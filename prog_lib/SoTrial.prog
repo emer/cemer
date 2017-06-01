@@ -1,10 +1,13 @@
-// ta_Dump File v3.0 -- code v8.0.0.0 rev9717
+// ta_Dump File v3.0 -- code v8.0.10.0 rev10813
 Program .projects[0].programs.gp[0][3] { 
  UserDataItem_List @*(.user_data_) {
   UserData_DocLink @[0] { };
  };
 
  ProgObjList @.objs = [0] {
+ };
+
+ ProgVar_List @.objs_vars = [0] {
  };
 
  ProgType_List @.types = [0] {
@@ -57,10 +60,7 @@ Program .projects[0].programs.gp[0][3] {
   name=;
   el_typ=UserData_DocLink;
   el_def=0;
-  UserData_DocLink @[0] {
-   name="DocLink";
-   doc=.projects[0].programs.gp[0][3].doc$$;
-  };
+  UserData_DocLink @[0] {name="DocLink": doc=.doc$$: };
  };
  name="SoTrial";
  short_nm="Trial";
@@ -73,13 +73,18 @@ Program .projects[0].programs.gp[0][3] {
  };
  author="Randall C. O'Reilly";
  email="emergent-users@grey.colorado.edu";
- flags=0;
+ flags=OBJS_UPDT_GUI;
  stop_step_cond {
   expr=;
  };
  objs {
   name="objs";
   el_typ=taNBase;
+  el_def=0;
+ };
+ objs_vars {
+  name="objs_vars";
+  el_typ=ProgVar;
   el_def=0;
  };
  types {
@@ -95,7 +100,8 @@ Program .projects[0].programs.gp[0][3] {
    name="network";
    var_type=T_Object;
    object_type=SoNetwork;
-   object_val=.projects[0].networks[0]$$<SoNetwork,Network_0>;
+   object_val=.networks["Network_0"]$$<SoNetwork,Network_0>;
+   object_scope=NULL;
    objs_ptr=0;
    flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
    reference=0;
@@ -106,7 +112,8 @@ Program .projects[0].programs.gp[0][3] {
    name="input_data";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=.projects[0].data.gp[0][0]$$<DataTable,StdInputData>;
+   object_val=.data.gp["InputData"]["StdInputData"]$$<DataTable,StdInputData>;
+   object_scope=NULL;
    objs_ptr=0;
    flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
    reference=0;
@@ -122,6 +129,7 @@ Program .projects[0].programs.gp[0][3] {
    name="update_net_view";
    var_type=T_Bool;
    bool_val=1;
+   object_scope=NULL;
    flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
    desc="determines whether to update any network view displays after trial is completed";
@@ -143,15 +151,15 @@ Program .projects[0].programs.gp[0][3] {
   el_typ=ProgCode;
   el_def=0;
   MethodCall @[0] {
+   name="MethodCall_networkInitInputData";
    desc="resets input data, before getting new external inputs data from apply inputs call";
    flags=CAN_REVERT_TO_CODE;
    code_string="network->Init_InputData()";
-   pre_compile_code_string="network->Init_InputData()";
    result_var=NULL;
-   obj=.projects[0].programs.gp[0][3].args[0]$$;
+   obj=.args[0]$$;
    method=Network::Init_InputData;
    meth_args {
-    name=;
+    name="meth_args";
     el_typ=ProgArg;
     el_def=0;
    };
@@ -159,13 +167,13 @@ Program .projects[0].programs.gp[0][3] {
    meth_desc=" Initializes external and target inputs";
   };
   ProgramCall @[1] {
+   name="ProgramCall_ApplyInputsnetworkinputdata";
    desc="apply external input activations from the input_data table to the network
 this program can be extended to do arbitrary things to generate data and apply it to network layers";
    flags=CAN_REVERT_TO_CODE;
    code_string="ApplyInputs(network, input_data)";
-   pre_compile_code_string="ApplyInputs(network, input_data)";
    prog_args {
-    name=;
+    name="prog_args";
     el_typ=ProgArg;
     el_def=0;
     ProgArg @[0] {
@@ -191,19 +199,19 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
     };
    };
-   target=.projects[0].programs.gp[0][4]$$<Program,ApplyInputs>;
+   target=.programs.gp["SoAll_Std"]["ApplyInputs"]$$<Program,ApplyInputs>;
    targ_ld_init="*ApplyInputs*";
   };
   MethodCall @[2] {
+   name="MethodCall_networkTrialRun";
    desc="initializes various counters at start of trial";
    flags=CAN_REVERT_TO_CODE;
    code_string="network->Trial_Run()";
-   pre_compile_code_string="network->Trial_Run()";
    result_var=NULL;
-   obj=$.projects[0].programs.gp[0][3].args[0]$;
+   obj=$.args[0]$;
    method=SoNetwork::Trial_Run;
    meth_args {
-    name=;
+    name="meth_args";
     el_typ=ProgArg;
     el_def=0;
    };
@@ -211,15 +219,15 @@ this program can be extended to do arbitrary things to generate data and apply i
    meth_desc=" run one trial of So";
   };
   MethodCall @[3] {
+   name="MethodCall_networkComputeTrialStats";
    desc=;
    flags=CAN_REVERT_TO_CODE;
    code_string="network->Compute_TrialStats()";
-   pre_compile_code_string="network->Compute_TrialStats()";
    result_var=NULL;
-   obj=$.projects[0].programs.gp[0][3].args[0]$;
+   obj=$.args[0]$;
    method=LeabraNetwork::Compute_TrialStats;
    meth_args {
-    name=;
+    name="meth_args";
     el_typ=ProgArg;
     el_def=0;
    };
@@ -227,12 +235,12 @@ this program can be extended to do arbitrary things to generate data and apply i
    meth_desc=" compute trial-level statistics (SSE and others defined by specific algorithms) do not call this function anymore -- it is obsolete -- please use Compute_PhaseStats or Compute_MinusStats / Compute_PlusStats for more appropriate stats computation at the right time";
   };
   ProgramCall @[4] {
+   name="ProgramCall_SoTrialMonitornetwork";
    desc="records data about the trial-level processing to a datatable for graphing/processing";
    flags=CAN_REVERT_TO_CODE;
    code_string="SoTrialMonitor(network)";
-   pre_compile_code_string="SoTrialMonitor(network)";
    prog_args {
-    name=;
+    name="prog_args";
     el_typ=ProgArg;
     el_def=0;
     ProgArg @[0] {
@@ -247,16 +255,16 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
     };
    };
-   target=.projects[0].programs.gp[0][5]$$<Program,SoTrialMonitor>;
+   target=.programs.gp["SoAll_Std"]["SoTrialMonitor"]$$<Program,SoTrialMonitor>;
    targ_ld_init="*SoTrialMonitor*";
   };
   NetUpdateView @[5] {
+   name="NetUpdateView_NetUpdateView";
    desc="update the network view(s) (only if update_net_view is true)";
    flags=CAN_REVERT_TO_CODE;
    code_string="Net Update View";
-   pre_compile_code_string="Net Update View";
-   network_var=$.projects[0].programs.gp[0][3].args[0]$;
-   update_var=.projects[0].programs.gp[0][3].vars[0]$$;
+   network_var=$.args[0]$;
+   update_var=.vars[0]$$;
   };
  };
  step_prog=NULL;

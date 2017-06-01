@@ -1,10 +1,13 @@
-// ta_Dump File v3.0 -- code v8.0.0.0 rev9717
+// ta_Dump File v3.0 -- code v8.0.10.0 rev10813
 Program .projects[0].programs[0] { 
  UserDataItem_List @*(.user_data_) {
   UserData_DocLink @[0] { };
  };
 
  ProgObjList @.objs = [0] {
+ };
+
+ ProgVar_List @.objs_vars = [0] {
  };
 
  ProgType_List @.types = [0] {
@@ -53,8 +56,9 @@ Program .projects[0].programs[0] {
   If @[13] { 
    ProgEl_List @.true_code = [1] {
     MethodCall @[0] { 
-     ProgArg_List @.meth_args = [1] {
+     ProgArg_List @.meth_args = [2] {
       ProgArg @[0] { };
+      ProgArg @[1] { };
      };
     };
    };
@@ -91,7 +95,7 @@ Program .projects[0].programs[0] {
    };
   };
   Else @[17] { 
-   ProgEl_List @.else_code = [2] {
+   ProgEl_List @.true_code = [2] {
     MethodCall @[0] { 
      ProgArg_List @.meth_args = [4] {
       ProgArg @[0] { };
@@ -161,10 +165,7 @@ Program .projects[0].programs[0] {
   name=;
   el_typ=UserData_DocLink;
   el_def=0;
-  UserData_DocLink @[0] {
-   name="DocLink";
-   doc=.projects[0].programs[0].doc$$;
-  };
+  UserData_DocLink @[0] {name="DocLink": doc=.doc$$: };
  };
  name="SoStartup";
  short_nm="Startup";
@@ -177,13 +178,18 @@ Program .projects[0].programs[0] {
  };
  author="Randall C. O'Reilly";
  email="emergent-users@grey.colorado.edu";
- flags=STARTUP_RUN;
+ flags=STARTUP_RUN|OBJS_UPDT_GUI;
  stop_step_cond {
   expr=;
  };
  objs {
   name="objs";
   el_typ=taNBase;
+  el_def=0;
+ };
+ objs_vars {
+  name="objs_vars";
+  el_typ=ProgVar;
   el_def=0;
  };
  types {
@@ -199,7 +205,8 @@ Program .projects[0].programs[0] {
    name="network";
    var_type=T_Object;
    object_type=Network;
-   object_val=.projects[0].networks[0]$$<SoNetwork,Network_0>;
+   object_val=.networks["Network_0"]$$<SoNetwork,Network_0>;
+   object_scope=NULL;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
    reference=0;
@@ -210,7 +217,8 @@ Program .projects[0].programs[0] {
    name="input_data";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=.projects[0].data.gp[0][0]$$<DataTable,StdInputData>;
+   object_val=.data.gp["InputData"]["StdInputData"]$$<DataTable,StdInputData>;
+   object_scope=NULL;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
    reference=0;
@@ -226,7 +234,8 @@ Program .projects[0].programs[0] {
    name="train_prog";
    var_type=T_Object;
    object_type=Program;
-   object_val=.projects[0].programs.gp[0][1]$$<Program,SoTrain>;
+   object_val=.programs.gp["SoAll_Std"]["SoTrain"]$$<Program,SoTrain>;
+   object_scope=NULL;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
    reference=0;
@@ -237,7 +246,8 @@ Program .projects[0].programs[0] {
    name="batch_prog";
    var_type=T_Object;
    object_type=Program;
-   object_val=.projects[0].programs.gp[0][0]$$<Program,SoBatch>;
+   object_val=.programs.gp["SoAll_Std"]["SoBatch"]$$<Program,SoBatch>;
+   object_scope=NULL;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
@@ -248,6 +258,7 @@ Program .projects[0].programs[0] {
    name="param_set";
    var_type=T_String;
    string_val=;
+   object_scope=NULL;
    flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
    desc="name of saved parameter set to apply at startup";
@@ -257,6 +268,7 @@ Program .projects[0].programs[0] {
    name="tag";
    var_type=T_String;
    string_val="_gui";
+   object_scope=NULL;
    flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
    desc=;
@@ -266,6 +278,7 @@ Program .projects[0].programs[0] {
    name="batch_str";
    var_type=T_String;
    string_val="00";
+   object_scope=NULL;
    flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
    desc="batch number as a string (leading zeros)";
@@ -275,6 +288,7 @@ Program .projects[0].programs[0] {
    name="log_dir";
    var_type=T_String;
    string_val=;
+   object_scope=NULL;
    flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
    desc="log file directory";
@@ -284,6 +298,7 @@ Program .projects[0].programs[0] {
    name="log_file_nm";
    var_type=T_String;
    string_val="/Users/oreilly/emergent/proj_templates/SoStd_gui.epc.dat";
+   object_scope=NULL;
    flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
    desc="name of log file";
@@ -293,6 +308,7 @@ Program .projects[0].programs[0] {
    name="batch_start";
    var_type=T_Int;
    int_val=0;
+   object_scope=NULL;
    flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
    desc="batch starting number";
@@ -302,7 +318,8 @@ Program .projects[0].programs[0] {
    name="EpochOutputData";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=.projects[0].data.gp[1][1]$$<DataTable,EpochOutputData>;
+   object_val=.data.gp["OutputData"]["EpochOutputData"]$$<DataTable,EpochOutputData>;
+   object_scope=NULL;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
@@ -313,7 +330,8 @@ Program .projects[0].programs[0] {
    name="TrialOutputData";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=.projects[0].data.gp[1][0]$$<DataTable,TrialOutputData>;
+   object_val=.data.gp["OutputData"]["TrialOutputData"]$$<DataTable,TrialOutputData>;
+   object_scope=NULL;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
@@ -324,7 +342,8 @@ Program .projects[0].programs[0] {
    name="MyClusterRun";
    var_type=T_Object;
    object_type=ClusterRun;
-   object_val=.projects[0].ctrl_panels[1]$$<ClusterRun,ClusterRun>;
+   object_val=.ctrl_panels["ClusterRun"]$$<ClusterRun,ClusterRun>;
+   object_scope=NULL;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
@@ -335,7 +354,8 @@ Program .projects[0].programs[0] {
    name="param_sets";
    var_type=T_Object;
    object_type=ParamSet_Group;
-   object_val=.projects[0].param_sets$$<ParamSet_Group,param_sets>;
+   object_val=.active_params$$<ParamSet_Group,active_params>;
+   object_scope=NULL;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
@@ -358,120 +378,120 @@ Program .projects[0].programs[0] {
   el_typ=ProgCode;
   el_def=0;
   RegisterArgs @[0] {
+   name="RegisterArgs_RegisterArgs";
    desc="This is KEY!!! actually processes all args, including those from ProgVarFmArg guys below";
    flags=CAN_REVERT_TO_CODE;
    code_string="Register Args";
-   pre_compile_code_string="Register Args";
   };
   PrintExpr @[1] {
+   name="PrintExpr_PrintLoadedproje_ojects0filename";
    desc=;
    flags=CAN_REVERT_TO_CODE;
    code_string="Print \"Loaded project: \" << .projects[0].file_name";
-   pre_compile_code_string="Print \"Loaded project: \" << .projects[0].file_name";
    expr {
     expr="\"Loaded project: \" << .projects[0].file_name";
    };
    debug=0;
   };
   Comment @[2] {
+   name="Comment_Stdvariablesinst_upprogramitself";
    desc="= Std variables in startup program itself =";
    flags=CAN_REVERT_TO_CODE;
    code_string="// = Std variables in startup program itself =";
-   pre_compile_code_string="// = Std variables in startup program itself =";
   };
   ProgVarFmArg @[3] {
+   name="ProgVarFmArg_SetVartaginProgr_artupfromArgtag";
    desc=;
    flags=CAN_REVERT_TO_CODE;
    code_string="Set Var:tag in Program:SoStartup from Arg:tag";
-   pre_compile_code_string="Set Var:tag in Program:SoStartup from Arg:tag";
-   prog=.projects[0].programs[0]$$;
+   prog=.$$;
    var_name="tag";
    arg_name="tag";
   };
   ProgVarFmArg @[4] {
+   name="ProgVarFmArg_SetVarlogdirinPr_upfromArglogdir";
    desc=;
    flags=CAN_REVERT_TO_CODE;
    code_string="Set Var:log_dir in Program:SoStartup from Arg:log_dir";
-   pre_compile_code_string="Set Var:log_dir in Program:SoStartup from Arg:log_dir";
-   prog=$.projects[0].programs[0]$;
+   prog=$.$;
    var_name="log_dir";
    arg_name="log_dir";
   };
   ProgVarFmArg @[5] {
+   name="ProgVarFmArg_SetVarparamsetin_fromArgparamset";
    desc=;
    flags=CAN_REVERT_TO_CODE;
    code_string="Set Var:param_set in Program:SoStartup from Arg:param_set";
-   pre_compile_code_string="Set Var:param_set in Program:SoStartup from Arg:param_set";
-   prog=$.projects[0].programs[0]$;
+   prog=$.$;
    var_name="param_set";
    arg_name="param_set";
   };
   ProgVarFmArg @[6] {
+   name="ProgVarFmArg_SetVarmaxepochin_infromArgepochs";
    desc=;
    flags=CAN_REVERT_TO_CODE;
    code_string="Set Var:max_epoch in Program:SoTrain from Arg:epochs";
-   pre_compile_code_string="Set Var:max_epoch in Program:SoTrain from Arg:epochs";
-   prog=$.projects[0].programs.gp[0][1]$;
+   prog=$.programs.gp["SoAll_Std"]["SoTrain"]$;
    var_name="max_epoch";
    arg_name="epochs";
   };
   ProgVarFmArg @[7] {
+   name="ProgVarFmArg_SetVarrndinitinP_nfromArgrndinit";
    desc=;
    flags=CAN_REVERT_TO_CODE;
    code_string="Set Var:rnd_init in Program:SoTrain from Arg:rnd_init";
-   pre_compile_code_string="Set Var:rnd_init in Program:SoTrain from Arg:rnd_init";
-   prog=$.projects[0].programs.gp[0][1]$;
+   prog=$.programs.gp["SoAll_Std"]["SoTrain"]$;
    var_name="rnd_init";
    arg_name="rnd_init";
   };
   ProgVarFmArg @[8] {
+   name="ProgVarFmArg_SetVarbatchstart_omArgbatchstart";
    desc="starting batch -- replaces b_start";
    flags=NEW_EL|CAN_REVERT_TO_CODE;
    code_string="Set Var:batch_start in Program:SoBatch from Arg:batch_start";
-   pre_compile_code_string="Set Var:batch_start in Program:SoBatch from Arg:batch_start";
-   prog=$.projects[0].programs.gp[0][0]$;
+   prog=$.programs.gp["SoAll_Std"]["SoBatch"]$;
    var_name="batch_start";
    arg_name="batch_start";
   };
   ProgVarFmArg @[9] {
+   name="ProgVarFmArg_SetVarnbatchesin_fromArgnbatches";
    desc="number of batches to run";
    flags=NEW_EL|CAN_REVERT_TO_CODE;
    code_string="Set Var:n_batches in Program:SoBatch from Arg:n_batches";
-   pre_compile_code_string="Set Var:n_batches in Program:SoBatch from Arg:n_batches";
-   prog=$.projects[0].programs.gp[0][0]$;
+   prog=$.programs.gp["SoAll_Std"]["SoBatch"]$;
    var_name="n_batches";
    arg_name="n_batches";
   };
   ProgVarFmArg @[10] {
+   name="ProgVarFmArg_SetVarsavewtsint_savewtsinterval";
    desc=;
    flags=CAN_REVERT_TO_CODE;
    code_string="Set Var:save_wts_interval in Program:SoTrain from Arg:save_wts_interval";
-   pre_compile_code_string="Set Var:save_wts_interval in Program:SoTrain from Arg:save_wts_interval";
-   prog=$.projects[0].programs.gp[0][1]$;
+   prog=$.programs.gp["SoAll_Std"]["SoTrain"]$;
    var_name="save_wts_interval";
    arg_name="save_wts_interval";
   };
   ProgVarFmArg @[11] {
+   name="ProgVarFmArg_SetVarsavefinalw_Argsavefinalwts";
    desc=;
    flags=CAN_REVERT_TO_CODE;
    code_string="Set Var:save_final_wts in Program:SoTrain from Arg:save_final_wts";
-   pre_compile_code_string="Set Var:save_final_wts in Program:SoTrain from Arg:save_final_wts";
-   prog=$.projects[0].programs.gp[0][1]$;
+   prog=$.programs.gp["SoAll_Std"]["SoTrain"]$;
    var_name="save_final_wts";
    arg_name="save_final_wts";
   };
   ControlPanelsFmArgs @[12] {
+   name="ControlPanelsFmArgs_CtrlPanelFmArgsvarMyClusterRun";
    desc="sets any arg listed in the control panel";
    flags=NEW_EL|CAN_REVERT_TO_CODE;
    code_string="CtrlPanel Fm Args: var = MyClusterRun ";
-   pre_compile_code_string="CtrlPanel Fm Args: var = MyClusterRun ";
-   ctrl_panel_var=.projects[0].programs[0].vars[10]$$;
+   ctrl_panel_var=.vars[10]$$;
   };
   If @[13] {
+   name="If_ifparamsetnonempty";
    desc="set variables to values stored in a param set";
    flags=CAN_REVERT_TO_CODE;
    code_string="if (param_set.nonempty())";
-   pre_compile_code_string="if (param_set.nonempty())";
    cond {
     expr="param_set.nonempty()";
    };
@@ -480,13 +500,13 @@ Program .projects[0].programs[0] {
     el_typ=ProgCode;
     el_def=0;
     MethodCall @[0] {
+     name="MethodCall_paramsetsActivat_aramSetparamset";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="param_sets->LoadParamSet(param_set)";
-     pre_compile_code_string="param_sets->LoadParamSet(param_set)";
      result_var=NULL;
-     obj=.projects[0].programs[0].vars[11]$$;
-     method=ParamSet_Group::LoadParamSet;
+     obj=.vars[11]$$;
+     method=ParamSet_Group::ActivateParamSet;
      meth_args {
       name="meth_args";
       el_typ=ProgArg;
@@ -497,60 +517,71 @@ Program .projects[0].programs[0] {
        name="set_name";
        required=1;
        def_val=;
-       prev_expr=;
+       prev_expr="param_set";
        expr {
 	expr="param_set";
        };
       };
+      ProgArg @[1] {
+       arg_type=bool;
+       type="bool";
+       name="err_not_found";
+       required=0;
+       def_val="true";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
      };
-     meth_sig="bool LoadParamSet(taString& set_name)";
-     meth_desc=;
+     meth_sig="bool ActivateParamSet(taString& set_name, bool err_not_found = true)";
+     meth_desc=" find given parameter set by name within this group, and call CopySavedtoActive(true) on that ParamSet if found, otherwise emit an error (if err_not_found) -- one step function for applying named parameter sets in programs";
     };
    };
   };
   Comment @[14] {
+   name="Comment_Addyourownvariableshere";
    desc="= Add your own variables here =";
    flags=CAN_REVERT_TO_CODE;
    code_string="// = Add your own variables here =";
-   pre_compile_code_string="// = Add your own variables here =";
   };
   Comment @[15] {
+   name="Comment_Belowsaveslogfil_ndarddatatables";
    desc="= Below saves log files of standard data tables =";
    flags=CAN_REVERT_TO_CODE;
    code_string="// = Below saves log files of standard data tables =";
-   pre_compile_code_string="// = Below saves log files of standard data tables =";
   };
   If @[16] {
+   name="If_iftaMiscCheckArgByNamebatchstart";
    desc="set tag for starting batch (new code in v 8.0)";
    flags=NEW_EL|CAN_REVERT_TO_CODE;
    code_string="if (taMisc::CheckArgByName(\"batch_start\"))";
-   pre_compile_code_string="if (taMisc::CheckArgByName(\"batch_start\"))";
    cond {
     expr="taMisc::CheckArgByName(\"batch_start\")";
    };
    true_code {
-    name=;
+    name="true_code";
     el_typ=ProgCode;
     el_def=0;
     ProgVarFmArg @[0] {
+     name="ProgVarFmArg_SetVarbatchstart_omArgbatchstart";
      desc="read in the arg to us too, so we can set file names based on it";
      flags=CAN_REVERT_TO_CODE;
      code_string="Set Var:batch_start in Program:SoStartup from Arg:batch_start";
-     pre_compile_code_string="Set Var:batch_start in Program:SoStartup from Arg:batch_start";
-     prog=$.projects[0].programs[0]$;
+     prog=$.$;
      var_name="batch_start";
      arg_name="batch_start";
     };
     MiscCall @[1] {
+     name="MiscCall_batchstrtaMiscLe_erosbatchstart2";
      desc="string version with leading zeros";
      flags=CAN_REVERT_TO_CODE;
      code_string="batch_str = taMisc::LeadingZeros(batch_start, 2)";
-     pre_compile_code_string="batch_str = taMisc::LeadingZeros(batch_start, 2)";
-     result_var=.projects[0].programs[0].vars[4]$$;
+     result_var=.vars[4]$$;
      object_type=taMisc;
      method=taMisc::LeadingZeros;
      meth_args {
-      name=;
+      name="meth_args";
       el_typ=ProgArg;
       el_def=0;
       ProgArg @[0] {
@@ -578,37 +609,37 @@ Program .projects[0].programs[0] {
      };
     };
     VarIncr @[2] {
+     name="VarIncr_tagbatchstr";
      desc="add to tag for setting log file names";
      flags=CAN_REVERT_TO_CODE;
      code_string="tag += \".\" + batch_str";
-     pre_compile_code_string="tag += \".\" + batch_str";
-     var=.projects[0].programs[0].vars[3]$$;
+     var=.vars[3]$$;
      expr {
       expr="\".\" + batch_str";
      };
     };
     If @[3] {
+     name="If_ifbatchstart0";
      desc="save startup args: only for first job in parallel batch mode, or this should be 0 otherwise in any case";
      flags=CAN_REVERT_TO_CODE;
      code_string="if (batch_start == 0)";
-     pre_compile_code_string="if (batch_start == 0)";
      cond {
       expr="batch_start == 0";
      };
      true_code {
-      name=;
+      name="true_code";
       el_typ=ProgCode;
       el_def=0;
       MethodCall @[0] {
+       name="MethodCall_logfilenmEpochOu_e001logdirfalse";
        desc="save args to file: last arg is to include dmem proc number";
        flags=CAN_REVERT_TO_CODE;
        code_string="log_file_nm = EpochOutputData->GetFileNameFmProject(\".args\", tag.before(\".00\",-1), log_dir, false)";
-       pre_compile_code_string="log_file_nm = EpochOutputData->GetFileNameFmProject(\".args\", tag.before(\".00\",-1), log_dir, false)";
-       result_var=.projects[0].programs[0].vars[6]$$;
-       obj=.projects[0].programs[0].vars[8]$$;
+       result_var=.vars[6]$$;
+       obj=.vars[8]$$;
        method=taBase::GetFileNameFmProject;
        meth_args {
-	name=;
+	name="meth_args";
 	el_typ=ProgArg;
 	el_def=0;
 	ProgArg @[0] {
@@ -660,15 +691,15 @@ Program .projects[0].programs[0] {
        meth_desc=" get file name from project file name -- useful for saving files associated with the project; ext = extension; tag = additional tag; subdir = additional directory after any existing in project name; fname = proj->base_name (subdir) + tag + ext; if dmem_proc_no, add dmem proc no to file name. empty if project not found";
       };
       MiscCall @[1] {
+       name="MiscCall_taMiscFullArgStr_ToFilelogfilenm";
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="taMisc::FullArgStringToFile(log_file_nm)";
-       pre_compile_code_string="taMisc::FullArgStringToFile(log_file_nm)";
        result_var=NULL;
        object_type=taMisc;
        method=taMisc::FullArgStringToFile;
        meth_args {
-	name=;
+	name="meth_args";
 	el_typ=ProgArg;
 	el_def=0;
 	ProgArg @[0] {
@@ -689,24 +720,27 @@ Program .projects[0].programs[0] {
    };
   };
   Else @[17] {
+   name="Else_If_iftaMiscCheckArgByNamebatchstart";
    desc=;
    flags=CAN_REVERT_TO_CODE;
    code_string="else";
-   pre_compile_code_string="else";
-   else_code {
-    name=;
+   cond {
+    expr=;
+   };
+   true_code {
+    name="true_code";
     el_typ=ProgCode;
     el_def=0;
     MethodCall @[0] {
+     name="MethodCall_logfilenmEpochOu_staglogdirfalse";
      desc="save args to file: last arg is to include dmem proc number";
      flags=CAN_REVERT_TO_CODE;
      code_string="log_file_nm = EpochOutputData->GetFileNameFmProject(\".args\", tag, log_dir, false)";
-     pre_compile_code_string="log_file_nm = EpochOutputData->GetFileNameFmProject(\".args\", tag, log_dir, false)";
-     result_var=$.projects[0].programs[0].vars[6]$;
-     obj=$.projects[0].programs[0].vars[8]$;
+     result_var=$.vars[6]$;
+     obj=$.vars[8]$;
      method=taBase::GetFileNameFmProject;
      meth_args {
-      name=;
+      name="meth_args";
       el_typ=ProgArg;
       el_def=0;
       ProgArg @[0] {
@@ -758,15 +792,15 @@ Program .projects[0].programs[0] {
      meth_desc=" get file name from project file name -- useful for saving files associated with the project; ext = extension; tag = additional tag; subdir = additional directory after any existing in project name; fname = proj->base_name (subdir) + tag + ext; if dmem_proc_no, add dmem proc no to file name. empty if project not found";
     };
     MiscCall @[1] {
+     name="MiscCall_taMiscFullArgStr_ToFilelogfilenm";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="taMisc::FullArgStringToFile(log_file_nm)";
-     pre_compile_code_string="taMisc::FullArgStringToFile(log_file_nm)";
      result_var=NULL;
      object_type=taMisc;
      method=taMisc::FullArgStringToFile;
      meth_args {
-      name=;
+      name="meth_args";
       el_typ=ProgArg;
       el_def=0;
       ProgArg @[0] {
@@ -785,15 +819,15 @@ Program .projects[0].programs[0] {
    };
   };
   MiscCall @[18] {
+   name="MiscCall_taMiscReportUnusedArgstrue";
    desc="report any args that didn't get used!";
    flags=NEW_EL|CAN_REVERT_TO_CODE;
    code_string="taMisc::ReportUnusedArgs(true)";
-   pre_compile_code_string="taMisc::ReportUnusedArgs(true)";
    result_var=NULL;
    object_type=taMisc;
    method=taMisc::ReportUnusedArgs;
    meth_args {
-    name="ProgArg_List_0";
+    name="meth_args";
     el_typ=ProgArg;
     el_def=0;
     ProgArg @[0] {
@@ -810,21 +844,21 @@ Program .projects[0].programs[0] {
    };
   };
   Comment @[19] {
+   name="Comment_Saveepochlogonbydefault";
    desc="== Save epoch log -- on by default ==";
    flags=CAN_REVERT_TO_CODE;
    code_string="// == Save epoch log -- on by default ==";
-   pre_compile_code_string="// == Save epoch log -- on by default ==";
   };
   MethodCall @[20] {
+   name="MethodCall_logfilenmEpochOu_ttaglogdirfalse";
    desc="last arg is to include dmem proc number";
    flags=CAN_REVERT_TO_CODE;
    code_string="log_file_nm = EpochOutputData->GetFileNameFmProject(\".epc.dat\", tag, log_dir, false)";
-   pre_compile_code_string="log_file_nm = EpochOutputData->GetFileNameFmProject(\".epc.dat\", tag, log_dir, false)";
-   result_var=$.projects[0].programs[0].vars[6]$;
-   obj=$.projects[0].programs[0].vars[8]$;
+   result_var=$.vars[6]$;
+   obj=$.vars[8]$;
    method=taBase::GetFileNameFmProject;
    meth_args {
-    name=;
+    name="meth_args";
     el_typ=ProgArg;
     el_def=0;
     ProgArg @[0] {
@@ -876,15 +910,15 @@ Program .projects[0].programs[0] {
    meth_desc=" get file name from project file name -- useful for saving files associated with the project; ext = extension; tag = additional tag; subdir = additional directory after any existing in project name; fname = proj->base_name (subdir) + tag + ext; if dmem_proc_no, add dmem proc no to file name. empty if project not found";
   };
   MethodCall @[21] {
+   name="MethodCall_EpochOutputDataS_filenmfalsetrue";
    desc="last arg is to restrict log to dmem_proc = 0";
    flags=CAN_REVERT_TO_CODE;
    code_string="EpochOutputData->SaveDataLog(log_file_nm, false, true)";
-   pre_compile_code_string="EpochOutputData->SaveDataLog(log_file_nm, false, true)";
    result_var=NULL;
-   obj=$.projects[0].programs[0].vars[8]$;
+   obj=$.vars[8]$;
    method=DataTable::SaveDataLog;
    meth_args {
-    name=;
+    name="meth_args";
     el_typ=ProgArg;
     el_def=0;
     ProgArg @[0] {
@@ -925,12 +959,12 @@ Program .projects[0].programs[0] {
    meth_desc=" incrementally save each new row of data that is written to the datatable (at WriteClose()) to given file. writes the header first if not appending to existing file. if running under demem, dmem_proc_0 determines if only the first processor writes to the log file, or if all processors write";
   };
   PrintVar @[22] {
+   name="PrintVar_PrintSavingepoch_datatologfilenm";
    desc=;
    flags=CAN_REVERT_TO_CODE;
    code_string="Print  \"Saving epoch log data to:\" log_file_nm";
-   pre_compile_code_string="Print  \"Saving epoch log data to:\" log_file_nm";
    message="Saving epoch log data to:";
-   print_var=$.projects[0].programs[0].vars[6]$;
+   print_var=$.vars[6]$;
    print_var2=NULL;
    print_var3=NULL;
    print_var4=NULL;
@@ -939,21 +973,21 @@ Program .projects[0].programs[0] {
    debug=0;
   };
   Comment @[23] {
+   name="Comment_SavetriallogOFFbydefault";
    desc="== Save trial log -- OFF by default ==";
    flags=CAN_REVERT_TO_CODE;
    code_string="// == Save trial log -- OFF by default ==";
-   pre_compile_code_string="// == Save trial log -- OFF by default ==";
   };
   MethodCall @[24] {
+   name="MethodCall_logfilenmTrialOu_attaglogdirtrue";
    desc="last arg is to include dmem proc number";
    flags=OFF|CAN_REVERT_TO_CODE;
    code_string="log_file_nm = TrialOutputData->GetFileNameFmProject(\".trl.dat\", tag, log_dir, true)";
-   pre_compile_code_string="log_file_nm = TrialOutputData->GetFileNameFmProject(\".trl.dat\", tag, log_dir, true)";
-   result_var=$.projects[0].programs[0].vars[6]$;
-   obj=.projects[0].programs[0].vars[9]$$;
+   result_var=$.vars[6]$;
+   obj=.vars[9]$$;
    method=taBase::GetFileNameFmProject;
    meth_args {
-    name=;
+    name="meth_args";
     el_typ=ProgArg;
     el_def=0;
     ProgArg @[0] {
@@ -1005,15 +1039,15 @@ Program .projects[0].programs[0] {
    meth_desc=" get file name from project file name -- useful for saving files associated with the project; ext = extension; tag = additional tag; subdir = additional directory after any existing in project name; fname = proj->base_name (subdir) + tag + ext; if dmem_proc_no, add dmem proc no to file name. empty if project not found";
   };
   MethodCall @[25] {
+   name="MethodCall_TrialOutputDataS_ilenmfalsefalse";
    desc="last arg is to restrict log to dmem_proc = 0";
    flags=OFF|CAN_REVERT_TO_CODE;
    code_string="TrialOutputData->SaveDataLog(log_file_nm, false, false)";
-   pre_compile_code_string="TrialOutputData->SaveDataLog(log_file_nm, false, false)";
    result_var=NULL;
-   obj=$.projects[0].programs[0].vars[9]$;
+   obj=$.vars[9]$;
    method=DataTable::SaveDataLog;
    meth_args {
-    name=;
+    name="meth_args";
     el_typ=ProgArg;
     el_def=0;
     ProgArg @[0] {
@@ -1054,12 +1088,12 @@ Program .projects[0].programs[0] {
    meth_desc=" incrementally save each new row of data that is written to the datatable (at WriteClose()) to given file. writes the header first if not appending to existing file. if running under demem, dmem_proc_0 determines if only the first processor writes to the log file, or if all processors write";
   };
   PrintVar @[26] {
+   name="PrintVar_PrintSavingtrial_datatologfilenm";
    desc=;
    flags=OFF|CAN_REVERT_TO_CODE;
    code_string="Print  \"Saving trial log data to:\" log_file_nm";
-   pre_compile_code_string="Print  \"Saving trial log data to:\" log_file_nm";
    message="Saving trial log data to:";
-   print_var=$.projects[0].programs[0].vars[6]$;
+   print_var=$.vars[6]$;
    print_var2=NULL;
    print_var3=NULL;
    print_var4=NULL;
@@ -1068,34 +1102,34 @@ Program .projects[0].programs[0] {
    debug=0;
   };
   OtherProgramVar @[27] {
+   name="OtherProgramVar_VarsToprogramSav_tagvar2var3var4";
    desc="propagate the tag";
    flags=CAN_REVERT_TO_CODE;
    code_string="Vars To:  program=SaveWeights set=to  var_1=tag  var_2=?  var_3=?  var_4=? ";
-   pre_compile_code_string="Vars To:  program=SaveWeights set=to  var_1=tag  var_2=?  var_3=?  var_4=? ";
-   other_prog=.projects[0].programs.gp[0][7]$$<Program,SaveWeights>;
+   other_prog=.programs.gp["SoAll_Std"]["SaveWeights"]$$<Program,SaveWeights>;
    set_other=1;
-   var_1=$.projects[0].programs[0].vars[3]$;
+   var_1=$.vars[3]$;
    var_2=NULL;
    var_3=NULL;
    var_4=NULL;
   };
   PrintExpr @[28] {
+   name="PrintExpr_PrintRunningbatchprogname";
    desc=;
    flags=CAN_REVERT_TO_CODE;
    code_string="Print \"Running: \" << batch_prog.name";
-   pre_compile_code_string="Print \"Running: \" << batch_prog.name";
    expr {
     expr="\"Running: \" << batch_prog.name";
    };
    debug=0;
   };
   ProgramCall @[29] {
+   name="ProgramCall_SoBatchnetworkinputdata";
    desc=;
    flags=CAN_REVERT_TO_CODE;
    code_string="SoBatch(network, input_data)";
-   pre_compile_code_string="SoBatch(network, input_data)";
    prog_args {
-    name=;
+    name="prog_args";
     el_typ=ProgArg;
     el_def=0;
     ProgArg @[0] {
@@ -1121,7 +1155,7 @@ Program .projects[0].programs[0] {
      };
     };
    };
-   target=$.projects[0].programs.gp[0][0]$;
+   target=$.programs.gp["SoAll_Std"]["SoBatch"]$;
    targ_ld_init="*LeabraBatch*";
   };
  };

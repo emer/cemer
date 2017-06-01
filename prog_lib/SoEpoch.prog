@@ -1,10 +1,13 @@
-// ta_Dump File v3.0 -- code v8.0.0.0 rev9717
+// ta_Dump File v3.0 -- code v8.0.10.0 rev10813
 Program .projects[0].programs.gp[0][2] { 
  UserDataItem_List @*(.user_data_) {
   UserData_DocLink @[0] { };
  };
 
  ProgObjList @.objs = [0] {
+ };
+
+ ProgVar_List @.objs_vars = [0] {
  };
 
  ProgType_List @.types = [0] {
@@ -93,10 +96,7 @@ Program .projects[0].programs.gp[0][2] {
   name=;
   el_typ=UserData_DocLink;
   el_def=0;
-  UserData_DocLink @[0] {
-   name="DocLink";
-   doc=.projects[0].programs.gp[0][2].doc$$;
-  };
+  UserData_DocLink @[0] {name="DocLink": doc=.doc$$: };
  };
  name="SoEpoch";
  short_nm="Epoch";
@@ -109,13 +109,18 @@ Program .projects[0].programs.gp[0][2] {
  };
  author="Randall C. O'Reilly";
  email="emergent-users@grey.colorado.edu";
- flags=0;
+ flags=OBJS_UPDT_GUI;
  stop_step_cond {
   expr=;
  };
  objs {
   name="objs";
   el_typ=taNBase;
+  el_def=0;
+ };
+ objs_vars {
+  name="objs_vars";
+  el_typ=ProgVar;
   el_def=0;
  };
  types {
@@ -131,7 +136,8 @@ Program .projects[0].programs.gp[0][2] {
    name="network";
    var_type=T_Object;
    object_type=SoNetwork;
-   object_val=.projects[0].networks[0]$$<SoNetwork,Network_0>;
+   object_val=.networks["Network_0"]$$<SoNetwork,Network_0>;
+   object_scope=NULL;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
    reference=0;
@@ -142,7 +148,8 @@ Program .projects[0].programs.gp[0][2] {
    name="input_data";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=.projects[0].data.gp[0][0]$$<DataTable,StdInputData>;
+   object_val=.data.gp["InputData"]["StdInputData"]$$<DataTable,StdInputData>;
+   object_scope=NULL;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
    reference=0;
@@ -158,6 +165,7 @@ Program .projects[0].programs.gp[0][2] {
    name="data_loop_order";
    var_type=T_HardEnum;
    int_val=1;
+   object_scope=NULL;
    hard_enum_type=DataLoop::Order;
    flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
@@ -169,6 +177,7 @@ Program .projects[0].programs.gp[0][2] {
    name="trial";
    var_type=T_Int;
    int_val=0;
+   object_scope=NULL;
    flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
    desc="current trial (event) within the epoch -- increments automatically";
@@ -178,7 +187,8 @@ Program .projects[0].programs.gp[0][2] {
    name="trial_mon_data";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=.projects[0].data.gp[1][0]$$<DataTable,TrialOutputData>;
+   object_val=.data.gp["OutputData"]["TrialOutputData"]$$<DataTable,TrialOutputData>;
+   object_scope=NULL;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
@@ -189,7 +199,8 @@ Program .projects[0].programs.gp[0][2] {
    name="epoch_timer";
    var_type=T_Object;
    object_type=TimeUsed;
-   object_val=.projects[0].networks[0].epoch_time$$<TimeUsed,epoch_time>;
+   object_val=.networks["Network_0"].epoch_time$$<TimeUsed,epoch_time>;
+   object_scope=NULL;
    objs_ptr=0;
    flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
@@ -199,7 +210,8 @@ Program .projects[0].programs.gp[0][2] {
   ProgVar @[4] {
    name="data_loop_index";
    var_type=T_Int;
-   int_val=8;
+   int_val=33;
+   object_scope=NULL;
    flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
    desc="index counter for the looping over items in the input_data datatable (not always the same as trial counter, depending on distributed memory computation)";
@@ -216,21 +228,21 @@ Program .projects[0].programs.gp[0][2] {
   el_typ=ProgCode;
   el_def=0;
   NetCounterInit @[0] {
+   name="NetCounterInit_NetCounterInittrial";
    desc="initialize trial counter (local variable and in the network)";
    flags=CAN_REVERT_TO_CODE;
    code_string="Net Counter Init: trial";
-   pre_compile_code_string="Net Counter Init: trial";
-   network_var=.projects[0].programs.gp[0][2].args[0]$$;
-   local_ctr_var=.projects[0].programs.gp[0][2].vars[1]$$;
+   network_var=.args[0]$$;
+   local_ctr_var=.vars[1]$$;
    counter=Network::trial;
    update_after=0;
   };
   AssignExpr @[1] {
+   name="AssignExpr_epochtimernetworkepochtime";
    desc="get pointer to epoch timer object on network";
    flags=CAN_REVERT_TO_CODE;
    code_string="epoch_timer = network.epoch_time";
-   pre_compile_code_string="epoch_timer = network.epoch_time";
-   result_var=.projects[0].programs.gp[0][2].vars[3]$$;
+   result_var=.vars[3]$$;
    expr {
     expr="network.epoch_time";
    };
@@ -241,35 +253,35 @@ Program .projects[0].programs.gp[0][2] {
   el_typ=ProgCode;
   el_def=0;
   NetCounterInit @[0] {
+   name="NetCounterInit_NetCounterInittrial";
    desc="initialize trial counter (local variable and in the network)";
    flags=CAN_REVERT_TO_CODE;
    code_string="Net Counter Init: trial";
-   pre_compile_code_string="Net Counter Init: trial";
-   network_var=$.projects[0].programs.gp[0][2].args[0]$;
-   local_ctr_var=$.projects[0].programs.gp[0][2].vars[1]$;
+   network_var=$.args[0]$;
+   local_ctr_var=$.vars[1]$;
    counter=Network::trial;
    update_after=0;
   };
   AssignExpr @[1] {
+   name="AssignExpr_epochtimernetworkepochtime";
    desc="get pointer to epoch timer object on network";
    flags=CAN_REVERT_TO_CODE;
    code_string="epoch_timer = network.epoch_time";
-   pre_compile_code_string="epoch_timer = network.epoch_time";
-   result_var=$.projects[0].programs.gp[0][2].vars[3]$;
+   result_var=$.vars[3]$;
    expr {
     expr="network.epoch_time";
    };
   };
   MethodCall @[2] {
+   name="MethodCall_epochtimerStartTimertrue";
    desc="start the epoch timer to record computation time per epoch";
    flags=CAN_REVERT_TO_CODE;
    code_string="epoch_timer->StartTimer(true)";
-   pre_compile_code_string="epoch_timer->StartTimer(true)";
    result_var=NULL;
-   obj=$.projects[0].programs.gp[0][2].vars[3]$;
+   obj=$.vars[3]$;
    method=TimeUsed::StartTimer;
    meth_args {
-    name=;
+    name="meth_args";
     el_typ=ProgArg;
     el_def=0;
     ProgArg @[0] {
@@ -288,12 +300,12 @@ Program .projects[0].programs.gp[0][2] {
    meth_desc=" record the current time as the starting time, and optionally reset the time used information";
   };
   MethodCall @[3] {
+   name="MethodCall_networkInitEpoch";
    desc="added in 8.0: essential for param_seqs";
    flags=NEW_EL|CAN_REVERT_TO_CODE;
    code_string="network->Init_Epoch()";
-   pre_compile_code_string="network->Init_Epoch()";
    result_var=NULL;
-   obj=$.projects[0].programs.gp[0][2].args[0]$;
+   obj=$.args[0]$;
    method=Network::Init_Epoch;
    meth_args {
     name="meth_args";
@@ -304,15 +316,15 @@ Program .projects[0].programs.gp[0][2] {
    meth_desc=" Initializes network state at the start of a new epoch -- updates parameters according to param_seq for example";
   };
   MethodCall @[4] {
+   name="MethodCall_trialmondataResetData";
    desc="reset trial-level monitor data every epoch, so it reflects only the most recent epoch's worth of data (turn flags OFF to accumulate trial data across entire training run)";
    flags=CAN_REVERT_TO_CODE;
    code_string="trial_mon_data->ResetData()";
-   pre_compile_code_string="trial_mon_data->ResetData()";
    result_var=NULL;
-   obj=.projects[0].programs.gp[0][2].vars[2]$$;
+   obj=.vars[2]$$;
    method=DataTable::ResetData;
    meth_args {
-    name=;
+    name="meth_args";
     el_typ=ProgArg;
     el_def=0;
    };
@@ -320,21 +332,21 @@ Program .projects[0].programs.gp[0][2] {
    meth_desc=" deletes all the data (rows), but keeps the column structure -- this cannot be undone!";
   };
   NetDataLoop @[5] {
+   name="NetDataLoop_NetDataLoopPERMU_ardatalooporder";
    desc="iterates over the events/rows of input_data, according to data_loop_order variable";
    flags=CAN_REVERT_TO_CODE;
    code_string="Net Data Loop (PERMUTED):  table=input_data  index=data_loop_index  order_var=data_loop_order ";
-   pre_compile_code_string="Net Data Loop (PERMUTED):  table=input_data  index=data_loop_index  order_var=data_loop_order ";
    loop_code {
-    name=;
+    name="loop_code";
     el_typ=ProgCode;
     el_def=0;
     ProgramCall @[0] {
+     name="ProgramCall_SoTrialnetworkinputdata";
      desc="run the trial program, passing network and input_data";
      flags=CAN_REVERT_TO_CODE;
      code_string="SoTrial(network, input_data)";
-     pre_compile_code_string="SoTrial(network, input_data)";
      prog_args {
-      name=;
+      name="prog_args";
       el_typ=ProgArg;
       el_def=0;
       ProgArg @[0] {
@@ -360,31 +372,31 @@ Program .projects[0].programs.gp[0][2] {
        };
       };
      };
-     target=.projects[0].programs.gp[0][3]$$<Program,SoTrial>;
+     target=.programs.gp["SoAll_Std"]["SoTrial"]$$<Program,SoTrial>;
      targ_ld_init="*SoTrial*";
     };
     If @[1] {
+     name="If_ifnetworkCompute_ightsTesttrial1";
      desc="test if it is time to update the weight values from delta weights (dWt) computed over trials";
      flags=CAN_REVERT_TO_CODE;
      code_string="if (network.Compute_Weights_Test(trial+1))";
-     pre_compile_code_string="if (network.Compute_Weights_Test(trial+1))";
      cond {
       expr="network.Compute_Weights_Test(trial+1)";
      };
      true_code {
-      name=;
+      name="true_code";
       el_typ=ProgCode;
       el_def=0;
       MethodCall @[0] {
+       name="MethodCall_networkComputeWeights";
        desc="update the weight values based on changes computed by trial program";
        flags=CAN_REVERT_TO_CODE;
        code_string="network->Compute_Weights()";
-       pre_compile_code_string="network->Compute_Weights()";
        result_var=NULL;
-       obj=$.projects[0].programs.gp[0][2].args[0]$;
+       obj=$.args[0]$;
        method=Network::Compute_Weights;
        meth_args {
-	name=;
+	name="meth_args";
 	el_typ=ProgArg;
 	el_def=0;
        };
@@ -394,9 +406,9 @@ Program .projects[0].programs.gp[0][2] {
      };
     };
    };
-   data_var=.projects[0].programs.gp[0][2].args[1]$$;
-   index_var=.projects[0].programs.gp[0][2].vars[4]$$;
-   order_var=.projects[0].programs.gp[0][2].vars[0]$$;
+   data_var=.args[1]$$;
+   index_var=.vars[4]$$;
+   order_var=.vars[0]$$;
    order=PERMUTED;
    update_after=0;
    dmem_nprocs=1;
@@ -409,27 +421,27 @@ Program .projects[0].programs.gp[0][2] {
    group_idx_list{    };
   };
   If @[6] {
+   name="If_ifnetworkwtupdateNetworkBATCH";
    desc="if full batch mode, update only at end of epoch";
    flags=CAN_REVERT_TO_CODE;
    code_string="if (network.wt_update == Network::BATCH)";
-   pre_compile_code_string="if (network.wt_update == Network::BATCH)";
    cond {
     expr="network.wt_update == Network::BATCH";
    };
    true_code {
-    name=;
+    name="true_code";
     el_typ=ProgCode;
     el_def=0;
     MethodCall @[0] {
+     name="MethodCall_networkComputeWeights";
      desc="final update of weights based on accumulated changes";
      flags=CAN_REVERT_TO_CODE;
      code_string="network->Compute_Weights()";
-     pre_compile_code_string="network->Compute_Weights()";
      result_var=NULL;
-     obj=$.projects[0].programs.gp[0][2].args[0]$;
+     obj=$.args[0]$;
      method=Network::Compute_Weights;
      meth_args {
-      name=;
+      name="meth_args";
       el_typ=ProgArg;
       el_def=0;
      };
@@ -439,15 +451,15 @@ Program .projects[0].programs.gp[0][2] {
    };
   };
   MethodCall @[7] {
+   name="MethodCall_networkComputeEpochStats";
    desc="network accumulates some core statistics over the epoch -- this finalizes that process and computes summary stats";
    flags=CAN_REVERT_TO_CODE;
    code_string="network->Compute_EpochStats()";
-   pre_compile_code_string="network->Compute_EpochStats()";
    result_var=NULL;
-   obj=$.projects[0].programs.gp[0][2].args[0]$;
+   obj=$.args[0]$;
    method=LeabraNetwork::Compute_EpochStats;
    meth_args {
-    name=;
+    name="meth_args";
     el_typ=ProgArg;
     el_def=0;
    };
@@ -455,12 +467,12 @@ Program .projects[0].programs.gp[0][2] {
    meth_desc=" compute epoch-level statistics; calls DMem_ComputeAggs (if dmem) and EpochSSE -- specific algos may add more compute epoch-level statistics, including SSE, AvgExtRew and AvgCycles";
   };
   ProgramCall @[8] {
+   name="ProgramCall_SoEpochMonitornetwork";
    desc="run program that records data from network and possibly other sources about the epoch";
    flags=CAN_REVERT_TO_CODE;
    code_string="SoEpochMonitor(network)";
-   pre_compile_code_string="SoEpochMonitor(network)";
    prog_args {
-    name=;
+    name="prog_args";
     el_typ=ProgArg;
     el_def=0;
     ProgArg @[0] {
@@ -475,19 +487,19 @@ Program .projects[0].programs.gp[0][2] {
      };
     };
    };
-   target=.projects[0].programs.gp[0][6]$$<Program,SoEpochMonitor>;
+   target=.programs.gp["SoAll_Std"]["SoEpochMonitor"]$$<Program,SoEpochMonitor>;
    targ_ld_init="*SoEpochMonitor*";
   };
   MethodCall @[9] {
+   name="MethodCall_epochtimerEndTimer";
    desc="done with the computation in the epoch -- record time it took";
    flags=CAN_REVERT_TO_CODE;
    code_string="epoch_timer->EndTimer()";
-   pre_compile_code_string="epoch_timer->EndTimer()";
    result_var=NULL;
-   obj=$.projects[0].programs.gp[0][2].vars[3]$;
+   obj=$.vars[3]$;
    method=TimeUsed::EndTimer;
    meth_args {
-    name=;
+    name="meth_args";
     el_typ=ProgArg;
     el_def=0;
    };

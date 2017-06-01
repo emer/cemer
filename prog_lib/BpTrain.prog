@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.0.0.0 rev9717
+// ta_Dump File v3.0 -- code v8.0.10.0 rev10813
 Program .projects[0].programs.gp[0][1] { 
  UserDataItem_List @*(.user_data_) {
   UserData_DocLink @[0] { };
@@ -35,6 +35,9 @@ Program .projects[0].programs.gp[0][1] {
    };
   };
   RndSeed @[1] { };
+ };
+
+ ProgVar_List @.objs_vars = [0] {
  };
 
  ProgType_List @.types = [1] {
@@ -175,7 +178,7 @@ Program .projects[0].programs.gp[0][1] {
      };
     };
     Else @[3] { 
-     ProgEl_List @.else_code = [1] {
+     ProgEl_List @.true_code = [1] {
       AssignExpr @[0] { };
      };
     };
@@ -214,10 +217,7 @@ Program .projects[0].programs.gp[0][1] {
   name=;
   el_typ=UserData_DocLink;
   el_def=0;
-  UserData_DocLink @[0] {
-   name="DocLink";
-   doc=.projects[0].programs.gp[0][1].doc$$;
-  };
+  UserData_DocLink @[0] {name="DocLink": doc=.doc$$: };
  };
  name="BpTrain";
  short_nm="Train";
@@ -230,7 +230,7 @@ Program .projects[0].programs.gp[0][1] {
  };
  author="Randall C. O'Reilly";
  email="emergent-users@grey.colorado.edu";
- flags=0;
+ flags=OBJS_UPDT_GUI;
  stop_step_cond {
   expr=;
  };
@@ -351,6 +351,11 @@ Program .projects[0].programs.gp[0][1] {
    rnd_seed=2947437512;
   };
  };
+ objs_vars {
+  name="objs_vars";
+  el_typ=ProgVar;
+  el_def=0;
+ };
  types {
   name="types";
   el_typ=DynEnumType;
@@ -359,7 +364,7 @@ Program .projects[0].programs.gp[0][1] {
    name="RndInitType";
    desc=;
    enums {
-    name=;
+    name="enums";
     el_typ=DynEnumItem;
     el_def=0;
     DynEnumItem @[0] {
@@ -389,7 +394,8 @@ Program .projects[0].programs.gp[0][1] {
    name="network";
    var_type=T_Object;
    object_type=BpNetwork;
-   object_val=.projects[0].networks[0]$$<BpNetwork,Network_0>;
+   object_val=.networks["Network_0"]$$<BpNetwork,Network_0>;
+   object_scope=NULL;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
    reference=0;
@@ -400,7 +406,8 @@ Program .projects[0].programs.gp[0][1] {
    name="input_data";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=.projects[0].data.gp[0][0]$$<DataTable,StdInputData>;
+   object_val=.data.gp["InputData"]["StdInputData"]$$<DataTable,StdInputData>;
+   object_scope=NULL;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
    reference=0;
@@ -411,6 +418,7 @@ Program .projects[0].programs.gp[0][1] {
    name="no_prompts";
    var_type=T_Bool;
    bool_val=0;
+   object_scope=NULL;
    flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
    reference=0;
    desc="If train is called by other programs (e.g., Batch), they should set this to true -- otherwise it is reset to false in Init";
@@ -425,6 +433,7 @@ Program .projects[0].programs.gp[0][1] {
    name="max_epoch";
    var_type=T_Int;
    int_val=500;
+   object_scope=NULL;
    flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
    desc=;
@@ -434,6 +443,7 @@ Program .projects[0].programs.gp[0][1] {
    name="epoch";
    var_type=T_Int;
    int_val=0;
+   object_scope=NULL;
    flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
    desc=;
@@ -443,6 +453,7 @@ Program .projects[0].programs.gp[0][1] {
    name="train_mode";
    var_type=T_HardEnum;
    int_val=1;
+   object_scope=NULL;
    hard_enum_type=Network::TrainMode;
    flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
@@ -452,9 +463,10 @@ Program .projects[0].programs.gp[0][1] {
   ProgVar @[3] {
    name="rnd_init";
    var_type=T_DynEnum;
+   object_scope=NULL;
    dyn_enum_val {
     user_data_=NULL;
-    enum_type=.projects[0].programs.gp[0][1].types[0]$$;
+    enum_type=.types[0]$$;
     value=2;
    };
    flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -466,6 +478,7 @@ Program .projects[0].programs.gp[0][1] {
    name="err_stopcrit";
    var_type=T_Real;
    real_val=0;
+   object_scope=NULL;
    flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
    desc="stopping criterion -- network avg_sse must be <= this number to stop training -- see n_under_thr too";
@@ -475,6 +488,7 @@ Program .projects[0].programs.gp[0][1] {
    name="n_under_thr";
    var_type=T_Int;
    int_val=1;
+   object_scope=NULL;
    flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
    desc="number of times network needs to be under stopcrit threshold to actually stop";
@@ -484,6 +498,7 @@ Program .projects[0].programs.gp[0][1] {
    name="save_final_wts";
    var_type=T_Bool;
    bool_val=0;
+   object_scope=NULL;
    flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
    desc="save the network's weights at the end of training?  ";
@@ -493,6 +508,7 @@ Program .projects[0].programs.gp[0][1] {
    name="save_wts_interval";
    var_type=T_Int;
    int_val=-1;
+   object_scope=NULL;
    flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
    desc="save the weights every this many epochs, if number is >= 1 (otherwise do not save weights)";
@@ -502,6 +518,7 @@ Program .projects[0].programs.gp[0][1] {
    name="n_under_cnt";
    var_type=T_Int;
    int_val=0;
+   object_scope=NULL;
    flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
    desc="current under threshold counter";
@@ -511,7 +528,8 @@ Program .projects[0].programs.gp[0][1] {
    name="rnd_seeds";
    var_type=T_Object;
    object_type=RndSeed_List;
-   object_val=.projects[0].programs.gp[0][1].objs[0]$$;
+   object_val=.objs[0]$$;
+   object_scope=NULL;
    objs_ptr=1;
    flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
@@ -522,7 +540,8 @@ Program .projects[0].programs.gp[0][1] {
    name="train_timer";
    var_type=T_Object;
    object_type=TimeUsed;
-   object_val=.projects[0].networks[0].train_time$$<TimeUsed,train_time>;
+   object_val=.networks["Network_0"].train_time$$<TimeUsed,train_time>;
+   object_scope=NULL;
    objs_ptr=0;
    flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
@@ -533,7 +552,8 @@ Program .projects[0].programs.gp[0][1] {
    name="rnd_seed";
    var_type=T_Object;
    object_type=RndSeed;
-   object_val=.projects[0].programs.gp[0][1].objs[1]$$;
+   object_val=.objs[1]$$;
+   object_scope=NULL;
    objs_ptr=1;
    flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
@@ -546,62 +566,61 @@ Program .projects[0].programs.gp[0][1] {
   el_typ=Function;
   el_def=0;
   Function @[0] {
+   name="GetRandomSeed";
    desc=;
    flags=CAN_REVERT_TO_CODE;
    code_string="GetRandomSeed() returns: int";
-   pre_compile_code_string="GetRandomSeed() returns: int";
-   name="GetRandomSeed";
    return_type=T_Int;
    object_type=taOBase;
    args {
-    name=;
+    name="args";
     el_typ=ProgVar;
     el_def=0;
    };
    fun_code {
-    name=;
+    name="fun_code";
     el_typ=ProgCode;
     el_def=0;
     LocalVars @[0] {
+     name="LocalVars_LocalVars0vars";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="LocalVars (0 vars)";
-     pre_compile_code_string="LocalVars (0 vars)";
      local_vars {
-      name=;
+      name="local_vars";
       el_typ=ProgVar;
       el_def=0;
      };
     };
     Switch @[1] {
+     name="Switch_switchrndinit";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="switch(rnd_init)";
-     pre_compile_code_string="switch(rnd_init)";
-     switch_var=.projects[0].programs.gp[0][1].vars[3]$$;
+     switch_var=.vars[3]$$;
      cases {
-      name=;
+      name="cases";
       el_typ=CaseBlock;
       el_def=0;
       CaseBlock @[0] {
+       name="CaseBlock_caseOLDSEED";
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="case: OLD_SEED";
-       pre_compile_code_string="case: OLD_SEED";
        prog_code {
-	name=;
+	name="prog_code";
 	el_typ=ProgCode;
 	el_def=0;
 	MethodCall @[0] {
+	 name="MethodCall_rndseedOldSeed";
 	 desc="restore previous random seed (all runs produce same results) -- click on rnd_seed object to generate a new seed to use for this if you want";
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="rnd_seed->OldSeed()";
-	 pre_compile_code_string="rnd_seed->OldSeed()";
 	 result_var=NULL;
-	 obj=.projects[0].programs.gp[0][1].vars[11]$$;
+	 obj=.vars[11]$$;
 	 method=RndSeed::OldSeed;
 	 meth_args {
-	  name=;
+	  name="meth_args";
 	  el_typ=ProgArg;
 	  el_def=0;
 	 };
@@ -615,24 +634,24 @@ Program .projects[0].programs.gp[0][1] {
        is_default=0;
       };
       CaseBlock @[1] {
+       name="CaseBlock_caseNEWSEED";
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="case: NEW_SEED";
-       pre_compile_code_string="case: NEW_SEED";
        prog_code {
-	name=;
+	name="prog_code";
 	el_typ=ProgCode;
 	el_def=0;
 	MethodCall @[0] {
+	 name="MethodCall_rndseedNewSeed";
 	 desc="new random numbers each time";
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="rnd_seed->NewSeed()";
-	 pre_compile_code_string="rnd_seed->NewSeed()";
 	 result_var=NULL;
-	 obj=$.projects[0].programs.gp[0][1].vars[11]$;
+	 obj=$.vars[11]$;
 	 method=RndSeed::NewSeed;
 	 meth_args {
-	  name=;
+	  name="meth_args";
 	  el_typ=ProgArg;
 	  el_def=0;
 	 };
@@ -646,24 +665,24 @@ Program .projects[0].programs.gp[0][1] {
        is_default=0;
       };
       CaseBlock @[2] {
+       name="CaseBlock_caseBATCHSEEDS";
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="case: BATCH_SEEDS";
-       pre_compile_code_string="case: BATCH_SEEDS";
        prog_code {
-	name=;
+	name="prog_code";
 	el_typ=ProgCode;
 	el_def=0;
 	MethodCall @[0] {
+	 name="MethodCall_rndseedsUseSeedn_dseedsseedssize";
 	 desc="restore previous random seed (all runs produce same results); change to NewSeed to have new random numbers each time";
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="rnd_seeds->UseSeed(network.batch % rnd_seeds.seeds.size)";
-	 pre_compile_code_string="rnd_seeds->UseSeed(network.batch % rnd_seeds.seeds.size)";
 	 result_var=NULL;
-	 obj=.projects[0].programs.gp[0][1].vars[9]$$;
+	 obj=.vars[9]$$;
 	 method=RndSeed_List::UseSeed;
 	 meth_args {
-	  name=;
+	  name="meth_args";
 	  el_typ=ProgArg;
 	  el_def=0;
 	  ProgArg @[0] {
@@ -697,25 +716,25 @@ Program .projects[0].programs.gp[0][1] {
   el_typ=ProgCode;
   el_def=0;
   AssignExpr @[0] {
+   name="AssignExpr_nopromptsfalse";
    desc=;
    flags=CAN_REVERT_TO_CODE;
    code_string="no_prompts = false";
-   pre_compile_code_string="no_prompts = false";
-   result_var=.projects[0].programs.gp[0][1].args[2]$$;
+   result_var=.args[2]$$;
    expr {
     expr="false";
    };
   };
   MethodCall @[1] {
+   name="MethodCall_networkCheckConfigfalse";
    desc=;
    flags=CAN_REVERT_TO_CODE;
    code_string="network->CheckConfig(false)";
-   pre_compile_code_string="network->CheckConfig(false)";
    result_var=NULL;
-   obj=.projects[0].programs.gp[0][1].args[0]$$;
+   obj=.args[0]$$;
    method=taBase::CheckConfig;
    meth_args {
-    name=;
+    name="meth_args";
     el_typ=ProgArg;
     el_def=0;
     ProgArg @[0] {
@@ -734,60 +753,60 @@ Program .projects[0].programs.gp[0][1] {
    meth_desc=" check the configuration of this object and all its children (defaults to no confirm of success)";
   };
   AssignExpr @[2] {
+   name="AssignExpr_traintimernetworktraintime";
    desc=;
    flags=CAN_REVERT_TO_CODE;
    code_string="train_timer = network.train_time";
-   pre_compile_code_string="train_timer = network.train_time";
-   result_var=.projects[0].programs.gp[0][1].vars[10]$$;
+   result_var=.vars[10]$$;
    expr {
     expr="network.train_time";
    };
   };
   AssignExpr @[3] {
+   name="AssignExpr_nundercnt0";
    desc=;
    flags=CAN_REVERT_TO_CODE;
    code_string="n_under_cnt = 0";
-   pre_compile_code_string="n_under_cnt = 0";
-   result_var=.projects[0].programs.gp[0][1].vars[8]$$;
+   result_var=.vars[8]$$;
    expr {
     expr="0";
    };
   };
   FunctionCall @[4] {
+   name="FunctionCall_GetRandomSeed";
    desc="initialize random seed";
    flags=CAN_REVERT_TO_CODE;
    code_string="GetRandomSeed()";
-   pre_compile_code_string="GetRandomSeed()";
    result_var=NULL;
-   fun=.projects[0].programs.gp[0][1].functions[0]$$;
+   fun=.functions[0]$$;
    fun_args {
-    name=;
+    name="fun_args";
     el_typ=ProgArg;
     el_def=0;
    };
   };
   WtInitPrompt @[5] {
+   name="WtInitPrompt_ifguiDoyouwantto_eNetworkWeights";
    desc="don't initialize weights without checking";
    flags=CAN_REVERT_TO_CODE;
    code_string="if (gui && \"Do you want to Initialize Network Weights\")";
-   pre_compile_code_string="if (gui && \"Do you want to Initialize Network Weights\")";
    prompt="Do you want to Initialize Network Weights";
    yes_label="Yes";
    no_label="No";
    yes_code {
-    name=;
+    name="yes_code";
     el_typ=ProgCode;
     el_def=0;
     MethodCall @[0] {
+     name="MethodCall_networkInitWeights";
      desc="initialize network weights: could also load pre-set weights or something else here";
      flags=CAN_REVERT_TO_CODE;
      code_string="network->Init_Weights()";
-     pre_compile_code_string="network->Init_Weights()";
      result_var=NULL;
-     obj=$.projects[0].programs.gp[0][1].args[0]$;
+     obj=$.args[0]$;
      method=Network::Init_Weights;
      meth_args {
-      name=;
+      name="meth_args";
       el_typ=ProgArg;
       el_def=0;
      };
@@ -795,10 +814,10 @@ Program .projects[0].programs.gp[0][1] {
      meth_desc=" Initialize the weights -- also inits acts, counters and stats -- does unit level threaded and then does Layers after";
     };
     PrintExpr @[1] {
+     name="PrintExpr_Printnetworkname_ghtsInitialized";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Print network.name << \" Weights Initialized\"";
-     pre_compile_code_string="Print network.name << \" Weights Initialized\"";
      expr {
       expr="network.name << \" Weights Initialized\"";
      };
@@ -807,11 +826,11 @@ Program .projects[0].programs.gp[0][1] {
    };
   };
   AssignExpr @[6] {
+   name="AssignExpr_epochnetworkepoch";
    desc="grab the official network epoch counter: will be initialized if needed by now";
    flags=CAN_REVERT_TO_CODE;
    code_string="epoch = network.epoch";
-   pre_compile_code_string="epoch = network.epoch";
-   result_var=.projects[0].programs.gp[0][1].vars[1]$$;
+   result_var=.vars[1]$$;
    expr {
     expr="network.epoch";
    };
@@ -822,25 +841,25 @@ Program .projects[0].programs.gp[0][1] {
   el_typ=ProgCode;
   el_def=0;
   AssignExpr @[0] {
+   name="AssignExpr_traintimernetworktraintime";
    desc=;
    flags=CAN_REVERT_TO_CODE;
    code_string="train_timer = network.train_time";
-   pre_compile_code_string="train_timer = network.train_time";
-   result_var=$.projects[0].programs.gp[0][1].vars[10]$;
+   result_var=$.vars[10]$;
    expr {
     expr="network.train_time";
    };
   };
   MethodCall @[1] {
+   name="MethodCall_traintimerStartTimertrue";
    desc=;
    flags=CAN_REVERT_TO_CODE;
    code_string="train_timer->StartTimer(true)";
-   pre_compile_code_string="train_timer->StartTimer(true)";
    result_var=NULL;
-   obj=$.projects[0].programs.gp[0][1].vars[10]$;
+   obj=$.vars[10]$;
    method=TimeUsed::StartTimer;
    meth_args {
-    name=;
+    name="meth_args";
     el_typ=ProgArg;
     el_def=0;
     ProgArg @[0] {
@@ -859,21 +878,21 @@ Program .projects[0].programs.gp[0][1] {
    meth_desc=" record the current time as the starting time, and optionally reset the time used information";
   };
   AssignExpr @[2] {
+   name="AssignExpr_nundercnt0";
    desc=;
    flags=CAN_REVERT_TO_CODE;
    code_string="n_under_cnt = 0";
-   pre_compile_code_string="n_under_cnt = 0";
-   result_var=$.projects[0].programs.gp[0][1].vars[8]$;
+   result_var=$.vars[8]$;
    expr {
     expr="0";
    };
   };
   MemberAssign @[3] {
+   name="MemberAssign_networktrainmodetrainmode";
    desc="set network's training mode to our local value";
    flags=CAN_REVERT_TO_CODE;
    code_string="network.train_mode = train_mode";
-   pre_compile_code_string="network.train_mode = train_mode";
-   obj=$.projects[0].programs.gp[0][1].args[0]$;
+   obj=$.args[0]$;
    path="train_mode";
    expr {
     expr="train_mode";
@@ -881,40 +900,40 @@ Program .projects[0].programs.gp[0][1] {
    update_after=0;
   };
   FunctionCall @[4] {
+   name="FunctionCall_GetRandomSeed";
    desc="initialize random seed";
    flags=CAN_REVERT_TO_CODE;
    code_string="GetRandomSeed()";
-   pre_compile_code_string="GetRandomSeed()";
    result_var=NULL;
-   fun=$.projects[0].programs.gp[0][1].functions[0]$;
+   fun=$.functions[0]$;
    fun_args {
-    name=;
+    name="fun_args";
     el_typ=ProgArg;
     el_def=0;
    };
   };
   If @[5] {
+   name="If_ifnoprompts";
    desc=;
    flags=CAN_REVERT_TO_CODE;
    code_string="if (no_prompts)";
-   pre_compile_code_string="if (no_prompts)";
    cond {
     expr="no_prompts";
    };
    true_code {
-    name=;
+    name="true_code";
     el_typ=ProgCode;
     el_def=0;
     MethodCall @[0] {
+     name="MethodCall_networkInitWeights";
      desc="initialize network weights: could also load pre-set weights or something else here";
      flags=CAN_REVERT_TO_CODE;
      code_string="network->Init_Weights()";
-     pre_compile_code_string="network->Init_Weights()";
      result_var=NULL;
-     obj=$.projects[0].programs.gp[0][1].args[0]$;
+     obj=$.args[0]$;
      method=Network::Init_Weights;
      meth_args {
-      name=;
+      name="meth_args";
       el_typ=ProgArg;
       el_def=0;
      };
@@ -922,10 +941,10 @@ Program .projects[0].programs.gp[0][1] {
      meth_desc=" Initialize the weights -- also inits acts, counters and stats -- does unit level threaded and then does Layers after";
     };
     PrintExpr @[1] {
+     name="PrintExpr_Printnetworkname_ghtsInitialized";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Print network.name << \" Weights Initialized\"";
-     pre_compile_code_string="Print network.name << \" Weights Initialized\"";
      expr {
       expr="network.name << \" Weights Initialized\"";
      };
@@ -934,31 +953,31 @@ Program .projects[0].programs.gp[0][1] {
    };
   };
   AssignExpr @[6] {
+   name="AssignExpr_epochnetworkepoch";
    desc="grab the official network epoch counter: will be initialized if needed by now";
    flags=CAN_REVERT_TO_CODE;
    code_string="epoch = network.epoch";
-   pre_compile_code_string="epoch = network.epoch";
-   result_var=$.projects[0].programs.gp[0][1].vars[1]$;
+   result_var=$.vars[1]$;
    expr {
     expr="network.epoch";
    };
   };
   WhileLoop @[7] {
+   name="WhileLoop_whileepochmaxepoch";
    desc=;
    flags=CAN_REVERT_TO_CODE;
    code_string="while (epoch < max_epoch)";
-   pre_compile_code_string="while (epoch < max_epoch)";
    loop_code {
-    name=;
+    name="loop_code";
     el_typ=ProgCode;
     el_def=0;
     ProgramCall @[0] {
+     name="ProgramCall_BpEpochnetworkinputdata";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="BpEpoch(network, input_data)";
-     pre_compile_code_string="BpEpoch(network, input_data)";
      prog_args {
-      name=;
+      name="prog_args";
       el_typ=ProgArg;
       el_def=0;
       ProgArg @[0] {
@@ -984,46 +1003,46 @@ Program .projects[0].programs.gp[0][1] {
        };
       };
      };
-     target=.projects[0].programs.gp[0][2]$$<Program,BpEpoch>;
+     target=.programs.gp["BpAll_Std"]["BpEpoch"]$$<Program,BpEpoch>;
      targ_ld_init="*BpEpoch*";
     };
     NetCounterIncr @[1] {
+     name="NetCounterIncr_NetCounterIncrepoch";
      desc="increment the epoch counter";
      flags=CAN_REVERT_TO_CODE;
      code_string="Net Counter Incr: epoch";
-     pre_compile_code_string="Net Counter Incr: epoch";
-     network_var=$.projects[0].programs.gp[0][1].args[0]$;
-     local_ctr_var=$.projects[0].programs.gp[0][1].vars[1]$;
+     network_var=$.args[0]$;
+     local_ctr_var=$.vars[1]$;
      counter=Network::epoch;
      update_after=0;
     };
     If @[2] {
+     name="If_ifnetworkavgsseavgerrstopcrit";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="if (network.avg_sse.avg <= err_stopcrit)";
-     pre_compile_code_string="if (network.avg_sse.avg <= err_stopcrit)";
      cond {
       expr="network.avg_sse.avg <= err_stopcrit";
      };
      true_code {
-      name=;
+      name="true_code";
       el_typ=ProgCode;
       el_def=0;
       VarIncr @[0] {
+       name="VarIncr_nundercnt1";
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="n_under_cnt += 1";
-       pre_compile_code_string="n_under_cnt += 1";
-       var=$.projects[0].programs.gp[0][1].vars[8]$;
+       var=$.vars[8]$;
        expr {
 	expr="1";
        };
       };
       IfBreak @[1] {
+       name="IfBreak_ifnundercntnunderthrbreak";
        desc="stop if errors go below stopping criterion (note: could use sse or avg_sse here too)";
        flags=CAN_REVERT_TO_CODE;
        code_string="if(n_under_cnt >=  n_under_thr) break";
-       pre_compile_code_string="if(n_under_cnt >=  n_under_thr) break";
        cond {
 	expr="n_under_cnt >=  n_under_thr";
        };
@@ -1031,20 +1050,23 @@ Program .projects[0].programs.gp[0][1] {
      };
     };
     Else @[3] {
+     name="Else_If_ifnetworkavgsseavgerrstopcrit";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="else";
-     pre_compile_code_string="else";
-     else_code {
-      name=;
+     cond {
+      expr=;
+     };
+     true_code {
+      name="true_code";
       el_typ=ProgCode;
       el_def=0;
       AssignExpr @[0] {
+       name="AssignExpr_nundercnt0";
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="n_under_cnt = 0";
-       pre_compile_code_string="n_under_cnt = 0";
-       result_var=$.projects[0].programs.gp[0][1].vars[8]$;
+       result_var=$.vars[8]$;
        expr {
 	expr="0";
        };
@@ -1052,36 +1074,36 @@ Program .projects[0].programs.gp[0][1] {
      };
     };
     If @[4] {
+     name="If_ifsavewtsinterval1";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="if (save_wts_interval >= 1)";
-     pre_compile_code_string="if (save_wts_interval >= 1)";
      cond {
       expr="save_wts_interval >= 1";
      };
      true_code {
-      name=;
+      name="true_code";
       el_typ=ProgCode;
       el_def=0;
       If @[0] {
+       name="If_ifepochsavewtsinterval0";
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="if (epoch % save_wts_interval == 0)";
-       pre_compile_code_string="if (epoch % save_wts_interval == 0)";
        cond {
 	expr="epoch % save_wts_interval == 0";
        };
        true_code {
-	name=;
+	name="true_code";
 	el_typ=ProgCode;
 	el_def=0;
 	ProgramCall @[0] {
+	 name="ProgramCall_SaveWeightsnetwork";
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="SaveWeights(network)";
-	 pre_compile_code_string="SaveWeights(network)";
 	 prog_args {
-	  name=;
+	  name="prog_args";
 	  el_typ=ProgArg;
 	  el_def=0;
 	  ProgArg @[0] {
@@ -1096,7 +1118,7 @@ Program .projects[0].programs.gp[0][1] {
 	   };
 	  };
 	 };
-	 target=.projects[0].programs.gp[0][7]$$<Program,SaveWeights>;
+	 target=.programs.gp["BpAll_Std"]["SaveWeights"]$$<Program,SaveWeights>;
 	 targ_ld_init="*SaveWeights*";
 	};
        };
@@ -1109,24 +1131,24 @@ Program .projects[0].programs.gp[0][1] {
    };
   };
   If @[8] {
+   name="If_ifsavefinalwts";
    desc=;
    flags=CAN_REVERT_TO_CODE;
    code_string="if (save_final_wts)";
-   pre_compile_code_string="if (save_final_wts)";
    cond {
     expr="save_final_wts";
    };
    true_code {
-    name=;
+    name="true_code";
     el_typ=ProgCode;
     el_def=0;
     ProgramCall @[0] {
+     name="ProgramCall_SaveWeightsnetwork";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="SaveWeights(network)";
-     pre_compile_code_string="SaveWeights(network)";
      prog_args {
-      name=;
+      name="prog_args";
       el_typ=ProgArg;
       el_def=0;
       ProgArg @[0] {
@@ -1141,21 +1163,21 @@ Program .projects[0].programs.gp[0][1] {
        };
       };
      };
-     target=$.projects[0].programs.gp[0][7]$;
+     target=$.programs.gp["BpAll_Std"]["SaveWeights"]$;
      targ_ld_init="*SaveWeights*";
     };
    };
   };
   MethodCall @[9] {
+   name="MethodCall_traintimerEndTimer";
    desc=;
    flags=CAN_REVERT_TO_CODE;
    code_string="train_timer->EndTimer()";
-   pre_compile_code_string="train_timer->EndTimer()";
    result_var=NULL;
-   obj=$.projects[0].programs.gp[0][1].vars[10]$;
+   obj=$.vars[10]$;
    method=TimeUsed::EndTimer;
    meth_args {
-    name=;
+    name="meth_args";
     el_typ=ProgArg;
     el_def=0;
    };

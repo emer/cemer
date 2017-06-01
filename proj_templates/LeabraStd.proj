@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.0.10.0 rev10791
+// ta_Dump File v3.0 -- code v8.0.10.0 rev10813
 LeabraProject .projects[0] { 
  Doc_Group @.docs = [0] {
  };
@@ -4171,7 +4171,7 @@ LeabraProject .projects[0] {
    };
    author="Randall C. O'Reilly";
    email="emergent-users@grey.colorado.edu";
-   flags=STARTUP_RUN;
+   flags=STARTUP_RUN|OBJS_UPDT_GUI;
    stop_step_cond {
     expr=;
    };
@@ -5191,7 +5191,7 @@ LeabraProject .projects[0] {
     };
     author="Randall C. O'Reilly";
     email="emergent-users@grey.colorado.edu";
-    flags=0;
+    flags=OBJS_UPDT_GUI;
     stop_step_cond {
      expr=;
     };
@@ -5450,7 +5450,7 @@ LeabraProject .projects[0] {
     };
     author="Randall C. O'Reilly";
     email="emergent-users@grey.colorado.edu";
-    flags=0;
+    flags=OBJS_UPDT_GUI;
     stop_step_cond {
      expr=;
     };
@@ -6640,7 +6640,7 @@ mw.config.set({\"wgBackendResponseTime\":155});
     };
     author="Randall C. O'Reilly";
     email="emergent-users@grey.colorado.edu";
-    flags=2;
+    flags=OBJS_UPDT_GUI;
     stop_step_cond {
      expr=;
     };
@@ -7073,7 +7073,7 @@ mw.config.set({\"wgBackendResponseTime\":155});
     };
     author="Randall C. O'Reilly";
     email="emergent-users@grey.colorado.edu";
-    flags=0;
+    flags=OBJS_UPDT_GUI;
     stop_step_cond {
      expr=;
     };
@@ -7411,7 +7411,7 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
     author="Randall C. O'Reilly";
     email="emergent-users@grey.colorado.edu";
-    flags=0;
+    flags=OBJS_UPDT_GUI;
     stop_step_cond {
      expr=;
     };
@@ -7756,7 +7756,7 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
     author="Randall C. O'Reilly";
     email="emergent-users@grey.colorado.edu";
-    flags=0;
+    flags=OBJS_UPDT_GUI;
     stop_step_cond {
      expr=;
     };
@@ -7878,7 +7878,7 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
     author="Randall C. O'Reilly";
     email="emergent-users@grey.colorado.edu";
-    flags=NO_STOP_STEP;
+    flags=NO_STOP_STEP|OBJS_UPDT_GUI;
     stop_step_cond {
      expr=;
     };
@@ -8179,7 +8179,7 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
     author="Randall C. O'Reilly";
     email="emergent-users@grey.colorado.edu";
-    flags=NO_STOP_STEP;
+    flags=NO_STOP_STEP|OBJS_UPDT_GUI;
     stop_step_cond {
      expr=;
     };
@@ -9364,7 +9364,7 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
     author="Randall C. O'Reilly";
     email="emergent-users@grey.colorado.edu";
-    flags=NO_STOP_STEP;
+    flags=NO_STOP_STEP|OBJS_UPDT_GUI;
     stop_step_cond {
      expr=;
     };
@@ -10827,7 +10827,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
     };
     author="Randall C. O'Reilly";
     email="emergent-users@grey.colorado.edu";
-    flags=NO_STOP_STEP;
+    flags=NO_STOP_STEP|OBJS_UPDT_GUI;
     stop_step_cond {
      expr=;
     };
@@ -11186,7 +11186,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
     };
     author="Randall C. O'Reilly";
     email="emergent-users@grey.colorado.edu";
-    flags=0;
+    flags=OBJS_UPDT_GUI;
     stop_step_cond {
      expr=;
     };
@@ -11594,7 +11594,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
     };
     author="Randall C. O'Reilly";
     email="emergent-users@grey.colorado.edu";
-    flags=0;
+    flags=OBJS_UPDT_GUI;
     stop_step_cond {
      expr=;
     };
@@ -11932,7 +11932,7 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
     author="Randall C. O'Reilly";
     email="emergent-users@grey.colorado.edu";
-    flags=0;
+    flags=OBJS_UPDT_GUI;
     stop_step_cond {
      expr=;
     };
@@ -12277,7 +12277,7 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
     author="Randall C. O'Reilly";
     email="emergent-users@grey.colorado.edu";
-    flags=0;
+    flags=OBJS_UPDT_GUI;
     stop_step_cond {
      expr=;
     };
@@ -12399,7 +12399,7 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
     author="Randall C. O'Reilly";
     email="emergent-users@grey.colorado.edu";
-    flags=NO_STOP_STEP;
+    flags=NO_STOP_STEP|OBJS_UPDT_GUI;
     stop_step_cond {
      expr=;
     };
@@ -12700,7 +12700,7 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
     author="Randall C. O'Reilly";
     email="emergent-users@grey.colorado.edu";
-    flags=NO_STOP_STEP;
+    flags=NO_STOP_STEP|OBJS_UPDT_GUI;
     stop_step_cond {
      expr=;
     };
@@ -13681,7 +13681,7 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
     author="Randall C. O'Reilly";
     email="emergent-users@grey.colorado.edu";
-    flags=NO_STOP_STEP;
+    flags=NO_STOP_STEP|OBJS_UPDT_GUI;
     stop_step_cond {
      expr=;
     };
@@ -14854,7 +14854,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	  unit_disp_mode=UDM_BLOCK;
 	  unit_text_disp=UTD_NONE;
 	  max_size {x=5: y=5: z=2.333333: };
-	  max_size2d {x=5: y=18: z=1: };
+	  max_size2d {x=5: y=9: z=1: };
 	  eff_max_size {x=5: y=5: z=2.333333: };
 	  font_sizes {net_name=0.05: net_vals=0.05: layer=0.04: layer_min=0.01: layer_vals=0.03: prjn=0.01: unit=0.02: un_nm_len=3: };
 	  view_params {xy_square=0: unit_spacing=0.05: prjn_disp=L_R_B: prjn_name=0: prjn_width=0.002: prjn_trans=0.5: lay_trans=0.4: unit_trans=0.4: laygp_width=1: show_laygp=1: };
@@ -17005,7 +17005,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        multi_gp_inhib {on=0: gi=1.8: ff=1: fb=1: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
        multi_gp_geom {size={x=3: y=3: }: st_off={x=-1: y=-1: }: sub_size={x=1: y=1: }: wrap=1: };
        lay_gp_inhib {on=0: gi=1.8: ff=1: fb=1: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
-       avg_act {targ_init=0.2: fixed=0: use_ext_act=0: tau=100: adjust=1: dt=0.01: };
+       avg_act {targ_init=0.2: fixed=0: use_ext_act=0: use_first=1: tau=100: adjust=1: dt=0.01: };
        inhib_adapt {on=0: tol_pct=0.25: trial_interval=100: tau=200: dt=0.005: };
        inhib_misc {net_thr=0: thr_rel=1: self_fb=0: self_tau=1.4: fb_up_immed=0: self_dt=0.7142857: };
        clamp {hard=1: gain=0.2: avg=0: avg_gain=0.2: };
@@ -17022,7 +17022,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      multi_gp_inhib {on=0: gi=1.8: ff=1: fb=1: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
      multi_gp_geom {size={x=3: y=3: }: st_off={x=-1: y=-1: }: sub_size={x=1: y=1: }: wrap=1: };
      lay_gp_inhib {on=0: gi=1.8: ff=1: fb=1: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
-     avg_act {targ_init=0.2: fixed=0: use_ext_act=0: tau=100: adjust=1: dt=0.01: };
+     avg_act {targ_init=0.2: fixed=0: use_ext_act=0: use_first=1: tau=100: adjust=1: dt=0.01: };
      inhib_adapt {on=0: tol_pct=0.25: trial_interval=100: tau=200: dt=0.005: };
      inhib_misc {net_thr=0: thr_rel=1: self_fb=0: self_tau=1.4: fb_up_immed=0: self_dt=0.7142857: };
      clamp {hard=1: gain=0.2: avg=0: avg_gain=0.2: };
@@ -17287,6 +17287,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      margin_low_avg=0.25;
      margin_med_avg=0.0375;
      margin_hi_avg=0.175;
+     twod_vals {
+      name="twod_vals";
+     };
     };
     LeabraLayer @[1] {
      name="Hidden";
@@ -17380,6 +17383,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      margin_low_avg=0.25;
      margin_med_avg=0.0375;
      margin_hi_avg=0.175;
+     twod_vals {
+      name="twod_vals";
+     };
     };
     LeabraLayer @[2] {
      name="Output";
@@ -17455,6 +17461,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      margin_low_avg=0.25;
      margin_med_avg=0.0375;
      margin_hi_avg=0.175;
+     twod_vals {
+      name="twod_vals";
+     };
     };
    };
    weights {

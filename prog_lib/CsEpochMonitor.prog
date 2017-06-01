@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.0.0.0 rev9717
+// ta_Dump File v3.0 -- code v8.0.10.0 rev10813
 Program .projects[0].programs.gp[0][8] { 
  UserDataItem_List @*(.user_data_) {
   UserData_DocLink @[0] { };
@@ -17,6 +17,9 @@ Program .projects[0].programs.gp[0][8] {
     NetMonItem @[7] { };
    };
   };
+ };
+
+ ProgVar_List @.objs_vars = [0] {
  };
 
  ProgType_List @.types = [0] {
@@ -92,10 +95,7 @@ Program .projects[0].programs.gp[0][8] {
   name=;
   el_typ=UserData_DocLink;
   el_def=0;
-  UserData_DocLink @[0] {
-   name="DocLink";
-   doc=.projects[0].programs.gp[0][8].doc$$;
-  };
+  UserData_DocLink @[0] {name="DocLink": doc=.doc$$: };
  };
  name="CsEpochMonitor";
  short_nm="EpcMon";
@@ -108,7 +108,7 @@ Program .projects[0].programs.gp[0][8] {
  };
  author="Randall C. O'Reilly";
  email="emergent-users@grey.colorado.edu";
- flags=NO_STOP_STEP;
+ flags=NO_STOP_STEP|OBJS_UPDT_GUI;
  stop_step_cond {
   expr=;
  };
@@ -124,10 +124,9 @@ Program .projects[0].programs.gp[0][8] {
     el_def=0;
     NetMonItem @[0] {
      name="batch";
-     monitor=.projects[0].programs.gp[0][8].objs[0]$$;
      computed=0;
      object_type=LeabraNetwork;
-     object=.projects[0].networks[0]$$<CsNetwork,Network_0>;
+     object=.networks["Network_0"]$$<CsNetwork,Network_0>;
      variable="batch";
      var_label=;
      name_style=AUTO_NAME;
@@ -141,7 +140,7 @@ Program .projects[0].programs.gp[0][8] {
      agg_col {
       col_name="agg_col";
      };
-     agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+     agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: val_string="": use_var=0: var=NULL: }: };
      select_rows=0;
      select_spec {
       col_name="select_spec";
@@ -159,10 +158,9 @@ Program .projects[0].programs.gp[0][8] {
     };
     NetMonItem @[1] {
      name="epoch";
-     monitor=$.projects[0].programs.gp[0][8].objs[0]$;
      computed=0;
      object_type=LeabraNetwork;
-     object=$.projects[0].networks[0]$;
+     object=$.networks["Network_0"]$;
      variable="epoch";
      var_label=;
      name_style=AUTO_NAME;
@@ -176,7 +174,7 @@ Program .projects[0].programs.gp[0][8] {
      agg_col {
       col_name="agg_col";
      };
-     agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+     agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: val_string="": use_var=0: var=NULL: }: };
      select_rows=0;
      select_spec {
       col_name="select_spec";
@@ -194,10 +192,9 @@ Program .projects[0].programs.gp[0][8] {
     };
     NetMonItem @[2] {
      name="avg_sse";
-     monitor=$.projects[0].programs.gp[0][8].objs[0]$;
      computed=0;
      object_type=LeabraNetwork;
-     object=$.projects[0].networks[0]$;
+     object=$.networks["Network_0"]$;
      variable="avg_sse";
      var_label=;
      name_style=AUTO_NAME;
@@ -211,7 +208,7 @@ Program .projects[0].programs.gp[0][8] {
      agg_col {
       col_name="agg_col";
      };
-     agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+     agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: val_string="": use_var=0: var=NULL: }: };
      select_rows=0;
      select_spec {
       col_name="select_spec";
@@ -229,10 +226,9 @@ Program .projects[0].programs.gp[0][8] {
     };
     NetMonItem @[3] {
      name="cnt_err";
-     monitor=$.projects[0].programs.gp[0][8].objs[0]$;
      computed=0;
      object_type=LeabraNetwork;
-     object=$.projects[0].networks[0]$;
+     object=$.networks["Network_0"]$;
      variable="cnt_err";
      var_label=;
      name_style=AUTO_NAME;
@@ -246,7 +242,7 @@ Program .projects[0].programs.gp[0][8] {
      agg_col {
       col_name="agg_col";
      };
-     agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+     agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: val_string="": use_var=0: var=NULL: }: };
      select_rows=0;
      select_spec {
       col_name="select_spec";
@@ -264,10 +260,9 @@ Program .projects[0].programs.gp[0][8] {
     };
     NetMonItem @[4] {
      name="avg_ext_rew";
-     monitor=$.projects[0].programs.gp[0][8].objs[0]$;
      computed=0;
      object_type=LeabraNetwork;
-     object=$.projects[0].networks[0]$;
+     object=$.networks["Network_0"]$;
      variable="avg_ext_rew";
      var_label=;
      name_style=AUTO_NAME;
@@ -281,7 +276,7 @@ Program .projects[0].programs.gp[0][8] {
      agg_col {
       col_name="agg_col";
      };
-     agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+     agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: val_string="": use_var=0: var=NULL: }: };
      select_rows=0;
      select_spec {
       col_name="select_spec";
@@ -299,10 +294,9 @@ Program .projects[0].programs.gp[0][8] {
     };
     NetMonItem @[5] {
      name="avg_cycles";
-     monitor=$.projects[0].programs.gp[0][8].objs[0]$;
      computed=0;
      object_type=LeabraNetwork;
-     object=$.projects[0].networks[0]$;
+     object=$.networks["Network_0"]$;
      variable="avg_cycles";
      var_label=;
      name_style=AUTO_NAME;
@@ -316,7 +310,7 @@ Program .projects[0].programs.gp[0][8] {
      agg_col {
       col_name="agg_col";
      };
-     agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+     agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: val_string="": use_var=0: var=NULL: }: };
      select_rows=0;
      select_spec {
       col_name="select_spec";
@@ -334,7 +328,6 @@ Program .projects[0].programs.gp[0][8] {
     };
     NetMonItem @[6] {
      name="epoch_time_tot";
-     monitor=$.projects[0].programs.gp[0][8].objs[0]$;
      computed=1;
      object_type=NULL;
      object=NULL;
@@ -351,7 +344,7 @@ Program .projects[0].programs.gp[0][8] {
      agg_col {
       col_name="agg_col";
      };
-     agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+     agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: val_string="": use_var=0: var=NULL: }: };
      select_rows=0;
      select_spec {
       col_name="select_spec";
@@ -369,7 +362,6 @@ Program .projects[0].programs.gp[0][8] {
     };
     NetMonItem @[7] {
      name="epoch_time_usr";
-     monitor=$.projects[0].programs.gp[0][8].objs[0]$;
      computed=1;
      object_type=NULL;
      object=NULL;
@@ -386,7 +378,7 @@ Program .projects[0].programs.gp[0][8] {
      agg_col {
       col_name="agg_col";
      };
-     agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+     agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: val_string="": use_var=0: var=NULL: }: };
      select_rows=0;
      select_spec {
       col_name="select_spec";
@@ -403,10 +395,15 @@ Program .projects[0].programs.gp[0][8] {
      pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
     };
    };
-   network=$.projects[0].networks[0]$;
-   data=.projects[0].data.gp[1][1]$$<DataTable,EpochOutputData>;
+   network=$.networks["Network_0"]$;
+   data=.data.gp["OutputData"]["EpochOutputData"]$$<DataTable,EpochOutputData>;
    rmv_orphan_cols=1;
   };
+ };
+ objs_vars {
+  name="objs_vars";
+  el_typ=ProgVar;
+  el_def=0;
  };
  types {
   name="types";
@@ -421,7 +418,8 @@ Program .projects[0].programs.gp[0][8] {
    name="network";
    var_type=T_Object;
    object_type=Network;
-   object_val=$.projects[0].networks[0]$;
+   object_val=$.networks["Network_0"]$;
+   object_scope=NULL;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
    reference=0;
@@ -437,7 +435,8 @@ Program .projects[0].programs.gp[0][8] {
    name="epoch_mon_data";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=$.projects[0].data.gp[1][1]$;
+   object_val=$.data.gp["OutputData"]["EpochOutputData"]$;
+   object_scope=NULL;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
@@ -448,7 +447,8 @@ Program .projects[0].programs.gp[0][8] {
    name="epoch_netmon";
    var_type=T_Object;
    object_type=NetMonitor;
-   object_val=$.projects[0].programs.gp[0][8].objs[0]$;
+   object_val=.objs[0]$$;
+   object_scope=NULL;
    objs_ptr=1;
    flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
@@ -459,7 +459,8 @@ Program .projects[0].programs.gp[0][8] {
    name="epoch_timer";
    var_type=T_Object;
    object_type=TimeUsed;
-   object_val=.projects[0].networks[0].epoch_time$$<TimeUsed,epoch_time>;
+   object_val=.networks["Network_0"].epoch_time$$<TimeUsed,epoch_time>;
+   object_scope=NULL;
    objs_ptr=0;
    flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
@@ -477,25 +478,25 @@ Program .projects[0].programs.gp[0][8] {
   el_typ=ProgCode;
   el_def=0;
   AssignExpr @[0] {
+   name="AssignExpr_epochtimernetworkepochtime";
    desc="get the epoch timer from current network";
    flags=CAN_REVERT_TO_CODE;
    code_string="epoch_timer = network.epoch_time";
-   pre_compile_code_string="epoch_timer = network.epoch_time";
-   result_var=.projects[0].programs.gp[0][8].vars[2]$$;
+   result_var=.vars[2]$$;
    expr {
     expr="network.epoch_time";
    };
   };
   MethodCall @[1] {
+   name="MethodCall_epochnetmonSetDa_hmondatanetwork";
    desc="set data and network on NetMonitor object";
    flags=CAN_REVERT_TO_CODE;
    code_string="epoch_netmon->SetDataNetwork(epoch_mon_data, network)";
-   pre_compile_code_string="epoch_netmon->SetDataNetwork(epoch_mon_data, network)";
    result_var=NULL;
-   obj=.projects[0].programs.gp[0][8].vars[1]$$;
+   obj=.vars[1]$$;
    method=NetMonitor::SetDataNetwork;
    meth_args {
-    name=;
+    name="meth_args";
     el_typ=ProgArg;
     el_def=0;
     ProgArg @[0] {
@@ -525,15 +526,15 @@ Program .projects[0].programs.gp[0][8] {
    meth_desc=" set both the data table and network -- convenient for programs -- calls ResetDataTableCols too -- don't call if columns are manually added or this is adding additional rows to a table";
   };
   MethodCall @[2] {
+   name="MethodCall_epochnetmonCheckConfigfalse";
    desc="check configuration and emit errors/warnings for problems";
    flags=CAN_REVERT_TO_CODE;
    code_string="epoch_netmon->CheckConfig(false)";
-   pre_compile_code_string="epoch_netmon->CheckConfig(false)";
    result_var=NULL;
-   obj=$.projects[0].programs.gp[0][8].vars[1]$;
+   obj=$.vars[1]$;
    method=taBase::CheckConfig;
    meth_args {
-    name=;
+    name="meth_args";
     el_typ=ProgArg;
     el_def=0;
     ProgArg @[0] {
@@ -552,15 +553,15 @@ Program .projects[0].programs.gp[0][8] {
    meth_desc=" check the configuration of this object and all its children (defaults to no confirm of success)";
   };
   MethodCall @[3] {
+   name="MethodCall_epochnetmonUpdateMonitorstrue";
    desc="update the monitor items and data schema based on current settings of NetMonitor";
    flags=CAN_REVERT_TO_CODE;
    code_string="epoch_netmon->UpdateMonitors(true)";
-   pre_compile_code_string="epoch_netmon->UpdateMonitors(true)";
    result_var=NULL;
-   obj=$.projects[0].programs.gp[0][8].vars[1]$;
+   obj=$.vars[1]$;
    method=NetMonitor::UpdateMonitors;
    meth_args {
-    name=;
+    name="meth_args";
     el_typ=ProgArg;
     el_def=0;
     ProgArg @[0] {
@@ -584,15 +585,15 @@ Program .projects[0].programs.gp[0][8] {
   el_typ=ProgCode;
   el_def=0;
   MethodCall @[0] {
+   name="MethodCall_epochmondataAddBlankRow";
    desc="add a new blank row to the data";
    flags=CAN_REVERT_TO_CODE;
    code_string="epoch_mon_data->AddBlankRow()";
-   pre_compile_code_string="epoch_mon_data->AddBlankRow()";
    result_var=NULL;
-   obj=.projects[0].programs.gp[0][8].vars[0]$$;
+   obj=.vars[0]$$;
    method=DataTable::AddBlankRow;
    meth_args {
-    name=;
+    name="meth_args";
     el_typ=ProgArg;
     el_def=0;
    };
@@ -600,15 +601,15 @@ Program .projects[0].programs.gp[0][8] {
    meth_desc=" add a new row to the data table, sets read (source) and write (sink) index to this last row (as in ReadItem or WriteItem), so that subsequent data routines refer to this new row, and returns row ";
   };
   MethodCall @[1] {
+   name="MethodCall_epochnetmonGetMonVals";
    desc="get the new monitor data and stor it into the data table -- this does the main job here";
    flags=CAN_REVERT_TO_CODE;
    code_string="epoch_netmon->GetMonVals()";
-   pre_compile_code_string="epoch_netmon->GetMonVals()";
    result_var=NULL;
-   obj=$.projects[0].programs.gp[0][8].vars[1]$;
+   obj=$.vars[1]$;
    method=NetMonitor::GetMonVals;
    meth_args {
-    name=;
+    name="meth_args";
     el_typ=ProgArg;
     el_def=0;
    };
@@ -616,25 +617,25 @@ Program .projects[0].programs.gp[0][8] {
    meth_desc=" get all the values and store in current row of data table -- call in program to get new data";
   };
   AssignExpr @[2] {
+   name="AssignExpr_epochtimernetworkepochtime";
    desc="get the epoch timer from current network";
    flags=CAN_REVERT_TO_CODE;
    code_string="epoch_timer = network.epoch_time";
-   pre_compile_code_string="epoch_timer = network.epoch_time";
-   result_var=$.projects[0].programs.gp[0][8].vars[2]$;
+   result_var=$.vars[2]$;
    expr {
     expr="network.epoch_time";
    };
   };
   MethodCall @[3] {
+   name="MethodCall_epochmondataSetV_csepochtimetot1";
    desc="set the total time to compute the epoch (epoch_time_tot -- wall clock time) to time used data from network timer";
    flags=CAN_REVERT_TO_CODE;
    code_string="epoch_mon_data->SetValColName(epoch_timer.used.GetTotSecs(), \"epoch_time_tot\", -1, )";
-   pre_compile_code_string="epoch_mon_data->SetValColName(epoch_timer.used.GetTotSecs(), \"epoch_time_tot\", -1, )";
    result_var=NULL;
-   obj=$.projects[0].programs.gp[0][8].vars[0]$;
+   obj=$.vars[0]$;
    method=DataTable::SetValColName;
    meth_args {
-    name=;
+    name="meth_args";
     el_typ=ProgArg;
     el_def=0;
     ProgArg @[0] {
@@ -686,15 +687,15 @@ Program .projects[0].programs.gp[0][8] {
    meth_desc=" set data of scalar type, in Variant form (any data type, use for Programs), for given column name, row; returns 'true' if valid access and set is successful -- quiet = fail quietly";
   };
   MethodCall @[4] {
+   name="MethodCall_epochmondataSetV_csepochtimeusr1";
    desc="set the user process time (cpu time for this process, epoch_time_usr) to time used data from network timer";
    flags=CAN_REVERT_TO_CODE;
    code_string="epoch_mon_data->SetValColName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\", -1, )";
-   pre_compile_code_string="epoch_mon_data->SetValColName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\", -1, )";
    result_var=NULL;
-   obj=$.projects[0].programs.gp[0][8].vars[0]$;
+   obj=$.vars[0]$;
    method=DataTable::SetValColName;
    meth_args {
-    name=;
+    name="meth_args";
     el_typ=ProgArg;
     el_def=0;
     ProgArg @[0] {
@@ -746,15 +747,15 @@ Program .projects[0].programs.gp[0][8] {
    meth_desc=" set data of scalar type, in Variant form (any data type, use for Programs), for given column name, row; returns 'true' if valid access and set is successful -- quiet = fail quietly";
   };
   MethodCall @[5] {
+   name="MethodCall_epochmondataWriteClose";
    desc="update after writing new data to monitor data table";
    flags=CAN_REVERT_TO_CODE;
    code_string="epoch_mon_data->WriteClose()";
-   pre_compile_code_string="epoch_mon_data->WriteClose()";
    result_var=NULL;
-   obj=$.projects[0].programs.gp[0][8].vars[0]$;
+   obj=$.vars[0]$;
    method=DataTable::WriteClose;
    meth_args {
-    name=;
+    name="meth_args";
     el_typ=ProgArg;
     el_def=0;
    };

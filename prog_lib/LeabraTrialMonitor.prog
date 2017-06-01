@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.0.3.0 rev10157
+// ta_Dump File v3.0 -- code v8.0.10.0 rev10813
 Program .projects[0].programs.gp[0][7] { 
  UserDataItem_List @*(.user_data_) {
   UserData_DocLink @[0] { };
@@ -35,6 +35,9 @@ Program .projects[0].programs.gp[0][7] {
     NetMonItem @[25] { };
    };
   };
+ };
+
+ ProgVar_List @.objs_vars = [0] {
  };
 
  ProgType_List @.types = [0] {
@@ -97,10 +100,7 @@ Program .projects[0].programs.gp[0][7] {
   name=;
   el_typ=UserData_DocLink;
   el_def=0;
-  UserData_DocLink @[0] {
-   name="DocLink";
-   doc=.projects[0].programs.gp[0][7].doc$$;
-  };
+  UserData_DocLink @[0] {name="DocLink": doc=.doc$$: };
  };
  name="LeabraTrialMonitor";
  short_nm="TrialMon";
@@ -113,7 +113,7 @@ Program .projects[0].programs.gp[0][7] {
  };
  author="Randall C. O'Reilly";
  email="emergent-users@grey.colorado.edu";
- flags=NO_STOP_STEP;
+ flags=NO_STOP_STEP|OBJS_UPDT_GUI;
  stop_step_cond {
   expr=;
  };
@@ -131,7 +131,7 @@ Program .projects[0].programs.gp[0][7] {
      name="batch";
      computed=0;
      object_type=LeabraNetwork;
-     object=.projects[0].networks[0]$$<LeabraNetwork,Network_0>;
+     object=.networks["Network_0"]$$<LeabraNetwork,Network_0>;
      variable="batch";
      var_label=;
      name_style=AUTO_NAME;
@@ -165,7 +165,7 @@ Program .projects[0].programs.gp[0][7] {
      name="epoch";
      computed=0;
      object_type=LeabraNetwork;
-     object=$.projects[0].networks[0]$;
+     object=$.networks["Network_0"]$;
      variable="epoch";
      var_label=;
      name_style=AUTO_NAME;
@@ -199,7 +199,7 @@ Program .projects[0].programs.gp[0][7] {
      name="train_mode";
      computed=0;
      object_type=LeabraNetwork;
-     object=$.projects[0].networks[0]$;
+     object=$.networks["Network_0"]$;
      variable="train_mode";
      var_label=;
      name_style=AUTO_NAME;
@@ -233,7 +233,7 @@ Program .projects[0].programs.gp[0][7] {
      name="group";
      computed=0;
      object_type=LeabraNetwork;
-     object=$.projects[0].networks[0]$;
+     object=$.networks["Network_0"]$;
      variable="group";
      var_label=;
      name_style=AUTO_NAME;
@@ -267,7 +267,7 @@ Program .projects[0].programs.gp[0][7] {
      name="trial";
      computed=0;
      object_type=LeabraNetwork;
-     object=$.projects[0].networks[0]$;
+     object=$.networks["Network_0"]$;
      variable="trial";
      var_label=;
      name_style=AUTO_NAME;
@@ -301,7 +301,7 @@ Program .projects[0].programs.gp[0][7] {
      name="tick";
      computed=0;
      object_type=LeabraNetwork;
-     object=$.projects[0].networks[0]$;
+     object=$.networks["Network_0"]$;
      variable="tick";
      var_label=;
      name_style=AUTO_NAME;
@@ -335,7 +335,7 @@ Program .projects[0].programs.gp[0][7] {
      name="time";
      computed=0;
      object_type=LeabraNetwork;
-     object=$.projects[0].networks[0]$;
+     object=$.networks["Network_0"]$;
      variable="time";
      var_label=;
      name_style=AUTO_NAME;
@@ -369,7 +369,7 @@ Program .projects[0].programs.gp[0][7] {
      name="trial_name";
      computed=0;
      object_type=LeabraNetwork;
-     object=$.projects[0].networks[0]$;
+     object=$.networks["Network_0"]$;
      variable="trial_name";
      var_label=;
      name_style=AUTO_NAME;
@@ -403,7 +403,7 @@ Program .projects[0].programs.gp[0][7] {
      name="group_name";
      computed=0;
      object_type=LeabraNetwork;
-     object=$.projects[0].networks[0]$;
+     object=$.networks["Network_0"]$;
      variable="group_name";
      var_label=;
      name_style=AUTO_NAME;
@@ -437,7 +437,7 @@ Program .projects[0].programs.gp[0][7] {
      name="output_name";
      computed=0;
      object_type=LeabraNetwork;
-     object=$.projects[0].networks[0]$;
+     object=$.networks["Network_0"]$;
      variable="minus_output_name";
      var_label=;
      name_style=MY_NAME;
@@ -471,7 +471,7 @@ Program .projects[0].programs.gp[0][7] {
      name="rt_cycles";
      computed=0;
      object_type=LeabraNetwork;
-     object=$.projects[0].networks[0]$;
+     object=$.networks["Network_0"]$;
      variable="rt_cycles";
      var_label=;
      name_style=AUTO_NAME;
@@ -505,7 +505,7 @@ Program .projects[0].programs.gp[0][7] {
      name="sse";
      computed=0;
      object_type=LeabraNetwork;
-     object=$.projects[0].networks[0]$;
+     object=$.networks["Network_0"]$;
      variable="sse";
      var_label=;
      name_style=AUTO_NAME;
@@ -539,7 +539,7 @@ Program .projects[0].programs.gp[0][7] {
      name="norm_err";
      computed=0;
      object_type=LeabraNetwork;
-     object=$.projects[0].networks[0]$;
+     object=$.networks["Network_0"]$;
      variable="norm_err";
      var_label=;
      name_style=AUTO_NAME;
@@ -573,7 +573,7 @@ Program .projects[0].programs.gp[0][7] {
      name="cos_err";
      computed=0;
      object_type=LeabraNetwork;
-     object=$.projects[0].networks[0]$;
+     object=$.networks["Network_0"]$;
      variable="cos_err";
      var_label=;
      name_style=AUTO_NAME;
@@ -607,7 +607,7 @@ Program .projects[0].programs.gp[0][7] {
      name="ext_rew";
      computed=0;
      object_type=LeabraNetwork;
-     object=$.projects[0].networks[0]$;
+     object=$.networks["Network_0"]$;
      variable="ext_rew";
      var_label=;
      name_style=AUTO_NAME;
@@ -641,7 +641,7 @@ Program .projects[0].programs.gp[0][7] {
      name="lay_sse";
      computed=0;
      object_type=LeabraNetwork;
-     object=$.projects[0].networks[0]$;
+     object=$.networks["Network_0"]$;
      variable="layers.sse";
      var_label="lay_sse";
      name_style=AUTO_NAME;
@@ -675,7 +675,7 @@ Program .projects[0].programs.gp[0][7] {
      name="lay_bin_err";
      computed=0;
      object_type=LeabraNetwork;
-     object=$.projects[0].networks[0]$;
+     object=$.networks["Network_0"]$;
      variable="layers.bin_err";
      var_label="lay_bin_err";
      name_style=AUTO_NAME;
@@ -709,7 +709,7 @@ Program .projects[0].programs.gp[0][7] {
      name="lay_norm_err";
      computed=0;
      object_type=LeabraNetwork;
-     object=$.projects[0].networks[0]$;
+     object=$.networks["Network_0"]$;
      variable="layers.norm_err";
      var_label="lay_norm_err";
      name_style=AUTO_NAME;
@@ -743,7 +743,7 @@ Program .projects[0].programs.gp[0][7] {
      name="lay_cos_err";
      computed=0;
      object_type=LeabraNetwork;
-     object=$.projects[0].networks[0]$;
+     object=$.networks["Network_0"]$;
      variable="layers.cos_err";
      var_label="lay_cos_err";
      name_style=AUTO_NAME;
@@ -777,7 +777,7 @@ Program .projects[0].programs.gp[0][7] {
      name="lay_net_sd";
      computed=0;
      object_type=LeabraNetwork;
-     object=$.projects[0].networks[0]$;
+     object=$.networks["Network_0"]$;
      variable="layers.net_sd";
      var_label="lay_net_sd";
      name_style=AUTO_NAME;
@@ -811,7 +811,7 @@ Program .projects[0].programs.gp[0][7] {
      name="net_cos_diff";
      computed=0;
      object_type=LeabraNetwork;
-     object=$.projects[0].networks[0]$;
+     object=$.networks["Network_0"]$;
      variable="cos_diff";
      var_label="net_cos_diff";
      name_style=AUTO_NAME;
@@ -845,7 +845,7 @@ Program .projects[0].programs.gp[0][7] {
      name="net_trial_cos_diff";
      computed=0;
      object_type=LeabraNetwork;
-     object=$.projects[0].networks[0]$;
+     object=$.networks["Network_0"]$;
      variable="trial_cos_diff";
      var_label="net_trial_cos_diff";
      name_style=AUTO_NAME;
@@ -879,7 +879,7 @@ Program .projects[0].programs.gp[0][7] {
      name="net_avg_act_diff";
      computed=0;
      object_type=LeabraNetwork;
-     object=$.projects[0].networks[0]$;
+     object=$.networks["Network_0"]$;
      variable="avg_act_diff";
      var_label="net_avg_act_diff";
      name_style=AUTO_NAME;
@@ -913,7 +913,7 @@ Program .projects[0].programs.gp[0][7] {
      name="cos_diff";
      computed=0;
      object_type=LeabraNetwork;
-     object=$.projects[0].networks[0]$;
+     object=$.networks["Network_0"]$;
      variable="layers.cos_diff";
      var_label="cos_diff";
      name_style=AUTO_NAME;
@@ -947,7 +947,7 @@ Program .projects[0].programs.gp[0][7] {
      name="trial_cos_diff";
      computed=0;
      object_type=LeabraNetwork;
-     object=$.projects[0].networks[0]$;
+     object=$.networks["Network_0"]$;
      variable="layers.trial_cos_diff";
      var_label="trial_cos_diff";
      name_style=AUTO_NAME;
@@ -981,7 +981,7 @@ Program .projects[0].programs.gp[0][7] {
      name="avg_act_diff";
      computed=0;
      object_type=LeabraNetwork;
-     object=$.projects[0].networks[0]$;
+     object=$.networks["Network_0"]$;
      variable="layers.avg_act_diff";
      var_label="avg_act_diff";
      name_style=AUTO_NAME;
@@ -1012,10 +1012,15 @@ Program .projects[0].programs.gp[0][7] {
      pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
     };
    };
-   network=$.projects[0].networks[0]$;
-   data=.projects[0].data.gp[1][0]$$<DataTable,TrialOutputData>;
+   network=$.networks["Network_0"]$;
+   data=.data.gp["OutputData"]["TrialOutputData"]$$<DataTable,TrialOutputData>;
    rmv_orphan_cols=1;
   };
+ };
+ objs_vars {
+  name="objs_vars";
+  el_typ=ProgVar;
+  el_def=0;
  };
  types {
   name="types";
@@ -1030,7 +1035,8 @@ Program .projects[0].programs.gp[0][7] {
    name="network";
    var_type=T_Object;
    object_type=Network;
-   object_val=$.projects[0].networks[0]$;
+   object_val=$.networks["Network_0"]$;
+   object_scope=NULL;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
    reference=0;
@@ -1046,7 +1052,8 @@ Program .projects[0].programs.gp[0][7] {
    name="trial_mon_data";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=$.projects[0].data.gp[1][0]$;
+   object_val=$.data.gp["OutputData"]["TrialOutputData"]$;
+   object_scope=NULL;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
@@ -1057,7 +1064,8 @@ Program .projects[0].programs.gp[0][7] {
    name="trial_netmon";
    var_type=T_Object;
    object_type=NetMonitor;
-   object_val=.projects[0].programs.gp[0][7].objs[0]$$;
+   object_val=.objs[0]$$;
+   object_scope=NULL;
    objs_ptr=1;
    flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
@@ -1075,15 +1083,15 @@ Program .projects[0].programs.gp[0][7] {
   el_typ=ProgCode;
   el_def=0;
   MethodCall @[0] {
+   name="MethodCall_trialnetmonSetDa_lmondatanetwork";
    desc="set the network and datatable for the NetMonitor";
    flags=CAN_REVERT_TO_CODE;
    code_string="trial_netmon->SetDataNetwork(trial_mon_data, network)";
-   pre_compile_code_string="trial_netmon->SetDataNetwork(trial_mon_data, network)";
    result_var=NULL;
-   obj=.projects[0].programs.gp[0][7].vars[1]$$;
+   obj=.vars[1]$$;
    method=NetMonitor::SetDataNetwork;
    meth_args {
-    name=;
+    name="meth_args";
     el_typ=ProgArg;
     el_def=0;
     ProgArg @[0] {
@@ -1113,15 +1121,15 @@ Program .projects[0].programs.gp[0][7] {
    meth_desc=" set both the data table and network -- convenient for programs -- calls ResetDataTableCols too -- don't call if columns are manually added or this is adding additional rows to a table";
   };
   MethodCall @[1] {
+   name="MethodCall_trialnetmonCheckConfigfalse";
    desc="check the configuration of the network monitor -- will emit warnings and errors for misconfigurations";
    flags=CAN_REVERT_TO_CODE;
    code_string="trial_netmon->CheckConfig(false)";
-   pre_compile_code_string="trial_netmon->CheckConfig(false)";
    result_var=NULL;
-   obj=$.projects[0].programs.gp[0][7].vars[1]$;
+   obj=$.vars[1]$;
    method=taBase::CheckConfig;
    meth_args {
-    name=;
+    name="meth_args";
     el_typ=ProgArg;
     el_def=0;
     ProgArg @[0] {
@@ -1140,15 +1148,15 @@ Program .projects[0].programs.gp[0][7] {
    meth_desc=" check the configuration of this object and all its children (defaults to no confirm of success)";
   };
   MethodCall @[2] {
+   name="MethodCall_trialnetmonUpdateMonitorstrue";
    desc="update the monitor items and data schema based on current settings of the NetMonitor object";
    flags=CAN_REVERT_TO_CODE;
    code_string="trial_netmon->UpdateMonitors(true)";
-   pre_compile_code_string="trial_netmon->UpdateMonitors(true)";
    result_var=NULL;
-   obj=$.projects[0].programs.gp[0][7].vars[1]$;
+   obj=$.vars[1]$;
    method=NetMonitor::UpdateMonitors;
    meth_args {
-    name=;
+    name="meth_args";
     el_typ=ProgArg;
     el_def=0;
     ProgArg @[0] {
@@ -1172,15 +1180,15 @@ Program .projects[0].programs.gp[0][7] {
   el_typ=ProgCode;
   el_def=0;
   MethodCall @[0] {
+   name="MethodCall_trialmondataAddBlankRow";
    desc="add a new blank row to the data";
    flags=CAN_REVERT_TO_CODE;
    code_string="trial_mon_data->AddBlankRow()";
-   pre_compile_code_string="trial_mon_data->AddBlankRow()";
    result_var=NULL;
-   obj=.projects[0].programs.gp[0][7].vars[0]$$;
+   obj=.vars[0]$$;
    method=DataTable::AddBlankRow;
    meth_args {
-    name=;
+    name="meth_args";
     el_typ=ProgArg;
     el_def=0;
    };
@@ -1188,15 +1196,15 @@ Program .projects[0].programs.gp[0][7] {
    meth_desc=" add a new row to the data table, sets read (source) and write (sink) index to this last row (as in ReadItem or WriteItem), so that subsequent data routines refer to this new row, and returns row ";
   };
   MethodCall @[1] {
+   name="MethodCall_trialnetmonGetMonVals";
    desc="get the new monitor data from the network and other sources -- this does the main work";
    flags=CAN_REVERT_TO_CODE;
    code_string="trial_netmon->GetMonVals()";
-   pre_compile_code_string="trial_netmon->GetMonVals()";
    result_var=NULL;
-   obj=$.projects[0].programs.gp[0][7].vars[1]$;
+   obj=$.vars[1]$;
    method=NetMonitor::GetMonVals;
    meth_args {
-    name=;
+    name="meth_args";
     el_typ=ProgArg;
     el_def=0;
    };
@@ -1204,15 +1212,15 @@ Program .projects[0].programs.gp[0][7] {
    meth_desc=" get all the values and store in current row of data table -- call in program to get new data";
   };
   MethodCall @[2] {
+   name="MethodCall_trialmondataWriteClose";
    desc="update views and other things after writing new data to monitor data table";
    flags=CAN_REVERT_TO_CODE;
    code_string="trial_mon_data->WriteClose()";
-   pre_compile_code_string="trial_mon_data->WriteClose()";
    result_var=NULL;
-   obj=$.projects[0].programs.gp[0][7].vars[0]$;
+   obj=$.vars[0]$;
    method=DataTable::WriteClose;
    meth_args {
-    name=;
+    name="meth_args";
     el_typ=ProgArg;
     el_def=0;
    };
@@ -1220,15 +1228,15 @@ Program .projects[0].programs.gp[0][7] {
    meth_desc=" closes up a write operation -- call when done writing data -- performs any post-writing cleanup/closing of files, etc";
   };
   MethodCall @[3] {
+   name="MethodCall_networkDMemShare_tatrialmondata1";
    desc="only functional for dmem projects: synchronizes trial data across processes so that all distributed memory processors have the same trial-level data, despite having run only a subset of them each";
    flags=CAN_REVERT_TO_CODE;
    code_string="network->DMem_ShareTrialData(trial_mon_data, 1)";
-   pre_compile_code_string="network->DMem_ShareTrialData(trial_mon_data, 1)";
    result_var=NULL;
-   obj=.projects[0].programs.gp[0][7].args[0]$$;
+   obj=.args[0]$$;
    method=Network::DMem_ShareTrialData;
    meth_args {
-    name=;
+    name="meth_args";
     el_typ=ProgArg;
     el_def=0;
     ProgArg @[0] {

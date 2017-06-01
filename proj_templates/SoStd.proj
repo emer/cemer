@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+// ta_Dump File v3.0 -- code v8.0.10.0 rev10813
 SoProject .projects[0] { 
  Doc_Group @.docs = [0] {
  };
@@ -146,6 +146,9 @@ SoProject .projects[0] {
    };
 
    ProgObjList @.objs = [0] {
+   };
+
+   ProgVar_List @.objs_vars = [0] {
    };
 
    ProgType_List @.types = [0] {
@@ -307,6 +310,9 @@ SoProject .projects[0] {
     ProgObjList @.objs = [0] {
     };
 
+    ProgVar_List @.objs_vars = [0] {
+    };
+
     ProgType_List @.types = [0] {
     };
 
@@ -386,6 +392,9 @@ SoProject .projects[0] {
       };
      };
      RndSeed @[1] { };
+    };
+
+    ProgVar_List @.objs_vars = [0] {
     };
 
     ProgType_List @.types = [1] {
@@ -568,6 +577,9 @@ SoProject .projects[0] {
     ProgObjList @.objs = [0] {
     };
 
+    ProgVar_List @.objs_vars = [0] {
+    };
+
     ProgType_List @.types = [0] {
     };
 
@@ -657,6 +669,9 @@ SoProject .projects[0] {
     ProgObjList @.objs = [0] {
     };
 
+    ProgVar_List @.objs_vars = [0] {
+    };
+
     ProgType_List @.types = [0] {
     };
 
@@ -716,6 +731,9 @@ SoProject .projects[0] {
      };
     };
 
+    ProgVar_List @.objs_vars = [0] {
+    };
+
     ProgType_List @.types = [0] {
     };
 
@@ -773,6 +791,9 @@ SoProject .projects[0] {
        NetMonItem @[5] { };
       };
      };
+    };
+
+    ProgVar_List @.objs_vars = [0] {
     };
 
     ProgType_List @.types = [0] {
@@ -846,6 +867,9 @@ SoProject .projects[0] {
        NetMonItem @[5] { };
       };
      };
+    };
+
+    ProgVar_List @.objs_vars = [0] {
     };
 
     ProgType_List @.types = [0] {
@@ -924,6 +948,9 @@ SoProject .projects[0] {
     ProgObjList @.objs = [0] {
     };
 
+    ProgVar_List @.objs_vars = [0] {
+    };
+
     ProgType_List @.types = [0] {
     };
 
@@ -989,6 +1016,9 @@ SoProject .projects[0] {
     };
 
     ProgObjList @.objs = [0] {
+    };
+
+    ProgVar_List @.objs_vars = [0] {
     };
 
     ProgType_List @.types = [0] {
@@ -1078,6 +1108,9 @@ SoProject .projects[0] {
     ProgObjList @.objs = [0] {
     };
 
+    ProgVar_List @.objs_vars = [0] {
+    };
+
     ProgType_List @.types = [0] {
     };
 
@@ -1137,6 +1170,9 @@ SoProject .projects[0] {
      };
     };
 
+    ProgVar_List @.objs_vars = [0] {
+    };
+
     ProgType_List @.types = [0] {
     };
 
@@ -1194,6 +1230,9 @@ SoProject .projects[0] {
        NetMonItem @[5] { };
       };
      };
+    };
+
+    ProgVar_List @.objs_vars = [0] {
     };
 
     ProgType_List @.types = [0] {
@@ -1267,6 +1306,9 @@ SoProject .projects[0] {
        NetMonItem @[5] { };
       };
      };
+    };
+
+    ProgVar_List @.objs_vars = [0] {
     };
 
     ProgType_List @.types = [0] {
@@ -2772,13 +2814,18 @@ SoProject .projects[0] {
    };
    author="Randall C. O'Reilly";
    email="emergent-users@grey.colorado.edu";
-   flags=STARTUP_RUN;
+   flags=STARTUP_RUN|OBJS_UPDT_GUI;
    stop_step_cond {
     expr=;
    };
    objs {
     name="objs";
     el_typ=taNBase;
+    el_def=0;
+   };
+   objs_vars {
+    name="objs_vars";
+    el_typ=ProgVar;
     el_def=0;
    };
    types {
@@ -3787,13 +3834,18 @@ SoProject .projects[0] {
     };
     author="Randall C. O'Reilly";
     email="emergent-users@grey.colorado.edu";
-    flags=0;
+    flags=OBJS_UPDT_GUI;
     stop_step_cond {
      expr=;
     };
     objs {
      name="objs";
      el_typ=taNBase;
+     el_def=0;
+    };
+    objs_vars {
+     name="objs_vars";
+     el_typ=ProgVar;
      el_def=0;
     };
     types {
@@ -4041,7 +4093,7 @@ SoProject .projects[0] {
     };
     author="Randall C. O'Reilly";
     email="emergent-users@grey.colorado.edu";
-    flags=0;
+    flags=OBJS_UPDT_GUI;
     stop_step_cond {
      expr=;
     };
@@ -4161,6 +4213,11 @@ SoProject .projects[0] {
       name="rnd_seed";
       rnd_seed=3681816228;
      };
+    };
+    objs_vars {
+     name="objs_vars";
+     el_typ=ProgVar;
+     el_def=0;
     };
     types {
      name="types";
@@ -5024,13 +5081,18 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
     };
     author="Randall C. O'Reilly";
     email="emergent-users@grey.colorado.edu";
-    flags=0;
+    flags=OBJS_UPDT_GUI;
     stop_step_cond {
      expr=;
     };
     objs {
      name="objs";
      el_typ=taNBase;
+     el_def=0;
+    };
+    objs_vars {
+     name="objs_vars";
+     el_typ=ProgVar;
      el_def=0;
     };
     types {
@@ -5449,13 +5511,18 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
     };
     author="Randall C. O'Reilly";
     email="emergent-users@grey.colorado.edu";
-    flags=0;
+    flags=OBJS_UPDT_GUI;
     stop_step_cond {
      expr=;
     };
     objs {
      name="objs";
      el_typ=taNBase;
+     el_def=0;
+    };
+    objs_vars {
+     name="objs_vars";
+     el_typ=ProgVar;
      el_def=0;
     };
     types {
@@ -5670,7 +5737,7 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
     author="Randall C. O'Reilly";
     email="emergent-users@grey.colorado.edu";
-    flags=NO_STOP_STEP;
+    flags=NO_STOP_STEP|OBJS_UPDT_GUI;
     stop_step_cond {
      expr=;
     };
@@ -5710,6 +5777,11 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
       };
      };
+    };
+    objs_vars {
+     name="objs_vars";
+     el_typ=ProgVar;
+     el_def=0;
     };
     types {
      name="types";
@@ -5917,7 +5989,7 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
     author="Randall C. O'Reilly";
     email="emergent-users@grey.colorado.edu";
-    flags=NO_STOP_STEP;
+    flags=NO_STOP_STEP|OBJS_UPDT_GUI;
     stop_step_cond {
      expr=;
     };
@@ -6140,6 +6212,11 @@ this program can be extended to do arbitrary things to generate data and apply i
       data=$.data.gp[1][0]$;
       rmv_orphan_cols=1;
      };
+    };
+    objs_vars {
+     name="objs_vars";
+     el_typ=ProgVar;
+     el_def=0;
     };
     types {
      name="types";
@@ -6417,7 +6494,7 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
     author="Randall C. O'Reilly";
     email="emergent-users@grey.colorado.edu";
-    flags=NO_STOP_STEP;
+    flags=NO_STOP_STEP|OBJS_UPDT_GUI;
     stop_step_cond {
      expr=;
     };
@@ -6640,6 +6717,11 @@ this program can be extended to do arbitrary things to generate data and apply i
       data=$.data.gp[1][1]$;
       rmv_orphan_cols=1;
      };
+    };
+    objs_vars {
+     name="objs_vars";
+     el_typ=ProgVar;
+     el_def=0;
     };
     types {
      name="types";
@@ -7031,13 +7113,18 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
     author="Randall C. O'Reilly";
     email="emergent-users@grey.colorado.edu";
-    flags=NO_STOP_STEP;
+    flags=NO_STOP_STEP|OBJS_UPDT_GUI;
     stop_step_cond {
      expr=;
     };
     objs {
      name="objs";
      el_typ=taNBase;
+     el_def=0;
+    };
+    objs_vars {
+     name="objs_vars";
+     el_typ=ProgVar;
      el_def=0;
     };
     types {
@@ -7385,13 +7472,18 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
     author="Randall C. O'Reilly";
     email="emergent-users@grey.colorado.edu";
-    flags=NO_STOP_STEP;
+    flags=NO_STOP_STEP|OBJS_UPDT_GUI;
     stop_step_cond {
      expr=;
     };
     objs {
      name="objs";
      el_typ=taNBase;
+     el_def=0;
+    };
+    objs_vars {
+     name="objs_vars";
+     el_typ=ProgVar;
      el_def=0;
     };
     types {
@@ -7818,13 +7910,18 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
     author="Randall C. O'Reilly";
     email="emergent-users@grey.colorado.edu";
-    flags=0;
+    flags=OBJS_UPDT_GUI;
     stop_step_cond {
      expr=;
     };
     objs {
      name="objs";
      el_typ=taNBase;
+     el_def=0;
+    };
+    objs_vars {
+     name="objs_vars";
+     el_typ=ProgVar;
      el_def=0;
     };
     types {
@@ -8039,7 +8136,7 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
     author="Randall C. O'Reilly";
     email="emergent-users@grey.colorado.edu";
-    flags=NO_STOP_STEP;
+    flags=NO_STOP_STEP|OBJS_UPDT_GUI;
     stop_step_cond {
      expr=;
     };
@@ -8079,6 +8176,11 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
       };
      };
+    };
+    objs_vars {
+     name="objs_vars";
+     el_typ=ProgVar;
+     el_def=0;
     };
     types {
      name="types";
@@ -8286,7 +8388,7 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
     author="Randall C. O'Reilly";
     email="emergent-users@grey.colorado.edu";
-    flags=NO_STOP_STEP;
+    flags=NO_STOP_STEP|OBJS_UPDT_GUI;
     stop_step_cond {
      expr=;
     };
@@ -8509,6 +8611,11 @@ this program can be extended to do arbitrary things to generate data and apply i
       data=$.data.gp[1][2]$;
       rmv_orphan_cols=1;
      };
+    };
+    objs_vars {
+     name="objs_vars";
+     el_typ=ProgVar;
+     el_def=0;
     };
     types {
      name="types";
@@ -8786,7 +8893,7 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
     author="Randall C. O'Reilly";
     email="emergent-users@grey.colorado.edu";
-    flags=NO_STOP_STEP;
+    flags=NO_STOP_STEP|OBJS_UPDT_GUI;
     stop_step_cond {
      expr=;
     };
@@ -9009,6 +9116,11 @@ this program can be extended to do arbitrary things to generate data and apply i
       data=.data.gp[1][3]$$;
       rmv_orphan_cols=1;
      };
+    };
+    objs_vars {
+     name="objs_vars";
+     el_typ=ProgVar;
+     el_def=0;
     };
     types {
      name="types";
@@ -9394,7 +9506,7 @@ this program can be extended to do arbitrary things to generate data and apply i
     el_typ=UserDataItem;
     el_def=0;
     UserDataItem @[0] {name="view_win_lft": value=0: val_type_fixed=0: };
-    UserDataItem @[1] {name="view_win_top": value=0.02039082: val_type_fixed=0: };
+    UserDataItem @[1] {name="view_win_top": value=0.01954121: val_type_fixed=0: };
     UserDataItem @[2] {name="view_win_wd": value=1: val_type_fixed=0: };
     UserDataItem @[3] {name="view_win_ht": value=0.7994902: val_type_fixed=0: };
     UserDataItem @[4] {name="view_win_iconified": value=0: val_type_fixed=0: };
@@ -10821,6 +10933,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      used_status=CHILD_USED;
      desc=;
      unique{      };
+     saved{      };
      children {
       name="children";
       el_typ=SoftClUnitSpec;
@@ -10831,6 +10944,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        used_status=USED;
        desc=;
        unique{ var;       };
+       saved{        };
        children {
 	name="children";
 	el_typ=SoftClUnitSpec;
@@ -10849,6 +10963,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        used_status=USED;
        desc=;
        unique{ threshold;       };
+       saved{        };
        children {
 	name="children";
 	el_typ=ThreshLinSoUnitSpec;
@@ -10870,6 +10985,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      used_status=UNUSED;
      desc=;
      unique{      };
+     saved{      };
      children {
       name="children";
       el_typ=ConSpec;
@@ -10884,6 +11000,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      used_status=USED;
      desc=;
      unique{      };
+     saved{      };
      children {
       name="children";
       el_typ=SoLayerSpec;
@@ -10897,6 +11014,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      used_status=USED;
      desc=;
      unique{      };
+     saved{      };
      children {
       name="children";
       el_typ=FullPrjnSpec;
@@ -10915,6 +11033,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      used_status=CHILD_USED;
      desc=;
      unique{      };
+     saved{      };
      children {
       name="children";
       el_typ=SoftClConSpec;
@@ -10925,6 +11044,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        used_status=UNUSED;
        desc=;
        unique{        };
+       saved{        };
        children {
 	name="children";
 	el_typ=SoftClConSpec;
@@ -10941,6 +11061,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        used_status=USED;
        desc=;
        unique{        };
+       saved{        };
        children {
 	name="children";
 	el_typ=MaxInConSpec;
@@ -10978,6 +11099,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      desc=;
      flags=0;
      layer_type=INPUT;
+     pos_rel {rel=ABS_POS: other=NULL: x_align=LEFT: x_off=0: y_align=FRONT: y_off=0: space=2: };
      pos {x=0: y=0: z=0: };
      pos_abs {x=0: y=0: z=0: };
      pos2d {x=0: y=0: };
@@ -11026,6 +11148,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      desc=;
      flags=0;
      layer_type=HIDDEN;
+     pos_rel {rel=ABS_POS: other=NULL: x_align=LEFT: x_off=0: y_align=FRONT: y_off=0: space=2: };
      pos {x=0: y=0: z=1: };
      pos_abs {x=0: y=0: z=1: };
      pos2d {x=0: y=7: };

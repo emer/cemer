@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.0.8.0 rev10704
+// ta_Dump File v3.0 -- code v8.0.10.0 rev10813
 Program .projects[0].programs.gp[0][1] { 
  UserDataItem_List @*(.user_data_) {
   UserData_DocLink @[0] { };
@@ -35,6 +35,9 @@ Program .projects[0].programs.gp[0][1] {
    };
   };
   RndSeed @[1] { };
+ };
+
+ ProgVar_List @.objs_vars = [0] {
  };
 
  ProgType_List @.types = [1] {
@@ -218,7 +221,7 @@ Program .projects[0].programs.gp[0][1] {
   name=;
   el_typ=UserData_DocLink;
   el_def=0;
-  UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[0][1].doc$$: };
+  UserData_DocLink @[0] {name="DocLink": doc=.doc$$: };
  };
  name="LeabraTrain";
  short_nm="Train";
@@ -231,7 +234,7 @@ Program .projects[0].programs.gp[0][1] {
  };
  author="Randall C. O'Reilly";
  email="emergent-users@grey.colorado.edu";
- flags=0;
+ flags=OBJS_UPDT_GUI;
  stop_step_cond {
   expr=;
  };
@@ -352,6 +355,11 @@ Program .projects[0].programs.gp[0][1] {
    rnd_seed=1208639044;
   };
  };
+ objs_vars {
+  name="objs_vars";
+  el_typ=ProgVar;
+  el_def=0;
+ };
  types {
   name="types";
   el_typ=DynEnumType;
@@ -360,7 +368,7 @@ Program .projects[0].programs.gp[0][1] {
    name="RndInitType";
    desc=;
    enums {
-    name=;
+    name="enums";
     el_typ=DynEnumItem;
     el_def=0;
     DynEnumItem @[0] {
@@ -390,7 +398,7 @@ Program .projects[0].programs.gp[0][1] {
    name="network";
    var_type=T_Object;
    object_type=LeabraNetwork;
-   object_val=.projects[0].networks[0]$$<LeabraNetwork,Network_0>;
+   object_val=.networks["Network_0"]$$<LeabraNetwork,Network_0>;
    object_scope=NULL;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
@@ -402,7 +410,7 @@ Program .projects[0].programs.gp[0][1] {
    name="input_data";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=.projects[0].data.gp[0][0]$$<DataTable,StdInputData>;
+   object_val=.data.gp["InputData"]["StdInputData"]$$<DataTable,StdInputData>;
    object_scope=NULL;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
@@ -462,7 +470,7 @@ Program .projects[0].programs.gp[0][1] {
    object_scope=NULL;
    dyn_enum_val {
     user_data_=NULL;
-    enum_type=.projects[0].programs.gp[0][1].types[0]$$;
+    enum_type=.types[0]$$;
     value=2;
    };
    flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -524,7 +532,7 @@ Program .projects[0].programs.gp[0][1] {
    name="rnd_seeds";
    var_type=T_Object;
    object_type=RndSeed_List;
-   object_val=.projects[0].programs.gp[0][1].objs[0]$$;
+   object_val=.objs[0]$$;
    object_scope=NULL;
    objs_ptr=1;
    flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -536,7 +544,7 @@ Program .projects[0].programs.gp[0][1] {
    name="train_timer";
    var_type=T_Object;
    object_type=TimeUsed;
-   object_val=.projects[0].networks[0].train_time$$<TimeUsed,train_time>;
+   object_val=.networks["Network_0"].train_time$$<TimeUsed,train_time>;
    object_scope=NULL;
    objs_ptr=0;
    flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -548,7 +556,7 @@ Program .projects[0].programs.gp[0][1] {
    name="rnd_seed";
    var_type=T_Object;
    object_type=RndSeed;
-   object_val=.projects[0].programs.gp[0][1].objs[1]$$;
+   object_val=.objs[1]$$;
    object_scope=NULL;
    objs_ptr=1;
    flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -593,7 +601,7 @@ Program .projects[0].programs.gp[0][1] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="switch(rnd_init)";
-     switch_var=.projects[0].programs.gp[0][1].vars[3]$$;
+     switch_var=.vars[3]$$;
      cases {
       name="cases";
       el_typ=CaseBlock;
@@ -613,7 +621,7 @@ Program .projects[0].programs.gp[0][1] {
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="rnd_seed->OldSeed()";
 	 result_var=NULL;
-	 obj=.projects[0].programs.gp[0][1].vars[11]$$;
+	 obj=.vars[11]$$;
 	 method=RndSeed::OldSeed;
 	 meth_args {
 	  name="meth_args";
@@ -644,7 +652,7 @@ Program .projects[0].programs.gp[0][1] {
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="rnd_seed->NewSeed()";
 	 result_var=NULL;
-	 obj=$.projects[0].programs.gp[0][1].vars[11]$;
+	 obj=$.vars[11]$;
 	 method=RndSeed::NewSeed;
 	 meth_args {
 	  name="meth_args";
@@ -675,7 +683,7 @@ Program .projects[0].programs.gp[0][1] {
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="rnd_seeds->UseSeed(network.batch % rnd_seeds.seeds.size)";
 	 result_var=NULL;
-	 obj=.projects[0].programs.gp[0][1].vars[9]$$;
+	 obj=.vars[9]$$;
 	 method=RndSeed_List::UseSeed;
 	 meth_args {
 	  name="meth_args";
@@ -716,7 +724,7 @@ Program .projects[0].programs.gp[0][1] {
    desc=;
    flags=CAN_REVERT_TO_CODE;
    code_string="no_prompts = false";
-   result_var=.projects[0].programs.gp[0][1].args[2]$$;
+   result_var=.args[2]$$;
    expr {
     expr="false";
    };
@@ -727,7 +735,7 @@ Program .projects[0].programs.gp[0][1] {
    flags=CAN_REVERT_TO_CODE;
    code_string="network->CheckConfig(false)";
    result_var=NULL;
-   obj=.projects[0].programs.gp[0][1].args[0]$$;
+   obj=.args[0]$$;
    method=taBase::CheckConfig;
    meth_args {
     name="meth_args";
@@ -753,7 +761,7 @@ Program .projects[0].programs.gp[0][1] {
    desc=;
    flags=CAN_REVERT_TO_CODE;
    code_string="train_timer = network.train_time";
-   result_var=.projects[0].programs.gp[0][1].vars[10]$$;
+   result_var=.vars[10]$$;
    expr {
     expr="network.train_time";
    };
@@ -763,7 +771,7 @@ Program .projects[0].programs.gp[0][1] {
    desc=;
    flags=CAN_REVERT_TO_CODE;
    code_string="n_under_cnt = 0";
-   result_var=.projects[0].programs.gp[0][1].vars[8]$$;
+   result_var=.vars[8]$$;
    expr {
     expr="0";
    };
@@ -774,7 +782,7 @@ Program .projects[0].programs.gp[0][1] {
    flags=CAN_REVERT_TO_CODE;
    code_string="GetRandomSeed()";
    result_var=NULL;
-   fun=.projects[0].programs.gp[0][1].functions[0]$$;
+   fun=.functions[0]$$;
    fun_args {
     name="fun_args";
     el_typ=ProgArg;
@@ -785,7 +793,7 @@ Program .projects[0].programs.gp[0][1] {
    name="WtInitPrompt_ifguiDoyouwantto_eNetworkWeights";
    desc="don't initialize weights without checking";
    flags=CAN_REVERT_TO_CODE;
-   code_string="if (gui && \\\"Do you want to Initialize Network Weights\\\")";
+   code_string="if (gui && \"Do you want to Initialize Network Weights\")";
    prompt="Do you want to Initialize Network Weights";
    yes_label="Yes";
    no_label="No";
@@ -799,7 +807,7 @@ Program .projects[0].programs.gp[0][1] {
      flags=CAN_REVERT_TO_CODE;
      code_string="network->Build()";
      result_var=NULL;
-     obj=$.projects[0].programs.gp[0][1].args[0]$;
+     obj=$.args[0]$;
      method=Network::Build;
      meth_args {
       name="meth_args";
@@ -815,7 +823,7 @@ Program .projects[0].programs.gp[0][1] {
      flags=CAN_REVERT_TO_CODE;
      code_string="network->Init_Weights()";
      result_var=NULL;
-     obj=$.projects[0].programs.gp[0][1].args[0]$;
+     obj=$.args[0]$;
      method=Network::Init_Weights;
      meth_args {
       name="meth_args";
@@ -829,9 +837,9 @@ Program .projects[0].programs.gp[0][1] {
      name="PrintExpr_Printnetworkname_ghtsInitialized";
      desc=;
      flags=CAN_REVERT_TO_CODE;
-     code_string="Print network.name << \\\" Weights Initialized\\\"";
+     code_string="Print network.name << \" Weights Initialized\"";
      expr {
-      expr="network.name << \\\" Weights Initialized\\\"";
+      expr="network.name << \" Weights Initialized\"";
      };
      debug=0;
     };
@@ -842,7 +850,7 @@ Program .projects[0].programs.gp[0][1] {
    desc="grab the official network epoch counter: will be initialized if needed by now";
    flags=CAN_REVERT_TO_CODE;
    code_string="epoch = network.epoch";
-   result_var=.projects[0].programs.gp[0][1].vars[1]$$;
+   result_var=.vars[1]$$;
    expr {
     expr="network.epoch";
    };
@@ -857,7 +865,7 @@ Program .projects[0].programs.gp[0][1] {
    desc=;
    flags=CAN_REVERT_TO_CODE;
    code_string="train_timer = network.train_time";
-   result_var=$.projects[0].programs.gp[0][1].vars[10]$;
+   result_var=$.vars[10]$;
    expr {
     expr="network.train_time";
    };
@@ -868,7 +876,7 @@ Program .projects[0].programs.gp[0][1] {
    flags=CAN_REVERT_TO_CODE;
    code_string="train_timer->StartTimer(true)";
    result_var=NULL;
-   obj=$.projects[0].programs.gp[0][1].vars[10]$;
+   obj=$.vars[10]$;
    method=TimeUsed::StartTimer;
    meth_args {
     name="meth_args";
@@ -894,7 +902,7 @@ Program .projects[0].programs.gp[0][1] {
    desc=;
    flags=CAN_REVERT_TO_CODE;
    code_string="n_under_cnt = 0";
-   result_var=$.projects[0].programs.gp[0][1].vars[8]$;
+   result_var=$.vars[8]$;
    expr {
     expr="0";
    };
@@ -904,7 +912,7 @@ Program .projects[0].programs.gp[0][1] {
    desc="set network's training mode to our local value";
    flags=CAN_REVERT_TO_CODE;
    code_string="network.train_mode = train_mode";
-   obj=$.projects[0].programs.gp[0][1].args[0]$;
+   obj=$.args[0]$;
    path="train_mode";
    expr {
     expr="train_mode";
@@ -917,7 +925,7 @@ Program .projects[0].programs.gp[0][1] {
    flags=CAN_REVERT_TO_CODE;
    code_string="GetRandomSeed()";
    result_var=NULL;
-   fun=$.projects[0].programs.gp[0][1].functions[0]$;
+   fun=$.functions[0]$;
    fun_args {
     name="fun_args";
     el_typ=ProgArg;
@@ -942,7 +950,7 @@ Program .projects[0].programs.gp[0][1] {
      flags=CAN_REVERT_TO_CODE;
      code_string="network->Init_Weights()";
      result_var=NULL;
-     obj=$.projects[0].programs.gp[0][1].args[0]$;
+     obj=$.args[0]$;
      method=Network::Init_Weights;
      meth_args {
       name="meth_args";
@@ -956,9 +964,9 @@ Program .projects[0].programs.gp[0][1] {
      name="PrintExpr_Printnetworkname_ghtsInitialized";
      desc=;
      flags=CAN_REVERT_TO_CODE;
-     code_string="Print network.name << \\\" Weights Initialized\\\"";
+     code_string="Print network.name << \" Weights Initialized\"";
      expr {
-      expr="network.name << \\\" Weights Initialized\\\"";
+      expr="network.name << \" Weights Initialized\"";
      };
      debug=0;
     };
@@ -969,7 +977,7 @@ Program .projects[0].programs.gp[0][1] {
    desc="grab the official network epoch counter: will be initialized if needed by now";
    flags=CAN_REVERT_TO_CODE;
    code_string="epoch = network.epoch";
-   result_var=$.projects[0].programs.gp[0][1].vars[1]$;
+   result_var=$.vars[1]$;
    expr {
     expr="network.epoch";
    };
@@ -1015,7 +1023,7 @@ Program .projects[0].programs.gp[0][1] {
        };
       };
      };
-     target=.projects[0].programs.gp[0][2]$$<Program,LeabraEpoch>;
+     target=.programs.gp["LeabraAll_Std"]["LeabraEpoch"]$$<Program,LeabraEpoch>;
      targ_ld_init="*LeabraEpoch*";
     };
     NetCounterIncr @[1] {
@@ -1023,8 +1031,8 @@ Program .projects[0].programs.gp[0][1] {
      desc="increment the epoch counter";
      flags=CAN_REVERT_TO_CODE;
      code_string="Net Counter Incr: epoch";
-     network_var=$.projects[0].programs.gp[0][1].args[0]$;
-     local_ctr_var=$.projects[0].programs.gp[0][1].vars[1]$;
+     network_var=$.args[0]$;
+     local_ctr_var=$.vars[1]$;
      counter=Network::epoch;
      update_after=0;
     };
@@ -1045,7 +1053,7 @@ Program .projects[0].programs.gp[0][1] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="n_under_cnt += 1";
-       var=$.projects[0].programs.gp[0][1].vars[8]$;
+       var=$.vars[8]$;
        expr {
 	expr="1";
        };
@@ -1078,7 +1086,7 @@ Program .projects[0].programs.gp[0][1] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="n_under_cnt = 0";
-       result_var=$.projects[0].programs.gp[0][1].vars[8]$;
+       result_var=$.vars[8]$;
        expr {
 	expr="0";
        };
@@ -1130,7 +1138,7 @@ Program .projects[0].programs.gp[0][1] {
 	   };
 	  };
 	 };
-	 target=.projects[0].programs.gp[0][9]$$<Program,SaveWeights>;
+	 target=.programs.gp["LeabraAll_Std"]["SaveWeights"]$$<Program,SaveWeights>;
 	 targ_ld_init="*SaveWeights*";
 	};
        };
@@ -1175,7 +1183,7 @@ Program .projects[0].programs.gp[0][1] {
        };
       };
      };
-     target=$.projects[0].programs.gp[0][9]$;
+     target=$.programs.gp["LeabraAll_Std"]["SaveWeights"]$;
      targ_ld_init="*SaveWeights*";
     };
    };
@@ -1186,7 +1194,7 @@ Program .projects[0].programs.gp[0][1] {
    flags=CAN_REVERT_TO_CODE;
    code_string="train_timer->EndTimer()";
    result_var=NULL;
-   obj=$.projects[0].programs.gp[0][1].vars[10]$;
+   obj=$.vars[10]$;
    method=TimeUsed::EndTimer;
    meth_args {
     name="meth_args";
@@ -1208,6 +1216,193 @@ Program .projects[0].programs.gp[0][1] {
   full_url="https://grey.colorado.edu/emergent/index.php/LeabraTrain";
   text_size=1;
   text=;
-  html_text="<!DOCTYPE html><html lang=\\\"en\\\" dir=\\\"ltr\\\" class=\\\"client-js\\\"><head>\\n<meta charset=\\\"UTF-8\\\">\\n<title>LeabraTrain - emergent</title>\\n<script>document.documentElement.className = document.documentElement.className.replace( /(^|\\\\s)client-nojs(\\\\s|$)/, \\\"$1client-js$2\\\" );</script>\\n<script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {\\nmw.config.set({\\\"wgCanonicalNamespace\\\":\\\"\\\",\\\"wgCanonicalSpecialPageName\\\":!1,\\\"wgNamespaceNumber\\\":0,\\\"wgPageName\\\":\\\"LeabraTrain\\\",\\\"wgTitle\\\":\\\"LeabraTrain\\\",\\\"wgCurRevisionId\\\":11266,\\\"wgRevisionId\\\":11266,\\\"wgArticleId\\\":2767,\\\"wgIsArticle\\\":!0,\\\"wgIsRedirect\\\":!1,\\\"wgAction\\\":\\\"view\\\",\\\"wgUserName\\\":\\\"Oreilly\\\",\\\"wgUserGroups\\\":[\\\"bureaucrat\\\",\\\"svnadmins\\\",\\\"sysop\\\",\\\"*\\\",\\\"user\\\",\\\"autoconfirmed\\\"],\\\"wgCategories\\\":[],\\\"wgBreakFrames\\\":!1,\\\"wgPageContentLanguage\\\":\\\"en\\\",\\\"wgPageContentModel\\\":\\\"wikitext\\\",\\\"wgSeparatorTransformTable\\\":[\\\"\\\",\\\"\\\"],\\\"wgDigitTransformTable\\\":[\\\"\\\",\\\"\\\"],\\\"wgDefaultDateFormat\\\":\\\"dmy\\\",\\\"wgMonthNames\\\":[\\\"\\\",\\\"January\\\",\\\"February\\\",\\\"March\\\",\\\"April\\\",\\\"May\\\",\\\"June\\\",\\\"July\\\",\\\"August\\\",\\\"September\\\",\\\"October\\\",\\\"November\\\",\\\"December\\\"],\\\"wgMonthNamesShort\\\":[\\\"\\\",\\\"Jan\\\",\\\"Feb\\\",\\\"Mar\\\",\\\"Apr\\\",\\\"May\\\",\\\"Jun\\\",\\\"Jul\\\",\\\"Aug\\\",\\\"Sep\\\",\\\"Oct\\\",\\\"Nov\\\",\\\"Dec\\\"],\\\"wgRelevantPageName\\\":\\\"LeabraTrain\\\",\\\"wgRelevantArticleId\\\":2767,\\\"wgUserId\\\":3,\\\"wgUserEditCount\\\":2418,\\\"wgUserRegistration\\\":1178051527000,\\\"wgUserNewMsgRevisionId\\\":null,\\\"wgIsProbablyEditable\\\":!0,\\n\\\"wgRestrictionEdit\\\":[],\\\"wgRestrictionMove\\\":[],\\\"sfgAutocompleteValues\\\":[],\\\"sfgAutocompleteOnAllChars\\\":!1,\\\"sfgFieldProperties\\\":[],\\\"sfgDependentFields\\\":[],\\\"sfgShowOnSelect\\\":[],\\\"sfgScriptPath\\\":\\\"/emergent/extensions/SemanticForms\\\",\\\"wgSVGEditEditor\\\":\\\"http://svg-edit.googlecode.com/svn/trunk/editor/svg-editor.html\\\",\\\"wgHeaderTabsTabIndexes\\\":[],\\\"wgWikiEditorEnabledModules\\\":{\\\"toolbar\\\":!0,\\\"dialogs\\\":!0,\\\"preview\\\":!0,\\\"publish\\\":!1},\\\"wgCategoryTreePageCategoryOptions\\\":\\\"{\\\"mode\\\":0,\\\"hideprefix\\\":20,\\\"showcount\\\":true,\\\"namespaces\\\":false}\\\"});mw.loader.implement(\\\"user.options\\\",function($,jQuery){mw.user.options.set({\\\"ccmeonemails\\\":\\\"1\\\",\\\"enotifminoredits\\\":\\\"1\\\",\\\"imagesize\\\":\\\"0\\\",\\\"previewontop\\\":\\\"\\\",\\\"rows\\\":\\\"30\\\",\\\"thumbsize\\\":\\\"0\\\",\\\"underline\\\":\\\"0\\\",\\\"watchmoves\\\":\\\"1\\\",\\\"editsection\\\":\\\"1\\\",\\\"rememberpassword\\\":\\\"1\\\",\\\"timecorrection\\\":\\\"ZoneInfo|-360|America/Denver\\\",\\\"watchlisttoken\\\":\\\"14fd6c804d78e99930123181974c128b983adb9e\\\"});});mw.loader.implement(\\\"user.tokens\\\",function($,jQuery){mw.user.tokens.set({\\\"editToken\\\":\\\"3b26cf5f182fe7fb29af6a6ca01dd6cb57342b95+\\\",\\\"patrolToken\\\":\\\"6f879f5a78cf8bf62c088b26f37a826a57342b95+\\\",\\\"watchToken\\\":\\\"0f5971aae38fcb23ba50cc900260a01757342b95+\\\"});});mw.loader.load([\\\"ext.smw.style\\\",\\\"ext.smw.tooltips\\\",\\\"mediawiki.page.startup\\\",\\\"mediawiki.legacy.wikibits\\\",\\\"skins.vector.js\\\"]);\\n} );</script>\\n<link rel=\\\"stylesheet\\\" href=\\\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=mediawiki.legacy.commonPrint%2Cshared%7Cmediawiki.sectionAnchor%7Cmediawiki.skinning.interface%7Cskins.vector.styles&amp;only=styles&amp;skin=vector\\\">\\n<link rel=\\\"stylesheet\\\" href=\\\"/emergent/extensions/HeaderTabs/skins/ext.headertabs.large.css\\\">\\n<meta name=\\\"ResourceLoaderDynamicStyles\\\" content=\\\"\\\">\\n<link rel=\\\"stylesheet\\\" href=\\\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=site&amp;only=styles&amp;skin=vector\\\">\\n<style>a{text-decoration:none}</style>\\n<script async=\\\"\\\" src=\\\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=startup&amp;only=scripts&amp;skin=vector\\\"></script>\\n<meta name=\\\"generator\\\" content=\\\"MediaWiki 1.26.2\\\">\\n<link rel=\\\"ExportRDF\\\" type=\\\"application/rdf+xml\\\" title=\\\"LeabraTrain\\\" href=\\\"/emergent/index.php?title=Special:ExportRDF/LeabraTrain&amp;xmlmime=rdf\\\">\\n<link rel=\\\"alternate\\\" type=\\\"application/x-wiki\\\" title=\\\"Edit\\\" href=\\\"/emergent/index.php?title=LeabraTrain&amp;action=edit\\\">\\n<link rel=\\\"edit\\\" title=\\\"Edit\\\" href=\\\"/emergent/index.php?title=LeabraTrain&amp;action=edit\\\">\\n<link rel=\\\"shortcut icon\\\" href=\\\"/emergent/favicon.ico\\\">\\n<link rel=\\\"search\\\" type=\\\"application/opensearchdescription+xml\\\" href=\\\"/emergent/opensearch_desc.php\\\" title=\\\"emergent (en)\\\">\\n<link rel=\\\"EditURI\\\" type=\\\"application/rsd+xml\\\" href=\\\"https://grey.colorado.edu/emergent/api.php?action=rsd\\\">\\n<link rel=\\\"alternate\\\" type=\\\"application/atom+xml\\\" title=\\\"emergent Atom feed\\\" href=\\\"/emergent/index.php?title=Special:RecentChanges&amp;feed=atom\\\">\\n<!--[if lt IE 7]><style type=\\\"text/css\\\">body{behavior:url(\\\"/emergent/skins/Vector/csshover.min.htc\\\")}</style><![endif]-->\\n<script src=\\\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery%2Cmediawiki&amp;only=scripts&amp;skin=vector&amp;version=EaPOpX%2FG\\\"></script></head>\\n<body class=\\\"mediawiki ltr sitedir-ltr ns-0 ns-subject page-LeabraTrain skin-vector action-view\\\">\\n\\t\\t<div id=\\\"mw-page-base\\\" class=\\\"noprint\\\"></div>\\n\\t\\t<div id=\\\"mw-head-base\\\" class=\\\"noprint\\\"></div>\\n\\t\\t<div id=\\\"content\\\" class=\\\"mw-body\\\" role=\\\"main\\\">\\n\\t\\t\\t<a id=\\\"top\\\"></a>\\n\\n\\t\\t\\t\\t\\t\\t<div class=\\\"mw-indicators\\\">\\n</div>\\n\\t\\t\\t<h1 id=\\\"firstHeading\\\" class=\\\"firstHeading\\\" lang=\\\"en\\\">LeabraTrain</h1>\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t<div id=\\\"bodyContent\\\" class=\\\"mw-body-content\\\">\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t<div id=\\\"siteSub\\\">From emergent</div>\\n\\t\\t\\t\\t\\t\\t\\t\\t<div id=\\\"contentSub\\\"></div>\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t<div id=\\\"jump-to-nav\\\" class=\\\"mw-jump\\\">\\n\\t\\t\\t\\t\\tJump to:\\t\\t\\t\\t\\t<a href=\\\"#mw-head\\\">navigation</a>, \\t\\t\\t\\t\\t<a href=\\\"#p-search\\\">search</a>\\n\\t\\t\\t\\t</div>\\n\\t\\t\\t\\t<div id=\\\"mw-content-text\\\" lang=\\\"en\\\" dir=\\\"ltr\\\" class=\\\"mw-content-ltr\\\"><p>LeabraTrain is the standard <a href=\\\"/emergent/index.php/Program\\\" title=\\\"Program\\\">Program</a> for training <a href=\\\"/emergent/index.php/Leabra\\\" title=\\\"Leabra\\\">Leabra</a> networks.  It iterates over <a href=\\\"/emergent/index.php?title=LeabraEpoch&amp;action=edit&amp;redlink=1\\\" class=\\\"new\\\" title=\\\"LeabraEpoch (page does not exist)\\\">LeabraEpoch</a> epochs, optionally until a training criterion has been met, or for a specified maximum number of epochs.\\n</p><p>You can easily customize this program to do different things at different points in the training process, for example by examining the network.epoch value (or the local copy of that value, epoch).\\n</p>\\n<!-- \\nNewPP limit report\\nCached time: 20160512070701\\nCache expiry: 86400\\nDynamic content: false\\nCPU time usage: 0.011 seconds\\nReal time usage: 0.014 seconds\\nPreprocessor visited node count: 1/1000000\\nPreprocessor generated node count: 4/1000000\\nPost?expand include size: 0/2097152 bytes\\nTemplate argument size: 0/2097152 bytes\\nHighest expansion depth: 1/40\\nExpensive parser function count: 0/100\\n-->\\n\\n<!-- \\nTransclusion expansion time report (%,ms,calls,template)\\n100.00%    0.000      1 - -total\\n-->\\n\\n<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2767-0!*!0!*!*!*!* and timestamp 20160512070701 and revision id 11266\\n -->\\n</div>\\t\\t\\t\\t\\t<div class=\\\"printfooter\\\">\\n\\t\\t\\t\\t\\t\\tRetrieved from \\\"<a dir=\\\"ltr\\\" href=\\\"https://grey.colorado.edu/emergent/index.php?title=LeabraTrain&amp;oldid=11266\\\">https://grey.colorado.edu/emergent/index.php?title=LeabraTrain&amp;oldid=11266</a>\\\"\\t\\t\\t\\t\\t</div>\\n\\t\\t\\t\\t<div id=\\\"catlinks\\\" class=\\\"catlinks catlinks-allhidden\\\"></div>\\t\\t\\t\\t<div class=\\\"visualClear\\\"></div>\\n\\t\\t\\t\\t\\t\\t\\t</div>\\n\\t\\t</div>\\n\\t\\t<div id=\\\"mw-navigation\\\">\\n\\t\\t\\t<h2>Navigation menu</h2>\\n\\n\\t\\t\\t<div id=\\\"mw-head\\\">\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t<div id=\\\"p-personal\\\" role=\\\"navigation\\\" class=\\\"\\\" aria-labelledby=\\\"p-personal-label\\\">\\n\\t\\t\\t\\t\\t\\t<h3 id=\\\"p-personal-label\\\">Personal tools</h3>\\n\\t\\t\\t\\t\\t\\t<ul>\\n\\t\\t\\t\\t\\t\\t\\t<li id=\\\"pt-userpage\\\"><a href=\\\"/emergent/index.php/User:Oreilly\\\" dir=\\\"auto\\\" title=\\\"Your user page [.]\\\" accesskey=\\\".\\\">Oreilly</a></li><li id=\\\"pt-mytalk\\\"><a href=\\\"/emergent/index.php/User_talk:Oreilly\\\" class=\\\"new\\\" title=\\\"Your talk page [n]\\\" accesskey=\\\"n\\\">Talk</a></li><li id=\\\"pt-preferences\\\"><a href=\\\"/emergent/index.php/Special:Preferences\\\" title=\\\"Your preferences\\\">Preferences</a></li><li id=\\\"pt-watchlist\\\"><a href=\\\"/emergent/index.php/Special:Watchlist\\\" title=\\\"A list of pages you are monitoring for changes [l]\\\" accesskey=\\\"l\\\">Watchlist</a></li><li id=\\\"pt-mycontris\\\"><a href=\\\"/emergent/index.php/Special:Contributions/Oreilly\\\" title=\\\"A list of your contributions [y]\\\" accesskey=\\\"y\\\">Contributions</a></li><li id=\\\"pt-logout\\\"><a href=\\\"/emergent/index.php?title=Special:UserLogout&amp;returnto=LeabraTrain\\\" title=\\\"Log out\\\">Log out</a></li>\\t\\t\\t\\t\\t\\t</ul>\\n\\t\\t\\t\\t\\t</div>\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t<div id=\\\"left-navigation\\\">\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t<div id=\\\"p-namespaces\\\" role=\\\"navigation\\\" class=\\\"vectorTabs\\\" aria-labelledby=\\\"p-namespaces-label\\\">\\n\\t\\t\\t\\t\\t\\t<h3 id=\\\"p-namespaces-label\\\">Namespaces</h3>\\n\\t\\t\\t\\t\\t\\t<ul>\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t<li id=\\\"ca-nstab-main\\\" class=\\\"selected\\\"><span><a href=\\\"/emergent/index.php/LeabraTrain\\\" title=\\\"View the content page [c]\\\" accesskey=\\\"c\\\">Page</a></span></li>\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t<li id=\\\"ca-talk\\\" class=\\\"new\\\"><span><a href=\\\"/emergent/index.php?title=Talk:LeabraTrain&amp;action=edit&amp;redlink=1\\\" title=\\\"Discussion about the content page [t]\\\" accesskey=\\\"t\\\" rel=\\\"discussion\\\">Discussion</a></span></li>\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t</ul>\\n\\t\\t\\t\\t\\t</div>\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t<div id=\\\"p-variants\\\" role=\\\"navigation\\\" class=\\\"vectorMenu emptyPortlet\\\" aria-labelledby=\\\"p-variants-label\\\">\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t<h3 id=\\\"p-variants-label\\\">\\n\\t\\t\\t\\t\\t\\t\\t<span>Variants</span><a href=\\\"#\\\"></a>\\n\\t\\t\\t\\t\\t\\t</h3>\\n\\n\\t\\t\\t\\t\\t\\t<div class=\\\"menu\\\">\\n\\t\\t\\t\\t\\t\\t\\t<ul>\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t</ul>\\n\\t\\t\\t\\t\\t\\t</div>\\n\\t\\t\\t\\t\\t</div>\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t</div>\\n\\t\\t\\t\\t<div id=\\\"right-navigation\\\">\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t<div id=\\\"p-views\\\" role=\\\"navigation\\\" class=\\\"vectorTabs\\\" aria-labelledby=\\\"p-views-label\\\">\\n\\t\\t\\t\\t\\t\\t<h3 id=\\\"p-views-label\\\">Views</h3>\\n\\t\\t\\t\\t\\t\\t<ul>\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t<li id=\\\"ca-view\\\" class=\\\"selected\\\"><span><a href=\\\"/emergent/index.php/LeabraTrain\\\">Read</a></span></li>\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t<li id=\\\"ca-edit\\\"><span><a href=\\\"/emergent/index.php?title=LeabraTrain&amp;action=edit\\\" title=\\\"Edit this page [e]\\\" accesskey=\\\"e\\\">Edit</a></span></li>\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t<li id=\\\"ca-history\\\" class=\\\"collapsible\\\"><span><a href=\\\"/emergent/index.php?title=LeabraTrain&amp;action=history\\\" title=\\\"Past revisions of this page [h]\\\" accesskey=\\\"h\\\">View history</a></span></li>\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t<li id=\\\"ca-unwatch\\\" class=\\\"icon\\\"><span><a href=\\\"/emergent/index.php?title=LeabraTrain&amp;action=unwatch&amp;token=c6d7363e22d4c0d44ac7ca2a8c59165157342b95%2B%5C\\\" title=\\\"Remove this page from your watchlist [w]\\\" accesskey=\\\"w\\\">Unwatch</a></span></li>\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t</ul>\\n\\t\\t\\t\\t\\t</div>\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t<div id=\\\"p-cactions\\\" role=\\\"navigation\\\" class=\\\"vectorMenu\\\" aria-labelledby=\\\"p-cactions-label\\\">\\n\\t\\t\\t\\t\\t\\t<h3 id=\\\"p-cactions-label\\\"><span>More</span><a href=\\\"#\\\"></a></h3>\\n\\n\\t\\t\\t\\t\\t\\t<div class=\\\"menu\\\">\\n\\t\\t\\t\\t\\t\\t\\t<ul>\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t<li id=\\\"ca-delete\\\">\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t<a href=\\\"/emergent/index.php?title=LeabraTrain&amp;action=delete\\\" title=\\\"Delete this page [d]\\\" accesskey=\\\"d\\\">Delete</a>\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t</li>\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t<li id=\\\"ca-move\\\">\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t<a href=\\\"/emergent/index.php/Special:MovePage/LeabraTrain\\\" title=\\\"Move this page [m]\\\" accesskey=\\\"m\\\">Move</a>\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t</li>\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t<li id=\\\"ca-protect\\\">\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t<a href=\\\"/emergent/index.php?title=LeabraTrain&amp;action=protect\\\" title=\\\"Protect this page [=]\\\" accesskey=\\\"=\\\">Protect</a>\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t</li>\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t<li id=\\\"ca-purge\\\">\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t<a href=\\\"/emergent/index.php?title=LeabraTrain&amp;action=purge\\\">Refresh</a>\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t</li>\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t</ul>\\n\\t\\t\\t\\t\\t\\t</div>\\n\\t\\t\\t\\t\\t</div>\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t<div id=\\\"p-search\\\" role=\\\"search\\\">\\n\\t\\t\\t\\t\\t\\t<h3>\\n\\t\\t\\t\\t\\t\\t\\t<label for=\\\"searchInput\\\">Search</label>\\n\\t\\t\\t\\t\\t\\t</h3>\\n\\n\\t\\t\\t\\t\\t\\t<form action=\\\"/emergent/index.php\\\" id=\\\"searchform\\\">\\n\\t\\t\\t\\t\\t\\t\\t<div id=\\\"simpleSearch\\\">\\n\\t\\t\\t\\t\\t\\t\\t<input type=\\\"search\\\" name=\\\"search\\\" placeholder=\\\"Search\\\" title=\\\"Search emergent [f]\\\" accesskey=\\\"f\\\" id=\\\"searchInput\\\"><input type=\\\"hidden\\\" value=\\\"Special:Search\\\" name=\\\"title\\\"><input type=\\\"submit\\\" name=\\\"fulltext\\\" value=\\\"Search\\\" title=\\\"Search the pages for this text\\\" id=\\\"mw-searchButton\\\" class=\\\"searchButton mw-fallbackSearchButton\\\"><input type=\\\"submit\\\" name=\\\"go\\\" value=\\\"Go\\\" title=\\\"Go to a page with this exact name if it exists\\\" id=\\\"searchButton\\\" class=\\\"searchButton\\\">\\t\\t\\t\\t\\t\\t\\t</div>\\n\\t\\t\\t\\t\\t\\t</form>\\n\\t\\t\\t\\t\\t</div>\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t</div>\\n\\t\\t\\t</div>\\n\\t\\t\\t<div id=\\\"mw-panel\\\">\\n\\t\\t\\t\\t<div id=\\\"p-logo\\\" role=\\\"banner\\\"><a class=\\\"mw-wiki-logo\\\" href=\\\"/emergent/index.php/Main_Page\\\" title=\\\"Visit the main page\\\"></a></div>\\n\\t\\t\\t\\t\\t\\t<div class=\\\"portal\\\" role=\\\"navigation\\\" id=\\\"p-navigation\\\" aria-labelledby=\\\"p-navigation-label\\\">\\n\\t\\t\\t<h3 id=\\\"p-navigation-label\\\">Navigation</h3>\\n\\n\\t\\t\\t<div class=\\\"body\\\">\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t<ul>\\n\\t\\t\\t\\t\\t\\t<li id=\\\"n-mainpage-description\\\"><a href=\\\"/emergent/index.php/Main_Page\\\" title=\\\"Visit the main page [z]\\\" accesskey=\\\"z\\\">Main page</a></li><li id=\\\"n-recentchanges\\\"><a href=\\\"/emergent/index.php/Special:RecentChanges\\\" title=\\\"A list of recent changes in the wiki [r]\\\" accesskey=\\\"r\\\">Recent changes</a></li><li id=\\\"n-Documentation\\\"><a href=\\\"/emergent/index.php/User_hub\\\">Documentation</a></li><li id=\\\"n-Submit-a-bug\\\"><a href=\\\"/emergent/index.php/How_to_submit_a_bug_report\\\">Submit a bug</a></li><li id=\\\"n-Bug-tracker\\\"><a href=\\\"//grey.colorado.edu/cgi-bin/bugzilla/index.cgi\\\" rel=\\\"nofollow\\\">Bug tracker</a></li><li id=\\\"n-Mailing-list\\\"><a href=\\\"//grey.colorado.edu/cgi-bin/mailman/listinfo/emergent-users\\\" rel=\\\"nofollow\\\">Mailing list</a></li>\\t\\t\\t\\t\\t</ul>\\n\\t\\t\\t\\t\\t\\t\\t</div>\\n\\t\\t</div>\\n\\t\\t\\t<div class=\\\"portal\\\" role=\\\"navigation\\\" id=\\\"p-tb\\\" aria-labelledby=\\\"p-tb-label\\\">\\n\\t\\t\\t<h3 id=\\\"p-tb-label\\\">Tools</h3>\\n\\n\\t\\t\\t<div class=\\\"body\\\">\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t<ul>\\n\\t\\t\\t\\t\\t\\t<li id=\\\"t-whatlinkshere\\\"><a href=\\\"/emergent/index.php/Special:WhatLinksHere/LeabraTrain\\\" title=\\\"A list of all wiki pages that link here [j]\\\" accesskey=\\\"j\\\">What links here</a></li><li id=\\\"t-recentchangeslinked\\\"><a href=\\\"/emergent/index.php/Special:RecentChangesLinked/LeabraTrain\\\" title=\\\"Recent changes in pages linked from this page [k]\\\" accesskey=\\\"k\\\">Related changes</a></li><li id=\\\"t-upload\\\"><a href=\\\"/emergent/index.php/Special:Upload\\\" title=\\\"Upload files [u]\\\" accesskey=\\\"u\\\">Upload file</a></li><li id=\\\"t-specialpages\\\"><a href=\\\"/emergent/index.php/Special:SpecialPages\\\" title=\\\"A list of all special pages [q]\\\" accesskey=\\\"q\\\">Special pages</a></li><li id=\\\"t-permalink\\\"><a href=\\\"/emergent/index.php?title=LeabraTrain&amp;oldid=11266\\\" title=\\\"Permanent link to this revision of the page\\\">Permanent link</a></li><li id=\\\"t-info\\\"><a href=\\\"/emergent/index.php?title=LeabraTrain&amp;action=info\\\" title=\\\"More information about this page\\\">Page information</a></li><li id=\\\"t-smwbrowselink\\\"><a href=\\\"/emergent/index.php/Special:Browse/LeabraTrain\\\" rel=\\\"smw-browse\\\">Browse properties</a></li>\\t\\t\\t\\t\\t</ul>\\n\\t\\t\\t\\t\\t\\t\\t</div>\\n\\t\\t</div>\\n\\t\\t\\t<div class=\\\"portal\\\" role=\\\"navigation\\\" id=\\\"p-coll-print_export\\\" aria-labelledby=\\\"p-coll-print_export-label\\\">\\n\\t\\t\\t<h3 id=\\\"p-coll-print_export-label\\\">Print/export</h3>\\n\\n\\t\\t\\t<div class=\\\"body\\\">\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t<ul>\\n\\t\\t\\t\\t\\t\\t<li id=\\\"coll-create_a_book\\\"><a href=\\\"/emergent/index.php?title=Special:Book&amp;bookcmd=book_creator&amp;referer=LeabraTrain\\\">Create a book</a></li><li id=\\\"coll-download-as-rl\\\"><a href=\\\"/emergent/index.php?title=Special:Book&amp;bookcmd=render_article&amp;arttitle=LeabraTrain&amp;oldid=11266&amp;writer=rl\\\">Download as PDF</a></li><li id=\\\"t-print\\\"><a href=\\\"/emergent/index.php?title=LeabraTrain&amp;printable=yes\\\" title=\\\"Printable version of this page [p]\\\" accesskey=\\\"p\\\">Printable version</a></li>\\t\\t\\t\\t\\t</ul>\\n\\t\\t\\t\\t\\t\\t\\t</div>\\n\\t\\t</div>\\n\\t\\t\\t\\t</div>\\n\\t\\t</div>\\n\\t\\t<div id=\\\"footer\\\" role=\\\"contentinfo\\\">\\n\\t\\t\\t\\t\\t\\t\\t<ul id=\\\"footer-info\\\">\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t<li id=\\\"footer-info-lastmod\\\"> This page was last modified on 12 May 2016, at 01:07.</li>\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t</ul>\\n\\t\\t\\t\\t\\t\\t\\t<ul id=\\\"footer-places\\\">\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t<li id=\\\"footer-places-about\\\"><a href=\\\"/emergent/index.php/emergent:About\\\" title=\\\"emergent:About\\\">About emergent</a></li>\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t</ul>\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t<ul id=\\\"footer-icons\\\" class=\\\"noprint\\\">\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t<li id=\\\"footer-poweredbyico\\\">\\n\\t\\t\\t\\t\\t\\t\\t<a href=\\\"//www.mediawiki.org/\\\"><img src=\\\"/emergent/resources/assets/poweredby_mediawiki_88x31.png\\\" alt=\\\"Powered by MediaWiki\\\" srcset=\\\"/emergent/resources/assets/poweredby_mediawiki_132x47.png 1.5x, /emergent/resources/assets/poweredby_mediawiki_176x62.png 2x\\\" width=\\\"88\\\" height=\\\"31\\\"></a><a href=\\\"https://www.semantic-mediawiki.org/wiki/Semantic_MediaWiki\\\"><img src=\\\"/emergent/extensions/SemanticMediaWiki/resources/images/smw_button.png\\\" alt=\\\"Powered by Semantic MediaWiki\\\" width=\\\"88\\\" height=\\\"31\\\"></a>\\t\\t\\t\\t\\t\\t</li>\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t</ul>\\n\\t\\t\\t\\t\\t\\t<div style=\\\"clear:both\\\"></div>\\n\\t\\t</div>\\n\\t\\t<script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {\\nmw.loader.state({\\\"user\\\":\\\"ready\\\",\\\"user.groups\\\":\\\"ready\\\"});mw.loader.load([\\\"mediawiki.action.view.postEdit\\\",\\\"site\\\",\\\"mediawiki.user\\\",\\\"mediawiki.hidpi\\\",\\\"mediawiki.page.ready\\\",\\\"mediawiki.searchSuggest\\\",\\\"mediawiki.page.watch.ajax\\\",\\\"ext.headertabs\\\"]);\\n} );</script><script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {\\nmw.config.set({\\\"wgBackendResponseTime\\\":155});\\n} );</script>\\n\\t\\n\\n</body></html>";
+  html_text="<!DOCTYPE html><html lang=\"en\" dir=\"ltr\" class=\"client-js\"><head>
+<meta charset=\"UTF-8\">
+<title>LeabraTrain - emergent</title>
+<script>document.documentElement.className = document.documentElement.className.replace( /(^|\\s)client-nojs(\\s|$)/, \"$1client-js$2\" );</script>
+<script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
+mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":!1,\"wgNamespaceNumber\":0,\"wgPageName\":\"LeabraTrain\",\"wgTitle\":\"LeabraTrain\",\"wgCurRevisionId\":11266,\"wgRevisionId\":11266,\"wgArticleId\":2767,\"wgIsArticle\":!0,\"wgIsRedirect\":!1,\"wgAction\":\"view\",\"wgUserName\":\"Oreilly\",\"wgUserGroups\":[\"bureaucrat\",\"svnadmins\",\"sysop\",\"*\",\"user\",\"autoconfirmed\"],\"wgCategories\":[],\"wgBreakFrames\":!1,\"wgPageContentLanguage\":\"en\",\"wgPageContentModel\":\"wikitext\",\"wgSeparatorTransformTable\":[\"\",\"\"],\"wgDigitTransformTable\":[\"\",\"\"],\"wgDefaultDateFormat\":\"dmy\",\"wgMonthNames\":[\"\",\"January\",\"February\",\"March\",\"April\",\"May\",\"June\",\"July\",\"August\",\"September\",\"October\",\"November\",\"December\"],\"wgMonthNamesShort\":[\"\",\"Jan\",\"Feb\",\"Mar\",\"Apr\",\"May\",\"Jun\",\"Jul\",\"Aug\",\"Sep\",\"Oct\",\"Nov\",\"Dec\"],\"wgRelevantPageName\":\"LeabraTrain\",\"wgRelevantArticleId\":2767,\"wgUserId\":3,\"wgUserEditCount\":2418,\"wgUserRegistration\":1178051527000,\"wgUserNewMsgRevisionId\":null,\"wgIsProbablyEditable\":!0,
+\"wgRestrictionEdit\":[],\"wgRestrictionMove\":[],\"sfgAutocompleteValues\":[],\"sfgAutocompleteOnAllChars\":!1,\"sfgFieldProperties\":[],\"sfgDependentFields\":[],\"sfgShowOnSelect\":[],\"sfgScriptPath\":\"/emergent/extensions/SemanticForms\",\"wgSVGEditEditor\":\"http://svg-edit.googlecode.com/svn/trunk/editor/svg-editor.html\",\"wgHeaderTabsTabIndexes\":[],\"wgWikiEditorEnabledModules\":{\"toolbar\":!0,\"dialogs\":!0,\"preview\":!0,\"publish\":!1},\"wgCategoryTreePageCategoryOptions\":\"{\\\"mode\\\":0,\\\"hideprefix\\\":20,\\\"showcount\\\":true,\\\"namespaces\\\":false}\"});mw.loader.implement(\"user.options\",function($,jQuery){mw.user.options.set({\"ccmeonemails\":\"1\",\"enotifminoredits\":\"1\",\"imagesize\":\"0\",\"previewontop\":\"\",\"rows\":\"30\",\"thumbsize\":\"0\",\"underline\":\"0\",\"watchmoves\":\"1\",\"editsection\":\"1\",\"rememberpassword\":\"1\",\"timecorrection\":\"ZoneInfo|-360|America/Denver\",\"watchlisttoken\":\"14fd6c804d78e99930123181974c128b983adb9e\"});});mw.loader.implement(\"user.tokens\",function($,jQuery){mw.user.tokens.set({\"editToken\":\"3b26cf5f182fe7fb29af6a6ca01dd6cb57342b95+\\\\\",\"patrolToken\":\"6f879f5a78cf8bf62c088b26f37a826a57342b95+\\\\\",\"watchToken\":\"0f5971aae38fcb23ba50cc900260a01757342b95+\\\\\"});});mw.loader.load([\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\",\"mediawiki.legacy.wikibits\",\"skins.vector.js\"]);
+} );</script>
+<link rel=\"stylesheet\" href=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=mediawiki.legacy.commonPrint%2Cshared%7Cmediawiki.sectionAnchor%7Cmediawiki.skinning.interface%7Cskins.vector.styles&amp;only=styles&amp;skin=vector\">
+<link rel=\"stylesheet\" href=\"/emergent/extensions/HeaderTabs/skins/ext.headertabs.large.css\">
+<meta name=\"ResourceLoaderDynamicStyles\" content=\"\">
+<link rel=\"stylesheet\" href=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=site&amp;only=styles&amp;skin=vector\">
+<style>a{text-decoration:none}</style>
+<script async=\"\" src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=startup&amp;only=scripts&amp;skin=vector\"></script>
+<meta name=\"generator\" content=\"MediaWiki 1.26.2\">
+<link rel=\"ExportRDF\" type=\"application/rdf+xml\" title=\"LeabraTrain\" href=\"/emergent/index.php?title=Special:ExportRDF/LeabraTrain&amp;xmlmime=rdf\">
+<link rel=\"alternate\" type=\"application/x-wiki\" title=\"Edit\" href=\"/emergent/index.php?title=LeabraTrain&amp;action=edit\">
+<link rel=\"edit\" title=\"Edit\" href=\"/emergent/index.php?title=LeabraTrain&amp;action=edit\">
+<link rel=\"shortcut icon\" href=\"/emergent/favicon.ico\">
+<link rel=\"search\" type=\"application/opensearchdescription+xml\" href=\"/emergent/opensearch_desc.php\" title=\"emergent (en)\">
+<link rel=\"EditURI\" type=\"application/rsd+xml\" href=\"https://grey.colorado.edu/emergent/api.php?action=rsd\">
+<link rel=\"alternate\" type=\"application/atom+xml\" title=\"emergent Atom feed\" href=\"/emergent/index.php?title=Special:RecentChanges&amp;feed=atom\">
+<!--[if lt IE 7]><style type=\"text/css\">body{behavior:url(\"/emergent/skins/Vector/csshover.min.htc\")}</style><![endif]-->
+<script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery%2Cmediawiki&amp;only=scripts&amp;skin=vector&amp;version=EaPOpX%2FG\"></script></head>
+<body class=\"mediawiki ltr sitedir-ltr ns-0 ns-subject page-LeabraTrain skin-vector action-view\">
+		<div id=\"mw-page-base\" class=\"noprint\"></div>
+		<div id=\"mw-head-base\" class=\"noprint\"></div>
+		<div id=\"content\" class=\"mw-body\" role=\"main\">
+			<a id=\"top\"></a>
+
+						<div class=\"mw-indicators\">
+</div>
+			<h1 id=\"firstHeading\" class=\"firstHeading\" lang=\"en\">LeabraTrain</h1>
+									<div id=\"bodyContent\" class=\"mw-body-content\">
+									<div id=\"siteSub\">From emergent</div>
+								<div id=\"contentSub\"></div>
+												<div id=\"jump-to-nav\" class=\"mw-jump\">
+					Jump to:					<a href=\"#mw-head\">navigation</a>, 					<a href=\"#p-search\">search</a>
+				</div>
+				<div id=\"mw-content-text\" lang=\"en\" dir=\"ltr\" class=\"mw-content-ltr\"><p>LeabraTrain is the standard <a href=\"/emergent/index.php/Program\" title=\"Program\">Program</a> for training <a href=\"/emergent/index.php/Leabra\" title=\"Leabra\">Leabra</a> networks.  It iterates over <a href=\"/emergent/index.php?title=LeabraEpoch&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"LeabraEpoch (page does not exist)\">LeabraEpoch</a> epochs, optionally until a training criterion has been met, or for a specified maximum number of epochs.
+</p><p>You can easily customize this program to do different things at different points in the training process, for example by examining the network.epoch value (or the local copy of that value, epoch).
+</p>
+<!-- 
+NewPP limit report
+Cached time: 20160512070701
+Cache expiry: 86400
+Dynamic content: false
+CPU time usage: 0.011 seconds
+Real time usage: 0.014 seconds
+Preprocessor visited node count: 1/1000000
+Preprocessor generated node count: 4/1000000
+Post?expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+Highest expansion depth: 1/40
+Expensive parser function count: 0/100
+-->
+
+<!-- 
+Transclusion expansion time report (%,ms,calls,template)
+100.00%    0.000      1 - -total
+-->
+
+<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2767-0!*!0!*!*!*!* and timestamp 20160512070701 and revision id 11266
+ -->
+</div>					<div class=\"printfooter\">
+						Retrieved from \"<a dir=\"ltr\" href=\"https://grey.colorado.edu/emergent/index.php?title=LeabraTrain&amp;oldid=11266\">https://grey.colorado.edu/emergent/index.php?title=LeabraTrain&amp;oldid=11266</a>\"					</div>
+				<div id=\"catlinks\" class=\"catlinks catlinks-allhidden\"></div>				<div class=\"visualClear\"></div>
+							</div>
+		</div>
+		<div id=\"mw-navigation\">
+			<h2>Navigation menu</h2>
+
+			<div id=\"mw-head\">
+									<div id=\"p-personal\" role=\"navigation\" class=\"\" aria-labelledby=\"p-personal-label\">
+						<h3 id=\"p-personal-label\">Personal tools</h3>
+						<ul>
+							<li id=\"pt-userpage\"><a href=\"/emergent/index.php/User:Oreilly\" dir=\"auto\" title=\"Your user page [.]\" accesskey=\".\">Oreilly</a></li><li id=\"pt-mytalk\"><a href=\"/emergent/index.php/User_talk:Oreilly\" class=\"new\" title=\"Your talk page [n]\" accesskey=\"n\">Talk</a></li><li id=\"pt-preferences\"><a href=\"/emergent/index.php/Special:Preferences\" title=\"Your preferences\">Preferences</a></li><li id=\"pt-watchlist\"><a href=\"/emergent/index.php/Special:Watchlist\" title=\"A list of pages you are monitoring for changes [l]\" accesskey=\"l\">Watchlist</a></li><li id=\"pt-mycontris\"><a href=\"/emergent/index.php/Special:Contributions/Oreilly\" title=\"A list of your contributions [y]\" accesskey=\"y\">Contributions</a></li><li id=\"pt-logout\"><a href=\"/emergent/index.php?title=Special:UserLogout&amp;returnto=LeabraTrain\" title=\"Log out\">Log out</a></li>						</ul>
+					</div>
+									<div id=\"left-navigation\">
+										<div id=\"p-namespaces\" role=\"navigation\" class=\"vectorTabs\" aria-labelledby=\"p-namespaces-label\">
+						<h3 id=\"p-namespaces-label\">Namespaces</h3>
+						<ul>
+															<li id=\"ca-nstab-main\" class=\"selected\"><span><a href=\"/emergent/index.php/LeabraTrain\" title=\"View the content page [c]\" accesskey=\"c\">Page</a></span></li>
+															<li id=\"ca-talk\" class=\"new\"><span><a href=\"/emergent/index.php?title=Talk:LeabraTrain&amp;action=edit&amp;redlink=1\" title=\"Discussion about the content page [t]\" accesskey=\"t\" rel=\"discussion\">Discussion</a></span></li>
+													</ul>
+					</div>
+										<div id=\"p-variants\" role=\"navigation\" class=\"vectorMenu emptyPortlet\" aria-labelledby=\"p-variants-label\">
+												<h3 id=\"p-variants-label\">
+							<span>Variants</span><a href=\"#\"></a>
+						</h3>
+
+						<div class=\"menu\">
+							<ul>
+															</ul>
+						</div>
+					</div>
+									</div>
+				<div id=\"right-navigation\">
+										<div id=\"p-views\" role=\"navigation\" class=\"vectorTabs\" aria-labelledby=\"p-views-label\">
+						<h3 id=\"p-views-label\">Views</h3>
+						<ul>
+															<li id=\"ca-view\" class=\"selected\"><span><a href=\"/emergent/index.php/LeabraTrain\">Read</a></span></li>
+															<li id=\"ca-edit\"><span><a href=\"/emergent/index.php?title=LeabraTrain&amp;action=edit\" title=\"Edit this page [e]\" accesskey=\"e\">Edit</a></span></li>
+															<li id=\"ca-history\" class=\"collapsible\"><span><a href=\"/emergent/index.php?title=LeabraTrain&amp;action=history\" title=\"Past revisions of this page [h]\" accesskey=\"h\">View history</a></span></li>
+															<li id=\"ca-unwatch\" class=\"icon\"><span><a href=\"/emergent/index.php?title=LeabraTrain&amp;action=unwatch&amp;token=c6d7363e22d4c0d44ac7ca2a8c59165157342b95%2B%5C\" title=\"Remove this page from your watchlist [w]\" accesskey=\"w\">Unwatch</a></span></li>
+													</ul>
+					</div>
+										<div id=\"p-cactions\" role=\"navigation\" class=\"vectorMenu\" aria-labelledby=\"p-cactions-label\">
+						<h3 id=\"p-cactions-label\"><span>More</span><a href=\"#\"></a></h3>
+
+						<div class=\"menu\">
+							<ul>
+																	<li id=\"ca-delete\">
+										<a href=\"/emergent/index.php?title=LeabraTrain&amp;action=delete\" title=\"Delete this page [d]\" accesskey=\"d\">Delete</a>
+									</li>
+																	<li id=\"ca-move\">
+										<a href=\"/emergent/index.php/Special:MovePage/LeabraTrain\" title=\"Move this page [m]\" accesskey=\"m\">Move</a>
+									</li>
+																	<li id=\"ca-protect\">
+										<a href=\"/emergent/index.php?title=LeabraTrain&amp;action=protect\" title=\"Protect this page [=]\" accesskey=\"=\">Protect</a>
+									</li>
+																	<li id=\"ca-purge\">
+										<a href=\"/emergent/index.php?title=LeabraTrain&amp;action=purge\">Refresh</a>
+									</li>
+															</ul>
+						</div>
+					</div>
+										<div id=\"p-search\" role=\"search\">
+						<h3>
+							<label for=\"searchInput\">Search</label>
+						</h3>
+
+						<form action=\"/emergent/index.php\" id=\"searchform\">
+							<div id=\"simpleSearch\">
+							<input type=\"search\" name=\"search\" placeholder=\"Search\" title=\"Search emergent [f]\" accesskey=\"f\" id=\"searchInput\"><input type=\"hidden\" value=\"Special:Search\" name=\"title\"><input type=\"submit\" name=\"fulltext\" value=\"Search\" title=\"Search the pages for this text\" id=\"mw-searchButton\" class=\"searchButton mw-fallbackSearchButton\"><input type=\"submit\" name=\"go\" value=\"Go\" title=\"Go to a page with this exact name if it exists\" id=\"searchButton\" class=\"searchButton\">							</div>
+						</form>
+					</div>
+									</div>
+			</div>
+			<div id=\"mw-panel\">
+				<div id=\"p-logo\" role=\"banner\"><a class=\"mw-wiki-logo\" href=\"/emergent/index.php/Main_Page\" title=\"Visit the main page\"></a></div>
+						<div class=\"portal\" role=\"navigation\" id=\"p-navigation\" aria-labelledby=\"p-navigation-label\">
+			<h3 id=\"p-navigation-label\">Navigation</h3>
+
+			<div class=\"body\">
+									<ul>
+						<li id=\"n-mainpage-description\"><a href=\"/emergent/index.php/Main_Page\" title=\"Visit the main page [z]\" accesskey=\"z\">Main page</a></li><li id=\"n-recentchanges\"><a href=\"/emergent/index.php/Special:RecentChanges\" title=\"A list of recent changes in the wiki [r]\" accesskey=\"r\">Recent changes</a></li><li id=\"n-Documentation\"><a href=\"/emergent/index.php/User_hub\">Documentation</a></li><li id=\"n-Submit-a-bug\"><a href=\"/emergent/index.php/How_to_submit_a_bug_report\">Submit a bug</a></li><li id=\"n-Bug-tracker\"><a href=\"//grey.colorado.edu/cgi-bin/bugzilla/index.cgi\" rel=\"nofollow\">Bug tracker</a></li><li id=\"n-Mailing-list\"><a href=\"//grey.colorado.edu/cgi-bin/mailman/listinfo/emergent-users\" rel=\"nofollow\">Mailing list</a></li>					</ul>
+							</div>
+		</div>
+			<div class=\"portal\" role=\"navigation\" id=\"p-tb\" aria-labelledby=\"p-tb-label\">
+			<h3 id=\"p-tb-label\">Tools</h3>
+
+			<div class=\"body\">
+									<ul>
+						<li id=\"t-whatlinkshere\"><a href=\"/emergent/index.php/Special:WhatLinksHere/LeabraTrain\" title=\"A list of all wiki pages that link here [j]\" accesskey=\"j\">What links here</a></li><li id=\"t-recentchangeslinked\"><a href=\"/emergent/index.php/Special:RecentChangesLinked/LeabraTrain\" title=\"Recent changes in pages linked from this page [k]\" accesskey=\"k\">Related changes</a></li><li id=\"t-upload\"><a href=\"/emergent/index.php/Special:Upload\" title=\"Upload files [u]\" accesskey=\"u\">Upload file</a></li><li id=\"t-specialpages\"><a href=\"/emergent/index.php/Special:SpecialPages\" title=\"A list of all special pages [q]\" accesskey=\"q\">Special pages</a></li><li id=\"t-permalink\"><a href=\"/emergent/index.php?title=LeabraTrain&amp;oldid=11266\" title=\"Permanent link to this revision of the page\">Permanent link</a></li><li id=\"t-info\"><a href=\"/emergent/index.php?title=LeabraTrain&amp;action=info\" title=\"More information about this page\">Page information</a></li><li id=\"t-smwbrowselink\"><a href=\"/emergent/index.php/Special:Browse/LeabraTrain\" rel=\"smw-browse\">Browse properties</a></li>					</ul>
+							</div>
+		</div>
+			<div class=\"portal\" role=\"navigation\" id=\"p-coll-print_export\" aria-labelledby=\"p-coll-print_export-label\">
+			<h3 id=\"p-coll-print_export-label\">Print/export</h3>
+
+			<div class=\"body\">
+									<ul>
+						<li id=\"coll-create_a_book\"><a href=\"/emergent/index.php?title=Special:Book&amp;bookcmd=book_creator&amp;referer=LeabraTrain\">Create a book</a></li><li id=\"coll-download-as-rl\"><a href=\"/emergent/index.php?title=Special:Book&amp;bookcmd=render_article&amp;arttitle=LeabraTrain&amp;oldid=11266&amp;writer=rl\">Download as PDF</a></li><li id=\"t-print\"><a href=\"/emergent/index.php?title=LeabraTrain&amp;printable=yes\" title=\"Printable version of this page [p]\" accesskey=\"p\">Printable version</a></li>					</ul>
+							</div>
+		</div>
+				</div>
+		</div>
+		<div id=\"footer\" role=\"contentinfo\">
+							<ul id=\"footer-info\">
+											<li id=\"footer-info-lastmod\"> This page was last modified on 12 May 2016, at 01:07.</li>
+									</ul>
+							<ul id=\"footer-places\">
+											<li id=\"footer-places-about\"><a href=\"/emergent/index.php/emergent:About\" title=\"emergent:About\">About emergent</a></li>
+									</ul>
+										<ul id=\"footer-icons\" class=\"noprint\">
+											<li id=\"footer-poweredbyico\">
+							<a href=\"//www.mediawiki.org/\"><img src=\"/emergent/resources/assets/poweredby_mediawiki_88x31.png\" alt=\"Powered by MediaWiki\" srcset=\"/emergent/resources/assets/poweredby_mediawiki_132x47.png 1.5x, /emergent/resources/assets/poweredby_mediawiki_176x62.png 2x\" width=\"88\" height=\"31\"></a><a href=\"https://www.semantic-mediawiki.org/wiki/Semantic_MediaWiki\"><img src=\"/emergent/extensions/SemanticMediaWiki/resources/images/smw_button.png\" alt=\"Powered by Semantic MediaWiki\" width=\"88\" height=\"31\"></a>						</li>
+									</ul>
+						<div style=\"clear:both\"></div>
+		</div>
+		<script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
+mw.loader.state({\"user\":\"ready\",\"user.groups\":\"ready\"});mw.loader.load([\"mediawiki.action.view.postEdit\",\"site\",\"mediawiki.user\",\"mediawiki.hidpi\",\"mediawiki.page.ready\",\"mediawiki.searchSuggest\",\"mediawiki.page.watch.ajax\",\"ext.headertabs\"]);
+} );</script><script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
+mw.config.set({\"wgBackendResponseTime\":155});
+} );</script>
+	
+
+</body></html>";
  };
 };
