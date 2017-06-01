@@ -730,7 +730,7 @@ public:
   // #EXPERT #CAT_Modify initialize all values in column of given name to given value
   bool          InitValsToRowNoColName(const String& col_name, int st_row = 0, int n_rows = -1);
   // #EXPERT #CAT_Modify initialize all values in column of given name to be equal to the row number -- only valid for scalar (not matrix) columns
-  bool          InitValsByIncrementColName(const int first_value, int increment, const String& col_name, int st_row = 0, int n_rows = -1);
+  bool          InitValsByIncrementColName(const float first_value, const float increment, const String& col_name, int st_row = 0, int n_rows = -1);
   // #EXPERT #CAT_Modify initialize all values in column of given name to be equal to the row number -- only valid for scalar (not matrix) columns
 
   int           FindValColName(const Variant& val, const String& col_name, int st_row = 0) const;

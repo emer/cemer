@@ -823,7 +823,7 @@ bool DataTable::InitValsToRowNoColName(const String& col_nm, int st_row, int n_r
   return true;
 }
 
-bool DataTable::InitValsByIncrementColName(const int first_value, const int increment, const String& col_nm, int st_row, int n_rows) {
+bool DataTable::InitValsByIncrementColName(const float first_value, const float increment, const String& col_nm, int st_row, int n_rows) {
   DataCol* da = FindColName(col_nm, true);
   if (!da) return false;
   da->InitValsByIncrement(first_value, increment, st_row, n_rows);
