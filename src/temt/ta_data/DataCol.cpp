@@ -812,7 +812,7 @@ bool DataCol::InitValsToRowNo(int st_row, int n_rows)  {
 bool DataCol::InitValsByIncrement(float first_value, float increment, int st_row, int n_rows)  {
   if(n_rows < 0)
     n_rows = rows() - st_row;
-  if(valType() == ValType::VT_INT) {
+  if(valType() == VT_INT) {
     for(int i=0; i<n_rows; i++) {
       SetValAsInt(first_value + i*increment, st_row + i);
     }
