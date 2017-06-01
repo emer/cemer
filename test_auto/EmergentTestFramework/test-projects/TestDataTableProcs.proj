@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+// ta_Dump File v3.0 -- code v8.0.10.0 rev10821
 LeabraProject .projects[0] { 
  Doc_Group @.docs = [0] {
  };
@@ -55,7 +55,7 @@ LeabraProject .projects[0] {
   };
  };
 
- Program_TopGroup @.programs = [4] {
+ Program_TopGroup @.programs = [7] {
   Program @[0] { 
    UserDataItem_List @*(.user_data_) {
     UserData_DocLink @[0] { };
@@ -82,16 +82,19 @@ LeabraProject .projects[0] {
     };
    };
 
+   ProgVar_List @.objs_vars = [2] {
+    ProgVar @[0] { };
+    ProgVar @[1] { };
+   };
+
    ProgType_List @.types = [0] {
    };
 
    ProgVar_List @.args = [0] {
    };
 
-   ProgVar_List @.vars = [3] {
+   ProgVar_List @.vars = [1] {
     ProgVar @[0] { };
-    ProgVar @[1] { };
-    ProgVar @[2] { };
    };
 
    Function_List @.functions = [0] {
@@ -416,17 +419,20 @@ LeabraProject .projects[0] {
     };
    };
 
+   ProgVar_List @.objs_vars = [3] {
+    ProgVar @[0] { };
+    ProgVar @[1] { };
+    ProgVar @[2] { };
+   };
+
    ProgType_List @.types = [0] {
    };
 
    ProgVar_List @.args = [0] {
    };
 
-   ProgVar_List @.vars = [4] {
+   ProgVar_List @.vars = [1] {
     ProgVar @[0] { };
-    ProgVar @[1] { };
-    ProgVar @[2] { };
-    ProgVar @[3] { };
    };
 
    Function_List @.functions = [0] {
@@ -624,16 +630,19 @@ LeabraProject .projects[0] {
     };
    };
 
+   ProgVar_List @.objs_vars = [2] {
+    ProgVar @[0] { };
+    ProgVar @[1] { };
+   };
+
    ProgType_List @.types = [0] {
    };
 
    ProgVar_List @.args = [0] {
    };
 
-   ProgVar_List @.vars = [3] {
+   ProgVar_List @.vars = [1] {
     ProgVar @[0] { };
-    ProgVar @[1] { };
-    ProgVar @[2] { };
    };
 
    Function_List @.functions = [0] {
@@ -1217,17 +1226,20 @@ LeabraProject .projects[0] {
     };
    };
 
+   ProgVar_List @.objs_vars = [3] {
+    ProgVar @[0] { };
+    ProgVar @[1] { };
+    ProgVar @[2] { };
+   };
+
    ProgType_List @.types = [0] {
    };
 
    ProgVar_List @.args = [0] {
    };
 
-   ProgVar_List @.vars = [4] {
+   ProgVar_List @.vars = [1] {
     ProgVar @[0] { };
-    ProgVar @[1] { };
-    ProgVar @[2] { };
-    ProgVar @[3] { };
    };
 
    Function_List @.functions = [0] {
@@ -3364,6 +3376,484 @@ LeabraProject .projects[0] {
     BlankLineEl @[244] { };
    };
   };
+  Program @[4] { 
+   UserDataItem_List @*(.user_data_) {
+    UserData_DocLink @[0] { };
+   };
+
+   ProgObjList @.objs = [2] {
+    DataTable @[0] { 
+     DataTableCols @.data = [3] {
+      String_Data @[0] { };
+      float_Data @[1] { };
+      float_Data @[2] { };
+     };
+
+     DataOpList @.last_sort_spec.ops = [0] {
+     };
+    };
+    DataTable @[1] { 
+     DataTableCols @.data = [3] {
+      String_Data @[0] { };
+      float_Data @[1] { };
+      float_Data @[2] { };
+     };
+
+     DataOpList @.last_sort_spec.ops = [0] {
+     };
+    };
+   };
+
+   ProgVar_List @.objs_vars = [2] {
+    ProgVar @[0] { };
+    ProgVar @[1] { };
+   };
+
+   ProgType_List @.types = [0] {
+   };
+
+   ProgVar_List @.args = [0] {
+   };
+
+   ProgVar_List @.vars = [2] {
+    ProgVar @[0] { };
+    ProgVar @[1] { };
+   };
+
+   Function_List @.functions = [0] {
+   };
+
+   ProgEl_List @.init_code = [0] {
+   };
+
+   ProgEl_List @.prog_code = [8] {
+    LocalVars @[0] { 
+     ProgVar_List @.local_vars = [0] {
+     };
+    };
+    AssignExpr @[1] { };
+    Comment @[2] { };
+    MethodCall @[3] { 
+     ProgArg_List @.meth_args = [1] {
+      ProgArg @[0] { };
+     };
+    };
+    If @[4] { 
+     ProgEl_List @.true_code = [1] {
+      MiscCall @[0] { 
+       ProgArg_List @.meth_args = [9] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+	ProgArg @[3] { };
+	ProgArg @[4] { };
+	ProgArg @[5] { };
+	ProgArg @[6] { };
+	ProgArg @[7] { };
+	ProgArg @[8] { };
+       };
+      };
+     };
+    };
+    DataAnalCall @[5] { 
+     ProgArg_List @.meth_args = [4] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+      ProgArg @[3] { };
+     };
+    };
+    If @[6] { 
+     ProgEl_List @.true_code = [1] {
+      AssignExpr @[0] { };
+     };
+    };
+    BlankLineEl @[7] { };
+   };
+  };
+  Program @[5] { 
+   UserDataItem_List @*(.user_data_) {
+    UserData_DocLink @[0] { };
+   };
+
+   ProgObjList @.objs = [3] {
+    DataTable @[0] { 
+     DataTableCols @.data = [2] {
+      String_Data @[0] { };
+      double_Data @[1] { };
+     };
+
+     DataOpList @.last_sort_spec.ops = [0] {
+     };
+    };
+    DataTable @[1] { 
+     DataTableCols @.data = [2] {
+      String_Data @[0] { };
+      double_Data @[1] { };
+     };
+
+     DataOpList @.last_sort_spec.ops = [0] {
+     };
+    };
+    DataTable @[2] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+      UserDataItem @[1] { };
+      UserDataItem @[2] { };
+     };
+
+     DataTableCols @.data = [1] {
+      float_Data @[0] { 
+       UserDataItem_List @*(.user_data_) {
+	UserDataItem @[0] { };
+       };
+      };
+     };
+
+     DataOpList @.last_sort_spec.ops = [0] {
+     };
+    };
+   };
+
+   ProgVar_List @.objs_vars = [3] {
+    ProgVar @[0] { };
+    ProgVar @[1] { };
+    ProgVar @[2] { };
+   };
+
+   ProgType_List @.types = [0] {
+   };
+
+   ProgVar_List @.args = [0] {
+   };
+
+   ProgVar_List @.vars = [2] {
+    ProgVar @[0] { };
+    ProgVar @[1] { };
+   };
+
+   Function_List @.functions = [0] {
+   };
+
+   ProgEl_List @.init_code = [0] {
+   };
+
+   ProgEl_List @.prog_code = [14] {
+    LocalVars @[0] { 
+     ProgVar_List @.local_vars = [2] {
+      ProgVar @[0] { };
+      ProgVar @[1] { };
+     };
+    };
+    AssignExpr @[1] { };
+    Comment @[2] { };
+    MethodCall @[3] { 
+     ProgArg_List @.meth_args = [1] {
+      ProgArg @[0] { };
+     };
+    };
+    If @[4] { 
+     ProgEl_List @.true_code = [1] {
+      MiscCall @[0] { 
+       ProgArg_List @.meth_args = [9] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+	ProgArg @[3] { };
+	ProgArg @[4] { };
+	ProgArg @[5] { };
+	ProgArg @[6] { };
+	ProgArg @[7] { };
+	ProgArg @[8] { };
+       };
+      };
+     };
+    };
+    DataAnalCall @[5] { 
+     ProgArg_List @.meth_args = [11] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+      ProgArg @[3] { };
+      ProgArg @[4] { };
+      ProgArg @[5] { };
+      ProgArg @[6] { };
+      ProgArg @[7] { };
+      ProgArg @[8] { };
+      ProgArg @[9] { };
+      ProgArg @[10] { };
+     };
+    };
+    ForLoop @[6] { 
+     ProgEl_List @.loop_code = [1] {
+      ForLoop @[0] { 
+       ProgEl_List @.loop_code = [2] {
+	If @[0] { 
+	 ProgEl_List @.true_code = [1] {
+	  If @[0] { 
+	   ProgEl_List @.true_code = [1] {
+	    AssignExpr @[0] { };
+	   };
+	  };
+	 };
+	};
+	Else @[1] { 
+	 ProgEl_List @.true_code = [1] {
+	  If @[0] { 
+	   ProgEl_List @.true_code = [1] {
+	    AssignExpr @[0] { };
+	   };
+	  };
+	 };
+	};
+       };
+      };
+     };
+    };
+    MethodCall @[7] { 
+     ProgArg_List @.meth_args = [1] {
+      ProgArg @[0] { };
+     };
+    };
+    If @[8] { 
+     ProgEl_List @.true_code = [1] {
+      MiscCall @[0] { 
+       ProgArg_List @.meth_args = [9] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+	ProgArg @[3] { };
+	ProgArg @[4] { };
+	ProgArg @[5] { };
+	ProgArg @[6] { };
+	ProgArg @[7] { };
+	ProgArg @[8] { };
+       };
+      };
+     };
+    };
+    MethodCall @[9] { 
+     ProgArg_List @.meth_args = [10] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+      ProgArg @[3] { };
+      ProgArg @[4] { };
+      ProgArg @[5] { };
+      ProgArg @[6] { };
+      ProgArg @[7] { };
+      ProgArg @[8] { };
+      ProgArg @[9] { };
+     };
+    };
+    If @[10] { 
+     ProgEl_List @.true_code = [1] {
+      MiscCall @[0] { 
+       ProgArg_List @.meth_args = [9] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+	ProgArg @[3] { };
+	ProgArg @[4] { };
+	ProgArg @[5] { };
+	ProgArg @[6] { };
+	ProgArg @[7] { };
+	ProgArg @[8] { };
+       };
+      };
+     };
+    };
+    DataAnalCall @[11] { 
+     ProgArg_List @.meth_args = [11] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+      ProgArg @[3] { };
+      ProgArg @[4] { };
+      ProgArg @[5] { };
+      ProgArg @[6] { };
+      ProgArg @[7] { };
+      ProgArg @[8] { };
+      ProgArg @[9] { };
+      ProgArg @[10] { };
+     };
+    };
+    ForLoop @[12] { 
+     ProgEl_List @.loop_code = [1] {
+      ForLoop @[0] { 
+       ProgEl_List @.loop_code = [1] {
+	If @[0] { 
+	 ProgEl_List @.true_code = [1] {
+	  AssignExpr @[0] { };
+	 };
+	};
+       };
+      };
+     };
+    };
+    BlankLineEl @[13] { };
+   };
+  };
+  Program @[6] { 
+   UserDataItem_List @*(.user_data_) {
+    UserData_DocLink @[0] { };
+   };
+
+   ProgObjList @.objs = [3] {
+    DataTable @[0] { 
+     DataTableCols @.data = [3] {
+      String_Data @[0] { };
+      float_Data @[1] { };
+      float_Data @[2] { };
+     };
+
+     DataOpList @.last_sort_spec.ops = [0] {
+     };
+    };
+    DataTable @[1] { 
+     DataTableCols @.data = [3] {
+      String_Data @[0] { };
+      float_Data @[1] { };
+      float_Data @[2] { };
+     };
+
+     DataOpList @.last_sort_spec.ops = [0] {
+     };
+    };
+    DataTable @[2] { 
+     DataTableCols @.data = [3] {
+      String_Data @[0] { };
+      float_Data @[1] { };
+      float_Data @[2] { };
+     };
+
+     DataOpList @.last_sort_spec.ops = [0] {
+     };
+    };
+   };
+
+   ProgVar_List @.objs_vars = [3] {
+    ProgVar @[0] { };
+    ProgVar @[1] { };
+    ProgVar @[2] { };
+   };
+
+   ProgType_List @.types = [0] {
+   };
+
+   ProgVar_List @.args = [0] {
+   };
+
+   ProgVar_List @.vars = [4] {
+    ProgVar @[0] { };
+    ProgVar @[1] { };
+    ProgVar @[2] { };
+    ProgVar @[3] { };
+   };
+
+   Function_List @.functions = [0] {
+   };
+
+   ProgEl_List @.init_code = [0] {
+   };
+
+   ProgEl_List @.prog_code = [12] {
+    LocalVars @[0] { 
+     ProgVar_List @.local_vars = [1] {
+      ProgVar @[0] { };
+     };
+    };
+    AssignExpr @[1] { };
+    Comment @[2] { };
+    MethodCall @[3] { 
+     ProgArg_List @.meth_args = [1] {
+      ProgArg @[0] { };
+     };
+    };
+    If @[4] { 
+     ProgEl_List @.true_code = [1] {
+      MiscCall @[0] { 
+       ProgArg_List @.meth_args = [9] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+	ProgArg @[3] { };
+	ProgArg @[4] { };
+	ProgArg @[5] { };
+	ProgArg @[6] { };
+	ProgArg @[7] { };
+	ProgArg @[8] { };
+       };
+      };
+     };
+    };
+    DataAnalCall @[5] { 
+     ProgArg_List @.meth_args = [9] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+      ProgArg @[3] { };
+      ProgArg @[4] { };
+      ProgArg @[5] { };
+      ProgArg @[6] { };
+      ProgArg @[7] { };
+      ProgArg @[8] { };
+     };
+    };
+    ForLoop @[6] { 
+     ProgEl_List @.loop_code = [1] {
+      If @[0] { 
+       ProgEl_List @.true_code = [2] {
+	AssignExpr @[0] { };
+	PrintExpr @[1] { };
+       };
+      };
+     };
+    };
+    MethodCall @[7] { 
+     ProgArg_List @.meth_args = [1] {
+      ProgArg @[0] { };
+     };
+    };
+    MethodCall @[8] { 
+     ProgArg_List @.meth_args = [10] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+      ProgArg @[3] { };
+      ProgArg @[4] { };
+      ProgArg @[5] { };
+      ProgArg @[6] { };
+      ProgArg @[7] { };
+      ProgArg @[8] { };
+      ProgArg @[9] { };
+     };
+    };
+    DataAnalCall @[9] { 
+     ProgArg_List @.meth_args = [9] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+      ProgArg @[3] { };
+      ProgArg @[4] { };
+      ProgArg @[5] { };
+      ProgArg @[6] { };
+      ProgArg @[7] { };
+      ProgArg @[8] { };
+     };
+    };
+    ForLoop @[10] { 
+     ProgEl_List @.loop_code = [1] {
+      If @[0] { 
+       ProgEl_List @.true_code = [1] {
+	AssignExpr @[0] { };
+       };
+      };
+     };
+    };
+    BlankLineEl @[11] { };
+   };
+  };
  };
 
  taViewer_List @.viewers = [1] {
@@ -3745,8 +4235,7 @@ LeabraProject .projects[0] {
      keygen 4 0=0;
      row_indexes {
       name="row_indexes";
-     [10] 0;1;2;3;4;5;6;7;8;9;
-     };
+     [3] 1;2;9;     };
      last_sort_spec {
       name="last_sort_spec";
       ops {
@@ -3758,18 +4247,8 @@ LeabraProject .projects[0] {
      row_with_hilite=-1;
     };
    };
-   types {
-    name="types";
-    el_typ=DynEnumType;
-    el_def=0;
-   };
-   args {
-    name="args";
-    el_typ=ProgVar;
-    el_def=0;
-   };
-   vars {
-    name="vars";
+   objs_vars {
+    name="objs_vars";
     el_typ=ProgVar;
     el_def=0;
     ProgVar @[0] {
@@ -3796,7 +4275,22 @@ LeabraProject .projects[0] {
      desc=;
      init_from=NULL;
     };
-    ProgVar @[2] {
+   };
+   types {
+    name="types";
+    el_typ=DynEnumType;
+    el_def=0;
+   };
+   args {
+    name="args";
+    el_typ=ProgVar;
+    el_def=0;
+   };
+   vars {
+    name="vars";
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @[0] {
      name="test_failed";
      var_type=T_Int;
      object_scope=NULL;
@@ -3843,7 +4337,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_copy->CopyFrom(data_table1)";
      result_var=NULL;
-     obj=.programs[0].vars[1]$$;
+     obj=.programs[0].objs_vars[1]$$;
      method=taBase::CopyFrom;
      meth_args {
       name="meth_args";
@@ -3997,7 +4491,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_copy->Filter(\"epoch\", Relation::GREATERTHAN, 3, , , , , , , )";
      result_var=NULL;
-     obj=$.programs[0].vars[1]$;
+     obj=$.programs[0].objs_vars[1]$;
      method=DataTable::Filter;
      meth_args {
       name="meth_args";
@@ -4247,7 +4741,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << 0)";
-       result_var=.programs[0].vars[2]$$;
+       result_var=.programs[0].vars[0]$$;
        expr {
 	expr="test_failed | (1 << 0)";
        };
@@ -4384,7 +4878,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << 0)";
-       result_var=$.programs[0].vars[2]$;
+       result_var=$.programs[0].vars[0]$;
        expr {
 	expr="test_failed | (1 << 0)";
        };
@@ -4521,7 +5015,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << 0)";
-       result_var=$.programs[0].vars[2]$;
+       result_var=$.programs[0].vars[0]$;
        expr {
 	expr="test_failed | (1 << 0)";
        };
@@ -4535,12 +5029,12 @@ LeabraProject .projects[0] {
      code_string="// Test Smallerthan";
     };
     MethodCall @[9] {
-     name="MethodCall_datatable1copyCopyFromdatatable1";
+     name="MethodCall_datatable1copyCopyFromdatatable1_1";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_copy->CopyFrom(data_table1)";
      result_var=NULL;
-     obj=$.programs[0].vars[1]$;
+     obj=$.programs[0].objs_vars[1]$;
      method=taBase::CopyFrom;
      meth_args {
       name="meth_args";
@@ -4562,7 +5056,7 @@ LeabraProject .projects[0] {
      meth_desc=" Copy from given object into this object (this is a safe interface to UnSafeCopy)";
     };
     If @[10] {
-     name="If_ifdatatable1copyrows10";
+     name="If_ifdatatable1copyrows10_1";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="if (data_table1_copy->rows != 10)";
@@ -4694,7 +5188,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_copy->Filter(\"epoch\", Relation::LESSTHAN, 3, , , , , , , )";
      result_var=NULL;
-     obj=$.programs[0].vars[1]$;
+     obj=$.programs[0].objs_vars[1]$;
      method=DataTable::Filter;
      meth_args {
       name="meth_args";
@@ -4944,7 +5438,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << 1)";
-       result_var=$.programs[0].vars[2]$;
+       result_var=$.programs[0].vars[0]$;
        expr {
 	expr="test_failed | (1 << 1)";
        };
@@ -5081,7 +5575,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << 1)";
-       result_var=$.programs[0].vars[2]$;
+       result_var=$.programs[0].vars[0]$;
        expr {
 	expr="test_failed | (1 << 1)";
        };
@@ -5218,7 +5712,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << 1)";
-       result_var=$.programs[0].vars[2]$;
+       result_var=$.programs[0].vars[0]$;
        expr {
 	expr="test_failed | (1 << 1)";
        };
@@ -5232,12 +5726,12 @@ LeabraProject .projects[0] {
      code_string="// Test Contains";
     };
     MethodCall @[16] {
-     name="MethodCall_datatable1copyCopyFromdatatable1_1";
+     name="MethodCall_datatable1copyCopyFromdatatable1";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_copy->CopyFrom(data_table1)";
      result_var=NULL;
-     obj=$.programs[0].vars[1]$;
+     obj=$.programs[0].objs_vars[1]$;
      method=taBase::CopyFrom;
      meth_args {
       name="meth_args";
@@ -5259,7 +5753,7 @@ LeabraProject .projects[0] {
      meth_desc=" Copy from given object into this object (this is a safe interface to UnSafeCopy)";
     };
     If @[17] {
-     name="If_ifdatatable1copyrows10_1";
+     name="If_ifdatatable1copyrows10";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="if (data_table1_copy->rows != 10)";
@@ -5391,7 +5885,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_copy->Filter(\"Name\", Relation::CONTAINS, \"World\", , , , , , , )";
      result_var=NULL;
-     obj=$.programs[0].vars[1]$;
+     obj=$.programs[0].objs_vars[1]$;
      method=DataTable::Filter;
      meth_args {
       name="meth_args";
@@ -5512,7 +6006,7 @@ LeabraProject .projects[0] {
      meth_desc=" Select table rows by specifying up to 3 conditions for which rows to retain in the table (hiding the ones that do not match). Note: you can instantly recover the original full set of rows, unsorted and unfiltered, by using ShowAllRows on the DataTable -- see that function for more details -- to be be able to undo just this Filter you would need to run Flatten first";
     };
     If @[19] {
-     name="If_ifdatatable1copyrows3";
+     name="If_ifdatatable1copyrows3_1";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="if (data_table1_copy->rows != 3)";
@@ -5641,7 +6135,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << 2)";
-       result_var=$.programs[0].vars[2]$;
+       result_var=$.programs[0].vars[0]$;
        expr {
 	expr="test_failed | (1 << 2)";
        };
@@ -5778,7 +6272,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << 2)";
-       result_var=$.programs[0].vars[2]$;
+       result_var=$.programs[0].vars[0]$;
        expr {
 	expr="test_failed | (1 << 2)";
        };
@@ -5915,7 +6409,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << 2)";
-       result_var=$.programs[0].vars[2]$;
+       result_var=$.programs[0].vars[0]$;
        expr {
 	expr="test_failed | (1 << 2)";
        };
@@ -6055,8 +6549,7 @@ LeabraProject .projects[0] {
        matrix_col_width=10;
        ar {
 	name="ar";
-       [10] "Hello";"Hello World";"Hello World again";"More Hellos";"Some name";"More names";"Even more names";"Another name";"Yest another name";"World";
-       };
+       [0]        };
       };
       int_Data @[1] {
        name="epoch";
@@ -6073,8 +6566,7 @@ LeabraProject .projects[0] {
        matrix_col_width=10;
        ar {
 	name="ar";
-       [10] 0;1;2;3;4;5;6;7;8;9;
-       };
+       [0]        };
       };
      };
      data_flags=SAVE_ROWS|AUTO_CALC;
@@ -6085,8 +6577,7 @@ LeabraProject .projects[0] {
      keygen 4 0=0;
      row_indexes {
       name="row_indexes";
-     [10] 0;1;2;3;4;5;6;7;8;9;
-     };
+     [0]      };
      last_sort_spec {
       name="last_sort_spec";
       ops {
@@ -6162,18 +6653,8 @@ LeabraProject .projects[0] {
      row_with_hilite=-1;
     };
    };
-   types {
-    name="types";
-    el_typ=DynEnumType;
-    el_def=0;
-   };
-   args {
-    name="args";
-    el_typ=ProgVar;
-    el_def=0;
-   };
-   vars {
-    name="vars";
+   objs_vars {
+    name="objs_vars";
     el_typ=ProgVar;
     el_def=0;
     ProgVar @[0] {
@@ -6189,6 +6670,18 @@ LeabraProject .projects[0] {
      init_from=NULL;
     };
     ProgVar @[1] {
+     name="dest_data_table1";
+     var_type=T_Object;
+     object_type=DataTable;
+     object_val=.programs[1].objs[1]$$;
+     object_scope=NULL;
+     objs_ptr=1;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @[2] {
      name="data_table1_copy";
      var_type=T_Object;
      object_type=DataTable;
@@ -6200,23 +6693,26 @@ LeabraProject .projects[0] {
      desc=;
      init_from=NULL;
     };
-    ProgVar @[2] {
+   };
+   types {
+    name="types";
+    el_typ=DynEnumType;
+    el_def=0;
+   };
+   args {
+    name="args";
+    el_typ=ProgVar;
+    el_def=0;
+   };
+   vars {
+    name="vars";
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @[0] {
      name="test_failed";
      var_type=T_Int;
      object_scope=NULL;
      flags=NULL_CHECK|USED|EDIT_VAL;
-     reference=0;
-     desc=;
-     init_from=NULL;
-    };
-    ProgVar @[3] {
-     name="dest_data_table1";
-     var_type=T_Object;
-     object_type=DataTable;
-     object_val=.programs[1].objs[1]$$;
-     object_scope=NULL;
-     objs_ptr=1;
-     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc=;
      init_from=NULL;
@@ -6259,7 +6755,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_copy->CopyFrom(data_table1)";
      result_var=NULL;
-     obj=.programs[1].vars[1]$$;
+     obj=.programs[1].objs_vars[2]$$;
      method=taBase::CopyFrom;
      meth_args {
       name="meth_args";
@@ -6286,7 +6782,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="dest_data_table1->ResetData()";
      result_var=NULL;
-     obj=.programs[1].vars[3]$$;
+     obj=.programs[1].objs_vars[1]$$;
      method=DataTable::ResetData;
      meth_args {
       name="meth_args";
@@ -6555,8 +7051,8 @@ LeabraProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="SelectRows:  src table = data_table1_copy  dest table = dest_data_table1  comb_op = AND";
-     src_data_var=$.programs[1].vars[1]$;
-     dest_data_var=$.programs[1].vars[3]$;
+     src_data_var=$.programs[1].objs_vars[2]$;
+     dest_data_var=$.programs[1].objs_vars[1]$;
      select_spec {
       name="select_spec";
       ops {
@@ -6578,7 +7074,7 @@ LeabraProject .projects[0] {
      };
     };
     If @[7] {
-     name="If_ifdatatable1copyrows10";
+     name="If_ifdatatable1copyrows10_1";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="if (data_table1_copy->rows != 10)";
@@ -6707,7 +7203,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << 0)";
-       result_var=.programs[1].vars[2]$$;
+       result_var=.programs[1].vars[0]$$;
        expr {
 	expr="test_failed | (1 << 0)";
        };
@@ -6844,7 +7340,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << 0)";
-       result_var=$.programs[1].vars[2]$;
+       result_var=$.programs[1].vars[0]$;
        expr {
 	expr="test_failed | (1 << 0)";
        };
@@ -6981,7 +7477,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << 0)";
-       result_var=$.programs[1].vars[2]$;
+       result_var=$.programs[1].vars[0]$;
        expr {
 	expr="test_failed | (1 << 0)";
        };
@@ -6995,12 +7491,12 @@ LeabraProject .projects[0] {
      code_string="// Test Smallerthan";
     };
     MethodCall @[11] {
-     name="MethodCall_datatable1copyCopyFromdatatable1";
+     name="MethodCall_datatable1copyCopyFromdatatable1_1";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_copy->CopyFrom(data_table1)";
      result_var=NULL;
-     obj=$.programs[1].vars[1]$;
+     obj=$.programs[1].objs_vars[2]$;
      method=taBase::CopyFrom;
      meth_args {
       name="meth_args";
@@ -7022,12 +7518,12 @@ LeabraProject .projects[0] {
      meth_desc=" Copy from given object into this object (this is a safe interface to UnSafeCopy)";
     };
     MethodCall @[12] {
-     name="MethodCall_destdatatable1ResetData";
+     name="MethodCall_destdatatable1ResetData_1";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="dest_data_table1->ResetData()";
      result_var=NULL;
-     obj=$.programs[1].vars[3]$;
+     obj=$.programs[1].objs_vars[1]$;
      method=DataTable::ResetData;
      meth_args {
       name="meth_args";
@@ -7038,7 +7534,7 @@ LeabraProject .projects[0] {
      meth_desc=" deletes all the data (rows), but keeps the column structure -- this cannot be undone!";
     };
     If @[13] {
-     name="If_ifdatatable1copyrows10_1";
+     name="If_ifdatatable1copyrows10";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="if (data_table1_copy->rows != 10)";
@@ -7165,7 +7661,7 @@ LeabraProject .projects[0] {
      };
     };
     If @[14] {
-     name="If_ifdestdatatable1rows0";
+     name="If_ifdestdatatable1rows0_1";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="if (dest_data_table1->rows != 0)";
@@ -7490,12 +7986,12 @@ LeabraProject .projects[0] {
      keygen 4 0=0;
      row_indexes {
       name="row_indexes";
-     [10] 0;1;2;3;4;5;6;7;8;9;
+     [10] 5;4;3;2;1;0;9;8;7;6;
      };
      last_sort_spec {
-      name="last_sort_spec";
+      name="DataSortSpec_65";
       ops {
-       name="ops";
+       name="DataOpList_1";
        el_typ=DataSortEl;
        el_def=0;
        DataSortEl @[0] {
@@ -7533,18 +8029,8 @@ LeabraProject .projects[0] {
      row_with_hilite=-1;
     };
    };
-   types {
-    name="types";
-    el_typ=DynEnumType;
-    el_def=0;
-   };
-   args {
-    name="args";
-    el_typ=ProgVar;
-    el_def=0;
-   };
-   vars {
-    name="vars";
+   objs_vars {
+    name="objs_vars";
     el_typ=ProgVar;
     el_def=0;
     ProgVar @[0] {
@@ -7571,7 +8057,22 @@ LeabraProject .projects[0] {
      desc=;
      init_from=NULL;
     };
-    ProgVar @[2] {
+   };
+   types {
+    name="types";
+    el_typ=DynEnumType;
+    el_def=0;
+   };
+   args {
+    name="args";
+    el_typ=ProgVar;
+    el_def=0;
+   };
+   vars {
+    name="vars";
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @[0] {
      name="test_failed";
      var_type=T_Int;
      object_scope=NULL;
@@ -7618,7 +8119,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_copy->CopyFrom(data_table1)";
      result_var=NULL;
-     obj=.programs[2].vars[1]$$;
+     obj=.programs[2].objs_vars[1]$$;
      method=taBase::CopyFrom;
      meth_args {
       name="meth_args";
@@ -7896,7 +8397,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << 0)";
-       result_var=.programs[2].vars[2]$$;
+       result_var=.programs[2].vars[0]$$;
        expr {
 	expr="test_failed | (1 << 0)";
        };
@@ -7909,7 +8410,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_copy->Sort(\"epoch\", false, , , , , , , , , , )";
      result_var=NULL;
-     obj=$.programs[2].vars[1]$;
+     obj=$.programs[2].objs_vars[1]$;
      method=DataTable::Sort;
      meth_args {
       name="meth_args";
@@ -8052,7 +8553,7 @@ LeabraProject .projects[0] {
      meth_desc=" sort table according to selected columns of data. Note: you can instantly recover the original full set of rows, unsorted and unfiltered, by using ShowAllRows on the DataTable -- see that function for more details -- to be be able to undo just this sort you would need to run Flatten first";
     };
     If @[6] {
-     name="If_ifdatatable1copyrows10";
+     name="If_ifdatatable1copyrows10_1";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="if (data_table1_copy->rows != 10)";
@@ -8181,7 +8682,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << 0)";
-       result_var=$.programs[2].vars[2]$;
+       result_var=$.programs[2].vars[0]$;
        expr {
 	expr="test_failed | (1 << 0)";
        };
@@ -8318,7 +8819,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << 0)";
-       result_var=$.programs[2].vars[2]$;
+       result_var=$.programs[2].vars[0]$;
        expr {
 	expr="test_failed | (1 << 0)";
        };
@@ -8455,7 +8956,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << 0)";
-       result_var=$.programs[2].vars[2]$;
+       result_var=$.programs[2].vars[0]$;
        expr {
 	expr="test_failed | (1 << 0)";
        };
@@ -8592,7 +9093,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << 0)";
-       result_var=$.programs[2].vars[2]$;
+       result_var=$.programs[2].vars[0]$;
        expr {
 	expr="test_failed | (1 << 0)";
        };
@@ -8729,7 +9230,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << 0)";
-       result_var=$.programs[2].vars[2]$;
+       result_var=$.programs[2].vars[0]$;
        expr {
 	expr="test_failed | (1 << 0)";
        };
@@ -8749,12 +9250,12 @@ LeabraProject .projects[0] {
      code_string="// Test sort string descending";
     };
     MethodCall @[13] {
-     name="MethodCall_datatable1copyCopyFromdatatable1";
+     name="MethodCall_datatable1copyCopyFromdatatable1_1";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_copy->CopyFrom(data_table1)";
      result_var=NULL;
-     obj=$.programs[2].vars[1]$;
+     obj=$.programs[2].objs_vars[1]$;
      method=taBase::CopyFrom;
      meth_args {
       name="meth_args";
@@ -8776,7 +9277,7 @@ LeabraProject .projects[0] {
      meth_desc=" Copy from given object into this object (this is a safe interface to UnSafeCopy)";
     };
     If @[14] {
-     name="If_ifdatatable1copyrows10_1";
+     name="If_ifdatatable1copyrows10";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="if (data_table1_copy->rows != 10)";
@@ -8903,7 +9404,7 @@ LeabraProject .projects[0] {
      };
     };
     If @[15] {
-     name="If_ifdatatable1copyepoch00";
+     name="If_ifdatatable1copyepoch00_1";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="if (data_table1_copy[\"epoch\"][0] != 0)";
@@ -9032,7 +9533,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << 0)";
-       result_var=$.programs[2].vars[2]$;
+       result_var=$.programs[2].vars[0]$;
        expr {
 	expr="test_failed | (1 << 0)";
        };
@@ -9045,7 +9546,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_copy->Sort(\"Name\", false, , , , , , , , , , )";
      result_var=NULL;
-     obj=$.programs[2].vars[1]$;
+     obj=$.programs[2].objs_vars[1]$;
      method=DataTable::Sort;
      meth_args {
       name="meth_args";
@@ -9317,7 +9818,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << 0)";
-       result_var=$.programs[2].vars[2]$;
+       result_var=$.programs[2].vars[0]$;
        expr {
 	expr="test_failed | (1 << 0)";
        };
@@ -9454,7 +9955,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << 0)";
-       result_var=$.programs[2].vars[2]$;
+       result_var=$.programs[2].vars[0]$;
        expr {
 	expr="test_failed | (1 << 0)";
        };
@@ -9591,7 +10092,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << 0)";
-       result_var=$.programs[2].vars[2]$;
+       result_var=$.programs[2].vars[0]$;
        expr {
 	expr="test_failed | (1 << 0)";
        };
@@ -9728,7 +10229,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << 0)";
-       result_var=$.programs[2].vars[2]$;
+       result_var=$.programs[2].vars[0]$;
        expr {
 	expr="test_failed | (1 << 0)";
        };
@@ -9865,7 +10366,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << 0)";
-       result_var=$.programs[2].vars[2]$;
+       result_var=$.programs[2].vars[0]$;
        expr {
 	expr="test_failed | (1 << 0)";
        };
@@ -9885,12 +10386,12 @@ LeabraProject .projects[0] {
      code_string="// Test int, int descending";
     };
     MethodCall @[24] {
-     name="MethodCall_datatable1copyCopyFromdatatable1_1";
+     name="MethodCall_datatable1copyCopyFromdatatable1";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_copy->CopyFrom(data_table1)";
      result_var=NULL;
-     obj=$.programs[2].vars[1]$;
+     obj=$.programs[2].objs_vars[1]$;
      method=taBase::CopyFrom;
      meth_args {
       name="meth_args";
@@ -10039,7 +10540,7 @@ LeabraProject .projects[0] {
      };
     };
     If @[26] {
-     name="If_ifdatatable1copyepoch00_1";
+     name="If_ifdatatable1copyepoch00";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="if (data_table1_copy[\"epoch\"][0] != 0)";
@@ -10168,7 +10669,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << 0)";
-       result_var=$.programs[2].vars[2]$;
+       result_var=$.programs[2].vars[0]$;
        expr {
 	expr="test_failed | (1 << 0)";
        };
@@ -10181,7 +10682,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_copy->Sort(\"batch\", true, \"epoch\", false, , , , , , , , )";
      result_var=NULL;
-     obj=$.programs[2].vars[1]$;
+     obj=$.programs[2].objs_vars[1]$;
      method=DataTable::Sort;
      meth_args {
       name="meth_args";
@@ -10453,7 +10954,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << 0)";
-       result_var=$.programs[2].vars[2]$;
+       result_var=$.programs[2].vars[0]$;
        expr {
 	expr="test_failed | (1 << 0)";
        };
@@ -10590,7 +11091,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << 0)";
-       result_var=$.programs[2].vars[2]$;
+       result_var=$.programs[2].vars[0]$;
        expr {
 	expr="test_failed | (1 << 0)";
        };
@@ -10727,7 +11228,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << 0)";
-       result_var=$.programs[2].vars[2]$;
+       result_var=$.programs[2].vars[0]$;
        expr {
 	expr="test_failed | (1 << 0)";
        };
@@ -10864,7 +11365,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << 0)";
-       result_var=$.programs[2].vars[2]$;
+       result_var=$.programs[2].vars[0]$;
        expr {
 	expr="test_failed | (1 << 0)";
        };
@@ -11001,7 +11502,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << 0)";
-       result_var=$.programs[2].vars[2]$;
+       result_var=$.programs[2].vars[0]$;
        expr {
 	expr="test_failed | (1 << 0)";
        };
@@ -11138,7 +11639,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << 0)";
-       result_var=$.programs[2].vars[2]$;
+       result_var=$.programs[2].vars[0]$;
        expr {
 	expr="test_failed | (1 << 0)";
        };
@@ -11275,7 +11776,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << 0)";
-       result_var=$.programs[2].vars[2]$;
+       result_var=$.programs[2].vars[0]$;
        expr {
 	expr="test_failed | (1 << 0)";
        };
@@ -11412,7 +11913,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << 0)";
-       result_var=$.programs[2].vars[2]$;
+       result_var=$.programs[2].vars[0]$;
        expr {
 	expr="test_failed | (1 << 0)";
        };
@@ -11549,7 +12050,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << 0)";
-       result_var=$.programs[2].vars[2]$;
+       result_var=$.programs[2].vars[0]$;
        expr {
 	expr="test_failed | (1 << 0)";
        };
@@ -11557,7 +12058,7 @@ LeabraProject .projects[0] {
      };
     };
     If @[37] {
-     name="If_ifdatatable1copy_Yestanothername";
+     name="If_ifdatatable1copy_Yestanothername_1";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="if (data_table1_copy[\"Name\"][7] != \"Yest another name\")";
@@ -11686,7 +12187,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << 0)";
-       result_var=$.programs[2].vars[2]$;
+       result_var=$.programs[2].vars[0]$;
        expr {
 	expr="test_failed | (1 << 0)";
        };
@@ -11911,18 +12412,8 @@ LeabraProject .projects[0] {
      row_with_hilite=-1;
     };
    };
-   types {
-    name="types";
-    el_typ=DynEnumType;
-    el_def=0;
-   };
-   args {
-    name="args";
-    el_typ=ProgVar;
-    el_def=0;
-   };
-   vars {
-    name="vars";
+   objs_vars {
+    name="objs_vars";
     el_typ=ProgVar;
     el_def=0;
     ProgVar @[0] {
@@ -11961,7 +12452,22 @@ LeabraProject .projects[0] {
      desc=;
      init_from=NULL;
     };
-    ProgVar @[3] {
+   };
+   types {
+    name="types";
+    el_typ=DynEnumType;
+    el_def=0;
+   };
+   args {
+    name="args";
+    el_typ=ProgVar;
+    el_def=0;
+   };
+   vars {
+    name="vars";
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @[0] {
      name="test_failed";
      var_type=T_Int;
      object_scope=NULL;
@@ -12028,7 +12534,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_copy->CopyFrom(data_table1)";
      result_var=NULL;
-     obj=.programs[3].vars[1]$$;
+     obj=.programs[3].objs_vars[1]$$;
      method=taBase::CopyFrom;
      meth_args {
       name="meth_args";
@@ -12055,7 +12561,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_dst->Reset()";
      result_var=NULL;
-     obj=.programs[3].vars[2]$$;
+     obj=.programs[3].objs_vars[2]$$;
      method=DataTable::Reset;
      meth_args {
       name="meth_args";
@@ -12195,7 +12701,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=.programs[3].vars[3]$$;
+       result_var=.programs[3].vars[0]$$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -12332,7 +12838,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -12469,7 +12975,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -12481,8 +12987,8 @@ LeabraProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Group from:  src table = data_table1_copy dest table = data_table1_dst";
-     src_data_var=$.programs[3].vars[1]$;
-     dest_data_var=$.programs[3].vars[2]$;
+     src_data_var=$.programs[3].objs_vars[1]$;
+     dest_data_var=$.programs[3].objs_vars[2]$;
      group_spec {
       name="group_spec";
       ops {
@@ -12628,7 +13134,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -12765,7 +13271,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -12902,7 +13408,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -13039,7 +13545,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << 0)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << 0)";
        };
@@ -13074,7 +13580,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_copy->CopyFrom(data_table1)";
      result_var=NULL;
-     obj=$.programs[3].vars[1]$;
+     obj=$.programs[3].objs_vars[1]$;
      method=taBase::CopyFrom;
      meth_args {
       name="meth_args";
@@ -13101,7 +13607,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_dst->Reset()";
      result_var=NULL;
-     obj=$.programs[3].vars[2]$;
+     obj=$.programs[3].objs_vars[2]$;
      method=DataTable::Reset;
      meth_args {
       name="meth_args";
@@ -13116,8 +13622,8 @@ LeabraProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Group from:  src table = data_table1_copy dest table = data_table1_dst";
-     src_data_var=$.programs[3].vars[1]$;
-     dest_data_var=$.programs[3].vars[2]$;
+     src_data_var=$.programs[3].objs_vars[1]$;
+     dest_data_var=$.programs[3].objs_vars[2]$;
      group_spec {
       name="group_spec";
       ops {
@@ -13268,7 +13774,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -13405,7 +13911,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -13542,7 +14048,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -13679,7 +14185,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -13816,7 +14322,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -13857,7 +14363,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_copy->CopyFrom(data_table1)";
      result_var=NULL;
-     obj=$.programs[3].vars[1]$;
+     obj=$.programs[3].objs_vars[1]$;
      method=taBase::CopyFrom;
      meth_args {
       name="meth_args";
@@ -13884,7 +14390,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_dst->Reset()";
      result_var=NULL;
-     obj=$.programs[3].vars[2]$;
+     obj=$.programs[3].objs_vars[2]$;
      method=DataTable::Reset;
      meth_args {
       name="meth_args";
@@ -13899,8 +14405,8 @@ LeabraProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Group from:  src table = data_table1_copy dest table = data_table1_dst";
-     src_data_var=$.programs[3].vars[1]$;
-     dest_data_var=$.programs[3].vars[2]$;
+     src_data_var=$.programs[3].objs_vars[1]$;
+     dest_data_var=$.programs[3].objs_vars[2]$;
      group_spec {
       name="group_spec";
       ops {
@@ -14051,7 +14557,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -14188,7 +14694,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -14325,7 +14831,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -14462,7 +14968,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -14599,7 +15105,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -14646,7 +15152,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_copy->CopyFrom(data_table1)";
      result_var=NULL;
-     obj=$.programs[3].vars[1]$;
+     obj=$.programs[3].objs_vars[1]$;
      method=taBase::CopyFrom;
      meth_args {
       name="meth_args";
@@ -14673,7 +15179,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_dst->Reset()";
      result_var=NULL;
-     obj=$.programs[3].vars[2]$;
+     obj=$.programs[3].objs_vars[2]$;
      method=DataTable::Reset;
      meth_args {
       name="meth_args";
@@ -14688,8 +15194,8 @@ LeabraProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Group from:  src table = data_table1_copy dest table = data_table1_dst";
-     src_data_var=$.programs[3].vars[1]$;
-     dest_data_var=$.programs[3].vars[2]$;
+     src_data_var=$.programs[3].objs_vars[1]$;
+     dest_data_var=$.programs[3].objs_vars[2]$;
      group_spec {
       name="group_spec";
       ops {
@@ -14840,7 +15346,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -14977,7 +15483,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -15114,7 +15620,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -15251,7 +15757,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -15388,7 +15894,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -15435,7 +15941,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_copy->CopyFrom(data_table1)";
      result_var=NULL;
-     obj=$.programs[3].vars[1]$;
+     obj=$.programs[3].objs_vars[1]$;
      method=taBase::CopyFrom;
      meth_args {
       name="meth_args";
@@ -15462,7 +15968,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_dst->Reset()";
      result_var=NULL;
-     obj=$.programs[3].vars[2]$;
+     obj=$.programs[3].objs_vars[2]$;
      method=DataTable::Reset;
      meth_args {
       name="meth_args";
@@ -15477,8 +15983,8 @@ LeabraProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Group from:  src table = data_table1_copy dest table = data_table1_dst";
-     src_data_var=$.programs[3].vars[1]$;
-     dest_data_var=$.programs[3].vars[2]$;
+     src_data_var=$.programs[3].objs_vars[1]$;
+     dest_data_var=$.programs[3].objs_vars[2]$;
      group_spec {
       name="group_spec";
       ops {
@@ -15629,7 +16135,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -15766,7 +16272,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -15903,7 +16409,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -16040,7 +16546,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -16177,7 +16683,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -16224,7 +16730,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_copy->CopyFrom(data_table1)";
      result_var=NULL;
-     obj=$.programs[3].vars[1]$;
+     obj=$.programs[3].objs_vars[1]$;
      method=taBase::CopyFrom;
      meth_args {
       name="meth_args";
@@ -16251,7 +16757,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_dst->Reset()";
      result_var=NULL;
-     obj=$.programs[3].vars[2]$;
+     obj=$.programs[3].objs_vars[2]$;
      method=DataTable::Reset;
      meth_args {
       name="meth_args";
@@ -16266,8 +16772,8 @@ LeabraProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Group from:  src table = data_table1_copy dest table = data_table1_dst";
-     src_data_var=$.programs[3].vars[1]$;
-     dest_data_var=$.programs[3].vars[2]$;
+     src_data_var=$.programs[3].objs_vars[1]$;
+     dest_data_var=$.programs[3].objs_vars[2]$;
      group_spec {
       name="group_spec";
       ops {
@@ -16418,7 +16924,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -16555,7 +17061,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -16692,7 +17198,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -16829,7 +17335,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -16966,7 +17472,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -17013,7 +17519,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_copy->CopyFrom(data_table1)";
      result_var=NULL;
-     obj=$.programs[3].vars[1]$;
+     obj=$.programs[3].objs_vars[1]$;
      method=taBase::CopyFrom;
      meth_args {
       name="meth_args";
@@ -17040,7 +17546,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_dst->Reset()";
      result_var=NULL;
-     obj=$.programs[3].vars[2]$;
+     obj=$.programs[3].objs_vars[2]$;
      method=DataTable::Reset;
      meth_args {
       name="meth_args";
@@ -17055,8 +17561,8 @@ LeabraProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Group from:  src table = data_table1_copy dest table = data_table1_dst";
-     src_data_var=$.programs[3].vars[1]$;
-     dest_data_var=$.programs[3].vars[2]$;
+     src_data_var=$.programs[3].objs_vars[1]$;
+     dest_data_var=$.programs[3].objs_vars[2]$;
      group_spec {
       name="group_spec";
       ops {
@@ -17207,7 +17713,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -17344,7 +17850,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -17481,7 +17987,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -17618,7 +18124,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -17755,7 +18261,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -17814,7 +18320,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_copy->CopyFrom(data_table1)";
      result_var=NULL;
-     obj=$.programs[3].vars[1]$;
+     obj=$.programs[3].objs_vars[1]$;
      method=taBase::CopyFrom;
      meth_args {
       name="meth_args";
@@ -17841,7 +18347,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_dst->Reset()";
      result_var=NULL;
-     obj=$.programs[3].vars[2]$;
+     obj=$.programs[3].objs_vars[2]$;
      method=DataTable::Reset;
      meth_args {
       name="meth_args";
@@ -17856,8 +18362,8 @@ LeabraProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Group from:  src table = data_table1_copy dest table = data_table1_dst";
-     src_data_var=$.programs[3].vars[1]$;
-     dest_data_var=$.programs[3].vars[2]$;
+     src_data_var=$.programs[3].objs_vars[1]$;
+     dest_data_var=$.programs[3].objs_vars[2]$;
      group_spec {
       name="group_spec";
       ops {
@@ -18008,7 +18514,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -18145,7 +18651,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -18282,7 +18788,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -18419,7 +18925,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -18556,7 +19062,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -18609,7 +19115,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_copy->CopyFrom(data_table1)";
      result_var=NULL;
-     obj=$.programs[3].vars[1]$;
+     obj=$.programs[3].objs_vars[1]$;
      method=taBase::CopyFrom;
      meth_args {
       name="meth_args";
@@ -18636,7 +19142,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_dst->Reset()";
      result_var=NULL;
-     obj=$.programs[3].vars[2]$;
+     obj=$.programs[3].objs_vars[2]$;
      method=DataTable::Reset;
      meth_args {
       name="meth_args";
@@ -18651,8 +19157,8 @@ LeabraProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Group from:  src table = data_table1_copy dest table = data_table1_dst";
-     src_data_var=$.programs[3].vars[1]$;
-     dest_data_var=$.programs[3].vars[2]$;
+     src_data_var=$.programs[3].objs_vars[1]$;
+     dest_data_var=$.programs[3].objs_vars[2]$;
      group_spec {
       name="group_spec";
       ops {
@@ -18803,7 +19309,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -18940,7 +19446,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -19077,7 +19583,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -19214,7 +19720,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -19351,7 +19857,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -19398,7 +19904,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_copy->CopyFrom(data_table1)";
      result_var=NULL;
-     obj=$.programs[3].vars[1]$;
+     obj=$.programs[3].objs_vars[1]$;
      method=taBase::CopyFrom;
      meth_args {
       name="meth_args";
@@ -19425,7 +19931,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_dst->Reset()";
      result_var=NULL;
-     obj=$.programs[3].vars[2]$;
+     obj=$.programs[3].objs_vars[2]$;
      method=DataTable::Reset;
      meth_args {
       name="meth_args";
@@ -19440,8 +19946,8 @@ LeabraProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Group from:  src table = data_table1_copy dest table = data_table1_dst";
-     src_data_var=$.programs[3].vars[1]$;
-     dest_data_var=$.programs[3].vars[2]$;
+     src_data_var=$.programs[3].objs_vars[1]$;
+     dest_data_var=$.programs[3].objs_vars[2]$;
      group_spec {
       name="group_spec";
       ops {
@@ -19592,7 +20098,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -19729,7 +20235,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -19866,7 +20372,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -20003,7 +20509,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -20140,7 +20646,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -20187,7 +20693,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_copy->CopyFrom(data_table1)";
      result_var=NULL;
-     obj=$.programs[3].vars[1]$;
+     obj=$.programs[3].objs_vars[1]$;
      method=taBase::CopyFrom;
      meth_args {
       name="meth_args";
@@ -20214,7 +20720,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_dst->Reset()";
      result_var=NULL;
-     obj=$.programs[3].vars[2]$;
+     obj=$.programs[3].objs_vars[2]$;
      method=DataTable::Reset;
      meth_args {
       name="meth_args";
@@ -20229,8 +20735,8 @@ LeabraProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Group from:  src table = data_table1_copy dest table = data_table1_dst";
-     src_data_var=$.programs[3].vars[1]$;
-     dest_data_var=$.programs[3].vars[2]$;
+     src_data_var=$.programs[3].objs_vars[1]$;
+     dest_data_var=$.programs[3].objs_vars[2]$;
      group_spec {
       name="group_spec";
       ops {
@@ -20381,7 +20887,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -20518,7 +21024,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -20655,7 +21161,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -20792,7 +21298,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -20929,7 +21435,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -20976,7 +21482,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_copy->CopyFrom(data_table1)";
      result_var=NULL;
-     obj=$.programs[3].vars[1]$;
+     obj=$.programs[3].objs_vars[1]$;
      method=taBase::CopyFrom;
      meth_args {
       name="meth_args";
@@ -21003,7 +21509,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_dst->Reset()";
      result_var=NULL;
-     obj=$.programs[3].vars[2]$;
+     obj=$.programs[3].objs_vars[2]$;
      method=DataTable::Reset;
      meth_args {
       name="meth_args";
@@ -21018,8 +21524,8 @@ LeabraProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Group from:  src table = data_table1_copy dest table = data_table1_dst";
-     src_data_var=$.programs[3].vars[1]$;
-     dest_data_var=$.programs[3].vars[2]$;
+     src_data_var=$.programs[3].objs_vars[1]$;
+     dest_data_var=$.programs[3].objs_vars[2]$;
      group_spec {
       name="group_spec";
       ops {
@@ -21170,7 +21676,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -21307,7 +21813,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -21444,7 +21950,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -21581,7 +22087,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -21718,7 +22224,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -21765,7 +22271,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_copy->CopyFrom(data_table1)";
      result_var=NULL;
-     obj=$.programs[3].vars[1]$;
+     obj=$.programs[3].objs_vars[1]$;
      method=taBase::CopyFrom;
      meth_args {
       name="meth_args";
@@ -21792,7 +22298,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_dst->Reset()";
      result_var=NULL;
-     obj=$.programs[3].vars[2]$;
+     obj=$.programs[3].objs_vars[2]$;
      method=DataTable::Reset;
      meth_args {
       name="meth_args";
@@ -21807,8 +22313,8 @@ LeabraProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Group from:  src table = data_table1_copy dest table = data_table1_dst";
-     src_data_var=$.programs[3].vars[1]$;
-     dest_data_var=$.programs[3].vars[2]$;
+     src_data_var=$.programs[3].objs_vars[1]$;
+     dest_data_var=$.programs[3].objs_vars[2]$;
      group_spec {
       name="group_spec";
       ops {
@@ -21959,7 +22465,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -22096,7 +22602,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -22233,7 +22739,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -22370,7 +22876,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -22507,7 +23013,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -22554,7 +23060,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_copy->CopyFrom(data_table1)";
      result_var=NULL;
-     obj=$.programs[3].vars[1]$;
+     obj=$.programs[3].objs_vars[1]$;
      method=taBase::CopyFrom;
      meth_args {
       name="meth_args";
@@ -22581,7 +23087,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_dst->Reset()";
      result_var=NULL;
-     obj=$.programs[3].vars[2]$;
+     obj=$.programs[3].objs_vars[2]$;
      method=DataTable::Reset;
      meth_args {
       name="meth_args";
@@ -22596,8 +23102,8 @@ LeabraProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Group from:  src table = data_table1_copy dest table = data_table1_dst";
-     src_data_var=$.programs[3].vars[1]$;
-     dest_data_var=$.programs[3].vars[2]$;
+     src_data_var=$.programs[3].objs_vars[1]$;
+     dest_data_var=$.programs[3].objs_vars[2]$;
      group_spec {
       name="group_spec";
       ops {
@@ -22748,7 +23254,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -22885,7 +23391,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -23022,7 +23528,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -23159,7 +23665,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -23296,7 +23802,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -23343,7 +23849,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_copy->CopyFrom(data_table1)";
      result_var=NULL;
-     obj=$.programs[3].vars[1]$;
+     obj=$.programs[3].objs_vars[1]$;
      method=taBase::CopyFrom;
      meth_args {
       name="meth_args";
@@ -23370,7 +23876,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_dst->Reset()";
      result_var=NULL;
-     obj=$.programs[3].vars[2]$;
+     obj=$.programs[3].objs_vars[2]$;
      method=DataTable::Reset;
      meth_args {
       name="meth_args";
@@ -23385,8 +23891,8 @@ LeabraProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Group from:  src table = data_table1_copy dest table = data_table1_dst";
-     src_data_var=$.programs[3].vars[1]$;
-     dest_data_var=$.programs[3].vars[2]$;
+     src_data_var=$.programs[3].objs_vars[1]$;
+     dest_data_var=$.programs[3].objs_vars[2]$;
      group_spec {
       name="group_spec";
       ops {
@@ -23537,7 +24043,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -23674,7 +24180,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -23811,7 +24317,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -23948,7 +24454,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -24085,7 +24591,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -24126,7 +24632,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_copy->CopyFrom(data_table1)";
      result_var=NULL;
-     obj=$.programs[3].vars[1]$;
+     obj=$.programs[3].objs_vars[1]$;
      method=taBase::CopyFrom;
      meth_args {
       name="meth_args";
@@ -24153,7 +24659,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_dst->Reset()";
      result_var=NULL;
-     obj=$.programs[3].vars[2]$;
+     obj=$.programs[3].objs_vars[2]$;
      method=DataTable::Reset;
      meth_args {
       name="meth_args";
@@ -24168,8 +24674,8 @@ LeabraProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Group from:  src table = data_table1_copy dest table = data_table1_dst";
-     src_data_var=$.programs[3].vars[1]$;
-     dest_data_var=$.programs[3].vars[2]$;
+     src_data_var=$.programs[3].objs_vars[1]$;
+     dest_data_var=$.programs[3].objs_vars[2]$;
      group_spec {
       name="group_spec";
       ops {
@@ -24320,7 +24826,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -24457,7 +24963,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -24594,7 +25100,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -24731,7 +25237,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -24868,7 +25374,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -24909,7 +25415,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_copy->CopyFrom(data_table1)";
      result_var=NULL;
-     obj=$.programs[3].vars[1]$;
+     obj=$.programs[3].objs_vars[1]$;
      method=taBase::CopyFrom;
      meth_args {
       name="meth_args";
@@ -24936,7 +25442,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_dst->Reset()";
      result_var=NULL;
-     obj=$.programs[3].vars[2]$;
+     obj=$.programs[3].objs_vars[2]$;
      method=DataTable::Reset;
      meth_args {
       name="meth_args";
@@ -24951,8 +25457,8 @@ LeabraProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Group from:  src table = data_table1_copy dest table = data_table1_dst";
-     src_data_var=$.programs[3].vars[1]$;
-     dest_data_var=$.programs[3].vars[2]$;
+     src_data_var=$.programs[3].objs_vars[1]$;
+     dest_data_var=$.programs[3].objs_vars[2]$;
      group_spec {
       name="group_spec";
       ops {
@@ -25103,7 +25609,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -25240,7 +25746,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -25377,7 +25883,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -25514,7 +26020,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -25651,7 +26157,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -25692,7 +26198,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_copy->CopyFrom(data_table1)";
      result_var=NULL;
-     obj=$.programs[3].vars[1]$;
+     obj=$.programs[3].objs_vars[1]$;
      method=taBase::CopyFrom;
      meth_args {
       name="meth_args";
@@ -25719,7 +26225,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_dst->Reset()";
      result_var=NULL;
-     obj=$.programs[3].vars[2]$;
+     obj=$.programs[3].objs_vars[2]$;
      method=DataTable::Reset;
      meth_args {
       name="meth_args";
@@ -25734,8 +26240,8 @@ LeabraProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Group from:  src table = data_table1_copy dest table = data_table1_dst";
-     src_data_var=$.programs[3].vars[1]$;
-     dest_data_var=$.programs[3].vars[2]$;
+     src_data_var=$.programs[3].objs_vars[1]$;
+     dest_data_var=$.programs[3].objs_vars[2]$;
      group_spec {
       name="group_spec";
       ops {
@@ -25886,7 +26392,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -26023,7 +26529,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -26160,7 +26666,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -26297,7 +26803,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -26434,7 +26940,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -26469,7 +26975,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_copy->CopyFrom(data_table1)";
      result_var=NULL;
-     obj=$.programs[3].vars[1]$;
+     obj=$.programs[3].objs_vars[1]$;
      method=taBase::CopyFrom;
      meth_args {
       name="meth_args";
@@ -26496,7 +27002,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_dst->Reset()";
      result_var=NULL;
-     obj=$.programs[3].vars[2]$;
+     obj=$.programs[3].objs_vars[2]$;
      method=DataTable::Reset;
      meth_args {
       name="meth_args";
@@ -26636,7 +27142,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -26648,8 +27154,8 @@ LeabraProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Group from:  src table = data_table1_copy dest table = data_table1_copy";
-     src_data_var=$.programs[3].vars[1]$;
-     dest_data_var=$.programs[3].vars[1]$;
+     src_data_var=$.programs[3].objs_vars[1]$;
+     dest_data_var=$.programs[3].objs_vars[1]$;
      group_spec {
       name="group_spec";
       ops {
@@ -26800,7 +27306,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -26937,7 +27443,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -27074,7 +27580,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -27211,7 +27717,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.programs[3].vars[3]$;
+       result_var=$.programs[3].vars[0]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -27251,6 +27757,3208 @@ LeabraProject .projects[0] {
     html_text=;
    };
   };
+  Program @[4] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserData_DocLink;
+    el_def=0;
+    UserData_DocLink @[0] {name="DocLink": doc=$.programs[0].doc$: };
+   };
+   name="RegressionLinear";
+   short_nm="RgrLnr";
+   tags=;
+   desc=;
+   version {
+    major=0;
+    minor=0;
+    step=0;
+   };
+   author="Kai Krueger";
+   email="kai.krueger@colorado.edu";
+   flags=NO_STOP_STEP;
+   stop_step_cond {
+    expr=;
+   };
+   objs {
+    name="objs";
+    el_typ=DataTable;
+    el_def=0;
+    DataTable @[0] {
+     name="DataTable1";
+     desc=;
+     data {
+      name="data";
+      el_typ=String_Data;
+      el_def=0;
+      String_Data @[0] {
+       name="Name";
+       col_flags=SAVE_DATA|AUTO_WIDTH;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name="dim_names";
+       [0]        };
+       width=16;
+       matrix_col_width=10;
+       ar {
+	name="ar";
+       [10] "Hello";"Hello World";"Hello World again";"More Hellos";"Some name";"More names";"Even more names";"Another name";"Yest another name";"World";
+       };
+      };
+      float_Data @[1] {
+       name="x";
+       col_flags=SAVE_DATA|AUTO_WIDTH;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name="dim_names";
+       [0]        };
+       width=8;
+       matrix_col_width=10;
+       ar {
+	name="ar";
+       [10] 0;1;2;3;4;5;6;7;8;9;
+       };
+      };
+      float_Data @[2] {
+       name="y";
+       col_flags=SAVE_DATA|AUTO_WIDTH;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name="dim_names";
+       [0]        };
+       width=8;
+       matrix_col_width=10;
+       ar {
+	name="ar";
+       [10] 0;1;2;3;4;5;6;7;8;9;
+       };
+      };
+     };
+     data_flags=SAVE_ROWS|AUTO_CALC;
+     auto_load=NO_AUTO_LOAD;
+     auto_load_file=;
+     row_height=1;
+     max_col_width=50;
+     keygen 4 0=0;
+     row_indexes {
+      name="row_indexes";
+     [10] 0;1;2;3;4;5;6;7;8;9;
+     };
+     last_sort_spec {
+      name="last_sort_spec";
+      ops {
+       name="ops";
+       el_typ=DataSortEl;
+       el_def=0;
+      };
+     };
+     row_with_hilite=-1;
+    };
+    DataTable @[1] {
+     name="DataTable1_copy";
+     desc=;
+     data {
+      name="data";
+      el_typ=String_Data;
+      el_def=0;
+      String_Data @[0] {
+       name="Name";
+       col_flags=SAVE_DATA|AUTO_WIDTH;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name="dim_names";
+       [0]        };
+       width=16;
+       matrix_col_width=10;
+       ar {
+	name="ar";
+       [10] "Hello";"Hello World";"Hello World again";"More Hellos";"Some name";"More names";"Even more names";"Another name";"Yest another name";"World";
+       };
+      };
+      float_Data @[1] {
+       name="x";
+       col_flags=SAVE_DATA|AUTO_WIDTH;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name="dim_names";
+       [0]        };
+       width=8;
+       matrix_col_width=10;
+       ar {
+	name="ar";
+       [10] 0;1;2;3;4;5;6;7;8;9;
+       };
+      };
+      float_Data @[2] {
+       name="y";
+       col_flags=SAVE_DATA|AUTO_WIDTH;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name="dim_names";
+       [0]        };
+       width=8;
+       matrix_col_width=10;
+       ar {
+	name="ar";
+       [10] 0;1;2;3;4;5;6;7;8;9;
+       };
+      };
+     };
+     data_flags=SAVE_ROWS|AUTO_CALC;
+     auto_load=NO_AUTO_LOAD;
+     auto_load_file=;
+     row_height=1;
+     max_col_width=50;
+     keygen 4 0=0;
+     row_indexes {
+      name="row_indexes";
+     [10] 0;1;2;3;4;5;6;7;8;9;
+     };
+     last_sort_spec {
+      name="last_sort_spec";
+      ops {
+       name="ops";
+       el_typ=DataSortEl;
+       el_def=0;
+      };
+     };
+     row_with_hilite=-1;
+    };
+   };
+   objs_vars {
+    name="objs_vars";
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @[0] {
+     name="data_table1";
+     var_type=T_Object;
+     object_type=DataTable;
+     object_val=.programs[4].objs[0]$$;
+     object_scope=NULL;
+     objs_ptr=1;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @[1] {
+     name="data_table1_copy";
+     var_type=T_Object;
+     object_type=DataTable;
+     object_val=.programs[4].objs[1]$$;
+     object_scope=NULL;
+     objs_ptr=1;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+   };
+   types {
+    name="types";
+    el_typ=DynEnumType;
+    el_def=0;
+   };
+   args {
+    name="args";
+    el_typ=ProgVar;
+    el_def=0;
+   };
+   vars {
+    name="vars";
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @[0] {
+     name="test_failed";
+     var_type=T_Int;
+     object_scope=NULL;
+     flags=NULL_CHECK|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @[1] {
+     name="result";
+     var_type=T_String;
+     string_val="y = 1 * x + 0; r = 1; r^2 = 1";
+     object_scope=NULL;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+   };
+   functions {
+    name="functions";
+    el_typ=Function;
+    el_def=0;
+   };
+   init_code {
+    name="init_code";
+    el_typ=ProgCode;
+    el_def=0;
+   };
+   prog_code {
+    name="prog_code";
+    el_typ=ProgCode;
+    el_def=0;
+    LocalVars @[0] {
+     name="LocalVars_LocalVars0vars";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="LocalVars (0 vars)";
+     local_vars {
+      name="local_vars";
+      el_typ=ProgVar;
+      el_def=0;
+     };
+    };
+    AssignExpr @[1] {
+     name="AssignExpr_testfailed0";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="test_failed = 0";
+     result_var=.programs[4].vars[0]$$;
+     expr {
+      expr="0";
+     };
+    };
+    Comment @[2] {
+     name="Comment_TestGreaterthan";
+     desc="Test Greaterthan";
+     flags=CAN_REVERT_TO_CODE;
+     code_string="// Test Greaterthan";
+    };
+    MethodCall @[3] {
+     name="MethodCall_datatable1copyCopyFromdatatable1";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="data_table1_copy->CopyFrom(data_table1)";
+     result_var=NULL;
+     obj=.programs[4].objs_vars[1]$$;
+     method=taBase::CopyFrom;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taBase_ptr;
+       type="taBase*";
+       name="cpy_from";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="data_table1";
+       };
+      };
+     };
+     meth_sig="bool CopyFrom(taBase* cpy_from)";
+     meth_desc=" Copy from given object into this object (this is a safe interface to UnSafeCopy)";
+    };
+    If @[4] {
+     name="If_ifdatatable1copyrows10";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if (data_table1_copy->rows != 10)";
+     cond {
+      expr="data_table1_copy->rows != 10";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      MiscCall @[0] {
+       name="MiscCall_taMiscErrorTheCo_idnothave10rows";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="taMisc::Error(\"The Copy data did not have 10 rows\", , , , , , , , )";
+       result_var=NULL;
+       object_type=taMisc;
+       method=taMisc::Error;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="a";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="\"The Copy data did not have 10 rows\"";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="b";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="c";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[3] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="d";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[4] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="e";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[5] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="f";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[6] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="g";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[7] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="h";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[8] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="i";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+       };
+      };
+     };
+    };
+    DataAnalCall @[5] {
+     name="DataAnalCall_resulttaDataAnal_ble1copyxyfalse";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="result = taDataAnal::RegressLinear(data_table1_copy, \"x\", \"y\", false)";
+     result_var=.programs[4].vars[1]$$;
+     object_type=taDataAnal;
+     method=taDataAnal::RegressLinear;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=DataTable_ptr;
+       type="DataTable*";
+       name="src_data";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="data_table1_copy";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="x_data_col_nm";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="\"x\"";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="y_data_col_nm";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="\"y\"";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=bool;
+       type="bool";
+       name="render_line";
+       required=0;
+       def_val="true";
+       prev_expr=;
+       expr {
+	expr="false";
+       };
+      };
+     };
+    };
+    If @[6] {
+     name="If_ifresultcontainsy1x0r1r21";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if (!result.contains(\"y = 1 * x + 0; r = 1; r^2 = 1\"))";
+     cond {
+      expr="!result.contains(\"y = 1 * x + 0; r = 1; r^2 = 1\")";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      AssignExpr @[0] {
+       name="AssignExpr_testfailed1";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="test_failed = 1";
+       result_var=$.programs[4].vars[0]$;
+       expr {
+	expr="1";
+       };
+      };
+     };
+    };
+    BlankLineEl @[7] {
+     name="BlankLineEl_";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string=" ";
+    };
+   };
+   step_prog=NULL;
+   step_n=1;
+   doc {
+    name="doc";
+    desc=;
+    web_doc=0;
+    wiki=;
+    url="local";
+    full_url="local";
+    text_size=1;
+    text=;
+    html_text=;
+   };
+  };
+  Program @[5] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserData_DocLink;
+    el_def=0;
+    UserData_DocLink @[0] {name="DocLink": doc=$.programs[0].doc$: };
+   };
+   name="DistMatrix";
+   short_nm="DsMtrx";
+   tags=;
+   desc=;
+   version {
+    major=0;
+    minor=0;
+    step=0;
+   };
+   author="Kai Krueger";
+   email="kai.krueger@colorado.edu";
+   flags=NO_STOP_STEP;
+   stop_step_cond {
+    expr=;
+   };
+   objs {
+    name="objs";
+    el_typ=DataTable;
+    el_def=0;
+    DataTable @[0] {
+     name="DataTable1";
+     desc=;
+     data {
+      name="data";
+      el_typ=String_Data;
+      el_def=0;
+      String_Data @[0] {
+       name="Name";
+       col_flags=SAVE_DATA|AUTO_WIDTH;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name="dim_names";
+       [0]        };
+       width=16;
+       matrix_col_width=10;
+       ar {
+	name="ar";
+       [10] "Type1";"Type2";"Type1";"Type2";"Type1";"Type2";"Type1";"Type2";"Type1";"Type2";
+       };
+      };
+      double_Data @[1] {
+       name="data";
+       col_flags=SAVE_DATA|AUTO_WIDTH;
+       is_matrix=1;
+       cell_geom{ 10;10;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name="dim_names";
+       [2] ;;       };
+       width=10;
+       matrix_col_width=10;
+       ar {
+	name="ar";
+       [10 10 10] 0;0;0;0;0;0;0;0;0;1;
+0;0;0;0;0;0;0;0;1;0;
+0;0;0;0;0;0;0;1;0;0;
+0;0;0;0;0;0;1;0;0;0;
+0;0;0;0;0;1;0;0;0;0;
+0;0;0;0;1;0;0;0;0;0;
+0;0;0;1;0;0;0;0;0;0;
+0;0;1;0;0;0;0;0;0;0;
+0;1;0;0;0;0;0;0;0;0;
+1;0;0;0;0;0;0;0;0;0;
+1;0;0;0;0;0;0;0;0;0;
+0;1;0;0;0;0;0;0;0;0;
+0;0;1;0;0;0;0;0;0;0;
+0;0;0;1;0;0;0;0;0;0;
+0;0;0;0;1;0;0;0;0;0;
+0;0;0;0;0;1;0;0;0;0;
+0;0;0;0;0;0;1;0;0;1;
+0;0;0;0;0;0;0;1;0;0;
+0;0;0;0;0;0;0;0;1;0;
+0;0;0;0;0;0;0;0;1;0;
+0;0;0;0;0;0;0;0;0;1;
+0;0;0;0;0;0;0;0;1;0;
+0;0;0;0;0;0;0;1;0;0;
+0;0;0;0;0;0;1;0;0;0;
+0;0;0;0;0;1;0;0;0;0;
+0;0;0;0;1;0;0;0;0;0;
+0;0;0;1;0;0;0;0;0;0;
+0;0;1;0;0;0;0;0;0;0;
+0;1;0;0;0;0;0;0;0;0;
+1;0;0;0;0;0;0;0;0;0;
+1;0;0;0;0;0;0;0;0;0;
+0;1;0;0;0;0;0;0;0;0;
+0;0;1;0;0;0;0;0;0;0;
+0;0;0;1;0;0;0;0;0;0;
+0;0;0;0;1;0;0;0;0;0;
+0;0;0;0;0;1;0;0;0;0;
+0;0;0;0;0;0;1;0;0;1;
+0;0;0;0;0;0;0;1;0;0;
+0;0;0;0;0;0;0;0;1;0;
+0;0;0;0;0;0;0;0;1;0;
+0;0;0;0;0;0;0;0;0;1;
+0;0;0;0;0;0;0;0;1;0;
+0;0;0;0;0;0;0;1;0;0;
+0;0;0;0;0;0;1;0;0;0;
+0;0;0;0;0;1;0;0;0;0;
+0;0;0;0;1;0;0;0;0;0;
+0;0;0;1;0;0;0;0;0;0;
+0;0;1;0;0;0;0;0;0;0;
+0;1;0;0;0;0;0;0;0;0;
+1;0;0;0;0;0;0;0;0;0;
+1;0;0;0;0;0;0;0;0;0;
+0;1;0;0;0;0;0;0;0;0;
+0;0;1;0;0;0;0;0;0;0;
+0;0;0;1;0;0;0;0;0;0;
+0;0;0;0;1;0;0;0;0;0;
+0;0;0;0;0;1;0;0;0;0;
+0;0;0;0;0;0;1;0;0;1;
+0;0;0;0;0;0;0;1;0;0;
+0;0;0;0;0;0;0;0;1;0;
+0;0;0;0;0;0;0;0;1;0;
+0;0;0;0;0;0;0;0;0;1;
+0;0;0;0;0;0;0;0;1;0;
+0;0;0;0;0;0;0;1;0;0;
+0;0;0;0;0;0;1;0;0;0;
+0;0;0;0;0;1;0;0;0;0;
+0;0;0;0;1;0;0;0;0;0;
+0;0;0;1;0;0;0;0;0;0;
+0;0;1;0;0;0;0;0;0;0;
+0;1;0;0;0;0;0;0;0;0;
+1;0;0;0;0;0;0;0;0;0;
+1;0;0;0;0;0;0;0;0;0;
+0;1;0;0;0;0;0;0;0;0;
+0;0;1;0;0;0;0;0;0;0;
+0;0;0;1;0;0;0;0;0;0;
+0;0;0;0;1;0;0;0;0;0;
+0;0;0;0;0;1;0;0;0;0;
+0;0;0;0;0;0;1;0;0;1;
+0;0;0;0;0;0;0;1;0;0;
+0;0;0;0;0;0;0;0;1;0;
+0;0;0;0;0;0;0;0;1;0;
+0;0;0;0;0;0;0;0;0;1;
+0;0;0;0;0;0;0;0;1;0;
+0;0;0;0;0;0;0;1;0;0;
+0;0;0;0;0;0;1;0;0;0;
+0;0;0;0;0;1;0;0;0;0;
+0;0;0;0;1;0;0;0;0;0;
+0;0;0;1;0;0;0;0;0;0;
+0;0;1;0;0;0;0;0;0;0;
+0;1;0;0;0;0;0;0;0;0;
+1;0;0;0;0;0;0;0;0;0;
+1;0;0;0;0;0;0;0;0;0;
+0;1;0;0;0;0;0;0;0;0;
+0;0;1;0;0;0;0;0;0;0;
+0;0;0;1;0;0;0;0;0;0;
+0;0;0;0;1;0;0;0;0;0;
+0;0;0;0;0;1;0;0;0;0;
+0;0;0;0;0;0;1;0;0;1;
+0;0;0;0;0;0;0;1;0;0;
+0;0;0;0;0;0;0;0;1;0;
+0;0;0;0;0;0;0;0;1;0;
+       };
+      };
+     };
+     data_flags=SAVE_ROWS|AUTO_CALC;
+     auto_load=NO_AUTO_LOAD;
+     auto_load_file=;
+     row_height=1;
+     max_col_width=50;
+     keygen 4 0=0;
+     row_indexes {
+      name="row_indexes";
+     [10] 0;1;2;3;4;5;6;7;8;9;
+     };
+     last_sort_spec {
+      name="last_sort_spec";
+      ops {
+       name="ops";
+       el_typ=DataSortEl;
+       el_def=0;
+      };
+     };
+     row_with_hilite=-1;
+    };
+    DataTable @[1] {
+     name="DataTable1_copy";
+     desc=;
+     data {
+      name="data";
+      el_typ=String_Data;
+      el_def=0;
+      String_Data @[0] {
+       name="Name";
+       col_flags=SAVE_DATA|AUTO_WIDTH;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name="dim_names";
+       [0]        };
+       width=16;
+       matrix_col_width=10;
+       ar {
+	name="ar";
+       [10] "Type1";"Type2";"Type1";"Type2";"Type1";"Type2";"Type1";"Type2";"Type1";"Type2";
+       };
+      };
+      double_Data @[1] {
+       name="data";
+       col_flags=SAVE_DATA|AUTO_WIDTH;
+       is_matrix=1;
+       cell_geom{ 10;10;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name="dim_names";
+       [2] ;;       };
+       width=10;
+       matrix_col_width=10;
+       ar {
+	name="ar";
+       [10 10 10] 0;0;0;0;0;0;0;0;0;1;
+0;0;0;0;0;0;0;0;1;0;
+0;0;0;0;0;0;0;1;0;0;
+0;0;0;0;0;0;1;0;0;0;
+0;0;0;0;0;1;0;0;0;0;
+0;0;0;0;1;0;0;0;0;0;
+0;0;0;1;0;0;0;0;0;0;
+0;0;1;0;0;0;0;0;0;0;
+0;1;0;0;0;0;0;0;0;0;
+1;0;0;0;0;0;0;0;0;0;
+1;0;0;0;0;0;0;0;0;0;
+0;1;0;0;0;0;0;0;0;0;
+0;0;1;0;0;0;0;0;0;0;
+0;0;0;1;0;0;0;0;0;0;
+0;0;0;0;1;0;0;0;0;0;
+0;0;0;0;0;1;0;0;0;0;
+0;0;0;0;0;0;1;0;0;1;
+0;0;0;0;0;0;0;1;0;0;
+0;0;0;0;0;0;0;0;1;0;
+0;0;0;0;0;0;0;0;1;0;
+0;0;0;0;0;0;0;0;0;1;
+0;0;0;0;0;0;0;0;1;0;
+0;0;0;0;0;0;0;1;0;0;
+0;0;0;0;0;0;1;0;0;0;
+0;0;0;0;0;1;0;0;0;0;
+0;0;0;0;1;0;0;0;0;0;
+0;0;0;1;0;0;0;0;0;0;
+0;0;1;0;0;0;0;0;0;0;
+0;1;0;0;0;0;0;0;0;0;
+1;0;0;0;0;0;0;0;0;0;
+1;0;0;0;0;0;0;0;0;0;
+0;1;0;0;0;0;0;0;0;0;
+0;0;1;0;0;0;0;0;0;0;
+0;0;0;1;0;0;0;0;0;0;
+0;0;0;0;1;0;0;0;0;0;
+0;0;0;0;0;1;0;0;0;0;
+0;0;0;0;0;0;1;0;0;1;
+0;0;0;0;0;0;0;1;0;0;
+0;0;0;0;0;0;0;0;1;0;
+0;0;0;0;0;0;0;0;1;0;
+0;0;0;0;0;0;0;0;0;1;
+0;0;0;0;0;0;0;0;1;0;
+0;0;0;0;0;0;0;1;0;0;
+0;0;0;0;0;0;1;0;0;0;
+0;0;0;0;0;1;0;0;0;0;
+0;0;0;0;1;0;0;0;0;0;
+0;0;0;1;0;0;0;0;0;0;
+0;0;1;0;0;0;0;0;0;0;
+0;1;0;0;0;0;0;0;0;0;
+1;0;0;0;0;0;0;0;0;0;
+1;0;0;0;0;0;0;0;0;0;
+0;1;0;0;0;0;0;0;0;0;
+0;0;1;0;0;0;0;0;0;0;
+0;0;0;1;0;0;0;0;0;0;
+0;0;0;0;1;0;0;0;0;0;
+0;0;0;0;0;1;0;0;0;0;
+0;0;0;0;0;0;1;0;0;1;
+0;0;0;0;0;0;0;1;0;0;
+0;0;0;0;0;0;0;0;1;0;
+0;0;0;0;0;0;0;0;1;0;
+0;0;0;0;0;0;0;0;0;1;
+0;0;0;0;0;0;0;0;1;0;
+0;0;0;0;0;0;0;1;0;0;
+0;0;0;0;0;0;1;0;0;0;
+0;0;0;0;0;1;0;0;0;0;
+0;0;0;0;1;0;0;0;0;0;
+0;0;0;1;0;0;0;0;0;0;
+0;0;1;0;0;0;0;0;0;0;
+0;1;0;0;0;0;0;0;0;0;
+1;0;0;0;0;0;0;0;0;0;
+1;0;0;0;0;0;0;0;0;0;
+0;1;0;0;0;0;0;0;0;0;
+0;0;1;0;0;0;0;0;0;0;
+0;0;0;1;0;0;0;0;0;0;
+0;0;0;0;1;0;0;0;0;0;
+0;0;0;0;0;1;0;0;0;0;
+0;0;0;0;0;0;1;0;0;1;
+0;0;0;0;0;0;0;1;0;0;
+0;0;0;0;0;0;0;0;1;0;
+0;0;0;0;0;0;0;0;1;0;
+0;0;0;0;0;0;0;0;0;1;
+0;0;0;0;0;0;0;0;1;0;
+0;0;0;0;0;0;0;1;0;0;
+0;0;0;0;0;0;1;0;0;0;
+0;0;0;0;0;1;0;0;0;0;
+0;0;0;0;1;0;0;0;0;0;
+0;0;0;1;0;0;0;0;0;0;
+0;0;1;0;0;0;0;0;0;0;
+0;1;0;0;0;0;0;0;0;0;
+1;0;0;0;0;0;0;0;0;0;
+1;0;0;0;0;0;0;0;0;0;
+0;1;0;0;0;0;0;0;0;0;
+0;0;1;0;0;0;0;0;0;0;
+0;0;0;1;0;0;0;0;0;0;
+0;0;0;0;1;0;0;0;0;0;
+0;0;0;0;0;1;0;0;0;0;
+0;0;0;0;0;0;1;0;0;1;
+0;0;0;0;0;0;0;1;0;0;
+0;0;0;0;0;0;0;0;1;0;
+0;0;0;0;0;0;0;0;1;0;
+       };
+      };
+     };
+     data_flags=SAVE_ROWS|AUTO_CALC;
+     auto_load=NO_AUTO_LOAD;
+     auto_load_file=;
+     row_height=1;
+     max_col_width=50;
+     keygen 4 0=0;
+     row_indexes {
+      name="row_indexes";
+     [5] 0;2;4;6;8;     };
+     last_sort_spec {
+      name="last_sort_spec";
+      ops {
+       name="ops";
+       el_typ=DataSortEl;
+       el_def=0;
+      };
+     };
+     row_with_hilite=-1;
+    };
+    DataTable @[2] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_1";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {name="N_ROWS": value=1: val_type_fixed=0: };
+      UserDataItem @[1] {name="AUTO_SCALE": value=1: val_type_fixed=0: };
+      UserDataItem @[2] {name="HEADER_OFF": value=1: val_type_fixed=0: };
+     };
+     name="distmat";
+     desc=;
+     data {
+      name="data";
+      el_typ=float_Data;
+      el_def=0;
+      float_Data @[0] {
+       UserDataItem_List @*(.user_data_) {
+	name="UserDataItem_List_1";
+	el_typ=UserDataItem;
+	el_def=0;
+	UserDataItem @[0] {name="TOP_ZERO": value=1: val_type_fixed=0: };
+       };
+       name="DataTable1_copy_DistMatrix";
+       col_flags=SAVE_DATA|AUTO_WIDTH;
+       is_matrix=1;
+       cell_geom{ 5;5;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name="dim_names";
+       [2] ;;       };
+       width=0;
+       matrix_col_width=10;
+       ar {
+	name="ar";
+       [5 5 1] 0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;       };
+      };
+     };
+     data_flags=SAVE_ROWS|AUTO_CALC;
+     auto_load=NO_AUTO_LOAD;
+     auto_load_file=;
+     row_height=1;
+     max_col_width=50;
+     keygen 4 0=0;
+     row_indexes {
+      name="row_indexes";
+     [1] 0;     };
+     last_sort_spec {
+      name="last_sort_spec";
+      ops {
+       name="ops";
+       el_typ=DataSortEl;
+       el_def=0;
+      };
+     };
+     row_with_hilite=-1;
+    };
+   };
+   objs_vars {
+    name="objs_vars";
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @[0] {
+     name="data_table1";
+     var_type=T_Object;
+     object_type=DataTable;
+     object_val=.programs[5].objs[0]$$;
+     object_scope=NULL;
+     objs_ptr=1;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @[1] {
+     name="data_table1_copy";
+     var_type=T_Object;
+     object_type=DataTable;
+     object_val=.programs[5].objs[1]$$;
+     object_scope=NULL;
+     objs_ptr=1;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @[2] {
+     name="distmat";
+     var_type=T_Object;
+     object_type=DataTable;
+     object_val=.programs[5].objs[2]$$;
+     object_scope=NULL;
+     objs_ptr=1;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+   };
+   types {
+    name="types";
+    el_typ=DynEnumType;
+    el_def=0;
+   };
+   args {
+    name="args";
+    el_typ=ProgVar;
+    el_def=0;
+   };
+   vars {
+    name="vars";
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @[0] {
+     name="test_failed";
+     var_type=T_Int;
+     object_scope=NULL;
+     flags=NULL_CHECK|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @[1] {
+     name="result";
+     var_type=T_String;
+     string_val="true";
+     object_scope=NULL;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+   };
+   functions {
+    name="functions";
+    el_typ=Function;
+    el_def=0;
+   };
+   init_code {
+    name="init_code";
+    el_typ=ProgCode;
+    el_def=0;
+   };
+   prog_code {
+    name="prog_code";
+    el_typ=ProgCode;
+    el_def=0;
+    LocalVars @[0] {
+     name="LocalVars_LocalVars2vars";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="LocalVars (2 vars)";
+     local_vars {
+      name="local_vars";
+      el_typ=ProgVar;
+      el_def=0;
+      ProgVar @[0] {
+       name="x";
+       var_type=T_Int;
+       int_val=0;
+       object_scope=NULL;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[1] {
+       name="y";
+       var_type=T_Int;
+       int_val=0;
+       object_scope=NULL;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+     };
+    };
+    AssignExpr @[1] {
+     name="AssignExpr_testfailed0";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="test_failed = 0";
+     result_var=.programs[5].vars[0]$$;
+     expr {
+      expr="0";
+     };
+    };
+    Comment @[2] {
+     name="Comment_TestGreaterthan";
+     desc="Test Greaterthan";
+     flags=CAN_REVERT_TO_CODE;
+     code_string="// Test Greaterthan";
+    };
+    MethodCall @[3] {
+     name="MethodCall_datatable1copyCopyFromdatatable1";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="data_table1_copy->CopyFrom(data_table1)";
+     result_var=NULL;
+     obj=.programs[5].objs_vars[1]$$;
+     method=taBase::CopyFrom;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taBase_ptr;
+       type="taBase*";
+       name="cpy_from";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="data_table1";
+       };
+      };
+     };
+     meth_sig="bool CopyFrom(taBase* cpy_from)";
+     meth_desc=" Copy from given object into this object (this is a safe interface to UnSafeCopy)";
+    };
+    If @[4] {
+     name="If_ifdatatable1copyrows10";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if (data_table1_copy->rows != 10)";
+     cond {
+      expr="data_table1_copy->rows != 10";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      MiscCall @[0] {
+       name="MiscCall_taMiscErrorTheCo_idnothave10rows";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="taMisc::Error(\"The Copy data did not have 10 rows\", , , , , , , , )";
+       result_var=NULL;
+       object_type=taMisc;
+       method=taMisc::Error;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="a";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="\"The Copy data did not have 10 rows\"";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="b";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="c";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[3] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="d";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[4] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="e";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[5] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="f";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[6] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="g";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[7] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="h";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[8] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="i";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+       };
+      };
+     };
+    };
+    DataAnalCall @[5] {
+     name="DataAnalCall_resulttaDataAnal_hEUCLIDIANfalse";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="result = taDataAnal::DistMatrixTable(distmat, false, data_table1_copy, \"data\", \"Name\", taMath::EUCLIDIAN, false, , , , )";
+     result_var=.programs[5].vars[1]$$;
+     object_type=taDataAnal;
+     method=taDataAnal::DistMatrixTable;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=DataTable_ptr;
+       type="DataTable*";
+       name="dist_mat";
+       required=1;
+       def_val=;
+       prev_expr="data_table1_copy";
+       expr {
+	expr="distmat";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=bool;
+       type="bool";
+       name="view";
+       required=1;
+       def_val=;
+       prev_expr="\"x\"";
+       expr {
+	expr="false";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=DataTable_ptr;
+       type="DataTable*";
+       name="src_data";
+       required=1;
+       def_val=;
+       prev_expr="\"y\"";
+       expr {
+	expr="data_table1_copy";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="data_col_nm";
+       required=1;
+       def_val=;
+       prev_expr="false";
+       expr {
+	expr="\"data\"";
+       };
+      };
+      ProgArg @[4] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="name_col_nm";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="\"Name\"";
+       };
+      };
+      ProgArg @[5] {
+       arg_type=taMath::DistMetric;
+       type="taMath::DistMetric";
+       name="metric";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="taMath::EUCLIDIAN";
+       };
+      };
+      ProgArg @[6] {
+       arg_type=bool;
+       type="bool";
+       name="norm";
+       required=0;
+       def_val="false";
+       prev_expr=;
+       expr {
+	expr="false";
+       };
+      };
+      ProgArg @[7] {
+       arg_type=float;
+       type="float";
+       name="tol";
+       required=0;
+       def_val="0.0f";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[8] {
+       arg_type=bool;
+       type="bool";
+       name="incl_scalars";
+       required=0;
+       def_val="false";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[9] {
+       arg_type=bool;
+       type="bool";
+       name="name_labels";
+       required=0;
+       def_val="true";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[10] {
+       arg_type=bool;
+       type="bool";
+       name="gp_names";
+       required=0;
+       def_val="true";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+     };
+    };
+    ForLoop @[6] {
+     name="ForLoop_forx0x10x";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="for (x = 0; x < 10; x++)";
+     loop_code {
+      name="loop_code";
+      el_typ=ProgCode;
+      el_def=0;
+      ForLoop @[0] {
+       name="ForLoop_fory0y10y";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="for (y = 0; y < 10; y++)";
+       loop_code {
+	name="loop_code";
+	el_typ=ProgCode;
+	el_def=0;
+	If @[0] {
+	 name="If_ifx2y2";
+	 desc=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="if (x % 2 == y % 2)";
+	 cond {
+	  expr="x % 2 == y % 2";
+	 };
+	 true_code {
+	  name="true_code";
+	  el_typ=ProgCode;
+	  el_def=0;
+	  If @[0] {
+	   name="If_ifdistmatDataTab_yDistMatrixxy00";
+	   desc=;
+	   flags=CAN_REVERT_TO_CODE;
+	   code_string="if (distmat[\"DataTable1_copy_DistMatrix\"][x,y,0] != 0)";
+	   cond {
+	    expr="distmat[\"DataTable1_copy_DistMatrix\"][x,y,0] != 0";
+	   };
+	   true_code {
+	    name="true_code";
+	    el_typ=ProgCode;
+	    el_def=0;
+	    AssignExpr @[0] {
+	     name="AssignExpr_testfailed1";
+	     desc=;
+	     flags=CAN_REVERT_TO_CODE;
+	     code_string="test_failed = 1";
+	     result_var=$.programs[5].vars[0]$;
+	     expr {
+	      expr="1";
+	     };
+	    };
+	   };
+	  };
+	 };
+	};
+	Else @[1] {
+	 name="Else_If_ifx2y2";
+	 desc=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="else";
+	 cond {
+	  expr=;
+	 };
+	 true_code {
+	  name="true_code";
+	  el_typ=ProgCode;
+	  el_def=0;
+	  If @[0] {
+	   name="If_ifdistmatDataTab_yDistMatrixxy00";
+	   desc=;
+	   flags=CAN_REVERT_TO_CODE;
+	   code_string="if (distmat[\"DataTable1_copy_DistMatrix\"][x,y,0] <= 0)";
+	   cond {
+	    expr="distmat[\"DataTable1_copy_DistMatrix\"][x,y,0] <= 0";
+	   };
+	   true_code {
+	    name="true_code";
+	    el_typ=ProgCode;
+	    el_def=0;
+	    AssignExpr @[0] {
+	     name="AssignExpr_testfailed1";
+	     desc=;
+	     flags=CAN_REVERT_TO_CODE;
+	     code_string="test_failed = 1";
+	     result_var=$.programs[5].vars[0]$;
+	     expr {
+	      expr="1";
+	     };
+	    };
+	   };
+	  };
+	 };
+	};
+       };
+       init {
+	expr="y = 0";
+       };
+       test {
+	expr="y < 10";
+       };
+       iter {
+	expr="y++";
+       };
+      };
+     };
+     init {
+      expr="x = 0";
+     };
+     test {
+      expr="x < 10";
+     };
+     iter {
+      expr="x++";
+     };
+    };
+    MethodCall @[7] {
+     name="MethodCall_datatable1copyCopyFromdatatable1_1";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="data_table1_copy->CopyFrom(data_table1)";
+     result_var=NULL;
+     obj=$.programs[5].objs_vars[1]$;
+     method=taBase::CopyFrom;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taBase_ptr;
+       type="taBase*";
+       name="cpy_from";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="data_table1";
+       };
+      };
+     };
+     meth_sig="bool CopyFrom(taBase* cpy_from)";
+     meth_desc=" Copy from given object into this object (this is a safe interface to UnSafeCopy)";
+    };
+    If @[8] {
+     name="If_ifdatatable1copyrows10_1";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if (data_table1_copy->rows != 10)";
+     cond {
+      expr="data_table1_copy->rows != 10";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      MiscCall @[0] {
+       name="MiscCall_taMiscErrorTheCo_idnothave10rows";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="taMisc::Error(\"The Copy data did not have 10 rows\", , , , , , , , )";
+       result_var=NULL;
+       object_type=taMisc;
+       method=taMisc::Error;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="a";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="\"The Copy data did not have 10 rows\"";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="b";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="c";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[3] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="d";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[4] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="e";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[5] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="f";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[6] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="g";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[7] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="h";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[8] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="i";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+       };
+      };
+     };
+    };
+    MethodCall @[9] {
+     name="MethodCall_datatable1copyFi_onCONTAINSType1";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="data_table1_copy->Filter(\"Name\", Relation::CONTAINS, \"Type1\", , , , , , , )";
+     result_var=NULL;
+     obj=$.programs[5].objs_vars[1]$;
+     method=DataTable::Filter;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_Variant_ref;
+       type="Variant&";
+       name="col1";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="\"Name\"";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=Relation::Relations;
+       type="Relation::Relations";
+       name="operator_1";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="Relation::CONTAINS";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="value_1";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="\"Type1\"";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=Relation::CombOp;
+       type="Relation::CombOp";
+       name="comb_op";
+       required=0;
+       def_val="Relation::AND";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[4] {
+       arg_type=Variant;
+       type="Variant";
+       name="col2";
+       required=0;
+       def_val="-1";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[5] {
+       arg_type=Relation::Relations;
+       type="Relation::Relations";
+       name="operator_2";
+       required=0;
+       def_val="Relation::EQUAL";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[6] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="value_2";
+       required=0;
+       def_val="\"\"";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[7] {
+       arg_type=Variant;
+       type="Variant";
+       name="col3";
+       required=0;
+       def_val="-1";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[8] {
+       arg_type=Relation::Relations;
+       type="Relation::Relations";
+       name="operator_3";
+       required=0;
+       def_val="Relation::EQUAL";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[9] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="value_3";
+       required=0;
+       def_val="\"\"";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+     };
+     meth_sig="void Filter(Variant& col1, Relation::Relations operator_1, taString& value_1, Relation::CombOp comb_op = Relation::AND, Variant col2 = -1, Relation::Relations operator_2 = Relation::EQUAL, taString& value_2, Variant col3 = -1, Relation::Relations operator_3 = Relation::EQUAL, taString& value_3)";
+     meth_desc=" Select table rows by specifying up to 3 conditions for which rows to retain in the table (hiding the ones that do not match). Note: you can instantly recover the original full set of rows, unsorted and unfiltered, by using ShowAllRows on the DataTable -- see that function for more details -- to be be able to undo just this Filter you would need to run Flatten first";
+    };
+    If @[10] {
+     name="If_ifdatatable1copyrows5";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if (data_table1_copy->rows != 5)";
+     cond {
+      expr="data_table1_copy->rows != 5";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      MiscCall @[0] {
+       name="MiscCall_taMiscErrorThefi_didnothave5rows";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="taMisc::Error(\"The filtered data did not have 5 rows\", , , , , , , , )";
+       result_var=NULL;
+       object_type=taMisc;
+       method=taMisc::Error;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="a";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="\"The filtered data did not have 5 rows\"";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="b";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="c";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[3] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="d";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[4] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="e";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[5] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="f";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[6] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="g";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[7] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="h";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[8] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="i";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+       };
+      };
+     };
+    };
+    DataAnalCall @[11] {
+     name="DataAnalCall_resulttaDataAnal_hEUCLIDIANfalse_1";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="result = taDataAnal::DistMatrixTable(distmat, false, data_table1_copy, \"data\", \"Name\", taMath::EUCLIDIAN, false, , , , )";
+     result_var=$.programs[5].vars[1]$;
+     object_type=taDataAnal;
+     method=taDataAnal::DistMatrixTable;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=DataTable_ptr;
+       type="DataTable*";
+       name="dist_mat";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="distmat";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=bool;
+       type="bool";
+       name="view";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="false";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=DataTable_ptr;
+       type="DataTable*";
+       name="src_data";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="data_table1_copy";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="data_col_nm";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="\"data\"";
+       };
+      };
+      ProgArg @[4] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="name_col_nm";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="\"Name\"";
+       };
+      };
+      ProgArg @[5] {
+       arg_type=taMath::DistMetric;
+       type="taMath::DistMetric";
+       name="metric";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="taMath::EUCLIDIAN";
+       };
+      };
+      ProgArg @[6] {
+       arg_type=bool;
+       type="bool";
+       name="norm";
+       required=0;
+       def_val="false";
+       prev_expr=;
+       expr {
+	expr="false";
+       };
+      };
+      ProgArg @[7] {
+       arg_type=float;
+       type="float";
+       name="tol";
+       required=0;
+       def_val="0.0f";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[8] {
+       arg_type=bool;
+       type="bool";
+       name="incl_scalars";
+       required=0;
+       def_val="false";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[9] {
+       arg_type=bool;
+       type="bool";
+       name="name_labels";
+       required=0;
+       def_val="true";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[10] {
+       arg_type=bool;
+       type="bool";
+       name="gp_names";
+       required=0;
+       def_val="true";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+     };
+    };
+    ForLoop @[12] {
+     name="ForLoop_forx0x5x";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="for (x = 0; x < 10; x++)";
+     loop_code {
+      name="loop_code";
+      el_typ=ProgCode;
+      el_def=0;
+      ForLoop @[0] {
+       name="ForLoop_fory0y5y";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="for (y = 0; y < 10; y++)";
+       loop_code {
+	name="loop_code";
+	el_typ=ProgCode;
+	el_def=0;
+	If @[0] {
+	 name="If_ifdistmatDataTab_yDistMatrixxy00";
+	 desc=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="if (distmat[\"DataTable1_copy_DistMatrix\"][x,y,0] != 0)";
+	 cond {
+	  expr="distmat[\"DataTable1_copy_DistMatrix\"][x,y,0] != 0";
+	 };
+	 true_code {
+	  name="true_code";
+	  el_typ=ProgCode;
+	  el_def=0;
+	  AssignExpr @[0] {
+	   name="AssignExpr_testfailed2";
+	   desc=;
+	   flags=CAN_REVERT_TO_CODE;
+	   code_string="test_failed = 2";
+	   result_var=$.programs[5].vars[0]$;
+	   expr {
+	    expr="2";
+	   };
+	  };
+	 };
+	};
+       };
+       init {
+	expr="y = 0";
+       };
+       test {
+	expr="y < 5";
+       };
+       iter {
+	expr="y++";
+       };
+      };
+     };
+     init {
+      expr="x = 0";
+     };
+     test {
+      expr="x < 5";
+     };
+     iter {
+      expr="x++";
+     };
+    };
+    BlankLineEl @[13] {
+     name="BlankLineEl_";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string=" ";
+    };
+   };
+   step_prog=NULL;
+   step_n=1;
+   doc {
+    name="doc";
+    desc=;
+    web_doc=0;
+    wiki=;
+    url="local";
+    full_url="local";
+    text_size=1;
+    text=;
+    html_text=;
+   };
+  };
+  Program @[6] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserData_DocLink;
+    el_def=0;
+    UserData_DocLink @[0] {name="DocLink": doc=$.programs[0].doc$: };
+   };
+   name="SmoothGauss";
+   short_nm="SmtGss";
+   tags=;
+   desc=;
+   version {
+    major=0;
+    minor=0;
+    step=0;
+   };
+   author="Kai Krueger";
+   email="kai.krueger@colorado.edu";
+   flags=NO_STOP_STEP;
+   stop_step_cond {
+    expr=;
+   };
+   objs {
+    name="objs";
+    el_typ=DataTable;
+    el_def=0;
+    DataTable @[0] {
+     name="DataTable1";
+     desc=;
+     data {
+      name="data";
+      el_typ=String_Data;
+      el_def=0;
+      String_Data @[0] {
+       name="Name";
+       col_flags=SAVE_DATA|AUTO_WIDTH;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name="dim_names";
+       [0]        };
+       width=16;
+       matrix_col_width=10;
+       ar {
+	name="ar";
+       [10] "Type1";"Type2";"Type1";"Type2";"Type1";"Type2";"Type1";"Type2";"Type1";"Type2";
+       };
+      };
+      float_Data @[1] {
+       name="x";
+       col_flags=SAVE_DATA|AUTO_WIDTH;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name="dim_names";
+       [0]        };
+       width=8;
+       matrix_col_width=10;
+       ar {
+	name="ar";
+       [10] 0;1;0;1;0;1;0;1;0;1;
+       };
+      };
+      float_Data @[2] {
+       name="y";
+       col_flags=SAVE_DATA|AUTO_WIDTH;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name="dim_names";
+       [0]        };
+       width=8;
+       matrix_col_width=10;
+       ar {
+	name="ar";
+       [10] 1;1;1;1;1;1;1;1;1;1;
+       };
+      };
+     };
+     data_flags=SAVE_ROWS|AUTO_CALC;
+     auto_load=NO_AUTO_LOAD;
+     auto_load_file=;
+     row_height=1;
+     max_col_width=50;
+     keygen 4 0=0;
+     row_indexes {
+      name="row_indexes";
+     [10] 0;1;2;3;4;5;6;7;8;9;
+     };
+     last_sort_spec {
+      name="last_sort_spec";
+      ops {
+       name="ops";
+       el_typ=DataSortEl;
+       el_def=0;
+      };
+     };
+     row_with_hilite=-1;
+    };
+    DataTable @[1] {
+     name="DataTable1_copy";
+     desc=;
+     data {
+      name="data";
+      el_typ=String_Data;
+      el_def=0;
+      String_Data @[0] {
+       name="Name";
+       col_flags=SAVE_DATA|AUTO_WIDTH;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name="dim_names";
+       [0]        };
+       width=16;
+       matrix_col_width=10;
+       ar {
+	name="ar";
+       [10] "Type1";"Type2";"Type1";"Type2";"Type1";"Type2";"Type1";"Type2";"Type1";"Type2";
+       };
+      };
+      float_Data @[1] {
+       name="x";
+       col_flags=SAVE_DATA|AUTO_WIDTH;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name="dim_names";
+       [0]        };
+       width=8;
+       matrix_col_width=10;
+       ar {
+	name="ar";
+       [10] 0;1;0;1;0;1;0;1;0;1;
+       };
+      };
+      float_Data @[2] {
+       name="y";
+       col_flags=SAVE_DATA|AUTO_WIDTH;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name="dim_names";
+       [0]        };
+       width=8;
+       matrix_col_width=10;
+       ar {
+	name="ar";
+       [10] 1;1;1;1;1;1;1;1;1;1;
+       };
+      };
+     };
+     data_flags=SAVE_ROWS|AUTO_CALC;
+     auto_load=NO_AUTO_LOAD;
+     auto_load_file=;
+     row_height=1;
+     max_col_width=50;
+     keygen 4 0=0;
+     row_indexes {
+      name="row_indexes";
+     [5] 1;3;5;7;9;     };
+     last_sort_spec {
+      name="last_sort_spec";
+      ops {
+       name="ops";
+       el_typ=DataSortEl;
+       el_def=0;
+      };
+     };
+     row_with_hilite=-1;
+    };
+    DataTable @[2] {
+     name="smoothedData";
+     desc=;
+     data {
+      name="data";
+      el_typ=String_Data;
+      el_def=0;
+      String_Data @[0] {
+       name="Name";
+       col_flags=SAVE_DATA|AUTO_WIDTH;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name="dim_names";
+       [0]        };
+       width=16;
+       matrix_col_width=10;
+       ar {
+	name="ar";
+       [5] "Type2";"Type2";"Type2";"Type2";"Type2";       };
+      };
+      float_Data @[1] {
+       name="x";
+       col_flags=SAVE_DATA|AUTO_WIDTH;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name="dim_names";
+       [0]        };
+       width=8;
+       matrix_col_width=10;
+       ar {
+	name="ar";
+       [5] 1.0000001;1.0000001;1.0000001;1.0000001;1.0000001;       };
+      };
+      float_Data @[2] {
+       name="y";
+       col_flags=SAVE_DATA|AUTO_WIDTH;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name="dim_names";
+       [0]        };
+       width=8;
+       matrix_col_width=10;
+       ar {
+	name="ar";
+       [5] 1.0000001;1.0000001;1.0000001;1.0000001;1.0000001;       };
+      };
+     };
+     data_flags=SAVE_ROWS|AUTO_CALC;
+     auto_load=NO_AUTO_LOAD;
+     auto_load_file=;
+     row_height=1;
+     max_col_width=50;
+     keygen 4 0=0;
+     row_indexes {
+      name="row_indexes";
+     [5] 0;1;2;3;4;     };
+     last_sort_spec {
+      name="last_sort_spec";
+      ops {
+       name="ops";
+       el_typ=DataSortEl;
+       el_def=0;
+      };
+     };
+     row_with_hilite=-1;
+    };
+   };
+   objs_vars {
+    name="objs_vars";
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @[0] {
+     name="data_table1";
+     var_type=T_Object;
+     object_type=DataTable;
+     object_val=.programs[6].objs[0]$$;
+     object_scope=NULL;
+     objs_ptr=1;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @[1] {
+     name="data_table1_copy";
+     var_type=T_Object;
+     object_type=DataTable;
+     object_val=.programs[6].objs[1]$$;
+     object_scope=NULL;
+     objs_ptr=1;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @[2] {
+     name="smoothed_data";
+     var_type=T_Object;
+     object_type=DataTable;
+     object_val=.programs[6].objs[2]$$;
+     object_scope=NULL;
+     objs_ptr=1;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+   };
+   types {
+    name="types";
+    el_typ=DynEnumType;
+    el_def=0;
+   };
+   args {
+    name="args";
+    el_typ=ProgVar;
+    el_def=0;
+   };
+   vars {
+    name="vars";
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @[0] {
+     name="test_failed";
+     var_type=T_Int;
+     object_scope=NULL;
+     flags=NULL_CHECK|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @[1] {
+     name="result";
+     var_type=T_String;
+     string_val="true";
+     object_scope=NULL;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @[2] {
+     name="data_table1_copy";
+     var_type=T_Object;
+     object_type=DataTable;
+     object_val=$.programs[6].objs[1]$;
+     object_scope=NULL;
+     objs_ptr=0;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @[3] {
+     name="data_table1";
+     var_type=T_Object;
+     object_type=DataTable;
+     object_val=$.programs[6].objs[0]$;
+     object_scope=NULL;
+     objs_ptr=0;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+   };
+   functions {
+    name="functions";
+    el_typ=Function;
+    el_def=0;
+   };
+   init_code {
+    name="init_code";
+    el_typ=ProgCode;
+    el_def=0;
+   };
+   prog_code {
+    name="prog_code";
+    el_typ=ProgCode;
+    el_def=0;
+    LocalVars @[0] {
+     name="LocalVars_LocalVars1vars";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="LocalVars (1 vars)";
+     local_vars {
+      name="local_vars";
+      el_typ=ProgVar;
+      el_def=0;
+      ProgVar @[0] {
+       name="i";
+       var_type=T_Int;
+       int_val=0;
+       object_scope=NULL;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+     };
+    };
+    AssignExpr @[1] {
+     name="AssignExpr_testfailed0";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="test_failed = 0";
+     result_var=.programs[6].vars[0]$$;
+     expr {
+      expr="0";
+     };
+    };
+    Comment @[2] {
+     name="Comment_TestGreaterthan";
+     desc="Test Greaterthan";
+     flags=CAN_REVERT_TO_CODE;
+     code_string="// Test Greaterthan";
+    };
+    MethodCall @[3] {
+     name="MethodCall_datatable1copyCopyFromdatatable1";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="data_table1_copy->CopyFrom(data_table1)";
+     result_var=NULL;
+     obj=.programs[6].vars[2]$$;
+     method=taBase::CopyFrom;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taBase_ptr;
+       type="taBase*";
+       name="cpy_from";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="data_table1";
+       };
+      };
+     };
+     meth_sig="bool CopyFrom(taBase* cpy_from)";
+     meth_desc=" Copy from given object into this object (this is a safe interface to UnSafeCopy)";
+    };
+    If @[4] {
+     name="If_ifdatatable1copyrows10";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if (data_table1_copy->rows != 10)";
+     cond {
+      expr="data_table1_copy->rows != 10";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      MiscCall @[0] {
+       name="MiscCall_taMiscErrorTheCo_idnothave10rows";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="taMisc::Error(\"The Copy data did not have 10 rows\", , , , , , , , )";
+       result_var=NULL;
+       object_type=taMisc;
+       method=taMisc::Error;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="a";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="\"The Copy data did not have 10 rows\"";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="b";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="c";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[3] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="d";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[4] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="e";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[5] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="f";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[6] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="g";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[7] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="h";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[8] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="i";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+       };
+      };
+     };
+    };
+    DataAnalCall @[5] {
+     name="DataAnalCall_resulttaDataAnal_atatable1copy22";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="result = taDataAnal::SmoothGauss(smoothed_data, false, data_table1_copy, 2, 2, , , , )";
+     result_var=.programs[6].vars[1]$$;
+     object_type=taDataAnal;
+     method=taDataAnal::SmoothGauss;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=DataTable_ptr;
+       type="DataTable*";
+       name="smooth_data";
+       required=1;
+       def_val=;
+       prev_expr="data_table1_copy";
+       expr {
+	expr="smoothed_data";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=bool;
+       type="bool";
+       name="view";
+       required=1;
+       def_val=;
+       prev_expr="\"x\"";
+       expr {
+	expr="false";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=DataTable_ptr;
+       type="DataTable*";
+       name="src_data";
+       required=1;
+       def_val=;
+       prev_expr="\"y\"";
+       expr {
+	expr="data_table1_copy";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=int;
+       type="int";
+       name="kern_half_wd";
+       required=1;
+       def_val=;
+       prev_expr="false";
+       expr {
+	expr="2";
+       };
+      };
+      ProgArg @[4] {
+       arg_type=float;
+       type="float";
+       name="kern_sigma";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="2";
+       };
+      };
+      ProgArg @[5] {
+       arg_type=bool;
+       type="bool";
+       name="neg_tail";
+       required=0;
+       def_val="true";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[6] {
+       arg_type=bool;
+       type="bool";
+       name="pos_tail";
+       required=0;
+       def_val="true";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[7] {
+       arg_type=bool;
+       type="bool";
+       name="keep_edges";
+       required=0;
+       def_val="true";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[8] {
+       arg_type=bool;
+       type="bool";
+       name="float_only";
+       required=0;
+       def_val="true";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+     };
+    };
+    ForLoop @[6] {
+     name="ForLoop_fori0i10i";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="for (i = 0; i< 10; i++)";
+     loop_code {
+      name="loop_code";
+      el_typ=ProgCode;
+      el_def=0;
+      If @[0] {
+       name="If_ifsmootheddatayi1";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="if (smoothed_data[\"y\"][i] != 1)";
+       cond {
+	expr="smoothed_data[\"y\"][i] != 1";
+       };
+       true_code {
+	name="true_code";
+	el_typ=ProgCode;
+	el_def=0;
+	AssignExpr @[0] {
+	 name="AssignExpr_testfailed1";
+	 desc=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="test_failed = 1";
+	 result_var=$.programs[6].vars[0]$;
+	 expr {
+	  expr="1";
+	 };
+	};
+	PrintExpr @[1] {
+	 name="PrintExpr_Printsmootheddatayi";
+	 desc=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="Print smoothed_data[\"y\"][i]";
+	 expr {
+	  expr="smoothed_data[\"y\"][i]";
+	 };
+	 debug=0;
+	};
+       };
+      };
+     };
+     init {
+      expr="i = 0";
+     };
+     test {
+      expr="i< 10";
+     };
+     iter {
+      expr="i++";
+     };
+    };
+    MethodCall @[7] {
+     name="MethodCall_datatable1copyCopyFromdatatable1_1";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="data_table1_copy->CopyFrom(data_table1)";
+     result_var=NULL;
+     obj=$.programs[6].vars[2]$;
+     method=taBase::CopyFrom;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taBase_ptr;
+       type="taBase*";
+       name="cpy_from";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="data_table1";
+       };
+      };
+     };
+     meth_sig="bool CopyFrom(taBase* cpy_from)";
+     meth_desc=" Copy from given object into this object (this is a safe interface to UnSafeCopy)";
+    };
+    MethodCall @[8] {
+     name="MethodCall_datatable1copyFi_onCONTAINSType2";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="data_table1_copy->Filter(\"Name\", Relation::CONTAINS, \"Type2\", , , , , , , )";
+     result_var=NULL;
+     obj=$.programs[6].vars[2]$;
+     method=DataTable::Filter;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_Variant_ref;
+       type="Variant&";
+       name="col1";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="\"Name\"";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=Relation::Relations;
+       type="Relation::Relations";
+       name="operator_1";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="Relation::CONTAINS";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="value_1";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="\"Type2\"";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=Relation::CombOp;
+       type="Relation::CombOp";
+       name="comb_op";
+       required=0;
+       def_val="Relation::AND";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[4] {
+       arg_type=Variant;
+       type="Variant";
+       name="col2";
+       required=0;
+       def_val="-1";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[5] {
+       arg_type=Relation::Relations;
+       type="Relation::Relations";
+       name="operator_2";
+       required=0;
+       def_val="Relation::EQUAL";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[6] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="value_2";
+       required=0;
+       def_val="\"\"";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[7] {
+       arg_type=Variant;
+       type="Variant";
+       name="col3";
+       required=0;
+       def_val="-1";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[8] {
+       arg_type=Relation::Relations;
+       type="Relation::Relations";
+       name="operator_3";
+       required=0;
+       def_val="Relation::EQUAL";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[9] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="value_3";
+       required=0;
+       def_val="\"\"";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+     };
+     meth_sig="void Filter(Variant& col1, Relation::Relations operator_1, taString& value_1, Relation::CombOp comb_op = Relation::AND, Variant col2 = -1, Relation::Relations operator_2 = Relation::EQUAL, taString& value_2, Variant col3 = -1, Relation::Relations operator_3 = Relation::EQUAL, taString& value_3)";
+     meth_desc=" Select table rows by specifying up to 3 conditions for which rows to retain in the table (hiding the ones that do not match). Note: you can instantly recover the original full set of rows, unsorted and unfiltered, by using ShowAllRows on the DataTable -- see that function for more details -- to be be able to undo just this Filter you would need to run Flatten first";
+    };
+    DataAnalCall @[9] {
+     name="DataAnalCall_resulttaDataAnal_atatable1copy22_1";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="result = taDataAnal::SmoothGauss(smoothed_data, false, data_table1_copy, 2, 2, , , , )";
+     result_var=$.programs[6].vars[1]$;
+     object_type=taDataAnal;
+     method=taDataAnal::SmoothGauss;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=DataTable_ptr;
+       type="DataTable*";
+       name="smooth_data";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="smoothed_data";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=bool;
+       type="bool";
+       name="view";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="false";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=DataTable_ptr;
+       type="DataTable*";
+       name="src_data";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="data_table1_copy";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=int;
+       type="int";
+       name="kern_half_wd";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="2";
+       };
+      };
+      ProgArg @[4] {
+       arg_type=float;
+       type="float";
+       name="kern_sigma";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="2";
+       };
+      };
+      ProgArg @[5] {
+       arg_type=bool;
+       type="bool";
+       name="neg_tail";
+       required=0;
+       def_val="true";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[6] {
+       arg_type=bool;
+       type="bool";
+       name="pos_tail";
+       required=0;
+       def_val="true";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[7] {
+       arg_type=bool;
+       type="bool";
+       name="keep_edges";
+       required=0;
+       def_val="true";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[8] {
+       arg_type=bool;
+       type="bool";
+       name="float_only";
+       required=0;
+       def_val="true";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+     };
+    };
+    ForLoop @[10] {
+     name="ForLoop_fori0i5i";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="for (i = 0; i< 5; i++)";
+     loop_code {
+      name="loop_code";
+      el_typ=ProgCode;
+      el_def=0;
+      If @[0] {
+       name="If_ifsmootheddataxi1";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="if (smoothed_data[\"x\"][i] != 1)";
+       cond {
+	expr="smoothed_data[\"x\"][i] != 1";
+       };
+       true_code {
+	name="true_code";
+	el_typ=ProgCode;
+	el_def=0;
+	AssignExpr @[0] {
+	 name="AssignExpr_testfailed2";
+	 desc=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="test_failed = 2";
+	 result_var=$.programs[6].vars[0]$;
+	 expr {
+	  expr="2";
+	 };
+	};
+       };
+      };
+     };
+     init {
+      expr="i = 0";
+     };
+     test {
+      expr="i< 5";
+     };
+     iter {
+      expr="i++";
+     };
+    };
+    BlankLineEl @[11] {
+     name="BlankLineEl_";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string=" ";
+    };
+   };
+   step_prog=NULL;
+   step_n=1;
+   doc {
+    name="doc";
+    desc=;
+    web_doc=0;
+    wiki=;
+    url="local";
+    full_url="local";
+    text_size=1;
+    text=;
+    html_text=;
+   };
+  };
  };
  viewers {
   name="viewers";
@@ -27264,9 +30972,9 @@ LeabraProject .projects[0] {
     UserDataItem @[0] {name="view_win_lft": value=0: val_type_fixed=0: };
     UserDataItem @[1] {name="view_win_top": value=0: val_type_fixed=0: };
     UserDataItem @[2] {name="view_win_wd": value=1: val_type_fixed=0: };
-    UserDataItem @[3] {name="view_win_ht": value=0.7994902: val_type_fixed=0: };
+    UserDataItem @[3] {name="view_win_ht": value=1: val_type_fixed=0: };
     UserDataItem @[4] {name="view_win_iconified": value=0: val_type_fixed=0: };
-    UserDataItem @[5] {name="view_splitter_state": value=AAAA/wAAAAEAAAADAAABFwAAAfwAAAKMAf////8BAAAAAQA=: val_type_fixed=0: };
+    UserDataItem @[5] {name="view_splitter_state": value=AAAA/wAAAAEAAAADAAABXQAAApgAAAFGAf////8BAAAAAQA=: val_type_fixed=0: };
    };
    name="Browser2";
    m_data=.$$;
@@ -27443,10 +31151,10 @@ LeabraProject .projects[0] {
       name="UserDataItem_List_103";
       el_typ=UserDataItem;
       el_def=0;
-      UserDataItem @[0] {name="view_win_lft": value=0: val_type_fixed=0: };
-      UserDataItem @[1] {name="view_win_top": value=0.008496176: val_type_fixed=0: };
-      UserDataItem @[2] {name="view_win_wd": value=0.04357067: val_type_fixed=0: };
-      UserDataItem @[3] {name="view_win_ht": value=0.7357689: val_type_fixed=0: };
+      UserDataItem @[0] {name="view_win_lft": value=-0.002785515: val_type_fixed=0: };
+      UserDataItem @[1] {name="view_win_top": value=0.002280502: val_type_fixed=0: };
+      UserDataItem @[2] {name="view_win_wd": value=0.05710306: val_type_fixed=0: };
+      UserDataItem @[3] {name="view_win_ht": value=0.9236032: val_type_fixed=0: };
       UserDataItem @[4] {name="view_win_iconified": value=0: val_type_fixed=0: };
       UserDataItem @[5] {name="view_visible": value=1: val_type_fixed=0: };
      };
@@ -27465,7 +31173,7 @@ LeabraProject .projects[0] {
  save_as_only=0;
  auto_name=1;
  last_change_desc=;
- tree_state{ .;.programs;.networks; };
+ tree_state{ .;.programs;.programs[4];.programs[5];.programs[5].objs;.programs[5].objs_vars;.programs[5].vars;.networks; };
  networks {
   name="networks";
   el_typ=LeabraNetwork;

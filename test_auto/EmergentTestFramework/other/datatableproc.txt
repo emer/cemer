@@ -72,6 +72,24 @@ Group
     Run Emergent Program	Group
     Prog Var Should Equal	test_failed	0    
 
+RegressionLinear
+    Ensure Emergent Free
+    Set Suite Variable     ${program_test}       "RegressionLinear"    
+    Run Emergent Program	RegressionLinear
+    Prog Var Should Equal	test_failed	0    
+
+DistMatrix
+    Ensure Emergent Free
+    Set Suite Variable     ${program_test}       "DistMatrix"    
+    Run Emergent Program	DistMatrix
+    Prog Var Should Equal	test_failed	0    
+
+SmoothGauss
+    Ensure Emergent Free
+    Set Suite Variable     ${program_test}       "SmoothGauss"    
+    Run Emergent Program	SmoothGauss
+    Prog Var Should Equal	test_failed	0    
+
 
 *** Keywords ***
 
