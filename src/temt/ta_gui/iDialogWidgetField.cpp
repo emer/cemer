@@ -66,27 +66,15 @@ void iDialogWidgetField::init(bool read_only_, const String& desc) {
     btnCancel = new QPushButton("&Close", this);
     layButtons->addWidget(btnCancel);
     connect(btnCancel, SIGNAL(clicked()), this, SLOT(reject()) );
-  } else {
+  }
+  else {
     btnOk = new QPushButton("&Ok", this);
     layButtons->addWidget(btnOk);
     btnCancel = new QPushButton("&Cancel", this);
     layButtons->addWidget(btnCancel);
     connect(btnOk, SIGNAL(clicked()), this, SLOT(accept()) );
     connect(btnCancel, SIGNAL(clicked()), this, SLOT(reject()) );
-    QObject::connect(txtText, SIGNAL(textChanged() ),
-          this, SLOT(repChanged() ) );
-  }
-  btnApply = NULL;
-  btnRevert = NULL;
-  if (!isModal() && !m_read_only) {
-    layButtons->addSpacing(8);
-    btnApply = new QPushButton("&Apply", this);
-    layButtons->addWidget(btnApply);
-    btnRevert = new QPushButton("&Revert", this);
-    layButtons->addWidget(btnRevert);
-    setApplyEnabled(false);
-    connect(btnApply, SIGNAL(clicked()), this, SLOT(btnApply_clicked()) );
-    connect(btnRevert, SIGNAL(clicked()), this, SLOT(btnRevert_clicked()) );
+    QObject::connect(txtText, SIGNAL(textChanged() ), this, SLOT(repChanged() ) );
   }
 }
 
@@ -98,8 +86,9 @@ iDialogWidgetField::~iDialogWidgetField() {
 }
 
 void iDialogWidgetField::accept() {
-  if (!m_read_only)
-    btnApply_clicked();
+  if (!m_read_only) {
+    btnApply_clicked();  // need to apply even without the apply button
+  }
   if (field)
     field->edit_dialog = NULL;
 //   if (!isModal()) {
@@ -117,30 +106,18 @@ void iDialogWidgetField::reject() {
   inherited::reject();
 }
 
-void iDialogWidgetField::setApplyEnabled(bool enabled) {
-  if (btnApply) btnApply->setEnabled(enabled);
-  if (btnRevert) btnRevert->setEnabled(enabled);
-}
-
 void iDialogWidgetField::setText(const QString& value) {
   txtText->setPlainText(value);
-  setApplyEnabled(false);
 }
 
-void iDialogWidgetField::btnApply_clicked() {
+void iDialogWidgetField::btnApply_clicked() {  // clicked virtually now that the button was removed
   field->rep()->setText(txtText->toPlainText());
   // unless explicitly overridden, we always do an autoapply
   if (!(field->flags() & taiWidget::flgNoEditDialogAutoApply)) {
     field->applyNow();
   }
-  setApplyEnabled(false);
-}
-
-void iDialogWidgetField::btnRevert_clicked() {
-  setText(field->rep()->text());
 }
 
 void iDialogWidgetField::repChanged() {
-  setApplyEnabled(true);
 }
 

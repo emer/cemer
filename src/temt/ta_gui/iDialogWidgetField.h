@@ -36,8 +36,6 @@ public:
   iTextEdit*    txtText;
   QPushButton*  btnOk; // read/write only
   QPushButton*  btnCancel; // or close, if read only
-  QPushButton*  btnApply; // writes it back to field
-  QPushButton*  btnRevert; // gets back from field
 
   bool          isReadOnly() { return m_read_only; }
   virtual void  setText(const QString& value);
@@ -50,14 +48,11 @@ public slots:
   void reject() override;
 
 protected:
-  taiWidgetField*     field;
-  bool          m_read_only;
-
-  void          setApplyEnabled(bool enabled); // set apply/revert enabled or not
+  taiWidgetField*    field;
+  bool               m_read_only;
 
 protected slots:
   void          btnApply_clicked();
-  void          btnRevert_clicked();
   void          repChanged();
 
 private:
