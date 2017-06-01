@@ -76,6 +76,7 @@ void LayerAvgActSpec::Initialize() {
 void LayerAvgActSpec::Defaults_init() {
   fixed = false;
   use_ext_act = false;
+  use_first = true;
   tau = 100.0f;
   adjust = 1.0f;
   dt = 1.0f / tau;
@@ -786,19 +787,34 @@ void LeabraLayerSpec::Quarter_Final_Layer(LeabraLayer* lay, LeabraNetwork* net) 
 
 void LeabraLayerSpec::Quarter_Final_GetMinus(LeabraLayer* lay, LeabraNetwork* net) {
   lay->acts_m = lay->acts_eq;
-  lay->acts_m_avg += avg_act.dt * (lay->acts_m.avg - lay->acts_m_avg);
+  if(avg_act.use_first && lay->acts_m_avg == avg_act.targ_init) {
+    lay->acts_m_avg = lay->acts_m.avg; // first sample is better than our guess..
+  }
+  else {
+    lay->acts_m_avg += avg_act.dt * (lay->acts_m.avg - lay->acts_m_avg);
+  }
   if(lay->unit_groups) {
     for(int g=0; g < lay->gp_geom.n; g++) {
       LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
       gpd->acts_m = gpd->acts_eq;
-      gpd->acts_m_avg += avg_act.dt * (gpd->acts_m.avg - gpd->acts_m_avg);
+      if(avg_act.use_first && gpd->acts_m_avg == avg_act.targ_init) {
+        gpd->acts_m_avg = gpd->acts_m.avg;
+      }
+      else {
+        gpd->acts_m_avg += avg_act.dt * (gpd->acts_m.avg - gpd->acts_m_avg);
+      }
     }
   }
 }
 
 void LeabraLayerSpec::Quarter_Final_GetPlus(LeabraLayer* lay, LeabraNetwork* net) {
   lay->acts_p = lay->acts_eq;
-  lay->acts_p_avg += avg_act.dt * (lay->acts_p.avg - lay->acts_p_avg); 
+  if(avg_act.use_first && lay->acts_p_avg == avg_act.targ_init) {
+    lay->acts_p_avg = lay->acts_p.avg;
+  }
+  else {
+    lay->acts_p_avg += avg_act.dt * (lay->acts_p.avg - lay->acts_p_avg);
+  }
   if(avg_act.fixed) {           // note: already done in Quarter_Init
     lay->acts_p_avg_eff = avg_act.targ_init;
   }
@@ -812,7 +828,12 @@ void LeabraLayerSpec::Quarter_Final_GetPlus(LeabraLayer* lay, LeabraNetwork* net
     for(int g=0; g < lay->gp_geom.n; g++) {
       LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
       gpd->acts_p = gpd->acts_eq;
-      gpd->acts_p_avg += avg_act.dt * (gpd->acts_p.avg - gpd->acts_p_avg);
+      if(avg_act.use_first && gpd->acts_p_avg == avg_act.targ_init) {
+        gpd->acts_p_avg = gpd->acts_p.avg;
+      }
+      else {
+        gpd->acts_p_avg += avg_act.dt * (gpd->acts_p.avg - gpd->acts_p_avg);
+      }
       if(avg_act.fixed) {
         gpd->acts_p_avg_eff = avg_act.fixed;
       }

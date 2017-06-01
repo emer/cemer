@@ -2336,20 +2336,27 @@ bool taMath_float::vec_convolve(float_Matrix* out_vec, const float_Matrix* in_ve
     taMisc::Error("vec_convolve: kernel size == 0");
     return false;
   }
+
+  const int eff_size = in_vec->IterCount();
+  bool frame_view = in_vec->IdxFrameView();
+  
   int off = (kernel->size-1) / 2;
   if(keep_edges) {
-    if(out_vec->size != in_vec->size) {
-      out_vec->SetGeom(1, in_vec->size);
+    if(out_vec->size != eff_size) {
+      out_vec->SetGeom(1, eff_size);
     }
-    for(int i=0;i<out_vec->size;i++) {
+    for(int i=0;i<eff_size;i++) {
       float sum = 0.0;
       float dnorm = 0.0;
       for(int j=0;j<kernel->size;j++) {
         int idx = i + j - off;
-        if(idx < 0 || idx >= in_vec->size) {
+        if(idx < 0 || idx >= eff_size) {
           dnorm += kernel->FastEl_Flat(j);
         }
         else {
+          if(frame_view) {
+            idx = in_vec->FrameViewFlatIdx(idx);
+          }
           sum += in_vec->FastEl_Flat(idx) * kernel->FastEl_Flat(j);
         }
       }
@@ -2360,17 +2367,21 @@ bool taMath_float::vec_convolve(float_Matrix* out_vec, const float_Matrix* in_ve
     }
   }
   else {
-    if(in_vec->size < kernel->size) {
+    if(eff_size < kernel->size) {
       taMisc::Error("vec_convolve: input vector size < kernel size -- cannot convolve");
       return false;
     }
-    if(out_vec->size != in_vec->size - kernel->size) {
-      out_vec->SetGeom(1, in_vec->size - kernel->size);
+    if(out_vec->size != eff_size - kernel->size) {
+      out_vec->SetGeom(1, eff_size - kernel->size);
     }
     for(int i=0;i<out_vec->size;i++) {
       float sum = 0.0;
       for(int j=0;j<kernel->size;j++) {
-        sum += in_vec->FastEl_Flat(i+j) * kernel->FastEl_Flat(j);
+        int idx = i+j;
+        if(frame_view) {
+          idx = in_vec->FrameViewFlatIdx(idx);
+        }
+        sum += in_vec->FastEl_Flat(idx) * kernel->FastEl_Flat(j);
       }
       out_vec->FastEl_Flat(i) = sum;
     }

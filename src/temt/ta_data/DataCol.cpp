@@ -819,7 +819,7 @@ bool DataCol::InitValsByIncrement(float first_value, float increment, int st_row
   }
   else {
     for(int i=0; i<n_rows; i++) {
-      SetValAsFloat(first_value + i*increment, st_row + i);
+      SetValAsFloat(first_value + (float)i*increment, st_row + i);
     }
   }
   return true;

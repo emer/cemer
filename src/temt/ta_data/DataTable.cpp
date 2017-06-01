@@ -802,7 +802,7 @@ bool DataTable::InitValsToRowNo(const Variant& col, int st_row, int n_rows) {
   return true;
 }
 
-bool DataTable::InitValsByIncrement(const int first_value, const int increment, const Variant& col, int st_row, int n_rows) {
+bool DataTable::InitValsByIncrement(const float first_value, const float increment, const Variant& col, int st_row, int n_rows) {
   DataCol* da = GetColData(col);
   if (!da) return false;
   da->InitValsByIncrement(first_value, increment, st_row, n_rows);

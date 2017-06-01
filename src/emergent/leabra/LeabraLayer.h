@@ -25,6 +25,7 @@
 #include <AvgMaxVals>
 #include <LeabraUnGpData_List>
 #include <DMemAggVars>
+#include <float_Matrix>
 
 
 // declare all other types mentioned but not required to include:
@@ -34,9 +35,30 @@ class LeabraNetwork; //
 eTypeDef_Of(LeabraLayer);
 
 class E_API LeabraLayer : public Layer, public LeabraInhib {
-  // #STEM_BASE ##CAT_Leabra a Leabra Layer, which defines the primary scope of inhibitory competition among the units and unit groups that it contains
+  // #STEM_BASE ##CAT_Leabra #AKA_TwoDValLeabraLayer a Leabra Layer, which defines the primary scope of inhibitory competition among the units and unit groups that it contains
 INHERITED(Layer)
 public:
+  enum TwoDXY {			// x-y two-d vals
+    TWOD_X,			// the horizontal (X) value encoded in the layer
+    TWOD_Y,			// the vertical (Y) value encoded in the layer
+    TWOD_XY,			// number of xy vals (2)
+  };
+
+  enum TwoDValTypes {		// different values encoded in the twod_vals matrix
+    TWOD_EXT,			// external inputs
+    TWOD_TARG,			// target values
+    TWOD_ACT,			// current activation
+    TWOD_ACT_M,			// minus phase activations
+    TWOD_ACT_P,			// plus phase activations
+    TWOD_ACT_DIF,		// difference between plus and minus phase activations
+    TWOD_ACT_M2,		// second minus phase activations
+    TWOD_ACT_P2,		// second plus phase activations
+    TWOD_ACT_DIF2,		// difference between second plus and minus phase activations
+    TWOD_ERR,			// error from target: targ - act_m
+    TWOD_SQERR,			// squared error from target: (targ - act_m)^2
+    TWOD_N,			// number of val types to encode
+  };
+  
   LeabraLayerSpec_SPtr	spec;	// #CAT_Structure the spec for this layer: controls all functions of layer
   float         adapt_gi;   // #READ_ONLY #SHOW #CAT_Activation #SAVE_WTS adaptive  inhibitory gain value -- this is an *extra* multiplier on top of existing gi value in the layer, unit inhib specs, starts out at 1 and moves from there -- adjusted by adaptive inhibition function -- saved with weight files
   float         margin_low_thr;   // #READ_ONLY #SHOW #CAT_Activation #SAVE_WTS low threshold for marginal activation, in terms of v_m_eq -- adapts so that roughly acts_p_avg units on average are above this low threshold
@@ -79,6 +101,8 @@ public:
   LeabraUnGpData_List ungp_data; // #NO_SAVE #NO_COPY #TREE_SHOW #HIDDEN #CAT_Activation unit group data (for inhibition computation and other things) -- allows actual unit groups to be virtual (virt_groups flag)
   LeabraUnGpData_List multigp_data; // #NO_SAVE #NO_COPY #TREE_SHOW #HIDDEN #CAT_Activation unit group data (for multi-unit-group inhibition computation and other things)
   LeabraUnGpData      laygp_data;   // #NO_SAVE #NO_COPY #TREE_SHOW #HIDDEN #CAT_Activation layer-group inhibition data -- first layer in a layer group that has lay_gp_inhib.on active has the data for the entire layer group
+  float_Matrix	      twod_vals;    // #TREE_SHOW matrix of layer-encoded values, dimensions: [gp_y][gp_x][n_vals][TWOD_N][TWOD_XY] (outer to inner) -- gp_y and gp_x are group indices, size 1,1, for a layer with no unit groups
+
 
 #ifdef DMEM_COMPILE
   DMemAggVars	dmem_agg_sum;		// #IGNORE aggregation of network variables using SUM op (currently only OP in use -- add others as needed)
@@ -267,6 +291,42 @@ public:
   void	ClearDeepActs(LeabraNetwork* net)	{ spec->ClearDeepActs(this, net); }
   // #CAT_TI clear the deep lamina variables -- can be useful to do at discontinuities of experience
 
+  ////////////////////////////////////////////
+  //	TwoD Misc structural routines
+
+  virtual bool   TwoDValMode();
+  // #CAT_TwoD are we operating in TwoD value spec mode?  i.e., the layerspec is set to a TwoDValLayerSpec
+  
+  inline float	GetTwoDVal(TwoDXY xy, TwoDValTypes val_typ, int val_no, int gp_x=0, int gp_y=0) {
+    return twod_vals.SafeElAsFloat(xy, val_typ, val_no, gp_x, gp_y);
+  }
+  // #CAT_TwoD get a two-d value encoded in the twod_vals data 
+  inline void	GetTwoDVals(float& x_val, float& y_val, TwoDValTypes val_typ, int val_no, int gp_x=0, int gp_y=0) {
+    x_val = twod_vals.SafeElAsFloat(TWOD_X, val_typ, val_no, gp_x, gp_y);
+    y_val = twod_vals.SafeElAsFloat(TWOD_Y, val_typ, val_no, gp_x, gp_y);
+  }
+  // #CAT_TwoD get a two-d value encoded in the twod_vals data 
+
+  inline void	SetTwoDVal(const Variant& val, TwoDXY xy, TwoDValTypes val_typ, int val_no, int gp_x=0, int gp_y=0) {
+    twod_vals.SetFmVar(val, xy, val_typ, val_no, gp_x, gp_y);
+  }
+  // #CAT_TwoD set a two-d value encoded in the twod_vals data 
+  inline void	SetTwoDVals(const Variant& x_val, const Variant& y_val, TwoDValTypes val_typ, int val_no, int gp_x=0, int gp_y=0) {
+    twod_vals.SetFmVar(x_val, TWOD_X, val_typ, val_no, gp_x, gp_y);
+    twod_vals.SetFmVar(y_val, TWOD_Y, val_typ, val_no, gp_x, gp_y);
+  }
+  // #CAT_TwoD set both two-d values encoded in the twod_vals data 
+
+  virtual void		UpdateTwoDValsGeom();
+  // update the twod_vals geometry based on current layer and layer spec settings
+
+  void	ApplyInputData_2d(taMatrix* data, UnitVars::ExtFlags ext_flags,
+				  Random* ran, const taVector2i& offs, bool na_by_range=false) override;
+  void	ApplyInputData_Flat4d(taMatrix* data, UnitVars::ExtFlags ext_flags,
+				      Random* ran, const taVector2i& offs, bool na_by_range=false) override;
+  void	ApplyInputData_Gp4d(taMatrix* data, UnitVars::ExtFlags ext_flags,
+				    Random* ran, bool na_by_range=false) override;
+  
   ////////////////////////////////////////////
   //	Misc structural routines
 

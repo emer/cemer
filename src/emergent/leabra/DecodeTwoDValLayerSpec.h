@@ -29,7 +29,7 @@ class E_API DecodeTwoDValLayerSpec : public TwoDValLayerSpec {
   // a two-d-value layer spec that copies its activations from one-to-one input prjns, to act as a decoder of another layer
 INHERITED(TwoDValLayerSpec)
 public:
-  void ReadValue_ugp(TwoDValLeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
+  void ReadValue_ugp(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
 	                 LeabraNetwork* net) override;
   void	Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net, int thread_no=-1) override;
 

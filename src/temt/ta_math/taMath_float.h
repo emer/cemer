@@ -525,7 +525,7 @@ public:
   // #CAT_Convolution create a unit-sum-normalized power-function kernel of given half-size (size set to 2* half_sz + 1) in given vector, with given exponential multiplier.  if given tail direction is false, it is replaced with zeros -- uses entire matrix, ignoring any view of sub-elements
   static bool   vec_convolve(float_Matrix* out_vec, const float_Matrix* in_vec,
                              const float_Matrix* kernel, bool keep_edges = false);
-  // #CAT_Convolution convolve in_vec with kernel to produce out_vec.  out_vec_i = sum_j kernel_j * in_vec_[i+j-off] (where off is 1/2 width of kernel).  normally, out_vec is indented by the offset and width of the kernel so that the full kernel is used for all out_vec points.  however, if keep_edges is true, it keeps these edges by clipping and renormalizing the kernel all the way to both edges -- uses entire matrix, ignoring any view of sub-elements
+  // #CAT_Convolution convolve in_vec with kernel to produce out_vec.  out_vec_i = sum_j kernel_j * in_vec_[i+j-off] (where off is 1/2 width of kernel).  normally, out_vec is indented by the offset and width of the kernel so that the full kernel is used for all out_vec points.  however, if keep_edges is true, it keeps these edges by clipping and renormalizing the kernel all the way to both edges -- supports frame indexing view of matrix (as used by data tables)
 
   static bool   vec_kern2d_gauss(float_Matrix* kernel, int half_sz_x, int half_sz_y,
                                  float sigma_x, float sigma_y);

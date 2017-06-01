@@ -15,6 +15,7 @@
 
 #include "LeabraLayer.h"
 #include <LeabraNetwork>
+#include <TwoDValLayerSpec>
 
 TA_BASEFUNS_CTORS_DEFN(LeabraLayer);
 SMARTREF_OF_CPP(LeabraLayer);
@@ -92,6 +93,7 @@ void LeabraLayer::InitLinks() {
   taBase::Own(ungp_data, this);
   taBase::Own(multigp_data, this);
   taBase::Own(laygp_data, this);
+  taBase::Own(twod_vals, this);
 
 #ifdef DMEM_COMPILE
   taBase::Own(dmem_agg_sum, this);
@@ -105,6 +107,10 @@ void LeabraLayer::InitLinks() {
 void LeabraLayer::CutLinks() {
   inherited::CutLinks();
   spec.CutLinks();
+  ungp_data.CutLinks();
+  multigp_data.CutLinks();
+  laygp_data.CutLinks();
+  twod_vals.CutLinks();
 }
 
 void LeabraLayer::Copy_(const LeabraLayer& cp) {
@@ -147,6 +153,7 @@ void LeabraLayer::CheckThisConfig_impl(bool quiet, bool& rval) {
 
 void LeabraLayer::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+  UpdateTwoDValsGeom();
 }
 
 void LeabraLayer::Init_InputData(Network* net) {
@@ -189,3 +196,98 @@ void LeabraLayer::DMem_ComputeAggs(MPI_Comm comm) {
 }
 #endif
 
+bool LeabraLayer::TwoDValMode() {
+  LeabraLayerSpec* ls = (LeabraLayerSpec*)GetLayerSpec();
+  if(!ls) return false;
+  return (ls->InheritsFrom(&TA_TwoDValLayerSpec));
+}
+
+void LeabraLayer::UpdateTwoDValsGeom() {
+  if(!TwoDValMode()) return;
+  TwoDValLayerSpec* ls = (TwoDValLayerSpec*)GetLayerSpec();
+  if(unit_groups)
+    twod_vals.SetGeom(5, 2, TWOD_N, ls->twod.n_vals, gp_geom.x, gp_geom.y);
+  else
+    twod_vals.SetGeom(5, 2, TWOD_N, ls->twod.n_vals, 1, 1);
+}
+
+void LeabraLayer::ApplyInputData_2d(taMatrix* data, UnitVars::ExtFlags ext_flags,
+                              Random* ran, const taVector2i& offs, bool na_by_range) {
+  if(TwoDValMode()) {
+    // only no unit_group supported!
+    if(TestError(unit_groups, "ApplyInputData_2d",
+                 "input data must be 4d for layers with unit_groups: outer 2 are group dims, inner 2 are x,y vals and n_vals")) {
+      return;
+    }
+    for(int d_y = 0; d_y < data->dim(1); d_y++) {
+      int val_idx = offs.y + d_y;
+      for(int d_x = 0; d_x < data->dim(0); d_x++) {
+        int xy_idx = offs.x + d_x;
+        Variant val = data->SafeElAsVar(d_x, d_y);
+        if(ext_flags & UnitVars::EXT)
+          twod_vals.SetFmVar(val, xy_idx, TWOD_EXT, val_idx, 0, 0);
+        else
+          twod_vals.SetFmVar(val, xy_idx, TWOD_TARG, val_idx, 0, 0);
+      }
+    }
+  }
+  else {
+    inherited::ApplyInputData_2d(data, ext_flags, ran, offs, na_by_range);
+  }
+}
+
+void LeabraLayer::ApplyInputData_Flat4d(taMatrix* data, UnitVars::ExtFlags ext_flags,
+                                  Random* ran, const taVector2i& offs, bool na_by_range) {
+  if(TwoDValMode()) {
+    // outer-loop is data-group (groups of x-y data items)
+    if(TestError(!unit_groups, "ApplyInputData_Flat4d",
+                 "input data must be 2d for layers without unit_groups: x,y vals and n_vals")) {
+      return;
+    }
+    for(int dg_y = 0; dg_y < data->dim(3); dg_y++) {
+      for(int dg_x = 0; dg_x < data->dim(2); dg_x++) {
+
+        for(int d_y = 0; d_y < data->dim(1); d_y++) {
+          int u_y = offs.y + dg_y * data->dim(1) + d_y; // multiply out data indicies
+          for(int d_x = 0; d_x < data->dim(0); d_x++) {
+            int u_x = offs.x + dg_x * data->dim(0) + d_x; // multiply out data indicies
+            Unit* un = UnitAtCoord(u_x, u_y);
+            if(un) {
+              float val = data->SafeElAsVar(d_x, d_y, dg_x, dg_y).toFloat();
+              un->ApplyInputData(val, ext_flags, ran, na_by_range);
+            }
+          }
+        }
+      }
+    }
+  }
+  else {
+    inherited::ApplyInputData_Flat4d(data, ext_flags, ran, offs, na_by_range);
+  }
+}
+
+void LeabraLayer::ApplyInputData_Gp4d(taMatrix* data, UnitVars::ExtFlags ext_flags, Random* ran,
+                                bool na_by_range) {
+  if(TwoDValMode()) {
+    // outer-loop is data-group (groups of x-y data items)
+    for(int dg_y = 0; dg_y < data->dim(3); dg_y++) {
+      for(int dg_x = 0; dg_x < data->dim(2); dg_x++) {
+
+        for(int d_y = 0; d_y < data->dim(1); d_y++) {
+          int val_idx = d_y;
+          for(int d_x = 0; d_x < data->dim(0); d_x++) {
+            int xy_idx = d_x;
+            Variant val = data->SafeElAsVar(d_x, d_y, dg_x, dg_y);
+            if(ext_flags & UnitVars::EXT)
+              twod_vals.SetFmVar(val, xy_idx, TWOD_EXT, val_idx, dg_x, dg_y);
+            else
+              twod_vals.SetFmVar(val, xy_idx, TWOD_TARG, val_idx, dg_x, dg_y);
+          }
+        }
+      }
+    }
+  }
+  else {
+    inherited::ApplyInputData_Gp4d(data, ext_flags, ran, na_by_range);
+  }
+}

@@ -20,7 +20,6 @@
 #include <LeabraLayerSpec>
 
 // member includes:
-#include <TwoDValLeabraLayer>
 #include <MinMaxRange>
 
 // declare all other types mentioned but not required to include:
@@ -117,7 +116,7 @@ private:
 eTypeDef_Of(TwoDValLayerSpec);
 
 class E_API TwoDValLayerSpec : public LeabraLayerSpec {
-  // represents one or more two-d value(s) using a coarse-coded distributed code over units.  one val readout is weighted-average; multiple vals = max bumps over 3x3 local grid -- requires TwoDValLeabraLayer to encode values (no longer using first row of units)
+  // represents one or more two-d value(s) using a coarse-coded distributed code over units.  one val readout is weighted-average; multiple vals = max bumps over 3x3 local grid
 INHERITED(LeabraLayerSpec)
 public:
   TwoDValSpec	 twod;		// specifies how values are represented in terms of distributed patterns of activation across the layer
@@ -127,12 +126,12 @@ public:
   MinMaxRange	 x_val_range;	// #READ_ONLY #NO_INHERIT actual range of values (scalar.min/max taking into account un_range)
   MinMaxRange	 y_val_range;	// #READ_ONLY #NO_INHERIT actual range of values (scalar.min/max taking into account un_range)
 
-  virtual void	ClampValue_ugp(TwoDValLeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
+  virtual void	ClampValue_ugp(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
 			       LeabraNetwork* net, float rescale=1.0f);
   // #CAT_TwoDVal clamp value in the first unit's ext field to the units in the group
-  virtual void	ReadValue(TwoDValLeabraLayer* lay, LeabraNetwork* net);
+  virtual void	ReadValue(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_TwoDVal read out current value represented by activations in layer
-    virtual void ReadValue_ugp(TwoDValLeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
+    virtual void ReadValue_ugp(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
 			       LeabraNetwork* net);
     // #CAT_TwoDVal unit group version: read out current value represented by activations in layer
   virtual void HardClampExt(LeabraLayer* lay, LeabraNetwork* net);
@@ -160,14 +159,14 @@ public:
   void  Init_Weights_Layer(LeabraLayer* lay, LeabraNetwork* net) override;
   void	Quarter_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) override;
     void Quarter_Init_TargFlags_Layer(LeabraLayer* lay, LeabraNetwork* net) override;
-    virtual void Quarter_Init_TargFlags_Layer_ugp(TwoDValLeabraLayer* lay,
+    virtual void Quarter_Init_TargFlags_Layer_ugp(LeabraLayer* lay,
 						 Layer::AccessMode acc_md, int gpidx,
 						 LeabraNetwork* net);
     // #IGNORE
   void	Compute_HardClamp_Layer(LeabraLayer* lay, LeabraNetwork* net) override;
   void	Compute_OutputName(LeabraLayer* lay, LeabraNetwork* net) override;
   void	Quarter_Final_Layer(LeabraLayer* lay, LeabraNetwork* net) override;
-    virtual void Quarter_Final_ugp(TwoDValLeabraLayer* lay,
+    virtual void Quarter_Final_ugp(LeabraLayer* lay,
 				Layer::AccessMode acc_md, int gpidx, LeabraNetwork* net);
     // #CAT_TwoDVal unit group version: update variables based on phase
 

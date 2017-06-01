@@ -49,8 +49,7 @@ set(leabra_HEADS_MAKETA
     
   ScalarValLayerSpec.h
 #  MotorForceLayerSpec.h
-  TwoDValLeabraLayer.h
-  TwoDValLayerSpec.h
+    TwoDValLayerSpec.h
   DecodeTwoDValLayerSpec.h
   LeabraV1LayerSpec.h
   TiledGpRFPrjnSpec.h
@@ -178,8 +177,7 @@ set(leabra_SRCS
     
   ScalarValLayerSpec.cpp
 #  MotorForceLayerSpec.cpp
-  TwoDValLeabraLayer.cpp
-  TwoDValLayerSpec.cpp
+    TwoDValLayerSpec.cpp
   DecodeTwoDValLayerSpec.cpp
   LeabraV1LayerSpec.cpp
   TiledGpRFPrjnSpec.cpp

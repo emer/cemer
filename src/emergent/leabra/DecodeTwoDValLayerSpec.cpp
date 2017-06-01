@@ -25,7 +25,7 @@ void DecodeTwoDValLayerSpec::Compute_Inhib(LeabraLayer*, LeabraNetwork*, int thr
   return;                       // do nothing!
 }
 
-void DecodeTwoDValLayerSpec::ReadValue_ugp(TwoDValLeabraLayer* lay,
+void DecodeTwoDValLayerSpec::ReadValue_ugp(LeabraLayer* lay,
                                            Layer::AccessMode acc_md, int gpidx,
                                            LeabraNetwork* net) {
   int nunits = lay->UnitAccess_NUnits(acc_md);

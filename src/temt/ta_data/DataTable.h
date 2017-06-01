@@ -665,7 +665,7 @@ public:
   const Variant         GetVal(const Variant& col, int row) const;
   // #CAT_Access get data of scalar type, in Variant form (any data type, use for Programs), for given column, row -- column can be specified as either integer index or a string that is then used to find the given column name
   bool                  SetVal(const Variant& val, const Variant& col, int row);
-  // #CAT_Modify set data of scalar type, in Variant form (any data type, use for Programs), for given column, row -- column can be specified as either integer index or a string that is then used to find the given column name; returns 'true' if valid access and set is successful
+  // #CAT_Modify set data in Variant form (any data type, use for Programs), for given column, row -- column can be specified as either integer index or a string that is then used to find the given column name; returns 'true' if valid access and set is successful -- works for both matrix and scalar columns (sets all values of matrix to same value)
 
   const Variant         GetMatrixVal(const Variant& col, int row,
                                      int d0, int d1=0, int d2=0, int d3=0) const;
@@ -682,9 +682,9 @@ public:
   bool          InitVals(const Variant& init_val, const Variant& col, int st_row = 0, int n_rows = -1);
   // #CAT_Modify initialize all values in given column to given value -- column can be specified as either integer index or a string that is then used to find the given column name -- for rows as specified by starting row, and n_rows = -1 means to the end
   bool          InitValsToRowNo(const Variant& col, int st_row = 0, int n_rows = -1);
-  // #CAT_Modify initialize all values in given column to be equal to the row number -- only valid for scalar (not matrix) columns -- column can be specified as either integer index or a string that is then used to find the given column name -- for rows as specified by starting row, and n_rows = -1 means to the end
-  bool          InitValsByIncrement(const int first_value, const int increment, const Variant& col, int st_row = 0, int n_rows = -1);
-  // #CAT_Modify initialize all values in given column to be equal to some starting values plus some increment -- only valid for scalar (not matrix) columns -- column can be specified as either integer index or a string that is then used to find the given column name -- for rows as specified by starting row, and n_rows = -1 means to the end
+  // #CAT_Modify initialize all values in given column to be equal to the row number -- column can be specified as either integer index or a string that is then used to find the given column name -- for rows as specified by starting row, and n_rows = -1 means to the end
+  bool          InitValsByIncrement(const float first_value, const float increment, const Variant& col, int st_row = 0, int n_rows = -1);
+  // #CAT_Modify initialize all values in given column to be equal to some starting values plus some increment -- column can be specified as either integer index or a string that is then used to find the given column name -- for rows as specified by starting row, and n_rows = -1 means to the end
 
   int           FindVal(const Variant& val, const Variant& col, int st_row = 0,
                         bool not_found_err = false) const;

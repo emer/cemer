@@ -21,9 +21,7 @@
 #include <taMisc>
 
 TA_BASEFUNS_CTORS_DEFN(TwoDValSpec);
-
 TA_BASEFUNS_CTORS_DEFN(TwoDValBias);
-
 TA_BASEFUNS_CTORS_DEFN(TwoDValLayerSpec);
 
 
@@ -102,8 +100,6 @@ void TwoDValBias::Initialize() {
 }
 
 void TwoDValLayerSpec::Initialize() {
-  min_obj_type = &TA_TwoDValLeabraLayer;
-
   // SetUnique("kwta", true);
   // kwta.k_from = KWTASpec::USE_K;
   // kwta.k = 9;
@@ -156,7 +152,7 @@ void TwoDValLayerSpec::HelpConfig() {
  Uses distributed coarse-coding units to represent two-dimensional values.  Each unit\
  has a preferred value arranged evenly between the min-max range, and decoding\
  simply computes an activation-weighted average based on these preferred values.  The\
- current twod value is encoded in the twod_vals member of the TwoDValLeabraLayer (x1,y1, x2,y2, etc),\
+ current twod value is encoded in the twod_vals member of the LeabraLayer (x1,y1, x2,y2, etc),\
  which are set by input data, and updated to reflect current values encoded over layer.\
  For no unit groups case, input data should be 2d with inner dim of size 2 (x,y) and outer dim\
  of n_vals size.  For unit_groups, data should be 4d with two extra outer dims of gp_x, gp_y.\
@@ -190,8 +186,8 @@ bool TwoDValLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
     }
   }
 
-  if(lay->InheritsFrom(&TA_TwoDValLeabraLayer)) { // inh will be flagged above
-    ((TwoDValLeabraLayer*)lay)->UpdateTwoDValsGeom();
+  if(lay->InheritsFrom(&TA_LeabraLayer)) { // inh will be flagged above
+    ((LeabraLayer*)lay)->UpdateTwoDValsGeom();
   }
 
   if(twod.rep == TwoDValSpec::LOCALIST) {
@@ -353,7 +349,7 @@ void TwoDValLayerSpec::Init_Weights_Layer(LeabraLayer* lay, LeabraNetwork* net) 
   Compute_BiasVal(lay, net);
 }
 
-void TwoDValLayerSpec::ClampValue_ugp(TwoDValLeabraLayer* lay,
+void TwoDValLayerSpec::ClampValue_ugp(LeabraLayer* lay,
                                       Layer::AccessMode acc_md, int gpidx,
                                       LeabraNetwork* net, float rescale) {
   int nunits = lay->UnitAccess_NUnits(acc_md);
@@ -368,9 +364,9 @@ void TwoDValLayerSpec::ClampValue_ugp(TwoDValLeabraLayer* lay,
     u->ext() = 0.0;
   }
   for(int k=0;k<twod.n_vals;k++) {
-    float x_val = lay->GetTwoDVal(TwoDValLeabraLayer::TWOD_X, TwoDValLeabraLayer::TWOD_EXT,
+    float x_val = lay->GetTwoDVal(LeabraLayer::TWOD_X, LeabraLayer::TWOD_EXT,
                                   k, gp_geom_pos.x, gp_geom_pos.y);
-    float y_val = lay->GetTwoDVal(TwoDValLeabraLayer::TWOD_Y, TwoDValLeabraLayer::TWOD_EXT,
+    float y_val = lay->GetTwoDVal(LeabraLayer::TWOD_Y, LeabraLayer::TWOD_EXT,
                                   k, gp_geom_pos.x, gp_geom_pos.y);
     if(twod.clip_val) {
       x_val = x_val_range.Clip(x_val);
@@ -388,11 +384,11 @@ void TwoDValLayerSpec::ClampValue_ugp(TwoDValLeabraLayer* lay,
   }
 }
 
-void TwoDValLayerSpec::ReadValue(TwoDValLeabraLayer* lay, LeabraNetwork* net) {
+void TwoDValLayerSpec::ReadValue(LeabraLayer* lay, LeabraNetwork* net) {
   UNIT_GP_ITR(lay, ReadValue_ugp(lay, acc_md, gpidx, net); );
 }
 
-void TwoDValLayerSpec::ReadValue_ugp(TwoDValLeabraLayer* lay,
+void TwoDValLayerSpec::ReadValue_ugp(LeabraLayer* lay,
                                      Layer::AccessMode acc_md, int gpidx, LeabraNetwork* net) {
   int nunits = lay->UnitAccess_NUnits(acc_md);
   if(nunits < 3) return;        // must be at least a few units..
@@ -416,9 +412,9 @@ void TwoDValLayerSpec::ReadValue_ugp(TwoDValLeabraLayer* lay,
       x_avg /= sum_act; y_avg /= sum_act;
     }
     // encode the value
-    lay->SetTwoDVal(x_avg, TwoDValLeabraLayer::TWOD_X, TwoDValLeabraLayer::TWOD_ACT,
+    lay->SetTwoDVal(x_avg, LeabraLayer::TWOD_X, LeabraLayer::TWOD_ACT,
                     0, gp_geom_pos.x, gp_geom_pos.y);
-    lay->SetTwoDVal(y_avg, TwoDValLeabraLayer::TWOD_Y, TwoDValLeabraLayer::TWOD_ACT,
+    lay->SetTwoDVal(y_avg, LeabraLayer::TWOD_Y, LeabraLayer::TWOD_ACT,
                     0, gp_geom_pos.x, gp_geom_pos.y);
   }
   else {                        // multiple items
@@ -464,9 +460,9 @@ void TwoDValLayerSpec::ReadValue_ugp(TwoDValLeabraLayer* lay,
       if(my_mn < mn_dist) { vi.val = -1.0f; j++; continue; } // mark with -1 so we know we skipped it
 
       // encode the value
-      lay->SetTwoDVal(x_cur, TwoDValLeabraLayer::TWOD_X, TwoDValLeabraLayer::TWOD_ACT,
+      lay->SetTwoDVal(x_cur, LeabraLayer::TWOD_X, LeabraLayer::TWOD_ACT,
                       0, gp_geom_pos.x, gp_geom_pos.y);
-      lay->SetTwoDVal(y_cur, TwoDValLeabraLayer::TWOD_Y, TwoDValLeabraLayer::TWOD_ACT,
+      lay->SetTwoDVal(y_cur, LeabraLayer::TWOD_Y, LeabraLayer::TWOD_ACT,
                       0, gp_geom_pos.x, gp_geom_pos.y);
       j++; outi++;
     }
@@ -501,15 +497,15 @@ void TwoDValLayerSpec::LabelUnitsNet(LeabraNetwork* net) {
 //   inherited::Compute_HardClamp(lay, net);
 // }
 
-void TwoDValLayerSpec::Quarter_Init_TargFlags_Layer_ugp(TwoDValLeabraLayer* lay,
+void TwoDValLayerSpec::Quarter_Init_TargFlags_Layer_ugp(LeabraLayer* lay,
                                                        Layer::AccessMode acc_md, int gpidx,
                                                        LeabraNetwork* net) {
   taVector2i gp_geom_pos = lay->UnitGpPosFmIdx(gpidx);
   for(int k=0;k<twod.n_vals;k++) {
     float x_val, y_val;
-    lay->GetTwoDVals(x_val, y_val, TwoDValLeabraLayer::TWOD_TARG,
+    lay->GetTwoDVals(x_val, y_val, LeabraLayer::TWOD_TARG,
                      k, gp_geom_pos.x, gp_geom_pos.y);
-    lay->SetTwoDVals(x_val, y_val, TwoDValLeabraLayer::TWOD_EXT,
+    lay->SetTwoDVals(x_val, y_val, LeabraLayer::TWOD_EXT,
                      k, gp_geom_pos.x, gp_geom_pos.y);
   }
 }
@@ -518,7 +514,7 @@ void TwoDValLayerSpec::Quarter_Init_TargFlags_Layer_ugp(TwoDValLeabraLayer* lay,
 void TwoDValLayerSpec::Quarter_Init_TargFlags_Layer(LeabraLayer* lay, LeabraNetwork* net) {
   inherited::Quarter_Init_TargFlags_Layer(lay, net);
   // need to actually copy over targ to ext vals!
-  TwoDValLeabraLayer* tdlay = (TwoDValLeabraLayer*)lay;
+  LeabraLayer* tdlay = (LeabraLayer*)lay;
   if(lay->HasExtFlag(UnitVars::TARG)) {     // only process target layers..
     if(net->phase == LeabraNetwork::PLUS_PHASE) {
       UNIT_GP_ITR(lay, Quarter_Init_TargFlags_Layer_ugp(tdlay, acc_md, gpidx, net); );
@@ -530,7 +526,7 @@ void TwoDValLayerSpec::Quarter_Init_TargFlags_Layer(LeabraLayer* lay, LeabraNetw
 void TwoDValLayerSpec::Quarter_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
   inherited::Quarter_Init_Layer(lay, net);
 
-  TwoDValLeabraLayer* tdlay = (TwoDValLeabraLayer*)lay;
+  LeabraLayer* tdlay = (LeabraLayer*)lay;
   tdlay->UpdateTwoDValsGeom();  // quick, make sure no mismatch
 
   if(bias_val.un == TwoDValBias::BWT) {
@@ -571,7 +567,7 @@ void TwoDValLayerSpec::Compute_HardClamp_Layer(LeabraLayer* lay, LeabraNetwork* 
     return;
   }
   // allow for soft-clamping: translates pattern into exts first
-  UNIT_GP_ITR(lay, ClampValue_ugp((TwoDValLeabraLayer*)lay, acc_md, gpidx, net); );
+  UNIT_GP_ITR(lay, ClampValue_ugp((LeabraLayer*)lay, acc_md, gpidx, net); );
   // now check for actual hard clamping
   if(!clamp.hard) {
     lay->hard_clamped = false;
@@ -583,38 +579,38 @@ void TwoDValLayerSpec::Compute_HardClamp_Layer(LeabraLayer* lay, LeabraNetwork* 
 
 void TwoDValLayerSpec::Compute_OutputName(LeabraLayer* lay, LeabraNetwork* net) {
   inherited::Compute_OutputName(lay, net);
-  ReadValue((TwoDValLeabraLayer*)lay, net);             // always read out the value
+  ReadValue((LeabraLayer*)lay, net);             // always read out the value
 }
 
 void TwoDValLayerSpec::Quarter_Final_Layer(LeabraLayer* ly, LeabraNetwork* net) {
   inherited::Quarter_Final_Layer(ly, net);
-  TwoDValLeabraLayer* lay = (TwoDValLeabraLayer*)ly;
+  LeabraLayer* lay = (LeabraLayer*)ly;
   UNIT_GP_ITR(lay, Quarter_Final_ugp(lay, acc_md, gpidx, net); );
 }
 
-void TwoDValLayerSpec::Quarter_Final_ugp(TwoDValLeabraLayer* lay,
+void TwoDValLayerSpec::Quarter_Final_ugp(LeabraLayer* lay,
                                       Layer::AccessMode acc_md, int gpidx,
                                       LeabraNetwork* net) {
   taVector2i gp_geom_pos = lay->UnitGpPosFmIdx(gpidx);
 
   for(int k=0;k<twod.n_vals;k++) {
     float x_val, y_val, x_m, y_m, x_p, y_p;
-    lay->GetTwoDVals(x_val, y_val, TwoDValLeabraLayer::TWOD_ACT,
+    lay->GetTwoDVals(x_val, y_val, LeabraLayer::TWOD_ACT,
                      k, gp_geom_pos.x, gp_geom_pos.y);
-    lay->GetTwoDVals(x_m, y_m, TwoDValLeabraLayer::TWOD_ACT_M,
+    lay->GetTwoDVals(x_m, y_m, LeabraLayer::TWOD_ACT_M,
                      k, gp_geom_pos.x, gp_geom_pos.y);
-    lay->GetTwoDVals(x_p, y_p, TwoDValLeabraLayer::TWOD_ACT_P,
+    lay->GetTwoDVals(x_p, y_p, LeabraLayer::TWOD_ACT_P,
                      k, gp_geom_pos.x, gp_geom_pos.y);
 
     // todo: fix this!
     if(net->phase == LeabraNetwork::MINUS_PHASE) {
-      lay->SetTwoDVals(x_val, y_val, TwoDValLeabraLayer::TWOD_ACT_M,
+      lay->SetTwoDVals(x_val, y_val, LeabraLayer::TWOD_ACT_M,
                        k, gp_geom_pos.x, gp_geom_pos.y);
     }
     else {
-      lay->SetTwoDVals(x_val, y_val, TwoDValLeabraLayer::TWOD_ACT_P,
+      lay->SetTwoDVals(x_val, y_val, LeabraLayer::TWOD_ACT_P,
                        k, gp_geom_pos.x, gp_geom_pos.y);
-      lay->SetTwoDVals(x_val - x_m, y_val - y_m, TwoDValLeabraLayer::TWOD_ACT_DIF,
+      lay->SetTwoDVals(x_val - x_m, y_val - y_m, LeabraLayer::TWOD_ACT_DIF,
                        k, gp_geom_pos.x, gp_geom_pos.y);
     }
   }
@@ -623,13 +619,13 @@ void TwoDValLayerSpec::Quarter_Final_ugp(TwoDValLeabraLayer* lay,
 float TwoDValLayerSpec::Compute_SSE_ugp(LeabraLayer* ly,
                                         Layer::AccessMode acc_md, int gpidx,
                                         int& n_vals) {
-  TwoDValLeabraLayer* lay = (TwoDValLeabraLayer*)ly;
+  LeabraLayer* lay = (LeabraLayer*)ly;
   taVector2i gp_geom_pos = lay->UnitGpPosFmIdx(gpidx);
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->GetUnitSpec();
   float rval = 0.0f;
   for(int k=0;k<twod.n_vals;k++) { // first loop over and find potential target values
     float x_targ, y_targ;
-    lay->GetTwoDVals(x_targ, y_targ, TwoDValLeabraLayer::TWOD_TARG, k,
+    lay->GetTwoDVals(x_targ, y_targ, LeabraLayer::TWOD_TARG, k,
                      gp_geom_pos.x, gp_geom_pos.y);
     // only count if target value is within range -- otherwise considered a non-target
     if(x_val_range.RangeTestEq(x_targ) && y_val_range.RangeTestEq(y_targ)) {
@@ -638,7 +634,7 @@ float TwoDValLayerSpec::Compute_SSE_ugp(LeabraLayer* ly,
       float mn_dist = taMath::flt_max;
       for(int j=0;j<twod.n_vals;j++) {
         float x_act_m, y_act_m;
-        lay->GetTwoDVals(x_act_m, y_act_m, TwoDValLeabraLayer::TWOD_ACT_M,
+        lay->GetTwoDVals(x_act_m, y_act_m, LeabraLayer::TWOD_ACT_M,
                                         j, gp_geom_pos.x, gp_geom_pos.y);
         float dx = x_targ - x_act_m;
         float dy = y_targ - y_act_m;
@@ -647,9 +643,9 @@ float TwoDValLayerSpec::Compute_SSE_ugp(LeabraLayer* ly,
         float dist = dx * dx + dy * dy;
         if(dist < mn_dist) {
           mn_dist = dist;
-          lay->SetTwoDVals(dx, dy, TwoDValLeabraLayer::TWOD_ERR,
+          lay->SetTwoDVals(dx, dy, LeabraLayer::TWOD_ERR,
                            k, gp_geom_pos.x, gp_geom_pos.y);
-          lay->SetTwoDVals(dx*dx, dy*dy, TwoDValLeabraLayer::TWOD_SQERR,
+          lay->SetTwoDVals(dx*dx, dy*dy, LeabraLayer::TWOD_SQERR,
                           k, gp_geom_pos.x, gp_geom_pos.y);
         }
       }
@@ -684,13 +680,13 @@ float TwoDValLayerSpec::Compute_SSE(LeabraLayer* lay, LeabraNetwork*,
 float TwoDValLayerSpec::Compute_NormErr_ugp(LeabraLayer* ly,
                                             Layer::AccessMode acc_md, int gpidx,
                                             LeabraInhib* thr, LeabraNetwork* net) {
-  TwoDValLeabraLayer* lay = (TwoDValLeabraLayer*)ly;
+  LeabraLayer* lay = (LeabraLayer*)ly;
   taVector2i gp_geom_pos = lay->UnitGpPosFmIdx(gpidx);
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->GetUnitSpec();
   float rval = 0.0f;
   for(int k=0;k<twod.n_vals;k++) { // first loop over and find potential target values
     float x_targ, y_targ;
-    lay->GetTwoDVals(x_targ, y_targ, TwoDValLeabraLayer::TWOD_TARG, k,
+    lay->GetTwoDVals(x_targ, y_targ, LeabraLayer::TWOD_TARG, k,
                      gp_geom_pos.x, gp_geom_pos.y);
     // only count if target value is within range -- otherwise considered a non-target
     if(x_val_range.RangeTestEq(x_targ) && y_val_range.RangeTestEq(y_targ)) {
@@ -698,7 +694,7 @@ float TwoDValLayerSpec::Compute_NormErr_ugp(LeabraLayer* ly,
       float mn_dist = taMath::flt_max;
       for(int j=0;j<twod.n_vals;j++) {
         float x_act_m, y_act_m;
-        lay->GetTwoDVals(x_act_m, y_act_m, TwoDValLeabraLayer::TWOD_ACT_M,
+        lay->GetTwoDVals(x_act_m, y_act_m, LeabraLayer::TWOD_ACT_M,
                                         j, gp_geom_pos.x, gp_geom_pos.y);
         float dx = x_targ - x_act_m;
         float dy = y_targ - y_act_m;

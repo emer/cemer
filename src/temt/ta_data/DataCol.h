@@ -175,9 +175,9 @@ public:
   bool          InitVals(const Variant& init_val, int st_row = 0, int n_rows = -1);
   // #CAT_Modify #BUTTON #MENU #MENU_CONTEXT #MENU_ON_Column initialize all values in this column to given value -- for rows as specified by starting row, and n_rows = -1 means to the end
   bool          InitValsToRowNo(int st_row = 0, int n_rows = -1);
-  // #CAT_Modify #MENU #MENU_CONTEXT #GHOST_ON_is_matrix initialize all values in this column to be equal to the row number -- only valid for scalar (not matrix) columns -- for rows as specified by starting row, and n_rows = -1 means to the end
-  bool          InitValsByIncrement(float first_value = 0, float increment = 1, int st_row = 0, int n_rows = -1);
-  // #CAT_Modify #MENU #MENU_CONTEXT #GHOST_ON_is_matrix initialize all values in this column to be equal to a starting integer plus some integer value (negative ok) multiplied by the row number -- only valid for scalar (not matrix) columns -- for rows as specified by starting row, and n_rows = -1 means to the end
+  // #CAT_Modify #MENU #MENU_CONTEXT initialize all values in this column to be equal to the row number -- for rows as specified by starting row, and n_rows = -1 means to the end
+  bool          InitValsByIncrement(float first_value = 0.0f, float increment = 1.0f, int st_row = 0, int n_rows = -1);
+  // #CAT_Modify #MENU #MENU_CONTEXT initialize all values in this column to be equal to a starting value plus some increment (negative ok) multiplied by the row number -- for rows as specified by starting row, and n_rows = -1 means to the end
 
   void          SortAscending();
   // #CAT_DataProc #MENU #MENU_CONTEXT #MENU_ON_Column #MENU_SEP_BEFORE #GHOST_ON_is_matrix
