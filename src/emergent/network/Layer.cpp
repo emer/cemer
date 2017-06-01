@@ -66,6 +66,17 @@ bool LayerRelPos::ComputePos2D(taVector2i& pos, Layer* lay) {
   return true;
 }
 
+
+static inline int layer_pos_eff_geom_x(Layer* lay) {
+  if(lay->Iconified()) return 0;
+  return lay->scaled_disp_geom.x;
+}
+
+static inline int layer_pos_eff_geom_y(Layer* lay) {
+  if(lay->Iconified()) return 0;
+  return lay->scaled_disp_geom.y;
+}
+
 bool LayerRelPos::ComputePos2D_impl(taVector2i& pos, Layer* lay, const taVector2i& oth_pos) {
   if(!other)
     return false;
@@ -74,19 +85,19 @@ bool LayerRelPos::ComputePos2D_impl(taVector2i& pos, Layer* lay, const taVector2
     return false;
   }
   case RIGHT_OF: {
-    pos.x = oth_pos.x + other->scaled_disp_geom.x + space;
+    pos.x = oth_pos.x + layer_pos_eff_geom_x(other) + space;
     break;
   }
   case LEFT_OF: {
-    pos.x = oth_pos.x - lay->scaled_disp_geom.x - space;
+    pos.x = oth_pos.x - layer_pos_eff_geom_x(lay) - space;
     break;
   }
   case BEHIND: {
-    pos.y = oth_pos.y + other->scaled_disp_geom.y + space;
+    pos.y = oth_pos.y + layer_pos_eff_geom_y(other) + space;
     break;
   }
   case FRONT_OF: {
-    pos.y = oth_pos.y - lay->scaled_disp_geom.y - space;
+    pos.y = oth_pos.y - layer_pos_eff_geom_y(lay) - space;
     break;
   }
   default:
