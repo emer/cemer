@@ -40,7 +40,7 @@ public:
   };
 
   bool                  is_root; // #HIDDEN #READ_ONLY #NO_SAVE is this the first group within the ControlPanel?
-  MthGroupType          group_type; // #GHOST_ON_is_root how to organize and display the methods in this group
+  MthGroupType          group_type; // #ENABLE_OFF_is_root how to organize and display the methods in this group
 
   void                  SetGroupType(MthGroupType group_type);
    // #MENU #MENU_CONTEXT set how the methods will be displayed in the ControlPanel dialog

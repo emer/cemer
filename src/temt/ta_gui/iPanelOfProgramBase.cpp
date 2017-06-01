@@ -120,5 +120,5 @@ QWidget* iPanelOfProgramBase::firstTabFocusWidget() {
 
 void iPanelOfProgramBase::showEvent(QShowEvent* ev) {
   inherited::showEvent(ev);
-  m_dps->UpdateMethodButtons();
+  m_dps->UpdateMethodsEnabled();
 }

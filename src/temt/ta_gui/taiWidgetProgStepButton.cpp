@@ -163,9 +163,13 @@ void taiWidgetProgStepButton::setStepN(int multiplex_val) {
   GetButtonRep();
 }
 
-bool taiWidgetProgStepButton::UpdateButtonRep() {
+bool taiWidgetProgStepButton::UpdateEnabled() {
+  return UpdateButtonRep(true);        // always update!
+}
+
+bool taiWidgetProgStepButton::UpdateButtonRep(bool enab) {
   if(!base || !buttonRep) return false;
   GetButtonRep();
-  taiWidgetMethod::UpdateButtonRep();
+  taiWidgetMethod::UpdateButtonRep(enab);
   return true;
 }

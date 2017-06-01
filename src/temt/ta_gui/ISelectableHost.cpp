@@ -82,10 +82,10 @@ void ISelectableHost::AddDynActions(taiWidgetActions* menu, int dyn_list,
     menu->AddAction(act);
     DynMethodDesc* dmd = dyn_methods[dyn_list].FastEl(i);
     MethodDef* meth =  dmd->md;
-    if(meth->OptionAfter("GHOST_").nonempty()) {
+    if(meth->OptionAfter("ENABLE_").nonempty()) {
       TypeDef* typ = meth->owner->owner;
-      bool ghost = meth->GetCondOptTest("GHOST", typ, curItem()->taData());
-      act->setEnabled(!ghost);
+      bool enab = meth->GetCondOptTest("ENABLE", typ, curItem()->taData());
+      act->setEnabled(enab);
     }
   }
 }

@@ -25,6 +25,7 @@
 class taiWidgetActions;
 class cssClass;                 // #IGNORE
 class cssiArgDialog;            // #IGNORE
+class iAction; //
 
 // unlike real taiWidget, functions are not subject to updating
 // so the constructor is the one that does all the work..
@@ -46,8 +47,11 @@ public:
   virtual QWidget*      GetButtonRep() {return buttonRep;}
   // button connected to method -- only created on demand by subclasses
 
-  virtual bool  UpdateButtonRep();
-  // if needed, can update the button representation -- default does GHOST stuff
+  virtual bool  UpdateEnabled();
+  // update all the enabled status for all menu actions -- calls UpdateButtonRep
+  
+  virtual bool  UpdateButtonRep(bool enable);
+  // if needed, can update the button representation
 
   virtual bool  hasButtonRep() { return (buttonRep != NULL); }
 
@@ -63,6 +67,7 @@ protected:
      const String& meth_name); // show return value after menu call
 
 #ifndef __MAKETA__
+  QPointer<iAction> menuRep;
   QPointer<QWidget> buttonRep;
 #endif
   QWidget*      gui_parent;

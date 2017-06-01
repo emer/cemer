@@ -144,7 +144,7 @@ public:
   void                  ToggleBreakEnable();
   // #MENU #MENU_ON_Object #DYN1 toggle whether a breakpoint is enabled or not -- if no breakpoint is set, then it will set a breakpoint in the first place, otherwise it will toggle the enabled status of that breakpoint -- see ToggleBreakpoint for more info
   virtual bool          RevertToCode();
-  // #BUTTON #GHOST_OFF_flags:CAN_REVERT_TO_CODE revert this program element back to a ProgCode element -- use this if the conversion did not proceed as expected
+  // #BUTTON #ENABLE_ON_flags:CAN_REVERT_TO_CODE revert this program element back to a ProgCode element -- use this if the conversion did not proceed as expected
 
   virtual ProgVar*      FindVarName(const String& var_nm) const;
   // find given variable within this program element -- NULL if not found

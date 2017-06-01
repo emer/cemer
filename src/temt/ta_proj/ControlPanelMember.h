@@ -52,7 +52,7 @@ public:
 
   ParamState            state;          // #LABEL_ #CONDSHOW_OFF_ctrl_type:CONTROL what state is this parameter in?  determines many features of how the parameter is used
 
-  ProgVar               saved;          // #CONDSHOW_ON_ctrl_type:PARAM_SET #CONDEDIT_OFF_state:LOCKED,INACTIVE #LABEL_ #EDIT_VALUE #NO_SAVE gui editor version of saved value of this parameter -- the value that was in use for a saved parameter set (ParamSet) or the value to be used for a parameter set that is specified to be used -- this value will be copied to the active current value of this object when it is used
+  ProgVar               saved;          // #CONDSHOW_ON_ctrl_type:PARAM_SET #CONDEDIT_OFF_state:LOCKED,INACTIVE #LABEL_ #EDIT_VALUE #NO_SAVE #NO_CHOOSER gui editor version of saved value of this parameter -- the value that was in use for a saved parameter set (ParamSet) or the value to be used for a parameter set that is specified to be used -- this value will be copied to the active current value of this object when it is used
   String                saved_value;    // #HIDDEN saved value of this parameter -- the value that was in use for a saved parameter set (ParamSet) or the value to be used for a parameter set that is specified to be used -- this value will be copied to the active current value of this object when it is used
 
   String                range;          // #CONDSHOW_ON_state:SEARCH specify the values over which to search this parameter -- specific values can be listed separated by commas , and ranges can be specified using start:stop:increment (increment is optional, defaults to 1) notation as used in Matrix code -- e.g. 1,2,3:10:1,10:20:2 -- however here the stop value here is INCLUSIVE: 1:3:1 = 1,2,3 as that is more often useful -- can also specify %paramname to yoke this parameter to the paramname parameter -- it will not be searched independently, but rather will have the same values as paramname
@@ -188,13 +188,13 @@ public:
   virtual void          MoveToBottom();
   // #CAT_CtrlPanel #BUTTON move this member to the bottom of list of members in its group -- automatically does this in Master if a ParamSet in a group
   inline void           SaveCurrent() { CopyActiveToSaved(); }
-  // #CAT_CtrlPanel #BUTTON #GHOST_OFF_data.ctrl_type:PARAM_SET only for ParamSet elements: copy the current active (live) values on the objects to the saved values
+  // #CAT_CtrlPanel #BUTTON #ENABLE_ON_data.ctrl_type:PARAM_SET only for ParamSet elements: copy the current active (live) values on the objects to the saved values
   inline void           Activate() { if(IsParamSet()) CopySavedToActive(); }
-  // #CAT_CtrlPanel #BUTTON #GHOST_OFF_data.ctrl_type:PARAM_SET only for ParamSet elements: copy the save_value to be active (live) values on the objects
+  // #CAT_CtrlPanel #BUTTON #ENABLE_ON_data.ctrl_type:PARAM_SET only for ParamSet elements: copy the save_value to be active (live) values on the objects
   virtual void          CopyToAllInGroup();
-  // #CAT_CtrlPanel #BUTTON #CONFIRM #GHOST_OFF_data.ctrl_type:PARAM_SET only for ParamSet elements: copy the save_value of this member to all other ParamSet's within the same group as this one -- does NOT copy any ones with state of LOCKED or INACTIVE, so you can protect certain ones with that
+  // #CAT_CtrlPanel #BUTTON #CONFIRM #ENABLE_ON_data.ctrl_type:PARAM_SET only for ParamSet elements: copy the save_value of this member to all other ParamSet's within the same group as this one -- does NOT copy any ones with state of LOCKED or INACTIVE, so you can protect certain ones with that
   virtual void          CopyStateToAllInGroup();
-  // #CAT_CtrlPanel #BUTTON #CONFIRM #GHOST_OFF_data.ctrl_type:PARAM_SET only for ParamSet elements: copy state (EXPLORE, STABLE, etc) of this member to all other ParamSet's within the same group as this one
+  // #CAT_CtrlPanel #BUTTON #CONFIRM #ENABLE_ON_data.ctrl_type:PARAM_SET only for ParamSet elements: copy state (EXPLORE, STABLE, etc) of this member to all other ParamSet's within the same group as this one
 
   virtual void          ActivateAfterEdit();
   // #CAT_CtrlPanel for EXPLORE paramset members, activate after editing -- called via the gui editor 

@@ -48,7 +48,7 @@ public:
   void                  AddSubPanelDynamic(iPanel* pn); // call this after fully built to dynamically add a new frame
   void                  SetMethodBox(QWidget* meths, taiEditorOfClass* mgr);
   // sets a box that contains methods, on bottom, along with manager of those buttons
-  void                  UpdateMethodButtons();
+  void                  UpdateMethodsEnabled();
   // update the method buttons, by calling on manager
 
   QWidget*              firstTabFocusWidget() override;

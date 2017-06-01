@@ -180,25 +180,25 @@ public:
   // #CAT_Modify #MENU #MENU_CONTEXT initialize all values in this column to be equal to a starting value plus some increment (negative ok) multiplied by the row number -- for rows as specified by starting row, and n_rows = -1 means to the end
 
   void          SortAscending();
-  // #CAT_DataProc #MENU #MENU_CONTEXT #MENU_ON_Column #MENU_SEP_BEFORE #GHOST_ON_is_matrix
+  // #CAT_DataProc #MENU #MENU_CONTEXT #MENU_ON_Column #MENU_SEP_BEFORE #ENABLE_OFF_is_matrix
   void          SortDescending();
-  // #CAT_DataProc #MENU  #MENU_CONTEXT #MENU_ON_Column #GHOST_ON_is_matrix
+  // #CAT_DataProc #MENU  #MENU_CONTEXT #MENU_ON_Column #ENABLE_OFF_is_matrix
   void          Filter(Relation::Relations operator_1 = Relation::EQUAL, const String& value_1 = "",
       Relation::CombOp comb_op = Relation::AND, Relation::Relations operator_2 = Relation::EQUAL, const String& value_2 = "");
-   // #CAT_DataProc #MENU #MENU_CONTEXT #MENU_ON_Column #LABEL_Filter #GHOST_ON_is_matrix Hide rows not matching the filter
+   // #CAT_DataProc #MENU #MENU_CONTEXT #MENU_ON_Column #LABEL_Filter #ENABLE_OFF_is_matrix Hide rows not matching the filter
   void          UnFilter();
-  // #CAT_DataProc #MENU #MENU_CONTEXT #MENU_ON_Column #GHOST_ON_is_matrix calls table to clear last_select_spec and show all hidden rows
+  // #CAT_DataProc #MENU #MENU_CONTEXT #MENU_ON_Column #ENABLE_OFF_is_matrix calls table to clear last_select_spec and show all hidden rows
 
   void          RunClusterAnalysis();
-  // #CAT_Stat #MENU  #MENU_CONTEXT #MENU_ON_Column #MENU_SEP_BEFORE #GHOST_OFF_is_matrix
+  // #CAT_Stat #MENU  #MENU_CONTEXT #MENU_ON_Column #MENU_SEP_BEFORE #ENABLE_ON_is_matrix
   void          RunPCA2dAnalysis();
-  // #CAT_Stat #MENU  #MENU_CONTEXT #MENU_ON_Column  #GHOST_OFF_is_matrix
+  // #CAT_Stat #MENU  #MENU_CONTEXT #MENU_ON_Column  #ENABLE_ON_is_matrix
   void          RunPCA_EigenAnalysis();
-  // #CAT_Stat #MENU  #MENU_CONTEXT #MENU_ON_Column  #GHOST_OFF_is_matrix
+  // #CAT_Stat #MENU  #MENU_CONTEXT #MENU_ON_Column  #ENABLE_ON_is_matrix
   void          ComputeDistanceMatrix();
-    // #CAT_Stat #MENU  #MENU_CONTEXT #MENU_ON_Column  #GHOST_OFF_is_matrix
+    // #CAT_Stat #MENU  #MENU_CONTEXT #MENU_ON_Column  #ENABLE_ON_is_matrix
   void          RunLinearRegression();
-    // #CAT_Stat #MENU  #MENU_CONTEXT #MENU_ON_Column  #GHOST_ON_is_matrix
+    // #CAT_Stat #MENU  #MENU_CONTEXT #MENU_ON_Column  #ENABLE_OFF_is_matrix
 
   void          CatRelation(String& expr, Relation::Relations oper);
   // concatenate an relation operator onto the end of the expression
@@ -381,7 +381,7 @@ public:
   // misc
 
   virtual String        ColStats();
-  // #CAT_DataProc #BUTTON #MENU #MENU_ON_Column #MENU_SEP_BEFORE #USE_RVAL #GHOST_ON_is_matrix compute standard descriptive statistics on given data table column, returning result as a string of name=value; pairs (e.g., mean=3.2; etc).
+  // #CAT_DataProc #BUTTON #MENU #MENU_ON_Column #MENU_SEP_BEFORE #USE_RVAL #ENABLE_OFF_is_matrix compute standard descriptive statistics on given data table column, returning result as a string of name=value; pairs (e.g., mean=3.2; etc).
 
   virtual int           GridColDisplayWidth() const;
   // #CAT_Display grid view display width, in chars, taken from options or defaults based on type of data -- does not use the editor width value
@@ -426,7 +426,7 @@ public:
   void          ChangeColCellGeom(const MatrixGeom& new_geom);
   // #CAT_ObjectMgmt change the cell geom of a mat col, or change from scalar to mat, without loss of data
   void          ChangeColCellGeom_gui(const MatrixGeom& new_geom);
-  // #CAT_ObjectMgmt #BUTTON #MENU #DYN1 #INIT_ARGVAL_ON_cell_geom #LABEL_ChangeColCellGeom #GHOST_OFF_is_matrix #MIN_DLG_WIDTH_400 change the cell geom of a mat col, or change from scalar to mat, without loss of data
+  // #CAT_ObjectMgmt #BUTTON #MENU #DYN1 #INIT_ARGVAL_ON_cell_geom #LABEL_ChangeColCellGeom #ENABLE_ON_is_matrix #MIN_DLG_WIDTH_400 change the cell geom of a mat col, or change from scalar to mat, without loss of data
   void          ChangeColCellGeomNs(int dims = 1, int d0=0, int d1=0, int d2=0,
                                       int d3=0, int d4=0, int d5=0, int d6=0);
   // #CAT_ObjectMgmt change the cell geom of a mat col, or change from scalar to mat, without loss of data -- separate numbers input instead of overall geom object

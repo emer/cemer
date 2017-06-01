@@ -44,8 +44,8 @@ public:
   bool			InitServer() // initializes the server
     {bool ok = true; InitServer_impl(ok); return ok;}
   
-  bool			OpenServer(); // #BUTTON #GHOST_ON_open open the server and accept connections
-  void			CloseServer(bool notify = true); // #BUTTON #GHOST_OFF_open #ARGC_0 stop the server and close open connections
+  bool			OpenServer(); // #BUTTON #ENABLE_OFF_open open the server and accept connections
+  void			CloseServer(bool notify = true); // #BUTTON #ENABLE_ON_open #ARGC_0 stop the server and close open connections
   
 // callbacks
   void			ClientDisconnected(TemtClient* client); // #IGNORE

@@ -122,7 +122,7 @@ String TypeItem::GetOptsHTML() const {
 
 bool TypeItem::GetCondOpt(const String condkey, const TypeDef* base_td, const void* base,
                           bool& is_on, bool& val_is_eq) const {
-  // format: [CONDEDIT|CONDSHOW|GHOST]_[ON|OFF]_member[:value{,value}[&&,||member[:value{,value}...]] -- must all be && or || for logic
+  // format: [CONDEDIT|CONDSHOW|ENABLE]_[ON|OFF]_member[:value{,value}[&&,||member[:value{,value}...]] -- must all be && or || for logic
   String optedit = OptionAfter(condkey + "_");
   if (optedit.empty()) return false;
 

@@ -55,7 +55,7 @@ public:
   virtual void    UpdateCallers();
   // no-gui update of callers
   virtual void    RunFunction();
-  // #BUTTON #GHOST_OFF_args.size:0 run this function right now
+  // #BUTTON #ENABLE_ON_args.size:0 run this function right now
   virtual void    UpdateCallerArgs();
   // #BUTTON #CAT_Code run UpdateArgs on all the function calls to me, and also display all these calls in the Find dialog (searching on this function's name) so you can make sure the args are correct for each call
   virtual void    ListCallers();

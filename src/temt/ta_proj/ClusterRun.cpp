@@ -2363,7 +2363,7 @@ void ClusterRun::UpdateUI() {
     enable_load = (cur_table == &jobs_running || cur_table == &jobs_done || cur_table == &jobs_archive);
     enable_notes = (cur_table == &jobs_done);
   }
-  ps->UpdateMethodButtons();
+  ps->UpdateMethodsEnabled();
 }
 
 void ClusterRun::FillInRunningTime(DataTable* table) {

@@ -159,10 +159,7 @@ void iMethodButtonMgr::GetImage() {
 
   for (int i = 0; i < meth_el.size; ++i) {
     taiWidgetMethod* mth_rep = (taiWidgetMethod*)meth_el.SafeEl(i);
-    if ( !(mth_rep->hasButtonRep())) //note: construction forced creation of all buttons
-      continue;
-
-    mth_rep->UpdateButtonRep();
+    mth_rep->UpdateEnabled();
   }
 }
 

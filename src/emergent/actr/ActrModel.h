@@ -147,15 +147,15 @@ public:
   bool  UpdateGui()     { return HasModelFlag(UPDATE_GUI); }
 
   virtual void          Init();
-  // #BUTTON #GHOST_OFF_run_state:DONE,STOP,NOT_INIT #CAT_Run initialize model at the start
+  // #BUTTON #ENABLE_ON_run_state:DONE,STOP,NOT_INIT #CAT_Run initialize model at the start
   virtual void          Step();
-  // #BUTTON #GHOST_OFF_run_state:DONE,STOP,NOT_INIT #CAT_Run run next step of processing
+  // #BUTTON #ENABLE_ON_run_state:DONE,STOP,NOT_INIT #CAT_Run run next step of processing
   virtual void          Run();
-  // #BUTTON #GHOST_OFF_run_state:DONE,STOP,NOT_INIT #CAT_Run run to completion or until Stop is pressed or emitted
+  // #BUTTON #ENABLE_ON_run_state:DONE,STOP,NOT_INIT #CAT_Run run to completion or until Stop is pressed or emitted
   virtual void          Cont();
-  // #BUTTON #GHOST_OFF_run_state:DONE,STOP,NOT_INIT #CAT_Run continue running until Stop is pressed or emitted -- key difference from Run is that it does not set DONE when it finishes -- suitable for using stop to break and then continue where it left off
+  // #BUTTON #ENABLE_ON_run_state:DONE,STOP,NOT_INIT #CAT_Run continue running until Stop is pressed or emitted -- key difference from Run is that it does not set DONE when it finishes -- suitable for using stop to break and then continue where it left off
   virtual void          Stop();
-  // #BUTTON #GHOST_OFF_run_state:RUN #CAT_Run stop running if currently running
+  // #BUTTON #ENABLE_ON_run_state:RUN #CAT_Run stop running if currently running
 
   virtual void          RunNextEvent();
   // #IGNORE run the next event -- called by above processing functions

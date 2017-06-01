@@ -197,11 +197,11 @@ public:
   inline void   ShowInCtrlPanelEditable()   { CtrlPanel(); }
   // #MENU #DYN1 #CAT_ProgVar show this variable in the program control panel - make editable
   inline void   ShowInCtrlPanelReadOnly()   { CtrlReadOnly(); }
-  // #MENU #DYN1 #CAT_ProgVar #GHOST_ON_flags:CTRL_READ_ONLY show variable in the program control panel - make readonly
+  // #MENU #DYN1 #CAT_ProgVar #ENABLE_OFF_flags:CTRL_READ_ONLY show variable in the program control panel - make readonly
   inline void   HideInCtrlPanel()      { NoCtrlPanel(); }
-  // #MENU #DYN1 #CAT_ProgVar #GHOST_OFF_flags:CTRL_PANEL,CTRL_READ_ONLY do not show this variable in the program the control panel
+  // #MENU #DYN1 #CAT_ProgVar #ENABLE_ON_flags:CTRL_PANEL,CTRL_READ_ONLY do not show this variable in the program the control panel
   virtual void  RenameToObj();
-  // #MENU #DYN1 #CAT_ProgVar #GHOST_OFF_var_type:Object* rename variable based on the name of the object that this variable is pointing to -- variable names are lower-case and use _ (underbar) to separate name elements (i.e., snake case)
+  // #MENU #DYN1 #CAT_ProgVar #ENABLE_ON_var_type:Object* rename variable based on the name of the object that this variable is pointing to -- variable names are lower-case and use _ (underbar) to separate name elements (i.e., snake case)
 
   virtual void  AddVarToControlPanel(ControlPanel* ctrl_panel, bool short_label = true);
   // #MENU #DYN1 #CAT_ProgVar #ITEM_FILTER_ControlPanelStdItemFilter add variable to control panel -- can add multiple variables at once -- use this to automatically add the correct data for each variable type -- short_label just uses the name of the variable -- otherwise prepends name of program

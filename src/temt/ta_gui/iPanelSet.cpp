@@ -163,9 +163,9 @@ void iPanelSet::SetMethodBox(QWidget* meths, taiEditorOfClass* mgr) {
   method_box_mgr = mgr;
 }
 
-void iPanelSet::UpdateMethodButtons() {
+void iPanelSet::UpdateMethodsEnabled() {
   if(method_box_mgr) {
-    method_box_mgr->GetButtonImage();
+    method_box_mgr->UpdateMethodsEnabled();
   }
 }
 

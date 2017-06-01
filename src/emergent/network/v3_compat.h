@@ -178,19 +178,19 @@ public:
   SArg_Array	s_args;		// string-valued arguments to pass to script
 
 //   virtual bool  Run();
-//   // #BUTTON #GHOST_OFF_recording run the script (returns false for no scr)
+//   // #BUTTON #ENABLE_ON_recording run the script (returns false for no scr)
 //   virtual void	Record(const char* file_nm = NULL);
-//   // #BUTTON #GHOST_OFF_recording #ARGC_0 #NO_SCRIPT record script code for interface actions
+//   // #BUTTON #ENABLE_ON_recording #ARGC_0 #NO_SCRIPT record script code for interface actions
 //   virtual void	StopRecording();
-//   // #BUTTON #LABEL_StopRec #GHOST_ON_recording stop recording script code
+//   // #BUTTON #LABEL_StopRec #ENABLE_OFF_recording stop recording script code
 //   virtual void	Clear();
 //   // #BUTTON #CONFIRM clear script file
 //   virtual void	Compile();
-//   // #BUTTON #GHOST_OFF_recording compile script from script file into internal runnable format
+//   // #BUTTON #ENABLE_ON_recording compile script from script file into internal runnable format
 //   virtual void	CmdShell();
-//   // #BUTTON #GHOST_OFF_recording set css command shell to operate on this script, so you can run, debug, etc this script from the command line
+//   // #BUTTON #ENABLE_ON_recording set css command shell to operate on this script, so you can run, debug, etc this script from the command line
 //   virtual void	ExitShell();
-//   // #BUTTON #GHOST_OFF_recording exit the command shell for this script (shell returns to previous script)
+//   // #BUTTON #ENABLE_ON_recording exit the command shell for this script (shell returns to previous script)
 
 //   virtual void	ScriptAllWinPos();
 //   // #MENU #MENU_ON_Actions #NO_SCRIPT record script code to set window positions, iconified

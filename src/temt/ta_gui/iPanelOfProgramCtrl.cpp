@@ -76,5 +76,5 @@ void iPanelOfProgramCtrl::ResolveChanges_impl(CancelOp& cancel_op) {
 
 void iPanelOfProgramCtrl::showEvent(QShowEvent* ev) {
   inherited::showEvent(ev);
-  m_dps->UpdateMethodButtons();
+  m_dps->UpdateMethodsEnabled();
 }

@@ -85,6 +85,7 @@ void taiWidgetMethod::AddToMenu(taiWidgetActions* mnu) {
   }
   iAction* act = mnu->AddItem(label, taiWidgetMenu::use_default,
                               iAction::action, this, SLOT(CallFun()) );
+  menuRep = act;                // save!
   
   // add meth desc as a status item
   String statustip = meth->desc;
@@ -95,9 +96,9 @@ void taiWidgetMethod::AddToMenu(taiWidgetActions* mnu) {
     mnu->AddSep();
   
   // works for context menus! Yes!
-  if(meth->OptionAfter("GHOST_").nonempty()) {
-    bool ghost = meth->GetCondOptTest("GHOST", typ, base);
-    act->setEnabled(!ghost);
+  if(meth->OptionAfter("ENABLE_").nonempty()) {
+    bool enab = meth->GetCondOptTest("ENABLE", typ, base);
+    act->setEnabled(enab);
   }
 }
 
@@ -236,18 +237,27 @@ QWidget* taiWidgetMethod::MakeButton() {
   return buttonRep;
 }
 
-bool taiWidgetMethod::UpdateButtonRep() {
-  if(!base || !buttonRep) return false;
-  if(meth->OptionAfter("GHOST_").nonempty()) {
-    // the default "true" for non-GHOST cases doesn't work here!
-    bool ghost = meth->GetCondOptTest("GHOST", typ, base);
-    buttonRep->setEnabled(!ghost);
-    if(!ghost) {
-      buttonRep->show();        // make it real?
-    }
-    return true;
+bool taiWidgetMethod::UpdateEnabled() {
+  if(!base) return false;
+  if(meth->OptionAfter("ENABLE_").empty())
+    return false;
+  bool enab = meth->GetCondOptTest("ENABLE", typ, base);
+  // taMisc::DebugInfo("meth rep enable update:", meth->name, "on:",
+  //                   ((taBase*)base)->GetName(), "now:", String(enab));
+  if(menuRep) {
+    menuRep->setEnabled(enab);
   }
-  return false;
+  UpdateButtonRep(enab);
+  return true;
+}
+
+bool taiWidgetMethod::UpdateButtonRep(bool enab) {
+  if(!buttonRep) return false;
+  buttonRep->setEnabled(enab);
+  if(enab) {
+    buttonRep->show();        // make it real?
+  }
+  return true;
 }
 
 void taiWidgetMethod::ApplyBefore() {

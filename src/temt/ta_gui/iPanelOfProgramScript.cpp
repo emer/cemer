@@ -150,5 +150,5 @@ void iPanelOfProgramScript::ResolveChanges_impl(CancelOp& cancel_op) {
 
 void iPanelOfProgramScript::showEvent(QShowEvent* ev) {
   inherited::showEvent(ev);
-  m_dps->UpdateMethodButtons();
+  m_dps->UpdateMethodsEnabled();
 }

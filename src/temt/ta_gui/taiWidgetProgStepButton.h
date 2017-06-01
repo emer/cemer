@@ -34,7 +34,8 @@ public:
   static const int  n_std_steps;      // number of standard step increments
   
   QWidget* GetButtonRep() override;
-  bool UpdateButtonRep() override;
+  bool  UpdateEnabled() override;
+  bool UpdateButtonRep(bool enab) override;
 
   taiWidgetProgStepButton(void* bs, MethodDef* md, TypeDef* typ_, IWidgetHost* host, taiWidget* par,
       QWidget* gui_parent_, int flags_ = 0);

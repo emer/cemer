@@ -988,7 +988,7 @@ public:
   virtual bool          CalcAllRows_impl();
   // #IGNORE perform calculations for all rows of data (calls InitCalcScript to make sure)
   virtual bool          CalcAllRows();
-  // #BUTTON #GHOST_OFF_data_flags:HAS_CALCS #CAT_Calc perform calculations for all rows of data (updates after)
+  // #BUTTON #ENABLE_ON_data_flags:HAS_CALCS #CAT_Calc perform calculations for all rows of data (updates after)
   virtual void          CalcRowCodeGen(String& code_str);
   // #IGNORE generate code for computing one row worth of data, with assumed 'int row' variable specifying row
   virtual bool          CalcRow(int row);

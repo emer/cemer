@@ -573,23 +573,20 @@ void taiEditorOfClass::FillLabelContextMenu_CtrlPanel(QMenu* mnu, int& last_id)
      SLOT(DoAddToControlPanel_Short(QAction*)), SLOT(DoGoToControlPanel()));
 }
 
-void taiEditorOfClass::GetButtonImage(bool force) {
-  // taMisc::DebugInfo("GetButtonImage", String(force));
-  if(!typ || !mwidget || !frmMethButtons)  return;
-  if(!force && !frmMethButtons->isVisible()) {
-    // taMisc::DebugInfo("GetButtonImage", "not visible");
-    return;
-  }
-  // taMisc::DebugInfo("GetButtonImage", "visible");
+void taiEditorOfClass::UpdateMethodsEnabled(bool force) {
+  // taMisc::DebugInfo("UpdateMethodsEnabled", String(force));
+  if(!typ || !mwidget)  return;
+  // NOTE: visibility tests seem to prevent needed updates -- just do it!
+  // if(!force && !mwidget->isVisible()) {
+  //   taMisc::DebugInfo("UpdateMethodsEnabled", "not visible");
+  //   return;
+  // }
+  // taMisc::DebugInfo("UpdateMethodsEnabled", "visible");
 
   for (int i = 0; i < meth_el.size; ++i) {
     taiWidgetMethod* mth_rep = (taiWidgetMethod*)meth_el.SafeEl(i);
-    if ( !(mth_rep->hasButtonRep())) //note: construction forced creation of all buttons
-      continue;
-
-    mth_rep->UpdateButtonRep();
+    mth_rep->UpdateEnabled();
   }
-
   Update_Methbox_Labels();
 }
 
@@ -603,8 +600,8 @@ void taiEditorOfClass::Update_Methbox_Labels() {
 }
 
 void taiEditorOfClass::GetImage(bool force) {
-  if ((host_type != HT_CONTROL) || (frmMethButtons != NULL))
-    GetButtonImage(force); // does its own visible check
+  // if ((host_type != HT_CONTROL))
+    UpdateMethodsEnabled(force); // does its own visible check
   if (!mwidget) return; // huh?
   //note: we could be invisible, so we only do what is visible
   if (!force && !mwidget->isVisible()) return;
@@ -691,7 +688,7 @@ void taiEditorOfClass::GetValue() {
   if (state > DEFERRED1) {
     GetValue_Membs();
   }
-  GetButtonImage();
+  UpdateMethodsEnabled(); //  during get image, not get value!
   Unchanged();
 }
 

@@ -110,7 +110,8 @@ public:
   void                  ResolveChanges(CancelOp& cancel_op, bool* discarded = NULL) override;
     // check for unsaved changes and prompt to save/discard; called by several places prior to closing tab window, closing dialog, shutting down app, etc.
   void                  Cancel_impl() override;
-  virtual void          GetButtonImage(bool force = true);
+  virtual void          UpdateMethodsEnabled(bool force = true);
+  // update enabled status of method elements
 
 public: // routines for the taiDelegate style of edit host
   virtual void          GetImage_Item(int row) {} // called from GetImage and ed->GetValue

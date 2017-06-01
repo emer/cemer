@@ -106,7 +106,7 @@ void iPanelOfEditor::showEvent(QShowEvent* ev) {
   inherited::showEvent(ev);
   taiEditorOfClass* edh = EditorOfClass();
   if(edh && edh->state >= taiEditorWidgetsMain::CONSTRUCTED)  {
-    edh->GetButtonImage();              // update buttons whenver we show!
+    edh->UpdateMethodsEnabled();
   }
 }
 

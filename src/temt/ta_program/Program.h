@@ -229,9 +229,9 @@ public:
   // #CAT_Code generate the listing of the program (NOT the underlying CSS code -- just the program)
 
   virtual void  Init();
-  // #BUTTON #GHOST_OFF_run_state:DONE,STOP,NOT_INIT #CAT_Run #SHORTCUT_F8 run init_code, global variables retain current values unless reset in the init_code
+  // #BUTTON #ENABLE_ON_run_state:DONE,STOP,NOT_INIT #CAT_Run #SHORTCUT_F8 run init_code, global variables retain current values unless reset in the init_code
   virtual void  Run_Gui();
-  // #BUTTON #GHOST_OFF_run_state:DONE,STOP,NOT_INIT #CAT_Run #LABEL_Run #SHORTCUT_F9 run the program -- if not yet Init, will run Init first
+  // #BUTTON #ENABLE_ON_run_state:DONE,STOP,NOT_INIT #CAT_Run #LABEL_Run #SHORTCUT_F9 run the program -- if not yet Init, will run Init first
   virtual void  Run();
   // #CAT_Run run the program -- if not yet Init, will run Init first
   virtual void  Step_Gui(Program* step_prg = NULL);
@@ -239,11 +239,11 @@ public:
   virtual void  Step(Program* step_prg = NULL);
   // #CAT_Run step the program at the level of the given program -- if NULL then step_prog default value will be used
   virtual void  Stop();
-  // #BUTTON #GHOST_OFF_run_state:RUN #CAT_Run #SHORTCUT_F11 stop the current program at its next natural stopping point (i.e., cleanly stopping when appropriate chunks of computation have completed)
+  // #BUTTON #ENABLE_ON_run_state:RUN #CAT_Run #SHORTCUT_F11 stop the current program at its next natural stopping point (i.e., cleanly stopping when appropriate chunks of computation have completed)
   virtual void  Abort();
-  // #BUTTON #GHOST_OFF_run_state:RUN #CAT_Run #SHORTCUT_F12 stop the current program immediately, regardless of where it is
+  // #BUTTON #ENABLE_ON_run_state:RUN #CAT_Run #SHORTCUT_F12 stop the current program immediately, regardless of where it is
   virtual void  StepCss();
-  // #BUTTON #GHOST_OFF_run_state:DONE,STOP,NOT_INIT #CAT_Run run one step of underlying css script code, from current point of execution
+  // #BUTTON #ENABLE_ON_run_state:DONE,STOP,NOT_INIT #CAT_Run run one step of underlying css script code, from current point of execution
   virtual void  RunFunction();
   // #BUTTON #NO_BUSY display chooser of no arg functions for user to run
   virtual void  RunNoArgFunction(Function* fun);
@@ -259,11 +259,11 @@ public:
   // #IGNORE update gui from changes in run status etc -- for global program controls
 
   virtual void  Compile();
-  // #MENU_BUTTON #MENU_ON_Debug #GHOST_ON_script_compiled:true #CAT_Debug generate and compile the script code that actually runs (if this button is available, you have changed something that needs to be recompiled)
+  // #MENU_BUTTON #MENU_ON_Debug #ENABLE_OFF_script_compiled:true #CAT_Debug generate and compile the script code that actually runs (if this button is available, you have changed something that needs to be recompiled)
   virtual void  CmdShell();
-  // #MENU_BUTTON #MENU_ON_Debug #GHOST_OFF_run_state:DONE,STOP #CAT_Debug set css command shell to operate on this program, so you can run, debug, etc this script from the command line
+  // #MENU_BUTTON #MENU_ON_Debug #ENABLE_ON_run_state:DONE,STOP #CAT_Debug set css command shell to operate on this program, so you can run, debug, etc this script from the command line
   virtual void  ExitShell();
-  // #MENU_BUTTON #MENU_ON_Debug #GHOST_OFF_run_state:DONE,STOP #CAT_Debug exit the command shell for this program (shell returns to previous script)
+  // #MENU_BUTTON #MENU_ON_Debug #ENABLE_ON_run_state:DONE,STOP #CAT_Debug exit the command shell for this program (shell returns to previous script)
   virtual void  GlobalTrace();
   // #MENU_BUTTON #MENU_ON_Debug #CAT_Debug display trace of all the programs called up to the point of the last stop (e.g., due to error or user stop/step)
     static String  RenderGlobalTrace(bool html = true);
@@ -272,7 +272,7 @@ public:
     // #IGNORE decode stop reason to string
 
   virtual void  LocalTrace();
-  // #MENU_BUTTON #MENU_ON_Debug #GHOST_OFF_run_state:STOP #CAT_Debug display trace of program flow within this program up to the point of the last stop (e.g., due to error or user stop/step)
+  // #MENU_BUTTON #MENU_ON_Debug #ENABLE_ON_run_state:STOP #CAT_Debug display trace of program flow within this program up to the point of the last stop (e.g., due to error or user stop/step)
     virtual String  RenderLocalTrace(bool html = true);
     // #CAT_Debug #EXPERT render a string representation of the local trace -- if html then render to html format that is useful for gui dialog with clickable program href links -- else plain text
 
