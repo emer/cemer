@@ -18,7 +18,7 @@ Version
     Start Process      ${emergent}   --version
     ${result} =        Wait For Process   timeout=15 secs  
     Should Be Equal As Integers   ${result.rc}  0
-    Should Contain    ${result.stdout}  version: 8.0
+    Should Contain    ${result.stdout}  version: 8.
 
 Missing CSS
     [Tags]             strict
