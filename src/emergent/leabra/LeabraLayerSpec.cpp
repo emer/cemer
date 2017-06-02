@@ -788,7 +788,7 @@ void LeabraLayerSpec::Quarter_Final_Layer(LeabraLayer* lay, LeabraNetwork* net) 
 void LeabraLayerSpec::Quarter_Final_GetMinus(LeabraLayer* lay, LeabraNetwork* net) {
   lay->acts_m = lay->acts_eq;
   if(avg_act.use_first && lay->acts_m_avg == avg_act.targ_init) {
-    lay->acts_m_avg = lay->acts_m.avg; // first sample is better than our guess..
+    lay->acts_m_avg += 0.5f * (lay->acts_m.avg - lay->acts_m_avg); // just go with average
   }
   else {
     lay->acts_m_avg += avg_act.dt * (lay->acts_m.avg - lay->acts_m_avg);
@@ -798,7 +798,7 @@ void LeabraLayerSpec::Quarter_Final_GetMinus(LeabraLayer* lay, LeabraNetwork* ne
       LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
       gpd->acts_m = gpd->acts_eq;
       if(avg_act.use_first && gpd->acts_m_avg == avg_act.targ_init) {
-        gpd->acts_m_avg = gpd->acts_m.avg;
+        gpd->acts_m_avg += 0.5f * (gpd->acts_m.avg - gpd->acts_m_avg);
       }
       else {
         gpd->acts_m_avg += avg_act.dt * (gpd->acts_m.avg - gpd->acts_m_avg);
@@ -810,7 +810,7 @@ void LeabraLayerSpec::Quarter_Final_GetMinus(LeabraLayer* lay, LeabraNetwork* ne
 void LeabraLayerSpec::Quarter_Final_GetPlus(LeabraLayer* lay, LeabraNetwork* net) {
   lay->acts_p = lay->acts_eq;
   if(avg_act.use_first && lay->acts_p_avg == avg_act.targ_init) {
-    lay->acts_p_avg = lay->acts_p.avg;
+    lay->acts_p_avg += 0.5f * (lay->acts_p.avg - lay->acts_p_avg);
   }
   else {
     lay->acts_p_avg += avg_act.dt * (lay->acts_p.avg - lay->acts_p_avg);
@@ -829,7 +829,7 @@ void LeabraLayerSpec::Quarter_Final_GetPlus(LeabraLayer* lay, LeabraNetwork* net
       LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
       gpd->acts_p = gpd->acts_eq;
       if(avg_act.use_first && gpd->acts_p_avg == avg_act.targ_init) {
-        gpd->acts_p_avg = gpd->acts_p.avg;
+        gpd->acts_p_avg += 0.5f * (gpd->acts_p.avg - gpd->acts_p_avg);
       }
       else {
         gpd->acts_p_avg += avg_act.dt * (gpd->acts_p.avg - gpd->acts_p_avg);
