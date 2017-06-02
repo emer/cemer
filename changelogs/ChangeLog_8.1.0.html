@@ -1,0 +1,3574 @@
+<html><body>
+<h2>ChangeLog for Emergent Version 8.1.0
+  Revisions 10445:10823</h2>
+<table border="1" style="table-layout:fixed;width: 100%;">
+<tr>
+<td width="5%">Rev No.</td>
+<td width="10%">
+                Date               
+        </td>
+<td width="5%">
+                    Author
+                 
+        </td>
+<td width="">
+                    Message
+                 
+        </td>
+</tr>
+<tr>
+<td><pre>10445</pre></td>
+<td><pre>2017-01-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* major fix for user-data saving: code was checking only for taPtrList_impl but
+taList_impl is a *multiple inheritance* child with the ptrlist as 2nd class, so size
+member is in a different place.. yuk.  checked that this doesn't appear to be happening
+anywhere else! This now fixes reliability of saving splitter sizes etc for windows,
+and various other user data settings since that save fix was implemented..
+* don't update plugin dependencies if there aren't any active plugins!  and also for
+autosave -- should speed up saving in most cases
+</pre></td>
+</tr>
+<tr>
+<td><pre>10446</pre></td>
+<td><pre>2017-01-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>changelog update for 8.0.4</pre></td>
+</tr>
+<tr>
+<td><pre>10447</pre></td>
+<td><pre>2017-01-13</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Use setText() slot to set the cursor position after a midline completion
+- fixes bug 2986
+</pre></td>
+</tr>
+<tr>
+<td><pre>10448</pre></td>
+<td><pre>2017-01-13</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for bug 2968 - FindMakeColMatrix default params incompatible
+- went with option 1 - set dim0 = 1 (was 0)
+</pre></td>
+</tr>
+<tr>
+<td><pre>10449</pre></td>
+<td><pre>2017-01-13</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Changed update ubuntu packages to update trusty and xenial repos
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>10450</pre></td>
+<td><pre>2017-01-14</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>check to see if xxx. is floating point or object.member/method
+</pre></td>
+</tr>
+<tr>
+<td><pre>10452</pre></td>
+<td><pre>2017-01-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>provisional fix for Ctrl+a, Ctrl+d = delete object bug -- need to test on win, linux
+</pre></td>
+</tr>
+<tr>
+<td><pre>10453</pre></td>
+<td><pre>2017-01-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>windows also does ctrl+a = select all -- and making it easier to expt
+</pre></td>
+</tr>
+<tr>
+<td><pre>10454</pre></td>
+<td><pre>2017-01-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fix for linux (and presumably windows) for ctrl+a ctrl+d bug -- kill the ctrl+a but stuff
+a ctrl+b to engage the editor
+* fix for annoying connect errors for iHelpBrowser and iPanelOfDocView for Qt &lt; 5.6 -- need
+to connect as a QWebView not an iWebView as that is the signature
+</pre></td>
+</tr>
+<tr>
+<td><pre>10455</pre></td>
+<td><pre>2017-01-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>windows doesn't work with event stuffing of ctrl+b to prevent ctrl+a ctrl+d delete bug -- just going to let it be at this point</pre></td>
+</tr>
+<tr>
+<td><pre>10456</pre></td>
+<td><pre>2017-01-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>properly detect dev path on windows startup -- sets app_dir correctly and proj templates etc show up</pre></td>
+</tr>
+<tr>
+<td><pre>10457</pre></td>
+<td><pre>2017-01-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>bump version to 8.0.5
+</pre></td>
+</tr>
+<tr>
+<td><pre>10458</pre></td>
+<td><pre>2017-01-16</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>New class iDialogList presents "item" and "path" much like the Find dialog but takes a list - does not search
+- very useful where the search won't get you the list you want but you want to display clickable items
+- used now for Functions - list callers
+- specs - "where used"
+- still to do - Programs - list callers
+- I'll probably enhance the dialog by allowing callers to add additional fields
+-- e.g. "where used" add the name of the child spec
+- dialog sizing not smart - will fix
+</pre></td>
+</tr>
+<tr>
+<td><pre>10459</pre></td>
+<td><pre>2017-01-16</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Update to new iDialogList
+</pre></td>
+</tr>
+<tr>
+<td><pre>10460</pre></td>
+<td><pre>2017-01-17</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>ListCallers now	finds function calls from other	programs
+and the	"used" state of	the function is	correct	when the function is
+only called from outside its home program - aside from gui update issue :)
+</pre></td>
+</tr>
+<tr>
+<td><pre>10461</pre></td>
+<td><pre>2017-01-18</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Added TestAll top LeabraFlex
+</pre></td>
+</tr>
+<tr>
+<td><pre>10462</pre></td>
+<td><pre>2017-01-18</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Keep local and global vars in separate lists
+</pre></td>
+</tr>
+<tr>
+<td><pre>10463</pre></td>
+<td><pre>2017-01-18</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>This fix keeps the code completer from showing local vars of function B when
+completing an expression in function A
+- this is one of several local var access violations in the chooser and completer
+that I am fixing
+</pre></td>
+</tr>
+<tr>
+<td><pre>10464</pre></td>
+<td><pre>2017-01-20</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>- Code completer now only shows local vars in scope
+- Lookup chooser not quite as smart about this but may not be worth fixing
+</pre></td>
+</tr>
+<tr>
+<td><pre>10465</pre></td>
+<td><pre>2017-01-21</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for but 2940 - Wrong item selected when inserting default element in Navigator
+- too much code :)
+</pre></td>
+</tr>
+<tr>
+<td><pre>10466</pre></td>
+<td><pre>2017-01-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>restoring lost DataTable::ItemCount() method -&gt; rows -- for the old "Data" interface
+</pre></td>
+</tr>
+<tr>
+<td><pre>10467</pre></td>
+<td><pre>2017-01-24</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Add code completion to ProgCode code field with special handling for tab key so you can still
+tab to other fields when the tab doesn't make sense for code completion
+- To ensure proper handling of tab in dialog fields and not break tab behavior in inline code
+I needed to know where the completer was being used but the MemberDef information was only
+on taiWidgetField and not the parent class taiWidgetText - thus the moving up of that info
+to the higher class
+- Also added an enum to distinguish the type of completer and this opens the door for extension
+to completers for fields that are not code expressions
+- Will next be adding a directive to specify fields that get completers - functionality will remain as it is
+</pre></td>
+</tr>
+<tr>
+<td><pre>10468</pre></td>
+<td><pre>2017-01-24</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>New directive #ADD_COMPLETER can be used on text fields to add a completer to the widget
+- only for code completion at this time
+</pre></td>
+</tr>
+<tr>
+<td><pre>10469</pre></td>
+<td><pre>2017-01-25</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for bug 3003 - EditProgramEl not working
+- Broke when BrowserSelectMe_ProgItem was changed to fix InsertDefaultEl and duplicate in Navigator
+tree which was selecting the program instead of the new item
+- I added a new method much like BrowserSelectMe_ProgItem that is only for the case when you want
+to select the item AND ALSO  open the program editor
+</pre></td>
+</tr>
+<tr>
+<td><pre>10470</pre></td>
+<td><pre>2017-01-25</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Experiment to resolve bug 3000 - clicking in program element clears text
+- The problem is that the code "il-&gt;init_start_kill" in the creation of the iTreeWidgetDefaultDelegate
+is true when it should be false.
+- And it looks like it is true because after editing it isn't getting set to false because
+iTreeWidget::itemWasEdited isn't getting called --  iTreeView::itemWasEdited is getting called on an object
+that is an iTreeWidget so this is a little puzzling.
+- Experiment is to called inherited::itemWasEdited at the beginning of the iTreeView method
+- But was is causing this change in behavior I don't yet know
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>10471</pre></td>
+<td><pre>2017-01-26</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for code completer not showing function args
+</pre></td>
+</tr>
+<tr>
+<td><pre>10472</pre></td>
+<td><pre>2017-01-26</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>update mac deps install to use --force and overwrite on brew link</pre></td>
+</tr>
+<tr>
+<td><pre>10473</pre></td>
+<td><pre>2017-01-27</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Add NULL guard to prevent crash
+</pre></td>
+</tr>
+<tr>
+<td><pre>10474</pre></td>
+<td><pre>2017-01-28</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Code completer fixes
+- float or other type at start of line should not present existing vars, functions, etc. - now fixed
+- whitespace mid expression should not include programs in list of completion choices - now fixed
+</pre></td>
+</tr>
+<tr>
+<td><pre>10475</pre></td>
+<td><pre>2017-01-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>help message about user_data.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10476</pre></td>
+<td><pre>2017-01-28</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>code completer - now only shows no arg functions after program
+i.e. Program() Function() expressions
+</pre></td>
+</tr>
+<tr>
+<td><pre>10477</pre></td>
+<td><pre>2017-01-30</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Limit Chooser for RunFunction to only show No Arg functions
+- works for both the expression lookup case and the program RunFunction case
+</pre></td>
+</tr>
+<tr>
+<td><pre>10478</pre></td>
+<td><pre>2017-01-30</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for code completer not showing vars after PrintVar
+- FindEl returns int not bool!
+</pre></td>
+</tr>
+<tr>
+<td><pre>10479</pre></td>
+<td><pre>2017-02-02</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>New method MostFrequent() returns the string that most frequently appears in the array
+</pre></td>
+</tr>
+<tr>
+<td><pre>10480</pre></td>
+<td><pre>2017-02-03</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Significant changes to lookup parser
+- Removed all "look at next char" code - only look at current or previous
+- Simpler parsing of '=' '==' and '!='
+- Always continue if you hit a space - all setting of expr_start_pos now done when hitting a delimiter
+- Completer was sometimes appearing in comment code - fixed
+- Fix for parser bug 3010
+</pre></td>
+</tr>
+<tr>
+<td><pre>10481</pre></td>
+<td><pre>2017-02-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix for dmem compile</pre></td>
+</tr>
+<tr>
+<td><pre>10482</pre></td>
+<td><pre>2017-02-04</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>We need to initialize u-&gt;thal_cnt to -1 in ClearDeepActs, as 0 counts as start of gating.
+
+This function is currently probably not very heavily used.
+
+
+
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>10483</pre></td>
+<td><pre>2017-02-08</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Version 1 of ParamSet compare
+</pre></td>
+</tr>
+<tr>
+<td><pre>10484</pre></td>
+<td><pre>2017-02-11</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>our coding standard is to put all if code in brackets for clarity and accidnetal bug prevention.. no bugs here but cleaning this up</pre></td>
+</tr>
+<tr>
+<td><pre>10485</pre></td>
+<td><pre>2017-02-13</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Color/decorator code for more informative spec where_used
+- still need to rewrite the actual where used logic
+</pre></td>
+</tr>
+<tr>
+<td><pre>10486</pre></td>
+<td><pre>2017-02-15</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>If a parent spec is used but not the child (or vice versa) return a new state decorator so the tree
+view item will be drawn to indicate this new state
+</pre></td>
+</tr>
+<tr>
+<td><pre>10487</pre></td>
+<td><pre>2017-02-16</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Add an optional column to the DisplayList dialog
+- Allows you to display an additional string for each item (row)
+- You also can pass a string for the column titl
+</pre></td>
+</tr>
+<tr>
+<td><pre>10488</pre></td>
+<td><pre>2017-02-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>leabra flex using param sets experiment project -- updated by randy from John's original, to remove the config table entirely, and use StdGlobal where relevant</pre></td>
+</tr>
+<tr>
+<td><pre>10489</pre></td>
+<td><pre>2017-02-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>actually remove the config table finally</pre></td>
+</tr>
+<tr>
+<td><pre>10490</pre></td>
+<td><pre>2017-02-17</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>New class to parse imagenet xml annotation files
+</pre></td>
+</tr>
+<tr>
+<td><pre>10491</pre></td>
+<td><pre>2017-02-18</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>- New taImageProc::GetBoundingBox - extensible to other image sources
+- ImageNetUtils - methods to get size and bounding box 
+</pre></td>
+</tr>
+<tr>
+<td><pre>10492</pre></td>
+<td><pre>2017-02-18</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>The brew commands were wrong and apr and apr-util were not getting installed and linked
+</pre></td>
+</tr>
+<tr>
+<td><pre>10493</pre></td>
+<td><pre>2017-02-19</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>fix for completer bug 3018
+</pre></td>
+</tr>
+<tr>
+<td><pre>10494</pre></td>
+<td><pre>2017-02-19</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Forgot to commit this after fixing the script brew commands
+</pre></td>
+</tr>
+<tr>
+<td><pre>10495</pre></td>
+<td><pre>2017-02-19</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for 3015 - child specs not getting "_copy" extension during copy
+- overrode El_CopyN_ and removed El_SetName_ which was undoing what was done in the copy step
+</pre></td>
+</tr>
+<tr>
+<td><pre>10496</pre></td>
+<td><pre>2017-02-21</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Updates to CropImage and GetBoundingBox
+</pre></td>
+</tr>
+<tr>
+<td><pre>10497</pre></td>
+<td><pre>2017-02-21</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Updated to generate subset OID files
+</pre></td>
+</tr>
+<tr>
+<td><pre>10498</pre></td>
+<td><pre>2017-02-22</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>#GHOST_ON #GHOST_OFF backwards on breakpoint enable/disable
+</pre></td>
+</tr>
+<tr>
+<td><pre>10499</pre></td>
+<td><pre>2017-02-22</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>- Fix for 3021 - crash opening control panel in new window
+- New method that can be used to conditionally not show the dialog that appears with some CallFun calls
+-- using to avoid the dialog that appears when calling LoadData from cluster run
+and there are no tables in the cluster run data group - couldn't take it anymore :)
+- Sorry about the big recompile
+</pre></td>
+</tr>
+<tr>
+<td><pre>10500</pre></td>
+<td><pre>2017-02-22</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>#ifdef QT_VERSION &gt;= 0x0406
+</pre></td>
+</tr>
+<tr>
+<td><pre>10501</pre></td>
+<td><pre>2017-02-22</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Only return the first bounding box
+-- The first one will always be of the category but later ones can be from other categories
+</pre></td>
+</tr>
+<tr>
+<td><pre>10502</pre></td>
+<td><pre>2017-02-23</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for parsing bug 3022 - no completion after minus
+</pre></td>
+</tr>
+<tr>
+<td><pre>10503</pre></td>
+<td><pre>2017-02-23</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Move the do_svn_update boolean option for Select Cluster into the dialog box
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>10504</pre></td>
+<td><pre>2017-02-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* bumped version to 8.0.6 to trigger updates to following:
+* MAJOR change in naming of ControlPanelMember / Method (was EditMbrItem, EditMthItem), and consolidated all data in a single "data" member with a local type enum that determines what kinds of data are relevant.
+* no major functional changes, just cleanup and reorg - relatively little testing though fact
+that it complies and various projects load properly is a good sign.  need to test param searching mainly.
+* did change saved_value to be editable, per discussion about using ParamSet for configs
+* once this is more thoroughly tested, everyone in lab should upgrade at same time b/c not backward compatible.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10505</pre></td>
+<td><pre>2017-02-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>aka type translation fix: was converting types to the template instantiation instead of the inherited subtype of it b/c template instance is getting the comment directives -- now omit those templ instances from aka types -- fixes control panel member group  subgroup conversion</pre></td>
+</tr>
+<tr>
+<td><pre>10506</pre></td>
+<td><pre>2017-02-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* now safe to upgrade and everyone in lab should -- rename fully tested and working!
+* ControlPanelMember copy updates ctrl_type so it is always up-to-date
+* param search tested and working, demo project updated also with graph of results
+* EpochsToTrainCR uses tag instead of tag_svn -- gives separate results for each run
+of a param search
+</pre></td>
+</tr>
+<tr>
+<td><pre>10507</pre></td>
+<td><pre>2017-02-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* major cleanup, improvement to add / remove to control panel
+:* only one menu item for all types of control panels
+:* groups added -- all groups now inherit from ControlPanel_Group which defines basic meths
+:* code much cleaner and updated to control panel instead of SelectEdit
+:* renamed ControlPanel methods: SelectMember -&gt; AddMember; RemoveField -&gt; RemoveMember, Fun -&gt; Method
+:* ability to add to group is really nice for ParamStep / ParamSeq -- also ability to directly edit saved_values there.
+:* adding a new ParamSet item auto sets saved_value to current
+:* ControlPanelMember does SetCtrlType on InitLinks -- should always be accurate now
+:* only show search for items that are single, numeric
+</pre></td>
+</tr>
+<tr>
+<td><pre>10508</pre></td>
+<td><pre>2017-02-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>add whether on first el of group group or not to group menu items -- could exhausively
+search through all group els but this is probably good enough.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10509</pre></td>
+<td><pre>2017-02-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>use curl and https instead of ftp for download script -- maybe more robust?</pre></td>
+</tr>
+<tr>
+<td><pre>10510</pre></td>
+<td><pre>2017-02-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* Major cleanup of ControlPanel label / desc code
+:* cust_* flags are saved (wasn't saving cust_label) and determine whether you get the default label or not, absolutely.  logic was previously very complex..
+:* initial construction sets flags, from there it is up to subsequent edits or user control
+:* added short_label arg and option in context menu to create items using short labels = just name of object w/out leading paths
+:* general cleanup of api: had taBase methods called xxxLabel and xxxText -- not clear what
+diff was -- now separately get Label and Desc defaults..
+:* taiArgTypeOfMethodPtr was not getting actual type of obj -- now fixed.
+* Added methods to copy Control Panels To / From DataTable's.
+:* can now copy entire group of control panels from a ConfigTable in one menu action -- just need to configure first control panel to point to relevant vars using same names as columns of table, then do CopyFromDataTable in controlpanel_group menu, et viola!
+:* this is then greatly simplifies converting projects over to new ParamSet structure instead of ConfigTable
+:* still need code for saving params from linked param set guys, etc..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10511</pre></td>
+<td><pre>2017-03-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Important fix for control panel labels: auto-detect cust_label flag when loading pre-8.0.6
+models!
+</pre></td>
+</tr>
+<tr>
+<td><pre>10512</pre></td>
+<td><pre>2017-03-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix for building on windows: taMisc::DisplayList was taking a String_Array arg outside of NO_TA_BASE ifdef..</pre></td>
+</tr>
+<tr>
+<td><pre>10513</pre></td>
+<td><pre>2017-03-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>rest of code needed for param set-based configs -- linked control panels generate saved param strings -- test project updated
+</pre></td>
+</tr>
+<tr>
+<td><pre>10514</pre></td>
+<td><pre>2017-03-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>update startup program</pre></td>
+</tr>
+<tr>
+<td><pre>10515</pre></td>
+<td><pre>2017-03-04</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>- More methods to access additional information from the ImageNet annotation files
+- Corresponding taImageProc methods and rename of the existing methods to be clear
+that these methods are accessing external "sources" of which ImageNet is the only one
+at this point.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10516</pre></td>
+<td><pre>2017-03-04</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* Major fix to Variant::isNumeric for String type -- was not using proper logic for bitwise
+variables and m_is_numeric_valid was not registering properly -- AND it was using QString::toDouble(&amp;ok) to check if a string was a valid number, BUT that doesn't work for
+the C locale, which is our default (and only I think now!?) locale, so now using our
+own taString isFloat routine.
+* major impliciation of above was inability to properly set enum values from variant strings -- it thought all strings were numbers and would just set to toInt() value which then
+leads to everything being a 0.  BUT you do have to check if a valid string-based number rep
+instead of a label.. so above fix was key.
+* switched control panel from args to use strings directly, instead of going through variant
+-- SetCurValFmString -- also handles info about setting and adds a warning if cur string of value != string rep used to set value!  should make bugs easier to see in future.
+* switched LeabraFlex over to the new ParamSet version -- param set pointers live in MasterTrain, for interactive running, but are accessed in MasterStartup -- overall this whole setup seems very clean
+* added a BUTTON interface for ComparePeers on ParamSet
+</pre></td>
+</tr>
+<tr>
+<td><pre>10517</pre></td>
+<td><pre>2017-03-04</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>allow quoted bits enums with \| -&gt; | sub, and quote bits | in cluster run script
+</pre></td>
+</tr>
+<tr>
+<td><pre>10518</pre></td>
+<td><pre>2017-03-04</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>get rid of fixed isBits flag -- need to compute every time -- per Kai's comments on bug 2571
+</pre></td>
+</tr>
+<tr>
+<td><pre>10519</pre></td>
+<td><pre>2017-03-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix for python script for | params</pre></td>
+</tr>
+<tr>
+<td><pre>10520</pre></td>
+<td><pre>2017-03-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* cleaner diffs for programs -- uses listing value only for ProgEl and ProgVar, instead
+of iterating over members etc.
+* generalized the diff code -- one function gets the new diff rec, and another gets the value
+for the diff to use
+</pre></td>
+</tr>
+<tr>
+<td><pre>10521</pre></td>
+<td><pre>2017-03-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>for taBase::UpdatePointers_NewPar_FindNew, use GetPathNames instead of GetPath -- then
+the subsequent path searching is based on names and not indexes -- this makes it MUCH more
+robust for updating across projects where things have been inserted, deleted, or moved around.  BUT of course, this makes it LESS robust to renaming.  but you can't have it
+both ways.. or maybe you can?? I will tweak further actually -- if name-based approach fails
+then try index based approach..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10522</pre></td>
+<td><pre>2017-03-07</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Adding wrapper class for QXmlStreamReader - not functional yet
+</pre></td>
+</tr>
+<tr>
+<td><pre>10523</pre></td>
+<td><pre>2017-03-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* taBase::UpdatePointers_NewPar_FindNew now first does a GetPathNames search, then a
+GetPath search -- confirmed with testing that this supports EITHER moving things around while
+keeping the same names, OR renaming things but keeping them in the same location, but
+NOT BOTH -- so if you want to be able to move objects with pointers around successfully
+those are the constraints.  Beyond that it seems like an NP-complete (or AI complete) problem..
+* also get rid of unnec. debug err msg in control panel full.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10524</pre></td>
+<td><pre>2017-03-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* master_and_clones flag in ControlPanel_Group and associated code in ControlPanel to
+manage first control panel as a master that updates clones whenever changed -- all seems
+to work!  only major limitation at this point is that moving items in / out of subgroups
+loses prior state info -- destroys and creates instead of moves -- logic for fixing this
+is not clear to me at this point -- chicken and egg kinds of problems..
+* currently using disabled state to mark clones -- could provide more specific state info
+in edit dialog for param sets, but it would take another row from editor..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10525</pre></td>
+<td><pre>2017-03-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>ActivateParamSet function -- handles everything for using paramsets to configurify anything!
+</pre></td>
+</tr>
+<tr>
+<td><pre>10526</pre></td>
+<td><pre>2017-03-08</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix the comment/description for member dead_thr
+</pre></td>
+</tr>
+<tr>
+<td><pre>10527</pre></td>
+<td><pre>2017-03-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* SaveCurrent, Activate buttons as shortcuts for ParamSet Copy.. functions
+* AddVarToControlPanel on ProgVar -- on the menu, can select any number and add en-masse --
+makes it very easy to add param set indirection for any program!
+</pre></td>
+</tr>
+<tr>
+<td><pre>10528</pre></td>
+<td><pre>2017-03-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* a new ParamSet_Group defaults to master_and_clones true outside of project param_set case,
+and also makes a default master item
+* NewParamSet_Group on program.objs to encourage this usage
+* crash fix
+</pre></td>
+</tr>
+<tr>
+<td><pre>10529</pre></td>
+<td><pre>2017-03-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* control panel items use string rep for diff compare - simpler more sensible diff compare results
+* need to expose ProgVar method that I previously IGNORE'd -- prev checkin won't work!!
+* LeabraFlex now has NO StdGlobalsInit!  Everything is in TrainStart!
+</pre></td>
+</tr>
+<tr>
+<td><pre>10530</pre></td>
+<td><pre>2017-03-08</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Add
+#else // older than qt 4.6
+  return false;
+#endif
+</pre></td>
+</tr>
+<tr>
+<td><pre>10531</pre></td>
+<td><pre>2017-03-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Updated leabra flex template with one clone in each param set group, for illustrative purposes.  added comments in desc for how to use.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10532</pre></td>
+<td><pre>2017-03-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* changed background color for ParamSet clones to light yellow (same as NO_STOP_STEP in Programs)
+* added last_activated flag and highlight those in green to indicate the last param set that was activated..  resets flag of others in the same group..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10533</pre></td>
+<td><pre>2017-03-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Programming is like a virus.. once you get a clear idea of a problem and a simple fix for it
+you just cannot stop yourself from implementing it!
+* #SCOPE_ON_xxx option for taBase* members (token pointer members) -- if xxx is another taBase* then it uses that object to scope the items shown in the dialog..  also supports xxx
+being a TypeDef*, and allows other #SCOPE options as backup if member pointer is null
+* taiWidgetTokenChooser has scope_obj and associated logic to use it to scope by a
+specific object -- uses taBase::IsChildOf 
+* ProgVar now has an object_scope member that uses above logic -- user can set this to point
+to e.g., a group or any object in the hierarchy that contains the objects you want the user
+to be able to select for this object* variable -- this will be useful for lots of thigns
+but immediately useful for selecting ParamSet* options in LeabraFlex
+* group objects were showing up with empty names in chooser for object_scope -- turns out obscure old BugId:1298 had turned them off -- turning back on names -- might fix some
+other cases we never noticed before, or might break something.. doesn't break the case
+for the original 1298 bug because we now name all our member groups automatically..
+* DynEnum was NOT returning the ProgVar description for control panel members -- does now.
+* dwt changes are typically tiny (esp in Leabra) -- need to have auto scale button on by default in NetView -- new #AUTO_SCALE setting on connection members now in place to set this on by default -- conveniently works wherever you haven't set anything before, i.e., it seems to fix most of the textbook projects for example.
+* css console window is STILL getting some kind of weird Max resize signal and restoring
+at maximum size -- now specifically prevent this from happening, and issue a message when
+wd &amp; ht are both &gt; 0.8 -- you really don't want to save the console window that big anyway. btw it seems to occur with secondary monitors.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10534</pre></td>
+<td><pre>2017-03-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>object_scope restricted to taNBase and above object types -- that should work and cuts
+down on a lot of the cruft in choosing this.. need a scoper to scope the scoper.. :)
+</pre></td>
+</tr>
+<tr>
+<td><pre>10535</pre></td>
+<td><pre>2017-03-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Leabra flex monitor programs use object_scope = OutputData 
+</pre></td>
+</tr>
+<tr>
+<td><pre>10536</pre></td>
+<td><pre>2017-03-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fixed major bug in Diff compare for DataTables: DataCol was doing direct access
+into col array using row index!  Must use table index indirection!!  Also fixed
+a number of cases where rows() was being used as the max in a for loop instead of
+caching the value -- much faster.
+* use Save Current and Activate labels for individual elements too
+</pre></td>
+</tr>
+<tr>
+<td><pre>10537</pre></td>
+<td><pre>2017-03-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* using actual name of group / list objects reveals that Function's are not naming
+their args or fun_code properly.  this is due to ProgEl inheriting from taOBase and
+not taNBase, so it didn't get the AutoNameMyMembers call, and it was ALSO not using
+the TA-based auto InitLinks -- should definitely always use that where possible!!
+* Fixing this then caused Functions to not auto-expand properly in program editor.  this
+is because their now properly-named "args" list was actually catching the args pref setting
+and that said "don't expand".  Due to the use of global "cur_exapnd_depth" in void iPanelOfProgram::items_CustomExpandFilter and lack of any specific setting for "fun_code"
+List, the args setting just carried on for everything thereafter.
+* My quick fix was to detect when we get the "fun_code" member and replace it with
+"functions" which is listed in the prefs, and is the appropriate setting presumably.
+* In general expansion MIGHT be more robust if some kind of stack on cur_expand_depth value
+was used so that when you pop out of a nesting level you get back to the expand depth
+that was active for that level.  this would entail a simple int_Array which stores
+depths as a function of "level" param.  But debugging this is beyond me right now..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10538</pre></td>
+<td><pre>2017-03-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* #AKA on ActivateParamSet
+* support for #AKA on Method def -- how did we not have this already!?
+</pre></td>
+</tr>
+<tr>
+<td><pre>10539</pre></td>
+<td><pre>2017-03-10</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Minimal API to support reading ImageNet annotation files. Will extend once that is working.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10540</pre></td>
+<td><pre>2017-03-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* don't elide member names or variable names when adding to control panel -- almost always
+want the full version of that
+* taBase* values are is_single and can be activated etc in param sets
+</pre></td>
+</tr>
+<tr>
+<td><pre>10541</pre></td>
+<td><pre>2017-03-10</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Another #ifdef for dream compilation. Edited and built on dream so I know it works!
+</pre></td>
+</tr>
+<tr>
+<td><pre>10542</pre></td>
+<td><pre>2017-03-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>don't recursively save linked control panels, per email discussion
+</pre></td>
+</tr>
+<tr>
+<td><pre>10543</pre></td>
+<td><pre>2017-03-11</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Temporary fix for "pointer variable turns NULL on change of control panel flag"
+- Removed #SCOPE_ON_object_scope directive from object_val
+- Even without clicking on control panel flag the UI was reporting the object val as NULL
+    and you couldn't get a chooser because object_scope was NULL so you needed to set a
+    scope to be able to reset the object value.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10544</pre></td>
+<td><pre>2017-03-11</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* scoping bug fixed, restored scope_on for ProgVar -- scope_typ was null but scope obj
+was non-null, and scope checking was only looking at the obj not also the type -- fixed
+in multiple places..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10545</pre></td>
+<td><pre>2017-03-13</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fixed - QFile object needs to be member - duh!
+</pre></td>
+</tr>
+<tr>
+<td><pre>10546</pre></td>
+<td><pre>2017-03-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>correct fix for #SCOPE_ON_xxx comment directive -- was being confused with #SCOPE_xxx
+directive -- reverted previous "fix" and changed to #SCOPEOBJ_ON_ and #SCOPETYPE_ON_
+</pre></td>
+</tr>
+<tr>
+<td><pre>10547</pre></td>
+<td><pre>2017-03-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Fix crash in ss.proj -- VarToTable method calling SetDataNetwork on a local stack-based
+NetMonitor was now atually replacing pointers to things due to new more effective pointer
+replacement code, and this is not a good idea when the NetMonitor is itself owned by
+something within the network.. just updated all such calls to do SetDataNetwork as
+the first step before creating a mon item.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10548</pre></td>
+<td><pre>2017-03-14</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>- Removing ImageNetUtils and calls in taImageProc that was the only caller.
+- The taXmlStreamReader class can be used to write emergent code to read xml files
+</pre></td>
+</tr>
+<tr>
+<td><pre>10549</pre></td>
+<td><pre>2017-03-15</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Another ifdef to compile on dream with old version of Qt
+</pre></td>
+</tr>
+<tr>
+<td><pre>10550</pre></td>
+<td><pre>2017-03-17</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>fix for expression parsing bug 3040
+</pre></td>
+</tr>
+<tr>
+<td><pre>10551</pre></td>
+<td><pre>2017-03-17</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Forgot to remove these includes when removing the .h and cpp code from svn
+</pre></td>
+</tr>
+<tr>
+<td><pre>10552</pre></td>
+<td><pre>2017-03-20</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Add CloseFile()
+</pre></td>
+</tr>
+<tr>
+<td><pre>10553</pre></td>
+<td><pre>2017-03-21</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for bug 2958 - clearing tree search doesn't always work
+- combination of careless mistake and poor implementation choice for the highlighting
+-- highlight now handled like all others using GetStateDecoKey
+</pre></td>
+</tr>
+<tr>
+<td><pre>10554</pre></td>
+<td><pre>2017-03-21</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Add a view to show act_g, the activations of the network at the cycle of gating.
+
+This takes a snapshot of the activity in all layers at the time when the GPi assesses if it should gate or not.
+
+This has no functional value/change, but may help with understanding/debugging a PBWM model.
+
+It creates a new unit variable act_g.
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>10555</pre></td>
+<td><pre>2017-03-22</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Updated fix for search highlighting
+- removed SEARCH_MATCH base flag and GetStateDecoKey code
+- TreeViewItem which calls GetStateDecoKey now checks the match list first and
+skips decorating if the item is highlighted for match
+- was able to remove a QList from the searcher and also make the code more robust
+- fixed an update that wasn't happening when clearning search
+</pre></td>
+</tr>
+<tr>
+<td><pre>10556</pre></td>
+<td><pre>2017-03-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* LeabraUnitSpec.deep.mod_thr -- threshold for layer-level deep_mod_net max before deep
+mod takes effect.  existing code and new default are .1. D1D2UnitSpec (and MSNUnitSpec
+which derived from it) had .01, which is new default there.  in new PVLV_cel it probably
+makes sense to go back to .1 -- will test.
+* ProgVar as a program arg turns off init_from -- doesn't make sense there.  can be set
+if moved from vars.
+* ControlPanel Group listing shows path of base, not just name -- optimized case for
+program objects that shows path relative to program.  May want to add a
+taBase::DisplayPath() method that does this -- otherwise uses project-relative path --
+good for general case of displaying paths.  Actually I will do this..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10557</pre></td>
+<td><pre>2017-03-23</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Console window now has search
+- click the magnifier icon to reveal the search bar
+- click done to hide the search bar
+- find next and find previous buttons (also "return" and "shift return" for next and previous"
+</pre></td>
+</tr>
+<tr>
+<td><pre>10558</pre></td>
+<td><pre>2017-03-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* taBase::DisplayPath() added -- optimized path display for gui routines
+* switched a number of cases of GetPathNames in gui routines to new DisplayPath
+* ParamSet_Group::ActivateSaveAll -- use this to refresh after copying from table -- e.g.,
+for bools that were saved as ints.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10559</pre></td>
+<td><pre>2017-03-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* Major changes to taBase::GetPath code -- BE ON THE LOOKOUT FOR &amp; REPORT ISSUES!
+:* fixes the issue with ParamSet paths to pointer variables -- now project relative
+so they don't change when you rename the project
+:* finally separated the main entry point from the _impl versions which do the recursive
+part -- small potential for Program code breakage -- grepped in our major project
+directories and none of our projects call any GetPath functions.
+:* added GetPathFromProj -- just does GetPathNames from project -- this is used now by
+default for non-streaming path values for GetValStr methods
+:* tabMisc::RootFindFromPath -- use this for most path decoding -- key feature is that it
+automatically handles project-relative paths, using taProject::cur_proj current project pointer, while also allowing root-based paths that start with .projects..
+:* static taProject::cur_proj pointer -- updated via SetProjAsCurrent methods (replaced
+existing ProjDirToCurrent methods) based on gui, Program updates.
+* ParamSet::active_editable flag -- toggles whether the active values are editable or
+read-only -- false by default.
+* iPanelOfProgramGroup -- middle panel view of program groups shows just the programs
+and not anything within the programs -- much quicker when you click on .programs for e.g.,
+search, and this is all you probably need..
+* ACTUALLY implemented the Compute_DeepMod mod_thr for MSNUnitSpec and other PVLV
+unit specs -- somehow had missed these last time -- threshold is now on individual unit
+deep_mod_net value and not layer-level
+</pre></td>
+</tr>
+<tr>
+<td><pre>10560</pre></td>
+<td><pre>2017-03-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>activate_params flag for MasterTrain in LeabraFlex template, and updated comment for
+mod_thr to indicate different behavior in PVLV
+</pre></td>
+</tr>
+<tr>
+<td><pre>10561</pre></td>
+<td><pre>2017-03-24</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Move SVN update for ClusterRun into a background thread.
+
+When you hit update in ClusterRun, this now spawns a background thread, that goes out and does an svn update
+on the local svn working directory. Once that svn update has finished, it signals the main gui thread to then
+reload all of the clusterrun tables from local disk.
+
+It also issues a UrlExists on the repository in the gui thread first, to ensure that svn has the neccessary credentials
+to access the repositories, as opening a password dialog in the background thread does not work.
+
+This commit only moves the update into the background thread, i.e. all write operations, including the write of "Update Running"
+still remain syncronous. Also the initial check for access in the first time hitting "Update" after emergent starts will be syncronous.
+
+So this commit does not eliminate all beachballing in ClusterRun, but should help the most significant and noticeable ones.
+
+As updates now happen in the background, if the "Update Running" stops beachballing, it does not mean the operation is complete
+and the data is available for "Load Data". It only means it has written the command to run "Update running" on the backend into the
+repository. To see when the update running is actually complete, one needs to look at the SVN cur_svn_rev number of when the upgrade succeeded.
+
+ 
+</pre></td>
+</tr>
+<tr>
+<td><pre>10562</pre></td>
+<td><pre>2017-03-25</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>First stage of enhancement 2910
+For assignments set the lhs type when the rhs is existing bool, int, real or string variable
+</pre></td>
+</tr>
+<tr>
+<td><pre>10563</pre></td>
+<td><pre>2017-03-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* new iComboBoxPrevNext -- has up / down arrows for quickly iterating through the items
+in a combobox (enum list).  now used automatically by everything.  seems to work, but
+only limited testing so far..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10564</pre></td>
+<td><pre>2017-03-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* WARNING: only for testing at this point to get some feedback -- do not update your
+running copy of emergent yet until we finalize all this stuff!!  just compile a debug
+version and play around with it and send feedback to the lab list!
+* Updated version to 8.0.7 to trigger loading update of obsoleted members
+* major changes to ParamSet functionality:
+:* replaced record, search with state enum
+:* added active string -- shows the current active values in read-only string form!
+:* ParamSet editor now always shows the saved_value as the thing you edit!  uses the quick under-the-hood copy-from saved_value, GetImage, then copy-back to active before anyone notices.  Same thing for GetValue.
+:* this is the main thing to get feedback on: does this reduce confusion b/c you are
+now editing the saved value for param sets??  might be momentarily confusing when used
+to the previous behavior, but after adapting to that, does it seem like the best way to go?
+:* One major issue: if anything is actually currently *running* while you edit these values
+it will "see" these shuffled values momentarily!  ugh.  just thought of this one.  Not
+sure how often you'll really be doing that but it could definitely cause some very strange
+inexplicable results, which seems bad..  have to think about this some more..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10565</pre></td>
+<td><pre>2017-03-26</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* this is another "experimental" checkin -- much better I think but still a few
+loose ends -- need to achieve some consensus on the active_params / archived_params before
+going down that route, but all the basic GUI stuff and state flag is in place and seems good..
+* improvement to the ParamSet editing: now uses a ProgVar to represent the saved_value for
+editing -- avoids any possible issues with previous swap-in-out hack.. and establishes a
+consistent interface -- left-most ALWAYS shows the current active value, then saved value --
+param sets can NEVER edit the active value, but when ACTIVE is set, any changes are
+automatically activated.  This seems like the right semantics.
+* created new taiWidgetProgVarValue to represent the value of a prog var -- previously
+this code was embedded in taiEditorOfProgramCtrl -- now shared -- #EDIT_VALUE option
+engages this view for any ProgVar via taiMemberOfProgVarValue
+* TODO: probably need "AllStable" and "AllLocked" buttons to easily reset and then you can
+selectively activate ones you want. unfortunately existing param sets were all using
+"record=true" so everything shows up as active.
+* TODO: also, massive tool tip is being set for the stable value editor -- drags in EVERYTHING -- not sure where -- tried to get rid of it in various places.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10566</pre></td>
+<td><pre>2017-03-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>New ParamSet / Control Panel stuff all working and tested -- this is prior to global
+rename of active_params, archive_params, in case we want to back that out..
+* loading existing ParamSets sets state to STABLE -- no active use of record flag there
+so not reasonable to obey that and set everything to ACTIVE
+* AllStable, AllActive on ControlPanels and groups -- in general want few ACTIVE vals
+* proper undo saving for control panel add, other actions
+* MoveTo action for control panel members, and GoToObject as a button for element
+</pre></td>
+</tr>
+<tr>
+<td><pre>10567</pre></td>
+<td><pre>2017-03-27</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Use GetPathNames() in PointerUpdateTests.
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>10568</pre></td>
+<td><pre>2017-03-27</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>More fixes to use GetPathNames() in auto_tests
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>10569</pre></td>
+<td><pre>2017-03-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* Last part of the new ParamSets design: rename param_sets to active_params, add
+archived_params, and Archive functionality for any param set
+* ClusterRun "SaveJobParams" now creates an archive element
+* Added CurrentDate/TimeStampString functions to taDateTime
+* Added various Find* functions to String_Array, and also fixed a few issues with MostFrequent method there
+* I will now be testing this out more extensively -- hopefully a few others will too --
+then we can all coordinate on updating to new version (no going back.. :)
+</pre></td>
+</tr>
+<tr>
+<td><pre>10570</pre></td>
+<td><pre>2017-03-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* Updated LeabraFlex -- renamed "MiscParams" to "NetParams" to make it clearer
+* don't include "active_params" in list of groups for add to control panel menu..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10571</pre></td>
+<td><pre>2017-03-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>#COLOR_ directive for enums -- unfortunately can only color the foreground (font)
+color -- background color forces terrible-looking custom widget (on mac at least) --
+used for ACTIVE, STABLE etc to allow for some pop-out level processing of these - should
+think about other importnat usecases!
+</pre></td>
+</tr>
+<tr>
+<td><pre>10572</pre></td>
+<td><pre>2017-03-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* add short_label flag to control panel member -- otherwise it doesn't auto-track
+renaming of variables in programs which is the main point anyway..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10573</pre></td>
+<td><pre>2017-03-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* add parent group to archived param set name
+* use saved_value in getting linked control panels (may not have been activated yet!)
+:* removed IsControlPanelPointer() and only have the Get* function -- if it is non-null,
+then it is one!  requires getting the pointer anyway so more efficient
+* ParamSet last_activated flag not saved or copied
+* reset all the completer lists after lookup -- these were holding stale objects after they
+had been deleted!
+* taiWidgetTokenChooser much more robust -- ignores IsDestroying objects and does better
+null checks in better order -- the object_scope lookup is a huge dragnet b/c it gets
+everything under a taNBase, was including some dead objects (not sure why they
+didn't get released -- was taMatrixT in this case -- unregister not working?
+* temp unfinished fixes to DogRegionSpec code -- that's next!
+</pre></td>
+</tr>
+<tr>
+<td><pre>10574</pre></td>
+<td><pre>2017-03-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* Don't auto-set short_label -- allow user to update that and respond accordingly!  much
+more useful than auto-setting this flag.
+* also, prior checkin contained an info message at start/end of autosave, in attempt to
+determine mysterious beachball phenomenon.  haven't seen it yet.  also prefs has undo debug
+flag that should be turned on to detect if that is cause..  we can turn autosave info off
+when issue is fixed.  actually, I'll make it contingent on undo flag so it won't bug anyone
+unnecessarily, who isn't looking for this..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10575</pre></td>
+<td><pre>2017-03-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* only report autosave on undo_debug
+* tried everything I could think of to only have enum color affect displayed part and
+not the popup -- nothing worked. 
+</pre></td>
+</tr>
+<tr>
+<td><pre>10576</pre></td>
+<td><pre>2017-03-30</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fix for Adding control panel item -- short_label not working -- arg != member!
+* added explicit deep_mod_zero option for MSNUnitSpec
+</pre></td>
+</tr>
+<tr>
+<td><pre>10577</pre></td>
+<td><pre>2017-03-30</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* solution to the unreadable combobox -- set the pen color in the paint event directly
+-- style sheet is completely unusable on mac b/c it uses a native widget..
+* also move the prev / next arrows to the left of the widget, to be less confusing with the
+native arrows -- also completely unable to remove these arrows on mac using style sheet.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10578</pre></td>
+<td><pre>2017-03-30</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* dog region spec: dog applied to monochrome (intensity) channel now subtracts a zero point
+and contributes to ON for positive values and OFF for negative -- allows same-sized
+DoG's to extract places of high and low intensity in image without spatial edge detection
+confound.
+:* zero point is image mean by default, but also have option for a fixed point, which is
+unlikely to work well given natural variability in images.
+* Saved display of monochrome images based on color inputs in VisRegionSpecBase now fixed --
+needed to convert RGB to grey -- was just copying the R channel!
+</pre></td>
+</tr>
+<tr>
+<td><pre>10579</pre></td>
+<td><pre>2017-03-30</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Add include for QStringList in ClusterManager.h
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>10580</pre></td>
+<td><pre>2017-03-31</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>MAJOR policy change: do NOT save matrix elements outside of data table columns --
+I don't think anyone counts on these being saved -- was source of major delays
+with saliency.proj stepping -- undo diff computation on huge string of signal_matrix
+numbers was taking forever.  could just prevent from undo saving, but, really, there
+is NO need to save these matrix elements anyway -- a standalone matrix is a temp
+varaible.  could add a flag if we ever need to save one..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10581</pre></td>
+<td><pre>2017-03-31</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>more fixes for dream to build</pre></td>
+</tr>
+<tr>
+<td><pre>10582</pre></td>
+<td><pre>2017-03-31</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* Undo debug now reports time taken for undo diff operation (in a thread) and issues a warning if it takes longer than 1 second (which indicates some kind of undo saving
+issue -- typically stuff being saved that should not be).
+* Misc fixes to time used to make more robust to not calling start timing before trying to
+get timing..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10583</pre></td>
+<td><pre>2017-03-31</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix for DND programming: .templates live on root.. 
+</pre></td>
+</tr>
+<tr>
+<td><pre>10584</pre></td>
+<td><pre>2017-04-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* tiledgprfprjnspec doesn't set sigma = 0 for dimension = 1 cases..  always get weights
+* updateSize on combobox -- dyn enums resizing properly
+* #DYN1 on Archive, AllStable, AllLocked in ControlPanel
+</pre></td>
+</tr>
+<tr>
+<td><pre>10585</pre></td>
+<td><pre>2017-04-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* various convenience functions on control panel members
+:* MoveToTop / Bottom -- in big lists, move active ones to top..
+:* CopyToAll / State -- copy saved_value to all other members in group (except locked), or state (e.g., ACTIVE'ate all of a given member, etc)
+:* SetSavedValue -- easy interface for seting saved values of members
+* update RootFindFromPath to deal with templates, colorspecs -- not a big deal performance-wise and now more robust..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10586</pre></td>
+<td><pre>2017-04-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* ControlPanelsFmArgs ProgEl (used in Startup code) now just calls two methods
+(AddArgs.., SetArgs..) instead of generating all the code in css --
+key change is that you ONLY need to add a top-level ClusterRun and any linked control
+panels from there will automatically be parsed for args.  it is also possible to restrict
+args to active_only in the methods but this is off by default, and not exposed in the
+ProgEl b/c it doesn't seem like we'll need it..
+* Existing projects can now remove redundant ControlPanelsFmArgs calls in MasterStartup -- only retain the one for ClusterRun.
+* added ITEM_FILTER to all ControlPanel* arg methods, to only show relevant control panels
+(no clones, no archives, no ParamSet for adding methods)
+* added support for #CAT_IGNORE -- all gui choosers and doc generation will ignore this
+method, but it will still exist in the type-access system as needed for various internal
+methods -- good for call-back kinds of methods that need to be in ta..
+* fixed taArgtypeOfMemberPtr to use actual current type of object -- had fixed MethdodPtr
+previously..
+* fixed handling of hard-coded enum #BITS types -- needed to use better string convert
+methods
+</pre></td>
+</tr>
+<tr>
+<td><pre>10587</pre></td>
+<td><pre>2017-04-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Updated flex proj to only get args for ClusterRun -- it will auto-get rest from linked params
+</pre></td>
+</tr>
+<tr>
+<td><pre>10588</pre></td>
+<td><pre>2017-04-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Removed DataTableCell -- obsoleted by the new ParamSet-based config code
+</pre></td>
+</tr>
+<tr>
+<td><pre>10589</pre></td>
+<td><pre>2017-04-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* ClusterManager: Move connections in thread obj to its constructor so only called once
+:* also, changed arg name to != name of member!  Never do that!  I just fixed a puzzling
+bug recently that was caused by this.  would be better if we can switch on a warning
+flag for it -- I'll look into that.
+:* also, fixed indentation to 2 per standard.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10590</pre></td>
+<td><pre>2017-04-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>-Wshadow turned on, warning about variables that shadow others, and LOTS of sloppy code with
+shadowing of various forms has been fixed!  John and Kai, can you please look carefully over
+the diffs on this checkin to make sure I didn't make any stupid mistakes?  Everything in
+simple tests is working but I do worry about potential for error in a fix of this
+magnitude.  going forward it should be better in catching bugs early..
+* one potentially significant bug caught in this process was in RndSeed_List::NewSeeds --
+it was not actually using a proper new seed and was instead getting a random number
+from whatever seed was currently active, and using that to generate new seeds..  it probably
+is not a big deal but it means that the batch 0 seed is not technically a "new" seed..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10591</pre></td>
+<td><pre>2017-04-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* updated std projects and test projects to avoid load errors
+* controlpanel (as opposed to clusterrun, paramset) items are automatically ACTIVE, but
+don't check for is_single for active in this case..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10592</pre></td>
+<td><pre>2017-04-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>int_PArray shadow fix -- dream build flags it but mac didnt</pre></td>
+</tr>
+<tr>
+<td><pre>10593</pre></td>
+<td><pre>2017-04-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>all array tmp shadow fixes..</pre></td>
+</tr>
+<tr>
+<td><pre>10594</pre></td>
+<td><pre>2017-04-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>ak.. so dream looks at method names for conflicts.. just trying to get the main high freq header ones fixed.. but will do this more later..</pre></td>
+</tr>
+<tr>
+<td><pre>10595</pre></td>
+<td><pre>2017-04-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>date time.. now really done for now..</pre></td>
+</tr>
+<tr>
+<td><pre>10596</pre></td>
+<td><pre>2017-04-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>only check -Wshadow on apple -- this is our dev platform so should catch most cases and not cause problems on older linux</pre></td>
+</tr>
+<tr>
+<td><pre>10597</pre></td>
+<td><pre>2017-04-02</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Remove unused project files, that aren't used in automated testing
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>10598</pre></td>
+<td><pre>2017-04-02</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Move variables i and ti into local scope
+</pre></td>
+</tr>
+<tr>
+<td><pre>10599</pre></td>
+<td><pre>2017-04-03</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>- iPanelOfDocView remove redundant method call
+- iTreeView clean up code in KeyPressEvent()
+</pre></td>
+</tr>
+<tr>
+<td><pre>10600</pre></td>
+<td><pre>2017-04-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>updated data table rows in TestDataTableProcs.proj -- unclear why the row order changed -- I loaded an old one and it had correct order..</pre></td>
+</tr>
+<tr>
+<td><pre>10601</pre></td>
+<td><pre>2017-04-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix ta api scan for taMatrix::SetGeom -- sz back to size for maketa -- checked other shadow changes for .h api changes -- nothing else likely to cause breakage -- fixed test project that broke from that</pre></td>
+</tr>
+<tr>
+<td><pre>10602</pre></td>
+<td><pre>2017-04-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>revert other .h file ta-api changing changes -- Data interfaces to DataTable were actually used in pvlv -- just moved to non-inline as there was no reason for them to be inline really</pre></td>
+</tr>
+<tr>
+<td><pre>10603</pre></td>
+<td><pre>2017-04-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>last thing: use ActivateAll and remove params from MasterStartup -- it now just needs
+cluster run and is very simple!  could add a method that gets the names of all the
+linked control panels in there for updating the tag -- will do that later.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10604</pre></td>
+<td><pre>2017-04-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>IMPORTANT FIX TO EARLIER MAJOR BUG introduced in r10580 which prevented saving of row indexes in DataTable -- now don't save for ProgObjList only</pre></td>
+</tr>
+<tr>
+<td><pre>10605</pre></td>
+<td><pre>2017-04-04</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Fix typo in variable for error message
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>10606</pre></td>
+<td><pre>2017-04-04</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Add a try catch around some svn_client operations to make sure emergent at least doesn't crash when something goes wrong.
+
+We should probably try and distinguish some of the most common error causes and do something more sensible.
+I.e. on a locked SVN repository, we should offer to automatically clean up the repo and try again.
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>10607</pre></td>
+<td><pre>2017-04-05</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Trying out a new display for check errors - non-modal dialog with links to failing objects
+</pre></td>
+</tr>
+<tr>
+<td><pre>10608</pre></td>
+<td><pre>2017-04-05</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>re: bug 3060 - Add a debug statement on saving tree state so I can check the log the next time emergent crashes
+</pre></td>
+</tr>
+<tr>
+<td><pre>10609</pre></td>
+<td><pre>2017-04-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fix for BugId:3076 -- revert item filter return vals on null items.. see bug comments -- should fix further.
+* added ParamSetNames method to ControlPanel -- now using in MasterStartup so that it is
+fully generic for getting the tag name based on selected configs.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10610</pre></td>
+<td><pre>2017-04-05</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>If we encounter a locked main svn repository during cluster run update, then prompt for a svn cleanup
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>10611</pre></td>
+<td><pre>2017-04-07</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for bug 3078 - some progvar errors not getting added to dialog display of errors
+- Inconsistent code - some errors were checked with CheckError and some were checked
+otherwise and taMisc::CheckError was called for display
+- Rewritten to always use CheckError
+- I'll be checking the rest of the code other instances of this problem
+</pre></td>
+</tr>
+<tr>
+<td><pre>10612</pre></td>
+<td><pre>2017-04-07</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>CheckThisConfig_impl in ProgExprBase now uses taBase::CheckError instead of taMisc::CheckError
+Redo a piece of error checking logic in ProgVar
+</pre></td>
+</tr>
+<tr>
+<td><pre>10613</pre></td>
+<td><pre>2017-04-07</pre></td>
+<td><pre>thazy</pre></td>
+<td><pre>positive rectify vspospi to prevent inappropriate bursting</pre></td>
+</tr>
+<tr>
+<td><pre>10614</pre></td>
+<td><pre>2017-04-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix for archive -- was saving active for control panels and cluster runs..</pre></td>
+</tr>
+<tr>
+<td><pre>10615</pre></td>
+<td><pre>2017-04-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix for basic chooser problems: over-zealous clearing out of scope_ref and scope_obj
+pointers for the basic GetImage call -- which is actually called routinely by the
+iDialogChooser guy and therefore must preserve any prior state!  maybe this will fix
+other crashe with object_scope too??
+</pre></td>
+</tr>
+<tr>
+<td><pre>10616</pre></td>
+<td><pre>2017-04-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* NOTE: major changes here -- not super thoroughly tested!  please file tickets!!
+* I will be testing more in coming days so recommend only for bleeding edge users and don't
+overwrite your installed version!  just test in debug / build directory
+* Major fixes to item chooser logic -- now much more clear and explicit and well-behaved!
+* setInitialSel function has all the data it needs to figure out how many tokens and
+how to set the initial default selection
+* method args and member pointers have different logic -- new PREFER_ITEM and PREFER_NULL flags and logic give full control over that, and finally allow methods to select more
+sensible defaults while also not auto-setting member variables.
+* also major cleanup to the presentation of items in broad token lists, such as in
+object_scope in progvar -- turns out we only want to present items that are owned by
+a list!  otherwise, they are members and not something we want to be selecting
+indpendently.  That plus a NO_TOKEN_CHOOSER object flag (which only applies to
+implicit, sub-token searching) seems to limit the space well..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10617</pre></td>
+<td><pre>2017-04-07</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>- Add option (default actually) for chooser filtering to only consider the first column.
+- There is a checkbox to right of filter text field "first column only"
+- If someone really wants the default behavior to be searching all columns I'll add a preference 
+</pre></td>
+</tr>
+<tr>
+<td><pre>10618</pre></td>
+<td><pre>2017-04-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>argh. can't sleep.. so just cleaned up the chooser code further, also added ProgEl to NO_TOKEN_CHOOSER
+* switched prefer null to prefer item flag, as null should be safer default and logic is
+cleaner that way
+* all token selection must go through single ShowToken method!
+* overall seems to be working correctly..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10619</pre></td>
+<td><pre>2017-04-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>important fix for chooser: default to assuming there are plenty of items</pre></td>
+</tr>
+<tr>
+<td><pre>10620</pre></td>
+<td><pre>2017-04-10</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Run an svn cleanup when we start the cluster run server script.
+
+For one, it might be that we need to restart the cluster run script, because it previously crashed and left the svn repository in a locked state
+
+However, the cluster_run svn directory can also accululate a huge amount of cruft in the .svn directory that we need to periodically cleanup.
+
+The .svn directory appears to have a complete copy of everything. But unlike the main version, if one deletes files with svn rm, they don't seem
+to get deleted from the .svn copy until one runs a svn cleanup. This led to e.g on cluster run directory shrinking from 70GB to 3 GB after running an svn cleanup
+
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>10621</pre></td>
+<td><pre>2017-04-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fixes for DistMatrixTable -- prevents crashing when running in -nogui, and postpones
+the StructUpdate(false) call to AFTER the view is generated, which *may* ensure that
+the flipped axis always takes -- I wasn't able to replicate.
+* also, we need to be on the lookout for unintended consequences of the delayed
+structupdate change..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10622</pre></td>
+<td><pre>2017-04-13</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Check for non-null column before calling Init...
+</pre></td>
+</tr>
+<tr>
+<td><pre>10623</pre></td>
+<td><pre>2017-04-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* New BFCSUnitSpec -- Basal Forebrain Cholinergic System -- integrates deltas and
+generates ach -- not quite working yet due to issues as reported in email..
+* BaseSpec ApplyTo is #PREFER_NULL -- also if you don't have PREFER_NULL then you
+CANNOT set a null even if you try.. needs some more history there..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10624</pre></td>
+<td><pre>2017-04-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>BFCS driven by VS act * da -- seems to work well</pre></td>
+</tr>
+<tr>
+<td><pre>10625</pre></td>
+<td><pre>2017-04-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* mark Matrix as NO_TOKEN_CHOOSER -- may fix object_scope crashing.. but still need to
+figure out what these registered zombie matrix guys are.. probalby slices..
+* get rid of wt_decay from BLAmygConSpec -- good riddance!
+</pre></td>
+</tr>
+<tr>
+<td><pre>10626</pre></td>
+<td><pre>2017-04-15</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Long overdue fix for cluster run row selection - bug 3025
+</pre></td>
+</tr>
+<tr>
+<td><pre>10627</pre></td>
+<td><pre>2017-04-15</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>We weren't including svn_version.h and thus SVN_VER_MAJOR/MINOR were undefined
+
+This resulted in URLs not getting canonicalized correctly in svn &gt; 1.7
+
+Resulted in bug #2785
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>10628</pre></td>
+<td><pre>2017-04-15</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Fix recording of act_g.
+
+The restriction of calculating times.current_cycle_gate_cycle only in thread 0 was not valid,
+as the GPi units might not be processed in thread 0 at all.
+
+Also, as we are only setting this value in multiple threads, and all threads should be setting it to the same value,
+there shouldn't be any issues with race conditions for this variable, even if multiple threads end up setting it.
+ 
+</pre></td>
+</tr>
+<tr>
+<td><pre>10629</pre></td>
+<td><pre>2017-04-15</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Provide an option to disable cluster run cluster_info in backend script
+
+When running on large public clusters, the queues often contain hundreds if
+not thousands of jobs concurrently. Polling each to fill the cluster_info
+table at that point becomes prohibitively expensive, so disable recording
+of the cluster info table.
+
+Also expose the use_qos flag in the main script to be able to switch
+between specifying qos or partitions on slurm
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>10630</pre></td>
+<td><pre>2017-04-16</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Replace the "first column only" feature with one that allows narrowing search to any chooser column
+- format is either column_name: or column_number: followed by the search text
+</pre></td>
+</tr>
+<tr>
+<td><pre>10631</pre></td>
+<td><pre>2017-04-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Major improvements in paramset / control panel usability:
+* changed ACTIVE -&gt; EXPLORE -- avoids confusion with "active values" and "activate" -- this
+state seems semantically appropriate.  IMPORTANT: this means that everyone must update
+to remain consistent!
+* added INACTIVE state too, where it behaves as if it doesn't exist -- good for temp removal
+* members that are part of a control panel are highlighted in the editor, and have a GoTo ControlPanel context menu that takes you there
+* if you edit such a member, and there is an activated param set that has been called setting this value, then you'll get a prompt for whether to also apply this value to the
+param set or revert to param set value, etc.
+* non-default values are now properly highlighted in the control panel
+* non-default and on param set is actually a slightly darker shade of yellow..
+* to avoid confusion, param set saved values != active values are now highlighted in red
+instead of yellow
+* added IsMemberEditable and MemberControlPanel methods to taBase
+</pre></td>
+</tr>
+<tr>
+<td><pre>10632</pre></td>
+<td><pre>2017-04-18</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>SelectedRows() - return false if no rows selected
+</pre></td>
+</tr>
+<tr>
+<td><pre>10633</pre></td>
+<td><pre>2017-04-18</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* prevent our own Activate changes from triggering MbrUpdated code!
+* also, my previous checkin contained major new feature of making inherited spec values
+actually read only like they should have been forever!
+</pre></td>
+</tr>
+<tr>
+<td><pre>10634</pre></td>
+<td><pre>2017-04-18</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>improved message for mismatch warning</pre></td>
+</tr>
+<tr>
+<td><pre>10635</pre></td>
+<td><pre>2017-04-18</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Has a V2 version of ComputeV2RF for working out representational analysis with V1 activations. Just temporary.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10636</pre></td>
+<td><pre>2017-04-18</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Oops, duplicate line
+</pre></td>
+</tr>
+<tr>
+<td><pre>10637</pre></td>
+<td><pre>2017-04-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>New margin computation and learning modulation -- reasonably accurately computes
+the units that would be identified by the oscillating inhibition dynamic of Norman et al,
+using adapting thresholds on v_m_eq values.  can modulate learning for units outside these
+sensitive margins.  initial tests show potential benefits on hog dynamics..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10638</pre></td>
+<td><pre>2017-04-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* static member_activating for ControlPanelMember to prevent prompts from self-updates
+* crash fix for taBase::MemberControlPanel
+* get current value for new control panel members *BEFORE* adding so clones get cur vals
+* updated default Margin params
+* major fixes to basespec is used code: was driving lots of gui updates due to too many
+sig updates and redundant loops etc. need to be very careful about that kind of thing!
+now takes a gui_updt arg (defaults to true) and logic is clearer and faster..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10639</pre></td>
+<td><pre>2017-04-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* don't highlight fields for archived param sets
+* always use the "bright" color for the highlight -- not consistently tracking rows anyway
+* stripe painting &amp; exceptions was missing the last stripe!
+* ParamSetNames takes "explore_only" arg -- allows tag to be selected among larger number
+of param sets -- typically don't want them all
+* saving job params filters blanks
+* don't warn about missing param names in LoadData
+</pre></td>
+</tr>
+<tr>
+<td><pre>10640</pre></td>
+<td><pre>2017-04-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* margin has scale for margin lrate too -- easier than changing global lrate
+* fixed netrel monitor -- scanobject has option for err msg or not
+* datatable row highlight clearing logic fixed
+</pre></td>
+</tr>
+<tr>
+<td><pre>10641</pre></td>
+<td><pre>2017-04-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* added basic signed margin learning mechanism -- delta rule on margin status -- does not
+impair learning and may do something interesting..
+* fixes to archiving: always create locked items, and don't add name for top-level proj groups
+</pre></td>
+</tr>
+<tr>
+<td><pre>10642</pre></td>
+<td><pre>2017-04-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix for infinite loop of updating in control panel -- not sure how that wasn't always
+a problem so maybe this fixes some recent random crashing (e.g., stepping)
+</pre></td>
+</tr>
+<tr>
+<td><pre>10643</pre></td>
+<td><pre>2017-04-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>trying regular close on xmlstream</pre></td>
+</tr>
+<tr>
+<td><pre>10644</pre></td>
+<td><pre>2017-04-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* different approach to blocking sigemit loop -- previous one blocked too much -- wasn't getting update on program controls
+* proper control panel highlighting for ProgVar::int_val -- needed separate highlight
+call for separate branch of code..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10645</pre></td>
+<td><pre>2017-04-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* dog_mono_gain factor in DoGRegionSpec -- needed for balancing out monochrome -- also
+properly initializing data table
+* update after calling add to control panel so you see the highlights right away
+* fixes to program select object code -- now actually follows the edit links etc into
+the right place in the program editor.
+* BUT one big problem: inserting new code not working -- working on this but need
+to run on cluster now..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10646</pre></td>
+<td><pre>2017-04-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>selection now working pretty well -- strange incantations necessary here so who
+knows how reliable, but working for the time being..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10647</pre></td>
+<td><pre>2017-04-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* color bar fixed to use smaller arrows, located to left instead of right,
+and it toggles off auto_scale on netview.  hmm. what about grid view?
+* newly added control panel items will be set to explore for last_activated param sets
+</pre></td>
+</tr>
+<tr>
+<td><pre>10648</pre></td>
+<td><pre>2017-04-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Updated LeabraFlex template so that interactive runs from MasterTrain save log and weight
+files with appropriate tags -- very convenient for interactive runs and comparing with
+prior runs etc -- don't always need to run cluster run!  To update existing projects,
+diff compare with following:
+* MasterStartup: set tag in SaveLogFiles, not SaveWeights
+* MasterTrain: add cluster_run, cust_tag, tag, code for updating
+* TrainStart: do SaveLogFiles even when interactive
+* SaveLogFiles: init code clears any existing log files, tag no longer init_from MasterStartup
+* SaveWeights: get tag from SaveLogFiles
+* ControlPanel: add cust_tag
+
+Man, we really need the concept of a "patch" diffs that can be applied to existing
+projects based on diff between this and prior LeabraFlex project
+</pre></td>
+</tr>
+<tr>
+<td><pre>10649</pre></td>
+<td><pre>2017-04-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* save col_name_good as last non-null column name for a given graph plot -- can restore
+with RestoreGoodCols -- e.g., for EpochCompare, when you switch between test and train
+data you lose many columns -- this makes it possible to get them back!
+* also prompt for a description when archiving param sets -- good practice..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10650</pre></td>
+<td><pre>2017-04-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>auto-update master/clone on group order changes -- trap SigEmit</pre></td>
+</tr>
+<tr>
+<td><pre>10651</pre></td>
+<td><pre>2017-04-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fixed scoping issue with completer options - "saved" guys are the ProgVar vals that
+live in control panels -- due to a quirk in how SameScope works, it falls back on
+default scope if object is not inside any kind of object of scope_type -- this is
+useful in some other context, so just add and additional check for it -- exclude
+those other guys in this case.  probably need some args for same scope really..
+* added a debug entry point for any future cases to see where these things are
+coming from -- AddToCompleter
+* removed various scope checking things that are obsolete or irrlevant given above
+* btw I still can't get "oth prg var" to come up in completer -- not sure why -- I
+often have cause to use that one..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10652</pre></td>
+<td><pre>2017-04-24</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Add ##PROGEL_COMPLETION directive
+</pre></td>
+</tr>
+<tr>
+<td><pre>10653</pre></td>
+<td><pre>2017-04-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* ProgEl::GenCss updates the code_string to be latest BrowserEditString -- if you're
+compiling it, this is the new code!
+* ReplaceValStr override in ProgEl to specificaly use the *current* BrowserEditString
+and then re-parse that, instead of doing the base case.  should probably do this in
+some other places where object is best represented by a single string (that can be parsed!)
+</pre></td>
+</tr>
+<tr>
+<td><pre>10654</pre></td>
+<td><pre>2017-04-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>TA_TMPLT_ABSTRACT_BASEFUNS now uses NTOK no-token initialize -- don't keep tokens of the abs template -- fixes stray tokens problem</pre></td>
+</tr>
+<tr>
+<td><pre>10655</pre></td>
+<td><pre>2017-04-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* output control panel to mediawiki table uses saved_values for ParamSets
+* margin now records -1, -.5, +.5, 1 and different lrates avail for off and on -- we'll
+see if this is useful.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10656</pre></td>
+<td><pre>2017-04-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* allow Leabra weights to go negative with soft bound off, wt_sig.gain, off = 1
+</pre></td>
+</tr>
+<tr>
+<td><pre>10657</pre></td>
+<td><pre>2017-04-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>retain wt bal factors even without softbound</pre></td>
+</tr>
+<tr>
+<td><pre>10658</pre></td>
+<td><pre>2017-04-26</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>ClusterRun: If slurm is configured to shutdown idle nodes, then if a job
+gets assigned a shutdown node, a job can spend a significant time in the "CONFIGURING" state.
+
+The current script was only looking for status PENDING and RUNNING. And so it would
+treat the CONFIGURING state as neither and thus would mark such a job as done
+before it even started.
+
+CONFIGURING should now be treated the same as PENDING
+ 
+</pre></td>
+</tr>
+<tr>
+<td><pre>10659</pre></td>
+<td><pre>2017-04-26</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* updated margin params -- now -2, -1, +1, +2, no split on_off -- separate flags for lrate
+mod and sign_dwt
+* don't own statics in taInitLinks_Auto -- but doesn't seem to be happening anyway -- not
+going to fix our step ref m_own crash
+* start on Patch code for generating patches from diff compare
+</pre></td>
+</tr>
+<tr>
+<td><pre>10660</pre></td>
+<td><pre>2017-04-26</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* patch set code first pass implemented -- not loading string values somehow properly yet
+* added option to svn browser to get the log of a specific file or directory so you can
+find prior revisions to generate patches against -- then do save and load -- will also
+have automatic diff against prior svn too..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10661</pre></td>
+<td><pre>2017-04-27</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Change code completer behavior - only accept tab key for choosing completion
+</pre></td>
+</tr>
+<tr>
+<td><pre>10662</pre></td>
+<td><pre>2017-04-27</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Reverting last change - restoring completer behavior
+</pre></td>
+</tr>
+<tr>
+<td><pre>10663</pre></td>
+<td><pre>2017-04-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* do not own static members in InitLinks_taAuto!  I had this implemented simply at first
+but then got a crash due to adding patches that was NOT being properly owned.. better
+to do one thing at a time I guess..
+* removed debug prints in program
+* this should fix the step crash!!
+</pre></td>
+</tr>
+<tr>
+<td><pre>10664</pre></td>
+<td><pre>2017-04-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>compiler food for jenkins</pre></td>
+</tr>
+<tr>
+<td><pre>10665</pre></td>
+<td><pre>2017-04-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* updates to Patch code -- basic framework working -- needs tweaking of source paths etc
+* has failed state flag and also allows you to select NO_APPLY to turn off individual recs
+* don't call CutLinks on a taSmartRef outside of destruction!  we were doing this in
+UAE of ProgVar for object_scope etc -- perhaps part of the crashing there -- CutLinks
+sets owner to null.. now just call set(NULL).
+* change pct_margin default to .3 
+</pre></td>
+</tr>
+<tr>
+<td><pre>10666</pre></td>
+<td><pre>2017-04-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>tmp checkin prior to reorg of diff code -- do not build</pre></td>
+</tr>
+<tr>
+<td><pre>10667</pre></td>
+<td><pre>2017-04-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* Complete overhaul of diff compare -- previous impl was a nightmare and buggy in various
+ways -- very hard to fix.  new scheme separates concept of getting a flat rep of the
+object tree (FlatTreeEl and list) from the diff itself -- much cleaner -- also
+move everything into ta_proj and use taBase -- previously was tied into TypeDef and
+had bare void* pointers etc -- very hard to use.
+* Still in progress but most of the remaining confined to ObjDiff and dialog -- flat tree
+stuff should all be good, but untested.
+* DiffCompare DEFINITELY not working for time being!
+* Also fixed a few const things.
+* new flat tree code will be useful for computing sizes of objects and presenting a
+browser showing the parts that are biggest -- simple mod of diff browser.  for later.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10668</pre></td>
+<td><pre>2017-04-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>more progress on diff update -- not working yet but...</pre></td>
+</tr>
+<tr>
+<td><pre>10669</pre></td>
+<td><pre>2017-04-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>global diff is not the right way to do it -- trying a new idea -- checkpointing the old way</pre></td>
+</tr>
+<tr>
+<td><pre>10670</pre></td>
+<td><pre>2017-04-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* Much improved diff based on using structure instead of flattening it out!
+* only real diff engine operates on elements of list.  otherwise, comparing objects
+uses members directly, and only items that are directly comparable can be compared
+because.. that's what makes sense!  otherwise, you need to get the other type if
+you really want to get rid of the diffs!
+* all working except failing to get subgroups..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10671</pre></td>
+<td><pre>2017-04-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* New structure-based diff all working very well, including on matrix, data table, array
+* added a ElView access to GetValStr_Flat in matrix -- uses matrix view if present
+* last thing needed on diff is context for list diffs, then ready to do patch updates
+</pre></td>
+</tr>
+<tr>
+<td><pre>10672</pre></td>
+<td><pre>2017-04-30</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>ComputeV2RF_V2 renamed to ComputeV2RF which it replaces
+</pre></td>
+</tr>
+<tr>
+<td><pre>10673</pre></td>
+<td><pre>2017-04-30</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>MAJOR CHANGE in TA type system: TypeDef now keeps a separate list of static_members!
+* it just doesn't make sense to have members and static members all mixed up in the
+same list -- I almost always forget to filter out static members from code where they
+should definitely be excluded, because I just don't think about them.  and they cause
+so many potential subtle and hard-to-recognize problems when they are improperly operated
+on as regular members.
+* As this is such a major change to fundamental infrastructure, it is likely that some kinds
+of bugs will be introduced even as others are eliminated..  I have only done basic testing
+at this point, so we'll see what Jenkins turns up, and further running etc.  Be on the
+lookout and file anything you find!
+* The new default behavior is to not save or edit static members.  taMisc and taMath have
+the new ##STATIC_MEMBERS directive to override this behavior for them.  there is a
+new check in ta_type_constr when building type data that makes sure any static members
+are marked as #NO_SAVE and #HIDDEN -- this was already true of most cases, but a few
+random cases didn't have that -- now fixed -- even though it doesn't actually matter anymore!
+The point in keeping that and checking still is to ensure that this behavior is
+acknowledged by the programmer, so it doesn't just slip under the radar..
+* updated css core code to look in static_members in addition to members, but there could
+be some strange css cases that don't work possibly still..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10674</pre></td>
+<td><pre>2017-04-30</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* diffs generate patches always, and optionally apply patches immediately or not -- this is
+simpler, more robust, and less redundant coding -- doing it all with strings allows
+for adapting to things dying and other changes from prior mods
+* needs a LOT more robustification and even some more basic things..
+including detecting reverse patch and having ability to undo changes!
+</pre></td>
+</tr>
+<tr>
+<td><pre>10675</pre></td>
+<td><pre>2017-04-30</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Add a function that allows to automatically define the cluster run repository and cluster for the public XSEDE cluster commet at SDSC.
+
+The computing resources are provided by the Neuroscience Gateway portal ( https://www.nsgportal.org/ ) under an NSF grant.
+
+The resources are available for people to more easily perform research in computational neuroscience and Emergent is hopefully
+going to be one of the computational neuroscience tools they offer and support.
+
+By including the configuration of this cluster in emergent, this allows to simplify the setup of its usage for new users.
+
+The needed repository for the cluster_run is hosted on grey (clusterun_public), and users need to obtain an svn username and password
+in order to ensure accountability for computing resources, by emailing.
+
+More information about this public resource will become available under https://grey.colorado.edu/emergent/index.php/NSG_public
+
+ 
+</pre></td>
+</tr>
+<tr>
+<td><pre>10676</pre></td>
+<td><pre>2017-05-01</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Make CMake respect the PATH variable to find the C/C++ compiler
+
+I.e. prefer the compilers listed on the $PATH over standard
+system paths.
+
+See #3351 for more details.
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>10677</pre></td>
+<td><pre>2017-05-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fix for New Project browser button -- needed to search in static_members
+* diff / patch now kinda working but before / after business not quite right
+</pre></td>
+</tr>
+<tr>
+<td><pre>10678</pre></td>
+<td><pre>2017-05-02</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Update the program WtBasedRField for V2 layer
+- added function to multiply weight times filter results with the V2 activations
+- creates a composite result (new table "composite")
+- works with Leabra or BP network (uses act for bp network and act_m for leabra network)
+</pre></td>
+</tr>
+<tr>
+<td><pre>10679</pre></td>
+<td><pre>2017-05-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>complete diff and patch working ALMOST perfectly for my main test case -- need to update
+refs for deletes after inserts and vice-versa.. 
+</pre></td>
+</tr>
+<tr>
+<td><pre>10680</pre></td>
+<td><pre>2017-05-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>diff compare and patches almost all done -- context before is working now -- needs after
+has flags for auto-apply on dialog, DiffCompare now a button on Project, and organized svn
+functions into menu button to make room.  Now we let the real testing begin! :)
+</pre></td>
+</tr>
+<tr>
+<td><pre>10681</pre></td>
+<td><pre>2017-05-03</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Try and fix cluster initialisations on new project when selecting a cluster first.
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>10682</pre></td>
+<td><pre>2017-05-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Patch / Diff code nearly all complete and seems to be working well!
+* has 2 lines of pre / post context for add / delete / change list diffs, uses pre for
+contextualizing Patch (post already there)
+* detects an attempted repeat application of a patch, offers opportunity to abort -- also
+has WARN vs. FAIL states and shows messages for each patch record, so you can easily browse
+to see what happened, etc.
+* svn browser can automatically get you a diff to an older svn revision of a project, with
+one button click!  with the new "log" functionality, you can see only revisions of that project file, pick the one you want, and get a diff against it!
+* also Svn Diff menu button on project quickly gives you a diff against last checked-in-file.  todo: need to have option to use the one-before-last in case you just checked
+it in and want to see what was diff between that and the one before it..
+* one known problem is ctrl panel members are not getting context properly -- not sure why yet..
+* wiki page link for saved patches -- we could very easily go all the way to having libraries
+like we do with prog lib... not sure how widely we'll use this
+* tested latest leabra flex update to having tags used in MasterTrain, on pvlv -- worked! :)
+</pre></td>
+</tr>
+<tr>
+<td><pre>10683</pre></td>
+<td><pre>2017-05-04</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Minor change to improve performance
+</pre></td>
+</tr>
+<tr>
+<td><pre>10684</pre></td>
+<td><pre>2017-05-04</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Bug Fix - getting wrong filter for column
+</pre></td>
+</tr>
+<tr>
+<td><pre>10685</pre></td>
+<td><pre>2017-05-04</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* IMPORTANT BUG FIX!  projects saved since last couple of revisions do not load properly!
+* issue was switch to using names for program elements (and control panel items) -- these
+names are not guaranteed to be unique and thus cannot be used for saving paths etc.
+:* still need to figure out a better way to make prog el names unique without resorting to
+putting line numbers in which will negate benefits of using names in first place
+* fix is to turn off using names for saving -- there is really no reason to do this -- it
+was an incomplete attempt to make project files mergable at the svn level, but it didn't
+work anyway, and is not a good solution -- much better to use new diff / patch mechanisms
+for merging -- we could impl an automated conflict resolution step for this now..
+* meanwhile, other fixes for diffing -- fixed bugs in context etc.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10686</pre></td>
+<td><pre>2017-05-04</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* re-enabling message on unique naming -- need to track and fix those cases where possible!
+* Else now names itself based on corresponding if / ifelse -- should be more unique
+* ProgEl now preserves unique names for cases where there really just are repeats -- it
+WOULD be really useful in general if the unique naming could use sequential indexes of
+repeats and NOT the absolute index of items -- i.e., _2 _3 etc -- much better for
+diffs -- I will look into this asap.
+* patchrec has a separate off flag and ToggleOff #DYN1 so you can disable multiple easily
+and preserve the action for re-enabling.
+* patch sets is_loading flag during patching -- prevents all manner of intermediate
+updates and makes sense -- patching is like loading -- TODO: probably need to set
+the loading version!
+* need a gobal UAE function to fix everything after patching -- loading effectively
+does this already -- probably could do it more efficiently with a single recursive
+call rather than making a huge list etc.  
+</pre></td>
+</tr>
+<tr>
+<td><pre>10687</pre></td>
+<td><pre>2017-05-04</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Add a test to test saving and loading a project
+
+This creates a new LeabraFlex project, then saves it, reopens it and checks if the Network runs and learns to completion in under 10 epochs.
+ 
+</pre></td>
+</tr>
+<tr>
+<td><pre>10688</pre></td>
+<td><pre>2017-05-04</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Forgot to comment back in the line to restart emergent between saving and reopening from previous commit
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>10689</pre></td>
+<td><pre>2017-05-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* Massive update to comment directive handling and conventions!
+* YOU MUST DO A: ./reconfigure build[_dbg] clean to rebuild with this!!  need to
+force maketa to redo everything -- it requires a complete rebuild in any case..
+* This has been superficially tested on our major projects (bvPVLV, lvis) and seems to
+work, including save / load / save / load cycles etc.  BUT, recommend not updating
+for everyone until a bit more testing by the brave.. :)
+* Version bumped to 8.0.8 in recognition of irreversable changes in file formats!
+* many classes were marked as only INLINE but not INLINE_DUMP -- now INLINE implies
+both EDIT_INLINE and SAVE_INLINE -- INLINE_DUMP no longer valid (err will trigger) -- if
+you want one or the other, just specify them separately.  many classes that can be
+effectively saved inline are now doing so, but the save format cannot go back to
+inline after being non-inline (probably that is fixable too... but for now..) so
+that is why the file formats are incompatible.
+* NO_SHOW is not allowed anymore -- it is HIDDEN!
+* changed order of tree options -- now TREE_HIDDEN and TREE_SHOW -- rules for these
+updated on wiki.
+* got rid of "show" menu and associated very complex logic that likely
+caused crashing etc -- new dialogs with expert, hidden sections handle that fine.
+now there is just one simple set of rules that apply for all time about what is
+visible in an edit dialog, where, etc.  you can just read the code and see what
+is going on.  also Hidden section now shows everything that was hidden, including
+READ_ONLY..
+* inline classes never show EXPERT members.  but they will show up in docs or if you
+view the object itself directly so still kinda ok to keep that option.
+* major visibility options are now cached in MemberDefBase opt_flags -- use the
+HasXXX and IsXXX methods to query these!  all existing code updated.  much more
+efficient and easier to type etc.  especially for large-scale traverses of the
+tree..
+* Wiki docs updated with all current comment directive logic.
+* saving and loading of INLINE classes is now robust to " } ; in strings!  this was NOT
+the case previously -- core parsing routines upgraded to skip things in quotes too
+so everything should be more robust.
+* added UpdateAll methods that traverse tree and update *everything* -- will use
+for Patch now, and then try to replace update after loading code.
+* fixed spurious warning about master and clones during destroy
+* Important fix to Function -- it already had a name and yet inherited from ProgEl which
+got a new name -- now properly replaces that functionality.  not sure how it
+even worked ok in prior checkin..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10690</pre></td>
+<td><pre>2017-05-05</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for bug 3358 - crash showing program trace
+- "global_trace" is a static member and FindName was called on members
+</pre></td>
+</tr>
+<tr>
+<td><pre>10691</pre></td>
+<td><pre>2017-05-05</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Delete old paramset compare peer table for each comparison
+- columns were just getting added to the existing table so multiple param set types could get mixed into one table
+</pre></td>
+</tr>
+<tr>
+<td><pre>10692</pre></td>
+<td><pre>2017-05-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>update std projects -- leabra flex in particular had rename warnings</pre></td>
+</tr>
+<tr>
+<td><pre>10693</pre></td>
+<td><pre>2017-05-06</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Zoom net view on double click
+</pre></td>
+</tr>
+<tr>
+<td><pre>10694</pre></td>
+<td><pre>2017-05-06</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>The LeabraFlex default network doesn't reliably converge within 10 epochs. So increase the epoch for which the test tests for 0 errors to 25
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>10695</pre></td>
+<td><pre>2017-05-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>re-quote paths -- one time fix required for any quoted strings -- need to be re-quoted</pre></td>
+</tr>
+<tr>
+<td><pre>10696</pre></td>
+<td><pre>2017-05-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>check version of loading file for unescaping strings -- only unescape when saved after 808</pre></td>
+</tr>
+<tr>
+<td><pre>10697</pre></td>
+<td><pre>2017-05-07</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for bug 3344 - Default new item not getting selected
+- Added redundant BrowserSelectMe() call at end to ensure that the new item is always selected
+- The failing case occured when the program panel contained a program group rather than a single program
+</pre></td>
+</tr>
+<tr>
+<td><pre>10698</pre></td>
+<td><pre>2017-05-07</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Revert the last change - same result but less efficient
+</pre></td>
+</tr>
+<tr>
+<td><pre>10699</pre></td>
+<td><pre>2017-05-07</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>New feature - grid table colorscale based on scale range for each column
+</pre></td>
+</tr>
+<tr>
+<td><pre>10700</pre></td>
+<td><pre>2017-05-07</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Add tooltips for auto_scale and per_column widgets
+</pre></td>
+</tr>
+<tr>
+<td><pre>10701</pre></td>
+<td><pre>2017-05-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* created ObjLibrary based on reorganized ProgLib code -- can be used for any kind of
+library of objects, including now Patch's, which can be found on wiki or locally..
+* Haven't impl'd PatchLib much yet but ProgLib is functional as it was before now, and most of the code is generic..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10702</pre></td>
+<td><pre>2017-05-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* Patch fixes -- now really working solidly and was able to patch old lvis to use new
+paramset config even!
+:* still a few issues: not picking up diffs in program el flags -- OFF vs. not etc.
+:* some diffs in progel names coming up due to new sequential ordering.. hmm.
+* PatchLib in place, but untested and needs web updates to support
+* temporary switch over to use UpdateAll instead of the update after list -- seems to work
+but requires more testing -- just an ifdef now -- if it all looks good then remove
+linking into uae list!
+</pre></td>
+</tr>
+<tr>
+<td><pre>10703</pre></td>
+<td><pre>2017-05-08</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Re-escape quoted string in TestPointerUpdates project.
+
+One of the strings was forgotten when re-introducing the quotations
+ 
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>10704</pre></td>
+<td><pre>2017-05-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* direct DiffFromProgLib in Program -- smart way to update a program from the proj lib
+version!  nice..
+* more misc lib fixes, including delaying download of actual lib files until actually used
+if already on disk, optmising diffs etc
+</pre></td>
+</tr>
+<tr>
+<td><pre>10705</pre></td>
+<td><pre>2017-05-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>more patch fixes and official patch generation files for standard projects</pre></td>
+</tr>
+<tr>
+<td><pre>10706</pre></td>
+<td><pre>2017-05-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* added patch_lib, first entry is a patch to update from a config-table LeabraFlex to current
+paramset one -- really amazing how well it works!
+* saving prog, patch to a SYSTEM_LIB now tries to save to ~/emergent/ -- if appropriate dir
+exists then it uses that -- makes more sense than writing to /usr/local/ which is usually
+not writable anyway.
+* fixed bug that was making lists visible in edits..
+* is it just me, or are loading times now MUCH faster??
+</pre></td>
+</tr>
+<tr>
+<td><pre>10707</pre></td>
+<td><pre>2017-05-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* added taProject::SvnPrevDiff -- shows diffs against previous two svn checkins -- if
+you're making a patch often you want to do it after checking in..
+* and now I think I'm done with all this!!  will generate a few more patches..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10708</pre></td>
+<td><pre>2017-05-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>wiki code and template updates for patch upload</pre></td>
+</tr>
+<tr>
+<td><pre>10709</pre></td>
+<td><pre>2017-05-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>init and fix lowercasing of obj vars for a few cases..</pre></td>
+</tr>
+<tr>
+<td><pre>10710</pre></td>
+<td><pre>2017-05-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix for join spec saving -- when an inline object contains a non-inline class member, switch to force_inline saving -- should fix last test error</pre></td>
+</tr>
+<tr>
+<td><pre>10711</pre></td>
+<td><pre>2017-05-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* IMPORTANT fix for string escaping -- was double-escaping strings since r10689 -- any
+projects saved with a version between then and now must be reverted to a prior revision,
+then should be safe to load / save using this version and beyond!
+* main save code now consistently uses taString::quote_esc / unesc, for both inline
+and non-inline strings, with backward compatibility for anything prior to 8.0.8 to
+only unescape the non-inline strings.
+:* NOTE: did NOT include convoluted case of projects saved with the double escaping for the small window of r10689 to now.. overall much safer to just revert because some of the
+escaping might have been recursively over-escaping etc.
+* rewrote taString::quote_esc / unesc to be a simpler faster monolithic function NOT using
+multiple gsubs, which might not have worked properly always -- also don't esc / unesc other
+whitespace -- this is just about the quotes.  fully tested with horrible strings!
+* reverted all the main project files affected by this.
+* noticed that LeabraFlex had some weird non-standard params -- act.gain = 20, etc --
+not sure how that happened!  could explain slower learning.
+* updated defaults for margin params in LeabraLayerSpec
+* tests will probably fail due to previous problems with obj var name updates -- haven't
+fixed those yet -- next -- but the escaping business should hopefully be ok..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10712</pre></td>
+<td><pre>2017-05-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* IMPORTANT: do a ./reconfigure build[_dbg] clean to build this!!
+* Fix for test project failures to update arg members: the parent list had NO_UPDATE_AFTER on it -- that USED to be OK but now it serves as a barrier to updating after loading,
+which was then causing the variables to not be bound..
+* Went through rest of code and greatly reduced usage of N_UPDATE_AFTER to limited cases
+where it is likely to make a difference -- in general AVOID using it unless you
+have a good performance optimization reason to use it.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10713</pre></td>
+<td><pre>2017-05-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>updated all test projects to current version, now that they are passing and file format should be stable</pre></td>
+</tr>
+<tr>
+<td><pre>10714</pre></td>
+<td><pre>2017-05-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>redid 804 to 810 patch with latest fixes</pre></td>
+</tr>
+<tr>
+<td><pre>10715</pre></td>
+<td><pre>2017-05-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* SvnMerge on project and MergePatches on Patch_Group -- makes it easier to merge
+two different branches off of a common ancestor -- detects dupes and conflicts in
+patch changes in the merged patches.
+* revert John's change about BrowserSelectMe being called again -- see comments in code!
+</pre></td>
+</tr>
+<tr>
+<td><pre>10716</pre></td>
+<td><pre>2017-05-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* Minor: rename SvnMerge -&gt; DiffMerge, and officially comment out old update_after code
+</pre></td>
+</tr>
+<tr>
+<td><pre>10717</pre></td>
+<td><pre>2017-05-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* more complete revert of browserselectme code from program.cpp -- wasn't properly
+selecting new items
+* fix order of diff objs for SvnDiff, SvnPrevDiff
+* update LeabraFlex to have a save_log_files_interactive flag -- good to be able to control
+that -- updated all the patches to that.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10718</pre></td>
+<td><pre>2017-05-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* Yet another major fix to dump file saving -- just when I thought I could rest easy...
+patch files were setting pointers to objects in other projects, depending on project
+that was source of patch relative to where it was being applied.  bottom line: dump
+file should NOT use absolute root-relatives paths!  the existing path fixing
+mechanisms for this only work when the paths to be fixed are fully within the
+loaded object, but with patches you're loading objects with pointers to other things
+outside of the current patch..
+* Fortunately, it was relatively easy to fix everything to save paths relative first
+to the object being saved, or, failing that, to the project, and, only failing that,
+to the root.  loading obeys the same logic.  just some bit of difficulty with links
+as in sending projections.. now working.
+* extra bonus: files are smaller yet again..
+* I will bump the version to 8.0.9 on next checkin -- should have done that this time.
+* definitely tested on many cases including patches and everything seems to work!
+* also fixed some issues with patches, and regenerated the main 8.0.4 to 8.1.0
+LeabraFlex one, for the nth time..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10719</pre></td>
+<td><pre>2017-05-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>bump version to 8.0.9 -- use that for optimizing load times for new vs. old paths</pre></td>
+</tr>
+<tr>
+<td><pre>10720</pre></td>
+<td><pre>2017-05-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>update patch yet again with 8.0.9</pre></td>
+</tr>
+<tr>
+<td><pre>10721</pre></td>
+<td><pre>2017-05-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>one more tweak for robustness: if path goes outside of saved obj, use names paths</pre></td>
+</tr>
+<tr>
+<td><pre>10722</pre></td>
+<td><pre>2017-05-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>updated patch with path names</pre></td>
+</tr>
+<tr>
+<td><pre>10723</pre></td>
+<td><pre>2017-05-11</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>gendoc fixes for statics</pre></td>
+</tr>
+<tr>
+<td><pre>10724</pre></td>
+<td><pre>2017-05-11</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* more #NO_DIFF on various things (author, email, version)
+* update CAN_REVERT_TO_CODE flag when code_string updated
+* updated patches with latest, added everything to patch_gen
+* updated proj templates and test projects with latest saving format
+</pre></td>
+</tr>
+<tr>
+<td><pre>10725</pre></td>
+<td><pre>2017-05-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>use #DIFF_STRING for control panel items, uses saved_value for param sets
+</pre></td>
+</tr>
+<tr>
+<td><pre>10726</pre></td>
+<td><pre>2017-05-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* restore ability to create new program variables in chooser -- had to override some kind
+of check for data_gen, data_proc guys but I tried those and couldn't see the issue -- but
+may need some further tweak if that comes up at some point.
+* added taBase::GetMemberStrVal -- much simpler way of getting a string rep of an enum
+value -- used in various places now.  Complements SetMember method.
+* better string rep of control panel members for diffing.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10727</pre></td>
+<td><pre>2017-05-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* found strange problem where token keeping was turned OFF for all _Group objects -- and
+can't really track down why!  no real diffs in #TOKENS vs. #NO_TOKENS in relevant classes
+from when it worked to when it did not..
+* AND it was not even properly processing adding ##TOKENS to DataTable_Group!
+* so, took the tokens processing out of mta_parse and put it in mta_constr -- after all
+is said and done -- now it works, but still seems to carry over a NO_TOKENS from
+somewhere.. anyway, now marked various important groups as ##TOKENS.  this affects eg.
+EpochCompare program ability to select ClusterRun group
+* should type: make clean_ta_all and then make -jx to rebuild -- causes full reparsing
+with maketa.  can also just do the ./reconfigure clean thing -- not much diff really.
+* added awesome new relative layer positioning code -- don't know why didn't think of that
+earlier -- really simple and effective!  still need to do more integration with
+other positioning code.
+* fixed parsing of dim expressions in MatrixAssign -- don't get syntax err msg with :
+anymore.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10728</pre></td>
+<td><pre>2017-05-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* exclude "saved" ProgVars from chooser -- previous exception needs to just be for taList objs
+* check and prevent self-loops for relative positioning
+* update LeabraFlex to eliminate extra update views calls in BasicRun etc, and don't
+include PositionLayers program now b/c new rel pos code makes it obsolete..  also set
+TEST flag in TestAll -- doh!  need to add new patches to existing.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10729</pre></td>
+<td><pre>2017-05-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>new lrate normalization and momentum options: dwmag_norm denominator available without dwt_zone numerator -- tests indicate it works well -- momentum seems like it isn't going work but will test further</pre></td>
+</tr>
+<tr>
+<td><pre>10730</pre></td>
+<td><pre>2017-05-16</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Testing svn commit
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>10731</pre></td>
+<td><pre>2017-05-16</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Another test commit
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>10732</pre></td>
+<td><pre>2017-05-16</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Another test commit
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>10733</pre></td>
+<td><pre>2017-05-16</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Testing pre-commit moving back
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>10734</pre></td>
+<td><pre>2017-05-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>does it work for me too?  fixed matrix IDX_SLICE bug -- end should be 0, not -1, and added some convenience routines for relative positioning layers by dropping them on each other</pre></td>
+</tr>
+<tr>
+<td><pre>10735</pre></td>
+<td><pre>2017-05-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* #DROP1 with args now works -- widgets were offset by hide_args
+* major fixes to layer layout and network view config:
+:* under no circumstances does anything ever mess with pos_abs!  only if the layer group
+is EXPLICITLY moved using a move api would this happen.  In general layer groups are now
+relegated to grouping and NOT layout functionality at all (removed that option already)
+:* network size is based strictly on non-lesioned, non-iconified layers -- was using
+layer group layout sizing before -- doesn't make sense..
+:* fixed some bugs in rel pos code
+:* added RelPosFrom/ToDropped as #DROP methods -- very convenient DND rel positioning now
+* Leabra margin sign dwt now uses hebbian weight factor always.  updated defaults.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10736</pre></td>
+<td><pre>2017-05-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>attempt to fix search bug but didn't work</pre></td>
+</tr>
+<tr>
+<td><pre>10737</pre></td>
+<td><pre>2017-05-16</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for bug 3370 - AddVarTo not working for DynEnum
+- Was only handling typical Object case
+- For DynEnum need to set the ProgVar type and the DynEnum specific ProgType
+</pre></td>
+</tr>
+<tr>
+<td><pre>10738</pre></td>
+<td><pre>2017-05-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* Fix for search and Function used bugs, and related issues: added IS_VISIBLE flag
+for MemberDefBase -- true for def child and anything not explicitly hidden / read only --
+IsInvisible() or IsVisible() should be used for all member traversal mechanisms -- don't
+use IsEditorHidden etc b/c that is just for the actual editor gui!
+* Important fixes for latest experiments in momentum etc -- add a norm_min which is likely
+to be key -- lower limit on normalization, and fixed logic to distinguish between
+accumulation of dwt and current computed dwt value
+</pre></td>
+</tr>
+<tr>
+<td><pre>10739</pre></td>
+<td><pre>2017-05-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* add one more z in new network size computation -- we reserve an extra z for values I guess.. that's why views were off..
+* use IsInvisible for iTreeSearch
+</pre></td>
+</tr>
+<tr>
+<td><pre>10740</pre></td>
+<td><pre>2017-05-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* expanded and renamed LeabraDynLrates -- includes dwt_norm and momentum factors, and
+dwt_zone -- surprisingly, momentum seems to work well in leabra!  quite possible that
+benefits of dwt_zone were due to the normalization factor, not the numerator..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10741</pre></td>
+<td><pre>2017-05-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>compiler food for linux</pre></td>
+</tr>
+<tr>
+<td><pre>10742</pre></td>
+<td><pre>2017-05-17</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Temporary fix for graphing bug (3371)
+If any err_plt value is -Inf the graph doesn't get drawn. This isn't handled by the range check.
+Added test isnan() and set err_plt to 0 if true
+</pre></td>
+</tr>
+<tr>
+<td><pre>10743</pre></td>
+<td><pre>2017-05-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* extended the isnan check to all data via main interface on GraphAxisBase
+* 2D positiosn now deal with ABOVE / BELOW positions by adding a given amount to y --
+user can set -- this makes it very easy to have compatible and fully automatic 2d and 3d
+views.  also fixed issue where 2d positioning was using 3d positions!
+* default positioning of new layers now uses relative positioning 
+</pre></td>
+</tr>
+<tr>
+<td><pre>10744</pre></td>
+<td><pre>2017-05-17</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Add an additional pure label column to the cluster run tables.
+
+The previous label column also added the svn tag to the label.
+
+When running paralele batch, the svn tag is different for all currently running batches,
+however once completed, they get combined into a single tag.
+
+When the runs are complete, the EpochCompare program can do a straightforward grouping on the
+label to create batch averages for the runs. But while the runs are still on going, the labels
+are different for each batch in the run and thus averaging doesn't work. By adding a pure label
+column, it should be possible to create batch averages both while still running and once completed
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>10745</pre></td>
+<td><pre>2017-05-18</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* LeabraConSpec::TriangleLrateSched, and organized all lrate scheds into menu group, also
+same with graphing options
+* Diff / Patch: update paths for within-project paths
+* ProgVal: don't diff based on value if save_val is off -- required GetDiffString for special
+diff strings
+</pre></td>
+</tr>
+<tr>
+<td><pre>10746</pre></td>
+<td><pre>2017-05-18</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>more complier food for linux</pre></td>
+</tr>
+<tr>
+<td><pre>10747</pre></td>
+<td><pre>2017-05-18</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* finished rest of cleanup of rel_pos layer positioning -- wizards now position everything
+using these relative positionings so will be very robust..
+* wizard for loading programs needed to build the library first.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10748</pre></td>
+<td><pre>2017-05-18</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* important diff / patch bug fixes!
+:* diff was not properly working on SmartRef / SmartPtr types! 
+:* Patch application was not checking that Assign value matches source -- now does --
+if there is a mismatch, and it is a pointer type, then it tries to do path substitution
+based on current object path -- if that works, then it retries -- works for layer geom
+patches.
+* added patches for pvlv, pbwm relative geometry -- works (now)!
+</pre></td>
+</tr>
+<tr>
+<td><pre>10749</pre></td>
+<td><pre>2017-05-18</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fix for svn prev diff hopefully -- goes through list of items and finds the highest revision -- should get it.. worked for me in my test but for some reason I couldn't acccess
+ecortex svn through emergent, but worked fine on command line..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10750</pre></td>
+<td><pre>2017-05-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* update network code to MemberDef::IsVisible logic -- forgot to check there!  This fixes
+the lrate schedule updating in LeabraConSpec
+* continued attempts to have the navigator scroll to top at start.. all failures..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10751</pre></td>
+<td><pre>2017-05-19</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Child specs now save values and restore them if parent override is checked
+- NameVar_Array holds name/value pairs when a member's override flag is unset
+- values are restored when the flag is rechecked and those name/value pairs are removed from the list
+- getting a few warnings about trying to set some members that shouldn't get set
+- could use more testing
+</pre></td>
+</tr>
+<tr>
+<td><pre>10752</pre></td>
+<td><pre>2017-05-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fixes to tree duplicates:
+:* need to prevent UAE calls during initial creation of objects -- this was problem with
+layer that was triggering layer_group sig emit updated
+:* also spec SetDefaultSpec now calls a non-UAE version, as it is called in InitLinks
+:* cannot assert tree item of a DEF_CHILD -- this was problem with undo creating dupes
+-- undo tries to select the item that triggered the undo, and this was asserting
+the tree item for def children..
+* tweaked John's spec save values thing -- use string rep instead of variant, and check
+for read only -- all seems to be working -- tested pretty extensively
+* marked archive_params as EXPAND_DEF_0 -- that wasn't working -- check for EF_EXPAND_DEFAULT was looking at *depth* instead of *level* -- fixed that and all
+seems to be working now!
+* got rid of most cases of NO_EXPAND_ALL as those are very counter-intuitive when you
+insistently try to double-click on them -- now just uses EXPAND_DEF_0
+* finally got the scroll to top working on load (usually) -- needed to be a slot!
+</pre></td>
+</tr>
+<tr>
+<td><pre>10753</pre></td>
+<td><pre>2017-05-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>correct overzealous AssertItem protection</pre></td>
+</tr>
+<tr>
+<td><pre>10754</pre></td>
+<td><pre>2017-05-19</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>When calling CopyFromDataTable on a control panel the copy could fail if the control panel item name
+was scoped, e.g. MyProgram_foo and the column was named "foo"
+- So if the lookup fails and the item named was scoped we now also look for the column using the short name
+- A little odd because you first get the column not found dialog and then it works. Could be fixed
+but the call generating the error dialog is deep down and I can't pass the "quiet" flag
+</pre></td>
+</tr>
+<tr>
+<td><pre>10755</pre></td>
+<td><pre>2017-05-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Major revamp of PBWM and PVLV code!
+* gating for PBWM driven entirely by local thal_gate signal delivered from GPiInvUnitSpec
+units to PFC, Matrix recv units -- this follows the new more flexible coding style
+* gate cycle and quarter params moved from network to GPiInvUnitSpec -- have a separate
+gate_qtr set of flags that default to Q1 and Q3, so it is very clear exactly when it gates
+* network has a times.thal_gate_cycle value that relfects last cycle on which gating occurred -- GPi updates this if flag set for it -- rest of units that don't recv direct
+gating signal look at this for updating their own act_g gating-time activation 
+* CRITICAL fix to several cases where values were being sent and used during the
+same stage of Cycle_Run updating!  This was across multiple PVLV and PBWM cases..
+:* New absolute standard is that all modulatory values are sent during Compute_Act_Post
+and consumed on the NEXT cycle, BEFORE Act_Post updates them again!
+:* Required Patch to now send shunt activation value which recv MSN's use on next
+cycle to modulate da and ach, instead of Patch directly doing it.
+* Note: GpiSoftMaxLayerSpec requires new gating logic and is currently broken.
+* Tested on sir52_v50 and textbook sir.proj -- both learn in usual amount of time
+according to single run -- will run batches later.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10756</pre></td>
+<td><pre>2017-05-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>set to explore when adding to ClusterRun</pre></td>
+</tr>
+<tr>
+<td><pre>10757</pre></td>
+<td><pre>2017-05-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* updated notes and defaults for LeabraConSpec momentum
+* rename dnd relative positioning functions to be clearer, and add connection ones
+</pre></td>
+</tr>
+<tr>
+<td><pre>10758</pre></td>
+<td><pre>2017-05-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* attempted fix for windows build -- excluding taBase from taMisc outside of infdef NO_TA_BASE -- thought I already fixed this one but anyway, here it is..  windows
+is only platform that seems to care about this -- be very careful when adding things to taMisc!
+</pre></td>
+</tr>
+<tr>
+<td><pre>10759</pre></td>
+<td><pre>2017-05-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* add a prompt for running svn cleanup at start of cluster run script -- can be really
+slow when debugging / experimenting with the script..
+* attempt to fix windows compile error with LARGE_INTEGER
+* back out attempt to allow quoted string params in cluster run -- just use a different
+delimeter other than space for layer_lesion_list etc -- couldn't get quoted string
+to go through all the jumps through cluster scripts etc.  hmm. I should at least have a
+warning..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10760</pre></td>
+<td><pre>2017-05-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>add that helpful warning message..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10761</pre></td>
+<td><pre>2017-05-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>cluster run fix</pre></td>
+</tr>
+<tr>
+<td><pre>10762</pre></td>
+<td><pre>2017-05-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>cluster run script -- ask all questions before doing svn cleanup</pre></td>
+</tr>
+<tr>
+<td><pre>10763</pre></td>
+<td><pre>2017-05-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>cluster run fix</pre></td>
+</tr>
+<tr>
+<td><pre>10764</pre></td>
+<td><pre>2017-05-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>update leabra flex to have a network config paramset by default, plugged into BasicInit, and to use colons instead of spaces for delimiters for cluster run compatibility -- also included a patch to update existing projects</pre></td>
+</tr>
+<tr>
+<td><pre>10765</pre></td>
+<td><pre>2017-05-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>windows LARGE_INTEGER fix -- have to specifically refer to QuadPart</pre></td>
+</tr>
+<tr>
+<td><pre>10766</pre></td>
+<td><pre>2017-05-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>shorten names of cluster run tables so the edit dialog doesn't have such a wide min width --
+makes it easier to find the scrollbar..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10767</pre></td>
+<td><pre>2017-05-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>much quicker min / max setting: uses the actual min / max in effect, NOT the min / max values for this particular set of data (which is what it currently uses).  so just set
+the first one, and then clicking all subsequent ones will inherit!  obeys the main / alt
+axis diff -- alt only gets from alt etc.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10768</pre></td>
+<td><pre>2017-05-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>re last fix: only update standard for cases that are on!
+</pre></td>
+</tr>
+<tr>
+<td><pre>10769</pre></td>
+<td><pre>2017-05-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>#NO_UNIQUE_NAME_WARNING directive, applied to ProgEl_List -- don't issue warnings
+for cases where we anticipate non-unique names.  keep warnings intact for other cases --
+good for user to know about those..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10770</pre></td>
+<td><pre>2017-05-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>attempt to fix windows crash bug -- don't select if parent project is destroying 
+</pre></td>
+</tr>
+<tr>
+<td><pre>10771</pre></td>
+<td><pre>2017-05-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>apparent fix for windows close proj crash</pre></td>
+</tr>
+<tr>
+<td><pre>10772</pre></td>
+<td><pre>2017-05-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>apply the windows patch more broadly -- tests fine on mac</pre></td>
+</tr>
+<tr>
+<td><pre>10773</pre></td>
+<td><pre>2017-05-21</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Add some basic matrix operations tests.
+
+- Test a variety of ways of how to initialise matrices.
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>10774</pre></td>
+<td><pre>2017-05-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* EpochCompare program has independent selectors for train and test data as suggested by John
+* Tweaks for view panels to make them take less room, esp graph view, and to stretch properly
+:* min/max fix gui labels just "fix" as it is obvious which it applies to
+:* got rid of extra spacing in taiWidgetComposite which is used for all inline classes
+:* colorbar gets a min width of 300 with stretch at end so it is typically fully visible
+</pre></td>
+</tr>
+<tr>
+<td><pre>10775</pre></td>
+<td><pre>2017-05-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>FINALLY (mostly) conquered the dreaded Layer (group) delete crashing on mac!
+* see notes under: https://grey.colorado.edu/bugzilla/show_bug.cgi?id=2957
+* turns out it IS a Qt bug!  lots of red herrings with layer-related issues..
+* key is to give it enough time to re-render, and collapse tree items before delete
+</pre></td>
+</tr>
+<tr>
+<td><pre>10776</pre></td>
+<td><pre>2017-05-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>last bit of edit wasn't saved -- and also added checkbox for editing list elements in properties view in prior checkin</pre></td>
+</tr>
+<tr>
+<td><pre>10777</pre></td>
+<td><pre>2017-05-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* don't update layer position if already set!
+* Layer dist member is read-only show
+* don't diff on prjn direction
+* add app name, version, and svn rev to startup msg
+</pre></td>
+</tr>
+<tr>
+<td><pre>10778</pre></td>
+<td><pre>2017-05-23</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix - ComparePeers was only showing 2 param sets when more than 2 were selected for comparison
+</pre></td>
+</tr>
+<tr>
+<td><pre>10779</pre></td>
+<td><pre>2017-05-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* finally implemented some more robust duplicate error message management code:
+:* use an 80% same starting string criterion for considering message to be a repeat --
+allows for some of it being novel at the end
+:* count number of repeats and emit repeat msgs in logarithmic intervals -- for silent
+repeats NOTHING is output
+:* final count output at end
+* attempt to fix closeness of plus toggle -- need a diff strategy
+</pre></td>
+</tr>
+<tr>
+<td><pre>10780</pre></td>
+<td><pre>2017-05-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* VTAUnitSpec: send 0 dopamine prior to Q4 -- was only setting u-&gt;act = 0 but was sending
+u-&gt;act_eq.. now sets all relevant act vars to 0 prior to Q4.
+* fix spacing of spec toggle button (on mac at least -- need to check on other platforms)
+</pre></td>
+</tr>
+<tr>
+<td><pre>10781</pre></td>
+<td><pre>2017-05-24</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Run an SVN cleanup on secondary cluster run directories as well if they are locked
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>10782</pre></td>
+<td><pre>2017-05-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>more clamp-o-matic protocol for vta and BFCS, which also wasn't setting act_eq properly</pre></td>
+</tr>
+<tr>
+<td><pre>10783</pre></td>
+<td><pre>2017-05-25</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Enabling/Disabling of cluster run table row context menus based on current table name.
+Renaming the tabs broke enable/disable of the menus - now fixed.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10784</pre></td>
+<td><pre>2017-05-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* progvar hard enums weren't working right in paramset
+</pre></td>
+</tr>
+<tr>
+<td><pre>10785</pre></td>
+<td><pre>2017-05-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>more fixes to support hard enum.. hopefully that's it..</pre></td>
+</tr>
+<tr>
+<td><pre>10786</pre></td>
+<td><pre>2017-05-25</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Fix cluster run search functionality.
+
+The value of cluster run search parameters weren't correctly written to the comand line arguments.
+Adding a cast to string seems to have fixed this.
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>10787</pre></td>
+<td><pre>2017-05-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>attempt to fix toolbar bug on linux</pre></td>
+</tr>
+<tr>
+<td><pre>10788</pre></td>
+<td><pre>2017-05-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>update std projs conspec params to current defaults</pre></td>
+</tr>
+<tr>
+<td><pre>10789</pre></td>
+<td><pre>2017-05-25</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>ComputeHigherLayerRF now use the values from the lower layer that include the multiplication with the unit's activation.
+This means that after you run ComputeV2RF for a specific V2 layer
+and then run the MultiplyWithActivations for a specific image
+you then call ComputeHigherLayerRF and it will use the values generated for the lower layer that include the activation factor.
+I will document the process of generating the receptive field representations on the wiki
+</pre></td>
+</tr>
+<tr>
+<td><pre>10790</pre></td>
+<td><pre>2017-05-26</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Updated to be more flexible, get max unit, build composite, etc - tested on both leabra and backprop models
+</pre></td>
+</tr>
+<tr>
+<td><pre>10791</pre></td>
+<td><pre>2017-05-26</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>oops, empty string var
+</pre></td>
+</tr>
+<tr>
+<td><pre>10792</pre></td>
+<td><pre>2017-05-26</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* update version to 8.0.10 (note: NOT yet 8.1.0!) due to non-backward compat change:
+* moved vars for objects into separate objs_vars -- much cleaner and clearer and gets those
+out of way of main vars you actually care about!
+* fixed major issue with For loop auto-loop variable detection / fixing code: if you
+had more than 1 variable in initializer expression, it would choose the LAST, not the FIRST,
+as the loop variable -- needed a break..
+* fixed layer position updating to happen automatically after every update.  BUT some weird
+problem is causing visual layer positions to not update when underlying pos changes..
+* updated std projects to use rel pos
+</pre></td>
+</tr>
+<tr>
+<td><pre>10793</pre></td>
+<td><pre>2017-05-26</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>glue for actually using objs_vars expand prefs, defaults to 0</pre></td>
+</tr>
+<tr>
+<td><pre>10794</pre></td>
+<td><pre>2017-05-26</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Completer now handling list and group cases
+- so table.data. now shows the list of columns
+- but not if it is an assign statement - that's next
+</pre></td>
+</tr>
+<tr>
+<td><pre>10795</pre></td>
+<td><pre>2017-05-27</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for 3392 - data columns not showing up in completer list
+- also fixes problems where a parse of object. or object-&gt; didn't work in an assignment
+- also fixes a similar problem where object.member.member worked on lhs but not rhs inside conditional
+</pre></td>
+</tr>
+<tr>
+<td><pre>10796</pre></td>
+<td><pre>2017-05-28</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Add a warning message to see if a particular section of code is entered or if it is obsolete
+</pre></td>
+</tr>
+<tr>
+<td><pre>10797</pre></td>
+<td><pre>2017-05-28</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for	3400 - Next logical tree node not selected on tree node	delete
+- Clearly this worked at some point because the	logic is in iTreeView::ItemDestroyingCb
+but some changes have meant that by the time the method is called the TreeItem no longer
+has a pointer to the TreeView and the code doesn't get executed.
+- I borrowed the logic from the method and added a public method that selects the next logical item
+and also calls BrowserSelectMe so that the item is actually focused but the method  doesn't call Remove
+because the previous method calls take() anyway.
+- Looks like ItemDestroyingCb is a no-op at this point
+- Heavily tested -- works well in all cases other than deletion of group item so a bit more to do
+- Fast deletion generates the "Attempt to add a SigLinkClient to a destructing object" warning so that
+is working well.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10798</pre></td>
+<td><pre>2017-05-29</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>* Fix for remainder of bug 3400 - group delete now selects the next logical item
+* Reformatted SigEmit_impl() and added some braces for conditionals that didn't have them
+* Deleted uncalled code in ~iTreeViewItem()
+</pre></td>
+</tr>
+<tr>
+<td><pre>10799</pre></td>
+<td><pre>2017-05-29</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix bug 3397 - "printexpr object." was not working in lookup or completer - both fixed
+</pre></td>
+</tr>
+<tr>
+<td><pre>10800</pre></td>
+<td><pre>2017-05-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>clear out unused matrix dim exprs when parsing</pre></td>
+</tr>
+<tr>
+<td><pre>10801</pre></td>
+<td><pre>2017-05-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* added EXPAND_DEF_0 to ProgArg_List -- didn't do anything
+* added HAS_CALL_ARGS to MemberMethodCall which works (uses call_args prefs setting)
+</pre></td>
+</tr>
+<tr>
+<td><pre>10802</pre></td>
+<td><pre>2017-05-30</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* added st_row=0, n_rows=-1 to InitVals in DataTable, DataCol -- can now spec range
+* also support matrix columns in SetFromInt / Float /etc -- just iterates over cells for columns
+* added DataTable::FindColNameIdxCamelSnake -- looks for alternative "casing" of search
+* LayerWriter::AutoConfig uses above to work with lower-case / snake as well as upper-case
+column / layer names
+* DataTable cols list tab shows cell_geom as well
+* Program::OBJS_UPDT_GUI flag is ON by default now for new programs
+* SetGuiUpdt menuitem in Program_Group for updating flag for existing projects
+</pre></td>
+</tr>
+<tr>
+<td><pre>10803</pre></td>
+<td><pre>2017-05-30</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* prev checkin included improvements to taMisc::Error and Warning to show first
+10 repeat messages in full, then start just showing dots, then more compression, etc. --
+gives you a better sense of what the trend is etc.
+* hopefully the LAST fix to the matrix range decoding with : -- there was another place
+where the -1 needed to be changed to a 0 for the new end-of-range coding..
+* DataCol SetVal for variant wasn't using new SetValAsVar..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10805</pre></td>
+<td><pre>2017-05-31</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* automatically Flatten a Matrix that already has an ElView before doing another view of it
+* auto-copyright-updating based on svn year in CodeUtils
+</pre></td>
+</tr>
+<tr>
+<td><pre>10806</pre></td>
+<td><pre>2017-05-31</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>copyrightify actually working now..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10807</pre></td>
+<td><pre>2017-05-31</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>massive copyright updates and fixes to get no messages on copyrightify</pre></td>
+</tr>
+<tr>
+<td><pre>10808</pre></td>
+<td><pre>2017-05-31</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>and now the recursive update because we just updated everything...</pre></td>
+</tr>
+<tr>
+<td><pre>10809</pre></td>
+<td><pre>2017-05-31</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>crash fix in MiscMath test -- more robust way of getting matrix
+</pre></td>
+</tr>
+<tr>
+<td><pre>10810</pre></td>
+<td><pre>2017-05-31</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Separate paths/methods for selecting tree items and selecting items where we also open the line for edit
+</pre></td>
+</tr>
+<tr>
+<td><pre>10811</pre></td>
+<td><pre>2017-05-31</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>type items, vars, args and code all go into edit mode when inserting a new element - but only when inserting new element 
+</pre></td>
+</tr>
+<tr>
+<td><pre>10812</pre></td>
+<td><pre>2017-05-31</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for 3294 - completer: return should NOT select a completion
+* I think this is fixed. The problem stemmed from different behavior by Qt when the completer is in
+QCompleter::UnfilteredPopupCompletion mode and QCompleter::PopupCompletion mode.
+I was using the unfiltered mode after spaces, parens, etc. That is, in places where there is no basis for filtering.
+It seems that I can leave the completer in filtered mode and still get the unfiltered list.
+Only the situations with the unfiltered list (like after "if(" ) had the return select problem.
+* Please report any problems.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10813</pre></td>
+<td><pre>2017-06-01</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>InitValsByIncrement now allows float values for initial value and increment
+- int type columns still display ints
+</pre></td>
+</tr>
+<tr>
+<td><pre>10814</pre></td>
+<td><pre>2017-06-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fixup to InitValsIncrement and others -- no longer depends on !is_matrix and also updated
+DataTable version
+* taMath vec_convolve now uses frame index view -- safe for filtered data tables
+* put all the TwoD layer stuff into base LeabraLayer and removed subtype -- much easier for
+switching back and forth and avoiding many problems with changing type of layer
+* Leabra layer average activation updating: added "use_first" option (default TRUE -- will change learning behavior of existing models, most likely for the better) -- uses the first real sample instead of our likely incorrect guess from targ_init..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10815</pre></td>
+<td><pre>2017-06-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>remove ValType:: -- apparently that is a C++11 thing</pre></td>
+</tr>
+<tr>
+<td><pre>10816</pre></td>
+<td><pre>2017-06-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* GHOST -&gt; ENABLE -- amazing how much more readable that is
+* save and update menu action enable status
+</pre></td>
+</tr>
+<tr>
+<td><pre>10818</pre></td>
+<td><pre>2017-06-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>updated all std programs and projects (OBJS_UPDT_GUI = true)
+</pre></td>
+</tr>
+<tr>
+<td><pre>10819</pre></td>
+<td><pre>2017-06-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>layer geom is 0 for iconified layers</pre></td>
+</tr>
+<tr>
+<td><pre>10820</pre></td>
+<td><pre>2017-06-01</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>* Remove the apply/revert buttons from this one field dialog but still need to call Apply
+* Fixes crashing bug in non-modal case (bug 3411)
+</pre></td>
+</tr>
+<tr>
+<td><pre>10821</pre></td>
+<td><pre>2017-06-01</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>InitValsByIncrementColName() - first_value and increment changed from int to float
+</pre></td>
+</tr>
+<tr>
+<td><pre>10822</pre></td>
+<td><pre>2017-06-01</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Add some extra tests for taDataAnal
+
+Currently only simple tests for LinearRegression, DistMatrix, SmoothGauss
+
+Should also test for #3414
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>10823</pre></td>
+<td><pre>2017-06-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>updating version number to 8.1.0 and generating packages now -- I will do mac and windows, Kai can you do linux?</pre></td>
+</tr>
+</table>
+</body></html>
