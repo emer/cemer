@@ -83,6 +83,9 @@ public:
   bool          CheckList(const String_PArray& lst) const;
   // check if method has a list in common with given one
   bool          CompareArgs(MethodDef* it) const;       // true if same, false if not
+  virtual bool  HasArgs() const { return (arg_names.size > 0); }
+  // does this function take arguments
+
   void          PrintType(String& col1, String& col2) const;
   void          CallFun(void* base, const String& arg_str = "") const;
   // call the function, using args as comma-separated simple literal expressions for argument values, or using gui dialog if need to get args 

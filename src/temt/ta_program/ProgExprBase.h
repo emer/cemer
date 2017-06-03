@@ -124,7 +124,10 @@ public:
   static bool                   include_types;          // #READ_ONLY #HIDDEN #NO_SAVE should lookup/completion include the ProgEls
   static bool                   include_bools;          // #READ_ONLY #HIDDEN #NO_SAVE should lookup/completion include the bools
   static bool                   include_null;           // #READ_ONLY #HIDDEN #NO_SAVE should lookup/completion include null
-  static bool                   include_css_functions;  // #READ_ONLY #HIDDEN #NO_SAVE should lookup/completion include null
+  static bool                   include_css_functions;  // #READ_ONLY #HIDDEN #NO_SAVE should lookup/completion include css_functions
+  static TypeDef*               current_typedef;        // #READ_ONLY #HIDDEN #NO_SAVE save for use after completer selection
+  static Program*               current_program;        // #READ_ONLY #HIDDEN #NO_SAVE save for use after completer selection
+  
 
   bool          empty() const {return expr.empty();}
     // #IGNORE quicky test for whether has anything or not, without needing to render
@@ -198,7 +201,9 @@ public:
                                       String& base_path, String& lookup_seed, String& path_var, String& path_rest,
                                       bool path_base_not_null, ExpressionStart& expr_start, bool& lookup_group_default);
   // return the lookup type and set many arguments
-  
+  static bool           ExpressionTakesArgs(String expression);
+  // if method then does it take arguments - completer uses this to position cursor intelligently
+
   static bool           FindPathSeparator(const String& path, int& separator_start, int& separator_end, bool backwards = true);
   // locate either '.' or '->' working backwards
   
@@ -216,7 +221,7 @@ public:
                                        TypeDef* scope_type = NULL, ProgVar::VarType = ProgVar::T_UnDef);
   static void           GetGlobalVars(taBase_List* tokens, taBase* scope = NULL,
                                        TypeDef* scope_type = NULL, ProgVar::VarType = ProgVar::T_UnDef);
- static void            GetMembersForType(TypeDef* td, MemberSpace* members, bool just_static = false);
+  static void           GetMembersForType(TypeDef* td, MemberSpace* members, bool just_static = false);
   static void           GetMethodsForType(TypeDef* td, MethodSpace* methods, bool just_static = false);
   static void           GetEnumsForType(TypeDef* td, EnumSpace* enums);
   static void           GetProgEls(String_Array* progels);
@@ -225,7 +230,7 @@ public:
   static void           GetNull(String_Array* nulls);
   static void           GetTypes(String_Array* types);
   static void           GenProgElList(ProgEl_List& list, TypeDef* td);
-
+  
   static ProgExprBase::LookUpType           Test_ParseForLookup(const String test_name, const String input_text, const int cursor_pos,
                                             String& lookup_seed, String& prepend_txt, String& append_txt,
                                             String& prog_el_txt, String& path_var, String& path_prepend_txt,

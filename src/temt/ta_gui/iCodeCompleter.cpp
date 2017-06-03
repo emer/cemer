@@ -147,6 +147,11 @@ String iCodeCompleter::GetText() {
   return ProgExprBase::completion_text_before;
 }
 
+bool iCodeCompleter::ExpressionTakesArgs(String expression) {
+  return ProgExprBase::ExpressionTakesArgs(expression);
+}
+
+// class iCompleterPopupView
 
 bool iCompleterPopupView::eventFilter(QObject* obj, QEvent* event) {
   if (event->type() == QEvent::ShortcutOverride) {
@@ -168,6 +173,8 @@ bool iCompleterPopupView::eventFilter(QObject* obj, QEvent* event) {
     return inherited::eventFilter(obj, event);
   }
 }
+
+// class iCodeCompleterModel
 
 iCodeCompleterModel::iCodeCompleterModel(QObject* parent) :
  inherited::QStringListModel(parent)

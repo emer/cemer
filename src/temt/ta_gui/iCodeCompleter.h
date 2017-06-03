@@ -62,7 +62,8 @@ public:
   void                    FilterList(String seed);  // pair down based on seed
   void                    ExtendSeed(String& seed); // extend the seed if possible -- called prefix in QCompleter terminology
   void                    SetIsDialogField(bool dialog_field) { is_dialog_field = dialog_field; }
-
+  bool                    ExpressionTakesArgs(String expression); // call ProgExprBase to know if method takes arguments
+  
 protected:
   QStringList             string_list;
   bool                    eventFilter(QObject* obj, QEvent* event) override;

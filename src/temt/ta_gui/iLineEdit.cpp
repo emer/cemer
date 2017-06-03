@@ -449,5 +449,8 @@ bool iLineEdit::IsDelimter(char a_char) {
 void iLineEdit::setText(const QString& str) {
   inherited::setText(str);
   setCursorPosition(text().length() - cursor_position_from_end);  // zero unless doing completion
+  if (completer->ExpressionTakesArgs(str)) {
+    setCursorPosition(cursorPosition() - 1);
+  }
 }
 

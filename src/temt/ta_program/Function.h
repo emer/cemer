@@ -60,7 +60,9 @@ public:
   // #BUTTON #CAT_Code run UpdateArgs on all the function calls to me, and also display all these calls in the Find dialog (searching on this function's name) so you can make sure the args are correct for each call
   virtual void    ListCallers();
   // #MENU #MENU_CONTEXT #CAT_Code Display all callers of this function in the Find dialog (searching on this program's name)
-
+  virtual bool    HasArgs() const { return (args.size > 0); }
+  // does this function take arguments
+  
   virtual String GetFunDecl();
   // get the function declaration (c++ code string for function, with return type and args)
   virtual void  GenCss_Decl(Program* prog);

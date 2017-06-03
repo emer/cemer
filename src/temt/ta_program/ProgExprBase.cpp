@@ -79,6 +79,8 @@ bool                        ProgExprBase::include_bools;
 bool                        ProgExprBase::include_null;
 bool                        ProgExprBase::include_css_functions;
 ProgExprBase::LookUpType    ProgExprBase::completion_lookup_type;
+TypeDef*                    ProgExprBase::current_typedef;
+Program*                    ProgExprBase::current_program;
 
 void ProgExprBase::Initialize() {
   flags = PE_NONE;
@@ -1351,6 +1353,8 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
   ExpressionStart   expr_start = LINE_START;
   bool              lookup_group_default = false;
   
+  current_program = own_prg;  // hold onto for later use in ExpressionTakesArgs()
+  
   bool path_base_not_null = false;
   lookup_type = ParseForLookup(cur_txt, cur_pos, prepend_txt, path_prepend_txt, append_txt, prog_el_txt, base_path, lookup_seed, path_var, path_rest, path_base_not_null, expr_start, lookup_group_default);
   
@@ -2001,6 +2005,8 @@ void ProgExprBase::GetMembersForType(TypeDef *td, MemberSpace* members, bool jus
 void ProgExprBase::GetMethodsForType(TypeDef *td, MethodSpace* methods, bool just_static) {
   if (td == NULL || methods == NULL) return;
   
+  current_typedef = td;
+  
   MethodSpace* mts = &td->methods;
   for (int i = 0; i < mts->size; ++i) {
     MethodDef* mth = mts->FastEl(i);
@@ -2098,6 +2104,56 @@ void ProgExprBase::GetTypes(String_Array* types) {
     types->Add("double");
     types->Add("String");
   }
+}
+
+bool ProgExprBase::ExpressionTakesArgs(String expression) {
+  if (!expression.endsWith("()")) return false;
+  
+  String expr_less_parens = expression.before("()", -1);
+  
+  int sep_start;
+  int sep_end;
+  bool has_sep = FindPathSeparator(expr_less_parens, sep_start, sep_end);
+  if (has_sep) {
+    String method_name = expr_less_parens.after(sep_end);
+    if (current_typedef) {
+      MethodDef* method_def = current_typedef->methods.FindName(method_name);
+      if (method_def) {
+        return method_def->HasArgs();
+      }
+    }
+  }
+  
+  if (expression.contains("::")) {
+    String method_name = expr_less_parens.after("::", -1);
+    if (current_typedef) {
+      MethodDef* method_def = current_typedef->methods.FindName(method_name);
+      if (method_def) {
+        return method_def->HasArgs();
+      }
+    }
+  }
+  
+  // maybe it is a program or function - they take arguments
+  if (!expr_less_parens.contains(' ')) {
+    if (current_program) {
+      taProject* proj = current_program->GetMyProj();
+      if (proj) {
+        String program_name = expr_less_parens;
+        Program* prgm = proj->programs.FindLeafName(program_name);
+        if (prgm) {
+          return prgm->HasArgs();
+        }
+      }
+      String function_name = expr_less_parens;
+      Function* func = current_program->functions.FindName(function_name);
+      if (func) {
+        return func->HasArgs();
+      }
+    }
+  }
+  
+  return false;
 }
 
 
