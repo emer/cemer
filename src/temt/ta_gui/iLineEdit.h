@@ -68,6 +68,7 @@ public slots:
   void          setText(const QString &str);  // "override" so we can fix cursor position after completion
   
 protected slots:
+  void              selectionChanged();
 
 protected:
   int               mmin_char_width; // note: we limit to 128
@@ -81,7 +82,9 @@ protected:
   void              wheelEvent(QWheelEvent * e) override;
   bool              event(QEvent * e) override;
   bool              eventFilter(QObject* obj, QEvent * e) override;
-  virtual bool      IsDelimter(char a_char);
+  bool              IsDelimter(char a_char);
+  int               FindMatchingParens(int start);
+  // returns 'balancing' parens position
 
 private:
   void		      init(CompleterType completer_type = NO_COMPLETER);

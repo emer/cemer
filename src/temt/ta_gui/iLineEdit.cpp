@@ -90,6 +90,10 @@ void iLineEdit::init(CompleterType completer_type) {
     completion_enabled = taMisc::code_completion.auto_complete;
   }
   installEventFilter(this);
+  
+  QObject::connect(this, SIGNAL(selectionChanged()),
+                   this, SLOT(selectionChanged() ) );
+
 }
 
 void iLineEdit::editInEditor() {
@@ -452,5 +456,42 @@ void iLineEdit::setText(const QString& str) {
   if (completer->ExpressionTakesArgs(str)) {
     setCursorPosition(cursorPosition() - 1);
   }
+}
+
+void iLineEdit::selectionChanged() {
+  if (hasSelectedText()) {
+    int selection_length = selectedText().length();
+    if (selection_length < text().length()) {
+      int selection_end = selectionStart() + selection_length;
+      if (text().at(selection_end) == '(') {
+        if ((text().at(selection_end + 1) == ')')) {
+          this->setSelection(selectionStart(), selection_length + 2);
+        }
+        else {
+          int end = FindMatchingParens(selection_end);
+          if (end > 0) {
+            selection_length = end - selectionStart();
+            this->setSelection(selectionStart(), selection_length);
+          }
+        }
+      }
+    }
+  }
+}
+
+int iLineEdit::FindMatchingParens(int start) {
+  String working_string = text();
+  if (working_string[start] != '(') return -1;
+  
+  int left_parens_count = 1;
+  int right_parens_count = 0;
+  for (int pos = start + 1; pos < text().length() - start + 1; pos++) {
+    if (working_string[pos] == ')') right_parens_count++;
+    if (working_string[pos] == '(') left_parens_count++;
+    if (left_parens_count == right_parens_count) {
+      return pos + 1;
+    }
+  }
+  return -1;
 }
 
