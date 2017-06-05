@@ -68,6 +68,7 @@ public:
     METHOD,
     ASSIGN,         // could be ProgVar, method, function but not program
     EQUALITY,       // either == or !=
+    DATACOL,        // column of a datatable
   };
   
   enum ExpressionStart {

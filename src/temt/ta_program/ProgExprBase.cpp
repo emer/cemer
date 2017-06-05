@@ -535,6 +535,8 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
   String txt = cur_txt.before(cur_pos);
   String extra_txt = cur_txt.from(cur_pos);
   
+  bool quotes_exception = false; // normally there is no parse inside quotes - an exception is for datatable columns ["col_name
+  
   // if we are in comment code don't parse
   if (txt.contains("//") || (txt.length() == 1 && txt.startsWith('/'))) return NOT_SET;
   
@@ -597,6 +599,14 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
     }
     
     if(c == ']' || c == '[' || c == ':') {
+      if (i > 2) {
+        if (c == ']') {
+          c_previous = txt[i-1];
+          if (c_previous == '"') {
+            quotes_exception = false;  // turn off
+          }
+        }
+      }
       delim_pos.Add(i);
       continue;
     }
@@ -614,7 +624,13 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
     }
     
     if (c =='"') {
-      
+      if (i > 2) {
+        c_previous = txt[i-1];
+        if (c_previous == '[') {
+          quotes_exception = true;
+        }
+      }
+      delim_pos.Add(i);
       quote_count++;
       continue;
     }
@@ -642,7 +658,7 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
     break;
   }
   
-  if (quote_count % 2 != 0) {  // we're inside quotes no lookup
+  if (quote_count % 2 != 0 && !quotes_exception) {  // we're inside quotes no lookup
     return NOT_SET;
   }
   
@@ -793,6 +809,31 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
         lookup_group_default = true;
       }
     }
+    
+    
+    
+    else if(delim_pos.size > 1 && txt[delim_pos[0]] == '"' && txt[delim_pos[1]] == '['
+            && (delim_pos[0] == delim_pos[1] + 1)) {
+      base_path = txt.at(expr_start_pos, delim_pos[1]-expr_start_pos);
+      int idx = base_path.index(' ', -1); 
+      if (idx != -1) {
+        base_path = base_path.after(idx);
+      }
+      int length = base_path.length();
+      base_path = triml(base_path);
+      int shift = length - base_path.length(); // shift to compensate for trim
+      expr_start_pos += shift;
+      prepend_txt = txt.before(expr_start_pos);
+      lookup_seed = txt.after(delim_pos[0]);
+      lookup_type = ProgExprBase::DATACOL;
+      delims_used = 2;
+      if (delim_pos.size > 2 && txt[delim_pos[2]] == ']') {
+        lookup_group_default = true;
+      }
+    }
+
+    
+    
     else if(delim_pos.size > 1 && txt[delim_pos[0]] == ':' && txt[delim_pos[1]] == ':'
             && (delim_pos[0] == delim_pos[1] + 1)) { // path sep = ::
       
@@ -1018,6 +1059,60 @@ String ProgExprBase::ExprLookupChooser(const String& cur_txt, int cur_pos, int& 
       break;
     }
 
+    case ProgExprBase::DATACOL: {
+      TypeDef* lookup_td = NULL;
+      taList_impl* tal = NULL;
+      taBase* base_base = NULL;
+      TypeDef* own_td = NULL;
+      ProgVar* st_var = NULL;
+      
+      // the datacol case is a bit unusual - notice the hard coding of path_rest to "data"
+      // basically we are substituting .data. for ["
+      if (path_var.empty()) {
+        path_var = base_path;
+      }
+      st_var = own_prg->FindVarName(path_var);
+      if(st_var) {
+        if(st_var->var_type == ProgVar::T_Object) {
+          if(!st_var->object_type) {
+            taMisc::DebugInfo("Var lookup: cannot lookup anything about variable:", path_var,
+                              "because it is an Object* but has no type set yet!");
+          }
+          else {
+            own_td = st_var->object_type;
+            if (own_td == &TA_DataTable) {
+              base_base = st_var->object_val;
+            }
+          }
+          if(base_base) {
+            MemberDef* md = NULL;
+            path_rest = "data";
+            taBase* mb_tab = base_base->FindFromPath(path_rest, md);
+            if(mb_tab) {
+              lookup_td = mb_tab->GetTypeDef();
+              if(lookup_td->InheritsFrom(&TA_taList_impl))
+                tal = (taList_impl*)mb_tab;
+              if(tal && tal->InheritsFrom(&TA_taList_impl)) {
+                taiWidgetListElChooser* lilkup = new taiWidgetListElChooser
+                (lookup_td, NULL, NULL, NULL, 0, lookup_seed);
+                lilkup->GetImage(tal, NULL);
+                bool okc = lilkup->OpenChooser();
+                if(okc && lilkup->item()) {
+                  path_own_obj = lilkup->item();
+                  path_own_typ = path_own_obj->GetTypeDef();
+                  rval = path_prepend_txt + path_own_obj->GetName();
+                  new_pos = rval.length();
+                  rval += append_txt;
+                }
+                delete lilkup;
+              }
+            }
+          }
+        }
+      }
+      break;
+    }
+      
     case ProgExprBase::OBJ_MEMB_METH: {                     // members/methods
       TypeDef* lookup_td = NULL;
       taList_impl* tal = NULL;
@@ -1486,6 +1581,49 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
       }
       if (lookup_td) {
         GetMembersForType(lookup_td, &completion_member_list);
+      }
+      break;
+    }
+      
+    case ProgExprBase::DATACOL: {
+      TypeDef* lookup_td = NULL;
+      taList_impl* tal = NULL;
+      taBase* base_base = NULL;
+      TypeDef* own_td = NULL;
+      ProgVar* st_var = NULL;
+      
+      // the datacol case is a bit unusual - notice the hard coding of path_rest to "data"
+      // basically we are substituting .data. for ["
+      if (path_var.empty()) {
+        path_var = base_path;
+      }
+      st_var = own_prg->FindVarName(path_var);
+      if(st_var) {
+        if(st_var->var_type == ProgVar::T_Object) {
+          if(!st_var->object_type) {
+            taMisc::DebugInfo("Var lookup: cannot lookup anything about variable:", path_var,
+                              "because it is an Object* but has no type set yet!");
+          }
+          else {
+            own_td = st_var->object_type;
+            if (own_td == &TA_DataTable) {
+              base_base = st_var->object_val;
+            }
+          }
+          if(base_base) {
+            MemberDef* md = NULL;
+            path_rest = "data";
+            taBase* mb_tab = base_base->FindFromPath(path_rest, md);
+            if(mb_tab) {
+              lookup_td = mb_tab->GetTypeDef();
+              if(lookup_td->InheritsFrom(&TA_taList_impl))
+                tal = (taList_impl*)mb_tab;
+              if (tal) {
+                GetListItems(tal, &completion_list_items_list);
+              }
+            }
+          }
+        }
       }
       break;
     }
