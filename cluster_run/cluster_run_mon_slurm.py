@@ -9,10 +9,12 @@ import cluster_run_mon_lib as runmon
 # STANDARD USER CONFIGURABLE PARAMETERS
 
 # name of queue -- used for a few things -- replace with actual!
-runmon.clust_queue = "blanca-ccn"
+runmon.clust_queue = "local"
 
 # specifies if the cluster uses QoS or partitions to specify the queue. This is only relevant for SLURM
 runmon.use_qos = True
+
+runmon.use_cuda = False
 
 # full path to single processor job submission script
 # STRONGLY recommend using the pyqsub based commands avail in 
@@ -33,13 +35,9 @@ runmon.use_qos = True
 # specify the job launcher command with all of its parameters. The parameters might be
 # specific to the cluster environment, such as the network interface the MPI libraries should use
 #job_launcher = "mpirun"
-runmon.job_launcher = 'mpirun --bind-to none'
 #runmon.job_launcher = 'mpirun --bind-to none --mca btl_tcp_if_include bond0'
+runmon.job_launcher = 'mpirun -v --debug-daemons --bind-to none --mca btl_base_verbose 1 --mca btl_base_debug 2 --mca btl_openib_verbose 1 --mca btl_tcp_if_include bond0'
 
-# specify a setup script that is run at the beginning of a job on the node the job is executed,
-# this allows to ensure that all of the enivronment variables, paths and other resources necessary
-# on the compute node is available and correctly setup.
-runmon.path_setup = "/work/ccnlab/bin/emergent_setup.sh"
 
 # qstat-like command -- for quering a specific job_no 
 # sge = qstat -j <job_no>
@@ -80,8 +78,14 @@ runmon.mail_user = "$USER"
 runmon.mail_type = "FAIL"
 
 # set to true for more debugging info
-runmon.debug = False
+runmon.debug = True
 # runmon.debug = True
+
+# specify the email address of the user to notify of job events
+runmon.mail_user = '$USER'
+# specify the type of job events the user should be notified about via email
+runmon.mail_type = "FAIL"
+
 
 # END OF STANDARD USER CONFIGURABLE PARAMETERS
 #############################################################################

@@ -94,8 +94,8 @@ class SGEJobManager( ClusterJobManager ):
         if job.queueName() == '':
             #SGE currently has just one queue 'all.q'
             job.setQueue('all.q')
-        file.write("#$ -q %s\n" % job.queueName() )
-        self.subCmd.append("-q %s" % job.queueName() )
+        file.write("#$ -p %s\n" % job.queueName() )
+        self.subCmd.append("-p %s" % job.queueName() )
                 
         file.write("#$ -l h_rt=%s\n" % job.wallTime() ) 
         self.subCmd.append("-l h_rt=%s" % job.wallTime())
@@ -385,6 +385,9 @@ class SlurmJobManager( ClusterJobManager ):
         if job.mail_user != None:
             file.write("#SBATCH --mail-type=%s\n" % job.mail_type)
             file.write("#SBATCH --mail-user=%s\n" % job.mail_user)
+        if job.useCUDA:
+            file.write("#SBATCH --gres=gpu:1\n")
+            
         # temporary hack!
         # file.write("#SBATCH --nodelist=bnode0204,bnode0205,bnode0206,bnode0207\n")
 
@@ -606,7 +609,9 @@ class ClusterJob:
         else:
             return self.queue
     def setQOS(self, t):
-        self.useQOS = t    
+        self.useQOS = t
+    def setCUDA(self, t):
+        self.useCUDA = t
     def setMemory( self, mem):
         # check that it's of format: Nmb|gb (e.g. 4mb or 4gb)
         m = mem.lower()

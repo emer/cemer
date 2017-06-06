@@ -21,6 +21,9 @@ clust_queue = ""
 # specifies if the cluster uses QoS or partitions to specify the queue. This is only relevant for SLURM
 use_qos = True
 
+# specifies if the job should request GPU resources. This is only relevant for SLURM at the moment
+use_cuda = False
+
 # full path to single processor job submission script
 # STRONGLY recommend using the pyqsub based commands avail in 
 # emergent/cluster_run/ directory (where this script lives as well)
@@ -1138,24 +1141,32 @@ class SubversionPoller(object):
             self._svn_add_cur_archive()
 
     def _svn_add_cur_running(self):
+        if debug:
+            logging.info("Adding running file: %s" % self.cur_running_file)
         cmd = ['svn', 'add', '--username', self.username,
                '--non-interactive', self.cur_running_file]
         # Don't check_output, just dump it to stdout (or nohup.out).
         subprocess.call(cmd)
 
     def _svn_add_cur_done(self):
+        if debug:
+            logging.info("Adding done file: %s" % self.cur_done_file)
         cmd = ['svn', 'add', '--username', self.username,
                '--non-interactive', self.cur_done_file]
         # Don't check_output, just dump it to stdout (or nohup.out).
         subprocess.call(cmd)
 
     def _svn_add_cur_deleted(self):
+        if debug:
+            logging.info("Adding deleted file: %s" % self.cur_deleted_file)
         cmd = ['svn', 'add', '--username', self.username,
                '--non-interactive', self.cur_deleted_file]
         # Don't check_output, just dump it to stdout (or nohup.out).
         subprocess.call(cmd)
 
     def _svn_add_cur_archive(self):
+        if debug:
+            logging.info("Adding archive file: %s" % self.cur_archive_file)
         cmd = ['svn', 'add', '--username', self.username,
                '--non-interactive', self.cur_archive_file]
         # Don't check_output, just dump it to stdout (or nohup.out).
@@ -1224,7 +1235,7 @@ class SubversionPoller(object):
         self._start_job_cluster(filename, rev, row);
 
     def _start_job_cluster(self, filename, rev, row):
-        global mail_user, clust_queue, use_qos
+        global mail_user, clust_queue, use_qos, use_cuda
         proj = self.model_files[0]  
         proj = os.path.abspath(proj)
         self.cur_proj_file = proj
@@ -1235,6 +1246,7 @@ class SubversionPoller(object):
         run_time = self.jobs_submit.get_val(row, "run_time")
         n_threads = self.jobs_submit.get_val(row, "n_threads")
         mpi_nodes = self.jobs_submit.get_val(row, "mpi_nodes")
+        use_cuda = self.jobs_submit.get_val(row, "use_cuda")
         mpi_per_node = self.jobs_submit.get_val(row, "mpi_per_node")
         ram_gb = self.jobs_submit.get_val(row, "ram_gb")
         pb_batches = self.jobs_submit.get_val(row, "pb_batches")
@@ -1293,7 +1305,13 @@ class SubversionPoller(object):
                 if (len(args_eff) > 0):
                     args_eff = args_eff + ["-q", clust_queue]
                 else:
-                    args_eff = ["-q", clust_queue] 
+                    args_eff = ["-q", clust_queue]
+            if (('use_cuda' in globals()) and use_cuda):
+                logging.info("adding CUDA to job submit")
+                if (len(args_eff) > 0):
+                    args_eff = args_eff + ["-C"]
+                else:
+                    args_eff = ["-C"]
             if len(args_eff) > 0:
                 args_eff = args_eff + ["-j", job_launcher]
             else:
@@ -1331,6 +1349,12 @@ class SubversionPoller(object):
                     args_eff = args_eff + ["-Q"]
                 else:
                     args_eff = ["-Q"]
+            if (('use_cuda' in globals()) and use_cuda):
+                logging.info("adding CUDA to job submit")
+                if (len(args_eff) > 0):
+                    args_eff = args_eff + ["-C"]
+                else:
+                    args_eff = ["-C"]
             if len(queue) > 0:
                 if (len(args_eff) > 0):
                     args_eff = args_eff + ["-q", queue]
@@ -1664,7 +1688,7 @@ class SubversionPoller(object):
         for df in dats:
             fdf = resdir + df
             if debug:
-                ("Checking if dat file: %s exists to commit to SVN" % fdf)
+                logging.info("Checking if dat file: %s exists to commit to SVN" % fdf)
             if os.path.exists(fdf):
                 cmd = ['svn', 'add', '-q', '--username', self.username,
                        '--non-interactive', fdf]
