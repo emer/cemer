@@ -463,6 +463,9 @@ void iLineEdit::selectionChanged() {
     int selection_length = selectedText().length();
     if (selection_length < text().length()) {
       int selection_end = selectionStart() + selection_length;
+      if (selection_end == text().length()) { // no more chars
+        return;
+      }
       if (text().at(selection_end) == '(') {
         if ((text().at(selection_end + 1) == ')')) {
           this->setSelection(selectionStart(), selection_length + 2);
