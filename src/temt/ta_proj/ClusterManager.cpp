@@ -1218,6 +1218,15 @@ ClusterManager::ShowRepoDialog()
   dlg.AddIntField(&m_cluster_run.n_threads, "threads", widget, row, tt);
   dlg.AddStretch(row);
 
+  row = "CUDA";
+  dlg.AddSpace(space, vbox);
+  dlg.AddHBoxLayout(row, vbox);
+  tt = "tooltip=" + TA_ClusterRun.members.FindName("use_cuda")->desc + ";";
+  dlg.AddLabel("cudaLbl", widget, row, "label=Use CUDA: ;" + tt);
+  dlg.AddBoolCheckbox(&m_cluster_run.use_cuda, "usecuda", widget, row, tt);
+  dlg.AddStretch(row);
+
+  
   row = "mpi";
   dlg.AddSpace(space, vbox);
   dlg.AddHBoxLayout(row, vbox);

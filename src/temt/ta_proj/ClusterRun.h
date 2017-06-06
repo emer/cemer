@@ -102,6 +102,7 @@ public:
   String        exe_cmd;        // #NO_DIFF executable command to run the project on the cluster -- defaults to taMisc::app_name (e.g., emergent) -- can be an absolute path or just an executable name that will be found on default path
   int           ram_gb;         // how many gigabytes of ram is required?  0 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources -- the status_info field can often show you how much a job has used in the past
   int           n_threads;      // #NO_DIFF number of parallel threads to use for running
+  bool          use_cuda;        // #NO_DIFF use CUDA GPU acceleration?
   bool          use_mpi;        // #NO_DIFF use message-passing-inteface distributed memory executable to run across multiple nodes?
   int           mpi_nodes;      // #NO_DIFF #CONDSHOW_ON_use_mpi number of physical nodes to use for mpi run -- total number of nodes is mpi_nodes * mpi_per_node
   int           mpi_per_node;   // #NO_DIFF #CONDSHOW_ON_use_mpi number of processes (instances of emergent) to use per physical node for mpi run -- mpi_per_node * n_threads must be <= total cores per node -- can be faster to run multiple processes per physical multi-core node, where these processes communicate locally on the same node, instead of the slower inter-node communication fabric

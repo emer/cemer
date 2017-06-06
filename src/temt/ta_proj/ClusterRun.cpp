@@ -68,6 +68,7 @@ void ClusterRun::Initialize() {
   ram_gb = 0;
   n_threads = 1;  // taMisc::thread_defaults.n_threads
   use_mpi = false;
+  use_cuda = false;
   mpi_nodes = 10;
   mpi_per_node = 1;
   parallel_batch = false;
@@ -1473,6 +1474,8 @@ void ClusterRun::FormatJobTable(DataTable& dt, bool clust_user) {
   dc->desc = "how many gigabytes of ram is required?  0 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources";
   dc = dt.FindMakeCol("n_threads", VT_INT);
   dc->desc = "number of parallel threads to use for running";
+  dc = dt.FindMakeCol("use_cuda", VT_INT);
+  dc->desc = "if the job should be run with CUDA";
   dc = dt.FindMakeCol("mpi_nodes", VT_INT);
   dc->desc = "number of physical nodes to use for mpi run -- 0 or -1 means not to use mpi";
   int nodes_idx = dt.FindColNameIdx(dc->name);
@@ -1923,6 +1926,7 @@ ClusterRun::AddJobRow_impl(const String& cmd, const String& params, int cmd_id) 
   jobs_submit.SetVal(run_time,    "run_time",   row);
   jobs_submit.SetVal(ram_gb,      "ram_gb",     row);
   jobs_submit.SetVal(n_threads,   "n_threads",  row);
+  jobs_submit.SetVal(use_cuda,    "use_cuda",   row);
   if(use_mpi) {
     jobs_submit.SetVal(mpi_nodes,   "mpi_nodes",  row);
     jobs_submit.SetVal(mpi_per_node, "mpi_per_node",  row);
@@ -2167,6 +2171,9 @@ void ClusterRun::RunCommand(String& cmd, String& params, bool use_cur_vals) {
   cmd = exe_cmd;
   if(nowin_x)
     cmd += "_x";
+  if (use_cuda) {
+    cmd.cat("_cuda");
+  }
   if (use_mpi) {
     cmd.cat("_mpi");
   }
