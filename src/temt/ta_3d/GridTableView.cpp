@@ -1384,6 +1384,7 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
           sogr->block_height = mat_block_height;
           sogr->trans_max = mat_trans;
           sogr->user_data = dc; // needed for point picking
+          sogr->parent_obj = this; // needed for point picking
 #endif // TA_QT3D
 
           if(render_svg) {
@@ -1680,6 +1681,10 @@ void T3GridViewNode_MouseCB(void* userData, SoEventCallback* ecb) {
         continue;
       }
       SoMatrixGrid* mtxg = (SoMatrixGrid*)pobj;
+      GridTableView* gpo = (GridTableView*)mtxg->parent_obj;
+      if(gpo != tgv) {           // not our guy..
+        continue;
+      }
       DataCol* dcol = (DataCol*)mtxg->user_data;
       taMatrixPtr matrix;
       matrix = mtxg->matrix->GetFrameSlice_(mtxg->slice_idx);
@@ -1768,7 +1773,7 @@ void T3GridViewNode_MouseCB(void* userData, SoEventCallback* ecb) {
       tgv->UpdateDisplay();     // update to show last viewed val
       got_one = true;
       break;
-    }
+    } // inherits grid view
   }
   if(got_one)
     ecb->setHandled();

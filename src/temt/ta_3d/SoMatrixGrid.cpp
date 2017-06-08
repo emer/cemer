@@ -64,6 +64,7 @@ SoMatrixGrid::SoMatrixGrid(taMatrix* mat, int slice, bool oddy, ColorScale* sc,
   block_height = .2f;
   trans_max = 0.6f;
   user_data = NULL;
+  parent_obj = NULL;
   render_svg = false;
   svg_str = NULL;
   //  render(); // don't do this by default; often want to spec further guys

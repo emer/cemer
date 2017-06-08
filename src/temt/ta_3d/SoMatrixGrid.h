@@ -67,6 +67,7 @@ public:
   float		block_height;	// #DEF_0.2 how tall (in Z dimension) to make the blocks (relative to the max of their X or Y size)
   float		trans_max;	// #DEF_0.6 maximum transparency value (for zero scaled values)
   void*		user_data;	// optional user data associated with this guy (e.g., DataCol)
+  void*	        parent_obj;	// optional parent obj that manages this (e.g., GridTableView)
   bool          render_svg;     // if true, render to svg
   String*       svg_str;        // string to render to
   taVector3f    svg_off;        // position offset for svg rendering output
