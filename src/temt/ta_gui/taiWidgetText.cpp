@@ -41,13 +41,13 @@ taiWidgetText::taiWidgetText(TypeDef* typ_, IWidgetHost* host_, taiWidget* par, 
     QHBoxLayout* lay = new QHBoxLayout(act_par);
     lay->setMargin(0);
     lay->setSpacing(1);
-
+    
     bool add_completer = (lookupfun_md && md->HasOption("ADD_COMPLETER"));
     if (add_completer) {
-      leText = new iLineEdit(act_par, iLineEdit::DIALOG_FIELD_CODE_COMPLETER); // if false - no code completer
+      leText = new iLineEdit(act_par, iLineEdit::DIALOG_FIELD_CODE_COMPLETER);
     }
     else {
-      leText = new iLineEdit(act_par, iLineEdit::NO_COMPLETER); // if false - no code completer
+      leText = new iLineEdit(act_par, iLineEdit::NO_COMPLETER);
     }
     lay->addWidget(leText, 1);
 
@@ -64,10 +64,10 @@ taiWidgetText::taiWidgetText(TypeDef* typ_, IWidgetHost* host_, taiWidget* par, 
   else {
     bool add_completer = (lookupfun_md && md->HasOption("ADD_COMPLETER"));
     if (add_completer) {
-      leText = new iLineEdit(gui_parent_, iLineEdit::DIALOG_FIELD_CODE_COMPLETER); // false - no code completer
+      leText = new iLineEdit(gui_parent_, iLineEdit::DIALOG_FIELD_CODE_COMPLETER);
     }
     else {
-      leText = new iLineEdit(gui_parent_, iLineEdit::NO_COMPLETER); // false - no code completer
+      leText = new iLineEdit(gui_parent_, iLineEdit::NO_COMPLETER);
     }
     SetRep(leText);
   }
