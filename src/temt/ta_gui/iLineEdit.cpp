@@ -36,18 +36,6 @@
 
 #include <iCodeCompleter>
 
-//iLineEdit::iLineEdit(QWidget* parent, bool add_completer)
-//: QLineEdit(parent)
-//{
-//  init(add_completer);
-//}
-//
-//iLineEdit::iLineEdit(const char* text, QWidget* parent, bool add_completer)
-//: QLineEdit(QString(text), parent)
-//{
-//  init(add_completer);
-//}
-
 iLineEdit::iLineEdit(QWidget* parent, CompleterType completer_type)
 : QLineEdit(parent)
 {

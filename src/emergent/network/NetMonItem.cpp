@@ -1293,3 +1293,19 @@ void NetMonItem::ToggleOffFlag() {
   off = !off;
   SigEmitUpdated();
 }
+
+String_Array*  NetMonItem::StringFieldLookupForCompleter(const String& cur_txt, int cur_pos,
+                                                         const String& mbr_name, int& new_pos) {
+  if (!monitor) {
+    UpdateAfterEdit_impl(); // do this to get the pointer to NetMonitor set
+  }
+    
+  monitor->var_completer_list.Reset();
+  
+  MemberSpace mbr_space = object_type->members;
+  for (int i = 0; i < mbr_space.size; ++i) {
+    MemberDef* mbr_def = mbr_space.FastEl(i);
+    monitor->var_completer_list.Add(mbr_def->name);
+  }
+  return &monitor->var_completer_list;
+}

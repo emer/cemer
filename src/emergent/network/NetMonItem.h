@@ -75,7 +75,7 @@ public:
   TypeDef*            object_type;	// #CONDSHOW_OFF_computed #TYPE_taOBase type of object to monitor (narrows down the choices when choosing the object)
   taSmartRef          object;		// #CONDSHOW_OFF_computed #TYPE_ON_object_type #PROJ_SCOPE the network object being monitored
   MemberDef*          lookup_var;	// #CONDSHOW_OFF_computed #TYPE_ON_object_type #NULL_OK #NO_SAVE #NO_EDIT lookup a member variable to monitor -- this just enters the name into the variable field and then auto-resets to NULL.  you can also just type variable directly, esp for non-members (r.wt, etc)
-  String              variable;	// #CONDSHOW_OFF_computed Variable on object to monitor.  Can also be a variable on sub-objects (e.g., act on Layer or Network will get all unit activations); r. and s. indicate recv and send connection vals (e.g., r.wt), projections.varname or prjns.varname gets projection-level variables, and layers.varname specifically targets layer-level variables (important for same-name variables on network and layer); can specify vars on particular unit(s) within a layer as 'units[index<-endidx>].varname' or 'units[gpno][index<-endidx>].varname' where the index value is a leaf in the first case and within a given unit group in the second -- in both cases a range of units can be optionally specified -- use user_data.data_name to access user data variables by name
+  String              variable;	//  #ADD_COMPLETER #CONDSHOW_OFF_computed Variable on object to monitor.  Can also be a variable on sub-objects (e.g., act on Layer or Network will get all unit activations); r. and s. indicate recv and send connection vals (e.g., r.wt), projections.varname or prjns.varname gets projection-level variables, and layers.varname specifically targets layer-level variables (important for same-name variables on network and layer); can specify vars on particular unit(s) within a layer as 'units[index<-endidx>].varname' or 'units[gpno][index<-endidx>].varname' where the index value is a leaf in the first case and within a given unit group in the second -- in both cases a range of units can be optionally specified -- use user_data.data_name to access user data variables by name
   String              var_label;	// #CONDSHOW_OFF_computed label to use in place of variable in naming the columns/columns generated from this data (if empty, variable is used)
   NameStyle           name_style;	 // #CONDSHOW_OFF_computed how to name the columns/columns generated from this data?
   int                 max_name_len;	 // #DEF_6 maximum length for any name segment
@@ -143,6 +143,10 @@ public:
 
   void           CollectAllSpecs(NetMonitor* mon);
   // #IGNORE collect all the specs to parent monitor
+
+  String_Array*  StringFieldLookupForCompleter(const String& cur_txt, int cur_pos,
+                                               const String& mbr_name, int& new_pos) override;
+  // #IGNORE returns a list of members of type that are legal entries for the field given the cur_txt
 
   int	GetEnabled() const override {return (off) ? 0 : 1;}
   void	SetEnabled(bool value) override {off = !value;}

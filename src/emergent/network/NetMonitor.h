@@ -91,6 +91,9 @@ public:
   taList_impl*	children_() override {return &items;}
   String	GetDisplayName() const override;
   
+  String_Array      var_completer_list;
+  // #IGNORE  // the list of members that are shown by the completer for the NetMonItem variable field - only need one so shared by all NetMonItems
+  
   void	InitLinks() override;
   void	CutLinks() override;
   void	Copy_(const NetMonitor& cp);
