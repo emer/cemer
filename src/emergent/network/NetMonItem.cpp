@@ -1214,12 +1214,13 @@ void NetMonItem::GetMonVals_DataAgg(DataTable* db) {
     return;
 
   DataTable sel_out(false);
+  
   bool use_sel_out = false;     // use sel_out instead of data_src
 
   if(select_rows && select_spec.col_name.nonempty()) {
     DataSelectSpec selspec(false);
     selspec.ops.Link(&select_spec);
-    use_sel_out = taDataProc::SelectRows(&sel_out, data_src, &selspec);
+    use_sel_out = taDataProc::SelectRows(NULL, data_src, &selspec);
     if(TestWarning(sel_out.rows == 0, "GetMonVals_DataAgg",
                "select rows did not match any rows -- reverting to full data table"))
       use_sel_out = false;
