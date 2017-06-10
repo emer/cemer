@@ -518,7 +518,7 @@ void iTreeWidget::keyPressEvent(QKeyEvent* e) {
         // linux and windows require the return to prevent select-all from inherited call
 #endif
       }
-      return;
+      break;
     case taiMisc::TREE_EDIT_END:
     case taiMisc::TREE_EDIT_END_II:
       if(cur_item && cur_item->flags() & Qt::ItemIsEditable) {
@@ -528,7 +528,7 @@ void iTreeWidget::keyPressEvent(QKeyEvent* e) {
         e->accept();
         accepted = true;
       }
-      return;
+      break;
     case taiMisc::TREE_EDIT_DELETE_TO_END:
     case taiMisc::TREE_EDIT_DELETE_TO_END_II:
       if(cur_item && cur_item->flags() & Qt::ItemIsEditable) {
@@ -538,7 +538,7 @@ void iTreeWidget::keyPressEvent(QKeyEvent* e) {
         e->accept();
         accepted = true;
       }
-      return;
+      break;
     default:
       ;
   }
