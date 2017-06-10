@@ -35,6 +35,7 @@
 #include <SigLinkSignal>
 #include <tabMisc>
 #include <taMisc>
+#include <taRootBase>
 
 TA_BASEFUNS_CTORS_DEFN(DataCol);
 SMARTREF_OF_CPP(DataCol);
@@ -205,7 +206,12 @@ void DataCol::Init() {
   if (tab) {
     rws = tab->rows_total;    // all rows, not just the visible rows
   }
-
+  else {
+    if(taRootBase::milestone & taRootBase::SM_APP_OBJ) {
+      taMisc::DebugInfo("data col can't find its owning table in Init() -- this indicates that the table is unowned which is generally a BAD thing -- do taBase::Own(table, tabMisc::root); for any temp tables");
+    }
+  }
+  
   if (is_matrix) {
     MatrixGeom tdim = cell_geom;
     tdim.SetDims(tdim.dims() + 1);

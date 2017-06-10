@@ -26,6 +26,8 @@
 #include <Average>
 
 #include <taMisc>
+#include <tabMisc>
+#include <taRootBase>
 #include <taProject>
 
 TA_BASEFUNS_CTORS_DEFN(NetMonItem);
@@ -1214,19 +1216,16 @@ void NetMonItem::GetMonVals_DataAgg(DataTable* db) {
                "internal error: val_specs.size != 1 for computed val -- report as bug!"))
     return;
 
-//  DataTable sel_out(false);
-  
-  taProject* proj = GetMyProj();
-  DataTable* sel_out = proj->GetNewAnalysisDataTable("sel_out", true);
-
+  DataTable sel_out(false);
+  taBase::Own(&sel_out, tabMisc::root); // this is ESSENTIAL for temp data tables -- otherwise cols can't access their parent table b/c owner is not set!
   
   bool use_sel_out = false;     // use sel_out instead of data_src
 
   if(select_rows && select_spec.col_name.nonempty()) {
     DataSelectSpec selspec(false);
     selspec.ops.Link(&select_spec);
-    use_sel_out = taDataProc::SelectRows(sel_out, data_src, &selspec);
-    if(TestWarning(sel_out->rows == 0, "GetMonVals_DataAgg",
+    use_sel_out = taDataProc::SelectRows(&sel_out, data_src, &selspec);
+    if(TestWarning(sel_out.rows == 0, "GetMonVals_DataAgg",
                "select rows did not match any rows -- reverting to full data table"))
       use_sel_out = false;
   }
@@ -1234,7 +1233,7 @@ void NetMonItem::GetMonVals_DataAgg(DataTable* db) {
   DataColSpec* vcs = val_specs.FastEl(0);
   DataCol* dc;
   if(use_sel_out)
-    dc = sel_out->FindColName(agg_col.col_name);
+    dc = sel_out.FindColName(agg_col.col_name);
   else
     dc = data_src->FindColName(agg_col.col_name);
   if(!dc) return;               // err in checkconfig

@@ -410,7 +410,9 @@ bool taDataProc::SortThruIndex(DataTable* dt, DataSortSpec* spec)
 
   // Sort implementation requires a place to keep a row of data
   // Create a single row table that gets reused on each recursion
-  DataTable pivot_row_table;
+  DataTable pivot_row_table(false);
+  taBase::Own(&pivot_row_table, tabMisc::root); // this is ESSENTIAL for temp data tables -- otherwise cols can't access their parent table b/c owner is not set!
+
   pivot_row_table.Copy_NoData(*dt);            // give it same structure
   pivot_row_table.AddBlankRow();               // always just has one row
 
@@ -715,7 +717,7 @@ bool taDataProc::Group_nogp(DataTable* dest, DataTable* src, DataGroupSpec* spec
 bool taDataProc::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, DataSortSpec* sort_spec) {
   if(src->rows == 0) return false;
   DataTable ssrc(false);
-  taBase::Own(ssrc, NULL);      // activates initlinks, refs
+  taBase::Own(&ssrc, tabMisc::root); // this is ESSENTIAL for temp data tables -- otherwise cols can't access their parent table b/c owner is not set!
   
   DataSortSpec full_sort_spec(false);
   taBase::Own(full_sort_spec, NULL);
@@ -734,7 +736,7 @@ bool taDataProc::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, 
     }
   }
   DataTable flsrc(false);
-  taBase::Own(flsrc, NULL);     // activates initlinks, refs
+  taBase::Own(&flsrc, tabMisc::root); // this is ESSENTIAL for temp data tables -- otherwise cols can't access their parent table b/c owner is not set!
   DataTable* use_src = src;     // source to actually use -- could be flsrc instead
   if(has_first_last) {
     flsrc = *src;
@@ -1396,7 +1398,8 @@ bool taDataProc::SplitRowsNByColGroupPermuted
   if(!src) { taMisc::Error("taDataProc::SplitRowsNByColGroupPermuted: src is NULL"); return false; }
 
   src->Sort(col_nm, true);      // must sort by col name already..
-  DataTable gp_table;
+  DataTable gp_table(false);
+  taBase::Own(&gp_table, tabMisc::root); // this is ESSENTIAL for temp data tables -- otherwise cols can't access their parent table b/c owner is not set!
   DataGroupSpec gp_spec;
   gp_spec.append_agg_name = false;
   DataGroupEl* gpel = (DataGroupEl*)gp_spec.AddColumn(col_nm, src);
@@ -1605,14 +1608,14 @@ bool taDataProc::Join(DataTable* dest, DataTable* src_a, DataTable* src_b,
   }
 
   DataTable ssrc_a(false);
-  taBase::Own(ssrc_a, NULL);    // activates initlinks, refs
+  taBase::Own(&ssrc_a, tabMisc::root); // this is ESSENTIAL for temp data tables -- otherwise cols can't access their parent table b/c owner is not set!
   Sort(&ssrc_a, src_a, &sort_spec_a);
   // Why doesn't this work with flatten jar 5/31/13 - should be more efficient
   //  src_a->FlattenTo(&ssrc_a);
   //  SortThruIndex(&ssrc_a, &sort_spec_a);
 
   DataTable ssrc_b(false);
-  taBase::Own(ssrc_b, NULL);    // activates initlinks, refs
+  taBase::Own(&ssrc_b, tabMisc::root);
   Sort(&ssrc_b, src_b, &sort_spec_b);
   // Why doesn't this work with flatten jar 5/31/13 - should be more efficient
   //  src_b->FlattenTo(&ssrc_b);

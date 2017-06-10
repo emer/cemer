@@ -349,6 +349,7 @@ bool taDataAnal::AnovaNWay(DataTable* result_data, DataTable* src_data,
   int n_conds = cond_cols.size;
 
   DataTable all_conds;
+  taBase::Own(&all_conds, tabMisc::root); // this is ESSENTIAL for temp data tables -- otherwise cols can't access their parent table b/c owner is not set!
 
   DataGroupSpec all_gp_spec;
   all_gp_spec.append_agg_name = true;
@@ -1985,6 +1986,7 @@ bool taDataAnal::Matrix3DGraph(DataTable* data, const String& x_axis_col, const 
   data->SortCol(xax, true, zax, true);
 
   DataTable dupl(false);
+  taBase::Own(&dupl, tabMisc::root); // this is ESSENTIAL for temp data tables -- otherwise cols can't access their parent table b/c owner is not set!
   dupl.CopyFrom(data);
   dupl.SortColName(z_axis_col, true, x_axis_col, true);
   taDataProc::AppendRows(data, &dupl);
