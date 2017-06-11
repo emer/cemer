@@ -1899,14 +1899,25 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
 
 String ProgExprBase::StringFieldLookupFun(const String& cur_txt, int cur_pos,
                                           const String& mbr_name, int& new_pos) {
-  
   ProgEl* own_pel = GET_MY_OWNER(ProgEl);
-  if(!own_pel)
+  
+  Program* own_prg;
+  if (own_pel) {
+    own_prg = GET_OWNER(own_pel, Program);
+  }
+  else {
+    own_prg = (Program*)GetOwner(&TA_Program);
+  }
+  
+  if(!own_prg) {
     return _nilString;
-  Program* own_prg = GET_OWNER(own_pel, Program);
-  if(!own_prg)
-    return _nilString;
-  Function* own_fun = GET_OWNER(own_pel, Function);
+  }
+  
+  Function* own_fun = NULL;
+  if (own_pel) {
+    own_fun = GET_OWNER(own_pel, Function);
+  }
+
   taBase* path_own_obj = NULL;
   TypeDef* path_own_typ = NULL;
   MemberDef* path_md = NULL;
@@ -1919,12 +1930,24 @@ String ProgExprBase::StringFieldLookupFun(const String& cur_txt, int cur_pos,
 String_Array* ProgExprBase::StringFieldLookupForCompleter(const String& cur_txt, int cur_pos,
                                           const String& mbr_name, int& new_pos) {
   ProgEl* own_pel = GET_MY_OWNER(ProgEl);
-  if(!own_pel)
+  
+  Program* own_prg;
+  if (own_pel) {
+    own_prg = GET_OWNER(own_pel, Program);
+  }
+  else {
+    own_prg = (Program*)GetOwner(&TA_Program);
+  }
+  
+  if(!own_prg) {
     return NULL;
-  Program* own_prg = GET_OWNER(own_pel, Program);
-  if(!own_prg)
-    return NULL;
-  Function* own_fun = GET_OWNER(own_pel, Function);
+  }
+  
+  Function* own_fun = NULL;
+  if (own_pel) {
+    own_fun = GET_OWNER(own_pel, Function);
+  }
+  
   taBase* path_own_obj = NULL;
   TypeDef* path_own_typ = NULL;
   MemberDef* path_md = NULL;
@@ -2057,7 +2080,7 @@ void ProgExprBase::GetGroupItems(taGroup_impl* list, taBase_List* tokens) {
 }
 
 void ProgExprBase::GetLocalVars(taBase_List* tokens, ProgEl* prog_el, taBase* scope, TypeDef* scope_type, ProgVar::VarType var_type) {
-  if (tokens == NULL) return;
+  if (tokens == NULL || prog_el == NULL) return;
   
   ProgEl_List* prog_el_owner_list = (ProgEl_List*)prog_el->GetOwner(&TA_ProgEl_List);
   if (!prog_el_owner_list) return; // should always have a list owner
