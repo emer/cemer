@@ -67,7 +67,7 @@ public:
   DataCol*		col_lookup;
   // #NO_SAVE #FROM_LIST_data.data #NO_EDIT #NO_UPDATE_POINTER column in data table use -- just to lookup the col_name, which is what is actually used -- this is reset to NULL after column is selected
   String		col_name;
-  // #AKA_chan_name of the column in the data to use 
+  // #AKA_chan_name #ADD_COMPLETER_SIMPLE of the column in the data to use
 
   NetTarget		net_target;
   // what to read/write from on the network
@@ -77,7 +77,7 @@ public:
   LayerRef 		layer;
   // #NO_SAVE #CONDSHOW_ON_net_target:LAYER #FROM_GROUP_network.layers #PROJ_SCOPE the Layer that will get read or written -- this is just for choosing layer_name from a list -- will be reset after selection is applied
   String 		layer_name;
-  // #CONDSHOW_ON_net_target:LAYER the name of the Layer that will get read or written
+  // #CONDSHOW_ON_net_target:LAYER #ADD_COMPLETER_SIMPLE the name of the Layer that will get read or written
 
   PosVector2i		offset;
   // #EXPERT offset in layer or unit group at which to start reading/writing
@@ -85,11 +85,12 @@ public:
   virtual void 	SetDataNetwork(DataTable* db, Network* net);
   // #CAT_LayerData set the data table and network pointers enable looking up columns/layer names
 
-  virtual int	GetColIdx(DataTable* db);
+  virtual int   GetColIdx(DataTable* db);
   // #CAT_LayerData get column index from datatable
 
-  String	GetName() const override		{ return col_name; }
-  String	GetDisplayName() const override;
+  String        GetName() const override		{ return col_name; }
+  String        GetDisplayName() const override;
+  void          GetListForCompletion(const MemberDef* md, String_Array& list) override;
 
   TA_SIMPLE_BASEFUNS(LayerDataEl);
 protected:

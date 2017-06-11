@@ -115,8 +115,8 @@ void DataOpEl::ClearColumns() {
 
 void DataOpEl::GetListForCompletion(const MemberDef* md, String_Array& list) {
   if (data_table) {
-    for (int i=0; i<data_table->data.size; i++) {
-      list.Add(data_table->data.FastEl(i)->name);
+    FOREACH_ELEM_IN_LIST(DataCol, col, data_table->data) {
+      list.Add(col->name);
     }
   }
 }
