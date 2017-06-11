@@ -35,6 +35,8 @@ class TA_API taiWidgetText : public taiWidget {
 public:
   taiWidgetText(TypeDef* typ_, IWidgetHost* host, taiWidget* par, QWidget* gui_parent_,
           int flags, bool needs_edit_button, const char *tooltip, MemberDef* md = NULL);
+  
+  static String_Array   completion_list;// #READ_ONLY #HIDDEN #NO_SAVE
 
   iLineEdit*            rep() const;
   bool         fillHor() override { return true; }

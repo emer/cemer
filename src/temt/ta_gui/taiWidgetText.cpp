@@ -22,10 +22,11 @@
 #include <taiMisc>
 #include <MemberDef>
 
-
 #include <QHBoxLayout>
 #include <QToolButton>
 #include <QFont>
+
+String_Array          taiWidgetText::completion_list;
 
 taiWidgetText::taiWidgetText(TypeDef* typ_, IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_,
                  bool needs_edit_button, const char *tooltip, MemberDef* md)
@@ -42,36 +43,52 @@ taiWidgetText::taiWidgetText(TypeDef* typ_, IWidgetHost* host_, taiWidget* par, 
     lay->setMargin(0);
     lay->setSpacing(1);
     
-    bool add_completer = (lookupfun_md && md->HasOption("ADD_COMPLETER"));
+    bool add_completer = (lookupfun_md && (md->HasOption("ADD_COMPLETER_EXPR") || lookupfun_md->HasOption("ADD_COMPLETER_SIMPLE")));
     if (add_completer) {
-      leText = new iLineEdit(act_par, iLineEdit::DIALOG_FIELD_CODE_COMPLETER);
+      leText = new iLineEdit(act_par, true);
+      if (leText->GetCompleter()) {
+        leText->GetCompleter()->SetHostType(iCodeCompleter::DIALOG_HOST);
+        if (lookupfun_md->HasOption("ADD_COMPLETER_SIMPLE")) {
+          leText->GetCompleter()->SetFieldType(iCodeCompleter::SIMPLE);
+        }
+        else {
+          leText->GetCompleter()->SetFieldType(iCodeCompleter::EXPRESSION);
+        }
+      }
     }
     else {
-      leText = new iLineEdit(act_par, iLineEdit::NO_COMPLETER);
+      leText = new iLineEdit(act_par, false);
     }
     lay->addWidget(leText, 1);
-
+    
     btnEdit = new QToolButton(act_par);
     btnEdit->setText("...");
     btnEdit->setToolTip(taiMisc::ToolTipPreProcess(tooltip));
     btnEdit->setFixedHeight(taiM->text_height(defSize()));
     lay->addWidget(btnEdit);
-
+    
     SetRep(act_par);
     connect(btnEdit, SIGNAL(clicked(bool)),
-      this, SLOT(btnEdit_clicked(bool)) );
+            this, SLOT(btnEdit_clicked(bool)) );
   }
   else {
-    bool add_completer = (lookupfun_md && md->HasOption("ADD_COMPLETER"));
+    bool add_completer = (lookupfun_md && (md->HasOption("ADD_COMPLETER_EXPR") || lookupfun_md->HasOption("ADD_COMPLETER_SIMPLE")));
     if (add_completer) {
-      leText = new iLineEdit(gui_parent_, iLineEdit::DIALOG_FIELD_CODE_COMPLETER);
+      leText = new iLineEdit(gui_parent_, true);
+      leText->GetCompleter()->SetHostType(iCodeCompleter::DIALOG_HOST);
+      if (lookupfun_md->HasOption("ADD_COMPLETER_SIMPLE")) {
+        leText->GetCompleter()->SetFieldType(iCodeCompleter::SIMPLE);
+      }
+      else {
+        leText->GetCompleter()->SetFieldType(iCodeCompleter::EXPRESSION);
+      }
     }
     else {
-      leText = new iLineEdit(gui_parent_, iLineEdit::NO_COMPLETER);
+      leText = new iLineEdit(gui_parent_, false);
     }
     SetRep(leText);
   }
-
+  
   QFont font = rep()->font();
   font.setPointSize(taMisc::GetCurrentFontSize("labels"));
   rep()->setFont(font);
@@ -82,13 +99,13 @@ taiWidgetText::taiWidgetText(TypeDef* typ_, IWidgetHost* host_, taiWidget* par, 
   }
   else {
     QObject::connect(rep(), SIGNAL(textChanged(const QString&) ),
-          this, SLOT(repChanged() ) );
+                     this, SLOT(repChanged() ) );
   }
-
+  
   // cliphandling connections
   QObject::connect(rep(), SIGNAL(selectionChanged()),
-    this, SLOT(selectionChanged() ) );
-
+                   this, SLOT(selectionChanged() ) );
+  
   QObject::connect(rep(), SIGNAL(lookupKeyPressed(iLineEdit*)),
                    this, SLOT(lookupKeyPressed()) );
   QObject::connect(rep(), SIGNAL(characterEntered(iLineEdit*)),

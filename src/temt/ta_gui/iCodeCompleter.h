@@ -49,11 +49,24 @@ class TA_API iCodeCompleter : public QCompleter {
   Q_OBJECT
 INHERITED(QCompleter)
 public:
+  
+  enum FieldType {
+    EXPRESSION,
+    SIMPLE,
+  };
+  
+  enum HostType {
+    DIALOG_HOST,
+    INLINE_HOST,
+  };
+  
   iCodeCompleter(QObject* parent = 0);
   iCodeCompleter(QAbstractItemModel *model, QObject *parent = 0);
 
   iCodeCompleterModel*    list_model;
   String                  last_epression_text;  // hold onto for comparison on next tab
+  FieldType               field_type;
+  HostType                host_type;
 
   void                    SetModelList(String_Array* list);
   QStringList*            GetList() { return &string_list; }
@@ -63,6 +76,8 @@ public:
   void                    ExtendSeed(String& seed); // extend the seed if possible -- called prefix in QCompleter terminology
   void                    SetIsDialogField(bool dialog_field) { is_dialog_field = dialog_field; }
   bool                    ExpressionTakesArgs(String expression); // call ProgExprBase to know if method takes arguments
+  void                    SetHostType(HostType type) { host_type = type; }
+  void                    SetFieldType(FieldType type) { field_type = type; }
   
 protected:
   QStringList             string_list;

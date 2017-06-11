@@ -41,13 +41,11 @@ void iCodeCompleter::Init() {
 #if (QT_VERSION >= 0x040600)
   setMaxVisibleItems(taMisc::code_completion.max_choices);
 #endif
-  //  iCompleterPopupView* completer_popup = new iCompleterPopupView();
-  //  setPopup(completer_popup);
 
   list_model = new iCodeCompleterModel(string_list, NULL);
   setModel(list_model);
-  
-  //  setModelSorting(QCompleter::CaseInsensitivelySortedModel);
+  host_type = INLINE_HOST;
+  field_type = EXPRESSION;
 }
 
 void iCodeCompleter::SetModelList(String_Array *list) {
@@ -66,7 +64,6 @@ void iCodeCompleter::ClearList() {
   string_list.clear();
   list_model->setStringList(string_list);
 }
-
 
 bool iCodeCompleter::eventFilter(QObject* obj, QEvent* event) {
   if (event->type() != QEvent::KeyPress) {

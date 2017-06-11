@@ -21,7 +21,7 @@
 #include <iTextEdit>
 #include <BuiltinTypeDefs>
 #include <taMisc>
-
+#include <iCodeCompleter>
 
 taiWidgetField::taiWidgetField(TypeDef* typ_, IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef* md)
   : taiWidgetText(typ_, host_, par, gui_parent_, flags_, (flags_ & flgEditDialog),
@@ -124,9 +124,17 @@ void taiWidgetField::characterEntered() {
   
   int cur_pos = rep()->cursorPosition();
   int new_pos = -1;
-  if (rep()->GetCompleter()) {
-    String_Array* list = tab->StringFieldLookupForCompleter(rep()->text(), cur_pos, lookupfun_md->name, new_pos);
-    rep()->GetCompleter()->SetModelList(list);
+  iCodeCompleter* completer = rep()->GetCompleter();
+  if (completer) {
+    completion_list.Reset();
+    if (completer->field_type == iCodeCompleter::SIMPLE) {
+      tab->GetListForCompletion(lookupfun_md, completion_list);
+      rep()->GetCompleter()->SetModelList(&completion_list);
+    }
+    else {  // iCodeCompleter::EXPRESSION
+      String_Array* list = tab->StringFieldLookupForCompleter(rep()->text(), cur_pos, lookupfun_md->name, new_pos);
+      rep()->GetCompleter()->SetModelList(list);
+    }
   }
   
 #ifdef TA_OS_MAC

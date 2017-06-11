@@ -112,3 +112,11 @@ void DataOpEl::GetColumns(DataTable* dt) {
 void DataOpEl::ClearColumns() {
   taBase::SetPointer((taBase**)&col_lookup, NULL);
 }
+
+void DataOpEl::GetListForCompletion(const MemberDef* md, String_Array& list) {
+  if (data_table) {
+    for (int i=0; i<data_table->data.size; i++) {
+      list.Add(data_table->data.FastEl(i)->name);
+    }
+  }
+}

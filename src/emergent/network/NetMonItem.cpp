@@ -1299,18 +1299,13 @@ void NetMonItem::ToggleOffFlag() {
   SigEmitUpdated();
 }
 
-String_Array*  NetMonItem::StringFieldLookupForCompleter(const String& cur_txt, int cur_pos,
-                                                         const String& mbr_name, int& new_pos) {
-  if (!monitor) {
-    UpdateAfterEdit_impl(); // do this to get the pointer to NetMonitor set
+void NetMonItem::GetListForCompletion(const MemberDef* md, String_Array& list) {
+  if (object_type) {
+    MemberSpace mbr_space = object_type->members;
+    for (int i = 0; i < mbr_space.size; ++i) {
+      MemberDef* mbr_def = mbr_space.FastEl(i);
+      list.Add(mbr_def->name);
+    }
   }
-    
-  monitor->var_completer_list.Reset();
-  
-  MemberSpace mbr_space = object_type->members;
-  for (int i = 0; i < mbr_space.size; ++i) {
-    MemberDef* mbr_def = mbr_space.FastEl(i);
-    monitor->var_completer_list.Add(mbr_def->name);
-  }
-  return &monitor->var_completer_list;
 }
+
