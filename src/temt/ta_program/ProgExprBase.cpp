@@ -1797,9 +1797,16 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
     taBase* base = completion_progvar_local_list.FastEl(i);
     AddToCompleter(base->GetName());
   }
-
+  
   for (int i=0; i<completion_progvar_global_list.size; i++) {
     taBase* base = completion_progvar_global_list.FastEl(i);
+    taBase* mbr_own = base->GetMemberOwner(false);
+    if (mbr_own) {
+      MemberDef* mbr_def = mbr_own->FindMemberBase(base);
+      if (mbr_def && mbr_def->HasOption("NO_CHOOSER")) {
+        continue;
+      }
+    }
     AddToCompleter(base->GetName());
   }
   
