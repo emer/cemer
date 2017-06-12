@@ -26,8 +26,6 @@
 #include <Average>
 
 #include <taMisc>
-#include <tabMisc>
-#include <taRootBase>
 #include <taProject>
 
 TA_BASEFUNS_CTORS_DEFN(NetMonItem);
@@ -1217,7 +1215,7 @@ void NetMonItem::GetMonVals_DataAgg(DataTable* db) {
     return;
 
   DataTable sel_out(false);
-  taBase::Own(&sel_out, tabMisc::root); // this is ESSENTIAL for temp data tables -- otherwise cols can't access their parent table b/c owner is not set!
+  sel_out.OwnTempObj(); // this is ESSENTIAL for temp data tables -- otherwise cols can't access their parent table b/c owner is not set!
   
   bool use_sel_out = false;     // use sel_out instead of data_src
 

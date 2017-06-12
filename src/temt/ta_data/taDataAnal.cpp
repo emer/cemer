@@ -34,8 +34,6 @@
 #include <T3Annotation>
 
 #include <taMisc>
-#include <tabMisc>
-#include <taRootBase>
 
 TA_BASEFUNS_CTORS_DEFN(taDataAnal);
 
@@ -348,8 +346,8 @@ bool taDataAnal::AnovaNWay(DataTable* result_data, DataTable* src_data,
   
   int n_conds = cond_cols.size;
 
-  DataTable all_conds;
-  taBase::Own(&all_conds, tabMisc::root); // this is ESSENTIAL for temp data tables -- otherwise cols can't access their parent table b/c owner is not set!
+  DataTable all_conds(false);
+  all_conds.OwnTempObj(); // this is ESSENTIAL for temp data tables -- otherwise cols can't access their parent table b/c owner is not set!
 
   DataGroupSpec all_gp_spec;
   all_gp_spec.append_agg_name = true;
@@ -632,7 +630,8 @@ bool taDataAnal::MultiClassClassificationViaLinearRegression(DataTable* src_data
   GetDest(dest_data, src_data, fun_name);
 
   // work - workspace with one row only. users can request to save this data in dest_data
-  DataTable* work = new DataTable; taBase::Own(work, tabMisc::root);
+  DataTable* work = new DataTable(false);
+  work->OwnTempObj(); // this is ESSENTIAL for temp data tables -- otherwise cols can't access their parent table b/c owner is not set!
 
   // *_col - check for existence
   DataCol* data_col = src_data->FindColName(data_col_nm);
@@ -653,8 +652,10 @@ bool taDataAnal::MultiClassClassificationViaLinearRegression(DataTable* src_data
     taMisc::Error(fun_name + " - data, name class and mode_col_nm's must all be of type string."); return false;}    
 
   // sorted_src_data - sort src_data by mode (train/test), class and name
-  DataTable* sorted_src_data = new DataTable; taBase::Own(sorted_src_data, tabMisc::root);
-  DataSortSpec* sort_spec = new DataSortSpec; taBase::Own(sort_spec, tabMisc::root);
+  DataTable* sorted_src_data = new DataTable(false);
+  sorted_src_data->OwnTempObj(); // this is ESSENTIAL for temp data tables -- otherwise cols can't access their parent table b/c owner is not set!
+  DataSortSpec* sort_spec = new DataSortSpec;
+  sort_spec->OwnTempObj(); // this is ESSENTIAL for temp data tables -- otherwise cols can't access their parent table b/c owner is not set!
   sort_spec->AddColumn(mode_col_nm, src_data);
   sort_spec->AddColumn(class_col_nm, src_data);
   sort_spec->AddColumn(name_col_nm, src_data);
@@ -697,8 +698,10 @@ bool taDataAnal::MultiClassClassificationViaLinearRegression(DataTable* src_data
 
   for (int i=0; i < classes->size; i++) {
 
-    DataTable* select_tmp = new DataTable; taBase::Own(select_tmp, tabMisc::root);
-    DataTable* one_cell_tmp = new DataTable; taBase::Own(one_cell_tmp, tabMisc::root);
+    DataTable* select_tmp = new DataTable(false);
+    select_tmp->OwnTempObj(); // this is ESSENTIAL for temp data tables -- otherwise cols can't access their parent table b/c owner is not set!
+    DataTable* one_cell_tmp = new DataTable(false);
+    one_cell_tmp->OwnTempObj(); // this is ESSENTIAL for temp data tables -- otherwise cols can't access their parent table b/c owner is not set!
 
     category = classes->FastEl1d(i);
 
@@ -787,7 +790,8 @@ bool taDataAnal::MultiClassClassificationViaLinearRegression(DataTable* src_data
   }
 
   // Create class-level confusion matrix
-  DataTable* confusion = new DataTable; taBase::Own(confusion, tabMisc::root);
+  DataTable* confusion = new DataTable(false);
+  confusion->OwnTempObj(); // this is ESSENTIAL for temp data tables -- otherwise cols can't access their parent table b/c owner is not set!
   String col_nm = "TEST_YPRIME_" + classes->FastEl1d(0);
   String cm = "ConfusionMatrix";
   DataCol* TEST_YPRIME_0 = work->FindColName(col_nm);
@@ -797,7 +801,8 @@ bool taDataAnal::MultiClassClassificationViaLinearRegression(DataTable* src_data
   confusion->ChangeColTypeGeom(cm, val_type, 2, d0, classes->size);
 
   // Create target confusion matrix
-  DataTable* confusion_target = new DataTable; taBase::Own(confusion_target, tabMisc::root);
+  DataTable* confusion_target = new DataTable(false);
+  confusion_target->OwnTempObj(); // this is ESSENTIAL for temp data tables -- otherwise cols can't access their parent table b/c owner is not set!
   col_nm = "TEST_T_" + classes->FastEl1d(0);
   cm = "ConfusionMatrixTarget";
   DataCol* TEST_T_0 = work->FindColName(col_nm);
@@ -807,7 +812,8 @@ bool taDataAnal::MultiClassClassificationViaLinearRegression(DataTable* src_data
   confusion_target->ChangeColTypeGeom(cm, val_type, 2, d0, classes->size);
 
   // class lengths - how many stimuli are in each test class?
-  DataTable* class_lengths = new DataTable; taBase::Own(class_lengths, tabMisc::root);
+  DataTable* class_lengths = new DataTable(false);
+  class_lengths->OwnTempObj(); // this is ESSENTIAL for temp data tables -- otherwise cols can't access their parent table b/c owner is not set!
   Relation* rel = new Relation; taBase::Ref(rel);
   double_Matrix* class_mat;
   double length;
@@ -1986,7 +1992,7 @@ bool taDataAnal::Matrix3DGraph(DataTable* data, const String& x_axis_col, const 
   data->SortCol(xax, true, zax, true);
 
   DataTable dupl(false);
-  taBase::Own(&dupl, tabMisc::root); // this is ESSENTIAL for temp data tables -- otherwise cols can't access their parent table b/c owner is not set!
+  dupl.OwnTempObj(); // this is ESSENTIAL for temp data tables -- otherwise cols can't access their parent table b/c owner is not set!
   dupl.CopyFrom(data);
   dupl.SortColName(z_axis_col, true, x_axis_col, true);
   taDataProc::AppendRows(data, &dupl);

@@ -208,7 +208,7 @@ void DataCol::Init() {
   }
   else {
     if(taRootBase::milestone & taRootBase::SM_APP_OBJ) {
-      taMisc::DebugInfo("data col can't find its owning table in Init() -- this indicates that the table is unowned which is generally a BAD thing -- do taBase::Own(table, tabMisc::root); for any temp tables");
+      taMisc::DebugInfo("data col can't find its owning table in Init() -- this indicates that the table is unowned which is generally a BAD thing -- do OwnTempObj() on any temp tables");
     }
   }
   

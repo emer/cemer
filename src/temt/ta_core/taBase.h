@@ -844,7 +844,7 @@ public:
   const taList_impl*    children_() const
   { return const_cast<const taList_impl*>(const_cast<taBase*>(this)->children_());}
   // #IGNORE mostly for testing if has children
-  virtual taBase*       SetOwner(taBase*)               { return(NULL); } // #IGNORE
+  virtual taBase*       SetOwner(taBase*)       { return(NULL); } // #IGNORE
   virtual taBase*       GetOwner() const        { return(NULL); } // #CAT_ObjectMgmt
   taBase*               GetOwnerOfType(TypeDef* td) const
   { return GetOwner(td); }
@@ -857,6 +857,8 @@ public:
   // #CAT_ObjectMgmt typically the first non-list/group owner above this one
   bool                  IsParentOf(const taBase* obj) const; // #CAT_ObjectMgmt true if this object is a direct or indirect parent of the obj (or is the obj)
   bool                  IsChildOf(const taBase* obj) const; // #CAT_ObjectMgmt true if this object is a direct or indirect child of the obj (or is the obj)
+  virtual void          OwnTempObj();
+  // #CAT_ObjectMgmt call own on this object with tabMisc::root as the owner -- this is important for temporary objects that don't otherwise live within the main structural hierarchy -- especially for DataTables, objects may not behave properly without being Own'd, as this then sets the owner pointers within the temporary object and calls InitLinks
 
   ///////////////////////////////////////////////////////////////////////////
   //    Paths in the structural hierarchy

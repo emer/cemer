@@ -223,6 +223,16 @@ bool taiWidgetTokenChooser::ShowToken(taBase* obj, TypeDef* td, int i) const {
   if (owner == &tabMisc::root->templates) {
     return false;
   }
+
+  taBase* mbrown = obj->GetMemberOwner(false);
+  if(mbrown) {
+    MemberDef* my_md = mbrown->FindMemberBase(obj);
+    // this is important for ControlPanelMember.saved which still shows up for local configs
+    if(my_md && my_md->HasOption("NO_CHOOSER")) {
+      return false;
+    }
+  }
+  
   // IMPORTANT: scope_typ CAN be NULL here -- if so, a default scope type is used -- this
   // is actually relevant for various choosers.  also scope_ref is assumed to be the base
   // obj -- this should ideally be cleaner

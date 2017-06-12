@@ -3264,9 +3264,7 @@ bool taBase::BrowserSelectMe() {
   if(InheritsFrom(&TA_taList_impl)) {     // need to check for def child -- cannot select!!
     taBase* mbrown = GetMemberOwner(false); // not highest
     if(mbrown) {
-      String mbr = GetPath(mbrown);
-      if(mbr.startsWith('.')) mbr = mbr.after('.');
-      MemberDef* my_md = mbrown->GetTypeDef()->members.FindName(mbr);
+      MemberDef* my_md = mbrown->FindMemberBase(this);
       if(my_md && my_md->IsDefChild()) {
         return false;
       }
@@ -3304,9 +3302,7 @@ bool taBase::BrowserEditMe() {
   if(InheritsFrom(&TA_taList_impl)) {     // need to check for def child -- cannot select!!
     taBase* mbrown = GetMemberOwner(false); // not highest
     if(mbrown) {
-      String mbr = GetPath(mbrown);
-      if(mbr.startsWith('.')) mbr = mbr.after('.');
-      MemberDef* my_md = mbrown->GetTypeDef()->members.FindName(mbr);
+      MemberDef* my_md = mbrown->FindMemberBase(this);
       if(my_md && my_md->IsDefChild()) {
         return false;
       }

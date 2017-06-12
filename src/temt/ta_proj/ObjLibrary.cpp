@@ -20,10 +20,8 @@
 #include <DataTable>
 #include <taProjVersion>
 #include <taDateTime>
-#include <taRootBase>
 
 #include <taMisc>
-#include <tabMisc>
 
 #include <QStringList>
 #include <QDir>
@@ -143,7 +141,7 @@ void ObjLibrary::AddFromWiki(LibLocs lib_loc) {
   String loc_path = file_paths[lib_loc];
   String lib_loc_nm = lib_loc_names[lib_loc];
   DataTable obj_list(false);
-  taBase::Own(obj_list, tabMisc::root); // this is ESSENTIAL for temp data tables -- otherwise cols can't access their parent table b/c owner is not set!
+  obj_list.OwnTempObj(); // this is ESSENTIAL for temp data tables -- otherwise cols can't access their parent table b/c owner is not set!
   taMediaWiki::QueryPagesByCategory(&obj_list, wiki_name, wiki_category);
   DataCol* pt_col = obj_list.FindColName("PageTitle");
   DataCol* pid_col = obj_list.FindColName("PageId");

@@ -548,6 +548,10 @@ bool taBase::IsParentOf(const taBase* obj) const {
   return false;
 }
 
+void taBase::OwnTempObj() {
+  taBase::Own(this, tabMisc::root); // own us!
+}
+
 
 void taBase::SetDefaultName_impl(int idx) {
   // name root -- use an explicit name root if any, else just the class name
