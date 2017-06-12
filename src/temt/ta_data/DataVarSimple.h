@@ -30,14 +30,15 @@ class TA_API DataVarSimple : public DataVarBase {
   // #VIRT_BASE A program element for exchanging information between program variables and data table values in columns with the same names as the variables -- scalar var/col and matrix var/col supported, and enum to/from Matrix localist code also supported (see DataVarSimpleMatrix for accessing individual matrix cells)
 INHERITED(DataVarBase)
 public:
-  ProgVarRef	 var;		// #LABEL_variable  #ITEM_FILTER_StdProgVarFilter program variable to write to (when reading from data table) or read from (when writing to data table)
-  String       column_name;  // the data table column to read from or write to
+  ProgVarRef    var;		// #LABEL_variable  #ITEM_FILTER_StdProgVarFilter program variable to write to (when reading from data table) or read from (when writing to data table)
+  String        column_name;  // #ADD_COMPLETER_SIMPLE the data table column to read from or write to
 
-        void  CheckThisConfig_impl(bool quiet, bool& rval) override;
+  void          CheckThisConfig_impl(bool quiet, bool& rval) override;
+  void          GetListForCompletion(const MemberDef* md, String_Array& list) override;
 
   PROGEL_SIMPLE_BASEFUNS(DataVarSimple);
 protected:
-  bool        writeToDataTable; // child classes must set this value, true = write, false = read
+  bool          writeToDataTable; // child classes must set this value, true = write, false = read
 
   virtual void  GenCssBody_impl(Program* prog) override;
   virtual bool  GenCss_OneVar(Program* prog, ProgVar* var, const String& idnm, int var_no);

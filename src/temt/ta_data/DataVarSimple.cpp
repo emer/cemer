@@ -199,3 +199,10 @@ bool DataVarSimple::CvtFmCode(const String& code) {
   return true;
 }
 
+void DataVarSimple::GetListForCompletion(const MemberDef* md, String_Array& list) {
+  if (GetData()) {
+    FOREACH_ELEM_IN_LIST(DataCol, col, GetData()->data) {
+      list.Add(col->name);
+    }
+  }
+}
