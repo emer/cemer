@@ -1146,6 +1146,7 @@ String ProgExprBase::ExprLookupChooser(const String& cur_txt, int cur_pos, int& 
               own_td = st_var->object_type;
               if(path_rest.empty()) {
                 lookup_td = st_var->object_type;
+                base_base = st_var->object_val;
               }
               else {
                 base_base = st_var->object_val;
@@ -1163,7 +1164,7 @@ String ProgExprBase::ExprLookupChooser(const String& cur_txt, int cur_pos, int& 
           taMisc::DebugInfo("Var lookup: cannot find variable:", path_var, "as start of lookup path:", base_path);
         }
       }
-      if(base_base && !lookup_td) {
+      if(base_base) { // was base_base && !lookup_td - changed to fix bug 3432 - rev 10849
         MemberDef* md = NULL;
         taBase* mb_tab = base_base->FindFromPath(path_rest, md);
         if(mb_tab) {
@@ -1661,6 +1662,7 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
               own_td = st_var->object_type;
               if(path_rest.empty()) {
                 lookup_td = st_var->object_type;
+                base_base = st_var->object_val;
               }
               else {
                 base_base = st_var->object_val;
@@ -1678,7 +1680,7 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
           taMisc::DebugInfo("Var lookup: cannot find variable:", path_var, "as start of lookup path:", base_path);
         }
       }
-      if(base_base && !lookup_td) {
+      if(base_base) { // was base_base && !lookup_td - changed to fix bug 3432 - rev 10849
         MemberDef* md = NULL;
         taBase* mb_tab = base_base->FindFromPath(path_rest, md);
         if(mb_tab) {
