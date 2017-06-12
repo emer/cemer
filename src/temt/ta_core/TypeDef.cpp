@@ -1579,6 +1579,11 @@ String TypeDef::GetValStr_class_inline(const void* base_, void* par, MemberDef* 
     else {
       if(md->HasNoSave())
         continue;
+      if (md->HasOption("NO_SAVE_EMPTY")) {
+        void* new_base = md->GetOff(base);
+        if(md->type->ValIsEmpty(new_base, md))
+          continue;
+      }
     }
     if(sc == SC_DISPLAY) {
       if(md->HasCondShow()) {

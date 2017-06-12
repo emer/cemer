@@ -327,6 +327,14 @@ void ControlPanel::RemoveMember(taBase* base, MemberDef* md) {
 }
 
 void ControlPanel::RemoveMemberIdx(int idx) {
+  if(IsClone() && owner) {
+    ControlPanel* master = ((ControlPanel_Group*)owner)->GetMaster();
+    if(master) {
+      master->RemoveMemberIdx(idx);
+      return;
+    }
+  }
+
   RemoveMember_impl(idx);
   ReShowEdit(true); //forced
 }
