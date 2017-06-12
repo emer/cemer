@@ -44,9 +44,12 @@ taiWidgetPoly::~taiWidgetPoly() {
   widget_el.Reset();
 }
 
-void taiWidgetPoly::AddChildMember(MemberDef* md, int column) {
+void taiWidgetPoly::AddChildMember(MemberDef* md, int column, bool mbr_type_only) {
   memb_el.Add(md);
-  inherited::AddChildMember(md, column);
+  if(mbr_type_only) {
+    taMisc::Warning("taiWidgetPoly::AddChildMember: we don't support mbr_type_only -- if needed impl as in Mashup!");
+  }
+  inherited::AddChildMember(md, column, false); // doesn't support mbr_type_only!
 }
 
 void taiWidgetPoly::AddTypeMembers() {

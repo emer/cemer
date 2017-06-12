@@ -21,6 +21,7 @@
 
 // member includes:
 #include <taBase_PtrList>
+#include <bool_Array>
 
 // declare all other types mentioned but not required to include:
 
@@ -34,16 +35,18 @@ public:
 
   Member_List           memb_el;        // member elements (1:1 with widget_el)
   taBase_PtrList        memb_bases;     // the bases in 1:1 with widget_el
+  bool_Array            type_only;      // in 1:1 with above -- if true, use only the type on the memberdef, and the base is a pointer to an object of the member->type, NOT to the base of the memberdef!
 
   inline QWidget*       rep() const { return (QWidget*)m_rep; }
   bool                  fillHor() override {return true;}
 
-  void                 AddChildMember(MemberDef* md, int column = 0) override;
+  void                  AddChildMember(MemberDef* md, int column = 0,
+                                       bool mbr_type_only = false) override;
   
- virtual void          ResetBases();
- virtual void          AddBase(taBase* b);
+  virtual void          ResetBases();
+  virtual void          AddBase(taBase* b);
   // call this if base is avail at time when adding a child member
- virtual void          SetBases(taBase* b1, taBase* b2=NULL, taBase* b3=NULL,
+  virtual void          SetBases(taBase* b1, taBase* b2=NULL, taBase* b3=NULL,
                                  taBase* b4=NULL, taBase* b5=NULL, taBase* b6=NULL);
   // convenience function for setting the memb_bases -- call this prior to GetImage and GetValue -- will reset bases first and then add these -- you can also do this manualy..
 

@@ -43,9 +43,10 @@ taiWidgetMashup::~taiWidgetMashup() {
   widget_el.Reset();
 }
 
-void taiWidgetMashup::AddChildMember(MemberDef* md, int column) {  // column for grid layout
+void taiWidgetMashup::AddChildMember(MemberDef* md, int column, bool mbr_type_only) {
   memb_el.Add(md);
-  inherited::AddChildMember(md, column);
+  type_only.Add(mbr_type_only);
+  inherited::AddChildMember(md, column, mbr_type_only);
 }
 
 void taiWidgetMashup::AddBase(taBase* b) {
@@ -112,7 +113,12 @@ void taiWidgetMashup::GetImage_impl(const void* base_) {
     taBase* bs = memb_bases.FastEl(i);
     taiWidget* mb_dat = widget_el.FastEl(i);
     m_child_base = bs;
-    md->im->GetImage(mb_dat, bs);
+    if(type_only[i]) {
+      md->type->it->GetImage(mb_dat, bs);
+    }
+    else {
+      md->im->GetImage(mb_dat, bs);
+    }
   }
   m_child_base = NULL;
 }
@@ -130,9 +136,14 @@ void taiWidgetMashup::GetValue_impl(void* base_) const {
     taBase* bs = memb_bases.FastEl(i);
     m_child_base = bs;
     taiWidget* mb_dat = widget_el.FastEl(i);
-    md->im->GetMbrValue(mb_dat, bs, first_diff);
-    if(bs && !HasFlag(flgNoUAE)) {
-      bs->MemberUpdateAfterEdit(md, true); // edit dialog context
+    if(type_only[i]) {
+      md->type->it->GetValue(mb_dat, bs);
+    }
+    else {
+      md->im->GetMbrValue(mb_dat, bs, first_diff);
+      if(bs && !HasFlag(flgNoUAE)) {
+        bs->MemberUpdateAfterEdit(md, true); // edit dialog context
+      }
     }
     if (bs && !HasFlag(flgNoUAE)) {
       bs->UpdateAfterEdit();   // hook to update the contents after an edit..

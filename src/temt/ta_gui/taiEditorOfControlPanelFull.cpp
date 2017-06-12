@@ -138,15 +138,22 @@ void taiEditorOfControlPanelFull::Constr_Widget_Labels() {
         continue; // should only happen if created manually (Bad!)
       memb_set->memb_el.Add(md);
 
-      // don't let the mashup do any uae by itself -- we retain full control over that!
       taiWidgetMashup* mash_widg = taiWidgetMashup::New(false, md->type, this, NULL, body);
-                                                        // taiWidgetMashup::flgNoUAE);
       mash_widg->SetMemberDef(md);
       mash_widg->add_labels = false;
       mash_widg->SetLayType(taiWidgetComposite::LT_Grid);
       mash_widg->InitLayout();
       mash_widg->AddChildMember(md, 1);
-      mash_widg->AddChildMember(data_md, 2);
+      if(item->data.saved_obj.ptr()) { // we're using a saved_obj rep
+        mash_widg->AddChildMember(md, 2, true); // true = type only!  key!
+        mash_widg->AddChildMember(data_md, 3);
+        if (item->IsLocked() || item->IsInactive()) {
+          mash_widg->widgets(1)->setEnabled(false); // inactivated
+        }
+      }
+      else {
+        mash_widg->AddChildMember(data_md, 2);
+      }
       mash_widg->EndLayout();
  
       //          taiWidget* mb_dat = md->im->GetWidgetRep(this, NULL, body);
@@ -155,6 +162,7 @@ void taiEditorOfControlPanelFull::Constr_Widget_Labels() {
       if (active_disable) {
         mash_widg->widgets(0)->setEnabled(false); // first one is active guy
       }
+        
       help_text = item->GetDesc();
       String new_lbl = item->caption();
       AddNameWidget(-1, new_lbl, help_text, data, mash_widg, md);
@@ -384,7 +392,6 @@ void taiEditorOfControlPanelFull::GetImage_Membs_def() {
     }
   }
 
-  //  cur_row = 0;
   int itm_idx = 0;;
   for (int j = 0; j < membs.size; ++j) {
     taiMemberWidgets* ms = membs.FastEl(j);
@@ -405,9 +412,10 @@ void taiEditorOfControlPanelFull::GetImage_Membs_def() {
         if(mash_widg) {
           mash_widg->SetBases(NULL);
           mash_widg->AddBase(item->base);
-          for (int el=1; el<mash_widg->memb_el.size; el++) {
-            mash_widg->AddBase(item);
+          if(item->data.saved_obj.ptr()) { // we're using a saved_obj rep
+            mash_widg->AddBase(item->data.saved_obj.ptr());
           }
+          mash_widg->AddBase(item);
           mash_widg->GetImage();
         }
         else {
@@ -415,7 +423,6 @@ void taiEditorOfControlPanelFull::GetImage_Membs_def() {
         }
       }
       ++itm_idx;
-//      cur_row++
     }
   }
 }

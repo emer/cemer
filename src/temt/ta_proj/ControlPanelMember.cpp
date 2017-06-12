@@ -35,6 +35,7 @@ TA_BASEFUNS_CTORS_DEFN(ControlItemNote); // OBSOLETE
 void ControlPanelMemberData::Initialize() {
   ctrl_type = CONTROL;
   state = STABLE;
+  saved_obj = NULL;
   is_numeric = false;
   is_single = false;
   obs_record = false;
@@ -42,6 +43,7 @@ void ControlPanelMemberData::Initialize() {
 }
 
 void ControlPanelMemberData::Destroy() {
+  saved_obj.CutLinks();
 }
 
 void ControlPanelMemberData::UpdateAfterEdit_impl() {
@@ -568,6 +570,7 @@ bool ControlPanelMember::ActiveEqualsSaved() const {
 void ControlPanelMember::SavedToProgVar() {
   if(!mbr || !base) return;
   TypeDef* mbr_td = mbr->type;
+  bool set_saved_obj = false;
   if(base->InheritsFrom(&TA_DynEnum)) {
     DynEnum* den = (DynEnum*)base;
     data.saved.var_type = ProgVar::T_DynEnum;
@@ -611,12 +614,36 @@ void ControlPanelMember::SavedToProgVar() {
   }
   else {
     data.saved.SetString(data.saved_value);
+    if(mbr_td->IsActualTaBase()) {
+      set_saved_obj = true;
+      if(data.saved_obj.ptr() && data.saved_obj->GetTypeDef() == mbr_td) {
+        mbr_td->SetValStr(data.saved_value, data.saved_obj.ptr(), NULL, mbr); // no force inline?
+      }
+      else {
+        if(data.saved_obj.ptr()) {
+          data.saved_obj.set(NULL);    // should delete
+        }
+        data.saved_obj.set(taBase::MakeToken(mbr_td));
+        if(data.saved_obj.ptr()) {
+          data.saved_obj.ptr()->SetOwner(base); // we are effectively owned by orig owner!
+          mbr_td->SetValStr(data.saved_value, data.saved_obj.ptr(), NULL, mbr); // no force inline?
+        }
+      }
+    }
+  }
+
+  if(!set_saved_obj) {
+    data.saved_obj.set(NULL);        // release any prior
   }
 }
 
 void ControlPanelMember::ProgVarToSaved() {
   if(!mbr || !base) return;
   data.saved_value = data.saved.GetStringVal();
+  TypeDef* mbr_td = mbr->type;
+  if(mbr_td->IsActualTaBase() && data.saved_obj.ptr()) {
+    data.saved_value = mbr_td->GetValStr(data.saved_obj.ptr(), NULL, mbr);
+  }
 }
 
 void ControlPanelMember::CopySavedToActive() {

@@ -52,9 +52,10 @@ public:
 
   ParamState            state;          // #LABEL_ #CONDSHOW_OFF_ctrl_type:CONTROL what state is this parameter in?  determines many features of how the parameter is used
 
-  ProgVar               saved;          // #CONDSHOW_ON_ctrl_type:PARAM_SET #CONDEDIT_OFF_state:LOCKED,INACTIVE #LABEL_ #EDIT_VALUE #NO_SAVE #NO_CHOOSER gui editor version of saved value of this parameter -- the value that was in use for a saved parameter set (ParamSet) or the value to be used for a parameter set that is specified to be used -- this value will be copied to the active current value of this object when it is used
   String                saved_value;    // #HIDDEN saved value of this parameter -- the value that was in use for a saved parameter set (ParamSet) or the value to be used for a parameter set that is specified to be used -- this value will be copied to the active current value of this object when it is used
-
+  ProgVar               saved;          // #CONDSHOW_ON_ctrl_type:PARAM_SET&&is_single #CONDEDIT_OFF_state:LOCKED,INACTIVE #LABEL_ #EDIT_VALUE #NO_SAVE #NO_CHOOSER gui editor version of saved value of this parameter -- the value that was in use for a saved parameter set (ParamSet) or the value to be used for a parameter set that is specified to be used -- this value will be copied to the active current value of this object when it is used
+  taBasePtr             saved_obj;      // #HIDDEN #NO_SAVE #NO_CHOOSER when member is a taBase object that cannot be handled by the ProgVar, we create an object here and use it for editing
+  
   String                range;          // #CONDSHOW_ON_state:SEARCH specify the values over which to search this parameter -- specific values can be listed separated by commas , and ranges can be specified using start:stop:increment (increment is optional, defaults to 1) notation as used in Matrix code -- e.g. 1,2,3:10:1,10:20:2 -- however here the stop value here is INCLUSIVE: 1:3:1 = 1,2,3 as that is more often useful -- can also specify %paramname to yoke this parameter to the paramname parameter -- it will not be searched independently, but rather will have the same values as paramname
   double                next_val;       // #HIDDEN #NO_SAVE computed next value to assign to this item in the parameter search
   double_Array          srch_vals;      // #HIDDEN #NO_SAVE full list of search values, parsed from range expression

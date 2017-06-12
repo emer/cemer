@@ -84,7 +84,7 @@ void taiWidgetComposite::InitLayout() { //virtual/overridable
   last_spc = taiM->hsep_c; // give it a bit of room
 }
 
-void taiWidgetComposite::AddChildMember(MemberDef* md, int column) {
+void taiWidgetComposite::AddChildMember(MemberDef* md, int column, bool mbr_type_only) {
   const int ctrl_size = taiM->ctrl_size;
   
   // establish container
@@ -103,8 +103,13 @@ void taiWidgetComposite::AddChildMember(MemberDef* md, int column) {
   }
   // get gui representation of data
   int child_flags = (mflags & flg_INHERIT_MASK);
-  taiWidget* mb_dat = md->im->GetWidgetRep(host, this, wid, NULL, child_flags); //adds to list
-  //nn, done by im mb_dat->SetMemberDef(md);
+  taiWidget* mb_dat;
+  if(mbr_type_only) {
+    mb_dat = md->type->it->GetWidgetRep(host, this, wid, NULL, child_flags, md);
+  }
+  else {
+    mb_dat = md->im->GetWidgetRep(host, this, wid, NULL, child_flags); //adds to list
+  }
   
   QWidget* ctrl = mb_dat->GetRep();
   connect(mb_dat, SIGNAL(SigEmitNotify(taiWidget*)),

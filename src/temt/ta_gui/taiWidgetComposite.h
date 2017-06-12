@@ -60,7 +60,9 @@ public:
   void                  AddChildWidget(QWidget* child_widget, int space_after = -1, int stretch = 0);
   // s_a=-1 for default taiM->hspc_c
   void                  AddChildWidgetToGrid(QWidget* child_widget, int column);
-  virtual void          AddChildMember(MemberDef* md, int column = 0); // adds label and control for the member - column for grid layout
+  virtual void          AddChildMember(MemberDef* md, int column = 0,
+                                       bool mbr_type_only = false);
+  // adds label and control for the member -- column for grid layout -- if mbr_type_only is true then just use the member type and its widget rep directly, not the member
   virtual void          EndLayout(); // default adds a stretch
 
 #ifndef __MAKETA__
