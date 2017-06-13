@@ -22,7 +22,6 @@ TA_BASEFUNS_CTORS_DEFN(LayerDataEl);
 
 void LayerDataEl::Initialize() {
   net_target = LAYER;
-  col_lookup = NULL;
 }
 
 void LayerDataEl::Destroy() {
@@ -31,19 +30,11 @@ void LayerDataEl::Destroy() {
 
 void LayerDataEl::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  if(col_lookup) {
-    col_name = col_lookup->name;
-    taBase::SetPointer((taBase**)&col_lookup, NULL); // reset as soon as used -- just a temp guy!
-  }
   if(!data) {
     LayerWriter* lw = GET_MY_OWNER(LayerWriter);
     if(lw && lw->data) {
       data = lw->data;
     }
-  }
-  if(layer) {
-    layer_name = layer->name;
-    layer = NULL;               // smart ref
   }
   if(!col_name.empty() && layer_name.empty()) {
     layer_name = col_name;
