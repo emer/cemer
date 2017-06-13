@@ -17,6 +17,8 @@
 #include <Program>
 #include <NameVar_PArray>
 #include <taMisc>
+#include <DataCol>
+#include <DataTable>
 
 TA_BASEFUNS_CTORS_DEFN(DataSelectColsProg);
 
@@ -121,3 +123,27 @@ void DataSelectColsProg::GenCssBody_impl(Program* prog) {
 void DataSelectColsProg::AddAllColumns() {
   select_spec.AddAllColumns(GetSrcData());
 }
+
+DataOpEl* DataSelectColsProg::AddColumn() {
+  if (!GetSrcData()) {
+    taMisc::Error("Set the source data table (src_data_var) before choosing columns.");
+    return NULL;
+  }
+  
+  String column_name = AddColumnDialog();
+  if (column_name.nonempty()) {
+    return select_spec.AddColumn(column_name, GetSrcData());
+  }
+  else {
+    return NULL;
+  }
+}
+
+void DataSelectColsProg::GetListForCompletion(const MemberDef* md, String_Array& list) {
+  if (GetSrcData()) {
+    FOREACH_ELEM_IN_LIST(DataCol, col, GetSrcData()->data) {
+      list.Add(col->name);
+    }
+  }
+}
+

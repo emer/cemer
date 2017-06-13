@@ -15,6 +15,10 @@
 
 #include "DataSrcDestProg.h"
 
+#include <taMisc>
+#include <DataTable>
+#include <taGuiDialog>
+
 TA_BASEFUNS_CTORS_DEFN(DataSrcDestProg);
 
 taTypeDef_Of(DataTable);
@@ -42,5 +46,25 @@ DataTable* DataSrcDestProg::GetDestData() {
   if(!dest_data_var) return NULL;
   if(dest_data_var->object_type != &TA_DataTable) return NULL;
   return (DataTable*)dest_data_var->object_val.ptr();
+}
+
+String DataSrcDestProg::AddColumnDialog() {
+  taGuiDialog dlg;
+  String column_name;
+  dlg.Reset();
+  dlg.prompt = "Choose a column to add to select specification ";
+  dlg.win_title = "Choose column for Select method";
+  dlg.AddWidget("main", "", "");
+  dlg.AddVBoxLayout("mainv","","main","");
+  String curow = "lbl";
+  dlg.AddHBoxLayout(curow, "mainv","","");
+  dlg.AddLabel("full_lbl_lbl", "main", curow, "label=Column: ;");
+  MemberDef* md = FindMemberName("src_table");
+  String tool_tip = "tooltip=enter a column name; Conrol + space will show all columns in the source data table.";
+  dlg.AddStringFieldForLookup(md, this, &column_name, "full_lbl", "main", curow, tool_tip);  // must pass member def and base object (this) to get completion to work
+  
+  int drval = dlg.PostDialog(true);
+  
+  return column_name;
 }
 

@@ -32,18 +32,20 @@ class TA_API DataSelectRowsProg : public DataSrcDestProg {
   // selects rows from src_data into dest_data according to select_spec
 INHERITED(DataSrcDestProg)
 public:
-  DataSelectSpec	select_spec; // #TREE_SHOW data selection specification
+  DataSelectSpec        select_spec; // #TREE_SHOW data selection specification
 
-  virtual DataOpEl* AddColumn(const String& col_name) { return select_spec.AddColumn(col_name, GetSrcData()); }
+  
+  virtual DataOpEl*     AddColumn();
   // #CAT_Data #BUTTON add a new column to operate on
-  virtual void	AddAllColumns();
+  virtual void          AddAllColumns();
   // #BUTTON #CAT_Data add all columns from src_data to the select_spec list of ops columns 
-  void	UpdateSpecDataTable() override;
+  void                  UpdateSpecDataTable() override;
 
-  String    GetDisplayName() const override;
-  String    GetToolbarName() const override { return "select\nrows"; }
-  bool      CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
-  bool      CvtFmCode(const String& code) override;
+  String                GetDisplayName() const override;
+  String                GetToolbarName() const override { return "select\nrows"; }
+  bool                  CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
+  bool                  CvtFmCode(const String& code) override;
+  void                  GetListForCompletion(const MemberDef* md, String_Array& list) override;
 
   TA_SIMPLE_BASEFUNS(DataSelectRowsProg);
 protected:

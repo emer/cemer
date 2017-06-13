@@ -23,8 +23,8 @@
 #include <ProgVar>
 
 // declare all other types mentioned but not required to include:
-class DataTable; // 
-
+class DataTable; //
+class MemberDef; //
 
 taTypeDef_Of(DataSrcDestProg);
 
@@ -32,19 +32,24 @@ class TA_API DataSrcDestProg : public ProgEl {
   // #VIRT_BASE #NO_INSTANCE ##PROGEL_COMPLETION a program element for data operations involving a source and destination (virtual base class -- do not use)
 INHERITED(ProgEl)
 public:
-  ProgVarRef	    src_data_var;	// #ITEM_FILTER_DataProgVarFilter program variable pointing to source data for operation
-  ProgVarRef	    dest_data_var;	// #NULL_OK #ITEM_FILTER_DataProgVarFilter program variable pointing to destination (result) data for operation (if NULL, a new one will be automatically created)
+  String              src_table;  // #HIDDEN #ADD_COMPLETER_SIMPLE
+  ProgVarRef          src_data_var;	// #ITEM_FILTER_DataProgVarFilter program variable pointing to source data for operation
+  ProgVarRef          dest_data_var;	// #NULL_OK #ITEM_FILTER_DataProgVarFilter program variable pointing to destination (result) data for operation (if NULL, a new one will be automatically created)
 
-  virtual DataTable* GetSrcData(); // get source data table pointer from src_data_var (or NULL)
-  virtual DataTable* GetDestData(); // get dsource data table pointer from dest_data_var (or NULL)
-
-  virtual void	UpdateSpecDataTable() { };
+  virtual DataTable*  GetSrcData(); // get source data table pointer from src_data_var (or NULL)
+  virtual DataTable*  GetDestData(); // get dsource data table pointer from dest_data_var (or NULL)
+  virtual void        UpdateSpecDataTable() { };
   // #CAT_Data update the data table pointer(s) for the spec in this prog (so the user can choose columns from the appropriate data table)
-
-  String 	GetTypeDecoKey() const override { return "DataTable"; }
+  
+  String              GetTypeDecoKey() const override { return "DataTable"; }
+  String              AddColumnDialog();
+  // CAT_Data  dialog for user to select a column name - has completion feature
+  
   PROGEL_SIMPLE_BASEFUNS(DataSrcDestProg);
+  
 protected:
   void	 CheckThisConfig_impl(bool quiet, bool& rval) override;
+  
 private:
   void	Initialize();
   void	Destroy()	{ CutLinks(); }
