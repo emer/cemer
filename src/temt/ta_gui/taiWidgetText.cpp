@@ -29,10 +29,10 @@
 String_Array          taiWidgetText::completion_list;
 
 taiWidgetText::taiWidgetText(TypeDef* typ_, IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_,
-                 bool needs_edit_button, const char *tooltip, MemberDef* md)
+                 bool needs_edit_button, const char *tooltip, MemberDef* md, taBase* base)
   : taiWidget(typ_, host_, par, gui_parent_, flags_)
   , lookupfun_md(md)
-  , lookupfun_base(0)
+  , lookupfun_base(base)
   , leText()
   , btnEdit()
 

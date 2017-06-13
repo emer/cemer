@@ -119,8 +119,12 @@ public:
                             const String& attributes = _nilString);
   // #EXPERT #CAT_Widget add a floating point value edit field -- attributes are:
   virtual bool  AddStringField(String* sptr, const String& nm,
-                            const String& parent, const String& layout = _nilString,
-                            const String& attributes = _nilString);
+                               const String& parent, const String& layout = _nilString,
+                               const String& attributes = _nilString);
+  // #EXPERT #CAT_Widget add a string value edit field -- attributes are:
+  virtual bool  AddStringFieldForLookup(MemberDef* lookup_md, taBase* lookup_base, String* sptr, const String& nm,
+                               const String& parent, const String& layout = _nilString,
+                               const String& attributes = _nilString );
   // #EXPERT #CAT_Widget add a string value edit field -- attributes are:
   virtual bool  AddBoolCheckbox(bool* bptr, const String& nm,
                             const String& parent, const String& layout = _nilString,

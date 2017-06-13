@@ -29,7 +29,7 @@ class TA_API taiWidgetField : public taiWidgetText {
   INHERITED(taiWidgetText)
   friend class iDialogWidgetField;
 public:
-  taiWidgetField(TypeDef* typ_, IWidgetHost* host, taiWidget* par, QWidget* gui_parent_, int flags = 0, MemberDef* md = NULL);
+  taiWidgetField(TypeDef* typ_, IWidgetHost* host, taiWidget* par, QWidget* gui_parent_, int flags = 0, MemberDef* md = NULL, taBase* base = NULL);
   ~taiWidgetField();
 
 protected slots:

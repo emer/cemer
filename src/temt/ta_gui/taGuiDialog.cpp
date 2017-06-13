@@ -505,6 +505,23 @@ bool taGuiDialog::AddStringField(String* dvar, const String& nm, const String& p
   return (bool)w;
 }
 
+bool taGuiDialog::AddStringFieldForLookup(MemberDef* lookup_md, taBase* lookup_base,
+                                          String* dvar, const String& nm, const String& parent,
+                                          const String& layout, const String& attributes) {
+  if(!lookup_md || !lookup_base || !dvar) return false;
+  
+  if(TestError(parent.empty(), "AddStringField", "a parent widget is required")) return false;
+  taGuiWidget* par = FindWidget(parent, true);
+  if(!par) return false;
+  int flags = 0;
+  { String att = GetAttribute("edit_dialog=", attributes);
+    if(att.nonempty()) flags = taiWidget::flgEditDialog;  }
+  taiWidgetField* taidata = new taiWidgetField(&TA_int, data_host, NULL, par->widget, flags, lookup_md, lookup_base);
+  taGuiWidget* w = AddWidget_impl(taidata->GetRep(), nm, "StringField", layout, attributes,
+                                  Variant((void*)dvar), _nilString, taidata);
+  return (bool)w;
+}
+
 bool taGuiDialog::AddBoolCheckbox(bool* dvar, const String& nm, const String& parent,
                               const String& layout, const String& attributes) {
   if(!dvar) return false;

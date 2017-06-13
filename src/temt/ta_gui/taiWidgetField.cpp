@@ -23,9 +23,9 @@
 #include <taMisc>
 #include <iCodeCompleter>
 
-taiWidgetField::taiWidgetField(TypeDef* typ_, IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef* md)
+taiWidgetField::taiWidgetField(TypeDef* typ_, IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef* md, taBase* base)
   : taiWidgetText(typ_, host_, par, gui_parent_, flags_, (flags_ & flgEditDialog),
-            "Edit this field in a multi-line dialog.", md)
+            "Edit this field in a multi-line dialog.", md, base)
   , edit_dialog(0)
 {
   // min width for some popular types

@@ -34,7 +34,7 @@ class TA_API taiWidgetText : public taiWidget {
   INHERITED(taiWidget)
 public:
   taiWidgetText(TypeDef* typ_, IWidgetHost* host, taiWidget* par, QWidget* gui_parent_,
-          int flags, bool needs_edit_button, const char *tooltip, MemberDef* md = NULL);
+          int flags, bool needs_edit_button, const char *tooltip, MemberDef* md = NULL, taBase* base = NULL);
   
   static String_Array   completion_list;// #READ_ONLY #HIDDEN #NO_SAVE
 
