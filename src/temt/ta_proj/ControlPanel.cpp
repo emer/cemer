@@ -166,6 +166,7 @@ bool ControlPanel::UpdateCloneFromMaster_mbrlist
       cln->cust_desc = mst->cust_desc;
       cln->label = mst->label;
       cln->desc = mst->desc;
+      cln->UpdateAfterEdit_NoGui();
     }
     else {
       clone->RemoveIdx(i);
@@ -182,6 +183,7 @@ bool ControlPanel::UpdateCloneFromMaster_mbrlist
       if(explore_new) {
         cln->SetToExplore();
       }
+      cln->UpdateAfterEdit_NoGui();
       any_changes = true;
     }
     else if (i != ti) {
