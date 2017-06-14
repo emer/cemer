@@ -36,7 +36,6 @@ void NetMonItem::Initialize() {
   off = false;
   computed = false;
   object_type = NULL;
-  lookup_var = NULL;
   monitor = NULL;
   variable = "act";
   name_style = AUTO_NAME;
@@ -79,7 +78,6 @@ void NetMonItem::CutLinks() {
   agg_specs.CutLinks();
   object.CutLinks();
   object_type = NULL;
-  lookup_var = NULL;
   monitor = NULL;
   inherited::CutLinks();
 }
@@ -90,7 +88,6 @@ void NetMonItem::Copy_(const NetMonItem& cp) {
   computed = cp.computed;
   object_type = cp.object_type;
   object = cp.object; // ptr only
-  lookup_var = cp.lookup_var;
   variable = cp.variable;
   var_label = cp.var_label;
   name_style = cp.name_style;
@@ -210,10 +207,6 @@ void NetMonItem::UpdateAfterEdit_impl() {
   if(!owner) return;
   if(!object) return;
   //  object_type = object->GetTypeDef(); // not a good idea -- prevents changing !!
-  if(lookup_var) {
-    variable = lookup_var->name;
-    lookup_var = NULL;
-  }
   if(variable.empty()) return;
 
   if (!taMisc::is_loading) {
