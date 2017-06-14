@@ -48,9 +48,9 @@ DataTable* DataSrcDestProg::GetDestData() {
   return (DataTable*)dest_data_var->object_val.ptr();
 }
 
-String DataSrcDestProg::AddColumnDialog() {
+String DataSrcDestProg::AddColumnDialog(String member_name) {
   taGuiDialog dlg;
-  String column_name;
+  String column_name = "";
   dlg.Reset();
   dlg.prompt = "Choose a column to add to select specification ";
   dlg.win_title = "Choose column for Select method";
@@ -59,7 +59,7 @@ String DataSrcDestProg::AddColumnDialog() {
   String curow = "lbl";
   dlg.AddHBoxLayout(curow, "mainv","","");
   dlg.AddLabel("full_lbl_lbl", "main", curow, "label=Column: ;");
-  MemberDef* md = FindMemberName("src_table");
+  MemberDef* md = FindMemberName(member_name);
   String tool_tip = "tooltip=enter a column name; Conrol + space will show all columns in the source data table.";
   dlg.AddStringFieldForLookup(md, this, &column_name, "full_lbl", "main", curow, tool_tip);  // must pass member def and base object (this) to get completion to work
   

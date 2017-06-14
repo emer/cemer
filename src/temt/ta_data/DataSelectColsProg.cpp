@@ -130,7 +130,7 @@ DataOpEl* DataSelectColsProg::AddColumn() {
     return NULL;
   }
   
-  String column_name = AddColumnDialog();
+  String column_name = AddColumnDialog("src_table");
   if (column_name.nonempty()) {
     return select_spec.AddColumn(column_name, GetSrcData());
   }

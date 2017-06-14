@@ -18,6 +18,8 @@
 #include <DataTable>
 #include <NameVar_PArray>
 #include <taMisc>
+#include <MemberDef>
+#include <taGuiDialog>
 
 TA_BASEFUNS_CTORS_DEFN(DataCalcLoop);
 
@@ -287,15 +289,38 @@ void DataCalcLoop::AddAllDestColumns() {
   UpdateColVars();
 }
 
-DataOpEl* DataCalcLoop::AddSrcColumn(const String& col_name) {
-  DataOpEl* rval = src_cols.AddColumn(col_name, GetSrcData());
-  UpdateColVars();
-  return rval;
+DataOpEl* DataCalcLoop::AddSrcColumn() {
+  if (!GetSrcData()) {
+    taMisc::Error("Set the source data table (src_data_var) before choosing columns.");
+    return NULL;
+  }
+  
+  String column_name = AddColumnDialog("src_table");
+  if (column_name.nonempty()) {
+    DataOpEl* rval = src_cols.AddColumn(column_name, GetSrcData());
+//    UpdateColVars();
+    return rval;
+  }
+  else {
+    return NULL;
+  }
 }
-DataOpEl* DataCalcLoop::AddDestColumn(const String& col_name) {
-  DataOpEl* rval = dest_cols.AddColumn(col_name, GetDestData());
-  UpdateColVars();
-  return rval;
+
+DataOpEl* DataCalcLoop::AddDestColumn() {
+  if (!GetDestData()) {
+    taMisc::Error("Set the dest data table (dest_data_var) before choosing columns.");
+    return NULL;
+  }
+  
+  String column_name = AddColumnDialog("dest_table");
+  if (column_name.nonempty()) {
+    DataOpEl* rval = dest_cols.AddColumn(column_name, GetSrcData());
+    UpdateColVars();
+    return rval;
+  }
+  else {
+    return NULL;
+  }
 }
 
 bool DataCalcLoop::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
@@ -330,4 +355,21 @@ bool DataCalcLoop::CvtFmCode(const String& code) {
   
   SigEmitUpdated();
   return true;
+}
+
+void DataCalcLoop::GetListForCompletion(const MemberDef* md, String_Array& list) {
+  if (md->name == "src_table") {
+    if (GetSrcData()) {
+      FOREACH_ELEM_IN_LIST(DataCol, col, GetSrcData()->data) {
+        list.Add(col->name);
+      }
+    }
+  }
+  else if (md->name == "dest_table") {
+    if (GetDestData()) {
+      FOREACH_ELEM_IN_LIST(DataCol, col, GetDestData()->data) {
+        list.Add(col->name);
+      }
+    }
+  }
 }

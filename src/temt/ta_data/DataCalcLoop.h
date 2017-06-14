@@ -37,47 +37,48 @@ class TA_API DataCalcLoop : public DataSrcDestProg {
   // enables arbitrary calculations and operations on data by looping row-by-row through the src_data table; can either just operate on src_data (using SetSrcRow) or generate new dest_data (using AddDestRow and SetDestRow)
 INHERITED(DataSrcDestProg)
 public:
-  DataOpList		src_cols;
+  DataOpList        src_cols;
   // source columns to operate on (variables are labeled as s_xxx where xxx is col_name)
-  DataOpList		dest_cols;
+  DataOpList        dest_cols;
   // destination columns to operate on (variables are labeled as d_xxx where xxx is col_name)
-  ProgEl_List		loop_code; // #TREE_SHOW the items to execute in the loop
-  bool			use_col_numbers; // #DEF_false use column numbers instead of names to access the column data within the loop -- this is significantly faster but also much more brittle -- if the columns change at all after the program is compiled, difficult-to-debug errors can occur -- use with caution!
-  ProgVar_List		src_col_vars;  // #READ_ONLY source column variables
-  ProgVar_List		dest_col_vars;  // #READ_ONLY dest column variables
-  ProgVar		src_row_var;	// #HIDDEN #READ_ONLY #NO_SAVE variable for FindVarName rval for src_row loop variable
+  ProgEl_List       loop_code; // #TREE_SHOW the items to execute in the loop
+  bool              use_col_numbers; // #DEF_false use column numbers instead of names to access the column data within the loop -- this is significantly faster but also much more brittle -- if the columns change at all after the program is compiled, difficult-to-debug errors can occur -- use with caution!
+  ProgVar_List      src_col_vars;  // #READ_ONLY source column variables
+  ProgVar_List      dest_col_vars;  // #READ_ONLY dest column variables
+  ProgVar           src_row_var;	// #HIDDEN #READ_ONLY #NO_SAVE variable for FindVarName rval for src_row loop variable
 
-  int 		ProgElChildrenCount() const override { return loop_code.size; }
+  int               ProgElChildrenCount() const override { return loop_code.size; }
 
-  virtual DataOpEl* AddSrcColumn(const String& col_name);
+  virtual DataOpEl* AddSrcColumn();
   // #CAT_DataOp #BUTTON add a new source column to operate on
-  virtual DataOpEl* AddDestColumn(const String& col_name);
+  virtual DataOpEl* AddDestColumn();
   // #CAT_DataOp #BUTTON add a new dest column to operate on
-  virtual void	AddAllSrcColumns();
+  virtual void      AddAllSrcColumns();
   // #BUTTON #CAT_Data add all columns from src_data to the src_cols list of columns 
-  virtual void	AddAllDestColumns();
+  virtual void      AddAllDestColumns();
   // #BUTTON #CAT_Data add all columns from dest_data to the dest_cols list of columns 
-  void	UpdateSpecDataTable() override;
+  void              UpdateSpecDataTable() override;
+  void              GetListForCompletion(const MemberDef* md, String_Array& list) override;
 
-  virtual ProgEl*	AddLoopCode(TypeDef* el_type)	{ return (ProgEl*)loop_code.New(1, el_type); }
+  virtual ProgEl*   AddLoopCode(TypeDef* el_type)	{ return (ProgEl*)loop_code.New(1, el_type); }
   // #BUTTON #TYPE_ProgEl add a new loop code element
 
-  ProgVar*	FindVarName(const String& var_nm) const override;
+  ProgVar*          FindVarName(const String& var_nm) const override;
 
-  String    GetDisplayName() const override;
-  String    GetToolbarName() const override { return "calc loop"; }
-  bool      CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
-  bool      CvtFmCode(const String& code) override;
+  String            GetDisplayName() const override;
+  String            GetToolbarName() const override { return "calc loop"; }
+  bool              CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
+  bool              CvtFmCode(const String& code) override;
 
   PROGEL_SIMPLE_BASEFUNS(DataCalcLoop);
 protected:
-  void      UpdateAfterEdit_impl() override;
-  void      CheckThisConfig_impl(bool quiet, bool& rval) override;
-  void      CheckChildConfig_impl(bool quiet, bool& rval) override;
-  void      PreGenChildren_impl(int& item_id) override;
+  void                UpdateAfterEdit_impl() override;
+  void                CheckThisConfig_impl(bool quiet, bool& rval) override;
+  void                CheckChildConfig_impl(bool quiet, bool& rval) override;
+  void                PreGenChildren_impl(int& item_id) override;
 
-  virtual void	SetColProgVarFmData(ProgVar* pv, DataOpEl* ds);
-  virtual void	UpdateColVars();
+  virtual void        SetColProgVarFmData(ProgVar* pv, DataOpEl* ds);
+  virtual void        UpdateColVars();
   // sync col vars from cols
 
   void		GenCssPre_impl(Program* prog) override; 
