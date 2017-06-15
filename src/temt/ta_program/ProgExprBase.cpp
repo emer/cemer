@@ -1788,6 +1788,8 @@ Completions* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_po
   completions.string_completions.Reset();
   completions.object_completions.Reset();
   
+  completions.seed = lookup_seed;
+  
   for (int i=0; i<completion_progvar_local_list.size; i++) {
     taBase* base = completion_progvar_local_list.FastEl(i);
     completions.object_completions.Link(base);

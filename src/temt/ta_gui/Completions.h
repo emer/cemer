@@ -31,8 +31,10 @@ class TA_API Completions : public taNBase {
   // <describe here in full detail in one extended line comment>
 INHERITED(taNBase)
 public:
-  String_Array            string_completions;
-  taBase_List             object_completions;
+  taBase_List             object_completions;   // objects that derive from taBase
+  String_Array            string_completions;   // these are strings like "NULL", true/false, etc that are not taBase objects
+  
+  String                  seed;                 // the text that starts the lookup
     TA_SIMPLE_BASEFUNS(Completions);
   
 protected:
