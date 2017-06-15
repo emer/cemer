@@ -31,6 +31,7 @@
 #include <ProgElChoiceDlg>
 #include <SigLinkSignal>
 #include <FlatTreeEl_List>
+#include <Completions>
 
 #include <taMisc>
 
@@ -851,7 +852,7 @@ String ProgEl::StringFieldLookupFun(const String& cur_txt, int cur_pos,
 }
 
 
-String_Array* ProgEl::StringFieldLookupForCompleter(const String& cur_txt, int cur_pos,
+Completions* ProgEl::StringFieldLookupForCompleter(const String& cur_txt, int cur_pos,
                                     const String& mbr_name, int& new_pos) {
   Program* own_prg = GET_MY_OWNER(Program);
   if(!own_prg) return NULL;

@@ -28,7 +28,7 @@ taTypeDef_Of(Program);
 class LocalVars; // 
 class taiWidgetItemChooser; //
 taTypeDef_Of(taiWidgetItemChooser);
-
+class Completions;
 
 /////////////////////////////////////////////////////////////////////
 //              IMPORTANT CODING NOTES:
@@ -233,8 +233,7 @@ public:
 
   String StringFieldLookupFun(const String& cur_txt, int cur_pos,
                               const String& mbr_name, int& new_pos) override;
-  String_Array* StringFieldLookupForCompleter(const String& cur_txt, int cur_pos,
-                                              const String& mbr_name, int& new_pos) override;
+  Completions* StringFieldLookupForCompleter(const String& cur_txt, int cur_pos, const String& mbr_name, int& new_pos) override;
 
   TA_BASEFUNS(ProgEl);
 

@@ -28,6 +28,9 @@
 #include <taiMisc>
 #include <taBase>
 #include <String_Array>
+#include <Completions>
+
+taTypeDef_Of(Function);
 
 iCodeCompleter::iCodeCompleter(QObject* parent) {
   Init();
@@ -54,6 +57,26 @@ void iCodeCompleter::SetModelList(String_Array *list) {
     list->ToQStringList(string_list);
     list_model->setStringList(string_list);
    }
+}
+
+void iCodeCompleter::SetCompletions(Completions* completions) {
+  if (completions) {
+    string_list.clear();
+    QStringList str_list;
+    completions->string_completions.ToQStringList(str_list);
+    for (int i=0; i<completions->object_completions.size; i++) {
+      taBase* base = completions->object_completions.FastEl(i);
+      if (base && (base->InheritsFrom(&TA_Function) || base->InheritsFrom(&TA_Program))) {
+        String name_plus = base->GetName()  + "()";
+        string_list.append(name_plus);
+      }
+      else {
+        string_list.append(base->GetName());
+      }
+    }
+    string_list.append(str_list);
+    list_model->setStringList(string_list);
+  }
 }
 
 String iCodeCompleter::GetCurrent() {

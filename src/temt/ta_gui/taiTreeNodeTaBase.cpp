@@ -19,6 +19,7 @@
 #include <iLineEdit>
 #include <ProgEl>
 #include <ProgExprBase>
+#include <Completions>
 
 #include <taMisc>
 
@@ -123,7 +124,7 @@ void taiTreeNodeTaBase::characterEntered(iLineEdit* le, int column) {
   
   int cur_pos = le->cursorPosition();
   int new_pos = -1;
-  String_Array* list = NULL;
+  Completions* completions = NULL;
 
   TypeDef* td = tab->GetTypeDef();
   for(int i=0; i<td->members.size; i++) {
@@ -134,8 +135,8 @@ void taiTreeNodeTaBase::characterEntered(iLineEdit* le, int column) {
       return;
     }
     taBase* bel = (taBase*)md->GetOff(tab);
-    list = bel->StringFieldLookupForCompleter(le->text(), cur_pos, "", new_pos);
-    le->GetCompleter()->SetModelList(list);
+    completions = bel->StringFieldLookupForCompleter(le->text(), cur_pos, "", new_pos);
+    le->GetCompleter()->SetCompletions(completions);
 #ifdef TA_OS_MAC
     // per this bug with 2.8.x on mac, we need to regain focus:  https://bugreports.qt-project.org/browse/QTBUG-22911
     le->window()->setFocus();
@@ -144,8 +145,8 @@ void taiTreeNodeTaBase::characterEntered(iLineEdit* le, int column) {
     return;                     // if we get it, bail
   }
   // didn't find any -- call the one on the guy itself!
-  list = tab->StringFieldLookupForCompleter(le->text(), cur_pos, "", new_pos);
-  le->GetCompleter()->SetModelList(list);
+  completions = tab->StringFieldLookupForCompleter(le->text(), cur_pos, "", new_pos);
+  le->GetCompleter()->SetCompletions(completions);
 #ifdef TA_OS_MAC
   //   per this bug with 2.8.x on mac, we need to regain focus:  https://bugreports.qt-project.org/browse/QTBUG-22911
   le->window()->setFocus();

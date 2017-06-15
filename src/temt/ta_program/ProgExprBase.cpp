@@ -40,6 +40,7 @@
 #include <SigLinkSignal>
 #include <taBase_List>
 #include <EnumDef>
+#include <Completions>
 
 TA_BASEFUNS_CTORS_DEFN(ProgExprBase);
 TA_BASEFUNS_CTORS_DEFN(ProgExprShort);
@@ -50,7 +51,7 @@ cssSpace*     ProgExprBase::parse_tmp = NULL;
 
 static ProgEl* expr_lookup_cur_base = NULL;
 
-String_Array                ProgExprBase::completion_choice_list;
+Completions                 ProgExprBase::completions;
 String_Array                ProgExprBase::completion_progels_list;
 String_Array                ProgExprBase::completion_statics_list;
 String_Array                ProgExprBase::completion_bool_list;
@@ -1422,14 +1423,7 @@ void ProgExprBase::ExprLookupCompleterReset() {
   completion_enum_list.RemoveAll();
 }
 
-void ProgExprBase::AddToCompleter(const String& txt) {
-  // if(txt == "saved") {
-  //   taMisc::Info("got saved!");
-  // }
-  completion_choice_list.Add(txt);
-}
-
-String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_pos, int& new_pos,
+Completions* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_pos, int& new_pos,
                                           taBase*& path_own_obj, TypeDef*& path_own_typ,
                                           MemberDef*& path_md, ProgEl* own_pel,
                                           Program* own_prg, Function* own_fun,
@@ -1791,11 +1785,12 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
     }
   }
 
-  completion_choice_list.Reset();
+  completions.string_completions.Reset();
+  completions.object_completions.Reset();
   
   for (int i=0; i<completion_progvar_local_list.size; i++) {
     taBase* base = completion_progvar_local_list.FastEl(i);
-    AddToCompleter(base->GetName());
+    completions.object_completions.Link(base);
   }
   
   for (int i=0; i<completion_progvar_global_list.size; i++) {
@@ -1807,70 +1802,70 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
         continue;
       }
     }
-    AddToCompleter(base->GetName());
+    completions.object_completions.Link(base);
   }
   
   for (int i=0; i<completion_list_items_list.size; i++) {
     taBase* base = completion_list_items_list.FastEl(i);
-    AddToCompleter(base->GetName());
+    completions.object_completions.Link(base);
   }
   
   for (int i=0; i<completion_group_items_list.size; i++) {
     taBase* base = completion_group_items_list.FastEl(i);
-    AddToCompleter(base->GetName());
+    completions.object_completions.Link(base);
   }
   
   if (include_bools) {
     for (int i=0; i<completion_bool_list.size; i++) {
-      AddToCompleter(completion_bool_list.FastEl(i));
+      completions.string_completions.Add(completion_bool_list.FastEl(i));
     }
   }
   
   if (include_null) {
     for (int i=0; i<completion_null_list.size; i++) {
-      AddToCompleter(completion_null_list.FastEl(i));
+      completions.string_completions.Add(completion_null_list.FastEl(i));
     }
   }
   
   for (int i=0; i<completion_function_list.size; i++) {
     taBase* base = completion_function_list.FastEl(i);
-    AddToCompleter(base->GetName() + "()");
+    completions.object_completions.Link(base);
   }
   
   for (int i=0; i<completion_program_list.size; i++) {
     taBase* base = completion_program_list.FastEl(i);
-    AddToCompleter(base->GetName() + "()");
+    completions.object_completions.Link(base);
   }
   
   if (include_types) {
     for (int i=0; i<completion_type_list.size; i++) {
-      AddToCompleter(completion_type_list.FastEl(i));
+      completions.string_completions.Add(completion_type_list.FastEl(i));
     }
   }
 
   if (include_progels) {
     for (int i=0; i<completion_progels_list.size; i++) {
-      AddToCompleter(completion_progels_list.FastEl(i));
+      completions.string_completions.Add(completion_progels_list.FastEl(i));
     }
   }
   
   if (include_statics) {
     for (int i=0; i<completion_statics_list.size; i++) {
-      AddToCompleter(completion_statics_list.FastEl(i));
+      completions.string_completions.Add(completion_statics_list.FastEl(i));
     }
   }
   
   if (include_css_functions) {
     for (int i=0; i<cssMisc::Functions.size; i++) {
-      AddToCompleter(cssMisc::Functions.FastEl(i)->name);
+      completions.string_completions.Add(cssMisc::Functions.FastEl(i)->name);
     }
   }
 
   completion_member_list.Sort();
   for (int i=0; i<completion_member_list.size; i++) {
     MemberDef* member_def = completion_member_list.FastEl(i);
-    AddToCompleter(member_def->name);
-  }
+    completions.string_completions.Add(member_def->name);
+    }
 
   for (int i=0; i<completion_method_list.size; i++) {
     MethodDef* method_def = completion_method_list.FastEl(i);
@@ -1882,17 +1877,17 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
 //      }
 //    }
     full_seed += ")";
-    AddToCompleter(full_seed);
+    completions.string_completions.Add(full_seed);
   }
   
   for (int i=0; i<completion_dynenum_list.size; i++) {
     taBase* base = completion_dynenum_list.FastEl(i);
-    AddToCompleter(base->GetName());
+    completions.object_completions.Link(base);
   }
 
   for (int i=0; i<completion_enum_list.size; i++) {
     EnumDef* enum_def = completion_enum_list.FastEl(i);
-    AddToCompleter(enum_def->name);
+    completions.string_completions.Add(enum_def->name);
   }
 
   // useful for debug
@@ -1901,8 +1896,8 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
 //  }
 
   ExprLookupCompleterReset();
-
-  return &completion_choice_list;
+  
+  return &completions;
 }
 
 
@@ -1936,7 +1931,7 @@ String ProgExprBase::StringFieldLookupFun(const String& cur_txt, int cur_pos,
                                      own_pel, own_prg, own_fun);
 }
 
-String_Array* ProgExprBase::StringFieldLookupForCompleter(const String& cur_txt, int cur_pos,
+Completions* ProgExprBase::StringFieldLookupForCompleter(const String& cur_txt, int cur_pos,
                                           const String& mbr_name, int& new_pos) {
   ProgEl* own_pel = GET_MY_OWNER(ProgEl);
   

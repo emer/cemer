@@ -22,6 +22,7 @@
 #include <BuiltinTypeDefs>
 #include <taMisc>
 #include <iCodeCompleter>
+#include <Completions>
 
 taiWidgetField::taiWidgetField(TypeDef* typ_, IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef* md, taBase* base)
   : taiWidgetText(typ_, host_, par, gui_parent_, flags_, (flags_ & flgEditDialog),
@@ -75,8 +76,7 @@ void taiWidgetField::lookupKeyPressed() {
   taBase* tab = (taBase*)lookupfun_base;
   int cur_pos = rep()->cursorPosition();
   int new_pos = -1;
-  String rval = tab->StringFieldLookupFun(rep()->text(), cur_pos,
-                                          lookupfun_md->name, new_pos);
+  String rval = tab->StringFieldLookupFun(rep()->text(), cur_pos,lookupfun_md->name, new_pos);
 #ifdef TA_OS_MAC
   // per this bug with 2.8.x on mac, we need to regain focus:  https://bugreports.qt-project.org/browse/QTBUG-22911
   rep()->window()->setFocus();
@@ -132,8 +132,8 @@ void taiWidgetField::characterEntered() {
       rep()->GetCompleter()->SetModelList(&completion_list);
     }
     else {  // iCodeCompleter::EXPRESSION
-      String_Array* list = tab->StringFieldLookupForCompleter(rep()->text(), cur_pos, lookupfun_md->name, new_pos);
-      rep()->GetCompleter()->SetModelList(list);
+      Completions* completions = tab->StringFieldLookupForCompleter(rep()->text(), cur_pos, lookupfun_md->name, new_pos);
+      rep()->GetCompleter()->SetCompletions(completions);
     }
   }
   

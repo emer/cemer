@@ -22,11 +22,12 @@
 #include <QCompleter>
 #include <QStringList>
 #include <QStringListModel>
-
 #include <QListView>
 
 // member includes:
 #include <taBase_List>
+
+class Completions;
 
 // declare all other types mentioned but not required to include:
 
@@ -69,6 +70,7 @@ public:
   HostType                host_type;
 
   void                    SetModelList(String_Array* list);
+  void                    SetCompletions(Completions* completions);
   QStringList*            GetList() { return &string_list; }
   String                  GetCurrent();             // return the current selection
   void                    ClearList();              // clear the model list

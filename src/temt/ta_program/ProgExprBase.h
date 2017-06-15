@@ -39,6 +39,7 @@ class ProgEl; //
 class ProgEl_List; //
 class cssProgSpace; // #IGNORE
 class cssSpace; // #IGNORE
+class Completions;
 
 
 taTypeDef_Of(ProgExprBase);
@@ -97,6 +98,8 @@ public:
   int                   parse_ve_pos; // #IGNORE position within expr during parsing for copying to var_expr
   
   // these are for the code completer
+  static Completions            completions;           // #READ_ONLY #HIDDEN #NO_SAVE
+  
   static taBase_List            completion_progvar_global_list;  // #READ_ONLY #HIDDEN #NO_SAVE
   static taBase_List            completion_progvar_local_list;  // #READ_ONLY #HIDDEN #NO_SAVE
   static taBase_List            completion_dynenum_list;  // #READ_ONLY #HIDDEN #NO_SAVE
@@ -112,7 +115,6 @@ public:
   static String_Array           completion_bool_list;   // #READ_ONLY #HIDDEN #NO_SAVE built once
   static String_Array           completion_null_list;   // #READ_ONLY #HIDDEN #NO_SAVE built once
   static String_Array           completion_type_list;   // #READ_ONLY #HIDDEN #NO_SAVE built once
-  static String_Array           completion_choice_list; // #READ_ONLY #HIDDEN #NO_SAVE
   static LookUpType             completion_lookup_type; // #READ_ONLY #HIDDEN #NO_SAVE
   static String                 completion_pre_text;    // #READ_ONLY #HIDDEN #NO_SAVE completers copy because it needs to be static so we can get it later
   static String                 completion_path_pre_text; // #READ_ONLY #HIDDEN #NO_SAVE completers copy because it needs to be static so we can get it later
@@ -180,22 +182,19 @@ public:
                                 taBase* path_base=NULL, TypeDef* path_base_typ=NULL);
   // #IGNORE generic lookup function for any kind of expression -- very powerful!  takes current text and position where the lookup function was called, and returns the new text filled in with whatever the user looked up, with a new cursor position (new_pos) -- if this is a path expression then path_own_typ is the type of object that owns the member path_md at the end of the path -- if path_md is NULL then path_own_typ is an object in a list or other container where member def is not relevant.  path_base is a base anchor point for paths if that is implied instead of needing to be fully contained within the expression (path_base_typ is type of that guy, esp needed if base is null) -- in this case only path expressions are allowed.
 
-  static String_Array* ExprLookupCompleter(const String& cur_txt, int cur_pos, int& new_pos,
+  static Completions* ExprLookupCompleter(const String& cur_txt, int cur_pos, int& new_pos,
                                 taBase*& path_own_obj, TypeDef*& path_own_typ,
                                 MemberDef*& path_md, ProgEl* own_pel,
                                 Program* own_prg, Function* own_fun,
                                 taBase* path_base=NULL, TypeDef* path_base_typ=NULL);
   // #IGNORE like ExprLookupChooser but returns the list of choosable strings and does not include calls to GUI widgets - just gets the list
-  static void          AddToCompleter(const String& itm);
-  // #IGNORE convenience and debugging entry point for anything added to the list
 
   static void          ExprLookupCompleterReset();
   // #IGNORE reset all the data structures and lists for completer -- 
 
   String               StringFieldLookupFun(const String& cur_txt, int cur_pos,
                                             const String& mbr_name, int& new_pos) override;
-  String_Array*        StringFieldLookupForCompleter(const String& cur_txt, int cur_pos,
-                                                     const String& mbr_name, int& new_pos) override;
+  Completions*         StringFieldLookupForCompleter(const String& cur_txt,int cur_pos, const String& mbr_name, int& new_pos) override;
   
   static LookUpType    ParseForLookup(const String& cur_txt, int cur_pos, String& prepend_txt,
                                       String& path_prepend_txt, String& append_txt, String& prog_el_txt,

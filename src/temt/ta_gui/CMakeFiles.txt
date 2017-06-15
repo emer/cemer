@@ -189,6 +189,7 @@ set(ta_gui_HEADS_MAKETA_NOMOC
 
   KeyBindings.h
   KeyBindings_List.h
+  Completions.h
 )
 
 # multiple inheritence -- in correspondence with deps below
@@ -989,6 +990,7 @@ set(ta_gui_SRCS_NOMAKETA
 
   iDialogRegexpPopulator.cpp
   taSound_QObj.cpp
+  Completions.cpp
 )
 
 set(ta_gui_SRCS_UI

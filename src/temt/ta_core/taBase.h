@@ -56,6 +56,7 @@ class MainWindowViewer; //
 class String_Array; //
 class taProject; //
 class String_Array; //
+class Completions; //
 
 //////////////////////////////////////////////////////////////////////////////////
 // Copy logic (this is complicated for dealing with constructors and = assignment
@@ -1259,7 +1260,7 @@ public:
                                              const String& mbr_name, int& new_pos)
   { return _nilString; }
   // #IGNORE special lookup function called when Ctrl-L is pressed for string members -- is passed current text and position of cursor, and name of member, and it must return the replacement text for the entire edit (if rval is empty, nothing happens)
-  virtual String_Array*  StringFieldLookupForCompleter(const String& cur_txt, int cur_pos,
+  virtual Completions*  StringFieldLookupForCompleter(const String& cur_txt, int cur_pos,
                                              const String& mbr_name, int& new_pos) { return NULL; }
   // #IGNORE lookup function called in code fields as each character is entered - returns a list of options that are legal entries for the field
   virtual void          GetListForCompletion(const MemberDef* md, String_Array& list) { };
