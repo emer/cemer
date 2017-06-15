@@ -1787,6 +1787,8 @@ Completions* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_po
 
   completions.string_completions.Reset();
   completions.object_completions.Reset();
+  completions.member_completions.Reset();
+  completions.method_completions.Reset();
   
   completions.seed = lookup_seed;
   
@@ -1866,20 +1868,20 @@ Completions* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_po
   completion_member_list.Sort();
   for (int i=0; i<completion_member_list.size; i++) {
     MemberDef* member_def = completion_member_list.FastEl(i);
-    completions.string_completions.Add(member_def->name);
-    }
+    completions.member_completions.Link(member_def);
+  }
 
   for (int i=0; i<completion_method_list.size; i++) {
     MethodDef* method_def = completion_method_list.FastEl(i);
-    String full_seed = method_def->name + "(";
-//    for (int j=0; j<method_def->arg_names.size; j++) {
-//      full_seed += method_def->arg_names.SafeEl(j);
-//      if (j < method_def->arg_names.size - 1) {
-//        full_seed += ", ";
-//      }
-//    }
-    full_seed += ")";
-    completions.string_completions.Add(full_seed);
+//    String full_seed = method_def->name + "(";
+////    for (int j=0; j<method_def->arg_names.size; j++) {
+////      full_seed += method_def->arg_names.SafeEl(j);
+////      if (j < method_def->arg_names.size - 1) {
+////        full_seed += ", ";
+////      }
+////    }
+//    full_seed += ")";
+    completions.method_completions.Link(method_def);
   }
   
   for (int i=0; i<completion_dynenum_list.size; i++) {
@@ -1903,8 +1905,7 @@ Completions* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_po
 }
 
 
-String ProgExprBase::StringFieldLookupFun(const String& cur_txt, int cur_pos,
-                                          const String& mbr_name, int& new_pos) {
+String ProgExprBase::StringFieldLookupFun(const String& cur_txt, int cur_pos, const String& mbr_name, int& new_pos) {
   ProgEl* own_pel = GET_MY_OWNER(ProgEl);
   
   Program* own_prg;

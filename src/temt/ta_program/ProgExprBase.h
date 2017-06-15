@@ -192,8 +192,7 @@ public:
   static void          ExprLookupCompleterReset();
   // #IGNORE reset all the data structures and lists for completer -- 
 
-  String               StringFieldLookupFun(const String& cur_txt, int cur_pos,
-                                            const String& mbr_name, int& new_pos) override;
+  String               StringFieldLookupFun(const String& cur_txt, int cur_pos, const String& mbr_name, int& new_pos) override;
   Completions*         StringFieldLookupForCompleter(const String& cur_txt,int cur_pos, const String& mbr_name, int& new_pos) override;
   
   static LookUpType    ParseForLookup(const String& cur_txt, int cur_pos, String& prepend_txt,

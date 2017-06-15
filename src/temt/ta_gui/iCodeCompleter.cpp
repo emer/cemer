@@ -21,6 +21,7 @@
 #include <QKeyEvent>
 
 #include <MemberDef>
+#include <MethodDef>
 #include <DataTable>
 #include <Program>
 
@@ -74,6 +75,20 @@ void iCodeCompleter::SetCompletions(Completions* completions) {
         string_list.append(base->GetName());
       }
     }
+    
+    // Members
+    for (int i=0; i<completions->member_completions.size; i++) {
+      MemberDef* member_def = completions->member_completions.FastEl(i);
+      string_list.append(member_def->name);
+    }
+    
+    //  Methods
+    for (int i=0; i<completions->method_completions.size; i++) {
+      MethodDef* method_def = completions->method_completions.FastEl(i);
+      String name_plus = method_def->name  + "()";
+      string_list.append(name_plus);
+    }
+    
     string_list.append(str_list);
     list_model->setStringList(string_list);
   }

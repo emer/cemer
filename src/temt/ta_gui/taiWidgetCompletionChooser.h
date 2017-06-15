@@ -37,8 +37,9 @@ public:
   const String          headerText(int index, int view) const override;
   int                   viewCount() const override {return 1;}
   const String          viewText(int index) const override;
+  String                GetSelectionText(); // return the selected string
 
-  void                  BuildChooser(iDialogItemChooser* ic, int view = 0) override;
+  void                  BuildChooser(iDialogItemChooser* item_chooser, int view = 0) override;
   void                  SetCompletions(Completions* completions_info);
   taBase*               GetValue() {return item();}
 
@@ -49,11 +50,9 @@ public:
                               taiWidget* par, QWidget* gui_parent_, int flags_ = 0,
                               const String& flt_start_txt = "", int button_width = -1);
 protected:
-  const String          labelNameNonNull() const override;
-  
-  virtual int           BuildChooser_0(iDialogItemChooser* ic, Completions* the_completions,
-                                       QTreeWidgetItem* top_item);
-  // we use this recursively, and also in gpi guy
+  const String          labelNameNonNull() const override;  
+  virtual int           Populate(iDialogItemChooser* item_chooser, Completions* the_completions, QTreeWidgetItem* top_item);
+
 };
 
 #endif // taiWidgetCompletionChooser_h
