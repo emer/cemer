@@ -23,6 +23,7 @@
 #include <taMisc>
 
 #include <QTreeWidgetItem>
+#include <iTreeWidget>
 
 taTypeDef_Of(Function);
 taTypeDef_Of(Program);
@@ -45,31 +46,30 @@ void taiWidgetCompletionChooser::BuildChooser(iDialogItemChooser* item_chooser, 
     taMisc::Error("taiWidgetCompletionChooser::BuildChooser: completions object pointer not set");
     return;
   }
+  dialog_item_chooser = item_chooser;
   Populate(item_chooser, completions, NULL);
 }
 
 int taiWidgetCompletionChooser::Populate(iDialogItemChooser* item_chooser, Completions* the_completions, QTreeWidgetItem* top_item)
 {
-  int rval = 0;
-  
+  int item_count = 0;
   String display_string;
   
+  taMisc::DebugInfo(filter_start_txt);
+
   // TA Objects
   for (int i = 0; i < the_completions->object_completions.size; ++i) {
     taBase* tab = the_completions->object_completions.FastEl(i);
     if (!tab)  continue;
 
     display_string = tab->GetName();
-    if(filter_start_txt.nonempty()) {
-      if(!display_string.startsWith(filter_start_txt)) continue;
-    }
     if (tab->InheritsFrom(&TA_Function) || tab->InheritsFrom(&TA_Program)) {
       display_string = display_string + "()";
     }
     QTreeWidgetItem* item = item_chooser->AddItem(display_string, top_item, tab);
     item->setText(1, tab->GetColText(taBase::key_type));
     item->setText(2, tab->GetColText(taBase::key_desc));
-    ++rval;
+    ++item_count;
   }
   
   // Members
@@ -78,11 +78,8 @@ int taiWidgetCompletionChooser::Populate(iDialogItemChooser* item_chooser, Compl
     if (!md)  continue;
     
     display_string = md->name;
-    if(filter_start_txt.nonempty()) {
-      if(!display_string.startsWith(filter_start_txt)) continue;
-    }
     QTreeWidgetItem* item = item_chooser->AddItem(display_string, top_item, md);
-    ++rval;
+    ++item_count;
   }
   
   // Methods
@@ -91,14 +88,11 @@ int taiWidgetCompletionChooser::Populate(iDialogItemChooser* item_chooser, Compl
     if (!md)  continue;
     
     display_string = md->name;
-    if(filter_start_txt.nonempty()) {
-      if(!display_string.startsWith(filter_start_txt)) continue;
-    }
     display_string = display_string + "()";  // always for methods
     QTreeWidgetItem* item = item_chooser->AddItem(display_string, top_item, md);
-    ++rval;
+    ++item_count;
   }
-  return rval;
+  return item_count;
 }
 
 int taiWidgetCompletionChooser::columnCount(int view) const {
@@ -121,7 +115,8 @@ const String taiWidgetCompletionChooser::headerText(int index, int view) const {
 }
 
 const String taiWidgetCompletionChooser::labelNameNonNull() const {
-  return item()->GetDisplayName();
+//  return item()->GetDisplayName();
+  return "";
 }
 
 const String taiWidgetCompletionChooser::viewText(int index) const {
@@ -137,5 +132,27 @@ void taiWidgetCompletionChooser::GetImage(taList_impl* base_lst, taBase* it) {
 }
 
 String taiWidgetCompletionChooser::GetSelectionText() {
-  return item()->GetName();
+  int seed_length = completions->seed.length();
+  int text_before_length = ProgExprBase::completion_text_before.length();
+  String leading_text = ProgExprBase::completion_text_before.before(text_before_length - seed_length);
+  String selection_text;
+  
+  MethodDef* mth = dynamic_cast<MethodDef*>(GetItemType());
+  if (mth) {
+    selection_text = mth->name + "()";
+  }
+  MemberDef* mbr = dynamic_cast<MemberDef*>(GetItemType());
+  if (mbr) {
+    selection_text = mbr->name;
+  }
+  
+  taBase* tab = dynamic_cast<taBase*>(GetItemType());
+  if (tab) {
+    selection_text = tab->GetName();
+    if (tab->InheritsFrom(&TA_Function) || tab->InheritsFrom(&TA_Program)) {
+      selection_text = selection_text + "()";
+    }
+  }
+
+  return leading_text + selection_text;
 }

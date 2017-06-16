@@ -1460,7 +1460,7 @@ Completions* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_po
   completion_lookup_seed = lookup_seed;
   completion_text_before = txt;
   completion_lookup_type = lookup_type;
-
+  
   ExprLookupCompleterReset();
   
   GetProgEls(&completion_progels_list); // get the list of program elements - Init() is too early to do this
@@ -1898,8 +1898,6 @@ Completions* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_po
 //  for (int i=0; i<completion_choice_list.size; i++) {
 //    taMisc::DebugInfo(completion_choice_list.SafeEl(i));
 //  }
-
-  ExprLookupCompleterReset();
   
   return &completions;
 }

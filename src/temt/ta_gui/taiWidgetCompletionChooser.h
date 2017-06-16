@@ -29,7 +29,9 @@ class TA_API taiWidgetCompletionChooser : public taiWidgetItemChooser {
   
   INHERITED(taiWidgetItemChooser)
 public:
+  inline TypeItem*      GetItemType() const {return (TypeItem*)m_sel;}
   taList_impl*          list;
+  iDialogItemChooser*   dialog_item_chooser;
   Completions*          completions; // the items to display
 
   inline taBase*        item() const {return (taBase*)m_sel;}
