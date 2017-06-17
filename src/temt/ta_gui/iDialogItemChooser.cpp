@@ -135,10 +135,13 @@ void iDialogItemChooser::accept() {
 
 QTreeWidgetItem* iDialogItemChooser::AddItem(const QString& itm_cat,
                                              const QString& itm_txt,
-                                             QTreeWidgetItem* parent, const void* data_,
-                                             const String& desc, int desc_idx)
+                                             QTreeWidgetItem* parent,
+                                             const void* data_,
+                                             const String& desc,
+                                             int desc_idx,
+                                             ItemObjType item_type)
 {
-  QTreeWidgetItem* rval = AddItem(itm_txt, parent, data_, desc, desc_idx);
+  QTreeWidgetItem* rval = AddItem(itm_txt, parent, data_, desc, desc_idx, item_type);
   if (!itm_cat.isEmpty())
     rval->setData(0, ObjCatRole, itm_cat);
   return rval;
@@ -147,13 +150,15 @@ QTreeWidgetItem* iDialogItemChooser::AddItem(const QString& itm_cat,
 QTreeWidgetItem* iDialogItemChooser::AddItem(const QString& itm_txt,
                                              QTreeWidgetItem* parent,
                                              const void* data_,
-                                             const String& desc, int desc_idx)
+                                             const String& desc,
+                                             int desc_idx,
+                                             ItemObjType item_type )
 {
   QTreeWidgetItem* rval;
   if (parent)
-    rval = new QTreeWidgetItem(parent);
+    rval = new QTreeWidgetItem(parent, item_type);
   else
-    rval = new QTreeWidgetItem(items);
+    rval = new QTreeWidgetItem(items, item_type);
   // set standard item text
   rval->setText(0, itm_txt);
   // set the object, which is an extended attribute

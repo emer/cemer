@@ -54,6 +54,13 @@ public:
     flgNoFlags          = 0x0000,
     flgNoCancel         = 0x0001,  // don't add the cancel button
   };
+  
+  enum ItemObjType {  // added to deal with getting the item selected text from multiple object types with different bases - add to QTreeWidgetItem constructor
+    UNSPECIFIED_ITEM = 0,
+    STRING_ITEM,
+    BASE_ITEM,
+    TYPE_ITEM
+  };
 
   static const String   cat_none; // "none" category
   static int            filt_delay; // delay, in msec, to invoke filter after typing
@@ -95,12 +102,12 @@ public:
 
   virtual QTreeWidgetItem* AddItem(const QString& itm_txt, QTreeWidgetItem* parent,
                                    const void* data_ = NULL, const String& desc = "",
-                                   int desc_idx = 1);
-  // add one item to dialog, optionally with data
+                                   int desc_idx = 1, ItemObjType item_type = UNSPECIFIED_ITEM);
+  // add one item to dialog, optionally with data; switch on item type if there are multiple item types that derive from different bases
   virtual QTreeWidgetItem* AddItem(const QString& itm_cat, const QString& itm_txt,
                                    QTreeWidgetItem* parent, const void* data_ = NULL,
-                                   const String& desc = "", int desc_idx = 1);
-  // add one categorized item to dialog, optionally with data
+                                   const String& desc = "", int desc_idx = 1, ItemObjType item_type = UNSPECIFIED_ITEM);
+  // add one categorized item to dialog, optionally with data; switch on item type if there are multiple item types that derive from different bases
 
   void*                 GetSelectedObject() const {return m_selObj;}
   
