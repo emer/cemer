@@ -1789,6 +1789,7 @@ Completions* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_po
   completions.object_completions.Reset();
   completions.member_completions.Reset();
   completions.method_completions.Reset();
+  completions.enum_completions.Reset();
   
   completions.seed = lookup_seed;
   
@@ -1841,7 +1842,7 @@ Completions* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_po
     completions.object_completions.Link(base);
   }
   
-  if (include_types) {
+  if (include_types) { // int, float, etc
     for (int i=0; i<completion_type_list.size; i++) {
       completions.string_completions.Add(completion_type_list.FastEl(i));
     }
@@ -1891,7 +1892,7 @@ Completions* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_po
 
   for (int i=0; i<completion_enum_list.size; i++) {
     EnumDef* enum_def = completion_enum_list.FastEl(i);
-    completions.string_completions.Add(enum_def->name);
+    completions.enum_completions.Link(enum_def);
   }
 
   // useful for debug

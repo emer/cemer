@@ -23,6 +23,10 @@
 #include <taMisc>
 #include <iCodeCompleter>
 #include <Completions>
+#include <ProgExprBase>
+#include <taiWidgetCompletionChooser>
+
+//#define completion_chooser
 
 taiWidgetField::taiWidgetField(TypeDef* typ_, IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef* md, taBase* base)
   : taiWidgetText(typ_, host_, par, gui_parent_, flags_, (flags_ & flgEditDialog),
@@ -73,15 +77,38 @@ void taiWidgetField::btnEdit_clicked(bool) {
 
 void taiWidgetField::lookupKeyPressed() {
   if(!lookupfun_md || !lookupfun_base) return;
+  
   taBase* tab = (taBase*)lookupfun_base;
   int cur_pos = rep()->cursorPosition();
   int new_pos = -1;
-  String rval = tab->StringFieldLookupFun(rep()->text(), cur_pos,lookupfun_md->name, new_pos);
+  Completions* completions = NULL;
+
+#ifdef completion_chooser
+  completions = tab->StringFieldLookupForCompleter(rep()->text(), cur_pos, lookupfun_md->name, new_pos);
+  rep()->GetCompleter()->SetCompletions(completions);
+#else
+  String rval = tab->StringFieldLookupFun(rep()->text(), cur_pos, lookupfun_md->name, new_pos);
+#endif
+
 #ifdef TA_OS_MAC
   // per this bug with 2.8.x on mac, we need to regain focus:  https://bugreports.qt-project.org/browse/QTBUG-22911
   rep()->window()->setFocus();
   rep()->setFocus();
 #endif
+  
+#ifdef completion_chooser
+  // Experiment to test out chooser before converting over to full use
+  taiWidgetCompletionChooser* chooser = new taiWidgetCompletionChooser(NULL, NULL, NULL, NULL, 0, completions->seed);
+  chooser->SetCompletions(completions);
+  bool ok_choice = chooser->OpenChooser();
+  
+  if (ok_choice) {
+    String pre_text = ProgExprBase::completion_text_before;
+    String selection_text = chooser->GetSelectionText();
+    rep()->setText(pre_text + selection_text);
+    rep()->setCursorPosition(cur_pos + selection_text.length()); // go back to orig pos
+  }
+#else
   if(rval.nonempty()) {
     rep()->setText(rval);
     if(new_pos >= 0)
@@ -89,6 +116,7 @@ void taiWidgetField::lookupKeyPressed() {
     else
       rep()->setCursorPosition(cur_pos); // go back to orig pos
   }
+#endif  // completion_chooser
 }
 
 void taiWidgetField::lookupKeyPressed_dialog() {

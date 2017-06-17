@@ -15,13 +15,15 @@
 
 #include "taiTreeNodeTaBase.h"
 
+#include <taMisc>
 #include <SigLinkSignal>
 #include <iLineEdit>
 #include <ProgEl>
 #include <ProgExprBase>
 #include <Completions>
+#include <taiWidgetCompletionChooser>
 
-#include <taMisc>
+//#define completion_chooser
 
 class iCodeCompleter;
 
@@ -76,6 +78,7 @@ void taiTreeNodeTaBase::lookupKeyPressed(iLineEdit* le, int column) {
   
   int cur_pos = le->cursorPosition();
   int new_pos = -1;
+  Completions* completions = NULL;
 
   TypeDef* td = tab->GetTypeDef();
   for(int i=0; i<td->members.size; i++) {
@@ -86,12 +89,33 @@ void taiTreeNodeTaBase::lookupKeyPressed(iLineEdit* le, int column) {
       return;
     }
     taBase* bel = (taBase*)md->GetOff(tab);
+#ifdef completion_chooser
+    completions = bel->StringFieldLookupForCompleter(le->text(), cur_pos, "", new_pos);
+    le->GetCompleter()->SetCompletions(completions);
+#else
     String rval = bel->StringFieldLookupFun(le->text(), cur_pos, "", new_pos);
+#endif
+    
 #ifdef TA_OS_MAC
   // per this bug with 2.8.x on mac, we need to regain focus:  https://bugreports.qt-project.org/browse/QTBUG-22911
     le->window()->setFocus();
     le->setFocus();
 #endif
+    
+    
+#ifdef completion_chooser
+    // Experiment to test out chooser before converting over to full use
+    taiWidgetCompletionChooser* chooser = new taiWidgetCompletionChooser(NULL, NULL, NULL, NULL, 0, completions->seed);
+    chooser->SetCompletions(completions);
+    bool ok_choice = chooser->OpenChooser();
+    
+    if (ok_choice) {
+      String pre_text = ProgExprBase::completion_text_before;
+      String selection_text = chooser->GetSelectionText();
+      le->setText(pre_text + selection_text);
+      le->setCursorPosition(cur_pos + selection_text.length()); // go back to orig pos
+    }
+#else
     if(rval.nonempty()) {
       le->setText(rval);
       if(new_pos >= 0)
@@ -99,16 +123,35 @@ void taiTreeNodeTaBase::lookupKeyPressed(iLineEdit* le, int column) {
       else
         le->setCursorPosition(cur_pos); // go back to orig pos
     }
+#endif  // completion_chooser
     return;                     // if we get it, bail
   }
 
   // didn't find any -- call the one on the guy itself!
+#ifdef completion_chooser
+  completions = tab->StringFieldLookupForCompleter(le->text(), cur_pos, "", new_pos);
+  le->GetCompleter()->SetCompletions(completions);
+#else
   String rval = tab->StringFieldLookupFun(le->text(), cur_pos, "", new_pos);
+#endif
 #ifdef TA_OS_MAC
   // per this bug with 2.8.x on mac, we need to regain focus:  https://bugreports.qt-project.org/browse/QTBUG-22911
   le->window()->setFocus();
   le->setFocus();
 #endif
+#ifdef completion_chooser
+  // Experiment to test out chooser before converting over to full use
+  taiWidgetCompletionChooser* chooser = new taiWidgetCompletionChooser(NULL, NULL, NULL, NULL, 0, completions->seed);
+  chooser->SetCompletions(completions);
+  bool ok_choice = chooser->OpenChooser();
+  
+  if (ok_choice) {
+    String pre_text = ProgExprBase::completion_text_before;
+    String selection_text = chooser->GetSelectionText();
+    le->setText(pre_text + selection_text);
+    le->setCursorPosition(cur_pos + selection_text.length()); // go back to orig pos
+  }
+#else
   if(rval.nonempty()) {
     le->setText(rval);
     if(new_pos >= 0)
@@ -116,6 +159,7 @@ void taiTreeNodeTaBase::lookupKeyPressed(iLineEdit* le, int column) {
     else
       le->setCursorPosition(cur_pos); // go back to orig pos
   }
+#endif  // completion_chooser
 }
 
 void taiTreeNodeTaBase::characterEntered(iLineEdit* le, int column) {

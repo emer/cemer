@@ -22,6 +22,7 @@
 
 #include <MemberDef>
 #include <MethodDef>
+#include <EnumDef>
 #include <DataTable>
 #include <Program>
 
@@ -90,6 +91,13 @@ void iCodeCompleter::SetCompletions(Completions* completions) {
     }
     
     string_list.append(str_list);
+
+    //  Enums
+    for (int i=0; i<completions->enum_completions.size; i++) {
+      EnumDef* enum_def = completions->enum_completions.FastEl(i);
+      string_list.append(enum_def->name);
+    }
+
     list_model->setStringList(string_list);
   }
 }

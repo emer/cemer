@@ -20,6 +20,7 @@
 #include <ProgExprBase>
 #include <MemberDef>
 #include <MethodDef>
+#include <EnumDef>
 #include <taMisc>
 
 #include <QTreeWidgetItem>
@@ -55,8 +56,6 @@ int taiWidgetCompletionChooser::Populate(iDialogItemChooser* item_chooser, Compl
   int item_count = 0;
   String display_string;
   
-  taMisc::DebugInfo(filter_start_txt);
-
   // TA Objects
   for (int i = 0; i < the_completions->object_completions.size; ++i) {
     taBase* tab = the_completions->object_completions.FastEl(i);
@@ -92,6 +91,24 @@ int taiWidgetCompletionChooser::Populate(iDialogItemChooser* item_chooser, Compl
     QTreeWidgetItem* item = item_chooser->AddItem(display_string, top_item, md);
     ++item_count;
   }
+  
+  // Enums
+  for (int i = 0; i < the_completions->enum_completions.size; ++i) {
+    EnumDef* ed = the_completions->enum_completions.FastEl(i);
+    if (!ed)  continue;
+    
+    display_string = ed->name;
+    QTreeWidgetItem* item = item_chooser->AddItem(display_string, top_item, ed);
+    ++item_count;
+  }
+
+  // Strings - stuff we only keep in a String_Array (types - float, int, etc; NULL, true/false)
+  // DON'T add until GetSelectedText works
+//  for (int i = 0; i < the_completions->string_completions.size; ++i) {
+//    String* st = &(the_completions->string_completions.FastEl(i));
+//    QTreeWidgetItem* item = item_chooser->AddItem(*st, top_item, st);
+//    ++item_count;
+//  }
   return item_count;
 }
 
@@ -137,22 +154,86 @@ String taiWidgetCompletionChooser::GetSelectionText() {
   String leading_text = ProgExprBase::completion_text_before.before(text_before_length - seed_length);
   String selection_text;
   
+//  taBase* tab = (taBase*)dialog_item_chooser->selObj();
+//  if (tab) {
+//    selection_text = tab->GetName();
+//    if (tab->InheritsFrom(&TA_Function) || tab->InheritsFrom(&TA_Program)) {
+//      selection_text = selection_text + "()";
+//    }
+//    return leading_text + selection_text;
+//  }
+
   MethodDef* mth = dynamic_cast<MethodDef*>(GetItemType());
   if (mth) {
     selection_text = mth->name + "()";
   }
+  
   MemberDef* mbr = dynamic_cast<MemberDef*>(GetItemType());
   if (mbr) {
     selection_text = mbr->name;
   }
   
-  taBase* tab = dynamic_cast<taBase*>(GetItemType());
-  if (tab) {
-    selection_text = tab->GetName();
-    if (tab->InheritsFrom(&TA_Function) || tab->InheritsFrom(&TA_Program)) {
-      selection_text = selection_text + "()";
+  EnumDef* enm = dynamic_cast<EnumDef*>(GetItemType());
+  if (enm) {
+    selection_text = enm->name;
+  }
+  
+  if (selection_text.nonempty()) {
+    return leading_text + selection_text;
+  }
+  else {
+    taBase* tab = (taBase*)dialog_item_chooser->selObj();
+    if (tab) {
+      selection_text = tab->GetName();
+      if (tab->InheritsFrom(&TA_Function) || tab->InheritsFrom(&TA_Program)) {
+        selection_text = selection_text + "()";
+      }
+      return leading_text + selection_text;
     }
   }
-
   return leading_text + selection_text;
+//  else {  // must be a string
+//    selection_text = (taString*)dialog_item_chooser->selObj();
+//    return leading_text + selection_text;
+//  }
 }
+
+//String taiWidgetCompletionChooser::GetSelectionText() {
+//  int seed_length = completions->seed.length();
+//  int text_before_length = ProgExprBase::completion_text_before.length();
+//  String leading_text = ProgExprBase::completion_text_before.before(text_before_length - seed_length);
+//  String selection_text;
+//  
+//  taBase* tab = (taBase*)dialog_item_chooser->selObj();
+//  if (tab) {
+//    selection_text = tab->GetName();
+//    if (tab->InheritsFrom(&TA_Function) || tab->InheritsFrom(&TA_Program)) {
+//      selection_text = selection_text + "()";
+//    }
+//    return leading_text + selection_text;
+//  }
+//  
+//  MethodDef* mth = dynamic_cast<MethodDef*>(GetItemType());
+//  if (mth) {
+//    selection_text = mth->name + "()";
+//  }
+//  
+//  MemberDef* mbr = dynamic_cast<MemberDef*>(GetItemType());
+//  if (mbr) {
+//    selection_text = mbr->name;
+//  }
+//  
+//  EnumDef* enm = dynamic_cast<EnumDef*>(GetItemType());
+//  if (enm) {
+//    selection_text = enm->name;
+//  }
+//  
+//  if (selection_text.nonempty()) {
+//    return leading_text + selection_text;
+//  }
+//  else {  // must be a string
+//    selection_text = (taString*)dialog_item_chooser->selObj();
+//    return leading_text + selection_text;
+//  }
+//}
+
