@@ -53,6 +53,8 @@ void taiWidgetCompletionChooser::BuildChooser(iDialogItemChooser* item_chooser, 
 
 int taiWidgetCompletionChooser::Populate(iDialogItemChooser* item_chooser, Completions* the_completions, QTreeWidgetItem* top_item)
 {
+  completions = the_completions;
+  
   int item_count = 0;
   String display_string;
   
@@ -68,6 +70,8 @@ int taiWidgetCompletionChooser::Populate(iDialogItemChooser* item_chooser, Compl
     QTreeWidgetItem* item = item_chooser->AddItem(display_string, top_item, tab, "", 1, iDialogItemChooser::BASE_ITEM);
     item->setText(1, tab->GetColText(taBase::key_type));
     item->setText(2, tab->GetColText(taBase::key_desc));
+    item->setText(3, tab->GetOwner()->GetColText(taBase::key_name));
+    item->setText(4, tab->GetOwner()->GetColText(taBase::key_type));
     ++item_count;
   }
   
@@ -77,7 +81,7 @@ int taiWidgetCompletionChooser::Populate(iDialogItemChooser* item_chooser, Compl
     if (!md)  continue;
     
     display_string = md->name;
-    QTreeWidgetItem* item = item_chooser->AddItem(display_string, top_item, md, "", 1, iDialogItemChooser::TYPE_ITEM);
+    QTreeWidgetItem* item = item_chooser->AddItem(display_string  + " (member)", top_item, md, md->desc, 1, iDialogItemChooser::TYPE_ITEM);
     ++item_count;
   }
   
@@ -88,7 +92,7 @@ int taiWidgetCompletionChooser::Populate(iDialogItemChooser* item_chooser, Compl
     
     display_string = md->name;
     display_string = display_string + "()";  // always for methods
-    QTreeWidgetItem* item = item_chooser->AddItem(display_string, top_item, md, "", 1, iDialogItemChooser::TYPE_ITEM);
+    QTreeWidgetItem* item = item_chooser->AddItem(display_string, top_item, md, md->desc, 1, iDialogItemChooser::TYPE_ITEM);
     ++item_count;
   }
   
@@ -114,21 +118,43 @@ int taiWidgetCompletionChooser::Populate(iDialogItemChooser* item_chooser, Compl
 
 int taiWidgetCompletionChooser::columnCount(int view) const {
   switch (view) {
-    case 0: return 3;
+    case 0:
+    {
+      if (completions->object_completions.size > 0) {
+        return 5; // 3 plus owner_name and owner_type
+      }
+      else {
+        return 3;
+      }
+      break;
+    }
     default: return 0; // not supposed to happen
   }
 }
 
 const String taiWidgetCompletionChooser::headerText(int index, int view) const {
-  switch (view) {
-    case 0: switch (index) {
+  // *** ignore view argument ***
+  int member_method_count = completions->member_completions.size + completions->method_completions.size;
+  
+  if (member_method_count > 0) {
+    switch (index) {
+      case 0: return "Name";
+      case 1: return "Description";
+      default:
+        return _nilString;
+    }
+  }
+  else {
+    switch (index) {
       case 0: return "Name";
       case 1: return "Type";
       case 2: return "Description";
-    } break;
-    default: break; // compiler food
+      case 3: return "Owner Name";
+      case 4: return "Owner Type";
+      default:
+        return _nilString;
+    }
   }
-  return _nilString; // shouldn't happen
 }
 
 const String taiWidgetCompletionChooser::labelNameNonNull() const {
@@ -155,6 +181,7 @@ String taiWidgetCompletionChooser::GetSelectionText() {
   String selection_text;
   
   QTreeWidgetItem* item = dialog_item_chooser->selItem();
+  if (!item) return _nilString;
   
   switch (item->type()) {
     case iDialogItemChooser::STRING_ITEM:

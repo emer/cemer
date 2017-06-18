@@ -110,9 +110,9 @@ void taiTreeNodeTaBase::lookupKeyPressed(iLineEdit* le, int column) {
     bool ok_choice = chooser->OpenChooser();
     
     if (ok_choice) {
-      String pre_text = ProgExprBase::completion_text_before;
+//      String pre_text = ProgExprBase::completion_text_before;
       String selection_text = chooser->GetSelectionText();
-      le->setText(pre_text + selection_text);
+      le->setText(selection_text);
       le->setCursorPosition(cur_pos + selection_text.length()); // go back to orig pos
     }
 #else
@@ -148,7 +148,8 @@ void taiTreeNodeTaBase::lookupKeyPressed(iLineEdit* le, int column) {
   if (ok_choice) {
     String pre_text = ProgExprBase::completion_text_before;
     String selection_text = chooser->GetSelectionText();
-    le->setText(pre_text + selection_text);
+//    le->setText(pre_text + selection_text);
+    le->setText(selection_text + ProgExprBase::completion_append_text);
     le->setCursorPosition(cur_pos + selection_text.length()); // go back to orig pos
   }
 #else
