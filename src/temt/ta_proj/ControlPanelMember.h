@@ -60,7 +60,7 @@ public:
   double                next_val;       // #HIDDEN #NO_SAVE computed next value to assign to this item in the parameter search
   double_Array          srch_vals;      // #HIDDEN #NO_SAVE full list of search values, parsed from range expression
 
-  String                notes;          // #EDIT_DIALOG #EDIT_WIDTH_40 a place to comment on the effect of parameter or any other comment -- please document early and often!
+  String                notes;          // #EDIT_DIALOG #EDIT_WIDTH_40 #CONDEDIT_OFF_state:INACTIVE a place to comment on the effect of parameter or any other comment -- please document early and often!
   String                last_prompt_val; // #IGNORE the last current value of stimulus that user was prompted about regarding differences from saved value
   
   bool                  obs_record;     // #AKA_record #HIDDEN #READ_ONLY #NO_SAVE #OBSOLETE just for loading obsolete data -- now EXPLORE

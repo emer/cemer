@@ -897,10 +897,17 @@ const String ProgVar::GenCssType() const {
   case T_Bool:
     return "bool";
   case T_Object:
-    if(object_val)
+    if(object_val) {
       return object_val->GetTypeDef()->name + "*";
-    else
-      return object_type->name + "*";
+    }
+    else {
+      if((var_type == ProgVar::T_Object) && object_type->InheritsFrom(&TA_ios)) {
+        return object_type->name;
+      }
+      else {
+        return object_type->name + "*";
+      }
+    }
   case T_HardEnum:
     if(hard_enum_type) {
       // Show scope of the enumerated value, if possible.
@@ -985,7 +992,9 @@ const String ProgVar::GenCssVar_impl() const {
   rval += name;
   rval += ";  ";
   if(IsLocal()) {
-    rval += name + " = " + GenCssInitVal() + ";";
+    if(!((var_type == ProgVar::T_Object) && object_type->InheritsFrom(&TA_ios))) {
+      rval += name + " = " + GenCssInitVal() + ";";
+    }
   }
   return rval;
 }
