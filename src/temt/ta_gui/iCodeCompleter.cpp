@@ -98,6 +98,12 @@ void iCodeCompleter::SetCompletions(Completions* completions) {
       string_list.append(enum_def->name);
     }
 
+    //  Statics
+    for (int i=0; i<completions->static_completions.size; i++) {
+      TypeDef* static_def = completions->static_completions.FastEl(i);
+      string_list.append(static_def->name + "::");
+    }
+
     list_model->setStringList(string_list);
   }
 }

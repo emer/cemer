@@ -106,13 +106,17 @@ int taiWidgetCompletionChooser::Populate(iDialogItemChooser* item_chooser, Compl
     ++item_count;
   }
 
-  // Strings - stuff we only keep in a String_Array (types - float, int, etc; NULL, true/false)
-  // DON'T add until GetSelectedText works
-  for (int i = 0; i < the_completions->string_completions.size; ++i) {
-    String* st = &(the_completions->string_completions.FastEl(i));
-    QTreeWidgetItem* item = item_chooser->AddItem(*st, top_item, st, "", 1, iDialogItemChooser::STRING_ITEM);
+  // Statics
+  for (int i = 0; i < the_completions->static_completions.size; ++i) {
+    TypeDef* td = the_completions->static_completions.FastEl(i);
+    if (!td)  continue;
+    
+    display_string = td->name + "::";
+    QTreeWidgetItem* item = item_chooser->AddItem(display_string, top_item, td, "", 1, iDialogItemChooser::TYPE_ITEM);
+    item->setText(2, td->desc);
     ++item_count;
   }
+
   return item_count;
 }
 

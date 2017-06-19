@@ -35,6 +35,7 @@ public:
   MemberSpace             member_completions;   // members of objects
   MethodSpace             method_completions;   // methods of objects
   EnumSpace               enum_completions;     // enums
+  TypeSpace               static_completions;   // statics - list is generated in taMisc
   String_Array            string_completions;   // these are strings like "NULL", true/false, etc that are not taBase objects
   
   String                  seed;                 // the text that starts the lookup

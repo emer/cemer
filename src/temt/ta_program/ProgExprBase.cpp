@@ -53,7 +53,6 @@ static ProgEl* expr_lookup_cur_base = NULL;
 
 Completions                 ProgExprBase::completions;
 String_Array                ProgExprBase::completion_progels_list;
-String_Array                ProgExprBase::completion_statics_list;
 String_Array                ProgExprBase::completion_bool_list;
 String_Array                ProgExprBase::completion_null_list;
 String_Array                ProgExprBase::completion_type_list;
@@ -67,6 +66,7 @@ taBase_List                 ProgExprBase::completion_group_items_list;
 MemberSpace                 ProgExprBase::completion_member_list;
 MethodSpace                 ProgExprBase::completion_method_list;
 EnumSpace                   ProgExprBase::completion_enum_list;
+TypeSpace                   ProgExprBase::completion_statics_list;
 String                      ProgExprBase::completion_pre_text;
 String                      ProgExprBase::completion_path_pre_text;
 String                      ProgExprBase::completion_append_text;
@@ -88,7 +88,6 @@ void ProgExprBase::Initialize() {
   parse_ve_off = 11;
   parse_ve_pos = 0;
   
-  GetStatics(&completion_statics_list); // get the list of statics - no need to do for every parse
   GetBools(&completion_bool_list); // create the bools list
   GetNull(&completion_null_list); // create the bools list
   GetTypes(&completion_type_list); // create the types list
@@ -1790,6 +1789,7 @@ Completions* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_po
   completions.member_completions.Reset();
   completions.method_completions.Reset();
   completions.enum_completions.Reset();
+  completions.static_completions.Reset();
   
   completions.seed = lookup_seed;
   
@@ -1855,8 +1855,8 @@ Completions* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_po
   }
   
   if (include_statics) {
-    for (int i=0; i<completion_statics_list.size; i++) {
-      completions.string_completions.Add(completion_statics_list.FastEl(i));
+    for (int i=0; i<taMisc::static_collection.size; i++) {
+      completions.static_completions.Link(taMisc::static_collection.FastEl(i));
     }
   }
   
@@ -2237,15 +2237,6 @@ void ProgExprBase::GenProgElList(ProgEl_List& list, TypeDef* td) {
   for(int i = 0; i < td->children.size; ++i) {
     TypeDef* chld = td->children[i];
     GenProgElList(list, chld);
-  }
-}
-
-void ProgExprBase::GetStatics(String_Array* statics) {
-  if (statics->size == 0) {
-    for (int i=0; i<taMisc::static_collection.size; i++) {
-      statics->Add(taMisc::static_collection.SafeEl(i)->name + "::");
-    }
-    statics->Sort();
   }
 }
 

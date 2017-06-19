@@ -110,8 +110,8 @@ public:
   static MemberSpace            completion_member_list; // #READ_ONLY #HIDDEN #NO_SAVE
   static MethodSpace            completion_method_list; // #READ_ONLY #HIDDEN #NO_SAVE
   static EnumSpace              completion_enum_list;   // #READ_ONLY #HIDDEN #NO_SAVE
+  static TypeSpace              completion_statics_list;// #READ_ONLY #HIDDEN #NO_SAVE built once - found in taMisc
   static String_Array           completion_progels_list;// #READ_ONLY #HIDDEN #NO_SAVE built once
-  static String_Array           completion_statics_list;// #READ_ONLY #HIDDEN #NO_SAVE built once
   static String_Array           completion_bool_list;   // #READ_ONLY #HIDDEN #NO_SAVE built once
   static String_Array           completion_null_list;   // #READ_ONLY #HIDDEN #NO_SAVE built once
   static String_Array           completion_type_list;   // #READ_ONLY #HIDDEN #NO_SAVE built once
@@ -224,7 +224,6 @@ public:
   static void           GetMethodsForType(TypeDef* td, MethodSpace* methods, bool just_static = false);
   static void           GetEnumsForType(TypeDef* td, EnumSpace* enums);
   static void           GetProgEls(String_Array* progels);
-  static void           GetStatics(String_Array* statics);
   static void           GetBools(String_Array* bools);
   static void           GetNull(String_Array* nulls);
   static void           GetTypes(String_Array* types);
