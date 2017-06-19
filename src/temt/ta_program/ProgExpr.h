@@ -34,8 +34,6 @@ public:
   // Signature must match that of the item_filter_fun typedef.
   static bool           StdProgVarFilter(void* base, void* var); // generic progvar filter -- excludes variables from functions if not itself in same function -- use this for most progvars in ITEM_FILTER comment directive
 
-  ProgVar*      var_lookup;     // #NULL_OK #NO_SAVE #NO_EDIT #NO_UPDATE_POINTER #ITEM_FILTER_StdProgVarFilter lookup a program variable and add it to the current expression (this field then returns to empty/NULL)
-
   void  CutLinks() override;
   TA_BASEFUNS_NOCOPY(ProgExpr);
 protected:
