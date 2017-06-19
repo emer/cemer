@@ -23,7 +23,7 @@
 #include <Completions>
 #include <taiWidgetCompletionChooser>
 
-//#define completion_chooser
+#define completion_chooser
 
 class iCodeCompleter;
 
@@ -102,7 +102,6 @@ void taiTreeNodeTaBase::lookupKeyPressed(iLineEdit* le, int column) {
     le->setFocus();
 #endif
     
-    
 #ifdef completion_chooser
     // Experiment to test out chooser before converting over to full use
     taiWidgetCompletionChooser* chooser = new taiWidgetCompletionChooser(NULL, NULL, NULL, NULL, 0, completions->seed);
@@ -110,10 +109,8 @@ void taiTreeNodeTaBase::lookupKeyPressed(iLineEdit* le, int column) {
     bool ok_choice = chooser->OpenChooser();
     
     if (ok_choice) {
-//      String pre_text = ProgExprBase::completion_text_before;
       String selection_text = chooser->GetSelectionText();
-      le->setText(selection_text);
-      le->setCursorPosition(cur_pos + selection_text.length()); // go back to orig pos
+      le->setText(selection_text + ProgExprBase::completion_append_text);
     }
 #else
     if(rval.nonempty()) {
@@ -134,11 +131,13 @@ void taiTreeNodeTaBase::lookupKeyPressed(iLineEdit* le, int column) {
 #else
   String rval = tab->StringFieldLookupFun(le->text(), cur_pos, "", new_pos);
 #endif
+  
 #ifdef TA_OS_MAC
   // per this bug with 2.8.x on mac, we need to regain focus:  https://bugreports.qt-project.org/browse/QTBUG-22911
   le->window()->setFocus();
   le->setFocus();
 #endif
+  
 #ifdef completion_chooser
   // Experiment to test out chooser before converting over to full use
   taiWidgetCompletionChooser* chooser = new taiWidgetCompletionChooser(NULL, NULL, NULL, NULL, 0, completions->seed);
@@ -146,11 +145,8 @@ void taiTreeNodeTaBase::lookupKeyPressed(iLineEdit* le, int column) {
   bool ok_choice = chooser->OpenChooser();
   
   if (ok_choice) {
-    String pre_text = ProgExprBase::completion_text_before;
     String selection_text = chooser->GetSelectionText();
-//    le->setText(pre_text + selection_text);
     le->setText(selection_text + ProgExprBase::completion_append_text);
-    le->setCursorPosition(cur_pos + selection_text.length()); // go back to orig pos
   }
 #else
   if(rval.nonempty()) {

@@ -26,7 +26,7 @@
 #include <ProgExprBase>
 #include <taiWidgetCompletionChooser>
 
-//#define completion_chooser
+#define completion_chooser
 
 taiWidgetField::taiWidgetField(TypeDef* typ_, IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef* md, taBase* base)
   : taiWidgetText(typ_, host_, par, gui_parent_, flags_, (flags_ & flgEditDialog),
@@ -103,10 +103,8 @@ void taiWidgetField::lookupKeyPressed() {
   bool ok_choice = chooser->OpenChooser();
   
   if (ok_choice) {
-    String pre_text = ProgExprBase::completion_text_before;
     String selection_text = chooser->GetSelectionText();
-    rep()->setText(pre_text + selection_text);
-    rep()->setCursorPosition(cur_pos + selection_text.length()); // go back to orig pos
+    rep()->setText(selection_text + ProgExprBase::completion_append_text);
   }
 #else
   if(rval.nonempty()) {
