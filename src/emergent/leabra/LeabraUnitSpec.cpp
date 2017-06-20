@@ -342,6 +342,8 @@ void DeepSpec::Initialize() {
   on = false;
   role = SUPER;
   trc_avg_clamp = false;
+  trc_clip = false;
+  trc_clip_max = 0.4f;
   Defaults_init();
 }
 
