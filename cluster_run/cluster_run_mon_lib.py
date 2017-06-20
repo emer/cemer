@@ -890,7 +890,7 @@ class SubversionPoller(object):
 
             # check for an auto-check based on interval, do every so often..
             tdel = datetime.now() - self.last_auto_check
-            do_auto_check = tdel.seconds >= self.auto_check_mins * 60
+            do_auto_check = tdel.total_seconds() >= self.auto_check_mins * 60
             if do_auto_check:
                 self.last_auto_check = datetime.now()
                 print 'Executing auto check now (every %d minutes, update all running jobs and commit data)' % self.auto_check_mins
@@ -2101,7 +2101,7 @@ class SubversionPoller(object):
         except: stdt = datetime.now()
         runtime = datetime.now() - stdt
         
-        if force_updt or runtime.seconds < job_update_window * 60:
+        if force_updt or runtime.total_seconds() < job_update_window * 60:
             # print "job %s running for %d seconds -- updating" % (tag, runtime.seconds)
             job_out = self._get_job_out(job_out_file)
             if len(job_out) > 0:
@@ -2140,16 +2140,18 @@ class SubversionPoller(object):
         status = self.jobs_done.get_val(row, "status")
         submit_job = self.jobs_done.get_val(row, "submit_job")
         dat_files = self.jobs_done.get_val(row, "dat_files")
-        if pb_batches > 1 and status == "DONE" and submit_job == "000":
-            self._touch_dat_files(tag, dat_files) # always touch!
-            return   # don't overwrite consolidated batch guy
+        
 
         try: eddt = datetime(*(time.strptime(end_time, time_format)[0:6]))
         except: eddt = datetime.now()
         deadtime = datetime.now() - eddt
         
-        if force_updt or deadtime.seconds < job_update_window * 60:
-            # print "job %s done for %d seconds -- updating" % (tag, deadtime.seconds)
+        if force_updt or deadtime.total_seconds() < job_update_window * 60:
+            if (debug):
+                logging.info("job %s done for %d seconds -- updating" % (tag, deadtime.seconds))
+            if pb_batches > 1 and status == "DONE" and submit_job == "000":
+                self._touch_dat_files(tag, dat_files) # always touch!
+                return   # don't overwrite consolidated batch guy
             job_out = self._get_job_out(job_out_file)
             if len(job_out) > 0:
                 self.jobs_done.set_val(row, "job_out", job_out)
@@ -2163,7 +2165,7 @@ class SubversionPoller(object):
             else:
                 self._touch_dat_files(tag, dat_files) # always touch!
             self.jobs_done.set_val(row, "other_files", all_files[1])
-#        elif deadtime.seconds > job_update_window * 60: # dead long enough to cleanup
+#        elif deadtime.total_seconds() > job_update_window * 60: # dead long enough to cleanup
 #            self._remove_job_files(job_out_file, job_no, tag)
 
     def _move_job_to_done(self, row):
