@@ -89,20 +89,15 @@ void taiTreeNodeTaBase::lookupKeyPressed(iLineEdit* le, int column) {
       return;
     }
     taBase* bel = (taBase*)md->GetOff(tab);
-#ifdef completion_chooser
     completions = bel->StringFieldLookupForCompleter(le->text(), cur_pos, "", new_pos);
     le->GetCompleter()->SetCompletions(completions);
-#else
-    String rval = bel->StringFieldLookupFun(le->text(), cur_pos, "", new_pos);
-#endif
-    
+
 #ifdef TA_OS_MAC
   // per this bug with 2.8.x on mac, we need to regain focus:  https://bugreports.qt-project.org/browse/QTBUG-22911
     le->window()->setFocus();
     le->setFocus();
 #endif
     
-#ifdef completion_chooser
     // Experiment to test out chooser before converting over to full use
     taiWidgetCompletionChooser* chooser = new taiWidgetCompletionChooser(NULL, NULL, NULL, NULL, 0, completions->seed);
     chooser->SetCompletions(completions);
@@ -112,25 +107,12 @@ void taiTreeNodeTaBase::lookupKeyPressed(iLineEdit* le, int column) {
       String selection_text = chooser->GetSelectionText();
       le->setText(selection_text + ProgExprBase::completion_append_text);
     }
-#else
-    if(rval.nonempty()) {
-      le->setText(rval);
-      if(new_pos >= 0)
-        le->setCursorPosition(new_pos); // go back to orig pos
-      else
-        le->setCursorPosition(cur_pos); // go back to orig pos
-    }
-#endif  // completion_chooser
     return;                     // if we get it, bail
   }
 
   // didn't find any -- call the one on the guy itself!
-#ifdef completion_chooser
   completions = tab->StringFieldLookupForCompleter(le->text(), cur_pos, "", new_pos);
   le->GetCompleter()->SetCompletions(completions);
-#else
-  String rval = tab->StringFieldLookupFun(le->text(), cur_pos, "", new_pos);
-#endif
   
 #ifdef TA_OS_MAC
   // per this bug with 2.8.x on mac, we need to regain focus:  https://bugreports.qt-project.org/browse/QTBUG-22911
@@ -138,7 +120,6 @@ void taiTreeNodeTaBase::lookupKeyPressed(iLineEdit* le, int column) {
   le->setFocus();
 #endif
   
-#ifdef completion_chooser
   // Experiment to test out chooser before converting over to full use
   taiWidgetCompletionChooser* chooser = new taiWidgetCompletionChooser(NULL, NULL, NULL, NULL, 0, completions->seed);
   chooser->SetCompletions(completions);
@@ -148,15 +129,6 @@ void taiTreeNodeTaBase::lookupKeyPressed(iLineEdit* le, int column) {
     String selection_text = chooser->GetSelectionText();
     le->setText(selection_text + ProgExprBase::completion_append_text);
   }
-#else
-  if(rval.nonempty()) {
-    le->setText(rval);
-    if(new_pos >= 0)
-      le->setCursorPosition(new_pos); // go back to orig pos
-    else
-      le->setCursorPosition(cur_pos); // go back to orig pos
-  }
-#endif  // completion_chooser
 }
 
 void taiTreeNodeTaBase::characterEntered(iLineEdit* le, int column) {

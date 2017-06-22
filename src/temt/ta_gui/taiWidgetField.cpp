@@ -83,12 +83,8 @@ void taiWidgetField::lookupKeyPressed() {
   int new_pos = -1;
   Completions* completions = NULL;
 
-#ifdef completion_chooser
   completions = tab->StringFieldLookupForCompleter(rep()->text(), cur_pos, lookupfun_md->name, new_pos);
   rep()->GetCompleter()->SetCompletions(completions);
-#else
-  String rval = tab->StringFieldLookupFun(rep()->text(), cur_pos, lookupfun_md->name, new_pos);
-#endif
 
 #ifdef TA_OS_MAC
   // per this bug with 2.8.x on mac, we need to regain focus:  https://bugreports.qt-project.org/browse/QTBUG-22911
@@ -96,7 +92,6 @@ void taiWidgetField::lookupKeyPressed() {
   rep()->setFocus();
 #endif
   
-#ifdef completion_chooser
   // Experiment to test out chooser before converting over to full use
   taiWidgetCompletionChooser* chooser = new taiWidgetCompletionChooser(NULL, NULL, NULL, NULL, 0, completions->seed);
   chooser->SetCompletions(completions);
@@ -106,15 +101,6 @@ void taiWidgetField::lookupKeyPressed() {
     String selection_text = chooser->GetSelectionText();
     rep()->setText(selection_text + ProgExprBase::completion_append_text);
   }
-#else
-  if(rval.nonempty()) {
-    rep()->setText(rval);
-    if(new_pos >= 0)
-      rep()->setCursorPosition(new_pos); // go back to orig pos
-    else
-      rep()->setCursorPosition(cur_pos); // go back to orig pos
-  }
-#endif  // completion_chooser
 }
 
 void taiWidgetField::lookupKeyPressed_dialog() {
