@@ -52,8 +52,6 @@ public:
     (const String& path, TypeDef* base_type, taBase* base_obj);
   // determine if the base type or any element of the subsequent path from there has the UAE_IN_PROGRAM class flag set -- use for setting update_after flag where needed
   
-  String StringFieldLookupFun(const String& cur_txt, int cur_pos,
-				       const String& mbr_name, int& new_pos) override;
   void 	Help() override;
 
   PROGEL_SIMPLE_BASEFUNS(MemberProgEl);

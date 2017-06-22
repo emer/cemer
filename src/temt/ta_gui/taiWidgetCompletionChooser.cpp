@@ -68,6 +68,9 @@ int taiWidgetCompletionChooser::Populate(iDialogItemChooser* item_chooser, Compl
       display_string = display_string + "()";
     }
     QTreeWidgetItem* item = item_chooser->AddItem(display_string, top_item, tab, "", 1, iDialogItemChooser::BASE_ITEM);
+    if (item->type() != iDialogItemChooser::BASE_ITEM) {
+      ;
+    }
     item->setText(1, tab->GetColText(taBase::key_type));
     item->setText(2, tab->GetColText(taBase::key_desc));
     item->setText(3, tab->GetOwner()->GetColText(taBase::key_name));
@@ -196,7 +199,10 @@ String taiWidgetCompletionChooser::GetSelectionText() {
   String selection_text;
   
   QTreeWidgetItem* item = dialog_item_chooser->selItem();
-  if (!item) return _nilString;
+  
+  if (!item) {
+    return _nilString;
+  }
   
   switch (item->type()) {
     case iDialogItemChooser::STRING_ITEM:
@@ -235,6 +241,7 @@ String taiWidgetCompletionChooser::GetSelectionText() {
       break;
       
     default:
+      taMisc::DebugInfo("GetSelectedItem(): selected item fell through switch - item->type() was " + (String)item->type());
       break;
   }
   return leading_text + selection_text;

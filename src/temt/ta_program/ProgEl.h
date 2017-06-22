@@ -231,8 +231,6 @@ public:
   virtual bool InDebugMode();
   // test whether we are in debug mode or not -- calls this method on parent program group
 
-  String StringFieldLookupFun(const String& cur_txt, int cur_pos,
-                              const String& mbr_name, int& new_pos) override;
   Completions* StringFieldLookupForCompleter(const String& cur_txt, int cur_pos, const String& mbr_name, int& new_pos) override;
 
   TA_BASEFUNS(ProgEl);

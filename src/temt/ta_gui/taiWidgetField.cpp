@@ -68,8 +68,7 @@ void taiWidgetField::btnEdit_clicked(bool) {
     // modeless
     edit_dialog->setText(rep()->text());
     edit_dialog->setWindowTitle(wintxt);
-    QObject::connect(edit_dialog->txtText, SIGNAL(lookupKeyPressed()),
-                     this, SLOT(lookupKeyPressed_dialog()) );
+    QObject::connect(edit_dialog->txtText, SIGNAL(lookupKeyPressed()), this, SLOT(lookupKeyPressed_dialog()) );
   }
   edit_dialog->show();
   edit_dialog->raise();
@@ -92,7 +91,6 @@ void taiWidgetField::lookupKeyPressed() {
   rep()->setFocus();
 #endif
   
-  // Experiment to test out chooser before converting over to full use
   taiWidgetCompletionChooser* chooser = new taiWidgetCompletionChooser(NULL, NULL, NULL, NULL, 0, completions->seed);
   chooser->SetCompletions(completions);
   bool ok_choice = chooser->OpenChooser();
@@ -112,26 +110,35 @@ void taiWidgetField::lookupKeyPressed_dialog() {
   taBase* tab = (taBase*)lookupfun_base;
   int cur_pos = cursor.position();
   int new_pos = -1;
-  String rval = tab->StringFieldLookupFun(edit_dialog->txtText->toPlainText(), cur_pos,
-                                          lookupfun_md->name, new_pos);
+  
+  Completions* completions = NULL;
+  
+  completions = tab->StringFieldLookupForCompleter(edit_dialog->txtText->toPlainText(), cur_pos, lookupfun_md->name, new_pos);
+  rep()->GetCompleter()->SetCompletions(completions);
+  
 #ifdef TA_OS_MAC
   // per this bug with 2.8.x on mac, we need to regain focus:  https://bugreports.qt-project.org/browse/QTBUG-22911
   rep()->window()->setFocus();
   rep()->setFocus();
 #endif
-  if(rval.nonempty()) {
-    edit_dialog->txtText->setPlainText(rval);
+  
+  taiWidgetCompletionChooser* chooser = new taiWidgetCompletionChooser(NULL, NULL, NULL, NULL, 0, completions->seed);
+  chooser->SetCompletions(completions);
+  bool ok_choice = chooser->OpenChooser();
+  
+  if (ok_choice) {
+    String selection_text = chooser->GetSelectionText();
+    edit_dialog->txtText->setPlainText(selection_text + ProgExprBase::completion_append_text);
     QTextCursor cur2(edit_dialog->txtText->textCursor());
-    if(new_pos >= 0)
-      cur2.setPosition(new_pos);
-    else
-      cur2.setPosition(cur_pos);
+    new_pos = cur_pos + selection_text.length() + completions->seed.length();
+    cur2.setPosition(new_pos);
     edit_dialog->txtText->setTextCursor(cur2);
   }
 }
 
 void taiWidgetField::characterEntered() {
   if(!lookupfun_md || !lookupfun_base) return;
+  
   taBase* tab = (taBase*)lookupfun_base;
   
   int cur_pos = rep()->cursorPosition();
