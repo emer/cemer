@@ -39,6 +39,13 @@ class TA_API taiWidgetItemChooser : public taiWidget {
   Q_OBJECT
   INHERITED(taiWidget)
 public:
+  enum ItemObjType {  // used to switch on object type when objects have no common parent - pass type to QTreeWidgetItem constructor
+    UNSPECIFIED_ITEM = 1000,
+    STRING_ITEM,
+    BASE_ITEM,
+    TYPE_ITEM
+  };
+  
   item_filter_fun       item_filter; // #IGNORE optional filter, in ITEM_FILTER_xxx
   cust_chooser_fun      cust_chooser; // #IGNORE customization call, in CUST_CHOOSER_xxx
   String                filter_start_txt; // if nonempty, item name must start with this text to be included
@@ -50,6 +57,8 @@ public:
   inline const String   nullText() { return null_text; }
   inline QAbstractButton* rep() {return m_but;}
   inline void*          sel() const {return m_sel;}
+  ItemObjType           sel_obj_type; // used to switch on object type when objects have no common parent
+
   inline void*          GetAltSel() const { return alt_sel; }  // return the smart alternate selection if host provides one
   virtual bool          isValid() const {return (targ_typ);} // if all required params have been set
   virtual int           catCount() const;

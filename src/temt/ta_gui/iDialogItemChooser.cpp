@@ -100,6 +100,10 @@ void iDialogItemChooser::accept() {
     itm = items->currentItem();
   }
   m_selItem = itm;
+  
+  if (m_selItem) {
+    m_client->sel_obj_type = (taiWidgetItemChooser::ItemObjType)itm->type();
+  }
 
   if(is_dialog) {
     inherited::accept();  // Do this BEFORE the new choose dialog!
@@ -139,7 +143,7 @@ QTreeWidgetItem* iDialogItemChooser::AddItem(const QString& itm_cat,
                                              const void* data_,
                                              const String& desc,
                                              int desc_idx,
-                                             ItemObjType item_type)
+                                             taiWidgetItemChooser::ItemObjType item_type)
 {
   QTreeWidgetItem* rval = AddItem(itm_txt, parent, data_, desc, desc_idx, item_type);
   if (!itm_cat.isEmpty())
@@ -152,7 +156,7 @@ QTreeWidgetItem* iDialogItemChooser::AddItem(const QString& itm_txt,
                                              const void* data_,
                                              const String& desc,
                                              int desc_idx,
-                                             ItemObjType item_type )
+                                             taiWidgetItemChooser::ItemObjType item_type )
 {
   QTreeWidgetItem* rval;
   if (parent)

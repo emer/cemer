@@ -23,7 +23,7 @@
 #include <EnumDef>
 #include <taMisc>
 
-#include <QTreeWidgetItem>
+#include <iTreeWidgetItem>
 #include <iTreeWidget>
 
 taTypeDef_Of(Function);
@@ -67,10 +67,8 @@ int taiWidgetCompletionChooser::Populate(iDialogItemChooser* item_chooser, Compl
     if (tab->InheritsFrom(&TA_Function) || tab->InheritsFrom(&TA_Program)) {
       display_string = display_string + "()";
     }
-    QTreeWidgetItem* item = item_chooser->AddItem(display_string, top_item, tab, "", 1, iDialogItemChooser::BASE_ITEM);
-    if (item->type() != iDialogItemChooser::BASE_ITEM) {
-      ;
-    }
+    QTreeWidgetItem* item = item_chooser->AddItem(display_string, top_item, tab, "", 1, BASE_ITEM);
+
     item->setText(1, tab->GetColText(taBase::key_type));
     item->setText(2, tab->GetColText(taBase::key_desc));
     item->setText(3, tab->GetOwner()->GetColText(taBase::key_name));
@@ -84,7 +82,7 @@ int taiWidgetCompletionChooser::Populate(iDialogItemChooser* item_chooser, Compl
     if (!md)  continue;
     
     display_string = md->name;
-    QTreeWidgetItem* item = item_chooser->AddItem(display_string  + " (member)", top_item, md, md->desc, 1, iDialogItemChooser::TYPE_ITEM);
+    QTreeWidgetItem* item = item_chooser->AddItem(display_string  + " (member)", top_item, md, md->desc, 1, TYPE_ITEM);
     ++item_count;
   }
   
@@ -95,8 +93,8 @@ int taiWidgetCompletionChooser::Populate(iDialogItemChooser* item_chooser, Compl
     
     display_string = md->name;
     display_string = display_string + "()";  // always for methods
-    QTreeWidgetItem* item = item_chooser->AddItem(display_string, top_item, md, md->desc, 1, iDialogItemChooser::TYPE_ITEM);
-    ++item_count;
+    QTreeWidgetItem* item = item_chooser->AddItem(display_string, top_item, md, md->desc, 1, TYPE_ITEM);
+   ++item_count;
   }
   
   // Enums
@@ -105,7 +103,7 @@ int taiWidgetCompletionChooser::Populate(iDialogItemChooser* item_chooser, Compl
     if (!ed)  continue;
     
     display_string = ed->name;
-    QTreeWidgetItem* item = item_chooser->AddItem(display_string, top_item, ed, "", 1, iDialogItemChooser::TYPE_ITEM);
+    QTreeWidgetItem* item = item_chooser->AddItem(display_string, top_item, ed, "", 1, TYPE_ITEM);
     ++item_count;
   }
 
@@ -115,7 +113,7 @@ int taiWidgetCompletionChooser::Populate(iDialogItemChooser* item_chooser, Compl
     if (!td)  continue;
     
     display_string = td->name + "::";
-    QTreeWidgetItem* item = item_chooser->AddItem(display_string, top_item, td, "", 1, iDialogItemChooser::TYPE_ITEM);
+    QTreeWidgetItem* item = item_chooser->AddItem(display_string, top_item, td, "", 1, TYPE_ITEM);
     item->setText(2, td->desc);
     ++item_count;
   }
@@ -126,7 +124,7 @@ int taiWidgetCompletionChooser::Populate(iDialogItemChooser* item_chooser, Compl
     if (!td)  continue;
     
     display_string = td->name + "::";
-    QTreeWidgetItem* item = item_chooser->AddItem(display_string, top_item, td, "", 1, iDialogItemChooser::TYPE_ITEM);
+    QTreeWidgetItem* item = item_chooser->AddItem(display_string, top_item, td, "", 1, TYPE_ITEM);
     item->setText(2, td->desc);
     ++item_count;
   }
@@ -198,51 +196,39 @@ String taiWidgetCompletionChooser::GetSelectionText() {
   String leading_text = ProgExprBase::completion_text_before.before(text_before_length - seed_length);
   String selection_text;
   
-  QTreeWidgetItem* item = dialog_item_chooser->selItem();
+  iTreeWidgetItem* item = (iTreeWidgetItem*)dialog_item_chooser->selItem();
   
   if (!item) {
     return _nilString;
   }
   
-  switch (item->type()) {
-    case iDialogItemChooser::STRING_ITEM:
-      selection_text = (taString*)dialog_item_chooser->selObj();
-      break;
-      
-    case iDialogItemChooser::BASE_ITEM:
-      {
-        taBase* tab = (taBase*)dialog_item_chooser->selObj();
-        if (tab) {
-          selection_text = tab->GetName();
-          if (tab->InheritsFrom(&TA_Function) || tab->InheritsFrom(&TA_Program)) {
-            selection_text = selection_text + "()";
-          }
-        }
+  if (sel_obj_type == STRING_ITEM) {
+    selection_text = (taString*)dialog_item_chooser->selObj();
+  }
+  else if (sel_obj_type == BASE_ITEM) {
+    taBase* tab = (taBase*)dialog_item_chooser->selObj();
+    if (tab) {
+      selection_text = tab->GetName();
+      if (tab->InheritsFrom(&TA_Function) || tab->InheritsFrom(&TA_Program)) {
+        selection_text = selection_text + "()";
       }
-      break;
-      
-    case iDialogItemChooser::TYPE_ITEM:
-      {
-        MethodDef* mth = dynamic_cast<MethodDef*>(GetItemType());
-        if (mth) {
-          selection_text = mth->name + "()";
-        }
-        
-        MemberDef* mbr = dynamic_cast<MemberDef*>(GetItemType());
-        if (mbr) {
-          selection_text = mbr->name;
-        }
-        
-        EnumDef* enm = dynamic_cast<EnumDef*>(GetItemType());
-        if (enm) {
-          selection_text = enm->name;
-        }
-      }
-      break;
-      
-    default:
-      taMisc::DebugInfo("GetSelectedItem(): selected item fell through switch - item->type() was " + (String)item->type());
-      break;
+    }
+  }
+  else if (sel_obj_type == TYPE_ITEM) {
+    MethodDef* mth = dynamic_cast<MethodDef*>(GetItemType());
+    if (mth) {
+      selection_text = mth->name + "()";
+    }
+    
+    MemberDef* mbr = dynamic_cast<MemberDef*>(GetItemType());
+    if (mbr) {
+      selection_text = mbr->name;
+    }
+    
+    EnumDef* enm = dynamic_cast<EnumDef*>(GetItemType());
+    if (enm) {
+      selection_text = enm->name;
+    }
   }
   return leading_text + selection_text;
 }
