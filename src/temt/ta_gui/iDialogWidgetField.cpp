@@ -115,7 +115,7 @@ void iDialogWidgetField::setText(const QString& value, const int cursor_position
 }
 
 void iDialogWidgetField::btnApply_clicked() {  // clicked virtually now that the button was removed
-  field->rep()->setText(txtText->toPlainText());
+  field->rep()->setText(txtText->toPlainText().trimmed());
   // unless explicitly overridden, we always do an autoapply
   if (!(field->flags() & taiWidget::flgNoEditDialogAutoApply)) {
     field->applyNow();
