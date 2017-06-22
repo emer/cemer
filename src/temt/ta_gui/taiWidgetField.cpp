@@ -66,7 +66,7 @@ void taiWidgetField::btnEdit_clicked(bool) {
     edit_dialog = new iDialogWidgetField(false, readOnly(), desc, this);
     // mismatch between modal=true and calling show does NOT work in 5.4.1 -- is now
     // modeless
-    edit_dialog->setText(rep()->text());
+    edit_dialog->setText(rep()->text(), leText->cursorPosition());
     edit_dialog->setWindowTitle(wintxt);
     QObject::connect(edit_dialog->txtText, SIGNAL(lookupKeyPressed()), this, SLOT(lookupKeyPressed_dialog()) );
   }

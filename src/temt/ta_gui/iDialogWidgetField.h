@@ -38,7 +38,7 @@ public:
   QPushButton*  btnCancel; // or close, if read only
 
   bool          isReadOnly() { return m_read_only; }
-  virtual void  setText(const QString& value);
+  virtual void  setText(const QString& value, const int cursor_position = 0);
 
   iDialogWidgetField(bool modal_, bool read_only, const String& desc, taiWidgetField* parent);
   ~iDialogWidgetField();

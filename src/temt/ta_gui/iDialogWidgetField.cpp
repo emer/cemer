@@ -24,6 +24,7 @@
 
 #include <QVBoxLayout>
 #include <QPushButton>
+#include <QTextCursor>
 
 
 iDialogWidgetField::iDialogWidgetField(bool modal_, bool read_only_,
@@ -106,8 +107,11 @@ void iDialogWidgetField::reject() {
   inherited::reject();
 }
 
-void iDialogWidgetField::setText(const QString& value) {
+void iDialogWidgetField::setText(const QString& value, const int cursor_position) {
   txtText->setPlainText(value);
+  QTextCursor cursor = txtText->textCursor();
+  cursor.setPosition(cursor_position);
+  txtText->setTextCursor(cursor);
 }
 
 void iDialogWidgetField::btnApply_clicked() {  // clicked virtually now that the button was removed
