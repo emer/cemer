@@ -504,7 +504,8 @@ TypeSpace taMisc::types("taMisc::types", 10000);
 TypeSpace taMisc::aka_types("taMisc::aka_types", 100);
 TypeSpace taMisc::reg_funs("taMisc::reg_funs", 100);
 TypeSpace taMisc::static_collection("taMisc::statics");
-TypeDef*        taMisc::default_scope = NULL;
+TypeSpace taMisc::scope_collection("taMisc::scope");
+TypeDef*  taMisc::default_scope = NULL;
 
 taPtrList_impl* taMisc::init_hook_list = NULL;
 
@@ -2263,6 +2264,12 @@ void taMisc::Init_Types_Gui(bool gui) {
     }
   }
 
+  for (int i = TypeDefInitRegistrar::types_list_last_size; i < types.size; ++i) {
+    td = types.FastEl(i);
+    if(td->IsActualClass() && td->HasOption("SCOPE_COMPLETION")) {
+      scope_collection.Link(td);
+    }
+  }
 }
 
 void taMisc::AddUserDataSchema(const String& type_name, UserDataItemBase* item) {

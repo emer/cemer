@@ -117,6 +117,17 @@ int taiWidgetCompletionChooser::Populate(iDialogItemChooser* item_chooser, Compl
     ++item_count;
   }
 
+  // Scopes
+  for (int i = 0; i < the_completions->scope_completions.size; ++i) {
+    TypeDef* td = the_completions->scope_completions.FastEl(i);
+    if (!td)  continue;
+    
+    display_string = td->name + "::";
+    QTreeWidgetItem* item = item_chooser->AddItem(display_string, top_item, td, "", 1, iDialogItemChooser::TYPE_ITEM);
+    item->setText(2, td->desc);
+    ++item_count;
+  }
+
   return item_count;
 }
 

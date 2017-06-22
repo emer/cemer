@@ -28,7 +28,7 @@
 taTypeDef_Of(Relation);
 
 class TA_API Relation : public taINBase {
-  // #STEM_BASE #NO_UPDATE_AFTER ##INLINE ##CAT_Math counting criteria params
+  // #STEM_BASE #NO_UPDATE_AFTER ##INLINE ##CAT_Math ##SCOPE_COMPLETION counting criteria params
   INHERITED(taINBase)
 public:
   enum Relations {

@@ -104,6 +104,12 @@ void iCodeCompleter::SetCompletions(Completions* completions) {
       string_list.append(static_def->name + "::");
     }
 
+    //  Scopes
+    for (int i=0; i<completions->scope_completions.size; i++) {
+      TypeDef* scope_def = completions->scope_completions.FastEl(i);
+      string_list.append(scope_def->name + "::");
+    }
+
     list_model->setStringList(string_list);
   }
 }

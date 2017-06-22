@@ -111,6 +111,7 @@ public:
   static MethodSpace            completion_method_list; // #READ_ONLY #HIDDEN #NO_SAVE
   static EnumSpace              completion_enum_list;   // #READ_ONLY #HIDDEN #NO_SAVE
   static TypeSpace              completion_statics_list;// #READ_ONLY #HIDDEN #NO_SAVE built once - found in taMisc
+  static TypeSpace              completion_scope_list;  // #READ_ONLY #HIDDEN #NO_SAVE built once - found in taMisc
   static String_Array           completion_progels_list;// #READ_ONLY #HIDDEN #NO_SAVE built once
   static String_Array           completion_bool_list;   // #READ_ONLY #HIDDEN #NO_SAVE built once
   static String_Array           completion_null_list;   // #READ_ONLY #HIDDEN #NO_SAVE built once
@@ -128,6 +129,7 @@ public:
   static bool                   include_bools;          // #READ_ONLY #HIDDEN #NO_SAVE should lookup/completion include the bools
   static bool                   include_null;           // #READ_ONLY #HIDDEN #NO_SAVE should lookup/completion include null
   static bool                   include_css_functions;  // #READ_ONLY #HIDDEN #NO_SAVE should lookup/completion include css_functions
+  static bool                   include_scopes;         // #READ_ONLY #HIDDEN #NO_SAVE should lookup/completion include scope classes
   static TypeDef*               current_typedef;        // #READ_ONLY #HIDDEN #NO_SAVE save for use after completer selection
   static Program*               current_program;        // #READ_ONLY #HIDDEN #NO_SAVE save for use after completer selection
   
