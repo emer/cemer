@@ -827,7 +827,7 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
       expr_start_pos += shift;
       prepend_txt = txt.before(expr_start_pos);
       lookup_seed = txt.after(delim_pos[0]);
-      lookup_type = ProgExprBase::DATACOL;
+      lookup_type = ProgExprBase::STRING_INDEX;
       delims_used = 2;
       if (delim_pos.size > 2 && txt[delim_pos[2]] == ']') {
         lookup_group_default = true;
@@ -1131,7 +1131,7 @@ Completions* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_po
       break;
     }
       
-    case ProgExprBase::DATACOL: {
+    case ProgExprBase::STRING_INDEX: {
       TypeDef* lookup_td = NULL;
       taList_impl* tal = NULL;
       taBase* base_base = NULL;
@@ -1152,20 +1152,25 @@ Completions* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_po
           }
           else {
             own_td = st_var->object_type;
-            if (own_td == &TA_DataTable) {
-              base_base = st_var->object_val;
+            if (own_td->InheritsFrom(&TA_taList_impl)) {
+              taList_impl* list = (taList_impl*)st_var->object_val.ptr();
+              GetListItems(list, &completion_group_items_list);
+              break;
             }
-          }
-          if(base_base) {
-            MemberDef* md = NULL;
-            path_rest = "data";
-            taBase* mb_tab = base_base->FindFromPath(path_rest, md);
-            if(mb_tab) {
-              lookup_td = mb_tab->GetTypeDef();
-              if(lookup_td->InheritsFrom(&TA_taList_impl))
-                tal = (taList_impl*)mb_tab;
-              if (tal) {
-                GetListItems(tal, &completion_list_items_list);
+            else if (own_td == &TA_DataTable) {  // special case because we treat DataTable[" like a list
+              base_base = st_var->object_val;
+              if(base_base) {
+                MemberDef* md = NULL;
+                path_rest = "data";
+                taBase* mb_tab = base_base->FindFromPath(path_rest, md);
+                if(mb_tab) {
+                  lookup_td = mb_tab->GetTypeDef();
+                  if(lookup_td->InheritsFrom(&TA_taList_impl))
+                    tal = (taList_impl*)mb_tab;
+                  if (tal) {
+                    GetListItems(tal, &completion_list_items_list);
+                  }
+                }
               }
             }
           }

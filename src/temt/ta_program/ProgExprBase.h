@@ -62,14 +62,14 @@ public:
     NOT_SET,
     VARIOUS,        // no path or delimiter - could be one of several types
     OBJ_MEMB_METH,
-    SCOPED,           // Class::
-    ARRAY_INDEX,
+    SCOPED,         // Class::
+    ARRAY_INDEX,    // not implemented
     CALL,
     PROGRAM_FUNCTION,
     METHOD,
     ASSIGN,         // could be ProgVar, method, function but not program
     EQUALITY,       // either == or !=
-    DATACOL,        // column of a datatable
+    STRING_INDEX,   // access of list/group item by name i.e. "string" or access of datatable column by name
   };
   
   enum ExpressionStart {
