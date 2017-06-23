@@ -448,16 +448,14 @@ public:
   float      raw_thr_abs;    // #CONDSHOW_ON_on #MIN_0 #MAX_1 #DEF_0.1;0.2;0.5 #AKA_thr_abs absolute threshold on act_raw value for deep_raw neurons to fire -- see thr_rel for relative threshold and activation value -- effective threshold is MAX of relative and absolute thresholds
   float      mod_min;     // #CONDSHOW_ON_on&&role:SUPER #MIN_0 #MAX_1 minimum deep_mod value -- provides a non-zero baseline for deep-layer modulation
   float      mod_thr;     // #CONDSHOW_ON_on&&role:SUPER #MIN_0 threshold on deep_mod_net before deep mod is applied -- if not receiving even this amount of overall input from deep_mod sender, then do not use the deep_mod_net to drive deep_mod and deep_lrn values -- only for SUPER units -- based on LAYER level maximum for base LeabraLayerSpec, PVLV classes are based on actual deep_mod_net for each unit
-  bool       trc_p_only_m; // #CONDSHOW_ON_on&&role:TRC TRC plus-phase (clamping) for TRC units only occurs if the minus phase max activation for given unit group is above .1
-  bool       trc_thal_gate; // #CONDSHOW_ON_on&&role:TRC apply thalamic gating to TRC activations -- multiply netin by current thal parameter
-  bool       trc_avg_clamp;  // #CONDSHOW_ON_on&&role:TRC TRC plus-phase netinput is weighted average (see trc_deep_gain) of current plus-phase deep netin and standard netin -- produces a better clamping dynamic
-  float      trc_deep_gain;  // #CONDSHOW_ON_on&&role:TRC&&trc_avg_clamp how much to weight the deep netin relative to standard netin  (1.0-trc_deep_gain) for trc_avg_clamp
-  bool       trc_clip;       // #CONDSHOW_ON_on&&role:TRC clip the deep netin to trc_clip_max value -- produces more of an OR-like behavior for TRC reps
-  float      trc_clip_max;   // #CONDSHOW_ON_on&&role:TRC&&trc_clip maximum netin value to clip deep raw netin in trc plus-phase clamping -- prevents strong from dominating weak too much..
+  float      ctxt_prv;    // #CONDSHOW_ON_on&&role:DEEP #MIN_0 #MAX_1 amount of prior deep context to retain when updating deep context net input -- (1-ctxt_prv) will be used for the amount of new context to add -- provides a built-in level of hysteresis / longer-term memory of prior informaiton -- can also achieve this kind of functionality, with more learning dynamics, using a deep ti context projection from the deep layer itself!
+  int        tick_updt;   // #CONDSHOW_ON_on&&role:DEEP if this value is >= 0, then only perform normal deep context updating when network.tick is this value -- otherwise use the else_prv value instead of ctxt_prv to determine how much of the previous context to retain (typically set this to a high value near 1 to retain information from the tick_updt time period) -- this simulates a simple form of gating-like behavior in the updating of deep context information
+  float      else_prv;    // #CONDSHOW_OFF_tick_updt:-1||!on when tick_updt is being used, this is the amount of prior deep context to retain on all other ticks aside from tick_updt when updating deep context net input -- (1-else_prv) will be used for the amount of new context to add -- ctxt_prv is still used on the time of tick_updt in case that is non-zero
 
   float      mod_range;  // #READ_ONLY #EXPERT 1 - mod_min -- range for the netinput to modulate value of deep_mod, between min and 1 value
-  float      trc_std_gain;      // #READ_ONLY #HIDDEN 1-trc_deep_gain
-
+  float      ctxt_new;   // #READ_ONLY #EXPERT 1 - ctxt_prv -- new context amount
+  float      else_new;   // #READ_ONLY #EXPERT 1 - else_prv -- new context amount
+  
   inline bool   IsSuper()
   { return on && role == SUPER; }
   // are we SUPER?
@@ -480,16 +478,45 @@ public:
   { return on && role == DEEP; }
   // should we apply deep context netinput?  only for deep guys
 
+  String     GetTypeDecoKey() const override { return "UnitSpec"; }
+
+  TA_SIMPLE_BASEFUNS(DeepSpec);
+protected:
+  SPEC_DEFAULTS;
+  void        UpdateAfterEdit_impl() override;
+
+private:
+  void        Initialize();
+  void        Destroy()        { };
+  void        Defaults_init();
+};
+
+
+eTypeDef_Of(TRCSpec);
+
+class E_API TRCSpec : public SpecMemberBase {
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra specs for DeepLeabra thalamic relay cells -- engaged only for deep.on and deep.role == TRC
+INHERITED(SpecMemberBase)
+public:
+  bool       p_only_m;          // TRC plus-phase (clamping) for TRC units only occurs if the minus phase max activation for given unit group is above .1
+  bool       thal_gate;         // apply thalamic gating to TRC activations -- multiply netin by current thal parameter
+  bool       avg_clamp;         // TRC plus-phase netinput is weighted average (see deep_gain) of current plus-phase deep netin and standard netin -- produces a better clamping dynamic
+  float      deep_gain;         // #CONDSHOW_ON_avg_clamp how much to weight the deep netin relative to standard netin  (1.0-deep_gain) for avg_clamp
+  bool       clip;              // clip the deep netin to clip_max value -- produces more of an OR-like behavior for TRC reps
+  float      clip_max;          // #CONDSHOW_ON_clip maximum netin value to clip deep raw netin in trc plus-phase clamping -- prevents strong from dominating weak too much..
+
+  float      std_gain;          // #READ_ONLY #HIDDEN 1-deep_gain
+
   inline float  TRCClampNet(float deep_raw_net, const float net_syn)
-  { if(trc_clip)      deep_raw_net = fminf(deep_raw_net, trc_clip_max);
-    if(trc_avg_clamp) return trc_deep_gain * deep_raw_net + trc_std_gain * net_syn;
-    else              return deep_raw_net; }
+  { if(clip)      deep_raw_net = fminf(deep_raw_net, clip_max);
+    if(avg_clamp) return deep_gain * deep_raw_net + std_gain * net_syn;
+    else          return deep_raw_net; }
   // compute TRC plus-phase clamp netinput
   
   
   String     GetTypeDecoKey() const override { return "UnitSpec"; }
 
-  TA_SIMPLE_BASEFUNS(DeepSpec);
+  TA_SIMPLE_BASEFUNS(TRCSpec);
 protected:
   SPEC_DEFAULTS;
   void        UpdateAfterEdit_impl() override;
@@ -599,6 +626,7 @@ public:
   SynDelaySpec     syn_delay;       // #CAT_Activation synaptic delay -- if active, activation sent to other units is delayed by a given amount
   Quarters         deep_raw_qtr;    // #CAT_Learning #AKA_deep_qtr quarter(s) during which deep_raw layer 5 intrinsic bursting activations should be updated -- deep_raw is updated and sent to deep_raw_net during this quarter, and deep_ctxt is updated right after this quarter (wrapping around to the first quarter for the 4th quarter)
   DeepSpec         deep;            // #CAT_Learning specs for DeepLeabra deep neocortical layer dynamics, which capture attentional, thalamic auto-encoder, and temporal integration mechanisms 
+  TRCSpec          trc;             // #CAT_Learning #CONDSHOW_ON_deep.on&&deep.role:TRC specs for DeepLeabra TRC thalamic relay cells
   DaModSpec        da_mod;          // #CAT_Learning da modulation of activations (for da-based learning, and other effects)
   NoiseType        noise_type;      // #CAT_Activation where to add random noise in the processing (if at all)
   RandomSpec       noise;           // #CONDSHOW_OFF_noise_type:NO_NOISE #CAT_Activation distribution parameters for random added noise

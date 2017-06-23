@@ -2500,8 +2500,8 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   pfc_trc_units->SetUnique("deep", true);
   pfc_trc_units->deep.on = true;
   pfc_trc_units->deep.role = DeepSpec::TRC;
-  pfc_trc_units->deep.trc_p_only_m = true;
-  pfc_trc_units->deep.trc_thal_gate = true;
+  pfc_trc_units->trc.p_only_m = true;
+  pfc_trc_units->trc.thal_gate = true;
 
   input_units->SetUnique("deep", true);
   input_units->deep.on = true;

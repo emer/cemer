@@ -72,7 +72,7 @@ void BLAmygUnitSpec::Compute_DeepMod(LeabraUnitVars* u, LeabraNetwork* net, int 
   }
   else if(deep.IsTRC()) {
     u->deep_lrn = u->deep_mod = 1.0f;         // don't do anything interesting
-    if(deep.trc_thal_gate) {
+    if(trc.thal_gate) {
       u->net *= u->thal;
     }
   }

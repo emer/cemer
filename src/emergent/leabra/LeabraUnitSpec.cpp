@@ -41,6 +41,7 @@ TA_BASEFUNS_CTORS_DEFN(ActAdaptSpec);
 TA_BASEFUNS_CTORS_DEFN(ShortPlastSpec);
 TA_BASEFUNS_CTORS_DEFN(SynDelaySpec);
 TA_BASEFUNS_CTORS_DEFN(DeepSpec);
+TA_BASEFUNS_CTORS_DEFN(TRCSpec);
 TA_BASEFUNS_CTORS_DEFN(DaModSpec);
 TA_BASEFUNS_CTORS_DEFN(NoiseAdaptSpec);
 
@@ -341,9 +342,6 @@ void SynDelaySpec::Initialize() {
 void DeepSpec::Initialize() {
   on = false;
   role = SUPER;
-  trc_avg_clamp = false;
-  trc_clip = false;
-  trc_clip_max = 0.4f;
   Defaults_init();
 }
 
@@ -352,17 +350,39 @@ void DeepSpec::Defaults_init() {
   raw_thr_abs = 0.1f;
   mod_min = 0.8f;
   mod_thr = 0.1f;
-  trc_p_only_m = false;
-  trc_thal_gate = false;
-  trc_deep_gain = 0.2f;
-  trc_std_gain = 1.0f - trc_deep_gain;
+  ctxt_prv = 0.0f;
+  tick_updt = -1;
+  else_prv = 0.9f;
+  
   mod_range = 1.0f - mod_min;
+  ctxt_new = 1.0f - ctxt_prv;
+  else_new = 1.0f - else_prv;
 }
 
 void DeepSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   mod_range = 1.0f - mod_min;
-  trc_std_gain = 1.0f - trc_deep_gain;
+  ctxt_new = 1.0f - ctxt_prv;
+  else_new = 1.0f - else_prv;
+}
+
+void TRCSpec::Initialize() {
+  avg_clamp = false;
+  clip = false;
+  clip_max = 0.4f;
+  Defaults_init();
+}
+
+void TRCSpec::Defaults_init() {
+  p_only_m = false;
+  thal_gate = false;
+  deep_gain = 0.2f;
+  std_gain = 1.0f - deep_gain;
+}
+
+void TRCSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  std_gain = 1.0f - deep_gain;
 }
 
 void DaModSpec::Initialize() {
@@ -1043,7 +1063,17 @@ void LeabraUnitSpec::Compute_DeepCtxt(LeabraUnitVars* u, LeabraNetwork* net, int
     float& ndval = net->ThrSendDeepRawNetTmp(j)[flat_idx];
     net_sum += ndval;
   }
-  u->deep_ctxt = net_sum;
+  if(deep.tick_updt >= 0) {
+    if(net->tick == deep.tick_updt) {
+      u->deep_ctxt = deep.ctxt_prv * u->deep_ctxt + deep.ctxt_new * net_sum;
+    }
+    else {
+      u->deep_ctxt = deep.else_prv * u->deep_ctxt + deep.else_new * net_sum;
+    }
+  }
+  else {
+    u->deep_ctxt = deep.ctxt_prv * u->deep_ctxt + deep.ctxt_new * net_sum;
+  }
 }
 
 void LeabraUnitSpec::Compute_DeepStateUpdt(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
@@ -1311,18 +1341,18 @@ void LeabraUnitSpec::Compute_NetinInteg(LeabraUnitVars* u, LeabraNetwork* net, i
   if(deep.IsTRC() && Quarter_DeepRawNow(net->quarter)) {
     LeabraUnit* un = (LeabraUnit*)u->Un(net, thr_no);
     if(lay->am_deep_raw_net.max > 0.1f) { // have to get some input to clamp
-      if(deep.trc_p_only_m) {
+      if(trc.p_only_m) {
         LeabraUnGpData* ugd = lay->UnGpDataUn(un);
         if(ugd->acts_prvq.max > 0.1f) {
           // only activate if we got prior and current activation
-          net_syn = deep.TRCClampNet(u->deep_raw_net, net_syn); // u->net_prv_q); 
+          net_syn = trc.TRCClampNet(u->deep_raw_net, net_syn); // u->net_prv_q); 
         }
         else {
           net_ex = Compute_NetinExtras(u, net, thr_no, net_syn);
         }
       }
       else {                       // always do it
-        net_syn = deep.TRCClampNet(u->deep_raw_net, net_syn); // u->net_prv_q); 
+        net_syn = trc.TRCClampNet(u->deep_raw_net, net_syn); // u->net_prv_q); 
       }
     }
     else {
@@ -1480,7 +1510,7 @@ void LeabraUnitSpec::Compute_DeepMod(LeabraUnitVars* u, LeabraNetwork* net, int 
   }
   else if(deep.IsTRC()) {
     u->deep_lrn = u->deep_mod = 1.0f;         // don't do anything interesting
-    if(deep.trc_thal_gate) {
+    if(trc.thal_gate) {
       u->net *= u->thal;
     }
     return;
