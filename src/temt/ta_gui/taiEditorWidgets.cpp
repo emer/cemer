@@ -47,9 +47,11 @@ void taiEditorWidgets::DoFillLabelContextMenu_CtrlPanel
   if (!proj) return;
 
   // no sense having args on control panels other than the program's own control panel
-  ProgVar* prog_var = (ProgVar*)rbase;
-  if (prog_var && prog_var->HasVarFlag(ProgVar::PGRM_ARG)) {
-    return;
+  if(rbase->InheritsFrom(&TA_ProgVar)) {
+    ProgVar* prog_var = (ProgVar*)rbase;
+    if (prog_var && prog_var->HasVarFlag(ProgVar::PGRM_ARG)) {
+      return;
+    }
   }
 
   QAction* act = menu->addAction("Go To ControlPanel", slot_obj, goto_slot);

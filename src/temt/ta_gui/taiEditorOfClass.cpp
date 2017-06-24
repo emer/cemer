@@ -96,6 +96,7 @@ taiEditorOfClass::taiEditorOfClass(void* base, TypeDef* typ_, bool read_only_,
   InitGuiFields(false);
   ta_menu_buttons.own_items = true; // so they get destroyed
   //note: don't register for notification until constr starts
+  ctrl_panel_mbrs = true; // inherited guys can turn off
 }
 
 taiEditorOfClass::~taiEditorOfClass() {
