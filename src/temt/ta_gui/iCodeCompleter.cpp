@@ -127,7 +127,15 @@ bool iCodeCompleter::eventFilter(QObject* obj, QEvent* event) {
   if (event->type() != QEvent::KeyPress) {
     return inherited::eventFilter(obj, event);
   }
+  
   QKeyEvent* key_event = static_cast<QKeyEvent *>(event);
+
+  if (host_type == TEXT_EDIT_HOST) {
+    if (key_event->key() == Qt::Key_Tab) {
+      return inherited::eventFilter(obj, event);
+    }
+  }
+
   if (key_event->key() == Qt::Key_Tab) {
     if (is_dialog_field && GetText() == last_epression_text) {
       return inherited::eventFilter(obj, event);

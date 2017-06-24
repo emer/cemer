@@ -58,8 +58,12 @@ protected:
   void              contextMenuEvent(QContextMenuEvent* e) override;
   void              focusInEvent(QFocusEvent* e) override;
 
+  protected slots:
+  void              InsertCompletion(const QString& the_completion);
+
 private:
   void              init(bool add_completer = false);
+  
 };
 
 #endif // iTextEdit_h

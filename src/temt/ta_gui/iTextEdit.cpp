@@ -54,8 +54,8 @@ void iTextEdit::init(bool add_completer) {
   if (add_completer) {
     completer = new iCodeCompleter(parent());
     completer->setCaseSensitivity(Qt::CaseInsensitive);
-//    this->setCompleter(completer);
     completion_enabled = taMisc::code_completion.auto_complete;
+    QObject::connect(completer, SIGNAL(activated(QString)), this, SLOT(InsertCompletion(QString)));
   }
   installEventFilter(this);
 }
@@ -69,6 +69,11 @@ void iTextEdit::clearExtSelection() {
 
 void iTextEdit::keyPressEvent(QKeyEvent* key_event) {
   taiMisc::UpdateUiOnCtrlPressed(this, key_event);
+  
+  if (key_event->key() == Qt::Key_Tab  && GetCompleter() && GetCompleter()->popup()->isVisible()) {
+    key_event->ignore();
+    return;
+  }
 
   QCoreApplication* app = QCoreApplication::instance();
   QTextCursor cursor(textCursor());
@@ -308,6 +313,18 @@ void iTextEdit::focusInEvent(QFocusEvent *e) // without this the completer can't
   if (GetCompleter())
     GetCompleter()->setWidget(this);
   QTextEdit::focusInEvent(e);
+}
+
+void iTextEdit::InsertCompletion(const QString& completion)
+{
+  if (GetCompleter()->widget() != this)
+    return;
+  QTextCursor tc = textCursor();
+  int extra = completion.length() - GetCompleter()->completionPrefix().length();
+  tc.movePosition(QTextCursor::Left);
+  tc.movePosition(QTextCursor::EndOfWord);
+  tc.insertText(completion.right(extra));
+  setTextCursor(tc);
 }
 
 

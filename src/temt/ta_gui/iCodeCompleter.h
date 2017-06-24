@@ -59,6 +59,7 @@ public:
   enum HostType {
     DIALOG_HOST,
     INLINE_HOST,
+    TEXT_EDIT_HOST,
   };
   
   iCodeCompleter(QObject* parent = 0);
