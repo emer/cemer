@@ -101,7 +101,7 @@ void iDialogItemChooser::accept() {
   }
   m_selItem = itm;
   
-  if (m_selItem) {
+  if (m_selItem && m_client) {
     m_client->sel_obj_type = (taiWidgetItemChooser::ItemObjType)itm->type();
   }
 

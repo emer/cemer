@@ -18,6 +18,7 @@
 #include <taMisc>
 #include <taiMisc>
 // ^^ note: this creates dependence on ta stuff, but needed for keyboard prefs
+#include <iCodeCompleter>
 
 #include <QKeyEvent>
 #include <QTextCursor>
@@ -26,21 +27,37 @@
 #include <QInputDialog>
 #include <QCoreApplication>
 #include <QApplication>
+#include <QScrollBar>
 
-iTextEdit::iTextEdit(QWidget* parent)
+iTextEdit::iTextEdit(QWidget* parent, bool add_completer)
 :inherited(parent)
 {
   ext_select_on = false;
+  init(add_completer);
 }
 
-iTextEdit::iTextEdit(const QString& text, QWidget* parent)
+iTextEdit::iTextEdit(const QString& text, QWidget* parent, bool add_completer)
  :inherited(text, parent)
 {
   ext_select_on = false;
+  init(add_completer);
 }
 
 iTextEdit::~iTextEdit()
 {
+}
+
+void iTextEdit::init(bool add_completer) {
+  completer = NULL;
+  completion_enabled = false;
+  cursor_position_from_end = 0;
+  if (add_completer) {
+    completer = new iCodeCompleter(parent());
+    completer->setCaseSensitivity(Qt::CaseInsensitive);
+//    this->setCompleter(completer);
+    completion_enabled = taMisc::code_completion.auto_complete;
+  }
+  installEventFilter(this);
 }
 
 void iTextEdit::clearExtSelection() {
@@ -168,7 +185,43 @@ void iTextEdit::keyPressEvent(QKeyEvent* key_event) {
     default:
       ;
   }
-  inherited::keyPressEvent(key_event);
+  {
+    if(!taiMisc::KeyEventCtrlPressed(key_event) && ((key_event->key() == Qt::Key_Enter || key_event->key() == Qt::Key_Return))) {
+      if (key_event->key() == Qt::Key_Return && GetCompleter()->currentRow() > 0) {
+        inherited::keyPressEvent(key_event);
+        CompletionDone();
+      }
+      else if (key_event->key() == Qt::Key_Enter) {
+        DoCompletion(true);  // try to extend
+      }
+      else {
+        inherited::keyPressEvent(key_event);
+      }
+    }
+    else if(!taiMisc::KeyEventCtrlPressed(key_event)
+            && key_event->key() != Qt::Key_Escape
+            && key_event->key() != Qt::Key_Right
+            && key_event->key() != Qt::Key_Left)
+    {
+      inherited::keyPressEvent(key_event);
+#ifdef TA_OS_MAC
+      if (!(key_event->modifiers() & Qt::ControlModifier)) { // don't complete if mac command key
+        DoCompletion(false);
+        return;
+      }
+#else
+      if (!(key_event->modifiers() & Qt::MetaModifier)) { // don't complete if other platform control key
+        DoCompletion(false);
+        return;
+      }
+#endif
+    }
+    else {
+      inherited::keyPressEvent(key_event);
+    }
+  }
+
+  //  inherited::keyPressEvent(key_event);
 }
 
 void iTextEdit::contextMenuEvent(QContextMenuEvent *event) {
@@ -207,3 +260,54 @@ bool iTextEdit::findPrompt() {
   }
   return true;
 }
+
+void iTextEdit::DoCompletion(bool extend) {
+  if (!GetCompleter()) return;
+  
+  String prefix = toPlainText();
+  prefix = prefix.through(textCursor().position() - 1);
+  if (prefix.length() < toPlainText().length()) {
+    cursor_position_from_end = toPlainText().length() - textCursor().position();
+  }
+  emit characterEntered();
+  GetCompleter()->setCompletionPrefix(prefix);
+  GetCompleter()->setCompletionMode(QCompleter::PopupCompletion);
+  
+  // if (IsDelimter(prefix.lastchar())) {
+  //    GetCompleter()->setCompletionMode(QCompleter::UnfilteredPopupCompletion);
+  //  }
+  //  else {
+  //    GetCompleter()->setCompletionMode(QCompleter::PopupCompletion);
+  //  }
+  
+  GetCompleter()->FilterList(prefix);
+  
+  if (extend) {
+    String extended_prefix = prefix;
+    GetCompleter()->ExtendSeed(extended_prefix);
+    if (extended_prefix.length() > prefix.length()) {
+      String extension = extended_prefix.after(prefix.length()-1);
+      toPlainText().insert(0, QString(extension.chars_ptr()));
+    }
+  }
+  
+  QRect cursor_rect = cursorRect();
+  cursor_rect.setWidth(GetCompleter()->popup()->sizeHintForColumn(0)
+              + GetCompleter()->popup()->verticalScrollBar()->sizeHint().width());
+  GetCompleter()->complete(cursor_rect);
+  return;
+}
+
+void iTextEdit::CompletionDone() {
+  QModelIndex index = GetCompleter()->currentIndex();
+  emit completed(GetCompleter()->currentIndex());
+}
+
+void iTextEdit::focusInEvent(QFocusEvent *e) // without this the completer can't find the widget! - see http://doc.qt.io/qt-5/qtwidgets-tools-customcompleter-example.html
+{
+  if (GetCompleter())
+    GetCompleter()->setWidget(this);
+  QTextEdit::focusInEvent(e);
+}
+
+

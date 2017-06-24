@@ -54,7 +54,7 @@ void iDialogWidgetField::init(bool read_only_, const String& desc) {
     prompt->setAlignment(Qt::AlignCenter | Qt::AlignVCenter);
     layOuter->addWidget(prompt);
   }
-  txtText = new iTextEdit(this);
+  txtText = new iTextEdit(this, true);  // true - add a completer to this text field
   layOuter->addWidget(txtText);
   QHBoxLayout* layButtons = new QHBoxLayout();
   layButtons->setMargin(2);

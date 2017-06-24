@@ -18,6 +18,7 @@
 
 #include "ta_def.h"
 
+#include <iCodeCompleter>
 #include <QTextEdit>
 
 // provides emacs keys for text editing!
@@ -26,29 +27,39 @@ class TA_API iTextEdit: public QTextEdit {
 INHERITED(QTextEdit)
   Q_OBJECT
 public:
-  
-  iTextEdit(QWidget* parent = 0);
-  iTextEdit(const QString &text, QWidget *parent = 0);
+  iTextEdit(QWidget* parent = 0, bool add_completer = false);
+  iTextEdit(const QString &text, QWidget *parent = 0, bool add_completer = false);
   ~iTextEdit();
 
-  virtual void	clearExtSelection();	   // clear extended selection mode and also clear any existing selection
+  bool              completion_enabled;
+  
+  virtual void      clearExtSelection();	   // clear extended selection mode and also clear any existing selection
+  iCodeCompleter*   GetCompleter() { return completer; }
 
 public slots:
-  virtual bool	findPrompt();
-  // find function with prompt for search string
+  virtual bool      findPrompt();               // find function with prompt for search string
+  void              DoCompletion(bool extend);  // what we do when the code completion key combo is pressed
+  void              CompletionDone();           // On return (selection of completion)
   
 #ifndef __MAKETA__
 signals:
-  void		lookupKeyPressed();	// use this as hook for looking up information based on current text etc (completion) -- bound to Ctrl-L
+  void              lookupKeyPressed();	// use this as hook for looking up information based on current text etc (completion) -- bound to Ctrl-L
+  void              completed(QModelIndex index); // emit this signal when the use makes a completion selection
+  void              characterEntered(); // use this as hook for looking up information based on current text etc (completion) -- when using the Completer feature rather than lookup feature
 #endif
 
 protected:
-  bool		ext_select_on;	   // toggled by Ctrl+space -- extends selection with keyboard movement
-  QString	prev_find_str;	   // previous find string
+  bool              ext_select_on;	   // toggled by Ctrl+space -- extends selection with keyboard movement
+  QString           prev_find_str;	   // previous find string
+  iCodeCompleter*   completer; //
+  int               cursor_position_from_end;  // cursor position for start of completion - only set during completion
 
-  void keyPressEvent(QKeyEvent* e) override;
-  void contextMenuEvent(QContextMenuEvent* e) override;
+  void              keyPressEvent(QKeyEvent* e) override;
+  void              contextMenuEvent(QContextMenuEvent* e) override;
+  void              focusInEvent(QFocusEvent* e) override;
 
+private:
+  void              init(bool add_completer = false);
 };
 
 #endif // iTextEdit_h

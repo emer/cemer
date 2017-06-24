@@ -68,8 +68,7 @@ taiWidgetText::taiWidgetText(TypeDef* typ_, IWidgetHost* host_, taiWidget* par, 
     lay->addWidget(btnEdit);
     
     SetRep(act_par);
-    connect(btnEdit, SIGNAL(clicked(bool)),
-            this, SLOT(btnEdit_clicked(bool)) );
+    connect(btnEdit, SIGNAL(clicked(bool)), this, SLOT(btnEdit_clicked(bool)) );
   }
   else {
     bool add_completer = (lookupfun_md && (md->HasOption("ADD_COMPLETER_EXPR") || lookupfun_md->HasOption("ADD_COMPLETER_SIMPLE")));
@@ -98,18 +97,13 @@ taiWidgetText::taiWidgetText(TypeDef* typ_, IWidgetHost* host_, taiWidget* par, 
     rep()->setReadOnly(true);
   }
   else {
-    QObject::connect(rep(), SIGNAL(textChanged(const QString&) ),
-                     this, SLOT(repChanged() ) );
+    QObject::connect(rep(), SIGNAL(textChanged(const QString&) ), this, SLOT(repChanged() ) );
   }
   
   // cliphandling connections
-  QObject::connect(rep(), SIGNAL(selectionChanged()),
-                   this, SLOT(selectionChanged() ) );
-  
-  QObject::connect(rep(), SIGNAL(lookupKeyPressed(iLineEdit*)),
-                   this, SLOT(lookupKeyPressed()) );
-  QObject::connect(rep(), SIGNAL(characterEntered(iLineEdit*)),
-                   this, SLOT(characterEntered()) );
+  QObject::connect(rep(), SIGNAL(selectionChanged()), this, SLOT(selectionChanged() ) );
+  QObject::connect(rep(), SIGNAL(lookupKeyPressed(iLineEdit*)), this, SLOT(lookupKeyPressed()) );
+  QObject::connect(rep(), SIGNAL(characterEntered(iLineEdit*)), this, SLOT(characterEntered()) );
 }
 
 iLineEdit* taiWidgetText::rep() const { return leText; }

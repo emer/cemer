@@ -37,6 +37,7 @@ protected slots:
   void                  lookupKeyPressed() override;
   void                  lookupKeyPressed_dialog();
   void                  characterEntered() override;
+  void                  characterEntered_dialog();
 
 public:
 

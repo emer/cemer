@@ -69,6 +69,7 @@ void taiWidgetField::btnEdit_clicked(bool) {
     edit_dialog->setText(rep()->text(), leText->cursorPosition());
     edit_dialog->setWindowTitle(wintxt);
     QObject::connect(edit_dialog->txtText, SIGNAL(lookupKeyPressed()), this, SLOT(lookupKeyPressed_dialog()) );
+    QObject::connect(edit_dialog->txtText, SIGNAL(characterEntered()), this, SLOT(characterEntered_dialog()) );
   }
   edit_dialog->show();
   edit_dialog->raise();
@@ -153,6 +154,33 @@ void taiWidgetField::characterEntered() {
     else {  // iCodeCompleter::EXPRESSION
       Completions* completions = tab->StringFieldLookupForCompleter(rep()->text(), cur_pos, lookupfun_md->name, new_pos);
       rep()->GetCompleter()->SetCompletions(completions);
+    }
+  }
+  
+#ifdef TA_OS_MAC
+  // per this bug with 2.8.x on mac, we need to regain focus:  https://bugreports.qt-project.org/browse/QTBUG-22911
+  rep()->window()->setFocus();
+  rep()->setFocus();
+#endif
+}
+
+void taiWidgetField::characterEntered_dialog() {
+  if(!lookupfun_md || !lookupfun_base) return;
+  
+  taBase* tab = (taBase*)lookupfun_base;
+  
+  int cur_pos = edit_dialog->txtText->textCursor().position();
+  int new_pos = -1;
+  iCodeCompleter* completer = edit_dialog->txtText->GetCompleter();
+  if (completer) {
+    completion_list.Reset();
+    if (completer->field_type == iCodeCompleter::SIMPLE) {
+      tab->GetListForCompletion(lookupfun_md, completion_list);
+      edit_dialog->txtText->GetCompleter()->SetModelList(&completion_list);
+    }
+    else {  // iCodeCompleter::EXPRESSION
+      Completions* completions = tab->StringFieldLookupForCompleter(edit_dialog->txtText->toPlainText(), cur_pos, lookupfun_md->name, new_pos);
+      edit_dialog->txtText->GetCompleter()->SetCompletions(completions);
     }
   }
   
