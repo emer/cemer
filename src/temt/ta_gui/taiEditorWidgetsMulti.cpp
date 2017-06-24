@@ -118,5 +118,5 @@ void taiEditorWidgetsMulti::RebuildMultiBody() {
 
 void taiEditorWidgetsMulti::showElsClicked() {
   show_els = show_els_chk->isChecked();
-  RebuildMultiBody();
+  ReShow(true);
 }

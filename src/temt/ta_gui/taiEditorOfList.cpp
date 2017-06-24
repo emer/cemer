@@ -114,6 +114,9 @@ void taiEditorOfList::Constr_ListLabels() {
 }
 
 void taiEditorOfList::GetValue_Membs() {
+  // first for the List-structure members
+  GetValue_Membs_def();
+
   if(!show_els) return;
   bool rebuild = false;
   if (lst_widget_el.size != cur_lst->size) rebuild = true;
@@ -132,8 +135,6 @@ void taiEditorOfList::GetValue_Membs() {
     return;
   }
 
-  // first for the List-structure members
-  GetValue_Membs_def();
   // then the List elements
   for (int lf=0;  lf < lst_widget_el.size;  ++lf) {
     taiListMemberWidgets* lf_el = lst_widget_el.FastEl(lf);
@@ -145,6 +146,9 @@ void taiEditorOfList::GetValue_Membs() {
 }
 
 void taiEditorOfList::GetImage_Membs() {
+  // first for the List-structure members
+  GetImage_Membs_def();
+
   if(!show_els) return;
   bool rebuild = false;
   if (lst_widget_el.size != cur_lst->size) rebuild = true;
@@ -160,9 +164,6 @@ void taiEditorOfList::GetImage_Membs() {
   if (rebuild) {
     RebuildMultiBody(); 
   } 
-
-  // first for the List-structure members
-  GetImage_Membs_def();
 
   // then the elements
   for (int lf = 0;  lf < lst_widget_el.size;  ++lf) {
