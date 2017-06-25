@@ -168,6 +168,8 @@ void taiWidgetField::characterEntered_dialog() {
   if(!lookupfun_md || !lookupfun_base) return;
   
   taBase* tab = (taBase*)lookupfun_base;
+
+  if (!edit_dialog) return;
   
   int cur_pos = edit_dialog->txtText->textCursor().position();
   int new_pos = -1;

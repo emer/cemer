@@ -19,6 +19,7 @@
 #include <taiMisc>
 // ^^ note: this creates dependence on ta stuff, but needed for keyboard prefs
 #include <iCodeCompleter>
+#include <iDialogWidgetField>
 
 #include <QKeyEvent>
 #include <QTextCursor>
@@ -69,6 +70,13 @@ void iTextEdit::clearExtSelection() {
 
 void iTextEdit::keyPressEvent(QKeyEvent* key_event) {
   taiMisc::UpdateUiOnCtrlPressed(this, key_event);
+  
+  if (taiMisc::KeyEventCtrlPressed(key_event) && key_event->key() == Qt::Key_Return) {
+    iDialogWidgetField* dialog = dynamic_cast<iDialogWidgetField*>(parentWidget());
+    if (dialog) {
+      dialog->accept();
+    }
+  }
   
   QCoreApplication* app = QCoreApplication::instance();
   QTextCursor cursor(textCursor());
@@ -185,8 +193,8 @@ void iTextEdit::keyPressEvent(QKeyEvent* key_event) {
     default:
       ;
   }
-  
-  // This bit is for the completer - when TAB is entered
+
+      // This bit is for the completer - when TAB is entered
   if (key_event->key() == Qt::Key_Tab  && GetCompleter() && GetCompleter()->PopUpIsVisible()) {
     // if no choice highlighted and more than one item in list then tab key will try to "extend" text
     if (!GetCompleter()->HasSelected() && GetCompleter()->GetListCount() > 1) {
@@ -304,16 +312,16 @@ void iTextEdit::focusInEvent(QFocusEvent *e) // without this the completer can't
   QTextEdit::focusInEvent(e);
 }
 
-void iTextEdit::InsertCompletion(const QString& completion)
+void iTextEdit::InsertCompletion(const QString& new_text)
 {
   if (GetCompleter()->widget() != this)
     return;
-  QTextCursor tc = textCursor();
-  int extra = completion.length() - GetCompleter()->completionPrefix().length();
-//  tc.movePosition(QTextCursor::Left);
-//  tc.movePosition(QTextCursor::EndOfWord);
-  tc.insertText(completion.right(extra));
-  setTextCursor(tc);
+  setPlainText(new_text);  // clears undo history
+  moveCursor(QTextCursor::StartOfLine);
+  int offset = new_text.length() - cursor_position_from_end;
+  for (int i=0; i<offset; i++) {
+    moveCursor(QTextCursor::NextCharacter);  // all the sensible ways to move cursor were causing wierd problems!!
+  }
 }
 
 bool iTextEdit::eventFilter(QObject* obj, QEvent* event) {
