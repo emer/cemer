@@ -49,14 +49,15 @@ signals:
 #endif
 
 protected:
-  bool              ext_select_on;	   // toggled by Ctrl+space -- extends selection with keyboard movement
-  QString           prev_find_str;	   // previous find string
+  bool              ext_select_on;	 // toggled by Ctrl+space -- extends selection with keyboard movement
+  QString           prev_find_str;	 // previous find string
   iCodeCompleter*   completer; //
-  int               cursor_position_from_end;  // cursor position for start of completion - only set during completion
+  int               cursor_position_from_end; // cursor position for start of completion - only set during completion
 
   void              keyPressEvent(QKeyEvent* e) override;
   void              contextMenuEvent(QContextMenuEvent* e) override;
   void              focusInEvent(QFocusEvent* e) override;
+  bool              eventFilter(QObject* obj, QEvent * e) override;
 
   protected slots:
   void              InsertCompletion(const QString& the_completion);

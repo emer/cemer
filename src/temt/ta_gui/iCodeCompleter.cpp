@@ -129,33 +129,45 @@ bool iCodeCompleter::eventFilter(QObject* obj, QEvent* event) {
   }
   
   QKeyEvent* key_event = static_cast<QKeyEvent *>(event);
-
+  
   if (host_type == TEXT_EDIT_HOST) {
     if (key_event->key() == Qt::Key_Tab) {
+      if (GetList()->size() == 1) {
+        QCoreApplication* app = QCoreApplication::instance();
+        app->postEvent(popup(), new QKeyEvent(QEvent::KeyPress, Qt::Key_Down, Qt::NoModifier)); // only one item in list
+        app->postEvent(popup(), new QKeyEvent(QEvent::KeyPress, Qt::Key_Return, Qt::NoModifier));  // select
+        return true;
+      }
       return inherited::eventFilter(obj, event);
     }
-  }
-
-  if (key_event->key() == Qt::Key_Tab) {
-    if (is_dialog_field && GetText() == last_epression_text) {
+    if (key_event->key() == Qt::Key_Return) {
       return inherited::eventFilter(obj, event);
     }
     last_epression_text = GetText();
-    QCoreApplication* app = QCoreApplication::instance();
-    if (event->type() == QEvent::KeyPress && popup()->currentIndex().row() != -1) {  // some item is highlighted
-      app->postEvent(popup(), new QKeyEvent(QEvent::KeyPress, Qt::Key_Return, Qt::NoModifier));  // select
-    }
-    else if (GetList()->size() == 1) {
-      app->postEvent(popup(), new QKeyEvent(QEvent::KeyPress, Qt::Key_Down, Qt::NoModifier)); // only one item in list
-      app->postEvent(popup(), new QKeyEvent(QEvent::KeyPress, Qt::Key_Return, Qt::NoModifier));  // select
-    }
-    else {
-      app->postEvent(popup(), new QKeyEvent(QEvent::KeyPress, Qt::Key_Enter, Qt::NoModifier));  // try extending
-    }
-    return true;
+    return inherited::eventFilter(obj, event);
   }
   else {
-    return inherited::eventFilter(obj, event);
+    if (key_event->key() == Qt::Key_Tab) {
+      if (is_dialog_field && GetText() == last_epression_text) {
+        return inherited::eventFilter(obj, event);
+      }
+      last_epression_text = GetText();
+      QCoreApplication* app = QCoreApplication::instance();
+      if (event->type() == QEvent::KeyPress && popup()->currentIndex().row() != -1) {  // some item is highlighted
+        app->postEvent(popup(), new QKeyEvent(QEvent::KeyPress, Qt::Key_Return, Qt::NoModifier));  // select
+      }
+      else if (GetList()->size() == 1) {
+        app->postEvent(popup(), new QKeyEvent(QEvent::KeyPress, Qt::Key_Down, Qt::NoModifier)); // only one item in list
+        app->postEvent(popup(), new QKeyEvent(QEvent::KeyPress, Qt::Key_Return, Qt::NoModifier));  // select
+      }
+      else {
+        app->postEvent(popup(), new QKeyEvent(QEvent::KeyPress, Qt::Key_Enter, Qt::NoModifier));  // try extending
+      }
+      return true;
+    }
+    else {
+      return inherited::eventFilter(obj, event);
+    }
   }
 }
 
@@ -212,6 +224,10 @@ String iCodeCompleter::GetText() {
 
 bool iCodeCompleter::ExpressionTakesArgs(String expression) {
   return ProgExprBase::ExpressionTakesArgs(expression);
+}
+
+bool iCodeCompleter::HasSelected() {
+  return (popup()->currentIndex().row() != -1);
 }
 
 // class iCompleterPopupView

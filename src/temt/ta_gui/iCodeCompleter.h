@@ -81,6 +81,9 @@ public:
   bool                    ExpressionTakesArgs(String expression); // call ProgExprBase to know if method takes arguments
   void                    SetHostType(HostType type) { host_type = type; }
   void                    SetFieldType(FieldType type) { field_type = type; }
+  bool                    HasSelected();             // is one of the completion choices highlighted
+  int                     GetListCount() { return GetList()->size(); }
+  bool                    PopUpIsVisible() { return popup()->isVisible(); }
   
 protected:
   QStringList             string_list;

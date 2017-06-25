@@ -70,11 +70,6 @@ void iTextEdit::clearExtSelection() {
 void iTextEdit::keyPressEvent(QKeyEvent* key_event) {
   taiMisc::UpdateUiOnCtrlPressed(this, key_event);
   
-  if (key_event->key() == Qt::Key_Tab  && GetCompleter() && GetCompleter()->popup()->isVisible()) {
-    key_event->ignore();
-    return;
-  }
-
   QCoreApplication* app = QCoreApplication::instance();
   QTextCursor cursor(textCursor());
   QTextCursor::MoveMode mv_md = QTextCursor::MoveAnchor;
@@ -190,43 +185,45 @@ void iTextEdit::keyPressEvent(QKeyEvent* key_event) {
     default:
       ;
   }
-  {
-    if(!taiMisc::KeyEventCtrlPressed(key_event) && ((key_event->key() == Qt::Key_Enter || key_event->key() == Qt::Key_Return))) {
-      if (key_event->key() == Qt::Key_Return && GetCompleter()->currentRow() > 0) {
-        inherited::keyPressEvent(key_event);
-        CompletionDone();
-      }
-      else if (key_event->key() == Qt::Key_Enter) {
-        DoCompletion(true);  // try to extend
-      }
-      else {
-        inherited::keyPressEvent(key_event);
-      }
+  
+  // This bit is for the completer - when TAB is entered
+  if (key_event->key() == Qt::Key_Tab  && GetCompleter() && GetCompleter()->PopUpIsVisible()) {
+    // if no choice highlighted and more than one item in list then tab key will try to "extend" text
+    if (!GetCompleter()->HasSelected() && GetCompleter()->GetListCount() > 1) {
+      DoCompletion(true);
+      key_event->accept();
+      return;
     }
-    else if(!taiMisc::KeyEventCtrlPressed(key_event)
-            && key_event->key() != Qt::Key_Escape
-            && key_event->key() != Qt::Key_Right
-            && key_event->key() != Qt::Key_Left)
-    {
-      inherited::keyPressEvent(key_event);
-#ifdef TA_OS_MAC
-      if (!(key_event->modifiers() & Qt::ControlModifier)) { // don't complete if mac command key
-        DoCompletion(false);
-        return;
-      }
-#else
-      if (!(key_event->modifiers() & Qt::MetaModifier)) { // don't complete if other platform control key
-        DoCompletion(false);
-        return;
-      }
-#endif
-    }
-    else {
-      inherited::keyPressEvent(key_event);
+    else {  // let standard completer code handle - will even do selection if only one item in list!
+      key_event->ignore();
+      return;
     }
   }
-
-  //  inherited::keyPressEvent(key_event);
+  
+  // This bit is for the completer - when RETURN/ENTER is entered
+  if (key_event->key() == Qt::Key_Return  && GetCompleter() && GetCompleter()->PopUpIsVisible()) {
+    key_event->ignore();
+    return;
+  }
+  
+  // other keys
+  if (completion_enabled) {
+#ifdef TA_OS_MAC
+    if (!(key_event->modifiers() & Qt::ControlModifier)) { // don't complete if mac command key
+      inherited::keyPressEvent(key_event);
+      DoCompletion(false);
+      return;
+    }
+#else
+    if (!(key_event->modifiers() & Qt::MetaModifier)) { // don't complete if other platform control key
+      inherited::keyPressEvent(key_event);
+      DoCompletion(false);
+      return;
+    }
+#endif
+  }
+  
+  inherited::keyPressEvent(key_event);
 }
 
 void iTextEdit::contextMenuEvent(QContextMenuEvent *event) {
@@ -277,14 +274,6 @@ void iTextEdit::DoCompletion(bool extend) {
   emit characterEntered();
   GetCompleter()->setCompletionPrefix(prefix);
   GetCompleter()->setCompletionMode(QCompleter::PopupCompletion);
-  
-  // if (IsDelimter(prefix.lastchar())) {
-  //    GetCompleter()->setCompletionMode(QCompleter::UnfilteredPopupCompletion);
-  //  }
-  //  else {
-  //    GetCompleter()->setCompletionMode(QCompleter::PopupCompletion);
-  //  }
-  
   GetCompleter()->FilterList(prefix);
   
   if (extend) {
@@ -292,7 +281,7 @@ void iTextEdit::DoCompletion(bool extend) {
     GetCompleter()->ExtendSeed(extended_prefix);
     if (extended_prefix.length() > prefix.length()) {
       String extension = extended_prefix.after(prefix.length()-1);
-      toPlainText().insert(0, QString(extension.chars_ptr()));
+      insertPlainText(extension.toQString());
     }
   }
   
@@ -321,10 +310,27 @@ void iTextEdit::InsertCompletion(const QString& completion)
     return;
   QTextCursor tc = textCursor();
   int extra = completion.length() - GetCompleter()->completionPrefix().length();
-  tc.movePosition(QTextCursor::Left);
-  tc.movePosition(QTextCursor::EndOfWord);
+//  tc.movePosition(QTextCursor::Left);
+//  tc.movePosition(QTextCursor::EndOfWord);
   tc.insertText(completion.right(extra));
   setTextCursor(tc);
 }
 
+bool iTextEdit::eventFilter(QObject* obj, QEvent* event) {
+  if (event->type() == QEvent::ShortcutOverride && GetCompleter()) {
+    QKeyEvent* key_event = static_cast<QKeyEvent*>(event);
+    QCoreApplication* app = QCoreApplication::instance();
+    
+    if (taiMisc::KeyEventCtrlPressed(key_event)) {
+      switch (static_cast<QKeyEvent*>(event)->key()) {
+        case Qt::Key_Space:
+          completion_enabled = true;
+          DoCompletion(false);
+          return true;
+      }
+    }
+    return false;
+  }
+  return inherited::eventFilter(obj, event);
+}
 
