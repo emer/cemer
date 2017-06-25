@@ -322,6 +322,11 @@ void iTextEdit::InsertCompletion(const QString& new_text)
   for (int i=0; i<offset; i++) {
     moveCursor(QTextCursor::NextCharacter);  // all the sensible ways to move cursor were causing wierd problems!!
   }
+  String working_copy = new_text;
+  working_copy = working_copy.before(offset);
+  if (completer->ExpressionTakesArgs(working_copy)) {
+    moveCursor(QTextCursor::PreviousCharacter);
+  }
 }
 
 bool iTextEdit::eventFilter(QObject* obj, QEvent* event) {
