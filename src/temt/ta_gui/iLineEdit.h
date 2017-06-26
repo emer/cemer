@@ -56,7 +56,6 @@ signals:
 
 public slots:
   void          setReadOnly(bool value);
-  void          editInEditor(); // edit contents in modal dialog
   void          doLookup();     // what we do when the lookup key is pressed
   void          DoCompletion(bool extend); // what we do when the code completion key combo is pressed
   void          CompletionDone(); // On return (selection of completion)
@@ -77,7 +76,6 @@ protected:
   void              wheelEvent(QWheelEvent * e) override;
   bool              event(QEvent * e) override;
   bool              eventFilter(QObject* obj, QEvent * e) override;
-  bool              IsDelimter(char a_char);
   int               FindMatchingParens(int start);
   // returns 'balancing' parens position
 

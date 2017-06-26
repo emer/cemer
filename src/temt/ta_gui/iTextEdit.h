@@ -61,6 +61,7 @@ protected:
 
   protected slots:
   void              InsertCompletion(const QString& the_completion);
+  void              selectionChanged();
 
 private:
   void              init(bool add_completer = false);

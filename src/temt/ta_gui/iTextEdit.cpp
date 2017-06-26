@@ -59,6 +59,9 @@ void iTextEdit::init(bool add_completer) {
     QObject::connect(completer, SIGNAL(activated(QString)), this, SLOT(InsertCompletion(QString)));
   }
   installEventFilter(this);
+  
+  QObject::connect(this, SIGNAL(selectionChanged()),
+                   this, SLOT(selectionChanged() ) );
 }
 
 void iTextEdit::clearExtSelection() {
@@ -345,5 +348,15 @@ bool iTextEdit::eventFilter(QObject* obj, QEvent* event) {
     return false;
   }
   return inherited::eventFilter(obj, event);
+}
+
+// hasSelection not returning true - revisit
+void iTextEdit::selectionChanged() {
+  QTextCursor cursor = QTextCursor();
+
+  if (cursor.hasSelection()) {
+    int selection_length = cursor.selectedText().length();
+  }
+  inherited::selectionChanged();
 }
 

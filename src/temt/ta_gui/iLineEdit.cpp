@@ -63,7 +63,6 @@ void iLineEdit::init(bool add_completer) {
   // this seems unnecessary, and conflicts with ctrl-U select-all!
 //   QShortcut* sc = new QShortcut(QKeySequence(/*Qt::ALT +*/ Qt::CTRL + Qt::Key_U), this);
 //   sc->setContext(Qt::WidgetShortcut);
-//   connect(sc, SIGNAL(activated()), this, SLOT(editInEditor()));
   
   completer = NULL;
   completion_enabled = false;
@@ -73,32 +72,13 @@ void iLineEdit::init(bool add_completer) {
     completer->setCaseSensitivity(Qt::CaseInsensitive);
     this->setCompleter(completer);
     completion_enabled = taMisc::code_completion.auto_complete;
+    connect(completer, SIGNAL(activated(QString)), this, SLOT(setText(QString)));
   }
   installEventFilter(this);
   
   QObject::connect(this, SIGNAL(selectionChanged()),
                    this, SLOT(selectionChanged() ) );
 
-}
-
-void iLineEdit::editInEditor() {
-  iDialogTextEdit* dlg = new iDialogTextEdit(); // no parent needed for modals
-  // set to be ~3/4 of screen
-  QDesktopWidget *d = QApplication::desktop();
-  int primaryScreen = d->primaryScreen();
-  QSize sz = d->availableGeometry(primaryScreen).size();
-  int wd = (sz.width() * 3) / 4;
-  int ht = (sz.height() * 3) / 4;
-  if(wd > 640) wd = 640;        // don't make it too wide..
-  dlg->resize(wd, ht);
-  if (isReadOnly()) {
-    dlg->txtText->setReadOnly(true);
-  }
-  dlg->txtText->setPlainText(text());
-  if (!isReadOnly() && (dlg->exec() == QDialog::Accepted)) {
-    setText(dlg->txtText->toPlainText());
-  }
-  dlg->deleteLater();
 }
 
 void iLineEdit::focusInEvent(QFocusEvent* e) {
@@ -313,10 +293,7 @@ void iLineEdit::keyPressEvent(QKeyEvent* key_event)
             inherited::keyPressEvent(key_event);
           }
         }
-        else if(!taiMisc::KeyEventCtrlPressed(key_event)
-                && key_event->key() != Qt::Key_Escape
-                && key_event->key() != Qt::Key_Right
-                && key_event->key() != Qt::Key_Left)
+        else if(!taiMisc::KeyEventCtrlPressed(key_event) && key_event->key() != Qt::Key_Escape)
         {
           inherited::keyPressEvent(key_event);
 #ifdef TA_OS_MAC
@@ -356,14 +333,6 @@ void iLineEdit::DoCompletion(bool extend) {
   emit characterEntered(this);
   GetCompleter()->setCompletionPrefix(prefix);
   GetCompleter()->setCompletionMode(QCompleter::PopupCompletion);
-  
-// if (IsDelimter(prefix.lastchar())) {
-//    GetCompleter()->setCompletionMode(QCompleter::UnfilteredPopupCompletion);
-//  }
-//  else {
-//    GetCompleter()->setCompletionMode(QCompleter::PopupCompletion);
-//  }
-  
   GetCompleter()->FilterList(prefix);
   
   if (extend) {
@@ -418,22 +387,6 @@ bool iLineEdit::eventFilter(QObject* obj, QEvent* event) {
     return false;
   }
   return inherited::eventFilter(obj, event);
-}
-
-bool iLineEdit::IsDelimter(char a_char) {
-  if (a_char == '.'
-      || a_char == '>'
-      || a_char == '('
-      || a_char == ')'
-      || a_char == '['
-      || a_char == ']'
-      || a_char == ':'
-      || a_char == ' '
-      )
-    return true;
-  else {
-    return false;
-  }
 }
 
 void iLineEdit::setText(const QString& str) {
