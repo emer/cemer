@@ -56,22 +56,21 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
 :inherited(tlv)
 {
   int font_spec = taiMisc::fonMedium;
-  
+
   layPlots = NULL;
   row_height = 10;
-  for(int i=0; i<max_plots; i++) { // coverity food
-    layYAxis[i] = NULL;
-    oncYAxis[i] = NULL;
-    lblYAxis[i] = NULL;
-    lelYAxis[i] = NULL;
-    pdtYAxis[i] = NULL;
-    chkYAltY[i] = NULL;
-    lelErr[i] = NULL;
-    oncErr[i] = NULL;
-    lblcellYAxis[i] = NULL;
-    cellYAxis[i] = NULL;
-    butLineProps[i] = NULL;
-  }
+  layYAxis = NULL;
+  oncYAxis = NULL;
+  lblYAxis = NULL;
+  lelYAxis = NULL;
+  pdtYAxis = NULL;
+  chkYAltY = NULL;
+  lblcellYAxis = NULL;
+  cellYAxis = NULL;
+  lelErr = NULL;
+  oncErr = NULL;
+  flipYAxis = NULL;
+  butLineProps = NULL;
   
   layTopCtrls = new QHBoxLayout; layWidg->addLayout(layTopCtrls);
   layTopCtrls->setContentsMargins(margin_l_r, margin_t_b, margin_l_r, margin_t_b);
@@ -175,7 +174,7 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
   layVals->addSpacing(taiM->hsep_c);
   
   lblNPlots = taiM->NewLabel("N Plots", widg, font_spec);
-  lblNPlots->setToolTip(taiMisc::ToolTipPreProcess("Number of different plots available to display in this graph -- can increase to up to 64 -- just takes more room in the control panel"));
+  lblNPlots->setToolTip(taiMisc::ToolTipPreProcess("Number of different plots available to display in this graph -- can have any number -- just takes more room in the control panel"));
   layVals->addWidget(lblNPlots);
   fldNPlots = dl.Add(new taiWidgetField(&TA_int, this, NULL, widg));
   layVals->addWidget(fldNPlots->GetRep());
@@ -488,7 +487,7 @@ bool iViewPanelOfGraphTable::BuildPlots() {
   GraphTableView* glv = this->glv(); //cache
   if (!glv) return false; // probably destructing
   
-  int pltsz = MIN(max_plots, glv->plots.size);
+  int pltsz = glv->plots.size;
   
   if(cur_built_plots == pltsz)
     return false;
@@ -502,6 +501,34 @@ bool iViewPanelOfGraphTable::BuildPlots() {
     delete plotsWidg->layout();
     taiMisc::DeleteChildrenLater(plotsWidg);
   }
+
+  if(layYAxis) {
+    delete layYAxis;
+    delete oncYAxis;
+    delete lblYAxis;
+    delete lelYAxis;
+    delete pdtYAxis;
+    delete chkYAltY;
+    delete lblcellYAxis;
+    delete cellYAxis;
+    delete lelErr;
+    delete oncErr;
+    delete flipYAxis;
+    delete butLineProps;
+  }
+
+  layYAxis = new QHBoxLayout*[pltsz];
+  oncYAxis = new iCheckBox*[pltsz];
+  lblYAxis = new iLabel*[pltsz];
+  lelYAxis = new taiWidgetListElChooser*[pltsz];
+  pdtYAxis = new taiWidgetPoly*[pltsz];
+  chkYAltY = new QCheckBox*[pltsz];
+  lblcellYAxis = new QLabel*[pltsz];
+  cellYAxis = new taiWidgetFieldIncr*[pltsz];
+  lelErr = new taiWidgetListElChooser*[pltsz];
+  oncErr = new iCheckBox*[pltsz];
+  flipYAxis = new iCheckBox*[pltsz];
+  butLineProps = new QPushButton*[pltsz];
   
   layPlots = new iFormLayout(plotsWidg);
   layPlots->setFormAlignment(Qt::AlignLeft | Qt::AlignTop);
@@ -668,7 +695,7 @@ void iViewPanelOfGraphTable::UpdatePanel_impl() {
   rncZAxis->setAttribute(Qt::WA_Disabled, !glv->z_axis.on);
   pdtZAxis->SetFlag(taiWidget::flgReadOnly, !glv->z_axis.on);
   
-  int pltsz = MIN(max_plots, glv->plots.size);
+  int pltsz = glv->plots.size;
   
   for(int i=0;i<pltsz; i++) {
     lelYAxis[i]->GetImage(&(glv->children), glv->plots[i]->GetColPtr());
@@ -828,7 +855,7 @@ void iViewPanelOfGraphTable::GetValue_impl() {
   glv->z_axis.labels_on = labonZAxis->isChecked();
   glv->z_axis.flip = flipZAxis->isChecked();
   
-  int pltsz = MIN(max_plots, glv->plots.size);
+  int pltsz = glv->plots.size;
 
   FixedMinMax cur_reg_mm;       // track first fixed min / max and use for new clicks
   FixedMinMax cur_alt_mm;

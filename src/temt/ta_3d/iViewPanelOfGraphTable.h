@@ -45,7 +45,6 @@ class TA_API iViewPanelOfGraphTable: public iViewPanelOfDataTable {
   Q_OBJECT
   INHERITED(iViewPanelOfDataTable)
 public:
-  static const int          max_plots = 64; // maximum number of y axis data plots that can be displayed in the control panel
   static const int          axis_chooser_width;
   static const int          axis_label_width;
   static const int          margin_l_r;  // left right contents margin
@@ -116,21 +115,19 @@ public:
   int                       cur_built_plots; // number of plots that are currently built
   int                       row_height;
   
-  QHBoxLayout*            layYAxis[max_plots];
-  iCheckBox*                oncYAxis[max_plots];
-  iLabel*                   lblYAxis[max_plots];
-  taiWidgetListElChooser*   lelYAxis[max_plots]; // list element chooser
-  taiWidgetPoly*            pdtYAxis[max_plots]; // fixed_range polydata (inline)
-  QCheckBox*                chkYAltY[max_plots];
-  QLabel*                   lblcellYAxis[max_plots];
-  taiWidgetFieldIncr*       cellYAxis[max_plots]; // matrix cell
-  taiWidgetListElChooser*   lelErr[max_plots];
-  iCheckBox*                oncErr[max_plots]; // on checkbox
-  iCheckBox*                flipYAxis[max_plots];
-  QPushButton*              butLineProps[max_plots];
-  
-  //  QLabel*                   lblErr[max_plots];
-  
+  QHBoxLayout**            layYAxis;
+  iCheckBox**                oncYAxis;
+  iLabel**                   lblYAxis;
+  taiWidgetListElChooser**   lelYAxis; // list element chooser
+  taiWidgetPoly**            pdtYAxis; // fixed_range polydata (inline)
+  QCheckBox**                chkYAltY;
+  QLabel**                   lblcellYAxis;
+  taiWidgetFieldIncr**       cellYAxis; // matrix cell
+  taiWidgetListElChooser**   lelErr;
+  iCheckBox**                oncErr; // on checkbox
+  iCheckBox**                flipYAxis;
+  QPushButton**              butLineProps;
+
   QHBoxLayout*            layCAxis;
   QLabel*                   lblColorMode;
   taiWidgetComboBox*        cmbColorMode;
