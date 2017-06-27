@@ -402,12 +402,14 @@ bool iLineEdit::eventFilter(QObject* obj, QEvent* event) {
 
 void iLineEdit::setText(const QString& str) {
   inherited::setText(str);
-  int cursor_position = text().length() - cursor_position_from_end + cursor_offset; // cursor_offset needed when doing completion
-  setCursorPosition(cursor_position);  // zero unless doing completion
-  String working_copy = text();
-  working_copy = working_copy.before(cursorPosition());
-  if (completer->ExpressionTakesArgs(working_copy)) {
-    setCursorPosition(cursorPosition() - 1);
+  if (completion_enabled) {
+    int cursor_position = text().length() - cursor_position_from_end + cursor_offset; // cursor_offset needed when doing completion
+    setCursorPosition(cursor_position);  // zero unless doing completion
+    String working_copy = text();
+    working_copy = working_copy.before(cursorPosition());
+    if (completer->ExpressionTakesArgs(working_copy)) {
+      setCursorPosition(cursorPosition() - 1);
+    }
   }
 }
 
