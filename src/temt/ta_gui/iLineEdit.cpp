@@ -212,12 +212,16 @@ void iLineEdit::keyPressEvent(QKeyEvent* key_event)
     case taiMisc::TEXTEDIT_CURSOR_FORWARD_II:
       key_event->accept();
       cursorForward(ext_select_on, 1);
+      DoCompletion(false);
+      cursor_offset--;
       return;
     case taiMisc::TEXTEDIT_CURSOR_BACKWARD:
     case taiMisc::TEXTEDIT_CURSOR_BACKWARD_II:
       key_event->accept();
       cursorBackward(ext_select_on, 1);
-      return;
+      DoCompletion(false);
+      cursor_offset++;
+     return;
     case taiMisc::TEXTEDIT_DELETE:
     case taiMisc::TEXTEDIT_DELETE_II:
       key_event->accept();
@@ -398,7 +402,7 @@ bool iLineEdit::eventFilter(QObject* obj, QEvent* event) {
 
 void iLineEdit::setText(const QString& str) {
   inherited::setText(str);
-  int cursor_position = text().length() - cursor_position_from_end + cursor_offset;
+  int cursor_position = text().length() - cursor_position_from_end + cursor_offset; // cursor_offset needed when doing completion
   setCursorPosition(cursor_position);  // zero unless doing completion
   String working_copy = text();
   working_copy = working_copy.before(cursorPosition());

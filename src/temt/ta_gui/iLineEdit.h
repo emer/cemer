@@ -68,7 +68,7 @@ protected:
   int               mchar_width; // note: we limit to 128
   bool              ext_select_on;	   // toggled by Ctrl+space -- extends selection with keyboard movement
   int               cursor_position_from_end;  // cursor position for start of completion - only set during completion
-  int               cursor_offset;   // compensate for cursor movement by user while selections are visible
+  int               cursor_offset;   // compensate for cursor movement by user while completion selections are visible
   iCodeCompleter*   completer; //
   
   void              focusInEvent(QFocusEvent* e) override;

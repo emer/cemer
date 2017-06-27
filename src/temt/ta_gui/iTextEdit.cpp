@@ -132,12 +132,16 @@ void iTextEdit::keyPressEvent(QKeyEvent* key_event) {
       key_event->accept();
       cursor.movePosition(QTextCursor::NextCharacter, mv_md);
       setTextCursor(cursor);
+      DoCompletion(false);
+      cursor_offset--;
       return;
     case taiMisc::TEXTEDIT_CURSOR_BACKWARD:
     case taiMisc::TEXTEDIT_CURSOR_BACKWARD_II:
       key_event->accept();
       cursor.movePosition(QTextCursor::PreviousCharacter, mv_md);
       setTextCursor(cursor);
+      DoCompletion(false);
+      cursor_offset++;
       return;
     case taiMisc::TEXTEDIT_PAGE_UP:
     case taiMisc::TEXTEDIT_PAGE_UP_II:
@@ -327,7 +331,7 @@ void iTextEdit::InsertCompletion(const QString& new_text)
     return;
   setPlainText(new_text);  // clears undo history
   moveCursor(QTextCursor::StartOfLine);
-  int total_offset = new_text.length() - cursor_position_from_end + cursor_offset;
+  int total_offset = new_text.length() - cursor_position_from_end + cursor_offset;  // cursor_offset needed when doing completion
   for (int i=0; i<total_offset; i++) {
     moveCursor(QTextCursor::NextCharacter);  // all the sensible ways to move cursor were causing wierd problems!!
   }
