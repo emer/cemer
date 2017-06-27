@@ -28,7 +28,7 @@
 taTypeDef_Of(Completions);
 
 class TA_API Completions : public taNBase {
-  // <describe here in full detail in one extended line comment>
+  // An object that holds all of the various lists that might be shown for code completion
 INHERITED(taNBase)
 public:
   taBase_List             object_completions;   // objects that derive from taBase
