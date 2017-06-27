@@ -52,6 +52,7 @@ void iTextEdit::init(bool add_completer) {
   completer = NULL;
   completion_enabled = false;
   cursor_position_from_end = 0;
+  cursor_offset = 0;
   if (add_completer) {
     completer = new iCodeCompleter(parent());
     completer->setCaseSensitivity(Qt::CaseInsensitive);
@@ -219,19 +220,24 @@ void iTextEdit::keyPressEvent(QKeyEvent* key_event) {
   
   // other keys
   if (completion_enabled) {
+    inherited::keyPressEvent(key_event);
 #ifdef TA_OS_MAC
-    if (!(key_event->modifiers() & Qt::ControlModifier)) { // don't complete if mac command key
-      inherited::keyPressEvent(key_event);
-      DoCompletion(false);
+    if (key_event->modifiers() & Qt::ControlModifier) { // don't complete if mac command key
       return;
     }
 #else
     if (!(key_event->modifiers() & Qt::MetaModifier)) { // don't complete if other platform control key
-      inherited::keyPressEvent(key_event);
-      DoCompletion(false);
       return;
     }
 #endif
+    DoCompletion(false);
+    if (key_event->key() == Qt::Key_Left) {
+      cursor_offset++;
+    }
+    else if (key_event->key() == Qt::Key_Right) {
+      cursor_offset--;
+    }
+    return;
   }
   
   inherited::keyPressEvent(key_event);
@@ -321,12 +327,12 @@ void iTextEdit::InsertCompletion(const QString& new_text)
     return;
   setPlainText(new_text);  // clears undo history
   moveCursor(QTextCursor::StartOfLine);
-  int offset = new_text.length() - cursor_position_from_end;
-  for (int i=0; i<offset; i++) {
+  int total_offset = new_text.length() - cursor_position_from_end + cursor_offset;
+  for (int i=0; i<total_offset; i++) {
     moveCursor(QTextCursor::NextCharacter);  // all the sensible ways to move cursor were causing wierd problems!!
   }
   String working_copy = new_text;
-  working_copy = working_copy.before(offset);
+  working_copy = working_copy.before(total_offset);
   if (completer->ExpressionTakesArgs(working_copy)) {
     moveCursor(QTextCursor::PreviousCharacter);
   }

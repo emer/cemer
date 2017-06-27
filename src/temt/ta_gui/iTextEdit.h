@@ -53,7 +53,7 @@ protected:
   QString           prev_find_str;	 // previous find string
   iCodeCompleter*   completer; //
   int               cursor_position_from_end; // cursor position for start of completion - only set during completion
-
+  int               cursor_offset;   // compensate for cursor movement by user while selections are visible
   void              keyPressEvent(QKeyEvent* e) override;
   void              contextMenuEvent(QContextMenuEvent* e) override;
   void              focusInEvent(QFocusEvent* e) override;

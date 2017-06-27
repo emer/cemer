@@ -32,7 +32,6 @@ public:
   int           init_start_pos;            // initial starting position for editing -- -1 = end, 0 = start
   bool          init_start_kill;           // at start of editing, kill contents
   bool          completion_enabled;
-  int           cursor_position_from_end;  // cursor position for start of completion - only set during completion
 
   iLineEdit(QWidget* parent = 0, bool add_completer = false);
   iLineEdit(const char* text, QWidget* parent, bool add_completer = false);
@@ -68,6 +67,8 @@ protected:
   int               mmin_char_width; // note: we limit to 128
   int               mchar_width; // note: we limit to 128
   bool              ext_select_on;	   // toggled by Ctrl+space -- extends selection with keyboard movement
+  int               cursor_position_from_end;  // cursor position for start of completion - only set during completion
+  int               cursor_offset;   // compensate for cursor movement by user while selections are visible
   iCodeCompleter*   completer; //
   
   void              focusInEvent(QFocusEvent* e) override;

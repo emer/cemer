@@ -67,6 +67,7 @@ void iLineEdit::init(bool add_completer) {
   completer = NULL;
   completion_enabled = false;
   cursor_position_from_end = 0;
+  cursor_offset = 0;
   if (add_completer) {
     completer = new iCodeCompleter(parent());
     completer->setCaseSensitivity(Qt::CaseInsensitive);
@@ -297,16 +298,22 @@ void iLineEdit::keyPressEvent(QKeyEvent* key_event)
         {
           inherited::keyPressEvent(key_event);
 #ifdef TA_OS_MAC
-          if (!(key_event->modifiers() & Qt::ControlModifier)) { // don't complete if mac command key
-            DoCompletion(false);
+          if (key_event->modifiers() & Qt::ControlModifier) { // don't complete if mac command key
             return;
           }
 #else
           if (!(key_event->modifiers() & Qt::MetaModifier)) { // don't complete if other platform control key
-            DoCompletion(false);
             return;
           }
 #endif
+          DoCompletion(false);
+          if (key_event->key() == Qt::Key_Left) {
+            cursor_offset++;
+          }
+          else if (key_event->key() == Qt::Key_Right) {
+            cursor_offset--;
+          }
+          return;
         }
         else {
           inherited::keyPressEvent(key_event);
@@ -391,7 +398,8 @@ bool iLineEdit::eventFilter(QObject* obj, QEvent* event) {
 
 void iLineEdit::setText(const QString& str) {
   inherited::setText(str);
-  setCursorPosition(text().length() - cursor_position_from_end);  // zero unless doing completion
+  int cursor_position = text().length() - cursor_position_from_end + cursor_offset;
+  setCursorPosition(cursor_position);  // zero unless doing completion
   String working_copy = text();
   working_copy = working_copy.before(cursorPosition());
   if (completer->ExpressionTakesArgs(working_copy)) {
