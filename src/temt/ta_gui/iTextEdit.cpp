@@ -361,12 +361,12 @@ bool iTextEdit::eventFilter(QObject* obj, QEvent* event) {
 }
 
 // hasSelection not returning true - revisit
-void iTextEdit::selectionChanged() {
-  QTextCursor cursor = QTextCursor();
-
-  if (cursor.hasSelection()) {
-    int selection_length = cursor.selectedText().length();
-  }
-  inherited::selectionChanged();
-}
+//void iTextEdit::selectionChanged() {
+//  QTextCursor cursor = QTextCursor();
+//
+//  if (cursor.hasSelection()) {
+//    int selection_length = cursor.selectedText().length();
+//  }
+//  inherited::selectionChanged();
+//}
 
