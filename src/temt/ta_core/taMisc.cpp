@@ -310,7 +310,6 @@ String  taMisc::t3d_text_color = "black";
 // parameters that differ between win and unix
 taMisc::ConsoleOptions taMisc::console_options = CO_PAGER;
 
-taMisc::GuiStyle taMisc::gui_style = taMisc::GS_DEFAULT;
 taMisc::AppToolbarStyle taMisc::app_toolbar_style = taMisc::TB_TEXT_UNDER_ICON;
 
 int     taMisc::display_width = 120;

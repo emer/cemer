@@ -1493,25 +1493,9 @@ bool taRootBase::Startup_InitTA() {
     inst->SetFileName(good_fnm); // reinstate for later saving
   }
 
-  // set GUI style
 #ifdef TA_GUI
   if(taMisc::use_gui) {
     // get optional style override
-# ifdef TA_OS_WIN
-    // Vista style only available on Vista+, so force down if not
-    // NOTE: this may not work with Windows 7 and Qt 4.5+ -- see QtSysInfo at that time
-    if ((taMisc::gui_style == taMisc::GS_WINDOWSVISTA) &&
-        (QSysInfo::WindowsVersion != QSysInfo::WV_VISTA))
-      taMisc::gui_style = taMisc::GS_WINDOWSXP;
-# endif // TA_OS_WIN
-    String gstyle;
-    if(taMisc::gui_style != taMisc::GS_DEFAULT) {
-      gstyle = TA_taMisc.GetEnumString("GuiStyle",
-                                       taMisc::gui_style).after("GS_").downcase();
-    }
-    if(gstyle.nonempty()) {
-      QApplication::setStyle(gstyle.toQString());
-    }
     QString app_ico_nm = ":/images/" + taMisc::app_name + "_32x32.png";
     QPixmap app_ico(app_ico_nm);
     QApplication::setWindowIcon(app_ico);

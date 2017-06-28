@@ -364,7 +364,6 @@ public:
   ////////////////////////////////////////////////////////
   //    TA GUI parameters
 
-  static GuiStyle       gui_style;      // #SAVE #CAT_GUI style options provided by the gui system, affecting how the widgets are drawn, etc (not all are available on all platforms) -- change only takes effect on restarting the program
   static AppToolbarStyle app_toolbar_style;      // #SAVE #CAT_GUI style options provided by the gui system, change only takes effect on restarting the program
   static taFontNames    font_names; // #SAVE #CAT_GUI font preferences for GUI and console
   static taFontSizes    font_sizes; // #SAVE #CAT_GUI font size preferences for various parts of the GUI
