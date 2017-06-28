@@ -67,7 +67,7 @@ MemberSpace                 ProgExprBase::completion_member_list;
 MethodSpace                 ProgExprBase::completion_method_list;
 EnumSpace                   ProgExprBase::completion_enum_list;
 TypeSpace                   ProgExprBase::completion_statics_list;
-TypeSpace                   ProgExprBase::completion_scope_list;
+TypeSpace                   ProgExprBase::completion_misc_list;
 String                      ProgExprBase::completion_pre_text;
 String                      ProgExprBase::completion_path_pre_text;
 String                      ProgExprBase::completion_append_text;
@@ -80,7 +80,7 @@ bool                        ProgExprBase::include_types;
 bool                        ProgExprBase::include_bools;
 bool                        ProgExprBase::include_null;
 bool                        ProgExprBase::include_css_functions;
-bool                        ProgExprBase::include_scopes;
+bool                        ProgExprBase::include_misc;
 ProgExprBase::LookUpType    ProgExprBase::completion_lookup_type;
 TypeDef*                    ProgExprBase::current_typedef;
 Program*                    ProgExprBase::current_program;
@@ -960,7 +960,7 @@ void ProgExprBase::ExprLookupCompleterReset() {
   include_null = false;
   include_types = false;
   include_css_functions = false;
-  include_scopes = false;
+  include_misc = false;
   completion_progvar_local_list.RemoveAll();
   completion_progvar_global_list.RemoveAll();
   completion_dynenum_list.RemoveAll();
@@ -1031,7 +1031,7 @@ Completions* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_po
         include_types = true;
         include_statics = true;
         include_progels = true;
-        include_scopes = true;
+        include_misc = true;
       }
       else if (expr_start == LINE_MID) {
         GetTokensOfType(&TA_Function, &completion_function_list, own_prg, &TA_Program);
@@ -1347,7 +1347,7 @@ Completions* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_po
   completions.method_completions.Reset();
   completions.enum_completions.Reset();
   completions.static_completions.Reset();
-  completions.scope_completions.Reset();
+  completions.misc_completions.Reset();
   
   completions.seed = lookup_seed;
   
@@ -1418,9 +1418,9 @@ Completions* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_po
     }
   }
   
-  if (include_scopes) {
-    for (int i=0; i<taMisc::scope_collection.size; i++) {
-      completions.scope_completions.Link(taMisc::scope_collection.FastEl(i));
+  if (include_misc) {
+    for (int i=0; i<taMisc::misc_collection.size; i++) {
+      completions.misc_completions.Link(taMisc::misc_collection.FastEl(i));
     }
   }
 

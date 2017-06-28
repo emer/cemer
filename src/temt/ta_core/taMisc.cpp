@@ -504,7 +504,7 @@ TypeSpace taMisc::types("taMisc::types", 10000);
 TypeSpace taMisc::aka_types("taMisc::aka_types", 100);
 TypeSpace taMisc::reg_funs("taMisc::reg_funs", 100);
 TypeSpace taMisc::static_collection("taMisc::statics");
-TypeSpace taMisc::scope_collection("taMisc::scope");
+TypeSpace taMisc::misc_collection("taMisc::misc");
 TypeDef*  taMisc::default_scope = NULL;
 
 taPtrList_impl* taMisc::init_hook_list = NULL;
@@ -2264,10 +2264,11 @@ void taMisc::Init_Types_Gui(bool gui) {
     }
   }
 
+  // add non-static classes that have important end user enums, e.g. Relation
   for (int i = TypeDefInitRegistrar::types_list_last_size; i < types.size; ++i) {
     td = types.FastEl(i);
-    if(td->IsActualClass() && td->HasOption("SCOPE_COMPLETION")) {
-      scope_collection.Link(td);
+    if(td->IsActualClass() && td->HasOption("MISC_COMPLETION")) {
+      misc_collection.Link(td);
     }
   }
 }

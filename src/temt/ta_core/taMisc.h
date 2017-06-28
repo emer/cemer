@@ -583,7 +583,7 @@ public:
   static TypeSpace      aka_types;      // #READ_ONLY #NO_SAVE #HIDDEN list of types that have AKA for other types that are no longer supported
   static TypeSpace      reg_funs;       // #READ_ONLY #NO_SAVE #HIDDEN registered global functions that have been marked with the REG_FUN directive -- contains links to corresponding types TypeDef entries with a static MethodDef that points to the function -- just a call-out list for easy searching of only these functions
   static TypeSpace      static_collection; // #READ_ONLY #NO_SAVE #HIDDEN list of classes with statics that we add to the completer popup list
-  static TypeSpace      scope_collection; // #READ_ONLY #NO_SAVE #HIDDEN list of classes (scopes) with enums that are for end user use - e.g. Relations::GREATERTHAN) - add these to completer popup list
+  static TypeSpace      misc_collection; // #READ_ONLY #NO_SAVE #HIDDEN list of classes (scopes) with enums that are for end user use - e.g. Relations::GREATERTHAN) - add these to completer popup list; other miscellaneous classes could also be on this list
   static TypeDef*       default_scope;  // #READ_ONLY #NO_SAVE type of object to use to determine if two objects are in the same scope
 
   static taPtrList_impl* init_hook_list; // #IGNORE list of init hook's to call during initialization

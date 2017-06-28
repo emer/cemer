@@ -119,8 +119,8 @@ int taiWidgetCompletionChooser::Populate(iDialogItemChooser* item_chooser, Compl
   }
 
   // Scopes
-  for (int i = 0; i < the_completions->scope_completions.size; ++i) {
-    TypeDef* td = the_completions->scope_completions.FastEl(i);
+  for (int i = 0; i < the_completions->misc_completions.size; ++i) {
+    TypeDef* td = the_completions->misc_completions.FastEl(i);
     if (!td)  continue;
     
     display_string = td->name + "::";

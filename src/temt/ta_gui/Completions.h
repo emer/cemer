@@ -36,7 +36,7 @@ public:
   MethodSpace             method_completions;   // methods of objects
   EnumSpace               enum_completions;     // enums
   TypeSpace               static_completions;   // statics - list is generated in taMisc
-  TypeSpace               scope_completions;    // scopes that have end user enums - list is generated in taMisc
+  TypeSpace               misc_completions;     // classes that have end user enums - list is generated in taMisc; other classes of misc nature could also be on this list
   String_Array            string_completions;   // these are strings like "NULL", true/false, etc that are not taBase objects
   
   String                  seed;                 // the text that starts the lookup
