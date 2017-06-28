@@ -199,7 +199,7 @@ public:
   int                   n_recv_prjns;    // #CAT_Structure #READ_ONLY number of active receiving projections
   int                   n_send_prjns;    // #CAT_Structure #READ_ONLY number of active sending projections
   Projection_Group      projections;    // #CAT_Structure group of receiving projections
-  Projection_Group      send_prjns;     // #CAT_Structure #HIDDEN #LINK_GROUP group of sending projections
+  Projection_Group      send_prjns;     // #CAT_Structure #HIDDEN #LINK_GROUP #NO_DIFF #NO_SEARCH group of sending projections
   Unit_Group            units;          // #CAT_Structure #NO_SEARCH units or groups of units
   UnitSpec_SPtr         unit_spec;      // #CAT_Structure default unit specification for units in this layer
   UnitVars::ExtFlags    ext_flag;       // #NO_SAVE #CAT_Activation #GUI_READ_ONLY #SHOW indicates which kind of external input layer received -- this is normally set by the ApplyInputData function -- it is not to be manipulated directly
