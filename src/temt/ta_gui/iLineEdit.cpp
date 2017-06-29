@@ -108,6 +108,8 @@ void iLineEdit::focusInEvent(QFocusEvent* e) {
 }
 
 void iLineEdit::focusOutEvent(QFocusEvent* e) {
+  if (completion_enabled && GetCompleter()->PopUpIsVisible()) return;
+  
   inherited::focusOutEvent(e);
   // std::cerr << "focus out" << std::endl;
   // emit focusChanged(false);
