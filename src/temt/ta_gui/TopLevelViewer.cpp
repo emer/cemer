@@ -74,9 +74,10 @@ void TopLevelViewer::SetWinState_impl() {
   float ht = GetUserDataDef("view_win_ht", 1.0f).toFloat();
   bool iconified = GetUserDataDef("view_win_iconified", false).toBool();
   // adjust ht in case we are using the console win
-  if (taMisc::console_win) {
-    if (ht > 0.8f) ht = 0.8f;
-  }
+  // this is now obsolete b/c we can put console win elsewhere..
+  // if (taMisc::console_win) {
+  //   if (ht > 0.8f) ht = 0.8f;
+  // }
 
   QWidget* widget = this->widget(); // cache
 
