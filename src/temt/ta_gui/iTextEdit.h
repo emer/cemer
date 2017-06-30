@@ -58,10 +58,11 @@ protected:
   void              contextMenuEvent(QContextMenuEvent* e) override;
   void              focusInEvent(QFocusEvent* e) override;
   bool              eventFilter(QObject* obj, QEvent * e) override;
+  int               FindMatchingParens(int start);
 
   protected slots:
   void              InsertCompletion(const QString& the_completion);
-//  void              selectionChanged();
+  void              selectionChanged();
 
 private:
   void              init(bool add_completer = false);

@@ -61,8 +61,8 @@ void iTextEdit::init(bool add_completer) {
   }
   installEventFilter(this);
   
-//  QObject::connect(this, SIGNAL(selectionChanged()),
-//                   this, SLOT(selectionChanged() ) );
+  QObject::connect(this, SIGNAL(selectionChanged()),
+                   this, SLOT(selectionChanged() ) );
 }
 
 void iTextEdit::clearExtSelection() {
@@ -360,13 +360,46 @@ bool iTextEdit::eventFilter(QObject* obj, QEvent* event) {
   return inherited::eventFilter(obj, event);
 }
 
-// hasSelection not returning true - revisit
-//void iTextEdit::selectionChanged() {
-//  QTextCursor cursor = QTextCursor();
-//
-//  if (cursor.hasSelection()) {
-//    int selection_length = cursor.selectedText().length();
-//  }
-//  inherited::selectionChanged();
-//}
+void iTextEdit::selectionChanged() {
+  QTextCursor cursor = textCursor();
+  if (cursor.hasSelection()) {
+    int selection_length = cursor.selectedText().length();
+    if (selection_length < toPlainText().length()) {
+      int selection_end = cursor.selectionStart() + selection_length;
+      if (selection_end == toPlainText().length()) { // no more chars
+        return;
+      }
+      if (toPlainText().at(selection_end) == '(') {
+        if ((toPlainText().at(selection_end + 1) == ')')) {
+          cursor.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor, 2);
+          setTextCursor(cursor);
+        }
+        else {
+          int new_end = FindMatchingParens(selection_end);
+          if (new_end > 0) {
+            int extend_length = new_end - selection_end;
+            cursor.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor, extend_length);
+            setTextCursor(cursor);
+          }
+        }
+      }
+    }
+  }
+}
+
+int iTextEdit::FindMatchingParens(int start) {
+  String working_string = toPlainText();
+  if (working_string[start] != '(') return -1;
+  
+  int left_parens_count = 1;
+  int right_parens_count = 0;
+  for (int pos = start + 1; pos < working_string.length(); pos++) {
+    if (working_string[pos] == ')') right_parens_count++;
+    if (working_string[pos] == '(') left_parens_count++;
+    if (left_parens_count == right_parens_count) {
+      return pos + 1;
+    }
+  }
+  return -1;
+}
 
