@@ -61,8 +61,8 @@ void iTextEdit::init(bool add_completer) {
   }
   installEventFilter(this);
   
-  QObject::connect(this, SIGNAL(selectionChanged()),
-                   this, SLOT(selectionChanged() ) );
+//  QObject::connect(this, SIGNAL(selectionChanged()),
+//                   this, SLOT(selectionChanged() ) );
 }
 
 void iTextEdit::clearExtSelection() {
