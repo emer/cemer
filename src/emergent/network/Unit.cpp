@@ -151,7 +151,7 @@ void Unit::LayerLogPos(taVector2i& log_pos) {
 void Unit::UnitGpLogPos(taVector2i& log_pos) {
   Layer* mlay = own_lay();
   if(mlay) {
-    return mlay->UnitInGpLogPos(this, log_pos);
+    mlay->UnitInGpLogPos(this, log_pos);
   }
 }
 
