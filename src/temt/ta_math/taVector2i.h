@@ -19,7 +19,9 @@
 // parent includes:
 #include <taBase>
 
+#ifndef __MAKETA__
 #include <cmath>
+#endif
 
 // member includes:
 
@@ -38,7 +40,7 @@ public:
   int           x;              // horizontal
   int           y;              // vertical
 
-  bool          isZero() {return ((x == 0) && (y == 0));}
+  inline bool   isZero() { return ((x == 0) && (y == 0)); }
   inline void   SetXY(int xx, int yy) { x = xx; y = yy;  }
   inline void   SetXY(float xx, float yy) { x = (int)xx; y = (int)yy; }
   inline void   GetXY(float& xx, float& yy) { xx = (float)x; yy = (float)y; }

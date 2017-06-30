@@ -19,7 +19,9 @@
 // parent includes:
 #include <taBase>
 
+#ifndef __MAKETA__
 #include <cmath>
+#endif
 
 // member includes:
 
