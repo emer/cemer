@@ -45,6 +45,7 @@ software work for purposes of copyright.
 #include <taMisc>
 #endif
 
+#include <taMisc>
 using namespace std;
 
 #ifdef TA_OS_WIN
@@ -1788,6 +1789,38 @@ int taString::freq(char c) const
   for (int i = 0; i < length(); i++)
     if (match(i,length(),0,&c,1) >= 0) found++;
   return(found);
+}
+
+int taString::FindMatchingParens(int parens_pos) const {
+  String working_copy = *this;
+  
+  if (working_copy[parens_pos] == '(') {
+    int left_parens_count = 1;
+    int right_parens_count = 0;
+    for (int pos = parens_pos + 1; pos < working_copy.length() + 1; pos++) {
+      if (working_copy[pos] == ')') right_parens_count++;
+      if (working_copy[pos] == '(') left_parens_count++;
+      if (left_parens_count == right_parens_count) {
+        return pos;
+      }
+    }
+    return -1;
+  }
+  else if (working_copy[parens_pos] == ')') {
+    int left_parens_count = 0;
+    int right_parens_count = 1;
+    for (int pos = parens_pos - 1; pos >= 0; pos--) {
+      if (working_copy[pos] == ')') right_parens_count++;
+      if (working_copy[pos] == '(') left_parens_count++;
+      if (left_parens_count == right_parens_count) {
+        return pos;
+      }
+    }
+    return -1;
+  }
+  else {
+    return -1;
+  }
 }
 
 taString taString::wrap(int width) const {

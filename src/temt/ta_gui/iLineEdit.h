@@ -77,8 +77,6 @@ protected:
   void              wheelEvent(QWheelEvent * e) override;
   bool              event(QEvent * e) override;
   bool              eventFilter(QObject* obj, QEvent * e) override;
-  int               FindMatchingParens(int start);
-  // returns 'balancing' parens position
 
 private:
   void		      init(bool add_completer = false);

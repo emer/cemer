@@ -370,36 +370,14 @@ void iTextEdit::selectionChanged() {
         return;
       }
       if (toPlainText().at(selection_end) == '(') {
-        if ((toPlainText().at(selection_end + 1) == ')')) {
-          cursor.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor, 2);
+        String full_string = toPlainText();
+        int new_end = full_string.FindMatchingParens(selection_end);
+        if (new_end > -1) {
+          int extend_length = new_end - selection_end + 1;
+          cursor.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor, extend_length);
           setTextCursor(cursor);
-        }
-        else {
-          int new_end = FindMatchingParens(selection_end);
-          if (new_end > 0) {
-            int extend_length = new_end - selection_end;
-            cursor.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor, extend_length);
-            setTextCursor(cursor);
-          }
         }
       }
     }
   }
 }
-
-int iTextEdit::FindMatchingParens(int start) {
-  String working_string = toPlainText();
-  if (working_string[start] != '(') return -1;
-  
-  int left_parens_count = 1;
-  int right_parens_count = 0;
-  for (int pos = start + 1; pos < working_string.length(); pos++) {
-    if (working_string[pos] == ')') right_parens_count++;
-    if (working_string[pos] == '(') left_parens_count++;
-    if (left_parens_count == right_parens_count) {
-      return pos + 1;
-    }
-  }
-  return -1;
-}
-

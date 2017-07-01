@@ -1,4 +1,4 @@
-// Copyright 2017, Regents of the University of Colorado,
+  // Copyright 2017, Regents of the University of Colorado,
 // Carnegie Mellon University, Princeton University.
 //
 // This file is part of The Emergent Toolkit
@@ -17,6 +17,7 @@
 
 #include <iDialogTextEdit>
 
+#include <taMisc>
 #include <taiMisc>
 #include <QCoreApplication>
 #include <QDesktopWidget>
@@ -30,7 +31,6 @@
 #include <QAbstractItemView>
 #include <QListView>
 
-#include <taMisc>
 #include <KeyBindings>
 #include <KeyBindings_List>
 
@@ -424,34 +424,13 @@ void iLineEdit::selectionChanged() {
         return;
       }
       if (text().at(selection_end) == '(') {
-        if ((text().at(selection_end + 1) == ')')) {
-          this->setSelection(selectionStart(), selection_length + 2);
-        }
-        else {
-          int end = FindMatchingParens(selection_end);
-          if (end > 0) {
-            selection_length = end - selectionStart();
-            this->setSelection(selectionStart(), selection_length);
-          }
+        String full_string = String(text());
+        int end = full_string.FindMatchingParens(selection_end);
+        if (end > -1) {
+          selection_length = end - selectionStart() + 1;
+          this->setSelection(selectionStart(), selection_length);
         }
       }
     }
   }
 }
-
-int iLineEdit::FindMatchingParens(int start) {
-  String working_string = text();
-  if (working_string[start] != '(') return -1;
-  
-  int left_parens_count = 1;
-  int right_parens_count = 0;
-  for (int pos = start + 1; pos < text().length() - start + 1; pos++) {
-    if (working_string[pos] == ')') right_parens_count++;
-    if (working_string[pos] == '(') left_parens_count++;
-    if (left_parens_count == right_parens_count) {
-      return pos + 1;
-    }
-  }
-  return -1;
-}
-

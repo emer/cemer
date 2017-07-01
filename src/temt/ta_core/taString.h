@@ -448,6 +448,9 @@ public:
   int                   freq(const taString& y) const;
   // #CAT_Find return number of occurences of target in String
 
+  int                   FindMatchingParens(int parens_pos) const;
+  // #CAT Find the parenthesis that balances the one in the specified location
+  
   ////////////////////////////////////////////////
   // String extraction (access)
 
