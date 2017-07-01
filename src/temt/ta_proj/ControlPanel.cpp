@@ -870,23 +870,62 @@ int ControlPanel::FindMethBase(const taBase* base, MethodDef* md) {
   return rval;
 }
 
-String ControlPanel::ToWikiTable() {
-  String rval = "{| class=\"wikitable\"\n\
-|-\n\
-! Parameter !! Value  !! Notes \n";
+String ControlPanel::ToTable(taMarkUp::Format fmt) {
+  String rval;
+  int n_cols = 0;
+  rval << taMarkUp::TableStart(fmt) << taMarkUp::TableHeaderStart(fmt, n_cols);
+  rval << taMarkUp::TableHeader(fmt, "Parameter", n_cols)
+       << taMarkUp::TableHeader(fmt, "Value", n_cols)
+       << taMarkUp::TableHeader(fmt, "Notes", n_cols)
+       << taMarkUp::TableHeaderEnd(fmt, n_cols);
   
   FOREACH_ELEM_IN_GROUP(ControlPanelMember, sei, mbrs) {
-    rval << "|-\n";
-    rval << "| " << sei->label << " || ";
+    int col_no = 0;
+    rval << taMarkUp::TableRowStart(fmt, col_no)
+         << taMarkUp::TableCell(fmt, taMarkUp::Code(fmt, sei->label), col_no);
     if(sei->IsParamSet())
-      rval << sei->data.saved_value;
+      rval << taMarkUp::TableCell(fmt, sei->data.saved_value, col_no);
     else
-      rval << sei->CurValAsString();
-    rval << " || " << sei->data.notes << "\n";
+      rval << taMarkUp::TableCell(fmt, sei->CurValAsString(), col_no);
+    rval << taMarkUp::TableCell(fmt, sei->data.notes, col_no)
+         << taMarkUp::TableRowEnd(fmt, col_no);
   }
-  
-  rval << "|}\n";
+  rval << taMarkUp::TableEnd(fmt);
   return rval;
+}
+
+DataTable* ControlPanel::ToDataTable(DataTable* dt) {
+  bool new_table = false;
+  if(!dt) {
+    taProject* proj = GetMyProj();
+    if(!proj) return NULL;
+    dt = proj->GetNewAnalysisDataTable("NetPrjns_" + name, true);
+    new_table = true;
+  }
+  dt->StructUpdate(true);
+  int idx;
+  dt->RemoveAllRows();
+  DataCol* col;
+  col = dt->FindMakeColName("parameter", idx, VT_STRING);
+  col->desc = "name of parameter";
+  col = dt->FindMakeColName("value", idx, VT_STRING);
+  col->desc = "text representation of value";
+  col = dt->FindMakeColName("notes", idx, VT_STRING);
+  col->desc = "notes";
+
+  FOREACH_ELEM_IN_GROUP(ControlPanelMember, sei, mbrs) {
+    dt->AddBlankRow();
+    dt->SetVal(sei->label, "parameter", -1);
+    if(sei->IsParamSet())
+      dt->SetVal(sei->data.saved_value, "value", -1);
+    else
+      dt->SetVal(sei->CurValAsString(), "value", -1);
+    dt->SetVal(sei->data.notes, "notes", -1);
+  }
+  dt->StructUpdate(false);
+  if(new_table)
+    tabMisc::DelayedFunCall_gui(dt, "BrowserSelectMe");
+  return dt;
 }
 
 String ControlPanel::ExploreMembersToString(bool use_search_vals) {

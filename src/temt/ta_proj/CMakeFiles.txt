@@ -78,6 +78,7 @@ set(ta_proj_HEADS_MAKETA_NOMOC
   PatchRec_Group.h
   Patch.h
   Patch_Group.h
+  taMarkUp.h
 )
 
 # multiple inheritence -- in correspondence with deps below
@@ -201,6 +202,7 @@ set(ta_proj_SRCS
   PatchRec_Group.cpp
   Patch.cpp
   Patch_Group.cpp
+  taMarkUp.cpp
 )
 
 set(ta_proj_FILES ${ta_proj_HEADS} ${ta_proj_SRCS})

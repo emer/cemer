@@ -34,6 +34,7 @@
 #include <DataSelectSpec>
 #include <taVector2i>
 #include <taVector2i_List>
+#include <taMarkUp>
 
 // declare all other types mentioned but not required to include:
 class cssProgSpace; // 
@@ -312,28 +313,31 @@ public:
   virtual int           LoadDataRow(const String& fname, Delimiters delim = TAB,
       bool quote_str = true);
   // #CAT_File #EXT_dat,tsv,csv,txt,log  #FILE_DIALOG_LOAD load one row of data, up to max num of recs (-1 for all), with delimiter between columns and optionaly quoting strings (returns EOF if strm is at end)
-  void                  ResetLoadSchema() const; // #IGNORE can be used by ex Server to reset the load schema at beginning of a load
+  virtual void          ResetLoadSchema() const; // #IGNORE can be used by ex Server to reset the load schema at beginning of a load
 
   virtual void          ExportHeader_strm(std::ostream& strm, Delimiters delim = TAB,
       bool quote_str = true, int col_fr = 0, int col_to = -1)
   { SaveHeader_strm_impl(strm, delim, false, col_fr, col_to, false, quote_str); }
   // #EXPERT #CAT_File #EXT_csv,tsv,txt,log saves header information, with delimiter between columns
-  void                  ExportData_strm(std::ostream& strm, Delimiters delim = COMMA,
+  virtual void          ExportData_strm(std::ostream& strm, Delimiters delim = COMMA,
       bool quote_str = true, bool headers = true);
   // #EXPERT #CAT_File #EXT_csv,tsv,txt,log exports data with given delimiter and string quoting format options in a format suitable for importing into other applications (spreadsheets, etc) -- does NOT include the emergent native header/data row markers and extended header info, so is not good for loading back into emergent (use SaveData for that)
-  void                  ExportData(const String& fname="", Delimiters delim = COMMA,
+  virtual void          ExportData(const String& fname="", Delimiters delim = COMMA,
       bool quote_str = true, bool headers = true);
   // #CAT_File #MENU #MENU_ON_Data #MENU_SEP_BEFORE #EXT_csv,tsv,txt,log #FILE_DIALOG_SAVE exports data with given delimiter and string quoting format options in a format suitable for importing into other applications (spreadsheets, etc) -- does NOT include the emergent native header/data row markers and extended header info, so is not good for loading back into emergent (use SaveData for that)
 
-  void                  ExportDataJSON(const String& fname="");
+  virtual void          ExportDataJSON(const String& fname="");
   // #CAT_File #MENU #MENU_ON_Data #EXT_json #FILE_DIALOG_SAVE exports data in json format
 #if (QT_VERSION >= 0x050000)
-  bool                  GetDataAsJSON(QJsonObject& json_obj, const String& column_name = "", int start_row = 0, int n_rows = -1);
+  virtual bool          GetDataAsJSON(QJsonObject& json_obj, const String& column_name = "", int start_row = 0, int n_rows = -1);
   // #IGNORE #EXPERT #CAT_File #EXT_json does the actual parse and save
-  bool                  GetDataMatrixCellAsJSON(QJsonObject& json_obj, const String& column_name, int row, int cell);
+  virtual bool          GetDataMatrixCellAsJSON(QJsonObject& json_obj, const String& column_name, int row, int cell);
   // #IGNORE #EXPERT #CAT_File #EXT_json does the actual parse and save
 #endif
 
+  virtual String        ExportDataText(taMarkUp::Format fmt) const;
+  // #CAT_File #MENU #MENU_ON_Data #USE_RVAL export data in a textual table format in a variety of formats suitable for inclusion in documents, web pages, wikis etc -- copy and paste result into document
+  
   virtual void          ImportData(const String& fname="", bool headers = true,
       LoadDelimiters delim = LD_AUTO, LoadQuotes quote_str = LQ_AUTO)
   { LoadAnyData(fname, headers, LD_AUTO, LQ_AUTO, -1, true); }

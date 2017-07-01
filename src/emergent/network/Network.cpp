@@ -2725,7 +2725,7 @@ void Network::NetStructFmTable(DataTable* dt) {
   }
 }
 
-DataTable* Network::NetPrjnsToTable(DataTable* dt) {
+DataTable* Network::NetPrjnsToTable(DataTable* dt, bool include_off) {
   bool new_table = false;
   if(!dt) {
     dt = proj->GetNewAnalysisDataTable("NetPrjns_" + name, true);
@@ -2743,6 +2743,8 @@ DataTable* Network::NetPrjnsToTable(DataTable* dt) {
   col->desc = "name of projection spec for this projection";
   col = dt->FindMakeColName("ConSpec", idx, VT_STRING);
   col->desc = "name of connection spec for this projection";
+  col = dt->FindMakeColName("Notes", idx, VT_STRING);
+  col->desc = "user-entered notes for each projection";
 
   FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
 //     if(l->lesioned()) continue;   // for this, get everything
@@ -2750,7 +2752,7 @@ DataTable* Network::NetPrjnsToTable(DataTable* dt) {
       Projection* pj = l->projections.FastEl(i);
       dt->AddBlankRow();
       dt->SetVal(l->name, "LayerName", -1);
-      dt->SetVal(pj->from->name, "PrjnFrom", -1);
+      dt->SetVal(pj->name, "PrjnFrom", -1);
       ProjectionSpec* ps = pj->GetPrjnSpec();
       if(ps)
         dt->SetVal(ps->name, "PrjnSpec", -1);
@@ -2761,12 +2763,63 @@ DataTable* Network::NetPrjnsToTable(DataTable* dt) {
         dt->SetVal(cs->name, "ConSpec", -1);
       else
         dt->SetVal("NULL", "ConSpec", -1);
+      dt->SetVal(pj->notes, "Notes", -1);
     }
   }
   dt->StructUpdate(false);
   if(new_table)
     tabMisc::DelayedFunCall_gui(dt, "BrowserSelectMe");
   return dt;
+}
+
+String Network::NetPrjnsToList(taMarkUp::Format fmt, bool include_off) {
+  int indent = 0;
+  String rval;
+  NetPrjnsToList_gp(&layers, rval, fmt, include_off, indent);
+  return rval;
+}
+
+void Network::NetPrjnsToList_gp(Layer_Group* gp, String& rval, taMarkUp::Format fmt, bool include_off,
+                                int& indent) {
+  if(gp->gp.size > 0) {
+    rval << taMarkUp::ListStart(fmt, indent, false)
+         << taMarkUp::ListItem(fmt, indent, false) << gp->name << "\n";
+  }
+  if(gp->size > 0) {
+    rval << taMarkUp::ListStart(fmt, indent, false);
+    for(int li=0; li<gp->size; li++) {
+      Layer* l = gp->FastEl(li);
+      if(!include_off && l->lesioned())
+        continue;
+      if(l->projections.size == 0)
+        continue;
+      rval << taMarkUp::ListItem(fmt, indent, false) << l->name << "\n";
+      rval << taMarkUp::ListStart(fmt, indent, false);
+      for(int i=0; i<l->projections.size; i++) {
+        Projection* pj = l->projections.FastEl(i);
+        if(!include_off && pj->off)
+          continue;
+        rval << taMarkUp::ListItem(fmt, indent, false) << taMarkUp::Bold(fmt, pj->name) << ": ";
+        ProjectionSpec* ps = pj->GetPrjnSpec();
+        if(ps)
+          rval << "( " << ps->name << ") ";
+        ConSpec* cs = pj->GetConSpec();
+        if(cs)
+          rval << "( " << cs->name << ") ";
+        rval << pj->notes << "\n";
+      }
+      rval << taMarkUp::ListEnd(fmt, indent, false);
+    }
+    rval << taMarkUp::ListEnd(fmt, indent, false);
+  }
+  if(gp->gp.size > 0) {
+    for(int gi=0; gi<gp->gp.size; gi++) {
+      Layer_Group* lg = (Layer_Group*)gp->gp.FastEl(gi);
+      rval << taMarkUp::ListItem(fmt, indent, false) << lg->name << "\n";
+      NetPrjnsToList_gp(lg, rval, fmt, include_off, indent);
+    }
+    rval << taMarkUp::ListEnd(fmt, indent, false);
+  }
 }
 
 void Network::DMemTrialBarrier() {

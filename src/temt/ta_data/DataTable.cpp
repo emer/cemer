@@ -2791,6 +2791,12 @@ bool DataTable::GetDataAsJSON(QJsonObject& json_obj, const String& column_name, 
 }
 #endif
 
+
+String DataTable::ExportDataText(taMarkUp::Format fmt) const {
+  return taMarkUp::DataTableTable(*this, fmt);
+}
+
+
 void DataTable::SaveDataRows_strm(ostream& strm, Delimiters delim, bool quote_str, bool row_mark) {
   for(int row=0;row <rows; row++) {
     SaveDataRow_strm(strm, row, delim, quote_str, row_mark);
