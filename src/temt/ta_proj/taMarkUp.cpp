@@ -31,6 +31,7 @@ String taMarkUp::Bold(Format fmt, const String& text) {
   case LATEX:
     return "\\textbf{" + text + "}";
   }
+  return _nilString;
 }
 
 String taMarkUp::Italics(Format fmt, const String& text) {
@@ -44,6 +45,7 @@ String taMarkUp::Italics(Format fmt, const String& text) {
   case LATEX:
     return "\\textit{" + text + "}";
   }
+  return _nilString;
 }
 
 String taMarkUp::Code(Format fmt, const String& text) {
@@ -56,6 +58,7 @@ String taMarkUp::Code(Format fmt, const String& text) {
   case LATEX:
     return "\\texttt{" + text + "}";
   }
+  return _nilString;
 }
 
 String taMarkUp::Strike(Format fmt, const String& text) {
@@ -68,6 +71,7 @@ String taMarkUp::Strike(Format fmt, const String& text) {
   case LATEX:
     return "\\sout{" + text + "}";
   }
+  return _nilString;
 }
 
 
@@ -82,6 +86,7 @@ String taMarkUp::TableStart(Format fmt) {
   case LATEX:
     return "\\begin{tabular}{ll} % todo: fix to number of cols\n";
   }
+  return _nilString;
 }
 
 String taMarkUp::TableHeaderStart(Format fmt, int& n_cols) {
@@ -96,6 +101,7 @@ String taMarkUp::TableHeaderStart(Format fmt, int& n_cols) {
   case LATEX:
     return "\\hline\n";
   }
+  return _nilString;
 }
 
 String taMarkUp::TableHeader(Format fmt, const String& header, int& n_cols) {
@@ -118,6 +124,7 @@ String taMarkUp::TableHeader(Format fmt, const String& header, int& n_cols) {
       return " & " + header;
   }
   }
+  return _nilString;
 }
 
 String taMarkUp::TableHeaderEnd(Format fmt, int n_cols) {
@@ -137,6 +144,7 @@ String taMarkUp::TableHeaderEnd(Format fmt, int n_cols) {
   case LATEX:
     return "\\\\\n\\hline";
   }
+  return _nilString;
 }
 
 String taMarkUp::TableRowStart(Format fmt, int& col_no) {
@@ -151,6 +159,7 @@ String taMarkUp::TableRowStart(Format fmt, int& col_no) {
   case LATEX:
     return "";
   }
+  return _nilString;
 }
 
 String taMarkUp::TableCell(Format fmt, const String& cell, int& col_no) {
@@ -173,6 +182,7 @@ String taMarkUp::TableCell(Format fmt, const String& cell, int& col_no) {
       return " & " + cell;
   }
   }
+  return _nilString;
 }
 
 String taMarkUp::TableRowEnd(Format fmt, int col_no) {
@@ -186,6 +196,7 @@ String taMarkUp::TableRowEnd(Format fmt, int col_no) {
   case LATEX:
     return "\\\\\n";
   }
+  return _nilString;
 }
 
 String taMarkUp::TableEnd(Format fmt) {
@@ -199,6 +210,7 @@ String taMarkUp::TableEnd(Format fmt) {
   case LATEX:
     return "\\hline\n\\end{tabular}\n";
   }
+  return _nilString;
 }
 
 String taMarkUp::DataTableTable(const DataTable& data, Format fmt) {
