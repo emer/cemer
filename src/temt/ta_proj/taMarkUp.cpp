@@ -102,7 +102,7 @@ String taMarkUp::TableHeader(Format fmt, const String& header, int& n_cols) {
   n_cols++;
   switch(fmt) {
   case HTML:
-    return "<th>" + header + "</th>\n";
+    return "  <th>" + header + "</th>\n";
   case MEDIAWIKI: {
     if(n_cols == 1)
       return "! " + header;
@@ -157,7 +157,7 @@ String taMarkUp::TableCell(Format fmt, const String& cell, int& col_no) {
   col_no++;
   switch(fmt) {
   case HTML:
-    return "<td>" + cell + "</td>";
+    return "  <td>" + cell + "</td>\n";
   case MEDIAWIKI: {
     if(col_no == 1)
       return "| " + cell;
@@ -212,7 +212,7 @@ String taMarkUp::DataTableTable(const DataTable& data, Format fmt) {
   for(int r=0; r<data.rows; r++) {
     int col_no = 0;
     rval << TableRowStart(fmt, col_no);
-    for(int i; i<data.data.size; i++) {
+    for(int i=0; i<data.data.size; i++) {
       rval << TableCell(fmt, data.GetValAsString(r,i), col_no);
     }
     rval << TableRowEnd(fmt, col_no);

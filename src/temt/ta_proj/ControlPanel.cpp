@@ -871,7 +871,7 @@ int ControlPanel::FindMethBase(const taBase* base, MethodDef* md) {
 }
 
 String ControlPanel::ToTable(taMarkUp::Format fmt) {
-  String rval;
+  String rval = "\n";
   int n_cols = 0;
   rval << taMarkUp::TableStart(fmt) << taMarkUp::TableHeaderStart(fmt, n_cols);
   rval << taMarkUp::TableHeader(fmt, "Parameter", n_cols)

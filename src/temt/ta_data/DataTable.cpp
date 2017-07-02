@@ -2793,7 +2793,7 @@ bool DataTable::GetDataAsJSON(QJsonObject& json_obj, const String& column_name, 
 
 
 String DataTable::ExportDataText(taMarkUp::Format fmt) const {
-  return taMarkUp::DataTableTable(*this, fmt);
+  return "\n" + taMarkUp::DataTableTable(*this, fmt);
 }
 
 
