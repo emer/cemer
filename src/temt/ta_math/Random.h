@@ -23,7 +23,9 @@
 // member includes:
 #include <MTRnd>
 
+#ifndef __MAKETA__
 #include <math.h>
+#endif
 
 #include <taMath_double>
 
