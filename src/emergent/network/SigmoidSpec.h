@@ -21,7 +21,9 @@
 #include <taOBase>
 
 // member includes:
+#ifndef __MAKETA__
 #include <math.h>
+#endif
 
 // declare all other types mentioned but not required to include:
 

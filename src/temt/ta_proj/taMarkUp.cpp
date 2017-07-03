@@ -316,7 +316,7 @@ String taMarkUp::ListItem(Format fmt, int indent, bool number) {
       if(indent == 1)
         rval << "* ";
       else
-        rval << "+ ";
+        rval << ((indent % 2 == 0) ? "+ " : "- "); // alternate..
     }
     break;
   case LATEX:

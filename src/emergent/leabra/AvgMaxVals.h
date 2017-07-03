@@ -22,9 +22,11 @@
 
 // member includes:
 // these are needed for FLT_MAX
+#ifndef __MAKETA__
 #include <math.h>
 #include <limits.h>
 #include <float.h>
+#endif
 
 // declare all other types mentioned but not required to include:
 
