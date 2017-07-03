@@ -2774,7 +2774,7 @@ DataTable* Network::NetPrjnsToTable(DataTable* dt, bool include_off) {
 
 String Network::NetPrjnsToList(taMarkUp::Format fmt, bool include_off) {
   int indent = 0;
-  String rval;
+  String rval = "\n";
   NetPrjnsToList_gp(&layers, rval, fmt, include_off, indent);
   return rval;
 }
@@ -2783,7 +2783,7 @@ void Network::NetPrjnsToList_gp(Layer_Group* gp, String& rval, taMarkUp::Format 
                                 int& indent) {
   if(gp->gp.size > 0) {
     rval << taMarkUp::ListStart(fmt, indent, false)
-         << taMarkUp::ListItem(fmt, indent, false) << gp->name << "\n";
+         << taMarkUp::ListItem(fmt, indent, false) << taMarkUp::Escape(fmt, gp->name) << "\n";
   }
   if(gp->size > 0) {
     rval << taMarkUp::ListStart(fmt, indent, false);
@@ -2793,7 +2793,7 @@ void Network::NetPrjnsToList_gp(Layer_Group* gp, String& rval, taMarkUp::Format 
         continue;
       if(l->projections.size == 0)
         continue;
-      rval << taMarkUp::ListItem(fmt, indent, false) << l->name << "\n";
+      rval << taMarkUp::ListItem(fmt, indent, false) << taMarkUp::Escape(fmt, l->name) << "\n";
       rval << taMarkUp::ListStart(fmt, indent, false);
       for(int i=0; i<l->projections.size; i++) {
         Projection* pj = l->projections.FastEl(i);
@@ -2802,11 +2802,11 @@ void Network::NetPrjnsToList_gp(Layer_Group* gp, String& rval, taMarkUp::Format 
         rval << taMarkUp::ListItem(fmt, indent, false) << taMarkUp::Bold(fmt, pj->name) << ": ";
         ProjectionSpec* ps = pj->GetPrjnSpec();
         if(ps)
-          rval << "( " << ps->name << ") ";
+          rval << "(" << taMarkUp::Escape(fmt, ps->name) << ") ";
         ConSpec* cs = pj->GetConSpec();
         if(cs)
-          rval << "( " << cs->name << ") ";
-        rval << pj->notes << "\n";
+          rval << "(" << taMarkUp::Escape(fmt, cs->name) << ") ";
+        rval << taMarkUp::Escape(fmt, pj->notes) << "\n";
       }
       rval << taMarkUp::ListEnd(fmt, indent, false);
     }

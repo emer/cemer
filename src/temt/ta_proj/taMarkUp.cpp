@@ -20,16 +20,51 @@
 
 TA_BASEFUNS_CTORS_DEFN(taMarkUp);
 
+String taMarkUp::Escape(Format fmt, const String& text) {
+  String rval = text;
+  switch(fmt) {
+  case HTML:
+    rval.xml_esc();
+    break;
+  case MEDIAWIKI:
+    break;
+  case MARKDOWN:
+    break;
+  case LATEX: {
+    int len = text.length();
+    rval = "";
+    bool prv_bs = false;
+    for(int i=0; i<len; i++) {
+      char c = text[i];
+      if(c == '\\') {
+        prv_bs = true;
+        rval.cat(c);
+        continue;
+      }
+      if(!prv_bs && (c == '#' || c == '$' || c == '%' || c == '&' || c == '_')) {
+        rval.cat('\\');
+      }
+      prv_bs = false;
+      rval.cat(c);
+    }
+    rval.gsub("^", "\\textasciicircum{}");
+    rval.gsub("~", "\\textasciitilde{}");
+    break;
+  }
+  }
+  return rval;
+}
+
 String taMarkUp::Bold(Format fmt, const String& text) {
   switch(fmt) {
   case HTML:
-    return "<b>" + text + "</b>";
+    return "<b>" + Escape(fmt, text) + "</b>";
   case MEDIAWIKI:
-    return "'''" + text + "'''";
+    return "'''" + Escape(fmt, text) + "'''";
   case MARKDOWN:
-    return "**" + text + "**";
+    return "**" + Escape(fmt, text) + "**";
   case LATEX:
-    return "\\textbf{" + text + "}";
+    return "\\textbf{" + Escape(fmt, text) + "}";
   }
   return _nilString;
 }
@@ -37,13 +72,13 @@ String taMarkUp::Bold(Format fmt, const String& text) {
 String taMarkUp::Italics(Format fmt, const String& text) {
   switch(fmt) {
   case HTML:
-    return "<i>" + text + "</i>";
+    return "<i>" + Escape(fmt, text) + "</i>";
   case MEDIAWIKI:
-    return "''" + text + "''";
+    return "''" + Escape(fmt, text) + "''";
   case MARKDOWN:
-    return "*" + text + "*";
+    return "*" + Escape(fmt, text) + "*";
   case LATEX:
-    return "\\textit{" + text + "}";
+    return "\\textit{" + Escape(fmt, text) + "}";
   }
   return _nilString;
 }
@@ -52,11 +87,11 @@ String taMarkUp::Code(Format fmt, const String& text) {
   switch(fmt) {
   case HTML:
   case MEDIAWIKI:
-    return "<code>" + text + "</code>";
+    return "<code>" + Escape(fmt, text) + "</code>";
   case MARKDOWN:
-    return "`" + text + "`";
+    return "`" + Escape(fmt, text) + "`";
   case LATEX:
-    return "\\texttt{" + text + "}";
+    return "\\texttt{" + Escape(fmt, text) + "}";
   }
   return _nilString;
 }
@@ -65,11 +100,11 @@ String taMarkUp::Strike(Format fmt, const String& text) {
   switch(fmt) {
   case HTML:
   case MEDIAWIKI:
-    return "<s>" + text + "</s>";
+    return "<s>" + Escape(fmt, text) + "</s>";
   case MARKDOWN:
-    return "~~" + text + "~~";
+    return "~~" + Escape(fmt, text) + "~~";
   case LATEX:
-    return "\\sout{" + text + "}";
+    return "\\sout{" + Escape(fmt, text) + "}";
   }
   return _nilString;
 }
@@ -108,20 +143,20 @@ String taMarkUp::TableHeader(Format fmt, const String& header, int& n_cols) {
   n_cols++;
   switch(fmt) {
   case HTML:
-    return "  <th>" + header + "</th>\n";
+    return "  <th>" + Escape(fmt, header) + "</th>\n";
   case MEDIAWIKI: {
     if(n_cols == 1)
-      return "! " + header;
+      return "! " + Escape(fmt, header);
     else
-      return " !! " + header;
+      return " !! " + Escape(fmt, header);
   }
   case MARKDOWN:
-    return "| " + header + " ";
+    return "| " + Escape(fmt, header) + " ";
   case LATEX: {
     if(n_cols == 1)
-      return header;
+      return Escape(fmt, header);
     else
-      return " & " + header;
+      return " & " + Escape(fmt, header);
   }
   }
   return _nilString;
@@ -142,7 +177,7 @@ String taMarkUp::TableHeaderEnd(Format fmt, int n_cols) {
     return rval;
   }
   case LATEX:
-    return "\\\\\n\\hline";
+    return "\\\\\n\\hline\n";
   }
   return _nilString;
 }
@@ -166,20 +201,20 @@ String taMarkUp::TableCell(Format fmt, const String& cell, int& col_no) {
   col_no++;
   switch(fmt) {
   case HTML:
-    return "  <td>" + cell + "</td>\n";
+    return "  <td>" + Escape(fmt, cell) + "</td>\n";
   case MEDIAWIKI: {
     if(col_no == 1)
-      return "| " + cell;
+      return "| " + Escape(fmt, cell);
     else
-      return " || " + cell;
+      return " || " + Escape(fmt, cell);
   }
   case MARKDOWN:
-    return "| " + cell + " ";
+    return "| " + Escape(fmt, cell) + " ";
   case LATEX: {
     if(col_no == 1)
-      return cell;
+      return Escape(fmt, cell);
     else
-      return " & " + cell;
+      return " & " + Escape(fmt, cell);
   }
   }
   return _nilString;

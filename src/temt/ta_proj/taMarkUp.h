@@ -37,6 +37,9 @@ public:
     LATEX,                      // LaTeX format
   };
 
+  static String Escape(Format fmt, const String& text);
+  // #CAT_Style apply format-specific escaping of control sequences so things should render properly -- used automtically in any of the code below that takes an arg, but can be called separately when generating markup output
+ 
   static String Bold(Format fmt, const String& text);
   // #CAT_Style format the given text in bold
   static String Italics(Format fmt, const String& text);

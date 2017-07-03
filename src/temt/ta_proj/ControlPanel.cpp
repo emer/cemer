@@ -899,7 +899,7 @@ DataTable* ControlPanel::ToDataTable(DataTable* dt) {
   if(!dt) {
     taProject* proj = GetMyProj();
     if(!proj) return NULL;
-    dt = proj->GetNewAnalysisDataTable("NetPrjns_" + name, true);
+    dt = proj->GetNewAnalysisDataTable(name, true);
     new_table = true;
   }
   dt->StructUpdate(true);
