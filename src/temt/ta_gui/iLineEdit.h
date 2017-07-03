@@ -64,11 +64,11 @@ protected slots:
   void              selectionChanged();
 
 protected:
-  int               mmin_char_width; // note: we limit to 128
-  int               mchar_width; // note: we limit to 128
-  bool              ext_select_on;	   // toggled by Ctrl+space -- extends selection with keyboard movement
-  int               cursor_position_from_end;  // cursor position for start of completion - only set during completion
-  int               cursor_offset;   // compensate for cursor movement by user while completion selections are visible
+  int               mmin_char_width;  // note: we limit to 128
+  int               mchar_width;      // note: we limit to 128
+  bool              ext_select_on;	  // toggled by Ctrl+space -- extends selection with keyboard movement
+  int               prefix_length;    // save for later cursor positioning
+  int               orig_text_length; // length of iLineEdit::text() before completion
   iCodeCompleter*   completer; //
   
   void              focusInEvent(QFocusEvent* e) override;

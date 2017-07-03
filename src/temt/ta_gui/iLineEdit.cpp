@@ -66,8 +66,9 @@ void iLineEdit::init(bool add_completer) {
   
   completer = NULL;
   completion_enabled = false;
-  cursor_position_from_end = 0;
-  cursor_offset = 0;
+  prefix_length = 0;
+  orig_text_length = 0;
+  
   if (add_completer) {
     completer = new iCodeCompleter(parent());
     completer->setCaseSensitivity(Qt::CaseInsensitive);
@@ -215,14 +216,12 @@ void iLineEdit::keyPressEvent(QKeyEvent* key_event)
       key_event->accept();
       cursorForward(ext_select_on, 1);
       DoCompletion(false);
-      cursor_offset--;
       return;
     case taiMisc::TEXTEDIT_CURSOR_BACKWARD:
     case taiMisc::TEXTEDIT_CURSOR_BACKWARD_II:
       key_event->accept();
       cursorBackward(ext_select_on, 1);
       DoCompletion(false);
-      cursor_offset++;
      return;
     case taiMisc::TEXTEDIT_DELETE:
     case taiMisc::TEXTEDIT_DELETE_II:
@@ -314,10 +313,8 @@ void iLineEdit::keyPressEvent(QKeyEvent* key_event)
 #endif
           DoCompletion(false);
           if (key_event->key() == Qt::Key_Left) {
-            cursor_offset++;
           }
           else if (key_event->key() == Qt::Key_Right) {
-            cursor_offset--;
           }
           return;
         }
@@ -338,11 +335,10 @@ void iLineEdit::doLookup() {
 void iLineEdit::DoCompletion(bool extend) {
   if (!GetCompleter()) return;
   
+  orig_text_length = text().length();
   String prefix = text();
   prefix = prefix.through(cursorPosition() - 1);
-  if (prefix.length() < text().length()) {
-    cursor_position_from_end = text().length() - cursorPosition();
-  }
+  prefix_length = prefix.length();
   emit characterEntered(this);
   GetCompleter()->setCompletionPrefix(prefix);
   GetCompleter()->setCompletionMode(QCompleter::PopupCompletion);
@@ -405,10 +401,8 @@ bool iLineEdit::eventFilter(QObject* obj, QEvent* event) {
 void iLineEdit::setText(const QString& str) {
   inherited::setText(str);
   if (completion_enabled) {
-    int cursor_position = text().length() - cursor_position_from_end + cursor_offset; // cursor_offset needed when doing completion
-    setCursorPosition(cursor_position);  // zero unless doing completion
     String working_copy = text();
-    working_copy = working_copy.before(cursorPosition());
+    setCursorPosition(prefix_length + GetCompleter()->currentCompletion().length() - orig_text_length);
     if (completer->ExpressionTakesArgs(working_copy)) {
       setCursorPosition(cursorPosition() - 1);
     }
