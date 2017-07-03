@@ -23,6 +23,9 @@
 
 #include <taMisc>
 
+#include <QElapsedTimer>
+#include <QDebug>
+
 TA_BASEFUNS_CTORS_DEFN(WtBasedRF);
 
 void WtBasedRF::Initialize() {
@@ -118,8 +121,11 @@ bool WtBasedRF::ComputeV2RF(Network* net, DataTable* dt_trg, DataTable* wts, Lay
   *marker_matrix = 1;
   count_matrix->SetGeom(2, dt_trg_rf_count_col->GetCellGeom(0), dt_trg_rf_count_col->GetCellGeom(1));
   
-//    for (int wts_row=0; wts_row<1; wts_row++) {  // for debug
-  for (int wts_row=0; wts_row<trg_layer_wts->rows; wts_row++) {
+  int last_row = trg_layer_wts->rows;
+
+//  last_row = 1; // for debug
+  
+  for (int wts_row=0; wts_row<last_row; wts_row++) {
     *count_matrix = 0;
     taVector2i snd_layer_units;
     snd_layer_units.x = snd_layer_unit_grp_geom.x * snd_layer_grp_geom.x;
@@ -209,8 +215,6 @@ bool WtBasedRF::ComputeHigherLayerRF(Network* net, DataTable* dt_trg, DataTable*
   int wt_rows = trg_layer_wts->rows;
   taVector2i snd_layer_grp_geom = snd_layer->gp_geom;
   DataCol* dt_trg_rf_values_col;
-  DataCol* dt_trg_rf_count_col;
-  
   
   // column of calculated image values - get the size of the image from the previously generated rf data table
   // ** use the values that are multiplied by the actual activations that were calculated for the specific image
@@ -218,25 +222,37 @@ bool WtBasedRF::ComputeHigherLayerRF(Network* net, DataTable* dt_trg, DataTable*
   taVector2i image_size;
   dt_snd_rf_values_col->Get2DCellGeom(image_size.x, image_size.y);
   dt_trg_rf_values_col = dt_trg_rf->FindMakeColMatrix("values", VT_FLOAT, 2, image_size.x, image_size.y);
-  // column to keep track of the number of values summed so we can correctly average
-  dt_trg_rf_count_col = dt_trg_rf->FindMakeColMatrix("count", VT_INT, 2, image_size.x, image_size.y);
   dt_trg_rf->EnforceRows(wt_rows);
   dt_trg_rf->StructUpdate(false);
   
   float_Matrix* sum_matrix = new float_Matrix(); // sums of sending layer values multiplied by target layer weights
   float_Matrix* tmp_matrix = new float_Matrix(); // multiplication of sending layer values and target layer weights for one connection
-  int_Matrix* marker_matrix = new int_Matrix(); // all 1's - used to mark the large count matrix for averaging of summed values
-  int_Matrix* count_matrix = new int_Matrix(); // tracks the number of values that are summed for each unit of the original image - use for averaging
   sum_matrix->SetGeom(2, image_size.x, image_size.y);
   tmp_matrix->SetGeom(2, image_size.x, image_size.y);
-  marker_matrix->SetGeom(2, image_size.x, image_size.y);
-  *marker_matrix = 0;
-  count_matrix->SetGeom(2, image_size.x, image_size.y); // same size as dt_trg_rf
   
   bool all_good = true;
-//  for (int wts_row=0; wts_row<1; wts_row++) {
-    for (int wts_row=0; wts_row<trg_layer_wts->rows; wts_row++) {
-    *count_matrix = 0;
+  
+  QElapsedTimer timer;
+  timer.start();
+  
+  int first_row = 0;  // first row for which we want to generate the representation
+  int last_row = trg_layer_wts->rows;
+  
+  int units_per_group = trg_layer->un_geom.x * trg_layer->un_geom.y;
+//  if (center_only) {
+//    first_row = 5 * units_per_group;
+//    last_row = 10 * units_per_group;
+//  }
+
+  // for every unit in the target layer
+  // (each row in table is a matrix of weights for the connections to a unit in target layer)
+  
+//  last_row = 1;  // for debug
+  
+  for (int wts_row = first_row; wts_row < last_row; wts_row++) {
+//    if (center_only && wts_row == (first_row + 2*units_per_group)) {
+//      wts_row = first_row + 4*units_per_group + 1;
+//    }
     *sum_matrix = 0;
     // get the target layer unit so we can find the sending units it recvs from
     Unit* trg_layer_unit = trg_layer->UnitAccess(Layer::ACC_LAY, wts_row, 0);
@@ -250,49 +266,29 @@ bool WtBasedRF::ComputeHigherLayerRF(Network* net, DataTable* dt_trg, DataTable*
     if (all_good) {
       for (int u=0; u<recv_cons->size; u++) {
         Unit* snd_unit = recv_cons->SafeUn(u);
-        taVector2i snd_layer_unit_grp_log_pos;
-        snd_unit->UnitGpLogPos(snd_layer_unit_grp_log_pos);
+        taVector2i snd_layer_unit_grp_logical_position;
+        snd_unit->UnitGpLogPos(snd_layer_unit_grp_logical_position);
         
         DataCol* wts_col = trg_layer_wts->GetColData(0);  // only one column
-        float weight = wts_col->GetValAsVarM(wts_row, snd_unit->idx).toFloat();
+        float weight = wts_col->GetValAsFloatM(wts_row, snd_unit->idx);
         float_Matrix* snd_values_matrix = (float_Matrix*)dt_snd_rf_values_col->GetValAsMatrix(snd_unit->idx);
         taBase::Ref(snd_values_matrix);
         *tmp_matrix = *snd_values_matrix * weight;
         taBase::unRefDone(snd_values_matrix);
         *sum_matrix += *tmp_matrix;
-        
-        DataCol* dt_snd_rf_count_col = dt_snd_rf->GetColData("count");
-        marker_matrix = (int_Matrix*)dt_snd_rf_count_col->GetValAsMatrix(snd_unit->idx);
-        taBase::Ref(marker_matrix);
-        for (int i=0; i<marker_matrix->size; i++) {
-          if (marker_matrix->taMatrix::SafeElAsVar_Flat(i) > 0) {
-            marker_matrix->Set_Flat(1, i);
-          }
-        }
-        *count_matrix += marker_matrix;
-        taBase::unRefDone(marker_matrix);
       }
-      // can't divide by zero
-      for (int i=0; i<count_matrix->size; i++) {
-        if (count_matrix->taMatrix::SafeElAsFloat_Flat(i) == 0) {
-          count_matrix->Set_Flat(1, i);
-        }
-      }
-      // the number of values summed is greater for some cells
-      *sum_matrix /= *count_matrix;
       dt_trg_rf_values_col->SetValAsMatrix(sum_matrix, wts_row);
-      dt_trg_rf_count_col->SetValAsMatrix(count_matrix, wts_row);
     }
     else {
       delete sum_matrix;
       delete tmp_matrix;
-      delete count_matrix;
       return false;
     }
   }
+  
+  qDebug() << "ComputeHigherLayerRF took " << timer.elapsed() << "milliseconds";
   delete sum_matrix;
   delete tmp_matrix;
-  delete count_matrix;
   
   return true;
 }
