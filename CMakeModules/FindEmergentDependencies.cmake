@@ -24,11 +24,21 @@ if (QT_USE_5)
 
   # subvers
   string(SUBSTRING "${Qt5Gui_VERSION}" 2 1 QT5_MINOR_VERS)
-  string(COMPARE GREATER "${QT5_MINOR_VERS}" "5" QT_USE_WEBENGINE)
-  message(STATUS "Qt5 version: ${Qt5Gui_VERSION} minor version is ${QT5_MINOR_VERS}, using WebEngine?: ${QT_USE_WEBENGINE}")
+  if (USE_QT_NOWEB)
+    message(STATUS "not using any web browser")
+  elseif (USE_QT_WEBKIT)
+    message(STATUS "requesting WebKit instead of WebEngine")
+  else ()
+    string(COMPARE GREATER "${QT5_MINOR_VERS}" "5" USE_QT_WEBENGINE)
+    if(NOT USE_QT_WEBENGINE)
+      set (USE_QT_WEBKIT ON)
+    endif ()
+  endif ()
 
-    #  qt5_use_modules(Emergent Widgets Network WebKit OpenGL Xml)
-#  set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+  message(STATUS "Qt5 version: ${Qt5Gui_VERSION} minor version is ${QT5_MINOR_VERS}, USE_QT_WEBKIT: ${USE_QT_WEBKIT}, USE_QT_WEBENGINE: ${USE_QT_WEBENGINE}")
+
+  #  qt5_use_modules(Emergent Widgets Network WebKit OpenGL Xml)
+  #  set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
   # Add compiler flags for building executables (-fPIE)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
@@ -45,7 +55,7 @@ if (QT_USE_5)
     ${Qt5Network_LIBRARIES} ${Qt5PrintSupport_LIBRARIES} ${Qt5Multimedia_LIBRARIES}
     ${Qt5Svg_LIBRARIES})
 
-  if (QT_USE_WEBENGINE)
+  if (USE_QT_WEBENGINE)
     find_package(Qt5WebEngineCore)
     find_package(Qt5WebEngine)
     find_package(Qt5WebEngineWidgets)
@@ -57,15 +67,17 @@ if (QT_USE_5)
 
     set(QT_LIBRARIES ${QT_LIBRARIES} ${Qt5WebEngineCore_LIBRARIES} ${Qt5WebEngine_LIBRARIES}
       ${Qt5WebEngineWidgets_LIBRARIES})
-  else (QT_USE_WEBENGINE)
+  elseif (USE_QT_WEBKIT)
 
     find_package(Qt5WebKit)
     find_package(Qt5WebKitWidgets)
      
+    add_definitions(-DUSE_QT_WEBVIEW)
+
     include_directories(${Qt5WebKit_INCLUDE_DIRS} ${Qt5WebKitWidgets_INCLUDE_DIRS})
     set(QT_LIBRARIES ${QT_LIBRARIES} ${Qt5WebKit_LIBRARIES} ${Qt5WebKitWidgets_LIBRARIES})
 
-  endif (QT_USE_WEBENGINE)
+  endif (USE_QT_WEBENGINE)
 
   if (QT_USE_3D)
     find_package(Qt53DCore)

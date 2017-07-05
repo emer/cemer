@@ -31,7 +31,7 @@
 #include <QWebEnginePage>
 class QWebEngineView;
 
-#else // USE_QT_WEBENGINE
+#elif defined(USE_QT_WEBVIEW)
 
 #include <QWebPage>
 class QWebView; //
@@ -146,7 +146,7 @@ protected slots:
   void                  addTab_clicked(); // or return in url_text
 #ifdef USE_QT_WEBENGINE
   void                  brow_createWindow(QWebEnginePage::WebWindowType type, QWebEngineView*& window);
-#else // USE_QT_WEBENGINE
+#elif defined(USE_QT_WEBVIEW)
   void                  brow_createWindow(QWebPage::WebWindowType type, QWebView*& window);
 #endif // USE_QT_WEBENGINE
   void                  brow_linkClicked(const QUrl& url);

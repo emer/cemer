@@ -2383,7 +2383,7 @@ void iMainWindowViewer::editCut() {
     webViewEdit->page()->triggerAction(iWebPage::Cut);
     return;
   }
-#else // USE_QT_WEBENGINE
+#elif defined(USE_QT_WEBVIEW)
   iWebView*  webViewEdit = dynamic_cast<iWebView*>(focusWidget());
   if (webViewEdit) {
     webViewEdit->page()->triggerAction(QWebPage::Cut);
@@ -2414,7 +2414,7 @@ void iMainWindowViewer::editCopy() {
     webViewEdit->page()->triggerAction(iWebPage::Copy);
     return;
   }
-#else // USE_QT_WEBENGINE
+#elif defined(USE_QT_WEBVIEW)
   iWebView*  webViewEdit = dynamic_cast<iWebView*>(focusWidget());
   if (webViewEdit) {
     webViewEdit->page()->triggerAction(QWebPage::Copy);
@@ -2444,7 +2444,7 @@ void iMainWindowViewer::editPaste() {
     webViewEdit->page()->triggerAction(iWebPage::Paste);
     return;
   }
-#else // USE_QT_WEBENGINE
+#elif defined(USE_QT_WEBVIEW)
   iWebView*  webViewEdit = dynamic_cast<iWebView*>(focusWidget());
   if (webViewEdit) {
     webViewEdit->page()->triggerAction(QWebPage::Paste);
@@ -2994,15 +2994,14 @@ void iMainWindowViewer::UpdateUi() {
 
   QLineEdit* lineEdit = dynamic_cast<QLineEdit*>(focusWidget());
   QTextEdit*  textEdit = dynamic_cast<QTextEdit*>(focusWidget());
-#ifdef USE_QT_WEBENGINE
   iWebView*  webViewEdit = NULL;
+#ifdef USE_QT_WEBENGINE
   if (focusWidget()) {
     webViewEdit = dynamic_cast<iWebView*>(focusWidget()->parentWidget());
   }
-#else // USE_QT_WEBENGINE
-  iWebView*  webViewEdit = dynamic_cast<iWebView*>(focusWidget());
+#elif defined(USE_QT_WEBVIEW)
+  webViewEdit = dynamic_cast<iWebView*>(focusWidget());
 #endif // USE_QT_WEBENGINE
-
 
   if (lineEdit != NULL) {
     editCutAction->setEnabled(lineEdit->hasSelectedText());

@@ -46,7 +46,7 @@
 #ifdef USE_QT_WEBENGINE
 #include <QWebEngineSettings>
 
-#else // USE_QT_WEBENGINE
+#elif defined(USE_QT_WEBVIEW)
 
 #include <QWebSettings>
 
@@ -154,7 +154,7 @@ void taiMisc::Init(bool gui) {
 #ifdef USE_QT_WEBENGINE
   QWebEngineSettings *defaultSettings = QWebEngineSettings::defaultSettings();
   defaultSettings->setAttribute(QWebEngineSettings::PluginsEnabled, true);
-#else // USE_QT_WEBENGINE
+#elif defined(USE_QT_WEBVIEW)
   QWebSettings *defaultSettings = QWebSettings::globalSettings();
   defaultSettings->setAttribute(QWebSettings::PluginsEnabled, true);
 #endif // USE_QT_WEBENGINE

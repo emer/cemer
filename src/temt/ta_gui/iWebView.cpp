@@ -168,7 +168,8 @@ void iWebView::contextMenuEvent(QContextMenuEvent *event) {
   menu->popup(event->globalPos());
 }
 
-#else // USE_QT_WEBENGINE
+/////////////////////////////////////////////////////////////////////
+#elif defined(USE_QT_WEBVIEW)
 
 iWebView::iWebView(QWidget* parent, iPanelOfDocView* docview)
   : inherited(parent)
@@ -191,6 +192,19 @@ void iWebView::cleanupWeb() {
 void iWebView::keyPressEvent(QKeyEvent* e) {
   taiMisc::UpdateUiOnCtrlPressed(this, e);
   inherited::keyPressEvent(e);
+}
+
+/////////////////////////////////////////////////////////////////////
+#else
+
+iWebView::iWebView(QWidget* parent, iPanelOfDocView* docview)
+  : inherited(parent)
+  , own_docview(docview)
+{
+}
+
+void iWebView::cleanupWeb() {
+  
 }
 
 #endif // USE_QT_WEBENGINE

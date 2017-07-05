@@ -769,7 +769,7 @@ void iNetworkCookieJar::setSecondLevelDomains(const QStringList &secondLevelDoma
 
 #ifdef USE_QT_WEBENGINE
 
-#else // USE_QT_WEBENGINE
+#elif defined(USE_QT_WEBVIEW)
 
 #include <QWebSettings>
 
@@ -953,7 +953,7 @@ QList<QNetworkCookie> iCookieJar::cookiesForUrl(const QUrl &url) const
 
 #ifdef USE_QT_WEBENGINE
   
-#else // USE_QT_WEBENGINE
+#elif defined(USE_QT_WEBVIEW)
   QWebSettings *globalSettings = QWebSettings::globalSettings();
   if (globalSettings->testAttribute(QWebSettings::PrivateBrowsingEnabled)) {
     QList<QNetworkCookie> noCookies;
@@ -976,7 +976,7 @@ bool iCookieJar::setCookiesFromUrl(const QList<QNetworkCookie> &cookieList, cons
 
 #ifdef USE_QT_WEBENGINE
 
-#else // USE_QT_WEBENGINE
+#elif defined(USE_QT_WEBVIEW)
   
   QWebSettings *globalSettings = QWebSettings::globalSettings();
   if (globalSettings->testAttribute(QWebSettings::PrivateBrowsingEnabled))

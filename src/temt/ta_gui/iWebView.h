@@ -27,9 +27,11 @@ class iPanelOfDocView;
 class QWebEngineProfile;
 class QWebEngineDownloadItem;
 class QAuthenticator;
-#else // USE_QT_WEBENGINE
+#elif USE_QT_WEBVIEW
 #include <QWebView>
-#endif // USE_QT_WEBENGINE
+#else // USE_QT_WEBENGINE
+#include <iTextEdit>
+#endif
 #endif // __MAKETA__
 
 // member includes:
@@ -88,8 +90,7 @@ protected:
 
 
 /////////////////////////////////////////////////////////////////////
-#else // USE_QT_WEBENGINE
-
+#elif defined(USE_QT_WEBVIEW)
 
 class iWebView: public QWebView {
   Q_OBJECT
@@ -114,7 +115,45 @@ protected:
   void keyPressEvent(QKeyEvent* e) override;
 };
 
-#endif // USE_QT_WEBENGINE
+/////////////////////////////////////////////////////////////////////
+#else // no web browser
 
+class iWebView: public iTextEdit {
+  Q_OBJECT
+  INHERITED(iTextEdit);
+public:
+  static bool handleTaLinkClick(const QUrl& url, iPanelOfDocView* docview);
+  // handle special ta: resource requests for special interactive links -- returns true if it is a special ta: link and was handled, and false if a regular link to be handled by the view
+
+  static void           cleanupWeb();
+  // cleanup any web stuff before exiting
+  
+  iPanelOfDocView*              own_docview;
+  // owning doc view
+
+  QUrl url() { QUrl url; return url; }
+  void load(const QUrl& url) { };
+
+  void setHtml(const QString& text, const QUrl& url) { inherited::setHtml(text); }
+  using inherited::setHtml;
+
+  QString selectedText() { return ""; }
+  
+  iWebView(QWidget* parent = 0, iPanelOfDocView* docview = 0);
+public slots:
+  void back() { };
+  void forward() { };
+  void reload() { };
+  void stop() { };
+
+signals:
+  void loadFinished(bool ok);
+  void loadProgress(int progress);
+  void loadStarted();
+  void urlChanged(const QUrl& url);
+  
+};
+
+#endif // USE_QT_WEBENGINE
 
 #endif // iWebView_h

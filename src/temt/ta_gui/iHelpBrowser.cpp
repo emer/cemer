@@ -45,12 +45,11 @@
 
 #include <QWebEngineSettings>
 
-#else // USE_QT_WEBENGINE
+#elif defined(USE_QT_WEBVIEW)
 
 #include <QWebPage>
 
 #endif // USE_QT_WEBENGINE
-
 
 
 class QSleazyFakeTreeWidget: public QTreeWidget {
@@ -310,7 +309,7 @@ void iHelpBrowser::find_clear_clicked() {
 #ifdef USE_QT_WEBENGINE
   curWebView()->page()->findText("");
 
-#else // USE_QT_WEBENGINE
+#elif defined(USE_QT_WEBVIEW)
  
 #if (QT_VERSION >= 0x040600)
   curWebView()->page()->findText("", QWebPage::HighlightAllOccurrences);
@@ -334,7 +333,7 @@ void iHelpBrowser::find_next_clicked() {
     curWebView()->page()->findText(cur_find);
   }
   
-#else // USE_QT_WEBENGINE
+#elif defined(USE_QT_WEBVIEW)
 
   if(cur_find != last_find) {
     // first one highlights all then goes to first one
@@ -357,7 +356,7 @@ void iHelpBrowser::find_prev_clicked() {
 #ifdef USE_QT_WEBENGINE
   curWebView()->page()->findText(find_text->text(), QWebEnginePage::FindBackward);
 
-#else // USE_QT_WEBENGINE
+#elif defined(USE_QT_WEBVIEW)
   
   curWebView()->page()->findText(find_text->text(), QWebPage::FindWrapsAroundDocument | QWebPage::FindBackward);
 
@@ -399,7 +398,7 @@ iWebView* iHelpBrowser::AddWebView(const String& label) {
   set->setFontSize(QWebEngineSettings::DefaultFontSize, brow_fs);
   set->setFontSize(QWebEngineSettings::DefaultFixedFontSize, brow_fs);
 
-#else // USE_QT_WEBENGINE
+#elif defined(USE_QT_WEBVIEW)
 
   brow->setTextSizeMultiplier((float)brow_fs / trg_font_sz);
 
@@ -414,7 +413,7 @@ iWebView* iHelpBrowser::AddWebView(const String& label) {
           SIGNAL(sigCreateWindow(QWebEnginePage::WebWindowType, QWebEngineView*&)), this,
           SLOT(brow_createWindow(QWebEnginePage::WebWindowType, QWebEngineView*&)) );
 
-#else // USE_QT_WEBENGINE
+#elif defined(USE_QT_WEBVIEW)
 
   QWebPage* wp = brow->page();
   
@@ -485,7 +484,7 @@ void iHelpBrowser::brow_createWindow(QWebEnginePage::WebWindowType type, QWebEng
   // }
 }
 
-#else // USE_QT_WEBENGINE
+#elif defined(USE_QT_WEBVIEW)
 
 void iHelpBrowser::brow_createWindow(QWebPage::WebWindowType type,
     QWebView*& window)

@@ -34,7 +34,7 @@ class taDoc; //
 class QToolBar; //
 class QLabel; //
 
-#ifndef USE_QT_WEBENGINE
+#ifdef USE_QT_WEBVIEW
 class QWebView; //
 #endif
 
@@ -97,7 +97,7 @@ protected:
 protected slots:
 #ifdef USE_QT_WEBENGINE
   void                  doc_createWindow(QWebEnginePage::WebWindowType type, QWebEngineView*& window);
-#else // USE_QT_WEBENGINE
+#elif defined(USE_QT_WEBVIEW)
   void                  doc_createWindow(QWebPage::WebWindowType type, QWebView*& window);
   void                  doc_linkClicked(const QUrl& url);
 #endif // USE_QT_WEBENGINE

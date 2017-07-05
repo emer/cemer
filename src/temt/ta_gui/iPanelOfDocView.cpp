@@ -41,7 +41,7 @@
 #include <QWebEngineProfile>
 #include <QWebEngineSettings>
 
-#else // USE_QT_WEBENGINE
+#elif defined(USE_QT_WEBVIEW)
 
 #include <QWebFrame>
 
@@ -153,7 +153,7 @@ iPanelOfDocView::iPanelOfDocView()
   connect(webview,
           SIGNAL(sigCreateWindow(QWebEnginePage::WebWindowType, QWebEngineView*&)), this,
           SLOT(doc_createWindow(QWebEnginePage::WebWindowType, QWebEngineView*&)) );
-#else // USE_QT_WEBENGINE
+#elif defined(USE_QT_WEBVIEW)
   webview->page()->setNetworkAccessManager(taiMisc::net_access_mgr);
   webview->page()->setForwardUnsupportedContent(true);
 
@@ -191,7 +191,7 @@ void iPanelOfDocView::doc_createWindow(QWebEnginePage::WebWindowType type, QWebE
   // }
 }
 
-#else // USE_QT_WEBENGINE
+#elif defined(USE_QT_WEBVIEW)
 
 void iPanelOfDocView::doc_createWindow(QWebPage::WebWindowType type, QWebView*& window) {
   // fork to browser
@@ -228,7 +228,7 @@ void iPanelOfDocView::doc_loadFinished(bool ok) {
   if(!doc_) return;
   if(!webview) return;
 #ifdef USE_QT_WEBENGINE
-#else // USE_QT_WEBENGINE
+#elif defined(USE_QT_WEBVIEW)
   QWebFrame* mnfrm = webview->page()->mainFrame();
   if(!mnfrm) return;
   doc_->html_text = mnfrm->toHtml(); // harvest it!
@@ -281,7 +281,7 @@ void iPanelOfDocView::find_clear_clicked() {
   find_text->clear();
 #ifdef USE_QT_WEBENGINE
 
-#else // USE_QT_WEBENGINE
+#elif defined(USE_QT_WEBVIEW)
   
 #if (QT_VERSION >= 0x040600)
   webview->page()->findText("", QWebPage::HighlightAllOccurrences);
@@ -300,7 +300,7 @@ void iPanelOfDocView::find_next_clicked() {
 
 #ifdef USE_QT_WEBENGINE
 
-#else // USE_QT_WEBENGINE
+#elif defined(USE_QT_WEBVIEW)
   
 #if (QT_VERSION >= 0x040600)
     webview->page()->findText(cur_find, QWebPage::HighlightAllOccurrences);
@@ -320,7 +320,7 @@ void iPanelOfDocView::find_next_clicked() {
 void iPanelOfDocView::find_prev_clicked() {
 #ifdef USE_QT_WEBENGINE
 
-#else // USE_QT_WEBENGINE
+#elif defined(USE_QT_WEBVIEW)
    webview->page()->findText(find_text->text(), QWebPage::FindWrapsAroundDocument | QWebPage::FindBackward);
 
 #endif // USE_QT_WEBENGINE
@@ -356,7 +356,7 @@ void iPanelOfDocView::UpdatePanel_impl() {
   set->setFontSize(QWebEngineSettings::DefaultFontSize, brow_fs);
   set->setFontSize(QWebEngineSettings::DefaultFixedFontSize, brow_fs);
 
-#else // USE_QT_WEBENGINE
+#elif defined(USE_QT_WEBVIEW)
   
   webview->setTextSizeMultiplier(doc_->text_size *
                                  ((float)brow_fs / trg_font_sz));
