@@ -395,14 +395,17 @@ class SlurmJobManager( ClusterJobManager ):
             file.write("#SBATCH --array=%d-%d\n" % (job.taskStart(), job.numTasks()))
             file.write("TASK_ID=$SLURM_ARRAY_TASK_ID\n")
 
+        if job.clean_env:
+            file.write("#SBATCH --export=NONE\n")
+
         file.write("\n")
 
         if job.pathSetupScript() != None:
             file.write(". " + job.pathSetupScript() + "\n")
 
         #file.write("export DISPLAY=:0.0\n\n")
-        file.write("# change to working dir\n")
-        file.write("cd $PBS_O_WORKDIR\n")
+#        file.write("# change to working dir\n")
+#        file.write("cd $PBS_O_WORKDIR\n")
         file.write("\n")
 
         file.write("%s %s" % (job.jobLauncher(), job.userCmd()))
@@ -510,6 +513,7 @@ class ClusterJob:
         self.job_launcher = "mpirun" # hardcode program name so fails gracefully
         self.path_setup_script = None
         self.useQOS = True
+        self.clean_env = True
     def isThreaded(self):
         return self.threaded
     def enableThreaded( self ):
@@ -610,6 +614,8 @@ class ClusterJob:
             return self.queue
     def setQOS(self, t):
         self.useQOS = t
+    def setCleanEnv(self, t):
+        self.clean_env = t
     def setCUDA(self, t):
         self.useCUDA = t
     def setMemory( self, mem):

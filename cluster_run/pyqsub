@@ -36,6 +36,10 @@ def submitJob(jm, opts, args):
                 job.setCUDA(True)
             else:
                 job.setCUDA(False)
+            if opts.clean:
+                job.setCleanEnv(True)
+            else:
+                job.setCleanEnv(False)
             if opts.memory != None:
                  if False == job.setMemory( opts.memory ):
                      print job.lastErr()
@@ -99,6 +103,10 @@ def submitJob(jm, opts, args):
                 job.setQOS(True)
             else:
                 job.setQOS(False)
+            if opts.clean:
+                job.setCleanEnv(True)
+            else:
+                job.setCleanEnv(False)
             if opts.cuda:
                 job.setCUDA(True)
             else:
@@ -170,6 +178,7 @@ if __name__ == "__main__":
     p.add_option("--jobtype", action="store", help="specify job type (e.g. dm or sp)", default='')
     p.add_option("--queue","-q", action="store", help="specify queue name", default=None)
     p.add_option("--qos","-Q", action="store_true", help="specify if to use partition or qos", default=False)
+    p.add_option("--clean", action="store_true", help="use a clean environment for job -- important for slurm", default=True)
     p.add_option("--cuda","-C", action="store_true", help="specify if to request GPU resource", default=False)
     p.add_option("--memory","-m", action="store", help="specify memory in mb or gb", default=None)
     p.add_option("--quick", action="store_true", help="enables quick/quiet output", default=False)
