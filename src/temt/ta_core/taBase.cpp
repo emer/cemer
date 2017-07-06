@@ -1311,6 +1311,18 @@ taBase* taBase::FindFromPath(const String& path, MemberDef*& ret_md, int start) 
       start = next_pos; // skip this element since it must be us
       continue;
     }
+    else if(this->InheritsFrom(&TA_taGroup_impl)) {
+      taGroup_impl* group = (taGroup_impl*)this;
+      for (int i=0; i<group->gp.size; i++) {
+        taGroup_impl* sub_group = group->gp.FastEl(i);
+        if (sub_group->GetName() == el_path) {
+          rval = sub_group;
+          if(delim_pos < length) {  // there's more to be done..
+            rval = rval->FindFromPath(effective_path, ret_md, next_pos); // start from after delim
+          }
+        }
+      }
+    }
     if((ptrflag) && (rval != NULL)) {
       taBase* prval = *((taBase* *)rval);
       // taMisc::DebugInfo("ptr non-null:", String(rval), String(prval));

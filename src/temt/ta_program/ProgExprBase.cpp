@@ -27,6 +27,7 @@
 #include <tabMisc>
 #include <taRootBase>
 #include <taString>
+#include <taGroup_impl>
 #include <css_machine.h>
 #include <css_ta.h>
 #include <css_c_ptr_types.h>
@@ -516,20 +517,38 @@ bool ProgExprBase::ExprLookupNoArgFuncFilter(void* base_, void* function_) {
 }
 
 bool ProgExprBase::FindPathSeparator(const String& path, int& separator_start, int& separator_end, bool backwards) {
-  int dot_pos = path.index('.', -1);
-  int arrow_tip_pos = path.index('>', -1);
-  
-  if (arrow_tip_pos != -1 && path[arrow_tip_pos-1] == '-' && arrow_tip_pos > dot_pos) {
-    separator_end = arrow_tip_pos;
-    separator_start = separator_end-1;
-    return true;
+  if (backwards) {
+    int dot_pos = path.index('.', -1);
+    int arrow_tip_pos = path.index('>', -1);
+    
+    if (arrow_tip_pos != -1 && path[arrow_tip_pos-1] == '-' && arrow_tip_pos > dot_pos) {
+      separator_end = arrow_tip_pos;
+      separator_start = separator_end-1;
+      return true;
+    }
+    if (dot_pos != -1) {
+      separator_end = dot_pos;
+      separator_start = separator_end;
+      return true;
+    }
+    return false;
   }
-  if (dot_pos != -1) {
-    separator_end = dot_pos;
-    separator_start = separator_end;
-    return true;
+  else {
+    int dot_pos = path.index('.', 0);
+    int arrow_tip_pos = path.index('>', 1);
+
+    if (arrow_tip_pos != -1 && path[arrow_tip_pos-1] == '-' && arrow_tip_pos > dot_pos) {
+      separator_end = arrow_tip_pos;
+      separator_start = separator_end-1;
+      return true;
+    }
+    if (dot_pos != -1) {
+      separator_end = dot_pos;
+      separator_start = separator_end;
+      return true;
+    }
+    return false;
   }
-  return false;
 }
 
 ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int cur_pos, String& prepend_txt, String& path_prepend_txt, String& append_txt, String& prog_el_txt, String& base_path, String& lookup_seed, String& path_var, String& path_rest, bool path_base_not_null, ExpressionStart& expr_start, bool& lookup_group_default) {
@@ -708,7 +727,7 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
       int separator_start = -1;
       int separator_end = -1;
       // check for both '.' and "->" delimiters
-      bool has_separator = FindPathSeparator(path_rest, separator_start, separator_end, true);
+      bool has_separator = FindPathSeparator(path_rest, separator_start, separator_end, false);
       if (has_separator) {
         path_rest = path_rest.after(separator_end);
         path_var = base_path.before(separator_start);
@@ -933,7 +952,7 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
       // this simple reparsing eliminates a lot of complicated spaghetti!!
       int sep_start; // separator starting position
       int sep_end;   // separator ending position
-      if (FindPathSeparator(base_path, sep_start, sep_end, true)) {
+      if (FindPathSeparator(base_path, sep_start, sep_end, false)) {
         path_var = base_path.before(sep_start);
         path_rest = base_path.after(sep_end);
       }
@@ -1239,7 +1258,9 @@ Completions* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_po
             tal = (taList_impl*)mb_tab;
         }
         else {
-          if(md) lookup_td = md->type;
+          if(md) {
+            lookup_td = md->type;
+          }
         }
       }
       if(!lookup_td && own_td) {
@@ -1264,9 +1285,9 @@ Completions* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_po
       }
       if(tal) {
         if(tal->InheritsFrom(&TA_taGroup_impl)) {
-          GetListItems(tal, &completion_group_items_list);
+          GetGroupItems((taGroup_impl*)tal, &completion_group_items_list);
         }
-        else {
+        else if(tal->InheritsFrom(&TA_taList_impl)) {
           GetListItems(tal, &completion_list_items_list);
         }
       }
@@ -1583,6 +1604,10 @@ void ProgExprBase::GetGroupItems(taGroup_impl* list, taBase_List* tokens) {
   
   for (int i = 0; i < list->size; ++i) {
     taBase* tab = (taBase*)list->FastEl_(i);
+    tokens->Link(tab);
+  }
+  for (int i = 0; i < list->gp.size; ++i) {
+    taBase* tab = (taGroup_impl*)list->gp.FastEl_(i);
     tokens->Link(tab);
   }
 }

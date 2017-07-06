@@ -195,7 +195,7 @@ public:
   // if method then does it take arguments - completer uses this to position cursor intelligently
 
   static bool           FindPathSeparator(const String& path, int& separator_start, int& separator_end, bool backwards = true);
-  // locate either '.' or '->' working backwards
+  // locate either '.' or '->'
   
   // Signature must match that of the item_filter_fun typedef.
   static bool           ExprLookupVarFilter(void* base, void* var); // special filter used in ExprLookupCompleter
