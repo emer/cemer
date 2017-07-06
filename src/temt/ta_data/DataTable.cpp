@@ -152,11 +152,19 @@ void DataTable::Copy_(const DataTable& cp) {
   ComputeRowsTotal();           // update to what we actually got
   ResetRowIndexes();            // so we reset our indexes to match the flattened source
   ClearCompareRows();
+  Copy_Properties(cp);
+}
+
+void DataTable::Copy_Properties(const DataTable& cp) {
   data_flags = cp.data_flags;
   auto_load = cp.auto_load;
   auto_load_file = cp.auto_load_file;
   row_height = cp.row_height;
+  max_col_width = cp.max_col_width;
   keygen = cp.keygen;
+  last_sort_spec = cp.last_sort_spec;
+  last_select_spec = cp.last_select_spec;
+  row_with_hilite = -1;  // will be invalid anyway
 }
 
 void DataTable::Copy_NoData(const DataTable& cp) {
@@ -2953,6 +2961,8 @@ bool DataTable::FlattenTo(DataTable* flattened_table) {
     old_name = this->name;  // copy will alter then name so save for resetting
     in_place = true;
     flattened_table = new DataTable;
+    flattened_table->OwnTempObj();
+    flattened_table->Copy_Properties(*this);
   }
   
   flattened_table->StructUpdate(true);

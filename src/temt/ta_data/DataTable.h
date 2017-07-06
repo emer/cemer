@@ -1147,6 +1147,8 @@ public:
 
   virtual void  Copy_NoData(const DataTable& cp);
   // #CAT_Copy copy only the column structure, but no data, from other data table
+  void  Copy_Properties(const DataTable& cp);
+  // #CAT_Copy copy only the misc properties of the data table object (flags, auto_load, display settings etc) -- doesn't copy any data, or the name
   virtual void  Copy_DataOnly(const DataTable& cp);
   // #CAT_Copy copy only the data from other data table
   virtual void  CopyFromRow(int dest_row, const DataTable& cp, int src_row);
