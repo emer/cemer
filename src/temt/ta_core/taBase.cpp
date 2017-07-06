@@ -1274,8 +1274,8 @@ taBase* taBase::FindFromPath(const String& path, MemberDef*& ret_md, int start) 
       if (!md->type->IsTaBase() && md->type->IsClass()) {
         return NULL;            // must be tabase
       }
-      taBase* mbr = (taBase*)tmp_ptr;
-      rval = mbr;
+      taBase** mbr = (taBase**)tmp_ptr;
+      rval = *mbr;
     }
     if (tmp_ptr && md && md->type->InheritsFrom(TA_taSmartRef)) {
       taSmartRef* ref = (taSmartRef*)tmp_ptr;
