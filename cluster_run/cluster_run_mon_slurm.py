@@ -34,9 +34,8 @@ runmon.use_cuda = False
 
 # specify the job launcher command with all of its parameters. The parameters might be
 # specific to the cluster environment, such as the network interface the MPI libraries should use
-#job_launcher = "mpirun"
-# key to use new srun instead of mpirun, and to reverse export from previous!
-runmon.job_launcher = 'srun --export=ALL'
+# key to use new srun instead of mpirun -- it doesn't bind by default so no args needed
+runmon.job_launcher = 'srun'
 #runmon.job_launcher = 'mpirun --bind-to none'
 #runmon.job_launcher = 'mpirun --bind-to none --mca btl_tcp_if_include bond0'
 

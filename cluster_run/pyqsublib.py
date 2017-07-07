@@ -395,8 +395,9 @@ class SlurmJobManager( ClusterJobManager ):
             file.write("#SBATCH --array=%d-%d\n" % (job.taskStart(), job.numTasks()))
             file.write("TASK_ID=$SLURM_ARRAY_TASK_ID\n")
 
-        if job.clean_env:
+        if not job.inherit_env:
             file.write("#SBATCH --export=NONE\n")
+            file.write("unset SLURM_EXPORT_ENV\n")
 
         file.write("\n")
 
@@ -513,7 +514,7 @@ class ClusterJob:
         self.job_launcher = "mpirun" # hardcode program name so fails gracefully
         self.path_setup_script = None
         self.useQOS = True
-        self.clean_env = True
+        self.inherit_env = False
     def isThreaded(self):
         return self.threaded
     def enableThreaded( self ):
@@ -614,8 +615,8 @@ class ClusterJob:
             return self.queue
     def setQOS(self, t):
         self.useQOS = t
-    def setCleanEnv(self, t):
-        self.clean_env = t
+    def setInheritEnv(self, t):
+        self.inherit_env = t
     def setCUDA(self, t):
         self.useCUDA = t
     def setMemory( self, mem):
