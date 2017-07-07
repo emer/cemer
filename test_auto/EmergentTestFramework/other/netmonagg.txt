@@ -1,0 +1,182 @@
+*** Settings ***
+
+Library          Telnet
+Library          HttpLibrary.HTTP
+Library          Process
+Library          OperatingSystem
+
+Resource         Server_lib.txt
+
+Suite Setup      Initialize Emergent    ./test-projects/TestNaNAggs.proj
+Suite Teardown   Shutdown Emergent
+
+*** Variables ***
+
+# use 'pybot -v debug:true server.txt' on the command line to
+#      output the transmissions to/from Emergent using warnings
+${debug} =       false
+
+*** Test Cases ***
+
+# Ideas on things to test
+#  - SetDataTableCell and Matrix Cell
+
+#
+# Initialization and general tests
+#
+
+Initialize
+    Set Suite Variable     ${verbose}       ${false}
+    Set Suite Variable     ${project}       ./test-projects/TestNaNAggs.proj
+    Run Keyword If         '${debug}' == 'true'       Set Suite Variable   ${verbose}  ${true}
+
+Connection
+    Sleep                  1 sec
+    ${output} =            Read
+    Print                  ${output}
+    Should Contain         ${output}    Emergent Server v8.
+
+# TODO: Start another process and check for the "Too many connections already" error.
+
+#
+# ParserTest
+#
+
+General RunState
+    ${output} =                Run Command Wait      {"command": "GetRunState"}
+    Status OK Match Result     ${output}             4
+
+
+
+Mean with NaN
+    Ensure Emergent Free
+    Run Emergent Program	TestNanAggs
+    DataTable Cell Value Should Roughly Equal	.projects[\\\"TestNanAggs\\\"].data.gp[\\\"OutputData\\\"][\\\"agg_out_data\\\"]  0  reward_mean  0.1  0.0001  "NetMon mean data aggregation failed"
+
+N with NaN
+    Ensure Emergent Free
+    Run Emergent Program	TestNanAggs
+    DataTable Cell Value Should Roughly Equal	.projects[\\\"TestNanAggs\\\"].data.gp[\\\"OutputData\\\"][\\\"agg_out_data\\\"]  0  reward_n  2  0.0001  "NetMon mean data aggregation failed"
+
+First with NaN
+    Ensure Emergent Free
+    Run Emergent Program	TestNanAggs
+    DataTable Cell Value Should Roughly Equal	.projects[\\\"TestNanAggs\\\"].data.gp[\\\"OutputData\\\"][\\\"agg_out_data\\\"]  0  reward_find_first  1  0.0001  "NetMon mean data aggregation failed"
+
+Last with NaN
+    Ensure Emergent Free
+    Run Emergent Program	TestNanAggs
+    DataTable Cell Value Should Roughly Equal	.projects[\\\"TestNanAggs\\\"].data.gp[\\\"OutputData\\\"][\\\"agg_out_data\\\"]  0  reward_find_last  2  0.0001  "NetMon mean data aggregation failed"
+
+min with NaN
+    Ensure Emergent Free
+    Run Emergent Program	TestNanAggs
+    DataTable Cell Value Should Roughly Equal	.projects[\\\"TestNanAggs\\\"].data.gp[\\\"OutputData\\\"][\\\"agg_out_data\\\"]  0  reward_min  -0.3  0.0001  "NetMon mean data aggregation failed"
+
+max with NaN
+    Ensure Emergent Free
+    Run Emergent Program	TestNanAggs
+    DataTable Cell Value Should Roughly Equal	.projects[\\\"TestNanAggs\\\"].data.gp[\\\"OutputData\\\"][\\\"agg_out_data\\\"]  0  reward_max  0.5  0.0001  "NetMon mean data aggregation failed"
+
+abs min with NaN
+    Ensure Emergent Free
+    Run Emergent Program	TestNanAggs
+    DataTable Cell Value Should Roughly Equal	.projects[\\\"TestNanAggs\\\"].data.gp[\\\"OutputData\\\"][\\\"agg_out_data\\\"]  0  reward_abs_min  0.3  0.0001  "NetMon mean data aggregation failed"
+
+abs max with NaN
+    Ensure Emergent Free
+    Run Emergent Program	TestNanAggs
+    DataTable Cell Value Should Roughly Equal	.projects[\\\"TestNanAggs\\\"].data.gp[\\\"OutputData\\\"][\\\"agg_out_data\\\"]  0  reward_abs_max  0.5  0.0001  "NetMon mean data aggregation failed"
+
+sum with NaN
+    Ensure Emergent Free
+    Run Emergent Program	TestNanAggs
+    DataTable Cell Value Should Roughly Equal	.projects[\\\"TestNanAggs\\\"].data.gp[\\\"OutputData\\\"][\\\"agg_out_data\\\"]  0  reward_sum  0.2  0.0001  "NetMon mean data aggregation failed"
+
+prod with NaN
+    Ensure Emergent Free
+    Run Emergent Program	TestNanAggs
+    DataTable Cell Value Should Roughly Equal	.projects[\\\"TestNanAggs\\\"].data.gp[\\\"OutputData\\\"][\\\"agg_out_data\\\"]  0  reward_prod  -0.15  0.0001  "NetMon mean data aggregation failed"
+
+var with NaN
+    Ensure Emergent Free
+    Run Emergent Program	TestNanAggs
+    DataTable Cell Value Should Roughly Equal	.projects[\\\"TestNanAggs\\\"].data.gp[\\\"OutputData\\\"][\\\"agg_out_data\\\"]  0  reward_var  0.16  0.0001  "NetMon mean data aggregation failed"
+
+ss with NaN
+    Ensure Emergent Free
+    Run Emergent Program	TestNanAggs
+    DataTable Cell Value Should Roughly Equal	.projects[\\\"TestNanAggs\\\"].data.gp[\\\"OutputData\\\"][\\\"agg_out_data\\\"]  0  reward_ss  0.32  0.0001  "NetMon mean data aggregation failed"
+
+stdev with NaN
+    Ensure Emergent Free
+    Run Emergent Program	TestNanAggs
+    DataTable Cell Value Should Roughly Equal	.projects[\\\"TestNanAggs\\\"].data.gp[\\\"OutputData\\\"][\\\"agg_out_data\\\"]  0  reward_stdev  0.4  0.0001  "NetMon mean data aggregation failed"
+
+sem with NaN
+    Ensure Emergent Free
+    Run Emergent Program	TestNanAggs
+    DataTable Cell Value Should Roughly Equal	.projects[\\\"TestNanAggs\\\"].data.gp[\\\"OutputData\\\"][\\\"agg_out_data\\\"]  0  reward_sem  0.4  0.0001  "NetMon mean data aggregation failed"
+
+count with NaN
+    Ensure Emergent Free
+    Run Emergent Program	TestNanAggs
+    DataTable Cell Value Should Roughly Equal	.projects[\\\"TestNanAggs\\\"].data.gp[\\\"OutputData\\\"][\\\"agg_out_data\\\"]  0  reward_count  1  0.0001  "NetMon mean data aggregation failed"
+
+pct with NaN
+    Ensure Emergent Free
+    Run Emergent Program	TestNanAggs
+    DataTable Cell Value Should Roughly Equal	.projects[\\\"TestNanAggs\\\"].data.gp[\\\"OutputData\\\"][\\\"agg_out_data\\\"]  0  reward_pct  0.5  0.0001  "NetMon mean data aggregation failed"
+
+median with NaN
+    Ensure Emergent Free
+    Run Emergent Program	TestNanAggs
+    DataTable Cell Value Should Roughly Equal	.projects[\\\"TestNanAggs\\\"].data.gp[\\\"OutputData\\\"][\\\"agg_out_data\\\"]  0  reward_median  0.5  0.0001  "NetMon mean data aggregation failed"
+
+mode with NaN
+    Ensure Emergent Free
+    Run Emergent Program	TestNanAggs
+    DataTable Cell Value Should Roughly Equal	.projects[\\\"TestNanAggs\\\"].data.gp[\\\"OutputData\\\"][\\\"agg_out_data\\\"]  0  reward_mode  -0.3  0.0001  "NetMon mean data aggregation failed"
+
+none with NaN
+    Ensure Emergent Free
+    Run Emergent Program	TestNanAggs
+    DataTable Cell Value Should Roughly Equal	.projects[\\\"TestNanAggs\\\"].data.gp[\\\"OutputData\\\"][\\\"agg_out_data\\\"]  0  reward_none  0  0.0001  "NetMon mean data aggregation failed"
+
+#n with empty filter
+#    Ensure Emergent Free
+#    Run Emergent Program	TestNanAggs
+#    DataTable Cell Value Should Roughly Equal	.projects[\\\"TestNanAggs\\\"].data.gp[\\\"OutputData\\\"][\\\"agg_out_data\\\"]  0  input_d_n  0  0.0001  "NetMon mean data aggregation failed"
+
+mean with empty filter
+    Ensure Emergent Free
+    Run Emergent Program	TestNanAggs
+    DataTable Cell Value Should Be Null		.projects[\\\"TestNanAggs\\\"].data.gp[\\\"OutputData\\\"][\\\"agg_out_data\\\"]  0  input_d_mean
+
+mean with empty filter
+    Ensure Emergent Free
+    Run Emergent Program	TestNanAggs
+    DataTable Cell Value Should Be Null		.projects[\\\"TestNanAggs\\\"].data.gp[\\\"OutputData\\\"][\\\"agg_out_data\\\"]  0  input_d_mean
+
+mean with single filter
+    Ensure Emergent Free
+    Run Emergent Program	TestNanAggs
+    DataTable Cell Value Should Roughly Equal		.projects[\\\"TestNanAggs\\\"].data.gp[\\\"OutputData\\\"][\\\"agg_out_data\\\"]  0  input_b_mean  0.3  0.00001  "NetMon mean data aggregation failed"
+
+std with single filter
+    Ensure Emergent Free
+    Run Emergent Program	TestNanAggs
+    DataTable Cell Value Should Be Null		.projects[\\\"TestNanAggs\\\"].data.gp[\\\"OutputData\\\"][\\\"agg_out_data\\\"]  0  input_b_var
+
+n with single filter
+    Ensure Emergent Free
+    Run Emergent Program	TestNanAggs
+    DataTable Cell Value Should Roughly Equal		.projects[\\\"TestNanAggs\\\"].data.gp[\\\"OutputData\\\"][\\\"agg_out_data\\\"]  0  input_b_n  1  0.00001  "NetMon mean data aggregation failed"
+
+
+
+
+
+*** Keywords ***
+
+

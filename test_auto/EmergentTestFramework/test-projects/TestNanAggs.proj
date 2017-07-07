@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.1.1.0 rev10925
+// ta_Dump File v3.0 -- code v8.1.1.0 rev10928
 LeabraProject .projects[0] { 
  Doc_Group @.docs = [0] {
  };
@@ -175,7 +175,7 @@ LeabraProject .projects[0] {
     };
    };
 
-   ProgEl_List @.prog_code = [3] {
+   ProgEl_List @.prog_code = [4] {
     MethodCall @[0] { 
      ProgArg_List @.meth_args = [0] {
      };
@@ -185,6 +185,10 @@ LeabraProject .projects[0] {
      };
     };
     MethodCall @[2] { 
+     ProgArg_List @.meth_args = [0] {
+     };
+    };
+    MethodCall @[3] { 
      ProgArg_List @.meth_args = [0] {
      };
     };
@@ -535,9 +539,6 @@ LeabraProject .projects[0] {
       [0]       };
       width=11;
       matrix_col_width=10;
-      ar {
-       name="ar";
-      [1] 0.099999994;      };
      };
      float_Data @[1] {
       name="reward_n";
@@ -552,9 +553,6 @@ LeabraProject .projects[0] {
       [0]       };
       width=8;
       matrix_col_width=10;
-      ar {
-       name="ar";
-      [1] 2;      };
      };
      float_Data @[2] {
       name="reward_first";
@@ -569,9 +567,6 @@ LeabraProject .projects[0] {
       [0]       };
       width=12;
       matrix_col_width=10;
-      ar {
-       name="ar";
-      [1] 0.5;      };
      };
      float_Data @[3] {
       name="reward_last";
@@ -586,9 +581,6 @@ LeabraProject .projects[0] {
       [0]       };
       width=11;
       matrix_col_width=10;
-      ar {
-       name="ar";
-      [1] -0.30000001;      };
      };
      float_Data @[4] {
       name="reward_find_first";
@@ -603,9 +595,6 @@ LeabraProject .projects[0] {
       [0]       };
       width=17;
       matrix_col_width=10;
-      ar {
-       name="ar";
-      [1] 1;      };
      };
      float_Data @[5] {
       name="reward_find_last";
@@ -620,9 +609,6 @@ LeabraProject .projects[0] {
       [0]       };
       width=16;
       matrix_col_width=10;
-      ar {
-       name="ar";
-      [1] 2;      };
      };
      float_Data @[6] {
       name="reward_min";
@@ -637,9 +623,6 @@ LeabraProject .projects[0] {
       [0]       };
       width=10;
       matrix_col_width=10;
-      ar {
-       name="ar";
-      [1] -0.30000001;      };
      };
      float_Data @[7] {
       name="reward_max";
@@ -654,9 +637,6 @@ LeabraProject .projects[0] {
       [0]       };
       width=10;
       matrix_col_width=10;
-      ar {
-       name="ar";
-      [1] 0.5;      };
      };
      float_Data @[8] {
       name="reward_abs_min";
@@ -671,9 +651,6 @@ LeabraProject .projects[0] {
       [0]       };
       width=14;
       matrix_col_width=10;
-      ar {
-       name="ar";
-      [1] 0.30000001;      };
      };
      float_Data @[9] {
       name="reward_abs_max";
@@ -688,9 +665,6 @@ LeabraProject .projects[0] {
       [0]       };
       width=14;
       matrix_col_width=10;
-      ar {
-       name="ar";
-      [1] 0.5;      };
      };
      float_Data @[10] {
       name="reward_sum";
@@ -705,9 +679,6 @@ LeabraProject .projects[0] {
       [0]       };
       width=10;
       matrix_col_width=10;
-      ar {
-       name="ar";
-      [1] 0.19999999;      };
      };
      float_Data @[11] {
       name="reward_prod";
@@ -722,9 +693,6 @@ LeabraProject .projects[0] {
       [0]       };
       width=11;
       matrix_col_width=10;
-      ar {
-       name="ar";
-      [1] -0.15000001;      };
      };
      float_Data @[12] {
       name="reward_var";
@@ -739,9 +707,6 @@ LeabraProject .projects[0] {
       [0]       };
       width=10;
       matrix_col_width=10;
-      ar {
-       name="ar";
-      [1] 0.16000001;      };
      };
      float_Data @[13] {
       name="reward_ss";
@@ -756,9 +721,6 @@ LeabraProject .projects[0] {
       [0]       };
       width=9;
       matrix_col_width=10;
-      ar {
-       name="ar";
-      [1] 0.32000002;      };
      };
      float_Data @[14] {
       name="reward_stdev";
@@ -773,9 +735,6 @@ LeabraProject .projects[0] {
       [0]       };
       width=12;
       matrix_col_width=10;
-      ar {
-       name="ar";
-      [1] 0.40000001;      };
      };
      float_Data @[15] {
       name="reward_sem";
@@ -790,9 +749,6 @@ LeabraProject .projects[0] {
       [0]       };
       width=10;
       matrix_col_width=10;
-      ar {
-       name="ar";
-      [1] 0.40000004;      };
      };
      float_Data @[16] {
       name="reward_count";
@@ -807,9 +763,6 @@ LeabraProject .projects[0] {
       [0]       };
       width=12;
       matrix_col_width=10;
-      ar {
-       name="ar";
-      [1] 1;      };
      };
      float_Data @[17] {
       name="reward_pct";
@@ -824,9 +777,6 @@ LeabraProject .projects[0] {
       [0]       };
       width=10;
       matrix_col_width=10;
-      ar {
-       name="ar";
-      [1] 0.5;      };
      };
      float_Data @[18] {
       name="reward_median";
@@ -841,9 +791,6 @@ LeabraProject .projects[0] {
       [0]       };
       width=13;
       matrix_col_width=10;
-      ar {
-       name="ar";
-      [1] 0.5;      };
      };
      float_Data @[19] {
       name="reward_mode";
@@ -858,9 +805,6 @@ LeabraProject .projects[0] {
       [0]       };
       width=11;
       matrix_col_width=10;
-      ar {
-       name="ar";
-      [1] -0.30000001;      };
      };
      float_Data @[20] {
       name="reward_quantile";
@@ -875,9 +819,6 @@ LeabraProject .projects[0] {
       [0]       };
       width=15;
       matrix_col_width=10;
-      ar {
-       name="ar";
-      [1] -0.30000001;      };
      };
      float_Data @[21] {
       name="reward_none";
@@ -892,9 +833,6 @@ LeabraProject .projects[0] {
       [0]       };
       width=11;
       matrix_col_width=10;
-      ar {
-       name="ar";
-      [1] 0;      };
      };
      float_Data @[22] {
       name="input_d_n";
@@ -909,9 +847,6 @@ LeabraProject .projects[0] {
       [0]       };
       width=9;
       matrix_col_width=10;
-      ar {
-       name="ar";
-      [1] nan;      };
      };
      float_Data @[23] {
       name="input_d_mean";
@@ -926,9 +861,6 @@ LeabraProject .projects[0] {
       [0]       };
       width=12;
       matrix_col_width=10;
-      ar {
-       name="ar";
-      [1] nan;      };
      };
      float_Data @[24] {
       name="input_b_mean";
@@ -943,9 +875,6 @@ LeabraProject .projects[0] {
       [0]       };
       width=12;
       matrix_col_width=10;
-      ar {
-       name="ar";
-      [1] 0.30000001;      };
      };
      float_Data @[25] {
       name="input_b_var";
@@ -960,9 +889,6 @@ LeabraProject .projects[0] {
       [0]       };
       width=11;
       matrix_col_width=10;
-      ar {
-       name="ar";
-      [1] nan;      };
      };
      float_Data @[26] {
       name="input_b_n";
@@ -977,20 +903,14 @@ LeabraProject .projects[0] {
       [0]       };
       width=9;
       matrix_col_width=10;
-      ar {
-       name="ar";
-      [1] 1;      };
      };
     };
-    data_flags=SAVE_ROWS|AUTO_CALC;
+    data_flags=AUTO_CALC;
     auto_load=NO_AUTO_LOAD;
     auto_load_file=;
     row_height=1;
     max_col_width=50;
     keygen 4 0=0;
-    row_indexes {
-     name="row_indexes";
-    [1] 0;    };
     last_sort_spec {
      name="last_sort_spec";
      ops {
@@ -2135,12 +2055,28 @@ LeabraProject .projects[0] {
     el_typ=ProgCode;
     el_def=0;
     MethodCall @[0] {
+     name="MethodCall_trialmondataResetData";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="trial_mon_data->ResetData()";
+     result_var=NULL;
+     obj=.programs[0].vars[0]$$;
+     method=DataTable::ResetData;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+     };
+     meth_sig="void ResetData()";
+     meth_desc=" deletes all the data (rows), but keeps the column structure -- this cannot be undone!";
+    };
+    MethodCall @[1] {
      name="MethodCall_trialmondataAddBlankRow";
      desc="add a new blank row to the data";
      flags=CAN_REVERT_TO_CODE;
      code_string="trial_mon_data->AddBlankRow()";
      result_var=NULL;
-     obj=.programs[0].vars[0]$$;
+     obj=$.programs[0].vars[0]$;
      method=DataTable::AddBlankRow;
      meth_args {
       name="meth_args";
@@ -2150,7 +2086,7 @@ LeabraProject .projects[0] {
      meth_sig="int AddBlankRow()";
      meth_desc=" add a new row to the data table, sets read (source) and write (sink) index to this last row (as in ReadItem or WriteItem), so that subsequent data routines refer to this new row, and returns row ";
     };
-    MethodCall @[1] {
+    MethodCall @[2] {
      name="MethodCall_trialnetmonGetMonVals";
      desc="get the new monitor data from the network and other sources -- this does the main work";
      flags=CAN_REVERT_TO_CODE;
@@ -2166,7 +2102,7 @@ LeabraProject .projects[0] {
      meth_sig="void GetMonVals()";
      meth_desc=" get all the values and store in current row of data table -- call in program to get new data";
     };
-    MethodCall @[2] {
+    MethodCall @[3] {
      name="MethodCall_trialmondataWriteClose";
      desc="update views and other things after writing new data to monitor data table";
      flags=CAN_REVERT_TO_CODE;
@@ -2208,9 +2144,9 @@ LeabraProject .projects[0] {
     el_typ=UserDataItem;
     el_def=0;
     UserDataItem @[0] {name="view_win_lft": value=0: val_type_fixed=0: };
-    UserDataItem @[1] {name="view_win_top": value=0.02293968: val_type_fixed=0: };
+    UserDataItem @[1] {name="view_win_top": value=0: val_type_fixed=0: };
     UserDataItem @[2] {name="view_win_wd": value=1: val_type_fixed=0: };
-    UserDataItem @[3] {name="view_win_ht": value=0.7994902: val_type_fixed=0: };
+    UserDataItem @[3] {name="view_win_ht": value=1: val_type_fixed=0: };
     UserDataItem @[4] {name="view_win_iconified": value=0: val_type_fixed=0: };
     UserDataItem @[5] {name="view_splitter_state": value=AAAA/wAAAAEAAAADAAABWgAABaEAAAAAAf////8BAAAAAQA=: val_type_fixed=0: };
    };
@@ -2389,10 +2325,10 @@ LeabraProject .projects[0] {
       name="UserDataItem_List_105";
       el_typ=UserDataItem;
       el_def=0;
-      UserDataItem @[0] {name="view_win_lft": value=0: val_type_fixed=0: };
-      UserDataItem @[1] {name="view_win_top": value=0.008496176: val_type_fixed=0: };
-      UserDataItem @[2] {name="view_win_wd": value=0.04352441: val_type_fixed=0: };
-      UserDataItem @[3] {name="view_win_ht": value=0.7357689: val_type_fixed=0: };
+      UserDataItem @[0] {name="view_win_lft": value=-0.002087683: val_type_fixed=0: };
+      UserDataItem @[1] {name="view_win_top": value=0.001892148: val_type_fixed=0: };
+      UserDataItem @[2] {name="view_win_wd": value=0.04279749: val_type_fixed=0: };
+      UserDataItem @[3] {name="view_win_ht": value=0.9366131: val_type_fixed=0: };
       UserDataItem @[4] {name="view_win_iconified": value=0: val_type_fixed=0: };
       UserDataItem @[5] {name="view_visible": value=1: val_type_fixed=0: };
      };
@@ -2411,7 +2347,7 @@ LeabraProject .projects[0] {
  save_as_only=0;
  auto_name=1;
  last_change_desc=;
- tree_state{ .;.patches;.docs;.wizards;.ctrl_panels;.active_params;.data;.data.gp[0];.data.gp[0][0];.data.gp[1];.data.gp[2];.programs;.programs[0];.programs[0].objs;.programs[0].objs[0];.programs[0].functions;.networks;.networks[0];.networks[0].spec_tables;.networks[0].specs;.networks[0].param_seqs;.networks[0].layers;.networks[0].weights; };
+ tree_state{ .;.patches;.docs;.wizards;.ctrl_panels;.active_params;.data;.data.gp[0];.data.gp[0][0];.data.gp[1];.data.gp[1][0];.data.gp[2];.programs;.programs[0];.programs[0].objs;.programs[0].objs[0];.programs[0].functions;.networks;.networks[0];.networks[0].spec_tables;.networks[0].specs;.networks[0].param_seqs;.networks[0].layers;.networks[0].weights; };
  networks {
   name="networks";
   el_typ=LeabraNetwork;

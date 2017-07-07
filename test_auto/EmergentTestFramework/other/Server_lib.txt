@@ -251,6 +251,14 @@ DataTable Cell Value Should Equal
     Status OK 		       ${output}
     Json Value Should Equal    ${output}             /result/columns/0/values/0   ${value}
 
+DataTable Cell Value Should Be Null
+    [Arguments]         ${table_path}	${row_from}	${col}
+    ${output} =                Run Command Wait      {"command": "GetData", "table": "${table_path}", "row_from": ${row_from}, "column" : "${col}", "rows": 1}
+    Status OK 		       ${output}
+    ${value_str} =         Get Json Value            ${output}        /result/columns/0/values/0
+    Should Match    '${value_str}'                      'null'
+
+
 DataTable Cell Value Should Roughly Equal
     [Arguments]         ${table_path}	${row_from}	${col} 	${target_value}	${margin}	${err_msg}
     ${output} =                Run Command Wait      {"command": "GetData", "table": "${table_path}", "row_from": ${row_from}, "column" : "${col}", "rows": 1}
