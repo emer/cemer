@@ -537,7 +537,7 @@ bool ProgExprBase::FindPathSeparator(const String& path, int& separator_start, i
     int dot_pos = path.index('.', 0);
     int arrow_tip_pos = path.index('>', 1);
 
-    if (arrow_tip_pos != -1 && path[arrow_tip_pos-1] == '-' && arrow_tip_pos > dot_pos) {
+    if (arrow_tip_pos != -1 && path[arrow_tip_pos-1] == '-' && (arrow_tip_pos < dot_pos || dot_pos == -1)) {
       separator_end = arrow_tip_pos;
       separator_start = separator_end-1;
       return true;
@@ -1251,7 +1251,9 @@ Completions* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_po
       }
       if(base_base) { // was base_base && !lookup_td - changed to fix bug 3432 - rev 10849
         MemberDef* md = NULL;
-        taBase* mb_tab = base_base->FindFromPath(path_rest, md);
+        String path_rest_mod = path_rest;
+        path_rest_mod = path_rest_mod.repl("->", ".");
+        taBase* mb_tab = base_base->FindFromPath(path_rest_mod, md);
         if(mb_tab) {
           lookup_td = mb_tab->GetTypeDef();
           if(lookup_td->InheritsFrom(&TA_taList_impl))
