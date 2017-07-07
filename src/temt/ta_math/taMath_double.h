@@ -43,6 +43,8 @@ public:
   /////////////////////////////////////////////////////////////////////////////////
   // Basic number checking
 
+  static double  nan;
+  // #CAT_Number a not-a-number (nan) value (quiet, non-signaling) -- for representing missing values
   static bool   isnan(double x);
   // #CAT_Number returns true if the number is a 'not a number' nan value
   static double  no_nan(double x) 
@@ -166,6 +168,7 @@ public:
   // #CAT_Trigonometry the squared length of the hypotenuse (i.e., Euclidean distance): (x^2 + y^2)
   static double  hypot(double x, double y)     { return sqrt(hypot_sq(x,y)); }
   // #CAT_Trigonometry the length of the hypotenuse (i.e., Euclidean distance): sqrt(x^2 + y^2)
+
   static double  acos(double X) { return std::acos(X); }
   // #CAT_Trigonometry The arc-cosine (inverse cosine) -- takes an X coordinate and returns the angle (in radians) such that cos(angle)=X
   static double  asin(double Y) { return std::asin(Y); }
@@ -289,14 +292,13 @@ public:
   static double chisq_q(double X, double v);
   // #CAT_Probability Q(X^2 | v) (complement)
   static double students_cum(double t, double df);
-  // #CAT_Probability area between -t and t of the student's distribution df deg of free t test
+  // #CAT_Probability area between -t and t of cumulative student's distribution df deg of free t test
   static double students_cum_cum(double t, double df);
   // #CAT_Probability cumulative student's distribution df deg of free t test
   static double students_den(double t, double df);
   // #CAT_Probability density fctn of student's distribution df deg of free t test
   static double Ftest_q(double F, double df_num, double df_den);
   // #CAT_Probability F distribution probability for given F ratio of mean square values and degrees of freedom for the numerator and denominator
-  // #CAT_Probability F distribution probability F | (v1 < v2)
   static double d_sub_a(double_Matrix* vec_signal, double_Matrix* vec_noise);
   // #CAT_Probability Computes d_sub_a, which reduces to d' in the equal variance case. See: http://psych.colorado.edu/~lharvey/P4165/P4165_2004_Fall/2004_Fall_pdf/P4165_SDT.pdf
   static double cdf_inv(double x);
@@ -317,6 +319,8 @@ public:
 
   static bool   vec_check_type(const double_Matrix* a);
   // #NO_CSS_MATH check that matrix is actually a double type -- issues Error if not and returns false
+  static bool   vec_check_type_nonempty(const double_Matrix* a);
+  // #NO_CSS_MATH check that matrix is actually a double type -- issues Error if not and returns false -- also if it is empty (size == 0) it returns false with no error -- aggregation routines can return nan() in this case to signal missing values -- other aggregation routines also exclude these nan() values automatically, providing an automatic solution for missing data
   static bool   vec_check_same_size(const double_Matrix* a, const double_Matrix* b,
                                     bool quiet = false, bool flex = true);
   // check that both vectors are the same size, and issue warning if not (unless quiet) -- if flex then use flexible test (assumes use of iterators for going through operators)
@@ -350,57 +354,87 @@ public:
 
   static bool vec_students_cum(double_Matrix* t,const double_Matrix* df);
   // #CAT_Probability element wise area between -t and t of student's distribution df deg of free t test
-  static bool vec_students_cum_cum(double_Matrix* t,const double_Matrix* df);
-  // #CAT_Probability element wise cumulative student's distribution df deg of free t test (area from 0 to t)
+  static bool vec_students_cum_cum( double_Matrix* t,const double_Matrix* df);
+  // #CAT_Probability element wise cumulative student's distribution (a is tval, b is df)
   static bool vec_gauss_inv(double_Matrix* p);
   // #CAT_Probability element-wise inverse of the cumulative for p: z value for given p
   static bool vec_gauss_inv_lim(double_Matrix* p);
-  // #CAT_Probability element-wise inverse of the cumulative for p: z value for given p . returns non-0 values for p==0 or p ==1
+  // #CAT_Probability element-wise inverse of the cumulative for p: z value for given p , returns nonzero values for  p==0 or p==1
 
   ///////////////////////////////////////
   // basic statistics
 
-  static double vec_first(const double_Matrix* vec);
-  // #CAT_Statistics first item in the vector
-  static double vec_last(const double_Matrix* vec);
-  // #CAT_Statistics last item in the vector
-  static int    vec_find_first(const double_Matrix* vec, Relation& rel);
-  // #CAT_Statistics find first element in the vector that meets relationship rel -- returns index in vector or -1 if not found
-  static int    vec_find_last(const double_Matrix* vec, Relation& rel);
-  // #CAT_Statistics find first element in the vector that meets relationship rel -- returns index in vector or -1 if not found 
-  static double vec_max(const double_Matrix* vec, int& idx);
-  // #CAT_Statistics value and index of the (first) element that has the maximum value
-  static double vec_abs_max(const double_Matrix* vec, int& idx);
-  // #CAT_Statistics value and index of the (first) element that has the maximum absolute value
-  static double vec_next_max(const double_Matrix* vec, int max_idx, int& idx);
-  // #CAT_Statistics value and index of the element that has the next-largest value, excluding the max item which is at max_idx -- uses entire matrix, ignoring any view of sub-elements
-  static double vec_min(const double_Matrix* vec, int& idx);
-  // #CAT_Statistics value and index of the (first) element that has the minimum value
-  static double vec_abs_min(const double_Matrix* vec, int& idx);
-  // #CAT_Statistics value and index of the (first) element that has the minimum value
-  static double vec_next_min(const double_Matrix* vec, int min_idx, int& idx);
-  // #CAT_Statistics value and index of the element that has the next-smallest value, excluding the min item which is at min_idx -- uses entire matrix, ignoring any view of sub-elements
+  static double  vec_aggregate(const double_Matrix* vec, Aggregate& agg);
+  // #CAT_Aggregate compute aggregate of values in this vector using aggregation params of agg (returns nan for empty vec, filters nan's)
+  static void  vec_nan_to_zero(double_Matrix* vec);
+  // #CAT_Aggregate replace all nan values with zero's in vector
 
-  static double vec_sum(const double_Matrix* vec);
-  // #CAT_Statistics compute the sum of the values in the vector
-  static double vec_sum_range(const double_Matrix* vec, int start=0, int end=-1);
+  static double  vec_n(const double_Matrix* vec);
+  // #CAT_Statistics number of elements in vector (returns nan for empty vec, filters nan's)
+  static double  vec_first(const double_Matrix* vec);
+  // #CAT_Statistics first item in the vector (returns nan for empty vec, filters nan's)
+  static double  vec_last(const double_Matrix* vec);
+  // #CAT_Statistics last item in the vector (returns nan for empty vec, filters nan's)
+  static int    vec_find_first(const double_Matrix* vec, Relation& rel);
+  // #CAT_Statistics find first element in the vector that meets relationship rel -- returns index in vector or -1 if not found (filters nan's)
+  static int    vec_find_last(const double_Matrix* vec, Relation& rel);
+  // #CAT_Statistics find first element in the vector that meets relationship rel -- returns index in vector or -1 if not found (filters nan's)
+  static double  vec_min(const double_Matrix* vec, int& idx);
+  // #CAT_Statistics value and index of the (first) element that has the minimum value (returns nan for empty vec, filters nan's)
+  static double  vec_max(const double_Matrix* vec, int& idx);
+  // #CAT_Statistics value and index of the (first) element that has the maximum value (returns nan for empty vec, filters nan's)
+  static double  vec_abs_min(const double_Matrix* vec, int& idx);
+  // #CAT_Statistics value and index of the (first) element that has the minimum value (returns nan for empty vec, filters nan's)
+  static double  vec_abs_max(const double_Matrix* vec, int& idx);
+  // #CAT_Statistics value and index of the (first) element that has the maximum absolute value (returns nan for empty vec, filters nan's)
+
+  static double  vec_next_max(const double_Matrix* vec, int max_idx, int& idx);
+  // #CAT_Statistics value and index of the element that has the next-largest value, excluding the max item which is at max_idx (returns nan for empty vec, filters nan's)
+  static double  vec_next_min(const double_Matrix* vec, int min_idx, int& idx);
+  // #CAT_Statistics value and index of the element that has the next-smallest value, excluding the min item which is at min_idx (returns nan for empty vec, filters nan's)
+
+  static double  vec_sum(const double_Matrix* vec);
+  // #CAT_Statistics compute the sum of the values in the vector (returns nan for empty vec, filters nan's)
+  static double  vec_sum_opt(const double_Matrix* vec);
+  // #CAT_Statistics compute the sum of the values in the vector -- optimized, using vector math -- does NOT filter nan's or use view of matrix (uses entire matrix)
+  static double  vec_sum_range(const double_Matrix* vec, int start=0, int end=-1);
   // #CAT_Statistics compute the sum of the values in the vector from el=startpos to el=endpos-1 -- uses entire matrix, ignoring any view of sub-elements
-  static double vec_prod(const double_Matrix* vec);
-  // #CAT_Statistics compute the product of the values in the vector
-  static double vec_mean(const double_Matrix* vec);
-  // #CAT_Statistics compute the mean of the values in the vector
-  static double vec_var(const double_Matrix* vec, double mean=0, bool use_mean=false, bool use_est=false);
-  // #CAT_Statistics compute the variance of the values, opt with given mean, if use_est is true, divides by N-1 rather than N
-  static double vec_std_dev(const double_Matrix* vec, double mean=0, bool use_mean=false, bool use_est=false);
-  // #CAT_Statistics compute the standard deviation of the values, opt with given mean, if use_est is true, divides by N-1 rather than N
-  static double vec_sem(const double_Matrix* vec, double mean=0, bool use_mean=false);
-  // #CAT_Statistics compute the standard error of the mean of the values, opt with given mean
-  static double vec_ss_len(const double_Matrix* vec);
-  // #CAT_Statistics sum-of-squares length of the vector
-  static double vec_norm(const double_Matrix* vec);
-  // #CAT_Statistics square root of the sum-of-squares length of the vector -- its norm or euclidean length
-  static double vec_ss_mean(const double_Matrix* vec);
-  // #CAT_Statistics sum-of-squares around the mean of the vector
+  static double  vec_prod(const double_Matrix* vec);
+  // #CAT_Statistics compute the product of the values in the vector (returns nan for empty vec, filters nan's)
+  static double  vec_mean(const double_Matrix* vec);
+  // #CAT_Statistics compute the mean of the values in the vector (returns nan for empty vec, filters nan's)
+  static double  vec_mean_opt(const double_Matrix* vec);
+  // #CAT_Statistics compute the mean of the values in the vector -- optimized, using vector math -- does NOT filter nan's or use view of matrix (uses entire matrix)
+  static double  vec_var(const double_Matrix* vec, double mean=0, bool use_mean=false, bool use_est=false);
+  // #CAT_Statistics compute the variance of the values, opt with given mean; if use_est == true, then divides by N-1 rather than N (returns nan for empty vec, filters nan's)
+  static double  vec_var_opt(const double_Matrix* vec, double mean=0, bool use_mean=false, bool use_est=false);
+  // #CAT_Statistics compute the variance of the values, opt with given mean; if use_est == true, then divides by N-1 rather than N (returns nan for empty vec) -- does NOT filter nan's or use view of matrix (uses entire matrix)
+  static double  vec_std_dev(const double_Matrix* vec, double mean=0, bool use_mean=false, bool use_est=false);
+  // #CAT_Statistics compute the standard deviation of the values, opt with given mean; if use_est == true, then divides by N-1 rather than N (returns nan for empty vec, filters nan's)
+  static double  vec_sem(const double_Matrix* vec, double mean=0, bool use_mean=false);
+  // #CAT_Statistics compute the standard error of the mean of the values, opt with given mean (returns nan for empty vec, filters nan's)
+  static double  vec_sem_opt(const double_Matrix* vec, double mean=0, bool use_mean=false);
+  // #CAT_Statistics compute the standard error of the mean of the values, opt with given mean (returns nan for empty vec) -- does NOT filter nan's or use view of matrix (uses entire matrix)
+  static double  vec_ss_len(const double_Matrix* vec);
+  // #CAT_Statistics sum-of-squares length of the vector (returns nan for empty vec, filters nan's)
+  static double  vec_ss_len_opt(const double_Matrix* vec);
+  // #CAT_Statistics sum-of-squares length of the vector (returns nan for empty vec) -- does NOT filter nan's or use view of matrix (uses entire matrix)
+  static double  vec_norm(const double_Matrix* vec);
+  // #CAT_Statistics square root of the sum-of-squares length of the vector -- its norm or euclidean length (returns nan for empty vec, filters nan's)
+  static double  vec_ss_mean(const double_Matrix* vec);
+  // #CAT_Statistics sum-of-squares around the mean of the vector (returns nan for empty vec, filters nan's)
+  static double  vec_count(const double_Matrix* vec, Relation& rel);
+  // #CAT_Statistics count number of times relationship is true (returns nan for empty vec, filters nan's)
+  static double  vec_percent(const double_Matrix* vec, Relation& rel);
+  // #CAT_Statistics compute percent (proportion) of times relationship is true (returns nan for empty vec, filters nan's)
+  static double  vec_median(const double_Matrix* vec);
+  // #CAT_Statistics compute the median of the values in the vector (middle value) -- requires sorting (returns nan for empty vec, filters nan's)
+  static double  vec_mode(const double_Matrix* vec);
+  // #CAT_Statistics compute the mode (most frequent) of the values in the vector -- requires sorting (returns nan for empty vec, filters nan's)
+  static double  vec_quantile(const double_Matrix* vec, double quant_pos);
+  // #CAT_Statistics compute arbitrary quantile according to quant_pos value, which is a proportion 0-1 from start to end of sorted list of values, e.g., .5 = median, .25 = first quartile, etc (returns nan for empty vec, filters nan's)
+
+  
   static void   vec_histogram(double_Matrix* hist_vec, const double_Matrix* src_vec,
                               double bin_size, double min_val = 0.0, double max_val = 0.0,
                               double_Matrix* bin_vec = NULL);
@@ -408,17 +442,7 @@ public:
   static void   vec_histogram_bins(double_Matrix* bin_vec, const double_Matrix* src_vec,
                               double bin_size, double min_val = 0.0, double max_val = 0.0);
   // #CAT_Statistics gets the bin values (X axis) for a histogram of source vector -- min and maximum ranges to compute within are also optional args -- only used min != max
-  static double vec_count(const double_Matrix* vec, Relation& rel);
-  // #CAT_Statistics count number of times relationship is true
-  static double vec_percent(const double_Matrix* vec, Relation& rel);
-  // #CAT_Statistics compute percent (proportion) of times relationship is true
-  static double vec_median(const double_Matrix* vec);
-  // #CAT_Statistics compute the median of the values in the vector (middle value) -- requires sorting
-  static double vec_mode(const double_Matrix* vec);
-  // #CAT_Statistics compute the mode (most frequent) of the values in the vector -- requires sorting
-  static double vec_quantile(const double_Matrix* vec, double quant_pos);
-  // #CAT_Statistics compute arbitrary quantile according to quant_pos value, which is a proportion 0-1 from start to end of sorted list of values, e.g., .5 = median, .25 = first quartile, etc
-  static double vec_kwta(double_Matrix* vec, int k, bool descending = true);
+  static double  vec_kwta(double_Matrix* vec, int k, bool descending = true);
   // #CAT_Statistics perform an optimized k-winners-take-all sort, returning the value of the item that is k from the highest (lowest if !descending) on the list -- this can be much faster than vec_quantile, which does a full sort -- uses entire matrix, ignoring any view of sub-elements
   static void   vec_kwta_avg(double& top_k_avg, double& bot_k_avg,
                              double_Matrix* vec, int k, bool descending = true);
@@ -520,8 +544,6 @@ public:
                             bool do5 = false, double find5=0.0, double repl5=0.0,
                             bool do6 = false, double find6=0.0, double repl6=0.0);
   // #CAT_Norm find and replace values -- replace find val with repl replacement val -- do flags activate usage of multiple replacements -- more efficient to do in parallel -- returns number of replacments made
-  static double vec_aggregate(const double_Matrix* vec, Aggregate& agg);
-  // #CAT_Aggregate compute aggregate of values in this vector using aggregation params of agg
 
   ///////////////////////////////////////
   // Convolution
@@ -542,9 +564,9 @@ public:
                              const double_Matrix* kernel, bool keep_edges = false);
   // #CAT_Convolution convolve in_vec with kernel to produce out_vec.  out_vec_i = sum_j kernel_j * in_vec_[i+j-off] (where off is 1/2 width of kernel).  normally, out_vec is indented by the offset and width of the kernel so that the full kernel is used for all out_vec points.  however, if keep_edges is true, it keeps these edges by clipping and renormalizing the kernel all the way to both edges  -- supports frame indexing view of matrix (as used by data tables)
 
-  static bool   vec_kern2d_gauss(double_Matrix* kernel, int sz_x, int sz_y,
+  static bool   vec_kern2d_gauss(double_Matrix* kernel, int half_sz_x, int half_sz_y,
                                  double sigma_x, double sigma_y);
-  // #CAT_Convolution create a unit-sum-normalized 2D gaussian kernel of given size in each axis (total size, not half size) in given vector, with given sigma (standard deviation) value in each axis -- uses entire matrix, ignoring any view of sub-elements
+  // #CAT_Convolution create a unit-sum-normalized 2D gaussian kernel of given half-size in each axis (size set to 2* half_sz + 1) in given vector, with given sigma (standard deviation) value in each axis -- uses entire matrix, ignoring any view of sub-elements
 
   /////////////////////////////////////////////////////////////////////////////////
   // Popular functions in place on vector

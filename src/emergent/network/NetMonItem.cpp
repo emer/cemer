@@ -1216,9 +1216,9 @@ void NetMonItem::GetMonVals_DataAgg(DataTable* db) {
     DataSelectSpec selspec(false);
     selspec.ops.Link(&select_spec);
     use_sel_out = taDataProc::SelectRows(&sel_out, data_src, &selspec);
-    if(TestWarning(sel_out.rows == 0, "GetMonVals_DataAgg",
-               "select rows did not match any rows -- reverting to full data table"))
-      use_sel_out = false;
+    // if(TestWarning(sel_out.rows == 0, "GetMonVals_DataAgg",
+    //            "select rows did not match any rows -- reverting to full data table"))
+    //   use_sel_out = false;
   }
 
   DataColSpec* vcs = val_specs.FastEl(0);

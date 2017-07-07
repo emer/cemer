@@ -43,6 +43,8 @@ public:
   /////////////////////////////////////////////////////////////////////////////////
   // Basic number checking
 
+  static float  nan;
+  // #CAT_Number a not-a-number (nan) value (quiet, non-signaling) -- for representing missing values
   static bool   isnan(float x);
   // #CAT_Number returns true if the number is a 'not a number' nan value
   static float  no_nan(float x) 
@@ -318,18 +320,20 @@ public:
 
   static bool   vec_check_type(const float_Matrix* a);
   // check that matrix is actually a float type -- issues Error if not and returns false
+  static bool   vec_check_type_nonempty(const float_Matrix* a);
+  // check that matrix is actually a float type -- issues Error if not and returns false -- also if it is empty (size == 0) it returns false with no error -- aggregation routines can return nan() in this case to signal missing values -- other aggregation routines also exclude these nan() values automatically, providing an automatic solution for missing data
   static bool   vec_check_same_size(const float_Matrix* a, const float_Matrix* b,
                                     bool quiet = false, bool flex = true);
   // check that both vectors are the same size, and issue warning if not (unless quiet) -- if flex then use flexible test (assumes use of iterators for going through operators)
 
   static bool  vec_add(float_Matrix* a, const float_Matrix* b);
-  // #CAT_Arithmetic add elements in two vectors: a(i) += b(i) -- uses entire matrix, ignoring any view of sub-elements
+  // #CAT_Arithmetic add elements in two vectors: a(i) += b(i)
   static bool  vec_sub(float_Matrix* a, const float_Matrix* b);
-  // #CAT_Arithmetic subtract elements in two vectors: a(i) -= b(i) -- uses entire matrix, ignoring any view of sub-elements
+  // #CAT_Arithmetic subtract elements in two vectors: a(i) -= b(i)
   static bool  vec_mult_els(float_Matrix* a, const float_Matrix* b);
-  // #CAT_Arithmetic multiply elements in two vectors: a(i) *= b(i) -- uses entire matrix, ignoring any view of sub-elements
+  // #CAT_Arithmetic multiply elements in two vectors: a(i) *= b(i)
   static bool  vec_div_els(float_Matrix* a, const float_Matrix* b);
-  // #CAT_Arithmetic divide elements in two vectors: a(i) /= b(i) -- uses entire matrix, ignoring any view of sub-elements
+  // #CAT_Arithmetic divide elements in two vectors: a(i) /= b(i)
 
   static bool  vec_add_scalar(float_Matrix* a, float b);
   // #CAT_Arithmetic add scalar value b to elements in vector a: a(i) += b
@@ -361,47 +365,79 @@ public:
   ///////////////////////////////////////
   // basic statistics
 
+  static float  vec_aggregate(const float_Matrix* vec, Aggregate& agg);
+  // #CAT_Aggregate compute aggregate of values in this vector using aggregation params of agg (returns nan for empty vec, filters nan's)
+  static void  vec_nan_to_zero(float_Matrix* vec);
+  // #CAT_Aggregate replace all nan values with zero's in vector
+
+  static float  vec_n(const float_Matrix* vec);
+  // #CAT_Statistics number of elements in vector (returns nan for empty vec, filters nan's)
   static float  vec_first(const float_Matrix* vec);
-  // #CAT_Statistics first item in the vector
+  // #CAT_Statistics first item in the vector (returns nan for empty vec, filters nan's)
   static float  vec_last(const float_Matrix* vec);
-  // #CAT_Statistics last item in the vector
+  // #CAT_Statistics last item in the vector (returns nan for empty vec, filters nan's)
   static int    vec_find_first(const float_Matrix* vec, Relation& rel);
-  // #CAT_Statistics find first element in the vector that meets relationship rel -- returns index in vector or -1 if not found
+  // #CAT_Statistics find first element in the vector that meets relationship rel -- returns index in vector or -1 if not found (filters nan's)
   static int    vec_find_last(const float_Matrix* vec, Relation& rel);
-  // #CAT_Statistics find first element in the vector that meets relationship rel -- returns index in vector or -1 if not found 
-  static float  vec_max(const float_Matrix* vec, int& idx);
-  // #CAT_Statistics value and index of the (first) element that has the maximum value
-  static float  vec_abs_max(const float_Matrix* vec, int& idx);
-  // #CAT_Statistics value and index of the (first) element that has the maximum absolute value
-  static float  vec_next_max(const float_Matrix* vec, int max_idx, int& idx);
-  // #CAT_Statistics value and index of the element that has the next-largest value, excluding the max item which is at max_idx -- uses entire matrix, ignoring any view of sub-elements
+  // #CAT_Statistics find first element in the vector that meets relationship rel -- returns index in vector or -1 if not found (filters nan's)
   static float  vec_min(const float_Matrix* vec, int& idx);
-  // #CAT_Statistics value and index of the (first) element that has the minimum value
+  // #CAT_Statistics value and index of the (first) element that has the minimum value (returns nan for empty vec, filters nan's)
+  static float  vec_max(const float_Matrix* vec, int& idx);
+  // #CAT_Statistics value and index of the (first) element that has the maximum value (returns nan for empty vec, filters nan's)
   static float  vec_abs_min(const float_Matrix* vec, int& idx);
-  // #CAT_Statistics value and index of the (first) element that has the minimum value
+  // #CAT_Statistics value and index of the (first) element that has the minimum value (returns nan for empty vec, filters nan's)
+  static float  vec_abs_max(const float_Matrix* vec, int& idx);
+  // #CAT_Statistics value and index of the (first) element that has the maximum absolute value (returns nan for empty vec, filters nan's)
+
+  static float  vec_next_max(const float_Matrix* vec, int max_idx, int& idx);
+  // #CAT_Statistics value and index of the element that has the next-largest value, excluding the max item which is at max_idx (returns nan for empty vec, filters nan's)
   static float  vec_next_min(const float_Matrix* vec, int min_idx, int& idx);
-  // #CAT_Statistics value and index of the element that has the next-smallest value, excluding the min item which is at min_idx -- uses entire matrix, ignoring any view of sub-elements
+  // #CAT_Statistics value and index of the element that has the next-smallest value, excluding the min item which is at min_idx (returns nan for empty vec, filters nan's)
 
   static float  vec_sum(const float_Matrix* vec);
-  // #CAT_Statistics compute the sum of the values in the vector
+  // #CAT_Statistics compute the sum of the values in the vector (returns nan for empty vec, filters nan's)
+  static float  vec_sum_opt(const float_Matrix* vec);
+  // #CAT_Statistics compute the sum of the values in the vector -- optimized, using vector math -- does NOT filter nan's or use view of matrix (uses entire matrix)
   static float  vec_sum_range(const float_Matrix* vec, int start=0, int end=-1);
   // #CAT_Statistics compute the sum of the values in the vector from el=startpos to el=endpos-1 -- uses entire matrix, ignoring any view of sub-elements
   static float  vec_prod(const float_Matrix* vec);
-  // #CAT_Statistics compute the product of the values in the vector
+  // #CAT_Statistics compute the product of the values in the vector (returns nan for empty vec, filters nan's)
   static float  vec_mean(const float_Matrix* vec);
-  // #CAT_Statistics compute the mean of the values in the vector
+  // #CAT_Statistics compute the mean of the values in the vector (returns nan for empty vec, filters nan's)
+  static float  vec_mean_opt(const float_Matrix* vec);
+  // #CAT_Statistics compute the mean of the values in the vector -- optimized, using vector math -- does NOT filter nan's or use view of matrix (uses entire matrix)
   static float  vec_var(const float_Matrix* vec, float mean=0, bool use_mean=false, bool use_est=false);
-  // #CAT_Statistics compute the variance of the values, opt with given mean; if use_est == true, then divides by N-1 rather than N
+  // #CAT_Statistics compute the variance of the values, opt with given mean; if use_est == true, then divides by N-1 rather than N (returns nan for empty vec, filters nan's)
+  static float  vec_var_opt(const float_Matrix* vec, float mean=0, bool use_mean=false, bool use_est=false);
+  // #CAT_Statistics compute the variance of the values, opt with given mean; if use_est == true, then divides by N-1 rather than N (returns nan for empty vec) -- does NOT filter nan's or use view of matrix (uses entire matrix)
   static float  vec_std_dev(const float_Matrix* vec, float mean=0, bool use_mean=false, bool use_est=false);
-  // #CAT_Statistics compute the standard deviation of the values, opt with given mean; if use_est == true, then divides by N-1 rather than N
+  // #CAT_Statistics compute the standard deviation of the values, opt with given mean; if use_est == true, then divides by N-1 rather than N (returns nan for empty vec, filters nan's)
   static float  vec_sem(const float_Matrix* vec, float mean=0, bool use_mean=false);
-  // #CAT_Statistics compute the standard error of the mean of the values, opt with given mean
+  // #CAT_Statistics compute the standard error of the mean of the values, opt with given mean (returns nan for empty vec, filters nan's)
+  static float  vec_sem_opt(const float_Matrix* vec, float mean=0, bool use_mean=false);
+  // #CAT_Statistics compute the standard error of the mean of the values, opt with given mean (returns nan for empty vec) -- does NOT filter nan's or use view of matrix (uses entire matrix)
   static float  vec_ss_len(const float_Matrix* vec);
-  // #CAT_Statistics sum-of-squares length of the vector
+  // #CAT_Statistics sum-of-squares length of the vector (returns nan for empty vec, filters nan's)
+  static float  vec_ss_len_opt(const float_Matrix* vec);
+  // #CAT_Statistics sum-of-squares length of the vector (returns nan for empty vec) -- does NOT filter nan's or use view of matrix (uses entire matrix)
   static float  vec_norm(const float_Matrix* vec);
-  // #CAT_Statistics square root of the sum-of-squares length of the vector -- its norm or euclidean length
+  // #CAT_Statistics square root of the sum-of-squares length of the vector -- its norm or euclidean length (returns nan for empty vec, filters nan's)
   static float  vec_ss_mean(const float_Matrix* vec);
-  // #CAT_Statistics sum-of-squares around the mean of the vector
+  // #CAT_Statistics sum-of-squares around the mean of the vector (returns nan for empty vec, filters nan's)
+  static float  vec_count(const float_Matrix* vec, Relation& rel);
+  // #CAT_Statistics count number of times relationship is true (returns nan for empty vec, filters nan's)
+  static float  vec_percent(const float_Matrix* vec, Relation& rel);
+  // #CAT_Statistics compute percent (proportion) of times relationship is true (returns nan for empty vec, filters nan's)
+  static float  vec_count_float(const float_Matrix* vec, RelationFloat& rel);
+  // #CAT_Statistics count number of times relationship is true -- optimized float version (returns nan for empty vec, filters nan's)
+  static float  vec_median(const float_Matrix* vec);
+  // #CAT_Statistics compute the median of the values in the vector (middle value) -- requires sorting (returns nan for empty vec, filters nan's)
+  static float  vec_mode(const float_Matrix* vec);
+  // #CAT_Statistics compute the mode (most frequent) of the values in the vector -- requires sorting (returns nan for empty vec, filters nan's)
+  static float  vec_quantile(const float_Matrix* vec, float quant_pos);
+  // #CAT_Statistics compute arbitrary quantile according to quant_pos value, which is a proportion 0-1 from start to end of sorted list of values, e.g., .5 = median, .25 = first quartile, etc (returns nan for empty vec, filters nan's)
+
+  
   static void   vec_histogram(float_Matrix* hist_vec, const float_Matrix* src_vec,
                               float bin_size, float min_val = 0.0, float max_val = 0.0,
                               float_Matrix* bin_vec = NULL);
@@ -409,18 +445,6 @@ public:
   static void   vec_histogram_bins(float_Matrix* bin_vec, const float_Matrix* src_vec,
                               float bin_size, float min_val = 0.0, float max_val = 0.0);
   // #CAT_Statistics gets the bin values (X axis) for a histogram of source vector -- min and maximum ranges to compute within are also optional args -- only used min != max
-  static float  vec_count(const float_Matrix* vec, Relation& rel);
-  // #CAT_Statistics count number of times relationship is true
-  static float  vec_percent(const float_Matrix* vec, Relation& rel);
-  // #CAT_Statistics compute percent (proportion) of times relationship is true
-  static float  vec_count_float(const float_Matrix* vec, RelationFloat& rel);
-  // #CAT_Statistics count number of times relationship is true -- optimized float version
-  static float  vec_median(const float_Matrix* vec);
-  // #CAT_Statistics compute the median of the values in the vector (middle value) -- requires sorting
-  static float  vec_mode(const float_Matrix* vec);
-  // #CAT_Statistics compute the mode (most frequent) of the values in the vector -- requires sorting
-  static float  vec_quantile(const float_Matrix* vec, float quant_pos);
-  // #CAT_Statistics compute arbitrary quantile according to quant_pos value, which is a proportion 0-1 from start to end of sorted list of values, e.g., .5 = median, .25 = first quartile, etc
   static float  vec_kwta(float_Matrix* vec, int k, bool descending = true);
   // #CAT_Statistics perform an optimized k-winners-take-all sort, returning the value of the item that is k from the highest (lowest if !descending) on the list -- this can be much faster than vec_quantile, which does a full sort -- uses entire matrix, ignoring any view of sub-elements
   static void   vec_kwta_avg(float& top_k_avg, float& bot_k_avg,
@@ -505,8 +529,6 @@ public:
                             bool do5 = false, float find5=0.0, float repl5=0.0,
                             bool do6 = false, float find6=0.0, float repl6=0.0);
   // #CAT_Norm find and replace values -- replace find val with repl replacement val -- do flags activate usage of multiple replacements -- more efficient to do in parallel -- returns number of replacments made
-  static float  vec_aggregate(const float_Matrix* vec, Aggregate& agg);
-  // #CAT_Aggregate compute aggregate of values in this vector using aggregation params of agg
 
   ///////////////////////////////////////
   // Convolution

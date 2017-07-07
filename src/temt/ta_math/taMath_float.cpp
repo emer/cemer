@@ -62,6 +62,9 @@
 
 TA_BASEFUNS_CTORS_DEFN(taMath_float);
 
+
+float taMath_float::nan = std::numeric_limits<float>::quiet_NaN();
+
 bool taMath_float::isnan(float val) {
 #ifdef TA_OS_WIN
   if(_isnan(val) || !_finite(val)) return true;
@@ -84,10 +87,10 @@ float taMath_float::exp_fast(float x) {
 // Trigonometry
 
 float taMath_float::pi = (float)M_PI;
-float taMath_float::two_pi = (float)(2.0f * M_PI);
-float taMath_float::oneo_two_pi = (float)(1.0f / (2.0f * M_PI));
-float taMath_float::deg_per_rad = (float)(180.0f / M_PI);
-float taMath_float::rad_per_deg = (float)(M_PI / 180.0f);
+float taMath_float::two_pi = (float)(2.0 * M_PI);
+float taMath_float::oneo_two_pi = (float)(1.0 / (2.0 * M_PI));
+float taMath_float::deg_per_rad = (float)(180.0 / M_PI);
+float taMath_float::rad_per_deg = (float)(M_PI / 180.0);
 
 /////////////////////////////////////////////////////////////////////////////////
 // Probability distributions, etc
@@ -673,6 +676,12 @@ bool taMath_float::vec_check_type(const float_Matrix* a) {
   return true;
 }
 
+bool taMath_float::vec_check_type_nonempty(const float_Matrix* a) {
+  if(!vec_check_type(a)) return false;
+  if(a->size == 0) return false;
+  return true;
+}
+  
 bool taMath_float::vec_check_same_size(const float_Matrix* a, const float_Matrix* b,
     bool quiet, bool flex) {
   if(!vec_check_type(a) || !vec_check_type(b)) return false;
@@ -858,145 +867,175 @@ bool taMath_float::vec_gauss_inv_lim(float_Matrix* p) {
   return true;
 }
 
-float taMath_float::vec_first(const float_Matrix* vec) {
-  if(!vec_check_type(vec)) return 0.0;
-  if(vec->size == 0) return 0.0;
-  if(vec->ElView()) {		// significantly less efficient
+//////////////////////////////////////////////////////////////////////
+//      Below are standard aggregation routines -- use and filter nan's
+//      these are used in vec_aggregate and they both consume and generate
+//      nan's to represent missing values -- call vec_nan_to_zero
+//      on any final output to remove any remaining nan's at the top-level
+
+void taMath_float::vec_nan_to_zero(float_Matrix* vec) {
+  if(!vec_check_type(vec)) return;
+  if(vec->ElView()) {
     TA_FOREACH_INDEX(i, *vec) {
-      return vec->FastEl_Flat(i);
+      float& val = vec->FastEl_Flat(i);
+      if(isnan(val))
+        val = 0.0;
     }
   }
-  return vec->FastEl_Flat(0);
+  else {
+    const int sz = vec->size;
+    for(int i=0; i<sz; i++) {
+      float& val = vec->FastEl_Flat(i);
+      if(isnan(val))
+        val = 0.0;
+    }
+  }
+}
+
+float taMath_float::vec_aggregate(const float_Matrix* vec, Aggregate& agg) {
+  if(!vec_check_type_nonempty(vec)) return nan;
+  int idx;
+  switch(agg.op) {
+  case Aggregate::GROUP:
+    return taMath_float::vec_first(vec); // same as first
+  case Aggregate::FIRST:
+    return taMath_float::vec_first(vec);
+  case Aggregate::LAST:
+    return taMath_float::vec_last(vec);
+  case Aggregate::FIND_FIRST:
+    return (float)taMath_float::vec_find_first(vec, agg.rel);
+  case Aggregate::FIND_LAST:
+    return (float)taMath_float::vec_find_last(vec, agg.rel);
+  case Aggregate::MIN:
+    return taMath_float::vec_min(vec, idx);
+  case Aggregate::MAX:
+    return taMath_float::vec_max(vec, idx);
+  case Aggregate::ABS_MIN:
+    return taMath_float::vec_abs_min(vec, idx);
+  case Aggregate::ABS_MAX:
+    return taMath_float::vec_abs_max(vec, idx);
+  case Aggregate::SUM:
+    return taMath_float::vec_sum(vec);
+  case Aggregate::PROD:
+    return taMath_float::vec_prod(vec);
+  case Aggregate::MEAN:
+    return taMath_float::vec_mean(vec);
+  case Aggregate::VAR:
+    return taMath_float::vec_var(vec);
+  case Aggregate::SS:
+    return taMath_float::vec_ss_mean(vec);
+  case Aggregate::STDEV:
+    return taMath_float::vec_std_dev(vec);
+  case Aggregate::SEM:
+    return taMath_float::vec_sem(vec);
+  case Aggregate::N:
+    return taMath_float::vec_n(vec);
+  case Aggregate::COUNT:
+    return taMath_float::vec_count(vec, agg.rel);
+  case Aggregate::PERCENT:
+    return taMath_float::vec_percent(vec, agg.rel);
+  case Aggregate::MEDIAN:
+    return taMath_float::vec_median(vec);
+  case Aggregate::MODE:
+    return taMath_float::vec_mode(vec);
+  case Aggregate::QUANTILE: {
+    float relval = agg.rel.val;
+    if(agg.rel.use_var && (bool)agg.rel.var) {
+      relval = agg.rel.var->GetVar().toDouble();
+    }
+    return taMath_float::vec_quantile(vec, relval);
+  }
+  case Aggregate::NONE:
+    return 0.0;
+  }
+  return 0.0;
+}
+
+float taMath_float::vec_n(const float_Matrix* vec) {
+  if(!vec_check_type_nonempty(vec)) return nan;
+  int n = 0;
+  if(vec->ElView()) {
+    TA_FOREACH_INDEX(i, *vec) {
+      float val = vec->FastEl_Flat(i);
+      if(isnan(val)) continue;
+      n++;
+    }
+  }
+  else {
+    const int sz = vec->size;
+    for(int i=0; i<sz; i++) {
+      float val = vec->FastEl_Flat(i);
+      if(isnan(val)) continue;
+      n++;
+    }
+  }
+  if(n > 0) {
+    return (float)n;
+  }
+  return nan;
+}
+
+float taMath_float::vec_first(const float_Matrix* vec) {
+  if(!vec_check_type_nonempty(vec)) return nan;
+  TA_FOREACH_INDEX(i, *vec) {
+    float val = vec->FastEl_Flat(i);
+    if(isnan(val)) continue;
+    return val;
+  }
+  return nan;
 }
 
 float taMath_float::vec_last(const float_Matrix* vec) {
-  if(!vec_check_type(vec)) return 0.0;
-  if(vec->size == 0) return 0.0;
-  if(vec->ElView()) {		// significantly less efficient
-    TA_FOREACH_INDEX_REV(i, *vec) {
-      return vec->FastEl_Flat(i);
-    }
+  if(!vec_check_type_nonempty(vec)) return nan;
+  TA_FOREACH_INDEX_REV(i, *vec) {
+    float val = vec->FastEl_Flat(i);
+    if(isnan(val)) continue;
+    return val;
   }
-  return vec->FastEl_Flat(vec->size-1);
+  return nan;
 }
 
 int taMath_float::vec_find_first(const float_Matrix* vec, Relation& rel) {
-  if(!vec_check_type(vec)) return -1;
+  if(!vec_check_type_nonempty(vec)) return -1;
   Relation tmp_rel;
   rel.CacheVar(tmp_rel);
   TA_FOREACH_INDEX(i, *vec) {
-    if(tmp_rel.Evaluate(vec->FastEl_Flat(i)))
+    float val = vec->FastEl_Flat(i);
+    if(isnan(val)) continue;
+    if(tmp_rel.Evaluate(val))
       return FOREACH_itr.count;
   }
   return -1;
 }
 
 int taMath_float::vec_find_last(const float_Matrix* vec, Relation& rel) {
-  if(!vec_check_type(vec)) return -1;
+  if(!vec_check_type_nonempty(vec)) return -1;
   Relation tmp_rel;
   rel.CacheVar(tmp_rel);
   TA_FOREACH_INDEX_REV(i, *vec) {
-    if(tmp_rel.Evaluate(vec->FastEl_Flat(i)))
+    float val = vec->FastEl_Flat(i);
+    if(isnan(val)) continue;
+    if(tmp_rel.Evaluate(val))
       return (vec->IterCount() - FOREACH_itr.count) - 1;
   }
   return -1;
 }
 
-float taMath_float::vec_max(const float_Matrix* vec, int& idx) {
-  if(!vec_check_type(vec)) return 0.0;
-  idx = 0;
-  if(vec->size == 0) return 0.0;
-  if(vec->ElView()) {		// significantly less efficient
-    bool first = true;
-    float rval = 0.0;
-    TA_FOREACH_INDEX(i, *vec) {
-      if(first) {
-        rval = vec->FastEl_Flat(i);
-        first = false;
-      }
-      else {
-        if(vec->FastEl_Flat(i) > rval) {
-          idx = FOREACH_itr.count;
-          rval = vec->FastEl_Flat(i);
-        }
-      }
-    }
-    return rval;
-  }
-  float rval = vec->FastEl_Flat(0);
-  for(int i=1;i<vec->size;i++) {
-    if(vec->FastEl_Flat(i) > rval) {
-      idx = i;
-      rval = vec->FastEl_Flat(i);
-    }
-  }
-  return rval;
-}
-
-float taMath_float::vec_abs_max(const float_Matrix* vec, int& idx) {
-  if(!vec_check_type(vec)) return 0.0;
-  idx = 0;
-  if(vec->size == 0) return 0.0;
-  if(vec->ElView()) {		// significantly less efficient
-    bool first = true;
-    float rval = 0.0;
-    TA_FOREACH_INDEX(i, *vec) {
-      if(first) {
-        rval = fabs(vec->FastEl_Flat(i));
-        first = false;
-      }
-      else {
-        if(fabs(vec->FastEl_Flat(i)) > rval) {
-          idx = FOREACH_itr.count;
-          rval = fabs(vec->FastEl_Flat(i));
-        }
-      }
-    }
-    return rval;
-  }
-  float rval = fabs(vec->FastEl_Flat(0));
-  for(int i=1;i<vec->size;i++) {
-    if(fabs(vec->FastEl_Flat(i)) > rval) {
-      idx = i;
-      rval = fabs(vec->FastEl_Flat(i));
-    }
-  }
-  return rval;
-}
-
-float taMath_float::vec_next_max(const float_Matrix* vec, int max_idx, int& idx) {
-  if(!vec_check_type(vec)) return 0.0;
-  idx = 0;
-  if(vec->size < 2) return 0.0;
-  float rval;
-  if(max_idx == 0)
-    rval = vec->FastEl_Flat(1);
-  else
-    rval = vec->FastEl_Flat(0);
-  for(int i=1;i<vec->size;i++) {
-    if(i == max_idx) continue;
-    if(vec->FastEl_Flat(i) > rval) {
-      idx = i;
-      rval = vec->FastEl_Flat(i);
-    }
-  }
-  return rval;
-}
-
 float taMath_float::vec_min(const float_Matrix* vec, int& idx) {
-  if(!vec_check_type(vec)) return 0.0;
+  if(!vec_check_type_nonempty(vec)) return nan;
   idx = 0;
-  if(vec->size == 0) return 0.0;
+  bool first = true;
+  float rval = nan;
   if(vec->ElView()) {		// significantly less efficient
-    bool first = true;
-    float rval = 0.0;
     TA_FOREACH_INDEX(i, *vec) {
+      float val = vec->FastEl_Flat(i);
+      if(isnan(val)) continue;
       if(first) {
-        rval = vec->FastEl_Flat(i);
+        rval = val;
         first = false;
       }
       else {
-        if(vec->FastEl_Flat(i) < rval) {
+        if(val < rval) {
           idx = FOREACH_itr.count;
           rval = vec->FastEl_Flat(i);
         }
@@ -1004,236 +1043,673 @@ float taMath_float::vec_min(const float_Matrix* vec, int& idx) {
     }
     return rval;
   }
-  float rval = vec->FastEl_Flat(0);
-  for(int i=1;i<vec->size;i++) {
-    if(vec->FastEl_Flat(i) < rval) {
-      idx = i;
-      rval = vec->FastEl_Flat(i);
+  const int sz = vec->size;
+  for(int i=0;i<sz;i++) {
+    float val = vec->FastEl_Flat(i);
+    if(isnan(val)) continue;
+    if(first) {
+      rval = val;
+      first = false;
+    }
+    else {
+      if(val < rval) {
+        idx = i;
+        rval = val;
+      }
+    }
+  }
+  return rval;
+}
+
+float taMath_float::vec_max(const float_Matrix* vec, int& idx) {
+  if(!vec_check_type_nonempty(vec)) return nan;
+  idx = 0;
+  bool first = true;
+  float rval = nan;
+  if(vec->ElView()) {		// significantly less efficient
+    TA_FOREACH_INDEX(i, *vec) {
+      float val = vec->FastEl_Flat(i);
+      if(isnan(val)) continue;
+      if(first) {
+        rval = val;
+        first = false;
+      }
+      else {
+        if(val > rval) {
+          idx = FOREACH_itr.count;
+          rval = vec->FastEl_Flat(i);
+        }
+      }
+    }
+    return rval;
+  }
+  const int sz = vec->size;
+  for(int i=0;i<sz;i++) {
+    float val = vec->FastEl_Flat(i);
+    if(isnan(val)) continue;
+    if(first) {
+      rval = val;
+      first = false;
+    }
+    else {
+      if(val > rval) {
+        idx = i;
+        rval = val;
+      }
     }
   }
   return rval;
 }
 
 float taMath_float::vec_abs_min(const float_Matrix* vec, int& idx) {
-  if(!vec_check_type(vec)) return 0.0;
+  if(!vec_check_type_nonempty(vec)) return nan;
   idx = 0;
-  if(vec->size == 0) return 0.0;
+  bool first = true;
+  float rval = nan;
   if(vec->ElView()) {		// significantly less efficient
-    bool first = true;
-    float rval = 0.0;
     TA_FOREACH_INDEX(i, *vec) {
+      float val = vec->FastEl_Flat(i);
+      if(isnan(val)) continue;
+      val = fabs(val);
       if(first) {
-        rval = fabs(vec->FastEl_Flat(i));
+        rval = val;
         first = false;
       }
       else {
-        if(fabs(vec->FastEl_Flat(i)) < rval) {
+        if(val < rval) {
           idx = FOREACH_itr.count;
-          rval = fabs(vec->FastEl_Flat(i));
+          rval = val;
         }
       }
     }
     return rval;
   }
-  float rval = fabs(vec->FastEl_Flat(0));
-  for(int i=1;i<vec->size;i++) {
-    if(fabs(vec->FastEl_Flat(i)) < rval) {
-      idx = i;
-      rval = fabs(vec->FastEl_Flat(i));
+  const int sz = vec->size;
+  for(int i=0;i<sz;i++) {
+    float val = vec->FastEl_Flat(i);
+    if(isnan(val)) continue;
+    val = fabs(val);
+    if(first) {
+      rval = val;
+      first = false;
+    }
+    else {
+      if(val < rval) {
+        idx = i;
+        rval = val;
+      }
+    }
+  }
+  return rval;
+}
+
+float taMath_float::vec_abs_max(const float_Matrix* vec, int& idx) {
+  if(!vec_check_type_nonempty(vec)) return nan;
+  idx = 0;
+  bool first = true;
+  float rval = nan;
+  if(vec->ElView()) {		// significantly less efficient
+    TA_FOREACH_INDEX(i, *vec) {
+      float val = vec->FastEl_Flat(i);
+      if(isnan(val)) continue;
+      val = fabs(val);
+      if(first) {
+        rval = val;
+        first = false;
+      }
+      else {
+        if(val > rval) {
+          idx = FOREACH_itr.count;
+          rval = val;
+        }
+      }
+    }
+    return rval;
+  }
+  const int sz = vec->size;
+  for(int i=0;i<sz;i++) {
+    float val = vec->FastEl_Flat(i);
+    if(isnan(val)) continue;
+    val = fabs(val);
+    if(first) {
+      rval = val;
+      first = false;
+    }
+    else {
+      if(val > rval) {
+        idx = i;
+        rval = val;
+      }
     }
   }
   return rval;
 }
 
 float taMath_float::vec_next_min(const float_Matrix* vec, int min_idx, int& idx) {
-  if(!vec_check_type(vec)) return 0.0;
+  if(!vec_check_type_nonempty(vec)) return nan;
   idx = 0;
-  if(vec->size < 2) return 0.0;
-  float rval;
-  if(min_idx == 0)
-    rval = vec->FastEl_Flat(1);
-  else
-    rval = vec->FastEl_Flat(0);
-  for(int i=1;i<vec->size;i++) {
+  bool first = true;
+  float rval = nan;
+  if(vec->ElView()) {		// significantly less efficient
+    TA_FOREACH_INDEX(i, *vec) {
+      float val = vec->FastEl_Flat(i);
+      if(isnan(val)) continue;
+      if(i == min_idx) continue;
+      if(first) {
+        rval = val;
+        first = false;
+      }
+      else {
+        if(val < rval) {
+          idx = FOREACH_itr.count;
+          rval = vec->FastEl_Flat(i);
+        }
+      }
+    }
+    return rval;
+  }
+  const int sz = vec->size;
+  for(int i=0;i<sz;i++) {
+    float val = vec->FastEl_Flat(i);
+    if(isnan(val)) continue;
     if(i == min_idx) continue;
-    if(vec->FastEl_Flat(i) < rval) {
-      idx = i;
-      rval = vec->FastEl_Flat(i);
+    if(first) {
+      rval = val;
+      first = false;
+    }
+    else {
+      if(val < rval) {
+        idx = i;
+        rval = val;
+      }
+    }
+  }
+  return rval;
+}
+
+float taMath_float::vec_next_max(const float_Matrix* vec, int max_idx, int& idx) {
+  if(!vec_check_type_nonempty(vec)) return nan;
+  idx = 0;
+  bool first = true;
+  float rval = nan;
+  if(vec->ElView()) {		// significantly less efficient
+    TA_FOREACH_INDEX(i, *vec) {
+      float val = vec->FastEl_Flat(i);
+      if(isnan(val)) continue;
+      if(i == max_idx) continue;
+      if(first) {
+        rval = val;
+        first = false;
+      }
+      else {
+        if(val > rval) {
+          idx = FOREACH_itr.count;
+          rval = vec->FastEl_Flat(i);
+        }
+      }
+    }
+    return rval;
+  }
+  const int sz = vec->size;
+  for(int i=0;i<sz;i++) {
+    float val = vec->FastEl_Flat(i);
+    if(isnan(val)) continue;
+    if(i == max_idx) continue;
+    if(first) {
+      rval = val;
+      first = false;
+    }
+    else {
+      if(val > rval) {
+        idx = i;
+        rval = val;
+      }
     }
   }
   return rval;
 }
 
 float taMath_float::vec_sum(const float_Matrix* vec) {
-  if(!vec_check_type(vec)) return 0.0;
+  if(!vec_check_type_nonempty(vec)) return nan;
   float rval = 0.0;
+  bool got = false;
   if(vec->ElView()) {
     TA_FOREACH_INDEX(i, *vec) {
-      rval += vec->FastEl_Flat(i);
+      float val = vec->FastEl_Flat(i);
+      if(isnan(val)) continue;
+      got = true;
+      rval += val;
     }
   }
   else {
     const int sz = vec->size;
-    float* vecel = vec->el;
-#ifdef USE_SSE8
-    const int psz = 8 * (sz / 8);
-    int i;
-    for(i=0; i<psz; i+=8) {
-      Vec8f vf; vf.load(vecel + i);
-      rval += horizontal_add(vf);
-    }
-    for(; i<sz; i++) {
-      rval += vecel[i];
-    }
-#else
     for(int i=0; i<sz; i++) {
-      rval += vecel[i];
+      float val = vec->FastEl_Flat(i);
+      if(isnan(val)) continue;
+      got = true;
+      rval += val;
     }
-#endif
   }
+  return got ? rval : nan;
+}
+
+float taMath_float::vec_sum_opt(const float_Matrix* vec) {
+  if(!vec_check_type_nonempty(vec)) return nan;
+  float rval = 0.0;
+  const int sz = vec->size;
+  float* vecel = vec->el;
+#ifdef USE_SSE8
+  const int psz = 8 * (sz / 8);
+  int i;
+  for(i=0; i<psz; i+=8) {
+    Vec8f vf; vf.load(vecel + i);
+    rval += horizontal_add(vf);
+  }
+  for(; i<sz; i++) {
+    rval += vecel[i];
+  }
+#else
+  for(int i=0; i<sz; i++) {
+    rval += vecel[i];
+  }
+#endif
   return rval;
 }
 
-
 float taMath_float::vec_sum_range(const float_Matrix* vec, int start, int end) {
-  if(!vec_check_type(vec)) return 0.0;
+  if(!vec_check_type(vec)) return nan;
   float rval = 0.0;
   if(start<0)
     start = vec->size - 1;
   if(end<0)
     end = vec->size ;
   if(start>end)
-    return rval;
+    return nan;
   for(int i=start;i<end;i++)
     rval += vec->FastEl_Flat(i);
   return rval;
 }
 
 float taMath_float::vec_prod(const float_Matrix* vec) {
-  if(!vec_check_type(vec)) return 0.0;
-  if(vec->size == 0) return 0.0;
-  float rval = 0.0;
-  if(vec->ElView()) {		// significantly less efficient
+  if(!vec_check_type_nonempty(vec)) return nan;
+  float rval = nan;
+  bool first = true;
+  if(vec->ElView()) {
     TA_FOREACH_INDEX(i, *vec) {
-      if(FOREACH_itr.count == 0)
-        rval = vec->FastEl_Flat(i);
-      else
-        rval *= vec->FastEl_Flat(i);
+      float val = vec->FastEl_Flat(i);
+      if(isnan(val)) continue;
+      if(first) {
+        rval = val;
+        first = false;
+      }
+      else {
+        rval *= val;
+      }
     }
   }
   else {
-    rval = vec->FastEl_Flat(0);
-    for(int i=1;i<vec->size;i++) {
-      rval *= vec->FastEl_Flat(i);
+    const int sz = vec->size;
+    for(int i=0; i<sz; i++) {
+      float val = vec->FastEl_Flat(i);
+      if(isnan(val)) continue;
+      if(first) {
+        rval = val;
+        first = false;
+      }
+      else {
+        rval *= val;
+      }
     }
   }
   return rval;
 }
 
 float taMath_float::vec_mean(const float_Matrix* vec) {
-  if(!vec_check_type(vec)) return 0.0;
-  if(vec->size == 0)    return 0.0;
-  if(vec->ElView()) {		// significantly less efficient
-    int ic = vec->IterCount();
-    if(ic == 0) return 0.0;
-    return vec_sum(vec) / (float)ic;
-  }
-  return vec_sum(vec) / (float)vec->size;
-}
-
-float taMath_float::vec_var(const float_Matrix* vec, float mean, bool use_mean,
-    bool use_est) {
-  if(!vec_check_type(vec)) return 0.0;
-  if(vec->size <= 1)    return 0.0;
-  if(!use_mean)
-    mean = vec_mean(vec);
+  if(!vec_check_type_nonempty(vec)) return nan;
   float rval = 0.0;
-  if(vec->ElView()) {
-    int ic = vec->IterCount();
-    if(ic <= 1) return 0.0;
-    TA_FOREACH_INDEX(i, *vec) {
-      float val = (vec->FastEl_Flat(i) - mean); rval += val * val;
-    }
-    return rval / ((float)ic - (float)use_est);
-  }
-  else {
-    for(int i=0; i<vec->size; i++) {
-      float val = (vec->FastEl_Flat(i) - mean); rval += val * val;
-    }
-    return rval / ((float)vec->size - (float)use_est);
-  }
-}
-
-float taMath_float::vec_std_dev(const float_Matrix* vec, float mean, bool use_mean, bool use_est) {
-  if(vec->size <= 1)    return 0.0;
-  return sqrt(vec_var(vec, mean, use_mean, use_est));
-}
-
-float taMath_float::vec_sem(const float_Matrix* vec, float mean, bool use_mean) {
-  if(!vec_check_type(vec)) return 0.0;
-  if(vec->size <= 1)    return 0.0;
-  if(vec->ElView()) {		// significantly less efficient
-    int ic = vec->IterCount();
-    if(ic <= 1) return 0.0;
-    return vec_std_dev(vec, mean, use_mean, true) / sqrt((float)ic);
-  }
-  return vec_std_dev(vec, mean, use_mean, true) / sqrt((float)vec->size);
-}
-
-float taMath_float::vec_ss_len(const float_Matrix* vec) {
-  if(!vec_check_type(vec)) return 0.0;
-  float rval = 0.0;
+  int n = 0;
   if(vec->ElView()) {
     TA_FOREACH_INDEX(i, *vec) {
       float val = vec->FastEl_Flat(i);
-      rval += val * val;
+      if(isnan(val)) continue;
+      rval += val;
+      n++;
     }
   }
   else {
     const int sz = vec->size;
-    float* vecel = vec->el;
-#ifdef USE_SSE8
-    const int psz = 8 * (sz / 8);
-    int i;
-    for(i=0; i<psz; i+=8) {
-      Vec8f vf; vf.load(vecel + i);
-      vf *= vf;
-      rval += horizontal_add(vf);
-    }
-    for(; i<sz; i++) {
-      rval += vecel[i] * vecel[i];
-    }
-#else
     for(int i=0; i<sz; i++) {
-      float val = vecel[i];
-      rval += val * val;
+      float val = vec->FastEl_Flat(i);
+      if(isnan(val)) continue;
+      rval += val;
+      n++;
     }
-#endif
   }
+  if(n > 0) {
+    return rval / (float)n;
+  }
+  return nan;
+}
+
+float taMath_float::vec_mean_opt(const float_Matrix* vec) {
+  if(!vec_check_type_nonempty(vec)) return nan;
+  return vec_sum_opt(vec) / (float)vec->size;
+}
+
+float taMath_float::vec_var(const float_Matrix* vec, float mean, bool use_mean,
+    bool use_est) {
+  if(!vec_check_type_nonempty(vec)) return nan;
+  if(vec->size <= 1)    return nan;
+  if(!use_mean)
+    mean = vec_mean(vec);
+  float rval = 0.0;
+  int n = 0;
+  if(vec->ElView()) {
+    TA_FOREACH_INDEX(i, *vec) {
+      float val = vec->FastEl_Flat(i);
+      if(isnan(val)) continue;
+      val = (val - mean); rval += val * val;
+      n++;
+    }
+  }
+  else {
+    const int sz = vec->size;
+    for(int i=0; i<sz; i++) {
+      float val = vec->FastEl_Flat(i);
+      if(isnan(val)) continue;
+      val = (val - mean); rval += val * val;
+      n++;
+    }
+  }
+  if(n > (int)use_est) {
+    return rval / (float(n - (int)use_est));
+  }
+  return nan;
+}
+
+float taMath_float::vec_var_opt(const float_Matrix* vec, float mean, bool use_mean,
+    bool use_est) {
+  if(!vec_check_type_nonempty(vec)) return nan;
+  if(vec->size <= 1)    return nan;
+  if(!use_mean)
+    mean = vec_mean_opt(vec);
+  float rval = 0.0;
+  const int sz = vec->size;
+  for(int i=0; i<sz; i++) {
+    float val = (vec->FastEl_Flat(i) - mean); rval += val * val;
+  }
+  return rval / ((float)vec->size - (float)use_est);
+}
+
+float taMath_float::vec_std_dev(const float_Matrix* vec, float mean, bool use_mean, bool use_est) {
+  if(!vec_check_type_nonempty(vec)) return nan;
+  if(vec->size <= 1)    return nan;
+  return sqrt(vec_var(vec, mean, use_mean, use_est));
+}
+
+float taMath_float::vec_sem(const float_Matrix* vec, float mean, bool use_mean) {
+  if(!vec_check_type_nonempty(vec)) return nan;
+  if(vec->size <= 1)    return nan;
+  if(!use_mean)
+    mean = vec_mean(vec);
+  float rval = 0.0;
+  int n = 0;
+  if(vec->ElView()) {
+    TA_FOREACH_INDEX(i, *vec) {
+      float val = vec->FastEl_Flat(i);
+      if(isnan(val)) continue;
+      val = (val - mean); rval += val * val;
+      n++;
+    }
+  }
+  else {
+    const int sz = vec->size;
+    for(int i=0; i<sz; i++) {
+      float val = vec->FastEl_Flat(i);
+      if(isnan(val)) continue;
+      val = (val - mean); rval += val * val;
+      n++;
+    }
+  }
+  if(n > 1) {
+    return sqrt(rval / (float)(n-1)) / sqrt((float)n);
+  }
+  return nan;
+}
+
+float taMath_float::vec_sem_opt(const float_Matrix* vec, float mean, bool use_mean) {
+  if(!vec_check_type_nonempty(vec)) return nan;
+  if(vec->size <= 1)    return nan;
+  return sqrt(vec_var_opt(vec, mean, use_mean, true)) / sqrt((float)vec->size);
+}
+
+float taMath_float::vec_ss_len(const float_Matrix* vec) {
+  if(!vec_check_type_nonempty(vec)) return nan;
+  float rval = 0.0;
+  bool got = false;
+  if(vec->ElView()) {
+    TA_FOREACH_INDEX(i, *vec) {
+      float val = vec->FastEl_Flat(i);
+      if(isnan(val)) continue;
+      rval += val * val;
+      got = true;
+    }
+  }
+  else {
+    const int sz = vec->size;
+    for(int i=0; i<sz; i++) {
+      float val = vec->FastEl_Flat(i);
+      if(isnan(val)) continue;
+      rval += val * val;
+      got = true;
+    }
+  }
+  return got ? rval : nan;
+}
+
+float taMath_float::vec_ss_len_opt(const float_Matrix* vec) {
+  if(!vec_check_type_nonempty(vec)) return nan;
+  float rval = 0.0;
+  const int sz = vec->size;
+  float* vecel = vec->el;
+#ifdef USE_SSE8
+  const int psz = 8 * (sz / 8);
+  int i;
+  for(i=0; i<psz; i+=8) {
+    Vec8f vf; vf.load(vecel + i);
+    vf *= vf;
+    rval += horizontal_add(vf);
+  }
+  for(; i<sz; i++) {
+    float val = vecel[i];
+    rval += val * val;
+  }
+#else
+  for(int i=0; i<sz; i++) {
+    float val = vecel[i];
+    rval += val * val;
+  }
+#endif
   return rval;
 }
 
 float taMath_float::vec_norm(const float_Matrix* vec) {
+  if(!vec_check_type_nonempty(vec)) return nan;
   return sqrt(vec_ss_len(vec));
 }
 
 float taMath_float::vec_ss_mean(const float_Matrix* vec) {
-  if(!vec_check_type(vec)) return 0.0;
-  if(vec->size <= 1)    return 0.0;
-  float rval = 0.0;
+  if(!vec_check_type_nonempty(vec)) return nan;
+  if(vec->size <= 1)    return nan;
   float mean = vec_mean(vec);
+  if(isnan(mean)) return nan;
+  float rval = 0.0;
   if(vec->ElView()) {
     TA_FOREACH_INDEX(i, *vec) {
-      float val = vec->FastEl_Flat(i) - mean;  rval += val * val;
+      float val = vec->FastEl_Flat(i);
+      if(isnan(val)) continue;
+      val = val - mean;  rval += val * val;
     }
   }
   else {
-    for(int i=0; i<vec->size; i++) {
-      float val = vec->FastEl_Flat(i) - mean;  rval += val * val;
+    const int sz = vec->size;
+    for(int i=0; i<sz; i++) {
+      float val = vec->FastEl_Flat(i);
+      if(isnan(val)) continue;
+      val = val - mean;  rval += val * val;
     }
   }
   return rval;
 }
+
+float taMath_float::vec_count(const float_Matrix* vec, Relation& rel) {
+  if(!vec_check_type_nonempty(vec)) return nan;
+  Relation tmp_rel;
+  rel.CacheVar(tmp_rel);
+  int rval = 0;
+  bool got = false;
+  if(vec->ElView()) {
+    TA_FOREACH_INDEX(i, *vec) {
+      float val = vec->FastEl_Flat(i);
+      if(isnan(val)) continue;
+      if(tmp_rel.Evaluate(val)) rval++;
+      got = true;
+    }
+  }
+  else {
+    const int sz = vec->size;
+    for(int i=0; i<sz; i++) {
+      float val = vec->FastEl_Flat(i);
+      if(isnan(val)) continue;
+      if(tmp_rel.Evaluate(val)) rval++;
+      got = true;
+    }
+  }
+  return got ? (float)rval : nan;
+}
+
+float taMath_float::vec_percent(const float_Matrix* vec, Relation& rel) {
+  if(!vec_check_type_nonempty(vec)) return nan;
+  Relation tmp_rel;
+  rel.CacheVar(tmp_rel);
+  int rval = 0;
+  int n = 0;
+  if(vec->ElView()) {
+    TA_FOREACH_INDEX(i, *vec) {
+      float val = vec->FastEl_Flat(i);
+      if(isnan(val)) continue;
+      if(tmp_rel.Evaluate(val)) rval++;
+      n++;
+    }
+  }
+  else {
+    const int sz = vec->size;
+    for(int i=0; i<sz; i++) {
+      float val = vec->FastEl_Flat(i);
+      if(isnan(val)) continue;
+      if(tmp_rel.Evaluate(val)) rval++;
+      n++;
+    }
+  }
+  if(n > 0) {
+    return (float)rval / (float)n;
+  }
+  return nan;
+}
+
+float taMath_float::vec_count_float(const float_Matrix* vec, RelationFloat& rel) {
+  if(!vec_check_type_nonempty(vec)) return 0.0;
+  // RelationFloat tmp_rel;
+  // rel.CacheVar(tmp_rel);
+  int rval = 0;
+  bool got = false;
+  if(vec->ElView()) {
+    TA_FOREACH_INDEX(i, *vec) {
+      float val = vec->FastEl_Flat(i);
+      if(isnan(val)) continue;
+      if(rel.Evaluate(val)) rval++;
+      got = true;
+    }
+  }
+  else {
+    const int sz = vec->size;
+    for(int i=0; i<sz; i++) {
+      float val = vec->FastEl_Flat(i);
+      if(isnan(val)) continue;
+      if(rel.Evaluate(val)) rval++;
+      got = true;
+    }
+  }
+  return got ? (float)rval : nan;
+}
+
+float taMath_float::vec_median(const float_Matrix* vec) {
+  if(!vec_check_type_nonempty(vec)) return nan;
+  float_Array tmp(false);
+  TA_FOREACH_INDEX(i, *vec) {
+    float val = vec->FastEl_Flat(i);
+    if(isnan(val)) continue;
+    tmp.Add(val);
+  }
+  if(tmp.size == 0)
+    return nan;
+  tmp.Sort();
+  int idx = tmp.size / 2;
+  return tmp[idx];
+}
+
+float taMath_float::vec_mode(const float_Matrix* vec) {
+  if(!vec_check_type_nonempty(vec)) return nan;
+  float_Array tmp(false);
+  TA_FOREACH_INDEX(i, *vec) {
+    float val = vec->FastEl_Flat(i);
+    if(isnan(val)) continue;
+    tmp.Add(val);
+  }
+  if(tmp.size == 0)
+    return nan;
+  tmp.Sort();
+  int mx_frq = 0;
+  float mode = 0.0;
+  int idx = 0;
+  while(idx < tmp.size) {
+    float val = tmp[idx];
+    int st_idx = idx;
+    while((idx < tmp.size-1) && (val == tmp[++idx]));
+    int frq = idx - st_idx;
+    if(idx == tmp.size-1) {
+      if(tmp[tmp.size-1] == val) frq++;
+      idx++;
+    }
+    if(frq > mx_frq) {
+      mx_frq = frq;
+      mode = val;
+    }
+  }
+  return mode;
+}
+
+float taMath_float::vec_quantile(const float_Matrix* vec, float quant_pos) {
+  if(!vec_check_type_nonempty(vec)) return nan;
+  float_Array tmp(false);
+  TA_FOREACH_INDEX(i, *vec) {
+    float val = vec->FastEl_Flat(i);
+    if(isnan(val)) continue;
+    tmp.Add(val);
+  }
+  if(tmp.size == 0)
+    return nan;
+  tmp.Sort();
+  int idx = (int)(quant_pos * (float)tmp.size);
+  if(idx >= tmp.size) idx = tmp.size-1;
+  if(idx < 0) idx = 0;
+  return tmp[idx];
+}
+
+
+//              END OF NAN Aggregate zone!
+///////////////////////////////////////////////////////////////////////////
+
 
 void taMath_float::vec_histogram
 (float_Matrix* vec, const float_Matrix* oth, float bin_size, float min_val, float max_val,
@@ -1324,96 +1800,9 @@ void taMath_float::vec_histogram_bins(float_Matrix* vec, const float_Matrix* oth
   vec->Add(max_v+bin_size);
 }
 
-float taMath_float::vec_count(const float_Matrix* vec, Relation& rel) {
-  if(!vec_check_type(vec)) return 0.0;
-  Relation tmp_rel;
-  rel.CacheVar(tmp_rel);
-  float rval = 0.0;
-  if(vec->ElView()) {
-    TA_FOREACH_INDEX(i, *vec) {
-      if(tmp_rel.Evaluate(vec->FastEl_Flat(i))) rval += 1.0;
-    }
-  }
-  else {
-    for(int i=0; i<vec->size; i++) {
-      if(tmp_rel.Evaluate(vec->FastEl_Flat(i))) rval += 1.0;
-    }
-  }
-  return rval;
-}
-
-float taMath_float::vec_percent(const float_Matrix* vec, Relation& rel) {
-  if(!vec_check_type(vec)) return 0.0;
-  Relation tmp_rel;
-  rel.CacheVar(tmp_rel);
-  float rval = 0.0;
-  if(vec->ElView()) {
-    TA_FOREACH_INDEX(i, *vec) {
-      if(tmp_rel.Evaluate(vec->FastEl_Flat(i))) rval += 1.0;
-    }
-    float denom = (float)vec->IterCount();
-    if(denom > 0.0)
-      rval /= denom;
-  }
-  else {
-    for(int i=0; i<vec->size; i++) {
-      if(tmp_rel.Evaluate(vec->FastEl_Flat(i))) rval += 1.0;
-    }
-    if(vec->size > 0)
-      rval /= (float)vec->size;
-  }
-  return rval;
-}
-
-float taMath_float::vec_count_float(const float_Matrix* vec, RelationFloat& rel) {
-  if(!vec_check_type(vec)) return 0.0;
-  // RelationFloat tmp_rel;
-  // rel.CacheVar(tmp_rel);
-  float rval = 0.0;
-  if(vec->ElView()) {
-    TA_FOREACH_INDEX(i, *vec) {
-      if(rel.Evaluate(vec->FastEl_Flat(i))) rval += 1.0;
-    }
-  }
-  else {
-    for(int i=0; i<vec->size; i++) {
-      if(rel.Evaluate(vec->FastEl_Flat(i))) rval += 1.0;
-    }
-  }
-  return rval;
-}
-
-float taMath_float::vec_median(const float_Matrix* vec) {
-  if(!vec_check_type(vec)) return 0.0;
-  if(vec->size == 0) return 0.0;
-  float_Array tmp;
-  tmp.SetSize(vec->IterCount());
-  TA_FOREACH_INDEX(i, *vec) {
-    tmp[FOREACH_itr.count] = vec->FastEl_Flat(i);
-  }
-  tmp.Sort();
-  int idx = tmp.size / 2;
-  return tmp[idx];
-}
-
-float taMath_float::vec_quantile(const float_Matrix* vec, float quant_pos) {
-  if(!vec_check_type(vec)) return 0.0;
-  if(vec->size == 0) return 0.0;
-  float_Array tmp;
-  tmp.SetSize(vec->IterCount());
-  TA_FOREACH_INDEX(i, *vec) {
-    tmp[FOREACH_itr.count] = vec->FastEl_Flat(i);
-  }
-  tmp.Sort();
-  int idx = (int)(quant_pos * (float)tmp.size);
-  if(idx >= tmp.size) idx = tmp.size-1;
-  if(idx < 0) idx = 0;
-  return tmp[idx];
-}
-
 float taMath_float::vec_kwta(float_Matrix* vec, int k, bool descending) {
-  if(!vec_check_type(vec)) return 0.0f;
-  if(vec->size == 0) return 0.0f;
+  if(!vec_check_type(vec)) return 0.0;
+  if(vec->size == 0) return 0.0;
   int_Array act_idx;
   // first fill act buff and get k for first items in list
   act_idx.SetSize(k);
@@ -1542,12 +1931,12 @@ void taMath_float::vec_kwta_avg(float& top_k_avg, float& bot_k_avg,
     }
   }
 
-  float topsum = 0.0f;
+  float topsum = 0.0;
   for(int j=0; j < k; j++) {
     float val = vec->FastEl_Flat(act_idx[j]);
     topsum += val;
   }
-  float botsum = 0.0f;
+  float botsum = 0.0;
   for(int j=0; j < inact_idx.size; j++) {
     float val = vec->FastEl_Flat(inact_idx[j]);
     botsum += val;
@@ -1555,35 +1944,6 @@ void taMath_float::vec_kwta_avg(float& top_k_avg, float& bot_k_avg,
 
   top_k_avg = topsum / (float)k;
   bot_k_avg = botsum / (float)(vec->size - k);
-}
-
-float taMath_float::vec_mode(const float_Matrix* vec) {
-  if(!vec_check_type(vec)) return 0.0f;
-  if(vec->size == 0) return 0.0f;
-  float_Array tmp(false);
-  tmp.SetSize(vec->IterCount());
-  TA_FOREACH_INDEX(i, *vec) {
-    tmp[FOREACH_itr.count] = vec->FastEl_Flat(i);
-  }
-  tmp.Sort();
-  int mx_frq = 0;
-  float mode = 0.0f;
-  int idx = 0;
-  while(idx < tmp.size) {
-    float val = tmp[idx];
-    int st_idx = idx;
-    while((idx < tmp.size-1) && (val == tmp[++idx]));
-    int frq = idx - st_idx;
-    if(idx == tmp.size-1) {
-      if(tmp[tmp.size-1] == val) frq++;
-      idx++;
-    }
-    if(frq > mx_frq) {
-      mx_frq = frq;
-      mode = val;
-    }
-  }
-  return mode;
 }
 
 void taMath_float::vec_sort(float_Matrix* vec, bool descending) {
@@ -1596,7 +1956,7 @@ String taMath_float::vec_stats(const float_Matrix* vec) {
   if(!vec_check_type(vec)) return "";
   String rval;
   int idx;
-  rval += "n=" + String(vec->IterCount()) + "; ";
+  rval += "n=" + String(vec_n(vec)) + "; ";
   rval += "min=" + String(vec_min(vec, idx)) + "; ";
   rval += "max=" + String(vec_max(vec, idx)) + "; ";
   float mean = vec_mean(vec);
@@ -1623,7 +1983,7 @@ int taMath_float::vec_prob_choose(float_Matrix* vec, int thr_no) {
 
 float taMath_float::vec_dprime(const float_Matrix* signal_vec,
     const float_Matrix* noise_vec) {
-  if(!vec_check_type(signal_vec) || !vec_check_type(noise_vec)) return 0.0f;
+  if(!vec_check_type(signal_vec) || !vec_check_type(noise_vec)) return 0.0;
   float mean_signal = vec_mean(signal_vec);
   float stdev_signal = vec_std_dev(signal_vec, mean_signal, true);
   float mean_noise = vec_mean(noise_vec);
@@ -1660,7 +2020,7 @@ bool taMath_float::vec_jitter_gauss(float_Matrix* vec, float stdev, int thr_no) 
 
   for(int i=0;i<vec_size;i++) {
     el = vec->FastEl_Flat(i);
-    if(el == 0.0f)
+    if(el == 0.0)
       zeroes += 1;
     tmp[i] = el;
   }
@@ -1676,7 +2036,7 @@ bool taMath_float::vec_jitter_gauss(float_Matrix* vec, float stdev, int thr_no) 
     el = tmp[i];
     if(el != 0) {
       while (new_index < 0 || new_index > vec_size) {
-        jitter = int(Random::Gauss(stdev, thr_no)+0.5f);
+        jitter = int(Random::Gauss(stdev, thr_no)+0.5);
         new_index = jitter+i;
         if (vec->FastEl_Flat(new_index) != 0)
           new_index = -1;
@@ -1706,7 +2066,7 @@ float taMath_float::vec_ss_dist(const float_Matrix* vec, const float_Matrix* oth
   }
   if(norm) {
     float dist = vec_ss_len(vec) + vec_ss_len(oth);
-    if(dist != 0.0f)
+    if(dist != 0.0)
       rval /= dist;
   }
   return rval;
@@ -1739,7 +2099,7 @@ float taMath_float::vec_hamming_dist(const float_Matrix* vec, const float_Matrix
   }
   if(norm) {
     float dist = alen + blen;
-    if(dist != 0.0f)
+    if(dist != 0.0)
       rval /= dist;
   }
   return rval;
@@ -1773,7 +2133,7 @@ float taMath_float::vec_correl(const float_Matrix* vec, const float_Matrix* oth)
     oth_var += oth_val * oth_val;
   }
   float var_prod = sqrt(my_var * oth_var);
-  if(var_prod != 0.0f)
+  if(var_prod != 0.0)
     return rval / var_prod;
   else
     return 0.0;
@@ -1801,20 +2161,20 @@ float taMath_float::vec_inner_prod(const float_Matrix* vec, const float_Matrix* 
   }
   if(norm) {
     float dist = sqrt(vec_ss_len(vec) * vec_ss_len(oth));
-    if(dist != 0.0f)
+    if(dist != 0.0)
       rval /= dist;
   }
   return rval;
 }
 
 float taMath_float::vec_cross_entropy(const float_Matrix* vec, const float_Matrix* oth) {
-  if(!vec_check_same_size(vec, oth)) return -1.0f;
-  float rval = 0.0f;
+  if(!vec_check_same_size(vec, oth)) return -1.0;
+  float rval = 0.0;
   TA_FOREACH_INDEX_TWO(ai, *vec, bi, *oth) {
     if(FOREACH_itr_b.Done()) bi = oth->IterFirstIndex(FOREACH_itr_b); // start over
     float p = vec->FastEl_Flat(ai);
     float q = oth->FastEl_Flat(bi);
-    q = max(q,0.000001f); q = max(q,0.999999f);
+    q = max(q,0.000001); q = max(q,0.999999);
     if(p >= 1.0)
       rval += -log(q);
     else if(p <= 0.0)
@@ -1855,24 +2215,24 @@ float taMath_float::scalar_dist(float v1, float v2,
   case SUM_SQUARES:
   case COVAR:
     rval = (v1 - v2);
-    if(fabs(rval) < tolerance) rval = 0.0f;
+    if(fabs(rval) < tolerance) rval = 0.0;
     else rval *= rval;
     break;
   case EUCLIDIAN:
   case CORREL:
     rval = (v1 - v2);
-    if(fabs(rval) < tolerance) rval = 0.0f;
+    if(fabs(rval) < tolerance) rval = 0.0;
     else rval = sqrt(rval * rval);
     break;
   case HAMMING:
     rval = fabs(v1 - v2);
-    if(rval < tolerance) rval = 0.0f;
+    if(rval < tolerance) rval = 0.0;
     break;
   case INNER_PROD:
     rval = v1 * v2;
     break;
   case CROSS_ENTROPY: {
-    float q = max(v2,0.000001f); q = max(q,0.999999f);
+    float q = max(v2,0.000001); q = max(q,0.999999);
     if(v1 >= 1.0)
       rval = -log(q);
     else if(v1 <= 0.0)
@@ -1889,37 +2249,37 @@ float taMath_float::scalar_dist(float v1, float v2,
 // Normalization
 
 float taMath_float::vec_norm_len(float_Matrix* vec, float len) {
-  if(!vec_check_type(vec)) return 0.0f;
+  if(!vec_check_type(vec)) return 0.0;
   if(vec->size == 0)    return 0.0;
   float scale = (len * len) / vec_ss_len(vec);
   if(vec->ElView()) {
     TA_FOREACH_INDEX(i, *vec) {
       float val = vec->FastEl_Flat(i);
       float mag = (val * val) * scale;
-      vec->FastEl_Flat(i) = (val >= 0.0f) ? mag : -mag;
+      vec->FastEl_Flat(i) = (val >= 0.0) ? mag : -mag;
     }
   }
   else {
     for(int i=0; i<vec->size; i++) {
       float val = vec->FastEl_Flat(i);
       float mag = (val * val) * scale;
-      vec->FastEl_Flat(i) = (val >= 0.0f) ? mag : -mag;
+      vec->FastEl_Flat(i) = (val >= 0.0) ? mag : -mag;
     }
   }
   return scale;
 }
 
 float taMath_float::vec_norm_sum(float_Matrix* vec, float sum, float min_val) {
-  if(!vec_check_type(vec)) return 0.0f;
+  if(!vec_check_type(vec)) return 0.0;
   if(vec->size == 0)    return 0.0;
   float act_sum = 0.0;
   float scale;
   if(vec->ElView()) {
-    if(min_val == 0.0f) {
+    if(min_val == 0.0) {
       TA_FOREACH_INDEX(i, *vec) {
         act_sum += vec->FastEl_Flat(i);
       }
-      if(act_sum == 0.0f) return 0.0;
+      if(act_sum == 0.0) return 0.0;
       scale = (sum / act_sum);
       TA_FOREACH_INDEX(i, *vec) {
         vec->FastEl_Flat(i) = vec->FastEl_Flat(i) * scale;
@@ -1929,7 +2289,7 @@ float taMath_float::vec_norm_sum(float_Matrix* vec, float sum, float min_val) {
       TA_FOREACH_INDEX(i, *vec) {
         act_sum += (vec->FastEl_Flat(i) - min_val);
       }
-      if(act_sum == 0.0f) return 0.0;
+      if(act_sum == 0.0) return 0.0;
       scale = (sum / act_sum);
       TA_FOREACH_INDEX(i, *vec) {
         vec->FastEl_Flat(i) = ((vec->FastEl_Flat(i) - min_val) * scale) + min_val;
@@ -1942,7 +2302,7 @@ float taMath_float::vec_norm_sum(float_Matrix* vec, float sum, float min_val) {
 #ifdef USE_SSE8
     const int psz = 8 * (sz / 8);
 #endif
-    if(min_val == 0.0f) {
+    if(min_val == 0.0) {
 #ifdef USE_SSE8
       int i;
       for(i=0; i<psz; i+=8) {
@@ -1952,7 +2312,7 @@ float taMath_float::vec_norm_sum(float_Matrix* vec, float sum, float min_val) {
       for(; i<sz; i++) {
         act_sum += vecel[i];
       }
-      if(act_sum == 0.0f) return 0.0f;
+      if(act_sum == 0.0) return 0.0;
       scale = (sum / act_sum);
       Vec8f sc(scale);
       for(i=0; i<psz; i+=8) {
@@ -1967,7 +2327,7 @@ float taMath_float::vec_norm_sum(float_Matrix* vec, float sum, float min_val) {
       for(int i=0; i<sz; i++) {
         act_sum += vecel[i];
       }
-      if(act_sum == 0.0f) return 0.0;
+      if(act_sum == 0.0) return 0.0;
       scale = (sum / act_sum);
       for(int i=0; i<sz; i++) {
         vecel[i] *= scale;
@@ -1986,7 +2346,7 @@ float taMath_float::vec_norm_sum(float_Matrix* vec, float sum, float min_val) {
       for(; i<sz; i++) {
         act_sum += (vecel[i] - min_val);
       }
-      if(act_sum == 0.0f) return 0.0;
+      if(act_sum == 0.0) return 0.0;
       scale = (sum / act_sum);
       Vec8f sc(scale);
       for(i=0; i<psz; i+=8) {
@@ -2001,7 +2361,7 @@ float taMath_float::vec_norm_sum(float_Matrix* vec, float sum, float min_val) {
       for(int i=0; i<sz; i++) {
         act_sum += (vec->FastEl_Flat(i) - min_val);
       }
-      if(act_sum == 0.0f) return 0.0;
+      if(act_sum == 0.0) return 0.0;
       scale = (sum / act_sum);
       for(int i=0; i<sz; i++) {
         vecel[i] = ((vecel[i] - min_val) * scale) + min_val;
@@ -2031,7 +2391,7 @@ float taMath_float::vec_norm_mean(float_Matrix* vec, float trg_mean) {
 }
 
 float taMath_float::vec_norm_max(float_Matrix* vec, float max) {
-  if(!vec_check_type(vec)) return 0.0f;
+  if(!vec_check_type(vec)) return 0.0;
   if(vec->size == 0)    return 0.0;
   int idx;
   float cur_max = vec_max(vec, idx);
@@ -2051,7 +2411,7 @@ float taMath_float::vec_norm_max(float_Matrix* vec, float max) {
 }
 
 float taMath_float::vec_norm_abs_max(float_Matrix* vec, float max) {
-  if(!vec_check_type(vec)) return 0.0f;
+  if(!vec_check_type(vec)) return 0.0;
   if(vec->size == 0)    return 0.0;
   int idx;
   float cur_max = vec_abs_max(vec, idx);
@@ -2164,65 +2524,6 @@ int taMath_float::vec_replace(float_Matrix* vec, float find1, float repl1,
     if(do6 && vl == find6) { vec->FastEl_Flat(i) = repl6; rval++; }
   }
   return rval;
-}
-
-float taMath_float::vec_aggregate(const float_Matrix* vec, Aggregate& agg) {
-  if(!vec_check_type(vec)) return 0.0f;
-  int idx;
-  switch(agg.op) {
-  case Aggregate::GROUP:
-    return taMath_float::vec_first(vec); // same as first
-  case Aggregate::FIRST:
-    return taMath_float::vec_first(vec);
-  case Aggregate::LAST:
-    return taMath_float::vec_last(vec);
-  case Aggregate::FIND_FIRST:
-    return (float)taMath_float::vec_find_first(vec, agg.rel);
-  case Aggregate::FIND_LAST:
-    return (float)taMath_float::vec_find_last(vec, agg.rel);
-  case Aggregate::MIN:
-    return taMath_float::vec_min(vec, idx);
-  case Aggregate::MAX:
-    return taMath_float::vec_max(vec, idx);
-  case Aggregate::ABS_MIN:
-    return taMath_float::vec_abs_min(vec, idx);
-  case Aggregate::ABS_MAX:
-    return taMath_float::vec_abs_max(vec, idx);
-  case Aggregate::SUM:
-    return taMath_float::vec_sum(vec);
-  case Aggregate::PROD:
-    return taMath_float::vec_prod(vec);
-  case Aggregate::MEAN:
-    return taMath_float::vec_mean(vec);
-  case Aggregate::VAR:
-    return taMath_float::vec_var(vec);
-  case Aggregate::SS:
-    return taMath_float::vec_ss_mean(vec);
-  case Aggregate::STDEV:
-    return taMath_float::vec_std_dev(vec);
-  case Aggregate::SEM:
-    return taMath_float::vec_sem(vec);
-  case Aggregate::N:
-    return (float)vec->IterCount();
-  case Aggregate::COUNT:
-    return taMath_float::vec_count(vec, agg.rel);
-  case Aggregate::PERCENT:
-    return taMath_float::vec_percent(vec, agg.rel);
-  case Aggregate::MEDIAN:
-    return taMath_float::vec_median(vec);
-  case Aggregate::MODE:
-    return taMath_float::vec_mode(vec);
-  case Aggregate::QUANTILE: {
-    float relval = agg.rel.val;
-    if(agg.rel.use_var && (bool)agg.rel.var) {
-      relval = agg.rel.var->GetVar().toDouble();
-    }
-    return taMath_float::vec_quantile(vec, relval);
-  }
-  case Aggregate::NONE:
-    return 0.0;
-  }
-  return 0.0;
 }
 
 
@@ -2401,7 +2702,7 @@ bool taMath_float::vec_kern2d_gauss(float_Matrix* kernel, int sz_x, int sz_y,
     float y = ((float)yi - ctr_y) / eff_sig_y;
     for(int xi=0; xi < sz_x; xi++) {
       float x = ((float)xi - ctr_y) / eff_sig_x;
-      float gv = exp(-(x*x + y*y)/2.0f);
+      float gv = exp(-(x*x + y*y)/2.0);
       kernel->FastEl2d(xi, yi) = gv;
     }
   }
@@ -3277,7 +3578,7 @@ bool taMath_float::mat_prjn(float_Matrix* prjn_vec, const float_Matrix* src_mat,
 
 bool taMath_float::mat_time_avg(float_Matrix* a, float avg_dt) {
   if(!vec_check_type(a)) return false;
-  if(avg_dt < 0.0f || avg_dt > 1.0f) {
+  if(avg_dt < 0.0 || avg_dt > 1.0) {
     taMisc::Error("*** mat_time_avg: avg_dt is not in 0..1 range:", String(avg_dt));
     return false;
   }
@@ -3473,7 +3774,7 @@ bool taMath_float::mat_frame_sum(float_Matrix* out_mat, const float_Matrix* in_m
   int frn = in_mat->Frames();
   int frs = in_mat->FrameSize();
   for(int i=0;i<frs;i++) {
-    float sum = 0.0f;
+    float sum = 0.0;
     for(int j=0;j<frn;j++) {
       int fsi = in_mat->FrameStartIdx(j);
       sum += in_mat->FastEl_Flat(fsi + i);
@@ -3501,7 +3802,7 @@ bool taMath_float::mat_frame_prod(float_Matrix* out_mat, const float_Matrix* in_
 
 bool taMath_float::mat_frame_mean(float_Matrix* out_mat, const float_Matrix* in_mat) {
   if(!mat_frame_sum(out_mat, in_mat)) return false;
-  float nrm = 1.0f / (float)(MAX(in_mat->Frames(),1));
+  float nrm = 1.0 / (float)(MAX(in_mat->Frames(),1));
   int frs = in_mat->FrameSize();
   for(int i=0;i<frs;i++) {
     out_mat->FastEl_Flat(i) *= nrm;
@@ -3515,13 +3816,13 @@ bool taMath_float::mat_frame_var(float_Matrix* out_mat, const float_Matrix* in_m
   int frs = in_mat->FrameSize();
   float nrm = 1.0 / ((float)frn - (float)use_est);
   for(int i=0;i<frs;i++) {
-    float mean = 0.0f;
+    float mean = 0.0;
     for(int j=0;j<frn;j++) {
       int fsi = in_mat->FrameStartIdx(j);
       mean += in_mat->FastEl_Flat(fsi + i);
     }
     mean /= (float)frn;
-    float var = 0.0f;
+    float var = 0.0;
     for(int j=0;j<frn;j++) {
       int fsi = in_mat->FrameStartIdx(j);
       float dm = (in_mat->FastEl_Flat(fsi + i) - mean);
@@ -3556,7 +3857,7 @@ bool taMath_float::mat_frame_ss_len(float_Matrix* out_mat, const float_Matrix* i
   int frn = in_mat->Frames();
   int frs = in_mat->FrameSize();
   for(int i=0;i<frs;i++) {
-    float sum = 0.0f;
+    float sum = 0.0;
     for(int j=0;j<frn;j++) {
       int fsi = in_mat->FrameStartIdx(j);
       sum += in_mat->FastEl_Flat(fsi + i) * in_mat->FastEl_Flat(fsi + i);
@@ -3571,8 +3872,8 @@ bool taMath_float::mat_frame_ss_mean(float_Matrix* out_mat, const float_Matrix* 
   int frn = in_mat->Frames();
   int frs = in_mat->FrameSize();
   for(int i=0;i<frs;i++) {
-    float sumsqr = 0.0f;
-    float sum = 0.0f;
+    float sumsqr = 0.0;
+    float sum = 0.0;
     for(int j=0;j<frn;j++) {
       int fsi = in_mat->FrameStartIdx(j);
       sumsqr += in_mat->FastEl_Flat(fsi + i) * in_mat->FastEl_Flat(fsi + i);
@@ -3591,7 +3892,7 @@ bool taMath_float::mat_frame_count(float_Matrix* out_mat, const float_Matrix* in
   int frn = in_mat->Frames();
   int frs = in_mat->FrameSize();
   for(int i=0;i<frs;i++) {
-    float sum = 0.0f;
+    float sum = 0.0;
     for(int j=0;j<frn;j++) {
       int fsi = in_mat->FrameStartIdx(j);
       if(tmp_rel.Evaluate(in_mat->FastEl_Flat(fsi + i))) sum += 1.0;
@@ -3609,7 +3910,7 @@ bool taMath_float::mat_frame_percent(float_Matrix* out_mat, const float_Matrix* 
   int frn = in_mat->Frames();
   int frs = in_mat->FrameSize();
   for(int i=0;i<frs;i++) {
-    float sum = 0.0f;
+    float sum = 0.0;
     for(int j=0;j<frn;j++) {
       int fsi = in_mat->FrameStartIdx(j);
       if(tmp_rel.Evaluate(in_mat->FastEl_Flat(fsi + i))) sum += 1.0;
@@ -3672,7 +3973,7 @@ bool taMath_float::mat_frame_mode(float_Matrix* out_mat, const float_Matrix* in_
     }
     tmp.Sort();
     int mx_frq = 0;
-    float mode = 0.0f;
+    float mode = 0.0;
     int idx = 0;
     while(idx < tmp.size) {
       float val = tmp[idx];

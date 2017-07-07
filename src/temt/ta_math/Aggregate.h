@@ -62,7 +62,7 @@ public:
 #endif
 
   Operator      op;             // how to aggregate over the network
-  Relation      rel;            // #CONDSHOW_ON_op:COUNT,PERCENT,FIND_FIRST,FIND_LAST,QUANTILE,VAR,STDEV parameters for the COUNT, PERCENT, FIND_xxx, and QUANTILE operators
+  Relation      rel;            // #CONDSHOW_ON_op:COUNT,PERCENT,FIND_FIRST,FIND_LAST,QUANTILE parameters for the COUNT, PERCENT, FIND_xxx, and QUANTILE operators
 
   virtual String GetAggName() const;  // get string representation of aggregation opr
   virtual ValType MinValType() const; // minimum value type that aggregation operator can operate on (VT_INT = any kind of numeric data, VT_STRING = even non-numeric is ok (GROUP, FIRST, LAST)

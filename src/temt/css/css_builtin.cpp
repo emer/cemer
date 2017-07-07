@@ -1830,6 +1830,9 @@ static void Install_Math() {
   cssConstReal_inst_nm(cssMisc::Constants, INT_MIN,             "INT_MIN");
   cssConstReal_inst_nm(cssMisc::Constants, LONG_MAX,            "LONG_MAX");
   cssConstReal_inst_nm(cssMisc::Constants, LONG_MIN,            "LONG_MIN");
+
+  cssMisc::Constants.Push(new cssConstReal(taMath_double::nan, "NAN"));
+  cssMisc::Constants.Push(new cssConstReal(taMath_double::nan, "nan"));
 }
 
 

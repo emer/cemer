@@ -92,8 +92,8 @@ public:
   bool                 select_rows;	// #CONDSHOW_ON_data_agg whether to select specific rows of data from the data_src data table to operate on
   DataSelectEl         select_spec;	// #CONDSHOW_ON_select_rows #NO_AUTO_NAME optional selection of rows to perform aggregation on according to the value of items in given column -- for more complex selections and/or greater efficiency, use DataSelectRowsProg to create intermediate data table and operate on that
 
-  DataColSpec_List      val_specs;	// #TREE_HIDDEN #NO_SAVE specs of the values being monitored
-  DataColSpec_List      agg_specs;	// #TREE_HIDDEN #NO_SAVE specs of the agg values -- these are the matrix values whereas the val_specs contain the agg'd scalar values
+  DataColSpec_List      val_specs;	// #TREE_HIDDEN #HIDDEN #NO_SAVE specs of the values being monitored
+  DataColSpec_List      agg_specs;	// #TREE_HIDDEN #HIDDEN #NO_SAVE specs of the agg values -- these are the matrix values whereas the val_specs contain the agg'd scalar values
   MemberSpace           members;	// #IGNORE memberdefs
   voidptr_Array         ptrs;     	// #HIDDEN #NO_SAVE actual ptrs to values
 
