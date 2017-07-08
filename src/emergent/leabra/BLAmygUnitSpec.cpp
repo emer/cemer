@@ -80,13 +80,18 @@ void BLAmygUnitSpec::Compute_DeepMod(LeabraUnitVars* u, LeabraNetwork* net, int 
   // else if(lay->am_deep_mod_net.max <= deep.mod_thr) { // not enough yet
   else if(u->deep_mod_net <= deep.mod_thr) { // per-unit, NOT layer
     u->deep_lrn = 0.0f;    // default is 0!
-    u->deep_mod = 1.0f;
+    if(deep_mod_zero) {
+      u->deep_mod = 0.0f; // makes activity dependent on deep_mod_net
+    }
+    else {
+      u->deep_mod = 1.0f;
+    }
   }
   else {
     u->deep_lrn = u->deep_mod_net / lay->am_deep_mod_net.max;
     u->deep_mod = 1.0f;
   }
-
+  
   if(bla_ach_mod.on) {          // use deep mod to reflect ach modulation
     u->deep_mod = bla_ach_mod.mod_min + bla_ach_mod.mod_min_c * u->ach;
   }

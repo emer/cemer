@@ -33,6 +33,13 @@ public:
   float         dalr_gain;      // #DEF_1 gain multiplier on abs(da) learning rate multiplier
   float         dalr_base;      // #DEF_0 constant baseline amount of learning prior to abs(da) factor -- should be near zero otherwise offsets in activation will drive learning in the absence of da significance
   
+  float         da_lrn_thr;     // #DEF_0.02 minimum threshold for phasic abs(da) signals to count as non-zero;  useful to screen out spurious da signals due to tiny VSPatch-to-LHb signals on t2 & t4 timesteps that can accumulate over many trials - 0.02f seems to work okay
+  float         act_delta_thr; // minimum threshold for delta activation to count as non-zero;  useful to screen out spurious learning due to unintended delta activity - 0.05f seems to work okay for acquisition guys, 0.02 for extinction guys
+  
+  bool          deep_lrn_mod; // #DEF_true if true, recv unit deep_lrn value modulates learning
+  
+  float         deep_lrn_thr; // #CONDSHOW_ON_deep_lrn_mod #DEF_0.05 only ru->deep_lrn values > this get to learn - 0.05f seems to work okay
+  
   String       GetTypeDecoKey() const override { return "ConSpec"; }
 
   TA_SIMPLE_BASEFUNS(BLAmygLearnSpec);
@@ -56,8 +63,12 @@ public:
 
   inline void C_Compute_dWt_BLA_Delta
     (float& dwt, const float su_act, const float ru_act, const float ru_act_prv,
-     const float da_p, const float lrate_eff, const float wt) {
-    float delta = lrate_eff * su_act * (ru_act - ru_act_prv);
+    const float da_p, const float lrate_eff, const float wt) {
+      
+    float ru_act_delta = ru_act - ru_act_prv;
+    if(fabsf(ru_act_delta) < bla_learn.act_delta_thr) { ru_act_delta = 0.0f; }
+    float delta = lrate_eff * su_act * (ru_act_delta);
+    //float delta = lrate_eff * su_act * (ru_act - ru_act_prv); // original version
     float da_lrate = bla_learn.dalr_base + bla_learn.dalr_gain * fabsf(da_p);
     dwt += da_lrate * delta;
   }
@@ -83,7 +94,25 @@ public:
     
     for(int i=0; i<sz; i++) {
       LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i, net);
-      C_Compute_dWt_BLA_Delta(dwts[i], su_act, ru->act_eq, ru->act_q0, ru->da_p, clrate,
+      
+      // learning dependent on non-zero deep_lrn
+      if(bla_learn.deep_lrn_mod) {
+        //clrate *= (bg_lrate + fg_lrate * ru->deep_lrn);
+        float eff_deep_lrn = 0.0f;
+        if(ru->deep_lrn > bla_learn.deep_lrn_thr) {
+          eff_deep_lrn = 1.0f;
+        }
+        else {
+          eff_deep_lrn = 0.0f;
+        }
+        clrate *= eff_deep_lrn;
+        }
+      
+      // screen out spurious da signals due to tiny VSPatch-to-LHb signals on t2 & t4 trials
+      float ru_da_p = ru->da_p;
+      if(fabsf(ru_da_p) < bla_learn.da_lrn_thr) { ru_da_p = 0.0f; }
+      
+      C_Compute_dWt_BLA_Delta(dwts[i], su_act, ru->act_eq, ru->act_q0, ru_da_p, clrate,
                               wts[i] / scales[i]);
     }
   }

@@ -78,6 +78,9 @@ public:
   DAReceptor    dar;            // type of predominant dopamine receptor: D1 vs. D2 -- determines whether primarily appetitive / relief (D1) or aversive / disappointment (D2)
   BLAmygDaMod   bla_da_mod;     // extra parameters for dopamine modulation of activation for BLA amyg units
   BLAmygAChMod  bla_ach_mod;   // ach modulation of activation for BLA amyg units
+  
+  bool          deep_mod_zero;  // for unit group-based extinction-coding layers; modulation coming from the corresponding BLA acquisition layer via deep_mod_net -- when this modulation signal is below deep.mod_thr, does it have the ability to zero out the extinction activations?  i.e., is the modulation required to enable extinction firing?
+  
 
   float Compute_DaModNetin(LeabraUnitVars* uv, LeabraNetwork* net,
                            int thr_no, float& net_syn) override;

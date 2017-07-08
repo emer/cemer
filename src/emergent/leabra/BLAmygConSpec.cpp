@@ -26,6 +26,10 @@ void BLAmygLearnSpec::Initialize() {
 void BLAmygLearnSpec::Defaults_init() {
   dalr_gain = 1.0f;
   dalr_base = 0.0f;
+  da_lrn_thr = 0.02f;
+  act_delta_thr = 0.05f;
+  deep_lrn_mod = true;
+  deep_lrn_thr = 0.05f;
 }
 
 void BLAmygConSpec::Initialize() {

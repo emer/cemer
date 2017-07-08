@@ -289,6 +289,7 @@ public:
     }
     
     float eff_ru_act = fmaxf(ru_act, fminf(deep_mod_net, trace.max_vs_deep_mod));
+    
     ntr = trace.MsnActLrnFactor(eff_ru_act) * su_act;
     
     float decay_factor = fabs(ntr); // decay is function of new trace

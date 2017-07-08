@@ -33,6 +33,11 @@ public:
   float         dalr_gain;      // #DEF_1 gain multiplier on abs(da) learning rate multiplier
   float         dalr_base;      // #DEF_0 constant baseline amount of learning prior to abs(da) factor -- should be near zero otherwise offsets in activation will drive learning in the absence of da significance
   
+  // NEW GUYS
+  float         da_lrn_thr;    // #DEF_0.02 minimum threshold for phasic abs(da) signals to count as non-zero;  useful to screen out spurious da signals due to tiny VSPatch-to-LHb signals on t2 & t4 timesteps that can accumulate over many trials - 0.02f seems to work okay
+  float         act_delta_thr; // #DEF_0.02 minimum threshold for delta activation to count as non-zero;  useful to screen out spurious learning due to unintended delta activity - 0.02f seems to work okay for both acquisition and extinction guys
+  // END NEW GUYS
+  
   String       GetTypeDecoKey() const override { return "ConSpec"; }
 
   TA_SIMPLE_BASEFUNS(CElAmygLearnSpec);
@@ -57,7 +62,11 @@ public:
   inline void C_Compute_dWt_CEl_Delta
     (float& dwt, const float su_act, const float ru_act, const float ru_act_prv,
      const float da_p, const float lrate_eff) {
-    float delta = lrate_eff * su_act * (ru_act - ru_act_prv);
+    
+    float ru_act_delta = ru_act - ru_act_prv;
+    if(fabsf(ru_act_delta) < cel_learn.act_delta_thr) { ru_act_delta = 0.0f; }
+    float delta = lrate_eff * su_act * (ru_act_delta);
+    //float delta = lrate_eff * su_act * (ru_act - ru_act_prv); // original version
     float da_lrate = cel_learn.dalr_base + cel_learn.dalr_gain * fabsf(da_p);
     dwt += da_lrate * delta;
   }
@@ -84,7 +93,12 @@ public:
     
     for(int i=0; i<sz; i++) {
       LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i, net);
-      C_Compute_dWt_CEl_Delta(dwts[i], su_act, ru->act_eq, ru->act_q0, ru->da_p, clrate);
+      
+      // screen out spurious da signals due to tiny VSPatch-to-LHb signals on t2 & t4 timesteps
+      float ru_da_p = ru->da_p;
+      if(fabsf(ru_da_p) < cel_learn.da_lrn_thr) { ru_da_p = 0.0f; }
+      //C_Compute_dWt_CEl_Delta(dwts[i], su_act, ru->act_eq, ru->act_q0, ru->da_p, clrate);
+      C_Compute_dWt_CEl_Delta(dwts[i], su_act, ru->act_eq, ru->act_q0, ru_da_p, clrate);
     }
   }
 
