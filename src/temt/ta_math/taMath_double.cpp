@@ -56,7 +56,11 @@ TA_BASEFUNS_CTORS_DEFN(taMath_double);
 
 using namespace std;
 
+#ifdef TA_OS_MAC
 double taMath_double::nan = std::nan("");
+#else
+double taMath_double::nan = NAN;
+#endif
 
 bool taMath_double::isnan(double val) {
 #ifdef TA_OS_WIN

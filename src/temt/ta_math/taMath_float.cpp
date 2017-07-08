@@ -66,7 +66,7 @@ TA_BASEFUNS_CTORS_DEFN(taMath_float);
 #ifdef TA_OS_MAC
 float taMath_float::nan = std::nanf("");
 #else
-float taMath_float::nan = (float)std::nan("");
+float taMath_float::nan = NAN;
 #endif
 
 bool taMath_float::isnan(float val) {
