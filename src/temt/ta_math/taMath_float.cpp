@@ -63,7 +63,7 @@
 TA_BASEFUNS_CTORS_DEFN(taMath_float);
 
 
-float taMath_float::nan = std::numeric_limits<float>::quiet_NaN();
+float taMath_float::nan = std::nanf("");
 
 bool taMath_float::isnan(float val) {
 #ifdef TA_OS_WIN

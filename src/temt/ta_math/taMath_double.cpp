@@ -56,7 +56,7 @@ TA_BASEFUNS_CTORS_DEFN(taMath_double);
 
 using namespace std;
 
-double taMath_double::nan = std::numeric_limits<double>::quiet_NaN();
+double taMath_double::nan = std::nan("");
 
 bool taMath_double::isnan(double val) {
 #ifdef TA_OS_WIN
