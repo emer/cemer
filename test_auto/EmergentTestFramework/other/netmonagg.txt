@@ -7,7 +7,7 @@ Library          OperatingSystem
 
 Resource         Server_lib.txt
 
-Suite Setup      Initialize Emergent    ./test-projects/TestNaNAggs.proj
+Suite Setup      Initialize Emergent    ./test-projects/TestNanAggs.proj
 Suite Teardown   Shutdown Emergent
 
 *** Variables ***
@@ -27,7 +27,7 @@ ${debug} =       false
 
 Initialize
     Set Suite Variable     ${verbose}       ${false}
-    Set Suite Variable     ${project}       ./test-projects/TestNaNAggs.proj
+    Set Suite Variable     ${project}       ./test-projects/TestNanAggs.proj
     Run Keyword If         '${debug}' == 'true'       Set Suite Variable   ${verbose}  ${true}
 
 Connection
