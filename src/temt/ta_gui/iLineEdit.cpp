@@ -66,7 +66,6 @@ void iLineEdit::init(bool add_completer) {
   
   completer = NULL;
   completion_enabled = false;
-  prefix_length = 0;
   orig_text_length = 0;
   
   if (add_completer) {
@@ -312,10 +311,6 @@ void iLineEdit::keyPressEvent(QKeyEvent* key_event)
           }
 #endif
           DoCompletion(false);
-          if (key_event->key() == Qt::Key_Left) {
-          }
-          else if (key_event->key() == Qt::Key_Right) {
-          }
           return;
         }
         else {
@@ -338,7 +333,6 @@ void iLineEdit::DoCompletion(bool extend) {
   orig_text_length = text().length();
   String prefix = text();
   prefix = prefix.through(cursorPosition() - 1);
-  prefix_length = prefix.length();
   emit characterEntered(this);
   GetCompleter()->setCompletionPrefix(prefix);
   GetCompleter()->setCompletionMode(QCompleter::PopupCompletion);
@@ -402,7 +396,12 @@ void iLineEdit::setText(const QString& str) {
   inherited::setText(str);
   if (completion_enabled) {
     String working_copy = text();
-    setCursorPosition(prefix_length + GetCompleter()->currentCompletion().length() - orig_text_length);
+    String insert_text = GetCompleter()->popup()->model()->data(GetCompleter()->currentIndex()).toString();
+    int index = working_copy.index_ci(insert_text);  // locate the completion text in the full text string
+    if (index == -1 && str.length() > 0) {
+      taMisc::DebugInfo("iLineEdit::setText -- insert text not found, index is -1");
+    }
+    setCursorPosition(index + insert_text.length());
     if (completer->ExpressionTakesArgs(working_copy)) {
       setCursorPosition(cursorPosition() - 1);
     }
