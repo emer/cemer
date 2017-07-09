@@ -52,14 +52,14 @@ void iClusterTableView::FillContextMenu_impl(ContextArea ca,
     
     menu->AddSep();
     act = menu->AddItem("Get Files", taiWidgetMenu::normal, iAction::var_act, this, SLOT(DoClusterOp(const Variant&)), "GetFiles");
-    act->setEnabled((tab->name == "file_list") && sel.height() > 0);
+    act->setEnabled((tab->name == "files") && sel.height() > 0);
     
     menu->AddSep();
     act = menu->AddItem("Update Notes", taiWidgetMenu::normal, iAction::var_act, this, SLOT(DoClusterOp(const Variant&)), "UpdtNotes");
     act->setEnabled((tab->name == "running" || tab->name == "done" || tab->name == "archive") && sel.height() >= 0);
 
     act = menu->AddItem("Load Data", taiWidgetMenu::normal, iAction::var_act, this, SLOT(DoClusterOp(const Variant&)), "LoadData");
-    act->setEnabled((tab->name == "running" || tab->name == "done" || tab->name == "archive" || tab->name == "file_list") && sel.height() > 0);
+    act->setEnabled((tab->name == "running" || tab->name == "done" || tab->name == "archive" || tab->name == "files") && sel.height() > 0);
 
     act = menu->AddItem("Save Job Params", taiWidgetMenu::normal, iAction::var_act, this, SLOT(DoClusterOp(const Variant&)), "SaveJobParams");
     act->setEnabled((tab->name == "done" || tab->name == "archive") && sel.height() > 0);
@@ -89,7 +89,7 @@ void iClusterTableView::FillContextMenu_impl(ContextArea ca,
     act->setEnabled((tab->name == "done" || tab->name == "archive") && sel.height() > 0);
     
     act = menu->AddItem("Remove Files", taiWidgetMenu::normal, iAction::var_act, this, SLOT(DoClusterOp(const Variant&)), "RemoveFiles");
-    act->setEnabled((tab->name == "file_list" || tab->name == "archive" || tab->name == "done" ) && sel.height() > 0);
+    act->setEnabled((tab->name == "files" || tab->name == "archive" || tab->name == "done" ) && sel.height() > 0);
     
     act = menu->AddItem("Remove Non Data Files", taiWidgetMenu::normal, iAction::var_act, this, SLOT(DoClusterOp(const Variant&)), "RemoveNonDataFiles");
     act->setEnabled((tab->name == "done" || tab->name == "archive") && sel.height() > 0);
