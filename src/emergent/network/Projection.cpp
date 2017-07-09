@@ -98,6 +98,7 @@ void Projection::InitLinks() {
 void Projection::Copy_(const Projection& cp) {
   off = cp.off;
   disp = cp.disp;
+  notes = cp.notes;
   from_type = cp.from_type;
   from = cp.from;
   spec = cp.spec;

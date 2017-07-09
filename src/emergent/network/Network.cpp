@@ -2774,6 +2774,8 @@ DataTable* Network::NetPrjnsToTable(DataTable* dt, bool include_off) {
 
 String Network::NetPrjnsToList(taMarkUp::Format fmt, bool include_off) {
   int indent = 0;
+  if(layers.size == 0 && layers.leaves > 0) // no top-level guys -- will have an extra indent
+    indent = -1;
   String rval = "\n";
   NetPrjnsToList_gp(&layers, rval, fmt, include_off, indent);
   return rval;
@@ -2799,14 +2801,20 @@ void Network::NetPrjnsToList_gp(Layer_Group* gp, String& rval, taMarkUp::Format 
         Projection* pj = l->projections.FastEl(i);
         if(!include_off && pj->off)
           continue;
-        rval << taMarkUp::ListItem(fmt, indent, false) << taMarkUp::Bold(fmt, pj->name) << ": ";
+        rval << taMarkUp::ListItem(fmt, indent, false);
+        if(pj->off)
+          rval << taMarkUp::Strike(fmt, pj->name);
+        else
+          rval << taMarkUp::Bold(fmt, pj->name);
+        rval << ": ";
+        rval << taMarkUp::Escape(fmt, pj->notes) << " ";
         ProjectionSpec* ps = pj->GetPrjnSpec();
         if(ps)
           rval << "(" << taMarkUp::Escape(fmt, ps->name) << ") ";
         ConSpec* cs = pj->GetConSpec();
         if(cs)
           rval << "(" << taMarkUp::Escape(fmt, cs->name) << ") ";
-        rval << taMarkUp::Escape(fmt, pj->notes) << "\n";
+        rval << "\n";
       }
       rval << taMarkUp::ListEnd(fmt, indent, false);
     }

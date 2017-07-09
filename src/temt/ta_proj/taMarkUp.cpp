@@ -309,7 +309,7 @@ String taMarkUp::ListItem(Format fmt, int indent, bool number) {
       rval << String(indent, 0, '*') << " ";
     break;
   case MARKDOWN:
-    taMisc::IndentString(rval, indent);
+    rval = String(MAX(indent,0) * 4, 0, ' '); // markdown requires 4 space indenting to work properly
     if(number)
       rval << "1. ";
     else {
