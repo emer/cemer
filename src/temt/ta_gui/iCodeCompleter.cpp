@@ -213,8 +213,10 @@ void iCodeCompleter::ExtendSeed(String& seed) {
 
 String iCodeCompleter::GetPretext() {
   String pretext;
-  pretext = ProgExprBase::completion_text_before;
-  pretext = pretext.before(pretext.length() - ProgExprBase::completion_lookup_seed.length());
+  if (field_type == EXPRESSION) {
+    pretext = ProgExprBase::completion_text_before;
+    pretext = pretext.before(pretext.length() - ProgExprBase::completion_lookup_seed.length());
+  }
   return pretext;
 }
 
