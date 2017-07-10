@@ -1343,6 +1343,9 @@ ProgVar* Program::FindMakeVarName(const String& var_nm, bool& made_new) {
   ProgVar* rval = vars.FindName(var_nm);
   if(rval)
     return rval;
+  rval = objs_vars.FindName(var_nm);
+  if(rval)
+    return rval;
   made_new = true;
   rval = (ProgVar*)vars.New(1);
   rval->name = var_nm;
@@ -2678,7 +2681,12 @@ ProgVar* Program::FindMakeProgVarInNewScope
       if(own == &(var_prg->args)) { // args
         rval = new_prg->FindMakeArgName(var_nm, made_new);
       }
-      else {                    // vars
+      else if(own == &(var_prg->vars)) { // vars
+        rval = new_prg->FindMakeVarName(var_nm, made_new);
+      }
+      else if(own == &(var_prg->objs_vars)) {
+        // note: even if we find it in objs_vars, need to make it in our vars -- it will point to other
+        // guy's objs -- could ask at this point if user actually wants to duplicate the object?
         rval = new_prg->FindMakeVarName(var_nm, made_new);
       }
       if(made_new) {
