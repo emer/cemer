@@ -206,7 +206,8 @@ public:
   static void           GetTokensOfType(TypeDef* td, taBase_List* tokens, taBase* scope = NULL,
                                         TypeDef* scope_type = NULL, ProgVar::VarType = ProgVar::T_UnDef);
   static void           GetListItems(taList_impl* list, taBase_List* tokens);
-  static void           GetGroupItems(taGroup_impl* groups, taBase_List* tokens);
+  static void           GetGroupItems(taGroup_impl* groups, taBase_List* tokens, bool top_group = true);
+  // top_group should be true on first call so the subgroups are listed but after that false so subsubgroups are not listed but subsub leaves are listed
   static void           GetLocalVars(taBase_List* tokens, ProgEl* prog_el, taBase* scope = NULL,
                                        TypeDef* scope_type = NULL, ProgVar::VarType = ProgVar::T_UnDef);
   static void           GetGlobalVars(taBase_List* tokens, taBase* scope = NULL,

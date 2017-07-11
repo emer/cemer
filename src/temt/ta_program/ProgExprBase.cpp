@@ -1601,7 +1601,7 @@ void ProgExprBase::GetListItems(taList_impl* list, taBase_List* tokens) {
   }
 }
 
-void ProgExprBase::GetGroupItems(taGroup_impl* list, taBase_List* tokens) {
+void ProgExprBase::GetGroupItems(taGroup_impl* list, taBase_List* tokens, bool top_group) {
   if (list == NULL || tokens == NULL) return;
   
   for (int i = 0; i < list->size; ++i) {
@@ -1610,8 +1610,14 @@ void ProgExprBase::GetGroupItems(taGroup_impl* list, taBase_List* tokens) {
   }
   for (int i = 0; i < list->gp.size; ++i) {
     taBase* tab = (taGroup_impl*)list->gp.FastEl_(i);
-    tokens->Link(tab);
+    if (top_group) {
+      tokens->Link(tab);
+    }
+    if (tab->InheritsFrom(&TA_taGroup_impl)) {
+      GetGroupItems((taGroup_impl*)tab, tokens, false);
+    }
   }
+  
 }
 
 void ProgExprBase::GetLocalVars(taBase_List* tokens, ProgEl* prog_el, taBase* scope, TypeDef* scope_type, ProgVar::VarType var_type) {
