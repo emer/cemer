@@ -271,6 +271,7 @@ bool WtBasedRF::ComputeHigherLayerRF(Network* net, DataTable* dt_trg, DataTable*
         
         DataCol* wts_col = trg_layer_wts->GetColData(0);  // only one column
         float weight = wts_col->GetValAsFloatM(wts_row, snd_unit->idx);
+        // the snd_values_matrix is the matrix of all the values from the previous layer calculation for a single unit in that layer
         float_Matrix* snd_values_matrix = (float_Matrix*)dt_snd_rf_values_col->GetValAsMatrix(snd_unit->idx);
         taBase::Ref(snd_values_matrix);
         *tmp_matrix = *snd_values_matrix * weight;
