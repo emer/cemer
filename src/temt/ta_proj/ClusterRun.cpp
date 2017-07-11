@@ -63,6 +63,7 @@ void ClusterRun::Initialize() {
   auto_updt_timeout = 30;
   cur_svn_rev = -1;
   last_backend_checkin = "Unknown";
+  isUpdating = false;
   exe_cmd = taMisc::app_name;
   use_search_algo = false;
   ram_gb = 0;
@@ -306,6 +307,8 @@ bool ClusterRun::Update_impl(bool do_svn_update) {
                    String(wait_proc_updt->cur_svn_rev));
       wait_proc_updt = NULL;
       wait_proc_trg_rev = -1;
+      SigEmitUpdated();
+      UpdateUI();
       return true;
     }
     if(wait_proc_start.secsTo(curtime) > wait_proc_updt->auto_updt_timeout) {
@@ -314,6 +317,8 @@ bool ClusterRun::Update_impl(bool do_svn_update) {
     
       wait_proc_updt = NULL;
       wait_proc_trg_rev = -1;
+      SigEmitUpdated();
+      UpdateUI();
       return true;
     }
   }

@@ -39,6 +39,7 @@
 ClusterManager_UpdtThr::ClusterManager_UpdtThr ( ClusterManager * cm, ClusterRun_QObj * qt_obj_help, QObject *parent) : QThread(parent) {
   m_cm = cm;
   isUpdating = 0;
+  m_cm->m_cluster_run.isUpdating = false;
   this->qt_object_helper = qt_obj_help;
 
   m_svn_other = new SubversionClient();
@@ -93,6 +94,7 @@ void ClusterManager_UpdtThr::EnsureSVNCredentialsAvailable() {
 }
 void ClusterManager_UpdtThr::run() {
   if (UpdateWorkingCopy() > -1) {
+    m_cm->m_cluster_run.isUpdating = false;
     emit UpdatedSVN();
   }
   isUpdating--;
@@ -829,6 +831,8 @@ ClusterManager::InitiateBackgroundSVNUpdate() {
   }
   if(!SetPaths()) return -1;
   m_updtThr->isUpdating++;
+  m_cluster_run.isUpdating = true;
+  m_cluster_run.UpdateUI();
   m_updtThr->EnsureSVNCredentialsAvailable();
   m_updtThr->start();
   return 0;
