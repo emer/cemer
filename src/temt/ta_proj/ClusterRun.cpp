@@ -464,6 +464,7 @@ void ClusterRun::LoadData(bool remove_existing) {
   if(!proj) return;
   DataTable_Group* dgp = (DataTable_Group*)proj->data.FindMakeGpName("ClusterRun");
   dgp->save_tables = false;     // don't save -- prevents project bloat
+  dgp->StructUpdate(true);
   if(remove_existing) {
     dgp->Reset();
   }
@@ -491,6 +492,7 @@ void ClusterRun::LoadData(bool remove_existing) {
       taMisc::Warning("No rows selected -- no data loaded");
     }
   }
+  dgp->StructUpdate(false);
   ClearAllSelections();       // done
 }
 
