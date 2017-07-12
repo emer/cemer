@@ -245,6 +245,8 @@ public:
   int                   Save_strm(std::ostream& strm, taBase* par=NULL, int indent=0) override;
   int                   Save() override;
   int                   SaveAs(const String& fname = "") override;
+  virtual int           SaveCopy(const String& fname = "");
+  // #MENU #ARGC_0 #EDIT_READ_ONLY #CAT_File Save a copy of the object without changing current file name -- if fname is empty, the user is prompted with a file dialog
   void                  SetSaveView(bool value);
   // #CAT_File determines whether or not the current view settings will be saved with the project
 

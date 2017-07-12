@@ -1732,8 +1732,8 @@ taFiler* taBase::GetSaveFiler(const String& fname, String exts,
   }
   else {
     String tfname;
-    if (getset_file_name)
-      tfname = GetFileName();
+    // if (getset_file_name)
+      tfname = GetFileName();   // always get, just don't set
     if (tfname.empty())
       tfname = GetName();
     flr->SetFileName(taMisc::ExpandFilePath(tfname, proj)); // filer etc. does auto extension

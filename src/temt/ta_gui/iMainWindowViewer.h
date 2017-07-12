@@ -126,6 +126,8 @@ public:
   iAction*            fileOpenAction;
   iAction*            fileSaveAction;
   iAction*            fileSaveAsAction;
+  iAction*            fileDuplicateAction;
+  iAction*            fileSaveCopyAction;
   iAction*            fileSaveNotesAction;
   iAction*            fileSaveAsTemplateAction;
   iAction*            fileOpenSvnBrowserAction;
@@ -346,6 +348,8 @@ public slots:
   virtual void  fileOpenFile(const Variant& file); // for recent menu
   virtual void  fileSave();     // Save Project (only enabled if viewer)
   virtual void  fileSaveAs();   // SaveAs Project (only enabled if viewer)
+  virtual void  fileDuplicate();   // Duplicate Project (only enabled if viewer)
+  virtual void  fileSaveCopy();   // SaveCopy Project (only enabled if viewer)
   virtual void  fileSaveNotes();        // SaveNoteChanges Project (only enabled if viewer)
   virtual void  fileSaveAsTemplate();   // SaveAsTemplate Project (only enabled if viewer)
   virtual void  fileOpenSvnBrowser();   // open svn browser for project

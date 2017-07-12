@@ -2246,6 +2246,11 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv,
     else {
       yval = plv.GetDataVal(da_y, row);
     }
+
+    if(taMath_float::isnan(yval)) {
+      continue;                 // just skip it
+    }
+    
     if((graph_type == RASTER) && da_rst) {
       dat.y = ax_rst->GetDataVal(da_rst, row);
     }
@@ -2545,13 +2550,19 @@ void GraphTableView::PlotData_Bar(SoSeparator* gr1, GraphPlotView& plv, GraphPlo
     if((mat_cell >= 0) && (matrix_mode == Z_INDEX)) {
       dat.z = mat_cell;
     }
+
+    float yval;
     if(mat_cell >= 0) {
-      dat.y = da_y->GetValAsFloatM(row, mat_cell);
+      yval = da_y->GetValAsFloatM(row, mat_cell);
     }
     else {
-      dat.y = plv.GetDataVal(da_y, row);
+      yval = plv.GetDataVal(da_y, row);
     }
-    if(dat.y < yax.range.min || dat.y > yax.range.max) continue;
+    if(taMath_float::isnan(yval)) {
+      continue;                 // just skip it
+    }
+    if(yval < yax.range.min || yval > yax.range.max) continue;
+    dat.y = yval;
     
     plt.x = x_axis.DataToPlot(dat.x);
     plt.y = yax.DataToPlot(dat.y);
@@ -2716,8 +2727,12 @@ void GraphTableView::PlotData_String(GraphPlotView& plv_str, GraphPlotView& plv_
       }
       if(dat.z < z_axis.range.min || dat.z > z_axis.range.max) continue;
     }
-    dat.y = plv_y.GetDataVal(da_y, row);
-    if(dat.y < plv_y.range.min || dat.y > plv_y.range.max) continue;
+    float yval = plv_y.GetDataVal(da_y, row);
+    if(taMath_float::isnan(yval)) {
+      continue;                 // just skip it
+    }
+    if(yval < plv_y.range.min || yval > plv_y.range.max) continue;
+    dat.y = yval;
     
     plt.x = x_axis.DataToPlot(dat.x);
     plt.y = plv_y.DataToPlot(dat.y);

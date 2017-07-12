@@ -690,9 +690,7 @@ int taProject::SaveAs(const String& fname) {
         imwv->viewSaveView();
       }
     }
-  }
-
-  if (flr->ostrm) {
+    
     QFileInfo fi(flr->FileName()); // set to current working dir
     proj_dir = fi.absolutePath();
     QDir::setCurrent(fi.absolutePath());
@@ -711,6 +709,33 @@ int taProject::SaveAs(const String& fname) {
   }
   else { // if the save wasn't successful reset the save_as_only flag
     save_as_only = tmp_save_as_only;
+  }
+  
+  taRefN::unRefDone(flr);
+  SigEmit(SLS_ITEM_UPDATED_ND);
+  return rval;
+}
+
+int taProject::SaveCopy(const String& fname) {
+  int rval = false;
+  taFiler* flr = GetSaveFiler(fname, _nilString, -1, _nilString, false, true);
+  // false = getset_file_name, true = make_copy
+  
+  if (flr->ostrm) {
+    if (save_view == true) { // save current view with project
+      for (int i = 0; i < viewers.size; ++i) {
+        MainWindowViewer* vwr = dynamic_cast<MainWindowViewer*>(viewers.FastEl(i));
+        if (!(vwr && vwr->isProjBrowser())) continue;
+        iMainWindowViewer* imwv = vwr->widget();
+        if(!imwv) continue;
+        imwv->viewSaveView();
+      }
+    }
+    
+    QFileInfo fi(flr->FileName()); // set to current working dir
+    Save_strm(*(flr->ostrm));
+    flr->Close();
+    rval = true;
   }
   
   taRefN::unRefDone(flr);

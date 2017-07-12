@@ -467,6 +467,9 @@ void iMainWindowViewer::Constr_FileMenu()
   fileSaveAsAction->setIcon(QIcon(QPixmap(":/images/save_as_icon.png")));
   fileSaveAsAction->setIconText("Save As");
   
+  fileDuplicateAction = AddAction(new iAction("&Duplicate", QKeySequence(), "fileDuplicateAction"));
+  fileSaveCopyAction = AddAction(new iAction("Save &Copy...", QKeySequence(), "fileSaveCopyAction"));
+
   fileSaveNotesAction = AddAction(new iAction("Save Note &Changes...", QKeySequence(), "fileSaveNotesAction"));
   fileSaveAsTemplateAction = AddAction(new iAction("Save As &Template...", QKeySequence(), "fileSaveAsTemplate"));
   fileUpdateChangeLogAction = AddAction(new iAction("&Updt Change Log...", QKeySequence(), "fileUpdateChangeLogAction"));
@@ -503,6 +506,8 @@ void iMainWindowViewer::Constr_FileMenu()
   fileMenu->AddAction(fileSaveAsAction);
 
   fileMenu->insertSeparator();
+  fileMenu->AddAction(fileDuplicateAction);
+  fileMenu->AddAction(fileSaveCopyAction);
   fileMenu->AddAction(fileSaveNotesAction);
   fileMenu->AddAction(fileSaveAsTemplateAction);
   fileMenu->AddAction(fileUpdateChangeLogAction);
@@ -552,6 +557,8 @@ void iMainWindowViewer::Constr_FileMenu()
     //      fileSaveAction->setEnabled(false);
     //    }
     connect(fileSaveAsAction, SIGNAL(Action()), this, SLOT(fileSaveAs()));
+    connect(fileDuplicateAction, SIGNAL(Action()), this, SLOT(fileDuplicate()));
+    connect(fileSaveCopyAction, SIGNAL(Action()), this, SLOT(fileSaveCopy()));
     connect(fileSaveNotesAction, SIGNAL(Action()), this, SLOT(fileSaveNotes()));
     connect(fileSaveAsTemplateAction, SIGNAL(Action()), this, SLOT(fileSaveAsTemplate()));
     connect(fileUpdateChangeLogAction, SIGNAL(Action()), this, SLOT(fileUpdateChangeLog()));
@@ -571,6 +578,8 @@ void iMainWindowViewer::Constr_FileMenu()
   else {
     fileSaveAction->setEnabled(false);
     fileSaveAsAction->setEnabled(false);
+    fileDuplicateAction->setEnabled(false);
+    fileSaveCopyAction->setEnabled(false);
     fileSaveNotesAction->setEnabled(false);
     fileSaveAsTemplateAction->setEnabled(false);
     fileUpdateChangeLogAction->setEnabled(false);
@@ -1583,6 +1592,18 @@ void iMainWindowViewer::fileSaveAs() {
   taProject* proj = curProject();
   if (!proj) return;
   proj->SaveAs();
+}
+
+void iMainWindowViewer::fileDuplicate() {
+  taProject* proj = curProject();
+  if (!proj) return;
+  proj->DuplicateMe();
+}
+
+void iMainWindowViewer::fileSaveCopy() {
+  taProject* proj = curProject();
+  if (!proj) return;
+  proj->SaveCopy();
 }
 
 void iMainWindowViewer::fileSaveNotes() {
