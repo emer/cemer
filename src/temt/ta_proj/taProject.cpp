@@ -368,7 +368,6 @@ void taProject::Dump_Load_post() {
     bool startup_run = programs.RunStartupProgs();      // run startups now..
     if(!taMisc::gui_active && startup_run) taiMC_->Quit();
   }
-  ;
 }
 
 void taProject::DoView() {

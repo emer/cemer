@@ -215,6 +215,7 @@ T3Panel* iT3PanelViewer::viewPanel(int idx) const {
 
 
 void iT3PanelViewer::Refresh_impl() {
+  if(!viewer()) return;
   for (int i = 0; i < viewer()->panels.size; ++i) {
     T3Panel* panl = viewer()->panels.FastEl(i);
     iT3Panel* ipanl = panl->widget();
@@ -226,6 +227,7 @@ void iT3PanelViewer::Refresh_impl() {
 }
 
 void iT3PanelViewer::UpdateTabNames() {
+  if(!viewer()) return;
   for (int i = 0; i < viewer()->panels.size; ++i) {
     T3Panel* panl = viewer()->panels.FastEl(i);
     panl->UpdateNameFmFirstChild();
@@ -266,6 +268,7 @@ bool iT3PanelViewer::SetCurrentTabName(const String& tab_nm) {
 
 void iT3PanelViewer::focusInEvent(QFocusEvent* ev) {
   inherited::focusInEvent(ev);
+  if(!viewer()) return;
   MainWindowViewer* mwv = viewer()->mainWindowViewer();
   if(mwv && mwv->widget()) {
     mwv->widget()->FocusIsRightViewer();

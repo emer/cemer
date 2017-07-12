@@ -2472,16 +2472,29 @@ bool taBase::ChildCanDuplicate(const taBase* chld, bool quiet) const {
 taBase* taBase::ChildDuplicate(const taBase* chld) {
   taList_impl* lst = children_();
   if (lst) {
-    taBase* rval = lst->DuplicateEl(chld);
-    if(rval && taMisc::gui_active) {
-      if(!taMisc::in_gui_multi_action &&
-         !lst->HasOption("NO_EXPAND_ALL") && !rval->HasOption("NO_EXPAND_ALL")) {
-        // Bug 2231 - no auto expand on duplicate
-//        tabMisc::DelayedFunCall_gui(rval, "BrowserExpandAll");
-        tabMisc::DelayedFunCall_gui(rval, "BrowserSelectMe");
+    if(chld->InheritsFrom(&TA_taProject)) {
+      String str;
+      taProject* rval = NULL;
+      ((taBase*)chld)->Save_String(str);
+      lst->Load_String(str, NULL, (taBase**)&rval);
+      if(rval) {
+        rval->SetName(chld->GetName() + "_copy");
       }
+      taMisc::ProcessEvents();
+      return rval;
     }
-    return rval;
+    else {
+      taBase* rval = lst->DuplicateEl(chld);
+      if(rval && taMisc::gui_active) {
+        if(!taMisc::in_gui_multi_action &&
+           !lst->HasOption("NO_EXPAND_ALL") && !rval->HasOption("NO_EXPAND_ALL")) {
+          // Bug 2231 - no auto expand on duplicate
+          //        tabMisc::DelayedFunCall_gui(rval, "BrowserExpandAll");
+          tabMisc::DelayedFunCall_gui(rval, "BrowserSelectMe");
+        }
+      }
+      return rval;
+    }
   }
   return NULL;
 }
