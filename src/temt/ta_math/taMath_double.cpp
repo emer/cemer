@@ -54,8 +54,6 @@
 
 TA_BASEFUNS_CTORS_DEFN(taMath_double);
 
-using namespace std;
-
 #ifdef TA_OS_MAC
 double taMath_double::nan = std::nan("");
 #else
@@ -1999,7 +1997,8 @@ bool taMath_double::mat_concat(const taMatrix* src_a_mat, const taMatrix* src_b_
 
   Variant val;
 
-  cout << a_d0 << " " << b_d0 << " " << a_d1 << " " << b_d1 << "\n";    cout << a_d0 << " " << b_d0 << " " << a_d1 << " " << b_d1 << "\n";
+  std::cout << a_d0 << " " << b_d0 << " " << a_d1 << " " << b_d1 << "\n";
+  std::cout << a_d0 << " " << b_d0 << " " << a_d1 << " " << b_d1 << "\n";
 
   if(dim == 0) { // col concat
     if (a_d1 != b_d1) {taMisc::Error("mat_concat - col concat specified (d0) but a and b do not have the same number of rows (d1)"); return false;}
@@ -2010,7 +2009,7 @@ bool taMath_double::mat_concat(const taMatrix* src_a_mat, const taMatrix* src_b_
     for (int i=0; i < a_d0; i++) {
       for (int j=0; j < a_d1; j++) {
         val = src_a_mat->SafeElAsVar(i, j);
-//      cout << val;
+//      std::cout << val;
 //      dest_mat->SetFmVar(val, i, j);
       }
     }

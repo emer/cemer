@@ -34,6 +34,7 @@ software work for purposes of copyright.
 #include <windows.h>
 // the Windows string.h doesn't define strcasecmp, so we use the Win32 equivalent
 #define strcasecmp(s1,s2) lstrcmp(s1, s2)
+static taString win_nanstr("nan");
 #endif
 
 #include <ctype.h>
@@ -628,12 +629,24 @@ taString::taString(ta_uint64_t u64) {
 }
 
 taString::taString(float f,const char* format) {
+#ifdef TA_OS_WIN
+  if(_isnan(f) || !_finite(f)) {
+    newRep(win_nanstr.mrep);
+    return;
+  }
+#endif
   char buf[64];
   ta_snprintf(buf, 64, format, f);
   newRep(Salloc(buf, -1));
 }
 
 taString::taString(double f,const char* format) {
+#ifdef TA_OS_WIN
+  if(_isnan(f) || !_finite(f)) {
+    newRep(win_nanstr.mrep);
+    return;
+  }
+#endif
   char buf[64];
   ta_snprintf(buf, 64, format, f);
   newRep(Salloc(buf, -1));
@@ -800,6 +813,12 @@ taString& taString::convert(long i,const char* format) {
 }
 
 taString& taString::convert(float f,const char* format) {
+#ifdef TA_OS_WIN
+  if(_isnan(f) || !_finite(f)) {
+    newRep(win_nanstr.mrep);
+    return *this;
+  }
+#endif
   char buf[64];
   ta_snprintf(buf, 64, format, f);
   setRep(Salloc(buf, -1));
@@ -807,6 +826,12 @@ taString& taString::convert(float f,const char* format) {
 }
 
 taString& taString::convert(double f,const char* format) {
+#ifdef TA_OS_WIN
+  if(_isnan(f) || !_finite(f)) {
+    newRep(win_nanstr.mrep);
+    return *this;
+  }
+#endif
   char buf[64];
   ta_snprintf(buf, 64, format, f);
   setRep(Salloc(buf, -1));
