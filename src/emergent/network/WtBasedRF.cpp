@@ -188,7 +188,7 @@ bool WtBasedRF::ComputeV2RF(Network* net, DataTable* dt_trg, DataTable* wts, Lay
   return true;
 }
 
-bool WtBasedRF::ComputeHigherLayerRF(Network* net, DataTable* dt_trg, DataTable* dt_snd, DataTable* wts,  Layer* tlay, Layer* slay) {
+bool WtBasedRF::ComputeHigherLayerRF(Network* net, DataTable* dt_trg, DataTable* dt_snd, DataTable* wts,  Layer* tlay, Layer* slay, float wt_threshold) {
   
   network = net;
   dt_trg_rf = dt_trg;
@@ -226,33 +226,22 @@ bool WtBasedRF::ComputeHigherLayerRF(Network* net, DataTable* dt_trg, DataTable*
   dt_trg_rf->StructUpdate(false);
   
   float_Matrix* sum_matrix = new float_Matrix(); // sums of sending layer values multiplied by target layer weights
-  float_Matrix* tmp_matrix = new float_Matrix(); // multiplication of sending layer values and target layer weights for one connection
   sum_matrix->SetGeom(2, image_size.x, image_size.y);
-  tmp_matrix->SetGeom(2, image_size.x, image_size.y);
   
   bool all_good = true;
   
-  QElapsedTimer timer;
-  timer.start();
-  
-  int first_row = 0;  // first row for which we want to generate the representation
-  int last_row = trg_layer_wts->rows;
+//  QElapsedTimer timer;
+//  timer.start();
   
   int units_per_group = trg_layer->un_geom.x * trg_layer->un_geom.y;
-//  if (center_only) {
-//    first_row = 5 * units_per_group;
-//    last_row = 10 * units_per_group;
-//  }
 
   // for every unit in the target layer
   // (each row in table is a matrix of weights for the connections to a unit in target layer)
-  
+  int first_row = 0;  // first row for which we want to generate the representation
+  int last_row = trg_layer_wts->rows;
 //  last_row = 1;  // for debug
   
   for (int wts_row = first_row; wts_row < last_row; wts_row++) {
-//    if (center_only && wts_row == (first_row + 2*units_per_group)) {
-//      wts_row = first_row + 4*units_per_group + 1;
-//    }
     *sum_matrix = 0;
     // get the target layer unit so we can find the sending units it recvs from
     Unit* trg_layer_unit = trg_layer->UnitAccess(Layer::ACC_LAY, wts_row, 0);
@@ -271,25 +260,25 @@ bool WtBasedRF::ComputeHigherLayerRF(Network* net, DataTable* dt_trg, DataTable*
         
         DataCol* wts_col = trg_layer_wts->GetColData(0);  // only one column
         float weight = wts_col->GetValAsFloatM(wts_row, snd_unit->idx);
-        // the snd_values_matrix is the matrix of all the values from the previous layer calculation for a single unit in that layer
+        if (taMath_float::fabs(weight) < wt_threshold) continue;
+        
         float_Matrix* snd_values_matrix = (float_Matrix*)dt_snd_rf_values_col->GetValAsMatrix(snd_unit->idx);
         taBase::Ref(snd_values_matrix);
-        *tmp_matrix = *snd_values_matrix * weight;
+        for (int s=0; s<snd_values_matrix->size; s++) {
+          sum_matrix->FastEl_Flat(s) += snd_values_matrix->FastEl_Flat(s) * weight;
+        }
         taBase::unRefDone(snd_values_matrix);
-        *sum_matrix += *tmp_matrix;
       }
       dt_trg_rf_values_col->SetValAsMatrix(sum_matrix, wts_row);
     }
     else {
       delete sum_matrix;
-      delete tmp_matrix;
       return false;
     }
   }
   
-  qDebug() << "ComputeHigherLayerRF took " << timer.elapsed() << "milliseconds";
+//  qDebug() << "ComputeHigherLayerRF took " << timer.elapsed() << "milliseconds";
   delete sum_matrix;
-  delete tmp_matrix;
   
   return true;
 }

@@ -57,8 +57,8 @@ public:
   virtual bool      ComputeV2RF(Network* net, DataTable* dt_trg, DataTable* wts, Layer* tlay, Layer* slay, V1RetinaProc* rproc, float wt_threshold = 0);
   // #CAT_WtBasedRF compute the rf_data based on V2 wts and V1 filters
   
-  virtual bool      ComputeHigherLayerRF(Network* net, DataTable* dt_trg, DataTable* dt_snd, DataTable* wts,  Layer* tlay, Layer* slay);
-  // #CAT_WtBasedRF compute the rf_data for layers beyond V2. These calculations use the RF computations from all layers below (e.g. the V4 representational analysis uses the values computed for V2). Because this is computation takes a long time you pass in a group number so you don't always have to process the entire layer. Pass -1 or use default for entire layer. Group number starts with zero (lower left) and moves right and then up.
+  virtual bool      ComputeHigherLayerRF(Network* net, DataTable* dt_trg, DataTable* dt_snd, DataTable* wts,  Layer* tlay, Layer* slay, float wt_threshold = .25);
+  // #CAT_WtBasedRF compute the rf_data for layers beyond V2. These calculations use the RF computations from all layers below (e.g. the V4 representational analysis uses the values computed for V2). Weights that are less than the |wt_threshold| will not be included
   
   TA_SIMPLE_BASEFUNS(WtBasedRF);
 protected:
