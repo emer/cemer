@@ -76,6 +76,7 @@ else (WIN32) # assume gcc!!!
   endif (APPLE)
   
   if(CMAKE_BUILD_TYPE MATCHES "Release" OR CMAKE_BUILD_TYPE MATCHES "RelWithDebInfo")
+    # note: was using  -ffast-math here but this prevents isnan from working, and we depend on that now..
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Ofast")
   else(CMAKE_BUILD_TYPE MATCHES "Release" OR CMAKE_BUILD_TYPE MATCHES "RelWithDebInfo")
     # debug mode

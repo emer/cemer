@@ -63,7 +63,7 @@ void ClusterRun::Initialize() {
   auto_updt_timeout = 30;
   cur_svn_rev = -1;
   last_backend_checkin = "Unknown";
-  isUpdating = false;
+  is_updating = false;
   exe_cmd = taMisc::app_name;
   use_search_algo = false;
   ram_gb = 0;

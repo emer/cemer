@@ -53,7 +53,7 @@ signals:
   void sendInfo(const QString msg);
   void promptCleanup();
 public:
-  int isUpdating;
+  int is_updating;
   ClusterManager_UpdtThr (ClusterManager * cm,  ClusterRun_QObj * qt_object_helper, QObject *parent = 0);
   void EnsureSVNCredentialsAvailable();
 };
