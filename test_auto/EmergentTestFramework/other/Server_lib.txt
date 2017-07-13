@@ -176,7 +176,7 @@ Run Emergent Program
     ${output} =        Run Command      ${command}       2500ms
     Status OK No Result        ${output}
 
-    :FOR   ${i}  IN RANGE      600
+    :FOR   ${i}  IN RANGE      6000
     \       ${command} =   Set Variable         {"command": "GetRunState"}
     \       Write Bare         ${command}\n
     \       ${output} =        Read till non empty	Could not read run state while executing program ${program}
