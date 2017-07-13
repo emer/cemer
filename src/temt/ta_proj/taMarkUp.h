@@ -31,9 +31,9 @@ class TA_API taMarkUp : public taNBase {
 INHERITED(taNBase)
 public:
   enum Format {
+    MARKDOWN,                   // GFM git flavored Markdown format
     HTML,                       // basic HTML format tags 
     MEDIAWIKI,                  // MediaWiki format, as used on WikiPedia
-    MARKDOWN,                   // GFM git flavored Markdown format table
     LATEX,                      // LaTeX format
   };
 

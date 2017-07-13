@@ -379,7 +379,7 @@ void taiEditorOfClass::Constr_Methbox_Labels() {
     QLabel* lab = new QLabel;
     lab->setMaximumHeight(taiM->label_height(taiMisc::sizSmall));
     lab->setFont(taiM->nameFont(taiMisc::sizSmall));
-    lab->setText(md->name + ": ");
+    lab->setText(md->GetLabel() + ": ");
     lab->setToolTip(taiMisc::ToolTipPreProcess(md->desc));
     layMethButtons->addWidget(lab);
     methbox_labels.Add(lab);
@@ -596,7 +596,7 @@ void taiEditorOfClass::Update_Methbox_Labels() {
   for(int i=0; i< sz; i++) {
     MemberDef* md = methbox_members[i];
     QLabel* lab = (QLabel*)methbox_labels[i];
-    lab->setText(md->name + ": " + md->GetValStr(root));
+    lab->setText(md->GetLabel() + ": " + md->GetValStr(root));
   }
 }
 
