@@ -384,6 +384,7 @@ void iProgramEditor::Controls_Add() {
   // add main inline controls
   int flags = taiWidget::flgInline ;
   if (read_only) flags |= taiWidget::flgReadOnly;
+  
   const int ctrl_size = taiM->ctrl_size;
   for (int j = 0; j < membs.size; ++j) {
     taiMemberWidgets* ms = membs.FastEl(j);
@@ -399,21 +400,30 @@ void iProgramEditor::Controls_Add() {
       if (i > 0)
         hbl->addSpacing(taiM->hspc_c);
       MemberDef* md = ms->memb_el.FastEl(i);
+      
+      if (Base() && Base()->GetMemberOwner() && md->name == "name") {
+        flags |= taiWidget::flgReadOnly;
+      }
+      
       taiWidget* mb_dat = md->im->GetWidgetRep(this, NULL, body, NULL, flags);
       ms->widget_el.Add(mb_dat);
-
-//obs      QLabel* lbl = taiM->NewLabel(, body);
+      
+      // reset the flags
+      flags = taiWidget::flgInline ;
+      if (read_only) flags |= taiWidget::flgReadOnly;
+      
+      //obs      QLabel* lbl = taiM->NewLabel(, body);
       String name;
       String desc;
       taiEditorWidgetsMain::GetName(md, name, desc);
       iLabel* lbl = taiEditorWidgetsMain::MakeInitEditLabel(name, body,
-        ctrl_size,  desc, mb_dat,
-        this, SLOT(label_contextMenuInvoked(iLabel*, QContextMenuEvent*)), row);
-
+                                                            ctrl_size,  desc, mb_dat,
+                                                            this, SLOT(label_contextMenuInvoked(iLabel*, QContextMenuEvent*)), row);
+      
       hbl->addWidget(lbl, 0,  (Qt::AlignLeft | Qt::AlignVCenter));
       hbl->addSpacing(taiM->hsep_c);
       lbl->show(); //n???
-
+      
       QWidget* rep = mb_dat->GetRep();
       hbl->addWidget(rep, stretch, (Qt::AlignVCenter));
       rep->show();
