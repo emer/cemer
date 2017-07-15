@@ -27,6 +27,7 @@
 
 #include <taMisc>
 #include <tabMisc>
+#include <taBase>
 #include <int_Matrix>
 #include <taiMisc>
 #include <iDialogEditor>
@@ -34,6 +35,7 @@
 #include <taiWidgetTokenChooser>
 #include <iHiLightButton>
 #include <taFiler>
+#include <DataTable>
 
 #include <QLabel>
 #include <QLayout>
@@ -413,6 +415,28 @@ void cssiArgDialog::GetValue() {
     }
   }
   Unchanged();
+}
+
+taBase* cssiArgDialog::GetBaseForArg(const String& arg_name) {
+  taiArgType* art = NULL;
+  taiWidget* mb_dat = NULL;
+  for (int i = hide_args; i < type_el.size; ++i) {
+    art = (taiArgType*)type_el.FastEl(i);
+    if (art->arg_val->name == arg_name) {
+      mb_dat = widget_el(0).SafeEl(i-hide_args);
+      break;
+    }
+  }
+//  taiArgType* art = (taiArgType*)type_el.FastEl(arg_pos);
+//  taiWidget* mb_dat = widget_el(0).SafeEl(arg_pos-hide_args);
+  if (mb_dat == NULL) return NULL; // shouldn't happen
+  
+  art->GetValue(mb_dat, root);
+//  taMisc::DebugInfo(art->arg_val->GetName());  // could pass in name instead of position!! then loop with this code to find the arg
+//  taMisc::DebugInfo((String)art->arg_val);
+  
+  taBase* obj = (taBase*)art->arg_val->GetVoidPtrOfType(&TA_taBase);
+  return obj;
 }
 
 void cssiArgDialog::GetImage(bool) {

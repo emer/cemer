@@ -143,7 +143,7 @@ public:
   void           CollectAllSpecs(NetMonitor* mon);
   // #IGNORE collect all the specs to parent monitor
 
-  void           GetListForCompletion(const MemberDef* md, String_Array& list) override;
+  void           GetMemberCompletionList(const MemberDef* md, String_Array& list) override;
 
   int	GetEnabled() const override {return (off) ? 0 : 1;}
   void	SetEnabled(bool value) override {off = !value;}

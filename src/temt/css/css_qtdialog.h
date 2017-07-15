@@ -48,7 +48,7 @@ public:
 
   void		GetImage_Membs() override;
   void		GetValue() override;
-  int		Edit(bool modal_ = false, int min_width=-1, int min_height=-1) override;
+  int		  Edit(bool modal_ = false, int min_width=-1, int min_height=-1) override;
   // ati is for when leading argument(s) are predetermined, and user shouldn't be prompted for them
 
 protected:
@@ -81,12 +81,13 @@ public:
   ~cssiArgDialog();
 
   using inherited::GetImage;
-  void		GetImage(bool force) override; // force ignored
-  void		GetValue() override;
-  int	        Edit(bool modal_ = false, int min_width=-1, int min_height=-1) override;
+  void        GetImage(bool force) override; // force ignored
+  void        GetValue() override;
+  int         Edit(bool modal_ = false, int min_width=-1, int min_height=-1) override;
   // ati is for when n leading args are predetermined by context, and so shouldn't be shown to the user
+  taBase*     GetBaseForArg(const String& arg_name);
 
-  void		Ok() override;
+  void        Ok() override;
 
 protected:
   void		Constr_impl() override;

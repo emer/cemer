@@ -53,7 +53,10 @@ public:
   { ops.AddAllColumns_gui(dt, exclude_strings); }
   // #CAT_DataOp #BUTTON #LABEL_AddAllColumns add all columns from given data table -- optionally excluding string-valued columns
 
-  taList_impl*	children_() override {return &ops;}	
+  String    GetArgForCompletion(const String& method, const String& arg) override;
+  void      GetArgCompletionList(const String& method, const String& arg, taBase* arg_obj, String_Array& list) override;
+
+  taList_impl*	children_() override {return &ops;}
   Variant      Elem(const Variant& idx, IndexMode mode = IDX_UNK) const override
   { return ops.Elem(idx, mode); }
   String 	GetTypeDecoKey() const override { return "DataTable"; }

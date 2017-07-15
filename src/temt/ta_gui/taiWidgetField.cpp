@@ -1,4 +1,3 @@
-
 // Copyright 2017, Regents of the University of Colorado,
 // Carnegie Mellon University, Princeton University.
 //
@@ -15,16 +14,21 @@
 //   Lesser General Public License for more details.
 
 #include "taiWidgetField.h"
+#include <taMisc>
+#include <MemberDef>
+#include <MethodDef>
+#include <BuiltinTypeDefs>
+
 #include <iDialogWidgetField>
 #include <iLineEdit>
-#include <MemberDef>
 #include <iTextEdit>
-#include <BuiltinTypeDefs>
-#include <taMisc>
 #include <iCodeCompleter>
 #include <Completions>
 #include <ProgExprBase>
+#include <DataTable>
 #include <taiWidgetCompletionChooser>
+#include <css_qtdialog.h>
+
 
 #define completion_chooser
 
@@ -138,17 +142,35 @@ void taiWidgetField::lookupKeyPressed_dialog() {
 }
 
 void taiWidgetField::characterEntered() {
+  cssiArgDialog* cssi_arg_dlg = dynamic_cast<cssiArgDialog*>(host);
+  if (cssi_arg_dlg) {
+    completion_list.Reset();
+    String reference_arg;  // the arg that holds a pointer to the object from which we can get a list
+    taBase* class_base = (taBase*)host->Root();
+    if (class_base) {
+      reference_arg = class_base->GetArgForCompletion(cssi_arg_dlg->md->name, label()->text());
+      
+      taBase* arg_obj = NULL;
+      if (reference_arg) {
+        arg_obj = cssi_arg_dlg->GetBaseForArg(reference_arg);
+      }
+      class_base->GetArgCompletionList(cssi_arg_dlg->md->name, label()->text(), arg_obj, completion_list);
+      rep()->GetCompleter()->SetModelList(&completion_list);
+      return;
+    }
+  }
+  
+  // not a cssi_arg_dialog move on
   if(!lookupfun_md || !lookupfun_base) return;
   
   taBase* tab = (taBase*)lookupfun_base;
-  
   int cur_pos = rep()->cursorPosition();
   int new_pos = -1;
   iCodeCompleter* completer = rep()->GetCompleter();
   if (completer) {
     completion_list.Reset();
     if (completer->field_type == iCodeCompleter::SIMPLE) {
-      tab->GetListForCompletion(lookupfun_md, completion_list);
+      tab->GetMemberCompletionList(lookupfun_md, completion_list);
       rep()->GetCompleter()->SetModelList(&completion_list);
     }
     else {  // iCodeCompleter::EXPRESSION
@@ -177,7 +199,7 @@ void taiWidgetField::characterEntered_dialog() {
   if (completer) {
     completion_list.Reset();
     if (completer->field_type == iCodeCompleter::SIMPLE) {
-      tab->GetListForCompletion(lookupfun_md, completion_list);
+      tab->GetMemberCompletionList(lookupfun_md, completion_list);
       edit_dialog->txtText->GetCompleter()->SetModelList(&completion_list);
     }
     else {  // iCodeCompleter::EXPRESSION

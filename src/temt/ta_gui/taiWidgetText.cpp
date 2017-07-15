@@ -21,6 +21,7 @@
 #include <taMisc>
 #include <taiMisc>
 #include <MemberDef>
+#include <css_qtdialog.h>
 
 #include <QHBoxLayout>
 #include <QToolButton>
@@ -37,6 +38,8 @@ taiWidgetText::taiWidgetText(TypeDef* typ_, IWidgetHost* host_, taiWidget* par, 
   , btnEdit()
 
 {
+  cssiArgDialog* cssi_arg_dlg = dynamic_cast<cssiArgDialog*>(host_);
+  
   if (needs_edit_button) {
     QWidget* act_par = MakeLayoutWidget(gui_parent_);
     QHBoxLayout* lay = new QHBoxLayout(act_par);
@@ -82,6 +85,13 @@ taiWidgetText::taiWidgetText(TypeDef* typ_, IWidgetHost* host_, taiWidget* par, 
         leText->GetCompleter()->SetFieldType(iCodeCompleter::EXPRESSION);
       }
     }
+//    else if (cssi_arg_dlg) {
+//      leText = new iLineEdit(gui_parent_, true);
+//      if (leText->GetCompleter()) {
+//        leText->GetCompleter()->SetHostType(iCodeCompleter::DIALOG_HOST);
+//        leText->GetCompleter()->SetFieldType(iCodeCompleter::SIMPLE);
+//      }
+//    }
     else {
       leText = new iLineEdit(gui_parent_, false);
     }

@@ -1,4 +1,4 @@
-// Copyright 2017, Regents of the University of Colorado,
+  // Copyright 2017, Regents of the University of Colorado,
 // Carnegie Mellon University, Princeton University.
 //
 // This file is part of The Emergent Toolkit
@@ -2137,6 +2137,83 @@ bool taDataAnal::MatrixCellFreq
   
   return true;
 }
+
+void taDataAnal::GetArgCompletionList(const String& method, const String& arg, taBase* arg_obj, String_Array& list) {
+  if (arg_obj) {
+    if (arg_obj->InheritsFrom(&TA_DataTable)) {
+      DataTable* table = (DataTable*)arg_obj;
+      FOREACH_ELEM_IN_LIST(DataCol, col, table->data) {
+        list.Add(col->name);
+      }
+    }
+  }
+}
+
+String taDataAnal::GetArgForCompletion(const String& method, const String& arg) {
+  if (method == "Histogram" || method == "MatrixCellFreq") {
+    if (arg == "src_col") {
+      return "src_data";
+    }
+  }
+  else if (method == "Matrix3DGraph") {
+    if (arg == "x_axis_col" || arg == "z_axis_col") {
+      return "data";
+    }
+  }
+  else if (method == "PCAEigens" || method == "PCAEigenTable") {
+    if (arg == "name_col_nm") {
+      return "src_data";
+    }
+  }
+  else if (method == "Cluster" || method == "PCA2dPrjn" || method == "MDS2dPrjn" || method == "RowPat2dPrjn") {
+    if (arg == "name_col_nm" || arg == "data_col_nm") {
+      return "src_data";
+    }
+  }
+  else if (method == "RegressLinear") {
+    if (arg == "x_data_col_nm" || arg == "y_data_col_nm") {
+      return "src_data";
+    }
+  }
+  else if (method == "AnovaOneWay") {
+    if (arg == "cond_col_nm" || arg == "data_col_nm") {
+      return "src_data";
+    }
+  }
+  else if (method == "AnovaNWay") {
+    if (arg == "cond_col_nms" || arg == "data_col_nm") {
+      return "src_data";
+    }
+  }
+  else if (method == "DistMatrixTable") {
+    if (arg == "data_col_nm" || arg == "name_col_nm") {
+      return "src_data";
+    }
+  }
+  else if (method == "CrossDistMatrixTable") {
+    if (arg == "data_col_nm_a" || arg == "name_col_nm_a") {
+      return "src_data_a";
+    }
+    if (arg == "data_col_nm_b" || arg == "name_col_nm_b") {
+      return "src_data_b";
+    }
+  }
+  else if (method == "DistMatrixTable") {
+    if (arg == "data_col_nm" || arg == "name_col_nm") {
+      return "src_data";
+    }
+  }
+  else if (method == "CorrelMatrixTable") {
+    if (arg == "data_col_nm") {
+      return "src_data";
+    }
+  }
+
+
+  return _nilString;
+}
+
+
 
 /*
 void Environment::PatFreqGrid(GridLog* disp_log, float act_thresh, bool prop) {

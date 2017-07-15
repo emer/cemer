@@ -1290,7 +1290,7 @@ void NetMonItem::ToggleOffFlag() {
   SigEmitUpdated();
 }
 
-void NetMonItem::GetListForCompletion(const MemberDef* md, String_Array& list) {
+void NetMonItem::GetMemberCompletionList(const MemberDef* md, String_Array& list) {
   if (object_type) {
     MemberSpace mbr_space = object_type->members;
     for (int i = 0; i < mbr_space.size; ++i) {

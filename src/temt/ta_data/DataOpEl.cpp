@@ -113,7 +113,7 @@ void DataOpEl::ClearColumns() {
   taBase::SetPointer((taBase**)&col_lookup, NULL);
 }
 
-void DataOpEl::GetListForCompletion(const MemberDef* md, String_Array& list) {
+void DataOpEl::GetMemberCompletionList(const MemberDef* md, String_Array& list) {
   if (data_table) {
     FOREACH_ELEM_IN_LIST(DataCol, col, data_table->data) {
       list.Add(col->name);

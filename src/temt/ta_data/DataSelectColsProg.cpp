@@ -124,26 +124,17 @@ void DataSelectColsProg::AddAllColumns() {
   select_spec.AddAllColumns(GetSrcData());
 }
 
-DataOpEl* DataSelectColsProg::AddColumn() {
-  if (!GetSrcData()) {
-    taMisc::Error("Set the source data table (src_data_var) before choosing columns.");
-    return NULL;
-  }
-  
-  String column_name = AddColumnDialog("src_table");
-  if (column_name.nonempty()) {
-    return select_spec.AddColumn(column_name, GetSrcData());
-  }
-  else {
-    return NULL;
-  }
+String DataSelectColsProg::GetArgForCompletion(const String& method, const String& arg) {
+  return "dt";
 }
 
-void DataSelectColsProg::GetListForCompletion(const MemberDef* md, String_Array& list) {
-  if (GetSrcData()) {
-    FOREACH_ELEM_IN_LIST(DataCol, col, GetSrcData()->data) {
-      list.Add(col->name);
+void DataSelectColsProg::GetArgCompletionList(const String& method, const String& arg, taBase* arg_obj, String_Array& list) {
+  if (arg_obj) {
+    if (arg_obj->InheritsFrom(&TA_DataTable)) {
+      DataTable* table = (DataTable*)arg_obj;
+      FOREACH_ELEM_IN_LIST(DataCol, col, table->data) {
+        list.Add(col->name);
+      }
     }
   }
 }
-

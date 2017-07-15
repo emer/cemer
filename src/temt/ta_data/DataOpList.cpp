@@ -18,6 +18,8 @@
 #include <DataOpBaseSpec>
 #include <DataTable>
 #include <DataSelectEl>
+#include <DataCol>
+#include <taLeafItr>
 
 #include <taMisc>
 #include <tabMisc>
@@ -99,6 +101,21 @@ void DataOpList::AddAllColumns_gui(DataTable* dt, bool excl_strings) {
   AddAllColumns(dt, excl_strings);
   if(size > 0 && taMisc::gui_active) {
     tabMisc::DelayedFunCall_gui(FastEl(size-1), "BrowserSelectMe");
+  }
+}
+
+String DataOpList::GetArgForCompletion(const String& method, const String& arg) {
+  return "dt";
+}
+
+void DataOpList::GetArgCompletionList(const String& method, const String& arg, taBase* arg_obj, String_Array& list) {
+  if (arg_obj) {
+    if (arg_obj->InheritsFrom(&TA_DataTable)) {
+      DataTable* table = (DataTable*)arg_obj;
+      FOREACH_ELEM_IN_LIST(DataCol, col, table->data) {
+        list.Add(col->name);
+      }
+    }
   }
 }
 

@@ -58,7 +58,7 @@ public:
   virtual void      AddAllDestColumns();
   // #BUTTON #CAT_Data add all columns from dest_data to the dest_cols list of columns 
   void              UpdateSpecDataTable() override;
-  void              GetListForCompletion(const MemberDef* md, String_Array& list) override;
+  void              GetMemberCompletionList(const MemberDef* md, String_Array& list) override;
 
   virtual ProgEl*   AddLoopCode(TypeDef* el_type)	{ return (ProgEl*)loop_code.New(1, el_type); }
   // #BUTTON #TYPE_ProgEl add a new loop code element

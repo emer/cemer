@@ -33,10 +33,8 @@ class TA_API DataSelectRowsProg : public DataSrcDestProg {
 INHERITED(DataSrcDestProg)
 public:
   DataSelectSpec        select_spec; // #TREE_SHOW data selection specification
-
   
-  virtual DataOpEl*     AddColumn();
-  // #CAT_Data #BUTTON add a new column to operate on
+  virtual DataOpEl*     AddColumn(const String& col_name) { return select_spec.AddColumn(col_name, GetSrcData()); }
   virtual void          AddAllColumns();
   // #BUTTON #CAT_Data add all columns from src_data to the select_spec list of ops columns 
   void                  UpdateSpecDataTable() override;
@@ -45,7 +43,9 @@ public:
   String                GetToolbarName() const override { return "select\nrows"; }
   bool                  CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
   bool                  CvtFmCode(const String& code) override;
-  void                  GetListForCompletion(const MemberDef* md, String_Array& list) override;
+  
+  String                GetArgForCompletion(const String& method, const String& arg) override;
+  void                  GetArgCompletionList(const String& method, const String& arg, taBase* arg_obj, String_Array& list) override;
 
   TA_SIMPLE_BASEFUNS(DataSelectRowsProg);
 protected:

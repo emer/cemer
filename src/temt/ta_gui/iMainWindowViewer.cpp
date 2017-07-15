@@ -1026,6 +1026,10 @@ void iMainWindowViewer::Constr_DataMenu() {
           String actionString = "dataAnal" + mdef->name + "Action";
           dataAnalDistanceActions.Add(new iAction(mdef->name, label, QKeySequence(), actionString));
         }
+        else if (mdef->HasOption("CAT_Correlation")) {
+          String actionString = "dataAnal" + mdef->name + "Action";
+          dataAnalDistanceActions.Add(new iAction(mdef->name, label, QKeySequence(), actionString));
+        }
         else if (mdef->HasOption("CAT_HighDim")) {
           String actionString = "dataAnal" + mdef->name + "Action";
           dataAnalHighDimActions.Add(new iAction(mdef->name, label, QKeySequence(), actionString));

@@ -357,7 +357,7 @@ bool DataCalcLoop::CvtFmCode(const String& code) {
   return true;
 }
 
-void DataCalcLoop::GetListForCompletion(const MemberDef* md, String_Array& list) {
+void DataCalcLoop::GetMemberCompletionList(const MemberDef* md, String_Array& list) {
   if (md->name == "src_table") {
     if (GetSrcData()) {
       FOREACH_ELEM_IN_LIST(DataCol, col, GetSrcData()->data) {

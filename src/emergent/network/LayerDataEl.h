@@ -84,7 +84,7 @@ public:
 
   String          GetName() const override		{ return col_name; }
   String          GetDisplayName() const override;
-  void            GetListForCompletion(const MemberDef* md, String_Array& list) override;
+  void            GetMemberCompletionList(const MemberDef* md, String_Array& list) override;
 
   TA_SIMPLE_BASEFUNS(LayerDataEl);
 protected:
