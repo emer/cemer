@@ -48,8 +48,6 @@ public:
   
 protected:
   void                CheckThisConfig_impl(bool quiet, bool& rval) override;
-  String              AddColumnDialog(String member_name);
-  // CAT_Data  dialog for user to select a column name - has completion feature
  
 private:
   void	Initialize();
