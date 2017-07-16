@@ -2161,7 +2161,7 @@ String taDataAnal::GetArgForCompletion(const String& method, const String& arg) 
     }
   }
   else if (method == "PCAEigens" || method == "PCAEigenTable") {
-    if (arg == "name_col_nm") {
+    if (arg == "data_col_nm") {
       return "src_data";
     }
   }

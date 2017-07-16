@@ -84,6 +84,7 @@ public:
   bool                    HasSelected();             // is one of the completion choices highlighted
   int                     GetListCount() { return GetList()->size(); }
   bool                    PopUpIsVisible() { return popup()->isVisible(); }
+  void                    DialogClosing() { popup()->hide(); }  // dialogs should call this when deleting
   
 protected:
   QStringList             string_list;

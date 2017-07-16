@@ -85,13 +85,14 @@ taiWidgetText::taiWidgetText(TypeDef* typ_, IWidgetHost* host_, taiWidget* par, 
         leText->GetCompleter()->SetFieldType(iCodeCompleter::EXPRESSION);
       }
     }
-//    else if (cssi_arg_dlg) {
-//      leText = new iLineEdit(gui_parent_, true);
-//      if (leText->GetCompleter()) {
-//        leText->GetCompleter()->SetHostType(iCodeCompleter::DIALOG_HOST);
-//        leText->GetCompleter()->SetFieldType(iCodeCompleter::SIMPLE);
-//      }
-//    }
+    else if (cssi_arg_dlg) {
+      leText = new iLineEdit(gui_parent_, true);
+      if (leText->GetCompleter()) {
+        cssi_arg_dlg->code_completer = leText->GetCompleter();
+        leText->GetCompleter()->SetHostType(iCodeCompleter::DIALOG_HOST);
+        leText->GetCompleter()->SetFieldType(iCodeCompleter::SIMPLE);
+      }
+    }
     else {
       leText = new iLineEdit(gui_parent_, false);
     }

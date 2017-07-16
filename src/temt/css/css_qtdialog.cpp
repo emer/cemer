@@ -36,6 +36,7 @@
 #include <iHiLightButton>
 #include <taFiler>
 #include <DataTable>
+#include <iCodeCompleter>
 
 #include <QLabel>
 #include <QLayout>
@@ -340,10 +341,14 @@ cssiArgDialog::cssiArgDialog(MethodDef* md_, TypeDef* typ_, void* base_, int use
   use_argc = use_argc_;
   hide_args = hide_args_;
   err_flag = false;
+  code_completer = NULL;
 }
 
 
 cssiArgDialog::~cssiArgDialog() {
+  if (code_completer) {
+    delete code_completer;
+  }
   delete obj;
   obj = NULL;
 }

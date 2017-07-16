@@ -153,15 +153,20 @@ bool iCodeCompleter::eventFilter(QObject* obj, QEvent* event) {
       }
       last_epression_text = GetText();
       QCoreApplication* app = QCoreApplication::instance();
-      if (event->type() == QEvent::KeyPress && popup()->currentIndex().row() != -1) {  // some item is highlighted
-        app->postEvent(popup(), new QKeyEvent(QEvent::KeyPress, Qt::Key_Return, Qt::NoModifier));  // select
+      if (popup()->isVisible()) {
+        if (event->type() == QEvent::KeyPress && popup()->currentIndex().row() != -1) {  // some item is highlighted
+          app->postEvent(popup(), new QKeyEvent(QEvent::KeyPress, Qt::Key_Return, Qt::NoModifier));  // select
+        }
+        else if (GetList()->size() == 1) {
+          app->postEvent(popup(), new QKeyEvent(QEvent::KeyPress, Qt::Key_Down, Qt::NoModifier)); // only one item in list
+          app->postEvent(popup(), new QKeyEvent(QEvent::KeyPress, Qt::Key_Return, Qt::NoModifier));  // select
+        }
+        else {
+          app->postEvent(popup(), new QKeyEvent(QEvent::KeyPress, Qt::Key_Enter, Qt::NoModifier));  // try extending
+        }
       }
-      else if (GetList()->size() == 1) {
-        app->postEvent(popup(), new QKeyEvent(QEvent::KeyPress, Qt::Key_Down, Qt::NoModifier)); // only one item in list
-        app->postEvent(popup(), new QKeyEvent(QEvent::KeyPress, Qt::Key_Return, Qt::NoModifier));  // select
-      }
-      else {
-        app->postEvent(popup(), new QKeyEvent(QEvent::KeyPress, Qt::Key_Enter, Qt::NoModifier));  // try extending
+      else {  // no popup in sight
+        return inherited::eventFilter(obj, event);
       }
       return true;
     }

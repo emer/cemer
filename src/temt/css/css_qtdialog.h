@@ -31,6 +31,7 @@ class cssProgSpace;
 class cssClassType;
 class cssClassInst;
 class taiArgType;
+class iCodeCompleter;
 
 class CSS_API cssiEditDialog : public taiEditorOfClass {
   // edit dialog for editing css classes
@@ -70,11 +71,13 @@ class CSS_API cssiArgDialog : public cssiEditDialog {
   // #IGNORE edit dialog for editing function arguments
 INHERITED(cssiEditDialog)
 public:
-  bool		err_flag; 	// true if an arg was improperly set
-  MethodDef*	md;
-  TypeDef*	typ;
-  int		use_argc;
-  int 		hide_args; // number of leading args to hide in dialogs to user (because context has already predetermined them)
+  bool                  err_flag; 	// true if an arg was improperly set
+  MethodDef*            md;
+  TypeDef*              typ;
+  int                   use_argc;
+  int                   hide_args; // number of leading args to hide in dialogs to user (because context has already predetermined them)
+  iCodeCompleter*       code_completer;
+  
 
   cssiArgDialog(MethodDef* md, TypeDef* typ, void* base, int use_argc, int hide_args,
     bool read_only_ = false, bool modal_ = true, QObject* parent = 0);
