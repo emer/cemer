@@ -52,14 +52,14 @@ INHERITED(QCompleter)
 public:
   
   enum FieldType {
-    EXPRESSION,
-    SIMPLE,
+    EXPRESSION,         // all code
+    SIMPLE,             // fields for single items, e.g. column name
   };
   
   enum HostType {
-    DIALOG_HOST,
-    INLINE_HOST,
-    TEXT_EDIT_HOST,
+    DIALOG_HOST,        // the field is a single line field in a dialog using an iLineEdit
+    INLINE_HOST,        // the field is an inline edit tree item using an iLineEdit
+    TEXT_EDIT_HOST,     // the field is a dialog with an iTextEdit
   };
   
   iCodeCompleter(QObject* parent = 0);
