@@ -60,13 +60,12 @@ public:
   
   enum LookUpType {
     NOT_SET,
-    VARIOUS,        // no path or delimiter - could be one of several types
-    OBJ_MEMB_METH,
-    SCOPED,         // Class::
-    ARRAY_INDEX,    // not implemented
-    CALL,
-    PROGRAM_FUNCTION,
-    METHOD,
+    VARIOUS,        // could be one of several types - e.g. at start of line - could be a data type, program variable, program element, etc.
+    OBJ_MEMB_METH,  // object. or object-> list will be members and methods
+    SCOPED,         // class::
+    CALL,           // call of program or call of function
+    PROGRAM_FUNCTION, //  call of a function in another program
+    METHOD,         // method. list will be members
     ASSIGN,         // could be ProgVar, method, function but not program
     EQUALITY,       // either == or !=
     STRING_INDEX,   // access of list/group item by name i.e. "string" or access of datatable column by name

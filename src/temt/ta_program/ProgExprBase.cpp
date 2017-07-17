@@ -1321,11 +1321,6 @@ Completions* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_po
       break;
     }
       
-    case ProgExprBase::ARRAY_INDEX: {
-      taMisc::Info("lookup an array index from path:", base_path, "seed:", lookup_seed);
-      break;
-    }
-      
     case ProgExprBase::CALL: {                 // ProgEl
       String trimmed_txt = trim(completion_prog_el_text);
       String el = trimmed_txt; // the program element
