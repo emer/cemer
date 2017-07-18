@@ -1273,7 +1273,6 @@ void NetMonItem::GetMonVals_DataAgg(DataTable* db) {
         dmat->SetFmVar_Flat(mbval, j);
       }
     }
-    taBase::UnRef(dmat);
   }
 }
 
