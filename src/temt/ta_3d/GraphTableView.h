@@ -86,6 +86,7 @@ public:
   float                 bar_space;      // #DEF_0.2 amount of space between bars
   float                 bar_depth;      // #DEF_0.01 how deep to make the 3d bars
   int                   label_spacing;  // how frequently to display text labels of the data values (-1 = never); if plotting a string column, the other data column (e.g. plot_2) is used to determine the y axis values
+  int                   string_spacing; // how frequently to display string column text values -- sometimes need to space these out to prevent overlap
   float                 width;          // how wide to make the display (height is always 1.0)
   float                 depth;          // how deep to make the display (height is always 1.0)
 
@@ -104,6 +105,7 @@ public:
   float                 err_bar_width;  // half-width of error bars, in view plot units
 
   ColorMode             color_mode;     // how to determine the colors to draw
+  bool                  color_gp_use_y; // group color mode uses existing y-axis color and line type settings -- otherwise it uses the colorscale
   GraphAxisView         color_axis;     // #CONDEDIT_ON_color_mode:BY_VARIABLE color axis, for determining color of lines when color_mode = BY_VARIABLE
   GraphAxisView         last_color_axis; // #READ_ONLY #NO_SAVE track so we don't unnecessarily repeat GetUniqueColumnValues() which is expensive
   ColorScale            colorscale;     // contains current min,max,range,zero,auto_scale

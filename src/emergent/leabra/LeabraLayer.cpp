@@ -70,6 +70,7 @@ void LeabraLayer::InitLinks() {
   taBase::Own(i_val, this);
   
   taBase::Own(netin, this);
+  taBase::Own(netin_m, this);
   taBase::Own(netin_raw, this);
   taBase::Own(acts, this);
   taBase::Own(acts_eq, this);

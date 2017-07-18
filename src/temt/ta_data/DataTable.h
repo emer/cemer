@@ -626,6 +626,8 @@ public:
   // #CAT_Rows should only be called internally - does not handle negative index values!
   virtual bool          AppendRows(DataTable* append_from);
   // #CAT_Rows #DROP1 #MENU append rows from another data table -- this is also available in taDataProc and in the GUI as a drag-and-drop action (appends rows of dropped item onto dropped item)
+  virtual bool          AppendRowsCopyFirst(DataTable* append_from);
+  // #CAT_Rows #DROP1 #MENU append rows from another data table -- if this table has no data, then do a CopyFrom instead of append rows, which is a good general motif for aggregating data from another table whose columns may change over time, ensuring that the aggregator always has the same columns -- this is also available in the GUI as a drag-and-drop action (appends rows of dropped item onto dropped item)
   virtual void          ShowAllRows();
   // #CAT_Rows #MENU #FROM_LIST_data #NULL_OK show all available rows of data in the table, in their original raw order, effectively undoing any prior sort, filter, or row removal functions -- the DataTable rows are accessed via a set of indexes that are what is actually sorted and filtered by the relevant functions. Therefore, you can instantly regain access to the original unsorted and unfiltered rows of data by resetting these indexes to be in one-to-one correspondence with the raw data stored in the table.  Note that *all* access to the DataTable rows goes through the indexes -- it is not possible to otherwise access the raw data directly.  See also the Flatten function.
   const Variant         GetColUserData(const String& name, const Variant& col) const;

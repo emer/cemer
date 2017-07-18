@@ -120,12 +120,14 @@ void GraphTableView::Initialize() {
   bar_space = .2f;
   bar_depth = 0.01f;
   color_mode = FIXED;
+  color_gp_use_y = false;
   negative_draw = false;
   negative_draw_z = true;
   axis_font_size = .05f;
   label_font_size = .04f;
   x_axis_label_rot = 0.0f;
   label_spacing = -1;
+  string_spacing = 1;
   matrix_mode = SEP_GRAPHS;
   mat_layout = taMisc::BOT_ZERO;
   mat_odd_vert = true;
@@ -212,6 +214,7 @@ void GraphTableView::CopyFromView(GraphTableView* cp) {
   bar_space = cp->bar_space;
   bar_depth = cp->bar_depth;
   label_spacing = cp->label_spacing;
+  string_spacing = cp->string_spacing;
   width = cp->width;
   depth = cp->depth;
   axis_font_size = cp->axis_font_size;
@@ -1018,6 +1021,9 @@ void GraphTableView::InitFromUserData() {
   if(dt->HasUserData("LABEL_SPACING")) {
     label_spacing = dt->GetUserDataAsInt("LABEL_SPACING");
   }
+  if(dt->HasUserData("STRING_SPACING")) {
+    string_spacing = dt->GetUserDataAsInt("STRING_SPACING");
+  }
   if(dt->HasUserData("BAR_SPACE")) {
     bar_space = dt->GetUserDataAsFloat("BAR_SPACE");
   }
@@ -1419,8 +1425,17 @@ void GraphTableView::RenderLegend_Ln(GraphPlotView& plv, T3GraphLine* t3gl,
   t3gl->setMarkerSize(point_size);
   t3gl->setValueColorMode(false);
   if (color_mode == BY_GROUP) {
-    iColor clr = GetValueColor(&color_axis, group);
-    t3gl->setDefaultColor(clr);
+    if(color_gp_use_y) {
+      int plot_idx = group % plots.size;
+      GraphPlotView* gpv = plots[plot_idx];
+      t3gl->setLineStyle((T3GraphLine::LineStyle)gpv->line_style, line_width_mult *
+                         line_width);
+      t3gl->setDefaultColor(gpv->color.color());
+    }
+    else {
+      iColor clr = GetValueColor(&color_axis, group);
+      t3gl->setDefaultColor(clr);
+    }
   }
   else {
     t3gl->setDefaultColor(plv.color.color());
@@ -2297,7 +2312,15 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv,
       else if (color_mode == BY_GROUP) {
         String group = da_clr->GetValAsString(row);
         int index = color_axis.group_by_values.FindEl(group);
-        clr = GetValueColor(ax_clr, index);
+        if(color_gp_use_y) {
+          int plot_idx = index % plots.size;
+          GraphPlotView* gpv = plots[plot_idx];
+          clr = gpv->color.color();
+          // t3gl->setLineStyle((T3GraphLine::LineStyle)plv.line_style, line_width_mult * line_width);
+        }
+        else {
+          clr = GetValueColor(ax_clr, index);
+        }
       }
       else { // BY_VARIABLE
         clr = GetValueColor(ax_clr, ax_clr->GetDataVal(da_clr, row));
@@ -2713,6 +2736,9 @@ void GraphTableView::PlotData_String(GraphPlotView& plv_str, GraphPlotView& plv_
   iVec3f dat;                   // data point
   iVec3f plt;                   // plot coords
   for (int row = view_range.min; row <= view_range.max; row++) {
+    if((string_spacing > 0) && (row % string_spacing != 0)) {
+      continue;
+    }
     if(x_axis.row_num)
       dat.x = row;
     else

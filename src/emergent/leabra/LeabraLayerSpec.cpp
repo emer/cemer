@@ -1207,8 +1207,8 @@ void LeabraLayerSpec::Compute_AbsRelNetin(LeabraLayer* lay, LeabraNetwork* net) 
   if(lay->netin.max < 0.01f) return; // not getting enough activation to count!
 
   // layer is automatic
-  lay->avg_netin_sum.avg += lay->netin.avg;
-  lay->avg_netin_sum.max += lay->netin.max;
+  lay->avg_netin_sum.avg += lay->netin_m.avg;
+  lay->avg_netin_sum.max += lay->netin_m.max;
   lay->avg_netin_n++;
 
   // but projection level is not

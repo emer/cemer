@@ -2119,6 +2119,16 @@ bool DataTable::AppendRows(DataTable* append_from) {
   return taDataProc::CopyCommonColData(this, append_from);
 }
 
+bool DataTable::AppendRowsCopyFirst(DataTable* append_from) {
+  if(rows == 0) {
+    CopyFrom(append_from);
+  }
+  else {
+    return AppendRows(append_from);
+  }
+  return true;
+}
+
 void DataTable::RemoveOrphanCols() {
   int cls_cnt = 0; // used to prevent spurious struct updates
   for(int i=data.size-1;i>=0;i--) {

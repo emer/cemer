@@ -59,6 +59,7 @@ public:
   float 	acts_p_avg_eff;	// #READ_ONLY #SHOW #CAT_Activation #SAVE_WTS acts_p_avg * avg_act.adjust factor -- this is the effective value actually used for netinput scaling based on layer activation levels -- saved with weights
   LeabraInhibVals i_val;        // #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation computed inhibitory values
   AvgMaxVals	netin;		// #NO_SAVE #READ_ONLY #SHOW #CAT_Activation average, maximum net input values for the layer
+  AvgMaxVals	netin_m;	// #NO_SAVE #READ_ONLY #SHOW #CAT_Activation average, maximum net input values for the layer, minus phase
   AvgMaxVals	netin_raw;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation average, maximum raw net input values for the layer (synaptic netinput only -- no extras)
   AvgMaxVals	acts;		// #NO_SAVE #READ_ONLY #SHOW #CAT_Activation average, maximum activation values for the layer
   AvgMaxVals	acts_eq;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation average, maximum act_eq values for the layer

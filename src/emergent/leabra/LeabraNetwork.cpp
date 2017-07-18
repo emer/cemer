@@ -953,6 +953,9 @@ void LeabraNetwork::Compute_NetinStats_Post() {
       netin_raw.UpdtFmAvgMaxRaw(*am_net_raw);
     }
     netin.CalcAvg();
+    if(phase == MINUS_PHASE) {
+      lay->netin_m = netin;
+    }
     netin_raw.CalcAvg();
   }
 
@@ -976,6 +979,9 @@ void LeabraNetwork::Compute_NetinStats_Post() {
       netin_raw.UpdtFmAvgMaxRaw(*am_net_raw);
     }
     netin.CalcAvg();
+    if(phase == MINUS_PHASE) {
+      gpd->netin_m = netin;
+    }
     netin_raw.CalcAvg();
   }
 }

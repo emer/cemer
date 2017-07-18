@@ -150,11 +150,19 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
   layVals->addSpacing(taiM->hsep_c);
   
   lblLabelSpacing = taiM->NewLabel("Lbl\nSpc", widg, font_spec);
-  lblLabelSpacing->setToolTip(taiMisc::ToolTipPreProcess("Spacing of text labels of data point values. -1 means no text labels."));
+  lblLabelSpacing->setToolTip(taiMisc::ToolTipPreProcess("Spacing between annotation of text labels of data point values. -1 means don't add any such data value labels."));
   layVals->addWidget(lblLabelSpacing);
   fldLabelSpacing = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
   layVals->addWidget(fldLabelSpacing->GetRep());
   ((iLineEdit*)fldLabelSpacing->GetRep())->setCharWidth(6);
+  layVals->addSpacing(taiM->hsep_c);
+  
+  lblStringSpacing = taiM->NewLabel("Str\nSpc", widg, font_spec);
+  lblStringSpacing->setToolTip(taiMisc::ToolTipPreProcess("Spacing between text displaying string-valued data column contents -- increasing spacing can prevent overlap and make text legible"));
+  layVals->addWidget(lblStringSpacing);
+  fldStringSpacing = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
+  layVals->addWidget(fldStringSpacing->GetRep());
+  ((iLineEdit*)fldStringSpacing->GetRep())->setCharWidth(6);
   layVals->addSpacing(taiM->hsep_c);
   
   lblWidth = taiM->NewLabel("Width", widg, font_spec);
@@ -420,6 +428,12 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
   // Raster Axis
   layRAxis = new QHBoxLayout; layWidg->addLayout(layRAxis);
   layRAxis->setContentsMargins(margin_l_r, margin_t_b, margin_l_r, margin_t_b);
+
+  chkColorGpY = new iCheckBox("Gp\nYs", widg);
+  chkColorGpY->setToolTip(taiMisc::ToolTipPreProcess("Use existing Y-axis line colors for group colors in BY_GROUP mode -- otherwise uses continuous colorscale"));
+  connect(chkColorGpY, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
+  layRAxis->addWidget(chkColorGpY);
+  layRAxis->addSpacing(taiM->hsep_c);
   
   lblRAxis = taiM->NewLabel("Raster:", widg, font_spec);
   lblRAxis->setToolTip(taiMisc::ToolTipPreProcess("Column of data for the Y axis in RASTER graphs"));
@@ -662,6 +676,7 @@ void iViewPanelOfGraphTable::UpdatePanel_impl() {
   fldLineWidth->GetImage((String)glv->line_width);
   fldPointSpacing->GetImage((String)glv->point_spacing);
   fldLabelSpacing->GetImage((String)glv->label_spacing);
+  fldStringSpacing->GetImage((String)glv->string_spacing);
   chkNegDraw->setChecked(glv->negative_draw);
   chkNegDrawZ->setChecked(glv->negative_draw_z);
   fldWidth->GetImage((String)glv->width);
@@ -734,6 +749,7 @@ void iViewPanelOfGraphTable::UpdatePanel_impl() {
   
   cbar->UpdateScaleValues();
   
+  chkColorGpY->setChecked(glv->color_gp_use_y);
   lelRAxis->GetImage(&(glv->children), glv->raster_axis.GetColPtr());
   pdtRAxis->GetImage_(&(glv->raster_axis.fixed_range));
   
@@ -820,6 +836,7 @@ void iViewPanelOfGraphTable::GetValue_impl() {
   glv->point_spacing = (int)fldPointSpacing->GetValue();
   glv->point_spacing = MAX(1, glv->point_spacing);
   glv->label_spacing = (int)fldLabelSpacing->GetValue();
+  glv->string_spacing = (int)fldStringSpacing->GetValue();
   glv->negative_draw = chkNegDraw->isChecked();
   glv->negative_draw_z = chkNegDrawZ->isChecked();
   glv->width = (float)fldWidth->GetValue();
@@ -906,6 +923,7 @@ void iViewPanelOfGraphTable::GetValue_impl() {
   
   glv->setScaleData(false, cbar->min(), cbar->max());
   
+  glv->color_gp_use_y = chkColorGpY->isChecked();
   glv->raster_axis.SetColPtr((GraphColView*)lelRAxis->GetValue());
   pdtRAxis->GetValue_(&(glv->raster_axis.fixed_range));
   

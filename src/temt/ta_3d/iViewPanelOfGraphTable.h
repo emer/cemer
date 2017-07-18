@@ -70,6 +70,8 @@ public:
   taiWidgetField*           fldPointSpacing;
   QLabel*                   lblLabelSpacing;
   taiWidgetField*           fldLabelSpacing;
+  QLabel*                   lblStringSpacing;
+  taiWidgetField*           fldStringSpacing;
   QLabel*                   lblWidth;
   taiWidgetField*           fldWidth; // width of the display (height is always 1.0)
   QLabel*                   lblDepth;
@@ -147,6 +149,7 @@ public:
   taiWidgetField*           fldXlblRot;
   
   QHBoxLayout*            layRAxis;
+  iCheckBox*                chkColorGpY;
   QLabel*                   lblRAxis;
   taiWidgetListElChooser*   lelRAxis; // list element chooser
   taiWidgetPoly*            pdtRAxis; // fixed_range polydata (inline)
