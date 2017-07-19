@@ -96,13 +96,15 @@ void taiWidgetField::lookupKeyPressed() {
   rep()->setFocus();
 #endif
   
-  taiWidgetCompletionChooser* chooser = new taiWidgetCompletionChooser(NULL, NULL, NULL, NULL, 0, completions->seed);
-  chooser->SetCompletions(completions);
-  bool ok_choice = chooser->OpenChooser();
-  
-  if (ok_choice) {
-    String selection_text = chooser->GetSelectionText();
-    rep()->setText(selection_text + ProgExprBase::completion_append_text);
+  if (completions) {
+    taiWidgetCompletionChooser* chooser = new taiWidgetCompletionChooser(NULL, NULL, NULL, NULL, 0, completions->seed);
+    chooser->SetCompletions(completions);
+    bool ok_choice = chooser->OpenChooser();
+    
+    if (ok_choice) {
+      String selection_text = chooser->GetSelectionText();
+      rep()->setText(selection_text + ProgExprBase::completion_append_text);
+    }
   }
 }
 
