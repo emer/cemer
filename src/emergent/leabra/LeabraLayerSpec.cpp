@@ -868,6 +868,34 @@ float LeabraLayerSpec::Compute_SSE(LeabraLayer* lay, LeabraNetwork* net,
   return rval;
 }
 
+float LeabraLayerSpec::Compute_MaxErr(LeabraLayer* lay, LeabraNetwork* net) {
+  lay->max_err = 0.0f;
+  if(!lay->HasExtFlag(UnitVars::COMP_TARG)) return 0.0f;
+  if(HasUnitGpInhib(lay)) {
+    int merr_sum = 0;
+    for(int g=0; g < lay->gp_geom.n; g++) {
+      LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
+      bool max_err = true;
+      if(gpd->acts_m.max_i >= 0) {
+        LeabraUnit* un = (LeabraUnit*)net->UnFmIdx(gpd->acts_m.max_i);
+        max_err = (un->targ() < 0.1f);
+      }
+      gpd->max_err = (float)max_err;
+      merr_sum += (int)max_err;
+    }
+    lay->max_err = (merr_sum > 0);
+  }
+  else {
+    bool max_err = true;
+    if(lay->acts_m.max_i >= 0) {
+      LeabraUnit* un = (LeabraUnit*)net->UnFmIdx(lay->acts_m.max_i);
+      max_err = (un->targ() < 0.1f);
+    }
+    lay->max_err = (float)max_err;
+  }
+  return lay->max_err;
+}
+
 float LeabraLayerSpec::Compute_NormErr(LeabraLayer* lay, LeabraNetwork* net) {
   lay->norm_err = -1.0f;        // assume not contributing
   if(!lay->HasExtFlag(UnitVars::COMP_TARG)) return -1.0f; // indicates not applicable

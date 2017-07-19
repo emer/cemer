@@ -41,6 +41,7 @@ void LeabraLayer::Initialize() {
   da_n = 0.0f;
   sev = 0.0f;
   bin_err = 0.0f;
+  max_err = 0.0f;
   norm_err = 0.0f;
   cos_err = 0.0f;
   cos_err_prv = 0.0f;
@@ -122,6 +123,7 @@ void LeabraLayer::Copy_(const LeabraLayer& cp) {
   da_n = cp.da_n;
   sev = cp.sev;
   bin_err = cp.bin_err;
+  max_err = cp.max_err;
   norm_err = cp.norm_err;
   cos_err = cp.cos_err;
   cos_err_prv = cp.cos_err_prv;

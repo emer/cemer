@@ -51,5 +51,5 @@ void LeabraUnGpData::Copy_(const LeabraUnGpData& cp) {
 }
 
 void LeabraUnGpData::Init_State() {
-  // nop
+  max_err = 0.0f;
 }

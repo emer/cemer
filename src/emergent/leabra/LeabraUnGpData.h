@@ -31,6 +31,7 @@ class E_API LeabraUnGpData : public taOBase, public LeabraInhib {
   // #STEM_BASE ##CAT_Leabra data to maintain for independent unit groups of competing units within a single layer -- storing separately allows unit groups to be virtual (virt_groups flag on layer)
 INHERITED(taOBase)
 public:
+  float		max_err;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic max activity error value for this unit group -- is 0 if the most active unit in the unit group has a non-zero target value -- otherwise 1 -- in other words, is the most active unit a target unit?  this only really makes sense for localist single-unit activity layers (although multiple units can be set to targets to allow for multiple options).  it is a highly sensitive measure, allowing for any other kinds of activity in the layer
 
   String 	GetTypeDecoKey() const override { return "Unit"; }
 

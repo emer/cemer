@@ -1955,6 +1955,7 @@ void LeabraNetwork::Compute_NormErr_Agg() {
   const int nlay = n_layers_built;
   for(int li = 0; li < nlay; li++) {
     LeabraLayer* lay = (LeabraLayer*)ActiveLayer(li);
+    lay->Compute_MaxErr(this);  // do this here as well..
     float nerr = lay->Compute_NormErr(this);
     if(nerr >= 0.0f) {
       nerr_avail += 1.0f;
