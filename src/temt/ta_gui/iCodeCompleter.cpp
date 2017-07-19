@@ -148,7 +148,7 @@ bool iCodeCompleter::eventFilter(QObject* obj, QEvent* event) {
   }
   else {
     if (key_event->key() == Qt::Key_Tab) {
-      if (is_dialog_field && GetText() == last_epression_text) {
+      if (field_type == EXPRESSION && GetText() == last_epression_text) {
         return inherited::eventFilter(obj, event);
       }
       last_epression_text = GetText();
