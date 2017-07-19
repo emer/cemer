@@ -4219,6 +4219,7 @@ void DataTable::Sort(const Variant& col1, bool ascending1,
     Variant col6, bool ascending6) {
 
   DataSortSpec spec;
+  spec.OwnTempObj();
   if(col1.isStringType() || col1.toInt() >= 0) {
     DataCol* da = GetColData(col1);
     if(da) {
@@ -4285,6 +4286,7 @@ void DataTable::SortColName(const String& col1, bool ascending1,
     const String& col6, bool ascending6) {
 
   DataSortSpec spec;
+  spec.OwnTempObj();
   if(col1.nonempty()) {
     DataSortEl* sp = (DataSortEl*)spec.ops.New(1);
     if(ascending1) sp->order = DataSortEl::ASCENDING;
@@ -4333,6 +4335,7 @@ void DataTable::SortCol(DataCol* col1, bool ascending1,
     DataCol* col6, bool ascending6) {
 
   DataSortSpec spec;
+  spec.OwnTempObj();
   if(col1) {
     DataSortEl* sp = (DataSortEl*)spec.ops.New(1);
     if(ascending1) sp->order = DataSortEl::ASCENDING;

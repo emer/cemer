@@ -348,6 +348,7 @@ cssiArgDialog::cssiArgDialog(MethodDef* md_, TypeDef* typ_, void* base_, int use
 cssiArgDialog::~cssiArgDialog() {
   if (code_completer) {
     delete code_completer;
+    code_completer = NULL
   }
   delete obj;
   obj = NULL;

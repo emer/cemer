@@ -427,12 +427,14 @@ bool taDataProc::SortThruIndex(DataTable* dt, DataSortSpec* spec)
   spec->ClearColumns();
 
   // now need to translate new order into raw indexes
-  for (int i=0; i < n_rows; i++)
+  for (int i=0; i < n_rows; i++) {
     order[i] = dt->row_indexes[order[i]];
+  }
 
   // now it is ready to overwrite
-  for (int i=0; i < n_rows; i++)  // copy the new order into the data tables index array
+  for (int i=0; i < n_rows; i++) { // copy the new order into the data tables index array
     dt->row_indexes[i] = order[i];
+  }
 
   delete[] order;
   dt->StructUpdate(false);

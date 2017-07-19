@@ -84,7 +84,8 @@ void ClusterManager_UpdtThr::EnsureSVNCredentialsAvailable() {
       int rev = 0;
       bool main_svn = ((clust == clust_nm) && (user == username));
       if (main_svn) {
-        m_cm->m_svn_client->UrlExists(uurl, rev); //Call an operation on the repository to check we have access
+        /* m_cm->m_svn_client*/
+        m_svn_other->UrlExists(uurl, rev); //Call an operation on the repository to check we have access
       } else {
         m_svn_other->UrlExists(uurl, rev);
       }
@@ -125,7 +126,9 @@ ClusterManager_UpdtThr::UpdateWorkingCopy() {
       bool main_svn = ((clust == clust_nm) && (user == username));
       if(main_svn) {
         try{
-          m_cm->m_cur_svn_rev = UpdateWorkingCopy_impl(m_cm->m_svn_client, m_cm->m_wc_path, user, clust, projname,
+          m_svn_other->SetWorkingCopyPath(wcp);
+          // note: getting crashes potentially from using main svn client in thread
+          m_cm->m_cur_svn_rev = UpdateWorkingCopy_impl(m_svn_other /* m_cm->m_svn_client */, m_cm->m_wc_path, user, clust, projname,
                                                      main_svn);
         } catch (const SubversionClient::Exception &ex) {
           if (ex.GetSvnErrorCode() == 155004) {
@@ -832,7 +835,7 @@ ClusterManager::InitiateBackgroundSVNUpdate() {
   if(!SetPaths()) return -1;
   m_updtThr->is_updating++;
   m_cluster_run.is_updating = true;
-  m_cluster_run.UpdateUI();
+  m_cluster_run.SigEmitUpdated();
   m_updtThr->EnsureSVNCredentialsAvailable();
   m_updtThr->start();
   return 0;
