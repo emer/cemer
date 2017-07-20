@@ -34,7 +34,7 @@ public:
   String        column_name;  // #ADD_COMPLETER_SIMPLE the data table column to read from or write to
 
   void          CheckThisConfig_impl(bool quiet, bool& rval) override;
-  void          GetMemberCompletionList(const MemberDef* md, String_Array& list) override;
+  void          GetMemberCompletionList(const MemberDef* md, Completions& completions) override;
 
   PROGEL_SIMPLE_BASEFUNS(DataVarSimple);
 protected:

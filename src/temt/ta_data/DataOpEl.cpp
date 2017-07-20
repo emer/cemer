@@ -17,8 +17,8 @@
 #include <ProgEl>
 #include <DataTable>
 #include <taProject>
-
 #include <taMisc>
+#include <Completions>
 
 TA_BASEFUNS_CTORS_DEFN(DataOpEl);
 
@@ -113,10 +113,10 @@ void DataOpEl::ClearColumns() {
   taBase::SetPointer((taBase**)&col_lookup, NULL);
 }
 
-void DataOpEl::GetMemberCompletionList(const MemberDef* md, String_Array& list) {
+void DataOpEl::GetMemberCompletionList(const MemberDef* md, Completions& completions) {
   if (data_table) {
     FOREACH_ELEM_IN_LIST(DataCol, col, data_table->data) {
-      list.Add(col->name);
+      completions.object_completions.Link(col);
     }
   }
 }

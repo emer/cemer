@@ -17,6 +17,7 @@
 #include <LayerWriter>
 #include <DataTable>
 #include <MemberDef>
+#include <Completions>
 
 TA_BASEFUNS_CTORS_DEFN(LayerDataEl);
 
@@ -80,18 +81,18 @@ int LayerDataEl::GetColIdx(DataTable* db) {
   return db->FindColNameIdx(col_name, true);
 }
 
-void LayerDataEl::GetMemberCompletionList(const MemberDef* md, String_Array& list) {
+void LayerDataEl::GetMemberCompletionList(const MemberDef* md, Completions& completions) {
   if (md && md->name == "col_name") {
     if (data) {
       FOREACH_ELEM_IN_LIST(DataCol, col, data->data) {
-        list.Add(col->name);
+        completions.object_completions.Link(col);
       }
     }
   }
   else if (md && md->name == "layer_name") {
     if (net_target == LAYER) {
       FOREACH_ELEM_IN_GROUP(Layer, lay, network->layers) {
-        list.Add(lay->name);
+        completions.object_completions.Link(lay);
       }
     }
   }

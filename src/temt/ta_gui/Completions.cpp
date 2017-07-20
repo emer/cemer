@@ -17,3 +17,12 @@
 
 TA_BASEFUNS_CTORS_DEFN(Completions);
 
+void Completions::Reset() {
+  string_completions.Reset();
+  object_completions.Reset();
+  member_completions.Reset();
+  method_completions.Reset();
+  enum_completions.Reset();
+  static_completions.Reset();
+  misc_completions.Reset();
+}

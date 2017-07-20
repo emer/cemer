@@ -1259,7 +1259,7 @@ public:
   virtual Completions*  StringFieldLookupForCompleter(const String& cur_txt, int cur_pos,
                                              const String& mbr_name, int& new_pos) { return NULL; }
   // #IGNORE returns a list of options that are legal entries for the field given the current contents and cursor position, used in expression fields and called after each character to present a list of options or called when Ctrl-L entered to display options in a chooser dialog
-  virtual void          GetMemberCompletionList(const MemberDef* md, String_Array& list) { };
+  virtual void          GetMemberCompletionList(const MemberDef* md, Completions& completions) { };
   // #IGNORE populates list with appropriate completion choices, variable names, columnn names, etc - used for non-code_expression completions;
   virtual void          GetArgCompletionList(const String& method, const String& arg, taBase* arg_obj, String_Array& list);
   // #IGNORE populates list with appropriate completion choices, columnn names, etc - used for cssi_arg_dialogs which are generated from the method signature; arg_obj is the object pointed to by another one of the arguments and that arguments name is returned by GetArgForCompletion()

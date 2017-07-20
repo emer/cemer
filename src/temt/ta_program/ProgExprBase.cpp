@@ -1359,14 +1359,7 @@ Completions* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_po
     }
   }
 
-  completions.string_completions.Reset();
-  completions.object_completions.Reset();
-  completions.member_completions.Reset();
-  completions.method_completions.Reset();
-  completions.enum_completions.Reset();
-  completions.static_completions.Reset();
-  completions.misc_completions.Reset();
-  
+  completions.Reset();  
   completions.seed = lookup_seed;
   
   for (int i=0; i<completion_progvar_local_list.size; i++) {

@@ -146,7 +146,8 @@ void taiWidgetField::lookupKeyPressed_dialog() {
 void taiWidgetField::characterEntered() {
   cssiArgDialog* cssi_arg_dlg = dynamic_cast<cssiArgDialog*>(host);
   if (cssi_arg_dlg) {
-    completion_list.Reset();
+    arg_completions.Reset();
+    member_completions.Reset();
     String reference_arg;  // the arg that holds a pointer to the object from which we can get a list
     taBase* class_base = (taBase*)host->Root();
     if (class_base) {
@@ -156,8 +157,8 @@ void taiWidgetField::characterEntered() {
       if (reference_arg) {
         arg_obj = cssi_arg_dlg->GetBaseForArg(reference_arg);
       }
-      class_base->GetArgCompletionList(cssi_arg_dlg->md->name, label()->text(), arg_obj, completion_list);
-      rep()->GetCompleter()->SetModelList(&completion_list);
+      class_base->GetArgCompletionList(cssi_arg_dlg->md->name, label()->text(), arg_obj, arg_completions);
+      rep()->GetCompleter()->SetModelList(&arg_completions);
       return;
     }
   }
@@ -170,10 +171,11 @@ void taiWidgetField::characterEntered() {
   int new_pos = -1;
   iCodeCompleter* completer = rep()->GetCompleter();
   if (completer) {
-    completion_list.Reset();
+    arg_completions.Reset();
+    member_completions.Reset();
     if (completer->field_type == iCodeCompleter::SIMPLE) {
-      tab->GetMemberCompletionList(lookupfun_md, completion_list);
-      rep()->GetCompleter()->SetModelList(&completion_list);
+      tab->GetMemberCompletionList(lookupfun_md, member_completions);
+      rep()->GetCompleter()->SetCompletions(&member_completions);
     }
     else {  // iCodeCompleter::EXPRESSION
       Completions* completions = tab->StringFieldLookupForCompleter(rep()->text(), cur_pos, lookupfun_md->name, new_pos);
@@ -199,10 +201,11 @@ void taiWidgetField::characterEntered_dialog() {
   int new_pos = -1;
   iCodeCompleter* completer = edit_dialog->txtText->GetCompleter();
   if (completer) {
-    completion_list.Reset();
+    arg_completions.Reset();
+    member_completions.Reset();
     if (completer->field_type == iCodeCompleter::SIMPLE) {
-      tab->GetMemberCompletionList(lookupfun_md, completion_list);
-      edit_dialog->txtText->GetCompleter()->SetModelList(&completion_list);
+      tab->GetMemberCompletionList(lookupfun_md, member_completions);
+      edit_dialog->txtText->GetCompleter()->SetCompletions(&member_completions);
     }
     else {  // iCodeCompleter::EXPRESSION
       Completions* completions = tab->StringFieldLookupForCompleter(edit_dialog->txtText->toPlainText(), cur_pos, lookupfun_md->name, new_pos);

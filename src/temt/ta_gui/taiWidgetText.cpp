@@ -21,13 +21,15 @@
 #include <taMisc>
 #include <taiMisc>
 #include <MemberDef>
+#include <Completions>
 #include <css_qtdialog.h>
 
 #include <QHBoxLayout>
 #include <QToolButton>
 #include <QFont>
 
-String_Array          taiWidgetText::completion_list;
+String_Array          taiWidgetText::arg_completions;
+Completions           taiWidgetText::member_completions;
 
 taiWidgetText::taiWidgetText(TypeDef* typ_, IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_,
                  bool needs_edit_button, const char *tooltip, MemberDef* md, taBase* base)

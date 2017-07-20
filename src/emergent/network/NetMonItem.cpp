@@ -24,6 +24,7 @@
 #include <DataTable>
 #include <NetMonitor>
 #include <Average>
+#include <Completions>
 
 #include <taMisc>
 #include <taProject>
@@ -1289,12 +1290,12 @@ void NetMonItem::ToggleOffFlag() {
   SigEmitUpdated();
 }
 
-void NetMonItem::GetMemberCompletionList(const MemberDef* md, String_Array& list) {
+void NetMonItem::GetMemberCompletionList(const MemberDef* md, Completions& completions) {
   if (object_type) {
     MemberSpace mbr_space = object_type->members;
     for (int i = 0; i < mbr_space.size; ++i) {
       MemberDef* mbr_def = mbr_space.FastEl(i);
-      list.Add(mbr_def->name);
+      completions.member_completions.Link(mbr_def);
     }
   }
 }

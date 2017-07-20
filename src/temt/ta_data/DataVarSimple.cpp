@@ -19,6 +19,7 @@
 #include <Program>
 #include <NameVar_PArray>
 #include <taMisc>
+#include <Completions>
 
 TA_BASEFUNS_CTORS_DEFN(DataVarSimple);
 
@@ -199,10 +200,10 @@ bool DataVarSimple::CvtFmCode(const String& code) {
   return true;
 }
 
-void DataVarSimple::GetMemberCompletionList(const MemberDef* md, String_Array& list) {
+void DataVarSimple::GetMemberCompletionList(const MemberDef* md, Completions& completions) {
   if (GetData()) {
     FOREACH_ELEM_IN_LIST(DataCol, col, GetData()->data) {
-      list.Add(col->name);
+      completions.object_completions.Link(col);
     }
   }
 }

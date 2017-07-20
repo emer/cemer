@@ -38,9 +38,11 @@ public:
   TypeSpace               static_completions;   // statics - list is generated in taMisc
   TypeSpace               misc_completions;     // classes that have end user enums - list is generated in taMisc; other classes of misc nature could also be on this list
   String_Array            string_completions;   // these are strings like "NULL", true/false, etc that are not taBase objects
-  
   String                  seed;                 // the text that starts the lookup
-    TA_SIMPLE_BASEFUNS(Completions);
+  
+  void                    Reset();
+  
+  TA_SIMPLE_BASEFUNS(Completions);
   
 protected:
 
