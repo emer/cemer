@@ -160,6 +160,10 @@ bool ClusterRun::AddUser(const String& user_nm) {
 }
 
 bool ClusterRun::InitClusterManager(bool check_prefs) {
+  if(is_updating) {
+    taMisc::Choice("Currently updating -- cannot submit a new action -- retry when is_updating = false on cluster run panel", "OK");
+    return false;
+  }
   if(check_prefs) {
     if(!ClusterManager::CheckPrefs())
       return false;
@@ -209,6 +213,10 @@ void ClusterRun::Run() {
 
 
 bool ClusterRun::Update() {
+  if (is_updating) {
+    taMisc::Info("Cluster run is already updating in the background. Skipping new update call");
+    return 1;
+  }
   if(!InitClusterManager())
     return false;
   AddCluster(cluster);
@@ -222,6 +230,13 @@ bool ClusterRun::LoadJobs() {
 }
 
 bool ClusterRun::Update_impl(bool do_svn_update) {
+  if(QApplication::activeModalWidget() != NULL) {
+    taMisc::Info("ClusterRun: modal window is now open, cancelling auto-update");
+    wait_proc_updt = NULL;
+    wait_proc_trg_rev = -1;
+    return false;               // don't update while a window is open!
+  }
+  
   if(!InitClusterManager())
     return false;
   
@@ -454,8 +469,6 @@ void ClusterRun::SaveState() {
 }
 
 void ClusterRun::LoadData(bool remove_existing) {
-  if(!InitClusterManager())
-    return;
   // note: can't call Update here because it unselects the rows in jobs_ tables!
   
   DataTable* cur_table = GetCurDataTable();

@@ -836,6 +836,7 @@ ClusterManager::InitiateBackgroundSVNUpdate() {
   m_updtThr->is_updating++;
   m_cluster_run.is_updating = true;
   m_cluster_run.SigEmitUpdated();
+  m_cluster_run.UpdateUI();
   m_updtThr->EnsureSVNCredentialsAvailable();
   m_updtThr->start();
   return 0;
