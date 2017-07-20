@@ -28,9 +28,6 @@
 #include <QToolButton>
 #include <QFont>
 
-String_Array          taiWidgetText::arg_completions;
-Completions           taiWidgetText::member_completions;
-
 taiWidgetText::taiWidgetText(TypeDef* typ_, IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_,
                  bool needs_edit_button, const char *tooltip, MemberDef* md, taBase* base)
   : taiWidget(typ_, host_, par, gui_parent_, flags_)

@@ -39,7 +39,7 @@
 #include <ISigLinkClient>
 #include <iColor>
 #include <taTaskThread>
-
+#include <Completions>
 #include <SigLinkSignal>
 #include <taMisc>
 #include <tabMisc>
@@ -4069,14 +4069,14 @@ void taBase::WarnSettingToNull(taBase* old_par, taBase* new_par) {
   }
 }
 
-void taBase::GetArgCompletionList(const String& method, const String& arg, taBase* base_obj, String_Array& list) {
+void taBase::GetArgCompletionList(const String& method, const String& arg, taBase* base_obj, Completions& completions) {
   if (method == "SetMember" && arg == "member") {
     TypeDef* td = GetTypeDef();
     if (td) {
       for (int i=0; i<td->members.size; i++) {
         MemberDef* md = td->members.FastEl(i);
         if (!md->IsGuiReadOnly() && !md->IsEditorHidden()) {
-          list.Add(td->members.FastEl(i)->name);
+          completions.member_completions.Link(md);
         }
       }
     }

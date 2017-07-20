@@ -27,6 +27,7 @@
 #include <ProgExprBase>
 #include <DataTable>
 #include <taiWidgetCompletionChooser>
+
 #include <css_qtdialog.h>
 
 
@@ -80,15 +81,46 @@ void taiWidgetField::btnEdit_clicked(bool) {
 }
 
 void taiWidgetField::lookupKeyPressed() {
+  cssiArgDialog* cssi_arg_dlg = dynamic_cast<cssiArgDialog*>(host);
+  if (cssi_arg_dlg) {
+    arg_completions.Reset();
+    member_completions.Reset();
+    String reference_arg;  // the arg that holds a pointer to the object from which we can get a list
+    taBase* class_base = (taBase*)host->Root();
+    if (class_base) {
+      reference_arg = class_base->GetArgForCompletion(cssi_arg_dlg->md->name, label()->text());
+      
+      taBase* arg_obj = NULL;
+      if (reference_arg) {
+        arg_obj = cssi_arg_dlg->GetBaseForArg(reference_arg);
+      }
+      class_base->GetArgCompletionList(cssi_arg_dlg->md->name, label()->text(), arg_obj, arg_completions);
+      rep()->GetCompleter()->SetCompletions(&arg_completions);
+      return;
+    }
+  }
+
+  // wasn't a cssi_arg_dialog
   if(!lookupfun_md || !lookupfun_base) return;
   
   taBase* tab = (taBase*)lookupfun_base;
   int cur_pos = rep()->cursorPosition();
   int new_pos = -1;
-  Completions* completions = NULL;
+  Completions* expr_completions = NULL;
 
-  completions = tab->StringFieldLookupForCompleter(rep()->text(), cur_pos, lookupfun_md->name, new_pos);
-  rep()->GetCompleter()->SetCompletions(completions);
+  iCodeCompleter* completer = rep()->GetCompleter();
+  if (completer) {
+    arg_completions.Reset();
+    member_completions.Reset();
+    if (completer->field_type == iCodeCompleter::SIMPLE) {
+      tab->GetMemberCompletionList(lookupfun_md, member_completions);
+      rep()->GetCompleter()->SetCompletions(&member_completions);
+    }
+    else {  // iCodeCompleter::EXPRESSION
+      expr_completions = tab->StringFieldLookupForCompleter(rep()->text(), cur_pos, lookupfun_md->name, new_pos);
+      rep()->GetCompleter()->SetCompletions(expr_completions);
+    }
+  }
 
 #ifdef TA_OS_MAC
   // per this bug with 2.8.x on mac, we need to regain focus:  https://bugreports.qt-project.org/browse/QTBUG-22911
@@ -96,9 +128,19 @@ void taiWidgetField::lookupKeyPressed() {
   rep()->setFocus();
 #endif
   
-  if (completions) {
-    taiWidgetCompletionChooser* chooser = new taiWidgetCompletionChooser(NULL, NULL, NULL, NULL, 0, completions->seed);
-    chooser->SetCompletions(completions);
+  if (expr_completions) {
+    taiWidgetCompletionChooser* chooser = new taiWidgetCompletionChooser(NULL, NULL, NULL, NULL, 0, expr_completions->seed);
+    chooser->SetCompletions(expr_completions);
+    bool ok_choice = chooser->OpenChooser();
+    
+    if (ok_choice) {
+      String selection_text = chooser->GetSelectionText();
+      rep()->setText(selection_text + ProgExprBase::completion_append_text);
+    }
+  }
+  else if (member_completions.HasCompletions()) {
+    taiWidgetCompletionChooser* chooser = new taiWidgetCompletionChooser(NULL, NULL, NULL, NULL, 0, &member_completions.seed);
+    chooser->SetCompletions(&member_completions);
     bool ok_choice = chooser->OpenChooser();
     
     if (ok_choice) {
@@ -158,17 +200,18 @@ void taiWidgetField::characterEntered() {
         arg_obj = cssi_arg_dlg->GetBaseForArg(reference_arg);
       }
       class_base->GetArgCompletionList(cssi_arg_dlg->md->name, label()->text(), arg_obj, arg_completions);
-      rep()->GetCompleter()->SetModelList(&arg_completions);
+      rep()->GetCompleter()->SetCompletions(&arg_completions);
       return;
     }
   }
   
-  // not a cssi_arg_dialog move on
+  // wasn't a cssi_arg_dialog
   if(!lookupfun_md || !lookupfun_base) return;
   
   taBase* tab = (taBase*)lookupfun_base;
   int cur_pos = rep()->cursorPosition();
   int new_pos = -1;
+  
   iCodeCompleter* completer = rep()->GetCompleter();
   if (completer) {
     arg_completions.Reset();

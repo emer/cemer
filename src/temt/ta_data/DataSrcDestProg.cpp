@@ -17,7 +17,6 @@
 
 #include <taMisc>
 #include <DataTable>
-#include <taGuiDialog>
 
 TA_BASEFUNS_CTORS_DEFN(DataSrcDestProg);
 

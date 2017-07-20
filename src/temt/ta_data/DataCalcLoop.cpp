@@ -19,7 +19,7 @@
 #include <NameVar_PArray>
 #include <taMisc>
 #include <MemberDef>
-#include <taGuiDialog>
+#include <Completions>
 
 TA_BASEFUNS_CTORS_DEFN(DataCalcLoop);
 
@@ -335,19 +335,19 @@ bool DataCalcLoop::CvtFmCode(const String& code) {
   return true;
 }
 
-void DataCalcLoop::GetArgCompletionList(const String& method, const String& arg, taBase* arg_obj, String_Array& list) {
+void DataCalcLoop::GetArgCompletionList(const String& method, const String& arg, taBase* arg_obj, Completions& completions) {
   taMisc::DebugInfo(method);
     if (method == "AddSrcColumn") {
       if (GetSrcData()) {
         FOREACH_ELEM_IN_LIST(DataCol, col, GetSrcData()->data) {
-          list.Add(col->name);
+          completions.object_completions.Link(col);
         }
       }
     }
     else if (method == "AddDestColumn") {
       if (GetDestData()) {
         FOREACH_ELEM_IN_LIST(DataCol, col, GetDestData()->data) {
-          list.Add(col->name);
+          completions.object_completions.Link(col);
         }
       }
     }

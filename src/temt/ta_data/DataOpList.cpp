@@ -20,7 +20,7 @@
 #include <DataSelectEl>
 #include <DataCol>
 #include <taLeafItr>
-
+#include <Completions>
 #include <taMisc>
 #include <tabMisc>
 
@@ -108,12 +108,12 @@ String DataOpList::GetArgForCompletion(const String& method, const String& arg) 
   return "dt";
 }
 
-void DataOpList::GetArgCompletionList(const String& method, const String& arg, taBase* arg_obj, String_Array& list) {
+void DataOpList::GetArgCompletionList(const String& method, const String& arg, taBase* arg_obj, Completions& completions) {
   if (arg_obj) {
     if (arg_obj->InheritsFrom(&TA_DataTable)) {
       DataTable* table = (DataTable*)arg_obj;
       FOREACH_ELEM_IN_LIST(DataCol, col, table->data) {
-        list.Add(col->name);
+        completions.object_completions.Link(col);
       }
     }
   }

@@ -26,3 +26,14 @@ void Completions::Reset() {
   static_completions.Reset();
   misc_completions.Reset();
 }
+
+bool Completions::HasCompletions() {
+  bool has_completions = false;
+  
+  if (string_completions.size > 0 || object_completions.size > 0 || member_completions.size > 0
+      || method_completions.size > 0 || enum_completions.size > 0 || static_completions.size > 0
+      || misc_completions.size > 0) {
+    has_completions = true;
+  }
+  return has_completions;
+}

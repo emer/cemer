@@ -18,6 +18,7 @@
 #include <taLeafItr>
 #include <DataTable>
 #include <DataCol>
+#include <Completions>
 
 TA_BASEFUNS_CTORS_DEFN(DataOpBaseSpec);
 
@@ -33,13 +34,12 @@ String DataOpBaseSpec::GetArgForCompletion(const String& method, const String& a
   return "dt";
 }
 
-void DataOpBaseSpec::GetArgCompletionList(const String& method, const String& arg, taBase* arg_obj, String_Array& list) {
+void DataOpBaseSpec::GetArgCompletionList(const String& method, const String& arg, taBase* arg_obj, Completions& completions) {
   if (arg_obj) {
     if (arg_obj->InheritsFrom(&TA_DataTable)) {
       DataTable* table = (DataTable*)arg_obj;
       FOREACH_ELEM_IN_LIST(DataCol, col, table->data) {
-        list.Add(col->name);
-      }
+        completions.object_completions.Link(col);      }
     }
   }
 }

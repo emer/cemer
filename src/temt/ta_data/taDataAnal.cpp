@@ -32,6 +32,7 @@
 #include <ClustNode>
 #include <GridTableView>
 #include <T3Annotation>
+#include <Completions>
 
 #include <taMisc>
 
@@ -2138,12 +2139,12 @@ bool taDataAnal::MatrixCellFreq
   return true;
 }
 
-void taDataAnal::GetArgCompletionList(const String& method, const String& arg, taBase* arg_obj, String_Array& list) {
+void taDataAnal::GetArgCompletionList(const String& method, const String& arg, taBase* arg_obj, Completions& completions) {
   if (arg_obj) {
     if (arg_obj->InheritsFrom(&TA_DataTable)) {
       DataTable* table = (DataTable*)arg_obj;
       FOREACH_ELEM_IN_LIST(DataCol, col, table->data) {
-        list.Add(col->name);
+        completions.object_completions.Link(col);
       }
     }
   }

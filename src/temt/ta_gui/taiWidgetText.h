@@ -18,6 +18,7 @@
 
 // parent includes:
 #include <taiWidget>
+#include <Completions>
 
 // member includes:
 
@@ -36,8 +37,8 @@ public:
   taiWidgetText(TypeDef* typ_, IWidgetHost* host, taiWidget* par, QWidget* gui_parent_,
           int flags, bool needs_edit_button, const char *tooltip, MemberDef* md = NULL, taBase* base = NULL);
   
-  static String_Array   arg_completions;// #READ_ONLY #HIDDEN #NO_SAVE
-  static Completions    member_completions;// #READ_ONLY #HIDDEN #NO_SAVE
+  Completions           arg_completions;// #READ_ONLY #HIDDEN #NO_SAVE
+  Completions           member_completions;// #READ_ONLY #HIDDEN #NO_SAVE
 
   iLineEdit*            rep() const;
   bool                  fillHor() override { return true; }

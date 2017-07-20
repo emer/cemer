@@ -40,7 +40,8 @@ public:
   String_Array            string_completions;   // these are strings like "NULL", true/false, etc that are not taBase objects
   String                  seed;                 // the text that starts the lookup
   
-  void                    Reset();
+  void                    Reset();              // remove items from all lists
+  bool                    HasCompletions();     // at least one list has items
   
   TA_SIMPLE_BASEFUNS(Completions);
   
