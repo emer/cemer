@@ -45,8 +45,6 @@ class TA_API GraphTableView: public DataTableView {
   // the master view guy for entire graph view
 INHERITED(DataTableView)
 public:
-  static GraphTableView* New(DataTable* dt, T3Panel*& fr);
-
   enum GraphType {
     XY,                         // standard XY(Z) plot -- plot value determines Y axis coordinate to plot (optional error bars as well, if turned on)
     BAR,                        // gar graph -- for integer/nominal X axis values (optional error bars as well, if turned on)
@@ -74,6 +72,8 @@ public:
     Z_INDEX,                    // values in the matrix are drawn in the same graph, arrayed in depth along the z axis
   };
 
+  static String_Array   color_palette;  // #NO_SAVE #HIDDEN 16 different colors used for standard line colors (used to be 8, expanded in version 8.2.0)
+  
   GraphType             graph_type;     // type of graph to draw
   PlotStyle             plot_style;     // how to plot the data
   bool                  negative_draw;  // continue same line when X value resets in negative axis direction?
@@ -125,6 +125,9 @@ public:
   taVector3f            last_sel_pt;    // #READ_ONLY #SHOW #NO_SAVE values of last selected point
 
   bool                  scrolling_;     // #IGNORE currently scrolling (in scroll callback)
+
+
+  static GraphTableView* New(DataTable* dt, T3Panel*& fr);
 
   void InitDisplay(bool init_panel = true) override;
   void UpdateDisplay(bool update_panel = true) override;

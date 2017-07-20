@@ -81,6 +81,7 @@ TA_BASEFUNS_CTORS_DEFN(GraphTableView);
 #define TICK_OFFSET 0.01f // gap between tick and label
 
 float GraphTableView::tick_size = 0.05f;
+String_Array GraphTableView::color_palette;
 
 // Add a new GraphTableView object to the frame for the given DataTable.
 GraphTableView* GraphTableView::New(DataTable* dt, T3Panel*& fr) {
@@ -98,6 +99,14 @@ GraphTableView* GraphTableView::New(DataTable* dt, T3Panel*& fr) {
 }
 
 void GraphTableView::Initialize() {
+  const char* colors[] = {"black", "red", "blue", "ForestGreen", "purple", "orange", "brown", "chartreuse", "navy", "cyan", "magenta", "tan", "salmon", "yellow4", "SkyBlue", "pink"};
+
+  if(color_palette.size == 0) {
+    for(int i=0; i<16; i++) {
+      color_palette.Add(colors[i]);
+    }
+  }
+  
   view_rows = 10000;
   tot_plots = 6;
   
@@ -494,8 +503,7 @@ GraphPlotView* GraphTableView::AltY() {
 }
 
 void GraphTableView::DefaultPlotStyles(int start_y, int end_y) {
-  const char* colors[] = {"black", "red", "blue", "green3", "purple", "orange", "brown", "chartreuse"};
-  int n_colors = 8;
+  const int n_colors = color_palette.size;
   const int styles[] = {GraphPlotView::CIRCLE, GraphPlotView::SQUARE,
     GraphPlotView::DIAMOND, GraphPlotView::TRIANGLE_UP,
     GraphPlotView::TRIANGLE_DN,
@@ -509,13 +517,14 @@ void GraphTableView::DefaultPlotStyles(int start_y, int end_y) {
   
   for(int i=start_y-1; i<end_y; i++) {
     GraphPlotView* gpv = plots[i];
-    gpv->color.setColorName(colors[i % n_colors]);
+    gpv->color.setColorName(color_palette[i % n_colors]);
     gpv->point_style = (GraphPlotView::PointStyle)styles[i % n_styles];
     if(solid_lines) {
       gpv->line_style = GraphPlotView::SOLID;
     }
     else {
-      gpv->line_style = (GraphPlotView::LineStyle)(i / n_colors);
+      gpv->line_style = (GraphPlotView::LineStyle)((i / n_colors) %
+                                                   GraphPlotView::LineStyle_MAX);
     }
     gpv->UpdateAfterEdit_NoGui();
   }
