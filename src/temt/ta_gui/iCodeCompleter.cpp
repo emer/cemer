@@ -47,7 +47,7 @@ void iCodeCompleter::Init() {
   setMaxVisibleItems(taMisc::code_completion.max_choices);
 #endif
 
-  list_model = new iCodeCompleterModel(string_list, NULL);
+  list_model = new iCodeCompleterModel(string_list, NULL, this);
   setModel(list_model);
   host_type = INLINE_HOST;
   field_type = EXPRESSION;
@@ -237,39 +237,41 @@ bool iCodeCompleter::HasSelected() {
   return (popup()->currentIndex().row() != -1);
 }
 
-// class iCompleterPopupView
-
-bool iCompleterPopupView::eventFilter(QObject* obj, QEvent* event) {
-  if (event->type() == QEvent::ShortcutOverride) {
-    if (static_cast<QKeyEvent*>(event)->key() == Qt::Key_N || static_cast<QKeyEvent*>(event)->key() == Qt::Key_P) {
-      event->accept();
-      return true;
-    }
-  }
-  
-  if (event->type() != QEvent::KeyPress) {
-    return inherited::eventFilter(obj, event);
-  }
-  QKeyEvent* key_event = static_cast<QKeyEvent *>(event);
-  if (key_event->key() == Qt::Key_Tab) {
-    return true;
-  }
-
-  else {
-    return inherited::eventFilter(obj, event);
-  }
-}
+//// class iCompleterPopupView
+//
+//bool iCompleterPopupView::eventFilter(QObject* obj, QEvent* event) {
+//  if (event->type() == QEvent::ShortcutOverride) {
+//    if (static_cast<QKeyEvent*>(event)->key() == Qt::Key_N || static_cast<QKeyEvent*>(event)->key() == Qt::Key_P) {
+//      event->accept();
+//      return true;
+//    }
+//  }
+//  
+//  if (event->type() != QEvent::KeyPress) {
+//    return inherited::eventFilter(obj, event);
+//  }
+//  QKeyEvent* key_event = static_cast<QKeyEvent *>(event);
+//  if (key_event->key() == Qt::Key_Tab) {
+//    return true;
+//  }
+//
+//  else {
+//    return inherited::eventFilter(obj, event);
+//  }
+//}
 
 // class iCodeCompleterModel
 
-iCodeCompleterModel::iCodeCompleterModel(QObject* parent) :
+iCodeCompleterModel::iCodeCompleterModel(QObject* parent, iCodeCompleter* cc) :
  inherited::QStringListModel(parent)
 {
+  completer = cc;
 }
 
-iCodeCompleterModel::iCodeCompleterModel(const QStringList &strings, QObject *parent) :
+iCodeCompleterModel::iCodeCompleterModel(const QStringList &strings, QObject *parent, iCodeCompleter* cc) :
   inherited::QStringListModel(strings, parent)
 {
+  completer = cc;
 }
 
 QVariant iCodeCompleterModel::data(const QModelIndex& index, int role) const {
@@ -280,9 +282,13 @@ QVariant iCodeCompleterModel::data(const QModelIndex& index, int role) const {
     case Qt::EditRole: { // this is the default role used for completion matching
       QVariant temp = inherited::data(index, role);
       String pretext;
-      pretext = ProgExprBase::completion_text_before;
-      pretext = pretext.before(pretext.length() - ProgExprBase::completion_lookup_seed.length());
-      String complete = pretext + temp.toString() + ProgExprBase::completion_append_text;
+      String append_text;
+      if (completer->field_type == iCodeCompleter::EXPRESSION) {
+        pretext = ProgExprBase::completion_text_before;
+        pretext = pretext.before(pretext.length() - ProgExprBase::completion_lookup_seed.length());
+        append_text = ProgExprBase::completion_append_text;
+      }
+      String complete = pretext + temp.toString() + append_text;
       return complete;
     }
       

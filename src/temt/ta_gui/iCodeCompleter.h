@@ -28,22 +28,9 @@
 #include <taBase_List>
 
 class Completions;
+class iCodeCompleterModel;
 
 // declare all other types mentioned but not required to include:
-
-class TA_API iCodeCompleterModel: public QStringListModel {
-  // #NO_INSTANCE #NO_CSS #NO_MEMBERS class that implements the Qt Model interface for CodeCompleter so we can display and match with separate roles
-  INHERITED(QStringListModel)
-  Q_OBJECT
-public:
-  iCodeCompleterModel(QObject *parent = 0);
-  iCodeCompleterModel(const QStringList &strings, QObject *parent = 0);
-
-  QVariant data(const QModelIndex &index, int role) const override;
-
-protected:
-  
-};
 
 class TA_API iCodeCompleter : public QCompleter {
   // Creates a list of code completions that make semantic sense - uses lookup logic to generate the list of options
@@ -102,16 +89,29 @@ public slots:
 };
 
 
-class TA_API iCompleterPopupView: public QListView {
-  // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBER table editor; model flattens >2d into 2d by frames
-  INHERITED(QListView)
+//class TA_API iCompleterPopupView: public QListView {
+//  // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBER table editor; model flattens >2d into 2d by frames
+//  INHERITED(QListView)
+//  Q_OBJECT
+//public:
+//  
+//protected:
+//  bool                    eventFilter(QObject* obj, QEvent* event) override;
+//};
+
+class TA_API iCodeCompleterModel: public QStringListModel {
+  // #NO_INSTANCE #NO_CSS #NO_MEMBERS class that implements the Qt Model interface for CodeCompleter so we can display and match with separate roles
+  INHERITED(QStringListModel)
   Q_OBJECT
 public:
+  iCodeCompleterModel(QObject *parent = 0, iCodeCompleter* cc = NULL);
+  iCodeCompleterModel(const QStringList &strings, QObject *parent = 0, iCodeCompleter* cc = NULL);
+  
+  QVariant data(const QModelIndex &index, int role) const override;
   
 protected:
-  bool                    eventFilter(QObject* obj, QEvent* event) override;
+  iCodeCompleter* completer;
 };
-
 
 
 #endif // iCodeCompleter_h
