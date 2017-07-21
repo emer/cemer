@@ -82,23 +82,32 @@ void taiWidgetField::btnEdit_clicked(bool) {
 
 void taiWidgetField::lookupKeyPressed() {
   cssiArgDialog* cssi_arg_dlg = dynamic_cast<cssiArgDialog*>(host);
-  if (cssi_arg_dlg) {
-    arg_completions.Reset();
-    member_completions.Reset();
-    String reference_arg;  // the arg that holds a pointer to the object from which we can get a list
-    taBase* class_base = (taBase*)host->Root();
-    if (class_base) {
-      reference_arg = class_base->GetArgForCompletion(cssi_arg_dlg->md->name, label()->text());
-      
-      taBase* arg_obj = NULL;
-      if (reference_arg) {
-        arg_obj = cssi_arg_dlg->GetBaseForArg(reference_arg);
-      }
-      class_base->GetArgCompletionList(cssi_arg_dlg->md->name, label()->text(), arg_obj, arg_completions);
-      rep()->GetCompleter()->SetCompletions(&arg_completions);
-      return;
-    }
-  }
+//  if (cssi_arg_dlg) {
+//    arg_completions.Reset();
+//    String reference_arg;  // the arg that holds a pointer to the object from which we can get a list
+//    taBase* class_base = (taBase*)host->Root();
+//    if (class_base) {
+//      reference_arg = class_base->GetArgForCompletion(cssi_arg_dlg->md->name, label()->text());
+//      
+//      taBase* arg_obj = NULL;
+//      if (reference_arg) {
+//        arg_obj = cssi_arg_dlg->GetBaseForArg(reference_arg);
+//      }
+//      class_base->GetArgCompletionList(cssi_arg_dlg->md->name, label()->text(), arg_obj, arg_completions);
+//      rep()->GetCompleter()->SetCompletions(&arg_completions);
+//    }
+//    if (arg_completions.HasCompletions()) {
+//      taiWidgetCompletionChooser* chooser = new taiWidgetCompletionChooser(NULL, NULL, NULL, NULL, 0, &arg_completions.seed);
+//      chooser->SetCompletions(&arg_completions);
+//      bool ok_choice = chooser->OpenChooser();
+//      
+//      if (ok_choice) {
+//        String selection_text = chooser->GetSelectionText();
+//        rep()->setText(selection_text);
+//      }
+//    }
+//    return;
+//  }
 
   // wasn't a cssi_arg_dialog
   if(!lookupfun_md || !lookupfun_base) return;
@@ -110,7 +119,6 @@ void taiWidgetField::lookupKeyPressed() {
 
   iCodeCompleter* completer = rep()->GetCompleter();
   if (completer) {
-    arg_completions.Reset();
     member_completions.Reset();
     if (completer->field_type == iCodeCompleter::SIMPLE) {
       tab->GetMemberCompletionList(lookupfun_md, member_completions);
@@ -138,16 +146,16 @@ void taiWidgetField::lookupKeyPressed() {
       rep()->setText(selection_text + ProgExprBase::completion_append_text);
     }
   }
-  else if (member_completions.HasCompletions()) {
-    taiWidgetCompletionChooser* chooser = new taiWidgetCompletionChooser(NULL, NULL, NULL, NULL, 0, &member_completions.seed);
-    chooser->SetCompletions(&member_completions);
-    bool ok_choice = chooser->OpenChooser();
-    
-    if (ok_choice) {
-      String selection_text = chooser->GetSelectionText();
-      rep()->setText(selection_text + ProgExprBase::completion_append_text);
-    }
-  }
+//  else if (member_completions.HasCompletions()) {
+//    taiWidgetCompletionChooser* chooser = new taiWidgetCompletionChooser(NULL, NULL, NULL, NULL, 0, &member_completions.seed);
+//    chooser->SetCompletions(&member_completions);
+//    bool ok_choice = chooser->OpenChooser();
+//    
+//    if (ok_choice) {
+//      String selection_text = chooser->GetSelectionText();
+//      rep()->setText(selection_text);
+//    }
+//  }
 }
 
 void taiWidgetField::lookupKeyPressed_dialog() {
