@@ -189,19 +189,37 @@ void taiWidgetField::characterEntered() {
   cssiArgDialog* cssi_arg_dlg = dynamic_cast<cssiArgDialog*>(host);
   if (cssi_arg_dlg) {
     arg_completions.Reset();
-    member_completions.Reset();
     String reference_arg;  // the arg that holds a pointer to the object from which we can get a list
+    String cur_text = leText->text();
     taBase* class_base = (taBase*)host->Root();
     if (class_base) {
-      reference_arg = class_base->GetArgForCompletion(cssi_arg_dlg->md->name, label()->text());
-      
-      taBase* arg_obj = NULL;
-      if (reference_arg) {
-        arg_obj = cssi_arg_dlg->GetBaseForArg(reference_arg);
+      if (!cur_text.contains('.')) {
+        reference_arg = class_base->GetArgForCompletion(cssi_arg_dlg->md->name, label()->text());
+        taBase* arg_obj = NULL;
+        if (reference_arg) {
+          arg_obj = cssi_arg_dlg->GetBaseForArg(reference_arg);
+        }
+        class_base->GetArgCompletionList(cssi_arg_dlg->md->name, label()->text(), arg_obj, arg_completions);
+        rep()->GetCompleter()->SetCompletions(&arg_completions);
+        return;
       }
-      class_base->GetArgCompletionList(cssi_arg_dlg->md->name, label()->text(), arg_obj, arg_completions);
-      rep()->GetCompleter()->SetCompletions(&arg_completions);
-      return;
+      else {
+        MemberDef* md = NULL;
+        String member_name = cur_text.before('.', -1);
+        class_base->FindMembeR(member_name, md);
+        if (md) {
+          TypeDef* td = md->type;
+          for (int i=0; i<td->members.size; i++) {
+            MemberDef* member_md = td->members.FastEl(i);
+            if (!member_md->IsGuiReadOnly() && !member_md->IsEditorHidden()) {
+              taMisc::DebugInfo(member_md->name);
+              arg_completions.member_completions.Link(member_md);
+            }
+          }
+          rep()->GetCompleter()->SetCompletions(&arg_completions);
+        }
+        return;
+      }
     }
   }
   
