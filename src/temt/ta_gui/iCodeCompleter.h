@@ -36,6 +36,7 @@ class TA_API iCodeCompleter : public QCompleter {
   // Creates a list of code completions that make semantic sense - uses lookup logic to generate the list of options
   Q_OBJECT
 INHERITED(QCompleter)
+  friend class iCodeCompleterModel;
 public:
   
   enum FieldType {
@@ -78,7 +79,8 @@ protected:
   bool                    eventFilter(QObject* obj, QEvent* event) override;
   bool                    is_dialog_field; // is the widget using this completer in a dialog - if so special tab handling
 
-  String                  GetPretext();  // get the pretext from the expression parser
+  String                  GetPreText();  // get the pretext from the expression parser
+  String                  GetAppendText();  // get the append text from the expression parser
   String                  GetText();     // get the text before cursor from the expression parser
 
 private:

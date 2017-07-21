@@ -179,7 +179,7 @@ bool iCodeCompleter::eventFilter(QObject* obj, QEvent* event) {
 void iCodeCompleter::FilterList(String seed) {
   for (int i = string_list.size() - 1; i >= 0; i--) {
     String item = string_list.at(i);
-    item = GetPretext() + item;  //
+    item = GetPreText() + item;  //
     if (!item.startsWithCI(seed)) {
       string_list.removeAt(i);
     }
@@ -189,7 +189,7 @@ void iCodeCompleter::FilterList(String seed) {
 void iCodeCompleter::ExtendSeed(String& seed) {
   if (string_list.size() <= 1) return;
   
-  String pretext = GetPretext(); // strip off the pretext (restore at end)
+  String pretext = GetPreText(); // strip off the pretext (restore at end)
   seed = seed.after(pretext);
   
   bool keep_trying = true;
@@ -216,13 +216,21 @@ void iCodeCompleter::ExtendSeed(String& seed) {
   seed = pretext + seed;
 }
 
-String iCodeCompleter::GetPretext() {
+String iCodeCompleter::GetPreText() {
   String pretext;
   if (field_type == EXPRESSION) {
     pretext = ProgExprBase::completion_text_before;
     pretext = pretext.before(pretext.length() - ProgExprBase::completion_lookup_seed.length());
   }
   return pretext;
+}
+
+String iCodeCompleter::GetAppendText() {
+  String append_text;
+  if (field_type == EXPRESSION) {
+    append_text = ProgExprBase::completion_append_text;
+  }
+  return append_text;
 }
 
 String iCodeCompleter::GetText() {
@@ -284,9 +292,8 @@ QVariant iCodeCompleterModel::data(const QModelIndex& index, int role) const {
       String pretext;
       String append_text;
       if (completer->field_type == iCodeCompleter::EXPRESSION) {
-        pretext = ProgExprBase::completion_text_before;
-        pretext = pretext.before(pretext.length() - ProgExprBase::completion_lookup_seed.length());
-        append_text = ProgExprBase::completion_append_text;
+        pretext = completer->GetPreText();
+        append_text = completer->GetAppendText();
       }
       String complete = pretext + temp.toString() + append_text;
       return complete;
