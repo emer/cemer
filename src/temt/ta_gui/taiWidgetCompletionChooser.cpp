@@ -195,18 +195,12 @@ String taiWidgetCompletionChooser::GetSelectionText() {
   int text_before_length = ProgExprBase::completion_text_before.length();
   String leading_text = ProgExprBase::completion_text_before.before(text_before_length - seed_length);
   String selection_text;
-  
-  iTreeWidgetItem* item = (iTreeWidgetItem*)dialog_item_chooser->selItem();
-  
-  if (!item) {
-    return _nilString;
-  }
-  
+    
   if (sel_obj_type == STRING_ITEM) {
-    selection_text = (taString*)dialog_item_chooser->selObj();
+    selection_text = (taString*)m_sel;
   }
   else if (sel_obj_type == BASE_ITEM) {
-    taBase* tab = (taBase*)dialog_item_chooser->selObj();
+    taBase* tab = (taBase*)m_sel;
     if (tab) {
       selection_text = tab->GetName();
       if (tab->InheritsFrom(&TA_Function) || tab->InheritsFrom(&TA_Program)) {
