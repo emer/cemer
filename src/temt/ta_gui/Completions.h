@@ -39,6 +39,8 @@ public:
   TypeSpace               misc_completions;     // classes that have end user enums - list is generated in taMisc; other classes of misc nature could also be on this list
   String_Array            string_completions;   // these are strings like "NULL", true/false, etc that are not taBase objects
   String                  seed;                 // the text that starts the lookup
+  String                  pre_text;             // text preceding completion
+  String                  append_text;          // text after completion
   
   void                    Reset();              // remove items from all lists
   bool                    HasCompletions();     // at least one list has items

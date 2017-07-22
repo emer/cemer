@@ -44,7 +44,6 @@ public:
   void          itemEdited(int column, int move_after = 0) override;
   void          lookupKeyPressed(iLineEdit* le, int column) override;
   void          characterEntered(iLineEdit* le, int column) override;
-  String        PostCompletionEdit(iCodeCompleter* completer) override;
 
 public: // ISigLinkClient interface
 //  void*      This() override {return (void*)this;}

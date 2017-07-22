@@ -116,12 +116,9 @@ public:
   static String_Array           completion_null_list;   // #READ_ONLY #HIDDEN #NO_SAVE built once
   static String_Array           completion_type_list;   // #READ_ONLY #HIDDEN #NO_SAVE built once
   static LookUpType             completion_lookup_type; // #READ_ONLY #HIDDEN #NO_SAVE
-  static String                 completion_pre_text;    // #READ_ONLY #HIDDEN #NO_SAVE completers copy because it needs to be static so we can get it later
-  static String                 completion_path_pre_text; // #READ_ONLY #HIDDEN #NO_SAVE completers copy because it needs to be static so we can get it later
-  static String                 completion_append_text; // #READ_ONLY #HIDDEN #NO_SAVE completers copy because it needs to be static so we can get it later
   static String                 completion_prog_el_text;// #READ_ONLY #HIDDEN #NO_SAVE completers copy because it needs to be static so we can get it later
-  static String                 completion_lookup_seed; // #READ_ONLY #HIDDEN #NO_SAVE completers copy because it needs to be static so we can get it later
   static String                 completion_text_before; // #READ_ONLY #HIDDEN #NO_SAVE completers copy - this is text before cursor
+  static String                 completion_lookup_seed; // #READ_ONLY #HIDDEN #NO_SAVE static so we can get it later
   static bool                   include_statics;        // #READ_ONLY #HIDDEN #NO_SAVE should lookup/completion include the static classes
   static bool                   include_progels;        // #READ_ONLY #HIDDEN #NO_SAVE should lookup/completion include the ProgEls
   static bool                   include_types;          // #READ_ONLY #HIDDEN #NO_SAVE should lookup/completion include the ProgEls
@@ -201,7 +198,6 @@ public:
   static bool           ExprLookupNoArgFuncFilter(void* base, void* function_); // special filter used in ExprLookupCompleter
   static bool           ExprLookupIsFunc(const String& txt);  // is it a function or program lookup
   static bool           ExprIsType(const String& txt);  // bool, int, float, etc
-  static String         FinishCompletion(const String& cur_completion , int& new_pos);
   static void           GetTokensOfType(TypeDef* td, taBase_List* tokens, taBase* scope = NULL,
                                         TypeDef* scope_type = NULL, ProgVar::VarType = ProgVar::T_UnDef);
   static void           GetListItems(taList_impl* list, taBase_List* tokens);

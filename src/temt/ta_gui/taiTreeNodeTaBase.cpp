@@ -19,7 +19,6 @@
 #include <SigLinkSignal>
 #include <iLineEdit>
 #include <ProgEl>
-#include <ProgExprBase>
 #include <Completions>
 #include <taiWidgetCompletionChooser>
 
@@ -98,14 +97,13 @@ void taiTreeNodeTaBase::lookupKeyPressed(iLineEdit* le, int column) {
     le->setFocus();
 #endif
     
-    // Experiment to test out chooser before converting over to full use
     taiWidgetCompletionChooser* chooser = new taiWidgetCompletionChooser(NULL, NULL, NULL, NULL, 0, completions->seed);
     chooser->SetCompletions(completions);
     bool ok_choice = chooser->OpenChooser();
     
     if (ok_choice) {
       String selection_text = chooser->GetSelectionText();
-      le->setText(selection_text + ProgExprBase::completion_append_text);
+      le->setText(selection_text + completions->append_text);
     }
     return;                     // if we get it, bail
   }
@@ -127,7 +125,7 @@ void taiTreeNodeTaBase::lookupKeyPressed(iLineEdit* le, int column) {
   
   if (ok_choice) {
     String selection_text = chooser->GetSelectionText();
-    le->setText(selection_text + ProgExprBase::completion_append_text);
+    le->setText(selection_text + completions->append_text);
   }
 }
 
@@ -165,17 +163,4 @@ void taiTreeNodeTaBase::characterEntered(iLineEdit* le, int column) {
   le->window()->setFocus();
   le->setFocus();
 #endif
-}
-
-String taiTreeNodeTaBase::PostCompletionEdit(iCodeCompleter* completer) {
-  taBase* tab = tadata();
-  if(!tab) {
-    return _nilString;
-  }
-  
-  String rval;
-  int new_pos;
-  String cur_string = completer->GetCurrent();
-  rval = ProgExprBase::FinishCompletion(cur_string, new_pos);
-  return rval;
 }

@@ -51,6 +51,9 @@ void iCodeCompleter::Init() {
   setModel(list_model);
   host_type = INLINE_HOST;
   field_type = EXPRESSION;
+  
+  pre_text = _nilString;
+  append_text = _nilString;
 }
 
 void iCodeCompleter::SetModelList(String_Array *list) {
@@ -63,6 +66,10 @@ void iCodeCompleter::SetModelList(String_Array *list) {
 
 void iCodeCompleter::SetCompletions(Completions* completions) {
   if (completions) {
+    // copy the string vars
+    pre_text = completions->pre_text;
+    append_text = completions->append_text;
+    
     string_list.clear();
     QStringList str_list;
     completions->string_completions.ToQStringList(str_list);
@@ -222,15 +229,10 @@ String iCodeCompleter::GetPreText() {
     pretext = ProgExprBase::completion_text_before;
     pretext = pretext.before(pretext.length() - ProgExprBase::completion_lookup_seed.length());
   }
-  return pretext;
-}
-
-String iCodeCompleter::GetAppendText() {
-  String append_text;
-  if (field_type == EXPRESSION) {
-    append_text = ProgExprBase::completion_append_text;
+  else {
+    return pre_text;
   }
-  return append_text;
+  return pretext;
 }
 
 String iCodeCompleter::GetText() {
@@ -289,13 +291,7 @@ QVariant iCodeCompleterModel::data(const QModelIndex& index, int role) const {
       
     case Qt::EditRole: { // this is the default role used for completion matching
       QVariant temp = inherited::data(index, role);
-      String pretext;
-      String append_text;
-      if (completer->field_type == iCodeCompleter::EXPRESSION) {
-        pretext = completer->GetPreText();
-        append_text = completer->GetAppendText();
-      }
-      String complete = pretext + temp.toString() + append_text;
+      String complete = completer->GetPreText() + temp.toString() + completer->GetAppendText();
       return complete;
     }
       

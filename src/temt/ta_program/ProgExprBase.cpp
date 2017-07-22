@@ -69,12 +69,9 @@ MethodSpace                 ProgExprBase::completion_method_list;
 EnumSpace                   ProgExprBase::completion_enum_list;
 TypeSpace                   ProgExprBase::completion_statics_list;
 TypeSpace                   ProgExprBase::completion_misc_list;
-String                      ProgExprBase::completion_pre_text;
-String                      ProgExprBase::completion_path_pre_text;
-String                      ProgExprBase::completion_append_text;
 String                      ProgExprBase::completion_prog_el_text;
-String                      ProgExprBase::completion_lookup_seed;
 String                      ProgExprBase::completion_text_before;
+String                      ProgExprBase::completion_lookup_seed;
 bool                        ProgExprBase::include_statics;
 bool                        ProgExprBase::include_progels;
 bool                        ProgExprBase::include_types;
@@ -1022,13 +1019,10 @@ Completions* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_po
   path_own_typ = NULL;
   path_md = NULL;
   
-  completion_pre_text = prepend_txt;
-  completion_path_pre_text = path_prepend_txt;
-  completion_append_text = append_txt;
   completion_prog_el_text = prog_el_txt;
-  completion_lookup_seed = lookup_seed;
   completion_text_before = txt;
   completion_lookup_type = lookup_type;
+  completion_lookup_seed = lookup_seed;
   
   ExprLookupCompleterReset();
   
@@ -1361,6 +1355,8 @@ Completions* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_po
 
   completions.Reset();  
   completions.seed = lookup_seed;
+  completions.pre_text = prepend_txt;
+  completions.append_text = append_txt;
   
   for (int i=0; i<completion_progvar_local_list.size; i++) {
     taBase* base = completion_progvar_local_list.FastEl(i);
@@ -1550,14 +1546,6 @@ ProgExprBase::LookUpType ProgExprBase::Test_ParseForLookup(const String test_nam
 //  taMisc::DebugInfo("path_rest = ", path_rest);
   
   return lookup_type;
-}
-
-String ProgExprBase::FinishCompletion(const String& cur_completion, int& new_pos) {
-  String rval;
-  rval = cur_completion;
-  new_pos = rval.length();
-  rval += completion_append_text;
-  return rval;
 }
 
 void ProgExprBase::GetTokensOfType(TypeDef* td, taBase_List* tokens, taBase* scope, TypeDef* scope_type, ProgVar::VarType var_type) {
