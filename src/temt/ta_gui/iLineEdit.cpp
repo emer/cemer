@@ -396,11 +396,13 @@ void iLineEdit::setText(const QString& str) {
   inherited::setText(str);
   if (completion_enabled) {
     String working_copy = text();
-    String insert_text = GetCompleter()->popup()->model()->data(GetCompleter()->currentIndex()).toString();
+    int row = GetCompleter()->popup()->currentIndex().row();
+    QModelIndex new_index = GetCompleter()->model()->index(row , 0, QModelIndex());
+    String insert_text = GetCompleter()->popup()->model()->data(new_index).toString();
     int index = working_copy.index_ci(insert_text);  // locate the completion text in the full text string
-    if (index == -1 && str.length() > 0) {
-      taMisc::DebugInfo("iLineEdit::setText -- insert text not found, index is -1");
-    }
+//    if (index == -1 && str.length() > 0) {
+//      taMisc::DebugInfo("iLineEdit::setText -- insert text not found, index is -1");
+//    }
     setCursorPosition(index + insert_text.length());
     if (completer->ExpressionTakesArgs(working_copy)) {
       setCursorPosition(cursorPosition() - 1);
