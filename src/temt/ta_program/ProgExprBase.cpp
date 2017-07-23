@@ -1355,7 +1355,12 @@ Completions* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_po
 
   completions.Reset();  
   completions.seed = lookup_seed;
-  completions.pre_text = prepend_txt;
+  if (path_prepend_txt.nonempty()) {
+    completions.pre_text = path_prepend_txt;
+  }
+  else {
+    completions.pre_text = prepend_txt;
+  }
   completions.append_text = append_txt;
   
   for (int i=0; i<completion_progvar_local_list.size; i++) {

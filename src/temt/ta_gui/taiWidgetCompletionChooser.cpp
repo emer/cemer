@@ -191,9 +191,6 @@ void taiWidgetCompletionChooser::GetImage(taList_impl* base_lst, taBase* it) {
 }
 
 String taiWidgetCompletionChooser::GetSelectionText() {
-  int seed_length = completions->seed.length();
-  int text_before_length = ProgExprBase::completion_text_before.length();
-  String leading_text = ProgExprBase::completion_text_before.before(text_before_length - seed_length);
   String selection_text;
     
   if (sel_obj_type == STRING_ITEM) {
@@ -224,5 +221,5 @@ String taiWidgetCompletionChooser::GetSelectionText() {
       selection_text = enm->name;
     }
   }
-  return leading_text + selection_text;
+  return selection_text;
 }

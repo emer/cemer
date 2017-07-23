@@ -143,7 +143,7 @@ void taiWidgetField::lookupKeyPressed() {
     
     if (ok_choice) {
       String selection_text = chooser->GetSelectionText();
-      rep()->setText(selection_text + expr_completions->append_text);
+      rep()->setText(expr_completions->pre_text + selection_text + expr_completions->append_text);
     }
   }
   else if (member_completions.HasCompletions()) {
@@ -186,7 +186,7 @@ void taiWidgetField::lookupKeyPressed_dialog() {
   
   if (ok_choice) {
     String selection_text = chooser->GetSelectionText();
-    edit_dialog->txtText->setPlainText(selection_text + completions->append_text);
+    edit_dialog->txtText->setPlainText(completions->pre_text + selection_text + completions->append_text);
     QTextCursor cur2(edit_dialog->txtText->textCursor());
     new_pos = cur_pos + selection_text.length() + completions->seed.length();
     cur2.setPosition(new_pos);
