@@ -54,6 +54,7 @@ void iCodeCompleter::Init() {
   
   pre_text = _nilString;
   append_text = _nilString;
+  chooser_selection = _nilString;
 }
 
 void iCodeCompleter::SetModelList(String_Array *list) {

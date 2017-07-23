@@ -57,6 +57,7 @@ public:
   String                  last_epression_text;  // hold onto for comparison on next tab
   FieldType               field_type;
   HostType                host_type;
+  String                  chooser_selection;  // if chooser used instead of popup store the selection in here
 
   void                    SetModelList(String_Array* list);
   void                    SetCompletions(Completions* completions);

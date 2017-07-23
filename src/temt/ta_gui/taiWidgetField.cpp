@@ -102,7 +102,9 @@ void taiWidgetField::lookupKeyPressed() {
       
       if (ok_choice) {
         String selection_text = chooser->GetSelectionText();
+        rep()->GetCompleter()->chooser_selection = selection_text;
         rep()->setText(selection_text);
+        rep()->GetCompleter()->chooser_selection = _nilString;
       }
       delete chooser;
     }
@@ -116,7 +118,6 @@ void taiWidgetField::lookupKeyPressed() {
   int cur_pos = rep()->cursorPosition();
   int new_pos = -1;
   Completions* expr_completions = NULL;
-
   iCodeCompleter* completer = rep()->GetCompleter();
   if (completer) {
     member_completions.Reset();
@@ -143,7 +144,9 @@ void taiWidgetField::lookupKeyPressed() {
     
     if (ok_choice) {
       String selection_text = chooser->GetSelectionText();
+      rep()->GetCompleter()->chooser_selection = selection_text;
       rep()->setText(expr_completions->pre_text + selection_text + expr_completions->append_text);
+      rep()->GetCompleter()->chooser_selection = _nilString;
     }
   }
   else if (member_completions.HasCompletions()) {
