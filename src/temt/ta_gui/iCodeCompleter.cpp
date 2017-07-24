@@ -156,27 +156,30 @@ bool iCodeCompleter::eventFilter(QObject* obj, QEvent* event) {
   }
   else {
     if (key_event->key() == Qt::Key_Tab) {
-//      if (field_type == EXPRESSION && GetText() == last_epression_text) {
+      if (field_type == EXPRESSION && GetText() == last_epression_text) {
 //        return inherited::eventFilter(obj, event);
-//      }
-//      last_epression_text = GetText();
-      QCoreApplication* app = QCoreApplication::instance();
-      if (popup()->isVisible()) {
-        if (event->type() == QEvent::KeyPress && popup()->currentIndex().row() != -1) {  // some item is highlighted
-          app->postEvent(popup(), new QKeyEvent(QEvent::KeyPress, Qt::Key_Return, Qt::NoModifier));  // select
-        }
-        else if (GetList()->size() == 1) {
-          app->postEvent(popup(), new QKeyEvent(QEvent::KeyPress, Qt::Key_Down, Qt::NoModifier)); // only one item in list
-          app->postEvent(popup(), new QKeyEvent(QEvent::KeyPress, Qt::Key_Return, Qt::NoModifier));  // select
-        }
-        else {
-          app->postEvent(popup(), new QKeyEvent(QEvent::KeyPress, Qt::Key_Enter, Qt::NoModifier));  // try extending
-        }
+        return true;  // absorb extra tabs - already fully extended
       }
-      else {  // no popup in sight
-        return inherited::eventFilter(obj, event);
+      else {
+        last_epression_text = GetText();
+        QCoreApplication* app = QCoreApplication::instance();
+        if (popup()->isVisible()) {
+          if (event->type() == QEvent::KeyPress && popup()->currentIndex().row() != -1) {  // some item is highlighted
+            app->postEvent(popup(), new QKeyEvent(QEvent::KeyPress, Qt::Key_Return, Qt::NoModifier));  // select
+          }
+          else if (GetList()->size() == 1) {
+            app->postEvent(popup(), new QKeyEvent(QEvent::KeyPress, Qt::Key_Down, Qt::NoModifier)); // only one item in list
+            app->postEvent(popup(), new QKeyEvent(QEvent::KeyPress, Qt::Key_Return, Qt::NoModifier));  // select
+          }
+          else {
+            app->postEvent(popup(), new QKeyEvent(QEvent::KeyPress, Qt::Key_Enter, Qt::NoModifier));  // try extending
+          }
+        }
+        else {  // no popup in sight
+          return inherited::eventFilter(obj, event);
+        }
+        return true;
       }
-      return true;
     }
     else {
       return inherited::eventFilter(obj, event);
