@@ -397,6 +397,7 @@ void iLineEdit::setText(const QString& str) {
   if (completion_enabled) {
     String working_copy = text();
     String insert_text;
+    
     int row = GetCompleter()->popup()->currentIndex().row();
     if (row == -1) { // no popup selection - get from chooser
       insert_text = GetCompleter()->chooser_selection;
@@ -405,10 +406,10 @@ void iLineEdit::setText(const QString& str) {
       QModelIndex new_index = GetCompleter()->model()->index(row , 0, QModelIndex());
       insert_text = GetCompleter()->popup()->model()->data(new_index).toString();
     }
-    int index = working_copy.index_ci(insert_text);  // locate the completion text in the full text string
-//    if (index == -1 && str.length() > 0) {
-//      taMisc::DebugInfo("iLineEdit::setText -- insert text not found, index is -1");
-//    }
+    // locate completion text in full text string - start at cursor position in case there are multiple instances of the text
+    int start_index = (GetCompleter()->GetPreText().length() > 0) ? GetCompleter()->GetPreText().length() - 1 : 0;
+    int index = working_copy.index_ci(insert_text, start_index);
+    // set the cursor position just past the insert
     setCursorPosition(index + insert_text.length());
     if (completer->ExpressionTakesArgs(working_copy)) {
       setCursorPosition(cursorPosition() - 1);
