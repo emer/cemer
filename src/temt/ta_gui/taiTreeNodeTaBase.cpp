@@ -88,8 +88,10 @@ void taiTreeNodeTaBase::lookupKeyPressed(iLineEdit* le, int column) {
       return;
     }
     taBase* bel = (taBase*)md->GetOff(tab);
-    completions = bel->StringFieldLookupForCompleter(le->text(), cur_pos, "", new_pos);
-    le->GetCompleter()->SetCompletions(completions);
+    if (le->GetCompleter()) {
+      completions = bel->StringFieldLookupForCompleter(le->text(), cur_pos, "", new_pos);
+      le->GetCompleter()->SetCompletions(completions);
+    }
 
 #ifdef TA_OS_MAC
   // per this bug with 2.8.x on mac, we need to regain focus:  https://bugreports.qt-project.org/browse/QTBUG-22911
@@ -138,6 +140,10 @@ void taiTreeNodeTaBase::characterEntered(iLineEdit* le, int column) {
   if(!tab) return;
   
   int cur_pos = le->cursorPosition();
+  if (le->GetCompleter()) {
+    le->GetCompleter()->cur_cursor_pos = cur_pos;
+  }
+
   int new_pos = -1;
   Completions* completions = NULL;
 

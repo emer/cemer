@@ -174,8 +174,10 @@ void taiWidgetField::lookupKeyPressed_dialog() {
   
   Completions* completions = NULL;
   
-  completions = tab->StringFieldLookupForCompleter(edit_dialog->txtText->toPlainText(), cur_pos, lookupfun_md->name, new_pos);
-  rep()->GetCompleter()->SetCompletions(completions);
+  if (rep()->GetCompleter()) {
+    completions = tab->StringFieldLookupForCompleter(edit_dialog->txtText->toPlainText(), cur_pos, lookupfun_md->name, new_pos);
+    rep()->GetCompleter()->SetCompletions(completions);
+  }
   
 #ifdef TA_OS_MAC
   // per this bug with 2.8.x on mac, we need to regain focus:  https://bugreports.qt-project.org/browse/QTBUG-22911
