@@ -140,10 +140,6 @@ void taiTreeNodeTaBase::characterEntered(iLineEdit* le, int column) {
   if(!tab) return;
   
   int cur_pos = le->cursorPosition();
-  if (le->GetCompleter()) {
-    le->GetCompleter()->cur_cursor_pos = cur_pos;
-  }
-
   int new_pos = -1;
   Completions* completions = NULL;
 
