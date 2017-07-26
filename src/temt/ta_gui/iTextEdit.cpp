@@ -75,11 +75,16 @@ void iTextEdit::clearExtSelection() {
 void iTextEdit::keyPressEvent(QKeyEvent* key_event) {
   taiMisc::UpdateUiOnCtrlPressed(this, key_event);
   
+  iDialogWidgetField* dialog = dynamic_cast<iDialogWidgetField*>(parentWidget());
   if (taiMisc::KeyEventCtrlPressed(key_event) && key_event->key() == Qt::Key_Return) {
-    iDialogWidgetField* dialog = dynamic_cast<iDialogWidgetField*>(parentWidget());
     if (dialog) {
       dialog->accept();
     }
+  }
+  
+  if (dialog && key_event->key() == Qt::Key_Escape) {
+    inherited::keyPressEvent(key_event);
+    return; // don't pass on - esc will close dialog but it might not be gone yet so swallow the key - fixes Bug 3514
   }
   
   QCoreApplication* app = QCoreApplication::instance();
