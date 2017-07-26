@@ -1898,7 +1898,8 @@ void DataTable::ChangeColTypeGeom_impl(DataCol* src, ValType new_type, const Mat
   String col_nm = src->name;
   src->name = _nilString; // for new
   DataCol* new_col = NULL;
-  new_col = NewColToken_impl(new_type, col_nm);
+  int new_idx = -1;
+  new_col = NewCol_impl(new_type, col_nm, new_idx);
   if(!new_col) {
     return;
   }
@@ -1911,8 +1912,8 @@ void DataTable::ChangeColTypeGeom_impl(DataCol* src, ValType new_type, const Mat
   // copy all data -- the generic copy dude copies user data, and robustly copies data
   new_col->CopyFromCol_Robust(*src);
   new_col->CopyExtras(*src);
-
-  data.ReplaceIdx(old_idx, new_col); // atomic replace is clean..
+  data.SwapIdx(old_idx, new_idx);
+  data.RemoveIdx(new_idx);
   // tabMisc::DelayedFunCall_gui(new_col, "BrowserSelectMe");
 }
 

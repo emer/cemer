@@ -667,6 +667,8 @@ void Unit::SaveWeights_strm(ostream& strm, ConGroup::WtSaveFormat fmt, Projectio
   for(int g = 0; g < rsz; g++) {
     ConGroup* cg = RecvConGroup(g);
     if(cg->NotActive() || (prjn && (cg->prjn != prjn)) || cg->Sharing()) continue;
+    Layer* fm = cg->prjn->from;
+    if(fm->lesioned()) continue;
     strm << "<Cg " << g << " Fm:" << cg->prjn->from->name << ">\n";
     cg->SaveWeights_strm(strm, this, net, fmt);
     strm << "</Cg>\n";

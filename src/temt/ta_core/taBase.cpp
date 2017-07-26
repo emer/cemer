@@ -2099,7 +2099,7 @@ void taBase::UpdatePointersAfterCopy_(const taBase& cp) {
     return;
   }
   taBase* owner = GetOwner();
-  if (owner) {
+  if (owner && owner != tabMisc::root) {
     if (!owner->HasBaseFlag(COPYING)) {
       UpdatePointers_NewPar((taBase*)&cp, this); // update any pointers within this guy
     }

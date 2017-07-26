@@ -65,10 +65,10 @@ bool CA1UnitSpec::CheckConfig_Unit(Layer* lay, bool quiet) {
     }
   }
 
-  if(lay->CheckError(!got_ca3, quiet, rval,
-                     "no projection from CA3 Layer found: must recv from layer with a name that contains the string 'CA3'")) {
-    return false;
-  }
+  // if(lay->CheckError(!got_ca3, quiet, rval,
+  //                    "no projection from CA3 Layer found: must recv from layer with a name that contains the string 'CA3'")) {
+  //   return false;
+  // }
   // it may be OK to not include ECout as that pathway is a bit more suspect?
   // if(lay->CheckError(!got_ec_out, quiet, rval,
   //               "no projection from ECout Layer found: must recv from layer with a name that contains 'EC' and 'out'")) {
