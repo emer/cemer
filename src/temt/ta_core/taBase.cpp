@@ -1274,8 +1274,13 @@ taBase* taBase::FindFromPath(const String& path, MemberDef*& ret_md, int start) 
       if (!md->type->IsTaBase() && md->type->IsClass()) {
         return NULL;            // must be tabase
       }
-      taBase** mbr = (taBase**)tmp_ptr;
-      rval = *mbr;
+      taBase* mbr = (taBase*)tmp_ptr;
+      // note: this is ACTUALLY a taBase**, but because rval is declared as taBase* we
+      // just return it like this -- calling code must look at the md->type and see
+      // that it is IsPointer() and treat accordingly -- also look at the ptrflag code --
+      // this path parser expects to get a *(myobj.pointer) kind of path to de-reference
+      // the pointer member here.
+      rval = mbr;
     }
     if (tmp_ptr && md && md->type->InheritsFrom(TA_taSmartRef)) {
       taSmartRef* ref = (taSmartRef*)tmp_ptr;
