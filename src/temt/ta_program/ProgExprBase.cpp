@@ -1248,6 +1248,10 @@ Completions* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_po
         String path_rest_mod = path_rest;
         path_rest_mod = path_rest_mod.repl("->", ".");
         taBase* mb_tab = base_base->FindFromPath(path_rest_mod, md);
+        if (md && md->type->IsPointer()) {
+          taBase** base_ptr_ptr = (taBase**)mb_tab;
+          mb_tab = *base_ptr_ptr;
+        }
         if(mb_tab) {
           lookup_td = mb_tab->GetTypeDef();
           if(lookup_td->InheritsFrom(&TA_taList_impl))
