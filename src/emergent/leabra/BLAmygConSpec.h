@@ -66,9 +66,12 @@ public:
     const float da_p, const float lrate_eff, const float wt) {
       
     float ru_act_delta = ru_act - ru_act_prv;
+     
+    // can kill now...
     if(fabsf(ru_act_delta) < bla_learn.act_delta_thr) { ru_act_delta = 0.0f; }
     float delta = lrate_eff * su_act * (ru_act_delta);
     //float delta = lrate_eff * su_act * (ru_act - ru_act_prv); // original version
+    
     float da_lrate = bla_learn.dalr_base + bla_learn.dalr_gain * fabsf(da_p);
     dwt += da_lrate * delta;
   }

@@ -100,7 +100,7 @@ void BLAmygUnitSpec::Compute_DeepMod(LeabraUnitVars* u, LeabraNetwork* net, int 
 float BLAmygUnitSpec::Compute_DaModNetin(LeabraUnitVars* u, LeabraNetwork* net,
                                           int thr_no, float& net_syn) {
   float da_val = u->da_p;
-  if(da_val > .0f) {
+  if(da_val > 0.0f) {
     da_val *= bla_da_mod.burst_da_gain;
   }
   else {
@@ -142,10 +142,29 @@ float BLAmygUnitSpec::Compute_NetinExtras(LeabraUnitVars* u, LeabraNetwork* net,
   if(deep.ApplyDeepCtxt()) {
     net_ex += u->deep_ctxt;
   }
-  if(da_mod.on) {
+  
+  if(da_mod.on && bla_da_mod.lrn_act) {
     net_ex += Compute_DaModNetin(u, net, thr_no, net_syn);
   }
   return net_ex;
+}
+
+void BLAmygUnitSpec::Compute_ActFun_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  inherited::Compute_ActFun_Rate(u, net, thr_no);
+  
+  // use act_eq for later use by C_Compute__dWt_BLA_Delta() to effect learning *as if* phasic dopamine modulates unit activations - but actually doesn't
+  if(!(da_mod.on && bla_da_mod.lrn_act)) {
+    float da_val = u->da_p;
+    if(da_val > 0.0f) {
+      da_val *= bla_da_mod.burst_da_gain;
+    }
+    else {
+      da_val *= bla_da_mod.dip_da_gain;
+    }
+    if(dar == D2R) { da_val = -da_val; } // flip the sign
+    u->act_eq *= (1.0f + da_val);
+  }
+  // u->act_eq should now be used by C_Compute__dWt_BLA_Delta() to change wts w/o actual changing unit activity
 }
 
 void BLAmygUnitSpec::Quarter_Final_RecVals(LeabraUnitVars* u, LeabraNetwork* net,

@@ -30,8 +30,11 @@ void PPTgUnitSpec::Defaults_init() {
 
 void PPTgUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   float net_save = u->net;
-  u->net = d_net_gain * (u->net - u->misc_1); // convert to delta
-  if(u->net < act_thr) u->net = 0.0f;
+  
+  u->net = d_net_gain * (u->net - u->misc_1); // convert to delta OLD GUY
+  //u->net = d_net_gain * (u->net - u->misc_1 + u->misc_2); // convert to delta, plus a neg-valued misc_2 rebound factor
+  
+  if(u->net < act_thr) { u->net = 0.0f; }
   // note: positive rectification means that trial after PV, which is often neg, will be nullified
   inherited::Compute_Act_Rate(u, net, thr_no);
   if(clamp_act) {
@@ -57,7 +60,8 @@ void PPTgUnitSpec::Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int 
 void PPTgUnitSpec::Quarter_Final(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   inherited::Quarter_Final(u, net, thr_no);
   if(net->phase == LeabraNetwork::PLUS_PHASE) {
-    u->misc_1 = u->net;       // save for next time -- this is the raw net..
+    //u->misc_2 = fminf(u->act_dif, 0.0f); // save any neg phasic DA to filter rebounds
+    u->misc_1 = u->net;       // save new guy for next time -- this is the raw net..
   }
 }
 

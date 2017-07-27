@@ -91,7 +91,12 @@ void CElAmygUnitSpec::Compute_DeepMod(LeabraUnitVars* u, LeabraNetwork* net, int
   // else if(lay->am_deep_mod_net.max <= deep.mod_thr) { // not enough yet
   else if(u->deep_mod_net <= deep.mod_thr) { // not enough yet
     u->deep_lrn = 0.0f;    // default is 0!
-    u->deep_mod = 1.0f;
+    if(deep_mod_zero) {
+      u->deep_mod = 0.0f;
+    }
+    else {
+      u->deep_mod = 1.0f;
+    }
   }
   else {
     u->deep_lrn = u->deep_mod_net / lay->am_deep_mod_net.max;
@@ -102,7 +107,7 @@ void CElAmygUnitSpec::Compute_DeepMod(LeabraUnitVars* u, LeabraNetwork* net, int
 float CElAmygUnitSpec::Compute_DaModNetin(LeabraUnitVars* u, LeabraNetwork* net,
                                           int thr_no, float& net_syn) {
   float da_val = u->da_p;
-  if(da_val > .0f) {
+  if(da_val > 0.0f) {
     da_val *= cel_da_mod.burst_da_gain;
   }
   else {
@@ -163,10 +168,27 @@ float CElAmygUnitSpec::Compute_NetinExtras(LeabraUnitVars* u, LeabraNetwork* net
   if(deep.ApplyDeepCtxt()) {
     net_ex += u->deep_ctxt;
   }
-  if(da_mod.on) {
+  if(da_mod.on && cel_da_mod.lrn_act) {
     net_ex += Compute_DaModNetin(u, net, thr_no, net_syn);
   }
   return net_ex;
+}
+
+void CElAmygUnitSpec::Compute_ActFun_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  inherited::Compute_ActFun_Rate(u, net, thr_no);
+  // use act_eq for later use by C_Compute__dWt_CEl_Delta() to effect learning *as if* phasic dopamine modulates activations - but actually doesn't
+  if(!(da_mod.on && cel_da_mod.lrn_act)) {
+    float da_val = u->da_p;
+    if(da_val > 0.0f) {
+      da_val *= cel_da_mod.burst_da_gain;
+    }
+    else {
+      da_val *= cel_da_mod.dip_da_gain;
+    }
+    if(dar == D2R) { da_val = -da_val; } // flip the sign
+    u->act_eq *= (1.0f + da_val);
+  }
+   // u->act_eq should now be used by C_Compute__dWt_CEl_Delta() to change wts w/o actual changing unit activity
 }
 
 void CElAmygUnitSpec::Quarter_Final_RecVals(LeabraUnitVars* u, LeabraNetwork* net,
