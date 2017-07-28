@@ -86,14 +86,16 @@ void taiWidgetField::lookupKeyPressed() {
     String reference_arg;  // the arg that holds a pointer to the object from which we can get a list
     taBase* class_base = (taBase*)host->Root();
     if (class_base) {
-      reference_arg = class_base->GetArgForCompletion(cssi_arg_dlg->md->name, label()->text());
-      
-      taBase* arg_obj = NULL;
-      if (reference_arg) {
-        arg_obj = cssi_arg_dlg->GetBaseForArg(reference_arg);
+      if (label()) {
+        reference_arg = class_base->GetArgForCompletion(cssi_arg_dlg->md->name, label()->text());
+        
+        taBase* arg_obj = NULL;
+        if (reference_arg) {
+          arg_obj = cssi_arg_dlg->GetBaseForArg(reference_arg);
+        }
+        class_base->GetArgCompletionList(cssi_arg_dlg->md->name, label()->text(), arg_obj, arg_completions);
+        rep()->GetCompleter()->SetCompletions(&arg_completions);
       }
-      class_base->GetArgCompletionList(cssi_arg_dlg->md->name, label()->text(), arg_obj, arg_completions);
-      rep()->GetCompleter()->SetCompletions(&arg_completions);
     }
     if (arg_completions.HasCompletions()) {
       taiWidgetCompletionChooser* chooser = new taiWidgetCompletionChooser(NULL, NULL, NULL, NULL, 0, &arg_completions.seed);
@@ -208,32 +210,34 @@ void taiWidgetField::characterEntered() {
     String cur_text = leText->text();
     taBase* class_base = (taBase*)host->Root();
     if (class_base) {
-      if (!cur_text.contains('.')) {
-        reference_arg = class_base->GetArgForCompletion(cssi_arg_dlg->md->name, label()->text());
-        taBase* arg_obj = NULL;
-        if (reference_arg) {
-          arg_obj = cssi_arg_dlg->GetBaseForArg(reference_arg);
-        }
-        class_base->GetArgCompletionList(cssi_arg_dlg->md->name, label()->text(), arg_obj, arg_completions);
-        rep()->GetCompleter()->SetCompletions(&arg_completions);
-        return;
-      }
-      else {
-        MemberDef* md = NULL;
-        String member_name = cur_text.before('.', -1);
-        class_base->FindMembeR(member_name, md);
-        if (md) {
-          TypeDef* td = md->type;
-          for (int i=0; i<td->members.size; i++) {
-            MemberDef* member_md = td->members.FastEl(i);
-            if (!member_md->IsGuiReadOnly() && !member_md->IsEditorHidden()) {
-              arg_completions.member_completions.Link(member_md);
-            }
+      if (label()) { // why isn't the label always set??
+        if (!cur_text.contains('.')) {
+          reference_arg = class_base->GetArgForCompletion(cssi_arg_dlg->md->name, label()->text());
+          taBase* arg_obj = NULL;
+          if (reference_arg) {
+            arg_obj = cssi_arg_dlg->GetBaseForArg(reference_arg);
           }
-          arg_completions.pre_text = member_name + '.';
+          class_base->GetArgCompletionList(cssi_arg_dlg->md->name, label()->text(), arg_obj, arg_completions);
           rep()->GetCompleter()->SetCompletions(&arg_completions);
+          return;
         }
-        return;
+        else {
+          MemberDef* md = NULL;
+          String member_name = cur_text.before('.', -1);
+          class_base->FindMembeR(member_name, md);
+          if (md) {
+            TypeDef* td = md->type;
+            for (int i=0; i<td->members.size; i++) {
+              MemberDef* member_md = td->members.FastEl(i);
+              if (!member_md->IsGuiReadOnly() && !member_md->IsEditorHidden()) {
+                arg_completions.member_completions.Link(member_md);
+              }
+            }
+            arg_completions.pre_text = member_name + '.';
+            rep()->GetCompleter()->SetCompletions(&arg_completions);
+          }
+          return;
+        }
       }
     }
   }
