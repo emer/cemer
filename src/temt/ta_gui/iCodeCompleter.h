@@ -74,15 +74,17 @@ public:
   int                     GetListCount() { return GetList()->size(); }
   bool                    PopUpIsVisible() { return popup()->isVisible(); }
   void                    DialogClosing() { popup()->hide(); }  // dialogs should call this when deleting
-  String                  GetPreText();  // get the pretext from the expression parser
+  String                  GetPreText(); // get the pretext from the expression parser
   String                  GetAppendText() { return append_text; }  // get the append text from the expression parser
-  String                  GetText();     // get the text before cursor from the expression parser
+  String                  GetPreCursorText() { return pre_cursor_text; }  // get the text before cursor from the expression parser
 
 protected:
   QStringList             string_list;
   bool                    eventFilter(QObject* obj, QEvent* event) override;
   bool                    is_dialog_field; // is the widget using this completer in a dialog - if so special tab handling
-  String                  pre_text;      // text before completion
+  String                  seed_text;
+  String                  pre_text;      // text before completion - so up to delimiter - no seed
+  String                  pre_cursor_text; // all text before cursor
   String                  append_text;   // text following completion
   
 private:

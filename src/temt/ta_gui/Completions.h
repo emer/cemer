@@ -41,6 +41,7 @@ public:
   String                  seed;                 // the text that starts the lookup
   String                  pre_text;             // text preceding completion
   String                  append_text;          // text after completion
+  String                  pre_cursor_text;    // all text up to current cursor position
   
   void                    Reset();              // remove items from all lists
   bool                    HasCompletions();     // at least one list has items

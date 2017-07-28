@@ -68,8 +68,10 @@ void iCodeCompleter::SetModelList(String_Array *list) {
 void iCodeCompleter::SetCompletions(Completions* completions) {
   if (completions) {
     // copy the string vars
+    seed_text = completions->seed;
     pre_text = completions->pre_text;
     append_text = completions->append_text;
+    pre_cursor_text = completions->pre_cursor_text;
     
     string_list.clear();
     QStringList str_list;
@@ -151,17 +153,17 @@ bool iCodeCompleter::eventFilter(QObject* obj, QEvent* event) {
     if (key_event->key() == Qt::Key_Return) {
       return inherited::eventFilter(obj, event);
     }
-    last_epression_text = GetText();
+    last_epression_text = pre_cursor_text;
     return inherited::eventFilter(obj, event);
   }
   else {
     if (key_event->key() == Qt::Key_Tab) {
-      if (field_type == EXPRESSION && GetText() == last_epression_text) {
+      if (field_type == EXPRESSION && pre_cursor_text == last_epression_text) {
 //        return inherited::eventFilter(obj, event);
         return true;  // absorb extra tabs - already fully extended
       }
       else {
-        last_epression_text = GetText();
+        last_epression_text = pre_cursor_text;
         QCoreApplication* app = QCoreApplication::instance();
         if (popup()->isVisible()) {
           if (event->type() == QEvent::KeyPress && popup()->currentIndex().row() != -1) {  // some item is highlighted
@@ -185,6 +187,18 @@ bool iCodeCompleter::eventFilter(QObject* obj, QEvent* event) {
       return inherited::eventFilter(obj, event);
     }
   }
+}
+
+String iCodeCompleter::GetPreText() {
+  String pretext;
+  if (field_type == EXPRESSION) {
+    pretext = pre_cursor_text;
+    pretext = pretext.before(pretext.length() - seed_text.length());
+  }
+  else {
+    pretext = pre_text;
+  }
+  return pretext;
 }
 
 void iCodeCompleter::FilterList(String seed) {
@@ -225,22 +239,6 @@ void iCodeCompleter::ExtendSeed(String& seed) {
     }
   }
   seed = pretext + seed;
-}
-
-String iCodeCompleter::GetPreText() {
-  String pretext;
-  if (field_type == EXPRESSION) {
-    pretext = ProgExprBase::completion_text_before;
-    pretext = pretext.before(pretext.length() - ProgExprBase::completion_lookup_seed.length());
-  }
-  else {
-    return pre_text;
-  }
-  return pretext;
-}
-
-String iCodeCompleter::GetText() {
-  return ProgExprBase::completion_text_before;
 }
 
 bool iCodeCompleter::ExpressionTakesArgs(String expression) {
