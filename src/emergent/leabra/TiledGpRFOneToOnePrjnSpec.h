@@ -39,6 +39,7 @@ public:
 				  int rgpidx, int sgpidx, bool make_cons) override;
   void	Init_Weights_Prjn(Projection* prjn, ConGroup* cg, Network* net, int thr_no)
     override;
+  bool  HasRandomScale() override { return false; }
 
   TA_SIMPLE_BASEFUNS(TiledGpRFOneToOnePrjnSpec);
 private:

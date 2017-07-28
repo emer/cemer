@@ -820,7 +820,7 @@ void ConGroup::SaveWeights_strm(ostream& strm, Unit* un, Network* net,
   MemberDef* smds[10];          // no more than 10!
   for(int i=0; i<ct->members.size; i++) {
     MemberDef* md = ct->members[i];
-    if(con_spec->SaveConVarToWeights(md)) {
+    if(con_spec->SaveConVarToWeights(this, md)) {
       smds[n_vars++] = md;
     }
   }
@@ -951,7 +951,7 @@ int ConGroup::LoadWeights_strm(istream& strm, Unit* ru, Network* net,
   MemberDef* smds[10];          // no more than 10!
   for(int i=0; i<ct->members.size; i++) {
     MemberDef* md = ct->members[i];
-    if(con_spec->SaveConVarToWeights(md)) {
+    if(con_spec->SaveConVarToWeights(this, md)) {
       smds[n_vars++] = md;
     }
   }

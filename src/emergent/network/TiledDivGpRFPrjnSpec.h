@@ -57,6 +57,7 @@ public:
   
   void	Init_Weights_Prjn(Projection* prjn, ConGroup* cg, Network* net,
                           int thr_no) override;
+  bool  HasRandomScale() override;
   
   virtual void	Init_Weights_Gaussian(Projection* prjn, ConGroup* cg, Network* net,
                                       int thr_no);

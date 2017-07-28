@@ -453,3 +453,12 @@ void TiledDivGpRFPrjnSpec::Init_Weights_BimodalPermuted(Projection* prjn, ConGro
     }
   }
 }
+
+bool TiledDivGpRFPrjnSpec::HasRandomScale() {
+  if(wts_type == GAUSSIAN) {
+    return false;
+  }
+  else {
+    return inherited::HasRandomScale();
+  }
+}

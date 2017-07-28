@@ -215,7 +215,7 @@ public:
   ////////////////////////////////////////////////////////////////////////////////
   //    The following are misc functionality not required for primary computing
 
-  virtual bool          SaveConVarToWeights(MemberDef* md);
+  virtual bool          SaveConVarToWeights(ConGroup* cg, MemberDef* md);
   // should given connection variable be saved to the weights file?  default method here just checks md->HasOption("SAVE") -- derived classes can determine based on other options
   
   virtual void          GetPrjnName(Projection& prjn, String& nm) { };

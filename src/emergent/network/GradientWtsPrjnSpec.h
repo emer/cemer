@@ -46,6 +46,7 @@ public:
 
   void	Init_Weights_Prjn(Projection* prjn, ConGroup* cg, Network* net,
                           int thr_no) override;
+  bool  HasRandomScale() override { return false; }
 
   virtual void	InitWeights_RecvGps(Projection* prjn, ConGroup* cg,
                                     Unit* ru, Network* net, int thr_no);

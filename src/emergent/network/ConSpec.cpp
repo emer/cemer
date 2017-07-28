@@ -72,7 +72,7 @@ bool ConSpec::CheckConfig_RecvCons(Projection* prjn, bool quiet) {
   return true;
 }
 
-bool ConSpec::SaveConVarToWeights(MemberDef* md) {
+bool ConSpec::SaveConVarToWeights(ConGroup* cg, MemberDef* md) {
   return md->HasOption("SAVE");
 }
 

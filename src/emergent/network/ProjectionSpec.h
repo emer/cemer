@@ -91,6 +91,9 @@ public:
   virtual void  Init_Weights_renorm(Projection* prjn, ConGroup* cg, Network* net, int thr_no);
   // #CAT_Weights #IGNORE renormalize weights -- done as a second pass after Init_Weights and before Init_Weights_post
 
+  virtual bool  HasRandomScale();
+  // #CAT_Weights does this projection spec set a randomized scale value -- by default this returns true when init_wts && set_scale is true -- other specs that do set_scale in a different way (e.g., a non-random topographic pattern) may yet return false in this case -- this has implications for saving the scale value with the weights file for example
+
   virtual bool  CheckConnect(Projection* prjn, bool quiet=false);
   // #CAT_ObjectMgmt check if projection is connected
 

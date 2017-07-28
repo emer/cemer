@@ -73,6 +73,7 @@ public:
   void	Connect_impl(Projection* prjn, bool make_cons) override;
   void	Init_Weights_Prjn(Projection* prjn, ConGroup* cg, Network* net,
                           int thr_no) override;
+  bool  HasRandomScale() override { return false; }
 
   virtual void	GetCtrFmRecv(taVector2i& sctr, taVector2i ruc);
   // get center of sender coords from receiving coords

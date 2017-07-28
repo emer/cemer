@@ -701,8 +701,10 @@ void LeabraConSpec::WtScaleCvt(float savg, int lay_sz, int n_cons,
   // new_abs = old_abs * (old_sc / new_sc)
 }
 
-bool LeabraConSpec::SaveConVarToWeights(MemberDef* md) {
+bool LeabraConSpec::SaveConVarToWeights(ConGroup* cg, MemberDef* md) {
   if(!md->HasOption("SAVE")) return false;
   if(md->name != "scale") return true;
-  return adapt_scale.on;      // only save if adapting!
+  if(adapt_scale.on) return true;
+  ProjectionSpec* ps = cg->prjn->GetPrjnSpec();
+  return ps->HasRandomScale();  // if random scale, needs to save it!
 }

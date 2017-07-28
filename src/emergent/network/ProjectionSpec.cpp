@@ -129,6 +129,10 @@ void ProjectionSpec::Init_Weights_renorm(Projection* prjn, ConGroup* cg,
   }
 }
 
+bool ProjectionSpec::HasRandomScale() {
+  return init_wts && set_scale;
+}
+
 bool ProjectionSpec::CheckConnect(Projection* prjn, bool quiet) {
   if(prjn->off) return true;
   bool rval;

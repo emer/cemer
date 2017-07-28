@@ -52,6 +52,7 @@ public:
   void	Connect_impl(Projection* prjn, bool make_cons) override;
   void	Init_Weights_Prjn(Projection* prjn, ConGroup* cg, Network* net,
                           int thr_no) override;
+  bool  HasRandomScale() override { return false; }
 
   static float	UnitDist(UnitDistType typ, Projection* prjn,
 			 const taVector2i& ru, const taVector2i& su);
