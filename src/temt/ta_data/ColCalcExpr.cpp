@@ -14,14 +14,19 @@
 //   Lesser General Public License for more details.
 
 #include "ColCalcExpr.h"
+
 #include <DataCol>
+#include <DataTableCols>
+#include <Completions>
+
 
 TA_BASEFUNS_CTORS_DEFN(ColCalcExpr);
 
 taTypeDef_Of(DataTableCols);
 
+Completions                 ColCalcExpr::completions;
+
 void ColCalcExpr::Initialize() {
-  col_lookup = NULL;
   data_cols = NULL;
 }
 
@@ -35,36 +40,20 @@ void ColCalcExpr::InitLinks() {
 }
 
 void ColCalcExpr::CutLinks() {
-  if(col_lookup) {
-    taBase::SetPointer((taBase**)&col_lookup, NULL);
-  }
   data_cols = NULL;
   inherited::CutLinks();
 }
 
 void ColCalcExpr::Copy_(const ColCalcExpr& cp) {
-  if(col_lookup) {
-    taBase::SetPointer((taBase**)&col_lookup, NULL);
-  }
   expr = cp.expr;
   UpdateAfterEdit_impl();       // gets everything
 }
 
 void ColCalcExpr::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-//   Program* prg = GET_MY_OWNER(Program);
-//   if(!prg || isDestroying()) return;
-  if(col_lookup) {
-    if(expr.empty())
-      expr += col_lookup->name;
-    else
-      expr += " " + col_lookup->name;
-    taBase::SetPointer((taBase**)&col_lookup, NULL);
-  }
 }
 
 bool ColCalcExpr::SetExpr(const String& ex) {
-  taBase::SetPointer((taBase**)&col_lookup, NULL); // justin case
   expr = ex;
   UpdateAfterEdit();            // does parse
   return true;
@@ -82,5 +71,30 @@ String ColCalcExpr::GetDisplayName() const {
 String ColCalcExpr::GetFullExpr() const {
   return expr;
 }
+
+Completions* ColCalcExpr::StringFieldLookupForCompleter(const String& cur_txt, int cur_pos,
+                                                        const String& mbr_name, int& new_pos) {
+  completions.Reset();
+  
+  if (data_cols) {
+    for (int i=0; i<data_cols->size; i++) {
+      DataCol* col = data_cols->SafeEl(i);
+      completions.object_completions.Link(col);
+    }
+  }
+  completions.pre_cursor_text = cur_txt.through(cur_pos);
+  int pos = completions.pre_cursor_text.index(' ', -1);
+  if (pos == -1) {
+    completions.seed = cur_txt.through(cur_pos);
+    completions.pre_text = "";
+}
+  else {
+    completions.seed = cur_txt.after(' ', -1);
+    completions.pre_text = cur_txt.before(' ', -1);
+  }
+  
+  return &completions;
+}
+
 
 
