@@ -99,9 +99,7 @@ bool DataSelectRowsProg::CvtFmCode(const String& code) {
 void DataSelectRowsProg::CheckChildConfig_impl(bool quiet, bool& rval) {
   inherited::CheckChildConfig_impl(quiet, rval);
   if(GetSrcData()) {
-    select_spec.GetColumns(GetSrcData());
     select_spec.CheckConfig(quiet, rval);
-    select_spec.ClearColumns();
   }
 }
 

@@ -86,7 +86,6 @@ void DataCalcAddDestRow::GenCssBody_impl(Program* prog) {
     return;
   }
   
-  dcl->dest_cols.GetColumns(dd);
   prog->AddLine(this, dcl->dest_data_var->name + "->AddBlankRow();", ProgLine::MAIN_LINE);
   prog->AddVerboseLine(this);
   
@@ -118,7 +117,6 @@ void DataCalcAddDestRow::GenCssBody_impl(Program* prog) {
     rval += ", -1); // -1 = last row";
     prog->AddLine(this, rval);
   }
-  dcl->dest_cols.ClearColumns();
 }
 
 bool DataCalcAddDestRow::CanCvtFmCode(const String& code, ProgEl* scope_el) const {

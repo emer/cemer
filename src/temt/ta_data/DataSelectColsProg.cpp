@@ -90,9 +90,7 @@ bool DataSelectColsProg::CvtFmCode(const String& code) {
 void DataSelectColsProg::CheckChildConfig_impl(bool quiet, bool& rval) {
   inherited::CheckChildConfig_impl(quiet, rval);
   if(GetSrcData()) {
-    select_spec.GetColumns(GetSrcData());
     select_spec.CheckConfig(quiet, rval);
-    select_spec.ClearColumns();
   }
 }
 

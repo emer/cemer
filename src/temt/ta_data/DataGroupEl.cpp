@@ -75,11 +75,12 @@ bool DataGroupEl::BrowserEditSet(const String& new_val_str, int move_after) {
 
 void DataGroupEl::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
-  if(col_lookup) {
-    CheckError((agg.op == Aggregate::GROUP) && col_lookup->isMatrix(), quiet, rval,
+  DataCol* dc = GetColumn();
+  if(dc) {
+    CheckError((agg.op == Aggregate::GROUP) && dc->isMatrix(), quiet, rval,
                "cannot use matrix column to GROUP");
     ValType mvt = agg.MinValType();
-    CheckError((mvt == Aggregate::VT_INT) && !col_lookup->isNumeric(), quiet, rval,
+    CheckError((mvt == Aggregate::VT_INT) && !dc->isNumeric(), quiet, rval,
                "aggregation operator:", agg.GetAggName(), "requires numeric data to operate on, but column named:", col_name, "is not numeric");
   }
 }

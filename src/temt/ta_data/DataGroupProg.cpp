@@ -53,9 +53,7 @@ String DataGroupProg::GetDisplayName() const {
 void DataGroupProg::CheckChildConfig_impl(bool quiet, bool& rval) {
   inherited::CheckChildConfig_impl(quiet, rval);
   if(GetSrcData()) {
-    group_spec.GetColumns(GetSrcData());
     group_spec.CheckConfig(quiet, rval);
-    group_spec.ClearColumns();
   }
 }
 

@@ -2950,8 +2950,6 @@ void DataTable::ShowAllRows() {
   StructUpdate(true);
   ResetRowIndexes();
   ClearCompareRows();
-  last_sort_spec.ClearColumns();
-  last_select_spec.ClearColumns();
   StructUpdate(false);
 }
 

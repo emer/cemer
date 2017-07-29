@@ -86,9 +86,7 @@ bool DataSortProg::CvtFmCode(const String& code) {
 void DataSortProg::CheckChildConfig_impl(bool quiet, bool& rval) {
   inherited::CheckChildConfig_impl(quiet, rval);
   if(GetSrcData()) {
-    sort_spec.GetColumns(GetSrcData());
     sort_spec.CheckConfig(quiet, rval);
-    sort_spec.ClearColumns();
   }
 }
 

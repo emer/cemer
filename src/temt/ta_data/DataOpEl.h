@@ -35,32 +35,28 @@ class TA_API DataOpEl : public taOBase {
 public:
   DataTableRef    data_table;
   // #READ_ONLY #HIDDEN #NO_SAVE data table -- gets set dynamically
-  DataCol*        col_lookup;
-  // #NULL_OK #NO_SAVE #FROM_LIST_data_table.data #NO_EDIT #NO_UPDATE_POINTER lookup column in data table to operate on -- sets col_name field (which is what is actually used) and returns to NULL after selection is applied
   String          col_name;	// #ADD_COMPLETER_SIMPLE name of column in data table to operate on (either enter directly or lookup from col_lookup)
   int             col_idx;	// #READ_ONLY #NO_SAVE column idx (from GetColumns)
 
-  virtual void    SetDataTable(DataTable* dt);
+  virtual void      SetDataTable(DataTable* dt);
   // #CAT_DataOp set the data table to enable looking up columns
-  virtual void    GetColumns(DataTable* dt);
-  // #CAT_DataOp get the column pointers for given data table (looking up by name)
-  virtual void    ClearColumns();
+  virtual DataCol*  GetColumn();
   // #CAT_DataOp clear column pointers (don't keep these guys hanging around)
-  virtual void    SetColName(const String& nm);
-  bool            HasName() const override { return true; }
-  String          GetName() const override;
-  bool            SetName(const String& nm) override;
-  void            MakeNameUnique() override;
-  virtual void    UpdateName() { };
+  virtual void      SetColName(const String& nm);
+  bool              HasName() const override { return true; }
+  String            GetName() const override;
+  bool              SetName(const String& nm) override;
+  void              MakeNameUnique() override;
+  virtual void      UpdateName() { };
   // #IGNORE define this for any subclasses that do more with name than just col_name, called in SetColName and UAE
-  virtual String  GetListIdxSuffix();
+  virtual String    GetListIdxSuffix();
   // get owner index based suffix to append to name -- make them always unique in case of overlap
-  String          GetDisplayName() const override;
-  String          GetTypeDecoKey() const override { return "ProgArg"; }
-  void            GetMemberCompletionList(const MemberDef* md, Completions& completions) override;
+  String            GetDisplayName() const override;
+  String            GetTypeDecoKey() const override { return "ProgArg"; }
+  void              GetMemberCompletionList(const MemberDef* md, Completions& completions) override;
 
-  bool            BrowserEditEnable() const override { return true; }
-  bool            BrowserEditSet(const String& new_val_str, int move_after = 0) override;
+  bool              BrowserEditEnable() const override { return true; }
+  bool              BrowserEditSet(const String& new_val_str, int move_after = 0) override;
 
   TA_SIMPLE_BASEFUNS(DataOpEl);
   
