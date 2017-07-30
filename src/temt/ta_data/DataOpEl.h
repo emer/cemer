@@ -35,7 +35,7 @@ class TA_API DataOpEl : public taOBase {
 public:
   DataTableRef    data_table;
   // #READ_ONLY #HIDDEN #NO_SAVE data table -- gets set dynamically
-  String          col_name;	// #ADD_COMPLETER_SIMPLE name of column in data table to operate on (either enter directly or lookup from col_lookup)
+  String          col_name;	// #ADD_COMPLETER_SIMPLE name of column in data table to operate on
   int             col_idx;	// #READ_ONLY #NO_SAVE column idx (from GetColumns)
 
   virtual void      SetDataTable(DataTable* dt);
@@ -61,7 +61,7 @@ public:
   TA_SIMPLE_BASEFUNS(DataOpEl);
   
 protected:
-  void	UpdateAfterEdit_impl() override;	// set col_name from col_lookup
+  void	UpdateAfterEdit_impl() override;	// set col_idx from col_name
   void	CheckThisConfig_impl(bool quiet, bool& rval) override;
   
 private:
