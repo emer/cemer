@@ -107,16 +107,19 @@ void DataOpEl::SetDataTable(DataTable* dt) {
 }
 
 void DataOpEl::GetMemberCompletionList(const MemberDef* md, Completions& completions) {
-  if (data_table) {
-    FOREACH_ELEM_IN_LIST(DataCol, col, data_table->data) {
-      completions.object_completions.Link(col);
-    }
+  if (!data_table){
+    taMisc::Error("The src_data_var (i.e the source DataTable) must be set before choosing a column.");
+    return;
+  }
+  
+  FOREACH_ELEM_IN_LIST(DataCol, col, data_table->data) {
+    completions.object_completions.Link(col);
   }
 }
 
 DataCol* DataOpEl::GetColumn() {
   if (!data_table) return NULL;
-  
+
   DataCol* dc = NULL;
   FOREACH_ELEM_IN_LIST(DataCol, col, data_table->data) {
     if (col->name == col_name) {
