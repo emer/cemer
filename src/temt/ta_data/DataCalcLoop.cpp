@@ -65,13 +65,9 @@ void DataCalcLoop::CheckThisConfig_impl(bool quiet, bool& rval) {
 
 void DataCalcLoop::SetColProgVarFmData(ProgVar* pv, DataOpEl* ds) {
   pv->SetVarFlag(ProgVar::LOCAL_VAR);
-  
-  DataCol* dc = ds->GetColumn();
-  if (!dc) return;
-  
-  ValType vt = dc->valType();
-
-  if(dc->is_matrix) {
+  if(!ds->col_lookup) return;   // nothing to do
+  ValType vt = ds->col_lookup->valType();
+  if(ds->col_lookup->is_matrix) {
     pv->var_type = ProgVar::T_Object;
     pv->object_val = NULL;
     if(vt == VT_FLOAT)
@@ -99,6 +95,7 @@ void DataCalcLoop::SetColProgVarFmData(ProgVar* pv, DataOpEl* ds) {
 }
 
 void DataCalcLoop::UpdateColVars() {
+  src_cols.GetColumns(GetSrcData());
   String srcp = "s_";
   int ti, i;
   for(i = src_col_vars.size - 1; i >= 0; --i) { // delete not used ones
@@ -124,7 +121,9 @@ void DataCalcLoop::UpdateColVars() {
       src_col_vars.MoveIdx(i, ti);
     }
   }
+  src_cols.ClearColumns();
 
+  dest_cols.GetColumns(GetDestData());
   srcp = "d_";
   for(i = dest_col_vars.size - 1; i >= 0; --i) { // delete not used ones
     ProgVar* pv = dest_col_vars.FastEl(i);
@@ -148,6 +147,7 @@ void DataCalcLoop::UpdateColVars() {
       dest_col_vars.MoveIdx(i, ti);
     }
   }
+  dest_cols.ClearColumns();
 }
 
 
@@ -170,10 +170,14 @@ void DataCalcLoop::CheckChildConfig_impl(bool quiet, bool& rval) {
   inherited::CheckChildConfig_impl(quiet, rval);
   UpdateColVars();
   if(GetSrcData()) {
+    src_cols.GetColumns(GetSrcData());
     src_cols.CheckConfig(quiet, rval);
+    src_cols.ClearColumns();
   }
   if(GetDestData()) {
+    dest_cols.GetColumns(GetDestData());
     dest_cols.CheckConfig(quiet, rval);
+    dest_cols.ClearColumns();
   }
   loop_code.CheckConfig(quiet, rval);
 }
@@ -197,6 +201,7 @@ void DataCalcLoop::GenCssPre_impl(Program* prog) {
     prog->AddLine(this, "// no src data!", ProgLine::MAIN_LINE);
     return;
   }
+  src_cols.GetColumns(GetSrcData());
   prog->AddLine(this, "{ DataCalcLoop* dcl = this" + GetPath(program()) + ";",
                 ProgLine::MAIN_LINE);
   prog->AddVerboseLine(this);
@@ -252,6 +257,7 @@ void DataCalcLoop::GenCssPre_impl(Program* prog) {
     rval += ", src_row);";
     prog->AddLine(this, rval);
   }
+  src_cols.ClearColumns();
   // dest cols are only activated by DataAddDestRow
 }
 

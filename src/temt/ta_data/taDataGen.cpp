@@ -1158,6 +1158,7 @@ bool taDataGen::WriteFmSubMatricies(DataTable* dest, const String& dest_col_nm,
   if(!dcol) return false;
 
   dest->StructUpdate(true);
+  spec->GetColumns(sub_mtx_src);                // cache column pointers & indicies from names
 
   int dms,d0,d1,d2,d3,d4,d5,d6;
 
@@ -1168,6 +1169,7 @@ bool taDataGen::WriteFmSubMatricies(DataTable* dest, const String& dest_col_nm,
     DataCol* scol = sub_mtx_src->data.FastEl(ds->col_idx);
     dcol->AR()->WriteFmSubMatrixFrames(scol->AR(), render_op, d0,d1,d2,d3,d4,d5,d6);
   }
+  spec->ClearColumns();
   dest->StructUpdate(false);
   return true;
 }
@@ -1184,6 +1186,7 @@ bool taDataGen::ReadToSubMatricies(DataTable* src, const String& src_col_nm,
   if(!scol) return false;
 
   sub_mtx_dest->StructUpdate(true);
+  spec->GetColumns(sub_mtx_dest);               // cache column pointers & indicies from names
 
   int dms,d0,d1,d2,d3,d4,d5,d6;
 
@@ -1194,6 +1197,7 @@ bool taDataGen::ReadToSubMatricies(DataTable* src, const String& src_col_nm,
     DataCol* dcol = sub_mtx_dest->data.FastEl(ds->col_idx);
     scol->AR()->ReadToSubMatrixFrames(dcol->AR(), render_op, d0,d1,d2,d3,d4,d5,d6);
   }
+  spec->ClearColumns();
   sub_mtx_dest->StructUpdate(false);
   return true;
 }

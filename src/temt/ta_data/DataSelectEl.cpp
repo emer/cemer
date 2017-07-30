@@ -139,10 +139,8 @@ void DataSelectEl::UpdateEnabled() {
 
 void DataSelectEl::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
-  
-  DataCol* dc = GetColumn();
-  if(dc) {
-    CheckError(dc->is_matrix && dc->cell_size() > 1 &&
+  if(col_lookup) {
+    CheckError(col_lookup->is_matrix && col_lookup->cell_size() > 1 &&
                !(rel == Relation::EQUAL || rel == Relation::NOTEQUAL), quiet, rval,
                "matrix column selection only uses EQUAL or NOTEQUAL and checks for a 1 value at matrix cell given by cmp index");
   }

@@ -37,15 +37,23 @@ public:
     INNER,			// only matching rows from both tables are included
   };
 
-  DataOpEl      col_a;		// #NO_AUTO_NAME column from first (a) source datatable to join on (values match those in col_b)
-  DataOpEl      col_b;		// #NO_AUTO_NAME column from second (b) source datatable to join on (values match those in col_a)
-  JoinType      type;		// type of join to perfrom (determines what to do with nonmatches -- matches are always included)
-  bool          nomatch_warn;	// #CONDEDIT_ON_type:INNER for INNER join, issue a warning for row values in A that do not have a matching value in B
+  DataOpEl	col_a;		// #NO_AUTO_NAME column from first (a) source datatable to join on (values match those in col_b)
+  DataOpEl	col_b;		// #NO_AUTO_NAME column from second (b) source datatable to join on (values match those in col_a)
+  JoinType	type;		// type of join to perfrom (determines what to do with nonmatches -- matches are always included)
+  bool		nomatch_warn;	// #CONDEDIT_ON_type:INNER for INNER join, issue a warning for row values in A that do not have a matching value in B
 
   virtual void 	SetDataTable(DataTable* dt_a, DataTable* dt_b);
   // set the data table to enable looking up columns
-  String        GetDisplayName() const override;
-  
+
+  virtual void 	GetColumns(DataTable* dt_a, DataTable* dt_b);
+  // get the column pointers for given data table (looking up by name)
+  virtual void 	ClearColumns();
+  // clear column pointers (don't keep these guys hanging around)
+  void  UpdateColIdxs(DataTable* dt_a, DataTable* dt_b)
+  { GetColumns(dt_a, dt_b); ClearColumns(); }
+  // update the column indexes for the current data tables
+
+  String GetDisplayName() const override;
   TA_SIMPLE_BASEFUNS(DataJoinSpec);
 protected:
   void	 CheckThisConfig_impl(bool quiet, bool& rval) override;

@@ -24,23 +24,17 @@ TA_BASEFUNS_CTORS_DEFN(DataOpEl);
 
 
 void DataOpEl::Initialize() {
+  col_lookup = NULL;
   col_idx = -1;
 }
 
 void DataOpEl::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  if (data_table) {
-    col_idx = -1;
-    FOREACH_ELEM_IN_LIST(DataCol, col, data_table->data) {
-      if (col->name == col_name) {
-        col_idx = col->col_idx;
-        return;
-      }
-    }
-    if (data_table->data.size > 0 && col_name.length() > 0 && col_idx == -1) {
-      taMisc::Error("Column named ", col_name, " not found");
-    }
+  if(col_lookup) {
+    col_name = col_lookup->name;
+    taBase::SetPointer((taBase**)&col_lookup, NULL); // reset as soon as used -- just a temp guy!
   }
+  UpdateName();
 }
 
 void DataOpEl::MakeNameUnique() {
@@ -106,26 +100,23 @@ void DataOpEl::SetDataTable(DataTable* dt) {
   data_table = dt;
 }
 
-void DataOpEl::GetMemberCompletionList(const MemberDef* md, Completions& completions) {
-  if (!data_table){
-    taMisc::Error("The src_data_var (i.e the source DataTable) must be set before choosing a column.");
-    return;
-  }
-  
-  FOREACH_ELEM_IN_LIST(DataCol, col, data_table->data) {
-    completions.object_completions.Link(col);
-  }
+void DataOpEl::GetColumns(DataTable* dt) {
+  if(!dt) return;
+  col_idx = dt->FindColNameIdx(col_name);
+  DataCol* da = NULL;
+  if(col_idx >= 0)
+    da = dt->data[col_idx];
+  taBase::SetPointer((taBase**)&col_lookup, da);
 }
 
-DataCol* DataOpEl::GetColumn() {
-  if (!data_table) return NULL;
+void DataOpEl::ClearColumns() {
+  taBase::SetPointer((taBase**)&col_lookup, NULL);
+}
 
-  DataCol* dc = NULL;
-  FOREACH_ELEM_IN_LIST(DataCol, col, data_table->data) {
-    if (col->name == col_name) {
-      dc = col;
-      break;
+void DataOpEl::GetMemberCompletionList(const MemberDef* md, Completions& completions) {
+  if (data_table) {
+    FOREACH_ELEM_IN_LIST(DataCol, col, data_table->data) {
+      completions.object_completions.Link(col);
     }
   }
-  return dc;
 }

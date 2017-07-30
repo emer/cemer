@@ -64,6 +64,7 @@ bool taDataProc::GetCommonCols(DataTable* dest, DataTable* src, DataOpList* dest
   if(!dest || !src) return false;
   src_cols->Reset(); dest_cols->Reset();
   src_cols->AddAllColumns(src);
+  src_cols->GetColumns(src);
   for(int i=0; i<src_cols->size;i++) {
     DataOpEl* sop = src_cols->FastEl(i);
     int d_idx = dest->FindColNameIdx(sop->col_name);
@@ -421,7 +422,9 @@ bool taDataProc::SortThruIndex(DataTable* dt, DataSortSpec* spec)
   for (int i=0; i < n_rows; i++)
     order[i] = i;               // key: use *logical* indexes here always -- sort goes through current row_indexes always..
 
+  spec->GetColumns(dt);
   SortThruIndex_impl(dt, spec, order, 0, n_rows-1, pivot_row_table);
+  spec->ClearColumns();
 
   // now need to translate new order into raw indexes
   for (int i=0; i < n_rows; i++) {
@@ -547,6 +550,7 @@ bool taDataProc::Group(DataTable* dest, DataTable* src, DataGroupSpec* spec) {
   GetDest(dest, src, "Group", in_place_req);
   DataTable* tmp_src = NULL;    // in case we need to convert column types
   dest->StructUpdate(true);
+  spec->GetColumns(src);                // cache column pointers & indicies from names
   dest->Reset();
   // add the dest columns
   for(int i=0;i<spec->ops.size; i++) {
@@ -600,6 +604,7 @@ bool taDataProc::Group(DataTable* dest, DataTable* src, DataGroupSpec* spec) {
     if(ds->agg.op != Aggregate::GROUP) continue;
     DataSortEl* ss = (DataSortEl*)sort_spec.ops.New(1, &TA_DataSortEl);
     ss->col_idx = ds->col_idx;
+    taBase::SetPointer((taBase**)&ss->col_lookup, ds->col_lookup);
     ss->order = DataSortEl::ASCENDING;
     ss->SetColName(ds->col_name);
   }
@@ -610,6 +615,7 @@ bool taDataProc::Group(DataTable* dest, DataTable* src, DataGroupSpec* spec) {
     Group_gp(dest, tmp_src ? tmp_src : src, spec, &sort_spec); // grouping.
   }
   dest->StructUpdate(false);
+  spec->ClearColumns();
   if(in_place_req) {
     String saved_name = src->GetName();  // save name to restore after the copy
     src->Copy(dest);
@@ -735,15 +741,19 @@ bool taDataProc::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, 
   if(has_first_last) {
     flsrc = *src;
     use_src = &flsrc;           // new src
+    //    sort_spec->GetColumns(&flsrc); // re-get columns for new guy, just to be sure
     int_Data* rowno_col = flsrc.NewColInt("__fl_rowno");
     rowno_col->InitValsToRowNo();
     DataSortEl* ss = (DataSortEl*)full_sort_spec.ops.New(1, &TA_DataSortEl);
     ss->col_idx = rowno_col->col_idx;
+    //    taBase::SetPointer((taBase**)&ss->col_lookup, ds->col_lookup);
     ss->order = DataSortEl::ASCENDING;
     ss->SetColName(rowno_col->name);
   }
   
   taDataProc::Sort(&ssrc, use_src, &full_sort_spec);
+  
+  sort_spec->GetColumns(&ssrc); // re-get columns -- they were nuked by Sort op!
   
   Variant_Array cur_vals;
   cur_vals.SetSize(sort_spec->ops.size);
@@ -1078,6 +1088,7 @@ bool taDataProc::SelectRows(DataTable* dest, DataTable* src, DataSelectSpec* spe
     dest->StructUpdate(true);
     dest->Copy_NoData(*src);              // give it same structure
   }
+  spec->GetColumns(src);                // cache column pointers & indicies from names
   // also sets act_enabled flag
   for(int row=src->rows-1;row>=0; row--) {
     bool incl = false;
@@ -1141,6 +1152,7 @@ bool taDataProc::SelectRows(DataTable* dest, DataTable* src, DataSelectSpec* spe
   }
   if (!in_place_req)
     dest->StructUpdate(false);
+  spec->ClearColumns();
   return true;
 }
 
@@ -1165,6 +1177,7 @@ bool taDataProc::SplitRows(DataTable* dest_a, DataTable* dest_b, DataTable* src,
   dest_a->Copy_NoData(*src);            // give it same structure
   dest_b->StructUpdate(true);
   dest_b->Copy_NoData(*src);            // give it same structure
+  spec->GetColumns(src);                // cache column pointers & indicies from names
   for(int row=0;row<src->rows; row++) {
     bool incl = false;
     bool not_incl = false;
@@ -1223,6 +1236,7 @@ bool taDataProc::SplitRows(DataTable* dest_a, DataTable* dest_b, DataTable* src,
   }
   dest_a->StructUpdate(false);
   dest_b->StructUpdate(false);
+  spec->ClearColumns();
   return true;
 }
 
@@ -1506,6 +1520,7 @@ bool taDataProc::SelectCols(DataTable* dest, DataTable* src, DataOpList* spec) {
   bool in_place_req = false;
   GetDest(dest, src, "SelectCols", in_place_req);
   dest->StructUpdate(true);
+  spec->GetColumns(src);                // cache column pointers & indicies from names
   dest->Reset();
   for(int i=0;i<spec->size; i++) {
     DataOpEl* ds = spec->FastEl(i);
@@ -1528,6 +1543,7 @@ bool taDataProc::SelectCols(DataTable* dest, DataTable* src, DataOpList* spec) {
     }
   }
   dest->StructUpdate(false);
+  spec->ClearColumns();
   if(in_place_req) {
     src->Copy_DataOnly(*dest);
     delete dest;
@@ -1548,6 +1564,7 @@ bool taDataProc::Join(DataTable* dest, DataTable* src_a, DataTable* src_b,
     return false;
   }
   dest->StructUpdate(true);
+  spec->GetColumns(src_a, src_b);       // cache column pointers & indicies from names
   if((spec->col_a.col_idx < 0) || (spec->col_b.col_idx < 0)) {
     taMisc::Error("taDataProc::Join: col_a or col_b is not set to a valid column"); 
     return false;
@@ -1575,6 +1592,7 @@ bool taDataProc::Join(DataTable* dest, DataTable* src_a, DataTable* src_b,
   {
     DataSortEl* ss = (DataSortEl*)sort_spec_a.ops.New(1, &TA_DataSortEl);
     ss->col_idx = spec->col_a.col_idx;
+    taBase::SetPointer((taBase**)&ss->col_lookup, spec->col_a.col_lookup);
     ss->order = DataSortEl::ASCENDING;
     ss->SetColName(spec->col_a.col_name);
   }
@@ -1584,6 +1602,7 @@ bool taDataProc::Join(DataTable* dest, DataTable* src_a, DataTable* src_b,
   {
     DataSortEl* ss = (DataSortEl*)sort_spec_b.ops.New(1, &TA_DataSortEl);
     ss->col_idx = spec->col_b.col_idx;
+    taBase::SetPointer((taBase**)&ss->col_lookup, spec->col_b.col_lookup);
     ss->order = DataSortEl::ASCENDING;
     ss->SetColName(spec->col_b.col_name);
   }
@@ -1673,6 +1692,7 @@ bool taDataProc::Join(DataTable* dest, DataTable* src_a, DataTable* src_b,
     }
   }
   dest->StructUpdate(false);
+  spec->ClearColumns();
   return true;
 }
 

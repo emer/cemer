@@ -28,6 +28,16 @@ void DataJoinSpec::SetDataTable(DataTable* dt_a, DataTable* dt_b) {
   col_b.SetDataTable(dt_b);
 }
 
+void DataJoinSpec::GetColumns(DataTable* dt_a, DataTable* dt_b) {
+  col_a.GetColumns(dt_a);
+  col_b.GetColumns(dt_b);
+}
+
+void DataJoinSpec::ClearColumns() {
+  col_a.ClearColumns();
+  col_b.ClearColumns();
+}
+
 String DataJoinSpec::GetDisplayName() const {
 //  return "join: col_a:" + col_a.GetDisplayName() + " to col_b: " + col_b.GetDisplayName();
   

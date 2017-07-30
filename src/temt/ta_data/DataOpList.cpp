@@ -41,6 +41,20 @@ void DataOpList::SetDataTable(DataTable* dt) {
   }
 }
 
+void DataOpList::GetColumns(DataTable* dt) {
+  for(int i=0;i<size;i++) {
+    DataOpEl* ds = FastEl(i);
+    ds->GetColumns(dt);
+  }
+}
+
+void DataOpList::ClearColumns() {
+  for(int i=0;i<size;i++) {
+    DataOpEl* ds = FastEl(i);
+    ds->ClearColumns();
+  }
+}
+
 DataOpEl* DataOpList::AddColumn(const String& col_name, DataTable* dt) {
   DataOpEl* dop = (DataOpEl*)New(1);
   dop->SetColName(col_name);

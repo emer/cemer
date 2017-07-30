@@ -33,9 +33,11 @@ class TA_API DataSelectSpec : public DataOpBaseSpec {
 public:
   Relation::CombOp	comb_op;	// how to combine individual expressions for each column
 
-  virtual void      UpdateEnabled(); // update the act_enabled flags based on variables etc
-  String            GetDisplayName() const override;
-  
+  virtual void 	UpdateEnabled(); // update the act_enabled flags based on variables etc
+
+  void GetColumns(DataTable* dt) override { inherited::GetColumns(dt); UpdateEnabled(); }
+
+  String GetDisplayName() const override;
   TA_SIMPLE_BASEFUNS(DataSelectSpec);
 private:
   void	Initialize();

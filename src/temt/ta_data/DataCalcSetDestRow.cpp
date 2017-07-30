@@ -88,6 +88,7 @@ void DataCalcSetDestRow::GenCssBody_impl(Program* prog) {
         + ".rows == 0) { taMisc::Error(\"Dest Rows == 0 -- forgot AddDestRow??\"); break; }",
                 ProgLine::MAIN_LINE);
   prog->AddVerboseLine(this);
+  dcl->dest_cols.GetColumns(dd);
   for(int i=0;i<dcl->dest_cols.size; i++) {
     DataOpEl* ds = dcl->dest_cols[i];
     if(ds->col_idx < 0) continue;
@@ -106,6 +107,7 @@ void DataCalcSetDestRow::GenCssBody_impl(Program* prog) {
     prog->AddLine(this, rval);
   }
   prog->AddLine(this, dcl->dest_data_var->name + ".WriteClose();");
+  dcl->dest_cols.ClearColumns();
 }
 
 bool DataCalcSetDestRow::CanCvtFmCode(const String& code, ProgEl* scope_el) const {

@@ -78,6 +78,7 @@ void DataCalcSetSrcRow::GenCssBody_impl(Program* prog) {
     return;
   }
 
+  dcl->src_cols.GetColumns(sd);
   for(int i=0;i<dcl->src_cols.size; i++) {
     DataOpEl* ds = dcl->src_cols[i];
     if(ds->col_idx < 0) continue;
@@ -96,6 +97,7 @@ void DataCalcSetSrcRow::GenCssBody_impl(Program* prog) {
     prog->AddLine(this, rval);
   }
   prog->AddLine(this, dcl->src_data_var->name + ".WriteClose();");
+  dcl->dest_cols.ClearColumns();
 }
 
 bool DataCalcSetSrcRow::CanCvtFmCode(const String& code, ProgEl* scope_el) const {

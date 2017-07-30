@@ -86,9 +86,7 @@ bool DataSortEl::BrowserEditSet(const String& new_val_str, int move_after) {
 
 void DataSortEl::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
-  
-  DataCol* dc = GetColumn();
-  if(dc) {
-    CheckError(dc->is_matrix, quiet, rval,"cannot use matrix column to sort");
+  if(col_lookup) {
+    CheckError(col_lookup->is_matrix, quiet, rval,"cannot use matrix column to sort");
   }
 }

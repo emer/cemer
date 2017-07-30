@@ -27,8 +27,7 @@ String SubMatrixOpEl::GetDisplayName() const {
 
 void SubMatrixOpEl::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
-  DataCol* dc = GetColumn();
-  if(dc) {
-    CheckError(!dc->is_matrix, quiet, rval, "column must be a matrix column");
+  if(col_lookup) {
+    CheckError(!col_lookup->is_matrix, quiet, rval, "column must be a matrix column");
   }
 }

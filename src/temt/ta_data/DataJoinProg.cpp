@@ -69,7 +69,9 @@ void DataJoinProg::CheckThisConfig_impl(bool quiet, bool& rval) {
 void DataJoinProg::CheckChildConfig_impl(bool quiet, bool& rval) {
   inherited::CheckChildConfig_impl(quiet, rval);
   if(GetSrcData() && GetSrcBData()) {
+    join_spec.GetColumns(GetSrcData(), GetSrcBData());
     join_spec.CheckConfig(quiet, rval);
+    join_spec.ClearColumns();
   }
 }
 
