@@ -735,12 +735,10 @@ bool taDataProc::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, 
   if(has_first_last) {
     flsrc = *src;
     use_src = &flsrc;           // new src
-    //    sort_spec->GetColumns(&flsrc); // re-get columns for new guy, just to be sure
     int_Data* rowno_col = flsrc.NewColInt("__fl_rowno");
     rowno_col->InitValsToRowNo();
     DataSortEl* ss = (DataSortEl*)full_sort_spec.ops.New(1, &TA_DataSortEl);
     ss->col_idx = rowno_col->col_idx;
-    //    taBase::SetPointer((taBase**)&ss->col_lookup, ds->col_lookup);
     ss->order = DataSortEl::ASCENDING;
     ss->SetColName(rowno_col->name);
   }
