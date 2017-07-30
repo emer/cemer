@@ -18,6 +18,7 @@
 #include <GraphColView>
 #include <DataCol>
 #include <DataTable>
+#include <Completions>
 #include <T3Axis>
 #include <taMath_float>
 #include <iViewPanelOfGraphTable>
@@ -819,6 +820,18 @@ void GraphAxisBase::RenderAxis_Z(T3Axis* t3ax, const iVec3f& off,
           *rnd_svg << taSvg::Text(label, fm.x - TICK_OFFSET, fm.y-y_lab_off, fm.z,
                                   color.color(), t3ax->font_size, taSvg::CENTER);
         }
+      }
+    }
+  }
+}
+
+void GraphAxisBase::GetMemberCompletionList(const MemberDef* md, Completions& completions) {
+  if (md && md->name == "col_name") {
+    if (GetGTV()->dataTable()) {
+      DataTable* dt = GetGTV()->dataTable();
+      for (int i=0; i<dt->data.size; i++) {
+        DataCol* dc = dt->data.SafeEl(i);
+        completions.object_completions.Link(dc);
       }
     }
   }
