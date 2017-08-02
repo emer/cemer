@@ -36,7 +36,7 @@ public:
   DataTableRef    data_table;
   // #READ_ONLY #HIDDEN #NO_SAVE data table -- gets set dynamically
   DataCol*        col_lookup;
-  // #NULL_OK #NO_SAVE #FROM_LIST_data_table.data #NO_EDIT #NO_UPDATE_POINTER lookup column in data table to operate on -- sets col_name field (which is what is actually used) and returns to NULL after selection is applied
+  // #NULL_OK #NO_SAVE #HIDDEN #NO_EDIT #NO_UPDATE_POINTER lookup column in data table to operate on -- sets col_name field (which is what is actually used) and returns to NULL after selection is applied
   String          col_name;	// #ADD_COMPLETER_SIMPLE name of column in data table to operate on (either enter directly or lookup from col_lookup)
   int             col_idx;	// #READ_ONLY #NO_SAVE column idx (from GetColumns)
 
