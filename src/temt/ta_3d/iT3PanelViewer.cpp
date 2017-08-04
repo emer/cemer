@@ -151,6 +151,13 @@ void iT3PanelViewer::FillContextMenu_impl(taiWidgetMenu* menu, int tab_idx) {
 
     menu->AddItem("Set Color Scheme -- All Views", iAction::int_act,
                   this, SLOT(SetAllColorScheme(int)), tab_idx);
+    
+    menu->AddSep();
+
+    for (int i=0; i<tabBar()->count(); i++) {
+      menu->AddItem(tabBar()->tabText(i), iAction::int_act,
+                    this, SLOT(SetSelectedTab(int)), i);
+    }
   }
 }
 
@@ -254,6 +261,10 @@ bool iT3PanelViewer::SetCurrentTab(int tab_idx) {
   return true;
 }
 
+void iT3PanelViewer::SetSelectedTab(int tab_idx) {
+  tw->setCurrentIndex(tab_idx);
+}
+
 int iT3PanelViewer::CurrentTabNo() {
   return tw->currentIndex();
 }
@@ -278,4 +289,5 @@ void iT3PanelViewer::focusInEvent(QFocusEvent* ev) {
 void iT3PanelViewer::tw_tabMoved(int fm, int to) {
   viewer()->panels.MoveIdx(fm, to);
 }
+
 

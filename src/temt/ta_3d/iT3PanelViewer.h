@@ -64,10 +64,11 @@ public slots:
   void                  SetColorScheme(int tab_idx);
   void                  SetAllColorScheme(int tab_idx);
   void                  FocusFirstTab(); // hack to get first tab focussed on load
-
+  void                  SetSelectedTab(int tab_idx);
+  
 protected: // IViewerWidget i/f
   int                   last_idx;
-  void         Refresh_impl() override;
+  void                  Refresh_impl() override;
 
   virtual void          FillContextMenu_impl(taiWidgetMenu* menu, int tab_idx);
 
