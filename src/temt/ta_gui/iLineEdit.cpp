@@ -301,6 +301,11 @@ void iLineEdit::keyPressEvent(QKeyEvent* key_event)
         else if(!taiMisc::KeyEventCtrlPressed(key_event) && key_event->key() != Qt::Key_Escape)
         {
           inherited::keyPressEvent(key_event);
+          if (key_event->modifiers() & Qt::ShiftModifier) { // don't complete if shift key down and moving cursor
+            if (key_event->key() == Qt::Key_Left || key_event->key() == Qt::Key_Right) {
+              return;
+            }
+          }
 #ifdef TA_OS_MAC
           if (key_event->modifiers() & Qt::ControlModifier) { // don't complete if mac command key
             return;
