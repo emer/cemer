@@ -61,6 +61,7 @@
 #include <taiMisc>
 #include <iHelpBrowser>
 #include <MatrixGeom>
+#include <EnumDef>
 
 #include <QVariant>
 #include <QDir>
@@ -4082,6 +4083,24 @@ void taBase::GetArgCompletionList(const String& method, const String& arg, taBas
         MemberDef* md = td->members.FastEl(i);
         if (!md->IsGuiReadOnly() && !md->IsEditorHidden()) {
           completions.member_completions.Link(md);
+        }
+      }
+    }
+  }
+  if (method == "SetMember" && arg == "value") {
+    // hack -- see note in taiWidgetField::characterEntered
+    String member_name = completions.string_completions[0];
+    completions.Reset();
+    if (member_name) {
+      // get the member def and if enum type add enum_vals to list
+      MemberDef* md = (MemberDef*)FindMemberName(member_name);
+      if (!md) return;
+    
+      TypeDef* td = md->type;
+      if (td && td->IsEnum()) {
+        for (int i=0; i<td->enum_vals.size; i++) {
+          EnumDef* enum_def = td->enum_vals.SafeEl(i);
+          completions.string_completions.Add(enum_def->name);
         }
       }
     }

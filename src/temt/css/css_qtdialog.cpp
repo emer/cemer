@@ -423,6 +423,17 @@ void cssiArgDialog::GetValue() {
   Unchanged();
 }
 
+String cssiArgDialog::GetArgValue(int index) {
+  String arg_value;
+  err_flag = false;
+  int arg_index = hide_args + index;
+  taiArgType* art = (taiArgType*)type_el.FastEl(hide_args + arg_index);
+  taiWidget* mb_dat = widget_el(0).SafeEl(index - hide_args);
+  if (mb_dat == NULL) return _nilString; // shouldn't happen
+  art->GetValue(mb_dat, root);
+  return art->arg_val->GetStr();
+}
+
 taBase* cssiArgDialog::GetBaseForArg(const String& arg_name) {
   taiArgType* art = NULL;
   taiWidget* mb_dat = NULL;

@@ -210,12 +210,18 @@ void taiWidgetField::characterEntered() {
     String cur_text = leText->text();
     taBase* class_base = (taBase*)host->Root();
     if (class_base) {
-      if (label()) { // why isn't the label always set??
+      if (label()) { // why isn't the label always set - conditional field might be the issue
         if (!cur_text.contains('.')) {
           reference_arg = class_base->GetArgForCompletion(cssi_arg_dlg->md->name, label()->text());
           taBase* arg_obj = NULL;
           if (reference_arg) {
             arg_obj = cssi_arg_dlg->GetBaseForArg(reference_arg);
+          }
+          // this is a hack for SetMember to show enum values in value field
+          // could generalize if there are other similar cases
+          if (cssi_arg_dlg->md->name == "SetMember" && label()->text() == "value") {
+            String member_name = cssi_arg_dlg->GetArgValue(0);
+            arg_completions.string_completions.Add(member_name);
           }
           class_base->GetArgCompletionList(cssi_arg_dlg->md->name, label()->text(), arg_obj, arg_completions);
           rep()->GetCompleter()->SetCompletions(&arg_completions);

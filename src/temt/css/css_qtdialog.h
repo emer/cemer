@@ -75,9 +75,8 @@ public:
   MethodDef*            md;
   TypeDef*              typ;
   int                   use_argc;
-  int                   hide_args; // number of leading args to hide in dialogs to user (because context has already predetermined them)
-  iCodeCompleter*       code_completer;
-  
+  int                   hide_args; // number of leading args to hide in dialogs (context has predetermined them)
+  iCodeCompleter*       code_completer;  
 
   cssiArgDialog(MethodDef* md, TypeDef* typ, void* base, int use_argc, int hide_args,
     bool read_only_ = false, bool modal_ = true, QObject* parent = 0);
@@ -86,6 +85,7 @@ public:
   using inherited::GetImage;
   void        GetImage(bool force) override; // force ignored
   void        GetValue() override;
+  String      GetArgValue(int index);  // index is based on visible args
   int         Edit(bool modal_ = false, int min_width=-1, int min_height=-1) override;
   // ati is for when n leading args are predetermined by context, and so shouldn't be shown to the user
   taBase*     GetBaseForArg(const String& arg_name);
