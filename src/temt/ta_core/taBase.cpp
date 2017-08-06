@@ -4093,9 +4093,22 @@ void taBase::GetArgCompletionList(const String& method, const String& arg, taBas
     completions.Reset();
     if (member_name) {
       // get the member def and if enum type add enum_vals to list
-      MemberDef* md = (MemberDef*)FindMemberName(member_name);
+      MemberDef* md = NULL;
+      if (member_name.contains('.')) {  // something like dynlr.dwt_norm
+        String member_object_name = member_name.before(member_name.index('.'));
+        md = (MemberDef*)FindMemberName(member_object_name);
+        if (md) {
+          TypeDef* member_td = md->type;
+          if (member_td) {
+            String member_member_name = member_name.after('.');
+            md = (MemberDef*)member_td->members.FindName(member_member_name);
+          }
+        }
+      }
+      else {
+        md = (MemberDef*)FindMemberName(member_name);
+      }
       if (!md) return;
-    
       TypeDef* td = md->type;
       if (td && td->IsEnum()) {
         for (int i=0; i<td->enum_vals.size; i++) {
