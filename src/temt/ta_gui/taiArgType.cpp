@@ -61,14 +61,22 @@ taiArgType::~taiArgType() {
 
 void taiArgType::GetImage_impl(taiWidget* dat, const void* base) {
   if (arg_base == NULL)  return;
-
+  
   if (arg_val && GetHasOption("ARG_VAL_FM_FUN")) {
     Variant val = ((taBase*)base)->GetGuiArgVal(meth->name, arg_idx);
     if(val != _nilVariant) {
       *arg_val = val;           // use css conversion code!
     }
   }
-
+  if (GetHasOption("VARIANT_TYPE_FM_FUN")) {
+    Variant val;
+    Variant::VarType vt = ((taBase*)base)->GetGuiVariantType(meth->name, arg_idx);
+    val.setType(vt);
+    if(val != _nilVariant) {
+      *arg_val = val;           // use css conversion code!
+    }
+  }
+  
   if(use_it != NULL)
     use_it->GetImage(dat, arg_base);
   else

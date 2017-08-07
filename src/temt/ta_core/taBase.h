@@ -1286,7 +1286,10 @@ public:
 
   virtual Variant       GetGuiArgVal(const String& fun_name, int arg_idx);
   // #IGNORE overload this to get default initial arg values for given function and arg index -- function must be marked with ARG_VAL_FM_FUN[_n] comment directive, and _nilVariant rval will be ignored (NOTE: definitely call inherited:: because this is used for ChangeMyType!
-
+  
+  virtual Variant::VarType GetGuiVariantType(const String& fun_name, int arg_idx) { return Variant::T_Invalid; }
+  // #IGNORE overload this to get default initial variant type -- function must be marked with VARIANT_TYPE_FM_FUN comment directive
+  
   ///////////////////////////////////////////////////////////////////////////
   //    Copying and changing type
 public:

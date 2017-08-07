@@ -1163,3 +1163,10 @@ void DataCol::GetUniqueColumnValues(String_Array& groups) {
     }
   }
 }
+
+Variant::VarType DataCol::GetGuiVariantType(const String& fun_name, int arg_idx) {
+  if (fun_name == "InitVals" && arg_idx == 0) {
+    return varType();
+  }
+  return Variant::T_Invalid;
+}
