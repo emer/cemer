@@ -2180,6 +2180,7 @@ void taBase::SetMember(const String& member, const String& value) {
     void* address = MemberDef::GetOff_static(this, base_off, mbr_off);
     mbr_def->type->SetValStr(value, address, NULL, mbr_def);
     UpdateAfterEdit();
+    taMisc::Info("SetMember: Object", GetName(), " - member", member, "value changed to", value);
   }
 }
 
