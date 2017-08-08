@@ -208,7 +208,7 @@ public:
   static bool	Histogram(DataTable* hist_data, DataTable* src_data,
                           const String& src_col, float bin_size,
                           float min_val = 0.0, float max_val = 0.0, bool view = true);
-  // #CAT_Graph #MENU_BUTTON #MENU_ON_Graph create a histogram of src_col data in src_data data table, using bin size, and optionally specifying fixed min and max values (only used if range between is non-zero) -- results go into hist_data table, by default creates a bar graph (can turn this off with the view option)
+  // #CAT_Graph #MENU_BUTTON #MENU_ON_Graph #NULL_OK_0 #NULL_TEXT_0_NewDataTable create a histogram of src_col data in src_data data table, using bin size, and optionally specifying fixed min and max values (only used if range between is non-zero) -- results go into hist_data table, by default creates a bar graph (can turn this off with the view option)
 
   static bool   MatrixCellFreq(DataTable* freq_data, DataTable* src_data,
                                const String& src_col, bool thresh = false,
