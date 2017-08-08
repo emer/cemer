@@ -502,7 +502,7 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
     }
     else {  // not a top-level group - get class default -- if none set max_levels to 1
       if (exp_def_str.nonempty()) {
-        max_levels = (int)exp_def_str;
+        max_levels = level + (int)exp_def_str;
       }
       else {
         max_levels = 1;
