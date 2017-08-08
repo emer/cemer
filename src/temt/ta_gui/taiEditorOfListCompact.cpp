@@ -124,6 +124,8 @@ void taiEditorOfListCompact::GetValue_Membs() {
 }
 
 void taiEditorOfListCompact::GetImage_Membs() {
+  GetImage_Membs_def();  // always get the class images - even if we aren't showing the list
+  
   if(!show_els) return;
   bool rebuild = false;
   if (lst_widget_el.size != cur_lst->size) rebuild = true;
@@ -139,9 +141,6 @@ void taiEditorOfListCompact::GetImage_Membs() {
   if (rebuild) {
     RebuildMultiBody(); 
   } 
-
-  // first for the List-structure members
-  GetImage_Membs_def();
 
   // then the elements
   for (int lf = 0;  lf < lst_widget_el.size;  ++lf) {
