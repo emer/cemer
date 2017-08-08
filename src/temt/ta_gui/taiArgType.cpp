@@ -68,7 +68,7 @@ void taiArgType::GetImage_impl(taiWidget* dat, const void* base) {
       *arg_val = val;           // use css conversion code!
     }
   }
-  if (GetHasOption("VARIANT_TYPE_FM_FUN")) {
+  if (arg_val && GetHasOption("VARIANT_TYPE_FM_FUN")) {
     Variant val;
     Variant::VarType vt = ((taBase*)base)->GetGuiVariantType(meth->name, arg_idx);
     val.setType(vt);
