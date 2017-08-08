@@ -67,6 +67,7 @@ void iLineEdit::init(bool add_completer) {
   completer = NULL;
   completion_enabled = false;
   orig_text_length = 0;
+  smart_select_enabled = true;
   
   if (add_completer) {
     completer = new iCodeCompleter(parent());
@@ -302,7 +303,8 @@ void iLineEdit::keyPressEvent(QKeyEvent* key_event)
         {
           inherited::keyPressEvent(key_event);
           if (key_event->modifiers() & Qt::ShiftModifier) { // don't complete if shift key down and moving cursor
-            if (key_event->key() == Qt::Key_Left || key_event->key() == Qt::Key_Right) {
+            if (hasSelectedText() || key_event->key() == Qt::Key_Left || key_event->key() == Qt::Key_Right) {
+              smart_select_enabled = false;
               return;
             }
           }
@@ -423,7 +425,7 @@ void iLineEdit::setText(const QString& str) {
 }
 
 void iLineEdit::selectionChanged() {
-  if (hasSelectedText()) {
+  if (smart_select_enabled && hasSelectedText()) {
     int selection_length = selectedText().length();
     if (selection_length < text().length()) {
       int selection_end = selectionStart() + selection_length;
@@ -440,4 +442,5 @@ void iLineEdit::selectionChanged() {
       }
     }
   }
+  smart_select_enabled = true;  // turn on again if it was off
 }

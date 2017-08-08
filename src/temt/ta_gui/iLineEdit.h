@@ -29,19 +29,20 @@ class TA_API iLineEdit: public QLineEdit {
 INHERITED(QLineEdit)
 public:
 
-  int           init_start_pos;            // initial starting position for editing -- -1 = end, 0 = start
-  bool          init_start_kill;           // at start of editing, kill contents
-  bool          completion_enabled;
+  int           init_start_pos;             // initial starting position for editing -- -1 = end, 0 = start
+  bool          init_start_kill;            // at start of editing, kill contents
+  bool          completion_enabled;         // obvious
+  bool          smart_select_enabled;       // smart select auto extends selection of methods to include parens - turn off if user extending with arrow key
 
   iLineEdit(QWidget* parent = 0, bool add_completer = false);
   iLineEdit(const char* text, QWidget* parent, bool add_completer = false);
 
   inline int	  charWidth() {return mchar_width;}
-  void		      setCharWidth(int num); // sets width to accommodate num chars of
+  void		      setCharWidth(int num);      // sets width to accommodate num chars of
   inline int	  minCharWidth() {return mmin_char_width;}
-  void		      setMinCharWidth(int num); // sets aprox min width to accommodate num chars of average text in current font; 0=no restriction; limited to 128
-  virtual void	clearExtSelection();	   // clear extended selection mode and also clear any existing selection
-  virtual void	emitReturnPressed();	   // emit this signal
+  void		      setMinCharWidth(int num);   // sets aprox min width to accommodate num chars of average text in current font; 0=no restriction; limited to 128
+  virtual void	clearExtSelection();        // clear extended selection mode and also clear any existing selection
+  virtual void	emitReturnPressed();        // emit this signal
   iCodeCompleter* GetCompleter() { return completer; }
     
 #ifndef __MAKETA__
