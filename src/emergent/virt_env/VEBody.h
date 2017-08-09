@@ -81,7 +81,7 @@ SMARTREF_OF(E_API, VEBody); // VEBodyRef
 eTypeDef_Of(VEBody);
 
 class E_API VEBody : public taNBase {
-  // #STEM_BASE ##CAT_VirtEnv ##EXT_vebod virtual environment body (rigid structural element), subject to physics dynamics
+  // #STEM_BASE ##CAT_VirtEnv ##EXT_vebod ##EXPAND_AS_GROUP ##EXPAND_DEF_6 virtual environment body (rigid structural element), subject to physics dynamics
 INHERITED(taNBase)
 public:
   enum BodyFlags { // #BITS flags for bodies

@@ -469,7 +469,7 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
         }
       }
       
-      if (level <= 0 && exp_flags & EF_DEFAULT_UNDER) {
+      if (depth <= 0 && exp_flags & EF_DEFAULT_UNDER) {
         depth = 1;  // if user asked for expansion expand 1 level even when default is zero
       }
       if (depth >= 0) {
@@ -521,15 +521,19 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
     if (!item->link()->isEnabled())
       expand = false;
   }
-  if (exp_flags & EF_CUSTOM_FILTER) {
-    max_levels = 1;  // this gets it open, then custom will take over
-    expand = true;
-    emit CustomExpandFilter(item, level, expand);
-  }
-  if (exp_flags & EF_NAVIGATOR_FILTER) {
-    max_levels = 1;  // this gets it open, then custom will take over
-    expand = true;
-    emit CustomExpandNavigatorFilter(item, level, expand);
+  
+  // groups and lists don't use custom filter
+  if (!(tab->InheritsFrom(&TA_taGroup) || tab->GetTypeDef()->HasOption("EXPAND_AS_GROUP"))) {
+    if (exp_flags & EF_CUSTOM_FILTER) {
+      max_levels = 1;  // this gets it open, then custom will take over
+      expand = true;
+      emit CustomExpandFilter(item, level, expand);
+    }
+    if (exp_flags & EF_NAVIGATOR_FILTER) {
+      max_levels = 1;  // this gets it open, then custom will take over
+      expand = true;
+      emit CustomExpandNavigatorFilter(item, level, expand);
+    }
   }
   
   if (expand) {

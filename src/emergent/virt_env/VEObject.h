@@ -36,7 +36,7 @@ class VEBody; //
 eTypeDef_Of(VEObject);
 
 class E_API VEObject : public taNBase {
-  // #STEM_BASE ##CAT_VirtEnv ##EXT_veobj #EXPAND_DEF_6 a virtual environment object, which contains interconnected bodies and their joints, and represents a sub-space of objects
+  // #STEM_BASE ##CAT_VirtEnv ##EXT_veobj ##EXPAND_AS_GROUP ##EXPAND_DEF_6 a virtual environment object, which contains interconnected bodies and their joints, and represents a sub-space of objects
 INHERITED(taNBase)
 public:
   enum SpaceType {
