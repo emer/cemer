@@ -523,7 +523,9 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
   }
   
   // groups and lists don't use custom filter
-  if (!(tab->InheritsFrom(&TA_taGroup) || tab->GetTypeDef()->HasOption("EXPAND_AS_GROUP"))) {
+  if (!(tab->InheritsFrom(&TA_taGroup)
+        || tab->InheritsFrom(&TA_taList)
+        || tab->GetTypeDef()->HasOption("EXPAND_AS_GROUP"))) {
     if (exp_flags & EF_CUSTOM_FILTER) {
       max_levels = 1;  // this gets it open, then custom will take over
       expand = true;
