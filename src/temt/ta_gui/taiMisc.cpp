@@ -922,6 +922,14 @@ iColor taiMisc::ivBrightness_to_Qt_lightdark(const QColor& qtColor, float ivBrig
   }
 }
 
+int taiMisc::GetExpandDef(const taBase *obj) {
+  String exp_def_str = obj->GetTypeDef()->OptionAfter("EXPAND_DEF_");
+  if (exp_def_str.nonempty()) {
+    return (int)exp_def_str;
+  }
+  return -1;
+}
+
 int taiMisc::GetGroupDefaultExpand(const String& group) {
   if (group == "docs")
     return taMisc::expand_defaults_project.docs;

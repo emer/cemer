@@ -430,7 +430,7 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
 {
   if (!item) return;
   if (isItemHidden(item)) return;
-
+  
   taBase* tab = item->link()->taData();
   
   bool expand = false;
@@ -446,9 +446,6 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
   if(tab && tab->HasOption("NO_EXPAND_ALL")) return;
   if(item->md() && item->md()->HasOption("NO_EXPAND_ALL")) return;
   if(tab->GetOwner() == NULL) return;
-
-  String exp_def_str = tab->GetTypeDef()->OptionAfter("EXPAND_DEF_");
-  // if(exp_def_str == "0") return;
   
   if (!(exp_flags & EF_CUSTOM_FILTER) && tab && (!(exp_flags & EF_EXPAND_FULLY))) {
     // if top level node or being treated like one - top level guys are docs, ctrl_panels, data, programs, networks, etc
@@ -467,6 +464,9 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
       int depth = -1;
       if (!tab->GetOwner()->DerivesFromName("taRootBase")) {
         depth = taiMisc::GetGroupDefaultExpand(name);
+        if (depth == -1) {  // not in preferences - get from class
+          depth = taiMisc::GetExpandDef(tab);
+        }
       }
       
       if (level <= 0 && exp_flags & EF_DEFAULT_UNDER) {
@@ -479,9 +479,9 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
           expand = true;
         }
       }
-      else if (!is_subgroup) {  // expand INITIATED on this non top-level group -- thus not being expanded as a subgroup
-        if (exp_def_str.nonempty()) {
-          max_levels = (int)exp_def_str;
+      else if (!is_subgroup) {  // expand INITIATED on this non top-level group -- not being expanded as a subgroup
+        if (taiMisc::GetExpandDef(tab) > -1) {
+          max_levels = taiMisc::GetExpandDef(tab);
         }
         else {
           max_levels = 1;
@@ -501,13 +501,13 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
       }
     }
     else {  // not a top-level group - get class default -- if none set max_levels to 1
-      if (exp_def_str.nonempty()) {
-        max_levels = level + (int)exp_def_str;
+      if (taiMisc::GetExpandDef(tab) > -1) {
+        max_levels = level + taiMisc::GetExpandDef(tab);  // expand_def is relative -- add current level
       }
       else {
         max_levels = 1;
       }
-        
+      
       if (level < max_levels) {
         expand = true;
       }

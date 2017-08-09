@@ -598,6 +598,7 @@ public:
   // get default expansion for program sections viewed in the program editor -- objs, types, vars, etc.
   static int    GetNavigatorDefaultExpand(const String& section);
   // get default expansion for program sections viewed in the navigator -- objs, types, vars, etc.
+  static int    GetExpandDef(const taBase* obj);
   
   taiMisc(QObject* parent = NULL);
   ~taiMisc();
