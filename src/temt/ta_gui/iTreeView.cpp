@@ -450,7 +450,9 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
   if (!(exp_flags & EF_CUSTOM_FILTER) && tab && (!(exp_flags & EF_EXPAND_FULLY))) {
     // if top level node or being treated like one - top level guys are docs, ctrl_panels, data, programs, networks, etc
     // those being treated like top level are specific networks (i.e. network -- not an actual group but has spec and layer groups
-    if (tab && (tab->InheritsFrom(&TA_taGroup_impl) || tab->GetTypeDef()->HasOption("EXPAND_AS_GROUP"))) {
+    if (tab && (tab->InheritsFrom(&TA_taGroup_impl)
+                || tab->InheritsFrom(&TA_taList_impl)
+                || tab->GetTypeDef()->HasOption("EXPAND_AS_GROUP"))) {
       String name;
       if (tab->GetTypeDef()->HasOption("EXPAND_AS_GROUP")) {
         name = tab->GetTypeDef()->OptionAfter("FILETYPE_");  // I didn't want to add another directive for this single case
@@ -459,11 +461,14 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
       else {
         name = tab->GetName();
       }
-      
+            
       // if owner is root go with hardcoded default (#EXPAND_DEF on object), otherwise user preference if there is one
       int depth = -1;
       if (!tab->GetOwner()->DerivesFromName("taRootBase")) {
         depth = taiMisc::GetGroupDefaultExpand(name);
+        if (depth > 0) {
+          depth = depth + level;
+        }
         if (depth == -1) {  // not in preferences - get from class
           depth = taiMisc::GetExpandDef(tab);
         }
@@ -481,7 +486,7 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
       }
       else if (!is_subgroup) {  // expand INITIATED on this non top-level group -- not being expanded as a subgroup
         if (taiMisc::GetExpandDef(tab) > -1) {
-          max_levels = taiMisc::GetExpandDef(tab);
+          max_levels = level + taiMisc::GetExpandDef(tab);
         }
         else {
           max_levels = 1;
@@ -500,13 +505,13 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
         expand = false;  // this level is > max_levels
       }
     }
-    else {  // not a top-level group - get class default -- if none set max_levels to 1
-      if (taiMisc::GetExpandDef(tab) > -1) {
-        max_levels = level + taiMisc::GetExpandDef(tab);  // expand_def is relative -- add current level
-      }
-      else {
-        max_levels = 1;
-      }
+    else {
+//      if (taiMisc::GetExpandDef(tab) > -1) {
+//        max_levels = level + taiMisc::GetExpandDef(tab);  // expand_def is relatvie
+//      }
+//      else {
+//        max_levels = 1;
+//      }
       
       if (level < max_levels) {
         expand = true;
@@ -550,7 +555,7 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
     // and expand item's children -- lazy children should be created by now
     for (int i = 0; i < item->childCount(); ++i) {
       iTreeViewItem* child = dynamic_cast<iTreeViewItem*>(item->child(i));
-      if (child) {
+      if (child && child->given_name != "LeabraStartup") {  // hack - keep LeabraStartup from expanding by default
         ExpandItem_impl(child, level, max_levels, exp_flags, is_subgroup);
       }
     }
