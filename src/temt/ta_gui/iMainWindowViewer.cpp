@@ -1829,9 +1829,10 @@ void iMainWindowViewer::fileClose() {
       return;
     }
   }
-  hide();       // prevent a possible bug on mac associated with hide and delete
-  taMisc::ProcessEvents();
-  proj->CloseLater();
+  fileCloseWindow();  // this will take care of closing the project (rohrlich rev 11022 fixes crash on closing project)
+//  hide();       // prevent a possible bug on mac associated with hide and delete
+//  taMisc::ProcessEvents();
+//  proj->CloseLater();
 }
 
 void iMainWindowViewer::fileOptions() {
