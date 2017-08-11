@@ -85,8 +85,10 @@ bool iTableView::eventFilter(QObject* obj, QEvent* event) {
   if (event->type() == QEvent::Paint) {
     QFont cur_font = QFont();
     int size = taMisc::GetCurrentFontSize("table");
-    cur_font.setPointSize(size);
-    setFont(cur_font);
+    if(cur_font.pointSize() != size) {
+      cur_font.setPointSize(size);
+      setFont(cur_font);
+    }
     return inherited::QObject::eventFilter(obj, event);
   }
   

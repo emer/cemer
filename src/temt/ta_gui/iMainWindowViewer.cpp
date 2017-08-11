@@ -816,6 +816,10 @@ void iMainWindowViewer::Constr_ViewMenu()
                                                "screenInfoAction"));
   viewMenu->AddAction(viewScreenInfoAction);
 
+  viewRestoreWinGeomAction = AddAction(new iAction("Restore Win Geom", QKeySequence(),
+                                                   "restoreWinGeomAction"));
+  viewMenu->AddAction(viewRestoreWinGeomAction);
+
   // don't add to menu - it is on the window menu anyway - it will be added to toolbar for easy access
   viewConsoleFrontAction = AddAction(new iAction("Console", QKeySequence(), "viewConsoleFrontAction"));
   viewConsoleFrontAction->setIcon(QIcon(QPixmap(":/images/console_icon.png")));
@@ -857,6 +861,7 @@ void iMainWindowViewer::Constr_ViewMenu()
   connect(viewDecrFontSizeAction, SIGNAL(Action()), this, SLOT(viewDecrFontSize()));
   connect(viewSetFontSizeAction, SIGNAL(Action()), this, SLOT(viewSetFontSize()));
   connect(viewScreenInfoAction, SIGNAL(Action()), this, SLOT(viewScreenInfo()));
+  connect(viewRestoreWinGeomAction, SIGNAL(Action()), this, SLOT(viewRestoreWinGeom()));
   connect(viewConsoleFrontAction, SIGNAL(Action()), this, SLOT(ConsoleToFront()));
   connect(signalMapperForViews, SIGNAL(mapped(int)), this, SLOT(ShowHideFrames(int))) ;
 }
@@ -2675,6 +2680,14 @@ void iMainWindowViewer::viewScreenInfo() {
 #endif
 }
 
+void iMainWindowViewer::viewRestoreWinGeom() {
+  MainWindowViewer* mwv = viewer();
+  if (!mwv) return; // shouldn't happen
+  mwv->SetWinState();
+  if (taMisc::console_win) {
+    taMisc::console_win->LoadGeom();
+  }
+}
 
 void iMainWindowViewer::ResolveChanges_impl(CancelOp& cancel_op) {
   if (!isProjShower()) return; // changes only applied for proj showers

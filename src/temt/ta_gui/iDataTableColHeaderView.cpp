@@ -75,7 +75,7 @@ void iDataTableColHeaderView::resizedSection(int columnIdx, int oldWidth, int ne
   // IMPORTANT: this is called from *programatic* resizes too!!  not just from gui
   // interaction.  so we can't do too much here..
   
-  dt->StructUpdate(true);
+  // dt->StructUpdate(true);
   DataCol* dc = dt->data.FastEl(columnIdx);
   if(dc) {
     iDataTableView* view = dynamic_cast<iDataTableView*>(parent());
@@ -86,7 +86,7 @@ void iDataTableColHeaderView::resizedSection(int columnIdx, int oldWidth, int ne
       }
     }
   }
-  dt->StructUpdate(false);
+  // dt->StructUpdate(false);
 }
 
 iMatrixTableColHeaderView::iMatrixTableColHeaderView(QWidget* parent)
