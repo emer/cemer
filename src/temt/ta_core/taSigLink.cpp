@@ -176,6 +176,19 @@ void taSigLink::SigLinkEmit(int sls, void* op1_, void* op2_) {
     if (m_dbu_cnt != 0) suppress = true;
   }
   else if (sls < SLS_UPDATE_VIEWS) {
+#ifndef NO_TA_BASE
+    if(isBase()) {
+      // check if member owner is in a struct update and suppress on that too..
+      taBase* db = taData();
+      if(db) {
+        taBase* mbown = db->GetMemberOwner();
+        if(mbown) {
+          taSigLink* dl = mbown->sig_link();
+          if (dl && dl->m_dbu_cnt != 0) suppress = true;
+        }
+      }
+    }
+#endif
     // if we are already updating, then ignore IUs, since we'll send one eventually
     if (m_dbu_cnt != 0) suppress = true;
   }
