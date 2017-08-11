@@ -1214,7 +1214,7 @@ int taMatrix::Dump_Save_Value(ostream& strm, taBase* par, int indent) {
   inherited::Dump_Save_Value(strm, par, indent);
 
   // don't save any matrix objects in program objs lists
-  if(owner->InheritsFrom(&TA_ProgObjList)) {
+  if(owner && owner->InheritsFrom(&TA_ProgObjList)) {
     return true;
     // if(taMisc::is_undo_saving) {
     //   if(!owner) return true;          // never
