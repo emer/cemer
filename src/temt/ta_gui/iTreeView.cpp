@@ -75,17 +75,13 @@ iTreeView::iTreeView(QWidget* parent, int tv_flags_)
   parent_type = TYPE_NULL;
 
   setFont(taiM->dialogFont(taiM->sizBig));
-  QFont cur_font = QFont();
   if(dynamic_cast<iBrowseViewer*>(parent)) {
     parent_type = TYPE_BROWSEVIEWER;
-    cur_font.setPointSize(taMisc::GetCurrentFontSize("navigator"));
-    setFont(cur_font);
   }
   else if(dynamic_cast<iProgramEditor*>(parent)) {
     parent_type = TYPE_PROGRAMEDITOR;
-    cur_font.setPointSize(taMisc::GetCurrentFontSize("editor"));
-    setFont(cur_font);
   }
+  setFontSizeToDefault();
   
   tv_flags = tv_flags_;
   m_filters = NULL; // only created if needed
@@ -844,19 +840,30 @@ QStringList iTreeView::mimeTypes () const {
   return rval;
 }
 
+bool iTreeView::setFontSizeToDefault() {
+  QFont cur_font = this->font();
+  if(parent_type == TYPE_BROWSEVIEWER) {
+    int fsz = taMisc::GetCurrentFontSize("navigator");
+    if(cur_font.pointSize() != fsz) {
+      cur_font.setPointSize(fsz);
+      setFont(cur_font);
+      return true;
+    }
+  }
+  else if(parent_type == TYPE_PROGRAMEDITOR) {
+    int fsz = taMisc::GetCurrentFontSize("editor");
+    if(cur_font.pointSize() != fsz) {
+      cur_font.setPointSize(fsz);
+      setFont(cur_font);
+      return true;
+    }
+  }
+  return false;
+}
+
 bool iTreeView::eventFilter(QObject* obj, QEvent* event) {
   if (event->type() == QEvent::Paint) {
-    QFont cur_font = QFont();
-    if(parent_type == TYPE_BROWSEVIEWER) {
-//      cur_font.setPointSize(tabMisc::root->navigator_font_size + tabMisc::root->global_font_incr_decr);
-      cur_font.setPointSize(taMisc::GetCurrentFontSize("navigator"));
-      setFont(cur_font);
-    }
-    else if(parent_type == TYPE_PROGRAMEDITOR) {
-//      cur_font.setPointSize(tabMisc::root->editor_font_size + tabMisc::root->global_font_incr_decr);
-      cur_font.setPointSize(taMisc::GetCurrentFontSize("editor"));
-      setFont(cur_font);
-    }
+    setFontSizeToDefault();
   }
 
   return QWidget::eventFilter(obj, event);
@@ -1186,15 +1193,7 @@ void iTreeView::setTvFlags(int value) {
 }
 
 void iTreeView::Refresh_impl() {
-  QFont cur_font = QFont();
-  if(parent_type == TYPE_BROWSEVIEWER) {
-    cur_font.setPointSize(taMisc::GetCurrentFontSize("navigator"));
-    setFont(cur_font);
-  }
-  else if(parent_type == TYPE_PROGRAMEDITOR) {
-    cur_font.setPointSize(taMisc::GetCurrentFontSize("editor"));
-    setFont(cur_font);
-  }
+  setFontSizeToDefault();
   
   SaveScrollPos();
   //note: very similar to Show_impl
@@ -1283,17 +1282,7 @@ void iTreeView::showEvent(QShowEvent* ev) {
     QTimer::singleShot(250, this, SLOT(ExpandDefault()) );
     tv_flags = (TreeViewFlags)(tv_flags | TV_AUTO_EXPANDED);
   }
-  
-  QFont cur_font = QFont();
-  if(parent_type == TYPE_BROWSEVIEWER) {
-    cur_font.setPointSize(taMisc::GetCurrentFontSize("navigator"));
-
-    setFont(cur_font);
-  }
-  else if(parent_type == TYPE_PROGRAMEDITOR) {
-    cur_font.setPointSize(taMisc::GetCurrentFontSize("editor"));
-    setFont(cur_font);
-  }
+  setFontSizeToDefault();
 }
 
 bool iTreeView::ShowNode(iTreeViewItem* item) const {

@@ -137,7 +137,7 @@ void iMatrixTableView::Refresh() {
 }
 
 void iMatrixTableView::UpdateRowHeight() {
-  QFont cur_font = QFont();
+  QFont cur_font = this->font();
   cur_font.setPointSize(taMisc::GetCurrentFontSize("table"));
   QFontMetrics metrics(cur_font);
   int max_pixels = metrics.height() + 2 * row_margin;

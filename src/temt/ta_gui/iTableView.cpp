@@ -83,11 +83,11 @@ void iTableView::selectCurCell() {
 
 bool iTableView::eventFilter(QObject* obj, QEvent* event) {
   if (event->type() == QEvent::Paint) {
-    QFont cur_font = QFont();
-    int size = taMisc::GetCurrentFontSize("table");
-    if(cur_font.pointSize() != size) {
-      cur_font.setPointSize(size);
-      setFont(cur_font);
+    QFont cur_font = this->font();
+    int fsz = taMisc::GetCurrentFontSize("table");
+    if(cur_font.pointSize() != fsz) {
+      cur_font.setPointSize(fsz);
+      this->setFont(cur_font);
     }
     return inherited::QObject::eventFilter(obj, event);
   }
@@ -482,7 +482,7 @@ void iTableView::SetCurrentAndSelect(int row, int col) {
 }
 
 void iTableView::SetRowHeight(int n_lines) {
-  QFont cur_font = QFont();
+  QFont cur_font = this->font();
   cur_font.setPointSize(taMisc::GetCurrentFontSize("table"));
   QFontMetrics metrics(cur_font);
   int eff_height = n_lines * metrics.height() + 2 * row_margin;
@@ -493,7 +493,7 @@ void iTableView::SetRowHeight(int n_lines) {
 }
 
 void iTableView::SetRowHeightToContents() {
-  QFont cur_font = QFont();
+  QFont cur_font = this->font();
   cur_font.setPointSize(taMisc::GetCurrentFontSize("table"));
   QFontMetrics metrics(cur_font);
 #if (QT_VERSION >= 0x050200)
@@ -504,7 +504,7 @@ void iTableView::SetRowHeightToContents() {
 }
 
 void iTableView::SetColumnWidth(int column, int n_chars) {
-  QFont cur_font = QFont();
+  QFont cur_font = this->font();
   cur_font.setPointSize(taMisc::GetCurrentFontSize("table"));
   QFontMetrics metrics(cur_font);
   if (n_chars < 1) n_chars = 1;
@@ -518,14 +518,14 @@ void iTableView::SetColumnWidth(int column, int n_chars) {
 }
 
 int iTableView::ConvertPixelsToChars(int n_pixels) {
-  QFont cur_font = QFont();
+  QFont cur_font = this->font();
   cur_font.setPointSize(taMisc::GetCurrentFontSize("table"));
   QFontMetrics metrics(cur_font);
   return n_pixels / metrics.maxWidth();
 }
 
 int iTableView::ConvertCharsToPixels(int chars) {
-  QFont cur_font = QFont();
+  QFont cur_font = this->font();
   cur_font.setPointSize(taMisc::GetCurrentFontSize("table"));
   QFontMetrics metrics(cur_font);
   int foo =  metrics.maxWidth() * chars;

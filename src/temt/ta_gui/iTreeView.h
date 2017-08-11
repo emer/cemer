@@ -121,6 +121,7 @@ public:
   void                  setHeaderText(int col, const String& value); // convenience
   int                   maxColChars(int col); // value if set, -1 otherwise
   void                  setMaxColChars(int col, int value); // sets max number of chars for that text (when retrieved from the link); elided if greater
+  virtual bool          setFontSizeToDefault(); // set to default for navigator or editor depending on parent_type
 
   inline TreeViewFlags  tvFlags() const {return (TreeViewFlags)tv_flags;}
   void                  setTvFlags(int value);

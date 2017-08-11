@@ -199,9 +199,12 @@ void iViewPanel::UpdatePanel() {
   if (!isVisible()) return; // no update when hidden!
   
   ++updating;
-  QFont cur_font;
-  cur_font.setPointSize(taMisc::GetCurrentFontSize("editor"));
-  setFont(cur_font);
+  QFont cur_font = this->font();
+  int fsz = taMisc::GetCurrentFontSize("editor");
+  if(cur_font.pointSize() != fsz) {
+    cur_font.setPointSize(fsz);
+    setFont(cur_font);
+  }
   
   SaveScrollPos();
   UpdatePanel_impl();
