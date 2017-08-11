@@ -33,7 +33,7 @@ public:
   { return (taiTreeNode*) QTreeWidgetItem::parent(); }
   // note: NULL for root item
 
-  taiTreeNode*      FindChildForData(void* data, int& idx);
+ taiTreeNode*      FindChildForData(void* data, int& idx, int guess_idx = 0);
   // find the Child Node (if any) that has data as the data of its link; NULL/-1 if not found
   virtual void          UpdateChildNames() {} // #IGNORE update child names of this node
 

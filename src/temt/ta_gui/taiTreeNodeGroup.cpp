@@ -141,7 +141,7 @@ void taiTreeNodeGroup::SigEmit_impl(int sls, void* op1_, void* op2_) {
           tv->scrollTo(new_node);
         }
       }
-      break;
+      return; // don't update names
     }
     case SLS_GROUP_REMOVE: {      // op1=item -- note, item not DisOwned yet, but has been removed from list
       taiTreeNode* gone_node = this->FindChildForData(op1_, idx); //null if not found
@@ -161,7 +161,7 @@ void taiTreeNodeGroup::SigEmit_impl(int sls, void* op1_, void* op2_) {
           tv->TreeStructUpdate(false);
         }
       }
-      break;
+      return;                   // don't update names
     }
     case SLS_GROUP_MOVED: {       // op1=item, op2=item_after, null=at beginning
       int fm_idx;
@@ -210,7 +210,7 @@ void taiTreeNodeGroup::SigEmit_impl(int sls, void* op1_, void* op2_) {
         // taMisc::DebugInfo("SLS_GROUP_RESET_START");
         tv->TreeStructUpdate(true);
       }
-      break;
+      return;                   // don't update names
     }
     case SLS_GROUP_RESET_END: {     // no ops
       // actually, no point in restoring!
@@ -273,7 +273,7 @@ void taiTreeNodeGroup::UpdateGroupNames() {
       tree_nm = "(subgroup " + String(i) + ")";
     }
     int idx;
-    iTreeViewItem* node1 = this->FindChildForData(el, idx); //null if not found
+    iTreeViewItem* node1 = this->FindChildForData(el, idx, i); // efficient search from i
     if (node1 != NULL)
       node1->setText(0, tree_nm);
   }

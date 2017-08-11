@@ -92,12 +92,39 @@ void taiTreeNode::willHaveChildren_impl(bool& will) const {
     inherited::willHaveChildren_impl(will);
 }
 
-taiTreeNode* taiTreeNode::FindChildForData(void* data, int& idx) {
-  for (int i = 0; i < childCount(); ++i) {
-    taiTreeNode* rval = (taiTreeNode*)child(i);
-    if (rval->link()->data() == data) {
-      idx = i;
-      return rval;
+taiTreeNode* taiTreeNode::FindChildForData(void* data, int& idx, int guess_idx) {
+  // do a more efficient lo/hi-search from guess if given a guess
+  if(guess_idx == 0) {
+    const int cnt = childCount();
+    for(int i=0; i<cnt; i++) {
+      taiTreeNode* rval = (taiTreeNode*)child(i);
+      if (rval->link()->data() == data) {
+        idx = i;
+        return rval;
+      }
+    }
+  }
+  else {
+    int lo_idx = guess_idx;
+    int hi_idx = guess_idx+1;
+    const int cnt = childCount();
+    while(lo_idx >= 0 || hi_idx < cnt) {
+      if(lo_idx >= 0) {
+        taiTreeNode* rval = (taiTreeNode*)child(lo_idx);
+        if (rval->link()->data() == data) {
+          idx = lo_idx;
+          return rval;
+        }
+        lo_idx--;
+      }
+      if(hi_idx < cnt) {
+        taiTreeNode* rval = (taiTreeNode*)child(hi_idx);
+        if (rval->link()->data() == data) {
+          idx = hi_idx;
+          return rval;
+        }
+        hi_idx++;
+      }
     }
   }
   idx = -1;

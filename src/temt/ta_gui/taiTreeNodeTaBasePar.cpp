@@ -151,34 +151,34 @@ void taiTreeNodeTaBasePar::SigEmit_impl(int sls, void* op1_, void* op2_) {
       tv->TreeStructUpdate(true);
     }
     taiTreeNode* new_node = CreateListItem(this, after_node, (taBase*)op1_);
-//EVIL    tv->expandItem(new_node);
+    //EVIL    tv->expandItem(new_node);
     // only scroll to it if parent is visible
     if(tv) {
       tv->TreeStructUpdate(false);
       if (isExpandedLeaf() && !taMisc::in_gui_multi_action)
         tv->scrollTo(new_node);
     }
-    break;
+    return;                     // don't update names
   }
-    case SLS_LIST_ITEM_REMOVE: {  // op1=item -- note, item not DisOwned yet, but has been removed from list
-      taiTreeNode* gone_node = this->FindChildForData(op1_, idx); //null if not found
-      if (gone_node) {
-        iTreeView* tv = treeView();
-        if(tv) {
-          // taMisc::DebugInfo("SLS_LIST_ITEM_REMOVE");
-          tv->TreeStructUpdate(true);
-          // bool is_exp = this->isExpanded();
-          // if(is_exp)
-          //   this->setExpanded(false);
-          tv->SelectNextLogicalItem(gone_node);  // do while we still have the current item
-          takeChild(idx);
-          delete gone_node;
-          // this->setExpanded(is_exp);
-          tv->TreeStructUpdate(false);
-       }
+  case SLS_LIST_ITEM_REMOVE: {  // op1=item -- note, item not DisOwned yet, but has been removed from list
+    taiTreeNode* gone_node = this->FindChildForData(op1_, idx); //null if not found
+    if (gone_node) {
+      iTreeView* tv = treeView();
+      if(tv) {
+        // taMisc::DebugInfo("SLS_LIST_ITEM_REMOVE");
+        tv->TreeStructUpdate(true);
+        // bool is_exp = this->isExpanded();
+        // if(is_exp)
+        //   this->setExpanded(false);
+        tv->SelectNextLogicalItem(gone_node);  // do while we still have the current item
+        takeChild(idx);
+        delete gone_node;
+        // this->setExpanded(is_exp);
+        tv->TreeStructUpdate(false);
       }
-      break;
     }
+    return;                     // don't update names
+  }
   case SLS_LIST_ITEM_MOVED: {   // op1=item, op2=item_after, null=at beginning
     int fm_idx;
     taiTreeNode* moved_node = this->FindChildForData(op1_, fm_idx); //null if not found
@@ -224,7 +224,7 @@ void taiTreeNodeTaBasePar::SigEmit_impl(int sls, void* op1_, void* op2_) {
       // taMisc::DebugInfo("SLS_LIST_RESET_START");
       tv->TreeStructUpdate(true);
     }
-    break;
+    return;                     // don't rename!
   }
   case SLS_LIST_RESET_END: {     // no ops
     // actually, no point in restoring!
@@ -240,7 +240,7 @@ void taiTreeNodeTaBasePar::SigEmit_impl(int sls, void* op1_, void* op2_) {
       // taMisc::DebugInfo("SLS_LIST_RESET_END");
       tv->TreeStructUpdate(false);
     }
-    break;
+    break;                      // ok to rename
   }
   case SLS_LIST_SORTED: {       // no ops
     int nd_idx; // index of the node
@@ -251,7 +251,7 @@ void taiTreeNodeTaBasePar::SigEmit_impl(int sls, void* op1_, void* op2_) {
     }
     for (int i = 0; i < list->size; ++i) {
       taBase* tab = (taBase*)list->FastEl_(i);
-      FindChildForData(tab, nd_idx);
+      FindChildForData(tab, nd_idx, i);
       if (i == nd_idx) continue; // in right place already
       moveChild(nd_idx, i);
     }
@@ -286,7 +286,7 @@ void taiTreeNodeTaBasePar::UpdateListNames() {
       tree_nm = link()->AnonymousItemName(typ->name, i);
     }
     int idx;
-    taiTreeNode* node1 = this->FindChildForData(el, idx); //null if not found
+    taiTreeNode* node1 = this->FindChildForData(el, idx, i); //efficient search from i
     if (node1 != NULL)
       node1->DecorateDataNode();
   }
