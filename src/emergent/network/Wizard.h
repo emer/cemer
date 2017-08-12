@@ -36,13 +36,14 @@ class E_API Wizard : public taWizard {
   // ##BUTROWS_2 ##EDIT_WIDTH_60 wizard for automating construction of simulation objects
 INHERITED(taWizard)
 public:
-  StdNetWizDlg*		std_net_dlg; // #HIDDEN #NO_SAVE std network dialog
+  StdNetWizDlg*		std_net_dlg;   // #HIDDEN #NO_SAVE std network dialog
+  bool            std_data_ok;   // #HIDDEN #NO_SAVE CallFun doesn't return a value so check this value
 
   virtual bool	StdEverything();
   // #MENU_BUTTON #MENU_ON_Network #MENU_SEP_AFTER make everything (Network, Data, Programs) according to the standard wizards
 
-  virtual bool	StdNetwork();
-  // #MENU_BUTTON #MENU_ON_Network configure a new or existing standard network -- user is prompted for full configuration settings
+  virtual bool	StdNetwork(bool cut_links = true);
+  // #MENU_BUTTON #MENU_ON_Network #ARGC_0 configure a new or existing standard network -- user is prompted for full configuration settings; if we will need the NetworkRef don't call CutLinks at end - caller will be responsible!
 
   virtual bool	StdData(Network* net, DataTable* data_table=NULL, int n_patterns = 0, bool group=false);
   // #MENU_BUTTON #MENU_ON_Data #NULL_OK_1 #NULL_TEXT_1_NewDataTable make standard input and output data tables: make a standard data table of input patterns according to the given network (if data_table == NULL, new datatable is created), group = create a group column for grouping inputs into sequences. also calls StdOutputData to create monitor output data, and UpdateLayerWriters to update any LayerWriter objects (typically in ApplyInputs programs) to the new data layout

@@ -32,6 +32,7 @@ TA_BASEFUNS_CTORS_DEFN(Wizard);
 
 void Wizard::Initialize() {
   std_net_dlg = NULL;
+  std_data_ok = false;
 }
 
 void Wizard::Destroy() {
@@ -106,19 +107,22 @@ bool Wizard::StdEverything() {
   ProjectBase* proj = GET_MY_OWNER(ProjectBase);
   if(!proj) return false;
   bool rval = false;
-  if(StdNetwork()) {
+  if(StdNetwork(false)) {  // we need the network ref for StdProgs - tell method not to CutLinks
     Network* net = proj->networks.SafeEl(0);
     if(net) {
-      if(StdData(net)) {
+      CallFun("StdData");
+      if (std_data_ok) {
         rval = StdProgs();
       }
     }
   }
+  std_net_dlg->network.CutLinks(); // NOW we are done with it!
+  taMisc::Info("Set some values in the StdInputData data table and run LeabraBatch");
   return rval;
 }
 
 
-bool Wizard::StdNetwork() {
+bool Wizard::StdNetwork(bool cut_links) {
   ProjectBase* proj = GET_MY_OWNER(ProjectBase);
   if(proj->networks.size == 0)  // make a new one for starters always
     proj->networks.New(1);
@@ -141,7 +145,9 @@ bool Wizard::StdNetwork() {
       proj->undo_mgr.SaveUndo(net, "Wizard::StdNetwork after -- actually saves network specifically");
     }
   }
-  std_net_dlg->network.CutLinks(); // done with it
+  if (cut_links) {
+    std_net_dlg->network.CutLinks(); // done with it
+  }
   return rval;
 }
 
@@ -151,9 +157,13 @@ bool Wizard::StdNetwork() {
 //////////////////////////////////
 
 bool Wizard::StdData(Network* net, DataTable* data_table, int n_patterns, bool group) {
-  StdOutputData();
-  StdInputData(net, data_table, n_patterns, group);
-  return true;
+  bool data_ops_ok = false;
+  data_ops_ok = StdOutputData();
+  if (data_ops_ok) {
+    data_ops_ok = StdInputData(net, data_table, n_patterns, group);
+  }
+  std_data_ok = data_ops_ok;
+  return data_ops_ok;
 }
 
 bool Wizard::StdInputData(Network* net, DataTable* data_table, int n_patterns, bool group) {
@@ -265,11 +275,22 @@ Program_Group* Wizard::StdProgs_impl(const String& prog_nm) {
                   "is not a group of programs -- invalid for this function");
     return NULL;
   }
-
+  
   Program_Group* pg = (Program_Group*)rval;
+  Network* net = NULL;
+  if (std_net_dlg) {
+    net = std_net_dlg->network;
+  }
+  taMisc::Warning("Wizard::StdProgs_impl - network NULL -- did you run StdNetwork wizard?");
+  
+  Program* batch = pg->FindName("LeabraBatch");
+  if (batch && net) {
+    batch->SetVar("network", net);
+  }
   Program* apin = pg->FindName("ApplyInputs");
   if(apin) {
     LayerWriter* lw = (LayerWriter*)apin->objs.FindType(&TA_LayerWriter);
+    lw->SetDataNetwork(lw->data, net);
     if(lw) {
       lw->AutoConfig();
     }

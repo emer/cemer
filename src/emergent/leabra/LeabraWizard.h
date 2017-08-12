@@ -36,7 +36,9 @@ class E_API LeabraWizard : public Wizard {
 INHERITED(Wizard)
 public:
 
-  bool StdNetwork() override;
+  bool  StdNetwork(bool cut_links = true) override;
+  // #ARGC_0 don't show cut_links checkbox
+
   bool	UpdateInputDataFmNet(Network* net, DataTable* data_table) override;
 
   virtual bool	StdLeabraSpecs(LeabraNetwork* net);
