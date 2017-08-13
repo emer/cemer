@@ -114,6 +114,8 @@ void taiTreeNodeTaBase::lookupKeyPressed(iLineEdit* le, int column) {
 
   // didn't find any -- call the one on the guy itself!
   completions = tab->StringFieldLookupForCompleter(le->text(), cur_pos, "", new_pos);
+  if (!completions) return;
+  
   le->GetCompleter()->SetCompletions(completions);
   
 #ifdef TA_OS_MAC
