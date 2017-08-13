@@ -113,7 +113,7 @@ String LeabraWizard::RenderWizDoc_network() {
   return rval;
 }
 
-bool LeabraWizard::StdNetwork(bool cut_links) {
+bool LeabraWizard::StdNetwork() {
   ProjectBase* proj = GET_MY_OWNER(ProjectBase);
   if(proj->networks.size == 0) {        // make a new one for starters always
     LeabraNetwork* net = (LeabraNetwork*)proj->networks.New(1);
@@ -140,9 +140,7 @@ bool LeabraWizard::StdNetwork(bool cut_links) {
       proj->undo_mgr.SaveUndo(net, "Wizard::StdNetwork after -- actually saves network specifically");
     }
   }
-  if (cut_links) {
-    std_net_dlg->network.CutLinks(); // done with it
-  }
+  std_net_dlg->network.CutLinks(); // done with it
   return rval;
 }
 

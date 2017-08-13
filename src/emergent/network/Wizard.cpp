@@ -33,6 +33,7 @@ TA_BASEFUNS_CTORS_DEFN(Wizard);
 void Wizard::Initialize() {
   std_net_dlg = NULL;
   std_data_ok = false;
+  network = NULL;
 }
 
 void Wizard::Destroy() {
@@ -43,6 +44,7 @@ void Wizard::CutLinks() {
   if(std_net_dlg) {
     taBase::DelPointer((taBase**)&std_net_dlg);
   }
+  network = NULL;
   inherited::CutLinks();
 }
 
@@ -107,9 +109,10 @@ bool Wizard::StdEverything() {
   ProjectBase* proj = GET_MY_OWNER(ProjectBase);
   if(!proj) return false;
   bool rval = false;
-  if(StdNetwork(false)) {  // we need the network ref for StdProgs - tell method not to CutLinks
+  if(StdNetwork()) {
     Network* net = proj->networks.SafeEl(0);
     if(net) {
+      network = net;
       CallFun("StdData");
       if (std_data_ok) {
         rval = StdProgs();
@@ -122,7 +125,7 @@ bool Wizard::StdEverything() {
 }
 
 
-bool Wizard::StdNetwork(bool cut_links) {
+bool Wizard::StdNetwork() {
   ProjectBase* proj = GET_MY_OWNER(ProjectBase);
   if(proj->networks.size == 0)  // make a new one for starters always
     proj->networks.New(1);
@@ -145,9 +148,7 @@ bool Wizard::StdNetwork(bool cut_links) {
       proj->undo_mgr.SaveUndo(net, "Wizard::StdNetwork after -- actually saves network specifically");
     }
   }
-  if (cut_links) {
-    std_net_dlg->network.CutLinks(); // done with it
-  }
+  std_net_dlg->network.CutLinks(); // done with it
   return rval;
 }
 
@@ -277,10 +278,7 @@ Program_Group* Wizard::StdProgs_impl(const String& prog_nm) {
   }
   
   Program_Group* pg = (Program_Group*)rval;
-  Network* net = NULL;
-  if (std_net_dlg) {
-    net = std_net_dlg->network;
-  }
+  Network* net = network;
   taMisc::Warning("Wizard::StdProgs_impl - network NULL -- did you run StdNetwork wizard?");
   
   Program* batch = pg->FindName("LeabraBatch");
