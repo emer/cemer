@@ -61,6 +61,7 @@ taTypeDef_Of(taDataGen);
 #include <QDateTime>
 #include <QBoxLayout>
 #include <iTextEdit>
+#include <cssConsoleWindow>
 
 #include <css_machine.h>
 #include <css_qtconsole.h>
@@ -671,7 +672,22 @@ void taProject::AutoNameProj(const String& fname) {
   SetName(nwnm);
 }
 
+void taProject::SaveViewState() {
+  if(!taMisc::gui_active) return;
+  for (int i = 0; i < viewers.size; ++i) {
+    MainWindowViewer* vwr = dynamic_cast<MainWindowViewer*>(viewers.FastEl(i));
+    if (!(vwr && vwr->isProjBrowser())) continue;
+    iMainWindowViewer* imwv = vwr->widget();
+    if(!imwv) continue;
+    imwv->viewSaveView();
+  }
+  if(taMisc::console_win) {
+    taMisc::console_win->SaveGeom();
+  }
+}
+
 int taProject::SaveAs(const String& fname) {
+  // note: Save() calls SaveAs -- common path here
   bool tmp_save_as_only = save_as_only;
   if (save_as_only)
     save_as_only = false;   // ok to save the new project on top of itself so set to false before the save
@@ -680,14 +696,8 @@ int taProject::SaveAs(const String& fname) {
   taFiler* flr = GetSaveFiler(fname, _nilString, -1, _nilString, true, tmp_save_as_only);
   
   if (flr->ostrm) {
-    if (save_view == true) { // save current view with project
-      for (int i = 0; i < viewers.size; ++i) {
-        MainWindowViewer* vwr = dynamic_cast<MainWindowViewer*>(viewers.FastEl(i));
-        if (!(vwr && vwr->isProjBrowser())) continue;
-        iMainWindowViewer* imwv = vwr->widget();
-        if(!imwv) continue;
-        imwv->viewSaveView();
-      }
+    if (save_view) { // save current view with project
+      SaveViewState();
     }
     
     QFileInfo fi(flr->FileName()); // set to current working dir
@@ -721,14 +731,8 @@ int taProject::SaveCopy(const String& fname) {
   // false = getset_file_name, true = make_copy
   
   if (flr->ostrm) {
-    if (save_view == true) { // save current view with project
-      for (int i = 0; i < viewers.size; ++i) {
-        MainWindowViewer* vwr = dynamic_cast<MainWindowViewer*>(viewers.FastEl(i));
-        if (!(vwr && vwr->isProjBrowser())) continue;
-        iMainWindowViewer* imwv = vwr->widget();
-        if(!imwv) continue;
-        imwv->viewSaveView();
-      }
+    if (save_view) { // save current view with project
+      SaveViewState();
     }
     
     QFileInfo fi(flr->FileName()); // set to current working dir

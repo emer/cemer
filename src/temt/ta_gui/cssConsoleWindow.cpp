@@ -213,12 +213,13 @@ void cssConsoleWindow::UpdateFmLock() {
 }
 
 void cssConsoleWindow::SaveGeom() {
+  if(lock_to_proj)
+    return;                     // don't save when locked
   iRect r = frameGeometry(); //note: same as size() for widgets
-
-  if(r == prev_geom) return;    // don't double-save -- on mac when desktop widget
-  // is resizing due to sleep etc, a spurious 2nd resize can come through and
-  // resize the console relative to the wrong screen..
-  prev_geom = r;
+  // if(r == prev_geom) return;    // don't double-save -- on mac when desktop widget
+  // // is resizing due to sleep etc, a spurious 2nd resize can come through and
+  // // resize the console relative to the wrong screen..
+  // prev_geom = r;
   
   // convert from screen coords to relative (note, allowed to be >1.0)
   // adjust for scrn geom, esp for evil mac
@@ -271,6 +272,9 @@ void cssConsoleWindow::LoadGeom() {
 }
 
 void cssConsoleWindow::PinAction() {
+  if(!lock_to_proj) {
+    SaveGeom();                 // save last geom before locking to restore for later
+  }
   lock_to_proj = !lock_to_proj;
   UpdateFmLock();
 }
@@ -285,15 +289,15 @@ void cssConsoleWindow::LockedNewGeom(int left, int top, int width, int height) {
 void cssConsoleWindow::resizeEvent(QResizeEvent* e) {
   inherited::resizeEvent(e);
   if(lock_to_proj) return;
-  
-  SaveGeom();
+  // only save on project saves or root saves
+  // SaveGeom();
 }
 
 void cssConsoleWindow::moveEvent(QMoveEvent* e) {
   inherited::moveEvent(e);
   if(lock_to_proj) return;
-
-  SaveGeom();
+  // only save on project saves or root saves
+  // SaveGeom();
 }
 
 void cssConsoleWindow::closeEvent(QCloseEvent* e) {

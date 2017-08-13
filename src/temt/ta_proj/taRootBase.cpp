@@ -389,6 +389,9 @@ int taRootBase::Save() {
 
   // save the view state info into us..
   if(taMisc::gui_active) {
+    if(taMisc::console_win) {
+      taMisc::console_win->SaveGeom();
+    }
     for (int i = 0; i < viewers.size; ++i) {
       MainWindowViewer* vwr = dynamic_cast<MainWindowViewer*>(viewers.FastEl(i));
       if (!(vwr && vwr->isRoot())) continue;
@@ -1835,7 +1838,7 @@ bool taRootBase::Startup_Console() {
                             (int)(.95 * taiM->scrn_s.w), (int)(.25 * taiM->scrn_s.h));
       }
       else {
-        cwin->UpdateFmLock();
+        cwin->UpdateFmLock();   // calls load geom
       }
       cwin->show();
       // cwin->css_con->clear();     // move cursor to bottom
@@ -1846,7 +1849,6 @@ bool taRootBase::Startup_Console() {
         MainWindowViewer* db = (MainWindowViewer*)tabMisc::root->viewers[0];
         db->ViewWindow();               // make sure root guy is on top
         qApp->setActiveWindow(db->widget());
-        // todo: add focus events here!!
       }
     }
     

@@ -249,6 +249,8 @@ public:
   // #MENU #ARGC_0 #EDIT_READ_ONLY #CAT_File Save a copy of the object without changing current file name -- if fname is empty, the user is prompted with a file dialog
   void                  SetSaveView(bool value);
   // #CAT_File determines whether or not the current view settings will be saved with the project
+  virtual void          SaveViewState();
+  // #CAT_File save the window sizes / positions (including css console) and other view state if save_view true
 
   virtual bool          PublishProjectOnWeb(const String& wiki_name);
   // #CAT_File publish project on the web (wiki) to given wiki name -- menu chooser for wikis available in gui version in iMainWindowViewer

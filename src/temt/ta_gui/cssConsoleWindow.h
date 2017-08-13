@@ -107,8 +107,6 @@ public slots:
   // unhighlight found items, clear search text
   
 protected:
-  iRect         prev_geom;      // previous geometry -- only update for new
-  
   void          resizeEvent(QResizeEvent* ev) override;
   void          moveEvent(QMoveEvent* e) override;
   void          closeEvent(QCloseEvent* e) override;
