@@ -21,6 +21,7 @@ TA_BASEFUNS_CTORS_DEFN(ParamSeq);
 void ParamSeq::Initialize() {
   on = true;
   verbose = true;
+  last_epoch_set = -1;
 }
 
 void ParamSeq::UpdateAfterEdit_impl() {
@@ -40,7 +41,9 @@ bool ParamSeq::SetParamsAtEpoch(int epoch) {
   bool got_some = false;
   for(int i=0; i<steps.size; i++) {
     ParamStep* ps = (ParamStep*)steps[i];
-    if(ps->epoch == epoch) {
+    // if we somehow jumped over our epoch, set it!
+    if(ps->epoch == epoch || (last_epoch_set < ps->epoch && epoch > ps->epoch)) {
+      last_epoch_set = epoch;
       got_some = true;
       if(verbose) {
         FOREACH_ELEM_IN_GROUP(ControlPanelMember, sei, ps->mbrs) {

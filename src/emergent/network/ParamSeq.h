@@ -34,6 +34,7 @@ public:
   String          desc;           // description of what this parameter sequence does
   bool            on;             // #DEF_true is this parameter sequence active?
   bool            verbose;        // print out a message whenever parameters are changed -- shows up in job output, project log, and console
+  int             last_epoch_set; // #READ_ONLY #SHOW #NO_SAVE last epoch when parameters were updated
   ParamStep_Group steps;          // parameter steps to take
 
 
