@@ -227,6 +227,7 @@ void Program::UpdateAfterEdit_impl() {
   
   if(taMisc::is_loading) {
     last_name = name;           // grab it!
+    objs.GetVarsForObjs();      // update right at loading to avoid further problems
   }
 
   //WARNING: the running css prog calls this on any changes to our vars,
@@ -1172,14 +1173,14 @@ bool Program::SetVar(const String& nm, const Variant& value) {
 }
 
 Variant Program::GetVar(const String& nm) {
-  ProgVar* var = FindVarName(nm);
+  ProgVar* var = FindGlobalVarName(nm);
   if(TestError(!var, "GetVar", "variable named:", nm, "not found!"))
     return false;
   return var->GetVar();
 }
 
 bool Program::HasVar(const String& var_nm) {
-  return (FindVarName(var_nm));
+  return (FindGlobalVarName(var_nm));
 }
 
 bool Program::SetVarFmArg(const String& arg_nm, const String& var_nm, bool quiet) {
@@ -1193,13 +1194,38 @@ bool Program::SetVarFmArg(const String& arg_nm, const String& var_nm, bool quiet
   return true;
 }
 
-ProgVar* Program::FindVarName(const String& var_nm) const {
-  // note: this does NOT look in functions!
+ProgVar* Program::FindGlobalVarName(const String& var_nm) const {
   ProgVar* sv = args.FindName(var_nm);
   if(sv) return sv;
   sv = vars.FindName(var_nm);
   if(sv) return sv;
   sv = objs_vars.FindName(var_nm);
+  if(sv) return sv;
+  return NULL;
+}
+  
+ProgVar* Program::GlobalVarDupeCheck(ProgVar* var) const {
+  for(int i=0; i<args.size; i++) {
+    ProgVar* sv = args[i];
+    if(sv == var) continue;
+    if(sv->name == var->name) return sv;
+  }
+  for(int i=0; i<vars.size; i++) {
+    ProgVar* sv = vars[i];
+    if(sv == var) continue;
+    if(sv->name == var->name) return sv;
+  }
+  for(int i=0; i<objs_vars.size; i++) {
+    ProgVar* sv = objs_vars[i];
+    if(sv == var) continue;
+    if(sv->name == var->name) return sv;
+  }
+  return NULL;
+}
+  
+ProgVar* Program::FindVarName(const String& var_nm) const {
+  // note: this does NOT look in functions!
+  ProgVar* sv = FindGlobalVarName(var_nm);
   if(sv) return sv;
   sv = init_code.FindVarName(var_nm);
   if(sv) return sv;

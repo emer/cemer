@@ -357,6 +357,10 @@ public:
   virtual void          RunLoadInitCode();
   // #CAT_Run Run the initialization code for object pointer variables and program calls -- to resolve pointers after loading
 
+  virtual ProgVar*      FindGlobalVarName(const String& var_nm) const;
+  // #CAT_Find find given global, top-level variable (args, vars, objs_vars) within this program -- NULL if not found
+  virtual ProgVar*      GlobalVarDupeCheck(ProgVar* var) const;
+  // #CAT_Find check for a possible duplicate global variable with same name as given variable -- does a find in top-level lists excluding the var -- return dupe var if found, else NULL
   virtual ProgVar*      FindVarName(const String& var_nm) const;
   // #CAT_Find find given variable within this program -- NULL if not found
   virtual taBase*       FindTypeName(const String& nm) const;

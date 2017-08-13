@@ -52,7 +52,7 @@ public:
     SAVE_VAL            = 0x0008, // #CONDSHOW_OFF_flags:LOCAL_VAR save the value of the variable in the project -- good idea to turn off saving for variables that don't require persistence across saving and loading (and that change for each run and thus might affect merging of project files)
     NEW_OBJ             = 0x0010, // #CONDSHOW_ON_var_type:T_Object&&flags:LOCAL_VAR automatically create a new object of given type when local variable is first initialized -- object will be automatically destroyed when this variable goes out of scope -- do not use if you are assigning this variable from a function return value -- only when you need a new temporary object of this type
     QUIET               = 0x0020, // turn off warning messages if they are not relevant (e.g., regarding global matrix vars)
-    LOCAL_VAR           = 0x0040, // #HIDDEN this is a local variable which does not set or update values!
+    LOCAL_VAR           = 0x0040, // #HIDDEN this is a local variable which does not set or update values!  this is also set for FUN_ARG
     FUN_ARG             = 0x0080, // #HIDDEN this is a function argument variable
     USED                = 0x0100, // #HIDDEN whether this variable is currently being used in the program (set automatically)
     EDIT_VAL            = 0x0200, // #HIDDEN allow value to be edited -- only if !LOCAL_VAR && !init_from

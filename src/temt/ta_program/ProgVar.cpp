@@ -226,11 +226,12 @@ void ProgVar::UpdateAfterEdit_impl() {
   if(Program::IsForbiddenName(this, name)) {
     name = "My" + name;
   }
-  
+
   // in cases like AssignTo we don't pop the choice dialog
   Program* pgrm = GET_MY_OWNER(Program);
+  if(!pgrm) return;
   taProject* proj = pgrm->GetMyProj();
-  if (proj->no_dialogs) {
+  if (proj && proj->no_dialogs) {
     if (CheckUndefType("UpdateAfterEdit", true)) {
       String var_nm;
       ProgElChoiceDlg dlg;
@@ -283,6 +284,15 @@ void ProgVar::UpdateAfterEdit_impl() {
   if(HasVarFlag(FUN_ARG)) {
     taBase* fun = owner->GetOwner();
     fun->SigEmitUpdated();
+  }
+
+  if(!taMisc::is_loading && !IsLocal()) {              // global name check
+    ProgVar* othvar = pgrm->GlobalVarDupeCheck(this);
+    if(othvar) {
+      taMisc::Confirm("Duplicate global variable names found in program:",pgrm->name,
+                      "Please rename one or the other of them!  Name:", name,
+                      "one:", this->DisplayPath(), "other:", othvar->DisplayPath());
+    }
   }
 }
 
@@ -734,7 +744,10 @@ void ProgVar::Cleanup() {
   if (var_type != T_HardEnum) {
     hard_enum_type = NULL;
   }
-  //TODO: anything about DynEnums???
+  if (var_type != T_DynEnum) {
+    dyn_enum_val.enum_type = NULL;
+    dyn_enum_val.value = 0;
+  }
 }
 
 void ProgVar::ToggleSaveVal() {

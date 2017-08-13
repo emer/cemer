@@ -925,7 +925,7 @@ void TemtClient::cmdGetVar() {
     SendError("Var '" + nm + "' not found", TemtClient::NOT_FOUND);
     return;
   }
-  ProgVar* var = prog->FindVarName(nm);
+  ProgVar* var = prog->FindGlobalVarName(nm);
   if (!var) { // shouldn't happen
     SendError("Var '" + nm + "' could unexpectedly not be retrieved", TemtClient::NOT_FOUND);
     return;
@@ -1071,7 +1071,7 @@ void TemtClient::cmdSetVar() {
         return;
       }
       // check if type ok to set -- assume it will be found since name is ok
-      ProgVar* var = prog->FindVarName(nm);
+      ProgVar* var = prog->FindGlobalVarName(nm);
       if (!var) continue; // shouldn't happen, but should get caught next stage
       if (var->var_type == ProgVar::T_Object) {
         SendError("Var '" + nm + "' is an Object--setting is not supported", TemtClient::RUNTIME);
@@ -1108,7 +1108,7 @@ void TemtClient::cmdSetVar() {
     }
     
     // check if type ok to set -- assume it will be found since name is ok
-    ProgVar* var = prog->FindVarName(var_name);
+    ProgVar* var = prog->FindGlobalVarName(var_name);
     if (var->var_type == ProgVar::T_Object) {
       SendError("Var '" + var_name + "' is an Object--setting is not supported", TemtClient::RUNTIME);
       return;
@@ -1752,7 +1752,7 @@ void TemtClient::cmdSetImage() {
     
     bool good_result = false;
     taImage* img = NULL;
-    ProgVar* var = prog->vars.FindName(var_name);
+    ProgVar* var = prog->FindGlobalVarName(var_name);
     if (var && var->object_type->DerivesFrom(&TA_taImage)) {
       img = dynamic_cast<taImage*>(var->object_val.ptr());
       if (img) {

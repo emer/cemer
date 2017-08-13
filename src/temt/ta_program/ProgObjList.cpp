@@ -63,6 +63,17 @@ void ProgObjList::GetVarsForObjs() {
         var->SetName(nm);
         var->UpdateAfterEdit(); // trigger more updating..
       }
+
+      // always look for possible dupe in old pre-8.1.0 location
+      ProgVar* ovar = prog->vars.FindObjVar(obj);
+      if(ovar) {
+        if(ovar->name == nm) {
+          taMisc::Warning("Duplicate objs variable for obj in vars list:",
+                          nm, "removing it, updating pointers");
+          prog->UpdatePointers_NewObj(ovar, var);
+          ovar->Close();
+        }
+      }
       continue;
     }
 
