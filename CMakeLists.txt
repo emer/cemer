@@ -103,7 +103,6 @@ include(CTest)
 include_directories(
   ${PROJECT_SOURCE_DIR}
   ${PROJECT_SOURCE_DIR}/include
-  ${PROJECT_SOURCE_DIR}/include/Quarter
   ${PROJECT_BINARY_DIR}/src/temt/lib
 )
 
@@ -149,7 +148,7 @@ message( STATUS "********************* Summary of Prerequisities  **************
 message( STATUS "-------------------------------------------------------------------------------" )
 message( STATUS "QT_LIBRARIES = ${QT_LIBRARIES}" )
 message( STATUS "COIN_LIBRARY = ${COIN_LIBRARY}" )
-message( STATUS "QUARTER_LIBRARY = ${QUARTER_LIBRARY}" )
+#message( STATUS "QUARTER_LIBRARY = ${QUARTER_LIBRARY}" )
 message( STATUS "GSL_LIBRARIES = ${GSL_LIBRARIES}" )
 message( STATUS "ODE_LIBRARY = ${ODE_LIBRARY}" )
 message( STATUS "OPENGL_LIBRARIES = ${OPENGL_LIBRARIES}" )
