@@ -227,7 +227,7 @@ void Program::UpdateAfterEdit_impl() {
   
   if(taMisc::is_loading) {
     last_name = name;           // grab it!
-    objs.GetVarsForObjs();      // update right at loading to avoid further problems
+    // objs.GetVarsForObjs();      // update right at loading to avoid further problems
   }
 
   //WARNING: the running css prog calls this on any changes to our vars,
