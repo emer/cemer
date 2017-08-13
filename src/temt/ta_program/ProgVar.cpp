@@ -1353,3 +1353,8 @@ void ProgVar::RenameToObj() {
   }
 }
 
+bool ProgVar::ReplaceWithVar(ProgVar* repl_var) {
+  Program* prog = GET_MY_OWNER(Program);
+  if(!prog) return false;
+  return prog->UpdatePointers_NewObj(this, repl_var);
+}

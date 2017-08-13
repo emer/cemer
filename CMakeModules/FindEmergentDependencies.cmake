@@ -94,7 +94,7 @@ if (QT_USE_5)
       ${Qt53DInput_LIBRARIES} ${Qt53DExtras_LIBRARIES})
   else (QT_USE_3D)
     find_package(Coin REQUIRED)
-    find_package(Quarter REQUIRED)
+#    find_package(Quarter REQUIRED)
     find_package(OpenGL REQUIRED)
 
   endif (QT_USE_3D)
@@ -111,7 +111,7 @@ if (QT_USE_5)
 else (QT_USE_5)
   find_package(Qt4 REQUIRED QtCore QtGui QtOpenGL QtXml QtNetwork QtWebKit QtSvg)
   find_package(Coin REQUIRED)
-  find_package(Quarter REQUIRED)
+#  find_package(Quarter REQUIRED)
   find_package(OpenGL REQUIRED)
 
   # setup QT_LIBRARIES, defines, etc through options, and the QT_USE_FILE thing does automagic
@@ -223,7 +223,7 @@ ENDIF(CUDA_BUILD)
 # NOTE: could also do BISON but it is not really required so not worth the hassle
 #find_package(BISON)
 
-include_directories(${COIN_INCLUDE_DIR} ${QUARTER_INCLUDE_DIR}
+include_directories(${COIN_INCLUDE_DIR} # ${QUARTER_INCLUDE_DIR}
   ${ODE_INCLUDE_DIR}
   ${GSL_INCLUDE_DIR}
   ${SUBVERSION_INCLUDE_DIRS}
@@ -240,12 +240,12 @@ endif (WIN32)
 
 # Windows dll macros
 if (WIN32)
-  add_definitions(-DCOIN_DLL -DQUARTER_DLL)
+  add_definitions(-DCOIN_DLL) #-DQUARTER_DLL)
 endif (WIN32)
 
 # all dependency libraries to link to -- used automatically in EMERGENT_LINK_LIBRARIES
 # specify in executables
-set(EMERGENT_DEP_LIBRARIES ${COIN_LIBRARY} ${QUARTER_LIBRARY} ${QT_LIBRARIES}
+set(EMERGENT_DEP_LIBRARIES ${COIN_LIBRARY} ${QT_LIBRARIES} # ${QUARTER_LIBRARY} 
     ${ODE_LIBRARY} ${GSL_LIBRARIES}
     ${OPENGL_LIBRARIES} ${ZLIB_LIBRARIES}
     ${SUBVERSION_LIBRARIES} ${EMERGENT_OPT_LIBRARIES}

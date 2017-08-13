@@ -1,0 +1,61 @@
+########## ta files ###############
+
+# IMPORTANT: this is just a list of files -- the compile commands are all located
+# in the temt/lib dir, which is where everything is actually built
+# other targets are in CMakeLists.txt in this directory
+
+
+set(quarter_HEADS_NOMOC
+  Basic.h
+  QtCoinCompatibility.h
+  ImageReader.h
+  InputDevice.h
+  Keyboard.h
+  KeyboardP.h
+  Mouse.h
+  NativeEvent.h
+  SpaceNavigatorDevice.h
+  Quarter.h
+  QuarterP.h
+  QuarterWidgetP.h
+)
+
+set(quarter_HEADS_MOC
+  ContextMenu.h
+  DragDropHandler.h
+  EventFilter.h
+  FocusHandler.h
+  InteractionMode.h
+  QuarterWidget.h
+  SensorManager.h
+  SignalThread.h
+)
+
+set(quarter_HEADS
+  ${quarter_HEADS_NOMOC}
+  ${quarter_HEADS_MOC}
+)
+
+set(quarter_SRCS
+  ContextMenu.cpp
+  DragDropHandler.cpp
+  EventFilter.cpp
+  FocusHandler.cpp
+  ImageReader.cpp
+  InputDevice.cpp
+  InteractionMode.cpp
+  Keyboard.cpp
+  KeyboardP.cpp
+  Mouse.cpp
+  NativeEvent.cpp
+  QtCoinCompatibility.cpp
+  Quarter.cpp
+  QuarterP.cpp
+  QuarterWidget.cpp
+  QuarterWidgetP.cpp
+  SensorManager.cpp
+  SignalThread.cpp
+  SpaceNavigatorDevice.cpp
+)
+
+set(quarter_FILES ${quarter_HEADS} ${quarter_SRCS})

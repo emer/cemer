@@ -103,6 +103,7 @@ include(CTest)
 include_directories(
   ${PROJECT_SOURCE_DIR}
   ${PROJECT_SOURCE_DIR}/include
+  ${PROJECT_SOURCE_DIR}/include/Quarter
   ${PROJECT_BINARY_DIR}/src/temt/lib
 )
 
@@ -165,6 +166,7 @@ message( STATUS "all EMERGENT_DEP_LIBRARIES = ${EMERGENT_DEP_LIBRARIES}")
 #  Now the actual building begins: all the subdirs
 
 # TEMT system: The EMergent Toolkit
+add_subdirectory(src/temt/quarter)
 add_subdirectory(src/temt/maketa)
 add_subdirectory(src/temt/ta_core)
 add_subdirectory(src/temt/ta_math)

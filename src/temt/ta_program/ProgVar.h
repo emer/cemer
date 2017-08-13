@@ -208,6 +208,9 @@ public:
   bool          AddToControlPanel(MemberDef* member, ControlPanel* ctrl_panel) override;
   // select an object member to be added to a given control_panel (a user-chosen collection of members and methods from one or more objects  -- if ctrl_panel is NULL, a new one is created in .ctrl_panels).  returns false if member was already selected. prompts user for final specification of label to use -- Leave member as NULL for default
   
+  virtual bool  ReplaceWithVar(ProgVar* replacement_var);
+  // #MENU #CAT_ProgVar replace this variable with another replacement variable -- updates any pointers to this variable to point to the replacement_var instead -- you may want to also do a string find / replace with the two variable names to update any expressions -- this just replaces the cases that operate directly on the variable object, e.g., where it is on the left-hand-side of an expression instead of the right-hand-size
+
   virtual void          SetFlagsByOwnership();
   // #IGNORE auto-set the LOCAL_VAR and FUN_ARG flags based on my owners
   virtual bool          UpdateUsedFlag();

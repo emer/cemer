@@ -34,6 +34,10 @@ macro(EMERGENT_INSTALL_HEADERS _file_list)
 #  message(STATUS "file list: ${no_hdrs}")
 endmacro(EMERGENT_INSTALL_HEADERS)
 
+macro(EMERGENT_INSTALL_QUARTER_HEADERS _file_list)
+  install(FILES ${_file_list} DESTINATION ${EMERGENT_INCLUDE_DEST}/Quarter)
+endmacro(EMERGENT_INSTALL_QUARTER_HEADERS)
+
 # Use these instead of ADD_EXECUTABLE and ADD_LIBRARY, except for maketa.
 # These versions take care of the CMAKE_DEPENDENCY_HACK.
 macro (EMERGENT_ADD_EXECUTABLE target)

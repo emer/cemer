@@ -12,6 +12,13 @@ set(mypath ${PROJECT_SOURCE_DIR}/src/temt)
 
 # first: include all the files and add the full path
 
+# quarter
+include(${PROJECT_SOURCE_DIR}/src/temt/quarter/CMakeFiles.txt)
+ADD_PATH_TO_FILES(temt_quarter_SRCS ${mypath}/quarter "${quarter_SRCS}")
+ADD_PATH_TO_FILES(temt_quarter_HEADS_MOC ${mypath}/quarter "${quarter_HEADS_MOC}")
+ADD_PATH_TO_FILES(temt_quarter_HEADS_NOMOC ${mypath}/quarter "${quarter_HEADS_NOMOC}")
+ADD_PATH_TO_FILES(temt_quarter_HEADS ${mypath}/quarter "${quarter_HEADS}")
+
 # ta_core
 include(${PROJECT_SOURCE_DIR}/src/temt/ta_core/CMakeFiles.txt)
 ADD_PATH_TO_FILES(temt_ta_core_SRCS ${mypath}/ta_core "${ta_core_SRCS}")
@@ -103,6 +110,7 @@ MAKETA_WRAP_H_MI(temt_ta_3d_SRCS_MAKETA_MI "${temt_ta_3d_HEADS_MAKETA_MI}" "${te
 
 if (QT_USE_5)
   qt5_wrap_ui(temt_ta_gui_SRCS_UIC ${temt_ta_gui_SRCS_UI})
+  qt5_wrap_cpp(temt_quarter_SRCS_MOC ${temt_quarter_HEADS_MOC})
   qt5_wrap_cpp(temt_ta_core_SRCS_MOC ${temt_ta_core_HEADS_MOC})
   # math, program, data don't have MOC files
   qt5_wrap_cpp(temt_ta_proj_SRCS_MOC ${temt_ta_proj_HEADS_MOC})
@@ -116,6 +124,7 @@ if (QT_USE_5)
 else (QT_USE_5)
   QT4_WRAP_UI(temt_ta_gui_SRCS_UIC ${temt_ta_gui_SRCS_UI})
   # math, program, data don't have MOC files
+  QT4_WRAP_CPP(temt_quarter_SRCS_MOC ${temt_quarter_HEADS_MOC})
   QT4_WRAP_CPP(temt_ta_core_SRCS_MOC ${temt_ta_core_HEADS_MOC})
   QT4_WRAP_CPP(temt_ta_proj_SRCS_MOC ${temt_ta_proj_HEADS_MOC})
   QT4_WRAP_CPP(temt_ta_gui_SRCS_MOC ${temt_ta_gui_HEADS_MOC})
@@ -126,6 +135,7 @@ endif (QT_USE_5)
 
 # just list whole set of files here -- and also include the headers for IDE's
 set(temtlib_SRCS
+  ${temt_quarter_SRCS} ${temt_quarter_SRCS_MOC}
   ${temt_ta_core_SRCS} ${temt_ta_core_SRCS_MAKETA} ${temt_ta_core_SRCS_MAKETA_MI} ${temt_ta_core_SRCS_MOC}
   ${temt_ta_math_SRCS} ${temt_ta_math_SRCS_MAKETA} ${temt_ta_math_SRCS_MAKETA_MI} ${temt_ta_math_SRCS_MOC}
   ${temt_ta_program_SRCS} ${temt_ta_program_SRCS_MAKETA} ${temt_ta_program_SRCS_MAKETA_MI} ${temt_ta_program_SRCS_MOC}
@@ -138,6 +148,7 @@ set(temtlib_SRCS
   ${temt_css_SRCS}
   ${temt_css_SRCS_MOC}
 
+  ${temt_quarter_HEADS}
   ${temt_ta_core_HEADS}
   ${temt_ta_math_HEADS}
   ${temt_ta_program_HEADS}
