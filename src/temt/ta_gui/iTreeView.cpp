@@ -588,7 +588,9 @@ void iTreeView::ExpandDefaultUnder(iTreeViewItem* item) {
   int exp_flags = 0;
   
   if (tab) {
-    if (parent_type == iTreeView::TYPE_BROWSEVIEWER && tab->GetTypeDef() == &TA_Program && useNavigatorCustomExpand()) {
+    if (parent_type == iTreeView::TYPE_BROWSEVIEWER
+        && (tab->GetTypeDef() == &TA_Program || tab->GetTypeDef() == &TA_Program_Group)
+        && useNavigatorCustomExpand()) {
       exp_flags |= EF_NAVIGATOR_FILTER;
     }
     else if (parent_type == iTreeView::TYPE_BROWSEVIEWER && tab->GetOwner(&TA_Program) && useNavigatorCustomExpand()) {
