@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+// ta_Dump File v3.0 -- code v8.1.1.0 rev11034
 LeabraProject .projects[0] { 
  Doc_Group @.docs = [2] {
   taDoc @[0] { 
@@ -237,6 +237,9 @@ LeabraProject .projects[0] {
    ProgObjList @.objs = [0] {
    };
 
+   ProgVar_List @.objs_vars = [0] {
+   };
+
    ProgType_List @.types = [0] {
    };
 
@@ -405,6 +408,9 @@ LeabraProject .projects[0] {
     ProgObjList @.objs = [0] {
     };
 
+    ProgVar_List @.objs_vars = [0] {
+    };
+
     ProgType_List @.types = [0] {
     };
 
@@ -435,6 +441,9 @@ LeabraProject .projects[0] {
     };
 
     ProgObjList @.objs = [0] {
+    };
+
+    ProgVar_List @.objs_vars = [0] {
     };
 
     ProgType_List @.types = [0] {
@@ -483,6 +492,9 @@ LeabraProject .projects[0] {
     };
 
     ProgObjList @.objs = [0] {
+    };
+
+    ProgVar_List @.objs_vars = [0] {
     };
 
     ProgType_List @.types = [1] {
@@ -557,6 +569,9 @@ LeabraProject .projects[0] {
     };
 
     ProgObjList @.objs = [0] {
+    };
+
+    ProgVar_List @.objs_vars = [0] {
     };
 
     ProgType_List @.types = [1] {
@@ -640,6 +655,9 @@ LeabraProject .projects[0] {
      ProgObjList @.objs = [0] {
      };
 
+     ProgVar_List @.objs_vars = [0] {
+     };
+
      ProgType_List @.types = [0] {
      };
 
@@ -696,6 +714,9 @@ LeabraProject .projects[0] {
      };
 
      ProgObjList @.objs = [0] {
+     };
+
+     ProgVar_List @.objs_vars = [0] {
      };
 
      ProgType_List @.types = [0] {
@@ -768,6 +789,9 @@ LeabraProject .projects[0] {
 
     ProgObjList @.objs = [1] {
      TimeUsed @[0] { };
+    };
+
+    ProgVar_List @.objs_vars = [0] {
     };
 
     ProgType_List @.types = [0] {
@@ -889,6 +913,9 @@ LeabraProject .projects[0] {
      };
     };
 
+    ProgVar_List @.objs_vars = [0] {
+    };
+
     ProgType_List @.types = [0] {
     };
 
@@ -974,8 +1001,10 @@ LeabraProject .projects[0] {
 	};
        };
        MethodCall @[3] { 
-	ProgArg_List @.meth_args = [1] {
+	ProgArg_List @.meth_args = [3] {
 	 ProgArg @[0] { };
+	 ProgArg @[1] { };
+	 ProgArg @[2] { };
 	};
        };
        FunctionCall @[4] { 
@@ -1065,6 +1094,9 @@ LeabraProject .projects[0] {
     ProgObjList @.objs = [0] {
     };
 
+    ProgVar_List @.objs_vars = [0] {
+    };
+
     ProgType_List @.types = [0] {
     };
 
@@ -1109,6 +1141,9 @@ LeabraProject .projects[0] {
        LayerWriterEl @[2] { };
       };
      };
+    };
+
+    ProgVar_List @.objs_vars = [0] {
     };
 
     ProgType_List @.types = [0] {
@@ -1166,6 +1201,9 @@ LeabraProject .projects[0] {
     };
 
     ProgObjList @.objs = [0] {
+    };
+
+    ProgVar_List @.objs_vars = [0] {
     };
 
     ProgType_List @.types = [0] {
@@ -1250,6 +1288,9 @@ LeabraProject .projects[0] {
      };
     };
 
+    ProgVar_List @.objs_vars = [0] {
+    };
+
     ProgType_List @.types = [0] {
     };
 
@@ -1282,6 +1323,9 @@ LeabraProject .projects[0] {
 
     ProgObjList @.objs = [1] {
      String_Matrix @[0] { };
+    };
+
+    ProgVar_List @.objs_vars = [0] {
     };
 
     ProgType_List @.types = [0] {
@@ -1469,6 +1513,9 @@ LeabraProject .projects[0] {
       DataOpList @.last_sort_spec.ops = [0] {
       };
      };
+    };
+
+    ProgVar_List @.objs_vars = [0] {
     };
 
     ProgType_List @.types = [2] {
@@ -1713,6 +1760,9 @@ LeabraProject .projects[0] {
      String_Matrix @[0] { };
     };
 
+    ProgVar_List @.objs_vars = [0] {
+    };
+
     ProgType_List @.types = [0] {
     };
 
@@ -1805,6 +1855,9 @@ LeabraProject .projects[0] {
      RndSeed @[0] { };
     };
 
+    ProgVar_List @.objs_vars = [0] {
+    };
+
     ProgType_List @.types = [0] {
     };
 
@@ -1894,6 +1947,9 @@ LeabraProject .projects[0] {
     ProgObjList @.objs = [0] {
     };
 
+    ProgVar_List @.objs_vars = [0] {
+    };
+
     ProgType_List @.types = [0] {
     };
 
@@ -1938,6 +1994,9 @@ LeabraProject .projects[0] {
     ProgObjList @.objs = [0] {
     };
 
+    ProgVar_List @.objs_vars = [0] {
+    };
+
     ProgType_List @.types = [0] {
     };
 
@@ -1979,6 +2038,9 @@ LeabraProject .projects[0] {
     };
 
     ProgObjList @.objs = [0] {
+    };
+
+    ProgVar_List @.objs_vars = [0] {
     };
 
     ProgType_List @.types = [0] {
@@ -2031,6 +2093,9 @@ LeabraProject .projects[0] {
     ProgObjList @.objs = [0] {
     };
 
+    ProgVar_List @.objs_vars = [0] {
+    };
+
     ProgType_List @.types = [0] {
     };
 
@@ -2075,6 +2140,9 @@ LeabraProject .projects[0] {
     ProgObjList @.objs = [0] {
     };
 
+    ProgVar_List @.objs_vars = [0] {
+    };
+
     ProgType_List @.types = [0] {
     };
 
@@ -2106,6 +2174,9 @@ LeabraProject .projects[0] {
     };
 
     ProgObjList @.objs = [0] {
+    };
+
+    ProgVar_List @.objs_vars = [0] {
     };
 
     ProgType_List @.types = [0] {
@@ -2151,6 +2222,9 @@ LeabraProject .projects[0] {
     ProgObjList @.objs = [0] {
     };
 
+    ProgVar_List @.objs_vars = [0] {
+    };
+
     ProgType_List @.types = [0] {
     };
 
@@ -2187,6 +2261,9 @@ LeabraProject .projects[0] {
     };
 
     ProgObjList @.objs = [0] {
+    };
+
+    ProgVar_List @.objs_vars = [0] {
     };
 
     ProgType_List @.types = [0] {
@@ -2249,6 +2326,9 @@ LeabraProject .projects[0] {
     ProgObjList @.objs = [0] {
     };
 
+    ProgVar_List @.objs_vars = [0] {
+    };
+
     ProgType_List @.types = [0] {
     };
 
@@ -2309,6 +2389,9 @@ LeabraProject .projects[0] {
     ProgObjList @.objs = [0] {
     };
 
+    ProgVar_List @.objs_vars = [0] {
+    };
+
     ProgType_List @.types = [0] {
     };
 
@@ -2341,6 +2424,9 @@ LeabraProject .projects[0] {
     };
 
     ProgObjList @.objs = [0] {
+    };
+
+    ProgVar_List @.objs_vars = [0] {
     };
 
     ProgType_List @.types = [0] {
@@ -2407,6 +2493,9 @@ LeabraProject .projects[0] {
      };
 
      ProgObjList @.objs = [0] {
+     };
+
+     ProgVar_List @.objs_vars = [0] {
      };
 
      ProgType_List @.types = [0] {
@@ -2514,6 +2603,9 @@ LeabraProject .projects[0] {
 	NetMonItem @[24] { };
        };
       };
+     };
+
+     ProgVar_List @.objs_vars = [0] {
      };
 
      ProgType_List @.types = [0] {
@@ -2631,6 +2723,9 @@ LeabraProject .projects[0] {
       };
      };
 
+     ProgVar_List @.objs_vars = [0] {
+     };
+
      ProgType_List @.types = [0] {
      };
 
@@ -2720,13 +2815,16 @@ LeabraProject .projects[0] {
     };
    };
   };
-  Program_Group @.gp[5] = [4] { 
+  Program_Group @.gp[5] = [5] { 
    Program @[0] { 
     UserDataItem_List @*(.user_data_) {
      UserData_DocLink @[0] { };
     };
 
     ProgObjList @.objs = [0] {
+    };
+
+    ProgVar_List @.objs_vars = [0] {
     };
 
     ProgType_List @.types = [0] {
@@ -2765,6 +2863,9 @@ LeabraProject .projects[0] {
     };
 
     ProgObjList @.objs = [0] {
+    };
+
+    ProgVar_List @.objs_vars = [0] {
     };
 
     ProgType_List @.types = [0] {
@@ -2937,6 +3038,9 @@ LeabraProject .projects[0] {
     ProgObjList @.objs = [0] {
     };
 
+    ProgVar_List @.objs_vars = [0] {
+    };
+
     ProgType_List @.types = [0] {
     };
 
@@ -2977,6 +3081,9 @@ LeabraProject .projects[0] {
     ProgObjList @.objs = [0] {
     };
 
+    ProgVar_List @.objs_vars = [0] {
+    };
+
     ProgType_List @.types = [0] {
     };
 
@@ -3006,6 +3113,60 @@ LeabraProject .projects[0] {
        ProgArg @[2] { };
        ProgArg @[3] { };
        ProgArg @[4] { };
+      };
+     };
+    };
+   };
+   Program @[4] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @[0] { };
+    };
+
+    ProgObjList @.objs = [0] {
+    };
+
+    ProgVar_List @.objs_vars = [0] {
+    };
+
+    ProgType_List @.types = [0] {
+    };
+
+    ProgVar_List @.args = [0] {
+    };
+
+    ProgVar_List @.vars = [4] {
+     ProgVar @[0] { };
+     ProgVar @[1] { };
+     ProgVar @[2] { };
+     ProgVar @[3] { };
+    };
+
+    Function_List @.functions = [0] {
+    };
+
+    ProgEl_List @.init_code = [0] {
+    };
+
+    ProgEl_List @.prog_code = [8] {
+     LocalVars @[0] { 
+      ProgVar_List @.local_vars = [0] {
+      };
+     };
+     AssignExpr @[1] { };
+     MethodCall @[2] { 
+      ProgArg_List @.meth_args = [1] {
+       ProgArg @[0] { };
+      };
+     };
+     AssignExpr @[3] { };
+     AssignExpr @[4] { };
+     MethodCall @[5] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+     };
+     AssignExpr @[6] { };
+     MethodCall @[7] { 
+      ProgArg_List @.meth_args = [0] {
       };
      };
     };
@@ -3788,6 +3949,7 @@ svn rev: 9901 possible fix for crash on linux -- use SetLayerUnit[Gp]Geom method
    exe_cmd="emergent";
    ram_gb=-1;
    n_threads=2;
+   use_cuda=0;
    use_mpi=0;
    mpi_nodes=10;
    mpi_per_node=1;
@@ -162426,6 +162588,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     el_typ=taNBase;
     el_def=0;
    };
+   objs_vars {
+    name="objs_vars";
+    el_typ=ProgVar;
+    el_def=0;
+   };
    types {
     name="types";
     el_typ=DynEnumType;
@@ -163456,6 +163623,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      el_typ=taNBase;
      el_def=0;
     };
+    objs_vars {
+     name="objs_vars";
+     el_typ=ProgVar;
+     el_def=0;
+    };
     types {
      name="types";
      el_typ=DynEnumType;
@@ -163567,6 +163739,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     objs {
      name="objs";
      el_typ=taNBase;
+     el_def=0;
+    };
+    objs_vars {
+     name="objs_vars";
+     el_typ=ProgVar;
      el_def=0;
     };
     types {
@@ -163787,6 +163964,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     objs {
      name="objs";
      el_typ=taNBase;
+     el_def=0;
+    };
+    objs_vars {
+     name="objs_vars";
+     el_typ=ProgVar;
      el_def=0;
     };
     types {
@@ -164167,6 +164349,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      el_typ=taNBase;
      el_def=0;
     };
+    objs_vars {
+     name="objs_vars";
+     el_typ=ProgVar;
+     el_def=0;
+    };
     types {
      name="types";
      el_typ=DynEnumType;
@@ -164505,6 +164692,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       el_typ=taNBase;
       el_def=0;
      };
+     objs_vars {
+      name="objs_vars";
+      el_typ=ProgVar;
+      el_def=0;
+     };
      types {
       name="types";
       el_typ=DynEnumType;
@@ -164760,6 +164952,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      objs {
       name="objs";
       el_typ=taNBase;
+      el_def=0;
+     };
+     objs_vars {
+      name="objs_vars";
+      el_typ=ProgVar;
       el_def=0;
      };
      types {
@@ -165109,6 +165306,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      el_typ=taNBase;
      el_def=0;
      TimeUsed @[0] {name="BasicTrainTime": start={usr=751: sys=222: tot=145584925742: }: end={usr=750: sys=222: tot=145584925741: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+    };
+    objs_vars {
+     name="objs_vars";
+     el_typ=ProgVar;
+     el_def=0;
     };
     types {
      name="types";
@@ -165665,6 +165867,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       row_with_hilite=-1;
      };
     };
+    objs_vars {
+     name="objs_vars";
+     el_typ=ProgVar;
+     el_def=0;
+    };
     types {
      name="types";
      el_typ=DynEnumType;
@@ -166046,14 +166253,36 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="col";
 	  required=1;
 	  def_val=;
-	  prev_expr=;
+	  prev_expr="0";
 	  expr {
 	   expr="0";
 	  };
 	 };
+	 ProgArg @[1] {
+	  arg_type=int;
+	  type="int";
+	  name="st_row";
+	  required=0;
+	  def_val="0";
+	  prev_expr=;
+	  expr {
+	   expr=;
+	  };
+	 };
+	 ProgArg @[2] {
+	  arg_type=int;
+	  type="int";
+	  name="n_rows";
+	  required=0;
+	  def_val="-1";
+	  prev_expr=;
+	  expr {
+	   expr=;
+	  };
+	 };
 	};
-	meth_sig="bool InitValsToRowNo(Variant& col)";
-	meth_desc=" initialize all values in given column to be equal to the row number -- only valid for scalar (not matrix) columns -- column can be specified as either integer index or a string that is then used to find the given column name";
+	meth_sig="bool InitValsToRowNo(Variant& col, int st_row = 0, int n_rows = -1)";
+	meth_desc=" initialize all values in given column to be equal to the row number -- column can be specified as either integer index or a string that is then used to find the given column name -- for rows as specified by starting row, and n_rows = -1 means to the end";
        };
        FunctionCall @[4] {
 	name="FunctionCall_PermuteIndexes";
@@ -166413,6 +166642,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      el_typ=taNBase;
      el_def=0;
     };
+    objs_vars {
+     name="objs_vars";
+     el_typ=ProgVar;
+     el_def=0;
+    };
     types {
      name="types";
      el_typ=DynEnumType;
@@ -166611,6 +166845,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        };
       };
      };
+    };
+    objs_vars {
+     name="objs_vars";
+     el_typ=ProgVar;
+     el_def=0;
     };
     types {
      name="types";
@@ -166871,6 +167110,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     objs {
      name="objs";
      el_typ=taNBase;
+     el_def=0;
+    };
+    objs_vars {
+     name="objs_vars";
+     el_typ=ProgVar;
      el_def=0;
     };
     types {
@@ -167276,6 +167520,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       };
      };
     };
+    objs_vars {
+     name="objs_vars";
+     el_typ=ProgVar;
+     el_def=0;
+    };
     types {
      name="types";
      el_typ=DynEnumType;
@@ -167400,6 +167649,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      String_Matrix @[0] {
       name="les_lay_mat";
      };
+    };
+    objs_vars {
+     name="objs_vars";
+     el_typ=ProgVar;
+     el_def=0;
     };
     types {
      name="types";
@@ -168385,6 +168639,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       };
       row_with_hilite=-1;
      };
+    };
+    objs_vars {
+     name="objs_vars";
+     el_typ=ProgVar;
+     el_def=0;
     };
     types {
      name="types";
@@ -169692,6 +169951,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="les_lay_mat";
      };
     };
+    objs_vars {
+     name="objs_vars";
+     el_typ=ProgVar;
+     el_def=0;
+    };
     types {
      name="types";
      el_typ=DynEnumType;
@@ -170168,6 +170432,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       rnd_seed=1439355325;
      };
     };
+    objs_vars {
+     name="objs_vars";
+     el_typ=ProgVar;
+     el_def=0;
+    };
     types {
      name="types";
      el_typ=DynEnumType;
@@ -170610,6 +170879,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      el_typ=taNBase;
      el_def=0;
     };
+    objs_vars {
+     name="objs_vars";
+     el_typ=ProgVar;
+     el_def=0;
+    };
     types {
      name="types";
      el_typ=DynEnumType;
@@ -170791,6 +171065,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      el_typ=taNBase;
      el_def=0;
     };
+    objs_vars {
+     name="objs_vars";
+     el_typ=ProgVar;
+     el_def=0;
+    };
     types {
      name="types";
      el_typ=DynEnumType;
@@ -170968,6 +171247,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     objs {
      name="objs";
      el_typ=taNBase;
+     el_def=0;
+    };
+    objs_vars {
+     name="objs_vars";
+     el_typ=ProgVar;
      el_def=0;
     };
     types {
@@ -171158,6 +171442,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      el_typ=taNBase;
      el_def=0;
     };
+    objs_vars {
+     name="objs_vars";
+     el_typ=ProgVar;
+     el_def=0;
+    };
     types {
      name="types";
      el_typ=DynEnumType;
@@ -171315,6 +171604,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      el_typ=taNBase;
      el_def=0;
     };
+    objs_vars {
+     name="objs_vars";
+     el_typ=ProgVar;
+     el_def=0;
+    };
     types {
      name="types";
      el_typ=DynEnumType;
@@ -171430,6 +171724,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     objs {
      name="objs";
      el_typ=taNBase;
+     el_def=0;
+    };
+    objs_vars {
+     name="objs_vars";
+     el_typ=ProgVar;
      el_def=0;
     };
     types {
@@ -171598,6 +171897,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      el_typ=taNBase;
      el_def=0;
     };
+    objs_vars {
+     name="objs_vars";
+     el_typ=ProgVar;
+     el_def=0;
+    };
     types {
      name="types";
      el_typ=DynEnumType;
@@ -171732,6 +172036,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     objs {
      name="objs";
      el_typ=taNBase;
+     el_def=0;
+    };
+    objs_vars {
+     name="objs_vars";
+     el_typ=ProgVar;
      el_def=0;
     };
     types {
@@ -171966,6 +172275,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     objs {
      name="objs";
      el_typ=taNBase;
+     el_def=0;
+    };
+    objs_vars {
+     name="objs_vars";
+     el_typ=ProgVar;
      el_def=0;
     };
     types {
@@ -172228,6 +172542,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      el_typ=taNBase;
      el_def=0;
     };
+    objs_vars {
+     name="objs_vars";
+     el_typ=ProgVar;
+     el_def=0;
+    };
     types {
      name="types";
      el_typ=DynEnumType;
@@ -172357,6 +172676,11 @@ also save specs.";
     objs {
      name="objs";
      el_typ=taNBase;
+     el_def=0;
+    };
+    objs_vars {
+     name="objs_vars";
+     el_typ=ProgVar;
      el_def=0;
     };
     types {
@@ -172710,6 +173034,11 @@ also save specs.";
      objs {
       name="objs";
       el_typ=taNBase;
+      el_def=0;
+     };
+     objs_vars {
+      name="objs_vars";
+      el_typ=ProgVar;
       el_def=0;
      };
      types {
@@ -174013,6 +174342,11 @@ also save specs.";
        data=$.data.gp[1][0]$;
        rmv_orphan_cols=1;
       };
+     };
+     objs_vars {
+      name="objs_vars";
+      el_typ=ProgVar;
+      el_def=0;
      };
      types {
       name="types";
@@ -175439,6 +175773,11 @@ also save specs.";
        rmv_orphan_cols=1;
       };
      };
+     objs_vars {
+      name="objs_vars";
+      el_typ=ProgVar;
+      el_def=0;
+     };
      types {
       name="types";
       el_typ=DynEnumType;
@@ -175984,6 +176323,11 @@ and the testing data is updated.  The first epoch monitor should have all the it
      el_typ=taNBase;
      el_def=0;
     };
+    objs_vars {
+     name="objs_vars";
+     el_typ=ProgVar;
+     el_def=0;
+    };
     types {
      name="types";
      el_typ=DynEnumType;
@@ -176126,6 +176470,11 @@ and the testing data is updated.  The first epoch monitor should have all the it
     objs {
      name="objs";
      el_typ=taNBase;
+     el_def=0;
+    };
+    objs_vars {
+     name="objs_vars";
+     el_typ=ProgVar;
      el_def=0;
     };
     types {
@@ -177110,6 +177459,11 @@ and the testing data is updated.  The first epoch monitor should have all the it
      el_typ=taNBase;
      el_def=0;
     };
+    objs_vars {
+     name="objs_vars";
+     el_typ=ProgVar;
+     el_def=0;
+    };
     types {
      name="types";
      el_typ=DynEnumType;
@@ -177276,6 +177630,11 @@ and the testing data is updated.  The first epoch monitor should have all the it
      el_typ=taNBase;
      el_def=0;
     };
+    objs_vars {
+     name="objs_vars";
+     el_typ=ProgVar;
+     el_def=0;
+    };
     types {
      name="types";
      el_typ=DynEnumType;
@@ -177426,6 +177785,248 @@ and the testing data is updated.  The first epoch monitor should have all the it
      html_text=;
     };
    };
+   Program @[4] {
+    UserDataItem_List @*(.user_data_) {
+     name="UserDataItem_List_1";
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[5][4].doc$$: };
+    };
+    name="TestStdEverything";
+    short_nm="TsStdv";
+    tags=;
+    desc=;
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author="Kai Krueger";
+    email="kai.krueger@colorado.edu";
+    flags=NO_STOP_STEP|OBJS_UPDT_GUI;
+    stop_step_cond {
+     expr=;
+    };
+    objs {
+     name="objs";
+     el_typ=DataTable;
+     el_def=0;
+    };
+    objs_vars {
+     name="objs_vars";
+     el_typ=ProgVar;
+     el_def=0;
+    };
+    types {
+     name="types";
+     el_typ=DynEnumType;
+     el_def=0;
+    };
+    args {
+     name="args";
+     el_typ=ProgVar;
+     el_def=0;
+    };
+    vars {
+     name="vars";
+     el_typ=ProgVar;
+     el_def=0;
+     ProgVar @[0] {
+      name="project_group";
+      var_type=T_Object;
+      object_type=Project_Group;
+      object_scope=NULL;
+      objs_ptr=0;
+      flags=USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+     ProgVar @[1] {
+      name="new_project";
+      var_type=T_Object;
+      object_type=LeabraProject;
+      object_scope=NULL;
+      objs_ptr=0;
+      flags=USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+     ProgVar @[2] {
+      name="leabra_wizard";
+      var_type=T_Object;
+      object_type=LeabraWizard;
+      object_scope=NULL;
+      objs_ptr=0;
+      flags=USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+     ProgVar @[3] {
+      name="batch_program";
+      var_type=T_Object;
+      object_type=Program;
+      object_scope=NULL;
+      objs_ptr=0;
+      flags=USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+    };
+    functions {
+     name="functions";
+     el_typ=Function;
+     el_def=0;
+    };
+    init_code {
+     name="init_code";
+     el_typ=ProgCode;
+     el_def=0;
+    };
+    prog_code {
+     name="prog_code";
+     el_typ=ProgCode;
+     el_def=0;
+     LocalVars @[0] {
+      name="LocalVars_LocalVars0vars";
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="LocalVars (0 vars)";
+      local_vars {
+       name="local_vars";
+       el_typ=ProgVar;
+       el_def=0;
+      };
+     };
+     AssignExpr @[1] {
+      name="AssignExpr_projectgroupprojects";
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="project_group = .projects";
+      result_var=.programs.gp[5][4].vars[0]$$;
+      expr {
+       expr=".projects";
+      };
+     };
+     MethodCall @[2] {
+      name="MethodCall_projectgroupNewF_NameLeabraBlank";
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="project_group->NewFromTemplateByName(\"LeabraBlank\")";
+      result_var=NULL;
+      obj=$.programs.gp[5][4].vars[0]$;
+      method=Project_Group::NewFromTemplateByName;
+      meth_args {
+       name="meth_args";
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=const_taString_ref;
+	type="taString&";
+	name="proj_nm";
+	required=1;
+	def_val=;
+	prev_expr=;
+	expr {
+	 expr="\"LeabraBlank\"";
+	};
+       };
+      };
+      meth_sig="taProject_ptr NewFromTemplateByName(taString& proj_nm)";
+      meth_desc=" create a new project from a library of existing project templates, looking up by name (NULL if name not found)";
+     };
+     AssignExpr @[3] {
+      name="AssignExpr_newprojectprojects1";
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="new_project = .projects[1]";
+      result_var=.programs.gp[5][4].vars[1]$$;
+      expr {
+       expr=".projects[1]";
+      };
+     };
+     AssignExpr @[4] {
+      name="AssignExpr_leabrawizardproj_dsLeabraWizard0";
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="leabra_wizard = .projects[1].wizards[\"LeabraWizard_0\"]";
+      result_var=.programs.gp[5][4].vars[2]$$;
+      expr {
+       expr=".projects[1].wizards[\"LeabraWizard_0\"]";
+      };
+     };
+     MethodCall @[5] {
+      name="MethodCall_leabrawizardStdEverything";
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="leabra_wizard->StdEverything()";
+      result_var=NULL;
+      obj=$.programs.gp[5][4].vars[2]$;
+      method=Wizard::StdEverything;
+      meth_args {
+       name="meth_args";
+       el_typ=ProgArg;
+       el_def=0;
+      };
+      meth_sig="bool StdEverything()";
+      meth_desc=" make everything (Network, Data, Programs) according to the standard wizards";
+     };
+     AssignExpr @[6] {
+      name="AssignExpr_batchprogramnewp_ramsLeabraBatch";
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="batch_program = new_project.programs[\"LeabraBatch\"]";
+      result_var=.programs.gp[5][4].vars[3]$$;
+      expr {
+       expr="new_project.programs[\"LeabraBatch\"]";
+      };
+     };
+     MethodCall @[7] {
+      name="MethodCall_batchprogramRun";
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="batch_program->Run()";
+      result_var=NULL;
+      obj=$.programs.gp[5][4].vars[3]$;
+      method=Program::Run;
+      meth_args {
+       name="meth_args";
+       el_typ=ProgArg;
+       el_def=0;
+      };
+      meth_sig="void Run()";
+      meth_desc=" run the program -- if not yet Init, will run Init first";
+     };
+    };
+    step_prog=NULL;
+    step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text="<html>
+<head></head>
+<body>
+== Enter Title Here ==
+</body>
+</html>
+";
+     html_text="<html>
+<head></head>
+<body>
+<h2> Enter Title Here </h2>
+</body>
+</html>
+";
+    };
+   };
   };
  };
  viewers {
@@ -177438,9 +178039,9 @@ and the testing data is updated.  The first epoch monitor should have all the it
     el_typ=UserDataItem;
     el_def=0;
     UserDataItem @[0] {name="view_win_lft": value=0: val_type_fixed=0: };
-    UserDataItem @[1] {name="view_win_top": value=0.04927782: val_type_fixed=0: };
+    UserDataItem @[1] {name="view_win_top": value=0.04903079: val_type_fixed=0: };
     UserDataItem @[2] {name="view_win_wd": value=1: val_type_fixed=0: };
-    UserDataItem @[3] {name="view_win_ht": value=0.7994902: val_type_fixed=0: };
+    UserDataItem @[3] {name="view_win_ht": value=0.7993159: val_type_fixed=0: };
     UserDataItem @[4] {name="view_win_iconified": value=0: val_type_fixed=0: };
     UserDataItem @[5] {name="view_splitter_state": value=AAAA/wAAAAEAAAADAAABOwAAAmoAAAGWAQAAAAcBAAAAAQE=: val_type_fixed=0: };
    };
@@ -178091,6 +178692,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  bar_space=0.2;
 	  bar_depth=0.01;
 	  label_spacing=-1;
+	  string_spacing=1;
 	  width=1;
 	  depth=1;
 	  axis_font_size=0.05;
@@ -178926,6 +179528,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  err_spacing=1;
 	  err_bar_width=0.02;
 	  color_mode=FIXED;
+	  color_gp_use_y=0;
 	  color_axis {
 	   name="color_axis";
 	   m_data=NULL;
@@ -179091,10 +179694,10 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       name=;
       el_typ=UserDataItem;
       el_def=0;
-      UserDataItem @[0] {name="view_win_lft": value=0: val_type_fixed=0: };
-      UserDataItem @[1] {name="view_win_top": value=0.008496176: val_type_fixed=0: };
-      UserDataItem @[2] {name="view_win_wd": value=0.04357067: val_type_fixed=0: };
-      UserDataItem @[3] {name="view_win_ht": value=0.7357689: val_type_fixed=0: };
+      UserDataItem @[0] {name="view_win_lft": value=-0.002785515: val_type_fixed=0: };
+      UserDataItem @[1] {name="view_win_top": value=0.002280502: val_type_fixed=0: };
+      UserDataItem @[2] {name="view_win_wd": value=0.05710306: val_type_fixed=0: };
+      UserDataItem @[3] {name="view_win_ht": value=0.722919: val_type_fixed=0: };
       UserDataItem @[4] {name="view_win_iconified": value=0: val_type_fixed=0: };
       UserDataItem @[5] {name="view_visible": value=1: val_type_fixed=0: };
      };
@@ -179113,7 +179716,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
  save_as_only=0;
  auto_name=1;
  last_change_desc="svn rev: 9901 possible fix for crash on linux -- use SetLayerUnit[Gp]Geom methods which update the n value automatically..";
- tree_state{ .;.ctrl_panels;.data;.data.gp[0];.data.gp[0][1];.data.gp[3];.programs;.programs.gp[0];.programs.gp[1];.programs.gp[1].gp[0];.programs.gp[1].gp[1];.programs.gp[2];.programs.gp[3];.programs.gp[4];.programs.gp[4].gp[0];.programs.gp[5];.networks;.networks[0];.networks[0].specs;.networks[0].specs[0];.networks[0].specs[1];.networks[0].specs[2];.networks[0].specs[2].children[0];.networks[0].specs[2].children[1];.networks[0].layers; };
+ tree_state{ .;.wizards;.ctrl_panels;.data;.data.gp[0];.data.gp[0][1];.data.gp[3];.programs;.programs.gp[0];.programs.gp[1].gp[0];.programs.gp[1].gp[1];.programs.gp[2];.programs.gp[3];.programs.gp[4];.programs.gp[4].gp[0];.programs.gp[5];.programs.gp[5][1];.programs.gp[5][1].vars;.programs.gp[5][4];.programs.gp[5][4].objs;.programs.gp[5][4].objs_vars;.programs.gp[5][4].types;.programs.gp[5][4].args;.programs.gp[5][4].vars;.programs.gp[5][4].functions;.programs.gp[5][4].init_code;.programs.gp[5][4].prog_code;.programs.gp[5][4].prog_code[0];.networks;.networks[0];.networks[0].specs;.networks[0].specs[0];.networks[0].specs[1];.networks[0].specs[2];.networks[0].specs[2].children[0];.networks[0].specs[2].children[1];.networks[0].layers; };
  networks {
   name="networks";
   el_typ=LeabraNetwork;
@@ -179163,6 +179766,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      used_status=USED;
      desc=;
      unique{      };
+     saved{      };
      children {
       name="children";
       el_typ=LeabraLayerSpec;
@@ -179173,6 +179777,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        used_status=USED;
        desc=;
        unique{        };
+       saved{        };
        children {
 	name="children";
 	el_typ=LeabraLayerSpec;
@@ -179183,7 +179788,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        multi_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
        multi_gp_geom {size={x=3: y=3: }: st_off={x=-1: y=-1: }: sub_size={x=1: y=1: }: wrap=1: };
        lay_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
-       avg_act {targ_init=0.1: fixed=0: use_ext_act=0: tau=100: adjust=1: dt=0.01: };
+       avg_act {targ_init=0.1: fixed=0: use_ext_act=0: use_first=1: tau=100: adjust=1: dt=0.01: };
        inhib_adapt {on=0: tol_pct=0.25: trial_interval=100: tau=200: dt=0.005: };
        inhib_misc {net_thr=0: thr_rel=1: self_fb=0: self_tau=1.4: fb_up_immed=0: self_dt=0.7142857: };
        clamp {hard=1: gain=0.2: avg=0: avg_gain=0.2: };
@@ -179200,7 +179805,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      multi_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
      multi_gp_geom {size={x=3: y=3: }: st_off={x=-1: y=-1: }: sub_size={x=1: y=1: }: wrap=1: };
      lay_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
-     avg_act {targ_init=0.1: fixed=0: use_ext_act=0: tau=100: adjust=1: dt=0.01: };
+     avg_act {targ_init=0.1: fixed=0: use_ext_act=0: use_first=1: tau=100: adjust=1: dt=0.01: };
      inhib_adapt {on=0: tol_pct=0.25: trial_interval=100: tau=200: dt=0.005: };
      inhib_misc {net_thr=0: thr_rel=1: self_fb=0: self_tau=1.4: fb_up_immed=0: self_dt=0.7142857: };
      clamp {hard=1: gain=0.2: avg=0: avg_gain=0.2: };
@@ -179217,6 +179822,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      used_status=USED;
      desc=;
      unique{      };
+     saved{      };
      children {
       name="children";
       el_typ=LeabraUnitSpec;
@@ -179244,7 +179850,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      stp {on=0: f_r_ratio=0.02: rec_tau=200: p0=0.3: p0_norm=0.4: kre_tau=100: kre=0.002: fac_tau=4: fac=0.3: rec_dt=0.005: fac_dt=0.25: kre_dt=0.01: oneo_p0_norm=2.5: };
      syn_delay {on=0: delay=4: };
      deep_raw_qtr=0;
-     deep {on=0: role=SUPER: raw_thr_rel=0.2: raw_thr_abs=0.2: mod_min=0.7: mod_thr=0.1: trc_p_only_m=0: trc_thal_gate=0: trc_avg_clamp=0: trc_deep_gain=0.2: mod_range=0.3: trc_std_gain=0.8: };
+     deep {on=0: role=SUPER: raw_thr_rel=0.2: raw_thr_abs=0.2: mod_min=0.7: mod_thr=0.1: ctxt_prv=0: tick_updt=-1: else_prv=0.9: mod_range=0.3: ctxt_new=1: else_new=0.1: };
+     trc {p_only_m=0: thal_gate=0: avg_clamp=0: deep_gain=0.2: clip=0: clip_max=0.4: std_gain=0.8: };
      da_mod {on=0: minus=0: plus=0.1: };
      noise_type=NO_NOISE;
      noise {name="noise": type=GAUSSIAN: mean=0: var=0.001: par=1: };
@@ -179263,6 +179870,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      used_status=USED;
      desc=;
      unique{      };
+     saved{      };
      children {
       name="children";
       el_typ=LeabraConSpec;
@@ -179273,6 +179881,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        used_status=USED;
        desc=;
        unique{ rnd;wt_limits;wt_scale;wt_scale_init;learn;inhib;       };
+       saved{        };
        children {
 	name="children";
 	el_typ=LeabraBiasSpec;
@@ -179340,12 +179949,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        use_unlearnable=1;
        xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
        wt_sig {gain=6: off=1: soft_bound=1: };
-       dwt_zone {on=0: con_norm=1: s_tau=50: l_tau=2: norm_tau=100: gain=2: lrate_mult=3: s_dt=0.02: l_dt=0.5: norm_dt=0.01: };
+       dynlr {dwt_norm=NO_NORM: norm_tau=1000: norm_min=0.001: moment=NO_MOMENT: m_tau=10: s_tau=50: l_tau=2: xx1=1: gain=2: lrate_comp=0.01: norm_dt=0.001: norm_dt_c=0.999: m_dt=0.1: m_dt_c=0.9: s_dt=0.02: l_dt=0.5: };
        wt_bal {on=1: hi_thr=0.4: hi_gain=4: lo_thr=0.2: lo_gain=4: };
        adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
        slow_wts {on=0: swt_pct=0.5: slow_tau=100: wt_tau=1: fwt_pct=0.5: slow_dt=0.01: wt_dt=1: };
        deep {on=0: bg_lrate=1: fg_lrate=0: };
-       margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_l_lrn=0: sign_lrn=0.001: };
+       margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_lrn=0.001: };
        dwt_thresh=0.1;
       };
       LeabraConSpec @[1] {
@@ -179354,6 +179963,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        used_status=USED;
        desc="top-down connections from output layers down to hidden etc typically need to be weaker than bottom-up";
        unique{ wt_scale;       };
+       saved{        };
        children {
 	name="children";
 	el_typ=LeabraConSpec;
@@ -179421,12 +180031,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        use_unlearnable=1;
        xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
        wt_sig {gain=6: off=1: soft_bound=1: };
-       dwt_zone {on=0: con_norm=1: s_tau=50: l_tau=2: norm_tau=100: gain=2: lrate_mult=3: s_dt=0.02: l_dt=0.5: norm_dt=0.01: };
+       dynlr {dwt_norm=NO_NORM: norm_tau=1000: norm_min=0.001: moment=NO_MOMENT: m_tau=10: s_tau=50: l_tau=2: xx1=1: gain=2: lrate_comp=0.01: norm_dt=0.001: norm_dt_c=0.999: m_dt=0.1: m_dt_c=0.9: s_dt=0.02: l_dt=0.5: };
        wt_bal {on=1: hi_thr=0.4: hi_gain=4: lo_thr=0.2: lo_gain=4: };
        adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
        slow_wts {on=0: swt_pct=0.5: slow_tau=100: wt_tau=1: fwt_pct=0.5: slow_dt=0.01: wt_dt=1: };
        deep {on=0: bg_lrate=1: fg_lrate=0: };
-       margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_l_lrn=0: sign_lrn=0.001: };
+       margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_lrn=0.001: };
       };
      };
      rnd {name="rnd": type=UNIFORM: mean=0.5: var=0.25: par=1: };
@@ -179491,12 +180101,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      use_unlearnable=1;
      xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
      wt_sig {gain=6: off=1: soft_bound=1: };
-     dwt_zone {on=0: con_norm=1: s_tau=50: l_tau=2: norm_tau=100: gain=2: lrate_mult=3: s_dt=0.02: l_dt=0.5: norm_dt=0.01: };
+     dynlr {dwt_norm=NO_NORM: norm_tau=1000: norm_min=0.001: moment=NO_MOMENT: m_tau=10: s_tau=50: l_tau=2: xx1=1: gain=2: lrate_comp=0.01: norm_dt=0.001: norm_dt_c=0.999: m_dt=0.1: m_dt_c=0.9: s_dt=0.02: l_dt=0.5: };
      wt_bal {on=1: hi_thr=0.4: hi_gain=4: lo_thr=0.2: lo_gain=4: };
      adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
      slow_wts {on=0: swt_pct=0.5: slow_tau=100: wt_tau=1: fwt_pct=0.5: slow_dt=0.01: wt_dt=1: };
      deep {on=0: bg_lrate=1: fg_lrate=0: };
-     margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_l_lrn=0: sign_lrn=0.001: };
+     margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_lrn=0.001: };
     };
     FullPrjnSpec @[3] {
      name="FullPrjnSpec_0";
@@ -179504,6 +180114,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      used_status=USED;
      desc=;
      unique{      };
+     saved{      };
      children {
       name="children";
       el_typ=FullPrjnSpec;
@@ -179533,8 +180144,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     LeabraLayer @[0] {
      name="Input";
      desc=;
-     flags=ABS_POS;
+     flags=0;
      layer_type=INPUT;
+     pos_rel {rel=ABS_POS: other=NULL: x_align=LEFT: x_off=0: y_align=FRONT: y_off=0: space=2: };
      pos {x=0: y=0: z=0: };
      pos_abs {x=0: y=0: z=0: };
      pos2d {x=0: y=0: };
@@ -179585,12 +180197,16 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      margin_low_avg=0.125;
      margin_med_avg=0.01875;
      margin_hi_avg=0.0875;
+     twod_vals {
+      name="twod_vals";
+     };
     };
     LeabraLayer @[1] {
      name="Hidden";
      desc=;
-     flags=ABS_POS;
+     flags=0;
      layer_type=HIDDEN;
+     pos_rel {rel=ABS_POS: other=NULL: x_align=LEFT: x_off=0: y_align=FRONT: y_off=0: space=2: };
      pos {x=0: y=0: z=1: };
      pos_abs {x=0: y=0: z=1: };
      pos2d {x=0: y=13: };
@@ -179614,6 +180230,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        name="Fm_Input";
        off=0;
        disp=1;
+       notes=;
        from_type=CUSTOM;
        from=.networks[0].layers[0]$$;
        spec {type=FullPrjnSpec: spec=.networks[0].specs[3]$$: };
@@ -179632,6 +180249,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        name="Fm_Output";
        off=0;
        disp=1;
+       notes=;
        from_type=CUSTOM;
        from=.networks[0].layers[2]$$;
        spec {type=FullPrjnSpec: spec=$.networks[0].specs[3]$: };
@@ -179677,12 +180295,16 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      margin_low_avg=0.125;
      margin_med_avg=0.01875;
      margin_hi_avg=0.0875;
+     twod_vals {
+      name="twod_vals";
+     };
     };
     LeabraLayer @[2] {
      name="Output";
      desc=;
-     flags=ABS_POS;
+     flags=0;
      layer_type=TARGET;
+     pos_rel {rel=ABS_POS: other=NULL: x_align=LEFT: x_off=0: y_align=FRONT: y_off=0: space=2: };
      pos {x=0: y=0: z=2: };
      pos_abs {x=0: y=0: z=2: };
      pos2d {x=0: y=6: };
@@ -179706,6 +180328,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        name="Fm_Hidden";
        off=0;
        disp=1;
+       notes=;
        from_type=CUSTOM;
        from=.networks[0].layers[1]$$;
        spec {type=FullPrjnSpec: spec=$.networks[0].specs[3]$: };
@@ -179751,6 +180374,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      margin_low_avg=0.125;
      margin_med_avg=0.01875;
      margin_hi_avg=0.0875;
+     twod_vals {
+      name="twod_vals";
+     };
     };
    };
    weights {
@@ -179758,7 +180384,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     el_typ=Weights;
     el_def=0;
    };
-   flags=MANUAL_POS|ABS_POS|BUILD_INIT_WTS;
+   flags=BUILD_INIT_WTS;
    unit_vars_type=LeabraUnitVars;
    con_group_type=LeabraConGroup;
    auto_build=AUTO_BUILD;
@@ -179778,7 +180404,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
    max_prjns=2;
    max_disp_size {x=5: y=5: z=3: };
    max_disp_size2d {x=5: y=18: };
-   times {quarter=25: gate_cyc=18: deep_cyc=5: time_inc=0.001: wt_bal_int=10: minus=75: plus=25: total_cycles=100: current_cycle_gate_cycle=1: };
+   times {quarter=25: deep_cyc=5: time_inc=0.001: wt_bal_int=10: minus=75: plus=25: total_cycles=100: thal_gate_cycle=-2: };
    lstats {trg_max_act_crit=0.5: off_errs=1: on_errs=1: agg_unlearnable=0: wt_bal=0: };
    net_misc {spike=0: deep=0: bias_learn=1: trial_decay=1: diff_scale_p=0: diff_scale_q1=0: wt_bal=0: lay_gp_inhib=0: inhib_cons=0: };
    deep {on=0: ctxt=0: raw_net=0: mod_net=0: raw_qtr=0: };
