@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.0.9.0 rev10769
+// ta_Dump File v3.0 -- code v8.1.0.0 rev10827
 LeabraProject .projects[0] { 
  Doc_Group @.docs = [0] {
  };
@@ -62,6 +62,9 @@ LeabraProject .projects[0] {
    };
 
    ProgObjList @.objs = [0] {
+   };
+
+   ProgVar_List @.objs_vars = [0] {
    };
 
    ProgType_List @.types = [0] {
@@ -346,13 +349,16 @@ LeabraProject .projects[0] {
    ProgObjList @.objs = [0] {
    };
 
+   ProgVar_List @.objs_vars = [0] {
+   };
+
    ProgType_List @.types = [0] {
    };
 
    ProgVar_List @.args = [0] {
    };
 
-   ProgVar_List @.vars = [9] {
+   ProgVar_List @.vars = [13] {
     ProgVar @[0] { };
     ProgVar @[1] { };
     ProgVar @[2] { };
@@ -362,6 +368,10 @@ LeabraProject .projects[0] {
     ProgVar @[6] { };
     ProgVar @[7] { };
     ProgVar @[8] { };
+    ProgVar @[9] { };
+    ProgVar @[10] { };
+    ProgVar @[11] { };
+    ProgVar @[12] { };
    };
 
    Function_List @.functions = [0] {
@@ -370,13 +380,21 @@ LeabraProject .projects[0] {
    ProgEl_List @.init_code = [0] {
    };
 
-   ProgEl_List @.prog_code = [14] {
+   ProgEl_List @.prog_code = [31] {
     LocalVars @[0] { 
-     ProgVar_List @.local_vars = [4] {
+     ProgVar_List @.local_vars = [12] {
       ProgVar @[0] { };
       ProgVar @[1] { };
       ProgVar @[2] { };
       ProgVar @[3] { };
+      ProgVar @[4] { };
+      ProgVar @[5] { };
+      ProgVar @[6] { };
+      ProgVar @[7] { };
+      ProgVar @[8] { };
+      ProgVar @[9] { };
+      ProgVar @[10] { };
+      ProgVar @[11] { };
      };
     };
     AssignExpr @[1] { };
@@ -392,6 +410,113 @@ LeabraProject .projects[0] {
     AssignExpr @[11] { };
     AssignExpr @[12] { };
     AssignExpr @[13] { };
+    AssignExpr @[14] { };
+    AssignExpr @[15] { };
+    AssignExpr @[16] { };
+    AssignExpr @[17] { };
+    AssignExpr @[18] { };
+    AssignExpr @[19] { };
+    MatrixAssign @[20] { };
+    AssignExpr @[21] { };
+    AssignExpr @[22] { };
+    AssignExpr @[23] { };
+    ForLoop @[24] { 
+     ProgEl_List @.loop_code = [1] {
+      ForLoop @[0] { 
+       ProgEl_List @.loop_code = [1] {
+	ForLoop @[0] { 
+	 ProgEl_List @.loop_code = [1] {
+	  If @[0] { 
+	   ProgEl_List @.true_code = [1] {
+	    AssignExpr @[0] { };
+	   };
+	  };
+	 };
+	};
+       };
+      };
+     };
+    };
+    MatrixAssign @[25] { };
+    ForLoop @[26] { 
+     ProgEl_List @.loop_code = [1] {
+      ForLoop @[0] { 
+       ProgEl_List @.loop_code = [1] {
+	ForLoop @[0] { 
+	 ProgEl_List @.loop_code = [2] {
+	  If @[0] { 
+	   ProgEl_List @.true_code = [1] {
+	    If @[0] { 
+	     ProgEl_List @.true_code = [1] {
+	      AssignExpr @[0] { };
+	     };
+	    };
+	   };
+	  };
+	  Else @[1] { 
+	   ProgEl_List @.true_code = [1] {
+	    If @[0] { 
+	     ProgEl_List @.true_code = [1] {
+	      AssignExpr @[0] { };
+	     };
+	    };
+	   };
+	  };
+	 };
+	};
+       };
+      };
+     };
+    };
+    AssignExpr @[27] { };
+    ForLoop @[28] { 
+     ProgEl_List @.loop_code = [1] {
+      ForLoop @[0] { 
+       ProgEl_List @.loop_code = [1] {
+	ForLoop @[0] { 
+	 ProgEl_List @.loop_code = [1] {
+	  If @[0] { 
+	   ProgEl_List @.true_code = [1] {
+	    AssignExpr @[0] { };
+	   };
+	  };
+	 };
+	};
+       };
+      };
+     };
+    };
+    MatrixAssign @[29] { };
+    ForLoop @[30] { 
+     ProgEl_List @.loop_code = [1] {
+      ForLoop @[0] { 
+       ProgEl_List @.loop_code = [1] {
+	ForLoop @[0] { 
+	 ProgEl_List @.loop_code = [2] {
+	  If @[0] { 
+	   ProgEl_List @.true_code = [1] {
+	    If @[0] { 
+	     ProgEl_List @.true_code = [1] {
+	      AssignExpr @[0] { };
+	     };
+	    };
+	   };
+	  };
+	  Else @[1] { 
+	   ProgEl_List @.true_code = [1] {
+	    If @[0] { 
+	     ProgEl_List @.true_code = [1] {
+	      AssignExpr @[0] { };
+	     };
+	    };
+	   };
+	  };
+	 };
+	};
+       };
+      };
+     };
+    };
    };
   };
  };
@@ -660,6 +785,11 @@ LeabraProject .projects[0] {
     el_typ=DataTable;
     el_def=0;
    };
+   objs_vars {
+    name="objs_vars";
+    el_typ=ProgVar;
+    el_def=0;
+   };
    types {
     name="types";
     el_typ=DynEnumType;
@@ -857,7 +987,7 @@ LeabraProject .projects[0] {
     el_typ=ProgCode;
     el_def=0;
     LocalVars @[0] {
-     name="LocalVars_LocalVars0vars";
+     name="LocalVars_LocalVars17vars";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="LocalVars (17 vars)";
@@ -1146,7 +1276,7 @@ LeabraProject .projects[0] {
      };
     };
     AssignExpr @[9] {
-     name="AssignExpr_shapea1shapea0";
+     name="AssignExpr_shapea0shapea0";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="shape_a_0 = shape_a[0]";
@@ -2319,6 +2449,11 @@ LeabraProject .projects[0] {
     el_typ=DataTable;
     el_def=0;
    };
+   objs_vars {
+    name="objs_vars";
+    el_typ=ProgVar;
+    el_def=0;
+   };
    types {
     name="types";
     el_typ=DynEnumType;
@@ -2372,7 +2507,7 @@ LeabraProject .projects[0] {
     ProgVar @[4] {
      name="elem_c_1";
      var_type=T_Int;
-     int_val=1;
+     int_val=5;
      object_scope=NULL;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -2415,6 +2550,45 @@ LeabraProject .projects[0] {
      desc=;
      init_from=NULL;
     };
+    ProgVar @[9] {
+     name="elem_d1";
+     var_type=T_Int;
+     int_val=1;
+     object_scope=NULL;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @[10] {
+     name="elem_d2";
+     var_type=T_Int;
+     int_val=5;
+     object_scope=NULL;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @[11] {
+     name="dims_f";
+     var_type=T_Int;
+     object_scope=NULL;
+     flags=NULL_CHECK|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @[12] {
+     name="test_failed";
+     var_type=T_Int;
+     int_val=0;
+     object_scope=NULL;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
    };
    functions {
     name="functions";
@@ -2434,7 +2608,7 @@ LeabraProject .projects[0] {
      name="LocalVars_LocalVars4vars";
      desc=;
      flags=CAN_REVERT_TO_CODE;
-     code_string="LocalVars (4 vars)";
+     code_string="LocalVars (12 vars)";
      local_vars {
       name="local_vars";
       el_typ=ProgVar;
@@ -2487,9 +2661,109 @@ LeabraProject .projects[0] {
        desc=;
        init_from=NULL;
       };
+      ProgVar @[4] {
+       name="int_e";
+       var_type=T_Object;
+       object_type=int_Matrix;
+       object_val=NULL;
+       object_scope=NULL;
+       objs_ptr=0;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[5] {
+       name="int_f";
+       var_type=T_Object;
+       object_type=int_Matrix;
+       object_val=NULL;
+       object_scope=NULL;
+       objs_ptr=0;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[6] {
+       name="int_g";
+       var_type=T_Object;
+       object_type=int_Matrix;
+       object_val=NULL;
+       object_scope=NULL;
+       objs_ptr=0;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[7] {
+       name="float_h";
+       var_type=T_Object;
+       object_type=float_Matrix;
+       object_val=NULL;
+       object_scope=NULL;
+       objs_ptr=0;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[8] {
+       name="float_i";
+       var_type=T_Object;
+       object_type=float_Matrix;
+       object_val=NULL;
+       object_scope=NULL;
+       objs_ptr=0;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[9] {
+       name="i";
+       var_type=T_Int;
+       int_val=0;
+       object_scope=NULL;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[10] {
+       name="j";
+       var_type=T_Int;
+       int_val=0;
+       object_scope=NULL;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[11] {
+       name="k";
+       var_type=T_Int;
+       int_val=0;
+       object_scope=NULL;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
      };
     };
     AssignExpr @[1] {
+     name="AssignExpr_testfailed0";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="test_failed = 0";
+     result_var=.programs[1].vars[12]$$;
+     expr {
+      expr="0";
+     };
+    };
+    AssignExpr @[2] {
      name="AssignExpr_inta12345678";
      desc=;
      flags=CAN_REVERT_TO_CODE;
@@ -2499,7 +2773,7 @@ LeabraProject .projects[0] {
       expr="[1,2,3,4;5,6,7,8]";
      };
     };
-    AssignExpr @[2] {
+    AssignExpr @[3] {
      name="AssignExpr_elema1inta00";
      desc=;
      flags=CAN_REVERT_TO_CODE;
@@ -2509,7 +2783,7 @@ LeabraProject .projects[0] {
       expr="int_a[0,0]";
      };
     };
-    AssignExpr @[3] {
+    AssignExpr @[4] {
      name="AssignExpr_elema2inta31";
      desc=;
      flags=CAN_REVERT_TO_CODE;
@@ -2519,7 +2793,7 @@ LeabraProject .projects[0] {
       expr="int_a[3,1]";
      };
     };
-    AssignExpr @[4] {
+    AssignExpr @[5] {
      name="AssignExpr_intbinta0";
      desc=;
      flags=CAN_REVERT_TO_CODE;
@@ -2529,7 +2803,7 @@ LeabraProject .projects[0] {
       expr="int_a[:,0]";
      };
     };
-    AssignExpr @[5] {
+    AssignExpr @[6] {
      name="AssignExpr_intcinta1";
      desc=;
      flags=CAN_REVERT_TO_CODE;
@@ -2539,7 +2813,7 @@ LeabraProject .projects[0] {
       expr="int_a[:,1]";
      };
     };
-    AssignExpr @[6] {
+    AssignExpr @[7] {
      name="AssignExpr_intdinta0";
      desc=;
      flags=CAN_REVERT_TO_CODE;
@@ -2549,7 +2823,7 @@ LeabraProject .projects[0] {
       expr="int_a[0,:]";
      };
     };
-    AssignExpr @[7] {
+    AssignExpr @[8] {
      name="AssignExpr_dimsbndimsintb";
      desc=;
      flags=CAN_REVERT_TO_CODE;
@@ -2559,7 +2833,7 @@ LeabraProject .projects[0] {
       expr="ndims(int_b)";
      };
     };
-    AssignExpr @[8] {
+    AssignExpr @[9] {
      name="AssignExpr_dimscndimsintc";
      desc=;
      flags=CAN_REVERT_TO_CODE;
@@ -2569,7 +2843,7 @@ LeabraProject .projects[0] {
       expr="ndims(int_c)";
      };
     };
-    AssignExpr @[9] {
+    AssignExpr @[10] {
      name="AssignExpr_dimsdndimsintd";
      desc=;
      flags=CAN_REVERT_TO_CODE;
@@ -2579,44 +2853,670 @@ LeabraProject .projects[0] {
       expr="ndims(int_d)";
      };
     };
-    AssignExpr @[10] {
-     name="AssignExpr_elemb1intb00";
+    AssignExpr @[11] {
+     name="AssignExpr_elemb1intb0";
      desc=;
      flags=CAN_REVERT_TO_CODE;
-     code_string="elem_b_1 = int_b[0,0]";
+     code_string="elem_b_1 = int_b[0]";
      result_var=.programs[1].vars[2]$$;
      expr {
-      expr="int_b[0,0]";
-     };
-    };
-    AssignExpr @[11] {
-     name="AssignExpr_elemb2intb30";
-     desc=;
-     flags=CAN_REVERT_TO_CODE;
-     code_string="elem_b_2 = int_b[3,0]";
-     result_var=.programs[1].vars[3]$$;
-     expr {
-      expr="int_b[3,0]";
+      expr="int_b[0]";
      };
     };
     AssignExpr @[12] {
-     name="AssignExpr_elemc1intc00";
+     name="AssignExpr_elemb2intb3";
      desc=;
      flags=CAN_REVERT_TO_CODE;
-     code_string="elem_c_1 = int_c[0,0]";
-     result_var=.programs[1].vars[4]$$;
+     code_string="elem_b_2 = int_b[3]";
+     result_var=.programs[1].vars[3]$$;
      expr {
-      expr="int_c[0,0]";
+      expr="int_b[3]";
      };
     };
     AssignExpr @[13] {
-     name="AssignExpr_elemc2intc30";
+     name="AssignExpr_elemc1intc0";
      desc=;
-     flags=CAN_REVERT_TO_CODE|BREAKPOINT_ENABLED;
-     code_string="elem_c_2 = int_c[3,0]";
+     flags=CAN_REVERT_TO_CODE;
+     code_string="elem_c_1 = int_c[0]";
+     result_var=.programs[1].vars[4]$$;
+     expr {
+      expr="int_c[0]";
+     };
+    };
+    AssignExpr @[14] {
+     name="AssignExpr_elemc2intc3";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="elem_c_2 = int_c[3]";
      result_var=.programs[1].vars[5]$$;
      expr {
-      expr="int_c[3,0]";
+      expr="int_c[3]";
+     };
+    };
+    AssignExpr @[15] {
+     name="AssignExpr_elemd1intd0";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="elem_d1 = int_d[0]";
+     result_var=.programs[1].vars[9]$$;
+     expr {
+      expr="int_d[0]";
+     };
+    };
+    AssignExpr @[16] {
+     name="AssignExpr_elemd2intd1";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="elem_d2 = int_d[1]";
+     result_var=.programs[1].vars[10]$$;
+     expr {
+      expr="int_d[1]";
+     };
+    };
+    AssignExpr @[17] {
+     name="AssignExpr_inte12345678910111213141516";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="int_e = [1,2,3,4;5,6,7,8;9,10,11,12;13,14,15,16]";
+     result_var=.programs[1].prog_code[0].local_vars[4]$$;
+     expr {
+      expr="[1,2,3,4;5,6,7,8;9,10,11,12;13,14,15,16]";
+     };
+    };
+    AssignExpr @[18] {
+     name="AssignExpr_intf16151413121110987654321";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="int_f = [16,15,14,13;12,11,10,9;8,7,6,5;4,3,2,1]";
+     result_var=.programs[1].prog_code[0].local_vars[5]$$;
+     expr {
+      expr="[16,15,14,13;12,11,10,9;8,7,6,5;4,3,2,1]";
+     };
+    };
+    AssignExpr @[19] {
+     name="AssignExpr_intg12345678910111213141516";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="int_g = [1,2,3,4;5,6,7,8;9,10,11,12;13,14,15,16]";
+     result_var=.programs[1].prog_code[0].local_vars[6]$$;
+     expr {
+      expr="[1,2,3,4;5,6,7,8;9,10,11,12;13,14,15,16]";
+     };
+    };
+    MatrixAssign @[20] {
+     name="MatrixAssign_intg0intf0";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="int_g[:,0] = int_f[0,:]";
+     variable=$.programs[1].prog_code[0].local_vars[6]$;
+     data_table=0;
+     col {
+      expr=;
+     };
+     dim0 {
+      expr=":";
+     };
+     dim1 {
+      expr="0";
+     };
+     dim2 {
+      expr=;
+     };
+     dim3 {
+      expr=;
+     };
+     dim4 {
+      expr=;
+     };
+     dim5 {
+      expr=;
+     };
+     expr {
+      expr="int_f[0,:]";
+     };
+    };
+    AssignExpr @[21] {
+     name="AssignExpr_floathrand345678";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="float_h = rand([3,4,5,6,7,8])";
+     result_var=.programs[1].prog_code[0].local_vars[7]$$;
+     expr {
+      expr="rand([3,4,5,6,7,8])";
+     };
+    };
+    AssignExpr @[22] {
+     name="AssignExpr_floatirand345";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="float_i = rand([3,4,5])";
+     result_var=.programs[1].prog_code[0].local_vars[8]$$;
+     expr {
+      expr="rand([3,4,5])";
+     };
+    };
+    AssignExpr @[23] {
+     name="AssignExpr_dimsfndimsfloath";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="dims_f = ndims(float_h)";
+     result_var=.programs[1].vars[11]$$;
+     expr {
+      expr="ndims(float_h)";
+     };
+    };
+    ForLoop @[24] {
+     name="ForLoop_fori0i3i";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="for (i =0; i < 3; i++)";
+     loop_code {
+      name="loop_code";
+      el_typ=ProgCode;
+      el_def=0;
+      ForLoop @[0] {
+       name="ForLoop_forj0j4j";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="for (j = 0; j < 4; j++)";
+       loop_code {
+	name="loop_code";
+	el_typ=ProgCode;
+	el_def=0;
+	ForLoop @[0] {
+	 name="ForLoop_fork0k5k";
+	 desc=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="for (k = 0; k < 5; k++)";
+	 loop_code {
+	  name="loop_code";
+	  el_typ=ProgCode;
+	  el_def=0;
+	  If @[0] {
+	   name="If_iffloatiijk0";
+	   desc=;
+	   flags=CAN_REVERT_TO_CODE;
+	   code_string="if (float_i[i,j,k] == 0)";
+	   cond {
+	    expr="float_i[i,j,k] == 0";
+	   };
+	   true_code {
+	    name="true_code";
+	    el_typ=ProgCode;
+	    el_def=0;
+	    AssignExpr @[0] {
+	     name="AssignExpr_testfailed1";
+	     desc=;
+	     flags=CAN_REVERT_TO_CODE;
+	     code_string="test_failed = 1";
+	     result_var=$.programs[1].vars[12]$;
+	     expr {
+	      expr="1";
+	     };
+	    };
+	   };
+	  };
+	 };
+	 init {
+	  expr="k = 0";
+	 };
+	 test {
+	  expr="k < 5";
+	 };
+	 iter {
+	  expr="k++";
+	 };
+	};
+       };
+       init {
+	expr="j = 0";
+       };
+       test {
+	expr="j < 4";
+       };
+       iter {
+	expr="j++";
+       };
+      };
+     };
+     init {
+      expr="i =0";
+     };
+     test {
+      expr="i < 3";
+     };
+     iter {
+      expr="i++";
+     };
+    };
+    MatrixAssign @[25] {
+     name="MatrixAssign_floati10";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="float_i[:,:,-1] = 0";
+     variable=$.programs[1].prog_code[0].local_vars[8]$;
+     data_table=0;
+     col {
+      expr=;
+     };
+     dim0 {
+      expr=":";
+     };
+     dim1 {
+      expr=":";
+     };
+     dim2 {
+      expr="-1";
+     };
+     dim3 {
+      expr=;
+     };
+     dim4 {
+      expr=;
+     };
+     dim5 {
+      expr=;
+     };
+     expr {
+      expr="0";
+     };
+    };
+    ForLoop @[26] {
+     name="ForLoop_fori0i3i_1";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="for (i =0; i < 3; i++)";
+     loop_code {
+      name="loop_code";
+      el_typ=ProgCode;
+      el_def=0;
+      ForLoop @[0] {
+       name="ForLoop_forj0j4j";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="for (j = 0; j < 4; j++)";
+       loop_code {
+	name="loop_code";
+	el_typ=ProgCode;
+	el_def=0;
+	ForLoop @[0] {
+	 name="ForLoop_fork0k5k";
+	 desc=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="for (k = 0; k < 5; k++)";
+	 loop_code {
+	  name="loop_code";
+	  el_typ=ProgCode;
+	  el_def=0;
+	  If @[0] {
+	   name="If_ifk4";
+	   desc=;
+	   flags=CAN_REVERT_TO_CODE;
+	   code_string="if (k == 4)";
+	   cond {
+	    expr="k == 4";
+	   };
+	   true_code {
+	    name="true_code";
+	    el_typ=ProgCode;
+	    el_def=0;
+	    If @[0] {
+	     name="If_iffloatiijk0";
+	     desc=;
+	     flags=CAN_REVERT_TO_CODE;
+	     code_string="if (float_i[i,j,k] != 0)";
+	     cond {
+	      expr="float_i[i,j,k] != 0";
+	     };
+	     true_code {
+	      name="true_code";
+	      el_typ=ProgCode;
+	      el_def=0;
+	      AssignExpr @[0] {
+	       name="AssignExpr_testfailed2";
+	       desc=;
+	       flags=CAN_REVERT_TO_CODE;
+	       code_string="test_failed = 2";
+	       result_var=$.programs[1].vars[12]$;
+	       expr {
+		expr="2";
+	       };
+	      };
+	     };
+	    };
+	   };
+	  };
+	  Else @[1] {
+	   name="Else_If_ifk4";
+	   desc=;
+	   flags=CAN_REVERT_TO_CODE;
+	   code_string="else";
+	   cond {
+	    expr=;
+	   };
+	   true_code {
+	    name="true_code";
+	    el_typ=ProgCode;
+	    el_def=0;
+	    If @[0] {
+	     name="If_iffloatiijk0";
+	     desc=;
+	     flags=CAN_REVERT_TO_CODE;
+	     code_string="if (float_i[i,j,k] == 0)";
+	     cond {
+	      expr="float_i[i,j,k] == 0";
+	     };
+	     true_code {
+	      name="true_code";
+	      el_typ=ProgCode;
+	      el_def=0;
+	      AssignExpr @[0] {
+	       name="AssignExpr_testfailed2";
+	       desc=;
+	       flags=CAN_REVERT_TO_CODE;
+	       code_string="test_failed = 2";
+	       result_var=$.programs[1].vars[12]$;
+	       expr {
+		expr="2";
+	       };
+	      };
+	     };
+	    };
+	   };
+	  };
+	 };
+	 init {
+	  expr="k = 0";
+	 };
+	 test {
+	  expr="k < 5";
+	 };
+	 iter {
+	  expr="k++";
+	 };
+	};
+       };
+       init {
+	expr="j = 0";
+       };
+       test {
+	expr="j < 4";
+       };
+       iter {
+	expr="j++";
+       };
+      };
+     };
+     init {
+      expr="i =0";
+     };
+     test {
+      expr="i < 3";
+     };
+     iter {
+      expr="i++";
+     };
+    };
+    AssignExpr @[27] {
+     name="AssignExpr_floatirand345_1";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="float_i = rand([3,4,5])";
+     result_var=$.programs[1].prog_code[0].local_vars[8]$;
+     expr {
+      expr="rand([3,4,5])";
+     };
+    };
+    ForLoop @[28] {
+     name="ForLoop_fori0i3i";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="for (i =0; i < 3; i++)";
+     loop_code {
+      name="loop_code";
+      el_typ=ProgCode;
+      el_def=0;
+      ForLoop @[0] {
+       name="ForLoop_forj0j4j";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="for (j = 0; j < 4; j++)";
+       loop_code {
+	name="loop_code";
+	el_typ=ProgCode;
+	el_def=0;
+	ForLoop @[0] {
+	 name="ForLoop_fork0k5k";
+	 desc=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="for (k = 0; k < 5; k++)";
+	 loop_code {
+	  name="loop_code";
+	  el_typ=ProgCode;
+	  el_def=0;
+	  If @[0] {
+	   name="If_iffloatiijk0";
+	   desc=;
+	   flags=CAN_REVERT_TO_CODE;
+	   code_string="if (float_i[i,j,k] == 0)";
+	   cond {
+	    expr="float_i[i,j,k] == 0";
+	   };
+	   true_code {
+	    name="true_code";
+	    el_typ=ProgCode;
+	    el_def=0;
+	    AssignExpr @[0] {
+	     name="AssignExpr_testfailed1";
+	     desc=;
+	     flags=CAN_REVERT_TO_CODE;
+	     code_string="test_failed = 1";
+	     result_var=$.programs[1].vars[12]$;
+	     expr {
+	      expr="1";
+	     };
+	    };
+	   };
+	  };
+	 };
+	 init {
+	  expr="k = 0";
+	 };
+	 test {
+	  expr="k < 5";
+	 };
+	 iter {
+	  expr="k++";
+	 };
+	};
+       };
+       init {
+	expr="j = 0";
+       };
+       test {
+	expr="j < 4";
+       };
+       iter {
+	expr="j++";
+       };
+      };
+     };
+     init {
+      expr="i =0";
+     };
+     test {
+      expr="i < 3";
+     };
+     iter {
+      expr="i++";
+     };
+    };
+    MatrixAssign @[29] {
+     name="MatrixAssign_floati00";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="float_i[:,0,:] = 0";
+     variable=$.programs[1].prog_code[0].local_vars[8]$;
+     data_table=0;
+     col {
+      expr=;
+     };
+     dim0 {
+      expr=":";
+     };
+     dim1 {
+      expr="0";
+     };
+     dim2 {
+      expr=":";
+     };
+     dim3 {
+      expr=;
+     };
+     dim4 {
+      expr=;
+     };
+     dim5 {
+      expr=;
+     };
+     expr {
+      expr="0";
+     };
+    };
+    ForLoop @[30] {
+     name="ForLoop_fori0i3i_2";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="for (i =0; i < 3; i++)";
+     loop_code {
+      name="loop_code";
+      el_typ=ProgCode;
+      el_def=0;
+      ForLoop @[0] {
+       name="ForLoop_forj0j4j";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="for (j = 0; j < 4; j++)";
+       loop_code {
+	name="loop_code";
+	el_typ=ProgCode;
+	el_def=0;
+	ForLoop @[0] {
+	 name="ForLoop_fork0k5k";
+	 desc=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="for (k = 0; k < 5; k++)";
+	 loop_code {
+	  name="loop_code";
+	  el_typ=ProgCode;
+	  el_def=0;
+	  If @[0] {
+	   name="If_ifj0";
+	   desc=;
+	   flags=CAN_REVERT_TO_CODE;
+	   code_string="if (j == 0)";
+	   cond {
+	    expr="j == 0";
+	   };
+	   true_code {
+	    name="true_code";
+	    el_typ=ProgCode;
+	    el_def=0;
+	    If @[0] {
+	     name="If_iffloatiijk0";
+	     desc=;
+	     flags=CAN_REVERT_TO_CODE;
+	     code_string="if (float_i[i,j,k] != 0)";
+	     cond {
+	      expr="float_i[i,j,k] != 0";
+	     };
+	     true_code {
+	      name="true_code";
+	      el_typ=ProgCode;
+	      el_def=0;
+	      AssignExpr @[0] {
+	       name="AssignExpr_testfailed3";
+	       desc=;
+	       flags=CAN_REVERT_TO_CODE;
+	       code_string="test_failed = 3";
+	       result_var=$.programs[1].vars[12]$;
+	       expr {
+		expr="3";
+	       };
+	      };
+	     };
+	    };
+	   };
+	  };
+	  Else @[1] {
+	   name="Else_If_ifk4";
+	   desc=;
+	   flags=CAN_REVERT_TO_CODE;
+	   code_string="else";
+	   cond {
+	    expr=;
+	   };
+	   true_code {
+	    name="true_code";
+	    el_typ=ProgCode;
+	    el_def=0;
+	    If @[0] {
+	     name="If_iffloatiijk0";
+	     desc=;
+	     flags=CAN_REVERT_TO_CODE;
+	     code_string="if (float_i[i,j,k] == 0)";
+	     cond {
+	      expr="float_i[i,j,k] == 0";
+	     };
+	     true_code {
+	      name="true_code";
+	      el_typ=ProgCode;
+	      el_def=0;
+	      AssignExpr @[0] {
+	       name="AssignExpr_testfailed3";
+	       desc=;
+	       flags=CAN_REVERT_TO_CODE;
+	       code_string="test_failed = 3";
+	       result_var=$.programs[1].vars[12]$;
+	       expr {
+		expr="3";
+	       };
+	      };
+	     };
+	    };
+	   };
+	  };
+	 };
+	 init {
+	  expr="k = 0";
+	 };
+	 test {
+	  expr="k < 5";
+	 };
+	 iter {
+	  expr="k++";
+	 };
+	};
+       };
+       init {
+	expr="j = 0";
+       };
+       test {
+	expr="j < 4";
+       };
+       iter {
+	expr="j++";
+       };
+      };
+     };
+     init {
+      expr="i =0";
+     };
+     test {
+      expr="i < 3";
+     };
+     iter {
+      expr="i++";
      };
     };
    };
@@ -2659,7 +3559,7 @@ LeabraProject .projects[0] {
     UserDataItem @[0] {name="view_win_lft": value=0: val_type_fixed=0: };
     UserDataItem @[1] {name="view_win_top": value=0: val_type_fixed=0: };
     UserDataItem @[2] {name="view_win_wd": value=1: val_type_fixed=0: };
-    UserDataItem @[3] {name="view_win_ht": value=0.7993158: val_type_fixed=0: };
+    UserDataItem @[3] {name="view_win_ht": value=0.7981756: val_type_fixed=0: };
     UserDataItem @[4] {name="view_win_iconified": value=0: val_type_fixed=0: };
     UserDataItem @[5] {name="view_splitter_state": value=AAAA/wAAAAEAAAADAAABBAAAAiIAAAIVAf////8BAAAAAQA=: val_type_fixed=0: };
    };
@@ -2841,7 +3741,7 @@ LeabraProject .projects[0] {
       UserDataItem @[0] {name="view_win_lft": value=-0.002785515: val_type_fixed=0: };
       UserDataItem @[1] {name="view_win_top": value=0.002280502: val_type_fixed=0: };
       UserDataItem @[2] {name="view_win_wd": value=0.05710306: val_type_fixed=0: };
-      UserDataItem @[3] {name="view_win_ht": value=0.722919: val_type_fixed=0: };
+      UserDataItem @[3] {name="view_win_ht": value=0.7217788: val_type_fixed=0: };
       UserDataItem @[4] {name="view_win_iconified": value=0: val_type_fixed=0: };
       UserDataItem @[5] {name="view_visible": value=1: val_type_fixed=0: };
      };
@@ -2860,7 +3760,7 @@ LeabraProject .projects[0] {
  save_as_only=0;
  auto_name=1;
  last_change_desc=;
- tree_state{ .;.patches;.ctrl_panels;.programs;.programs[0];.programs[0].objs;.programs[0].types;.programs[0].args;.programs[0].vars;.programs[0].functions;.programs[0].init_code;.programs[0].prog_code;.programs[0].prog_code[0];.programs[1];.programs[1].objs;.programs[1].types;.programs[1].args;.programs[1].vars;.programs[1].functions;.programs[1].init_code;.programs[1].prog_code;.programs[1].prog_code[0]; };
+ tree_state{ .;.patches;.ctrl_panels;.programs;.programs[0].objs;.programs[0].types;.programs[0].args;.programs[0].vars;.programs[0].functions;.programs[0].init_code;.programs[0].prog_code;.programs[0].prog_code[0];.programs[1].objs;.programs[1].types;.programs[1].args;.programs[1].vars;.programs[1].functions;.programs[1].init_code;.programs[1].prog_code;.programs[1].prog_code[0]; };
  networks {
   name="networks";
   el_typ=LeabraNetwork;
