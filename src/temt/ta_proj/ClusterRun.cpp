@@ -23,6 +23,8 @@
 #include <iClusterTableView>
 #include <taDataProc>
 #include <DataTable_Group>
+#include <DataGroupSpec>
+#include <DataGroupEl>
 #include <taProject>
 #include <SubversionClient>
 #include <iSubversionBrowser>
@@ -673,6 +675,110 @@ void ClusterRun::SelectCluster() {
     Update_impl(m_cm->m_do_svn_update);
   }
   UpdateUI();
+}
+
+void ClusterRun::ComputeStats() {
+  taProject* proj = GetMyProj();
+  if(!proj) return;
+  DataTable* stat_data = proj->GetNewAnalysisDataTable("ClusterRunCpuHrs", true);
+  stat_data->StructUpdate(true);
+  stat_data->ResetData();
+
+  DataCol* dc;
+  int idx;
+  dc = stat_data->FindMakeCol("cluster", VT_STRING);
+  dc->desc = "name of cluster to run job on";
+  dc = stat_data->FindMakeCol("tag", VT_STRING);
+  dc->desc = "unique tag id for this job -- all files etc are named according to this tag";
+  dc = stat_data->FindMakeCol("cpu_hr", VT_FLOAT);
+  dc->desc = "main stat: total cpu hours used: total_cpus * run_time_hr";
+  dc = stat_data->FindMakeCol("run_time_hr", VT_FLOAT);
+  dc->desc = "total running time in hours";
+  dc = stat_data->FindMakeCol("n_threads", VT_FLOAT);
+  dc->desc = "number of parallel threads to use for running";
+  dc = stat_data->FindMakeCol("use_cuda", VT_BOOL);
+  dc->desc = "if the job should be run with CUDA";
+  dc = stat_data->FindMakeCol("mpi_nodes", VT_FLOAT);
+  dc->desc = "number of physical nodes to use for mpi run -- 0 or -1 means not to use mpi";
+  dc = stat_data->FindMakeCol("mpi_per_node", VT_FLOAT);
+  dc->desc = "number of processes to use per MPI node to use for mpi run - total nodes is mpi_nodes * mpi_per_node";
+  dc = stat_data->FindMakeCol("total_nodes", VT_FLOAT);
+  dc->desc = "total nodes is mpi_nodes * mpi_per_node";
+  dc = stat_data->FindMakeCol("total_cpus", VT_FLOAT);
+  dc->desc = "total_nodes * total_threads";
+
+  DataTable* cur_table = GetCurDataTable();
+  
+  // Get the (inclusive) range of rows to process
+  int st_row, end_row;
+  if (cur_table == &jobs_running || cur_table == &jobs_done || cur_table == &jobs_archive) {
+    if (SelectedRows(*cur_table, st_row, end_row)) {
+      for (int row = st_row; row <= end_row; ++row) {
+        ComputeStats_impl(stat_data, cur_table, row);
+      }
+    }
+    else {
+      ComputeStats_impl(stat_data, &jobs_done, -1); // all rows
+      ComputeStats_impl(stat_data, &jobs_archive, -1); // all rows
+      ComputeStats_impl(stat_data, &jobs_deleted, -1); // all rows
+    }
+  }
+  stat_data->StructUpdate(false);
+
+  DataTable* stats = proj->GetNewAnalysisDataTable("ClusterRunStats", true);
+
+  DataGroupSpec gp_spec;
+  gp_spec.append_agg_name = true;
+  gp_spec.SetDataTable(stat_data);
+  // DataGroupEl* cond_gp = (DataGroupEl*)gp_spec.AddColumn(, src_data);
+  // cond_gp->agg.op = Aggregate::GROUP;
+
+  String data_col_nm = "cpu_hr";
+  DataGroupEl* sum_gp = (DataGroupEl*)gp_spec.AddColumn(data_col_nm, stat_data);
+  sum_gp->agg.op = Aggregate::SUM;
+  DataGroupEl* n_gp = (DataGroupEl*)gp_spec.AddColumn(data_col_nm, stat_data);
+  n_gp->agg.op = Aggregate::N;
+  DataGroupEl* mean_gp = (DataGroupEl*)gp_spec.AddColumn(data_col_nm, stat_data);
+  mean_gp->agg.op = Aggregate::MEAN;
+  mean_gp = (DataGroupEl*)gp_spec.AddColumn("run_time_hr", stat_data);
+  mean_gp->agg.op = Aggregate::MEAN;
+  mean_gp = (DataGroupEl*)gp_spec.AddColumn("total_cpus", stat_data);
+  mean_gp->agg.op = Aggregate::MEAN;
+  taDataProc::Group(stats, stat_data, &gp_spec);
+}
+
+void ClusterRun::ComputeStats_impl(DataTable* stats, DataTable* table, int row) {
+  int st_row = row;
+  int ed_row = row+1;
+  if(row < 0) {
+    st_row = 0;
+    ed_row = table->rows;
+  }
+  for(int i=st_row; i<ed_row; i++) {
+    stats->AddRow();
+    String clust = table->GetValAsString("cluster", i);
+    stats->SetValAsString(clust, "cluster", -1);
+    String tag = table->GetValAsString("tag", i);
+    stats->SetValAsString(tag, "tag", -1);
+    float n_thr = table->GetValAsFloat("n_threads", i);
+    stats->SetValAsFloat(n_thr, "n_threads", -1);
+    float mpi_nod = table->GetValAsFloat("mpi_nodes", i);
+    stats->SetValAsFloat(mpi_nod, "mpi_nodes", -1);
+    float mpi_per_nod = table->GetValAsFloat("mpi_per_node", i);
+    stats->SetValAsFloat(mpi_per_nod, "mpi_per_node", -1);
+    float total_nodes = mpi_nod * mpi_per_nod;
+    stats->SetValAsFloat(total_nodes, "total_nodes", -1);
+    float total_cpus = n_thr * total_nodes;
+    stats->SetValAsFloat(total_cpus, "total_cpus", -1);
+
+    float secs = RunningTimeSecs(table, i);
+    float hrs = secs / 3600.0f;
+    stats->SetValAsFloat(hrs, "run_time_hr", -1);
+
+    float cpu_hr = total_cpus * hrs;
+    stats->SetValAsFloat(cpu_hr, "cpu_hr", -1);
+    stats->WriteClose();
+  }
 }
 
 void ClusterRun::ListJobFiles() {
@@ -2393,25 +2499,26 @@ void ClusterRun::UpdateUI() {
   ps->UpdateMethodsEnabled();
 }
 
+int ClusterRun::RunningTimeSecs(DataTable* table, int row) {
+  String start_time_str;
+  String end_time_str;
+  start_time_str = table->GetValAsString("start_time", row);
+  end_time_str = table->GetValAsString("end_time", row);
+        
+  taDateTime start_time;
+  taDateTime end_time;
+  start_time.fromString(start_time_str, timestamp_fmt);
+  end_time.fromString(end_time_str, timestamp_fmt);
+  int secs = start_time.secsTo(end_time);
+  return secs;
+}
+
 void ClusterRun::FillInRunningTime(DataTable* table) {
   DataCol* running_time_col = table->GetColData("running_time", true); // true means quiet
   if (running_time_col) {
-    DataCol* start_col = table->GetColData("start_time", true);
-    DataCol* end_col = table->GetColData("end_time", true);
-    if (start_col && end_col) {
-      for (int i=0; i<table->rows; i++) {
-        String start_time_str;
-        String end_time_str;
-        start_time_str = start_col->GetValAsString(i);
-        end_time_str = end_col->GetValAsString(i);
-        
-        taDateTime start_time;
-        taDateTime end_time;
-        start_time.fromString(start_time_str, timestamp_fmt);
-        end_time.fromString(end_time_str, timestamp_fmt);
-        int secs = start_time.secsTo(end_time);
-        running_time_col->SetVal(taDateTime::SecondsToDHM(secs), i);
-      }
+    for (int i=0; i<table->rows; i++) {
+      int secs = RunningTimeSecs(table, i);
+      running_time_col->SetVal(taDateTime::SecondsToDHM(secs), i);
     }
   }
 }

@@ -144,10 +144,7 @@ public:
   // #BUTTON #CONFIRM #ENABLE_OFF_enable_kill:false running jobs in the jobs_running datatable (must select rows for jobs in gui)
   virtual void  LoadData(bool remove_existing = false);
   // #BUTTON #ENABLE_OFF_enable_load:false load the data for the selected rows in the jobs_running, jobs_done or file_list data tables (all rows if none selected) -- loads each of the job's data into data.ClusterRun datatables with file name = tag, and columns added for each of the parameter values that were set in the command -- if remove_existing is set, any existing files are removed prior to loading the new ones
-  virtual void  SaveJobParams();
-  // #MENU_BUTTON #MENU_ON_Jobs save the active parameters for selected job(s) in jobs_running, jobs_done or jobs_archive into new ParamSet saved parameters under .archived_params -- convenient way to save different sets of good parameters for later reference -- automatically named with the job name and comments in the desc field
-  virtual void  UpdtNotes();
-  // #MENU_BUTTON #MENU_ON_Jobs update notes field of completed jobs -- enter a new note in the table and then do this, and it will update the table permanently -- otherwise all edits are overwritten by the version in svn which is only updated on the cluster side
+  
   virtual void  DeleteJobs();
   // #MENU_BUTTON #MENU_ON_Jobs #CONFIRM move jobs to the deleted table, including all their data that has been checked in (according to the local contents of the repository) -- jobs in the deleted table can be undeleted or permanently deleted -- (good idea to do an Update before running this) -- for cleaning up old unneeded jobs
   virtual void  NukeJobs();
@@ -158,10 +155,16 @@ public:
   // #MENU_BUTTON #MENU_ON_Jobs #CONFIRM recover jobs selected in the jobs_deleted data table into the jobs_done table, and restore the dat_files into the svn repository as well
   virtual void  ArchiveJobs();
   // #MENU_BUTTON #MENU_ON_Jobs #CONFIRM move jobs selected in the jobs_done data table into the jobs_archive table
+
+  virtual void  SaveJobParams();
+  // #MENU_BUTTON #MENU_SEP_BEFORE #MENU_ON_Jobs save the active parameters for selected job(s) in jobs_running, jobs_done or jobs_archive into new ParamSet saved parameters under .archived_params -- convenient way to save different sets of good parameters for later reference -- automatically named with the job name and comments in the desc field
+  virtual void  UpdtNotes();
+  // #MENU_BUTTON #MENU_ON_Jobs update notes field of completed jobs -- enter a new note in the table and then do this, and it will update the table permanently -- otherwise all edits are overwritten by the version in svn which is only updated on the cluster side
   virtual void  Cont();
   // #MENU_BUTTON #MENU_ON_Jobs #CONFIRM Continue the search process by submitting the next batch of jobs.
   virtual void  SaveState();
   // #MENU_BUTTON #MENU_ON_Jobs #CONFIRM send command to running job to save its state (e.g., weight file) -- typically occurs at end of large-ish chunk (e.g., end of epoch), when running project checks for any commands that have been sent to it
+  
   virtual ParamSearchAlgo*  NewSearchAlgo(TypeDef *type = &TA_GridSearch);
   // #MENU_BUTTON #MENU_ON_Jobs #MENU_SEP_BEFORE #TYPE_0_ParamSearchAlgo Create a search algorithm to use in this cluster run -- will automatically be selected as the current search algo and enabled (use_search_algo = true)
   virtual bool  AddCluster(const String& clust_nm);
@@ -171,6 +174,11 @@ public:
   virtual bool  LoadJobs();
   // #MENU_BUTTON #MENU_ON_Jobs load existing data to jobs_* tables based on data currently in the svn working copy -- does not update from svn server and thus does not get latest data from cluster -- use Update to get new data from svn -- this is useful if your network connection is not available but you still want to analyze existing data
 
+  virtual void  ComputeStats();
+  // #MENU_BUTTON #MENU_SEP_BEFORE #MENU_ON_Jobs generate total computation time statistics on either selected jobs or all jobs across all categories for this project
+  virtual void  ComputeStats_impl(DataTable* stats, DataTable* table, int row);
+  // #IGNORE impl -- row = -1 = all
+  
   virtual void  ListJobFiles();
   // #MENU_BUTTON #MENU_ON_Files list all the other_files associated with jobs selected in the jobs_running or jobs_done or jobs_archive data table (looks in running first, then done, then archive for selected rows) -- if include_data is selected, then it includes the dat_files too -- you can then go to the file_list tab to select the specific files you want to operate on for other operations in this menu
   virtual void  ListLocalFiles();
@@ -229,6 +237,8 @@ public:
   // validate all the current parameters and ensure that they make sense for selected cluster, etc -- arg is number of jobs that will be submitted of this form
   virtual String CurTimeStamp();
   // get a timestamp string for the current time
+  virtual int  RunningTimeSecs(DataTable* table, int row);
+  // get running time in seconds for row of table
   virtual void FillInRunningTime(DataTable* table);
   // calculate the running time and write the result into the running_time column
   virtual void FillInElapsedTime(DataTable* table);
