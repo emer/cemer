@@ -31,8 +31,8 @@ class SbImage;
 namespace SIM { namespace Coin3D { namespace Quarter {
 
 namespace QtCoinCompatibility {
-  void QUARTER_DLL_API QImageToSbImage(const QImage &, SbImage & );
-  void QUARTER_DLL_API SbImageToQImage(const SbImage &, QImage & );
+  void TA_API QImageToSbImage(const QImage &, SbImage & );
+  void TA_API SbImageToQImage(const SbImage &, QImage & );
 }
 
 }}} // namespace

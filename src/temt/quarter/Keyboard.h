@@ -31,7 +31,7 @@ class SoEvent;
 
 namespace SIM { namespace Coin3D { namespace Quarter {
 
-class QUARTER_DLL_API Keyboard : public InputDevice {
+class TA_API Keyboard : public InputDevice {
 public:
   Keyboard(QuarterWidget* quarter);
   virtual ~Keyboard();

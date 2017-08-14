@@ -33,7 +33,7 @@ namespace SIM { namespace Coin3D { namespace Quarter {
 
 class InputDevice;
 
-class QUARTER_DLL_API EventFilter : public QObject {
+class TA_API EventFilter : public QObject {
   Q_OBJECT
 
 public:

@@ -34,7 +34,7 @@ namespace SIM { namespace Coin3D { namespace Quarter {
 
 class QuarterWidget;
       
-class QUARTER_DLL_API InputDevice {
+class TA_API InputDevice {
 public:
   InputDevice(QuarterWidget* quarter);
   virtual ~InputDevice() {}

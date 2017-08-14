@@ -33,7 +33,7 @@ namespace SIM { namespace Coin3D { namespace Quarter {
 
 class QuarterWidget;
 
-class QUARTER_DLL_API DragDropHandler : public QObject {
+class TA_API DragDropHandler : public QObject {
   Q_OBJECT
 public:
   DragDropHandler(QuarterWidget * parent);

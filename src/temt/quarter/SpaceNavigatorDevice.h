@@ -31,7 +31,7 @@ class QEvent;
 
 namespace SIM { namespace Coin3D { namespace Quarter {
 
-class QUARTER_DLL_API SpaceNavigatorDevice : public InputDevice {
+class TA_API SpaceNavigatorDevice : public InputDevice {
  public:
   SpaceNavigatorDevice(QuarterWidget* quarter);
   virtual ~SpaceNavigatorDevice();

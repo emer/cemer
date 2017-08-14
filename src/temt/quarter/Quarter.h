@@ -28,9 +28,9 @@
 namespace SIM { namespace Coin3D { namespace Quarter {
 
 namespace Quarter {
-  void QUARTER_DLL_API init(bool initCoin = true);
-  void QUARTER_DLL_API clean(void);
-  void QUARTER_DLL_API setTimerEpsilon(double sec);
+  void TA_API init(bool initCoin = true);
+  void TA_API clean(void);
+  void TA_API setTimerEpsilon(double sec);
 };
 
 }}} // namespace

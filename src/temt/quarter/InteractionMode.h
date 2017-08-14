@@ -37,7 +37,7 @@ namespace SIM { namespace Coin3D { namespace Quarter {
 
 class QuarterWidget;
 
-class QUARTER_DLL_API InteractionMode : public QObject {
+class TA_API InteractionMode : public QObject {
   Q_OBJECT
 public:
   InteractionMode(QuarterWidget * quarterwidget);

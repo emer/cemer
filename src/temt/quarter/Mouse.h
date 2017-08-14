@@ -32,7 +32,7 @@ class QuarterWidget;
 
 namespace SIM { namespace Coin3D { namespace Quarter {
 
-class QUARTER_DLL_API Mouse : public InputDevice {
+class TA_API Mouse : public InputDevice {
 public:
   Mouse(QuarterWidget* quarter);
   virtual ~Mouse();

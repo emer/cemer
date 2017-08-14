@@ -44,29 +44,15 @@ void iClusterTableView::FillContextMenu_impl(ContextArea ca,
   if (ca == CA_ROW_HDR) {
     iAction* act = NULL;
     menu->AddSep();
-    act = menu->AddItem("List Job Files", taiWidgetMenu::normal, iAction::var_act, this, SLOT(DoClusterOp(const Variant&)), "ListJobFiles");
-    act->setEnabled((tab->name == "running" || tab->name == "done" || tab->name == "archive") && sel.height() > 0);
-
-    act = menu->AddItem("List Local Files", taiWidgetMenu::normal, iAction::var_act, this, SLOT(DoClusterOp(const Variant&)), "ListLocalFiles");
-    act->setEnabled((tab->name == "running" || tab->name == "done" || tab->name == "archive") && sel.height() >= 0);
-    
-    menu->AddSep();
-    act = menu->AddItem("Get Files", taiWidgetMenu::normal, iAction::var_act, this, SLOT(DoClusterOp(const Variant&)), "GetFiles");
-    act->setEnabled((tab->name == "files") && sel.height() > 0);
-    
-    menu->AddSep();
-    act = menu->AddItem("Update Notes", taiWidgetMenu::normal, iAction::var_act, this, SLOT(DoClusterOp(const Variant&)), "UpdtNotes");
-    act->setEnabled((tab->name == "running" || tab->name == "done" || tab->name == "archive") && sel.height() >= 0);
-
-    act = menu->AddItem("Load Data", taiWidgetMenu::normal, iAction::var_act, this, SLOT(DoClusterOp(const Variant&)), "LoadData");
-    act->setEnabled((tab->name == "running" || tab->name == "done" || tab->name == "archive" || tab->name == "files") && sel.height() > 0);
-
-    act = menu->AddItem("Save Job Params", taiWidgetMenu::normal, iAction::var_act, this, SLOT(DoClusterOp(const Variant&)), "SaveJobParams");
-    act->setEnabled((tab->name == "done" || tab->name == "archive") && sel.height() > 0);
 
     act = menu->AddItem("Kill Job", taiWidgetMenu::normal, iAction::var_act, this, SLOT(DoClusterOp(const Variant&)), "Kill");
     act->setEnabled((tab->name == "running") && sel.height() > 0);  //
 
+    act = menu->AddItem("Load Data", taiWidgetMenu::normal, iAction::var_act, this, SLOT(DoClusterOp(const Variant&)), "LoadData");
+    act->setEnabled((tab->name == "running" || tab->name == "done" || tab->name == "archive" || tab->name == "files") && sel.height() > 0);
+
+    menu->AddSep();
+    
     act = menu->AddItem("Delete Jobs", taiWidgetMenu::normal, iAction::var_act, this, SLOT(DoClusterOp(const Variant&)), "DeleteJobs");
     act->setEnabled((tab->name == "done" || tab->name == "archive" || tab->name == "deleted") && sel.height() > 0);
     
@@ -82,23 +68,46 @@ void iClusterTableView::FillContextMenu_impl(ContextArea ca,
     act = menu->AddItem("Archive Jobs", taiWidgetMenu::normal, iAction::var_act, this, SLOT(DoClusterOp(const Variant&)), "ArchiveJobs");
     act->setEnabled((tab->name == "done") && sel.height() > 0);
 
+    menu->AddSep();
+    
+    act = menu->AddItem("Save Job Params", taiWidgetMenu::normal, iAction::var_act, this, SLOT(DoClusterOp(const Variant&)), "SaveJobParams");
+    act->setEnabled((tab->name == "done" || tab->name == "archive") && sel.height() > 0);
+
+    act = menu->AddItem("Update Notes", taiWidgetMenu::normal, iAction::var_act, this, SLOT(DoClusterOp(const Variant&)), "UpdtNotes");
+    act->setEnabled((tab->name == "running" || tab->name == "done" || tab->name == "archive") && sel.height() >= 0);
+
     act = menu->AddItem("Save State", taiWidgetMenu::normal, iAction::var_act, this, SLOT(DoClusterOp(const Variant&)), "SaveState");
     act->setEnabled((tab->name == "running") && sel.height() > 0);
 
+    menu->AddSep();
+
+    act = menu->AddItem("List Job Files", taiWidgetMenu::normal, iAction::var_act, this, SLOT(DoClusterOp(const Variant&)), "ListJobFiles");
+    act->setEnabled((tab->name == "running" || tab->name == "done" || tab->name == "archive") && sel.height() > 0);
+
+    act = menu->AddItem("List Local Files", taiWidgetMenu::normal, iAction::var_act, this, SLOT(DoClusterOp(const Variant&)), "ListLocalFiles");
+    act->setEnabled((tab->name == "running" || tab->name == "done" || tab->name == "archive") && sel.height() >= 0);
+    
+    act = menu->AddItem("Get Files", taiWidgetMenu::normal, iAction::var_act, this, SLOT(DoClusterOp(const Variant&)), "GetFiles");
+    act->setEnabled((tab->name == "files") && sel.height() > 0);
+    
+    menu->AddSep();
+    
     act = menu->AddItem("Clean Job Files", taiWidgetMenu::normal, iAction::var_act, this, SLOT(DoClusterOp(const Variant&)), "CleanJobFiles");
     act->setEnabled((tab->name == "done" || tab->name == "archive") && sel.height() > 0);
     
-    act = menu->AddItem("Remove Files", taiWidgetMenu::normal, iAction::var_act, this, SLOT(DoClusterOp(const Variant&)), "RemoveFiles");
+    act = menu->AddItem("Delete Files", taiWidgetMenu::normal, iAction::var_act, this, SLOT(DoClusterOp(const Variant&)), "DeleteFiles");
     act->setEnabled((tab->name == "files" || tab->name == "archive" || tab->name == "done" ) && sel.height() > 0);
     
-    act = menu->AddItem("Remove Non Data Files", taiWidgetMenu::normal, iAction::var_act, this, SLOT(DoClusterOp(const Variant&)), "RemoveNonDataFiles");
+    act = menu->AddItem("Delete Non Data Files", taiWidgetMenu::normal, iAction::var_act, this, SLOT(DoClusterOp(const Variant&)), "DeleteNonDataFiles");
     act->setEnabled((tab->name == "done" || tab->name == "archive") && sel.height() > 0);
 
     menu->AddSep();
+    
     act = menu->AddItem("Get Proj at Rev", taiWidgetMenu::normal, iAction::var_act, this, SLOT(DoClusterOp(const Variant&)), "GetProjAtRev");
     act->setEnabled((tab->name == "running" || tab->name == "done" || tab->name == "archive") && sel.height() > 0);
 
     menu->AddSep();
+    
     act = menu->AddItem("Compare Selected Rows", taiWidgetMenu::normal,
                         iAction::int_act,
                         this, SLOT(RowColOp(int)), (OP_ROW | OP_COMPARE));

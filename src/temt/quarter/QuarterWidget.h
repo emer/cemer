@@ -58,7 +58,7 @@ namespace SIM { namespace Coin3D { namespace Quarter {
 class EventFilter;
 const char DEFAULT_NAVIGATIONFILE []  = "coin:///scxml/navigation/examiner.xml";
 
-class QUARTER_DLL_API QuarterWidget : public QT_GL_WIDGET {
+class TA_API QuarterWidget : public QT_GL_WIDGET {
   typedef QT_GL_WIDGET inherited;
   Q_OBJECT
 
