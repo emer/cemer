@@ -845,6 +845,8 @@ public:
   const taList_impl*    children_() const
   { return const_cast<const taList_impl*>(const_cast<taBase*>(this)->children_());}
   // #IGNORE mostly for testing if has children
+  virtual bool          HasTreeVisibleMembers() const;
+  // #IGNORE does this object have taBase members (lists, groups typically) that are visible in the tree view?
   virtual taBase*       SetOwner(taBase*)       { return(NULL); } // #IGNORE
   virtual taBase*       GetOwner() const        { return(NULL); } // #CAT_ObjectMgmt
   taBase*               GetOwnerOfType(TypeDef* td) const

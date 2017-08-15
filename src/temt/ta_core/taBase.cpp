@@ -491,6 +491,15 @@ void taBase::MakeNameUnique() {
   // nop for base -- only defined for taNBase
 }
 
+bool taBase::HasTreeVisibleMembers() const {
+  TypeDef* td = GetTypeDef();
+  for(int i=0; i<td->members.size; i++) {
+    MemberDef* md = td->members.FastEl(i);
+    if(!md->IsTreeHidden()) return true;
+  }
+  return false;
+}
+
 taBase* taBase::GetOwner(TypeDef* td) const {
   taBase* own = GetOwner();
   if(own == NULL)
