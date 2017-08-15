@@ -492,6 +492,7 @@ void taBase::MakeNameUnique() {
 }
 
 bool taBase::HasTreeVisibleMembers() const {
+  if(children_() != NULL) return true;
   TypeDef* td = GetTypeDef();
   for(int i=0; i<td->members.size; i++) {
     MemberDef* md = td->members.FastEl(i);
