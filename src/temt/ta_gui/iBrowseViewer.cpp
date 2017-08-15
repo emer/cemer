@@ -55,6 +55,11 @@ void iBrowseViewer::Init() {
 
   lvwTreeSearch = new iTreeSearch(lvwDataTree, this);
   lvwDataTree->tree_searcher = lvwTreeSearch;
+  lvwDataTree->setEditTriggers(QAbstractItemView::DoubleClicked |
+                         QAbstractItemView::SelectedClicked |
+                         QAbstractItemView::EditKeyPressed |
+                         QAbstractItemView::AnyKeyPressed
+                         );
   lay->addWidget(lvwTreeSearch);
 
   lvwDataTree->installEventFilter(mainWindowViewer()->widget()); // translate keys..

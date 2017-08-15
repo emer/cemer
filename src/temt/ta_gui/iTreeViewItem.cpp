@@ -26,6 +26,8 @@
 #include <taMisc>
 #include <taiMisc>
 
+taTypeDef_Of(Program);
+taTypeDef_Of(Network);
 
 
 class DataNodeDeleter: public QObject { // enables nodes to be put on deferredDelete list
@@ -381,8 +383,17 @@ iTreeView* iTreeViewItem::treeView() const {
 }
 
 bool iTreeViewItem::CanExpand() {
-  if (link()->taData()->children_() != NULL) {
-    return true;
+  taBase* ta_base = link()->taData();
+  if (ta_base) {
+    if (ta_base->children_() != NULL) {
+      return true;
+    }
+    if (ta_base->InheritsFromName("Program")
+        || ta_base->InheritsFromName("Network")
+        || ta_base->InheritsFromName("taProject")
+        || ta_base->InheritsFromName("taDataView")) {
+      return true;
+    }
   }
   return false;
 }

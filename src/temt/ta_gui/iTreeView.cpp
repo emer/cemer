@@ -440,6 +440,13 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
   
   // figure out default if not otherwise saved
   if(tab && tab->HasOption("NO_EXPAND_ALL")) return;
+  
+  // TODO (replace above) - we always want to expand if user double clicks the actual item but this
+  // causes the 1 level expand in all cases - need another test
+//  if(tab && tab->HasOption("NO_EXPAND_ALL")) {
+//    max_levels = 1;
+//    expand = true;
+//  }
   if(item->md() && item->md()->HasOption("NO_EXPAND_ALL")) return;
   if(tab->GetOwner() == NULL) return;
   
