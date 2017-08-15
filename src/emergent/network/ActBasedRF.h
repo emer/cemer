@@ -38,7 +38,7 @@ public:
     NORM_TRG_UNIT,		// normalize across each target unit separately: each row of the rf_data table has a max value of 1
     NORM_TRG_LAYER,		// normalize across entire target layer of units: entire rf_data table has a max value of 1
     NORM_RF_LAY,		// normalize across each receptive field layer (i.e., all the layers in the network) separately: each column of the rf_data table has a max value of 1
-    NORM_TRG_UNIT_RF_LAY,	// normalize across each target unit for each receptive field layer: each cell of the rf_data table has a max value of 1
+    NORM_TRG_UNIT_RF_LAY,	// normalize across each target unit for each receptive field layer: each cell of the rf_data table has a max value of 1 -- best for visualization and the default option
   };
 
   DataTableRef	rf_data;
@@ -51,8 +51,10 @@ public:
   // the network to operate on -- all layers (except lesioned or iconified) are computed, with each layer getting a column of the data table
   LayerRef	trg_layer;
   // #PROJ_SCOPE the target layer to compute receptive fields for: each unit in the layer gets a row of the data table, and the columns in that row show the activation based receptive field for that unit for all the other layers in the network
+  String        exclude_lays;
+  // colon-separated list of layer names to exclude from computing act-based rf on -- can save file space etc to exclude large and uniformative layers here
   NormMode	norm_mode;
-  // how to normalize the resulting values
+  // #DEF_NORM_TRG_UNIT_RF_LAY how to normalize the resulting values -- for visualization purposes the default NORM_TRG_UNIT_RF_LAY is best -- others may be more suitable for other visualization purposes
   String        var;
   // what variable to record (act) by default
   float		threshold;

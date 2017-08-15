@@ -246,6 +246,14 @@ public:
   virtual void          SaveDataLog(const String& fname="", bool append=false,
                                     bool dmem_proc_0 = true);
   // #CAT_File #EXT_dat,tsv,csv,txt,log #FILE_DIALOG_SAVE incrementally save each new row of data that is written to the datatable (at WriteClose()) to given file.  writes the header first if not appending to existing file.  if running under demem, dmem_proc_0 determines if only the first processor writes to the log file, or if all processors write
+  virtual void          SaveDataLogNameFmProject
+    (const String& ext, const String& tag = "", const String& subdir = "",
+     bool dmem_proc_0 = true, bool append=false);
+  // #CAT_File incrementally save each new row of data that is written to the datatable (at WriteClose()) to given file.  writes the header first if not appending to existing file.  if running under demem, dmem_proc_0 determines if only the first processor writes to the log file, or if all processors write (if all processors write, then filename contains proc no).  Gets the file name by calling GetFileNameFmProject with ext extension, special tag name for this run / job, and any subdirectory to append
+  virtual void          SaveDataNameFmProject
+    (const String& ext, const String& tag = "", const String& subdir = "",
+     bool dmem_proc_0 = true);
+  // #CAT_File save current data in table to a file using standard Emergent formatting options -- gets the file name by calling GetFileNameFmProject with ext extension, special tag name for this run / job, and any subdirectory to append
   virtual void          CloseDataLog();
   // #CAT_File close the data log file if it was previously open
   virtual bool          WriteDataLogRow();

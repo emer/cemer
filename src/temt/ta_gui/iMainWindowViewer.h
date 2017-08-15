@@ -331,9 +331,7 @@ public:
   ~iMainWindowViewer();
 
 public slots:
-  void slot_AssertBrowserItem(taiSigLink* link) {
-    AssertBrowserItem(link);
-  }
+  virtual void  BrowserHistorySelectItem(taiSigLink* link);
 
   virtual void  BackMenuAboutToShow();
   virtual void  ForwardMenuAboutToShow();

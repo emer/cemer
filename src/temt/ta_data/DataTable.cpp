@@ -2912,6 +2912,23 @@ void DataTable::SaveDataLog(const String& fname, bool append, bool dmem_proc_0) 
   }
 }
 
+void DataTable::SaveDataLogNameFmProject
+(const String& ext, const String& tag, const String& subdir,
+ bool dmem_proc_0, bool append) {
+  String fnm = GetFileNameFmProject(ext, tag, subdir, !dmem_proc_0);
+  SaveDataLog(fnm, append, dmem_proc_0);
+}
+
+void DataTable::SaveDataNameFmProject
+(const String& ext, const String& tag, const String& subdir,
+ bool dmem_proc_0) {
+#ifdef DMEM_COMPILE
+  if((taMisc::dmem_proc > 0) && dmem_proc_0) return; // don't open!
+#endif
+  String fnm = GetFileNameFmProject(ext, tag, subdir, !dmem_proc_0);
+  SaveData_Gui(fnm);
+}
+
 void DataTable::CloseDataLog() {
   if(!log_file) return;
   log_file->Close();

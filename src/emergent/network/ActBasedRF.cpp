@@ -47,12 +47,15 @@ String ActBasedRF::GetDisplayName() const {
 }
 
 void ActBasedRF::ConfigDataTable(DataTable* dt, Network* net) {
+  String_Array excl;
+  excl.Split(exclude_lays, ":");
   dt->StructUpdate(true);
   dt->Reset();                  // nuke cols -- ensure matching
   int rows = trg_layer->units.leaves;
   int idx;
   FOREACH_ELEM_IN_GROUP(Layer, lay, net->layers) {
-    if(lay->lesioned()) continue;
+    if(lay->lesioned() || lay->Iconified()) continue; // iconified also excludes!
+    if(excl.FindEl(lay->name) >= 0) continue; // exclude
     DataCol* da;
     if(lay->unit_groups)
       da = dt->FindMakeColName(lay->name, idx, VT_FLOAT, 4, lay->un_geom.x,
@@ -101,10 +104,13 @@ void ActBasedRF::InitAll(DataTable* dt, Network* net, Layer* tlay) {
 
 bool ActBasedRF::IncrementSums() {
   if(!network || !rf_data || !trg_layer || !var_md) return false;
+  String_Array excl;
+  excl.Split(exclude_lays, ":");
 
   int idx;
   FOREACH_ELEM_IN_GROUP(Layer, lay, network->layers) {
     if(lay->lesioned() || lay->Iconified()) continue;
+    if(excl.FindEl(lay->name) >= 0) continue; // exclude
     DataCol* sum_da = NULL;
     if(lay->unit_groups) {
       sum_da = sum_data.FindMakeColName(lay->name, idx, VT_FLOAT, 4, lay->un_geom.x,
@@ -251,9 +257,12 @@ bool ActBasedRF::CopyRFtoNetWtPrjn(int trg_unit_no) {
   if(TestError(trg_unit_no >= rf_data->rows, "CopyRFtoNetWtPrjn", "trg_unit_no is greater than number of target units"))
     return false;
 
+  String_Array excl;
+  excl.Split(exclude_lays, ":");
   int idx;
   FOREACH_ELEM_IN_GROUP(Layer, lay, network->layers) {
     if(lay->lesioned() || lay->Iconified()) continue;
+    if(excl.FindEl(lay->name) >= 0) continue; // exclude
     DataCol* rf_da = NULL;
     if(lay->unit_groups) {
       rf_da = rf_data->FindMakeColName(lay->name, idx, VT_FLOAT, 4, lay->un_geom.x,

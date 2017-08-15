@@ -835,7 +835,7 @@ void iMainWindowViewer::Constr_ViewMenu()
   connect(this, SIGNAL(SelectableHostNotifySignal(ISelectableHost*, int)),
       brow_hist, SLOT(SelectableHostNotifying(ISelectableHost*, int)));
   connect(brow_hist, SIGNAL(select_item(taiSigLink*)),
-      this, SLOT(slot_AssertBrowserItem(taiSigLink*)));
+      this, SLOT(BrowserHistorySelectItem(taiSigLink*)));
 
   connect(viewResetViewAction, SIGNAL(Action()), this, SLOT(ViewReset()));
   connect(viewRefreshAction, SIGNAL(Action()), this, SLOT(viewRefresh()));
@@ -3467,6 +3467,23 @@ void iMainWindowViewer::UpdateStateActions() {
   progTraceAction->setEnabled(has_run_prog);
 }
 
+void iMainWindowViewer::BrowserHistorySelectItem(taiSigLink* link) {
+  taBase* tab = link->taData();
+  if(tab) {
+    Program* prg = (Program*)tab->GetOwner(&TA_Program);
+    if(prg) {
+      prg->BrowserSelectMe();
+      taMisc::RunPending();
+      prg->ViewProgEditor();
+      taMisc::RunPending();
+      prg->BrowserSelectMe_ProgItem((taOBase*)tab);
+      return;
+    }
+  }
+  AssertBrowserItem(link);
+}
+
+
 void iMainWindowViewer::BackMenuAboutToShow() {
   ToolBar* tb = viewer()->FindToolBarByType(&TA_ToolBar,"Application");
   iApplicationToolBar* ap_toolbar = (iApplicationToolBar*)tb->widget();
@@ -3498,7 +3515,7 @@ void iMainWindowViewer::ForwardMenuAboutToShow() {
 void iMainWindowViewer::HistoryGoTo(QAction* action) {
   int index = action->data().toInt();
   taiSigLink* link = brow_hist->items.SafeEl(index);
-  AssertBrowserItem(link);
+  BrowserHistorySelectItem(link);
 }
 
 void iMainWindowViewer::UndoMenuAboutToShow() {
