@@ -36,6 +36,7 @@ public:
   bool              edit_start_kill; // kill to end of line at edit start?
   bool              tree_dirty;  // dirty if any item was expanded or collapsed since the project was opened
   iLineEdit*        line_edit; // the current open iLineEdit object
+  bool              in_double_click;  // no editor on doubleclick on expandable items (no children? - okay to edit on double click)
 
   bool              hasHighlightColor(int idx) const;
   void              setHighlightColor(int idx, const QColor& base);
@@ -60,6 +61,8 @@ public:
   // get the next item in the tree after given itm, if avail
   QTreeWidgetItem*  GetParentItem(QTreeWidgetItem* itm) const;
   // get the parent item in the tree for given itm, if avail
+  QTreeWidgetItem*  GetItemFromIndex(const QModelIndex& index) const { return itemFromIndex(index); }
+  // because itemFromIndex is protected and the delegate needs to get the item
   void              SetTreeStateDirty() { tree_dirty = true; }
   void              SetTreeStateClean() { tree_dirty = false; }
   bool              IsTreeDirty() { return tree_dirty; }

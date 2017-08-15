@@ -104,6 +104,7 @@ public:
   
   ParentType            parent_type; // the context for the tree - browse, edit, list*&
   iTreeSearch*          tree_searcher;
+  
   bool                  useEditorCustomExpand() const;
   bool                  useNavigatorCustomExpand() const;
   const KeyString       colKey(int col) const; // the key we set for data lookup
@@ -288,8 +289,8 @@ protected:
   virtual void          Show_impl();
 
 protected slots:
-  void                  this_contextMenuRequested(QTreeWidgetItem* item,
-    const QPoint & pos, int col ); //note: should probably rejig to use a virtual method
+  void                  this_contextMenuRequested(QTreeWidgetItem* item, const QPoint & pos, int col );
+  //note: should probably rejig to use a virtual method
   void                  this_currentItemChanged(QTreeWidgetItem* curr, QTreeWidgetItem* prev);
   void                  this_itemSelectionChanged();
   virtual void          ExpandAllUnderInt(void* item);

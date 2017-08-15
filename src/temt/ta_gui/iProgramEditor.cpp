@@ -170,7 +170,6 @@ void iProgramEditor::Init() {
                          QAbstractItemView::SelectedClicked |
                          QAbstractItemView::EditKeyPressed |
                          QAbstractItemView::AnyKeyPressed
-                         // QAbstractItemView::CurrentChanged
                          );
   // items->setColumnWidth(0, 220);
   // items->setHeaderText(1, "Item Description");

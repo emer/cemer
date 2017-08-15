@@ -1062,6 +1062,8 @@ void iTreeView::mnuReplaceFromHere(iAction* mel) {
 }
 
 void iTreeView::mouseDoubleClickEvent(QMouseEvent* event) {
+  in_double_click = true;
+
   // NOTE: we replace all the default behavior with our custom exp/coll all shtick
   QModelIndex index = indexAt(event->pos());
   if (!index.isValid()) {
@@ -1070,7 +1072,11 @@ void iTreeView::mouseDoubleClickEvent(QMouseEvent* event) {
   }
   QTreeWidgetItem* item_ = itemFromIndex(index);
   iTreeViewItem* item = dynamic_cast<iTreeViewItem*>(item_);
-  if (!item) return;
+  if (!item) {
+    inherited::mouseDoubleClickEvent(event); 
+    return;
+  }
+  
   if (item->isExpanded()) {
     if(QApplication::keyboardModifiers() & Qt::ControlModifier) {  // command key on mac
       ExpandAllUnder(item);
@@ -1087,6 +1093,7 @@ void iTreeView::mouseDoubleClickEvent(QMouseEvent* event) {
       ExpandDefaultUnder(item);
     }
   }
+  inherited::mouseDoubleClickEvent(event);
   emit itemDoubleClicked(item_, index.column()); // still need to emit the signal for other consumers!
   // i.e., the iPanelOfList
 }

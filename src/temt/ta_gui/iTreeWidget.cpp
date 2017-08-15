@@ -79,6 +79,7 @@ void  iTreeWidget::init() {
   // we never use this class for Qt-internal dnd semantics
   tree_dirty = false;
   line_edit = NULL;
+  in_double_click = false;
   
   setAutoScroll(true);
   setDragDropMode(DragDrop);
@@ -669,6 +670,13 @@ inherited(own_tw)
 QWidget* iTreeWidgetDefaultDelegate::createEditor(QWidget *parent,
                                                   const QStyleOptionViewItem &option,
                                                   const QModelIndex &index) const {
+  // if the item is expandable don't open edit on doubleclick - just expand/collapse
+  QTreeWidgetItem* item = own_tree_widg->GetItemFromIndex(index);
+  if (item && item->childCount() > 0 && own_tree_widg->in_double_click) {
+    own_tree_widg->in_double_click = false;
+    return NULL;
+  }
+  
   QWidget* widg = inherited::createEditor(parent, option, index);
   QLineEdit* le = dynamic_cast<QLineEdit*>(widg);
   if(le) {
