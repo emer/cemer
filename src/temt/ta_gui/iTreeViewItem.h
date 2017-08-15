@@ -50,6 +50,7 @@ enum NodeBitmapFlags { // #IGNORE
 };
 
 taTypeDef_Of(iTreeViewItem);
+taTypeDef_Of(taList);
 
 class TA_API iTreeViewItem: public iTreeWidgetItem,
   public virtual ISigLinkClient, public virtual IObjectSelectable {
@@ -89,6 +90,9 @@ public:
   // sets icon and other visual attributes, based on state of node
   virtual bool  ShowNode() const;
   // whether to show the node
+  virtual bool  CanExpand();
+  // does item have potential to have children
+
 
   iTreeViewItem(taiSigLink* link_, MemberDef* md_, iTreeViewItem* parent_,
     iTreeViewItem* after, const String& tree_name, int dn_flags_ = 0);

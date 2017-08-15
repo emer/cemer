@@ -380,4 +380,10 @@ iTreeView* iTreeViewItem::treeView() const {
   return rval;
 }
 
+bool iTreeViewItem::CanExpand() {
+  if (link()->taData()->children_() != NULL) {
+    return true;
+  }
+  return false;
+}
 

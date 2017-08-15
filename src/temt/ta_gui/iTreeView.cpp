@@ -551,7 +551,7 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
     // and expand item's children -- lazy children should be created by now
     for (int i = 0; i < item->childCount(); ++i) {
       iTreeViewItem* child = dynamic_cast<iTreeViewItem*>(item->child(i));
-      if (child && child->given_name != "LeabraStartup") {  // hack - keep LeabraStartup from expanding by default
+      if (child && child->given_name != "LeabraStartup" && child->given_name != "MasterStartup") {  // hack - keep LeabraStartup from expanding by default
         ExpandItem_impl(child, level, max_levels, exp_flags, is_subgroup);
       }
     }
@@ -1077,22 +1077,27 @@ void iTreeView::mouseDoubleClickEvent(QMouseEvent* event) {
     return;
   }
   
-  if (item->isExpanded()) {
-    if(QApplication::keyboardModifiers() & Qt::ControlModifier) {  // command key on mac
-      ExpandAllUnder(item);
+  if (item->CanExpand()) {
+    if (item->isExpanded()) {
+      if(QApplication::keyboardModifiers() & Qt::ControlModifier) {  // command key on mac
+        ExpandAllUnder(item);
+      }
+      else {
+        CollapseAllUnder(item);
+      }
     }
     else {
-      CollapseAllUnder(item);
+      if(QApplication::keyboardModifiers() & Qt::ControlModifier) {  // command key on mac
+        ExpandAllUnder(item);
+      }
+      else {
+        ExpandDefaultUnder(item);
+      }
     }
+    return;
   }
-  else {
-    if(QApplication::keyboardModifiers() & Qt::ControlModifier) {  // command key on mac
-      ExpandAllUnder(item);
-    }
-    else {
-      ExpandDefaultUnder(item);
-    }
-  }
+  
+  // if not and expanding item call inherited so we get double click to open editor
   inherited::mouseDoubleClickEvent(event);
   emit itemDoubleClicked(item_, index.column()); // still need to emit the signal for other consumers!
   // i.e., the iPanelOfList
