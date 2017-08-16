@@ -638,7 +638,6 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
           continue;
         }
       }
-      continue;
     }
     
     if (c =='"') {
@@ -827,9 +826,6 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
         lookup_group_default = true;
       }
     }
-    
-    
-    
     else if(delim_pos.size > 1 && txt[delim_pos[0]] == '"' && txt[delim_pos[1]] == '['
             && (delim_pos[0] == delim_pos[1] + 1)) {
       base_path = txt.at(expr_start_pos, delim_pos[1]-expr_start_pos);
@@ -849,12 +845,8 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
         lookup_group_default = true;
       }
     }
-
-    
-    
     else if(delim_pos.size > 1 && txt[delim_pos[0]] == ':' && txt[delim_pos[1]] == ':'
             && (delim_pos[0] == delim_pos[1] + 1)) { // path sep = ::
-      
       int base_path_start = 0;
       for (int j = delim_pos[1] - 1; j >= 0; j--) {
         c = txt[j];
@@ -873,6 +865,17 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
       lookup_seed = txt.after(delim_pos[0]);
       lookup_type = ProgExprBase::SCOPED;
       delims_used = 2;
+    }
+    else if(delim_pos.size == 1 && txt[delim_pos[0]] == ':') { // case stmt OR is it ternary!! TODO
+      base_path = txt.at(expr_start_pos, delim_pos[0]-expr_start_pos);
+      int length = base_path.length();
+      base_path = triml(base_path);
+      int shift = length - base_path.length(); // shift to compensate for trim
+      expr_start_pos += shift;
+      prepend_txt = txt.through(expr_start_pos);
+      lookup_seed = txt.after(delim_pos[0]);
+      lookup_type = ProgExprBase::ENUM;
+      delims_used = 1;
     }
     else if(delim_pos.size > 1 && txt[delim_pos[0]] == ')' && txt[delim_pos[1]] == '(') { // program () which can be followed by a function in that program
       base_path = txt.at(expr_start_pos, delim_pos[1]-expr_start_pos);
@@ -1054,6 +1057,12 @@ Completions* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_po
         GetTokensOfType(&TA_Function, &completion_function_list, own_prg, &TA_Program);
         include_statics = true;
       }
+      expr_lookup_cur_base = NULL;
+      break;
+    }
+      
+    case ProgExprBase::ENUM: {  // only dynamic enums
+      GetTokensOfType(&TA_DynEnumItem, &completion_dynenum_list, own_prg, &TA_Program);
       expr_lookup_cur_base = NULL;
       break;
     }

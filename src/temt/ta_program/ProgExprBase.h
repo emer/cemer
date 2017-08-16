@@ -60,6 +60,7 @@ public:
   
   enum LookUpType {
     NOT_SET,
+    ENUM,           // just enums - basically all you can have for case:
     VARIOUS,        // could be one of several types - e.g. at start of line - could be a data type, program variable, program element, etc.
     OBJ_MEMB_METH,  // object. or object-> list will be members and methods
     SCOPED,         // class::

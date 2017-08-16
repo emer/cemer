@@ -385,13 +385,7 @@ iTreeView* iTreeViewItem::treeView() const {
 bool iTreeViewItem::CanExpand() {
   taBase* ta_base = link()->taData();
   if (ta_base) {
-    if (ta_base->children_() != NULL) {
-      return true;
-    }
-    if (ta_base->InheritsFromName("Program")
-        || ta_base->InheritsFromName("Network")
-        || ta_base->InheritsFromName("taProject")
-        || ta_base->InheritsFromName("taDataView")) {
+    if (ta_base->HasTreeVisibleMembers()) {
       return true;
     }
   }
