@@ -1473,6 +1473,7 @@ void GraphTableView::RenderLegend_Ln(GraphPlotView& plv, T3GraphLine* t3gl,
   t3gl->finishBatch();
   
   if(render_svg) {
+    label.xml_esc();            // svg is xml..
     svg_str << taSvg::GroupTranslate(cur_tr.x, -cur_tr.y)
     << taSvg::Path(plv.color.color(), line_width)
     << "M " << taSvg::Coords(st)

@@ -2912,14 +2912,15 @@ void DataTable::SaveDataLog(const String& fname, bool append, bool dmem_proc_0) 
   }
 }
 
-void DataTable::SaveDataLogNameFmProject
+String DataTable::SaveDataLogNameFmProject
 (const String& ext, const String& tag, const String& subdir,
  bool dmem_proc_0, bool append) {
   String fnm = GetFileNameFmProject(ext, tag, subdir, !dmem_proc_0);
   SaveDataLog(fnm, append, dmem_proc_0);
+  return fnm;
 }
 
-void DataTable::SaveDataNameFmProject
+String DataTable::SaveDataNameFmProject
 (const String& ext, const String& tag, const String& subdir,
  bool dmem_proc_0) {
 #ifdef DMEM_COMPILE
@@ -2927,6 +2928,7 @@ void DataTable::SaveDataNameFmProject
 #endif
   String fnm = GetFileNameFmProject(ext, tag, subdir, !dmem_proc_0);
   SaveData_Gui(fnm);
+  return fnm;
 }
 
 void DataTable::CloseDataLog() {
