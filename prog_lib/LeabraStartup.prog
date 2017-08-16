@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.0.10.0 rev10813
+// ta_Dump File v3.0 -- code v8.1.1.0 rev11045
 Program .projects[0].programs[0] { 
  UserDataItem_List @*(.user_data_) {
   UserData_DocLink @[0] { };
@@ -39,7 +39,7 @@ Program .projects[0].programs[0] {
  ProgEl_List @.init_code = [0] {
  };
 
- ProgEl_List @.prog_code = [30] {
+ ProgEl_List @.prog_code = [28] {
   RegisterArgs @[0] { };
   PrintExpr @[1] { };
   Comment @[2] { };
@@ -118,41 +118,29 @@ Program .projects[0].programs[0] {
   };
   Comment @[19] { };
   MethodCall @[20] { 
-   ProgArg_List @.meth_args = [4] {
+   ProgArg_List @.meth_args = [5] {
     ProgArg @[0] { };
     ProgArg @[1] { };
     ProgArg @[2] { };
     ProgArg @[3] { };
+    ProgArg @[4] { };
    };
   };
-  MethodCall @[21] { 
-   ProgArg_List @.meth_args = [3] {
-    ProgArg @[0] { };
-    ProgArg @[1] { };
-    ProgArg @[2] { };
-   };
-  };
-  PrintVar @[22] { };
-  Comment @[23] { };
-  MethodCall @[24] { 
-   ProgArg_List @.meth_args = [4] {
+  PrintVar @[21] { };
+  Comment @[22] { };
+  MethodCall @[23] { 
+   ProgArg_List @.meth_args = [5] {
     ProgArg @[0] { };
     ProgArg @[1] { };
     ProgArg @[2] { };
     ProgArg @[3] { };
+    ProgArg @[4] { };
    };
   };
-  MethodCall @[25] { 
-   ProgArg_List @.meth_args = [3] {
-    ProgArg @[0] { };
-    ProgArg @[1] { };
-    ProgArg @[2] { };
-   };
-  };
-  PrintVar @[26] { };
-  OtherProgramVar @[27] { };
-  PrintExpr @[28] { };
-  ProgramCall @[29] { 
+  PrintVar @[24] { };
+  OtherProgramVar @[25] { };
+  PrintExpr @[26] { };
+  ProgramCall @[27] { 
    ProgArg_List @.prog_args = [2] {
     ProgArg @[0] { };
     ProgArg @[1] { };
@@ -850,13 +838,13 @@ Program .projects[0].programs[0] {
    code_string="// == Save epoch log -- on by default ==";
   };
   MethodCall @[20] {
-   name="MethodCall_logfilenmEpochOu_ttaglogdirfalse";
-   desc="last arg is to include dmem proc number";
+   name="MethodCall_logfilenmEpochOu_logdirtruefalse";
+   desc="only on dmem_proc 0";
    flags=CAN_REVERT_TO_CODE;
    code_string="log_file_nm = EpochOutputData->GetFileNameFmProject(\".epc.dat\", tag, log_dir, false)";
    result_var=$.vars[6]$;
    obj=$.vars[8]$;
-   method=taBase::GetFileNameFmProject;
+   method=DataTable::SaveDataLogNameFmProject;
    meth_args {
     name="meth_args";
     el_typ=ProgArg;
@@ -867,7 +855,7 @@ Program .projects[0].programs[0] {
      name="ext";
      required=1;
      def_val=;
-     prev_expr=;
+     prev_expr="\".epc.dat\"";
      expr {
       expr="\".epc.dat\"";
      };
@@ -878,7 +866,7 @@ Program .projects[0].programs[0] {
      name="tag";
      required=0;
      def_val="\"\"";
-     prev_expr=;
+     prev_expr="tag";
      expr {
       expr="tag";
      };
@@ -889,7 +877,7 @@ Program .projects[0].programs[0] {
      name="subdir";
      required=0;
      def_val="\"\"";
-     prev_expr=;
+     prev_expr="log_dir";
      expr {
       expr="log_dir";
      };
@@ -897,42 +885,15 @@ Program .projects[0].programs[0] {
     ProgArg @[3] {
      arg_type=bool;
      type="bool";
-     name="dmem_proc_no";
+     name="dmem_proc_0";
      required=0;
-     def_val="false";
-     prev_expr=;
+     def_val="true";
+     prev_expr="false";
      expr {
-      expr="false";
+      expr="true";
      };
     };
-   };
-   meth_sig="taString GetFileNameFmProject(taString& ext, taString& tag, taString& subdir, bool dmem_proc_no = false)";
-   meth_desc=" get file name from project file name -- useful for saving files associated with the project; ext = extension; tag = additional tag; subdir = additional directory after any existing in project name; fname = proj->base_name (subdir) + tag + ext; if dmem_proc_no, add dmem proc no to file name. empty if project not found";
-  };
-  MethodCall @[21] {
-   name="MethodCall_EpochOutputDataS_filenmfalsetrue";
-   desc="last arg is to restrict log to dmem_proc = 0";
-   flags=CAN_REVERT_TO_CODE;
-   code_string="EpochOutputData->SaveDataLog(log_file_nm, false, true)";
-   result_var=NULL;
-   obj=$.vars[8]$;
-   method=DataTable::SaveDataLog;
-   meth_args {
-    name="meth_args";
-    el_typ=ProgArg;
-    el_def=0;
-    ProgArg @[0] {
-     arg_type=const_taString_ref;
-     type="taString&";
-     name="fname";
-     required=0;
-     def_val="\"\"";
-     prev_expr=;
-     expr {
-      expr="log_file_nm";
-     };
-    };
-    ProgArg @[1] {
+    ProgArg @[4] {
      arg_type=bool;
      type="bool";
      name="append";
@@ -943,22 +904,11 @@ Program .projects[0].programs[0] {
       expr="false";
      };
     };
-    ProgArg @[2] {
-     arg_type=bool;
-     type="bool";
-     name="dmem_proc_0";
-     required=0;
-     def_val="true";
-     prev_expr=;
-     expr {
-      expr="true";
-     };
-    };
    };
-   meth_sig="void SaveDataLog(taString& fname, bool append = false, bool dmem_proc_0 = true)";
-   meth_desc=" incrementally save each new row of data that is written to the datatable (at WriteClose()) to given file. writes the header first if not appending to existing file. if running under demem, dmem_proc_0 determines if only the first processor writes to the log file, or if all processors write";
+   meth_sig="taString SaveDataLogNameFmProject(taString& ext, taString& tag, taString& subdir, bool dmem_proc_0 = true, bool append = false)";
+   meth_desc=" incrementally save each new row of data that is written to the datatable (at WriteClose()) to given file. writes the header first if not appending to existing file. if running under demem, dmem_proc_0 determines if only the first processor writes to the log file, or if all processors write (if all processors write, then filename contains proc no). Gets the file name by calling GetFileNameFmProject with ext extension, special tag name for this run / job, and any subdirectory to append -- returns the file name";
   };
-  PrintVar @[22] {
+  PrintVar @[21] {
    name="PrintVar_PrintSavingepoch_datatologfilenm";
    desc=;
    flags=CAN_REVERT_TO_CODE;
@@ -972,20 +922,20 @@ Program .projects[0].programs[0] {
    print_var6=NULL;
    debug=0;
   };
-  Comment @[23] {
+  Comment @[22] {
    name="Comment_SavetriallogOFFbydefault";
    desc="== Save trial log -- OFF by default ==";
    flags=CAN_REVERT_TO_CODE;
    code_string="// == Save trial log -- OFF by default ==";
   };
-  MethodCall @[24] {
-   name="MethodCall_logfilenmTrialOu_attaglogdirtrue";
-   desc="last arg is to include dmem proc number";
+  MethodCall @[23] {
+   name="MethodCall_logfilenmTrialOu_ogdirfalsefalse";
+   desc="on all dmem procs";
    flags=OFF|CAN_REVERT_TO_CODE;
    code_string="log_file_nm = TrialOutputData->GetFileNameFmProject(\".trl.dat\", tag, log_dir, true)";
    result_var=$.vars[6]$;
    obj=.vars[9]$$;
-   method=taBase::GetFileNameFmProject;
+   method=DataTable::SaveDataLogNameFmProject;
    meth_args {
     name="meth_args";
     el_typ=ProgArg;
@@ -996,7 +946,7 @@ Program .projects[0].programs[0] {
      name="ext";
      required=1;
      def_val=;
-     prev_expr=;
+     prev_expr="\".trl.dat\"";
      expr {
       expr="\".trl.dat\"";
      };
@@ -1007,7 +957,7 @@ Program .projects[0].programs[0] {
      name="tag";
      required=0;
      def_val="\"\"";
-     prev_expr=;
+     prev_expr="tag";
      expr {
       expr="tag";
      };
@@ -1018,7 +968,7 @@ Program .projects[0].programs[0] {
      name="subdir";
      required=0;
      def_val="\"\"";
-     prev_expr=;
+     prev_expr="log_dir";
      expr {
       expr="log_dir";
      };
@@ -1026,42 +976,15 @@ Program .projects[0].programs[0] {
     ProgArg @[3] {
      arg_type=bool;
      type="bool";
-     name="dmem_proc_no";
+     name="dmem_proc_0";
      required=0;
-     def_val="false";
-     prev_expr=;
+     def_val="true";
+     prev_expr="true";
      expr {
-      expr="true";
+      expr="false";
      };
     };
-   };
-   meth_sig="taString GetFileNameFmProject(taString& ext, taString& tag, taString& subdir, bool dmem_proc_no = false)";
-   meth_desc=" get file name from project file name -- useful for saving files associated with the project; ext = extension; tag = additional tag; subdir = additional directory after any existing in project name; fname = proj->base_name (subdir) + tag + ext; if dmem_proc_no, add dmem proc no to file name. empty if project not found";
-  };
-  MethodCall @[25] {
-   name="MethodCall_TrialOutputDataS_ilenmfalsefalse";
-   desc="last arg is to restrict log to dmem_proc = 0";
-   flags=OFF|CAN_REVERT_TO_CODE;
-   code_string="TrialOutputData->SaveDataLog(log_file_nm, false, false)";
-   result_var=NULL;
-   obj=$.vars[9]$;
-   method=DataTable::SaveDataLog;
-   meth_args {
-    name="meth_args";
-    el_typ=ProgArg;
-    el_def=0;
-    ProgArg @[0] {
-     arg_type=const_taString_ref;
-     type="taString&";
-     name="fname";
-     required=0;
-     def_val="\"\"";
-     prev_expr=;
-     expr {
-      expr="log_file_nm";
-     };
-    };
-    ProgArg @[1] {
+    ProgArg @[4] {
      arg_type=bool;
      type="bool";
      name="append";
@@ -1072,22 +995,11 @@ Program .projects[0].programs[0] {
       expr="false";
      };
     };
-    ProgArg @[2] {
-     arg_type=bool;
-     type="bool";
-     name="dmem_proc_0";
-     required=0;
-     def_val="true";
-     prev_expr=;
-     expr {
-      expr="false";
-     };
-    };
    };
-   meth_sig="void SaveDataLog(taString& fname, bool append = false, bool dmem_proc_0 = true)";
-   meth_desc=" incrementally save each new row of data that is written to the datatable (at WriteClose()) to given file. writes the header first if not appending to existing file. if running under demem, dmem_proc_0 determines if only the first processor writes to the log file, or if all processors write";
+   meth_sig="taString SaveDataLogNameFmProject(taString& ext, taString& tag, taString& subdir, bool dmem_proc_0 = true, bool append = false)";
+   meth_desc=" incrementally save each new row of data that is written to the datatable (at WriteClose()) to given file. writes the header first if not appending to existing file. if running under demem, dmem_proc_0 determines if only the first processor writes to the log file, or if all processors write (if all processors write, then filename contains proc no). Gets the file name by calling GetFileNameFmProject with ext extension, special tag name for this run / job, and any subdirectory to append -- returns the file name";
   };
-  PrintVar @[26] {
+  PrintVar @[24] {
    name="PrintVar_PrintSavingtrial_datatologfilenm";
    desc=;
    flags=OFF|CAN_REVERT_TO_CODE;
@@ -1101,7 +1013,7 @@ Program .projects[0].programs[0] {
    print_var6=NULL;
    debug=0;
   };
-  OtherProgramVar @[27] {
+  OtherProgramVar @[25] {
    name="OtherProgramVar_VarsToprogramSav_tagvar2var3var4";
    desc="propagate the tag";
    flags=CAN_REVERT_TO_CODE;
@@ -1113,7 +1025,7 @@ Program .projects[0].programs[0] {
    var_3=NULL;
    var_4=NULL;
   };
-  PrintExpr @[28] {
+  PrintExpr @[26] {
    name="PrintExpr_PrintRunningbatchprogname";
    desc=;
    flags=CAN_REVERT_TO_CODE;
@@ -1123,7 +1035,7 @@ Program .projects[0].programs[0] {
    };
    debug=0;
   };
-  ProgramCall @[29] {
+  ProgramCall @[27] {
    name="ProgramCall_LeabraBatchnetworkinputdata";
    desc=;
    flags=CAN_REVERT_TO_CODE;

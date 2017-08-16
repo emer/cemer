@@ -1,5 +1,5 @@
-// ta_Dump File v3.0 -- code v8.1.0.0 rev10831
-LeabraProject .projects[1] { 
+// ta_Dump File v3.0 -- code v8.1.1.0 rev11045
+LeabraProject .projects[0] { 
  Doc_Group @.docs = [2] {
   taDoc @[0] { 
    UserDataItem_List @*(.user_data_) {
@@ -2700,7 +2700,7 @@ LeabraProject .projects[1] {
       };
      };
 
-     ProgEl_List @.prog_code = [6] {
+     ProgEl_List @.prog_code = [5] {
       LocalVars @[0] { 
        ProgVar_List @.local_vars = [0] {
        };
@@ -2711,39 +2711,27 @@ LeabraProject .projects[1] {
        };
       };
       MethodCall @[2] { 
-       ProgArg_List @.meth_args = [4] {
+       ProgArg_List @.meth_args = [5] {
 	ProgArg @[0] { };
 	ProgArg @[1] { };
 	ProgArg @[2] { };
 	ProgArg @[3] { };
+	ProgArg @[4] { };
        };
       };
-      MethodCall @[3] { 
-       ProgArg_List @.meth_args = [3] {
-	ProgArg @[0] { };
-	ProgArg @[1] { };
-	ProgArg @[2] { };
-       };
-      };
-      PrintVar @[4] { };
-      If @[5] { 
-       ProgEl_List @.true_code = [3] {
+      PrintVar @[3] { };
+      If @[4] { 
+       ProgEl_List @.true_code = [2] {
 	MethodCall @[0] { 
-	 ProgArg_List @.meth_args = [4] {
+	 ProgArg_List @.meth_args = [5] {
 	  ProgArg @[0] { };
 	  ProgArg @[1] { };
 	  ProgArg @[2] { };
 	  ProgArg @[3] { };
+	  ProgArg @[4] { };
 	 };
 	};
-	MethodCall @[1] { 
-	 ProgArg_List @.meth_args = [3] {
-	  ProgArg @[0] { };
-	  ProgArg @[1] { };
-	  ProgArg @[2] { };
-	 };
-	};
-	PrintVar @[2] { };
+	PrintVar @[1] { };
        };
       };
      };
@@ -3532,7 +3520,7 @@ LeabraProject .projects[1] {
   };
  };
 };
-LeabraProject .projects[1] {
+LeabraProject .projects[0] {
  name="LeabraFlex";
  desc="flexible modular framework for Leabra Programs";
  tags="Leabra, flex";
@@ -4095,6 +4083,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
    exe_cmd="emergent";
    ram_gb=0;
    n_threads=2;
+   use_cuda=0;
    use_mpi=0;
    mpi_nodes=10;
    mpi_per_node=1;
@@ -17388,8 +17377,8 @@ also save specs.";
       minor=0;
       step=0;
      };
-     author=;
-     email=;
+     author="Randall C. O'Reilly";
+     email="emergent-users@grey.colorado.edu";
      flags=NO_STOP_STEP|OBJS_UPDT_GUI;
      stop_step_cond {
       expr=;
@@ -17574,13 +17563,13 @@ also save specs.";
        };
       };
       MethodCall @[2] {
-       name="MethodCall_logfilenmepochou_ttaglogdirfalse";
-       desc="last arg is to include dmem proc number";
+       name="MethodCall_logfilenmepochou_attaglogdirtrue";
+       desc="only on dmem_proc 0";
        flags=CAN_REVERT_TO_CODE;
        code_string="log_file_nm = epoch_output_data->GetFileNameFmProject(\".trn_epc.dat\", tag, log_dir, false)";
        result_var=.programs.gp[4].gp[0][0].vars[3]$$;
        obj=$.programs.gp[4].gp[0][0].vars[4]$;
-       method=taBase::GetFileNameFmProject;
+       method=DataTable::SaveDataLogNameFmProject;
        meth_args {
 	name="meth_args";
 	el_typ=ProgArg;
@@ -17591,7 +17580,7 @@ also save specs.";
 	 name="ext";
 	 required=1;
 	 def_val=;
-	 prev_expr=;
+	 prev_expr="\".trn_epc.dat\"";
 	 expr {
 	  expr="\".trn_epc.dat\"";
 	 };
@@ -17602,7 +17591,7 @@ also save specs.";
 	 name="tag";
 	 required=0;
 	 def_val="\"\"";
-	 prev_expr=;
+	 prev_expr="tag";
 	 expr {
 	  expr="tag";
 	 };
@@ -17613,7 +17602,7 @@ also save specs.";
 	 name="subdir";
 	 required=0;
 	 def_val="\"\"";
-	 prev_expr=;
+	 prev_expr="log_dir";
 	 expr {
 	  expr="log_dir";
 	 };
@@ -17621,42 +17610,15 @@ also save specs.";
 	ProgArg @[3] {
 	 arg_type=bool;
 	 type="bool";
-	 name="dmem_proc_no";
+	 name="dmem_proc_0";
 	 required=0;
-	 def_val="false";
-	 prev_expr=;
+	 def_val="true";
+	 prev_expr="false";
 	 expr {
-	  expr="false";
+	  expr="true";
 	 };
 	};
-       };
-       meth_sig="taString GetFileNameFmProject(taString& ext, taString& tag, taString& subdir, bool dmem_proc_no = false)";
-       meth_desc=" get file name from project file name -- useful for saving files associated with the project; ext = extension; tag = additional tag; subdir = additional directory after any existing in project name; fname = proj->base_name (subdir) + tag + ext; if dmem_proc_no, add dmem proc no to file name. empty if project not found";
-      };
-      MethodCall @[3] {
-       name="MethodCall_epochoutputdataS_filenmfalsetrue";
-       desc="last arg is to restrict log to dmem_proc = 0";
-       flags=CAN_REVERT_TO_CODE;
-       code_string="epoch_output_data->SaveDataLog(log_file_nm, false, true)";
-       result_var=NULL;
-       obj=$.programs.gp[4].gp[0][0].vars[4]$;
-       method=DataTable::SaveDataLog;
-       meth_args {
-	name="meth_args";
-	el_typ=ProgArg;
-	el_def=0;
-	ProgArg @[0] {
-	 arg_type=const_taString_ref;
-	 type="taString&";
-	 name="fname";
-	 required=0;
-	 def_val="\"\"";
-	 prev_expr=;
-	 expr {
-	  expr="log_file_nm";
-	 };
-	};
-	ProgArg @[1] {
+	ProgArg @[4] {
 	 arg_type=bool;
 	 type="bool";
 	 name="append";
@@ -17667,22 +17629,11 @@ also save specs.";
 	  expr="false";
 	 };
 	};
-	ProgArg @[2] {
-	 arg_type=bool;
-	 type="bool";
-	 name="dmem_proc_0";
-	 required=0;
-	 def_val="true";
-	 prev_expr=;
-	 expr {
-	  expr="true";
-	 };
-	};
        };
-       meth_sig="void SaveDataLog(taString& fname, bool append = false, bool dmem_proc_0 = true)";
-       meth_desc=" incrementally save each new row of data that is written to the datatable (at WriteClose()) to given file. writes the header first if not appending to existing file. if running under demem, dmem_proc_0 determines if only the first processor writes to the log file, or if all processors write";
+       meth_sig="taString SaveDataLogNameFmProject(taString& ext, taString& tag, taString& subdir, bool dmem_proc_0 = true, bool append = false)";
+       meth_desc=" incrementally save each new row of data that is written to the datatable (at WriteClose()) to given file. writes the header first if not appending to existing file. if running under demem, dmem_proc_0 determines if only the first processor writes to the log file, or if all processors write (if all processors write, then filename contains proc no). Gets the file name by calling GetFileNameFmProject with ext extension, special tag name for this run / job, and any subdirectory to append -- returns the file name";
       };
-      PrintVar @[4] {
+      PrintVar @[3] {
        name="PrintVar_PrintSavingepoch_datatologfilenm";
        desc=;
        flags=CAN_REVERT_TO_CODE;
@@ -17696,7 +17647,7 @@ also save specs.";
        print_var6=NULL;
        debug=0;
       };
-      If @[5] {
+      If @[4] {
        name="If_iflogtrials";
        desc=;
        flags=CAN_REVERT_TO_CODE;
@@ -17709,13 +17660,13 @@ also save specs.";
 	el_typ=ProgCode;
 	el_def=0;
 	MethodCall @[0] {
-	 name="MethodCall_logfilenmtrialou_attaglogdirtrue";
-	 desc="last arg is to include dmem proc number";
+	 name="MethodCall_logfilenmtrialou_ogdirfalsefalse";
+	 desc="all dmem procs";
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="log_file_nm = trial_output_data->GetFileNameFmProject(\".trn_trl.dat\", tag, log_dir, true)";
 	 result_var=$.programs.gp[4].gp[0][0].vars[3]$;
 	 obj=.programs.gp[4].gp[0][0].vars[5]$$;
-	 method=taBase::GetFileNameFmProject;
+	 method=DataTable::SaveDataLogNameFmProject;
 	 meth_args {
 	  name="meth_args";
 	  el_typ=ProgArg;
@@ -17726,7 +17677,7 @@ also save specs.";
 	   name="ext";
 	   required=1;
 	   def_val=;
-	   prev_expr=;
+	   prev_expr="\".trn_trl.dat\"";
 	   expr {
 	    expr="\".trn_trl.dat\"";
 	   };
@@ -17737,7 +17688,7 @@ also save specs.";
 	   name="tag";
 	   required=0;
 	   def_val="\"\"";
-	   prev_expr=;
+	   prev_expr="tag";
 	   expr {
 	    expr="tag";
 	   };
@@ -17748,7 +17699,7 @@ also save specs.";
 	   name="subdir";
 	   required=0;
 	   def_val="\"\"";
-	   prev_expr=;
+	   prev_expr="log_dir";
 	   expr {
 	    expr="log_dir";
 	   };
@@ -17756,42 +17707,15 @@ also save specs.";
 	  ProgArg @[3] {
 	   arg_type=bool;
 	   type="bool";
-	   name="dmem_proc_no";
+	   name="dmem_proc_0";
 	   required=0;
-	   def_val="false";
-	   prev_expr=;
+	   def_val="true";
+	   prev_expr="true";
 	   expr {
-	    expr="true";
+	    expr="false";
 	   };
 	  };
-	 };
-	 meth_sig="taString GetFileNameFmProject(taString& ext, taString& tag, taString& subdir, bool dmem_proc_no = false)";
-	 meth_desc=" get file name from project file name -- useful for saving files associated with the project; ext = extension; tag = additional tag; subdir = additional directory after any existing in project name; fname = proj->base_name (subdir) + tag + ext; if dmem_proc_no, add dmem proc no to file name. empty if project not found";
-	};
-	MethodCall @[1] {
-	 name="MethodCall_trialoutputdataS_ilenmfalsefalse";
-	 desc="last arg is to restrict log to dmem_proc = 0";
-	 flags=CAN_REVERT_TO_CODE;
-	 code_string="trial_output_data->SaveDataLog(log_file_nm, false, false)";
-	 result_var=NULL;
-	 obj=$.programs.gp[4].gp[0][0].vars[5]$;
-	 method=DataTable::SaveDataLog;
-	 meth_args {
-	  name="meth_args";
-	  el_typ=ProgArg;
-	  el_def=0;
-	  ProgArg @[0] {
-	   arg_type=const_taString_ref;
-	   type="taString&";
-	   name="fname";
-	   required=0;
-	   def_val="\"\"";
-	   prev_expr=;
-	   expr {
-	    expr="log_file_nm";
-	   };
-	  };
-	  ProgArg @[1] {
+	  ProgArg @[4] {
 	   arg_type=bool;
 	   type="bool";
 	   name="append";
@@ -17802,22 +17726,11 @@ also save specs.";
 	    expr="false";
 	   };
 	  };
-	  ProgArg @[2] {
-	   arg_type=bool;
-	   type="bool";
-	   name="dmem_proc_0";
-	   required=0;
-	   def_val="true";
-	   prev_expr=;
-	   expr {
-	    expr="false";
-	   };
-	  };
 	 };
-	 meth_sig="void SaveDataLog(taString& fname, bool append = false, bool dmem_proc_0 = true)";
-	 meth_desc=" incrementally save each new row of data that is written to the datatable (at WriteClose()) to given file. writes the header first if not appending to existing file. if running under demem, dmem_proc_0 determines if only the first processor writes to the log file, or if all processors write";
+	 meth_sig="taString SaveDataLogNameFmProject(taString& ext, taString& tag, taString& subdir, bool dmem_proc_0 = true, bool append = false)";
+	 meth_desc=" incrementally save each new row of data that is written to the datatable (at WriteClose()) to given file. writes the header first if not appending to existing file. if running under demem, dmem_proc_0 determines if only the first processor writes to the log file, or if all processors write (if all processors write, then filename contains proc no). Gets the file name by calling GetFileNameFmProject with ext extension, special tag name for this run / job, and any subdirectory to append -- returns the file name";
 	};
-	PrintVar @[2] {
+	PrintVar @[1] {
 	 name="PrintVar_PrintSavingtrial_datatologfilenm";
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
@@ -23270,10 +23183,10 @@ and the testing data is updated.  The first epoch monitor should have all the it
     name="UserDataItem_List_130";
     el_typ=UserDataItem;
     el_def=0;
-    UserDataItem @[0] {name="view_win_lft": value=0.005313496: val_type_fixed=0: };
-    UserDataItem @[1] {name="view_win_top": value=0.03738318: val_type_fixed=0: };
-    UserDataItem @[2] {name="view_win_wd": value=0.9941552: val_type_fixed=0: };
-    UserDataItem @[3] {name="view_win_ht": value=0.7986406: val_type_fixed=0: };
+    UserDataItem @[0] {name="view_win_lft": value=0.005280528: val_type_fixed=0: };
+    UserDataItem @[1] {name="view_win_top": value=0.03686366: val_type_fixed=0: };
+    UserDataItem @[2] {name="view_win_wd": value=0.9940594: val_type_fixed=0: };
+    UserDataItem @[3] {name="view_win_ht": value=0.7981275: val_type_fixed=0: };
     UserDataItem @[4] {name="view_win_iconified": value=0: val_type_fixed=0: };
     UserDataItem @[5] {name="view_splitter_state": value=AAAA/wAAAAEAAAADAAABWAAAAnYAAAMgAf////8BAAAAAQA=: val_type_fixed=0: };
    };
@@ -23932,6 +23845,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  bar_space=0.2;
 	  bar_depth=0.01;
 	  label_spacing=-1;
+	  string_spacing=1;
 	  width=1;
 	  depth=1;
 	  axis_font_size=0.05;
@@ -24767,6 +24681,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  err_spacing=1;
 	  err_bar_width=0.02;
 	  color_mode=FIXED;
+	  color_gp_use_y=0;
 	  color_axis {
 	   name="color_axis";
 	   m_data=NULL;
@@ -24933,9 +24848,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       el_typ=UserDataItem;
       el_def=0;
       UserDataItem @[0] {name="view_win_lft": value=0: val_type_fixed=0: };
-      UserDataItem @[1] {name="view_win_top": value=0.008496176: val_type_fixed=0: };
-      UserDataItem @[2] {name="view_win_wd": value=0.04357067: val_type_fixed=0: };
-      UserDataItem @[3] {name="view_win_ht": value=0.7349193: val_type_fixed=0: };
+      UserDataItem @[1] {name="view_win_top": value=0.0093622: val_type_fixed=0: };
+      UserDataItem @[2] {name="view_win_wd": value=0.02706271: val_type_fixed=0: };
+      UserDataItem @[3] {name="view_win_ht": value=0.7495611: val_type_fixed=0: };
       UserDataItem @[4] {name="view_win_iconified": value=0: val_type_fixed=0: };
       UserDataItem @[5] {name="view_visible": value=1: val_type_fixed=0: };
      };
@@ -24954,7 +24869,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
  save_as_only=0;
  auto_name=1;
  last_change_desc="svn rev: 10514 update startup program";
- tree_state{ .;.patches;.docs;.wizards;.ctrl_panels;.active_params;.active_params.gp[0];.active_params.gp[1];.active_params.gp[2];.data;.data.gp[0];.data.gp[1];.data.gp[2];.data.gp[3];.programs;.programs.gp[0];.programs.gp[1];.programs.gp[1].gp[0];.programs.gp[1].gp[1];.programs.gp[2];.programs.gp[3];.programs.gp[4];.programs.gp[4].gp[0];.networks;.networks[0];.networks[0].specs;.networks[0].specs[2];.networks[0].layers; };
+ tree_state{ .;.patches;.docs;.wizards;.ctrl_panels;.active_params;.active_params.gp[0];.active_params.gp[1];.active_params.gp[2];.data;.data.gp[0];.data.gp[1];.data.gp[2];.data.gp[3];.programs;.programs.gp[0];.programs.gp[1];.programs.gp[1].gp[0];.programs.gp[1].gp[1];.programs.gp[2];.programs.gp[3];.programs.gp[4];.programs.gp[4].gp[0];.networks;.networks[0];.networks[0].specs;.networks[0].specs[2];.networks[0].layers;.networks[0].weights; };
  networks {
   name="networks";
   el_typ=LeabraNetwork;
@@ -25088,7 +25003,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      stp {on=0: f_r_ratio=0.02: rec_tau=200: p0=0.2: p0_norm=0.2: kre_tau=100: kre=0.002: fac_tau=4: fac=0.3: rec_dt=0.005: fac_dt=0.25: kre_dt=0.01: oneo_p0_norm=5: };
      syn_delay {on=0: delay=4: };
      deep_raw_qtr=0;
-     deep {on=0: role=SUPER: raw_thr_rel=0.1: raw_thr_abs=0.1: mod_min=0.8: mod_thr=0.1: trc_p_only_m=0: trc_thal_gate=0: trc_avg_clamp=0: trc_deep_gain=0.2: mod_range=0.2: trc_std_gain=0.8: };
+     deep {on=0: role=SUPER: raw_thr_rel=0.1: raw_thr_abs=0.1: mod_min=0.8: mod_thr=0.1: ctxt_prv=0: tick_updt=-1: else_prv=0.9: mod_range=0.2: ctxt_new=1: else_new=0.1: };
+     trc {p_only_m=0: thal_gate=0: avg_clamp=0: deep_gain=0.2: clip=0: clip_max=0.4: std_gain=0.8: };
      da_mod {on=0: minus=0: plus=0.1: };
      noise_type=NO_NOISE;
      noise {name="noise": type=GAUSSIAN: mean=0: var=0.001: par=1: };
@@ -25467,6 +25383,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        name="Fm_Input";
        off=0;
        disp=1;
+       notes=;
        from_type=CUSTOM;
        from=$.networks[0].layers[0]$;
        spec {type=FullPrjnSpec: spec=.networks[0].specs[3]$$: };
@@ -25485,6 +25402,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        name="Fm_Output";
        off=0;
        disp=1;
+       notes=;
        from_type=CUSTOM;
        from=.networks[0].layers[2]$$;
        spec {type=FullPrjnSpec: spec=$.networks[0].specs[3]$: };
@@ -25563,6 +25481,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        name="Fm_Hidden";
        off=0;
        disp=1;
+       notes=;
        from_type=CUSTOM;
        from=$.networks[0].layers[1]$;
        spec {type=FullPrjnSpec: spec=$.networks[0].specs[3]$: };
