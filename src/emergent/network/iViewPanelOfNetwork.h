@@ -125,6 +125,8 @@ public:
   QAction*                 actFwd_All;
   QLabel*                  lblHist;
   QAction*                 actMovie;
+  taiWidgetField*          fldMovieW;
+  taiWidgetField*          fldMovieH;
 
   QTabWidget*           tw;
   QTreeWidget*            lvDisplayValues;

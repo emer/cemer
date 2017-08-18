@@ -363,9 +363,21 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   histTB->addSeparator();
 
   actMovie = histTB->addAction("Movie");
-  actMovie->setToolTip(taiMisc::ToolTipPreProcess("record individual frames of the netview display from current position through to the end of the history buffer, as movie frames -- uses default 640x480 size with images saved as movie_img_xxx.png -- use mjpeg tools http://mjpeg.sourceforge.net/ (pipe png2yuv into mpeg2enc) to compile the individual PNG frames into an MPEG movie, which can then be transcoded (e.g., using VLC) into any number of other formats"));
+  actMovie->setToolTip(taiMisc::ToolTipPreProcess("record individual frames of the netview display from current position through to the end of the history buffer, as movie frames -- use ffmpeg http://ffmpeg.org to compile the individual PNG frames into an mp4 movie -- e.g., ffmpeg -framerate 10 -i movie_img_%05d.png -vcodec libx264 -pix_fmt yuv420p -crf 25 movie.mp4"));
   connect(actMovie, SIGNAL(triggered()), this, SLOT(hist_movie()) );
 
+  QLabel* lblsz = taiM->NewLabel("sz:", histTB, font_spec);
+  lblsz->setToolTip(taiMisc::ToolTipPreProcess("Size of movie frames to save (width x height"));
+  histTB->addWidget(lblsz);
+
+  fldMovieW = dl.Add(new taiWidgetField(&TA_int, this, NULL, widg));
+  fldMovieW->rep()->setCharWidth(4);
+  histTB->addWidget(fldMovieW->GetRep());
+
+  fldMovieH = dl.Add(new taiWidgetField(&TA_int, this, NULL, widg));
+  fldMovieH->rep()->setCharWidth(4);
+  histTB->addWidget(fldMovieH->GetRep());
+  
   layHistory->addStretch(10);
 //   histTB->addStretch();
 
@@ -521,6 +533,9 @@ void iViewPanelOfNetwork::UpdatePanel_impl() {
   lblHist->setText(String(nv->ctr_hist_idx.length) + ", " + String(nv->ctr_hist_idx.length-nv->hist_idx) + "  ");
   fldHistFF->GetImage((String)nv->hist_ff);
 
+  fldMovieW->GetImage((String)nv->movie_size.x);
+  fldMovieH->GetImage((String)nv->movie_size.y);
+  
   // update var selection
   int i = 0;
   QTreeWidgetItemIterator it(lvDisplayValues);
@@ -607,6 +622,8 @@ void iViewPanelOfNetwork::GetValue_impl() {
   nv->hist_save = chkHist->isChecked();
   nv->hist_max = (int)fldHistMax->GetValue();
   nv->hist_ff = (int)fldHistFF->GetValue();
+  nv->movie_size.x = (int)fldMovieW->GetValue();
+  nv->movie_size.y = (int)fldMovieH->GetValue();
 
   nv->SetScaleData(chkAutoScale->isChecked(), cbar->min(), cbar->max(), false);
 }
@@ -691,7 +708,7 @@ void iViewPanelOfNetwork::hist_fwd_all() {
 void iViewPanelOfNetwork::hist_movie() {
   if (updating) return;
   if (NetView *nv = getNetView()) {
-    nv->HistMovie();
+    nv->HistMovie(nv->movie_size.x, nv->movie_size.y);
   }
 }
 

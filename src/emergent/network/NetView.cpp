@@ -404,6 +404,8 @@ void NetView::Initialize() {
   hist_save = true;
   hist_max = 100;
   hist_ff = 5;
+  movie_size.x = 720;
+  movie_size.y = 720;
 
   unit_scrng = NULL;
   unit_md_flags = MD_UNKNOWN;

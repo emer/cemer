@@ -173,6 +173,7 @@ public:
   int                   hist_max;       // #MIN_1 how much history of state information to store -- updated each time UpdateUnitValues is called
   int                   hist_ff;        // #MIN_2 how many steps to take in the fast forward/ fast backward interface
   bool                  hist_reset_req; // #NO_SAVE #NO_COPY #READ_ONLY reset of history index position requested because of data reset in one or more of the unit groups
+  PosVector2i           movie_size;     // size of movie frame to save for Movie button in netview
 
   ScaleRange*           unit_scrng;     // #NO_SAVE #NO_COPY #READ_ONLY scalerange of disp_md
   MDFlags               unit_md_flags;  // #NO_SAVE #READ_ONLY type to display in units
@@ -283,9 +284,9 @@ public:
   virtual bool          HistFwdAll();
   // move through history of saved values -- forward all the way
 
-  virtual void          HistMovie(int x_size=640, int y_size=480,
+  virtual void          HistMovie(int x_size=720, int y_size=720,
                                   const String& fname_stub = "movie_img_");
-  // #BUTTON record individual frames of the netview display from current position through to the end of the history buffer, as movie frames -- use mjpeg tools http://mjpeg.sourceforge.net/ (pipe png2yuv into mpeg2enc) to compile the individual PNG frames into an MPEG movie, which can then be transcoded (e.g., using VLC) into any number of other formats
+  // #BUTTON record individual frames of the netview display from current position through to the end of the history buffer, as movie frames -- use ffmpeg http://ffmpeg.org to compile the individual PNG frames into an mp4 movie -- e.g., ffmpeg -framerate 10 -i movie_img_%05d.png -vcodec libx264 -pix_fmt yuv420p -crf 25 movie.mp4
 
   virtual void          unTrappedKeyPressEvent(QKeyEvent* e);
   // #IGNORE process key presses from examiner viewer -- for arrow-key navigation
