@@ -155,6 +155,7 @@ void ISelectableHost::EditAction(int ea,
     if (rval == iClipData::ER_CLEAR) {
       QApplication::clipboard()->clear();
     }
+    Emit_GotFocusSignal();  // rohrlich - bug 3420 - make sure focus is returned to us
   }
 }
 
