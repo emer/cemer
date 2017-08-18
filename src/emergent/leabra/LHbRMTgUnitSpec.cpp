@@ -285,7 +285,9 @@ void LHbRMTgUnitSpec::Compute_Lhb(LeabraUnitVars* u, LeabraNetwork* net, int thr
   
   // net out the VS matrix D1 versus D2 pairs...WATCH the signs - double negatives!
   float vsmatrix_pos_net = (gains.vsmatrix_pos_D1 * vsmatrix_pos_D1) - (gains.vsmatrix_pos_D2 * vsmatrix_pos_D2); // positive number net inhibitory!
+  vsmatrix_pos_net = fmaxf(0.0f, vsmatrix_pos_net); // restrict to positive net values
   float vsmatrix_neg_net = (gains.vsmatrix_neg_D2 * vsmatrix_neg_D2) - (gains.vsmatrix_neg_D1 * vsmatrix_neg_D1); // positive number net excitatory!
+  vsmatrix_neg_net = fmaxf(0.0f, vsmatrix_neg_net); // restrict to negative net values
   
   // don't double count pv going through the matrix guys
   float net_pos = vsmatrix_pos_net;
