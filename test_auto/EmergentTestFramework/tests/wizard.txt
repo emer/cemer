@@ -46,6 +46,13 @@ General RunState
     ${output} =                Run Command Wait      {"command": "GetRunState"}
     Status OK Match Result     ${output}             4
 
+# Std Network
+# Run Emergent Program    TestStdNetwork
+
+Std Everything
+ Run Emergent Program    TestStdEverything
+  Run Emergent Program
+.# projects[\\\"projects_1\\\"].programs.gp[\\\"LeabraAll_Std\\\"][\\\"LeabraBatch\\\"]
 
 Hippo
     Ensure Emergent Free

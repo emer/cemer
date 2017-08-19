@@ -113,7 +113,12 @@ bool Wizard::StdEverything() {
     Network* net = proj->networks.SafeEl(0);
     if(net) {
       network = net;
-      CallFun("StdData");
+      if (taMisc::gui_active) {
+        CallFun("StdData");
+      }
+      else {
+        std_data_ok = StdData(net);
+      }
       if (std_data_ok) {
         rval = StdProgs();
       }
