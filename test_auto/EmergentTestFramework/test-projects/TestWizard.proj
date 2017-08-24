@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.1.1.0 rev11048
+// ta_Dump File v3.0 -- code v8.1.1.0 rev11050
 LeabraProject .projects[0] { 
  Doc_Group @.docs = [2] {
   taDoc @[0] { 
@@ -178036,7 +178036,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
      MethodCall @[7] {
       name="MethodCall_batchprogramRun";
       desc=;
-      flags=CAN_REVERT_TO_CODE;
+      flags=OFF|CAN_REVERT_TO_CODE;
       code_string="batch_program->Run()";
       result_var=NULL;
       obj=$.programs.gp[5][4].vars[3]$;
@@ -178304,9 +178304,9 @@ and the testing data is updated.  The first epoch monitor should have all the it
     el_typ=UserDataItem;
     el_def=0;
     UserDataItem @[0] {name="view_win_lft": value=0: val_type_fixed=0: };
-    UserDataItem @[1] {name="view_win_top": value=0.04868549: val_type_fixed=0: };
+    UserDataItem @[1] {name="view_win_top": value=0.04789054: val_type_fixed=0: };
     UserDataItem @[2] {name="view_win_wd": value=1: val_type_fixed=0: };
-    UserDataItem @[3] {name="view_win_ht": value=0.7984421: val_type_fixed=0: };
+    UserDataItem @[3] {name="view_win_ht": value=0.7981756: val_type_fixed=0: };
     UserDataItem @[4] {name="view_win_iconified": value=0: val_type_fixed=0: };
     UserDataItem @[5] {name="view_splitter_state": value=AAAA/wAAAAEAAAADAAAB+QAAAlMAAAHfAQAAAAcBAAAAAQE=: val_type_fixed=0: };
    };
@@ -179960,10 +179960,10 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       name=;
       el_typ=UserDataItem;
       el_def=0;
-      UserDataItem @[0] {name="view_win_lft": value=0: val_type_fixed=0: };
-      UserDataItem @[1] {name="view_win_top": value=0.009737099: val_type_fixed=0: };
-      UserDataItem @[2] {name="view_win_wd": value=0.04892601: val_type_fixed=0: };
-      UserDataItem @[3] {name="view_win_ht": value=0.7254138: val_type_fixed=0: };
+      UserDataItem @[0] {name="view_win_lft": value=-0.002785515: val_type_fixed=0: };
+      UserDataItem @[1] {name="view_win_top": value=0.002280502: val_type_fixed=0: };
+      UserDataItem @[2] {name="view_win_wd": value=0.05710306: val_type_fixed=0: };
+      UserDataItem @[3] {name="view_win_ht": value=0.7217788: val_type_fixed=0: };
       UserDataItem @[4] {name="view_win_iconified": value=0: val_type_fixed=0: };
       UserDataItem @[5] {name="view_visible": value=1: val_type_fixed=0: };
      };
