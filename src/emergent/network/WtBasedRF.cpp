@@ -267,7 +267,7 @@ bool WtBasedRF::ComputeHigherLayerRF(Network* net, DataTable* dt_trg, DataTable*
         for (int s=0; s<snd_values_matrix->size; s++) {
           sum_matrix->FastEl_Flat(s) += snd_values_matrix->FastEl_Flat(s) * weight;
         }
-        taBase::unRefDone(snd_values_matrix);
+        taBase::UnRef(snd_values_matrix);
       }
       dt_trg_rf_values_col->SetValAsMatrix(sum_matrix, wts_row);
     }

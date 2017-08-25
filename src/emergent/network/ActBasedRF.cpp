@@ -141,7 +141,7 @@ bool ActBasedRF::IncrementSums() {
         const float sact = *((float*)var_md->GetOff(suv));
         sum_mat->FastEl1d(sidx) += tact * sact;
       }
-      taBase::unRefDone(sum_mat);
+      taBase::UnRef(sum_mat);
     }
   }
   return true;
@@ -172,8 +172,8 @@ bool ActBasedRF::ComputeRF() {
         rf_mat->FastEl1d(j) = sum_mat->FastEl1d(j) * sc;
       }
 
-      taBase::unRefDone(rf_mat);
-      taBase::unRefDone(sum_mat);
+      taBase::UnRef(rf_mat);
+      taBase::UnRef(sum_mat);
     }
   }
 
@@ -192,7 +192,7 @@ bool ActBasedRF::ComputeRF() {
         taBase::Ref(mat);
         float mx = taMath_float::vec_abs_max(mat, idx);
         max_val = fmaxf(mx, max_val);
-        taBase::unRefDone(mat);
+        taBase::UnRef(mat);
       }
       float sc = 1.0f;
       if(max_val > 0.0f)
@@ -202,7 +202,7 @@ bool ActBasedRF::ComputeRF() {
         float_Matrix* mat = (float_Matrix*)rf_da->GetValAsMatrix(r);
         taBase::Ref(mat);
         taMath_float::vec_mult_scalar(mat, sc);
-        taBase::unRefDone(mat);
+        taBase::UnRef(mat);
       }
     }
     break;
@@ -240,7 +240,7 @@ bool ActBasedRF::ComputeRF() {
         float_Matrix* mat = (float_Matrix*)rf_da->GetValAsMatrix(r);
         taBase::Ref(mat);
         taMath_float::vec_norm_abs_max(mat);
-        taBase::unRefDone(mat);
+        taBase::UnRef(mat);
       }
     }
     break;
