@@ -2921,12 +2921,11 @@ String DataTable::SaveDataLogNameFmProject
 }
 
 String DataTable::SaveDataNameFmProject
-(const String& ext, const String& tag, const String& subdir,
- bool dmem_proc_0) {
-#ifdef DMEM_COMPILE
-  if((taMisc::dmem_proc > 0) && dmem_proc_0) return; // don't open!
-#endif
+(const String& ext, const String& tag, const String& subdir, bool dmem_proc_0) {
   String fnm = GetFileNameFmProject(ext, tag, subdir, !dmem_proc_0);
+#ifdef DMEM_COMPILE
+  if((taMisc::dmem_proc > 0) && dmem_proc_0) return fnm; // don't open!
+#endif
   SaveData_Gui(fnm);
   return fnm;
 }
