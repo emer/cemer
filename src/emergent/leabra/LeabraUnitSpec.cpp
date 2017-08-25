@@ -306,14 +306,14 @@ void ActAdaptSpec::UpdateAfterEdit_impl() {
 
 void ShortPlastSpec::Initialize() {
   on = false;
+  algorithm = CYCLES;
+  
   f_r_ratio = 0.02f;
   kre = 0.002f;
   Defaults_init();
 }
 
 void ShortPlastSpec::Defaults_init() {
-  algorithm = ShortPlastSpec::CYCLES;
-  
   p0 = 0.2f;
   p0_norm = 0.2f;
   rec_tau = 200.0f;
@@ -923,22 +923,24 @@ void LeabraUnitSpec::Trial_NoiseInit(LeabraUnitVars* u, LeabraNetwork* net, int 
 }
 
 void LeabraUnitSpec::Trial_STP_TrialBinary_Updt(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
-  if(stp.on&&(stp.algorithm==ShortPlastSpec::TRIAL_BINARY)) {
-    if (u->syn_tr > 0) { // if the unit isn't currently depressed
-      if (u->act_q3 > stp.thresh) {
-        u->syn_kre++;
-      } else {
-        u->syn_kre = 0;
-      }
-      if (u->syn_kre >= stp.n_trials) {
-        u->syn_tr  = 0.0;
-      }
-    } else { // this unit is currently depressed
-      bool recover = Random::BoolProb(stp.rec_prob, thr_no);
-      if (recover == true) {
-        u->syn_tr = 1.0;
-        u->syn_kre = 0;
-      }
+  if(!stp.on || stp.algorithm != ShortPlastSpec::TRIAL_BINARY) return;
+
+  if (u->syn_tr > 0.0f) { // if the unit isn't currently depressed
+    if (u->act_q3 > stp.thresh) {
+      u->syn_kre += 1.0f;       // note: ++ not generally defined for floats
+    }
+    else {
+      u->syn_kre = 0.0f;
+    }
+    if (u->syn_kre >= stp.n_trials) {
+      u->syn_tr  = 0.0f;
+    }
+  }
+  else { // this unit is currently depressed
+    bool recover = Random::BoolProb(stp.rec_prob, thr_no);
+    if (recover) {
+      u->syn_tr = 1.0f;
+      u->syn_kre = 0.0f;
     }
   }
 }
