@@ -23,6 +23,7 @@
 taTypeDef_Of(taMatrix);
 taTypeDef_Of(Function);
 taTypeDef_Of(taProject);
+taTypeDef_Of(Loop);
 
 #include <SigLinkSignal>
 #include <ProgElChoiceDlg>
@@ -102,13 +103,6 @@ void ProgVar::SetFlagsByOwnership() {
         SetVarFlag(SAVE_VAL);   // all objs_ptr vars MUST save
       }
       else { // !objs_ptr
-        if(object_type && object_type->InheritsFrom(&TA_taMatrix)) {
-          if(!HasVarFlag(QUIET)) {
-            TestWarning(true, "ProgVar", "for Matrix* ProgVar named:",name,
-                        "Matrix pointers should be located in LocalVars within the code, not in the global vars/args section, in order to properly manage the reference counting of matrix objects returned from various functions.");
-          }
-        }
-
         if(!HasVarFlag(SAVE_VAL) && HasVarFlag(NULL_CHECK)) {
           if(!HasVarFlag(QUIET)) {
             TestWarning(true, "ProgVar", "for Object* ProgVar named:",name,
@@ -360,17 +354,34 @@ void ProgVar::CheckThisConfig_impl(bool quiet, bool& rval) {
     }
   }
   
-  // WARN
-  if(var_type == T_Object && object_type) {
-    if(!HasVarFlag(QUIET)) {
-      TestWarning(!objs_ptr && !IsLocal() && object_type->InheritsFrom(&TA_taMatrix) &&
-                  !HasVarFlag(NEW_OBJ),
-                  "ProgVar", "for Matrix* ProgVar named:",name,
-                  "Matrix pointers should be located in LocalVars within the code, not in the global vars/args section, in order to properly manage the reference counting of matrix objects returned from various functions.");
-    }
-  }
-  
   GetInitFromVar(true);         // warn
+}
+
+bool ProgVar::CheckMatrixAssignFmMethod(bool quiet, bool& rval, MethodDef* meth, ProgEl* pel) {
+  if(HasVarFlag(QUIET) || HasVarFlag(NEW_OBJ)) return false;
+  if(var_type != ProgVar::T_Object) return false;
+  if(!object_type || !object_type->InheritsFrom(&TA_taMatrix))
+    return false;
+  if(!(meth->name.startsWith("GetValAsMatrix") || meth->name.startsWith("GetRangeAsMatrix")))
+     return false;
+  // we have a suspect, now check for local vars
+  if(!IsLocal()) {
+    CheckError(true, quiet, rval,
+               "ProgVar", "for Matrix* ProgVar named:",name,
+               "being assigned a temporary matrix from GetValAsMatrix -- these Matrix pointer variables MUST be located in LocalVars within the code, within the proper looping scope where the variable is re-used, NOT in the global vars/args section, in order to properly manage the reference counting of matrix objects returned from various functions.");
+    return true;
+  }
+
+  taBase* pel_loop = pel->GetOwnerOfType(&TA_Loop);
+  if(!pel_loop) return false;   // if not in a loop, then one-time and we don't care!
+  taBase* var_loop = this->GetOwnerOfType(&TA_Loop);
+  if(pel_loop != var_loop) {    // now we have a problem
+    CheckError(true, quiet, rval,
+               "ProgVar", "for Matrix* ProgVar named:",name,
+               "being assigned a temporary matrix from GetValAsMatrix -- these Matrix pointer variables MUST be located WITHIN the same loop (for, while etc) that the GetValAsMatrix call is in, in order to properly manage the reference counting of matrix objects returned from various functions.");
+    return true;
+  }
+  return false;
 }
 
 void ProgVar::CheckChildConfig_impl(bool quiet, bool& rval) {

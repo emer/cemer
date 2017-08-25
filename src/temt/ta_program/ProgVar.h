@@ -25,7 +25,7 @@
 #include <DynEnum>
 
 // declare all other types mentioned but not required to include:
-
+class ProgEl; //
 
 taTypeDef_Of(ProgVar);
 
@@ -235,6 +235,8 @@ public:
   bool         BrowserEditEnable() const override { return true; }
   bool         BrowserEditSet(const String& new_val, int move_after = 0) override;
   String       GetDiffString() const override;
+  virtual bool CheckMatrixAssignFmMethod(bool quiet, bool& rval, MethodDef* meth, ProgEl* pel);
+  // #IGNORE check matrix temp vars
   
   DumpQueryResult Dump_QuerySaveMember(MemberDef* md) override; // don't save the unused vals
   void         SigEmit(int sls, void* op1 = NULL, void* op2 = NULL) override;

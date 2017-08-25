@@ -147,11 +147,13 @@ public:
   // #BUTTON #ENABLE_ON_flags:CAN_REVERT_TO_CODE revert this program element back to a ProgCode element -- use this if the conversion did not proceed as expected
 
   virtual ProgVar*      FindVarName(const String& var_nm) const;
-  // find given variable within this program element -- NULL if not found
+  // #CAT_ProgVar find given variable within this program element -- NULL if not found
   virtual LocalVars*     FindLocalVarList() const;
-  // find local variable list at the closest level of scope to this program element
+  // #CAT_ProgVar find local variable list at the closest level of scope to this program element
   virtual ProgVar*      MakeLocalVar(const String& var_nm);
-  // make a new local variable with the given name -- creates a local vars if none found
+  // #CAT_ProgVar make a new local variable with the given name -- creates a local vars if none found
+  virtual void          MoveLocalVarHere(ProgVar* var);
+  // #CAT_ProgVar #DROP1 create a new LocalVars var container at this code location, and move the given program variable into it
   virtual ProgVar*      FindVarNameInScope(String& var_nm, bool else_make = false);
   // find variable name at the closest level of scope to this program element -- if else_make, then offer the option of creating the variable in global or local scope if not found
 

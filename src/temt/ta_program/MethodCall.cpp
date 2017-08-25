@@ -59,6 +59,9 @@ void MethodCall::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   CheckError(!obj, quiet, rval, "obj is NULL");
   CheckError(!method, quiet, rval, "method is NULL");
+  if(result_var) {
+    result_var->CheckMatrixAssignFmMethod(quiet, rval, method, this);
+  }
 }
 
 void MethodCall::CheckChildConfig_impl(bool quiet, bool& rval) {

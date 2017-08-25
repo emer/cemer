@@ -518,6 +518,23 @@ ProgVar* ProgEl::MakeLocalVar(const String& var_nm) {
   return NULL;
 }
 
+void ProgEl::MoveLocalVarHere(ProgVar* var) {
+  if(InheritsFrom(&TA_LocalVars)) {
+    ((LocalVars*)this)->local_vars.Transfer(var);
+    SigEmitUpdated();
+    return;
+  }
+  ProgEl_List* pelst = GET_MY_OWNER(ProgEl_List);
+  if(!pelst) return;
+  int myidx = pelst->FindEl(this);
+  LocalVars* locvars = new LocalVars;
+  pelst->Insert(locvars, myidx);
+  locvars->local_vars.Transfer(var);
+  if(taMisc::gui_active) {
+    tabMisc::DelayedFunCall_gui(var, "BrowserSelectMe");
+  }
+}
+
 ProgVar* ProgEl::FindVarNameInScope(String& var_nm, bool else_make) {
   Program* prg = GET_MY_OWNER(Program);
   if(!prg)

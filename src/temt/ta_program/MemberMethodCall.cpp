@@ -49,6 +49,9 @@ void MemberMethodCall::UpdateAfterEdit_impl() {
 void MemberMethodCall::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   CheckError(!method, quiet, rval, "method is NULL");
+  if(result_var) {
+    result_var->CheckMatrixAssignFmMethod(quiet, rval, method, this);
+  }
 }
 
 void MemberMethodCall::CheckChildConfig_impl(bool quiet, bool& rval) {
