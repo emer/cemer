@@ -312,6 +312,8 @@ void ShortPlastSpec::Initialize() {
 }
 
 void ShortPlastSpec::Defaults_init() {
+  algorithm = ShortPlastSpec::CYCLES;
+  
   p0 = 0.2f;
   p0_norm = 0.2f;
   rec_tau = 200.0f;
@@ -323,6 +325,10 @@ void ShortPlastSpec::Defaults_init() {
   fac_dt = 1.0f / fac_tau;
   kre_dt = 1.0f / kre_tau;
   oneo_p0_norm = 1.0f / p0_norm;
+  
+  thresh = 0.5;
+  n_trials = 1;
+  rec_prob = 0.1;
 }
 
 void ShortPlastSpec::UpdateAfterEdit_impl() {
@@ -808,7 +814,7 @@ void LeabraUnitSpec::DecayState(LeabraUnitVars* u, LeabraNetwork* net, int thr_n
     u->gi_ex -= decay * u->gi_ex;
     u->E_i -= decay * (u->E_i - e_rev.i);
 
-    if(stp.on) {
+    if(stp.on&&(stp.algorithm==ShortPlastSpec::CYCLES)) {
       u->syn_tr -= decay * (u->syn_tr - 1.0f);
       u->syn_nr -= decay * (u->syn_nr - 1.0f);
       u->syn_pr -= decay * (u->syn_tr - stp.p0);
@@ -833,6 +839,11 @@ void LeabraUnitSpec::DecayState(LeabraUnitVars* u, LeabraNetwork* net, int thr_n
   }
 }
 
+void LeabraUnitSpec::ResetSynTR(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) {
+  uv->syn_tr = 1.0;
+  uv->syn_kre = 0.0;
+}
+
 
 ///////////////////////////////////////////////////////////////////////
 //      TrialInit functions
@@ -855,6 +866,7 @@ void LeabraUnitSpec::Trial_Init_Specs(LeabraNetwork* net) {
 }
 
 void LeabraUnitSpec::Trial_Init_Unit(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  Trial_STP_TrialBinary_Updt(u, net, thr_no); //do this b4 decay, because using act_q3 from previous trial
   Trial_Init_PrvVals(u, net, thr_no);   // do this b4 decay, so vals are intact
   Trial_Init_SRAvg(u, net, thr_no);     // do this b4 decay..
   Trial_DecayState(u, net, thr_no);
@@ -907,6 +919,27 @@ void LeabraUnitSpec::Trial_NoiseInit(LeabraUnitVars* u, LeabraNetwork* net, int 
   if(noise_type != NO_NOISE && noise_adapt.trial_fixed &&
      (noise.type != Random::NONE)) {
     u->noise = noise.Gen(thr_no);
+  }
+}
+
+void LeabraUnitSpec::Trial_STP_TrialBinary_Updt(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  if(stp.on&&(stp.algorithm==ShortPlastSpec::TRIAL_BINARY)) {
+    if (u->syn_tr > 0) { // if the unit isn't currently depressed
+      if (u->act_q3 > stp.thresh) {
+        u->syn_kre++;
+      } else {
+        u->syn_kre = 0;
+      }
+      if (u->syn_kre >= stp.n_trials) {
+        u->syn_tr  = 0.0;
+      }
+    } else { // this unit is currently depressed
+      bool recover = Random::BoolProb(stp.rec_prob, thr_no);
+      if (recover == true) {
+        u->syn_tr = 1.0;
+        u->syn_kre = 0;
+      }
+    }
   }
 }
 
@@ -1848,18 +1881,20 @@ void LeabraUnitSpec::Compute_ShortPlast_Cycle(LeabraUnitVars* u, LeabraNetwork* 
     }
   }
   else {
-    float dnr = (dt.integ * stp.rec_dt + u->syn_kre) * (1.0f - u->syn_nr)
-      - u->syn_pr * u->syn_nr * u->spike;
-    float dpr = dt.integ * stp.fac_dt * (stp.p0 - u->syn_pr)
-      + stp.fac * (1.0f - u->syn_pr) * u->spike;
-    float dkre = -dt.integ * stp.kre_dt * u->syn_kre
-      + stp.kre * (1.0f - u->syn_kre) * u->spike;
-    u->syn_nr += dnr;
-    u->syn_pr += dpr;
-    u->syn_kre += dkre;
-    if(u->spike > 0.0f) {                                     // only update at spike
-      u->syn_tr = stp.oneo_p0_norm * (u->syn_nr * u->syn_pr); // normalize pr by p0_norm
-      if(u->syn_tr > 1.0f) u->syn_tr = 1.0f;                  // max out at 1.0
+    if (stp.on&&(stp.algorithm==ShortPlastSpec::CYCLES)) {
+      float dnr = (dt.integ * stp.rec_dt + u->syn_kre) * (1.0f - u->syn_nr)
+        - u->syn_pr * u->syn_nr * u->spike;
+      float dpr = dt.integ * stp.fac_dt * (stp.p0 - u->syn_pr)
+        + stp.fac * (1.0f - u->syn_pr) * u->spike;
+      float dkre = -dt.integ * stp.kre_dt * u->syn_kre
+        + stp.kre * (1.0f - u->syn_kre) * u->spike;
+      u->syn_nr += dnr;
+      u->syn_pr += dpr;
+      u->syn_kre += dkre;
+      if(u->spike > 0.0f) {                                     // only update at spike
+        u->syn_tr = stp.oneo_p0_norm * (u->syn_nr * u->syn_pr); // normalize pr by p0_norm
+        if(u->syn_tr > 1.0f) u->syn_tr = 1.0f;                  // max out at 1.0
+      }
     }
   }
 }

@@ -352,6 +352,20 @@ void LeabraNetwork::DecayState_Thr(int thr_no) {
   }
 }
 
+void LeabraNetwork::ResetSynTR() {
+  NET_THREAD_CALL(LeabraNetwork::ResetSynTR_Thr);
+}
+
+void LeabraNetwork::ResetSynTR_Thr(int thr_no) {
+  const int nu = ThrNUnits(thr_no);
+  for(int i=0; i<nu; i++) {
+    LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, i);
+    if(uv->lesioned()) continue;
+    ((LeabraUnitSpec*)uv->unit_spec)->ResetSynTR(uv, this, thr_no);
+  }
+}
+
+
 ///////////////////////////////////////////////////////////////////////
 //      TrialInit -- at start of trial
 

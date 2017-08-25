@@ -351,6 +351,11 @@ public:
   // #CAT_Activation decay activation states towards initial values by given amount (0 = no decay, 1 = full decay)
     virtual void DecayState_Thr(int thr_no);
     // #IGNORE decay activation states towards initial values by given amount (0 = no decay, 1 = full decay)
+  
+  virtual void ResetSynTR();
+  // #CAT_Activation Reset Synaptic transmitter availability to full (1.0)
+  virtual void ResetSynTR_Thr(int thr_no);
+  // #IGNORE
 
   ///////////////////////////////////////////////////////////////////////
   //	TrialInit -- at start of trial
