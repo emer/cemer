@@ -449,7 +449,7 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
 //  }
   if(item->md() && item->md()->HasOption("NO_EXPAND_ALL")) return;
   if(tab->GetOwner() == NULL) return;
-  
+
   if (!(exp_flags & EF_CUSTOM_FILTER) && tab && (!(exp_flags & EF_EXPAND_FULLY))) {
     // if top level node or being treated like one - top level guys are docs, ctrl_panels, data, programs, networks, etc
     // those being treated like top level are specific networks (i.e. network -- not an actual group but has spec and layer groups
@@ -559,6 +559,10 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
     for (int i = 0; i < item->childCount(); ++i) {
       iTreeViewItem* child = dynamic_cast<iTreeViewItem*>(item->child(i));
       if (child && child->given_name != "LeabraStartup" && child->given_name != "MasterStartup") {  // hack - keep LeabraStartup from expanding by default
+        if (exp_flags & EF_DEFAULT_UNDER) {
+          // EXPAND_DEF should only be ignored for the item on which the expand was initiated, not all its children
+          exp_flags = (ExpandFlags)(exp_flags & ~EF_DEFAULT_UNDER);
+        }
         ExpandItem_impl(child, level, max_levels, exp_flags, is_subgroup);
       }
     }
