@@ -117,7 +117,7 @@ bool Wizard::StdEverything() {
         CallFun("StdData");
       }
       else {
-        std_data_ok = StdData(net, NULL, 6);
+        std_data_ok = StdData(net);
       }
       if (std_data_ok) {
         rval = StdProgs();
