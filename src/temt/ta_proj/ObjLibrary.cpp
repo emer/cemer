@@ -67,8 +67,10 @@ void ObjLibrary::BuildLibrary_impl() {
   for(i=0; i< WEB_APP_LIB; i++) {
     AddFromFiles((LibLocs)i);
   }
-  for(; i<N_LIB_LOCS; i++) {
-    AddFromWiki((LibLocs)i);
+  if (taMisc::gui_active) {
+    for(; i<N_LIB_LOCS; i++) {
+      AddFromWiki((LibLocs)i);
+    }
   }
   is_built = true;
   taMisc::DoneBusy();

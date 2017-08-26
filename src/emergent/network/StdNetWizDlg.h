@@ -55,7 +55,9 @@ public:
 
   virtual bool	DoDialog();
   // do the dialog and configure the network based on results -- returns true if network configured, false if not
-
+  virtual bool  NoDialog();
+  // just use defaults, no dialog
+  
   TA_SIMPLE_BASEFUNS(StdNetWizDlg);
 private:
   void 	Initialize();

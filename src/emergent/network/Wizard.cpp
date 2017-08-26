@@ -117,7 +117,7 @@ bool Wizard::StdEverything() {
         CallFun("StdData");
       }
       else {
-        std_data_ok = StdData(net);
+        std_data_ok = StdData(net, NULL, 6);
       }
       if (std_data_ok) {
         rval = StdProgs();
@@ -132,15 +132,26 @@ bool Wizard::StdEverything() {
 
 bool Wizard::StdNetwork() {
   ProjectBase* proj = GET_MY_OWNER(ProjectBase);
-  if(proj->networks.size == 0)  // make a new one for starters always
-    proj->networks.New(1);
+  Network* net = NULL;
+  if(proj->networks.size == 0) { // make a new one for starters always
+    net = (Network*)proj->networks.New(1);
+  }
   if(!std_net_dlg) {
     taBase::SetPointer((taBase**)&std_net_dlg, new StdNetWizDlg);
     taBase::Own(std_net_dlg, this);
   }
-  bool rval = std_net_dlg->DoDialog();
-  if(rval) {
-    Network* net = (Network*)std_net_dlg->network.ptr();
+
+  bool rval = false;
+  if (taMisc::gui_active) {
+    rval = std_net_dlg->DoDialog();
+  }
+  else {
+    rval = std_net_dlg->NoDialog();
+  }
+  
+  if(rval && std_net_dlg && net) {
+//    if(rval && std_net_dlg && std_net_dlg->network) {
+//    net = (Network*)std_net_dlg->network.ptr();
     net->Build();
     net->LayerZPos_Unitize();
     net->FindMakeView();
@@ -284,7 +295,9 @@ Program_Group* Wizard::StdProgs_impl(const String& prog_nm) {
   
   Program_Group* pg = (Program_Group*)rval;
   Network* net = network;
-  taMisc::Warning("Wizard::StdProgs_impl - network NULL -- did you run StdNetwork wizard?");
+  if (!net) {
+    taMisc::Warning("Wizard::StdProgs_impl - network NULL -- did you run StdNetwork wizard?");
+  }
   
   Program* batch = pg->FindName("LeabraBatch");
   if (batch && net) {
@@ -299,8 +312,9 @@ Program_Group* Wizard::StdProgs_impl(const String& prog_nm) {
     }
   }
   Program* first_guy = pg->Leaf(0);
-  if(first_guy)
-    tabMisc::DelayedFunCall_gui(first_guy, "BrowserSelectMe");
+  if(first_guy && taMisc::gui_active) {
+      tabMisc::DelayedFunCall_gui(first_guy, "BrowserSelectMe");
+  }
   return (Program_Group*)pg;
 }
 
@@ -308,7 +322,7 @@ Program_Group* Wizard::TestProgs_impl(const String& prog_nm, Program* call_test_
                                       bool call_in_loop, int call_modulus) {
   ProjectBase* proj = GET_MY_OWNER(ProjectBase);
 
-  // make testing output data tables -- used by the test programs
+  // maketesting output data tables -- used by the test programs
   DataTable_Group* dgp = (DataTable_Group*)proj->data.FindMakeGpName("OutputData");
   if(dgp->size < 4) {
     proj->GetNewOutputDataTable("TrialTestOutputData", true); // msg = true

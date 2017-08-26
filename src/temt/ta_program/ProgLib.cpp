@@ -41,7 +41,9 @@ taBase* ProgLib::NewProgram(Program_Group* new_owner, ObjLibEl* lib_el) {
   if(lib_el->filename.endsWith(".progp")) {
     Program_Group* pg = (Program_Group*)new_owner->NewGp(1);
     UpdateProgramGroup(pg, lib_el);
-    tabMisc::DelayedFunCall_gui(pg, "BrowserSelectFirstEl");
+    if(taMisc::gui_active) {
+      tabMisc::DelayedFunCall_gui(pg, "BrowserSelectFirstEl");
+    }
     return pg;
   }
   Program* pg = new_owner->NewEl(1, &TA_Program);

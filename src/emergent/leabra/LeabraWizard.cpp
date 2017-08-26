@@ -115,8 +115,9 @@ String LeabraWizard::RenderWizDoc_network() {
 
 bool LeabraWizard::StdNetwork() {
   ProjectBase* proj = GET_MY_OWNER(ProjectBase);
+  LeabraNetwork* net = NULL;
   if(proj->networks.size == 0) {        // make a new one for starters always
-    LeabraNetwork* net = (LeabraNetwork*)proj->networks.New(1);
+    net = (LeabraNetwork*)proj->networks.New(1);
     if(net)
       StdLeabraSpecs(net);
   }
@@ -124,9 +125,20 @@ bool LeabraWizard::StdNetwork() {
     taBase::SetPointer((taBase**)&std_net_dlg, new StdNetWizDlg);
     taBase::Own(std_net_dlg, this);
   }
-  bool rval = std_net_dlg->DoDialog();
-  if(rval && std_net_dlg && std_net_dlg->network) {
-    LeabraNetwork* net = (LeabraNetwork*)std_net_dlg->network.ptr();
+  
+  bool rval = false;
+  std_net_dlg->network.set(net);
+
+  if (taMisc::gui_active) {
+    rval = std_net_dlg->DoDialog();
+  }
+  else {
+    rval = std_net_dlg->NoDialog();
+  }
+  
+  if(rval && std_net_dlg && net) {
+//    if(rval && std_net_dlg && std_net_dlg->network) {
+//    net = (LeabraNetwork*)std_net_dlg->network.ptr();
     StdLeabraSpecs(net); // re-run to organize things better now that stuff has happened
     net->Build();
     net->LayerZPos_Unitize();

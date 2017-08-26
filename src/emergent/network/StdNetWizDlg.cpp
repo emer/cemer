@@ -217,3 +217,19 @@ bool StdNetWizDlg::DoDialog() {
   Initialize();
   return rval;
 }
+
+bool StdNetWizDlg::NoDialog() {
+  net_config = new DataTable;
+  taBase::Own(net_config, this);
+  n_layers = 3;
+  
+  if (network && net_config) {
+    network->NetStructToTable(net_config);
+    net_config->RemoveCol("SendPrjns");
+    net_config->EnforceRows(n_layers);
+    NewNetDefaultConfig();
+    network->NetStructFmTable(net_config);
+    return true;
+  }
+  return false;
+}
