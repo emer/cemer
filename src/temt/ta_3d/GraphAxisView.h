@@ -33,6 +33,7 @@ public:
   bool         labels_on;       // use a separate column for labels for this axis
   String       labels_col_name; // name of datatable column for labels 
   bool         row_num;         // display row number instead of column value for this axis (e.g., for string columns)
+  String       axis_label;      // optional axis label if empty column name used
 
   void         ComputeRange() override;
   bool         UpdateRange() override;

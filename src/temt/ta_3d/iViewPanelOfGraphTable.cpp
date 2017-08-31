@@ -191,12 +191,12 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
   
   layVals->addStretch(10);
   
-  //    A series of checkboxes for show/hide axes labels
+  //  A series of checkboxes to show/hide axes labels
   layAxisLabelChks = new QHBoxLayout;
   layAxisLabelChks->setContentsMargins(margin_l_r, margin_t_b, margin_l_r, margin_t_b);
   layWidg->addLayout(layAxisLabelChks);
   
-  lblAxisLabelChks =  taiM->NewLabel("Axes Labels:  ", widg, font_spec);
+  lblAxisLabelChks =  taiM->NewLabel("Show Axis Label:  ", widg, font_spec);
   layAxisLabelChks->addWidget(lblAxisLabelChks);
   lblAxisLabelChks->setToolTip(taiMisc::ToolTipPreProcess("Check to have axis label appear"));
   
@@ -224,8 +224,54 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
   
   layAxisLabelChks->addSpacing(taiM->hsep_c);
   layAxisLabelChks->addStretch(10);
-  //    Axes
   
+  // row of text fields for axes labels
+  layAxisLabels = new QHBoxLayout;
+  layAxisLabels->setContentsMargins(margin_l_r, margin_t_b, margin_l_r, margin_t_b);
+  layWidg->addLayout(layAxisLabels);
+
+  lblAxisLabelFlds =  taiM->NewLabel("Optional Axis Label:  ", widg, font_spec);
+  layAxisLabels->addWidget(lblAxisLabelFlds);
+  lblAxisLabelFlds->setToolTip(taiMisc::ToolTipPreProcess("Optional label for each axis - if empty column name will be used"));
+
+  lblTextXAxis = taiM->NewLabel("X:", widg, font_spec);
+  lblTextXAxis->setToolTip(taiMisc::ToolTipPreProcess("If empty the name of X variable column will be used to label axis."));
+  layAxisLabels->addWidget(lblTextXAxis);
+  fldTextXAxis = dl.Add(new taiWidgetField(&TA_taString, this, NULL, widg));
+  layAxisLabels->addWidget(fldTextXAxis->GetRep());
+  ((iLineEdit*)fldTextXAxis->GetRep())->setCharWidth(20);
+  layAxisLabels->addSpacing(taiM->hsep_c);
+
+  lblTextYAxis = taiM->NewLabel("Y:", widg, font_spec);
+  lblTextYAxis->setToolTip(taiMisc::ToolTipPreProcess("If empty the name of first Y variable column will be used to label axis."));
+  layAxisLabels->addWidget(lblTextYAxis);
+  fldTextYAxis = dl.Add(new taiWidgetField(&TA_taString, this, NULL, widg));
+  layAxisLabels->addWidget(fldTextYAxis->GetRep());
+  ((iLineEdit*)fldTextYAxis->GetRep())->setCharWidth(20);
+  layAxisLabels->addSpacing(taiM->hsep_c);
+
+  lblTextAltYAxis = taiM->NewLabel("Alt-Y:", widg, font_spec);
+  lblTextAltYAxis->setToolTip(taiMisc::ToolTipPreProcess("If empty the name of first Alt-Y variable column will be used to label axis."));
+  layAxisLabels->addWidget(lblTextAltYAxis);
+  fldTextAltYAxis = dl.Add(new taiWidgetField(&TA_taString, this, NULL, widg));
+  layAxisLabels->addWidget(fldTextAltYAxis->GetRep());
+  ((iLineEdit*)fldTextAltYAxis->GetRep())->setCharWidth(20);
+  layAxisLabels->addSpacing(taiM->hsep_c);
+
+  lblTextYAxis = taiM->NewLabel("Z:", widg, font_spec);
+  lblTextYAxis->setToolTip(taiMisc::ToolTipPreProcess("If empty the name of Z variable column will be used to label axis."));
+  layAxisLabels->addWidget(lblTextYAxis);
+  fldTextZAxis = dl.Add(new taiWidgetField(&TA_taString, this, NULL, widg));
+  layAxisLabels->addWidget(fldTextZAxis->GetRep());
+  ((iLineEdit*)fldTextZAxis->GetRep())->setCharWidth(20);
+  layAxisLabels->addSpacing(taiM->hsep_c);
+
+  layAxisLabels->addSpacing(taiM->hsep_c);
+  layAxisLabels->addStretch(10);
+  
+
+  //    Axes
+
   // -------- X Axis --------
   row_height = taiM->max_control_height(taiM->ctrl_size);
   layXAxis = new QHBoxLayout; layWidg->addLayout(layXAxis);
@@ -693,6 +739,7 @@ void iViewPanelOfGraphTable::UpdatePanel_impl() {
   labonXAxis->setReadOnly(glv->x_axis.GetLabelsColPtr() == NULL);
   labonXAxis->setChecked(glv->x_axis.labels_on);
   flipXAxis->setChecked(glv->x_axis.flip);
+  fldTextXAxis->GetImage(glv->x_axis.axis_label);
   
   lelZAxis->GetImage(&(glv->children), glv->z_axis.GetColPtr());
   oncZAxis->setReadOnly(glv->z_axis.GetColPtr() == NULL);
@@ -705,6 +752,7 @@ void iViewPanelOfGraphTable::UpdatePanel_impl() {
   labonZAxis->setReadOnly(glv->z_axis.GetLabelsColPtr() == NULL);
   labonZAxis->setChecked(glv->z_axis.labels_on);
   flipZAxis->setChecked(glv->z_axis.flip);
+  fldTextZAxis->GetImage(glv->z_axis.axis_label);
   
   lelZAxis->SetFlag(taiWidget::flgReadOnly, !glv->z_axis.on);
   rncZAxis->setAttribute(Qt::WA_Disabled, !glv->z_axis.on);
@@ -725,12 +773,13 @@ void iViewPanelOfGraphTable::UpdatePanel_impl() {
     lelErr[i]->GetImage(&(glv->children), glv->errbars[i]->GetColPtr());
     oncErr[i]->setReadOnly(glv->errbars[i]->GetColPtr() == NULL);
     oncErr[i]->setChecked(glv->errbars[i]->on);
-    
     flipYAxis[i]->setChecked(glv->plots[i]->flip);
     
-    // set each but all set by single checkbox
+    // all plots set with same value - single field in view panel
     chkYAxisLabel->setChecked(glv->plots[i]->show_axis_label);
     chkAltYAxisLabel->setChecked(glv->plots[i]->show_alt_axis_label);
+    fldTextYAxis->GetImage(glv->plots[i]->axis_label);
+    fldTextAltYAxis->GetImage(glv->plots[i]->alt_axis_label);
   }
   
   fldErrSpacing->GetImage((String)glv->err_spacing);
@@ -843,7 +892,9 @@ void iViewPanelOfGraphTable::GetValue_impl() {
   glv->depth = (float)fldDepth->GetValue();
   glv->tot_plots = (float)fldNPlots->GetValue();
   glv->solid_lines = chkLinesSolid->isChecked();
-  
+  glv->x_axis_label = fldTextXAxis->GetValue();
+  glv->z_axis_label = fldTextZAxis->GetValue();
+
   glv->setScaleData(false, cbar->min(), cbar->max());
 
   FixedMinMax cur_x_mm;
@@ -852,6 +903,7 @@ void iViewPanelOfGraphTable::GetValue_impl() {
   GetFixedMinMaxVal(pdtXAxis, glv->x_axis.fixed_range, panel_current, false, cur_x_mm);
   glv->x_axis.SetColPtr((GraphColView*)lelXAxis->GetValue());
   glv->x_axis.matrix_cell = (int)cellXAxis->GetValue();
+  glv->x_axis.axis_label = fldTextXAxis->GetValue();
   glv->x_axis.show_axis_label = chkXAxisLabel->isChecked();
   glv->x_axis.SetLabelsColPtr((GraphColView*)labXAxis->GetValue());
   glv->x_axis.labels_on = labonXAxis->isChecked();
@@ -867,6 +919,7 @@ void iViewPanelOfGraphTable::GetValue_impl() {
   glv->z_axis.row_num = rncZAxis->isChecked();
   glv->z_axis.SetColPtr(tcol);
   glv->z_axis.matrix_cell = (int)cellZAxis->GetValue();
+  glv->z_axis.axis_label = fldTextZAxis->GetValue();
   glv->z_axis.show_axis_label = chkZAxisLabel->isChecked();
   glv->z_axis.SetLabelsColPtr((GraphColView*)labZAxis->GetValue());
   glv->z_axis.labels_on = labonZAxis->isChecked();
@@ -906,6 +959,9 @@ void iViewPanelOfGraphTable::GetValue_impl() {
     // set each but all set by single checkbox
     glv->plots[pi]->show_axis_label = chkYAxisLabel->isChecked();
     glv->plots[pi]->show_alt_axis_label = chkAltYAxisLabel->isChecked();
+    
+    glv->plots[pi]->axis_label = fldTextYAxis->GetValue();
+    glv->plots[pi]->alt_axis_label = fldTextAltYAxis->GetValue();
   }
   
   glv->err_spacing = (int)fldErrSpacing->GetValue();

@@ -26,6 +26,7 @@ TA_BASEFUNS_CTORS_DEFN(GraphAxisView);
 void GraphAxisView::Initialize() {
   labels_on = false;
   row_num = false;
+  axis_label = _nilString;
 }
 
 void GraphAxisView::UpdateAfterEdit_impl() {

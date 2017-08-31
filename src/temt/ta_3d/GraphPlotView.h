@@ -60,14 +60,16 @@ public:
     PointStyle_MAX = STAR,      // #IGNORE
   };
 
-  LineStyle     line_style;     // the style in which the line is drawn
-  PointStyle    point_style;    // the style in which the points are drawn
-  bool          alt_y;          // use the alternate (right hand side) y axis instead of default left axis
-  GraphPlotView* eff_y_axis;    // #NO_SAVE #READ_ONLY #NO_SET_POINTER #NO_COPY effective y axis for this guy at this point in time
+  LineStyle       line_style;     // the style in which the line is drawn
+  PointStyle      point_style;    // the style in which the points are drawn
+  bool            alt_y;          // use the alternate (right hand side) y axis instead of default left axis
+  GraphPlotView*  eff_y_axis;      // #NO_SAVE #READ_ONLY #NO_SET_POINTER #NO_COPY effective y axis for this guy at this point in time
+  String          axis_label;      // optional axis label if empty column name used
+  String          alt_axis_label;  // optional axis label if empty column name used
 
-  void         UpdateOnFlag() override;
+  void            UpdateOnFlag() override;
 
-  void          CopyFromView(GraphPlotView* cp);
+  void            CopyFromView(GraphPlotView* cp);
   // #BUTTON special copy function that just copies user view options in a robust manner
 
 //   void InitLinks();

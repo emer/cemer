@@ -27,6 +27,7 @@ class taiWidgetFieldIncr; //
 class iColorScaleBar; //
 class taiWidgetListElChooser; //
 class taiWidgetPoly; //
+class taiWidgetText; //
 class iCheckBox; //
 class taiWidgetComboBox; //
 class GraphTableView; //
@@ -86,6 +87,17 @@ public:
   QCheckBox*                chkAltYAxisLabel; // show or hide Y alt axis label
   QCheckBox*                chkZAxisLabel; // show or hide Z axis label
   QCheckBox*                chkLinesSolid; // solid lines
+
+  QHBoxLayout*            layAxisLabels;
+  QLabel*                   lblAxisLabelFlds;
+  QLabel*                   lblTextXAxis;
+  taiWidgetText*            fldTextXAxis;     // label X axis with this text, if blank use name of first column
+  QLabel*                   lblTextYAxis;
+  taiWidgetText*            fldTextYAxis;     // label Y axis with this text, if blank use name of first column
+  QLabel*                   lblTextAltYAxis;
+  taiWidgetText*            fldTextAltYAxis;  // label Alt-Y axis with this text, if blank use name of first column
+  QLabel*                   lblTextZAxis;
+  taiWidgetText*            fldTextZAxis;     // label Z axis with this text, if blank use name of first column
   
   QHBoxLayout*            layXAxis;
   QLabel*                   lblXAxis;

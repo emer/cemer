@@ -141,6 +141,10 @@ void GraphTableView::Initialize() {
   mat_layout = taMisc::BOT_ZERO;
   mat_odd_vert = true;
   scrolling_ = false;
+  x_axis_label = _nilString;
+  y_axis_label = _nilString;
+  alt_y_axis_label = _nilString;
+  z_axis_label = _nilString;
   
   err_spacing = 1;
   err_bar_width = .02f;
@@ -229,6 +233,10 @@ void GraphTableView::CopyFromView(GraphTableView* cp) {
   axis_font_size = cp->axis_font_size;
   label_font_size = cp->label_font_size;
   x_axis_label_rot = cp->x_axis_label_rot;
+  x_axis_label = cp->x_axis_label;
+  y_axis_label = cp->y_axis_label;
+  alt_y_axis_label = cp->alt_y_axis_label;
+  z_axis_label = cp->z_axis_label;
   
   x_axis.CopyFromView(&(cp->x_axis));
   z_axis.CopyFromView(&(cp->z_axis));
@@ -1199,7 +1207,6 @@ void GraphTableView::RenderAxes() {
   
 #endif // TA_QT3D
   float ylen = plots[0]->axis_length;
-  
   x_axis.RenderAxis(t3_x_axis, iVec3f(0.0f, 0.0f, 0.0f), 0, false, rnd_svg);
   if(rnd_svg) {                 // svg needs separate ticks-only pass
     x_axis.RenderAxis(t3_x_axis, iVec3f(0.0f, 0.0f, 0.0f), 0, true, rnd_svg);

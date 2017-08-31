@@ -100,6 +100,11 @@ public:
   int                   tot_plots;      // total number of plots to make avail for this graph -- just sets the default size of plots and errs lists
   GraphPlotView_List    plots;          // columns of data to plot for Y axis
   GraphPlotView_List    errbars;        // error bar columns of data to plot, in correspondence with plots
+  
+  String                x_axis_label;   // optional label for axis - otherwise uses column name
+  String                y_axis_label;   // optional label for axis - otherwise uses column name
+  String                alt_y_axis_label;   // optional label for axis - otherwise uses column name
+  String                z_axis_label;   // optional label for axis - otherwise uses column name
 
   int                   err_spacing;    // #CONDEDIT_ON_graph_type:XY_ERR spacing between
   float                 err_bar_width;  // half-width of error bars, in view plot units

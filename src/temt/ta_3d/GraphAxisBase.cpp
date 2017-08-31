@@ -458,7 +458,11 @@ void GraphAxisBase::RenderAxis_X(T3Axis* t3ax, const iVec3f& off,
     if(!col_name.empty()) {
       fm.x = off.x + .5f * axis_length;
       fm.y = off.y + -(GraphTableView::tick_size + TICK_OFFSET + 1.5f * t3ax->font_size);
-      String label = col_name;
+      String label;
+      label = thisax->axis_label;
+      if (label.empty()) {
+        label = col_name;
+      }
       taMisc::SpaceLabel(label);
       if(thisax->row_num) {
         if(isString()) {
@@ -621,10 +625,17 @@ void GraphAxisBase::RenderAxis_Y(T3Axis* t3ax, const iVec3f& off,
       rot.setValue(SbVec3f(0.0, 0.0f, 1.0f), .5f * taMath_float::pi);
 #endif // TA_QT3D
       fm.y = off.y + .5f * axis_length;
-      String label = col_name; taMisc::SpaceLabel(label);
+      String label;
+      GraphPlotView* this_ax = (GraphPlotView*)this;
+
       if(n_ax > 0) {  // alt Y axis
         fm.x = off.x + GraphTableView::tick_size + TICK_OFFSET + 1.3f * t3ax->font_size;
         if (show_alt_axis_label) {
+          label = this_ax->alt_axis_label;
+          if (label.empty()) {
+            label = col_name;
+          }
+          taMisc::SpaceLabel(label);
 #ifdef TA_QT3D
           t3ax->addLabelRot(label.chars(), fm, T3_ALIGN_CENTER, rot_ax, rot_ang);
 #else // TA_QT3D
@@ -639,6 +650,11 @@ void GraphAxisBase::RenderAxis_Y(T3Axis* t3ax, const iVec3f& off,
       else {
         fm.x = off.x + -GraphTableView::tick_size - TICK_OFFSET - 1.3f * t3ax->font_size;
         if (show_axis_label) {
+          label = this_ax->axis_label;
+          if (label.empty()) {
+            label = col_name;
+          }
+          taMisc::SpaceLabel(label);
 #ifdef TA_QT3D
           t3ax->addLabelRot(label.chars(), fm, T3_ALIGN_CENTER, rot_ax, rot_ang);
 #else // TA_QT3D
@@ -745,7 +761,14 @@ void GraphAxisBase::RenderAxis_Z(T3Axis* t3ax, const iVec3f& off,
       fm.z = off.z + .5f * axis_length;
       fm.y = off.y + -(.5f * GraphTableView::tick_size + TICK_OFFSET + t3ax->font_size);
       fm.x = off.x + -(TICK_OFFSET + 2.5f * t3ax->font_size);
-      String label = col_name;
+      String label;
+      GraphTableView* gtv = GetGTV();
+      if (gtv) {
+        label = gtv->z_axis_label;
+      }
+      if (label.empty()) {
+        label = col_name;
+      }
       taMisc::SpaceLabel(label);
       if(((GraphAxisView*)this)->row_num) {
         if(isString()) {

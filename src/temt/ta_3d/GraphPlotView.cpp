@@ -27,6 +27,8 @@ void GraphPlotView::Initialize() {
   point_style = CIRCLE;
   alt_y = false;
   eff_y_axis = NULL;
+  axis_label = _nilString;
+  alt_axis_label = _nilString;
 }
 
 // void GraphPlotView::InitLinks() {
