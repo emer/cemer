@@ -24,7 +24,7 @@
 TA_BASEFUNS_CTORS_DEFN(WtScaleSpec);
 TA_BASEFUNS_CTORS_DEFN(XCalLearnSpec);
 TA_BASEFUNS_CTORS_DEFN(WtSigSpec);
-TA_BASEFUNS_CTORS_DEFN(LeabraDynLrates);
+TA_BASEFUNS_CTORS_DEFN(LeabraMomentum);
 TA_BASEFUNS_CTORS_DEFN(WtBalanceSpec);
 TA_BASEFUNS_CTORS_DEFN(AdaptWtScaleSpec);
 TA_BASEFUNS_CTORS_DEFN(SlowWtsSpec);
@@ -104,38 +104,35 @@ void WtSigSpec::UpdateAfterEdit_impl() {
   if(owner) owner->UpdateAfterEdit(); // update our conspec so it can recompute lookup function!
 }
 
-void LeabraDynLrates::Initialize() {
-  dwt_norm = NO_NORM;
-  moment = NO_MOMENT;
+void LeabraMomentum::Initialize() {
   Defaults_init();
 }
 
-void LeabraDynLrates::Defaults_init() {
-  norm_tau = 1000.0f;
+void LeabraMomentum::Defaults_init() {
+  taVersion v820(8, 2, 0);
+  if(taMisc::is_loading && taMisc::loading_version < v820) {
+    on = false;
+  }
+  else {
+    on = true;
+  }
+  dwavg_tau = 1000.0f;
   norm_min = 0.001f;
   m_tau = 10.0f;
-  s_tau = 50.0f;
-  l_tau = 2.0f;
-  xx1 = true;
-  gain = 2.0f;
   lrate_comp = 0.01f;
 
-  norm_dt = 1.0f / norm_tau;
-  norm_dt_c = 1.0f - norm_dt;
+  dwavg_dt = 1.0f / dwavg_tau;
+  dwavg_dt_c = 1.0f - dwavg_dt;
   m_dt = 1.0f / m_tau;
   m_dt_c = 1.0f - m_dt;
-  s_dt = 1.0f / s_tau;
-  l_dt = 1.0f / l_tau;
 }
 
-void LeabraDynLrates::UpdateAfterEdit_impl() {
+void LeabraMomentum::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  norm_dt = 1.0f / norm_tau;
-  norm_dt_c = 1.0f - norm_dt;
+  dwavg_dt = 1.0f / dwavg_tau;
+  dwavg_dt_c = 1.0f - dwavg_dt;
   m_dt = 1.0f / m_tau;
   m_dt_c = 1.0f - m_dt;
-  s_dt = 1.0f / s_tau;
-  l_dt = 1.0f / l_tau;
 }
 
 void WtBalanceSpec::Initialize() {
@@ -289,11 +286,6 @@ void LeabraConSpec::UpdateAfterEdit_impl() {
   slow_wts.UpdateAfterEdit_NoGui();
   xcal.UpdateAfterEdit_NoGui(); // this calls owner
   CreateWtSigFun();
-
-  if(TestWarning(dynlr.moment == LeabraDynLrates::DWT_ZONE && slow_wts.on, "UAE",
-                 "dwt_zone and slow_wts cannot both be on at this point -- turning slow_wts off")) {
-    slow_wts.on = false;
-  }
 
   ClearBaseFlag(BF_MISC2);      // done..
 

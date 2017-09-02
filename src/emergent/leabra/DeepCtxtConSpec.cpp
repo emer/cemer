@@ -21,6 +21,8 @@ void DeepCtxtConSpec::Initialize() {
   SetUnique("wt_scale", true);
   wt_scale.rel = 1.0;
   delta_dwt = false;
+  SetUnique("momentum", true);
+  momentum.on = false;
 }
 
 void DeepCtxtConSpec::GetPrjnName(Projection& prjn, String& nm) {

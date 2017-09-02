@@ -59,9 +59,9 @@ public:
   { return 0.0f; }
 
   inline float C_Compute_dWt_Delta
-    (const float ru_avg_s, const float ru_avg_m, const float su_deep_prv, float& dwnorm) {
+    (const float ru_avg_s, const float ru_avg_m, const float su_deep_prv) {
     float new_dwt = (ru_avg_s - ru_avg_m) * su_deep_prv;
-    return C_Compute_dWt_DwNorm(dwnorm, new_dwt);
+    return new_dwt;
   }
   // #IGNORE
 
@@ -78,15 +78,13 @@ public:
     const float su_avg_s = su->deep_raw_prv; // value sent on prior trial..
     const float su_avg_m = su->deep_raw_prv;
     float* dwts = cg->OwnCnVar(DWT);
-    float* dwnorms = cg->OwnCnVar(DWNORM);
 
     const int sz = cg->size;
 
-    if(dynlr.moment != LeabraDynLrates::NO_MOMENT) {
-      clrate *= dynlr.lrate_comp;
-      float* dwa_ss = cg->OwnCnVar(DWA_S);
-      float* dwa_ls = cg->OwnCnVar(DWA_L);
-      float* swts = cg->OwnCnVar(SWT);
+    if(momentum.on) {
+      clrate *= momentum.lrate_comp;
+      float* dwavgs = cg->OwnCnVar(DWAVG);
+      float* moments = cg->OwnCnVar(MOMENT);
       for(int i=0; i<sz; i++) {
         LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i, net);
         // note: applying opt_thresh.xcal_lrn here does NOT work well for dwt_zone..
@@ -100,14 +98,13 @@ public:
         float l_lrn_eff = xcal.LongLrate(ru->avg_l_lrn);
         float new_dwt;
         if(delta_dwt) {
-          new_dwt = C_Compute_dWt_Delta(ru->avg_s, ru->avg_m, su_avg_s, dwnorms[i]);
+          new_dwt = C_Compute_dWt_Delta(ru->avg_s, ru->avg_m, su_avg_s);
         }
         else {
           new_dwt = C_Compute_dWt_CtLeabraXCAL
-            (ru->avg_s_eff, ru->avg_m, su_avg_s, su_avg_m,
-             ru->avg_l, l_lrn_eff, ru->margin, dwnorms[i]);
+            (ru->avg_s_eff, ru->avg_m, su_avg_s, su_avg_m, ru->avg_l, l_lrn_eff, ru->margin);
         }
-        new_dwt = dynlr.ComputeMoment(dwa_ss[i], dwa_ls[i], dwnorms[i], swts[i], new_dwt);
+        new_dwt = momentum.ComputeMoment(moments[i], dwavgs[i], new_dwt);
         dwts[i] += lrate_eff * new_dwt; // lrate always at the end!
       }
     }
@@ -128,12 +125,11 @@ public:
           l_lrn_eff = ru->avg_l_lrn;
         float new_dwt;
         if(delta_dwt) {
-          new_dwt = C_Compute_dWt_Delta(ru->avg_s, ru->avg_m, su_avg_s, dwnorms[i]);
+          new_dwt = C_Compute_dWt_Delta(ru->avg_s, ru->avg_m, su_avg_s);
         }
         else {
           new_dwt = C_Compute_dWt_CtLeabraXCAL
-            (ru->avg_s_eff, ru->avg_m, su_avg_s, su_avg_m,
-             ru->avg_l, l_lrn_eff, ru->margin, dwnorms[i]);
+            (ru->avg_s_eff, ru->avg_m, su_avg_s, su_avg_m, ru->avg_l, l_lrn_eff, ru->margin);
         }
         dwts[i] += lrate_eff * new_dwt; // lrate always at the end!
       }

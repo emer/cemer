@@ -37,20 +37,13 @@ inline void LeabraConSpec::Init_Weights_post(ConGroup* cg, Network* net, int thr
   float* swts = cg->OwnCnVar(SWT);
   float* fwts = cg->OwnCnVar(FWT);
   float* scales = cg->OwnCnVar(SCALE);
-  float* dwa_ss = cg->OwnCnVar(DWA_S);
-  float* dwa_ls = cg->OwnCnVar(DWA_L);
-  float* dwnorms = cg->OwnCnVar(DWNORM);
+  float* dwavgs = cg->OwnCnVar(DWAVG);
+  float* moments = cg->OwnCnVar(MOMENT);
   for(int i=0; i<cg->size; i++) {
     fwts[i] = LinFmSigWt(wts[i]); // swt, fwt are linear underlying weight values
-    dwa_ss[i] = 0.0f;
-    dwa_ls[i] = 0.0f;
-    dwnorms[i] = 0.0f;
-    if(dynlr.moment == LeabraDynLrates::DWT_ZONE) {
-      swts[i] = 0.0f;         // used for saving zone_lr val
-    }
-    else {
-      swts[i] = fwts[i];
-    }
+    dwavgs[i] = 0.0f;
+    moments[i] = 0.0f;
+    swts[i] = fwts[i];
     wts[i] *= scales[i];
   }
 }
@@ -162,16 +155,13 @@ inline void LeabraConSpec::Compute_dWt(ConGroup* scg, Network* rnet, int thr_no)
   const int sz = cg->size;
 
   float* dwts = cg->OwnCnVar(DWT);
-  float* dwnorms = cg->OwnCnVar(DWNORM);
   
-  if(dynlr.moment != LeabraDynLrates::NO_MOMENT) {
-    clrate *= dynlr.lrate_comp;
-    float* dwa_ss = cg->OwnCnVar(DWA_S);
-    float* dwa_ls = cg->OwnCnVar(DWA_L);
-    float* swts = cg->OwnCnVar(SWT);
+  if(momentum.on) {
+    clrate *= momentum.lrate_comp;
+    float* dwavgs = cg->OwnCnVar(DWAVG);
+    float* moments = cg->OwnCnVar(MOMENT);
     for(int i=0; i<sz; i++) {
       LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i, net);
-      // note: applying opt_thresh.xcal_lrn here does NOT work well for dwt_zone..
       float lrate_eff = clrate;
       if(deep_on) {
         lrate_eff *= (bg_lrate + fg_lrate * ru->deep_lrn);
@@ -181,9 +171,8 @@ inline void LeabraConSpec::Compute_dWt(ConGroup* scg, Network* rnet, int thr_no)
       }
       float l_lrn_eff = xcal.LongLrate(ru->avg_l_lrn);
       float new_dwt = C_Compute_dWt_CtLeabraXCAL
-        (ru->avg_s_eff, ru->avg_m, su_avg_s, su_avg_m,
-         ru->avg_l, l_lrn_eff, ru->margin, dwnorms[i]);
-      new_dwt = dynlr.ComputeMoment(dwa_ss[i], dwa_ls[i], dwnorms[i], swts[i], new_dwt);
+        (ru->avg_s_eff, ru->avg_m, su_avg_s, su_avg_m, ru->avg_l, l_lrn_eff, ru->margin);
+      new_dwt = momentum.ComputeMoment(moments[i], dwavgs[i], new_dwt);
       dwts[i] += lrate_eff * new_dwt;
     }
   }
@@ -199,8 +188,7 @@ inline void LeabraConSpec::Compute_dWt(ConGroup* scg, Network* rnet, int thr_no)
       }
       float l_lrn_eff = xcal.LongLrate(ru->avg_l_lrn);
       float new_dwt = C_Compute_dWt_CtLeabraXCAL
-        (ru->avg_s_eff, ru->avg_m, su_avg_s, su_avg_m,
-         ru->avg_l, l_lrn_eff, ru->margin, dwnorms[i]);
+        (ru->avg_s_eff, ru->avg_m, su_avg_s, su_avg_m, ru->avg_l, l_lrn_eff, ru->margin);
       dwts[i] += lrate_eff * new_dwt;
     }
   }
