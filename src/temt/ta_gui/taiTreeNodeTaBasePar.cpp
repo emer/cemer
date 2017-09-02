@@ -132,9 +132,9 @@ void taiTreeNodeTaBasePar::SigEmit_impl(int sls, void* op1_, void* op2_) {
   }
 
   if(sls == SLS_ITEM_UPDATED || sls == SLS_STRUCT_UPDATE_END) {
-    // taMisc::DebugInfo("SLS item update or struct update end", String(sls));
+    // taMisc::Info("SLS item update or struct update end", String(sls));
     if(!RebuildChildrenIfNeeded()) {
-      // taMisc::DebugInfo("UpdateListNames", String(sls));
+      // taMisc::Info("UpdateListNames", String(sls));
       UpdateListNames();
     }
     return;

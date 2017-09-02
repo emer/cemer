@@ -114,12 +114,16 @@ bool taUndoMgr::SaveUndo(taBase* mod_obj, const String& action, taBase* save_top
       cur_src = undo_srcs.CircPeek(); // always grab the last guy
     if(taMisc::undo_debug) {
       String last_pct;
-      if(cur_src)
-        last_pct = " last pct: " + String(cur_src->last_diff_pct);
+      if(cur_src) {
+        last_pct = " last pct: " + String(cur_src->last_diff_pct) + " n: " +
+          String(cur_src->last_diff_n);
+      }
       taMisc::Info("undo save size:", taMisc::GetSizeString(urec->save_data.length()),
                    last_pct);
     }
-    if(!cur_src || cur_src->last_diff_pct > new_src_thr) {
+    // todo: add a new param for number of diffs, and probably make the existing pct
+    // thr smaller, around .1
+    if(!cur_src || cur_src->last_diff_pct > new_src_thr || cur_src->last_diff_n > 10000) {
       if(cur_src && taMisc::undo_debug) {
         taMisc::Info("SaveUndo diff pct on last save:", String(cur_src->last_diff_pct),
                      "was greater than threshold:", String(new_src_thr),

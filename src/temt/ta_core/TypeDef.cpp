@@ -2199,8 +2199,10 @@ int TypeDef::ReplaceValStr_class(const String& srch, const String& repl, const S
         continue;
     }
     else {
-      if(md->HasNoSave())
+      if(md->HasNoSave()) {
+        // taMisc::Info("skipping:", md->name);
         continue;
+      }
     }
     if(sc == SC_DISPLAY) {
       if(md->HasCondShow()) {

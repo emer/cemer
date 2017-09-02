@@ -721,7 +721,22 @@ int ProgEl::ReplaceValStr
  void* par, TypeDef* par_typ, MemberDef* memb_def, TypeDef::StrContext sc, bool replace_deep) {
   String cur_val = BrowserEditString(); // current best string rep
   int rval = cur_val.gsub(srch, repl);
-  CvtFmCode(cur_val);
+  if(rval > 0) {
+    taMisc::Info("Replaced string value in ProgEl of type:", GetTypeDef()->name,
+                 "now:", cur_val);
+    CvtFmCode(cur_val);
+    SigEmitUpdated();
+  }
+  if(replace_deep) {
+    TypeDef* td = GetTypeDef();
+    for(int i=0;i<td->members.size;i++) {
+      MemberDef* md = td->members[i];
+      if(md->type->InheritsFrom(&TA_taList_impl)) {
+        taList_impl* lst = (taList_impl*)md->GetOff((void*)this);
+        rval += lst->ReplaceValStr(srch, repl, mbr_filt, this, GetTypeDef(), md, sc, replace_deep);
+      }
+    }
+  }
   return rval;
 }
 

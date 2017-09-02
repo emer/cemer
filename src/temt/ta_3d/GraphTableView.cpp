@@ -2689,15 +2689,15 @@ void GraphTableView::PlotData_Bar(SoSeparator* gr1, GraphPlotView& plv, GraphPlo
       if(render_svg) {
         svg_bars
         // low bar
-        << "\nM " << taSvg::Coords(plt.x-err_bar_width, plt.y-err_plt, plt.z)
-        << "L " << taSvg::Coords(plt.x+err_bar_width, plt.y-err_plt, plt.z)
-        << "M " << taSvg::Coords(plt.x-err_bar_width, plt.y+err_plt, plt.z)
+        << "\nM " << taSvg::Coords(pt.x-err_bar_width, pt.y-err_plt, pt.z)
+        << "L " << taSvg::Coords(pt.x+err_bar_width, pt.y-err_plt, pt.z)
+        << "M " << taSvg::Coords(pt.x-err_bar_width, pt.y+err_plt, pt.z)
         // high bar
-        << "L " << taSvg::Coords(plt.x+err_bar_width, plt.y+err_plt, plt.z)
-        << "M " << taSvg::Coords(plt.x, plt.y-err_plt, plt.z)
+        << "L " << taSvg::Coords(pt.x+err_bar_width, pt.y+err_plt, pt.z)
+        << "M " << taSvg::Coords(pt.x, pt.y-err_plt, pt.z)
         // vert bar
-        << "L " << taSvg::Coords(plt.x, plt.y+err_plt, plt.z)
-        << "M " << taSvg::Coords(plt.x, plt.y, plt.z) << "\n"; // back home..
+        << "L " << taSvg::Coords(pt.x, pt.y+err_plt, pt.z)
+        << "M " << taSvg::Coords(pt.x, pt.y, pt.z) << "\n"; // back home..
       }
     }
     
