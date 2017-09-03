@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+// ta_Dump File v3.0 -- code v8.2.0.0 rev11062
 BpProject .projects[0] { 
  Doc_Group @.docs = [0] {
  };
@@ -238,6 +238,7 @@ BpProject .projects[0] {
    exe_cmd="emergent";
    ram_gb=-1;
    n_threads=2;
+   use_cuda=0;
    use_mpi=0;
    mpi_nodes=10;
    mpi_per_node=1;
@@ -303,8 +304,8 @@ BpProject .projects[0] {
     name="UserDataItem_List_100";
     el_typ=UserDataItem;
     el_def=0;
-    UserDataItem @[0] {name="view_win_lft": value=0.001062699: val_type_fixed=0: };
-    UserDataItem @[1] {name="view_win_top": value=0.02124044: val_type_fixed=0: };
+    UserDataItem @[0] {name="view_win_lft": value=0: val_type_fixed=0: };
+    UserDataItem @[1] {name="view_win_top": value=0.02039082: val_type_fixed=0: };
     UserDataItem @[2] {name="view_win_wd": value=1: val_type_fixed=0: };
     UserDataItem @[3] {name="view_win_ht": value=0.7994902: val_type_fixed=0: };
     UserDataItem @[4] {name="view_win_iconified": value=0: val_type_fixed=0: };
@@ -486,9 +487,9 @@ BpProject .projects[0] {
       el_typ=UserDataItem;
       el_def=0;
       UserDataItem @[0] {name="view_win_lft": value=0: val_type_fixed=0: };
-      UserDataItem @[1] {name="view_win_top": value=0.008496176: val_type_fixed=0: };
-      UserDataItem @[2] {name="view_win_wd": value=0.04357067: val_type_fixed=0: };
-      UserDataItem @[3] {name="view_win_ht": value=0.7357689: val_type_fixed=0: };
+      UserDataItem @[1] {name="view_win_top": value=0.01019541: val_type_fixed=0: };
+      UserDataItem @[2] {name="view_win_wd": value=0.04354753: val_type_fixed=0: };
+      UserDataItem @[3] {name="view_win_ht": value=0.7340696: val_type_fixed=0: };
       UserDataItem @[4] {name="view_win_iconified": value=0: val_type_fixed=0: };
       UserDataItem @[5] {name="view_visible": value=1: val_type_fixed=0: };
      };

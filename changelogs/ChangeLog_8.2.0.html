@@ -1,0 +1,2025 @@
+<html><body>
+<h2>ChangeLog for Emergent Version 8.2.0
+  Revisions 10824:11063</h2>
+<table border="1" style="table-layout:fixed;width: 100%;">
+<tr>
+<td width="5%">Rev No.</td>
+<td width="10%">
+                Date               
+        </td>
+<td width="5%">
+                    Author
+                 
+        </td>
+<td width="">
+                    Message
+                 
+        </td>
+</tr>
+<tr>
+<td><pre>10824</pre></td>
+<td><pre>2017-06-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>changelog update for 8.1.0</pre></td>
+</tr>
+<tr>
+<td><pre>10825</pre></td>
+<td><pre>2017-06-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>change use_first to just go 1/2 way toward first sample, to prevent unlucky first samples from producing zeros or something</pre></td>
+</tr>
+<tr>
+<td><pre>10826</pre></td>
+<td><pre>2017-06-02</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>One of the tests was testing for version number 8.0
+
+Change it to test for  8. to make it more robust.
+
+Might want to find a better solution for this in the future to be robust against version changes
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>10827</pre></td>
+<td><pre>2017-06-03</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Smarter cursor positioning for code completer
+- if a method, function or program takes arguments the cursor is positioned between parens,
+otherwise after "()"
+</pre></td>
+</tr>
+<tr>
+<td><pre>10828</pre></td>
+<td><pre>2017-06-04</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Change to text selection in programs
+- If you select a method, program name or function that is followed by () the selection will automatically include the ()
+- Likewise for object-&gt;method(arg1, arg2) doubleclicking or otherwise selecting the method name will automatically select
+the args and parens as well
+- This is to eliminate the problem whereby you use the code completer to change a method name and you get method()()
+i.e. double parens
+- I hope the solution is an improvement in general and doesn't have drawbacks
+- I didn't actually implement any scoping to methods, programs and functions but this can be done if this selection code
+triggers in other cases where we don't want this behavior
+</pre></td>
+</tr>
+<tr>
+<td><pre>10829</pre></td>
+<td><pre>2017-06-05</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Comnpletion and lookup for data columns if you type some_data_table["
+</pre></td>
+</tr>
+<tr>
+<td><pre>10830</pre></td>
+<td><pre>2017-06-06</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Updated so that it can be called after each trial to generate a set of representations for each image.
+- Additional program variable to specify how many unit representations to save in the
+SampleUnits table. Will be the N most active V2 units where you specify N.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10831</pre></td>
+<td><pre>2017-06-06</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>- Don't test for following "()" if the end of the selection is already at the end of the string
+- Believe this fixes a selection involved crash I had
+</pre></td>
+</tr>
+<tr>
+<td><pre>10832</pre></td>
+<td><pre>2017-06-06</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Add an option to cluster run to specify that we want to run with CUDA
+
+this then addes a GRES request for gpu:1 to the slurm submission job.
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>10833</pre></td>
+<td><pre>2017-06-06</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Add a flag to the cluster run run dialog if we want to enable cuda on the server backend.
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>10834</pre></td>
+<td><pre>2017-06-08</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Smart cursor positioning for selections that take args was not working for cases
+where the completer was used to replace existing code - fixed now
+</pre></td>
+</tr>
+<tr>
+<td><pre>10836</pre></td>
+<td><pre>2017-06-08</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for 3413 - Going into edit mode clears text in ProgEl, ProgVar
+- We were falling into a condition in iLineEdit::focusInEvent that was cutting the code. And this was
+because init_start_kill was true and that was because there were a couple of missing return
+statements in KeyPressEvent and you would fall through into a case that set edit_start_kill to true!!!
+
+I also saw that some of the cases (those that are about tree selection) use breaks while
+the other cases use return. This is because there is selection code following the switch.
+This mixing of return and break is not a good idea so I'll refactor that code.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10837</pre></td>
+<td><pre>2017-06-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* Update version to 8.1.1
+* remove ChangeLog items from LeabraFlex template
+* fix updating of 2nd grid table view -- was just not looking for the right one
+</pre></td>
+</tr>
+<tr>
+<td><pre>10838</pre></td>
+<td><pre>2017-06-09</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>remove redundant comments
+</pre></td>
+</tr>
+<tr>
+<td><pre>10839</pre></td>
+<td><pre>2017-06-09</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Added lookup to NetMonItem variable field.
+- If there are many of these fields I might change the approach
+- I already see that the completer doesn't appear in the variable field in the
+dialog that appears when you click on one of the various  NetMonitor "Add" buttons, will need to investiate.
+- Removed some commented out code in iLineEdit
+</pre></td>
+</tr>
+<tr>
+<td><pre>10840</pre></td>
+<td><pre>2017-06-09</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>This is a temporary fix for bug 3001.
+- There is something about the creation or initialization, ownership, not sure what that is important.
+- possibly something about the row indices, not sure yet
+- But for now I am passing in NULL for the dest datatable which means one will get created in the analysis
+data group and using this table the insert/copy in select rows works.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10841</pre></td>
+<td><pre>2017-06-10</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Another attempt at fixing bug 3001
+</pre></td>
+</tr>
+<tr>
+<td><pre>10842</pre></td>
+<td><pre>2017-06-10</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>- The missing return/break statements that caused bug 3413 should be breaks not returns.
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>10843</pre></td>
+<td><pre>2017-06-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>added notes about importance of breaks -- good idea to add such docs when there are issues like this..</pre></td>
+</tr>
+<tr>
+<td><pre>10844</pre></td>
+<td><pre>2017-06-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fixes for all known cases of temp datatables, including on stack ones (grep 'DataTable ') --
+taBase::Own these guys!  and added a DebugInfo message in DataCol if it can't find
+its owning table, beyond the point in construction when all the unowned tables (instances etc) will have been created.  specifically fixes bug 3001.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10846</pre></td>
+<td><pre>2017-06-11</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Infrastructure changes to get completion working for fields that are not expressions,
+fields like column names, variable names, etc.
+- I did add the appropriate directive and code for these fields in NetMonItem and DataOpEl but I'm sure there are more
+- Many of the column name fields are in auto generated argument dialogs so that will take some additional code
+</pre></td>
+</tr>
+<tr>
+<td><pre>10847</pre></td>
+<td><pre>2017-06-11</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for completer not working in stop_step_condition field
+- The problem was that the field is not owned by a ProgEl but rather a program
+- Lookup had the same problem - also fixed
+</pre></td>
+</tr>
+<tr>
+<td><pre>10848</pre></td>
+<td><pre>2017-06-11</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>- Completion for fields in LayerDataEl
+</pre></td>
+</tr>
+<tr>
+<td><pre>10849</pre></td>
+<td><pre>2017-06-12</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for bug 3432 - completer / lookup: not finding elements of groups lists
+- A case never handled!
+- code changes in the OBJ_MEMB_METH case, the most complicated, so be on the lookout for regressions.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10850</pre></td>
+<td><pre>2017-06-12</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Another column name field that needed completion
+</pre></td>
+</tr>
+<tr>
+<td><pre>10851</pre></td>
+<td><pre>2017-06-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* taBase::OwnTempObj -- use this for owning this object by tabMisc::root -- simpler
+to use, avoids need for including tabMisc etc.
+* exclude #NO_CHOOSER members from taWidgetTokenChooser -- needed for ctrl panel saved
+for local save guys -- probably need to add this same logic to completer but I'll let
+John do that so I don't step on anything.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10852</pre></td>
+<td><pre>2017-06-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* Control panel now has gui for editing saved value of taBase objects!  Very convenient for
+layer geom and projection params (can't set these to EXPLORE and save on cmd line though)
+* looks like paramset remove member isn't going to master like it should -- I thought I fixed that -- next..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10853</pre></td>
+<td><pre>2017-06-12</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>- exclude #NO_CHOOSER members from completion list
+</pre></td>
+</tr>
+<tr>
+<td><pre>10854</pre></td>
+<td><pre>2017-06-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* Remove on a clone paramset member removes on master
+* check for NO_SAVE_EMPTY in exluding items from inline GetValStr -- excludes user_data.. -- may need to do ActivateSaveAll on paramsets if they have any such objs
+</pre></td>
+</tr>
+<tr>
+<td><pre>10855</pre></td>
+<td><pre>2017-06-13</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Infrastructure to get completion working in taiWidget string fields
+</pre></td>
+</tr>
+<tr>
+<td><pre>10856</pre></td>
+<td><pre>2017-06-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>call UAE on new clones -- new gui updating exposed lack of setting of is_single on those
+</pre></td>
+</tr>
+<tr>
+<td><pre>10857</pre></td>
+<td><pre>2017-06-13</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>New AddColumn dialog with text field completion
+</pre></td>
+</tr>
+<tr>
+<td><pre>10858</pre></td>
+<td><pre>2017-06-13</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Removing layer and column lookups now that we have completion. More to do.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10859</pre></td>
+<td><pre>2017-06-14</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Remove lookup_var member, use completion in variable field
+</pre></td>
+</tr>
+<tr>
+<td><pre>10860</pre></td>
+<td><pre>2017-06-14</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>A couple of additional dialog changes for adding a table column. A bit more to do on DataCalcLoop.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10861</pre></td>
+<td><pre>2017-06-15</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>* Completions object for passing results to code completer and the chooser
+- Now hooked up for code completion and replaces String_Array
+- Next is to build a chooser that takes a Completions object rather than building the list itself
+- Last will be to consolidate the chooser and completer code in ProgExprBase which has significant
+overlap other than parsing which is used by both.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10862</pre></td>
+<td><pre>2017-06-15</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Update the Copyright
+</pre></td>
+</tr>
+<tr>
+<td><pre>10863</pre></td>
+<td><pre>2017-06-15</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Update to 2017
+</pre></td>
+</tr>
+<tr>
+<td><pre>10864</pre></td>
+<td><pre>2017-06-15</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>* First cut at chooser to display expression completion choices
+* Add lookup seed to Completions class
+</pre></td>
+</tr>
+<tr>
+<td><pre>10865</pre></td>
+<td><pre>2017-06-15</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>* Checkpoint - Lookup still on hold code
+* Additional members for Completions class
+* Updates to completer and chooser for displaying member/method choices
+</pre></td>
+</tr>
+<tr>
+<td><pre>10866</pre></td>
+<td><pre>2017-06-16</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>More updates to the completion chooser
+</pre></td>
+</tr>
+<tr>
+<td><pre>10867</pre></td>
+<td><pre>2017-06-17</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>More updates to completion chooser
+- #ifdef'd off until I solve one really annoying problem
+</pre></td>
+</tr>
+<tr>
+<td><pre>10868</pre></td>
+<td><pre>2017-06-17</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>* Solution for annoying problem;  Chooser now handles mix of all item types
+* Uses QTreeWidgetItem "type" field to store high level type info for later use when getting text
+</pre></td>
+</tr>
+<tr>
+<td><pre>10869</pre></td>
+<td><pre>2017-06-18</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>* Completion Chooser now smart about what columns to show for the lookup
+* Only kink remaining is cursor positioning 
+</pre></td>
+</tr>
+<tr>
+<td><pre>10870</pre></td>
+<td><pre>2017-06-18</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fstream or any other ios prog vars as local vars are not pointers and don't do init -- still bugs with reading from fstream</pre></td>
+</tr>
+<tr>
+<td><pre>10871</pre></td>
+<td><pre>2017-06-19</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>* Remove ProgEls, bools, NULL from completion chooser
+* Statics types now returned as TypeSpace instead of a list of strings
+* Display description for statics in the chooser
+</pre></td>
+</tr>
+<tr>
+<td><pre>10872</pre></td>
+<td><pre>2017-06-19</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>* Turned on new completion chooser, will leave ifdef for a few days
+</pre></td>
+</tr>
+<tr>
+<td><pre>10873</pre></td>
+<td><pre>2017-06-19</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Remove var_lookup
+</pre></td>
+</tr>
+<tr>
+<td><pre>10874</pre></td>
+<td><pre>2017-06-20</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Updated SampleUnits table has unit number, actual image 
+</pre></td>
+</tr>
+<tr>
+<td><pre>10875</pre></td>
+<td><pre>2017-06-20</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>If the var is a program arg don't display the add_to_control_panel and similar menu items
+</pre></td>
+</tr>
+<tr>
+<td><pre>10876</pre></td>
+<td><pre>2017-06-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>trc_clip/max OR-like trc behavior</pre></td>
+</tr>
+<tr>
+<td><pre>10877</pre></td>
+<td><pre>2017-06-20</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Use total_seconds() rather than seconds in cluster run script.
+
+seconds seems to wrap around and is thus not useful for checking how long jobs are done for.
+
+Move the touching of dat files into the checking when done to stop touching after three minutes after
+they are done
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>10878</pre></td>
+<td><pre>2017-06-22</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>* New completion category "SCOPE" - for classes that have end user enums
+* Relation and RelationFloat are the only 2 classes in this group so far
+</pre></td>
+</tr>
+<tr>
+<td><pre>10879</pre></td>
+<td><pre>2017-06-22</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>* Remove the #ifdef completion and the code that called the old ProgExprBase calls
+that was calling choosers
+* I was going to leave for a few days but these ifdef's are getting in my way
+</pre></td>
+</tr>
+<tr>
+<td><pre>10880</pre></td>
+<td><pre>2017-06-22</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>* iDialogWidgetField now using new taiWidgetCompleterChooser
+* ProgExprBase::ExprLookupChooser and ProgExprBase::StringFieldLookupFun removed
+* All of the calls to these methods gone (replaced by calls to new completion lookup code
+</pre></td>
+</tr>
+<tr>
+<td><pre>10881</pre></td>
+<td><pre>2017-06-22</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>* Fix for crashing bug 3457 and other oddities - accessing a value that was in a deleted object
+* Moved the ItemObjType enum and member from iDialogItemChooser to taiWidgetItemChooser
+</pre></td>
+</tr>
+<tr>
+<td><pre>10882</pre></td>
+<td><pre>2017-06-22</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for 3454 - DialogWidgetField cursor is always at position 0 when dialog opens regardless of text
+* New optional param to SetText for cursor position
+* Get the cursor position from line edit field and pass to text edit in SetText - works well
+</pre></td>
+</tr>
+<tr>
+<td><pre>10883</pre></td>
+<td><pre>2017-06-22</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>* Trim whitespace from iDialogWidgetFields which can easily get added by mistake
+* If you want whitespace around code it is better to add blank lines in code which you can do now but couldn't a couple of years ago
+</pre></td>
+</tr>
+<tr>
+<td><pre>10884</pre></td>
+<td><pre>2017-06-23</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Generalize completion for string indexing into list, for example some_layer_group[" will show layers in the group
+</pre></td>
+</tr>
+<tr>
+<td><pre>10885</pre></td>
+<td><pre>2017-06-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* moved deep.trc params to separate trc line in edit -- getting to be too many of those!  at some point might be able to reduce but not yet..
+* added ctxt_prv, tick_updt, and else_prv params to deep params -- more ways to get some hysteresis in leabra deep layers (besides adding deep-to-deep context, which is also good)
+</pre></td>
+</tr>
+<tr>
+<td><pre>10886</pre></td>
+<td><pre>2017-06-24</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>* Nearly complete implementation of code completion in text dialogs,
+i.e. TextEdit as opposed to LineEdit.
+* The popup is there but tab is not entering the text so that bit is still to do
+</pre></td>
+</tr>
+<tr>
+<td><pre>10887</pre></td>
+<td><pre>2017-06-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix for list / group property dialogs -- clearly wouldnt have worked before..</pre></td>
+</tr>
+<tr>
+<td><pre>10888</pre></td>
+<td><pre>2017-06-24</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Completion in TextEdit updates
+- tab now at least does select the highlighted item but tab extend not working yet nor some other aspects
+</pre></td>
+</tr>
+<tr>
+<td><pre>10889</pre></td>
+<td><pre>2017-06-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix for adding random.* vars to control panel -- recent checkin preventing progvar args
+from having this menu was assuming everything is a ProgVar -- need to do inherits check
+first!
+</pre></td>
+</tr>
+<tr>
+<td><pre>10890</pre></td>
+<td><pre>2017-06-25</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>- More updates to TextEdit code completion - a couple of minor issues remain
+- In doing this I was able to simplify the logic and key handling compared to iLineEdit
+and it will be easy to do now for iLineEdit
+</pre></td>
+</tr>
+<tr>
+<td><pre>10891</pre></td>
+<td><pre>2017-06-25</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>* Control + Return now closes iDialogWidgetField
+* Fix cursor positioning for completion id iTextEdit
+</pre></td>
+</tr>
+<tr>
+<td><pre>10892</pre></td>
+<td><pre>2017-06-25</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>if the call takes args position cursor between parens
+</pre></td>
+</tr>
+<tr>
+<td><pre>10893</pre></td>
+<td><pre>2017-06-26</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>remove the 64 y axis limit -- now as many as you want!
+</pre></td>
+</tr>
+<tr>
+<td><pre>10894</pre></td>
+<td><pre>2017-06-26</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Remove obsolete code in iLineEdit; Add selectionChanged() to iTextEdit
+</pre></td>
+</tr>
+<tr>
+<td><pre>10895</pre></td>
+<td><pre>2017-06-27</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for cursor positioning bug
+- If you moved left or right with the arrow keys while doing completion the cursor
+would be in the wrong location (offset by your cursor movement) when finished completing
+</pre></td>
+</tr>
+<tr>
+<td><pre>10896</pre></td>
+<td><pre>2017-06-27</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>* Completion was not getting engaged when using control-f/control-b (or other mapping)
+to move the text cursor forward and backward - fixed
+* Surprised a certain somebody didn't report this :)
+</pre></td>
+</tr>
+<tr>
+<td><pre>10897</pre></td>
+<td><pre>2017-06-27</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>if completion isn't enabled setText only calls inherited
+</pre></td>
+</tr>
+<tr>
+<td><pre>10898</pre></td>
+<td><pre>2017-06-27</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Update a comment
+</pre></td>
+</tr>
+<tr>
+<td><pre>10899</pre></td>
+<td><pre>2017-06-28</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Comment out selectionChanged() - looks to be generating recursive call that is overflowing stack
+and causing emergent to crash when opening the commit dialog.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10900</pre></td>
+<td><pre>2017-06-28</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Undo a previous wrong commit to cluster_run_mon_slurm.py that changed the local settings
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>10901</pre></td>
+<td><pre>2017-06-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>#NO_DIFF on send_prjns -- had #HIDDEN but I guess that isn't enough anymore?
+</pre></td>
+</tr>
+<tr>
+<td><pre>10902</pre></td>
+<td><pre>2017-06-28</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>* Rename SCOPE_COMPLETIONS to MISC_COMPLETIONS to avoid collision with the SCOPE directive.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10903</pre></td>
+<td><pre>2017-06-28</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Remove obsolete preference and code for gui_style
+</pre></td>
+</tr>
+<tr>
+<td><pre>10904</pre></td>
+<td><pre>2017-06-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>remove 80% height constraint on main window -- no longer relevant if console not pinned which is better use-case</pre></td>
+</tr>
+<tr>
+<td><pre>10905</pre></td>
+<td><pre>2017-06-29</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Workaround for cursor not visible bug - don't allow focus out if completion popup visible
+</pre></td>
+</tr>
+<tr>
+<td><pre>10906</pre></td>
+<td><pre>2017-06-30</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Comment out the connect call until the selectionChange method is reimplemented
+</pre></td>
+</tr>
+<tr>
+<td><pre>10907</pre></td>
+<td><pre>2017-06-30</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Oops, that should have been done in iTextEdit!!
+</pre></td>
+</tr>
+<tr>
+<td><pre>10908</pre></td>
+<td><pre>2017-06-30</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>ifndef __MAKETA__ on cmath include -- required for more recent gcc builds</pre></td>
+</tr>
+<tr>
+<td><pre>10909</pre></td>
+<td><pre>2017-06-30</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>* Implement slot method selectionChanged and add method FindMatchingParens
+- gives TextEdit the same smart text selection as LineEdit
+- selecting method name or other that is followed by parens selects parens as well
+- works for method() and method(arg, arg, arg)
+</pre></td>
+</tr>
+<tr>
+<td><pre>10910</pre></td>
+<td><pre>2017-06-30</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre> void Unit::UnitGpLogPos(taVector2i&amp; log_pos) {
+   Layer* mlay = own_lay();
+   if(mlay) {
+-    return mlay-&gt;UnitInGpLogPos(this, log_pos);
++    mlay-&gt;UnitInGpLogPos(this, log_pos);
+   }
+ }
+</pre></td>
+</tr>
+<tr>
+<td><pre>10911</pre></td>
+<td><pre>2017-07-01</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>* New taString method FindMatchingParens(int parens_pos), works forwards and backwards
+* Used in line and text edits
+</pre></td>
+</tr>
+<tr>
+<td><pre>10912</pre></td>
+<td><pre>2017-07-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* added taMarkUp static collection for generating markup formatted code in major standard
+formats, supports lists, tables, basic styles
+* function on DataTable to generate a text table using markup formatting
+* ControlPanel et al now use markup for generating params table in any format, also can save to a data table
+* projection has notes field for documenting stuff about that projection
+* network has new function to list projections to markup formatted text list, with indenting for layers and layer groups, includes notes (also for table generation)
+</pre></td>
+</tr>
+<tr>
+<td><pre>10913</pre></td>
+<td><pre>2017-07-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>i def should be initialized -- thanks for catching</pre></td>
+</tr>
+<tr>
+<td><pre>10914</pre></td>
+<td><pre>2017-07-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>compiler food for linux</pre></td>
+</tr>
+<tr>
+<td><pre>10915</pre></td>
+<td><pre>2017-07-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>markup fixes -- added escaping -- especially important for latex -- seems to be working
+</pre></td>
+</tr>
+<tr>
+<td><pre>10916</pre></td>
+<td><pre>2017-07-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>need to prevent maketa from seeing math.h in a few more places</pre></td>
+</tr>
+<tr>
+<td><pre>10917</pre></td>
+<td><pre>2017-07-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>and a few more math.h fixes</pre></td>
+</tr>
+<tr>
+<td><pre>10918</pre></td>
+<td><pre>2017-07-03</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>- New logic for positioning cursor after completion;
+- Might not handle all cases yet but should make handling errant cases much easier.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10919</pre></td>
+<td><pre>2017-07-03</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>- One of the operations I was doing in creating the V4 represenation was wrong!
+- Basically I was compensating for something that had already been compensated for in the V2 step
+</pre></td>
+</tr>
+<tr>
+<td><pre>10920</pre></td>
+<td><pre>2017-07-04</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>- V3 is for any layer that receives from V2
+- V3 version bug fix and lots of updates
+</pre></td>
+</tr>
+<tr>
+<td><pre>10921</pre></td>
+<td><pre>2017-07-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* can now have no web browser dependency in emergent build -- configure has --noweb option
+important for building on older cluster OS's where it is difficult to compile something
+like webengine..
+* uses iTextView which does display local help info so actually pretty usable without it
+* also have option to override default webengine and request webview even for version 5.6
+or higher -- --webview
+</pre></td>
+</tr>
+<tr>
+<td><pre>10922</pre></td>
+<td><pre>2017-07-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>updates to cluster run slurm and pyqsub scripts to support clean environment (--export=NONE) -- defaults to true -- Kai, this might affect other systems</pre></td>
+</tr>
+<tr>
+<td><pre>10923</pre></td>
+<td><pre>2017-07-06</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Major fix for completions - bug 3461
+* Completion now works for any number of subgroups
+* Added case to taBase::FindFromPath to handle taGroups
+* A fix in ProgExprBase::FindPathSeparator and in its usage
+</pre></td>
+</tr>
+<tr>
+<td><pre>10924</pre></td>
+<td><pre>2017-07-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* added DataTable::Copy_Properties to copy just the misc properties of data table
+* fix for DataTable::Flatten (in FlattenTo, self case) to copy properties (preserve them)
+</pre></td>
+</tr>
+<tr>
+<td><pre>10925</pre></td>
+<td><pre>2017-07-06</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for FindFromPath member pointer case - bug 3399
+</pre></td>
+</tr>
+<tr>
+<td><pre>10926</pre></td>
+<td><pre>2017-07-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>change pyqsub logic to inherit env instead of clean -- default is off (clean) -- makes more sense for default to be off than on -- also always add unset SLURM_EXPORT_ENV so we don't need to do that in srun -- this should be a just-works setup -- pass --inherit flag to pyqsub if ever need to inherit</pre></td>
+</tr>
+<tr>
+<td><pre>10927</pre></td>
+<td><pre>2017-07-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* First pass on support for nan filtering in core Aggregate routines used in DataTable::Group
+etc -- all the basic stats routines in taMath* now both filter nan's and also return nan's
+for any missing or bad inputs.
+* added a few _opt cases of core routines that just run on "bare" matrix with no nan
+filtering - using existing code from before - seems better to fork off optimized and make
+core routines fully safe, instead of the other way around.
+* added nan constant value ot taMath_float/double scoped context, and in css, you can now
+just type "nan" or "NAN" and get a nan value, assign it, etc.
+* important: cannot use val == nan to determine if variable is a nan - nan is by definition
+not equal to anything, *not even itself!* -- float val = nan; print val == val -&gt; false!
+* instead, use taMath_float::isnan etc
+* I should export basic isnan function into css namespace -- might already happen by magic but probably not
+* added a testing project and tested everything, and also confirmed that routines give same values as they did before on various data.  forgot to svn add testing project -- next checkin.
+* got rid of warning message and "revert to full table" in NetMonItem filtering case -- now just leaves the table empty and generates the nan's as expected.
+* seem to just be able to type in "nan" into any place where a number goes, and it works fine!  including saving and loading etc.  so no need for anything additional there.
+* Kai should give it a try and file any issues that come up..  I wont' install on clusters
+yet pending overall testing results etc.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10928</pre></td>
+<td><pre>2017-07-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>here's the test project -- not plugged into testing framework yet but shoudl be easy
+to do so.
+also isnan is already magically avail in plain css namespace so you can just type "isnan(number)" and it works.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10929</pre></td>
+<td><pre>2017-07-07</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix completion - not handling all expressions with "-&gt;"
+- logic fix in FindPathSeparator
+- replace "-&gt;"s with "."s before passing to FindFromPath
+</pre></td>
+</tr>
+<tr>
+<td><pre>10930</pre></td>
+<td><pre>2017-07-07</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Add tests for the NaN Netmonitor aggregation functions
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>10931</pre></td>
+<td><pre>2017-07-08</pre></td>
+<td><pre>thazy</pre></td>
+<td><pre>both BLA, CeL now using phasic dopamine and receive unit delta activation thresholds; BLA now using deep_mod_zero so that deep_mod_net (I think) filters activity; no significant change to MSNConSpec</pre></td>
+</tr>
+<tr>
+<td><pre>10932</pre></td>
+<td><pre>2017-07-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>use older nan functions</pre></td>
+</tr>
+<tr>
+<td><pre>10933</pre></td>
+<td><pre>2017-07-08</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Another attempt at cursor positioning after completion that works in all cases
+</pre></td>
+</tr>
+<tr>
+<td><pre>10934</pre></td>
+<td><pre>2017-07-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>trying again to get a compilable nan on grey</pre></td>
+</tr>
+<tr>
+<td><pre>10935</pre></td>
+<td><pre>2017-07-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>sorry for the churn -- didn't look at error msgs carefully enough -- how about this -- next time I'll ssh..</pre></td>
+</tr>
+<tr>
+<td><pre>10936</pre></td>
+<td><pre>2017-07-08</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Fix typo in project name for NaN tests
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>10937</pre></td>
+<td><pre>2017-07-09</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix files table context menu - change "file_list" to "files" to sync with tab name changes
+</pre></td>
+</tr>
+<tr>
+<td><pre>10938</pre></td>
+<td><pre>2017-07-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* projection now copies notes
+* fixes to network prjns to list -- use strike-through for off prjns, and put specs after notes
+* markup uses 4 space indenting for markdown lists, which appears to require it in several cases
+</pre></td>
+</tr>
+<tr>
+<td><pre>10939</pre></td>
+<td><pre>2017-07-10</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for completion bug 3484
+- For fields that are SIMPLE - single type and not an expression - DON'T get pretext from ProgExprBase
+- Missed this in my testing of SIMPLE fields - should have interspersed testing of them with expression completions;
+if I had I would have seen that the simple guys were getting the last pretext of the expression parse
+</pre></td>
+</tr>
+<tr>
+<td><pre>10940</pre></td>
+<td><pre>2017-07-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Look in objs_vars for variables in FindMakeVarName -- could also prompt for creating
+a new obj if existing var is in objs_vars, when copying over variables from other proj
+</pre></td>
+</tr>
+<tr>
+<td><pre>10941</pre></td>
+<td><pre>2017-07-11</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>When listing items in groups list all leaves of that group and subgroups but only the subgroups in the initial group
+</pre></td>
+</tr>
+<tr>
+<td><pre>10942</pre></td>
+<td><pre>2017-07-11</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Add a comment
+</pre></td>
+</tr>
+<tr>
+<td><pre>10943</pre></td>
+<td><pre>2017-07-11</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Report on ClusterRun panel if the cluster run SVN background thread is currently updating.
+
+Ensure that the ClusterRun panel information is redrawn after the background SVN thread has completed the SVN update.
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>10944</pre></td>
+<td><pre>2017-07-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* graph just skips nan data
+* added Duplicate and Save Copy to project file menu
+* unfortunately Duplicate of Project still crashes!  need to fix
+</pre></td>
+</tr>
+<tr>
+<td><pre>10945</pre></td>
+<td><pre>2017-07-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fixed project duplicate -- brute force -- save to string, load from string -- otherwise update pointers takes forever - not worth sorting through that</pre></td>
+</tr>
+<tr>
+<td><pre>10946</pre></td>
+<td><pre>2017-07-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>struct update wrapper around remove existing on cluster run load data seems to fix issues
+</pre></td>
+</tr>
+<tr>
+<td><pre>10947</pre></td>
+<td><pre>2017-07-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>nan fixes: generate standard "nan" string on windows, and turn off --fast-math because
+it *specifically* disables the isnan function and general checking for nan's!  we'll
+see what kind of impact this has on performance..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10948</pre></td>
+<td><pre>2017-07-13</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>* Reduced the running time for ComputeHigherLayerRF from 2700 seconds to 169 seconds by removing a intermediary temp matrix.
+* Reduced that in half again by adding a weight threshold and only including values when
+the target layer unit weight had an absolute value greater than .25
+* Add wt_threshold argument but did not explore other values
+* Results with the wt_threshold are very close to those without threshold, images have a bit more contrast
+</pre></td>
+</tr>
+<tr>
+<td><pre>10949</pre></td>
+<td><pre>2017-07-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>rename isUpdating -&gt; is_updating to be consistent with std naming conventions for members
+</pre></td>
+</tr>
+<tr>
+<td><pre>10950</pre></td>
+<td><pre>2017-07-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* MARKDOWN is first formatting choice..
+* use GetLabel for Methbox_Label 
+</pre></td>
+</tr>
+<tr>
+<td><pre>10951</pre></td>
+<td><pre>2017-07-13</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>If the member is "name" and the member has an owner then the field should be read_only
+- e.g. program components objs, vars, init_code - those names are now read_only
+</pre></td>
+</tr>
+<tr>
+<td><pre>10952</pre></td>
+<td><pre>2017-07-13</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Increase the timeout for running an emergent program during running automated tests
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>10953</pre></td>
+<td><pre>2017-07-15</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>* Implementation of completion for the auto generated method dialogs
+- Examples are AddColumn, all taDataAnal methods, SetMember
+- SetMember shows all non_read_only &amp;&amp; not_hidden members
+- Implementation turned off until I fix a crashing bug - if you escape dialog while the completion popup is visible
+- Partial rollback of earlier AddColumn solution that had a hand coded dialog but was not being used in all cases;
+will rollback completely with new generic solution
+- taBase GetListForCompletion renamed GetMemberCompletionList and added GetArgCompletionList
+</pre></td>
+</tr>
+<tr>
+<td><pre>10954</pre></td>
+<td><pre>2017-07-16</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Get the AddColumn completion working two more classes
+</pre></td>
+</tr>
+<tr>
+<td><pre>10955</pre></td>
+<td><pre>2017-07-16</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>* Turned on code completion for cssi_arg_dialogs
+* Likely fix for hard to reproduce crashing bug closing dialog - one of these event timing bugs
+* Minor fix in taDataAnalysis for code completion
+* Fixed tabbing between fields in arg dialogs - bug 3492 - 
+</pre></td>
+</tr>
+<tr>
+<td><pre>10956</pre></td>
+<td><pre>2017-07-17</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Update some comments
+</pre></td>
+</tr>
+<tr>
+<td><pre>10957</pre></td>
+<td><pre>2017-07-17</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Added comments for enums
+</pre></td>
+</tr>
+<tr>
+<td><pre>10958</pre></td>
+<td><pre>2017-07-18</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>* Remove UnRef of taMatrixPtr - I believe this was the cause of intermittent crashes
+in DataTable::CutLinks in my long running lvis_fix8 jobs doing represenational analysis
+</pre></td>
+</tr>
+<tr>
+<td><pre>10959</pre></td>
+<td><pre>2017-07-18</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* DataTable::AppendRowsCopyFirst -- this is the best for aggregating data from another table -- saves a bit of boilerplate in programs.
+* GraphTableView::color_gp_use_y  -- BY_GROUP uses Y axis colors instead of colorscale,  and string_spacing -- space string-valued data so it can be read
+* netmax = layer avg_netin now uses new netin_m minus-phase only netinput statistics -- this is really what you want to tune, and especially for clamped layers and trc / pulvinar units it is only meanful case.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10960</pre></td>
+<td><pre>2017-07-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>max_err -- correct if most active unit has targ value set
+</pre></td>
+</tr>
+<tr>
+<td><pre>10961</pre></td>
+<td><pre>2017-07-19</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Bug 3502 - Add NULL check for Ctrl+L lookup case which isn't implemented for simple fields
+</pre></td>
+</tr>
+<tr>
+<td><pre>10962</pre></td>
+<td><pre>2017-07-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fix to ClusterManager update thread to ALWAYS use its own thread-specific svn client
+object -- was causing crashing before when thread called main thread's object -- definite no-no.
+* also use SigEmitUpdated for updating gui instead of UpdateUI which may have broader effects
+* set completer to null after deleting in css_qtdialog -- unlikely to be meaningful but good practice
+* ref temp sort spec -- was getting crashing there but was likely caused elsewhere -- hopefully by this cluster run thing that is now fixed
+</pre></td>
+</tr>
+<tr>
+<td><pre>10963</pre></td>
+<td><pre>2017-07-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix typo</pre></td>
+</tr>
+<tr>
+<td><pre>10964</pre></td>
+<td><pre>2017-07-19</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>change is_dialog_field test to is EXPRESSION test - makes much more sense
+- doesn't explain difference between debug and no-debug behavior
+</pre></td>
+</tr>
+<tr>
+<td><pre>10965</pre></td>
+<td><pre>2017-07-20</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>* GetMemberCompletionList() completions argument changed from String_Array to Completions object
+    this is needed to get lookup for the member fields (chooser takes a Completions object)
+    and makes more sense anyway
+* Completions reset code moved from ProgExprBase to Completions object where it belongs
+* Comment out one of the tab key cases in iCodeCompleter::eventFilter - need to rethink
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>10966</pre></td>
+<td><pre>2017-07-20</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>* Sorry to make another chane to taBase.h - I don't anticipate others soon
+* ccsi_arg_dialog completion code now also using Completions object -
+no one is passing back a String_Array anymore
+* Added HasCompletions to Completions class - true if any of the lists has an item
+* Still some wierd behavior in member and arg completion fields,
+will fix those next.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10967</pre></td>
+<td><pre>2017-07-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* restore prevention of update while modal dialog is open -- was getting a crash from that
+* also prevent any other svn submit while an update is under way -- can get an svn conflict and a crash also from this.
+* really not sure why these weren't causing crashes before but seems like they are clearly
+bad things that should not have worked, and now it is not crashing.. yet.. at least..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10968</pre></td>
+<td><pre>2017-07-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>16 graph line colors now avail!  do Graph View Default Styles to get them..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10969</pre></td>
+<td><pre>2017-07-20</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for 3501
+- pass completer to the completer model so the model knows if the completer is for an expression
+- only add the expression pretext and append text if it is an expression
+</pre></td>
+</tr>
+<tr>
+<td><pre>10970</pre></td>
+<td><pre>2017-07-21</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>- Code for member.member completions in member fields like SetMember
+- Will need to update the iCodeCompleterModel code again as now we have a "non-expression" case
+with a prefix so still a bit more to do
+</pre></td>
+</tr>
+<tr>
+<td><pre>10971</pre></td>
+<td><pre>2017-07-21</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>*Added lookup to non-expression fields but commented out because the code crashes
+getting the text from selected item - fix will need to wait till tomorrow. 
+</pre></td>
+</tr>
+<tr>
+<td><pre>10972</pre></td>
+<td><pre>2017-07-21</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>* taiWidgetField - leaking chooser object - call delete when done with chooser
+* taiWidgetCompletionChooser - fix for 3511 - chooser crash
+  - get the result from m_sel in the widget chooser because the dialogItemChooser has already been deleted
+</pre></td>
+</tr>
+<tr>
+<td><pre>10973</pre></td>
+<td><pre>2017-07-21</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>* API change - model has no business calling ProgExprBase
+* Make model friend of iCodeCompleter
+</pre></td>
+</tr>
+<tr>
+<td><pre>10974</pre></td>
+<td><pre>2017-07-22</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>* Fix for bug 3507 SetMember member field shows members but there is no completion after "member."
+* Return completion pretext and append text in the completions object and update all the calls to get these strings
+* Remove a couple of obsolete methods
+* Remove unneeded static vars in ProgExprBase
+</pre></td>
+</tr>
+<tr>
+<td><pre>10975</pre></td>
+<td><pre>2017-07-22</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for	bug 3496 - cursor positioning in program editor fields not right
+- fixed now for completions done from popup menu
+</pre></td>
+</tr>
+<tr>
+<td><pre>10976</pre></td>
+<td><pre>2017-07-23</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>* ProgExprBase - fix setting of pre_text string
+* Chooser should only return selection not pre_text plus selection
+* SetText calls are now pass pre + selection + append
+</pre></td>
+</tr>
+<tr>
+<td><pre>10977</pre></td>
+<td><pre>2017-07-23</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for 3496 -	cursor positioning in program editor fields not right
+* store chooser selection in the Completer object
+* iLineEdit - if there was no popup selection check the chooser selection
+* fields using completion chooser store the chooser selection and then clear it after setting text
+</pre></td>
+</tr>
+<tr>
+<td><pre>10978</pre></td>
+<td><pre>2017-07-24</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for 3512 -  cursor positioning issue in inline code if insert text appears multiple times
+</pre></td>
+</tr>
+<tr>
+<td><pre>10979</pre></td>
+<td><pre>2017-07-24</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Absorb tab in completions if completion choice fully extended already
+- prevents tab to other fields
+</pre></td>
+</tr>
+<tr>
+<td><pre>10980</pre></td>
+<td><pre>2017-07-25</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Add a few checks for NULL completer
+</pre></td>
+</tr>
+<tr>
+<td><pre>10981</pre></td>
+<td><pre>2017-07-25</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Oops, that doesn't compile - remove ref to non-existant class member
+</pre></td>
+</tr>
+<tr>
+<td><pre>10982</pre></td>
+<td><pre>2017-07-26</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for bug 3514 - Crash closing textedit dialog using completer
+* Escape closes the dialog but the dialog is still around when the key gets to keyPressEvent
+so the completer puts up a menu but then the dialog goes away and so the completer object goes
+away and boom
+* Easy solution is to just call inherited if escape key and then return - i.e. don't pass on for completion
+</pre></td>
+</tr>
+<tr>
+<td><pre>10983</pre></td>
+<td><pre>2017-07-26</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Remove method directive that was an early experiment for cssiArgDialog completion
+- the chosen implementation does not use directives
+</pre></td>
+</tr>
+<tr>
+<td><pre>10984</pre></td>
+<td><pre>2017-07-26</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* CA1UnitSpec doesn't check for CA3 in checkconfig -- allows pretraining of CA1&lt;-&gt;EC
+* Unit save weights also checks if layer is lesioned -- std prjn IsActive doesn't do that!
+* DataTable::ChangeColTypeGeom_impl -- rewrote to make the new col in the data group right from the start, then move it into correct position (via swap with old), then remove the old one -- eliminates lack of owner in Init which triggered messages, and possibly errors in this
+function which still seems occasionally crashy..
+* UpdatePointersAfterCopy -- don't update pointers for anything owned by root!  prevents
+out-of-sync StructUpdate issue and perhaps other issues.. Also a good tip that somehow it is
+finding the siglink in this pointer update code?? need to investigate that further.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10985</pre></td>
+<td><pre>2017-07-27</pre></td>
+<td><pre>thazy</pre></td>
+<td><pre>working checkin, but still needs better documentation, cleanup old code, etc.; new learning rule for BLA, CEL con specs using dopamine modulation effecting only act_eq instead of regular act (lrn_act = false on unit spec; else works the old way)</pre></td>
+</tr>
+<tr>
+<td><pre>10986</pre></td>
+<td><pre>2017-07-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix for Bug 3498 which is reverting Bug 3399 -- need another solution for myobj.owner
+case in completer
+</pre></td>
+</tr>
+<tr>
+<td><pre>10987</pre></td>
+<td><pre>2017-07-27</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for bug 3399 - check to see if FindFromPath is returning a pointer and dereference if so
+</pre></td>
+</tr>
+<tr>
+<td><pre>10988</pre></td>
+<td><pre>2017-07-28</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>* Changes to support expression completion in ColCalcExpr
+* Remove calls on ProgExprBase - all of that info is now passed in the Completions object
+- means iCodeCompleter doesn't need to know who is handling the expression
+- Some renaming and cleanup as well
+</pre></td>
+</tr>
+<tr>
+<td><pre>10989</pre></td>
+<td><pre>2017-07-28</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Implemented completion for the expression field
+- limited to column names - will add possible relations
+- removed all code and references to col_lookup
+</pre></td>
+</tr>
+<tr>
+<td><pre>10990</pre></td>
+<td><pre>2017-07-28</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for 3520 - exit if QLabel* is NULL - will file separate bug - label should always be good
+</pre></td>
+</tr>
+<tr>
+<td><pre>10991</pre></td>
+<td><pre>2017-07-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>diff compare: don't ignore non taOBase members (e.g., layer un_geom etc) -- just use string diff</pre></td>
+</tr>
+<tr>
+<td><pre>10992</pre></td>
+<td><pre>2017-07-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>added ProjectionSpec::HasRandomScale method, now called by LeabraConSpec::SaveConVarToWeights for "scale" -- if projection sets a randomized scale value, then this must be saved with the weights file.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10993</pre></td>
+<td><pre>2017-07-29</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>* DataOpEl - Remove member col_lookup and methods GetColumns and ClearColumns
+* DataOpEl - Add method GetColumn() returns DataCol*
+* DataOpEl - UpdateAfterEdit sets col_idx based on col_name - throws error if name doesn't match a column
+- unlikely with completion
+* All the other changes are the result of the changes to DataOpEl
+</pre></td>
+</tr>
+<tr>
+<td><pre>10994</pre></td>
+<td><pre>2017-07-30</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Update a couple of comments referring to col_lookup
+</pre></td>
+</tr>
+<tr>
+<td><pre>10995</pre></td>
+<td><pre>2017-07-30</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>A couple of commented out lines I forgot to delete
+</pre></td>
+</tr>
+<tr>
+<td><pre>10996</pre></td>
+<td><pre>2017-07-30</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Add completion to col_name field but left col_lookup in place as it is a GraphColView object
+</pre></td>
+</tr>
+<tr>
+<td><pre>10997</pre></td>
+<td><pre>2017-07-30</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Error message if you try to complete a column name field without setting the data table variable
+</pre></td>
+</tr>
+<tr>
+<td><pre>10998</pre></td>
+<td><pre>2017-07-30</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Revert all changes to files in ta_data to revision 10992
+</pre></td>
+</tr>
+<tr>
+<td><pre>10999</pre></td>
+<td><pre>2017-08-02</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Remove col_lookup from GUI
+</pre></td>
+</tr>
+<tr>
+<td><pre>11000</pre></td>
+<td><pre>2017-08-04</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Add tab names to tab context menu to allow switching tabs from menu
+</pre></td>
+</tr>
+<tr>
+<td><pre>11001</pre></td>
+<td><pre>2017-08-04</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>* If the shift key is down and the left or right arrow key is pressed don't do completion.
+  -- this allows text selection to work correctly
+</pre></td>
+</tr>
+<tr>
+<td><pre>11002</pre></td>
+<td><pre>2017-08-05</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Some smarts for the ColCalcExpr completer
+* lists column names
+* column_name. gets you a list of string matching routines if column type is String
+(contains, startsWith, endsWith, matches, matches_regexp, matches_wildcard)
+and each is followed by (" so users don't type (' which won't work
+* column names will not appear if the prior portion of the expression was another column name
+but will appear if you have column name and then operator
+* So a bit of help for the user but by no means a full parser/completer
+</pre></td>
+</tr>
+<tr>
+<td><pre>11003</pre></td>
+<td><pre>2017-08-05</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>* Completion for SetMember dialog shows values if the field is an enum
+-- it is a minor hack but could be written more generally if we need similar
+functionality in other dialogs
+</pre></td>
+</tr>
+<tr>
+<td><pre>11004</pre></td>
+<td><pre>2017-08-06</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>SetMember values field - forgot to handle the member.member case - working now
+</pre></td>
+</tr>
+<tr>
+<td><pre>11005</pre></td>
+<td><pre>2017-08-07</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Solution for setting Variant type on combo box for DataCol InitVals
+- would work in other cases if we find them
+- follows pattern of GetGuiArgVal code
+</pre></td>
+</tr>
+<tr>
+<td><pre>11006</pre></td>
+<td><pre>2017-08-07</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>SetMember changes now written to console
+</pre></td>
+</tr>
+<tr>
+<td><pre>11007</pre></td>
+<td><pre>2017-08-08</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for 3487 - property panels for objs_vars, types, args and vars have empty fields
+- always call GetImage_Membs_def() even if we aren't showing the list items
+- bug introduced when the boolean was added for showing/not showing list items
+</pre></td>
+</tr>
+<tr>
+<td><pre>11008</pre></td>
+<td><pre>2017-08-08</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Add #NULL_OK_0 #NULL_TEXT_0_NewDataTable to support new data table as option for generated histogram
+</pre></td>
+</tr>
+<tr>
+<td><pre>11009</pre></td>
+<td><pre>2017-08-08</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Add null check
+</pre></td>
+</tr>
+<tr>
+<td><pre>11010</pre></td>
+<td><pre>2017-08-08</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Two fixes
+- shift key was causing text selection to deselect
+- fix for bug 3527 - Smart selection should be turned off if shift and arrow keys making selection
+</pre></td>
+</tr>
+<tr>
+<td><pre>11011</pre></td>
+<td><pre>2017-08-08</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for expand default - see note in bug 3405
+</pre></td>
+</tr>
+<tr>
+<td><pre>11012</pre></td>
+<td><pre>2017-08-09</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Bug fix for tree expansion - ParamSeqs_Group was not expanding to default
+- If there is no preference for the group expansion then use EXPAND_DEF
+- Convenience function added for getting EXPAND_DEF value cleans up the code
+- a couple of comment updates
+- fixes bug 3405
+</pre></td>
+</tr>
+<tr>
+<td><pre>11013</pre></td>
+<td><pre>2017-08-09</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for auto expanding Virtual World objects
+- Update all VE classes directives
+-- Those that derive from TA_Group got EXPAND_DEF_6
+-- Those that should expand like groups but don't derive from TA_Group marked EXPAND_AS_GROUP
+- bug fix so that these directive work
+-- if object derives from TA_Groug or marked EXPAND_AS_GROUP - don't let it fall into custom expand filter code
+-- changed "if (level &lt;= 0 &amp;&amp; exp_flags &amp; EF_DEFAULT_UNDER)" to "if (depth &lt;= 0..."  (pretty sure that is correct now)
+</pre></td>
+</tr>
+<tr>
+<td><pre>11014</pre></td>
+<td><pre>2017-08-09</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>VETextures are kept in a list not a group - add lists to types that don't use custom expand filters
+</pre></td>
+</tr>
+<tr>
+<td><pre>11015</pre></td>
+<td><pre>2017-08-10</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fixes 3533 - program sub groups, objs, vars, etc were not getting expanded
+- backed out yesterday's fix that stopped all custom filter expand calls for groups
+- new fix that fixes yesterday's problem (paramseq and other groups not expanding)
+without the negative consequence is to make sure that an expand preference will be
+found before calling custom expand - otherwise the failure to find preference
+leads to non-expansion.
+</pre></td>
+</tr>
+<tr>
+<td><pre>11016</pre></td>
+<td><pre>2017-08-10</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>More changes to expand code
+- likely will never be fully correct unless rewritten from ground up!
+</pre></td>
+</tr>
+<tr>
+<td><pre>11017</pre></td>
+<td><pre>2017-08-11</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Add NULL check on owner before calling GetTypeDef()
+</pre></td>
+</tr>
+<tr>
+<td><pre>11018</pre></td>
+<td><pre>2017-08-11</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* remove StructUpdate from iDataTableColHeaderView.cpp resizedSection -- this was triggering
+massive updates when displaying a datatable.  is it possible I just never noticied this
+before?  my tick log data has a LOT of columns.  maybe I never really clicked on them
+before.  or just tolerated the slowness..  anyway, this may have repercussions but none
+noted yet.. :)
+* iTableView event filter was triggering a lot of redundant updates by constantly
+setting the font everytime on Paint events!  now only does this when the font is different --
+actually not sure this is working right -- will investigate further
+* added a Restore Win Geom menu action for when your laptop insists on resizing your
+windows during its naptime..  need to fix the css console win to use this too
+and to only save geom when being saved..
+</pre></td>
+</tr>
+<tr>
+<td><pre>11019</pre></td>
+<td><pre>2017-08-11</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fixed all font size setting code (that I could find) to use update-only-when-different
+font size updates.  verfied with print statements.. :)
+</pre></td>
+</tr>
+<tr>
+<td><pre>11020</pre></td>
+<td><pre>2017-08-11</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>major slowness in WWI TickCompare fixed -- was spending forever in UpdateListNames --
+fixed FindChildForData to take a guess index and search outward from there if passed --
+huge speedup there.  rest of it seems to just be all the computation of actually doing
+the smoothing..  none of this is new -- really don't know why it showed up now and
+maybe I just really didn't notice enough before.
+</pre></td>
+</tr>
+<tr>
+<td><pre>11021</pre></td>
+<td><pre>2017-08-11</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>sig link now checks if its MemberOwner is in a struct update state -- if so, it
+suppresses its own updates, under the assumption that the MemberOwner's update will
+update it as well (generally should be a safe assumption)
+
+HOWEVER, we may see some failures-to-update which could potentially lead to crashes
+from stale state -- please be on the lookout for these and it is easy to back this
+out if it causes problems!  definitely speeds up TickUpdate just a bit more
+</pre></td>
+</tr>
+<tr>
+<td><pre>11022</pre></td>
+<td><pre>2017-08-11</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for crash closing project
+- Replace the hide(), ProcessEvents() and proj-&gt;CloseLater() calls in file close with
+call to fileCloseWindow() which makes the same calls but AFTER closing all the widgets
+- anyway, it works
+</pre></td>
+</tr>
+<tr>
+<td><pre>11023</pre></td>
+<td><pre>2017-08-12</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>* Fixes for StdEverythig -- wizard not creating working project
+- Don't	cutlink	to network until it is no longer needed!
+- Set the network on LayerWriter before	auto config
+- Set network arg for LeabraBatch explicitly - not sure	how this worked	before
+-- possibly broken with	changes to the load from lib work ??
+-- might return to - thinking about alternative solution
+* The StdData dialog was not getting called if you started with StdEverything - fixed
+</pre></td>
+</tr>
+<tr>
+<td><pre>11024</pre></td>
+<td><pre>2017-08-13</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Cleaner solution for wizard bug 3472
+</pre></td>
+</tr>
+<tr>
+<td><pre>11025</pre></td>
+<td><pre>2017-08-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fire param seq's that have been passed over if epoch jumps past them.
+</pre></td>
+</tr>
+<tr>
+<td><pre>11026</pre></td>
+<td><pre>2017-08-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>only save css console win geom on save events, not on resize -- prevents spurious
+geom changes etc from messing with geom.. Restore win geom now will always work..
+</pre></td>
+</tr>
+<tr>
+<td><pre>11027</pre></td>
+<td><pre>2017-08-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* check for duplicate variable names across all global locations, and prompt user to
+change one or the other of them if found
+* improve objs vars initializer routine (and call it on loading now) -- looks for possible
+dupes in vars (can happen if someone opens in old version and saves -- happend to me!) -- updates pointers to old before removing.  fixed that project
+* new method: FindGlobalVarName -- HasVar and GetVar were advertised as only looking
+at globals but in fact they looked for locals too, by calling FindVarName -- updated
+TemtClient to use FindGlobalVarName as it use HasVar.
+</pre></td>
+</tr>
+<tr>
+<td><pre>11028</pre></td>
+<td><pre>2017-08-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>quarter now built within temt library instead of linking externally</pre></td>
+</tr>
+<tr>
+<td><pre>11029</pre></td>
+<td><pre>2017-08-13</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for crash doing lookup "ctrl L" in global var
+</pre></td>
+</tr>
+<tr>
+<td><pre>11030</pre></td>
+<td><pre>2017-08-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>remove quarter comments to see if that fixes john's build issue
+</pre></td>
+</tr>
+<tr>
+<td><pre>11031</pre></td>
+<td><pre>2017-08-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>undo objs_vars transfer at load time, because it doesn't update the variable names
+to lowercase etc as is needed for loading an older project.
+this should fix the auto tests -- program_examples had upper-case versions of
+objs vars
+</pre></td>
+</tr>
+<tr>
+<td><pre>11032</pre></td>
+<td><pre>2017-08-14</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>- Fixed default expand for program groups in Navigator but not for Program_TopGroup
+- This was a very small change with little chance of side effect
+</pre></td>
+</tr>
+<tr>
+<td><pre>11033</pre></td>
+<td><pre>2017-08-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Compute stats for ClusterRun -- see how many cycles you've burned!
+</pre></td>
+</tr>
+<tr>
+<td><pre>11034</pre></td>
+<td><pre>2017-08-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* updated ClusterRun datatable action menus to match new more organized menu layout
+* use TA_API for quarter
+</pre></td>
+</tr>
+<tr>
+<td><pre>11035</pre></td>
+<td><pre>2017-08-14</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Rename the autotest "other" directory to tests
+ 
+</pre></td>
+</tr>
+<tr>
+<td><pre>11036</pre></td>
+<td><pre>2017-08-14</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Commit the initial attempt at testing the LeabraWizard::StdEverything wizard.
+
+This does not yet actually include the test and is just the update to the test project.
+So this shouldn't effect the tests, which would otherwise fail due to bug #3542
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>11037</pre></td>
+<td><pre>2017-08-15</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>* Change of behavior for initiating editing in the program editor
+- If the item has children doubleclick will expand/contract but not open an editor
+- If the item does not have children doubleclick opens an editor
+- Clicking on a selected item will always open the editor (for editable items)
+- Now get this! Double click was NEVER opening an edit before. We weren't calling
+inherited so only the expand/collapse was happening
+- And yet it seemed sometimes like it worked and that is because of the timing we sometimes
+got a select followed by a click! That is why it felt inconsistent. Glad to get this fixed.
+</pre></td>
+</tr>
+<tr>
+<td><pre>11038</pre></td>
+<td><pre>2017-08-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* main back/forward history arrows go into program editor for program elements (instead of navigator)
+* FINALLY added one-stop versions of DataTable::SaveDataLog and SaveData that get the file
+name from the project, instead of requiring two calls for this.
+* add list of excluded layers from ActBasedRF
+</pre></td>
+</tr>
+<tr>
+<td><pre>11039</pre></td>
+<td><pre>2017-08-15</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix logic in mouseDoubleClickEvent to get program groups expanding
+- don't call inherited if we are expanding/collapsing
+- do call inherited if we want to trigger an edit
+- added iTreeViewItem::CanExpand() which checks taBase::children_() to determine
+if we will be doing expand/collapse or edit
+</pre></td>
+</tr>
+<tr>
+<td><pre>11040</pre></td>
+<td><pre>2017-08-15</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Basic tests contained the "other" directory, so rename to tests
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>11041</pre></td>
+<td><pre>2017-08-15</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>* Edit mode triggers in Navigator now same as for Program Editor
+* Add some exceptions to iTreeViewItem::CanExpand which don't have "children"
+so that Network, Project, Program and DataView do expand on doubleclick
+- we probably want a taBase method instead.
+</pre></td>
+</tr>
+<tr>
+<td><pre>11042</pre></td>
+<td><pre>2017-08-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>taBase::HasTreeVisibleMembers -- use this for checking on expand / collapse etc</pre></td>
+</tr>
+<tr>
+<td><pre>11043</pre></td>
+<td><pre>2017-08-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>taBase::HasTreeVisibleMembers -- also check for non-null children so this is a one-stop solution.. :)</pre></td>
+</tr>
+<tr>
+<td><pre>11044</pre></td>
+<td><pre>2017-08-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>xml escape legend in svg output.. could probably do more of those</pre></td>
+</tr>
+<tr>
+<td><pre>11045</pre></td>
+<td><pre>2017-08-16</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>* Swap code in iTreeViewItem::CanExpand for new taBase method HasTreeVisibleMembers
+* Fix for failure to complete after '&gt;'
+* Fix for failure to complete after "case:" - was a missing piece. Only shows DynEnums
+as I don't think emergent has any other constants.
+</pre></td>
+</tr>
+<tr>
+<td><pre>11046</pre></td>
+<td><pre>2017-08-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>update std projs and startup prog to use new more compact log opening routine</pre></td>
+</tr>
+<tr>
+<td><pre>11047</pre></td>
+<td><pre>2017-08-18</pre></td>
+<td><pre>thazy</pre></td>
+<td><pre>positive-rectify net matrix inputs - was getting double excitatory inputs fm all four matrix layers during mixed US config when same CS can predict either pos or neg US</pre></td>
+</tr>
+<tr>
+<td><pre>11048</pre></td>
+<td><pre>2017-08-18</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>add movie frame size option to netview</pre></td>
+</tr>
+<tr>
+<td><pre>11049</pre></td>
+<td><pre>2017-08-18</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for bug 3420 - focus not returned to tree when selecting network component in tree
+after selecting network component in T3DataView
+- Added Emit_GotFocusSignal() after edit action completes to ensure focus is returned to initiator
+- I expect there is a narrower fix but I believe this one is safe, perhaps at cost of some performance, not sure.
+</pre></td>
+</tr>
+<tr>
+<td><pre>11050</pre></td>
+<td><pre>2017-08-19</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Make sure StdEverything wizard runs ok in no_gui mode
+</pre></td>
+</tr>
+<tr>
+<td><pre>11051</pre></td>
+<td><pre>2017-08-24</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Disable wizards StdEverything for the moment until the test passes
+ 
+</pre></td>
+</tr>
+<tr>
+<td><pre>11052</pre></td>
+<td><pre>2017-08-25</pre></td>
+<td><pre>anna0217</pre></td>
+<td><pre>Adding trial by trial based accomodation --  individual units that are active above threshold for n trials get depressed (syn_tr=0) and recover at a probability 
+ 
+</pre></td>
+</tr>
+<tr>
+<td><pre>11053</pre></td>
+<td><pre>2017-08-25</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Change to expand logic to fix items like Schedule that were expanding when they had EXPAND_DEF_0
+</pre></td>
+</tr>
+<tr>
+<td><pre>11054</pre></td>
+<td><pre>2017-08-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* double-checked ActBasedRF code -- looks clean -- updated to more modern UnRef instead
+of unRefDone -- should just clean that up once-and-for-all as it is very confusing --
+they really are functionally identical..
+* then ran wwi in debugger (that was slow!) and found the problem: wasn't using local-to-the
+for loop matrix* pointer local vars -- key point there -- we might want to find a way
+to provide more targeted validation of this.
+</pre></td>
+</tr>
+<tr>
+<td><pre>11055</pre></td>
+<td><pre>2017-08-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* targeted check config for GetValAsMatrix / GetRangeAsMatrix returning a Matrix -- that
+matrix var MUST be localvar inside the same loop as the call!
+* can drop a var on a ProgEl and there an option to Move Local Var Here -- convenient way
+to move these matrix vars to the right place!
+</pre></td>
+</tr>
+<tr>
+<td><pre>11056</pre></td>
+<td><pre>2017-08-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>STP fixes / style updates
+* forgot to update CONDSHOW to CYCLES instead of STANDARD
+* Defaults_init should not set valid diff options like algorithm -- just put that in Initialize
+* move description of algorithms into the relevant enum, overall class desc is then more generic
+* updated overall comments to be more specific about syn_tr and its effect on act, act_eq etc
+* updated language to refer to synaptic NT depletion instead of accommodation..
+* for the update code, better to return immediately if !on and not the right algo -- easier to read non-indented code and less chance of errors for later mods affecting wrong algo
+* our style guide says don't do: } else { all on one line
+* bools don't need an == true
+* don't use ++ on floats
+* use f suffix on all float constants -- some compilers warn about that (still?)
+</pre></td>
+</tr>
+<tr>
+<td><pre>11057</pre></td>
+<td><pre>2017-08-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix for savedatanamefmproj -- needs rval</pre></td>
+</tr>
+<tr>
+<td><pre>11058</pre></td>
+<td><pre>2017-08-26</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Changes to get Wizards to run nogui
+- the StdEverything wizard creates everything but generates an error. I think the network args are not getting set
+- I conditonalized the loading of AddFromWiki in ObjLibrary::BuildLibrary_impl so it doesn't load if gui is not active.
+I didn't feel it was worth going deeper down this path. I already spent too much time on this.
+- The StdNetwork wizard should now work with automated testing and the StdEverything won't crash but won't run.
+I'll file a bug about this but won't fix at this time.
+</pre></td>
+</tr>
+<tr>
+<td><pre>11059</pre></td>
+<td><pre>2017-08-26</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>- Reset StdData default creation to zero rows
+- Contrary to my last commit comment I don't see any error from StdEverything in nogui mode
+</pre></td>
+</tr>
+<tr>
+<td><pre>11060</pre></td>
+<td><pre>2017-08-31</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Enhancement - you can now label graph axes with arbitrary text
+</pre></td>
+</tr>
+<tr>
+<td><pre>11061</pre></td>
+<td><pre>2017-09-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fix error bar location for svg bar plots
+* fix ReplaceVarStr for ProgEl: go deep!  and sigemitupdated
+</pre></td>
+</tr>
+<tr>
+<td><pre>11062</pre></td>
+<td><pre>2017-09-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* updated version to 8.2.0 in preparation for release, and to conditionalize new momentum
+* massively simplified momentum to just be simple momentum with automatic dwt normalization
+-- greatly cleans up impl and these are the options that work -- on by default for new
+projects.
+</pre></td>
+</tr>
+<tr>
+<td><pre>11063</pre></td>
+<td><pre>2017-09-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>momentum defaults 10 or 20 -- 20 best for most probably</pre></td>
+</tr>
+</table>
+</body></html>
