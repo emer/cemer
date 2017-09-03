@@ -457,6 +457,11 @@ void iDataTableView::UpdateRowHeightColWidth() {
   DataTable* dt = dataTable();
   if(!dt) return;
 
+  if(col_header->count() != dt->data.size) {
+    // out of date!
+    return;
+  }
+  
   int row_height = 1;
 #if (QT_VERSION >= 0x050200)
   col_header->setMaximumSectionSize(ConvertCharsToPixels(dt->max_col_width));
