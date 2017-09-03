@@ -118,7 +118,7 @@ void LeabraMomentum::Defaults_init() {
   }
   dwavg_tau = 1000.0f;
   norm_min = 0.001f;
-  m_tau = 10.0f;
+  m_tau = 20.0f;
   lrate_comp = 0.01f;
 
   dwavg_dt = 1.0f / dwavg_tau;
