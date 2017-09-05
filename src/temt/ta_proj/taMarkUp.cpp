@@ -260,7 +260,7 @@ String taMarkUp::DataTableTable(const DataTable& data, Format fmt) {
     int col_no = 0;
     rval << TableRowStart(fmt, col_no);
     for(int i=0; i<data.data.size; i++) {
-      rval << TableCell(fmt, data.GetValAsString(r,i), col_no);
+      rval << TableCell(fmt, data.GetValAsString(i,r), col_no);
     }
     rval << TableRowEnd(fmt, col_no);
   }

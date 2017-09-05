@@ -2607,6 +2607,7 @@ DataTable* Network::NetStructToTable(DataTable* dt, bool list_specs) {
     String fmp;
     for(int i=0; i<l->projections.size; i++) {
       Projection* pj = l->projections.FastEl(i);
+      if(pj->off) continue;
       fmp += pj->from->name + " ";
     }
     dt->SetVal(fmp, "RecvPrjns", -1);
@@ -2614,6 +2615,7 @@ DataTable* Network::NetStructToTable(DataTable* dt, bool list_specs) {
     String snp;
     for(int i=0; i<l->send_prjns.size; i++) {
       Projection* pj = l->send_prjns.FastEl(i);
+      if(pj->off) continue;
       snp += pj->layer->name + " ";
     }
     dt->SetVal(snp, "SendPrjns", -1);
