@@ -51,7 +51,7 @@ void taDataView::UpdateAfterEdit() {
 
 void taDataView::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  if (taMisc::is_loading) {
+  if (taMisc::is_loading) { // && !taMisc::is_undo_loading) {
     if (m_data)
       m_data->AddSigClient(this);
   }

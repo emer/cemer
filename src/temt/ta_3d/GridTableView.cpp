@@ -828,12 +828,19 @@ void GridTableView::Clear_impl() {
   inherited::Clear_impl();
 }
 
-void GridTableView::OnWindowBind_impl(iT3Panel* vw) {
-  inherited::OnWindowBind_impl(vw);
+void GridTableView::MakePanel() {
   if (!m_lvp) {
     m_lvp = new iViewPanelOfGridTable(this);
-    vw->RegisterPanel(m_lvp);
+    T3Panel* panl = GetFrame();
+    if(panl && panl->widget()) {
+      panl->widget()->RegisterPanel(m_lvp);
+    }
   }
+}
+
+void GridTableView::OnWindowBind_impl(iT3Panel* vw) {
+  inherited::OnWindowBind_impl(vw);
+  MakePanel();
 }
 
 void GridTableView::RemoveGrid() {

@@ -50,6 +50,7 @@ void taSigLink::SigDestroying() { //note: linklist will automatically remove us
   while (clients.size > 0) {
     //NOTE: client could destroy, so we have to remove it now
     dlc = clients.Pop();
+    if(!dlc) continue;
     dlc->RemoveSigLink(this);
     //NOTE: client can still refer to us, but must do so through the ref we pass it
     dlc->SigLinkDestroying(this);
@@ -66,6 +67,7 @@ void taSigLink::DoNotify(int sls, void* op1_, void* op2_) {
 #endif
   for (int i = 0; i < clients.size; ++i) {
     ISigLinkClient* dlc = clients.FastEl(i);
+    if(!dlc) continue;
     if ((sls == SLS_REBUILD_VIEWS) && !dlc->isDataView()) continue;
     if (dlc->ignoreSigEmit())
       dlc->IgnoredSigEmit(this, sls, op1_, op2_);
@@ -233,6 +235,7 @@ String& taSigLink::ListClients(String& strm, int indent) const {
   nms.Alloc(clients.size);
   for(int i=0; i<clients.size; i++) {
     ISigLinkClient* dlc = clients.FastEl(i);
+    if(!dlc) continue;
     TypeDef* dlc_typ = dlc->GetTypeDef();
     if (dlc_typ) {
       nms.Add(dlc_typ->name);

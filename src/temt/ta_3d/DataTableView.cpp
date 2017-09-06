@@ -56,6 +56,11 @@ void DataTableView::InitLinks() {
 }
 
 void DataTableView::CutLinks() {
+  // the nvp refs some of our stuff, so we have to nuke it
+  if (m_lvp) {
+    delete m_lvp; // should delete our ref
+    m_lvp = NULL;
+  }
   view_range.CutLinks();
   inherited::CutLinks();
 }
@@ -138,13 +143,25 @@ void DataTableView::setDataTable(DataTable* dt) {
 }
 
 void DataTableView::InitPanel() {
-  if (m_lvp)
+  if (!m_lvp) {
+    MakePanel();
+  }
+  if (m_lvp) {
     m_lvp->InitPanel();
+  }
 }
 
 void DataTableView::UpdatePanel() {
-  if (m_lvp)
+  if (!m_lvp) {
+    MakePanel();
+  }
+  if(m_lvp) {
     m_lvp->UpdatePanel();
+  }
+}
+
+void DataTableView::MakePanel() {
+  // in subclasses
 }
 
 bool DataTableView::isVisible() const {

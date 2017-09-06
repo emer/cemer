@@ -74,6 +74,8 @@ public:
   // lets panel init itself after struct changes
   virtual void          UpdatePanel();
   // after changes to props
+  virtual void          MakePanel();
+  // make a new panel, if it is not created yet
 
   virtual void          ClearData();
   // Clear the display and the data

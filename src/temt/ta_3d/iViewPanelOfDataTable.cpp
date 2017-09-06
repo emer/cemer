@@ -56,9 +56,9 @@ void iViewPanelOfDataTable::UpdatePanel_impl() {
       bool ok;
       this->setStyleSheet("iViewPanel { background-color: #" +
                           dv->dataTable()->GetEditColor(ok).toString() + "; }");
+      meth_but_mgr->GetImage();
     }
   }
-  meth_but_mgr->GetImage();
 }
 
 String iViewPanelOfDataTable::TabText() const {

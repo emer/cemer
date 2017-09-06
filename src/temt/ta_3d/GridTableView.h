@@ -135,6 +135,7 @@ public:
   void         UpdateName() override;
   const String caption() const override;
   bool         hasViewProperties() const override { return true; }
+  void         MakePanel() override;
 
   void         DataUnitsXForm(taVector3f& pos, taVector3f& size) override;
 

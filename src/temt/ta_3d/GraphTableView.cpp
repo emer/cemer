@@ -862,12 +862,19 @@ void GraphTableView::Clear_impl() {
   inherited::Clear_impl();
 }
 
-void GraphTableView::OnWindowBind_impl(iT3Panel* vw) {
-  inherited::OnWindowBind_impl(vw);
+void GraphTableView::MakePanel() {
   if (!m_lvp) {
     m_lvp = new iViewPanelOfGraphTable(this);
-    vw->RegisterPanel(m_lvp);
+    T3Panel* panl = GetFrame();
+    if(panl && panl->widget()) {
+      panl->widget()->RegisterPanel(m_lvp);
+    }
   }
+}
+
+void GraphTableView::OnWindowBind_impl(iT3Panel* vw) {
+  inherited::OnWindowBind_impl(vw);
+  MakePanel();
 }
 
 void GraphTableView::RemoveGraph(){

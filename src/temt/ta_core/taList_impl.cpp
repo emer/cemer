@@ -862,16 +862,20 @@ taBase* taList_impl::Dump_Load_Path_parent(const String& el_path, TypeDef* ld_el
     elnm = elnm.between('\"','\"');
     elnm = taMisc::StringCVar(elnm);
     nw_el = (taBase*)FindName_(elnm);
-    if(nw_el)
+    if(nw_el) {
       idx = FindEl_(nw_el);
-    else
+    }
+    else {
       idx = size;               // put it at the end!
+    }
   }
   else {
     idx = (int)elnm;
     if(InRange(idx)) {
       nw_el = (taBase*)FastEl_(idx);
-      if(!nw_el)        RemoveIdx(idx); // somehow has a null guy on list.. nuke it
+      if(!nw_el) {
+        RemoveIdx(idx); // somehow has a null guy on list.. nuke it
+      }
     }
   }
   if(nw_el) {
@@ -895,6 +899,17 @@ taBase* taList_impl::Dump_Load_Path_parent(const String& el_path, TypeDef* ld_el
       ReplaceIdx(idx, nw_el);
       if(has_nm) {
         nw_el->SetName(elnm);
+      }
+    }
+    if(taMisc::is_undo_loading) {
+      taSigLink* dl = nw_el->sig_link();
+      if (dl) {
+        for(int i=dl->clients_list().size -1; i >= 0; i--) {
+          ISigLinkClient* dlc = dl->clients_list().FastEl(i);
+          if(dlc->isDataView()) {
+            dl->clients_list().RemoveIdx(i);
+          }
+        }
       }
     }
   }

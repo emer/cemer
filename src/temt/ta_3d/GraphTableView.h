@@ -175,6 +175,7 @@ public:
   const iColor bgColor(bool& ok) const override; // #IGNORE
   void         UpdateName() override;
   const String caption() const override;
+  void          MakePanel() override;
 
   bool         hasViewProperties() const override { return true; }
 
