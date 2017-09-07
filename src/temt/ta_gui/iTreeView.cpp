@@ -495,11 +495,11 @@ void iTreeView::ExpandDefaultItem_impl(iTreeViewItem* item) {
       expand = false;
     }
   }
-  else if(td->HasOption("DEF_CHILD")) { // def child obj, def no expend
+  else if(tab->children_() != NULL) { // def child obj, def no expend
     expand = false;
     if(has_expand && !has_no_expand) {
       taList_impl* lst = tab->children_();
-      if(lst && lst->size > 0) { // only expand if actual children items!
+      if(lst->size > 0) { // only expand if actual children items!
         expand = true;
       }
     }
