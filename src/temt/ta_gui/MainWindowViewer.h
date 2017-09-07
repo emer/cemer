@@ -44,7 +44,7 @@ class taiWidgetActions; //
 taTypeDef_Of(MainWindowViewer);
 
 class TA_API MainWindowViewer : public TopLevelViewer {
-  // ##DEF_NAME_ROOT_Browser the uber controller for main windows
+  // ##DEF_NAME_ROOT_Browser ##EXPAND the uber controller for main windows
 INHERITED(TopLevelViewer)
 friend class taSigLink;
 friend class ToolBar_List;

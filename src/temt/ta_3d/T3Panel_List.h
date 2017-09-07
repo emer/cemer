@@ -27,7 +27,8 @@
 
 taTypeDef_Of(T3Panel_List);
 
-class TA_API T3Panel_List: public taViewer_List { // #NO_TOKENS
+class TA_API T3Panel_List: public taViewer_List {
+  // #NO_TOKENS ##EXPAND 
 INHERITED(taViewer_List)
 public:
   TA_DATAVIEWLISTFUNS(T3Panel_List, taViewer_List, T3Panel)
