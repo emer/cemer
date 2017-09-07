@@ -27,7 +27,7 @@
 eTypeDef_Of(VEMuscle_List);
 
 class E_API VEMuscle_List : public taList<VEMuscle> {
-  // group of linear muscles ##EXPAND_DEF_6
+  // group of linear muscles 
   INHERITED(taList<VEMuscle>)
 public:
 

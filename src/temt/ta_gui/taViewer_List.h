@@ -28,7 +28,7 @@ taTypeDef_Of(taViewer);
 taTypeDef_Of(taViewer_List);
 
 class TA_API taViewer_List: public DataView_List {
-  // #NO_TOKENS ##EXPAND_DEF_0 list of data viewers
+  // #NO_TOKENS ##NO_EXPAND list of data viewers
 INHERITED(DataView_List)
 public:
 

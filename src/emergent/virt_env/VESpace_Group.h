@@ -29,7 +29,7 @@ class VEStatic; //
 eTypeDef_Of(VESpace_Group);
 
 class E_API VESpace_Group : public taGroup<VESpace> {
-  // ##CAT_VirtEnv #EXPAND_DEF_6 a group of virtual environment objects
+  // ##CAT_VirtEnv a group of virtual environment objects
 INHERITED(taGroup<VESpace>)
 public:
   virtual void  Init();

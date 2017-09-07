@@ -31,7 +31,7 @@ class taBase;
 taTypeDef_Of(ProgVar_List);
 
 class TA_API ProgVar_List : public taList<ProgVar> {
-  // ##NO_TOKENS ##CHILDREN_INLINE ##CAT_Program list of script variables
+  // ##NO_TOKENS ##CHILDREN_INLINE ##CAT_Program ##NO_EXPAND_NAV list of script variables
 INHERITED(taList<ProgVar>)
 public:
   enum VarContext {

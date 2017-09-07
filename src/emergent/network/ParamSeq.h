@@ -28,7 +28,7 @@
 eTypeDef_Of(ParamSeq);
 
 class E_API ParamSeq : public taNBase {
-  // #STEM_BASE ##TOKENS ##CAT_Network ##DEF_CHILD_steps ##EXPAND_DEF_3 ##EXPAND_AS_GROUP A sequence of parameters to apply over training of a network -- MUST add network.Init_Epoch() call at start of epoch in appropriate program code (e.g., LeabraEpoch or EpochStart programs)
+  // #STEM_BASE ##TOKENS ##CAT_Network ##DEF_CHILD_steps A sequence of parameters to apply over training of a network -- MUST add network.Init_Epoch() call at start of epoch in appropriate program code (e.g., LeabraEpoch or EpochStart programs)
 INHERITED(taNBase)
 public:
   String          desc;           // description of what this parameter sequence does

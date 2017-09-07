@@ -142,7 +142,7 @@ public:
   ProgExpr              stop_step_cond;
   // #CONDSHOW_OFF_flags:NO_STOP_STEP #BROWSER_EDIT_LOOKUP optional condition for when the default stop / step check should be executed (this is automatically inserted at the end of the program) -- only stop / step when this expression is true -- allows e.g., longer time scales and specific conditions (e.g., errors) to be used for stopping
   ProgObjList           objs;
-  // #TREEFILT_ProgGp create persistent objects of any type here that are needed for the program -- each object will automatically create an associated variable
+  // create persistent objects of any type here that are needed for the program -- each object will automatically create an associated variable
   ProgVar_List          objs_vars;
   // variables automatically maintained in one-to-one correspondence with the objs objects -- these are how the program accesses the objs objects -- they have lower-case versions of the names (snake_case) instead of CamelCase, which is naming convention for variables
   ProgType_List         types;

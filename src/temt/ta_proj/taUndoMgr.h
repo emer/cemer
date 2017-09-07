@@ -40,7 +40,6 @@ public:
   taUndoRec_List        undo_recs;    // #TREE_SHOW #NO_SAVE the undo records
   int                   cur_undo_idx;   // #READ_ONLY #NO_SAVE logical index into undo record list where the next undo/redo will operate -- actually +1 relative to index to undo -- 0 = no more undos -- goes to the end for each SaveUndo, moves back/forward for Undo/Redo
   int                   undo_depth;     // #NO_SAVE how many undo's to keep around
-  float                 new_src_thr;    // #NO_SAVE threshold for how big (as a proportion of total file size) the diff's need to get before a new undo source record is created
   bool                  save_load_file; // #NO_SAVE save a copy of the file that is loaded during an undo or redo -- file name is "undo_load_file.txt" in cur directory -- useful for debugging issues
   taUndoRec*            rec_to_diff;    // #IGNORE for threading system, rec for diffing
   TimeUsedHR            undo_time_used; // #NO_SAVE undo time used recording

@@ -29,7 +29,7 @@
 taTypeDef_Of(taBase_Group);
 
 class TA_API taBase_Group : public taGroup<taBase> {
-  // #NO_TOKENS ##EXPAND_DEF_0 group of objects
+  // #NO_TOKENS group of objects
 INHERITED(taGroup<taBase>)
 public:
   void  Initialize()            { SetBaseType(&TA_taBase); }

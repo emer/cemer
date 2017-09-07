@@ -29,7 +29,7 @@ class ActrSlot; //
 eTypeDef_Of(ActrSlot_List);
 
 class E_API ActrSlot_List : public taList<ActrSlot> {
-  // ##NO_TOKENS ##CAT_ActR #EXPAND_DEF_0 list of ActR slots
+  // ##NO_TOKENS ##CAT_ActR ##NO_EXPAND list of ActR slots
 INHERITED(taList<ActrSlot>)
 public:
 

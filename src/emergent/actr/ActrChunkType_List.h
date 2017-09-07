@@ -28,7 +28,7 @@ class ActrChunkType; //
 eTypeDef_Of(ActrChunkType_List);
 
 class E_API ActrChunkType_List : public taList<ActrChunkType> {
-  // ##NO_TOKENS ##CAT_ActR #EXPAND_DEF_0 list of ActR chunk types
+  // ##NO_TOKENS ##CAT_ActR ##NO_EXPAND list of ActR chunk types
 INHERITED(taList<ActrChunkType>)
 public:
 

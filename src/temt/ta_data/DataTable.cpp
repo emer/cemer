@@ -463,14 +463,14 @@ taBase::DumpQueryResult DataTable::Dump_QuerySaveMember(MemberDef* md) {
   
   // always save for obj itself
   if(tabMisc::cur_undo_mod_obj == this) {
-    if(dt_cells > taMisc::undo_data_max_cells) {
-      if(taMisc::undo_debug) {
+    if(dt_cells > taMisc::undo.data_max_cells) {
+      if(taMisc::undo.debug) {
         taMisc::Info("not undo saving directly affected datatable row_indexes -- too big:",
                      DisplayPath(), "cells:", String(dt_cells));
       }
       return DQR_NO_SAVE; // too big or no save!
     }
-    if(taMisc::undo_debug) {
+    if(taMisc::undo.debug) {
       taMisc::Info("YES undo saving directly affected datatable row_indexes:",
                    DisplayPath(), "cells:", String(dt_cells));
     }
@@ -479,7 +479,7 @@ taBase::DumpQueryResult DataTable::Dump_QuerySaveMember(MemberDef* md) {
   
   if(!tabMisc::cur_undo_save_owner || !IsChildOf(tabMisc::cur_undo_save_owner)) {
     // no need to save b/c unaffected by changes elsewhere..
-    if(taMisc::undo_debug) {
+    if(taMisc::undo.debug) {
       // taMisc::Info("not undo saving datatable -- should be unaffected:",
       //              DisplayPath());
       // if(tabMisc::cur_undo_save_owner) {
@@ -490,22 +490,22 @@ taBase::DumpQueryResult DataTable::Dump_QuerySaveMember(MemberDef* md) {
   }
   
   if(!HasDataFlag(DataTable::SAVE_ROWS)) {
-    if(taMisc::undo_debug) {
+    if(taMisc::undo.debug) {
       // taMisc::Info("not undo saving datatable -- SAVE_ROWS not set:",
       //              DisplayPath(), "cells:", String(dt_cells));
     }
     return DQR_NO_SAVE;
   }
   
-  if(dt_cells > taMisc::undo_data_max_cells) {
-    if(taMisc::undo_debug) {
+  if(dt_cells > taMisc::undo.data_max_cells) {
+    if(taMisc::undo.debug) {
       taMisc::Info("not undo saving datatable row_indexes -- affected, but too big:",
                    DisplayPath(), "cells:", String(dt_cells));
     }
     return DQR_NO_SAVE;   // too big!
   }
   
-  if(taMisc::undo_debug) {
+  if(taMisc::undo.debug) {
     // taMisc::Info("YES undo saving datatable -- affected, SAVE_ROWS on, not too big:",
     //              DisplayPath(), "cells:", String(dt_cells));
   }

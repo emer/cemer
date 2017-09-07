@@ -490,13 +490,13 @@ int Network::Dump_Save_impl(ostream& strm, taBase* par, int indent) {
       // no need to save b/c unaffected by changes elsewhere..
       if(!tabMisc::cur_undo_mod_obj || !tabMisc::cur_undo_mod_obj->IsChildOf(this)) {
         // affected object is not under us
-	if(taMisc::undo_debug) {
+	if(taMisc::undo.debug) {
 	  taMisc::Info("NOT saving for Undo network named:", name);
 	}
 	return 1;
       }
     }
-    if(taMisc::undo_debug) {
+    if(taMisc::undo.debug) {
       taMisc::Info("YES saving for Undo network named:", name);
     }
   }

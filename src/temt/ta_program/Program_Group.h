@@ -29,7 +29,7 @@ class taBase; //
 taTypeDef_Of(Program_Group);
 
 class TA_API Program_Group : public taGroup<Program> {
-  // ##EXT_progp ##FILETYPE_ProgramGroup #CAT_Program ##EXPAND_DEF_2 ##TOKENS a collection of programs sharing common global variables and a control panel interface
+  // ##EXT_progp ##FILETYPE_ProgramGroup #CAT_Program ##TOKENS a collection of programs sharing common global variables and a control panel interface
 INHERITED(taGroup<Program>)
 public:
   

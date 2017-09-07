@@ -43,13 +43,8 @@ public: // ISigLinkClient interface
   TypeDef*              GetTypeDef() const override {return &TA_iPanelOfProgram;}
 
 protected:
-  int                   cur_expand_depth; // holds expand level for each group as we iterate through sub items of objs, types, etc
-
   void                  OnWindowBind_impl(iPanelViewer* itv) override;
 
-protected slots:
-  void                  items_CustomExpandFilter(iTreeViewItem* item,
-    int level, bool& expand);
 };
 
 #endif // iPanelOfProgram_h

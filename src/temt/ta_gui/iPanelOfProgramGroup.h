@@ -44,9 +44,6 @@ public: // ISigLinkClient interface
 //  void*      This() override {return (void*)this;}
   TypeDef*     GetTypeDef() const override {return &TA_iPanelOfProgramGroup;}
 
-protected slots:
-  void                  items_CustomExpandFilter(iTreeViewItem* item,
-    int level, bool& expand);
 };
 
 #endif // iPanelOfProgramGroup_h

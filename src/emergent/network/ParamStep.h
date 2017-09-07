@@ -64,7 +64,7 @@ private:
 eTypeDef_Of(ParamStep_Group);
 
 class E_API ParamStep_Group : public ParamSet_Group {
-  // ##EXPAND_DEF_2 list of parameter steps
+  // list of parameter steps
 INHERITED(ParamSet_Group)
 public:
   TA_BASEFUNS(ParamStep_Group);

@@ -28,7 +28,7 @@ taTypeDef_Of(PatchRec);
 taTypeDef_Of(PatchRec_Group);
 
 class TA_API PatchRec_Group : public taGroup<PatchRec> {
-  // ##CAT_Patch ##EXPAND_DEF_1 group of patch records -- allows patches to be applied based on differences
+  // ##CAT_Patch group of patch records -- allows patches to be applied based on differences
 INHERITED(taGroup<PatchRec>)
 public:
   String       path;            // our root path for all the patches that apply under us

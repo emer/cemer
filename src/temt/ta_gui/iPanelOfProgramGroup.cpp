@@ -20,28 +20,9 @@
 #include <Program>
 
 
-void iPanelOfProgramGroup::items_CustomExpandFilter(iTreeViewItem* item,
-  int level, bool& expand)
-{
-  if (level < 1) return; // always expand root level
-  taiSigLink* dl = item->link();
-  TypeDef* typ = dl->GetDataTypeDef();
-  if(typ->DerivesFrom(&TA_Program_Group)) //  || typ->DerivesFrom(&TA_Program))
-    return;             // always expand those
-  expand = false;       // otherwise don't expand by default -- not useful and very slow
-  // // by default, we don't expand code and objs,  but do expand
-  // // the args, and vars.
-  // if (typ->DerivesFrom(&TA_ProgEl_List) ||
-  //   typ->DerivesFrom(&TA_ProgObjList)
-  // )  {
-  //   expand = false;
-  // }
-}
-
 iPanelOfProgramGroup::iPanelOfProgramGroup(taiSigLink* dl_)
 :inherited(dl_)
 {
-  pe->items->AddFilter("ProgGp");
   Program_Group* prog_ = progGroup();
   if (prog_) {
     taiSigLink* dl = (taiSigLink*)prog_->GetSigLink();
@@ -49,9 +30,7 @@ iPanelOfProgramGroup::iPanelOfProgramGroup(taiSigLink* dl_)
       dl->CreateTreeDataNode(NULL, pe->items, NULL, dl->GetName());
     }
   }
-  pe->items->setDefaultExpandLevels(2);
-  connect(pe->items, SIGNAL(CustomExpandFilter(iTreeViewItem*, int, bool&)),
-    this, SLOT(items_CustomExpandFilter(iTreeViewItem*, int, bool&)) );
+  pe->items->ctxt_name = "PRGP";
 }
 
 

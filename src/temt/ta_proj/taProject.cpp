@@ -1547,14 +1547,14 @@ bool taProject::AutoSave(bool force) {
   taFiler* flr = GetSaveFiler(fnm, _nilString, -1, _nilString);
   bool saved = false;
   if(flr->ostrm) {
-    if(taMisc::undo_debug)
+    if(taMisc::undo.debug)
       taMisc::Info("Autosave start...");
     ++taMisc::is_auto_saving;
     int rval = GetTypeDef()->Dump_Save(*flr->ostrm, (void*)this);
     // note: not using Save_strm to preserve the dirty bit!
     --taMisc::is_auto_saving;
     saved = true;
-    if(taMisc::undo_debug)
+    if(taMisc::undo.debug)
       taMisc::Info("Autosave end.");
   }
   flr->Close();

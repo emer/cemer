@@ -64,7 +64,7 @@ private:
 eTypeDef_Of(ActrProduction);
 
 class E_API ActrProduction : public taNBase {
-  // ##INSTANCE ##CAT_ActR ##SCOPE_ActrModel #EXPAND_DEF_2 a production that matches conditions and produces actions
+  // ##INSTANCE ##CAT_ActR ##SCOPE_ActrModel a production that matches conditions and produces actions
 INHERITED(taNBase)
 public:
   enum ProdFlags { // #BITS ActR production flags

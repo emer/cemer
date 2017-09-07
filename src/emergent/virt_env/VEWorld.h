@@ -86,7 +86,7 @@ private:
 eTypeDef_Of(VEWorld);
 
 class E_API VEWorld : public taNBase {
-  // #STEM_BASE ##CAT_VirtEnv ##EXT_vewld ##EXPAND_AS_GROUP ##EXPAND_DEF_6 a virtual environment world
+  // #STEM_BASE ##CAT_VirtEnv ##EXT_vewld a virtual environment world
 INHERITED(taNBase)
 public:
   enum  StepType {              // which type of stepping function to use

@@ -29,7 +29,7 @@ taTypeDef_Of(Patch);
 taTypeDef_Of(Patch_Group);
 
 class TA_API Patch_Group : public taGroup<Patch> {
-  // ##CAT_Patch ##EXPAND_DEF_1 a group of patches, where each patch is a set of edits to change a project based on changes (diffs) generated from other projects
+  // ##CAT_Patch a group of patches, where each patch is a set of edits to change a project based on changes (diffs) generated from other projects
 INHERITED(taGroup<Patch>)
 public:
   static PatchLib patch_lib; // #TREE_HIDDEN #HIDDEN #NO_SAVE library of available patches

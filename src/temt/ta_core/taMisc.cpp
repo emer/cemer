@@ -204,47 +204,6 @@ taThreadDefaults::taThreadDefaults() {
 taThreadDefaults taMisc::thread_defaults;
 bool    taMisc::dmem_output_all = false;
 
-taExpandDefaultsProject::taExpandDefaultsProject() {
-  docs = 1;
-  wizards = 1;
-  ctrl_panels = 1;
-  active_params = 2;
-  archived_params = 0;
-  data = 2;
-  programs = 2;
-  viewers = 0;
-  networks = 1;
-  network = 1;
-  specs = 1;
-  layers = 0;
-}
-taExpandDefaultsProject taMisc::expand_defaults_project;
-
-taExpandDefaultsEditor::taExpandDefaultsEditor() {
-  objs = 1;
-  objs_vars = 0;
-  types = 1;
-  args = 1;
-  vars = 1;
-  functions = 7;
-  init_code = 7;
-  prog_code = 7;
-  call_args = 0;
-}
-taExpandDefaultsEditor taMisc::expand_defaults_editor;
-
-taExpandDefaultsNavigator::taExpandDefaultsNavigator() {
-  objs = 1;
-  objs_vars = 0;
-  types = 0;
-  args = 0;
-  vars = 0;
-  functions = 1;
-  init_code = 0;
-  prog_code = 0;
-  call_args = 0;
-}
-taExpandDefaultsNavigator taMisc::expand_defaults_navigator;
 
 ////////////////////////////////////////////////////////
 //      TA GUI parameters
@@ -307,6 +266,16 @@ String  taMisc::t3d_font_name = "Arial";
 String  taMisc::t3d_bg_color = "white"; // was: grey80 -- white is brighter :)
 String  taMisc::t3d_text_color = "black";
 
+taUndoPrefs::taUndoPrefs() {
+  depth = 100;
+  data_max_cells = 10000;
+  new_src_pct = 0.1f;
+  new_src_n = 10000;
+  debug = false;
+}
+
+taUndoPrefs taMisc::undo;
+
 // parameters that differ between win and unix
 taMisc::ConsoleOptions taMisc::console_options = CO_PAGER;
 
@@ -316,11 +285,7 @@ int     taMisc::display_width = 120;
 int     taMisc::max_display_width = 255;
 int     taMisc::indent_spc = 2;
 int     taMisc::display_height = 25;
-int     taMisc::undo_depth = 100;
-int     taMisc::undo_data_max_cells = 10000;
 int     taMisc::auto_save_data_max_cells = 1000000;
-float   taMisc::undo_new_src_thr = 0.3f;
-bool    taMisc::undo_debug = false;
 int     taMisc::auto_save_interval = 120;
 int     taMisc::wait_proc_delay = 20;
 int     taMisc::css_gui_event_interval = 200;

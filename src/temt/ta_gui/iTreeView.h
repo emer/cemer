@@ -85,7 +85,6 @@ public:
     TYPE_NULL                     // QWidget was NULL
   };
 
-  static const String   opt_treefilt; // "TREEFILT_"
   static String         call_string; // holds the method name bound to QKeySeqeunce called on the selected object
 
 #ifndef __MAKETA__
@@ -103,10 +102,9 @@ public:
 #endif
   
   ParentType            parent_type; // the context for the tree - browse, edit, list*&
+  String                ctxt_name;   // NAV, PROG, PRGP -- for contextualized expand comment directives -- name of this tree context
   iTreeSearch*          tree_searcher;
   
-  bool                  useEditorCustomExpand() const;
-  bool                  useNavigatorCustomExpand() const;
   const KeyString       colKey(int col) const; // the key we set for data lookup
   void                  setColKey(int col, const KeyString& key);
     // sets in ColKeyRole -- you can do it yourself if you want
@@ -114,9 +112,6 @@ public:
   void                  setColFormat(int col, int format_flags);
   bool                  decorateEnabled() const {return m_decorate_enabled;}
   void                  setDecorateEnabled(bool value); //note: must be done at create time
-  int                   defaultExpandLevels() const {return m_def_exp_levels;}
-    // how many levels the DefaultExpand expands
-  void                  setDefaultExpandLevels(int value) {m_def_exp_levels = (int)value;}
   iTreeViewItem*        item(int i) const; // item at i, NULL if out of range
   inline int            itemCount() const {return topLevelItemCount();}
   void                  setHeaderText(int col, const String& value); // convenience
@@ -127,16 +122,12 @@ public:
   inline TreeViewFlags  tvFlags() const {return (TreeViewFlags)tv_flags;}
   void                  setTvFlags(int value);
 
-  void                  AddFilter(const String& value);
-    // add a TREEFILT_xxx expression to exclude members and/or types; note: not dynamic, must be added before items created
   iTreeViewItem*        AssertItem(taiSigLink* link, bool super = true);
     // insures that the item for the link exists; returns NULL if it doesn't exist/couldn't be assertedtaMisc::
   iTreeViewItem*        PrevItem(iTreeViewItem* itm);
   // return the previous item just before given item on the tree
   virtual void          SelectNextLogicalItem(iTreeViewItem* item);
   // select the next item or if no next then the previous
-  bool                  HasFilter(TypeItem* ti) const;
-    // true if the typeitem has a TREEFILT_xxx filter that was added to our list
 
   void                  AddColDataKey(int col, const KeyString& key, int role);
     // sets in ColDataRole, ex for a tooltip text or font for the col
@@ -176,10 +167,6 @@ public:
 
 #ifndef __MAKETA__
 signals:
-  void                  CustomExpandFilter(iTreeViewItem* item, int level, bool& expand);
-  // invoked when we want our mummy to do custom filtering, expand=true by default
-  void                  CustomExpandNavigatorFilter(iTreeViewItem* item, int level, bool& expand);
-  // invoked when we want our mummy to do custom filtering, expand=true by default
   void                  FillContextMenuHookPre(ISelectable_PtrList& sel_items,
      taiWidgetActions* menu);
     // hook to allow client to add items to start of context menu before it shows
@@ -199,10 +186,10 @@ public slots:
   virtual void          mnuReplaceFromHere(iAction* mel); // called from context 'Replace from here'; cast obj to iTreeViewItem*
   virtual void          ExpandDefault();
   // expand to the default level specified for this tree, or invokes CustomExpand if set
-  virtual void          ExpandAll(int max_levels = 6);
+  virtual void          ExpandAll();
   // expand all nodes, ml=-1 for "infinite" levels (there better not be any loops!!!)
   virtual void          CollapseAll(); // collapse all nodes
-  virtual void          ExpandAllUnder(iTreeViewItem* item, int max_levels = 6);
+  virtual void          ExpandAllUnder(iTreeViewItem* item);
   // expand all nodes under item, ml=-1 for "infinite" levels (there better not be any loops!!!)
   virtual void          ExpandDefaultUnder(iTreeViewItem* item);
   // expand to default level under given item
@@ -231,18 +218,8 @@ protected:
   void         UpdateSelectedItems_impl() override;
 
 protected:
-  enum ExpandFlags {
-    EF_CUSTOM_FILTER            = 0x01,
-    EF_DEFAULT                  = 0x02, // we are in the DefaultExpand context
-    EF_EXPAND_DISABLED          = 0x04, // either Expand on that guy, or set in flags
-    EF_NAVIGATOR_FILTER         = 0x08, // custom expand when doing in navigator tree
-    EF_EXPAND_FULLY             = 0x10, // expand - ignore default
-    EF_DEFAULT_UNDER            = 0x20  // expand default action called for by user by menu item or double click
-  };
 
   int                   tv_flags;
-  String_PArray*        m_filters; // only created if any added
-  short                 m_def_exp_levels; // level of default expand, typically 2
   bool                  m_decorate_enabled;
   int                   struct_updt_cnt; // counter for struct updates
   int                   in_mouse_press; // ugly hack
@@ -265,11 +242,11 @@ protected:
   void                  showEvent(QShowEvent* ev) override; // for expand all
   bool                  eventFilter(QObject *obj, QEvent *event) override;
 
-  virtual void          ExpandAll_impl(int max_levels, int exp_flags = 0);
-  // inner code
-  virtual void          ExpandItem_impl(iTreeViewItem* item, int level, int max_levels,
-                                        int exp_flags = 0, bool is_subgroup = false);
-  // inner code; level=-1 when not known, is_subgroup true if the initial expansion node is a top level group
+  virtual void          CollapseItem_impl(iTreeViewItem* item);
+  virtual void          ExpandDefault_impl();
+  virtual void          ExpandDefaultItem_impl(iTreeViewItem* item);
+  virtual void          ExpandAll_impl();
+  virtual void          ExpandAllItem_impl(iTreeViewItem* item);
   virtual void          GetSelectedItems(ISelectable_PtrList& lst);
   // list of the selected datanodes
 

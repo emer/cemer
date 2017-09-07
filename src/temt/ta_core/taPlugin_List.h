@@ -28,7 +28,7 @@ taTypeDef_Of(taPlugin);
 taTypeDef_Of(taPlugin_List);
 
 class TA_API taPlugin_List: public taPluginBase_List {
-  // ##EXPAND_DEF_1 plugins available to the program (also used for descs)
+  // plugins available to the program (also used for descs)
 INHERITED(taPluginBase_List)
 public:
   inline taPlugin*	FastEl(int i) {return (taPlugin*)inherited::FastEl(i);}

@@ -29,7 +29,7 @@ class ObjDiff; //
 taTypeDef_Of(Patch);
 
 class TA_API Patch : public taNBase {
-  // ##CAT_Patch ##EXPAND_DEF_1 #STEM_BASE ##EXT_patch a patch is a set of edits to change a project based on changes (diffs) generated from other projects
+  // ##CAT_Patch #STEM_BASE ##EXT_patch a patch is a set of edits to change a project based on changes (diffs) generated from other projects
 INHERITED(taNBase)
 public:
   static String         cur_subgp;      // #IGNORE new subgroup for creating new patch records -- if this is non-empty then NewPatchRec methods will create records in this subgroup

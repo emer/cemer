@@ -36,9 +36,6 @@ iBrowseViewer::iBrowseViewer(BrowseViewer* browser_, QWidget* parent)
 {
   Init();
   
-  connect(lvwDataTree, SIGNAL(CustomExpandNavigatorFilter(iTreeViewItem*, int, bool&)),
-          this, SLOT(items_CustomExpandNavigator(iTreeViewItem*, int, bool&)) );
-  
   cur_expand_depth = -1;
 }
 
@@ -62,12 +59,12 @@ void iBrowseViewer::Init() {
                          );
   lay->addWidget(lvwTreeSearch);
 
+  lvwDataTree->ctxt_name = "NAV";
   lvwDataTree->installEventFilter(mainWindowViewer()->widget()); // translate keys..
   lvwDataTree->main_window = mainWindowViewer()->widget();
   lvwDataTree->setObjectName("lvwDataTree");
   lvwDataTree->setSortingEnabled(false); // preserve enumeration order of items
   lvwDataTree->setSelectionMode(QAbstractItemView::ExtendedSelection); // multiselect
-  lvwDataTree->setDefaultExpandLevels(8); // set fairly deep for ExpandAll
   lvwDataTree->setColumnCount(1);
   lvwDataTree->AddColDataKey(0, "", Qt::StatusTipRole); // show status tip
   lvwDataTree->AddColDataKey(0, "", Qt::ToolTipRole); // and tool tip
@@ -137,36 +134,3 @@ void iBrowseViewer::Reset() {
   lvwDataTree->clear();
 }
 
-void iBrowseViewer::items_CustomExpandNavigator(iTreeViewItem* item, int level, bool& expand)
-{
-  if (level < 1) {
-    return; // always expand root level
-  }
-  
-  taiSigLink* dl = item->link();
-  int depth = taiMisc::GetNavigatorDefaultExpand(dl->GetName());  // get user's preference for top level proogram groups
-  if (depth > -1) {  // must be one of the program groups (objs, types, vars, etc)
-    cur_expand_depth = depth;
-    if (depth == 0) {
-      expand = false;
-      return;
-    }
-    else if (depth >= 1) {
-      return;
-    }
-  }
-  else if (level <= cur_expand_depth) {
-    taBase* tab = item->link()->taData();
-    if (tab->GetTypeDef()->HasOption("HAS_CALL_ARGS") && !taiMisc::GetEditorDefaultExpand("call_args"))   {
-      expand = false;
-      return;
-    }
-    else {
-      return;
-    }
-  }
-  else {
-    expand = false;
-    return;
-  }
-}

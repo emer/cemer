@@ -54,7 +54,7 @@ class Completions;
 taTypeDef_Of(ProgEl);
 
 class TA_API ProgEl: public taOBase {
-  // #VIRT_BASE #STEM_BASE ##EDIT_INLINE ##SCOPE_Program ##CAT_Program ##NO_TOKEN_CHOOSER ##DIFF_STRING base class for a program element
+  // #VIRT_BASE #STEM_BASE ##EDIT_INLINE ##SCOPE_Program ##CAT_Program ##NO_TOKEN_CHOOSER ##DIFF_STRING ##EXPAND_PROG base class for a program element
 friend class ProgExprBase;
 INHERITED(taOBase)
 public:

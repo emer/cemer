@@ -178,8 +178,6 @@ protected slots:
   void                  hist_movie();
   void                  lvDisplayValues_selectionChanged();
   void                  lvDisplayValues_itemClicked(QTreeWidgetItem* item, int col);
-  void                  tvSpecs_CustomExpandFilter(iTreeViewItem* item,
-                                                   int level, bool& expand);
   void                  tvSpecs_ItemSelected(iTreeViewItem* item);
   // note: this one seems a bit defunct for the iTreeView -- replaced with Notify below
   void                  tvSpecs_Notify(ISelectableHost* src, int op);

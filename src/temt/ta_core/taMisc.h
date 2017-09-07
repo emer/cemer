@@ -76,64 +76,6 @@ private:
   InitProcRegistrar& operator =(const InitProcRegistrar&);
 };
 
-taTypeDef_Of(taExpandDefaultsProject);
-
-class TA_API taExpandDefaultsProject {
-  // #EDIT_INLINE defaults for expanding top level groups
-public:
-  int  docs;  // #MIN_0
-  int  wizards;  // #MIN_0
-  int  ctrl_panels;  // #MIN_0
-  int  active_params;  // #MIN_0
-  int  archived_params;  // #MIN_0
-  int  data;  // #MIN_0
-  int  programs;  // #MIN_0
-  int  viewers;  // #MIN_0
-  int  networks;  // #MIN_0
-  int  network;  // #MIN_0
-  int  specs;  // #MIN_0
-  int  layers;  // #MIN_0
-  
-  taExpandDefaultsProject();
-};
-
-taTypeDef_Of(taExpandDefaultsEditor);
-
-class TA_API taExpandDefaultsEditor {
-  // #EDIT_INLINE defaults for expanding program groups in program editor
-public:
-  int  objs;  // #MIN_0
-  int  objs_vars;  // #MIN_0
-  int  types;  // #MIN_0
-  int  args;  // #MIN_0 #MAX_1
-  int  vars;  // #MIN_0 #MAX_1
-  int  functions;  // #MIN_0
-  int  init_code;  // #MIN_0
-  int  prog_code;  // #MIN_0
-  int  call_args; // #MIN_0 #MAX_1 function, method, program call arguments
-  
-  taExpandDefaultsEditor();
-};
-
-taTypeDef_Of(taExpandDefaultsNavigator);
-
-class TA_API taExpandDefaultsNavigator {
-  // #EDIT_INLINE defaults for expanding program groups in the navigator panel
-public:
-  int  objs;  // #MIN_0
-  int  objs_vars;  // #MIN_0
-  int  types;  // #MIN_0
-  int  args;  // #MIN_0 #MAX_1
-  int  vars;  // #MIN_0 #MAX_1
-  int  functions;  // #MIN_0
-  int  init_code;  // #MIN_0
-  int  prog_code;  // #MIN_0
-  int  call_args; // #MIN_0 #MAX_1 function, method, program call arguments
-  
-  taExpandDefaultsNavigator();
-};
-
-
 taTypeDef_Of(taFontSizes);
 
 class TA_API taFontSizes {
@@ -193,6 +135,21 @@ public:
   
   taScreenPrefs();
 };
+
+taTypeDef_Of(taUndoPrefs);
+
+class TA_API taUndoPrefs {
+  // #EDIT_INLINE options for undo
+public:
+  int            depth;     // #MIN_10 #DEF_100 how many steps of undo are maintained -- the system is very efficient so large numbers (default 100) are usually acceptable -- see Project UndoStats menu item for memory usage statistics
+  int            data_max_cells; // #DEF_10000 maximum number of cells in a data table to save an undo copy -- if above this number of cells, it won't be saved for undo (only the column structure will be retained)
+  float          new_src_pct; // #MIN_0.01 #MAX_0.5 #DEF_0.1 threshold for how big (as a proportion of total file size) the diff's need to get before a new undo source record is created (default of around .1 is usually fine)
+  int            new_src_n; // #MIN_100 #DEF_10000 threshold for how many diffs before a new undo source record is created -- when there are too many diffs, the process becomes slow and it is more efficient to store a new reference source 
+  bool           debug; // display undo debug messages to css console and project log -- can help determine what is causing excessive latencies and unresponsiveness in the application
+
+  taUndoPrefs();
+};
+
 
 #define PATH_SEP taMisc::path_sep
 
@@ -376,17 +333,8 @@ public:
   static int            max_display_width;  // #SAVE #EXPERT #MIN_10 #CAT_GUI maximum width of console display (in chars) -- affects all Print routines, which generate strings that also show up in tool tips, dialogs, and other places -- may not want this to get too big
   static int            indent_spc;     // #SAVE #EXPERT #MIN_1 #MAX_8 #DEF_2 #CAT_GUI how many spaces to use per indent level
   static int            display_height;  // #SAVE #HIDDEN #CAT_GUI height of console display (in rows) -- set automatically by gui console -- used for paging
-  static taExpandDefaultsProject expand_defaults_project;
-  // #SAVE #CAT_GUI default depths for expanding top level groups -- 0 = don't expand, 1 = expand to first level (all major elements at that level, e.g., all Programs will be shown within all program groups and subgroups), 2+ = expand to second and beyond level (only applicable for specs, where it expands further children of specs at higher levels)
-  static taExpandDefaultsEditor expand_defaults_editor;
-  // #SAVE #CAT_GUI default depths for expanding program editor sections -- 0 = don't expand, 1 = expand to first level (all major elements at that level, e.g., all types, args, vars, functions). For init_code and prog_code 2+ will reveal nested code.
-  static taExpandDefaultsNavigator expand_defaults_navigator;
-  // #SAVE #CAT_GUI default depths for expanding program sections in the navigator panel -- 0 = don't expand, 1 = expand to first level (all major elements at that level, e.g., all types, args, vars, functions). For init_code and prog_code 2+ will reveal nested code.
-  static int            undo_depth;     // #SAVE #CAT_GUI #MIN_10 how many steps of undo are maintained -- the system is very efficient so large numbers (default 100) are usually acceptable -- see Project UndoStats menu item for memory usage statistics
-  static int            undo_data_max_cells; // #SAVE #CAT_GUI maximum number of cells in a data table to save an undo copy -- if above this number of cells, it won't be saved for undo (only the column structure will be retained)
+  static taUndoPrefs    undo;           // #SAVE #CAT_GUI undo options 
   static int            auto_save_data_max_cells; // #SAVE #CAT_GUI if column of data table has more than this number of cells, it won't be saved during auto_save (column structure will be retained)
-  static bool           undo_debug; // #NO_SAVE #CAT_GUI #EXPERT display undo debug messages to css console and project log -- can help determine what is causing excessive latencies and unresponsiveness in the application
-  static float          undo_new_src_thr; // #SAVE #CAT_GUI #EXPERT threshold for how big (as a proportion of total file size) the diff's need to get before a new undo source record is created (default of around .3 is usually fine)
   static int            auto_save_interval;     // #SAVE #CAT_GUI #EXPERT how many seconds to wait between automatic saves of opened projects that have been modified?  auto save files go to project file name + _autosave
   static int            wait_proc_delay; // #SAVE #CAT_GUI #DEF_20 #EXPERT delay in milliseconds before starting the wait processing function to process misc stuff after all of the current gui events have been processed -- a smaller number makes the system more responsive but also consumes a bit more CPU -- setting to 0 consumes a lot of CPU as the wait processing loop is constantly revisited
   static int            css_gui_event_interval; // #SAVE #CAT_GUI #DEF_200 #EXPERT how many milliseconds between processing of gui events in css -- lower number = more responsive interface, but worse performance, while things are running

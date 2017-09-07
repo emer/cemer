@@ -41,49 +41,8 @@ iPanelOfProgram::iPanelOfProgram(taiSigLink* dl_)
       dl->CreateTreeDataNode(NULL, pe->items, NULL, dl->GetName());
     }
   }
-  pe->items->setDefaultExpandLevels(12); // shouldn't generally be more than this
+  pe->items->ctxt_name = "PROG";
   pe->items->setDecorateEnabled(true); //TODO: maybe make this an app option
-  connect(pe->items, SIGNAL(CustomExpandFilter(iTreeViewItem*, int, bool&)),
-    this, SLOT(items_CustomExpandFilter(iTreeViewItem*, int, bool&)) );
-  
-  cur_expand_depth = -1;
-}
-
-void iPanelOfProgram::items_CustomExpandFilter(iTreeViewItem* item, int level, bool& expand)
-{
-  if (level < 1) {
-    return; // always expand root level
-  }
-  
-  taiSigLink* dl = item->link();
-  String nm = dl->GetName();
-  if(nm == "fun_code")
-    nm = "functions";                                         // use the functions setting
-  int depth = taiMisc::GetEditorDefaultExpand(nm);  // get user's preference for top level proogram groups
-  if (depth > -1) {  // must be one of the program groups (objs, types, vars, etc)
-    cur_expand_depth = depth;
-    if (depth == 0) {
-      expand = false;
-      return;
-    }
-    else if (depth >= 1) {
-      return;
-    }
-  }
-  else if (level <= cur_expand_depth) {
-    taBase* tab = item->link()->taData();
-    if (tab->GetTypeDef()->HasOption("HAS_CALL_ARGS") && !taiMisc::GetEditorDefaultExpand("call_args"))   {
-      expand = false;
-      return;
-    }
-    else {
-      return;
-    }
-  }
-  else {
-    expand = false;
-    return;
-  }
 }
 
 void iPanelOfProgram::OnWindowBind_impl(iPanelViewer* itv) {

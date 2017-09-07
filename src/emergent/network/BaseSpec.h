@@ -45,7 +45,7 @@ class SpecUser; //
 eTypeDef_Of(BaseSpec);
 
 class E_API BaseSpec : public taNBase {
-  // ##EXT_spec ##MEMB_IN_GPMENU ##SCOPE_Network ##DEF_CHILD_children ##DEF_CHILDNAME_Sub_Specs ##CAT_Spec ##UAE_IN_PROGRAM base specification class
+  // ##EXT_spec ##MEMB_IN_GPMENU ##SCOPE_Network ##DEF_CHILD_children ##DEF_CHILDNAME_Sub_Specs ##CAT_Spec ##UAE_IN_PROGRAM ##EXPAND base specification class
 friend class BaseSpec_Group;
 friend class SpecMemberBase;
 INHERITED(taNBase)

@@ -30,7 +30,7 @@ class MethodDef; //
 taTypeDef_Of(ProgArg_List);
 
 class TA_API ProgArg_List : public taList<ProgArg> {
-  // ##NO_TOKENS ##CHILDREN_INLINE #FIXED_SIZE #EXPAND_DEF_0 ##CAT_Program list of arguments
+  // ##NO_TOKENS ##CHILDREN_INLINE #FIXED_SIZE ##NO_EXPAND ##CAT_Program list of arguments
 INHERITED(taList<ProgArg>)
 public:
   String_Array  saved_exprs;    // #HIDDEN #NO_SAVE saved arg exprs across changes

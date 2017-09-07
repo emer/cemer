@@ -27,7 +27,8 @@ taTypeDef_Of(FrameViewer);
 
 taTypeDef_Of(FrameViewer_List);
 
-class TA_API FrameViewer_List: public taViewer_List { // #NO_TOKENS
+class TA_API FrameViewer_List: public taViewer_List {
+  // #NO_TOKENS ##EXPAND
 INHERITED(taViewer_List)
 public:
   TA_DATAVIEWLISTFUNS(FrameViewer_List, taViewer_List, FrameViewer)

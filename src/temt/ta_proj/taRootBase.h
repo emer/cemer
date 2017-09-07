@@ -46,7 +46,7 @@ class ClusterRun; //
 taTypeDef_Of(taRootBase);
 
 class TA_API taRootBase: public taFBase {
-  // ##CAT_Project ##EXPAND_DEF_2 base class for the root of the structural hierarchy (root. or . in css / paths)
+  // ##CAT_Project base class for the root of the structural hierarchy (root. or . in css / paths)
 INHERITED(taFBase)
 public:
   static TypeDef*       root_type;      // #READ_ONLY #NO_SAVE set in Startup_Main

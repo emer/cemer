@@ -58,8 +58,6 @@ public slots:
 
 protected slots:
   virtual void          lvwDataTree_FillContextMenuHookPost(ISelectable_PtrList& sel_items, taiWidgetActions* menu);
-  void                  items_CustomExpandNavigator(iTreeViewItem* item, int level, bool& expand);
-
 
 protected: // IViewerWidget i/f
   void         Refresh_impl() override;

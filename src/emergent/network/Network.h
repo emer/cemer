@@ -128,7 +128,7 @@ private:
 eTypeDef_Of(NetTiming_List);
 
 class E_API NetTiming_List : public taList<NetTiming> {
-  // #NO_TOKENS #NO_UPDATE_AFTER #EXPAND_DEF_0 List of NetTiming objects
+  // #NO_TOKENS #NO_UPDATE_AFTER #NO_EXPAND List of NetTiming objects
 INHERITED(taList<NetTiming>)
 public:
 
@@ -187,7 +187,7 @@ private:
 eTypeDef_Of(Network);
 
 class E_API Network : public taFBase {
-  // ##FILETYPE_Network ##EXT_net ##COMPRESS ##CAT_Network ##DEF_NAME_ROOT_Network ##EXPAND_DEF_2 ##EXPAND_AS_GROUP A network, containing layers, units, etc..
+  // ##FILETYPE_Network ##EXT_net ##COMPRESS ##CAT_Network ##DEF_NAME_ROOT_Network ##EXPAND_NAV A network, containing layers, units, etc..
 INHERITED(taFBase)
 public:
   static bool nw_itm_def_arg;   // #IGNORE default arg val for FindMake..

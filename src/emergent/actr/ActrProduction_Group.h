@@ -27,7 +27,7 @@
 eTypeDef_Of(ActrProduction_Group);
 
 class E_API ActrProduction_Group : public taGroup<ActrProduction> {
-  // ##CAT_ActR ##NO_TOKENS #EXPAND_DEF_2 group of ACT-R productions
+  // ##CAT_ActR ##NO_TOKENS group of ACT-R productions
 INHERITED(taGroup<ActrProduction>)
 public:
 

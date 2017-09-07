@@ -27,8 +27,7 @@ using namespace std;
 
 void taUndoMgr::Initialize() {
   cur_undo_idx = 0;
-  undo_depth = taMisc::undo_depth;
-  new_src_thr = taMisc::undo_new_src_thr;
+  undo_depth = taMisc::undo.depth;
 #ifdef DEBUG
   save_load_file = false;       // can set to true if need to do debugging on undo
 #else
@@ -79,7 +78,7 @@ bool taUndoMgr::SaveUndo(taBase* mod_obj, const String& action, taBase* save_top
   urec->save_top = save_top;
   urec->save_top_path = save_top->GetPath(owner);
 
-  if(taMisc::undo_debug) {
+  if(taMisc::undo.debug) {
     taMisc::Info("SaveUndo of action:",urec->action,"on:",urec->mod_obj_name,
                   "at path:", urec->mod_obj_path, "saving at:", urec->save_top_path);
   }
@@ -112,7 +111,7 @@ bool taUndoMgr::SaveUndo(taBase* mod_obj, const String& action, taBase* save_top
     taUndoDiffSrc* cur_src = NULL;
     if(undo_srcs.length > 0)
       cur_src = undo_srcs.CircPeek(); // always grab the last guy
-    if(taMisc::undo_debug) {
+    if(taMisc::undo.debug) {
       String last_pct;
       if(cur_src) {
         last_pct = " last pct: " + String(cur_src->last_diff_pct) + " n: " +
@@ -123,11 +122,19 @@ bool taUndoMgr::SaveUndo(taBase* mod_obj, const String& action, taBase* save_top
     }
     // todo: add a new param for number of diffs, and probably make the existing pct
     // thr smaller, around .1
-    if(!cur_src || cur_src->last_diff_pct > new_src_thr || cur_src->last_diff_n > 10000) {
-      if(cur_src && taMisc::undo_debug) {
-        taMisc::Info("SaveUndo diff pct on last save:", String(cur_src->last_diff_pct),
-                     "was greater than threshold:", String(new_src_thr),
-                     "saving a new src instead of the diff from previous src");
+    if(!cur_src || cur_src->last_diff_pct > taMisc::undo.new_src_pct
+       || cur_src->last_diff_n > taMisc::undo.new_src_n) {
+      if(cur_src && taMisc::undo.debug) {
+        if(cur_src->last_diff_pct > taMisc::undo.new_src_pct) {
+          taMisc::Info("SaveUndo diff pct on last save:", String(cur_src->last_diff_pct),
+                       "was greater than threshold:", String(taMisc::undo.new_src_pct),
+                       "saving a new src instead of the diff from previous src");
+        }
+        else {
+          taMisc::Info("SaveUndo diff n on last save:", String(cur_src->last_diff_n),
+                       "was greater than threshold:", String(taMisc::undo.new_src_n),
+                       "saving a new src instead of the diff from previous src");
+        }
       }
       cur_src = new taUndoDiffSrc;
       undo_srcs.CircAddLimit(cur_src, undo_depth); // large depth
@@ -140,8 +147,8 @@ bool taUndoMgr::SaveUndo(taBase* mod_obj, const String& action, taBase* save_top
       float size_diff_pct = (float)size_diff / (float)MAX(cur_src->save_data.length(),
                                                           urec->save_data.length());
       
-      if(size_diff_pct > 0.5f * new_src_thr) {
-        if(cur_src && taMisc::undo_debug) {
+      if(size_diff_pct > 0.5f * taMisc::undo.new_src_pct) {
+        if(cur_src && taMisc::undo.debug) {
           taMisc::Info("SaveUndo size difference is above threshold:",
                        String(size_diff_pct),
                        "saving a new src instead of the diff from previous src");
@@ -185,7 +192,7 @@ bool taUndoMgr::SaveUndo(taBase* mod_obj, const String& action, taBase* save_top
 
   undo_time_used.EndTimer();
   undo_time_used.IncrAvg();
-  if(taMisc::undo_debug) {
+  if(taMisc::undo.debug) {
     taMisc::Info("undo save took:", String(undo_time_used.s_used * 1.0e3),
                  "msec.  running average:", String(undo_time_used.avg_used.GetAvg() * 1.0e3f),
                  "\nundo diff took:", String(undo_diff_time_used.s_used * 1.0e3),
@@ -204,7 +211,7 @@ void taUndoMgr::PurgeUnusedSrcs() {
     if(!urec) continue;
     int cnt = urec->UseCount();
     if(cnt == 0) {
-      if(taMisc::undo_debug) {
+      if(taMisc::undo.debug) {
         taMisc::Info("Undo: purging unused save rec, size: ",
                      String(urec->save_data.length()));
       }
@@ -221,7 +228,7 @@ void taUndoMgr::PurgeUnusedSrcs() {
   } while(did_purge);
 
   if(n_purges > 0) {
-    if(taMisc::undo_debug) {
+    if(taMisc::undo.debug) {
       taMisc::Info("Undo: Total Purges: ", String(n_purges), " remaining length: ",
                    String(undo_srcs.length));
     }

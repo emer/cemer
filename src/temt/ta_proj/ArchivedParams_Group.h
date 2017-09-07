@@ -26,7 +26,7 @@
 taTypeDef_Of(ArchivedParams_Group);
 
 class TA_API ArchivedParams_Group : public ParamSet_Group {
-  // #EXPAND_DEF_0 group of archived control panels, cluster runs, and param sets -- sorted by time with most recent at the top
+  // #NO_EXPAND group of archived control panels, cluster runs, and param sets -- sorted by time with most recent at the top
 INHERITED(ParamSet_Group)
 public:
   virtual ParamSet*     NewArchive();

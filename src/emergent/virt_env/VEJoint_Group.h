@@ -28,7 +28,7 @@
 eTypeDef_Of(VEJoint_Group);
 
 class E_API VEJoint_Group : public taGroup<VEJoint> {
-  // ##CAT_VirtEnv ##EXPAND_DEF_6 a group of virtual environment joints
+  // ##CAT_VirtEnv a group of virtual environment joints
 INHERITED(taGroup<VEJoint>)
 public:
   virtual void  Init();

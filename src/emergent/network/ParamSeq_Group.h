@@ -28,7 +28,7 @@ class ParamSeq; //
 eTypeDef_Of(ParamSeq_Group);
 
 class E_API ParamSeq_Group : public taGroup<ParamSeq> {
-  // #EXPAND_DEF_2 group of parameter sequences, where each parameter sequence defines parameters that are set at a particular epoch 
+  // group of parameter sequences, where each parameter sequence defines parameters that are set at a particular epoch 
 INHERITED(taGroup<ParamSeq>)
 public:
 

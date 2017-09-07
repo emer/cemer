@@ -36,7 +36,7 @@ class VEBody; //
 eTypeDef_Of(VEObject);
 
 class E_API VEObject : public taNBase {
-  // #STEM_BASE ##CAT_VirtEnv ##EXT_veobj ##EXPAND_AS_GROUP ##EXPAND_DEF_6 a virtual environment object, which contains interconnected bodies and their joints, and represents a sub-space of objects
+  // #STEM_BASE ##CAT_VirtEnv ##EXT_veobj ##EXPAND_NAV a virtual environment object, which contains interconnected bodies and their joints, and represents a sub-space of objects
 INHERITED(taNBase)
 public:
   enum SpaceType {
@@ -49,8 +49,8 @@ public:
   SpaceType     space_type;     // type of space to use
   MinMaxInt     hash_levels;    // #CONDSHOW_ON_space_type:HASH_SPACE minimum and maximum spacing levels in hash space
   bool          auto_updt_rels; // #DEF_true automatically update relative body positions of other linked bodies whenever a body in this object is translated or rotated with Translate or Rotate functions
-  VEBody_Group  bodies;
-  VEJoint_Group joints;
+  VEBody_Group  bodies;         // bodies (parts) within this object -- these are the independent elements
+  VEJoint_Group joints;         // joints connecting bodies
 
 
   String       GetDesc() const override { return desc; }

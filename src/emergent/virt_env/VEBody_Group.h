@@ -28,7 +28,7 @@
 eTypeDef_Of(VEBody_Group);
 
 class E_API VEBody_Group : public taGroup<VEBody> {
-  // ##CAT_VirtEnv ##EXPAND_DEF_6 a group of virtual environment bodies
+  // ##CAT_VirtEnv a group of virtual environment bodies
 INHERITED(taGroup<VEBody>)
 public:
   virtual void  Init();

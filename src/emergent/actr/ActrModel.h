@@ -58,7 +58,7 @@ private:
 eTypeDef_Of(ActrModel);
 
 class E_API ActrModel : public taNBase {
-  // ##INSTANCE ##CAT_ActR #EXPAND_DEF_2 ##FILETYPE_ActrModel ##EXT_actr a complete ACT-R model, including productions, buffers, chunks, etc
+  // ##INSTANCE ##CAT_ActR ##FILETYPE_ActrModel ##EXT_actr a complete ACT-R model, including productions, buffers, chunks, etc
 INHERITED(taNBase)
 public:
   enum ModelFlags { // #BITS ActR model flags

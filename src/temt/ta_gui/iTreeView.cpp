@@ -48,7 +48,6 @@
 #include <iLineEdit>
 #include <iCodeCompleter>
 
-const String iTreeView::opt_treefilt("TREEFILT_");
 String iTreeView::call_string = "";
 
 void iTreeView::FillTypedList(const QList<QTreeWidgetItem*>& items,
@@ -77,15 +76,15 @@ iTreeView::iTreeView(QWidget* parent, int tv_flags_)
   setFont(taiM->dialogFont(taiM->sizBig));
   if(dynamic_cast<iBrowseViewer*>(parent)) {
     parent_type = TYPE_BROWSEVIEWER;
+    ctxt_name = "NAV";
   }
   else if(dynamic_cast<iProgramEditor*>(parent)) {
     parent_type = TYPE_PROGRAMEDITOR;
+    ctxt_name = "PROG";         // could be PRGP
   }
   setFontSizeToDefault();
   
   tv_flags = tv_flags_;
-  m_filters = NULL; // only created if needed
-  m_def_exp_levels = 2; // works well for most contexts
   tree_state_restored = false;
   m_decorate_enabled = true;
   italic_font = NULL;
@@ -122,10 +121,6 @@ iTreeView::iTreeView(QWidget* parent, int tv_flags_)
 }
 
 iTreeView::~iTreeView() {
-  if (m_filters) {
-    delete m_filters;
-    m_filters = NULL;
-  }
   if (italic_font) {
     delete italic_font;
     italic_font = NULL;
@@ -178,13 +173,6 @@ void iTreeView::ClearColDataKeys(int col) {
   if (!vmap.canConvert(QVariant::Map)) return;
 
   headerItem()->setData(col, ColDataRole, QVariant());
-}
-
-void iTreeView::AddFilter(const String& value) {
-  if (!m_filters) {
-    m_filters = new String_PArray;
-  }
-  m_filters->AddUnique(value);
 }
 
 iTreeViewItem* iTreeView::AssertItem(taiSigLink* link, bool super) {
@@ -403,145 +391,123 @@ const KeyString iTreeView::colKey(int col) const {
   return rval;
 }
 
-void iTreeView::ExpandAll(int max_levels) {
-  ExpandAll_impl(max_levels);
+void iTreeView::CollapseItem_impl(iTreeViewItem* item) {
+  if(!item) return;
+  if (isItemExpanded(item)) {
+    item->setExpanded(false);
+  }
 }
 
-void iTreeView::ExpandAll_impl(int max_levels, int exp_flags) {
+/////////////////////////////////////////////////////////////
+//              ExpandDefault
+
+void iTreeView::ExpandDefault() {
+  if (tree_state_restored) {
+    tree_state_restored = false; // used to prevent expanding to defaults if we already expanded to saved state
+    return;
+  }
+  ExpandDefault_impl();
+  ScrollTo(0);
+  QTimer::singleShot(250, this, SLOT(ScrollTo()) );
+}
+
+void iTreeView::ExpandDefault_impl() {
   // NOTE: we can't user iterators for expanding, because we add/remove items which
   // crashes the iterator
   for (int i = 0; i < topLevelItemCount(); ++i) {
     iTreeViewItem* node = dynamic_cast<iTreeViewItem*>(topLevelItem(i));
     if (!node) continue;
-    taBase* tab = node->link()->taData();
-    ExpandItem_impl(node, 0, max_levels, exp_flags); // false - this is the root node for this expansion
+    ExpandDefaultUnder(node);
   }
   if (header()->isVisible() && (header()->count() > 1)) {
     resizeColumnsToContents();
   }
 }
 
-void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
-                                int max_levels, int exp_flags, bool is_subgroup)
-{
+void iTreeView::ExpandDefaultUnder(iTreeViewItem* item) {
   if (!item) return;
-  if (isItemHidden(item)) return;
-  
-  taBase* tab = item->link()->taData();
-  
-  bool expand = false;
-  if (tab && tab->InheritsFrom(&TA_taProject)) { // always expand project
-    expand = true;
+  // taMisc::Busy(true);
+  if (!isItemExpanded(item)) {
+    item->setExpanded(true);  // should trigger CreateChildren for lazy
   }
-  
-  if (exp_flags & EF_EXPAND_FULLY) {
-    expand = true;
+  // and expand item's children -- lazy children should be created by now
+  for (int i = 0; i < item->childCount(); ++i) {
+    iTreeViewItem* child = dynamic_cast<iTreeViewItem*>(item->child(i));
+    ExpandDefaultItem_impl(child);
   }
-  
-  // figure out default if not otherwise saved
-  if(tab && tab->HasOption("NO_EXPAND_ALL")) return;
-  
-  // TODO (replace above) - we always want to expand if user double clicks the actual item but this
-  // causes the 1 level expand in all cases - need another test
-//  if(tab && tab->HasOption("NO_EXPAND_ALL")) {
-//    max_levels = 1;
-//    expand = true;
-//  }
-  if(item->md() && item->md()->HasOption("NO_EXPAND_ALL")) return;
-  if(tab->GetOwner() == NULL) return;
+  if (header()->isVisible() && (header()->count() > 1)) {
+    resizeColumnsToContents();
+  }
+  // taMisc::Busy(false);
+}
 
-  if (!(exp_flags & EF_CUSTOM_FILTER) && tab && (!(exp_flags & EF_EXPAND_FULLY))) {
-    // if top level node or being treated like one - top level guys are docs, ctrl_panels, data, programs, networks, etc
-    // those being treated like top level are specific networks (i.e. network -- not an actual group but has spec and layer groups
-    if (tab && (tab->InheritsFrom(&TA_taGroup_impl)
-                || tab->InheritsFrom(&TA_taList_impl)
-                || tab->GetTypeDef()->HasOption("EXPAND_AS_GROUP"))) {
-      String name;
-      if (tab->GetTypeDef()->HasOption("EXPAND_AS_GROUP")) {
-        name = tab->GetTypeDef()->OptionAfter("FILETYPE_");  // I didn't want to add another directive for this single case
-        name.downcase();
-      }
-      else {
-        name = tab->GetName();
-      }
-            
-      // if owner is root go with hardcoded default (#EXPAND_DEF on object), otherwise user preference if there is one
-      int depth = -1;
-      if (!tab->GetOwner()->DerivesFromName("taRootBase")) {
-        depth = taiMisc::GetGroupDefaultExpand(name);
-        if (depth > 0) {
-          depth = depth + level;
-        }
-        if (depth == -1) {  // not in preferences - get from class
-          depth = taiMisc::GetExpandDef(tab);
-        }
-      }
-      
-      if (depth <= 0 && exp_flags & EF_DEFAULT_UNDER) {
-        depth = 1;  // if user asked for expansion expand 1 level even when default is zero
-      }
-      if (depth >= 0) {
-        is_subgroup = true;
-        max_levels = depth;
-        if (max_levels > 0) {
-          expand = true;
-        }
-      }
-      else if (!is_subgroup) {  // expand INITIATED on this non top-level group -- not being expanded as a subgroup
-        if (taiMisc::GetExpandDef(tab) > -1) {
-          max_levels = level + taiMisc::GetExpandDef(tab);
-        }
-        else {
-          max_levels = 1;
-        }
-        if (level <= max_levels) {
-          expand = true;
-        }
-        else {
-          expand = false;
-        }
-      }
-      else if (level <= max_levels) {  // expand initiated by ancestor group -- just check level
-        expand = true;
-      }
-      else {
-        expand = false;  // this level is > max_levels
-      }
-    }
-    else {
-//      if (taiMisc::GetExpandDef(tab) > -1) {
-//        max_levels = level + taiMisc::GetExpandDef(tab);  // expand_def is relatvie
-//      }
-//      else {
-//        max_levels = 1;
-//      }
-      
-      if (level < max_levels) {
-        expand = true;
-      }
-      else {
-        expand = false;
-      }
-    }
+void iTreeView::ExpandDefaultUnderInt(void* item) {
+  // CollapseAllUnderInt(item);
+  ExpandDefaultUnder((iTreeViewItem*)item);
+}
+
+void iTreeView::ExpandDefaultItem_impl(iTreeViewItem* item) {
+  if (!item) return;
+  if(isItemHidden(item)) {
+    CollapseItem_impl(item);
+    return;
   }
-    
-  if (!(exp_flags & EF_EXPAND_DISABLED)) {
-    if (!item->link()->isEnabled())
+  taBase* tab = item->link()->taData();
+  if(!tab || tab->HasOption("NO_EXPAND_ALL")) {
+    CollapseItem_impl(item);
+    return;
+  }
+  if(item->md() && item->md()->HasOption("NO_EXPAND_ALL")) {
+    CollapseItem_impl(item);
+    return;
+  }
+  if(tab->GetOwner() == NULL) {
+    CollapseItem_impl(item);
+    return;
+  }
+
+  TypeDef* td = tab->GetTypeDef();
+  bool has_expand = false;
+  bool has_no_expand = false;
+  String exp_ctxt;
+  String no_exp_ctxt;
+  if(td->HasOption("NO_EXPAND")) {
+    has_no_expand = true;
+  }
+  if(td->HasOption("EXPAND")) {
+    has_expand = true;
+  }
+  no_exp_ctxt = td->OptionAfter("NO_EXPAND_");
+  if(no_exp_ctxt.nonempty()) {
+    if(no_exp_ctxt == ctxt_name)
+      has_no_expand = true;
+  }
+  exp_ctxt = td->OptionAfter("EXPAND_");
+  if(exp_ctxt.nonempty()) {
+    if(exp_ctxt == ctxt_name)
+      has_expand = true;
+  }
+
+  bool expand = false;
+  if(tab->InheritsFrom(&TA_taList_impl)) { // list or group, def expand
+    expand = true;
+    if(has_no_expand && !has_expand) {
       expand = false;
+    }
   }
-  
-  if (exp_flags & EF_CUSTOM_FILTER) {
-      max_levels = 1;  // this gets it open, then custom will take over
-      expand = true;
-      emit CustomExpandFilter(item, level, expand);
+  else if(td->HasOption("DEF_CHILD")) { // def child obj, def no expend
+    expand = false;
+    if(has_expand && !has_no_expand) {
+      taList_impl* lst = tab->children_();
+      if(lst && lst->size > 0) { // only expand if actual children items!
+        expand = true;
+      }
+    }
   }
-  if (exp_flags & EF_NAVIGATOR_FILTER) {
-    taiSigLink* dl = item->link();
-    int depth = taiMisc::GetNavigatorDefaultExpand(dl->GetName());  // only call custom if we know we will find a preference!
-    if (depth > -1) {
-      max_levels = 1;  // this gets it open, then custom will take over
+  else { // def child obj, def no expand
+    expand = false;
+    if(has_expand && !has_no_expand) {
       expand = true;
-      emit CustomExpandNavigatorFilter(item, level, expand);
     }
   }
   
@@ -550,107 +516,85 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
     if (!isItemExpanded(item)) { // ok, eligible...
       item->setExpanded(true);  // should trigger CreateChildren for lazy
     }
-    // check if we've expanded deeply enough
-    // (works for finite (>=1) and infinite (<0) cases)
-    if (max_levels == 0) return;
-    
-    if (level >= 0) ++level;
     // and expand item's children -- lazy children should be created by now
     for (int i = 0; i < item->childCount(); ++i) {
       iTreeViewItem* child = dynamic_cast<iTreeViewItem*>(item->child(i));
-      if (child && child->given_name != "LeabraStartup" && child->given_name != "MasterStartup") {  // hack - keep LeabraStartup from expanding by default
-        if (exp_flags & EF_DEFAULT_UNDER) {
-          // EXPAND_DEF should only be ignored for the item on which the expand was initiated, not all its children
-          exp_flags = (ExpandFlags)(exp_flags & ~EF_DEFAULT_UNDER);
-        }
-        ExpandItem_impl(child, level, max_levels, exp_flags, is_subgroup);
-      }
+      ExpandDefaultItem_impl(child);
     }
   }
   else {
-    // note: following test not needed for 1st time, but is
-    // needed for subsequent ExpandDefault
-    if(!(exp_flags & EF_DEFAULT) && !(exp_flags & EF_CUSTOM_FILTER)) {
-      // for auto-expand, do NOT collapse expanded items!
-      if (isItemExpanded(item)) {
-        item->setExpanded(false);
-      }
-    }
+    CollapseItem_impl(item);
   }
 }
 
-void iTreeView::ExpandAllUnder(iTreeViewItem* item, int max_levels) {
-  if (!item) return;
-  taMisc::Busy(true);
-  ExpandItem_impl(item, -1, max_levels, EF_EXPAND_FULLY);
+///////////////////////////////////////////////////////////////
+//              ExpandAll
+
+void iTreeView::ExpandAll() {
+  ExpandAll_impl();
+}
+
+void iTreeView::ExpandAll_impl() {
+  // NOTE: we can't user iterators for expanding, because we add/remove items which
+  // crashes the iterator
+  for (int i = 0; i < topLevelItemCount(); ++i) {
+    iTreeViewItem* node = dynamic_cast<iTreeViewItem*>(topLevelItem(i));
+    if (!node) continue;
+    ExpandAllItem_impl(node); // false - this is the root node for this expansion
+  }
   if (header()->isVisible() && (header()->count() > 1)) {
     resizeColumnsToContents();
   }
-  taMisc::Busy(false);
+}
+
+void iTreeView::ExpandAllUnder(iTreeViewItem* item) {
+  if (!item) return;
+  // taMisc::Busy(true);
+  if (!isItemExpanded(item)) { // ok, eligible...
+    item->setExpanded(true);  // should trigger CreateChildren for lazy
+  }
+  // and expand item's children -- lazy children should be created by now
+  for (int i = 0; i < item->childCount(); ++i) {
+    iTreeViewItem* child = dynamic_cast<iTreeViewItem*>(item->child(i));
+    ExpandAllItem_impl(child);
+  }
+  if (header()->isVisible() && (header()->count() > 1)) {
+    resizeColumnsToContents();
+  }
+  // taMisc::Busy(false);
 }
 
 void iTreeView::ExpandAllUnderInt(void* item) {
   ExpandAllUnder((iTreeViewItem*)item);
 }
 
-void iTreeView::ExpandDefaultUnder(iTreeViewItem* item) {
+void iTreeView::ExpandAllItem_impl(iTreeViewItem* item) {
   if (!item) return;
+  if(isItemHidden(item)) {
+    CollapseItem_impl(item);
+    return;
+  }
   taBase* tab = item->link()->taData();
-  int exp_flags = 0;
-  
-  if (tab) {
-    if (parent_type == iTreeView::TYPE_BROWSEVIEWER
-        && (tab->GetTypeDef() == &TA_Program || tab->GetTypeDef() == &TA_Program_Group)
-        && useNavigatorCustomExpand()) {
-      exp_flags |= EF_NAVIGATOR_FILTER;
-    }
-    else if (parent_type == iTreeView::TYPE_BROWSEVIEWER && tab->GetOwner(&TA_Program) && useNavigatorCustomExpand()) {
-      exp_flags |= EF_NAVIGATOR_FILTER;
-    }
-    else if (parent_type == iTreeView::TYPE_PROGRAMEDITOR && useEditorCustomExpand()) {
-      exp_flags |= EF_CUSTOM_FILTER;
-    }
+  if(!tab || tab->HasOption("NO_EXPAND_ALL")) {
+    CollapseItem_impl(item);
+    return;
   }
-  
-  exp_flags |= EF_DEFAULT_UNDER;
-  
-  taMisc::Busy(true);
-  ExpandItem_impl(item, 0, m_def_exp_levels, exp_flags);
-  if (header()->isVisible() && (header()->count() > 1)) {
-    resizeColumnsToContents();
+  if(item->md() && item->md()->HasOption("NO_EXPAND_ALL")) {
+    CollapseItem_impl(item);
+    return;
   }
-  taMisc::Busy(false);
-}
-
-void iTreeView::ExpandDefaultUnderInt(void* item) {
-  CollapseAllUnderInt(item);
-  ExpandDefaultUnder((iTreeViewItem*)item);
-}
-
-void iTreeView::ExpandDefault() {
-  if (tree_state_restored) {
-    tree_state_restored = false; // used to prevent expanding to defaults if we already expanded to saved state
+  if(tab->GetOwner() == NULL) {
+    CollapseItem_impl(item);
     return;
   }
   
-  int exp_flags = EF_DEFAULT;
-  
-  if (parent_type == iTreeView::TYPE_PROGRAMEDITOR && useEditorCustomExpand()) {
-    exp_flags |= EF_CUSTOM_FILTER;
+  if (!isItemExpanded(item)) { // ok, eligible...
+    item->setExpanded(true);  // should trigger CreateChildren for lazy
   }
-  
-  if (tv_flags & TV_EXPAND_DISABLED) exp_flags |= EF_EXPAND_DISABLED;
-  ExpandAll_impl(m_def_exp_levels, exp_flags);
-  ScrollTo(0);
-  QTimer::singleShot(250, this, SLOT(ScrollTo()) );
-  // taMisc::Info("trying to scroll to top!");
-  // if(topLevelItemCount() > 0) {
-  //   iTreeViewItem* node = dynamic_cast<iTreeViewItem*>(topLevelItem(0));
-  //   if(node) {
-  //     taMisc::ProcessEvents();
-  //     scrollTo(node);
-  //   }
-  // }
+  for (int i = 0; i < item->childCount(); ++i) {
+    iTreeViewItem* child = dynamic_cast<iTreeViewItem*>(item->child(i));
+    ExpandAllItem_impl(child);
+  }
 }
 
 void iTreeView::GetTreeState_impl(iTreeViewItem* node, String_Array& tree_state) {
@@ -749,14 +693,6 @@ void iTreeView::GetSelectedItems(ISelectable_PtrList& lst) {
       lst.Add(si);
     ++it;
   }
-}
-
-bool iTreeView::HasFilter(TypeItem* ti) const {
-  if (m_filters) for (int i = 0; i < m_filters->size; ++i) {
-    if (ti->HasOptionAfter(opt_treefilt, m_filters->FastEl(i)))
-      return true;
-  }
-  return false;
 }
 
 bool iTreeView::hasMultiSelect() const {
@@ -1119,15 +1055,6 @@ void iTreeView::mousePressEvent(QMouseEvent* event) {
   inherited::mousePressEvent(event);
   --in_mouse_press;
 }
-
-bool iTreeView::useEditorCustomExpand() const {
-  return (receivers(SIGNAL(CustomExpandFilter(iTreeViewItem*, int, bool&))) > 0);
-}
-
-bool iTreeView::useNavigatorCustomExpand() const {
-  return (receivers(SIGNAL(CustomExpandNavigatorFilter(iTreeViewItem*, int, bool&))) > 0);
-}
-
 
 void iTreeView::setColKey(int col, const KeyString& key) {
   if ((col < 0) || (col >= columnCount())) return;

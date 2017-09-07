@@ -409,7 +409,7 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
 
   tvSpecs = new iTreeView(NULL, iTreeView::TV_AUTO_EXPAND);
   tw->addTab(tvSpecs, "Spec Explorer");
-  tvSpecs->setDefaultExpandLevels(6); // shouldn't generally be more than this
+  tvSpecs->ctxt_name = "SPEC";
   tvSpecs->setColumnCount(2);
   tvSpecs->setSortingEnabled(false);// only 1 order possible
   tvSpecs->setHeaderText(0, "Spec");
@@ -440,8 +440,6 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
     SLOT(tvSpecs_Notify(ISelectableHost*, int)) );
 //   connect(tvSpecs, SIGNAL(ItemSelected(iTreeViewItem*)),
 //     this, SLOT(tvSpecs_ItemSelected(iTreeViewItem*)) );
-  connect(tvSpecs, SIGNAL(CustomExpandFilter(iTreeViewItem*, int, bool&)),
-    this, SLOT(tvSpecs_CustomExpandFilter(iTreeViewItem*, int, bool&)) );
 
 //   layOuter->setStretchFactor(scr, 0); // so it only uses exact spacing
   // so doesn't have tiny scrollable annoying area:
@@ -805,24 +803,6 @@ void iViewPanelOfNetwork::setHighlightSpec(BaseSpec* spec, bool force) {
   if (NetView *nv = getNetView()) {
     nv->SetHighlightSpec(spec);
   }
-}
-
-void iViewPanelOfNetwork::tvSpecs_CustomExpandFilter(iTreeViewItem* item,
-  int level, bool& expand)
-{
-  if (level < 1) return; // always expand root level
-  // by default, we only expand specs themselves, not the args, objs, etc.
-  // and then ONLY if that spec itself has child specs
-  taiSigLink* dl = item->link();
-  TypeDef* typ = dl->GetDataTypeDef();
-  // check for spec itself (DEF_CHILD) and children list
-  if (typ->InheritsFrom(&TA_BaseSpec)) {
-    BaseSpec* spec = (BaseSpec*)dl->data();
-    if (spec->children.size > 0) return;
-  }
-  else if (typ->DerivesFrom(&TA_BaseSpec_Group))
-    return;
-  expand = false;
 }
 
 void iViewPanelOfNetwork::tvSpecs_Notify(ISelectableHost* src, int op) {

@@ -55,7 +55,7 @@ private:
 eTypeDef_Of(Schedule);
 
 class E_API Schedule : public taList<SchedItem> {
-  // ##CAT_Network ##EXPAND_DEF_0 A schedule for parameters that vary over time
+  // ##CAT_Network #NO_EXPAND A schedule for parameters that vary over time
 INHERITED(taList<SchedItem>)
 public:
   int           last_ctr;       // #NO_SAVE the last counter index called

@@ -35,7 +35,7 @@ class VEStatic; //
 eTypeDef_Of(VESpace);
 
 class E_API VESpace : public taNBase {
-  // #STEM_BASE ##CAT_VirtEnv ##EXT_vespc ##EXPAND_AS_GROUP ##EXPAND_DEF_6 a virtual environment that represents a sub-space of objects, containing static elements only -- helps optimize the collision detection process to group proximal items into sub spaces
+  // #STEM_BASE ##CAT_VirtEnv ##EXT_vespc ##EXPAND_NAV a virtual environment that represents a sub-space of objects, containing static elements only -- helps optimize the collision detection process to group proximal items into sub spaces
 INHERITED(taNBase)
 public:
   enum SpaceType {

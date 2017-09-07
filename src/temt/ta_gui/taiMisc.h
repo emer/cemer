@@ -591,15 +591,6 @@ public:
   String        color_to_string(const iColor& color);
   // returns a string value (appropriate for setting in a style) for the color
   
-  static int    GetGroupDefaultExpand(const String& group);
-  static void   SetGroupDefaultExpand(const String& group, int depth);
-  // set the expansion depth for this group - 0 means don't expand, 1 is one level deep, and so on
-  static int    GetEditorDefaultExpand(const String& group);
-  // get default expansion for program sections viewed in the program editor -- objs, types, vars, etc.
-  static int    GetNavigatorDefaultExpand(const String& section);
-  // get default expansion for program sections viewed in the navigator -- objs, types, vars, etc.
-  static int    GetExpandDef(const taBase* obj);
-  
   taiMisc(QObject* parent = NULL);
   ~taiMisc();
   
