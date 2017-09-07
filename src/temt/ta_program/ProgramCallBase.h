@@ -30,7 +30,7 @@ class Program_List; //
 taTypeDef_Of(ProgramCallBase);
 
 class TA_API ProgramCallBase: public ProgEl {
-  // ##DEF_CHILD_prog_args #VIRT_BASE base class for prog el that calls a program -- manages args and provides interface that Program's require for managing sub-progs
+  // ##DEF_CHILD_prog_args #VIRT_BASE ##NO_EXPAND base class for prog el that calls a program -- manages args and provides interface that Program's require for managing sub-progs
 INHERITED(ProgEl)
 public:
   ProgArg_List          prog_args; // #TREE_SHOW arguments to the program--copied to prog before call -- all programs in prog_group must accept these same args
