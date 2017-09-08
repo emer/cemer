@@ -66,9 +66,11 @@ public:
     const float da_p, const float lrate_eff, const float wt) {
       
     float ru_act_delta = ru_act - ru_act_prv;
+    if(ru_act_delta > 0.0f)
+      ru_act_delta = fmaxf(ru_act_delta, 0.09f); // need some significant pos delta to bootstrap learning in extinction wts; TODO: if works, add threshold param
      
     // can kill now...
-    if(fabsf(ru_act_delta) < bla_learn.act_delta_thr) { ru_act_delta = 0.0f; }
+    //if(fabsf(ru_act_delta) < bla_learn.act_delta_thr) { ru_act_delta = 0.0f; }
     float delta = lrate_eff * su_act * (ru_act_delta);
     //float delta = lrate_eff * su_act * (ru_act - ru_act_prv); // original version
     
@@ -97,10 +99,11 @@ public:
     
     for(int i=0; i<sz; i++) {
       LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i, net);
+      float lrate_eff = clrate; // start fresh each time thru for_loop
       
       // learning dependent on non-zero deep_lrn
       if(bla_learn.deep_lrn_mod) {
-        //clrate *= (bg_lrate + fg_lrate * ru->deep_lrn);
+        //lrate_eff *= (bg_lrate + fg_lrate * ru->deep_lrn);
         float eff_deep_lrn = 0.0f;
         if(ru->deep_lrn > bla_learn.deep_lrn_thr) {
           eff_deep_lrn = 1.0f;
@@ -108,14 +111,14 @@ public:
         else {
           eff_deep_lrn = 0.0f;
         }
-        clrate *= eff_deep_lrn;
-        }
+        lrate_eff *= eff_deep_lrn;
+      }
       
       // screen out spurious da signals due to tiny VSPatch-to-LHb signals on t2 & t4 trials
       float ru_da_p = ru->da_p;
       if(fabsf(ru_da_p) < bla_learn.da_lrn_thr) { ru_da_p = 0.0f; }
       
-      C_Compute_dWt_BLA_Delta(dwts[i], su_act, ru->act_eq, ru->act_q0, ru_da_p, clrate,
+      C_Compute_dWt_BLA_Delta(dwts[i], su_act, ru->act_eq, ru->act_q0, ru_da_p, lrate_eff,
                               wts[i] / scales[i]);
     }
   }

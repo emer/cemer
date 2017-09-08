@@ -285,15 +285,22 @@ void LHbRMTgUnitSpec::Compute_Lhb(LeabraUnitVars* u, LeabraNetwork* net, int thr
   
   // net out the VS matrix D1 versus D2 pairs...WATCH the signs - double negatives!
   float vsmatrix_pos_net = (gains.vsmatrix_pos_D1 * vsmatrix_pos_D1) - (gains.vsmatrix_pos_D2 * vsmatrix_pos_D2); // positive number net inhibitory!
-  vsmatrix_pos_net = fmaxf(0.0f, vsmatrix_pos_net); // restrict to positive net values
+  //vsmatrix_pos_net = fmaxf(0.0f, vsmatrix_pos_net); // restrict to positive net values
   float vsmatrix_neg_net = (gains.vsmatrix_neg_D2 * vsmatrix_neg_D2) - (gains.vsmatrix_neg_D1 * vsmatrix_neg_D1); // positive number net excitatory!
-  vsmatrix_neg_net = fmaxf(0.0f, vsmatrix_neg_net); // restrict to negative net values
+  //vsmatrix_neg_net = fmaxf(0.0f, vsmatrix_neg_net); // restrict to positive net values
   
   // don't double count pv going through the matrix guys
   float net_pos = vsmatrix_pos_net;
   if(pv_pos) { net_pos = fmaxf(pv_pos, vsmatrix_pos_net); }
   float net_neg = vsmatrix_neg_net;
-  if(pv_neg) { net_neg = fmaxf(pv_neg, vsmatrix_neg_net); }
+  if(pv_neg) {
+    // below can arise when same CS can predict either pos_pv or neg_pv probalistically
+    if(vsmatrix_pos_net < 0.0f) {
+      net_neg = fmaxf(net_neg, fabsf(vsmatrix_pos_net));
+      net_pos = 0.0f; // don't double-count since transferred to net_neg in this case only
+    }
+    net_neg = fmaxf(pv_neg, net_neg);
+  }
   
   float net_lhb = net_neg - net_pos + vspatch_pos_net - vspatch_neg_net;
   
