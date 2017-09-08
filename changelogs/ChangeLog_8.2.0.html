@@ -1,6 +1,6 @@
 <html><body>
 <h2>ChangeLog for Emergent Version 8.2.0
-  Revisions 10824:11063</h2>
+  Revisions 10824:11074</h2>
 <table border="1" style="table-layout:fixed;width: 100%;">
 <tr>
 <td width="5%">Rev No.</td>
@@ -2020,6 +2020,91 @@ projects.
 <td><pre>2017-09-03</pre></td>
 <td><pre>oreilly</pre></td>
 <td><pre>momentum defaults 10 or 20 -- 20 best for most probably</pre></td>
+</tr>
+<tr>
+<td><pre>11064</pre></td>
+<td><pre>2017-09-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* update changelog for 8.2.0 release
+* update all template projects
+</pre></td>
+</tr>
+<tr>
+<td><pre>11065</pre></td>
+<td><pre>2017-09-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix for Bug 3555 -- view hadn't been updated yet when this function called -- check for
+mismatch in number of columns and bail if doesn't fit.
+</pre></td>
+</tr>
+<tr>
+<td><pre>11066</pre></td>
+<td><pre>2017-09-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fix taMarkUp::DataTableTable -- row, col was crossed!
+</pre></td>
+</tr>
+<tr>
+<td><pre>11067</pre></td>
+<td><pre>2017-09-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Fixes for deleting / undoing deletion of data tables:
+* when table was deleted, the iViewPanel control panel was not being deleted -- fixed
+* also need to create a new panel not just at on window bind.. added general Make function
+* when doing undo loading, reset any existing taDataView clients -- otherwise dupes.
+</pre></td>
+</tr>
+<tr>
+<td><pre>11068</pre></td>
+<td><pre>2017-09-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>New treeview expand logic -- MUCH MUCH simpler and working great except for a few cases:
+not showing lrate_sched in terminal LeabraConSpecs, and not showing args in method calls etc
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>11069</pre></td>
+<td><pre>2017-09-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>IMPORTANT: use './reconfigure build[_dbg] clean' before building the new expand code version
+as it needs to reprocess all of the comment directives
+* easy fix for args -- just mark them as #NO_EXPAND -- now just the conspecs
+</pre></td>
+</tr>
+<tr>
+<td><pre>11070</pre></td>
+<td><pre>2017-09-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>and now conspecs working -- wasn't using proper test for def_child -- just look for non-null children_()
+</pre></td>
+</tr>
+<tr>
+<td><pre>11071</pre></td>
+<td><pre>2017-09-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* get rid of unused TREE_EXPANDED baseflag from taBase
+* last thing is to optimize the viewers expansion when you want to look in there -- should
+go further
+</pre></td>
+</tr>
+<tr>
+<td><pre>11072</pre></td>
+<td><pre>2017-09-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>viewer expansion gets you to the main t3d views in one click..</pre></td>
+</tr>
+<tr>
+<td><pre>11073</pre></td>
+<td><pre>2017-09-08</pre></td>
+<td><pre>thazy</pre></td>
+<td><pre>fixed Compute_dWt for loop clrate problem; also tweaked LHb netin integration</pre></td>
+</tr>
+<tr>
+<td><pre>11074</pre></td>
+<td><pre>2017-09-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>last few expand fixes -- all done -- ready for 8.2.0</pre></td>
 </tr>
 </table>
 </body></html>
