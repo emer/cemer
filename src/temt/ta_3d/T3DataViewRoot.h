@@ -26,7 +26,7 @@
 taTypeDef_Of(T3DataViewRoot);
 
 class TA_API T3DataViewRoot: public T3DataViewPar {
-  // #NO_TOKENS Root item for a viewwidget type
+  // #NO_TOKENS #EXPAND Root item for a viewwidget type
 #ifndef __MAKETA__
 typedef T3DataViewPar inherited;
 #endif
