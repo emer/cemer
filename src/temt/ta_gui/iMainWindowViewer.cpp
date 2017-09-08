@@ -2112,13 +2112,13 @@ iTreeViewItem* iMainWindowViewer::BrowserExpandAllItem(taiSigLink* link) {
   taMisc::ProcessEvents();
   iTreeViewItem* rval = itv->AssertItem(link);
   if (rval) {
-    itv->ExpandAllUnder(rval);
+    itv->ExpandDefaultUnder(rval);
   }
   else if(itv == cur_tree_view) { // try again with main
     itv = GetMainTreeView();
     rval = itv->AssertItem(link);
     if (rval) {
-      itv->ExpandAllUnder(rval);
+      itv->ExpandDefaultUnder(rval);
     }
   }
   // make sure our operations are finished

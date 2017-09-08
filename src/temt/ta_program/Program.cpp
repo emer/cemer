@@ -2566,7 +2566,7 @@ bool Program::BrowserExpandAll_ProgItem(taOBase* itm) {
   iTreeView* itv = mwv->pe->items;
   iTreeViewItem* iti = itv->AssertItem(link);
   if(iti) {
-    itv->ExpandAllUnder(iti);
+    itv->ExpandDefaultUnder(iti);
   }
   // make sure our operations are finished
   taMisc::ProcessEvents();
