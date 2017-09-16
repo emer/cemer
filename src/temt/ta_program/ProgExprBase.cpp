@@ -42,6 +42,7 @@
 #include <taBase_List>
 #include <EnumDef>
 #include <Completions>
+#include <AssignExpr>
 
 TA_BASEFUNS_CTORS_DEFN(ProgExprBase);
 TA_BASEFUNS_CTORS_DEFN(ProgExprShort);
@@ -163,7 +164,18 @@ void ProgExprBase::ReParseExpr(bool prompt_for_bad) {
           if (bad_vars[i] == "_toolbox_tmp_") { // just a temporary variable
             make = false;
           }
-          pel->FindVarNameInScope(bad_vars[i], make);
+          // did the user forget to quote a string?
+          if (pel->InheritsFrom(&TA_AssignExpr)) {
+            AssignExpr* ass_expr = (AssignExpr*)pel;
+            if (ass_expr && ass_expr->result_var->var_type == ProgVar::T_String) {
+              int chs = taMisc::Choice("Did you forget quotes around \"" + expr + "\" ?", "No, continue", "Yes, please quote");
+              if (chs == 1) {
+                expr = "\"" + expr + "\"";
+                break;
+              }
+            }
+          }
+        pel->FindVarNameInScope(bad_vars[i], make);
         }
       }
     }
