@@ -49,9 +49,9 @@ General RunState
 # Std Network
 # Run Emergent Program    TestStdNetwork
 
-#Std Everything
-#    Run Emergent Program    TestStdEverything
-#    Run Emergent Program    .projects[\\\"projects_1\\\"].programs.gp[\\\"LeabraAll_Std\\\"][\\\"LeabraBatch\\\"]
+Std Everything
+    Run Emergent Program    TestStdEverything
+    Run Emergent Program    .projects[\\\"projects_1\\\"].programs.gp[\\\"LeabraAll_Std\\\"][\\\"LeabraBatch\\\"]
 
 Hippo
     Ensure Emergent Free
