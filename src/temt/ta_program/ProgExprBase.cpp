@@ -583,7 +583,7 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
   // ** Working backwards - delimiters will be in reverse order **
   for(int i = cur_pos-1; i >= 0; i--) {
     c = txt[i];
-    if(isdigit(c) || (c == '_') || (c == '-')) {
+    if(isdigit(c) || (c == '_')) {
       continue;
     }
     
@@ -647,6 +647,15 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
         if (c_previous == '-') {
           delim_pos.Add(i);
           delim_pos.Add(i-1);
+          continue;
+        }
+      }
+    }
+    
+    if(c == '-') {
+      if (i > 2) {
+        c_previous = txt[i-1];
+        if (c_previous != ' ') {
           continue;
         }
       }
