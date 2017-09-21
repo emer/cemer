@@ -223,6 +223,11 @@ public:
   virtual ProgVar*      GetInitFromVar(bool warn = true);
   // #CAT_ProgVar get the program variable to initialize from in the init_from program -- warn = emit a warning if the variable is not found
 
+  int           ReplaceValStr
+    (const String& srch, const String& repl, const String& mbr_filt,
+     void* par = NULL, TypeDef* par_typ=NULL, MemberDef* md = NULL,
+     TypeDef::StrContext sc = TypeDef::SC_DEFAULT, bool replace_deep = true) override;
+
   FlatTreeEl*   GetFlatTree(FlatTreeEl_List& ftl, int nest_lev, FlatTreeEl* par_el,
                             const taBase* par_obj, MemberDef* md) const override;
   void         GetFlatTreeValue(FlatTreeEl_List& ftl, FlatTreeEl* ft, bool ptr = false) const override;

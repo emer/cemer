@@ -1170,6 +1170,19 @@ bool ProgVar::SetTypeAndName(const String& ty_nm) {
   return true;
 }
 
+int ProgVar::ReplaceValStr
+(const String& srch, const String& repl, const String& mbr_filt,
+ void* par, TypeDef* par_typ, MemberDef* memb_def, TypeDef::StrContext sc, bool replace_deep) {
+  String cur_val = BrowserEditString(); // current best string rep
+  int rval = cur_val.gsub(srch, repl);
+  if(rval > 0) {
+    taMisc::Info("Replaced string value in ProgVar of type:", GetTypeDef()->name,
+                 "now:", cur_val);
+    BrowserEditSet(cur_val);
+  }
+  return rval;
+}
+
 FlatTreeEl* ProgVar::GetFlatTree(FlatTreeEl_List& ftl, int nest_lev, FlatTreeEl* par_el,
                                  const taBase* par_obj, MemberDef* md) const {
   FlatTreeEl* fel = NULL;
