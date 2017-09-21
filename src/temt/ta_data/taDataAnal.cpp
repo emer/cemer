@@ -969,7 +969,7 @@ bool taDataAnal::ReceiverOperatingCharacteristic(DataTable* src_data,
     return false;
   }
   
-  if (!(vec_signal->size > 0 && vec_noise > 0)) {
+  if (!(vec_signal->size > 0 && vec_noise->size > 0)) {
     taMisc::Error("signal and noise vectors must each have at least one element");
     return false;
   }
