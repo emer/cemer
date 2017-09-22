@@ -37,6 +37,8 @@ public:
 
   virtual void          UpdateArgs();
   // #BUTTON updates the arguments based on the target args (also automatically called in updateafteredit)
+  virtual bool          UpdateArgs_impl();
+  // #IGNORE update args impl -- true if any changes
 
   virtual Program*      GetTarget() { return NULL; }
   // safe call to get target: emits error if target is null (used by program) -- call during runtime

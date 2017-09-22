@@ -28,7 +28,7 @@ void ProgramCallBase::Initialize() {
 
 void ProgramCallBase::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  UpdateArgs();         // always do this..  nondestructive and sometimes stuff changes anyway
+  UpdateArgs_impl(); // always do this..  nondestructive and sometimes stuff changes anyway
   Program* prg = program();
   if(prg && !HasProgFlag(OFF)) {
     if(TestError(prg->init_code.IsParentOf(this), "UAE", "Cannot have a program call within init_code -- init_code should generally be very simple and robust code as it is not checked in advance of running (to prevent init-dependent Catch-22 scenarios) -- turning this call OFF"))
@@ -71,18 +71,25 @@ void ProgramCallBase::GenCssArgSet_impl(Program* prog, const String trg_var_nm) 
 }
 
 void ProgramCallBase::UpdateArgs() {
+  bool any_changes = UpdateArgs_impl();
+  if(any_changes) {
+    SigEmitUpdated();
+  }
+}
+
+bool ProgramCallBase::UpdateArgs_impl() {
   Program* trg = GetTarget_Compile();
-  if(!trg) return;
+  if(!trg) return false;
   
   if (!trg->InheritsFrom(&TA_Program)) {
     taMisc::Error("ProgramCallBase::UpdateArgs trg type bad! - programmer error - please report");
-    return;
+    return false;
   }
   
   bool any_changes = prog_args.UpdateFromVarList(trg->args);
   // now go through and set default value for variables of same name in this program
   Program* prg = GET_MY_OWNER(Program);
-  if(!prg) return;
+  if(!prg) return any_changes;
   for(int i=0;i<prog_args.size; i++) {
     ProgArg* pa = prog_args.FastEl(i);
     if(!pa->expr.expr.empty()) continue; // skip if already set
@@ -95,4 +102,5 @@ void ProgramCallBase::UpdateArgs() {
   if(any_changes && taMisc::gui_active) {
     tabMisc::DelayedFunCall_gui(this, "BrowserExpandAll");
   }
+  return any_changes;
 }

@@ -284,7 +284,9 @@ void ProgEl::SmartRef_SigEmit(taSmartRef* ref, taBase* obj,
 
 void ProgEl::GenCss(Program* prog) {
   if(HasProgFlag(OFF)) return;
-  code_string = BrowserEditString(); // save it whenever you compile!
+  if(!HasBaseFlag(INVALID_MASK)) {
+    code_string = BrowserEditString(); // save it whenever you compile!
+  }
   UpdateProgFlags();
   if(useDesc()) {
     prog->AddDescString(this, desc);

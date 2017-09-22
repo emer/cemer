@@ -32,7 +32,7 @@ void FunctionCall::Destroy() {
 
 void FunctionCall::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  UpdateArgs();         // always do this.. nondestructive and sometimes stuff changes anyway
+  UpdateArgs_impl(); // always do this.. nondestructive and sometimes stuff changes anyway
 }
 
 void FunctionCall::CheckThisConfig_impl(bool quiet, bool& rval) {
@@ -85,14 +85,22 @@ String FunctionCall::GetDisplayName() const {
     }
     rval += ")";
   }
-  else
+  else {
     rval += "function_name()";
+  }
   return rval;
 }
 
+bool FunctionCall::UpdateArgs_impl() {
+  if(!fun) return false; // just leave existing stuff for now
+  return fun_args.UpdateFromVarList(fun->args);
+}
+
 void FunctionCall::UpdateArgs() {
-  if(!fun) return; // just leave existing stuff for now
-  fun_args.UpdateFromVarList(fun->args);
+  bool any_changes = UpdateArgs_impl();
+  if(any_changes) {
+    SigEmitUpdated();
+  }
 }
 
 bool FunctionCall::CanCvtFmCode(const String& code, ProgEl* scope_el) const {

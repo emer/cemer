@@ -42,6 +42,8 @@ public:
 
   virtual void          UpdateArgs();
   // #BUTTON updates the argument list based on the function being called
+  virtual bool          UpdateArgs_impl();
+  // #IGNORE update args impl -- true if any changes
 
   bool         CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
   bool         CvtFmCode(const String& code) override;
