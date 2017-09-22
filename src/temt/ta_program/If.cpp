@@ -66,8 +66,9 @@ void If::GenCssPre_impl(Program* prog) {
   prog->AddVerboseLine(this, false, "\"inside if\"");
 }
 
-void If::GenCssBody_impl(Program* prog) {
+bool If::GenCssBody_impl(Program* prog) {
   true_code.GenCss(prog);
+  return true;
 }
 
 void If::GenCssPost_impl(Program* prog) {

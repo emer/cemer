@@ -40,8 +40,8 @@ String ProgramCallFun::GetDisplayName() const {
   return rval;
 }
 
-void ProgramCallFun::GenCssBody_impl(Program* prog) {
-  if (!target) return;
+bool ProgramCallFun::GenCssBody_impl(Program* prog) {
+  if (!target) return false;
   prog->AddLine(this, String("Program* target = this") + GetPath(program())+ "->GetTarget();");
   prog->AddLine(this, "if(target) {");
   prog->IncIndent();
@@ -52,6 +52,7 @@ void ProgramCallFun::GenCssBody_impl(Program* prog) {
   prog->AddLine(this, "{ target->CallFunction(this,\"" + function + "\"); }");
   prog->DecIndent();
   prog->AddLine(this, "}");
+  return true;
 }
 
 bool ProgramCallFun::CanCvtFmCode(const String& code, ProgEl* scope_el) const {

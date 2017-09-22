@@ -284,16 +284,16 @@ void ProgEl::SmartRef_SigEmit(taSmartRef* ref, taBase* obj,
 
 void ProgEl::GenCss(Program* prog) {
   if(HasProgFlag(OFF)) return;
-  if(!HasBaseFlag(INVALID_MASK)) {
-    code_string = BrowserEditString(); // save it whenever you compile!
-  }
   UpdateProgFlags();
   if(useDesc()) {
     prog->AddDescString(this, desc);
   }
   GenCssPre_impl(prog);
-  GenCssBody_impl(prog);
+  bool code_gen = GenCssBody_impl(prog);
   GenCssPost_impl(prog);
+  if(code_gen) {
+    code_string = BrowserEditString(); // save it whenever you compile!
+  }
 }
 
 const String ProgEl::GenListing(int indent_level) const {
@@ -863,6 +863,7 @@ bool ProgEl::RevertToCode() {
   else {
     cvt->desc = desc;
   }
+  cvt->code_string = code_string;
   cvt->code.expr = code_string;
   if (HasSubCode() && children_()->DerivesFromName("ProgEl_List")) {  // should always be true
     cvt->sub_code.Copy(*(ProgEl_List*)children_());  // save the subcode in the ProgCode object for later replacement in new ProgEl

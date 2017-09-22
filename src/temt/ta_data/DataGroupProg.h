@@ -41,7 +41,7 @@ public:
   void	UpdateSpecDataTable() override;
 
   String  GetDisplayName() const override;
-  String	GetToolbarName() const override { return "group"; }
+  String  GetToolbarName() const override { return "group"; }
   bool    CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
   bool    CvtFmCode(const String& code) override;
 
@@ -49,7 +49,7 @@ public:
 protected:
   void    UpdateAfterEdit_impl() override;
   void    CheckChildConfig_impl(bool quiet, bool& rval) override;
-  void		GenCssBody_impl(Program* prog) override; 
+  bool    GenCssBody_impl(Program* prog) override; 
 
 private:
   void	Initialize();

@@ -58,9 +58,9 @@ public:
   PROGEL_SIMPLE_BASEFUNS(MemberMethodCall);
 protected:
   void		UpdateAfterEdit_impl() override;
-  void 	  CheckThisConfig_impl(bool quiet, bool& rval) override;
+  void          CheckThisConfig_impl(bool quiet, bool& rval) override;
   void		CheckChildConfig_impl(bool quiet, bool& rval) override;
-  void		GenCssBody_impl(Program* prog) override;
+  bool		GenCssBody_impl(Program* prog) override;
 
 private:
   void	Initialize();

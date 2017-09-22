@@ -60,7 +60,7 @@ void IfReturn::CheckThisConfig_impl(bool quiet, bool& rval) {
   CheckEqualsError(cond.expr, quiet, rval);
 }
 
-void IfReturn::GenCssBody_impl(Program* prog) {
+bool IfReturn::GenCssBody_impl(Program* prog) {
   cond.ParseExpr();             // re-parse just to be sure!
   String fexp = cond.GetFullExpr();
   if(fexp.nonempty()) {
@@ -76,6 +76,7 @@ void IfReturn::GenCssBody_impl(Program* prog) {
     prog->AddLine(this, "return;", ProgLine::MAIN_LINE);
     prog->AddVerboseLine(this);
   }
+  return true;
 }
 
 String IfReturn::GetDisplayName() const {

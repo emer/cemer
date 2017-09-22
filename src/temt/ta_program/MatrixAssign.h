@@ -69,7 +69,7 @@ public:
   PROGEL_SIMPLE_BASEFUNS(MatrixAssign);
 protected:
   void            CheckThisConfig_impl(bool quiet, bool& rval) override;
-  void            GenCssBody_impl(Program* prog) override;
+  bool            GenCssBody_impl(Program* prog) override;
 
 private:
   void Initialize();

@@ -54,7 +54,7 @@ protected:
   void		CheckChildConfig_impl(bool quiet, bool& rval) override;
   void		PreGenChildren_impl(int& item_id) override;
   void		GenCssPre_impl(Program* prog) override; 
-  void		GenCssBody_impl(Program* prog) override; 
+  bool		GenCssBody_impl(Program* prog) override; 
   void		GenCssPost_impl(Program* prog) override; 
   const String	GenListing_children(int indent_level) const override;
 

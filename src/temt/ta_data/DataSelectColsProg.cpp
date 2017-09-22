@@ -96,11 +96,11 @@ void DataSelectColsProg::CheckChildConfig_impl(bool quiet, bool& rval) {
   }
 }
 
-void DataSelectColsProg::GenCssBody_impl(Program* prog) {
+bool DataSelectColsProg::GenCssBody_impl(Program* prog) {
   if(!src_data_var) {
     prog->AddLine(this, "// DataSelectCols: src_data_var not set!  cannot run!",
                   ProgLine::MAIN_LINE);
-    return;
+    return false;
   }
   prog->AddLine(this, "{ DataSelectColsProg* dsp = this" + GetPath(program()) + ";",
                 ProgLine::MAIN_LINE);
@@ -119,6 +119,7 @@ void DataSelectColsProg::GenCssBody_impl(Program* prog) {
   }
   prog->DecIndent();
   prog->AddLine(this, "}");
+  return true;
 }
 
 void DataSelectColsProg::AddAllColumns() {

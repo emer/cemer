@@ -164,7 +164,7 @@ bool ProgCode::BrowserEditSet(const String& code_str, int move_after) {
   else {
     code.expr = CodeGetDesc(code_str, desc);
   }
-    tabMisc::DelayedFunCall_gui(this, "ConvertToProgEl"); // do it later..
+  tabMisc::DelayedFunCall_gui(this, "ConvertToProgEl"); // do it later..
   return false;
 }
 

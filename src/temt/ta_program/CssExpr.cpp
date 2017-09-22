@@ -38,7 +38,7 @@ void CssExpr::UpdateAfterEdit_impl() {
   }
 }
 
-void CssExpr::GenCssBody_impl(Program* prog) {
+bool CssExpr::GenCssBody_impl(Program* prog) {
   expr.ParseExpr();             // re-parse just to be sure!
   String rval = expr.GetFullExpr();
   if(!rval.endsWith(';'))
@@ -47,6 +47,7 @@ void CssExpr::GenCssBody_impl(Program* prog) {
     rval = rval.before(rval.length()-1); // cut off last ;
   prog->AddLine(this, rval, ProgLine::MAIN_LINE);
   // no verbose here!
+  return true;
 }
 
 String CssExpr::GetDisplayName() const {

@@ -31,18 +31,20 @@ String NetCounterInit::GetDisplayName() const {
   return rval;
 }
 
-void NetCounterInit::GenCssBody_impl(Program* prog) {
+bool NetCounterInit::GenCssBody_impl(Program* prog) {
   if(!counter || !network_var) {
     prog->AddLine(this, "// NetCounterInit ERROR: vars not set!", ProgLine::MAIN_LINE);
-    return;
+    return false;
   }
   prog->AddLine(this, counter->name + " = 0;");
   prog->AddLine(this, network_var->name + "->" + counter->name + " = " + counter->name + ";",
                 ProgLine::MAIN_LINE);
   prog->AddVerboseLine(this);
   prog->AddVerboseLine(this, false, "\"new value:\", String(" + counter->name + ")");
-  if(update_after)
+  if(update_after) {
     prog->AddLine(this, network_var->name + "->UpdateAfterEdit();");
+  }
+  return true;
 }
 
 bool NetCounterInit::CanCvtFmCode(const String& code, ProgEl* scope_el) const {

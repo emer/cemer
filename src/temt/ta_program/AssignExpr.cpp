@@ -30,16 +30,17 @@ void AssignExpr::CheckThisConfig_impl(bool quiet, bool& rval) {
   expr.CheckConfig(quiet, rval);
 }
 
-void AssignExpr::GenCssBody_impl(Program* prog) {
+bool AssignExpr::GenCssBody_impl(Program* prog) {
   expr.ParseExpr();             // re-parse just to be sure!
   if (!result_var) {
     prog->AddLine(this, "// WARNING: AssignExpr not generated here -- result_var not specified", ProgLine::MAIN_LINE);
-    return;
+    return false;
   }
 
   prog->AddLine(this, result_var->name + " = " + expr.GetFullExpr() + ";", ProgLine::MAIN_LINE);
   prog->AddVerboseLine(this, true, "\"prev value:\", String(" + result_var->name + ")"); // moved above
   prog->AddVerboseLine(this, false, "\"new  value:\", String(" + result_var->name + ")"); // after
+  return true;
 }
 
 String AssignExpr::GetDisplayName() const {

@@ -43,7 +43,7 @@ public:
   PROGEL_SIMPLE_BASEFUNS(Comment);
 protected:
   bool		useDesc() const override {return false;} 
-  void		GenCssBody_impl(Program* prog) override;
+  bool		GenCssBody_impl(Program* prog) override;
 
 private:
   void	Initialize();

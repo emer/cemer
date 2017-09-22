@@ -73,9 +73,10 @@ void CaseBlock::GenCssPre_impl(Program* prog) {
   prog->AddVerboseLine(this, false, "\"inside case\"");
 }
 
-void CaseBlock::GenCssBody_impl(Program* prog) {
-  if(prog_code.size == 0) return;
+bool CaseBlock::GenCssBody_impl(Program* prog) {
+  if(prog_code.size == 0) return false;
   prog_code.GenCss(prog);
+  return true;
 }
 
 void CaseBlock::GenCssPost_impl(Program* prog) {

@@ -29,7 +29,7 @@ void StopStepPoint::CheckThisConfig_impl(bool quiet, bool& rval) {
   CheckEqualsError(cond.expr, quiet, rval);
 }
 
-void StopStepPoint::GenCssBody_impl(Program* prog) {
+bool StopStepPoint::GenCssBody_impl(Program* prog) {
   cond.ParseExpr();             // re-parse just to be sure!
   String fexp = cond.GetFullExpr();
   if(fexp.nonempty()) {
@@ -44,6 +44,7 @@ void StopStepPoint::GenCssBody_impl(Program* prog) {
                   ProgLine::MAIN_LINE);
   }
   prog->AddVerboseLine(this);
+  return true;
 }
 
 String StopStepPoint::GetDisplayName() const {

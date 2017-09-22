@@ -61,14 +61,15 @@ void NetUpdateView::GetUpdateVar() {
   update_var->var_type = ProgVar::T_Bool;
 }
 
-void NetUpdateView::GenCssBody_impl(Program* prog) {
+bool NetUpdateView::GenCssBody_impl(Program* prog) {
   if (!network_var) {
     prog->AddLine(this, "// ERROR: network_var not set in NetUpdateView", ProgLine::MAIN_LINE);
-    return;
+    return false;
   }
   prog->AddLine(this, "if(update_net_view || this.IsStepProg())"
                 + network_var->name + "->UpdateAllViews();", ProgLine::MAIN_LINE);
   prog->AddVerboseLine(this);
+  return true;
 }
 
 bool NetUpdateView::CanCvtFmCode(const String& code, ProgEl* scope_el) const {

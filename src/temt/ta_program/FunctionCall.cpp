@@ -51,8 +51,8 @@ void FunctionCall::CheckChildConfig_impl(bool quiet, bool& rval) {
   fun_args.CheckConfig(quiet, rval);
 }
 
-void FunctionCall::GenCssBody_impl(Program* prog) {
-  if (!fun) return;
+bool FunctionCall::GenCssBody_impl(Program* prog) {
+  if (!fun) return false;
 
   String rval;
   if(result_var) {
@@ -69,6 +69,7 @@ void FunctionCall::GenCssBody_impl(Program* prog) {
 
   prog->AddLine(this, rval, ProgLine::MAIN_LINE);
   prog->AddVerboseLine(this);
+  return true;
 }
 
 String FunctionCall::GetDisplayName() const {

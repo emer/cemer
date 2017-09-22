@@ -45,7 +45,7 @@ protected:
   void		CheckThisConfig_impl(bool quiet, bool& rval) override;
   void		PreGenMe_impl(int item_id) override;
   // register the target as a subprog of this one
-  void		GenCssBody_impl(Program* prog) override;
+  bool		GenCssBody_impl(Program* prog) override;
 
 private:
   void	Initialize();

@@ -52,8 +52,8 @@ protected:
   ProgVar* 		prv_obj; // #IGNORE used to track changes in obj type to clear expr
   
   void		UpdateAfterEdit_impl() override;
-  void 	CheckThisConfig_impl(bool quiet, bool& rval) override;
-  void		GenCssBody_impl(Program* prog) override;
+  void          CheckThisConfig_impl(bool quiet, bool& rval) override;
+  bool		GenCssBody_impl(Program* prog) override;
 
 private:
   void	Initialize();

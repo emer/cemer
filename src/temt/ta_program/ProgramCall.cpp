@@ -133,8 +133,8 @@ void ProgramCall::GenCssPre_impl(Program* prog) {
   prog->IncIndent();
 }
 
-void ProgramCall::GenCssBody_impl(Program* prog) {
-  if (!target) return;
+bool ProgramCall::GenCssBody_impl(Program* prog) {
+  if (!target) return false;
   prog->AddLine(this, String("Program* target = this") + GetPath(program())+ "->GetTarget();");
   prog->AddLine(this, "if(target) {");
   prog->IncIndent();
@@ -145,6 +145,7 @@ void ProgramCall::GenCssBody_impl(Program* prog) {
   prog->AddLine(this, "{ target->Call(this); }");
   prog->DecIndent();
   prog->AddLine(this, "}");
+  return true;
 }
 
 void ProgramCall::GenCssPost_impl(Program* prog) {

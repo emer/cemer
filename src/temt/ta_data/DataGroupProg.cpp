@@ -59,10 +59,10 @@ void DataGroupProg::CheckChildConfig_impl(bool quiet, bool& rval) {
   }
 }
 
-void DataGroupProg::GenCssBody_impl(Program* prog) {
+bool DataGroupProg::GenCssBody_impl(Program* prog) {
   if(!src_data_var) {
     prog->AddLine(this, "// DataGroup: src_data_var not set!  cannot run!", ProgLine::MAIN_LINE);
-    return;
+    return false;
   }
   prog->AddLine(this, "{ DataGroupProg* dsp = this" + GetPath(program()) + ";",
                 ProgLine::MAIN_LINE);
@@ -81,6 +81,7 @@ void DataGroupProg::GenCssBody_impl(Program* prog) {
   }
   prog->DecIndent();
   prog->AddLine(this, "}");
+  return true;
 }
 
 void DataGroupProg::AddAllColumns() {

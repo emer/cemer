@@ -35,13 +35,14 @@ String AddNewDataRow::GetDisplayName() const {
   return rval;
 }
 
-void AddNewDataRow::GenCssBody_impl(Program* prog) {
+bool AddNewDataRow::GenCssBody_impl(Program* prog) {
   if(!data_var) {
     prog->AddLine(this, "// data_var not set!", ProgLine::MAIN_LINE);
-    return;
+    return false;
   }
   prog->AddLine(this, data_var->name + ".AddBlankRow();", ProgLine::MAIN_LINE);
   prog->AddVerboseLine(this);
+  return true;
 }
 
 bool AddNewDataRow::CanCvtFmCode(const String& code, ProgEl* scope_el) const {

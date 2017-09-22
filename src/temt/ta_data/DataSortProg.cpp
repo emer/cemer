@@ -92,10 +92,10 @@ void DataSortProg::CheckChildConfig_impl(bool quiet, bool& rval) {
   }
 }
 
-void DataSortProg::GenCssBody_impl(Program* prog) {
+bool DataSortProg::GenCssBody_impl(Program* prog) {
   if(!src_data_var) {
     prog->AddLine(this, "// DataSort: src_data_var not set!  cannot run", ProgLine::MAIN_LINE);
-    return;
+    return false;
   }
   prog->AddLine(this, "{ DataSortProg* dsp = this" + GetPath(program()) + ";", ProgLine::MAIN_LINE);
   prog->AddVerboseLine(this);
@@ -112,6 +112,7 @@ void DataSortProg::GenCssBody_impl(Program* prog) {
   }
   prog->DecIndent();
   prog->AddLine(this, "}");
+  return true;
 }
 
 void DataSortProg::AddAllColumns() {

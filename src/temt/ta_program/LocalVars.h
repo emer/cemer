@@ -60,7 +60,7 @@ public:
   PROGEL_SIMPLE_BASEFUNS(LocalVars);
 protected:
   void		CheckChildConfig_impl(bool quiet, bool& rval) override;
-  void		GenCssBody_impl(Program* prog) override;
+  bool		GenCssBody_impl(Program* prog) override;
   const String	GenListing_children(int indent_level) const override;
 
 private:

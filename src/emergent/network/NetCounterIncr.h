@@ -36,7 +36,7 @@ public:
 
   PROGEL_SIMPLE_BASEFUNS(NetCounterIncr);
 protected:
-  void		GenCssBody_impl(Program* prog) override;
+  bool		GenCssBody_impl(Program* prog) override;
 
 private:
   void	Initialize() { };

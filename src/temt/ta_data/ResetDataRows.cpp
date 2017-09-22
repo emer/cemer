@@ -35,13 +35,14 @@ String ResetDataRows::GetDisplayName() const {
   return rval;
 }
 
-void ResetDataRows::GenCssBody_impl(Program* prog) {
+bool ResetDataRows::GenCssBody_impl(Program* prog) {
   if(!data_var) {
     prog->AddLine(this, "// data_var not set!", ProgLine::MAIN_LINE);
-    return;
+    return false;
   }
   prog->AddLine(this, data_var->name + ".RemoveAllRows();", ProgLine::MAIN_LINE);
   prog->AddVerboseLine(this);
+  return true;
 }
 
 bool ResetDataRows::CanCvtFmCode(const String& code, ProgEl* scope_el) const {

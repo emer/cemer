@@ -57,7 +57,7 @@ protected:
   void         UpdateAfterEdit_impl() override;
   void         CheckThisConfig_impl(bool quiet, bool& rval) override;
   void         CheckChildConfig_impl(bool quiet, bool& rval) override;
-  void         GenCssBody_impl(Program* prog) override; // generate the Css body code for this object
+  bool         GenCssBody_impl(Program* prog) override; // generate the Css body code for this object
 
 private:
   void  Initialize();

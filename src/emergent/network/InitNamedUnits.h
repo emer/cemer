@@ -68,7 +68,7 @@ protected:
   virtual bool	GetUnitNamesVar();
   virtual bool	GetNetworkVar();
 
-  void		GenCssBody_impl(Program* prog) override;
+  bool		GenCssBody_impl(Program* prog) override;
 
 private:
   void	Initialize();

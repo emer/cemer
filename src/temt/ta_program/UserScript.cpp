@@ -37,10 +37,11 @@ void UserScript::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
 }
 
-void UserScript::GenCssBody_impl(Program* prog) {
+bool UserScript::GenCssBody_impl(Program* prog) {
   script.ParseExpr();           // re-parse just to be sure!
   prog->AddLine(this, script.GetFullExpr(), ProgLine::MAIN_LINE);
   prog->AddVerboseLine(this);
+  return true;
 }
 
 String UserScript::GetDisplayName() const {

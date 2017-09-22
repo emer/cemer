@@ -28,10 +28,11 @@ void ReturnExpr::CheckChildConfig_impl(bool quiet, bool& rval) {
   expr.CheckConfig(quiet, rval);
 }
 
-void ReturnExpr::GenCssBody_impl(Program* prog) {
+bool ReturnExpr::GenCssBody_impl(Program* prog) {
   expr.ParseExpr();             // re-parse just to be sure!
   prog->AddLine(this, "return " + expr.GetFullExpr() + ";", ProgLine::MAIN_LINE);
   prog->AddVerboseLine(this);
+  return true;
 }
 
 String ReturnExpr::GetDisplayName() const {

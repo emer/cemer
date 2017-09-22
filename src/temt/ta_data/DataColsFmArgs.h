@@ -61,7 +61,7 @@ DataColsFmArgs::RowType        StringToRowType(const String& row_type);
 protected:
   void UpdateAfterEdit_impl() override;
   void CheckThisConfig_impl(bool quiet, bool& rval) override;
-  void	GenCssBody_impl(Program* prog) override;
+  bool	GenCssBody_impl(Program* prog) override;
 
 private:
   void	Initialize();

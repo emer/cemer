@@ -125,8 +125,9 @@ bool InitNamedUnits::GetNetworkVar() {
   return (bool)network_var->object_val;
 }
 
-void InitNamedUnits::GenCssBody_impl(Program* prog) {
+bool InitNamedUnits::GenCssBody_impl(Program* prog) {
   prog->AddLine(this, "// InitNamedUnits: no action taken", ProgLine::MAIN_LINE);
+  return true;
 }
 
 bool InitNamedUnits::InitNamesTable() {

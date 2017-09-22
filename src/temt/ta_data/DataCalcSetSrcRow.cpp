@@ -63,19 +63,19 @@ void DataCalcSetSrcRow::CheckThisConfig_impl(bool quiet, bool& rval) {
   CheckError(!dcl, quiet, rval, "parent DataCalcLoop not found");
 }
 
-void DataCalcSetSrcRow::GenCssBody_impl(Program* prog) {
+bool DataCalcSetSrcRow::GenCssBody_impl(Program* prog) {
   // can assume that the dcl variable has already been declared!!
   DataCalcLoop* dcl = GET_MY_OWNER(DataCalcLoop);
   if(!dcl) {
     prog->AddLine(this, "// DataCalcSetSrcRow Error -- DataCalcLoop not found!!",
                   ProgLine::MAIN_LINE);
-    return;
+    return false;
   }
   DataTable* sd = dcl->GetSrcData();
   if(!sd) {
     prog->AddLine(this, "// DataCalcSetSrcRow Error -- src_data_var not set!!",
                   ProgLine::MAIN_LINE);
-    return;
+    return false;
   }
 
   dcl->src_cols.GetColumns(sd);
@@ -98,6 +98,7 @@ void DataCalcSetSrcRow::GenCssBody_impl(Program* prog) {
   }
   prog->AddLine(this, dcl->src_data_var->name + ".WriteClose();");
   dcl->dest_cols.ClearColumns();
+  return true;
 }
 
 bool DataCalcSetSrcRow::CanCvtFmCode(const String& code, ProgEl* scope_el) const {

@@ -53,10 +53,10 @@ void MemberFmArg::CheckThisConfig_impl(bool quieta, bool& rval) {
   CheckError(arg_name.empty(), quieta, rval, "arg_name is empty");
 }
 
-void MemberFmArg::GenCssBody_impl(Program* prog) {
+bool MemberFmArg::GenCssBody_impl(Program* prog) {
   if (!(bool)obj || path.empty() || arg_name.empty()) {
     prog->AddLine(this, "// WARNING: MemberFmArg not generated here -- obj or path not specified or expr empty", ProgLine::MAIN_LINE);
-    return;
+    return false;
   }
 
   String flpth = obj->name + "->" + path;
@@ -81,6 +81,7 @@ void MemberFmArg::GenCssBody_impl(Program* prog) {
   prog->AddLine(this, "}");
   prog->DecIndent();
   prog->AddLine(this, "}");
+  return true;
 }
 
 void MemberFmArg::GenRegArgs(Program* prog) {

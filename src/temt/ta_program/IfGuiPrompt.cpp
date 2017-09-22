@@ -52,8 +52,9 @@ void IfGuiPrompt::GenCssPre_impl(Program* prog) {
   }
 }
 
-void IfGuiPrompt::GenCssBody_impl(Program* prog) {
+bool IfGuiPrompt::GenCssBody_impl(Program* prog) {
   yes_code.GenCss(prog);
+  return true;
 }
 
 void IfGuiPrompt::GenCssPost_impl(Program* prog) {

@@ -132,8 +132,9 @@ void DataLoop::GenCssPre_impl(Program* prog) {
   prog->AddLine(this, String("if(!") + data_nm + "->WriteItem(data_row_idx)) break; // set write index too");
 }
 
-void DataLoop::GenCssBody_impl(Program* prog) {
+bool DataLoop::GenCssBody_impl(Program* prog) {
   loop_code.GenCss(prog);
+  return true;
 }
 
 void DataLoop::GenCssPost_impl(Program* prog) {

@@ -34,12 +34,13 @@ String RegisterArgs::GetDisplayName() const {
   return rval;
 }
 
-void RegisterArgs::GenCssBody_impl(Program* prog) {
+bool RegisterArgs::GenCssBody_impl(Program* prog) {
   prog->AddLine(this, "// Register Args:", ProgLine::MAIN_LINE);
   prog->AddVerboseLine(this);
   AddArgsFmCode(prog, prog->prog_code);
   prog->AddLine(this, "taMisc::UpdateArgs();");
   prog->AddLine(this, "if(taMisc::CheckArgByName(\"Help\")) taMisc::HelpMsg();"); // extra help!
+  return true;
 }
 
 void RegisterArgs::AddArgsFmCode(Program* prog, ProgEl_List& progs) {

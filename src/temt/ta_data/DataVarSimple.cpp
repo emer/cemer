@@ -151,19 +151,20 @@ bool DataVarSimple::GenCss_OneVarMatEnum(Program* prog, ProgVar* pvar, const Str
   return true;
 }
 
-void DataVarSimple::GenCssBody_impl(Program* prog) {
+bool DataVarSimple::GenCssBody_impl(Program* prog) {
   if(!data_var) {
     prog->AddLine(this, "// data_var not set!", ProgLine::MAIN_LINE);
-    return;
+    return false;
   }
   if(row_spec != CUR_ROW && !row_var) {
     prog->AddLine(this, "// row_var not set but needed!", ProgLine::MAIN_LINE);
-    return;
+    return false;
   }
   String idnm = data_var->name;
   prog->AddLine(this, "// " + GetDisplayName(), ProgLine::MAIN_LINE);
   prog->AddVerboseLine(this);
-    GenCss_OneVar(prog, var, idnm, 0);
+  GenCss_OneVar(prog, var, idnm, 0);
+  return true;
 }
 
 bool DataVarSimple::CvtFmCode(const String& code) {

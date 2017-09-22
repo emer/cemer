@@ -29,7 +29,7 @@ void IfContinue::CheckThisConfig_impl(bool quiet, bool& rval) {
   CheckEqualsError(cond.expr, quiet, rval);
 }
 
-void IfContinue::GenCssBody_impl(Program* prog) {
+bool IfContinue::GenCssBody_impl(Program* prog) {
   cond.ParseExpr();             // re-parse just to be sure!
   String fexp = cond.GetFullExpr();
   if(fexp.nonempty()) {
@@ -45,6 +45,7 @@ void IfContinue::GenCssBody_impl(Program* prog) {
     prog->AddLine(this, "continue;", ProgLine::MAIN_LINE);
     prog->AddVerboseLine(this);
   }
+  return true;
 }
 
 String IfContinue::GetDisplayName() const {

@@ -38,9 +38,9 @@ void PrintVar::CheckThisConfig_impl(bool quiet, bool& rval) {
   //  CheckError(!print_var, quiet, rval, "print_var is NULL");
 }
 
-void PrintVar::GenCssBody_impl(Program* prog) {
+bool PrintVar::GenCssBody_impl(Program* prog) {
   if(message.empty() && !print_var && !print_var2 && !print_var3 && !print_var4 && !print_var5 && !print_var6)
-    return;
+    return false;
 
   String rval = "cout ";
   if(message.nonempty())
@@ -70,6 +70,7 @@ void PrintVar::GenCssBody_impl(Program* prog) {
   prog->AddLine(this, "}");
   prog->DecIndent();
   prog->AddLine(this, "}");
+  return true;
 }
 
 String PrintVar::GetDisplayName() const {

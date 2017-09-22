@@ -37,7 +37,7 @@ void PrintExpr::CheckThisConfig_impl(bool quiet, bool& rval) {
   expr.CheckConfig(quiet, rval);
 }
 
-void PrintExpr::GenCssBody_impl(Program* prog) {
+bool PrintExpr::GenCssBody_impl(Program* prog) {
   expr.ParseExpr();             // re-parse just to be sure!]
   if (expr.GetFullExpr().empty())
     expr.SetExpr("\"\""); // prevents error if no expression
@@ -54,6 +54,7 @@ void PrintExpr::GenCssBody_impl(Program* prog) {
   prog->AddLine(this, "}");
   prog->DecIndent();
   prog->AddLine(this, "}");
+  return true;
 }
 
 String PrintExpr::GetDisplayName() const {

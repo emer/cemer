@@ -47,9 +47,10 @@ void Switch::GenCssPre_impl(Program* prog) {
   prog->IncIndent();
 }
 
-void Switch::GenCssBody_impl(Program* prog) {
-  if(!switch_var) return;
+bool Switch::GenCssBody_impl(Program* prog) {
+  if(!switch_var) return false;
   cases.GenCss(prog);
+  return true;
 }
 
 void Switch::GenCssPost_impl(Program* prog) {

@@ -31,16 +31,17 @@ void VarIncr::CheckThisConfig_impl(bool quiet, bool& rval) {
   expr.CheckConfig(quiet, rval);
 }
 
-void VarIncr::GenCssBody_impl(Program* prog) {
+bool VarIncr::GenCssBody_impl(Program* prog) {
   expr.ParseExpr();             // re-parse just to be sure!
   if (!var) {
     prog->AddLine(this, "// WARNING: VarIncr not generated here -- var not specified", ProgLine::MAIN_LINE);
-    return;
+    return false;
   }
 
   prog->AddLine(this, var->name + " = " + var->name + " + " + expr.GetFullExpr() + ";", ProgLine::MAIN_LINE);
   prog->AddVerboseLine(this, true, "\"prev value:\", String(" + var->name + ")"); // moved above
   prog->AddVerboseLine(this, false, "\"new  value:\", String(" + var->name + ")"); // after
+  return true;
 }
 
 String VarIncr::GetDisplayName() const {

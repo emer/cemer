@@ -81,11 +81,11 @@ DataTable* DataJoinProg::GetSrcBData() {
   return (DataTable*)src_b_data_var->object_val.ptr();
 }
 
-void DataJoinProg::GenCssBody_impl(Program* prog) {
+bool DataJoinProg::GenCssBody_impl(Program* prog) {
   if(!src_data_var || !src_b_data_var) {
     prog->AddLine(this, "// DataJoin: src_data_var or src_b_data_var not set!  cannot run",
                   ProgLine::MAIN_LINE);
-    return;
+    return false;
   }
   prog->AddLine(this, "{ DataJoinProg* dsp = this" + GetPath(program()) + ";",
                 ProgLine::MAIN_LINE);
@@ -104,6 +104,7 @@ void DataJoinProg::GenCssBody_impl(Program* prog) {
   }
   prog->DecIndent();
   prog->AddLine(this, "}");
+  return true;
 }
 
 bool DataJoinProg::CanCvtFmCode(const String& code, ProgEl* scope_el) const {

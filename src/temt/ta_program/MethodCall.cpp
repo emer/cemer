@@ -69,10 +69,10 @@ void MethodCall::CheckChildConfig_impl(bool quiet, bool& rval) {
   meth_args.CheckConfig(quiet, rval);
 }
 
-void MethodCall::GenCssBody_impl(Program* prog) {
+bool MethodCall::GenCssBody_impl(Program* prog) {
   if (!((bool)obj && method)) {
     prog->AddLine(this, "// WARNING: MethodCall not generated here -- obj or method not specified", ProgLine::MAIN_LINE);
-    return;
+    return false;
   }
 
   String rval;
@@ -86,6 +86,7 @@ void MethodCall::GenCssBody_impl(Program* prog) {
 
   prog->AddLine(this, rval, ProgLine::MAIN_LINE);
   prog->AddVerboseLine(this);
+  return true;
 }
 
 String MethodCall::GetDisplayName() const {

@@ -105,10 +105,10 @@ void DataSelectRowsProg::CheckChildConfig_impl(bool quiet, bool& rval) {
   }
 }
 
-void DataSelectRowsProg::GenCssBody_impl(Program* prog) {
+bool DataSelectRowsProg::GenCssBody_impl(Program* prog) {
   if(!src_data_var) {
     prog->AddLine(this, "// DataSelectRows: src_data_var not set!  cannot run!", ProgLine::MAIN_LINE);
-    return;
+    return false;
   }
   prog->AddLine(this, "{ DataSelectRowsProg* dsp = this" + GetPath(program()) + ";",
                 ProgLine::MAIN_LINE);
@@ -127,6 +127,7 @@ void DataSelectRowsProg::GenCssBody_impl(Program* prog) {
   }
   prog->DecIndent();
   prog->AddLine(this, "}");
+  return true;
 }
 
 void DataSelectRowsProg::AddAllColumns() {

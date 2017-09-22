@@ -53,7 +53,7 @@ protected:
   void	CheckThisConfig_impl(bool quiet, bool& rval) override;
   virtual bool	GetInputDataVar();
 
-  void	GenCssBody_impl(Program* prog) override;
+  bool	GenCssBody_impl(Program* prog) override;
   virtual bool	GenCss_OneUnit(Program* prog, ProgVarRef& un, const String& idnm, DataTable* idat);
 
 private:

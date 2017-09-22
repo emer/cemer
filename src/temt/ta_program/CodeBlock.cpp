@@ -34,9 +34,10 @@ void CodeBlock::GenCssPre_impl(Program* prog) {
   prog->IncIndent();
 }
 
-void CodeBlock::GenCssBody_impl(Program* prog) {
-  if(prog_code.size == 0) return;
+bool CodeBlock::GenCssBody_impl(Program* prog) {
+  if(prog_code.size == 0) return false;
   prog_code.GenCss(prog);
+  return true;
 }
 
 void CodeBlock::GenCssPost_impl(Program* prog) {

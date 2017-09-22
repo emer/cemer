@@ -29,10 +29,10 @@ String NetCounterIncr::GetDisplayName() const {
   return rval;
 }
 
-void NetCounterIncr::GenCssBody_impl(Program* prog) {
+bool NetCounterIncr::GenCssBody_impl(Program* prog) {
   if(!counter || !network_var) {
     prog->AddLine(this, "// NetCounterIncr ERROR: vars not set!", ProgLine::MAIN_LINE);
-    return;
+    return false;
   }
   TypeDef* netype = network_var->act_object_type();
   if((counter->name == "cycle") && netype->InheritsFromName("LeabraNetwork")) {
@@ -52,6 +52,7 @@ void NetCounterIncr::GenCssBody_impl(Program* prog) {
     if(update_after)
       prog->AddLine(this, network_var->name + "->UpdateAfterEdit();");
   }
+  return true;
 }
 
 bool NetCounterIncr::CanCvtFmCode(const String& code, ProgEl* scope_el) const {

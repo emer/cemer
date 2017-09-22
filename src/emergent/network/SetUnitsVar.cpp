@@ -124,16 +124,16 @@ bool SetUnitsVar::GenCss_OneUnit(Program* prog, ProgVarRef& un, const String& id
   return false;
 }
 
-void SetUnitsVar::GenCssBody_impl(Program* prog) {
+bool SetUnitsVar::GenCssBody_impl(Program* prog) {
   if(!input_data_var) {
     prog->AddLine(this, "// input_data_var not set!", ProgLine::MAIN_LINE);
-    return;
+    return false;
   }
   String idnm = input_data_var->name;
   DataTable* idat = (DataTable*)input_data_var->object_val.ptr();
   if(!idat) {
     prog->AddLine(this, "// input_data not set!", ProgLine::MAIN_LINE);
-    return;
+    return false;
   }
   prog->AddLine(this, "// " + GetDisplayName(), ProgLine::MAIN_LINE);
   prog->AddVerboseLine(this);
@@ -141,6 +141,7 @@ void SetUnitsVar::GenCssBody_impl(Program* prog) {
   GenCss_OneUnit(prog, unit_2, idnm, idat);
   GenCss_OneUnit(prog, unit_3, idnm, idat);
   GenCss_OneUnit(prog, unit_4, idnm, idat);
+  return true;
 }
 
 bool SetUnitsVar::CanCvtFmCode(const String& code, ProgEl* scope_el) const {

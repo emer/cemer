@@ -91,8 +91,9 @@ void Else::GenCssPre_impl(Program* prog) {
   prog->AddVerboseLine(this, false, "\"inside else\"");
 }
 
-void Else::GenCssBody_impl(Program* prog) {
+bool Else::GenCssBody_impl(Program* prog) {
   true_code.GenCss(prog);
+  return true;
 }
 
 void Else::GenCssPost_impl(Program* prog) {

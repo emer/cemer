@@ -82,7 +82,7 @@ protected:
   // sync col vars from cols
 
   void		GenCssPre_impl(Program* prog) override; 
-  void		GenCssBody_impl(Program* prog) override; 
+  bool		GenCssBody_impl(Program* prog) override; 
   void		GenCssPost_impl(Program* prog) override; 
   const String	GenListing_children(int indent_level) const override;
 

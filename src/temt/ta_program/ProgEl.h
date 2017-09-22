@@ -268,7 +268,7 @@ protected:
   virtual void          PreGenChildren_impl(int& item_id) {}
   virtual void          GenCssPre_impl(Program* prog) {};
   // #IGNORE generate the Css prefix code (if any) for this object
-  virtual void          GenCssBody_impl(Program* prog) {};
+  virtual bool          GenCssBody_impl(Program* prog) { return false; }
   // #IGNORE generate the Css body code for this object
   virtual void          GenCssPost_impl(Program* prog) {};
   // #IGNORE generate the Css postfix code (if any) for this object

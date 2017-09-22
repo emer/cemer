@@ -66,7 +66,7 @@ protected:
   void         UpdateAfterEdit_impl() override;
   void         CheckThisConfig_impl(bool quiet, bool& rval) override;
   void         GenCssPre_impl(Program* prog) override;
-  void         GenCssBody_impl(Program* prog) override;
+  bool         GenCssBody_impl(Program* prog) override;
   void         GenCssPost_impl(Program* prog) override;
 private:
   void  Initialize();

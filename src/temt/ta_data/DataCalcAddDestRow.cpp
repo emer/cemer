@@ -71,19 +71,19 @@ void DataCalcAddDestRow::CheckThisConfig_impl(bool quiet, bool& rval) {
              "DataCalcLoop::dest_data_var variable does not point to a DataTable object");
 }
 
-void DataCalcAddDestRow::GenCssBody_impl(Program* prog) {
+bool DataCalcAddDestRow::GenCssBody_impl(Program* prog) {
   // can assume that the dcl variable has already been declared!!
   DataCalcLoop* dcl = GET_MY_OWNER(DataCalcLoop);
   if(!dcl) {
     prog->AddLine(this, "// DataCalcAddDestRow Error -- DataCalcLoop not found!!",
                   ProgLine::MAIN_LINE);
-    return;
+    return false;
   }
   DataTable* dd = dcl->GetDestData();
   if(!dd) {
     prog->AddLine(this, "// DataCalcAddDestRow Error -- dest_data_var not set!!",
                   ProgLine::MAIN_LINE);
-    return;
+    return false;
   }
   
   dcl->dest_cols.GetColumns(dd);
@@ -119,6 +119,7 @@ void DataCalcAddDestRow::GenCssBody_impl(Program* prog) {
     prog->AddLine(this, rval);
   }
   dcl->dest_cols.ClearColumns();
+  return true;
 }
 
 bool DataCalcAddDestRow::CanCvtFmCode(const String& code, ProgEl* scope_el) const {

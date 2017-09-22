@@ -54,7 +54,7 @@ protected:
   void	CheckThisConfig_impl(bool quiet, bool& rval) override;
 
   void	GenCssPre_impl(Program* prog) override; 
-  void	GenCssBody_impl(Program* prog) override;
+  bool	GenCssBody_impl(Program* prog) override;
   void	GenCssPost_impl(Program* prog) override; 
   virtual bool	GenCss_OneVar(Program* prog, ProgVarRef& var, int var_no);
 private:

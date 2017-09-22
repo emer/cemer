@@ -47,8 +47,8 @@ public:
 
   PROGEL_SIMPLE_BASEFUNS(UserScript);
 protected:
-  void    UpdateAfterEdit_impl() override;
-  void		GenCssBody_impl(Program* prog) override;
+  void          UpdateAfterEdit_impl() override;
+  bool		GenCssBody_impl(Program* prog) override;
 
 private:
   void	Initialize();

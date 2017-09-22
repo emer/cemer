@@ -42,7 +42,7 @@ public:
  
   PROGEL_SIMPLE_BASEFUNS(ProgramCallFun);
  protected:
-  void         GenCssBody_impl(Program* prog) override;
+  bool         GenCssBody_impl(Program* prog) override;
  private:
   void Initialize()  { };
   void Destroy()     { };

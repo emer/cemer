@@ -126,14 +126,15 @@ void OtherProgramVar::GenCssPre_impl(Program* prog) {
   prog->IncIndent();
 }
 
-void OtherProgramVar::GenCssBody_impl(Program* prog) {
-  if (!other_prog) return;
+bool OtherProgramVar::GenCssBody_impl(Program* prog) {
+  if (!other_prog) return false;
   prog->AddLine(this, String("Program* other_prog = this") + GetPath(program())
       + "->GetOtherProg();");
   GenCss_OneVar(prog, var_1, 0);
   GenCss_OneVar(prog, var_2, 1);
   GenCss_OneVar(prog, var_3, 2);
   GenCss_OneVar(prog, var_4, 3);
+  return true;
 }
 
 void OtherProgramVar::GenCssPost_impl(Program* prog) {

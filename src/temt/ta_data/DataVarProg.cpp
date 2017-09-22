@@ -221,14 +221,14 @@ bool DataVarProg::GenCss_OneVar(Program* prog, ProgVar* var, const String& idnm,
   return true;
 }
 
-void DataVarProg::GenCssBody_impl(Program* prog) {
+bool DataVarProg::GenCssBody_impl(Program* prog) {
   if(!data_var) {
     prog->AddLine(this, "// data_var not set!", ProgLine::MAIN_LINE);
-    return;
+    return false;
   }
   if(row_spec != CUR_ROW && !row_var) {
     prog->AddLine(this, "// row_var not set but needed!", ProgLine::MAIN_LINE);
-    return;
+    return false;
   }
   String idnm = data_var->name;
   prog->AddLine(this, "// " + GetDisplayName(), ProgLine::MAIN_LINE);
@@ -241,8 +241,9 @@ void DataVarProg::GenCssBody_impl(Program* prog) {
   }
   else {
     DataTable* dt = GetData();
-    if (!dt)
-      return;
+    if (!dt) {
+      return false;
+    }
     ProgVar_List all_vars = program()->vars;
     for (int i = 0; i < all_vars.size; i++) {
       String var_name = all_vars.SafeEl(i)->name;
@@ -255,6 +256,7 @@ void DataVarProg::GenCssBody_impl(Program* prog) {
       }
     }
   }
+  return true;
 }
 
 bool DataVarProg::CanCvtFmCode(const String& code, ProgEl* scope_el) const {

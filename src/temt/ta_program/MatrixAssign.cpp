@@ -95,7 +95,7 @@ String MatrixAssign::GetIndexExpr() const {
   return mtx_code;
 }
 
-void MatrixAssign::GenCssBody_impl(Program* prog) {
+bool MatrixAssign::GenCssBody_impl(Program* prog) {
   expr.ParseExpr();             // re-parse just to be sure!
   if(data_table) {
     col.ParseExpr();
@@ -108,7 +108,7 @@ void MatrixAssign::GenCssBody_impl(Program* prog) {
   dim5.ParseExpr();
   if (!variable) {
     prog->AddLine(this, "// WARNING: MatrixAssign not generated here -- variable not specified", ProgLine::MAIN_LINE);
-    return;
+    return false;
   }
 
   String mtx_code = variable->name + GetIndexExpr();
@@ -117,6 +117,7 @@ void MatrixAssign::GenCssBody_impl(Program* prog) {
   prog->AddLine(this, code, ProgLine::MAIN_LINE);
   prog->AddVerboseLine(this, true, "\"prev value:\", String(" + mtx_code + ")"); // moved above
   prog->AddVerboseLine(this, false, "\"new  value:\", String(" + mtx_code + ")"); // after
+  return true;
 }
 
 String MatrixAssign::GetDisplayName() const {

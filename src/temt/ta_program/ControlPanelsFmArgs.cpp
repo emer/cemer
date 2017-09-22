@@ -90,15 +90,16 @@ ControlPanel* ControlPanelsFmArgs::GetControlPanel() const {
   return (ControlPanel*)ctrl_panel_var->object_val.ptr();
 }
 
-void ControlPanelsFmArgs::GenCssBody_impl(Program* prog) {
+bool ControlPanelsFmArgs::GenCssBody_impl(Program* prog) {
   ControlPanel* cpan = GetControlPanel();
   if(!cpan) {
     prog->AddLine(this, "// ControlPanelsFmArgs: ctrl_panel_var not set!", ProgLine::MAIN_LINE);
-    return;
+    return false;
   }
 
   prog->AddLine(this, ctrl_panel_var->name + ".SetMembersFromArgs();");
   prog->AddVerboseLine(this);
+  return true;
 }
 
 void ControlPanelsFmArgs::GenRegArgs(Program* prog) {

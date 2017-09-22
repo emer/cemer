@@ -76,28 +76,31 @@ void DataCalcCopyCommonCols::CheckThisConfig_impl(bool quiet, bool& rval) {
              "DataCalcLoop::dest_data_var variable does not point to a DataTable object");
 }
 
-void DataCalcCopyCommonCols::GenCssBody_impl(Program* prog) {
+bool DataCalcCopyCommonCols::GenCssBody_impl(Program* prog) {
   // can assume that the dcl variable has already been declared!!
   DataCalcLoop* dcl = GET_MY_OWNER(DataCalcLoop);
   if(!dcl) {
     prog->AddLine(this, "// DataCalcCopyCommonCols Error -- DataCalcLoop not found!!",
                   ProgLine::MAIN_LINE);
-    return;
+    return false;
   }
   if(!dcl->dest_data_var) {
     prog->AddLine(this, "// DataCalcCopyCommonCols Error -- dest_data_var null in DataCalcLoop!!", ProgLine::MAIN_LINE);
-    return;
+    return false;
   }
 
   prog->AddLine(this, String("if(") + dcl->dest_data_var->name
                 + ".rows == 0) { taMisc::Error(\"Dest Rows == 0 -- forgot AddDestRow??\"); break; }", ProgLine::MAIN_LINE);
   prog->AddVerboseLine(this);
-  if(only_named_cols)
+  if(only_named_cols) {
     prog->AddLine(this, "taDataProc::CopyCommonColsRow_impl(" + dcl->dest_data_var->name + ", " +
           dcl->src_data_var->name + ", common_dest_cols_named, common_src_cols_named, -1, src_row);");
-  else
+  }
+  else {
     prog->AddLine(this, "taDataProc::CopyCommonColsRow_impl(" + dcl->dest_data_var->name + ", " +
                   dcl->src_data_var->name + ", common_dest_cols, common_src_cols, -1, src_row);");
+  }
+  return true;
 }
 
 bool DataCalcCopyCommonCols::CanCvtFmCode(const String& code, ProgEl* scope_el) const {

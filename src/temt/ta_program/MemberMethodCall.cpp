@@ -59,10 +59,10 @@ void MemberMethodCall::CheckChildConfig_impl(bool quiet, bool& rval) {
   meth_args.CheckConfig(quiet, rval);
 }
 
-void MemberMethodCall::GenCssBody_impl(Program* prog) {
+bool MemberMethodCall::GenCssBody_impl(Program* prog) {
   if (!((bool)obj && method)) {
     prog->AddLine(this, "// WARNING: MemberMethodCall not generated here -- obj or method not specified");
-    return;
+    return false;
   }
 
   String rval;
@@ -95,6 +95,7 @@ void MemberMethodCall::GenCssBody_impl(Program* prog) {
 
   prog->AddLine(this, rval, ProgLine::MAIN_LINE);
   prog->AddVerboseLine(this);
+  return true;
 }
 
 String MemberMethodCall::GetDisplayName() const {

@@ -26,11 +26,12 @@ void Comment::Initialize() {
   SetProgFlag(ProgEl::NO_CODE);
 }
 
-void Comment::GenCssBody_impl(Program* prog) {
+bool Comment::GenCssBody_impl(Program* prog) {
   prog->AddLine(this, "/*******************************************************************",
                 ProgLine::MAIN_LINE);
   prog->AddDescString(this, desc);
   prog->AddLine(this, "*******************************************************************/");
+  return true;
 }
 
 String Comment::GetDisplayName() const {

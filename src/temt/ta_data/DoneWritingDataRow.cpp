@@ -64,12 +64,13 @@ bool DoneWritingDataRow::CvtFmCode(const String& code) {
   return true;
 }
 
-void DoneWritingDataRow::GenCssBody_impl(Program* prog) {
+bool DoneWritingDataRow::GenCssBody_impl(Program* prog) {
   if(!data_var) {
     prog->AddLine(this, "// data_var not set!", ProgLine::MAIN_LINE);
-    return;
+    return false;
   }
   prog->AddLine(this, data_var->name + ".WriteClose();");
   prog->AddVerboseLine(this);
+  return true;
 }
 

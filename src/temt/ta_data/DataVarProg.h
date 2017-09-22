@@ -41,16 +41,16 @@ public:
   ProgVarRef	var_3;		// #CONDSHOW_OFF_all_matches #ITEM_FILTER_StdProgVarFilter program variable to operate on -- name must match name of column in data table!
   ProgVarRef	var_4;		// #CONDSHOW_OFF_all_matches #ITEM_FILTER_StdProgVarFilter program variable to operate on -- name must match name of column in data table!
 
-  String	GetDisplayName() const override;
+  String  GetDisplayName() const override;
   String  GetToolbarName() const override { return "data=vars"; }
   bool    CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
   bool    CvtFmCode(const String& code) override;
 
-  void  CheckThisConfig_impl(bool quiet, bool& rval) override;
+  void    CheckThisConfig_impl(bool quiet, bool& rval) override;
 
   PROGEL_SIMPLE_BASEFUNS(DataVarProg);
 protected:
-  void	GenCssBody_impl(Program* prog) override;
+  bool	        GenCssBody_impl(Program* prog) override;
   virtual bool  GenCss_OneVar(Program* prog, ProgVar* var, const String& idnm, int var_no);
   virtual bool  GenCss_OneVarMat(Program* prog, ProgVar* mat_var, const String& idnm, int var_no);
   virtual bool  GenCss_OneVarMatEnum(Program* prog, ProgVar* mat_var, const String& idnm, int var_no);

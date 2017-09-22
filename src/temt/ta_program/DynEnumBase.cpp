@@ -82,6 +82,7 @@ void DynEnumBase::GenCssBody_impl(Program* prog) {
       code += String(it->value) + ",";
     prog->AddLine(it, code, it->desc);
   }
+  return;
 }
 
 void DynEnumBase::GenCssPost_impl(Program* prog) {

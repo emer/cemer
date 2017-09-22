@@ -45,7 +45,7 @@ protected:
   void	CheckThisConfig_impl(bool quiet, bool& rval) override;
   virtual void	GetUpdateVar(); // get the update_var variable
 
-  void		GenCssBody_impl(Program* prog) override;
+  bool		GenCssBody_impl(Program* prog) override;
 
 private:
   void	Initialize();

@@ -144,7 +144,7 @@ void Function::GenCss_Decl(Program* prog) {
   prog->AddLine(this, rval, ProgLine::MAIN_LINE);
 }
 
-void Function::GenCssBody_impl(Program* prog) {
+bool Function::GenCssBody_impl(Program* prog) {
   String rval = GetFunDecl() + " {";
   prog->AddLine(this, rval, ProgLine::MAIN_LINE);
   prog->IncIndent();
@@ -155,6 +155,7 @@ void Function::GenCssBody_impl(Program* prog) {
   fun_code.GenCss(prog);
   prog->DecIndent();
   prog->AddLine(this, "}");
+  return true;
 }
 
 const String Function::GenListing_children(int indent_level) const {

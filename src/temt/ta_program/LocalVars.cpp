@@ -38,11 +38,13 @@ void LocalVars::CheckChildConfig_impl(bool quiet, bool& rval) {
   local_vars.CheckConfig(quiet, rval);
 }
 
-void LocalVars::GenCssBody_impl(Program* prog) {
+bool LocalVars::GenCssBody_impl(Program* prog) {
   if(local_vars.size > 0) {
     prog->AddLine(this, "// local variables", ProgLine::MAIN_LINE); // best we've got
     local_vars.GenCss_ProgVars(prog);
+    return true;
   }
+  return false;
 }
 
 const String LocalVars::GenListing_children(int indent_level) const {

@@ -52,10 +52,10 @@ void StaticMethodCall::CheckChildConfig_impl(bool quiet, bool& rval) {
   meth_args.CheckConfig(quiet, rval);
 }
 
-void StaticMethodCall::GenCssBody_impl(Program* prog) {
+bool StaticMethodCall::GenCssBody_impl(Program* prog) {
   if (!method || !object_type) {
     prog->AddLine(this, "//WARNING: StaticMethodCall not generated here -- object or method not specified", true);
-    return;
+    return false;
   }
 
   String rval;
@@ -69,6 +69,7 @@ void StaticMethodCall::GenCssBody_impl(Program* prog) {
   prog->AddLine(this, rval, ProgLine::MAIN_LINE);
 
   prog->AddVerboseLine(this);
+  return true;
 }
 
 String StaticMethodCall::GetDisplayName() const {

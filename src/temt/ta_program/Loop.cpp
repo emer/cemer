@@ -29,8 +29,9 @@ void Loop::CheckChildConfig_impl(bool quiet, bool& rval) {
   loop_code.CheckConfig(quiet, rval);
 }
 
-void Loop::GenCssBody_impl(Program* prog) {
+bool Loop::GenCssBody_impl(Program* prog) {
   loop_code.GenCss(prog);
+  return true;
 }
 
 const String Loop::GenListing_children(int indent_level) const {

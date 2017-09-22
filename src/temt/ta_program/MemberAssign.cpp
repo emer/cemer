@@ -41,11 +41,11 @@ void MemberAssign::CheckChildConfig_impl(bool quiet, bool& rval) {
   expr.CheckConfig(quiet, rval);
 }
 
-void MemberAssign::GenCssBody_impl(Program* prog) {
+bool MemberAssign::GenCssBody_impl(Program* prog) {
   expr.ParseExpr();             // re-parse just to be sure!
   if (!(bool)obj || path.empty() || expr.empty()) {
     prog->AddLine(this, "// WARNING: MemberAssign not generated here -- obj or path not specified or expr empty", ProgLine::MAIN_LINE);
-    return;
+    return false;
   }
 
   String path_term = path;
@@ -88,6 +88,7 @@ void MemberAssign::GenCssBody_impl(Program* prog) {
   }
   prog->AddVerboseLine(this, true, "\"prev value:\", String(" + fpath + ")"); // moved above
   prog->AddVerboseLine(this, false, "\"new  value:\", String(" + fpath + ")"); // after
+  return true;
 }
 
 String MemberAssign::GetDisplayName() const {

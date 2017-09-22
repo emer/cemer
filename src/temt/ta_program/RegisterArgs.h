@@ -39,7 +39,7 @@ public:
 
   PROGEL_SIMPLE_BASEFUNS(RegisterArgs);
 protected:
-  void	GenCssBody_impl(Program* prog) override;
+  bool	GenCssBody_impl(Program* prog) override;
 
   virtual void		AddArgsFmCode(Program* prog, ProgEl_List& progs);
   // main function: iterates recursively through progs, adding any that add args to gen_code

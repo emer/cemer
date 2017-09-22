@@ -72,8 +72,8 @@ Program* ProgVarFmArg::GetOtherProg() {
   return prog.ptr();
 }
 
-void ProgVarFmArg::GenCssBody_impl(Program* prg) {
-  if (!prg) return;
+bool ProgVarFmArg::GenCssBody_impl(Program* prg) {
+  if (!prg) return false;
   prg->AddLine(this, String("{ // prog var fm arg: ") + prg->name, ProgLine::MAIN_LINE);
   prg->AddVerboseLine(this);
   prg->IncIndent();
@@ -82,6 +82,7 @@ void ProgVarFmArg::GenCssBody_impl(Program* prg) {
   prg->AddLine(this, "other_prog->SetVarFmArg(\"" + arg_name + "\", \"" + var_name + "\");");
   prg->DecIndent();
   prg->AddLine(this, "} // prog var fm arg");
+  return true;
 }
 
 void ProgVarFmArg::GenRegArgs(Program* prg) {

@@ -79,11 +79,11 @@ DataTable* DataColsFmArgs::GetData() const {
   return (DataTable*)data_var->object_val.ptr();
 }
 
-void DataColsFmArgs::GenCssBody_impl(Program* prog) {
+bool DataColsFmArgs::GenCssBody_impl(Program* prog) {
   DataTable* dt = GetData();
   if(!dt) {
     prog->AddLine(this, "// DataColsFmArgs: data_var not set!", ProgLine::MAIN_LINE);
-    return;
+    return false;
   }
   prog->AddLine(this, "{ // DataColsFmArgs fm: " + dt->name, ProgLine::MAIN_LINE);
   prog->AddVerboseLine(this);
@@ -113,6 +113,7 @@ void DataColsFmArgs::GenCssBody_impl(Program* prog) {
   prog->AddLine(this, "}");
   prog->DecIndent();
   prog->AddLine(this, "}");
+  return true;
 }
 
 void DataColsFmArgs::GenRegArgs(Program* prog) {

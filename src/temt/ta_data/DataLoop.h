@@ -52,8 +52,8 @@ public:
 
   String	GetDisplayName() const override;
   String	GetToolbarName() const override { return "data loop"; }
-  bool    CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
-  bool    CvtFmCode(const String& code) override;
+  bool          CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
+  bool          CvtFmCode(const String& code) override;
   DataLoop::Order StringToOrderType(const String& order_type);
 
 
@@ -61,10 +61,10 @@ public:
 protected:
   virtual void	GetOrderVar(); // make an order variable in program if not already set
   virtual void	GetIndexVar(); // make an index variable in program if not already set
-  void    UpdateAfterEdit_impl() override;
-  void    CheckThisConfig_impl(bool quiet, bool& rval) override;
+  void          UpdateAfterEdit_impl() override;
+  void          CheckThisConfig_impl(bool quiet, bool& rval) override;
   void		GenCssPre_impl(Program* prog) override; 
-  void		GenCssBody_impl(Program* prog) override; 
+  bool		GenCssBody_impl(Program* prog) override; 
   void		GenCssPost_impl(Program* prog) override; 
 
 private:

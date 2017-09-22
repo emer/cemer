@@ -261,8 +261,9 @@ void DataCalcLoop::GenCssPre_impl(Program* prog) {
   // dest cols are only activated by DataAddDestRow
 }
 
-void DataCalcLoop::GenCssBody_impl(Program* prog) {
+bool DataCalcLoop::GenCssBody_impl(Program* prog) {
   loop_code.GenCss(prog);
+  return true;
 }
 
 void DataCalcLoop::GenCssPost_impl(Program* prog) {
