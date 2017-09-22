@@ -66,7 +66,7 @@ public:
     float ru_act_delta = ru_act - ru_act_prv;
     if(fabsf(ru_act_delta) < cel_learn.act_delta_thr) { ru_act_delta = 0.0f; }
     float delta = lrate_eff * su_act * (ru_act_delta);
-    //float delta = lrate_eff * su_act * (ru_act - ru_act_prv); // original version
+    // dopamine signal further modulates learning
     float da_lrate = cel_learn.dalr_base + cel_learn.dalr_gain * fabsf(da_p);
     dwt += da_lrate * delta;
   }
@@ -93,11 +93,19 @@ public:
     
     for(int i=0; i<sz; i++) {
       LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i, net);
+      // CElAmygConSpec* rus = ru->TODO...;
       
       // screen out spurious da signals due to tiny VSPatch-to-LHb signals on t2 & t4 timesteps
       float ru_da_p = ru->da_p;
       if(fabsf(ru_da_p) < cel_learn.da_lrn_thr) { ru_da_p = 0.0f; }
-      //C_Compute_dWt_CEl_Delta(dwts[i], su_act, ru->act_eq, ru->act_q0, ru->da_p, clrate);
+      
+      // TODO: need if(rus->cel_da_mod.lrn_fm_act_eq) ...
+      // use US value as current ru act, if present
+      // now redundant since done in Compute_ActFun_Rate() with da_mod
+//      float ru_act = ru->act_eq;
+//      if(ru->deep_raw_net > 0.01f) { ru_act = ru->deep_raw_net; }
+//      C_Compute_dWt_CEl_Delta(dwts[i], su_act, ru_act, ru->act_q0, ru_da_p, clrate);
+      //
       C_Compute_dWt_CEl_Delta(dwts[i], su_act, ru->act_eq, ru->act_q0, ru_da_p, clrate);
     }
   }

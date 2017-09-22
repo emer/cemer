@@ -66,13 +66,11 @@ public:
     const float da_p, const float lrate_eff, const float wt) {
       
     float ru_act_delta = ru_act - ru_act_prv;
-    if(ru_act_delta > 0.0f)
-      ru_act_delta = fmaxf(ru_act_delta, 0.09f); // need some significant pos delta to bootstrap learning in extinction wts; TODO: if works, add threshold param
      
-    // can kill now...
-    //if(fabsf(ru_act_delta) < bla_learn.act_delta_thr) { ru_act_delta = 0.0f; }
+    // filter tiny spurious delta act signals - needed especially for acq guys w/
+    // non-zero dalr_base value
+    if(fabsf(ru_act_delta) < bla_learn.act_delta_thr) { ru_act_delta = 0.0f; }
     float delta = lrate_eff * su_act * (ru_act_delta);
-    //float delta = lrate_eff * su_act * (ru_act - ru_act_prv); // original version
     
     float da_lrate = bla_learn.dalr_base + bla_learn.dalr_gain * fabsf(da_p);
     dwt += da_lrate * delta;
@@ -114,7 +112,8 @@ public:
         lrate_eff *= eff_deep_lrn;
       }
       
-      // screen out spurious da signals due to tiny VSPatch-to-LHb signals on t2 & t4 trials
+      // filter any tiny spurious da signals on t2 & t4 trials - best for ext guys since
+      // they have zero dalr_base value
       float ru_da_p = ru->da_p;
       if(fabsf(ru_da_p) < bla_learn.da_lrn_thr) { ru_da_p = 0.0f; }
       

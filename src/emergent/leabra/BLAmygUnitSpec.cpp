@@ -107,7 +107,11 @@ float BLAmygUnitSpec::Compute_DaModNetin(LeabraUnitVars* u, LeabraNetwork* net,
     da_val *= bla_da_mod.dip_da_gain;
   }
 
-  float mod_val = bla_da_mod.pct_act * u->act_eq + (1.0f - bla_da_mod.pct_act) * net_syn;
+  float mod_val = u->act_eq;
+  if(bla_da_mod.lrn_mod_act) {
+    mod_val = bla_da_mod.pct_act * u->act_eq + (1.0f - bla_da_mod.pct_act) * net_syn;
+  }
+    
   da_val *= mod_val;
   if(dar == D2R)
     da_val = -da_val;           // flip the sign
@@ -134,17 +138,17 @@ float BLAmygUnitSpec::Compute_NetinExtras(LeabraUnitVars* u, LeabraNetwork* net,
     else
       net_ex += u->ext * ls->clamp.gain;
   }
-  // new part: use deep_raw_net if it exists!
-  if(u->deep_raw_net > 0.1f) {
-    net_syn = bla_da_mod.us_clamp_avg * u->deep_raw_net + (1.0f - bla_da_mod.us_clamp_avg) * net_syn;
-  }
   
   if(deep.ApplyDeepCtxt()) {
     net_ex += u->deep_ctxt;
   }
   
-  if(da_mod.on && bla_da_mod.lrn_act) {
+  if(bla_da_mod.lrn_mod_act) {
     net_ex += Compute_DaModNetin(u, net, thr_no, net_syn);
+    // similarly for US (PV) inputs (deep_raw_net), if present
+    if(u->deep_raw_net > 0.1f) {
+      net_syn = bla_da_mod.us_clamp_avg * u->deep_raw_net + (1.0f - bla_da_mod.us_clamp_avg) * net_syn;
+    }
   }
   return net_ex;
 }
@@ -152,8 +156,8 @@ float BLAmygUnitSpec::Compute_NetinExtras(LeabraUnitVars* u, LeabraNetwork* net,
 void BLAmygUnitSpec::Compute_ActFun_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   inherited::Compute_ActFun_Rate(u, net, thr_no);
   
-  // use act_eq for later use by C_Compute__dWt_BLA_Delta() to effect learning *as if* phasic dopamine modulates unit activations - but actually doesn't
-  if(!(da_mod.on && bla_da_mod.lrn_act)) {
+  // default is to use act_eq for later use by C_Compute__dWt_CEl_Delta() to effect learning *as if* phasic dopamine modulates activations - but without actually doing it!
+  if(!bla_da_mod.lrn_mod_act) {
     float da_val = u->da_p;
     if(da_val > 0.0f) {
       da_val *= bla_da_mod.burst_da_gain;
@@ -164,7 +168,6 @@ void BLAmygUnitSpec::Compute_ActFun_Rate(LeabraUnitVars* u, LeabraNetwork* net, 
     if(dar == D2R) { da_val = -da_val; } // flip the sign
     u->act_eq *= (1.0f + da_val);
   }
-  // u->act_eq should now be used by C_Compute__dWt_BLA_Delta() to change wts w/o actual changing unit activity
 }
 
 void BLAmygUnitSpec::Quarter_Final_RecVals(LeabraUnitVars* u, LeabraNetwork* net,
