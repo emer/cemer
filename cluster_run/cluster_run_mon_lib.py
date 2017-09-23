@@ -853,7 +853,8 @@ class SubversionPoller(object):
         # b) The cluster run svn repository can accumulate a huge amount of cruft in the .svn repository. We need to run an occasional cleanup
         #      to ensure the directory size doesn't get out of hand.
         
-        self._svn_cleanup()
+        if self.do_svn_cleanup:
+            self._svn_cleanup()
         
         while True:
             # If running in background and the nohup "keep running" file
