@@ -54,7 +54,7 @@ void LayerWriterEl::CutLinks() {
 
 void LayerWriterEl::CheckThisConfig_impl(bool qt, bool& rval) {
   inherited::CheckThisConfig_impl(qt, rval);
-  if(!network) return;
+  if(off || !network) return;
   if(net_target == LAYER) {
     Layer* lay = (Layer*)network->layers.FindLeafName(layer_name);
     if(!lay) return;            // already checked in parent
@@ -66,7 +66,7 @@ void LayerWriterEl::CheckThisConfig_impl(bool qt, bool& rval) {
 // note: we always do the lookup by name every time -- it just doesn't cost
 // that much and it makes everything so much simpler!
 bool LayerWriterEl::ApplyInputData(DataTable* db, Network* net) {
-  if(!db || !net) return false;
+  if(off || !db || !net) return false;
   int chan_idx = GetColIdx(db);
   if(chan_idx < 0) return false;
   if(net_target == TRIAL_NAME) {

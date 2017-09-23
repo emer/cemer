@@ -144,7 +144,7 @@ public:
   ProgObjList           objs;
   // create persistent objects of any type here that are needed for the program -- each object will automatically create an associated variable
   ProgVar_List          objs_vars;
-  // variables automatically maintained in one-to-one correspondence with the objs objects -- these are how the program accesses the objs objects -- they have lower-case versions of the names (snake_case) instead of CamelCase, which is naming convention for variables
+  // #NO_EXPAND variables automatically maintained in one-to-one correspondence with the objs objects -- these are how the program accesses the objs objects -- they have lower-case versions of the names (snake_case) instead of CamelCase, which is naming convention for variables
   ProgType_List         types;
   // user-defined types for this program (new enumerated types and class objects)
   ProgVar_List          args;

@@ -22,6 +22,7 @@
 TA_BASEFUNS_CTORS_DEFN(LayerDataEl);
 
 void LayerDataEl::Initialize() {
+  off = false;
   net_target = LAYER;
 }
 
@@ -31,6 +32,7 @@ void LayerDataEl::Destroy() {
 
 void LayerDataEl::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+  if(off) return;
   if(!data) {
     LayerWriter* lw = GET_MY_OWNER(LayerWriter);
     if(lw && lw->data) {
@@ -46,7 +48,11 @@ void LayerDataEl::UpdateAfterEdit_impl() {
 }
 
 String LayerDataEl::GetDisplayName() const {
-  String rval = "data chan: " + col_name;
+  String rval;
+  if(off) {
+    rval = "OFF ";
+  }
+  rval += "data chan: " + col_name;
   rval += " net: " + GetTypeDef()->GetEnumString("NetTarget", net_target);
   if(net_target == LAYER) {
     rval += " " + layer_name;
@@ -57,7 +63,7 @@ String LayerDataEl::GetDisplayName() const {
 void LayerDataEl::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   // these data/network things are set by parent prior to this being called (hopefully)
-  if(!data || ! network) return;
+  if(off || !data || ! network) return;
   CheckError(col_name.empty(), quiet, rval,
              "col_name is empty");
   CheckError(GetColIdx(data) < 0, quiet, rval,
@@ -78,6 +84,7 @@ void LayerDataEl::SetDataNetwork(DataTable* db, Network* net) {
 }
 
 int LayerDataEl::GetColIdx(DataTable* db) {
+  if(off) return -1;
   return db->FindColNameIdx(col_name, true);
 }
 
@@ -96,5 +103,10 @@ void LayerDataEl::GetMemberCompletionList(const MemberDef* md, Completions& comp
       }
     }
   }
+}
+
+void LayerDataEl::ToggleOff() {
+  off = !off;
+  SigEmitUpdated();
 }
 

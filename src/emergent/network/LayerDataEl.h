@@ -62,7 +62,9 @@ public:
     GROUP_NAME,			// read/write the network group_name field
   };
 
-  DataTableRef		data;
+  bool            off;
+  // #DEF_false turn this layer writer element off (for experimentation, updating, dynamic changes -- prevents warnings etc)
+  DataTableRef    data;
   // #READ_ONLY #HIDDEN #NO_SAVE the datatable to write to
   String          col_name;
   // #AKA_chan_name #ADD_COMPLETER_SIMPLE of the column in the data to use
@@ -82,8 +84,13 @@ public:
   virtual int     GetColIdx(DataTable* db);
   // #CAT_LayerData get column index from datatable
 
+  virtual void  ToggleOff();
+  // #MENU #MENU_ON_Object #DYN1 #CAT_Structure toggle the off status of this layer writer -- if on, turn off, if off, turn on
+
   String          GetName() const override		{ return col_name; }
   String          GetDisplayName() const override;
+  int             GetEnabled() const    override { return !off; }
+  void            SetEnabled(bool value) override { off = !value; }
   void            GetMemberCompletionList(const MemberDef* md, Completions& completions) override;
 
   TA_SIMPLE_BASEFUNS(LayerDataEl);

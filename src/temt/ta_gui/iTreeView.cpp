@@ -457,7 +457,8 @@ void iTreeView::ExpandDefaultItem_impl(iTreeViewItem* item) {
     CollapseItem_impl(item);
     return;
   }
-  if(item->md() && item->md()->HasOption("NO_EXPAND_ALL")) {
+  MemberDef* imd = item->md();
+  if(imd && imd->HasOption("NO_EXPAND_ALL")) {
     CollapseItem_impl(item);
     return;
   }
@@ -471,18 +472,24 @@ void iTreeView::ExpandDefaultItem_impl(iTreeViewItem* item) {
   bool has_no_expand = false;
   String exp_ctxt;
   String no_exp_ctxt;
-  if(td->HasOption("NO_EXPAND")) {
+  if(td->HasOption("NO_EXPAND") || (imd && imd->HasOption("NO_EXPAND"))) {
     has_no_expand = true;
   }
-  if(td->HasOption("EXPAND")) {
+  if(td->HasOption("EXPAND") || (imd && imd->HasOption("EXPAND"))) {
     has_expand = true;
   }
   no_exp_ctxt = td->OptionAfter("NO_EXPAND_");
+  if(imd && no_exp_ctxt.empty()) {
+    no_exp_ctxt = imd->OptionAfter("NO_EXPAND_");
+  }
   if(no_exp_ctxt.nonempty()) {
     if(no_exp_ctxt == ctxt_name)
       has_no_expand = true;
   }
   exp_ctxt = td->OptionAfter("EXPAND_");
+  if(imd && exp_ctxt.empty()) {
+    exp_ctxt = imd->OptionAfter("EXPAND_");
+  }
   if(exp_ctxt.nonempty()) {
     if(exp_ctxt == ctxt_name)
       has_expand = true;
