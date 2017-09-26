@@ -29,11 +29,13 @@ class E_API CElAmygDaMod : public SpecMemberBase {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra specifications for da_mod gain factors and other learning parameters in CEl central amygdala lateral learning
 INHERITED(SpecMemberBase)
 public:
-  bool          lrn_act;        // #DEF_false if true, phasic dopamine values effect learning by modulating netin values (Compute_DaModNetin() - and thus unit activations
+  
   float         burst_da_gain;  // #MIN_0 #DEF_0;0.04 multiplicative gain factor applied to positive dopamine signals -- this operates on the raw dopamine signal prior to any effect of D2 receptors in reversing its sign!
   float         dip_da_gain;    // #MIN_0 #DEF_0.1 multiplicative gain factor applied to negative dopamine signals -- this operates on the raw dopamine signal prior to any effect of D2 receptors in reversing its sign! should be small for acq, but roughly equal to burst_da_gain for ext 
-  bool          acq_deep_mod;   // #DEF_true use deep_mod_net for value from acquisition / go units, instead of inhibition current (otherwise use gi_syn) -- allows simpler parameter settting without titrating inhibition and this learning modulation signal
-  float         us_clamp_avg;   // #DEF_0.2 averaging factor for clamping US (PV) values when sent using a SendDeepRaw connection -- better form of hard-clamping..
+  bool          acq_deep_mod;   // #DEF_true use deep_mod_net for value from acquisition / go units, instead of inhibition current (otherwise use gi_syn) -- allows simpler parameter setting without titrating inhibition and this learning modulation signal
+  
+  bool          lrn_mod_act;  // #DEF_false if true, phasic dopamine values effect learning by modulating net_syn values (Compute_NetinExtras() - and thus unit activations; - CAUTION - very brittle and hard to use due to unintended consequences!
+  float         us_clamp_avg;   // #CONDSHOW_LRN_MOD_ACT_true #DEF_0.2 averaging factor for quasi-clamping US (PV) values when sent using a SendDeepRaw connection to modulate net_syn values which in turn modulates actual activation values -- more graded form of clamping..
   
   String       GetTypeDecoKey() const override { return "ConSpec"; }
 
@@ -64,7 +66,7 @@ public:
   DAReceptor    dar;            // #READ_ONLY #SHOW type of dopamine receptor: D1 vs. D2 -- computed automatically from acq_ext and valence
   CElAmygDaMod  cel_da_mod;     // extra parameters for dopamine modulation of activation for CEl amyg units
 
-  bool          deep_mod_zero;  // for unit group-based extinction-coding layers; modulation coming from the corresponding BLA acquisition layer via deep_mod_net -- when this modulation signal is below deep.mod_thr, does it have the ability to zero out the extinction activations?  i.e., is the modulation required to enable extinction firing?
+  bool          deep_mod_zero;  // for unit group-based extinction-coding layers; modulation coming from the corresponding acquisition layer via deep_mod_net -- when this modulation signal is below deep.mod_thr, does it have the ability to zero out the extinction activations?  i.e., is the modulation required to enable extinction firing?
   
   float Compute_DaModNetin(LeabraUnitVars* uv, LeabraNetwork* net,
                            int thr_no, float& net_syn) override;

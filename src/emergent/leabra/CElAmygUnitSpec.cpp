@@ -160,24 +160,28 @@ float CElAmygUnitSpec::Compute_NetinExtras(LeabraUnitVars* u, LeabraNetwork* net
     else
       net_ex += u->ext * ls->clamp.gain;
   }
-  // new part: use deep_raw_net if it exists!
-  if(u->deep_raw_net > 0.1f) {
-    net_syn = cel_da_mod.us_clamp_avg * u->deep_raw_net + (1.0f - cel_da_mod.us_clamp_avg) * net_syn;
+  // if not using act_eq for learning, use deep_raw_net (i.e., US-input) to modulate net_syn
+  //  if it exists!
+  if(cel_da_mod.lrn_mod_act) {
+    
   }
-  
   if(deep.ApplyDeepCtxt()) {
     net_ex += u->deep_ctxt;
   }
-  if(da_mod.on && cel_da_mod.lrn_act) {
+  if(cel_da_mod.lrn_mod_act) {
     net_ex += Compute_DaModNetin(u, net, thr_no, net_syn);
+    // also need to modulate net_syn for US (PV) inputs, if present
+    if(u->deep_raw_net > 0.1f) {
+      net_syn = cel_da_mod.us_clamp_avg * u->deep_raw_net + (1.0f - cel_da_mod.us_clamp_avg) * net_syn;
+    }
   }
   return net_ex;
 }
 
 void CElAmygUnitSpec::Compute_ActFun_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   inherited::Compute_ActFun_Rate(u, net, thr_no);
-  // use act_eq for later use by C_Compute__dWt_CEl_Delta() to effect learning *as if* phasic dopamine modulates activations - but actually doesn't
-  if(!(da_mod.on && cel_da_mod.lrn_act)) {
+  // default is to use act_eq for later use by C_Compute__dWt_CEl_Delta() to effect learning *as if* phasic dopamine modulates activations - but without actually doing it!
+  if(!cel_da_mod.lrn_mod_act) {
     float da_val = u->da_p;
     if(da_val > 0.0f) {
       da_val *= cel_da_mod.burst_da_gain;
@@ -186,9 +190,13 @@ void CElAmygUnitSpec::Compute_ActFun_Rate(LeabraUnitVars* u, LeabraNetwork* net,
       da_val *= cel_da_mod.dip_da_gain;
     }
     if(dar == D2R) { da_val = -da_val; } // flip the sign
-    u->act_eq *= (1.0f + da_val);
+    u->act_eq *= (1.0f + da_val); // co-opt act_eq variable for wt changes
+    // similarly, clamp act_eq to US (PV) inputs (deep_raw_net), if present
+    if(u->deep_raw_net > 0.01f) {
+      u->act_eq = u->deep_raw_net;
+    }
   }
-   // u->act_eq should now be used by C_Compute__dWt_CEl_Delta() to change wts w/o actual changing unit activity
+  // ELSE: actually *DOES* modulate actual activations - CAUTION - very brittle!
 }
 
 void CElAmygUnitSpec::Quarter_Final_RecVals(LeabraUnitVars* u, LeabraNetwork* net,
