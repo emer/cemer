@@ -13,22 +13,5 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-#ifndef LeabraUnitSpec_inlines_h
-#define LeabraUnitSpec_inlines_h 1
+// #include "LeabraUnitSpec_core.h"
 
-// parent includes:
-
-// member includes:
-
-// declare all other types mentioned but not required to include:
-
-inline LeabraInhib* LeabraUnitSpec::GetInhib(LeabraUnit* u) {
-  LeabraLayer* lay = u->own_lay();
-  LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->GetLayerSpec();
-  if(ls->HasUnitGpInhib(lay))
-    return (LeabraInhib*)lay->UnGpDataUn(u);
-  else
-    return (LeabraInhib*)lay;
-}
-
-#endif // LeabraUnitSpec_inlines_h

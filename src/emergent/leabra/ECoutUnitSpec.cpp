@@ -70,7 +70,7 @@ void ECoutUnitSpec::ClampFromECin(LeabraUnitVars* u, LeabraNetwork* net, int thr
       u->act *= u->deep_mod;
     }
     u->act_eq = u->act_nd = u->act;
-    TestWrite(u->da, 0.0f);
+    u->da = 0.0f;
     //    u->AddToActBuf(syn_delay);
   }
 }
@@ -94,10 +94,12 @@ float ECoutUnitSpec::Compute_SSE(UnitVars* ru, Network* rnet, int thr_no, bool& 
   LeabraNetwork* net = (LeabraNetwork*)rnet;
   
   float uerr = u->act_p - u->act_q1;
-  if(fabsf(uerr) >= sse_tol)
+  if(fabsf(uerr) >= sse_tol) {
     u->misc_1 = uerr * uerr;
-  else
-    TestWrite(u->misc_1, 0.0f);
+  }
+  else {
+    u->misc_1 = 0.0f;
+  }
 
   return inherited::Compute_SSE(ru, rnet, thr_no, has_targ);
 }

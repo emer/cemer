@@ -108,7 +108,7 @@ void LeabraContextUnitSpec::Compute_Context(LeabraUnitVars* u, LeabraNetwork* ne
     }
   }
   u->act_eq = u->act_nd = u->act;
-  TestWrite(u->da, 0.0f);
+  u->da = 0.0f;
   // u->AddToActBuf(syn_delay); // todo:
 
   if(deep.on && Quarter_DeepRawNow(net->quarter)) {

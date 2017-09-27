@@ -117,6 +117,7 @@ public:
   String	trg_header;	// header file to process, full path as provided
   String	trg_fname_only; // target header -- file name only
   String	trg_basename;   // basic unique name for target -- 
+  String        special_trg_fname; // this file has been marked as a target using pragma maketa_file_is_target
   String	out_fname;	// output file name to generate maketa type info into
   String        tmp_fname;      // temporary file name for cpp output
 

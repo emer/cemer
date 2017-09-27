@@ -80,7 +80,7 @@ void PoolInputsUnitSpec::Compute_PooledAct(LeabraUnitVars* u, LeabraNetwork* net
     
   u->act = new_act;
   u->act_eq = u->act_nd = u->act;
-  TestWrite(u->da, 0.0f);
+  u->da = 0.0f;
   // u->AddToActBuf(syn_delay); // todo
 }
 

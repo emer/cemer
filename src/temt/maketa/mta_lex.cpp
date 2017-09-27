@@ -304,8 +304,26 @@ int MTA::lex() {
     if(c == '#') {
       c = skipwhite();
       c = readword(c);
-      if((LexBuf == "pragma") || (LexBuf == "ident")) {
+      if(LexBuf == "ident") {
 	c = skipline();
+	continue;
+      }
+      if(LexBuf == "pragma") {
+        c = skipwhite_nocr();
+	c = readword(c);
+        LexBuf.trim();
+        if(LexBuf.contains("maketa_file_is_target")) {
+          c = skipwhite_nocr();
+          c = readword(c);
+          LexBuf.trim();
+          LexBuf += ".h";
+          if(LexBuf == trg_fname_only) {
+            cur_is_trg = true;
+            special_trg_fname = cur_fname_only;
+            Info(1, "turning special target on for:", special_trg_fname);
+          }
+        }
+        c = skipline();
 	continue;
       }
       // note: following for MS VC++
@@ -337,10 +355,13 @@ int MTA::lex() {
 	skipline();		// might be training stuff to skip here
 
       cur_fname_only = taMisc::GetFileFmPath(cur_fname);
-      if(cur_fname_only == trg_fname_only) {
+      if(cur_fname_only == trg_fname_only || cur_fname_only == special_trg_fname) {
         cur_is_trg = true;
       }
       else {
+        if(cur_is_trg) {
+          Info(1, "target going off at:", String(line), cur_fname);
+        }
         cur_is_trg = false;
       }
 

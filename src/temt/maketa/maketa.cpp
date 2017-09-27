@@ -329,7 +329,13 @@ void MTA::EndTemplPars() {
 }
 
 void MTA::SetSource(TypeDef* td, bool use_defn_st_line) {
-  td->source_file = taMisc::PathToUnixSep(cur_fname);
+  if(cur_is_trg) {
+    td->source_file = taMisc::PathToUnixSep(trg_fname_only); // cur_fname);
+    Info(1, "set trg source:", td->name);
+  }
+  else {
+    td->source_file = taMisc::PathToUnixSep(cur_fname);
+  }    
   if(use_defn_st_line) {
     td->source_start = defn_st_line;
   }

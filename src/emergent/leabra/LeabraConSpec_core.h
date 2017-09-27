@@ -13,22 +13,27 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-#ifndef LeabraUnitSpec_inlines_h
-#define LeabraUnitSpec_inlines_h 1
+#ifndef LeabraConSpec_core_h
+#define LeabraConSpec_core_h 1
 
 // parent includes:
+#include <taNBase>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
 
-inline LeabraInhib* LeabraUnitSpec::GetInhib(LeabraUnit* u) {
-  LeabraLayer* lay = u->own_lay();
-  LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->GetLayerSpec();
-  if(ls->HasUnitGpInhib(lay))
-    return (LeabraInhib*)lay->UnGpDataUn(u);
-  else
-    return (LeabraInhib*)lay;
-}
+eTypeDef_Of(LeabraConSpec_core);
 
-#endif // LeabraUnitSpec_inlines_h
+class E_API LeabraConSpec_core : public taNBase {
+  // <describe here in full detail in one extended line comment>
+INHERITED(taNBase)
+public:
+
+  TA_SIMPLE_BASEFUNS(LeabraConSpec_core);
+private:
+  void Initialize()  { };
+  void Destroy()     { };
+};
+
+#endif // LeabraConSpec_core_h

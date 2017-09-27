@@ -74,4 +74,11 @@ public:
   
 };
 
+class UnitVars_gen : public UnitVars_core {
+  // generic version of UnitVars -- for generic code that works for regular c++ or cuda
+public:
+  void*   unit_spec; // keep our unit vars aligned with C++ one..
+};
+
+
 #endif // UnitVars_core_h

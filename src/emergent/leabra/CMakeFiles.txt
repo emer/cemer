@@ -10,6 +10,12 @@
 
 # all headers that need maketa run on them
 set(leabra_HEADS_MAKETA
+
+#  Leabra_code.h
+#  LeabraUnitVars_core.h
+#  LeabraUnitSpec_core.h
+#  LeabraConSpec_core.h
+  
   LeabraCon.h
   LeabraConGroup.h
   LeabraConSpec.h
@@ -17,7 +23,6 @@ set(leabra_HEADS_MAKETA
 
   LeabraUnitVars.h
   LeabraUnit.h
-  LeabraUnitSpec.h
   
   LeabraPrjn.h
 
@@ -112,6 +117,7 @@ set(leabra_HEADS_MAKETA
 set(leabra_HEADS_MAKETA_MI
   LeabraLayer.h
   LeabraUnGpData.h
+  LeabraUnitSpec.h
 )
 
 # note: there must be exactly same number of dependencies for each item
@@ -119,9 +125,15 @@ set(leabra_HEADS_MAKETA_MI
 set(leabra_HEADS_MAKETA_MI_DEPS
   "../../temt/ta_core/taBase.h;../network/Layer.h"
   "../../temt/ta_core/taBase.h;LeabraInhib.h"
+  "LeabraUnitSpec_core.h;../network/UnitSpec.h"
 )
 
 set(leabra_HEADS_NOMAKETA
+  Leabra_code.h
+  LeabraUnitVars_core.h
+  LeabraUnitSpec_core.h
+  LeabraConSpec_core.h
+  
   LeabraConSpec_inlines.h
   LeabraUnitSpec_inlines.h
 )
@@ -136,6 +148,11 @@ set(leabra_HEADS
 
 # all source files to compile: NOTE: do NOT include TA_ or .moc files -- auto generated
 set(leabra_SRCS
+#  Leabra_code.cpp
+#  LeabraUnitVars_core.cpp
+#  LeabraUnitSpec_core.cpp
+#  LeabraConSpec_core.cpp
+  
   LeabraCon.cpp
   LeabraConGroup.cpp
   LeabraConSpec.cpp
