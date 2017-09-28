@@ -104,12 +104,65 @@ public:
   float         thr;                // #DEF_0.5 threshold value Theta (Q) for firing output activation (.5 is more accurate value based on AdEx biological parameters and normalization -- see BioParams button)
   float         gain;                // #DEF_80;100;40 #MIN_0 gain (gamma) of the rate-coded activation functions -- 100 is default, 80 works better for larger models, and 40 is closer to the actual spiking behavior of the AdEx model -- use lower values for more graded signals, generally in lower input/sensory layers of the network
   float         nvar;                // #DEF_0.005;0.01 #MIN_0 variance of the Gaussian noise kernel for convolving with XX1 in NOISY_XX1 and NOISY_LINEAR -- determines the level of curvature of the activation function near the threshold -- increase for more graded responding there -- note that this is not actual stochastic noise, just constant convolved gaussian smoothness to the activation function
+  float         sig_mult;            // #DEF_0.33 #EXPERT multiplier on sigmoid used for computing values for net < thr
+  float         sig_mult_pow;        // #DEF_0.8 #EXPERT power for computing sig_mult_eff as function of gain * nvar
+  float         sig_gain;            // #DEF_3 #EXPERT gain multipler on (net - thr) for sigmoid used for computing values for net < thr
+  float         interp_range;        // #DEF_0.01 #EXPERT interpolation range above zero to use interpolation
+  float         gain_cor_range;      // #DEF_10 #EXPERT range in units of nvar over which to apply gain correction to compensate for convolution
+  float         gain_cor;            // #DEF_0.1 #EXPERT gain correction multiplier -- how much to correct gains
+
+  float         sig_gain_nvar;      // #READ_ONLY sig_gain / nvar
+  float         sig_mult_eff;       // #READ_ONLY overall multiplier on sigmoidal component for values below threshold = sig_mult * pow(gain * nvar, sig_mult_pow)
+  float         sig_val_at_0;       // #READ_ONLY 0.5 * sig_mult_eff -- used for interpolation portion
+  float         interp_val;         // #READ_ONLY function value at interp_range - sig_val_at_0 -- for interpolation
+
+
+  inline float  XX1(float x) { return x / (x + 1.0f); }
+  // x/(x+1) function
+
+  inline float  XX1GainCor(float x) {
+    float gain_cor_fact = (gain_cor_range - (x / nvar)) / gain_cor_range;
+    if(gain_cor_fact < 0.0f) {
+      return XX1(gain * x);
+    }
+    float new_gain = gain * (1.0f - gain_cor * gain_cor_fact);
+    return XX1(new_gain * x);
+  }
+  // x/(x+1) with gain correction within gain_cor_range to compensate for convolution effects
+  
+  inline float  NoisyXX1(float x) {
+    if(x < 0.0f) {        // sigmoidal for < 0
+      return sig_mult_eff / (1.0f + expf(-(x * sig_gain_nvar)));
+    }
+    else if(x < interp_range) {
+      float interp = 1.0f - ((interp_range - x) / interp_range);
+      return sig_val_at_0 + interp * interp_val;
+    }
+    else {
+      return XX1GainCor(x);
+    }
+  }
+  // noisy x/(x+1) function -- directly computes close approximation to x/(x+1) convolved with a gaussian noise function with variance nvar -- no need for a lookup table -- very reasonable approximation for standard range of parameters (nvar = .01 or less -- higher values of nvar are less accurate with large gains, but ok for lower gains)
 
   TA_STD_CODE(LeabraActFunSpec);
   
+  UPDATE_AFTER_EDIT( UpdateParams(); );
+  
 private:
+  inline void UpdateParams() {  // too many to duplicate..
+    sig_gain_nvar = sig_gain / nvar;
+    sig_mult_eff = sig_mult * powf(gain * nvar, sig_mult_pow);
+    sig_val_at_0 = 0.5f * sig_mult_eff;
+    interp_val = XX1GainCor(interp_range) - sig_val_at_0;
+  }
+
   void        Initialize()      { Defaults_init(); }
-  void        Defaults_init()   { thr = 0.5f;  gain = 100.0f;  nvar = 0.005f; }
+  void        Defaults_init() {
+    thr = 0.5f;  gain = 100.0f;  nvar = 0.005f;
+    sig_mult = 0.33f; sig_mult_pow = 0.8f; sig_gain = 3.0f;
+    interp_range = 0.01f; gain_cor_range = 10.0f; gain_cor = 0.1f;
+    UpdateParams();
+  }
 };
 
 
@@ -1172,17 +1225,8 @@ public:
   }
   // #IGNORE called for hard_clamped ApplyDeepMod() layers
 
-  // todo: compute instead of lookup!
   inline float Compute_ActFun_Rate_fun(float val_sub_thr) {
-    float new_act = 0.0f;
-    // if(val_sub_thr >= nxx1_fun.x_range.max) {
-    //   val_sub_thr *= act.gain;
-    //   new_act = val_sub_thr / (val_sub_thr + 1.0f);
-    // }
-    // else if(val_sub_thr > nxx1_fun.x_range.min) {
-    //   new_act = nxx1_fun.Eval(val_sub_thr);
-    // }
-    return new_act;
+    return act.NoisyXX1(val_sub_thr);
   }
   // #IGNORE raw activation function: computes an activation value from given value subtracted from its relevant threshold value
 

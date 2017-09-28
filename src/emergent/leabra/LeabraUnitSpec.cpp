@@ -88,8 +88,6 @@ void LeabraUnitSpec::Initialize() {
   noise.var = .001f;
 
   Defaults_init();
-
-  CreateNXX1Fun(act, nxx1_fun, noise_conv);
 }
 
 void LeabraUnitSpec::Defaults_init() {
@@ -128,7 +126,6 @@ void LeabraUnitSpec::UpdateAfterEdit_impl() {
   noise_sched.UpdateAfterEdit_NoGui();
   noise_adapt.UpdateAfterEdit_NoGui();
   deep.UpdateAfterEdit_NoGui();
-  CreateNXX1Fun(act, nxx1_fun, noise_conv);
 
   // if(deep.on && deep_raw_qtr == QNULL) { // doesn't make sense to not have any deep raw..
   //   deep_raw_qtr = Q4;
@@ -923,68 +920,9 @@ void LeabraUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int
   // u->AddToActBuf(syn_delay);
 }
 
-float LeabraUnitSpec::Compute_ActFun_Rate_fun(float val_sub_thr) {
-  // todo: call _core fun when it is no longer a lookup..
-  float new_act = 0.0f;
-  if(val_sub_thr >= nxx1_fun.x_range.max) {
-    val_sub_thr *= act.gain;
-    new_act = val_sub_thr / (val_sub_thr + 1.0f);
-  }
-  else if(val_sub_thr > nxx1_fun.x_range.min) {
-    new_act = nxx1_fun.Eval(val_sub_thr);
-  }
-  return new_act;
-}
-
 void LeabraUnitSpec::Compute_ActFun_Rate(LeabraUnitVars* u, LeabraNetwork* net,
                                          int thr_no) {
-  // Compute_ActFun_Rate_impl(u, net->cycle, net->tot_cycle);
-  
-  float new_act;
-  if(u->v_m_eq <= act.thr) {
-    // note: this is quite important -- if you directly use the gelin
-    // the whole time, then units are active right away -- need v_m_eq dynamics to
-    // drive subthreshold activation behavior
-    new_act = Compute_ActFun_Rate_fun(u->v_m_eq - act.thr);
-  }
-  else {
-    float g_e_thr = Compute_EThresh(u);
-    new_act = Compute_ActFun_Rate_fun((u->net * g_bar.e) - g_e_thr);
-  }
-  if(net->cycle >= dt.fast_cyc) {
-    new_act = u->act_nd + dt.integ * dt.vm_dt * (new_act - u->act_nd); // time integral with dt.vm_dt  -- use nd to avoid synd problems
-  }
-
-  u->da = new_act - u->act_nd;
-  if((noise_type == ACT_NOISE) && (noise.type != Random::NONE) && (net->cycle >= 0)) {
-    new_act += Compute_Noise(u, net, thr_no);
-  }
-
-  u->act_raw = new_act;
-  if(deep.ApplyDeepMod()) { // apply attention directly to act
-    new_act *= u->deep_mod;
-  }
-  u->act_nd = act_range.Clip(new_act);
-
-  if(stp.on) {                   // short term plasticity, depression
-    u->act = u->act_nd * u->syn_tr; // overall probability of transmission
-  }
-  else {
-    u->act = u->act_nd;
-  }
-  u->act_eq = u->act;           // for rate code, eq == act
-
-  // we now use the exact same vm-based dynamics as in SPIKE model, for full consistency!
-  // note that v_m_eq is NOT reset here:
-  if(u->v_m > spike_misc.eff_spk_thr) {
-    u->spike = 1.0f;
-    u->v_m = spike_misc.vm_r;
-    u->spk_t = net->tot_cycle;
-    u->I_net = 0.0f;
-  }
-  else {
-    u->spike = 0.0f;
-  }
+  Compute_ActFun_Rate_impl(u, net->cycle, net->tot_cycle);
 }
 
 void LeabraUnitSpec::Compute_RateCodeSpike(LeabraUnitVars* u, LeabraNetwork* net,
@@ -1319,12 +1257,14 @@ void LeabraUnitSpec::GraphActFmNetFun(DataTable* graph_data, float g_i, float mi
   if(!graph_data) {
     graph_data = proj->GetNewAnalysisDataTable(name + "_ActFmNetFun", true);
   }
+  CreateNXX1Fun(act, nxx1_fun, noise_conv);
   int idx;
   graph_data->StructUpdate(true);
   graph_data->ResetData();
   DataCol* nt = graph_data->FindMakeColName("Net", idx, VT_FLOAT);
   DataCol* av = graph_data->FindMakeColName("Act", idx, VT_FLOAT);
   DataCol* lin = graph_data->FindMakeColName("Linear", idx, VT_FLOAT);
+  DataCol* cnv = graph_data->FindMakeColName("Convolved", idx, VT_FLOAT);
 
   av->SetUserData("PLOT_1", true);
   av->SetUserData("MIN", 0.0f);
@@ -1339,7 +1279,8 @@ void LeabraUnitSpec::GraphActFmNetFun(DataTable* graph_data, float g_i, float mi
   for(x = min; x <= max; x += incr) {
     float aval;
     aval = Compute_ActFun_Rate_fun(x - g_e_thr);
-    float ln = x - g_e_thr;
+    float val_sub_thr = x - g_e_thr;
+    float ln = val_sub_thr;
     if(ln < 0.0f) ln = 0.0f;
     ln *= lin_gain;
     if(ln > 1.0f) ln = 1.0f;
@@ -1347,6 +1288,16 @@ void LeabraUnitSpec::GraphActFmNetFun(DataTable* graph_data, float g_i, float mi
     nt->SetValAsFloat(x, -1);
     av->SetValAsFloat(aval, -1);
     lin->SetValAsFloat(ln, -1);
+
+    float cnval = 0.0f;
+    if(val_sub_thr >= nxx1_fun.x_range.max) {
+      float tmp = val_sub_thr * act.gain;
+      cnval = tmp / (tmp + 1.0f);
+    }
+    else if(val_sub_thr > nxx1_fun.x_range.min) {
+      cnval = nxx1_fun.Eval(val_sub_thr);
+    }
+    cnv->SetValAsFloat(cnval, -1);
   }
   graph_data->StructUpdate(false);
   graph_data->FindMakeGraphView();

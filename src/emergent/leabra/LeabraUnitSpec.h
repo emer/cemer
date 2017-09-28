@@ -214,8 +214,6 @@ public:
     // #CAT_Activation compute deep_lrn and deep_mod values
     virtual void Compute_ActFun_Rate(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
     // #CAT_Activation compute the activation from g_e vs. threshold -- rate code functions
-    virtual float Compute_ActFun_Rate_fun(float val_sub_thr);
-    // #CAT_Activation raw activation function: computes an activation value from given value subtracted from its relevant threshold value
 
     virtual void Compute_RateCodeSpike(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
     // #CAT_Activation compute spiking activation (u->spike) based off of rate-code activation value
