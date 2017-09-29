@@ -88,6 +88,10 @@ void  PFCUnitSpec::FormatDynTable() {
 }
 
 void  PFCUnitSpec::DefaultDynTable(float std_tau) {
+  if(taBase::GetRefn(&dyn_table) == 0) {     // own it -- can be formatted in init
+    taBase::Own(dyn_table, this);
+  }
+  
   if(gate.out_gate)
     n_dyns = 1;
   else

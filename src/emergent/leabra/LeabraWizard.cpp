@@ -2452,7 +2452,7 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   matrix_go_units->noise_type.type = LeabraNoiseSpec::NETIN_NOISE;
   matrix_go_units->SetUnique("noise", true);
   matrix_go_units->noise.var = 0.001f;
-  matrix_go_units->SetUnique("noise_adapt", true);
+  matrix_go_units->SetUnique("noise_type", true);
   matrix_go_units->noise_type.trial_fixed = true;
   matrix_go_units->SetUnique("dar", true);
   matrix_go_units->dar = MSNUnitSpec::D1R;
@@ -2468,7 +2468,6 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
 
   matrix_no_units->SetUnique("noise_type", false);
   matrix_no_units->SetUnique("noise", false);
-  matrix_no_units->SetUnique("noise_adapt", false);
   matrix_no_units->SetUnique("deep", false);
   matrix_no_units->SetUnique("dar", true);
   matrix_no_units->dar = MSNUnitSpec::D2R;

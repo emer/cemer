@@ -51,6 +51,10 @@ void BgPfcPrjnSpec::FormatBgTable() {
 }
 
 void BgPfcPrjnSpec::InitBgTable() {
+  if(taBase::GetRefn(&bg_table) == 0) {     // own it -- can be formatted in init
+    taBase::Own(bg_table, this);
+  }
+
   n_pfcs = 2;
   FormatBgTable();
 
