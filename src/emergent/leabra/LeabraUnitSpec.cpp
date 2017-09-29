@@ -249,7 +249,11 @@ void LeabraUnitSpec::Init_ActAvg(LeabraUnitVars* u, LeabraNetwork* net, int thr_
 
 void LeabraUnitSpec::Init_Netins(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   Init_Netins_impl(u);
-  
+
+  Init_Netins_cons(u, net, thr_no);
+}
+
+void LeabraUnitSpec::Init_Netins_cons(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   const int nrg = u->NRecvConGps(net, thr_no); 
   for(int g=0; g< nrg; g++) {
     LeabraConGroup* recv_gp = (LeabraConGroup*)u->RecvConGroup(net, thr_no, g);
@@ -264,6 +268,7 @@ void LeabraUnitSpec::Init_Acts(UnitVars* ru, Network* rnet, int thr_no) {
   inherited::Init_Acts(u, net, thr_no);
 
   Init_Acts_impl(u);
+  Init_Netins_cons(u, net, thr_no);
 
   CircBufferIndex::Reset(u->spike_e_st, u->spike_e_len);
   CircBufferIndex::Reset(u->spike_i_st, u->spike_i_len);
@@ -337,6 +342,7 @@ void LeabraUnitSpec::Trial_DecayState(LeabraUnitVars* u, LeabraNetwork* net, int
   LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
   LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->GetLayerSpec();
   Trial_DecayState_impl(u, ls->decay.trial);
+  Init_Netins_cons(u, net, thr_no);
 }
 
 // todo: need this on cuda side..

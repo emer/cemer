@@ -87,6 +87,8 @@ public:
 
   virtual void Init_Netins(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
   // #CAT_Activation initialize netinput computation variables (delta-based requires several intermediate variables)
+  virtual void Init_Netins_cons(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
+  // #IGNORE initialize netinput computation variables in connection groups
   virtual void DecayState(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no,
                            float decay);
   // #CAT_Activation decay activation states towards initial values by given amount (0 = no decay, 1 = full decay)
