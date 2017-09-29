@@ -29,6 +29,13 @@
 // #define SPEC_CLASS_SUFFIX _cuda or _core
 // #define SPEC_BASE UnitSpec_cuda or UnitSpec
 
+// make sure we have a cudafun defined -- actual cuda needs to include ta_cuda.h
+#ifndef CUDAFUN
+#define CUDAFUN
+#endif
+
+#define INLINE CUDAFUN inline
+
 #include <UnitVars_core>
 
 class LeabraUnitVars_gen : public UnitVars_gen {
@@ -41,6 +48,8 @@ public:
 #define PASTETWOITEMSTOGETHER(c,s) c ## s
 
 #define CLASS_SUFFIXED(c,s) PASTETWOITEMSTOGETHER(c,s)
+
+#define SPEC_MEMBER(c) CLASS_SUFFIXED(c,MEMBER_CLASS_SUFFIX)
 
 #define SPEC_MEMBER_CLASS(c) class E_API CLASS_SUFFIXED(c,MEMBER_CLASS_SUFFIX) : public SPEC_MEMBER_BASE
 
@@ -117,10 +126,10 @@ public:
   float         interp_val;         // #READ_ONLY function value at interp_range - sig_val_at_0 -- for interpolation
 
 
-  inline float  XX1(float x) { return x / (x + 1.0f); }
+  INLINE float  XX1(float x) { return x / (x + 1.0f); }
   // x/(x+1) function
 
-  inline float  XX1GainCor(float x) {
+  INLINE float  XX1GainCor(float x) {
     float gain_cor_fact = (gain_cor_range - (x / nvar)) / gain_cor_range;
     if(gain_cor_fact < 0.0f) {
       return XX1(gain * x);
@@ -130,7 +139,7 @@ public:
   }
   // x/(x+1) with gain correction within gain_cor_range to compensate for convolution effects
   
-  inline float  NoisyXX1(float x) {
+  INLINE float  NoisyXX1(float x) {
     if(x < 0.0f) {        // sigmoidal for < 0
       return sig_mult_eff / (1.0f + expf(-(x * sig_gain_nvar)));
     }
@@ -149,7 +158,7 @@ public:
   UPDATE_AFTER_EDIT( UpdateParams(); );
   
 private:
-  inline void UpdateParams() {  // too many to duplicate..
+  INLINE void UpdateParams() {  // too many to duplicate..
     sig_gain_nvar = sig_gain / nvar;
     sig_mult_eff = sig_mult * powf(gain * nvar, sig_mult_pow);
     sig_val_at_0 = 0.5f * sig_mult_eff;
@@ -182,7 +191,7 @@ public:
   float         avg_init;        // #DEF_0.15 #MIN_0 initial activation average value -- used for act_avg, avg_s, avg_m, avg_l
   float         avg_dt;          // #READ_ONLY #EXPERT rate = 1 / tau
 
-  inline int    ActToInterval(const float time_inc, const float integ, const float act)
+  INLINE int    ActToInterval(const float time_inc, const float integ, const float act)
   { return (int) (1.0f / (time_inc * integ * act * act_max_hz)); }
   // #CAT_ActMisc compute spiking interval based on network time_inc, dt.integ, and unit act -- note that network time_inc is usually .001 = 1 msec per cycle -- this depends on that being accurately set
 
@@ -220,7 +229,7 @@ public:
   float         oneo_rise;       // #READ_ONLY #NO_SAVE 1.0/rise
   float         eq_dt;           // #READ_ONLY #EXPERT rate = 1 / tau
 
-  inline float  ComputeAlpha(float t) {
+  INLINE float  ComputeAlpha(float t) {
     if(decay == 0.0f) return (t == 0.0f) ? g_gain : 0.0f; // delta function
     if(rise == 0.0f) return gg_decay * taMath_float::exp_fast(-t * oneo_decay);         // exponential
     if(rise == decay) return t * gg_decay_sq * taMath_float::exp_fast(-t * oneo_decay); // symmetric alpha
@@ -414,12 +423,12 @@ public:
   float         dt;             // #READ_ONLY #EXPERT rate = 1 / tau
   float         lrn_fact;       // #READ_ONLY #EXPERT (lrn_max - lrn_min) / (gain - min)
   
-  inline float  GetLrn(const float avg_l) {
+  INLINE float  GetLrn(const float avg_l) {
     return lrn_min + lrn_fact * (avg_l - min);
   }
   // get the avg_l_lrn value for given avg_l value
 
-  inline void   UpdtAvgL(float& avg_l, const float act) {
+  INLINE void   UpdtAvgL(float& avg_l, const float act) {
     avg_l += dt * (gain * act - avg_l);
     if(avg_l < min) avg_l = min;
   }
@@ -491,7 +500,7 @@ public:
   float         dt;                // #READ_ONLY #EXPERT rate = 1 / tau
   float         Ei_dt;          // #READ_ONLY #EXPERT rate = 1 / tau
 
-  inline float  Compute_dAdapt(float vm, float e_rev_l, float adapt)
+  INLINE float  Compute_dAdapt(float vm, float e_rev_l, float adapt)
   { return dt * (vm_gain * (vm - e_rev_l) - adapt); }
   // compute the change in adapt given vm, resting reversal potential (leak reversal), and adapt inputs
 
@@ -541,19 +550,19 @@ public:
   float         oneo_p0_norm;   // #CONDSHOW_ON_on&&algorithm:CYCLES #READ_ONLY #EXPERT 1 / p0_norm
   
 
-  inline float dNR(float dt_integ, float syn_kre, float syn_nr, float syn_pr, float spike) {
+  INLINE float dNR(float dt_integ, float syn_kre, float syn_nr, float syn_pr, float spike) {
     return (dt_integ * rec_dt + syn_kre) * (1.0f - syn_nr) - syn_pr * syn_nr * spike;
   }
   
-  inline float dPR(float dt_integ, float syn_pr, float spike) {
+  INLINE float dPR(float dt_integ, float syn_pr, float spike) {
     return dt_integ * fac_dt * (p0 - syn_pr) + fac * (1.0f - syn_pr) * spike;
   }
 
-  inline float dKRE(float dt_integ, float syn_kre, float spike) {
+  INLINE float dKRE(float dt_integ, float syn_kre, float spike) {
     return -dt_integ * kre_dt * syn_kre + kre * (1.0f - syn_kre) * spike;
   }
 
-  inline float TR(float syn_nr, float syn_pr) {
+  INLINE float TR(float syn_nr, float syn_pr) {
     float syn_tr = oneo_p0_norm * (syn_nr * syn_pr); // normalize pr by p0_norm
     if(syn_tr > 1.0f) syn_tr = 1.0f;                  // max out at 1.0
     return syn_tr;
@@ -629,25 +638,25 @@ public:
   float      ctxt_new;   // #READ_ONLY #EXPERT 1 - ctxt_prv -- new context amount
   float      else_new;   // #READ_ONLY #EXPERT 1 - else_prv -- new context amount
   
-  inline bool   IsSuper()
+  INLINE bool   IsSuper()
   { return on && role == SUPER; }
   // are we SUPER?
-  inline bool   IsDeep()
+  INLINE bool   IsDeep()
   { return on && role == DEEP; }
   // are we DEEP?
-  inline bool   IsTRC()
+  INLINE bool   IsTRC()
   { return on && role == TRC; }
   // are we thalamic relay cell units?
 
-  inline bool   ApplyDeepMod()
+  INLINE bool   ApplyDeepMod()
   { return on && role == SUPER; }
   // should deep modulation be applied to these units?
 
-  inline bool   SendDeepMod()
+  INLINE bool   SendDeepMod()
   { return on && role == DEEP; }
   // should we send our activation into deep_net of other (superficial) units via SendDeepModConSpec connections?
 
-  inline bool   ApplyDeepCtxt()
+  INLINE bool   ApplyDeepCtxt()
   { return on && role == DEEP; }
   // should we apply deep context netinput?  only for deep guys
 
@@ -683,7 +692,7 @@ public:
 
   float      std_gain;          // #READ_ONLY #HIDDEN 1-deep_gain
 
-  inline float  TRCClampNet(float deep_raw_net, const float net_syn)
+  INLINE float  TRCClampNet(float deep_raw_net, const float net_syn)
   { if(clip)      deep_raw_net = fminf(deep_raw_net, clip_max);
     if(avg_clamp) return deep_gain * deep_raw_net + std_gain * net_syn;
     else          return deep_raw_net; }
@@ -723,18 +732,25 @@ private:
 };
 
 
-// todo: remove this -- can be dealt with using schedule and cycles is not practical
-
-SPEC_MEMBER_CLASS(NoiseAdaptSpec) {
-  // ##INLINE ##NO_TOKENS ##CAT_Leabra specs for adapting the noise variance over time as a function of different variables
+SPEC_MEMBER_CLASS(LeabraNoiseSpec) {
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra specs for noise type etc
 INHERITED(SPEC_MEMBER_BASE)
 public:
-  bool          trial_fixed;        // keep the same noise value over the entire trial -- prevents noise from being washed out and produces a stable effect that can be better used for learning -- this is strongly recommended for most learning situations
+  enum NoiseType {               // where to add processing noise
+    NO_NOISE,                    // no noise added to processing
+    VM_NOISE,                    // noise in the value of v_m (membrane potential) -- IMPORTANT: this should NOT be used for rate-code (NXX1) activations, because they do not depend directly on the vm -- this then has no effect
+    NETIN_NOISE,                // noise in the net input (g_e) -- this should be used for rate coded activations (NXX1)
+    ACT_NOISE,                  // noise in the activations
+    NET_MULT_NOISE,             // multiplicative net-input noise: multiply net input by the noise term
+  };
 
-  TA_STD_CODE(NoiseAdaptSpec);
+  NoiseType     type;            // where to add processing noise
+  bool          trial_fixed;     // keep the same noise value over the entire trial -- prevents noise from being washed out and produces a stable effect that can be better used for learning -- this is strongly recommended for most learning situations
+
+  TA_STD_CODE(LeabraNoiseSpec);
 
 private:
-  void        Initialize()      { trial_fixed = true; }
+  void        Initialize()      { type = NO_NOISE; trial_fixed = true; }
   void        Defaults_init()   { };
 };
 
@@ -749,14 +765,6 @@ public:
     SPIKE,                        // discrete spiking activations (spike when > thr) -- default params produce adaptive exponential (AdEx) model
   };
 
-  enum NoiseType {
-    NO_NOISE,                        // no noise added to processing
-    VM_NOISE,                        // noise in the value of v_m (membrane potential) -- IMPORTANT: this should NOT be used for rate-code (NXX1) activations, because they do not depend directly on the vm -- this then has no effect
-    NETIN_NOISE,                // noise in the net input (g_e) -- this should be used for rate coded activations (NXX1)
-    ACT_NOISE,                        // noise in the activations
-    NET_MULT_NOISE,             // multiplicative net-input noise: multiply net input by the noise term
-  };
-
   enum Quarters {               // #BITS specifies gamma frequency quarters within an alpha-frequency trial on which to do things
     QNULL = 0x00,              // #NO_BIT no quarter (yeah..)
     Q1 = 0x01,                 // first quarter
@@ -769,36 +777,31 @@ public:
   };
 
   ActFun            act_fun;        // #CAT_Activation activation function to use -- typically NOISY_XX1 or SPIKE -- others are for special purposes or testing
-  LeabraActFunSpec  act;            // #CAT_Activation activation function parameters -- very important for determining the shape of the selected act_fun
-  LeabraActMiscSpec act_misc;       // #CAT_Activation miscellaneous activation parameters
-  SpikeFunSpec      spike;          // #CONDSHOW_ON_act_fun:SPIKE #CAT_Activation spiking function specs (only for act_fun = SPIKE)
-  SpikeMiscSpec    spike_misc;      // #CAT_Activation misc extra spiking function specs (only for act_fun = SPIKE)
-  OptThreshSpec    opt_thresh;      // #CAT_Learning optimization thresholds for speeding up processing when units are basically inactive
-  MinMaxRange      clamp_range;     // #CAT_Activation range of clamped activation values (min, max, 0, .95 std), don't clamp to 1 because acts can't reach, so .95 instead
-  MinMaxRange      vm_range;        // #CAT_Activation membrane potential range (min, max, 0-2 for normalized)
-  LeabraInitSpec   init;            // #CAT_Activation initial starting values for various key neural parameters
-  LeabraDtSpec     dt;              // #CAT_Activation time constants (rate of updating): membrane potential (vm) and net input (net)
-  LeabraActAvgSpec act_avg;         // #CAT_Learning time constants (rate of updating) for computing activation averages -- used in XCAL learning rules
-  LeabraAvgLSpec   avg_l;           // #CAT_Learning parameters for computing the avg_l long-term floating average that drives BCM-style hebbian learning
-  LeabraAvgL2Spec  avg_l_2;         // #CAT_Learning additional parameters for computing the avg_l long-term floating average that drives BCM-style hebbian learning
-  LeabraChannels   g_bar;           // #CAT_Activation [Defaults: 1, .1, 1] maximal conductances for channels
-  LeabraChannels   e_rev;           // #CAT_Activation [Defaults: 1, .3, .25] reversal potentials for each channel
-  ActAdaptSpec     adapt;           // #CAT_Activation activation-driven adaptation factor that drives spike rate adaptation dynamics based on both sub- and supra-threshold membrane potentials
-  ShortPlastSpec   stp;             // #CAT_Activation short term presynaptic plasticity specs -- can implement full range between facilitating vs. depresssion
-  SynDelaySpec     syn_delay;       // #CAT_Activation synaptic delay -- if active, activation sent to other units is delayed by a given amount
+  SPEC_MEMBER(LeabraActFunSpec)  act;            // #CAT_Activation activation function parameters -- very important for determining the shape of the selected act_fun
+  SPEC_MEMBER(LeabraActMiscSpec) act_misc;       // #CAT_Activation miscellaneous activation parameters
+  SPEC_MEMBER(SpikeFunSpec)      spike;          // #CONDSHOW_ON_act_fun:SPIKE #CAT_Activation spiking function specs (only for act_fun = SPIKE)
+  SPEC_MEMBER(SpikeMiscSpec)    spike_misc;      // #CAT_Activation misc extra spiking function specs (only for act_fun = SPIKE)
+  SPEC_MEMBER(OptThreshSpec)    opt_thresh;      // #CAT_Learning optimization thresholds for speeding up processing when units are basically inactive
+  SPEC_MEMBER(MinMaxRange)      clamp_range;     // #CAT_Activation range of clamped activation values (min, max, 0, .95 std), don't clamp to 1 because acts can't reach, so .95 instead
+  SPEC_MEMBER(MinMaxRange)      vm_range;        // #CAT_Activation membrane potential range (min, max, 0-2 for normalized)
+  SPEC_MEMBER(LeabraInitSpec)   init;            // #CAT_Activation initial starting values for various key neural parameters
+  SPEC_MEMBER(LeabraDtSpec)     dt;              // #CAT_Activation time constants (rate of updating): membrane potential (vm) and net input (net)
+  SPEC_MEMBER(LeabraActAvgSpec) act_avg;         // #CAT_Learning time constants (rate of updating) for computing activation averages -- used in XCAL learning rules
+  SPEC_MEMBER(LeabraAvgLSpec)   avg_l;           // #CAT_Learning parameters for computing the avg_l long-term floating average that drives BCM-style hebbian learning
+  SPEC_MEMBER(LeabraAvgL2Spec)  avg_l_2;         // #CAT_Learning additional parameters for computing the avg_l long-term floating average that drives BCM-style hebbian learning
+  SPEC_MEMBER(LeabraChannels)   g_bar;           // #CAT_Activation [Defaults: 1, .1, 1] maximal conductances for channels
+  SPEC_MEMBER(LeabraChannels)   e_rev;           // #CAT_Activation [Defaults: 1, .3, .25] reversal potentials for each channel
+  SPEC_MEMBER(ActAdaptSpec)     adapt;           // #CAT_Activation activation-driven adaptation factor that drives spike rate adaptation dynamics based on both sub- and supra-threshold membrane potentials
+  SPEC_MEMBER(ShortPlastSpec)   stp;             // #CAT_Activation short term presynaptic plasticity specs -- can implement full range between facilitating vs. depresssion
+  SPEC_MEMBER(SynDelaySpec)     syn_delay;       // #CAT_Activation synaptic delay -- if active, activation sent to other units is delayed by a given amount
   Quarters         deep_raw_qtr;    // #CAT_Learning #AKA_deep_qtr quarter(s) during which deep_raw layer 5 intrinsic bursting activations should be updated -- deep_raw is updated and sent to deep_raw_net during this quarter, and deep_ctxt is updated right after this quarter (wrapping around to the first quarter for the 4th quarter)
-  DeepSpec         deep;            // #CAT_Learning specs for DeepLeabra deep neocortical layer dynamics, which capture attentional, thalamic auto-encoder, and temporal integration mechanisms 
-  TRCSpec          trc;             // #CAT_Learning #CONDSHOW_ON_deep.on&&deep.role:TRC specs for DeepLeabra TRC thalamic relay cells
-  DaModSpec        da_mod;          // #CAT_Learning da modulation of activations (for da-based learning, and other effects)
-  NoiseType        noise_type;      // #CAT_Activation where to add random noise in the processing (if at all)
-  RandomSpec       noise;           // #CONDSHOW_OFF_noise_type:NO_NOISE #CAT_Activation distribution parameters for random added noise
-  NoiseAdaptSpec   noise_adapt;     // #CONDSHOW_OFF_noise_type:NO_NOISE #CAT_Activation how to adapt the noise variance (var) value
-  Schedule         noise_sched;     // #CONDSHOW_OFF_noise_type:NO_NOISE #CAT_Activation schedule of noise variance -- time scale depends on noise_adapt parameter (cycles, epochs, etc)
-
-  FunLookup        nxx1_fun;        // #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Activation convolved gaussian and x/x+1 function as lookup table
-  FunLookup        noise_conv;      // #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Activation gaussian for convolution
-
-  LeabraChannels e_rev_sub_thr;     // #CAT_Activation #READ_ONLY #NO_SAVE #HIDDEN e_rev - act.thr for each item -- used for compute_ithresh
+  SPEC_MEMBER(DeepSpec)         deep;            // #CAT_Learning specs for DeepLeabra deep neocortical layer dynamics, which capture attentional, thalamic auto-encoder, and temporal integration mechanisms 
+  SPEC_MEMBER(TRCSpec)          trc;             // #CAT_Learning #CONDSHOW_ON_deep.on&&deep.role:TRC specs for DeepLeabra TRC thalamic relay cells
+  SPEC_MEMBER(DaModSpec)        da_mod;          // #CAT_Learning da modulation of activations (for da-based learning, and other effects)
+  SPEC_MEMBER(LeabraNoiseSpec)  noise_type;      // #CAT_Activation random noise in the processing parameters
+  RandomSpec       noise;           // #CONDSHOW_OFF_noise_type.type:NO_NOISE #CAT_Activation distribution parameters for random added noise
+  
+  SPEC_MEMBER(LeabraChannels) e_rev_sub_thr;     // #CAT_Activation #READ_ONLY #NO_SAVE #HIDDEN e_rev - act.thr for each item -- used for compute_ithresh
   float          thr_sub_e_rev_i;   // #CAT_Activation #READ_ONLY #NO_SAVE #HIDDEN g_bar.i * (act.thr - e_rev.i) used for compute_ithresh
   float          thr_sub_e_rev_e;   // #CAT_Activation #READ_ONLY #NO_SAVE #HIDDEN g_bar.e * (act.thr - e_rev.e) used for compute_ethresh
 
@@ -806,7 +809,7 @@ public:
   ///////////////////////////////////////////////////////////////////////
   //        General Init functions
 
-  inline void Init_Netins_impl(UNITVARS* u) {
+  INLINE void Init_Netins_impl(UNITVARS* u) {
     u->act_sent = 0.0f;
     u->net_raw = 0.0f;
     u->gi_raw = 0.0f;
@@ -819,7 +822,7 @@ public:
   }
   // #IGNORE just unit -- congroups also have netin vals that need init
     
-  inline void Init_Acts_impl(UNITVARS* u) {
+  INLINE void Init_Acts_impl(UNITVARS* u) {
     Init_Netins_impl(u);
 
     u->ClearExtFlag(UnitVars_core::COMP_TARG_EXT);
@@ -888,7 +891,7 @@ public:
     u->spk_t = -1;
   }
   
-  inline void  Init_Vars_impl(UNITVARS* u) {
+  INLINE void  Init_Vars_impl(UNITVARS* u) {
     u->ext_flag = UnitVars_core::NO_EXTERNAL;
     u->bias_wt = 0.0f;
     u->bias_dwt = 0.0f;
@@ -915,7 +918,7 @@ public:
   }
   // #IGNORE
 
-  inline void Init_ActAvg_impl(UNITVARS* u) {
+  INLINE void Init_ActAvg_impl(UNITVARS* u) {
     if(act_misc.avg_trace) {
       u->act_avg = 0.0f;
     }
@@ -927,7 +930,7 @@ public:
   }
   // #IGNORE
   
-  inline void  Init_Weights_impl(UNITVARS* u) {
+  INLINE void  Init_Weights_impl(UNITVARS* u) {
     u->net_prv_q = 0.0f;
     u->net_prv_trl = 0.0f;
     u->misc_1 = 0.0f;
@@ -937,7 +940,7 @@ public:
   }
   // #IGNORE only the unit aspect of weights -- actual weights need to be done separately
   
-  inline void DecayState_impl(UNITVARS* u, float decay) {
+  INLINE void DecayState_impl(UNITVARS* u, float decay) {
     if(decay > 0.0f) {            // no need to reset netin if not decaying at all
       u->act -= decay * (u->act - init.act);
       u->net -= decay * (u->net - init.netin);
@@ -969,7 +972,7 @@ public:
   }
   // #CAT_Activation decay activation states towards initial values by given amount (0 = no decay, 1 = full decay)
   
-  inline void ResetSynTR_impl(UNITVARS* u) {
+  INLINE void ResetSynTR_impl(UNITVARS* u) {
     u->syn_tr = 1.0;
     u->syn_kre = 0.0;
   }
@@ -979,15 +982,15 @@ public:
   ///////////////////////////////////////////////////////////////////////
   //        TrialInit -- at start of trial
 
-  // inline void Trial_Init_Unit_impl(UNITVARS* uv);
+  // INLINE void Trial_Init_Unit_impl(UNITVARS* uv);
   // #CAT_Activation trial unit-level initialization functions: Trial_STP_TrialBinary_Updt, Trial_Init_PrvVals, Trial_Init_SRAvg, DecayState, NoiseInit
 
-    inline void Trial_Init_PrvVals_impl(UNITVARS* u) {
+    INLINE void Trial_Init_PrvVals_impl(UNITVARS* u) {
       u->net_prv_trl = u->net; 
       u->act_q0 = u->act_q4;
     }
     // #IGNORE save previous trial values at start of new trial -- allow values at end of trial to be valid for visualization..
-    inline void Trial_Init_SRAvg_impl(UNITVARS* u, float lay_acts_p_avg,
+    INLINE void Trial_Init_SRAvg_impl(UNITVARS* u, float lay_acts_p_avg,
                                       float lay_cos_diff_avg_lrn, bool zero_avg_l_lrn) {
       if(lay_acts_p_avg >= avg_l_2.lay_act_thr) {
         avg_l.UpdtAvgL(u->avg_l, u->avg_m);
@@ -1003,7 +1006,7 @@ public:
     }
     // #IGNORE reset the sender-receiver coproduct average -- call at start of trial
     
-    inline void Trial_DecayState_impl(UNITVARS* u, float decay_trial) {
+    INLINE void Trial_DecayState_impl(UNITVARS* u, float decay_trial) {
       DecayState_impl(u, decay_trial);
       // note: theoretically you could avoid doing Init_Netins if there is no decay between
       // trials, and save some compute time, but the delta-based netin has enough
@@ -1021,28 +1024,28 @@ public:
     }
     // #IGNORE decay activation states towards initial values: at trial-level boundary
     
-    // inline void Trial_NoiseInit_impl(UNITVARS* u);
+    // INLINE void Trial_NoiseInit_impl(UNITVARS* u);
     // #CAT_Activation init trial-level noise -- ONLY called if noise_adapt.trial_fixed is set
-    // inline void Trial_STP_TrialBinary_Updt_impl(UNITVARS* u);
+    // INLINE void Trial_STP_TrialBinary_Updt_impl(UNITVARS* u);
     // #CAT_Activation calculates short term depression of units by a trial by trial basis
 
 
   ///////////////////////////////////////////////////////////////////////
   //        QuarterInit -- at start of new gamma-quarter
 
-  inline  bool Quarter_DeepRawNow(int qtr)
+  INLINE  bool Quarter_DeepRawNow(int qtr)
   { return deep_raw_qtr & (1 << qtr); }
   // #CAT_Activation test whether to compute deep_raw activations and send deep_raw_net netintput at given quarter (pass net->quarter as arg)
-  inline  bool Quarter_DeepRawPrevQtr(int qtr)
+  INLINE  bool Quarter_DeepRawPrevQtr(int qtr)
   { if(qtr == 0) qtr = 3; else qtr--; return deep_raw_qtr & (1 << qtr); }
   // #CAT_Activation test whether the previous quarter was when deep_raw was updated
-  inline  bool Quarter_DeepRawNextQtr(int qtr)
+  INLINE  bool Quarter_DeepRawNextQtr(int qtr)
   { return deep_raw_qtr & (1 << (qtr + 1)); }
   // #CAT_Activation test whether the next quarter will be when deep_raw is updated
 
-  // inline void Quarter_Init_Unit_impl(UNITVARS* u);
+  // INLINE void Quarter_Init_Unit_impl(UNITVARS* u);
   // #CAT_Activation quarter unit-level initialization functions: Init_TargFlags, Init_PrvVals, NetinScale, HardClamp
-    inline void Quarter_Init_TargFlags_impl(UNITVARS* u, bool minus_phase) {
+    INLINE void Quarter_Init_TargFlags_impl(UNITVARS* u, bool minus_phase) {
       if(!u->HasExtFlag(UnitVars_core::TARG))
         return;
 
@@ -1059,7 +1062,7 @@ public:
     }
     // #IGNORE initialize external input flags based on phase
     
-    inline void Quarter_Init_PrvVals_impl(UNITVARS* u, int quarter) {
+    INLINE void Quarter_Init_PrvVals_impl(UNITVARS* u, int quarter) {
       if(deep.on && (deep_raw_qtr & Q2)) {
         // if using beta rhythm, this happens at that interval
         if(Quarter_DeepRawPrevQtr(quarter)) {
@@ -1082,14 +1085,14 @@ public:
     }
     // #IGNORE update the previous values: e.g., netinput variables (prv_net_q) based on current counters
 
-  inline void Compute_DeepStateUpdt_impl(UNITVARS* u, int quarter) {
+  INLINE void Compute_DeepStateUpdt_impl(UNITVARS* u, int quarter) {
     if(!deep.on || !Quarter_DeepRawPrevQtr(quarter)) return;
     
     u->deep_raw_prv = u->deep_raw; // keep track of what we sent here, for context learning
   }
   // #IGNORE state update for deep leabra -- typically at start of new alpha trial --
 
-  inline void  Init_InputData_impl(UNITVARS* u) {
+  INLINE void  Init_InputData_impl(UNITVARS* u) {
     u->ClearExtFlag(UnitVars_core::COMP_TARG_EXT);
     u->ext = 0.0f;
     u->targ = 0.0f;
@@ -1097,14 +1100,14 @@ public:
   }
   // #IGNORE note: must keep sync'd with UnitSpec version
   
-  inline void ApplyInputData_post_impl(UNITVARS* u) {
+  INLINE void ApplyInputData_post_impl(UNITVARS* u) {
     if(!u->HasExtFlag(UnitVars_core::EXT))
       return;
     u->ext_orig = u->ext;
   }
   // #IGNORE post-apply input data -- cache the ext value b/c it might get overwritten in transforms of the input data, as in ScalarValLayerSpec
   
-  inline void Compute_HardClamp_impl(UNITVARS* u, int cycle, bool clip) {
+  INLINE void Compute_HardClamp_impl(UNITVARS* u, int cycle, bool clip) {
     float ext_in = u->ext;
     u->act_raw = ext_in;
     if(cycle > 0 && deep.ApplyDeepMod()) {
@@ -1126,7 +1129,7 @@ public:
   }
   // #IGNORE force units to external values provided by environment
   
-  inline void ExtToComp_impl(UNITVARS* u) {
+  INLINE void ExtToComp_impl(UNITVARS* u) {
     if(!u->HasExtFlag(UnitVars::EXT))
       return;
     u->ClearExtFlag(UnitVars::EXT);
@@ -1136,7 +1139,7 @@ public:
   }
   // #IGNORE change external inputs to comparisons (remove input)
   
-  inline void TargExtToComp_impl(UNITVARS* u) {
+  INLINE void TargExtToComp_impl(UNITVARS* u) {
     if(!u->HasExtFlag(UnitVars::TARG_EXT))
       return;
     if(u->HasExtFlag(UnitVars::EXT))
@@ -1151,7 +1154,7 @@ public:
   ///////////////////////////////////////////////////////////////////////
   //        Cycle Step 1: Netinput 
 
-  inline float Compute_DaModNetin_impl(UNITVARS* u, float& net_syn, bool plus_phase) {
+  INLINE float Compute_DaModNetin_impl(UNITVARS* u, float& net_syn, bool plus_phase) {
     if(plus_phase) { // net->phase == LeabraNetwork::PLUS_PHASE
       return da_mod.plus * u->da_p * net_syn;
     }
@@ -1161,7 +1164,7 @@ public:
   }
   // #IGNORE compute the da_mod netinput extra contribution -- only called if da_mod.on is true so this doesn't need to check that flag -- subtypes can do things to change the function (e.g., D1 vs D2 effects)
   
-  inline float Compute_EThresh(UNITVARS* u) {
+  INLINE float Compute_EThresh(UNITVARS* u) {
     float gc_l = g_bar.l;
     return ((g_bar.i * u->gc_i * (u->E_i - act.thr)
              + gc_l * e_rev_sub_thr.l - u->adapt) /
@@ -1173,13 +1176,13 @@ public:
   //        Cycle Step 2: Inhibition: these are actually called by Compute_Act to integrate
   //            inhibition computed at the layer level
 
-  inline void  Compute_SelfInhib_impl(UNITVARS* u, float self_fb, float self_dt) {
+  INLINE void  Compute_SelfInhib_impl(UNITVARS* u, float self_fb, float self_dt) {
     float self = self_fb * u->act;
     u->gi_self += self_dt * (self - u->gi_self);
   }
   // #IGNORE compute self inhibition value
 
-  inline void  Compute_ApplyInhib_impl(UNITVARS* u, float ival, float gi_ex,
+  INLINE void  Compute_ApplyInhib_impl(UNITVARS* u, float ival, float gi_ex,
                                        float lay_adapt_gi) {
     u->gc_i = ival + lay_adapt_gi * (u->gi_syn + u->gi_self) + gi_ex;
     u->gi_ex = gi_ex;
@@ -1194,7 +1197,7 @@ public:
   // below derived types that send activation directly to special unit variables (e.g.,
   // VTAUnitSpec -> da_p) should do this here, so they can be processed in Compute_Act_Post
 
-  inline void Compute_DeepMod_impl(UNITVARS* u, float lay_am_deep_mod_net_max) {
+  INLINE void Compute_DeepMod_impl(UNITVARS* u, float lay_am_deep_mod_net_max) {
     if(deep.SendDeepMod()) {
       u->deep_lrn = u->deep_mod = u->act;      // record what we send!
       return;
@@ -1217,7 +1220,7 @@ public:
   }
   // #IGNORE compute deep_lrn and deep_mod values
     
-  inline void Compute_DeepModClampAct_impl(UNITVARS* u) {
+  INLINE void Compute_DeepModClampAct_impl(UNITVARS* u) {
     float ext_in = u->ext * u->deep_mod;
     u->net = u->thal = ext_in;
     ext_in = clamp_range.Clip(ext_in);
@@ -1225,12 +1228,12 @@ public:
   }
   // #IGNORE called for hard_clamped ApplyDeepMod() layers
 
-  inline float Compute_ActFun_Rate_fun(float val_sub_thr) {
+  INLINE float Compute_ActFun_Rate_fun(float val_sub_thr) {
     return act.NoisyXX1(val_sub_thr);
   }
   // #IGNORE raw activation function: computes an activation value from given value subtracted from its relevant threshold value
 
-  inline void Compute_ActFun_Rate_impl(UNITVARS* u, int cycle, int tot_cycle) {
+  INLINE void Compute_ActFun_Rate_impl(UNITVARS* u, int cycle, int tot_cycle) {
     float new_act;
     if(u->v_m_eq <= act.thr) {
       // note: this is quite important -- if you directly use the gelin
@@ -1247,8 +1250,8 @@ public:
     }
 
     u->da = new_act - u->act_nd;
-    if((noise_type == ACT_NOISE) && (noise.type != Random::NONE) && (cycle >= 0)) {
-      // new_act += Compute_Noise(u, net, thr_no);
+    if((noise_type.type == LeabraNoiseSpec::ACT_NOISE) && (noise.type != Random::NONE) && (cycle >= 0)) {
+      new_act += u->noise;
     }
 
     u->act_raw = new_act;
@@ -1280,7 +1283,7 @@ public:
   // #IGNORE Rate coded activation
 
   
-  inline void Compute_RateCodeSpike_impl(UNITVARS* u, int tot_cycle, const float time_inc) {
+  INLINE void Compute_RateCodeSpike_impl(UNITVARS* u, int tot_cycle, const float time_inc) {
     // use act_nd here so it isn't a self-fulfilling function!
     // note: this is only used for clamped layers -- dynamic layers use SPIKE-based mechanisms
     u->spike = 0.0f;
@@ -1302,7 +1305,7 @@ public:
   }    
   // #IGNORE compute spiking activation (u->spike) based off of rate-code activation value
 
-  inline void Compute_ActFun_Spike_impl(UNITVARS* u, int tot_cycle, int cycle) {
+  INLINE void Compute_ActFun_Spike_impl(UNITVARS* u, int tot_cycle, int cycle) {
     if(u->v_m > spike_misc.eff_spk_thr) {
       u->act = 1.0f;
       u->spike = 1.0f;
@@ -1338,7 +1341,7 @@ public:
   }
   // #IGNORE compute the activation from membrane potential -- discrete spiking
   
-  inline void Compute_Vm_impl(UNITVARS* u, int tot_cycle, int cycle) {
+  INLINE void Compute_Vm_impl(UNITVARS* u, int tot_cycle, int cycle) {
     bool updt_spk_vm = true;
     if(spike_misc.t_r > 0 && u->spk_t > 0) {
       int spkdel = tot_cycle - u->spk_t;
@@ -1395,9 +1398,8 @@ public:
       u->v_m_eq += dt.integ * dt.vm_dt * (I_net_r - u->adapt);
     }
 
-    if((noise_type == VM_NOISE) && (noise.type != Random::NONE) && (cycle >= 0)) {
-      // float ns = Compute_Noise(u, net, thr_no);
-      float ns = 0.0f;
+    if((noise_type.type == LeabraNoiseSpec::VM_NOISE) && (noise.type != Random::NONE) && (cycle >= 0)) {
+      float ns = u->noise;
       u->v_m += ns;
       u->v_m_eq += ns;
     }
@@ -1409,7 +1411,7 @@ public:
   }
   // #IGNORE Act Step 2: compute the membrane potential from input conductances
   
-  inline float Compute_EqVm(UNITVARS* u) {
+  INLINE float Compute_EqVm(UNITVARS* u) {
     float gc_l = g_bar.l;
     float new_v_m = (((u->net * e_rev.e) + (gc_l * e_rev.l)
                       + (g_bar.i * u->gc_i * u->E_i) - u->adapt) /
@@ -1418,13 +1420,13 @@ public:
   }
   // #IGNORE compute the equilibrium (asymptotic) membrante potential from input conductances (assuming they remain fixed as they are)
 
-  inline void Compute_SelfReg_Cycle_impl(UNITVARS* u) {
+  INLINE void Compute_SelfReg_Cycle_impl(UNITVARS* u) {
     Compute_ActAdapt_Cycle_impl(u);
     Compute_ShortPlast_Cycle_impl(u);
   }
   // #IGNORE Act Step 3: compute self-regulatory dynamics at the cycle time scale -- adapt, etc
   
-  inline void Compute_ActAdapt_Cycle_impl(UNITVARS* u) {
+  INLINE void Compute_ActAdapt_Cycle_impl(UNITVARS* u) {
     if(!adapt.on) {
       u->adapt = 0.0f;
     }
@@ -1436,7 +1438,7 @@ public:
   }
   // #IGNORE compute the activation-based adaptation value based on spiking and membrane potential
     
-  inline void Compute_ShortPlast_Cycle_impl(UNITVARS* u) {
+  INLINE void Compute_ShortPlast_Cycle_impl(UNITVARS* u) {
     if(!stp.on) {
       if(u->syn_tr != 1.0f) {
         u->syn_tr = 1.0f;
@@ -1461,15 +1463,13 @@ public:
   }
   // #IGNORE compute whole-neuron (presynaptic) short-term plasticity at the cycle level, using the stp parameters -- updates the syn_* unit variables
 
-  // inline float Compute_Noise_impl(UNITVARS* u);
-  // // #CAT_Activation utility fun to generate and return the noise value based on current settings -- will set unit->noise value as appropriate (generally excludes effect of noise_sched schedule)
 
   ///////////////////////////////////////////////////////////////////////
   //        Post Activation Step
 
-  // inline void Compute_Act_Post_impl(UNITVARS* u);
+  // INLINE void Compute_Act_Post_impl(UNITVARS* u);
   // #CAT_Activation post-processing step after activations are computed -- calls  Compute_SRAvg and Compute_Margin by default -- this is also when any modulatory signals should be sent -- NEVER send any such signals during Compute_Act as they might be consumed by other layers during that time
-  inline void Compute_SRAvg_impl(UNITVARS* u) {
+  INLINE void Compute_SRAvg_impl(UNITVARS* u) {
     float ru_act;
     if(act_misc.avg_nd) {
       ru_act = u->act_nd;
@@ -1486,7 +1486,7 @@ public:
   }
   // #IGNORE compute sending-receiving running activation averages (avg_ss, avg_s, avg_m) -- only for this unit (SR name is a hold-over from connection-level averaging that is no longer used) -- unit level only, used for XCAL -- called by Compute_Act_Post
   
-  inline void Compute_Margin_impl(UNITVARS* u, float margin_low_thr, float margin_med_thr,
+  INLINE void Compute_Margin_impl(UNITVARS* u, float margin_low_thr, float margin_med_thr,
                                   float margin_hi_thr) {
     const float v_m_eq = u->v_m_eq;
     if(v_m_eq >= margin_low_thr) {
@@ -1513,7 +1513,7 @@ public:
   ///////////////////////////////////////////////////////////////////////
   //        Deep Leabra Computations -- after superifical acts updated
 
-  inline void ClearDeepActs_impl(UNITVARS* u) {
+  INLINE void ClearDeepActs_impl(UNITVARS* u) {
     u->deep_raw = 0.0f;
     u->deep_raw_prv = 0.0f;
     u->deep_ctxt = 0.0f;
@@ -1528,15 +1528,15 @@ public:
   ///////////////////////////////////////////////////////////////////////
   //        Quarter Final
 
-  inline float GetRecAct(UNITVARS* u) {
+  INLINE float GetRecAct(UNITVARS* u) {
     if(act_misc.rec_nd) return u->act_nd;
     return u->act_eq;
   }
   // #IGNORE get activation to record
   
-  // inline void Quarter_Final_impl(UNITVARS* u);
+  // INLINE void Quarter_Final_impl(UNITVARS* u);
   // // #CAT_Activation record state variables after each gamma-frequency quarter-trial of processing
-  inline void Quarter_Final_RecVals_impl(UNITVARS* u, int quarter) {
+  INLINE void Quarter_Final_RecVals_impl(UNITVARS* u, int quarter) {
     float use_act = GetRecAct(u);
     switch(quarter) {        // this has not advanced yet -- still 0-3
     case 0: {
@@ -1568,7 +1568,7 @@ public:
   }
   // #IGNORE record state variables after each gamma-frequency quarter-trial of processing
 
-  inline void Compute_ActTimeAvg_impl(UNITVARS* u) {
+  INLINE void Compute_ActTimeAvg_impl(UNITVARS* u) {
     if(act_misc.avg_trace) {
       u->act_avg = act_misc.lambda * u->act_avg + u->act_q0; // using prior act to be compatible with std td learning mechanism
     }
@@ -1582,7 +1582,7 @@ public:
   ///////////////////////////////////////////////////////////////////////
   //        Stats
 
-  float Compute_SSE_impl(UNITVARS* u, bool& has_targ) {
+  INLINE float Compute_SSE_impl(UNITVARS* u, bool& has_targ) {
     float sse = 0.0f;
     has_targ = false;
     if(u->HasExtFlag(UnitVars::COMP_TARG)) {
@@ -1595,7 +1595,7 @@ public:
   }
   // #IGNORE
   
-  bool  Compute_PRerr_impl(UNITVARS* u, float& true_pos, float& false_pos,
+  INLINE bool  Compute_PRerr_impl(UNITVARS* u, float& true_pos, float& false_pos,
                            float& false_neg, float& true_neg) {
     true_pos = 0.0f; false_pos = 0.0f; false_neg = 0.0f; true_neg = 0.0f;
     bool has_targ = false;
@@ -1616,7 +1616,7 @@ public:
   }
   // #IGNORE
   
-  inline float  Compute_NormErr_impl(UNITVARS* u, bool& targ_active, bool on_errs, bool off_errs) {
+  INLINE float  Compute_NormErr_impl(UNITVARS* u, bool& targ_active, bool on_errs, bool off_errs) {
     targ_active = false;
     if(!u->HasExtFlag(UnitVars::COMP_TARG)) return 0.0f;
 

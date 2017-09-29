@@ -2449,11 +2449,11 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   matrix_go_units->SetUnique("act_misc", true);
   matrix_go_units->act_misc.net_gain = 0.5f;
   matrix_go_units->SetUnique("noise_type", true);
-  matrix_go_units->noise_type = LeabraUnitSpec::NETIN_NOISE;
+  matrix_go_units->noise_type.type = LeabraNoiseSpec::NETIN_NOISE;
   matrix_go_units->SetUnique("noise", true);
   matrix_go_units->noise.var = 0.001f;
   matrix_go_units->SetUnique("noise_adapt", true);
-  matrix_go_units->noise_adapt.trial_fixed = true;
+  matrix_go_units->noise_type.trial_fixed = true;
   matrix_go_units->SetUnique("dar", true);
   matrix_go_units->dar = MSNUnitSpec::D1R;
   matrix_go_units->SetUnique("matrix_patch", true);

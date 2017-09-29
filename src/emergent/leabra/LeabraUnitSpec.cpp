@@ -43,7 +43,7 @@ TA_BASEFUNS_CTORS_DEFN(SynDelaySpec);
 TA_BASEFUNS_CTORS_DEFN(DeepSpec);
 TA_BASEFUNS_CTORS_DEFN(TRCSpec);
 TA_BASEFUNS_CTORS_DEFN(DaModSpec);
-TA_BASEFUNS_CTORS_DEFN(NoiseAdaptSpec);
+TA_BASEFUNS_CTORS_DEFN(LeabraNoiseSpec);
 
 TA_BASEFUNS_CTORS_DEFN(LeabraUnitSpec_core);
 TA_BASEFUNS_CTORS_DEFN(LeabraUnitSpec);
@@ -83,7 +83,6 @@ void LeabraUnitSpec::Initialize() {
   min_obj_type = &TA_LeabraUnit;
   bias_spec.SetBaseType(&TA_LeabraBiasSpec);
 
-  noise_type = NO_NOISE;
   noise.type = Random::GAUSSIAN;
   noise.var = .001f;
 
@@ -104,9 +103,9 @@ void LeabraUnitSpec::InitLinks() {
 void LeabraUnitSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
 
-  if(noise_type == VM_NOISE && act_fun != SPIKE) {
+  if(noise_type.type == LeabraNoiseSpec::VM_NOISE && act_fun != SPIKE) {
     taMisc::Warning("Cannot use noise_type = VM_NOISE with rate-code (non-spiking) activation function -- changing noise_type to NETIN_NOISE");
-    noise_type = NETIN_NOISE;
+    noise_type.type = LeabraNoiseSpec::NETIN_NOISE;
   }
 
   if(spike_misc.ex)
@@ -123,8 +122,6 @@ void LeabraUnitSpec::UpdateAfterEdit_impl() {
   act_avg.UpdateAfterEdit_NoGui();
   adapt.UpdateAfterEdit_NoGui();
   stp.UpdateAfterEdit_NoGui();
-  noise_sched.UpdateAfterEdit_NoGui();
-  noise_adapt.UpdateAfterEdit_NoGui();
   deep.UpdateAfterEdit_NoGui();
 
   // if(deep.on && deep_raw_qtr == QNULL) { // doesn't make sense to not have any deep raw..
@@ -342,8 +339,9 @@ void LeabraUnitSpec::Trial_DecayState(LeabraUnitVars* u, LeabraNetwork* net, int
   Trial_DecayState_impl(u, ls->decay.trial);
 }
 
+// todo: need this on cuda side..
 void LeabraUnitSpec::Trial_NoiseInit(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
-  if(noise_type != NO_NOISE && noise_adapt.trial_fixed &&
+  if(noise_type.type != LeabraNoiseSpec::NO_NOISE && noise_type.trial_fixed &&
      (noise.type != Random::NONE)) {
     u->noise = noise.Gen(thr_no);
   }
@@ -761,12 +759,18 @@ void LeabraUnitSpec::Compute_NetinInteg(LeabraUnitVars* u, LeabraNetwork* net, i
     if(u->net < 0.0f) u->net = 0.0f; // negative netin doesn't make any sense
   }
 
-  // add after all the other stuff is done..
-  if((noise_type == NETIN_NOISE) && (noise.type != Random::NONE)) {
-    u->net += Compute_Noise(u, net, thr_no);
+  // first place noise is required -- generate here!
+  if(noise_type.type != LeabraNoiseSpec::NO_NOISE && !noise_type.trial_fixed &&
+     (noise.type != Random::NONE)) {
+    u->noise = noise.Gen(thr_no);
   }
-  else if((noise_type == NET_MULT_NOISE) && (noise.type != Random::NONE)) {
-    u->net *= Compute_Noise(u, net, thr_no);
+  
+  // add after all the other stuff is done..
+  if((noise_type.type == LeabraNoiseSpec::NETIN_NOISE) && (noise.type != Random::NONE)) {
+    u->net += u->noise;
+  }
+  else if((noise_type.type == LeabraNoiseSpec::NET_MULT_NOISE) && (noise.type != Random::NONE)) {
+    u->net *= u->noise;
   }
 }
 
@@ -1025,19 +1029,6 @@ void LeabraUnitSpec::Compute_SelfReg_Cycle(LeabraUnitVars* u, LeabraNetwork* net
   Compute_ShortPlast_Cycle(u, net, thr_no);
 }
 
-float LeabraUnitSpec::Compute_Noise(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
-  float rval = 0.0f;
-  if(noise_adapt.trial_fixed) {
-    rval = u->noise; // u->noise is trial-level generated value
-  }
-  else {
-    rval = noise.Gen(thr_no);
-    u->noise = rval;
-  }
-
-  return rval;
-}
-
 void LeabraUnitSpec::Compute_Act_Post(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   Compute_SRAvg(u, net, thr_no);
   Compute_Margin(u, net, thr_no);
@@ -1257,6 +1248,13 @@ void LeabraUnitSpec::GraphActFmNetFun(DataTable* graph_data, float g_i, float mi
   if(!graph_data) {
     graph_data = proj->GetNewAnalysisDataTable(name + "_ActFmNetFun", true);
   }
+  
+  FunLookup        nxx1_fun;
+  FunLookup        noise_conv;
+
+  nxx1_fun.OwnTempObj();
+  noise_conv.OwnTempObj();
+
   CreateNXX1Fun(act, nxx1_fun, noise_conv);
   int idx;
   graph_data->StructUpdate(true);

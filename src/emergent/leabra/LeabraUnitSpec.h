@@ -56,7 +56,7 @@ eTypeDef_Of(SynDelaySpec);
 eTypeDef_Of(DeepSpec);
 eTypeDef_Of(TRCSpec);
 eTypeDef_Of(DaModSpec);
-eTypeDef_Of(NoiseAdaptSpec);
+eTypeDef_Of(LeabraNoiseSpec);
 eTypeDef_Of(LeabraUnitSpec);
 eTypeDef_Of(LeabraUnitSpec_core);
 
@@ -239,8 +239,6 @@ public:
                                             int thr_no);
     // #CAT_Activation compute whole-neuron (presynaptic) short-term plasticity at the cycle level, using the stp parameters -- updates the syn_* unit variables
 
-    virtual float Compute_Noise(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
-    // #CAT_Activation utility fun to generate and return the noise value based on current settings -- will set unit->noise value as appropriate (generally excludes effect of noise_sched schedule)
 
   ///////////////////////////////////////////////////////////////////////
   //        Post Activation Step
