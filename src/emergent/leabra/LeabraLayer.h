@@ -99,8 +99,8 @@ public:
   Average	avg_net_sd;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #DMEM_AGG_SUM average net_sd (computed over previous epoch) -- standard deviation of the minus phase net inputs across the layer -- this is a key statistic to monitor over time for how much the units are gaining traction on the problem -- they should be getting more differentiated and sd should go up -- if not, then the network will likely fail
   float         hog_pct;           // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic the percentage of units in the layer that have a long-time-averaged activitation level that is above the layerspec hog_thr threshold, indicating that they are 'hogging' the representational space (because this is computed on a time average, there is no epoch average of this statistic)
   float         dead_pct;           // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic the percentage of units in the layer that have a long-time-averaged activitation level that is below the layerspec dead_thr threshold, indicating that they are effectively 'dead' and not participating in any representations (because this is computed on a time average, there is no epoch average of this statistic)
+
   LeabraUnGpData_List ungp_data; // #NO_SAVE #NO_COPY #TREE_SHOW #HIDDEN #CAT_Activation unit group data (for inhibition computation and other things) -- allows actual unit groups to be virtual (virt_groups flag)
-  LeabraUnGpData_List multigp_data; // #NO_SAVE #NO_COPY #TREE_SHOW #HIDDEN #CAT_Activation unit group data (for multi-unit-group inhibition computation and other things)
   LeabraUnGpData      laygp_data;   // #NO_SAVE #NO_COPY #TREE_SHOW #HIDDEN #CAT_Activation layer-group inhibition data -- first layer in a layer group that has lay_gp_inhib.on active has the data for the entire layer group
   float_Matrix	      twod_vals;    // #TREE_SHOW matrix of layer-encoded values, dimensions: [gp_y][gp_x][n_vals][TWOD_N][TWOD_XY] (outer to inner) -- gp_y and gp_x are group indices, size 1,1, for a layer with no unit groups
 
@@ -119,14 +119,8 @@ public:
   LeabraUnGpData* 	UnGpData(int gpidx)
   { return ungp_data.SafeEl(gpidx); }
   // #CAT_Structure get unit group data structure for given unit group index
-  LeabraUnGpData* 	MultiGpData(int gpidx)
-  { return multigp_data.SafeEl(gpidx); }
-  // #CAT_Structure get multi unit group data structure for given unit group index
   LeabraUnGpData* 	UnGpDataUn(Unit* un)
   { return ungp_data.SafeEl(un->ug_idx); }
-  // #CAT_Structure get unit group data structure for unit group for given unit
-  LeabraUnGpData* 	MultiGpDataUn(Unit* un)
-  { return multigp_data.SafeEl(un->ug_idx); }
   // #CAT_Structure get unit group data structure for unit group for given unit
   bool          	HasUnitGpInhib()
   { return spec->HasUnitGpInhib(this); }

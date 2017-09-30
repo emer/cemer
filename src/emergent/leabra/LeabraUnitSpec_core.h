@@ -22,19 +22,21 @@
 // outer context including this MUST have the following defines:
 
 // for member class elements that group together relevant parameters
-// #define MEMBER_CLASS_SUFFIX _cuda -- or empty for base case
-// #define SPEC_MEMBER_BASE SpecMemberBase or SpecMemberBase_cuda or ..
+// #define UNITSPEC_MEMBER_SUFFIX _cuda -- or empty for base case
+// #define UNITSPEC_MEMBER_BASE SpecMemberBase or SpecMemberBase_cuda or ..
 
 // for main spec class
-// #define SPEC_CLASS_SUFFIX _cuda or _core
-// #define SPEC_BASE UnitSpec_cuda or UnitSpec
+// #define UNITSPEC_CLASS_SUFFIX _cuda or _core
+// #define UNITSPEC_BASE UnitSpec_cuda or UnitSpec
 
 // make sure we have a cudafun defined -- actual cuda needs to include ta_cuda.h
 #ifndef CUDAFUN
 #define CUDAFUN
 #endif
 
+#ifndef INLINE
 #define INLINE CUDAFUN inline
+#endif
 
 #include <UnitVars_core>
 
@@ -45,15 +47,16 @@ public:
   #include "LeabraUnitVars_core.h"
 };
 
+#ifndef PASTETWOITEMSTOGETHER
 #define PASTETWOITEMSTOGETHER(c,s) c ## s
-
 #define CLASS_SUFFIXED(c,s) PASTETWOITEMSTOGETHER(c,s)
+#endif
 
-#define SPEC_MEMBER(c) CLASS_SUFFIXED(c,MEMBER_CLASS_SUFFIX)
+#define UNITSPEC_MEMBER(c) CLASS_SUFFIXED(c,UNITSPEC_MEMBER_SUFFIX)
 
-#define SPEC_MEMBER_CLASS(c) class E_API CLASS_SUFFIXED(c,MEMBER_CLASS_SUFFIX) : public SPEC_MEMBER_BASE
+#define UNITSPEC_MEMBER_CLASS(c) class E_API CLASS_SUFFIXED(c,UNITSPEC_MEMBER_SUFFIX) : public UNITSPEC_MEMBER_BASE
 
-#define SPEC_CLASS(c) class E_API CLASS_SUFFIXED(c,SPEC_CLASS_SUFFIX) : public SPEC_BASE
+#define UNITSPEC_CLASS(c) class E_API CLASS_SUFFIXED(c,UNITSPEC_CLASS_SUFFIX) : public UNITSPEC_BASE
 
 #ifdef LeabraUnitSpec_h
 // for the standard C++ TA case
@@ -62,17 +65,17 @@ public:
 
 #define UNITVARS LeabraUnitVars
 
-#define TA_STD_CODE(c) \
+#define UNITSPEC_TD_STD_CODE(c) \
   String        GetTypeDecoKey() const override { return "UnitSpec"; } \
   \
-  TA_SIMPLE_BASEFUNS(CLASS_SUFFIXED(c, MEMBER_CLASS_SUFFIX));   \
+  TA_SIMPLE_BASEFUNS(CLASS_SUFFIXED(c, UNITSPEC_MEMBER_SUFFIX));   \
 protected: \
   SPEC_DEFAULTS; \
 private: \
   void Destroy() { }
 
-#define TA_STD_CODE_SPEC(c) \
-  TA_SIMPLE_BASEFUNS(CLASS_SUFFIXED(c, SPEC_CLASS_SUFFIX));     \
+#define UNITSPEC_TD_STD_CODE_SPEC(c) \
+  TA_SIMPLE_BASEFUNS(CLASS_SUFFIXED(c, UNITSPEC_CLASS_SUFFIX));     \
 protected: \
   SPEC_DEFAULTS; \
 private: \
@@ -88,11 +91,11 @@ private: \
 
 #define UNITVARS LeabraUnitVars_gen
 
-#define TA_STD_CODE(c) \
-  CLASS_SUFFIXED(c, MEMBER_CLASS_SUFFIX) () { Initialize(); }
+#define UNITSPEC_TD_STD_CODE(c) \
+  CLASS_SUFFIXED(c, UNITSPEC_MEMBER_SUFFIX) () { Initialize(); }
 
-#define TA_STD_CODE_SPEC(c) \
-  CLASS_SUFFIXED(c, SPEC_CLASS_SUFFIX) () { Initialize(); }
+#define UNITSPEC_TD_STD_CODE_SPEC(c) \
+  CLASS_SUFFIXED(c, UNITSPEC_CLASS_SUFFIX) () { Initialize(); }
 
 #define UPDATE_AFTER_EDIT(c) void UpdateAfterEdit_impl() { c }
 
@@ -106,9 +109,9 @@ private: \
 #pragma maketa_file_is_target LeabraUnitSpec
 
 
-SPEC_MEMBER_CLASS(LeabraActFunSpec) {
+UNITSPEC_MEMBER_CLASS(LeabraActFunSpec) {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra activation function specifications, using the gelin (g_e linear) activation function by default
-INHERITED(SPEC_MEMBER_BASE)
+INHERITED(UNITSPEC_MEMBER_BASE)
 public:
   float         thr;                // #DEF_0.5 threshold value Theta (Q) for firing output activation (.5 is more accurate value based on AdEx biological parameters and normalization -- see BioParams button)
   float         gain;                // #DEF_80;100;40 #MIN_0 gain (gamma) of the rate-coded activation functions -- 100 is default, 80 works better for larger models, and 40 is closer to the actual spiking behavior of the AdEx model -- use lower values for more graded signals, generally in lower input/sensory layers of the network
@@ -153,7 +156,7 @@ public:
   }
   // noisy x/(x+1) function -- directly computes close approximation to x/(x+1) convolved with a gaussian noise function with variance nvar -- no need for a lookup table -- very reasonable approximation for standard range of parameters (nvar = .01 or less -- higher values of nvar are less accurate with large gains, but ok for lower gains)
 
-  TA_STD_CODE(LeabraActFunSpec);
+  UNITSPEC_TD_STD_CODE(LeabraActFunSpec);
   
   UPDATE_AFTER_EDIT( UpdateParams(); );
   
@@ -175,9 +178,9 @@ private:
 };
 
 
-SPEC_MEMBER_CLASS(LeabraActMiscSpec) {
+UNITSPEC_MEMBER_CLASS(LeabraActMiscSpec) {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra miscellaneous activation computation parameters and specs
-INHERITED(SPEC_MEMBER_BASE)
+INHERITED(UNITSPEC_MEMBER_BASE)
 public:
   bool          rec_nd;         // record the act_nd non-depressed activation variable (instead of act_eq) for the act_q* quarter-trial and phase (act_m, act_p) activation state variables -- these are used primarily for statistics, or possibly for specialized learning mechanisms
   bool          avg_nd;         // use the act_nd non-depressed activation variable (instead of act_eq) for the time-average activation values (avg_ss, avg_s, avg_m, avg_l) used in the XCAL learning mechanism -- this is appropriate for action-potential driven learning dynamics, as compared to synaptic efficacy, when short term plasticity is present
@@ -195,7 +198,7 @@ public:
   { return (int) (1.0f / (time_inc * integ * act * act_max_hz)); }
   // #CAT_ActMisc compute spiking interval based on network time_inc, dt.integ, and unit act -- note that network time_inc is usually .001 = 1 msec per cycle -- this depends on that being accurately set
 
-  TA_STD_CODE(LeabraActMiscSpec);
+  UNITSPEC_TD_STD_CODE(LeabraActMiscSpec);
 
   UPDATE_AFTER_EDIT(avg_dt = 1.0f / avg_tau;);
 
@@ -211,9 +214,9 @@ private:
 };
 
 
-SPEC_MEMBER_CLASS(SpikeFunSpec) {
+UNITSPEC_MEMBER_CLASS(SpikeFunSpec) {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra spiking activation function specs -- conductance is computed postsynaptically using an alpha function based on spike pulses sent presynaptically -- for clamped layers, spiking probability is proportional to external input controlled by the clamp_type and clamp_max_p values -- soft clamping may still be a better option though
-INHERITED(SPEC_MEMBER_BASE)
+INHERITED(UNITSPEC_MEMBER_BASE)
 public:
   float         rise;                // #DEF_0 #MIN_0 exponential rise time (in cycles) of the synaptic conductance according to the alpha function 1/(decay - rise) [e^(-t/decay) - e^(-t/rise)] -- set to 0 to only include decay time (1/decay e^(-t/decay)), which is highly optimized (doesn't use window -- just uses recursive exp decay) and thus the default!
   float         decay;                // #DEF_5 #MIN_0 exponential decay time (in cycles) of the synaptic conductance according to the alpha function 1/(decay - rise) [e^(-t/decay) - e^(-t/rise)] -- set to 0 to implement a delta function (not very useful)
@@ -236,7 +239,7 @@ public:
     return gg_decay_rise * (taMath_float::exp_fast(-t * oneo_decay) - taMath_float::exp_fast(-t * oneo_rise)); // full alpha
   }
 
-  TA_STD_CODE(SpikeFunSpec);
+  UNITSPEC_TD_STD_CODE(SpikeFunSpec);
 
   UPDATE_AFTER_EDIT
     (if(window <= 0) window = 1;
@@ -281,9 +284,9 @@ private:
 };
 
 
-SPEC_MEMBER_CLASS(SpikeMiscSpec) {
+UNITSPEC_MEMBER_CLASS(SpikeMiscSpec) {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra extra misc spiking parameters 
-INHERITED(SPEC_MEMBER_BASE)
+INHERITED(UNITSPEC_MEMBER_BASE)
 public:
   enum ClampType {                // how to generate spikes during hard clamp conditions
     POISSON,                        // generate spikes according to Poisson distribution with probability = clamp_max_p * u->ext
@@ -302,7 +305,7 @@ public:
 
   float         eff_spk_thr;    // #HIDDEN #READ_ONLY effective spiking threshold -- depends on whether exponential mechanism is being used (= act.thr if not ex, else spk_thr)
 
-  TA_STD_CODE(SpikeMiscSpec);
+  UNITSPEC_TD_STD_CODE(SpikeMiscSpec);
 
 private:
   void        Initialize()      { Defaults_init(); }
@@ -320,39 +323,39 @@ private:
 };
 
 
-SPEC_MEMBER_CLASS(OptThreshSpec) {
+UNITSPEC_MEMBER_CLASS(OptThreshSpec) {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra optimization thresholds for faster processing
-INHERITED(SPEC_MEMBER_BASE)
+INHERITED(UNITSPEC_MEMBER_BASE)
 public:
   float         send;                   // #DEF_0.1 don't send activation when act <= send -- greatly speeds processing
   float         delta;                  // #DEF_0.005 don't send activation changes until they exceed this threshold: only for when LeabraNetwork::send_delta is on!
   float         xcal_lrn;               // #DEF_0.01 xcal learning threshold -- don't learn when sending unit activation is below this value in both phases -- due to the nature of the learning function being 0 when the sr coproduct is 0, it should not affect learning in any substantial way -- this is applied in the LeabraConSpec, so other learning algorithms that have different properties should ignore it
 
-  TA_STD_CODE(OptThreshSpec);
+  UNITSPEC_TD_STD_CODE(OptThreshSpec);
 private:
   void        Initialize()      { Defaults_init(); }
   void        Defaults_init()   { send = .1f; delta = 0.005f; xcal_lrn = 0.01f; }
 };
 
 
-SPEC_MEMBER_CLASS(LeabraInitSpec) {
+UNITSPEC_MEMBER_CLASS(LeabraInitSpec) {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra initial values for key network state variables -- initialized at start of trial with Init_Acts or DecayState
-INHERITED(SPEC_MEMBER_BASE)
+INHERITED(UNITSPEC_MEMBER_BASE)
 public:
   float       v_m;        // #DEF_0.4 initial membrane potential -- see e_rev.l for the resting potential (typically .3) -- often works better to have a somewhat elevated initial membrane potential relative to that
   float       act;        // #DEF_0 initial activation value -- typically 0
   float       netin;      // #DEF_0 baseline level of excitatory net input -- netin is initialized to this value, and it is added in as a constant background level of excitatory input -- captures all the other inputs not represented in the model, and intrinsic excitability, etc
 
-  TA_STD_CODE(LeabraInitSpec);
+  UNITSPEC_TD_STD_CODE(LeabraInitSpec);
 private:
   void        Initialize()      { Defaults_init(); }
   void        Defaults_init()   { act = 0.0f;  v_m = 0.4f;  netin = 0.0f; }
 };
 
 
-SPEC_MEMBER_CLASS(LeabraDtSpec) {
+UNITSPEC_MEMBER_CLASS(LeabraDtSpec) {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra time and rate constants for temporal derivatives in Leabra (Vm, net input)
-INHERITED(SPEC_MEMBER_BASE)
+INHERITED(UNITSPEC_MEMBER_BASE)
 public:
   float         integ;           // #DEF_1;0.5 #MIN_0 overall rate constant for numerical integration, for all equations at the unit level -- all time constants are specified in millisecond units, with one cycle = 1 msec -- if you instead want to make one cycle = 2 msec, you can do this globaly by setting this integ value to 2 (etc).  However, stability issues will likely arise if you go too high.  For improved numerical stability, you may even need to reduce this value to 0.5 or possibly even lower (typically however this is not necessary).  MUST also coordinate this with network.time_inc variable to ensure that global network.time reflects simulated time accurately
   float         vm_tau;          // #AKA_vm_time #DEF_2.81:10 [3.3 std for rate code, 2.81 for spiking] #MIN_1 membrane potential and rate-code activation time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly -- 1.4x the half-life) -- reflects the capacitance of the neuron in principle -- biological default for AeEx spiking model C = 281 pF = 2.81 normalized -- for rate-code activation, this also determines how fast to integrate computed activation values over time
@@ -362,7 +365,7 @@ public:
   float         vm_dt;           // #READ_ONLY #EXPERT rate = 1 / tau
   float         net_dt;          // #READ_ONLY #EXPERT rate = 1 / tau
 
-  TA_STD_CODE(LeabraDtSpec);
+  UNITSPEC_TD_STD_CODE(LeabraDtSpec);
   
   UPDATE_AFTER_EDIT(vm_dt = 1.0f / vm_tau;  net_dt = 1.0f / net_tau; );
   
@@ -377,9 +380,9 @@ private:
 };
 
 
-SPEC_MEMBER_CLASS(LeabraActAvgSpec) {
+UNITSPEC_MEMBER_CLASS(LeabraActAvgSpec) {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra rate constants for averaging over activations -- only used in XCAL learning rules
-INHERITED(SPEC_MEMBER_BASE)
+INHERITED(UNITSPEC_MEMBER_BASE)
 public:
   float         ss_tau;                // #DEF_2;20 #MIN_1 time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly -- 1.4x the half-life), for continuously updating the super-short time-scale avg_ss value -- this is provides a pre-integration step before integrating into the avg_s short time scale
   float         s_tau;                // #DEF_2;20 #MIN_1 time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly -- 1.4x the half-life), for continuously updating the short time-scale avg_s value from the super-short avg_ss value (cascade mode) -- avg_s represents the plus phase learning signal that reflects the most recent past information
@@ -391,7 +394,7 @@ public:
   float         m_dt;                // #READ_ONLY #EXPERT rate = 1 / tau
   float         s_in_s;              // #READ_ONLY #EXPERT 1-m_in_s
 
-  TA_STD_CODE(LeabraActAvgSpec);
+  UNITSPEC_TD_STD_CODE(LeabraActAvgSpec);
   
   UPDATE_AFTER_EDIT(ss_dt = 1.0f / ss_tau;  s_dt = 1.0f / s_tau;
                     m_dt = 1.0f / m_tau;    s_in_s = 1.0f - m_in_s; );
@@ -409,9 +412,9 @@ private:
 };
 
 
-SPEC_MEMBER_CLASS(LeabraAvgLSpec) {
+UNITSPEC_MEMBER_CLASS(LeabraAvgLSpec) {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra parameters for computing the long-term floating average value, avg_l, which is used for driving BCM-style hebbian learning in XCAL -- this form of learning increases contrast of weights and generally decreases overall activity of neuron, to prevent "hog" units -- it is computed as a running average of the (gain multiplied) medium-time-scale average activation at the end of the trial
-INHERITED(SPEC_MEMBER_BASE)
+INHERITED(UNITSPEC_MEMBER_BASE)
 public:
   float         init;           // #DEF_0.4 #MIN_0 #MAX_1 initial avg_l value at start of training
   float         gain;           // #DEF_1.5;2;2.5 #AKA_max #MIN_0 gain multiplier on activation used in computing the running average avg_l value -- lower values are sometimes better for some models but higher ones are generally not -- it is a good idea to experiment with this parameter a bit
@@ -435,7 +438,7 @@ public:
   // update long-term average value from given activation, using average-based update
 
   
-  TA_STD_CODE(LeabraAvgLSpec);
+  UNITSPEC_TD_STD_CODE(LeabraAvgLSpec);
   
   UPDATE_AFTER_EDIT(dt = 1.0f / tau;  lrn_fact = (lrn_max - lrn_min) / (gain - min); );
   
@@ -451,15 +454,15 @@ private:
 };
 
 
-SPEC_MEMBER_CLASS(LeabraAvgL2Spec) {
+UNITSPEC_MEMBER_CLASS(LeabraAvgL2Spec) {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra additional parameters for computing the long-term floating average value, avg_l, which is used for driving BCM-style hebbian learning in XCAL -- this form of learning increases contrast of weights and generally decreases overall activity of neuron, to prevent "hog" units
-INHERITED(SPEC_MEMBER_BASE)
+INHERITED(UNITSPEC_MEMBER_BASE)
 public:
   bool          err_mod;        // #DEF_true if true, then we multiply avg_l_lrn factor by layer.cos_diff_avg_lrn to make hebbian term roughly proportional to amount of error driven learning signal across layers -- cos_diff_avg computes the running average of the cos diff value between act_m and act_p (no diff is 1, max diff is 0), and cos_diff_avg_lrn = 1 - cos_diff_avg (and 0 for non-HIDDEN layers), so the effective lrn value is high when there are large error signals (differences) in a layer, and low when error signals are low, producing a more consistent mix overall -- typically this error level tends to be stable for a given layer, so this is really just a quick shortcut for setting layer-specific mixes by hand (which the brain can do) -- see LeabraLayerSpec cos_diff.avg_tau rate constant for integrating cos_diff_avg value
   float         err_min;        // #DEF_0.01:0.1 #CONDSHOW_ON_err_mod minimum layer.cos_diff_avg_lrn value (for non-zero cases, i.e., not for target or input layers) -- ensures a minimum amount of self-organizing learning even for layers that have a very small level of error signal
   float         lay_act_thr;    // #DEF_0.01 threshold of layer average activation on this trial, in order to update avg_l values -- setting to 0 disables this check
   
-  TA_STD_CODE(LeabraAvgL2Spec);
+  UNITSPEC_TD_STD_CODE(LeabraAvgL2Spec);
 
 private:
   void        Initialize()      { Defaults_init(); }
@@ -470,15 +473,15 @@ private:
 };
 
 
-SPEC_MEMBER_CLASS(LeabraChannels) {
+UNITSPEC_MEMBER_CLASS(LeabraChannels) {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra channels used in Leabra
-INHERITED(SPEC_MEMBER_BASE)
+INHERITED(UNITSPEC_MEMBER_BASE)
 public:
   float         e;                // excitatory (sodium (Na) channel), synaptic glutamate AMPA activated
   float         l;                // constant leak (potassium, K+) channel 
   float         i;                // inhibitory (chloride, Cl-) channel, synaptic GABA activated
 
-  TA_STD_CODE(LeabraChannels);
+  UNITSPEC_TD_STD_CODE(LeabraChannels);
   
 private:
   void        Initialize()      { Defaults_init(); }
@@ -486,9 +489,9 @@ private:
 };
 
 
-SPEC_MEMBER_CLASS(ActAdaptSpec) {
+UNITSPEC_MEMBER_CLASS(ActAdaptSpec) {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra activation-driven adaptation dynamics -- negative feedback on v_m based on sub- and super-threshold activation -- relatively rapid time-scale and especially relevant for spike-based models -- drives the adapt variable on the unit
-INHERITED(SPEC_MEMBER_BASE)
+INHERITED(UNITSPEC_MEMBER_BASE)
 public:
   bool          on;                // apply adaptation?
   float         tau;                // #CONDSHOW_ON_on #DEF_144 adaptation dynamics time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly -- 1.4x the half-life)
@@ -504,7 +507,7 @@ public:
   { return dt * (vm_gain * (vm - e_rev_l) - adapt); }
   // compute the change in adapt given vm, resting reversal potential (leak reversal), and adapt inputs
 
-  TA_STD_CODE(ActAdaptSpec);
+  UNITSPEC_TD_STD_CODE(ActAdaptSpec);
   
   UPDATE_AFTER_EDIT(dt = 1.0f / tau;  Ei_dt = 1.0f / Ei_tau; );
   
@@ -520,9 +523,9 @@ private:
 };
 
 
-SPEC_MEMBER_CLASS(ShortPlastSpec) {
+UNITSPEC_MEMBER_CLASS(ShortPlastSpec) {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra short-term plasticity specifications -- different algorithms are available to update the syn_tr amount of neurotransmitter available to release, which multiplies computed firing rate or spiking (but not act_nd) to produce a net sending activation efficacy in the act and act_eq variables
-INHERITED(SPEC_MEMBER_BASE)
+INHERITED(UNITSPEC_MEMBER_BASE)
 public:
   enum STPAlgorithm {           // which algorithm to use for STP
      CYCLES,                    // uses standard equations summarized in Hennig, 2013 (eq 6) to capture both facilitation and depression dynamics as a function of presynaptic firing -- models interactions between number of vesicles available to release, and probability of release, and a time-varying recovery rate -- rate code uses generated spike var to drive this
@@ -568,7 +571,7 @@ public:
     return syn_tr;
   }
   
-  TA_STD_CODE(ShortPlastSpec);
+  UNITSPEC_TD_STD_CODE(ShortPlastSpec);
   
   UPDATE_AFTER_EDIT
     ( fac_tau = f_r_ratio * rec_tau;  rec_dt = 1.0f / rec_tau;
@@ -600,23 +603,23 @@ private:
   }    
 };
 
-SPEC_MEMBER_CLASS(SynDelaySpec) {
+UNITSPEC_MEMBER_CLASS(SynDelaySpec) {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra synaptic delay -- activation sent to other units is delayed by a given number of cycles
-INHERITED(SPEC_MEMBER_BASE)
+INHERITED(UNITSPEC_MEMBER_BASE)
 public:
   bool          on;                // is synaptic delay active?
   int           delay;             // #CONDSHOW_ON_on #MIN_0 number of cycles to delay for
 
-  TA_STD_CODE(SynDelaySpec);
+  UNITSPEC_TD_STD_CODE(SynDelaySpec);
 private:
   void        Initialize()      { on = false; delay = 4; Defaults_init(); }
   void        Defaults_init()   { }; // note: does NOT do any init -- these vals are not really subject to defaults in the usual way, so don't mess with them
 };
 
 
-SPEC_MEMBER_CLASS(DeepSpec) {
+UNITSPEC_MEMBER_CLASS(DeepSpec) {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra specs for DeepLeabra deep neocortical layer dynamics, which capture attentional, thalamic auto-encoder, and temporal integration mechanisms 
-INHERITED(SPEC_MEMBER_BASE)
+INHERITED(UNITSPEC_MEMBER_BASE)
 public:
   enum DeepRole {          // what role do these neurons play in the deep layer network dynamics -- determines what function the deep_net plays
     SUPER,                 // superficial layer cortical neurons -- generate a deep_raw activation based on thresholds, and receive a deep_net signal from ongoing deep layer neuron activations via SendDeepModConSpec connections, which they then turn into a deep_mod activation value that multiplies activations in this layer
@@ -660,7 +663,7 @@ public:
   { return on && role == DEEP; }
   // should we apply deep context netinput?  only for deep guys
 
-  TA_STD_CODE(DeepSpec);
+  UNITSPEC_TD_STD_CODE(DeepSpec);
   
   UPDATE_AFTER_EDIT(mod_range = 1.0f - mod_min;  ctxt_new = 1.0f - ctxt_prv;
                     else_new = 1.0f - else_prv; );
@@ -679,9 +682,9 @@ private:
 };
 
 
-SPEC_MEMBER_CLASS(TRCSpec) {
+UNITSPEC_MEMBER_CLASS(TRCSpec) {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra specs for DeepLeabra thalamic relay cells -- engaged only for deep.on and deep.role == TRC
-INHERITED(SPEC_MEMBER_BASE)
+INHERITED(UNITSPEC_MEMBER_BASE)
 public:
   bool       p_only_m;          // TRC plus-phase (clamping) for TRC units only occurs if the minus phase max activation for given unit group is above .1
   bool       thal_gate;         // apply thalamic gating to TRC activations -- multiply netin by current thal parameter
@@ -699,7 +702,7 @@ public:
   // compute TRC plus-phase clamp netinput
   
   
-  TA_STD_CODE(TRCSpec);
+  UNITSPEC_TD_STD_CODE(TRCSpec);
   
   UPDATE_AFTER_EDIT(std_gain = 1.0f - deep_gain;);
 
@@ -716,15 +719,15 @@ private:
 };
 
 
-SPEC_MEMBER_CLASS(DaModSpec) {
+UNITSPEC_MEMBER_CLASS(DaModSpec) {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra specs for effects of da-based modulation: plus-phase = learning effects
-INHERITED(SPEC_MEMBER_BASE)
+INHERITED(UNITSPEC_MEMBER_BASE)
 public:
   bool          on;               // whether to add dopamine factor to net input
   float         minus;            // #CONDSHOW_ON_on how much to multiply da_p in the minus phase to add to netinput -- use negative values for NoGo/indirect pathway/D2 type neurons
   float         plus;             // #CONDSHOW_ON_on #AKA_gain how much to multiply da_p in the plus phase to add to netinput -- use negative values for NoGo/indirect pathway/D2 type neurons
 
-  TA_STD_CODE(DaModSpec);
+  UNITSPEC_TD_STD_CODE(DaModSpec);
 private:
   void        Initialize()
   { on = false;  minus = 0.0f;  plus = 0.01f; Defaults_init(); }
@@ -732,9 +735,9 @@ private:
 };
 
 
-SPEC_MEMBER_CLASS(LeabraNoiseSpec) {
+UNITSPEC_MEMBER_CLASS(LeabraNoiseSpec) {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra specs for noise type etc
-INHERITED(SPEC_MEMBER_BASE)
+INHERITED(UNITSPEC_MEMBER_BASE)
 public:
   enum NoiseType {               // where to add processing noise
     NO_NOISE,                    // no noise added to processing
@@ -747,7 +750,7 @@ public:
   NoiseType     type;            // where to add processing noise
   bool          trial_fixed;     // keep the same noise value over the entire trial -- prevents noise from being washed out and produces a stable effect that can be better used for learning -- this is strongly recommended for most learning situations
 
-  TA_STD_CODE(LeabraNoiseSpec);
+  UNITSPEC_TD_STD_CODE(LeabraNoiseSpec);
 
 private:
   void        Initialize()      { type = NO_NOISE; trial_fixed = true; }
@@ -756,9 +759,9 @@ private:
 
 
   
-SPEC_CLASS(LeabraUnitSpec) {
+UNITSPEC_CLASS(LeabraUnitSpec) {
   // #STEM_BASE ##CAT_Leabra Leabra unit specifications, point-neuron approximation
-INHERITED(SPEC_BASE)
+INHERITED(UNITSPEC_BASE)
 public:
   enum ActFun {
     NOISY_XX1,                        // x over x plus 1 convolved with Gaussian noise (noise is nvar)
@@ -777,31 +780,31 @@ public:
   };
 
   ActFun            act_fun;        // #CAT_Activation activation function to use -- typically NOISY_XX1 or SPIKE -- others are for special purposes or testing
-  SPEC_MEMBER(LeabraActFunSpec)  act;            // #CAT_Activation activation function parameters -- very important for determining the shape of the selected act_fun
-  SPEC_MEMBER(LeabraActMiscSpec) act_misc;       // #CAT_Activation miscellaneous activation parameters
-  SPEC_MEMBER(SpikeFunSpec)      spike;          // #CONDSHOW_ON_act_fun:SPIKE #CAT_Activation spiking function specs (only for act_fun = SPIKE)
-  SPEC_MEMBER(SpikeMiscSpec)    spike_misc;      // #CAT_Activation misc extra spiking function specs (only for act_fun = SPIKE)
-  SPEC_MEMBER(OptThreshSpec)    opt_thresh;      // #CAT_Learning optimization thresholds for speeding up processing when units are basically inactive
-  SPEC_MEMBER(MinMaxRange)      clamp_range;     // #CAT_Activation range of clamped activation values (min, max, 0, .95 std), don't clamp to 1 because acts can't reach, so .95 instead
-  SPEC_MEMBER(MinMaxRange)      vm_range;        // #CAT_Activation membrane potential range (min, max, 0-2 for normalized)
-  SPEC_MEMBER(LeabraInitSpec)   init;            // #CAT_Activation initial starting values for various key neural parameters
-  SPEC_MEMBER(LeabraDtSpec)     dt;              // #CAT_Activation time constants (rate of updating): membrane potential (vm) and net input (net)
-  SPEC_MEMBER(LeabraActAvgSpec) act_avg;         // #CAT_Learning time constants (rate of updating) for computing activation averages -- used in XCAL learning rules
-  SPEC_MEMBER(LeabraAvgLSpec)   avg_l;           // #CAT_Learning parameters for computing the avg_l long-term floating average that drives BCM-style hebbian learning
-  SPEC_MEMBER(LeabraAvgL2Spec)  avg_l_2;         // #CAT_Learning additional parameters for computing the avg_l long-term floating average that drives BCM-style hebbian learning
-  SPEC_MEMBER(LeabraChannels)   g_bar;           // #CAT_Activation [Defaults: 1, .1, 1] maximal conductances for channels
-  SPEC_MEMBER(LeabraChannels)   e_rev;           // #CAT_Activation [Defaults: 1, .3, .25] reversal potentials for each channel
-  SPEC_MEMBER(ActAdaptSpec)     adapt;           // #CAT_Activation activation-driven adaptation factor that drives spike rate adaptation dynamics based on both sub- and supra-threshold membrane potentials
-  SPEC_MEMBER(ShortPlastSpec)   stp;             // #CAT_Activation short term presynaptic plasticity specs -- can implement full range between facilitating vs. depresssion
-  SPEC_MEMBER(SynDelaySpec)     syn_delay;       // #CAT_Activation synaptic delay -- if active, activation sent to other units is delayed by a given amount
+  UNITSPEC_MEMBER(LeabraActFunSpec)  act;            // #CAT_Activation activation function parameters -- very important for determining the shape of the selected act_fun
+  UNITSPEC_MEMBER(LeabraActMiscSpec) act_misc;       // #CAT_Activation miscellaneous activation parameters
+  UNITSPEC_MEMBER(SpikeFunSpec)      spike;          // #CONDSHOW_ON_act_fun:SPIKE #CAT_Activation spiking function specs (only for act_fun = SPIKE)
+  UNITSPEC_MEMBER(SpikeMiscSpec)    spike_misc;      // #CAT_Activation misc extra spiking function specs (only for act_fun = SPIKE)
+  UNITSPEC_MEMBER(OptThreshSpec)    opt_thresh;      // #CAT_Learning optimization thresholds for speeding up processing when units are basically inactive
+  UNITSPEC_MEMBER(MinMaxRange)      clamp_range;     // #CAT_Activation range of clamped activation values (min, max, 0, .95 std), don't clamp to 1 because acts can't reach, so .95 instead
+  UNITSPEC_MEMBER(MinMaxRange)      vm_range;        // #CAT_Activation membrane potential range (min, max, 0-2 for normalized)
+  UNITSPEC_MEMBER(LeabraInitSpec)   init;            // #CAT_Activation initial starting values for various key neural parameters
+  UNITSPEC_MEMBER(LeabraDtSpec)     dt;              // #CAT_Activation time constants (rate of updating): membrane potential (vm) and net input (net)
+  UNITSPEC_MEMBER(LeabraActAvgSpec) act_avg;         // #CAT_Learning time constants (rate of updating) for computing activation averages -- used in XCAL learning rules
+  UNITSPEC_MEMBER(LeabraAvgLSpec)   avg_l;           // #CAT_Learning parameters for computing the avg_l long-term floating average that drives BCM-style hebbian learning
+  UNITSPEC_MEMBER(LeabraAvgL2Spec)  avg_l_2;         // #CAT_Learning additional parameters for computing the avg_l long-term floating average that drives BCM-style hebbian learning
+  UNITSPEC_MEMBER(LeabraChannels)   g_bar;           // #CAT_Activation [Defaults: 1, .1, 1] maximal conductances for channels
+  UNITSPEC_MEMBER(LeabraChannels)   e_rev;           // #CAT_Activation [Defaults: 1, .3, .25] reversal potentials for each channel
+  UNITSPEC_MEMBER(ActAdaptSpec)     adapt;           // #CAT_Activation activation-driven adaptation factor that drives spike rate adaptation dynamics based on both sub- and supra-threshold membrane potentials
+  UNITSPEC_MEMBER(ShortPlastSpec)   stp;             // #CAT_Activation short term presynaptic plasticity specs -- can implement full range between facilitating vs. depresssion
+  UNITSPEC_MEMBER(SynDelaySpec)     syn_delay;       // #CAT_Activation synaptic delay -- if active, activation sent to other units is delayed by a given amount
   Quarters         deep_raw_qtr;    // #CAT_Learning #AKA_deep_qtr quarter(s) during which deep_raw layer 5 intrinsic bursting activations should be updated -- deep_raw is updated and sent to deep_raw_net during this quarter, and deep_ctxt is updated right after this quarter (wrapping around to the first quarter for the 4th quarter)
-  SPEC_MEMBER(DeepSpec)         deep;            // #CAT_Learning specs for DeepLeabra deep neocortical layer dynamics, which capture attentional, thalamic auto-encoder, and temporal integration mechanisms 
-  SPEC_MEMBER(TRCSpec)          trc;             // #CAT_Learning #CONDSHOW_ON_deep.on&&deep.role:TRC specs for DeepLeabra TRC thalamic relay cells
-  SPEC_MEMBER(DaModSpec)        da_mod;          // #CAT_Learning da modulation of activations (for da-based learning, and other effects)
-  SPEC_MEMBER(LeabraNoiseSpec)  noise_type;      // #CAT_Activation random noise in the processing parameters
+  UNITSPEC_MEMBER(DeepSpec)         deep;            // #CAT_Learning specs for DeepLeabra deep neocortical layer dynamics, which capture attentional, thalamic auto-encoder, and temporal integration mechanisms 
+  UNITSPEC_MEMBER(TRCSpec)          trc;             // #CAT_Learning #CONDSHOW_ON_deep.on&&deep.role:TRC specs for DeepLeabra TRC thalamic relay cells
+  UNITSPEC_MEMBER(DaModSpec)        da_mod;          // #CAT_Learning da modulation of activations (for da-based learning, and other effects)
+  UNITSPEC_MEMBER(LeabraNoiseSpec)  noise_type;      // #CAT_Activation random noise in the processing parameters
   RandomSpec       noise;           // #CONDSHOW_OFF_noise_type.type:NO_NOISE #CAT_Activation distribution parameters for random added noise
   
-  SPEC_MEMBER(LeabraChannels) e_rev_sub_thr;     // #CAT_Activation #READ_ONLY #NO_SAVE #HIDDEN e_rev - act.thr for each item -- used for compute_ithresh
+  UNITSPEC_MEMBER(LeabraChannels) e_rev_sub_thr;     // #CAT_Activation #READ_ONLY #NO_SAVE #HIDDEN e_rev - act.thr for each item -- used for compute_ithresh
   float          thr_sub_e_rev_i;   // #CAT_Activation #READ_ONLY #NO_SAVE #HIDDEN g_bar.i * (act.thr - e_rev.i) used for compute_ithresh
   float          thr_sub_e_rev_e;   // #CAT_Activation #READ_ONLY #NO_SAVE #HIDDEN g_bar.e * (act.thr - e_rev.e) used for compute_ethresh
 
@@ -1632,7 +1635,7 @@ public:
   }
   // IGNORE compute normalized binary error (0-1 as function of bits off of act_m vs target) according to settings on the network (returns a 1 or 0) -- if (net->lstats.on_errs && act_m > .5 && targ < .5) return 1; if (net->lstats.off_errs && act_m < .5 && targ > .5) return 1; else return 0
 
-  TA_STD_CODE_SPEC(LeabraUnitSpec);
+  UNITSPEC_TD_STD_CODE_SPEC(LeabraUnitSpec);
 
   UPDATE_AFTER_EDIT
     ( e_rev_sub_thr.e = e_rev.e - act.thr;

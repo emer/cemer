@@ -20,7 +20,6 @@
 #include <taMisc>
 
 TA_BASEFUNS_CTORS_DEFN(LeabraInhibSpec);
-TA_BASEFUNS_CTORS_DEFN(LeabraMultiGpSpec);
 TA_BASEFUNS_CTORS_DEFN(LayerAvgActSpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraAdaptInhib);
 TA_BASEFUNS_CTORS_DEFN(LeabraActMargin);
@@ -30,187 +29,15 @@ TA_BASEFUNS_CTORS_DEFN(LayerDecaySpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraDelInhib);
 TA_BASEFUNS_CTORS_DEFN(LeabraCosDiffMod);
 TA_BASEFUNS_CTORS_DEFN(LeabraLayStats);
+
+TA_BASEFUNS_CTORS_DEFN(LeabraLayerSpec_core);
 TA_BASEFUNS_CTORS_DEFN(LeabraLayerSpec);
+
 TA_BASEFUNS_CTORS_LITE_DEFN(LeabraLayerSpec_SPtr);
 SMARTREF_OF_CPP(LeabraLayerSpec);
 
 eTypeDef_Of(MarkerConSpec);
 
-void LeabraInhibSpec::Initialize() {
-  on = true;
-  Defaults_init();
-}
-
-void LeabraInhibSpec::Defaults_init() {
-  gi = 1.8f;
-  ff = 1.0f;
-  fb = 1.0f;
-  fb_tau = 1.4f;
-  max_vs_avg = 0.0f;
-  ff0 = 0.1f;
-  
-  fb_dt = 1.0f / fb_tau;
-}
-
-void LeabraInhibSpec::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-  fb_dt = 1.0f / fb_tau;
-}
-
-void LeabraMultiGpSpec::Initialize() {
-  size = 3;
-  st_off = -1;
-  sub_size = 1;
-  wrap = true;
-}
-
-void LeabraMultiGpSpec::Defaults_init() {
-}
-
-void LayerAvgActSpec::Initialize() {
-  targ_init = 0.15f;
-  
-  Defaults_init();
-}
-
-void LayerAvgActSpec::Defaults_init() {
-  fixed = false;
-  use_ext_act = false;
-  use_first = true;
-  tau = 100.0f;
-  adjust = 1.0f;
-  dt = 1.0f / tau;
-}
-
-void LayerAvgActSpec::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-  dt = 1.0f / tau;
-}
-
-void LeabraAdaptInhib::Initialize() {
-  on = false;
-  Defaults_init();
-}
-
-void LeabraAdaptInhib::Defaults_init() {
-  tol_pct = 0.25f;
-  trial_interval = 100;
-  tau = 200.0f;
-  dt = 1.0f / tau;
-}
-
-void LeabraAdaptInhib::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-  dt = 1.0f / tau;
-}
-
-void LeabraActMargin::Initialize() {
-  Defaults_init();
-}
-
-void LeabraActMargin::Defaults_init() {
-  pct_marg = 0.3f;
-  avg_tau = 100.0f;
-  adapt_tau = 500.0f;
-  tol_pct = 0.25f;
-  avg_act = 0.8f;
-  low_thr = 0.501f;
-  med_thr = 0.506f;
-  hi_thr = 0.508f;
-
-  avg_dt = 1.0f / avg_tau;
-  adapt_dt = 1.0f / adapt_tau;
-}
-
-void LeabraActMargin::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-  avg_dt = 1.0f / avg_tau;
-  adapt_dt = 1.0f / adapt_tau;
-}
-
-void LeabraInhibMisc::Initialize() {
-  net_thr = 0.0f;
-  thr_rel = true;
-  self_fb = 0.0f;
-  fb_up_immed = false;
-
-  Defaults_init();
-}
-
-void LeabraInhibMisc::Defaults_init() {
-  self_tau = 1.4f;
-  self_dt = 1.0f / self_tau;
-}
-
-void LeabraInhibMisc::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-  self_dt = 1.0f / self_tau;
-}
-
-void LeabraClampSpec::Initialize() {
-  hard = true;
-  avg = false;
-  avg_gain = 0.2f;
-  Defaults_init();
-}
-
-void LeabraClampSpec::Defaults_init() {
-  gain = .2f;
-}
-
-void LayerDecaySpec::Initialize() {
-  trial = 1.0f;
-
-  Defaults_init();
-}
-
-void LayerDecaySpec::Defaults_init() {
-}
-
-void LeabraDelInhib::Initialize() {
-  on = false;
-  prv_trl = 0.0f;
-  prv_q = 0.0f;
-
-  Defaults_init();
-}
-
-void LeabraDelInhib::Defaults_init() {
-}
-
-void LeabraDelInhib::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-}
-
-void LeabraCosDiffMod::Initialize() {
-  Defaults_init();
-}
-
-void LeabraCosDiffMod::Defaults_init() {
-  avg_tau = 100.0f;
-  lrate_mod = false;
-  lrmod_fm_trc = false;
-  lrmod_z_thr = -1.5f;
-  set_net_unlrn = false;
-
-  avg_dt = 1.0f / avg_tau;
-  avg_dt_c = 1.0f - avg_dt;
-}
-
-void LeabraCosDiffMod::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-  avg_dt = 1.0f / avg_tau;
-  avg_dt_c = 1.0f - avg_dt;
-}
-
-void LeabraLayStats::Initialize() {
-  Defaults_init();
-}
-
-void LeabraLayStats::Defaults_init() {
-  hog_thr = 0.3f;
-  dead_thr = 0.01f;
-}
 
 
 //////////////////////////////////////////////////////////
@@ -218,14 +45,10 @@ void LeabraLayStats::Defaults_init() {
 
 void LeabraLayerSpec::Initialize() {
   min_obj_type = &TA_LeabraLayer;
-  unit_gp_inhib.on = false;
-  multi_gp_inhib.on = false;
-  lay_gp_inhib.on = false;
   Defaults_init();
 }
 
 void LeabraLayerSpec::Defaults_init() {
-  lay_lrate = 1.0f;
 }
 
 void LeabraLayerSpec::UpdateAfterEdit_impl() {
@@ -233,7 +56,6 @@ void LeabraLayerSpec::UpdateAfterEdit_impl() {
 
   lay_inhib.UpdateAfterEdit_NoGui();
   unit_gp_inhib.UpdateAfterEdit_NoGui();
-  multi_gp_inhib.UpdateAfterEdit_NoGui();
   lay_gp_inhib.UpdateAfterEdit_NoGui();
   avg_act.UpdateAfterEdit_NoGui();
   cos_diff.UpdateAfterEdit_NoGui();
@@ -342,17 +164,6 @@ void LeabraLayerSpec::Init_Weights_Layer(LeabraLayer* lay, LeabraNetwork* net) {
       else {
         gpd->acts_p_avg_eff = avg_act.adjust * gpd->acts_p_avg;
       }
-
-      gpd = lay->multigp_data.FastEl(g);
-      gpd->Init_State();
-      gpd->acts_m_avg = avg_act.targ_init;
-      gpd->acts_p_avg = avg_act.targ_init;
-      if(avg_act.fixed) {
-        gpd->acts_p_avg_eff = avg_act.targ_init;
-      }
-      else {
-        gpd->acts_p_avg_eff = avg_act.adjust * gpd->acts_p_avg;
-      }
     }
   }
   lay->laygp_data.Init_State();
@@ -418,9 +229,6 @@ void LeabraLayerSpec::Init_Acts_Layer(LeabraLayer* lay, LeabraNetwork* net) {
     for(int g=0; g < lay->gp_geom.n; g++) {
       LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
       gpd->Inhib_Init_Acts(this);
-
-      gpd = lay->multigp_data.FastEl(g);
-      gpd->Inhib_Init_Acts(this);
     }
   }
   lay->laygp_data.Inhib_Init_Acts(this);
@@ -448,11 +256,12 @@ void LeabraLayerSpec::Trial_Init_Specs(LeabraLayer* lay, LeabraNetwork* net) {
     p->Trial_Init_Specs(net);
   }
 
-  if(lay_gp_inhib.on) 
+  if(lay_gp_inhib.on) {
     net->net_misc.lay_gp_inhib = true;
-
-  if(decay.trial > 0.0f)
+  }
+  if(decay.trial > 0.0f) {
     net->net_misc.trial_decay = true;
+  }
 }
 
 void LeabraLayerSpec::Trial_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
@@ -470,10 +279,6 @@ void LeabraLayerSpec::Trial_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
     if(lay->unit_groups) {
       for(int g=0; g < lay->gp_geom.n; g++) {
         LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
-        gpd->i_val.ffi -= decay.trial * gpd->i_val.ffi;
-        gpd->i_val.fbi -= decay.trial * gpd->i_val.fbi;
-
-        gpd = lay->multigp_data.FastEl(g);
         gpd->i_val.ffi -= decay.trial * gpd->i_val.ffi;
         gpd->i_val.fbi -= decay.trial * gpd->i_val.fbi;
       }
@@ -586,9 +391,6 @@ void LeabraLayerSpec::Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net, int th
       Compute_Inhib_impl(lay, (LeabraInhib*)gpd, net, unit_gp_inhib);
     }
   }
-  if(HasMultiGpInhib(lay)) {
-    Compute_MultiGpInhib(lay, net, thr_no);
-  }
   if(HasLayerInhib(lay)) {
     Compute_Inhib_impl(lay, (LeabraInhib*)lay, net, lay_inhib);
   }
@@ -599,45 +401,6 @@ void LeabraLayerSpec::Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net, int th
   }
 
   Compute_LayInhibToGps(lay, net); // sync it all up..
-}
-
-void LeabraLayerSpec::Compute_MultiGpInhib(LeabraLayer* lay, LeabraNetwork* net, int thr_no) {
-  bool wrap = multi_gp_geom.wrap;
-
-  taVector2i gpc;
-  for(gpc.y = 0; gpc.y < lay->gp_geom.y; gpc.y++) {
-    for(gpc.x = 0; gpc.x < lay->gp_geom.x; gpc.x++) {
-      int gpidx = lay->UnitGpIdxFmPos(gpc);
-
-      taVector2i st_gpc;
-      st_gpc = gpc / multi_gp_geom.sub_size; // auto takes int part
-      st_gpc *= multi_gp_geom.sub_size;
-      st_gpc += multi_gp_geom.st_off;         // add offset, post sub-grouping
-
-      LeabraUnGpData* mgpd = lay->multigp_data.FastEl(gpidx);
-      mgpd->netin.InitVals();
-      mgpd->acts.InitVals();
-
-      taVector2i ngpc;  // neighbor gp to get values from
-      for(ngpc.y = st_gpc.y; ngpc.y < st_gpc.y + multi_gp_geom.size.y; ngpc.y++) {
-        for(ngpc.x = st_gpc.x; ngpc.x < st_gpc.x + multi_gp_geom.size.x; ngpc.x++) {
-          taVector2i ngpc_wrp = ngpc;
-          if(ngpc_wrp.WrapClip(wrap, lay->gp_geom) && !wrap)
-            continue;
-          int ngpidx = lay->UnitGpIdxFmPos(ngpc_wrp);
-
-          LeabraUnGpData* ngpd = lay->ungp_data.FastEl(ngpidx);
-
-          mgpd->netin.UpdtFmAvgMax(ngpd->netin);
-          mgpd->acts.UpdtFmAvgMax(ngpd->acts);
-        }
-      }
-      mgpd->netin.CalcAvg();
-      mgpd->acts.CalcAvg();
-      // mgpd has average netin and acts across multi-gp groups
-      Compute_Inhib_impl(lay, (LeabraInhib*)mgpd, net, multi_gp_inhib);
-    }
-  }
 }
 
 void LeabraLayerSpec::Compute_Inhib_impl
@@ -687,7 +450,7 @@ void LeabraLayerSpec::Compute_LayInhibToGps(LeabraLayer* lay, LeabraNetwork* net
   
   if(!lay->unit_groups) return;
   
-  if(unit_gp_inhib.on || multi_gp_inhib.on) {
+  if(unit_gp_inhib.on) {
     for(int g=0; g < lay->gp_geom.n; g++) {
       LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
       gpd->i_val.lay_g_i = lay->i_val.g_i;
@@ -696,10 +459,6 @@ void LeabraLayerSpec::Compute_LayInhibToGps(LeabraLayer* lay, LeabraNetwork* net
       }
       else {
         gpd->i_val.g_i = 0.0f;
-      }
-      if(multi_gp_inhib.on) {
-        LeabraUnGpData* mgpd = lay->multigp_data.FastEl(g);
-        gpd->i_val.g_i = fmaxf(gpd->i_val.g_i, mgpd->i_val.g_i);
       }
     }
   }

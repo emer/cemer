@@ -62,11 +62,11 @@ eTypeDef_Of(LeabraUnitSpec_core);
 
 // key defines for LeabraUnitSpec_core
 
-#define MEMBER_CLASS_SUFFIX 
-#define SPEC_MEMBER_BASE SpecMemberBase
+#define UNITSPEC_MEMBER_SUFFIX 
+#define UNITSPEC_MEMBER_BASE SpecMemberBase
 
-#define SPEC_CLASS_SUFFIX _core
-#define SPEC_BASE UnitSpec
+#define UNITSPEC_CLASS_SUFFIX _core
+#define UNITSPEC_BASE UnitSpec
 
 #include <LeabraUnitSpec_core>
 
