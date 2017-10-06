@@ -174,6 +174,688 @@ bool taCodeUtils::CreateNewSrcFiles(const String& type_nm, const String& top_pat
   return got_one;
 }
 
+bool taCodeUtils::CreateNewSpecFiles(const String& type_nm, const String& top_path,
+			       const String& src_dir) {
+  String src_path = top_path + PATH_SEP + src_dir + PATH_SEP;
+  String crfile = src_path + "COPYRIGHT.txt";
+  String cmfile = src_path + "CMakeFiles.txt";
+  String hfile = src_path + type_nm + ".h";
+  String cppfile = src_path + type_nm + ".cpp";
+  String incfile = top_path + "/include/" + type_nm;
+  String incfileh = incfile + ".h";
+
+  String corehfile = src_path + type_nm + "_core.h";
+  String corecppfile = src_path + type_nm + "_core.cpp";
+  String coreincfile = top_path + "/include/" + type_nm + "_core";
+  String coreincfileh = coreincfile + ".h";
+  
+  String mbrshfile = src_path + type_nm + "_mbrs.h";
+  String mbrscppfile = src_path + type_nm + "_mbrs.cpp";
+  String mbrsincfile = top_path + "/include/" + type_nm + "_mbrs";
+  String mbrsincfileh = mbrsincfile + ".h";
+  
+  String cpphfile = src_path + type_nm + "_cpp.h";
+  String cppcppfile = src_path + type_nm + "_cpp.cpp";
+  String cppincfile = top_path + "/include/" + type_nm + "_cpp";
+  String cppincfileh = cppincfile + ".h";
+
+  String cudahfile = src_path + type_nm + "_cuda.h";
+  String cudacppfile = src_path + type_nm + "_cuda.cpp";
+  String cudaincfile = top_path + "/include/" + type_nm + "_cuda";
+  String cudaincfileh = cudaincfile + ".h";
+  
+  if(!taMisc::FileExists(crfile)) {
+    taMisc::Error("CreateNewSrcFiles: copyright file:", crfile, "not found -- paths must be wrong -- aborting");
+    return false;
+  }
+
+  String crstr;
+  crstr.LoadFromFile(crfile);
+
+  bool got_one = false;
+
+  //////////////////////////////////////////////
+  // regular "main" headers
+  
+  if(taMisc::FileExists(hfile)) {
+    taMisc::Warning("header file:", hfile, "already exists, not changing");
+  }
+  else {
+    String str = crstr;
+    str << "\n#ifndef " << type_nm << "_h\n"
+        << "#define " << type_nm << "_h 1\n\n"
+        << "// parent includes:\n"
+        << "#include <UnitSpec> // replace with actual parent\n\n"
+        << "// member includes:\n\n"
+        << "// full standalone C++ implementation State code (include algo specific one)\n"
+        << "#include <NetworkState_cpp>\n\n"
+        << "#include <State_main>\n\n"
+        << "// declare all other types mentioned but not required to include:\n\n"
+        << "eTypeDef_Of(" << type_nm << ");\n\n"
+        << "class E_API " << type_nm << " : public UnitSpec {\n"
+        << "  // <describe here in full detail in one extended line comment>\n"
+        << "INHERITED(UnitSpec)\n"
+        << "public:\n\n"
+        << "#include <" << type_nm << "_core>\n\n"
+        << "  TA_SIMPLE_BASEFUNS(" << type_nm << ");\n"
+        << "protected:\n"
+        << "  SPEC_DEFAULTS;\n"
+        << "private:\n"
+        << "  void Initialize()  {\n"
+        << "    Defaults_init(); // also init any non-defaults\n"
+        << "  }\n"
+        << "  void Defaults_init() {\n"
+        << "  };\n"
+        << "};\n\n"
+        << "#endif // " << type_nm << "_h\n";
+    str.SaveToFile(hfile);
+    taMisc::ExecuteCommand("svn add " + hfile);
+    got_one = true;
+  }
+
+  if(taMisc::FileExists(cppfile)) {
+    taMisc::Warning("cpp file:", cppfile, "already exists, not changing");
+  }
+  else {
+    String str = crstr;
+    str << "\n#include \"" << type_nm << ".h\"\n\n"
+        << "TA_BASEFUNS_CTORS_DEFN(" << type_nm << ");\n\n";
+    str.SaveToFile(cppfile);
+    taMisc::ExecuteCommand("svn add " + cppfile);
+    got_one = true;
+  }
+
+  if(taMisc::FileExists(incfile)) {
+    taMisc::Warning("include file:", incfile, "already exists, not changing");
+  }
+  else {
+    String str;
+    str << "#include \"" << type_nm << ".h\"\n";
+    str.SaveToFile(incfile);
+    taMisc::ExecuteCommand("svn add " + incfile);
+    got_one = true;
+  }
+
+  if(taMisc::FileExists(incfileh)) {
+    taMisc::Warning("include file:", incfileh, "already exists, not changing");
+  }
+  else {
+    String str;
+    str << "#include \"../" << src_dir << PATH_SEP << type_nm << ".h\"\n";
+    str.SaveToFile(incfileh);
+    taMisc::ExecuteCommand("svn add " + incfileh);
+    got_one = true;
+  }
+
+  //////////////////////////////////////////////
+  // CORE files
+  
+  if(taMisc::FileExists(corehfile)) {
+    taMisc::Warning("header file:", corehfile, "already exists, not changing");
+  }
+  else {
+    String str = "";            // no copyright!
+    str << "// this contains core shared code, and is included directly in " << type_nm << ".h, _cpp.h, _cuda.h\n"
+        << "//{\n"
+        << "  INLINE virtual void SampleInlineFun() { do something; }\n"
+        << "  // #CAT_State does something..\n\n"
+        << "  INIMPL virtual void SampleNotInlineFun();\n"
+        << "  // #CAT_State impl in _core.cpp\n\n"
+        << "private:\n"
+        << "  INLINE void Initialize_core() {\n"
+        << "    // init all members -- called by constructors\n"
+        << "  };\n\n";
+    str.SaveToFile(corehfile);
+    taMisc::ExecuteCommand("svn add " + corehfile);
+    got_one = true;
+  }
+
+  if(taMisc::FileExists(corecppfile)) {
+    taMisc::Warning("cpp file:", corecppfile, "already exists, not changing");
+  }
+  else {
+    String str = ""; // no copyright
+    str << "// contains core non-inline (INIMPL) functions from _core.h\n"
+        << "// if used, include directly in " << type_nm << ".cpp, _cpp.cpp, _cuda.cpp\n\n";
+    str.SaveToFile(corecppfile);
+    taMisc::ExecuteCommand("svn add " + corecppfile);
+    got_one = true;
+  }
+
+  if(taMisc::FileExists(coreincfile)) {
+    taMisc::Warning("include file:", coreincfile, "already exists, not changing");
+  }
+  else {
+    String str;
+    str << "#include \"" << type_nm << "_core.h\"\n";
+    str.SaveToFile(coreincfile);
+    taMisc::ExecuteCommand("svn add " + coreincfile);
+    got_one = true;
+  }
+
+  if(taMisc::FileExists(coreincfileh)) {
+    taMisc::Warning("include file:", coreincfileh, "already exists, not changing");
+  }
+  else {
+    String str;
+    str << "#include \"../" << src_dir << PATH_SEP << type_nm << "_core.h\"\n";
+    str.SaveToFile(coreincfileh);
+    taMisc::ExecuteCommand("svn add " + coreincfileh);
+    got_one = true;
+  }
+
+  //////////////////////////////////////////////
+  // MBRS files
+
+  if(taMisc::FileExists(mbrshfile)) {
+    taMisc::Warning("header file:", mbrshfile, "already exists, not changing");
+  }
+  else {
+    String str = crstr;
+    str << "\n// this contains all full classes that appear as members of _core specs\n"
+        << "// it must be included directly in " << type_nm << ".h, _cpp.h, _cuda.h\n"
+        << "// the STATE_CLASS macro will define a _cpp _cuda or plain (no suffix) version\n\n"
+        << "// this pragma ensures that maketa properly grabs this type information even though\n"
+        << "// this file is included in the other files -- we get ta info for main and _cpp, not cuda\n"
+        << "#pragma maketa_file_is_target " << type_nm << "\n"
+        << "#pragma maketa_file_is_target " << type_nm << "_cpp\n\n"
+        << "class STATE_CLASS(MySpecMember) : public STATE_CLASS(SpecMemberBase) {\n"
+        << "  // ##NO_TOKENS ##INLINE #NO_UPDATE_AFTER ##CAT_Network specifies ??\n"
+        << "INHERITED(SpecMemberBase)\n"
+        << "public:\n\n"
+        << "  INLINE virtual void SampleInlineFun() { do something; }\n"
+        << "  // does something..\n\n"
+        << "  INIMPL virtual void SampleNotInlineFun();\n"
+        << "  // in _mbrs.cpp -- generally try to put all inline\n\n"
+        << "  STATE_DECO_KEY(\"UnitSpec\");\n"
+        << "  STATE_TA_STD_CODE_SPEC(MySpecMember);\n"
+        << "  // STATE_UAE( update after edit code here; );\n"
+        << "private:\n"
+        << "  void  Initialize() {\n"
+        << "    mbr = 1.0f; // initialize all vals here\n"
+        << "    Defaults_init();\n"
+        << "  }\n"
+        << "  void  Defaults_init() {\n"
+        << "    def_mbr = 1.0f; // all strong defaults go here\n"
+        << "  }\n"
+        << "};\n\n";
+
+    str.SaveToFile(mbrshfile);
+    taMisc::ExecuteCommand("svn add " + mbrshfile);
+    got_one = true;
+  }
+
+  if(taMisc::FileExists(mbrscppfile)) {
+    taMisc::Warning("cpp file:", mbrscppfile, "already exists, not changing");
+  }
+  else {
+    String str = ""; // no copyright
+    str << "// contains mbrs non-inline (INIMPL) functions from _mbrs.h\n"
+        << "// if used, must be included directly in " << type_nm << ".cpp, _cpp.cpp, _cuda.cpp\n\n"
+        << "// NOTE: the main " << type_nm << ".cpp file must have TA_BASEFUNS_CTORS_DEFN(MySpecMember);\n"
+        << "// for all classes defined in _mbrs.h\n\n";
+    str.SaveToFile(mbrscppfile);
+    taMisc::ExecuteCommand("svn add " + mbrscppfile);
+    got_one = true;
+  }
+
+  if(taMisc::FileExists(mbrsincfile)) {
+    taMisc::Warning("include file:", mbrsincfile, "already exists, not changing");
+  }
+  else {
+    String str;
+    str << "#include \"" << type_nm << "_mbrs.h\"\n";
+    str.SaveToFile(mbrsincfile);
+    taMisc::ExecuteCommand("svn add " + mbrsincfile);
+    got_one = true;
+  }
+
+  if(taMisc::FileExists(mbrsincfileh)) {
+    taMisc::Warning("include file:", mbrsincfileh, "already exists, not changing");
+  }
+  else {
+    String str;
+    str << "#include \"../" << src_dir << PATH_SEP << type_nm << "_mbrs.h\"\n";
+    str.SaveToFile(mbrsincfileh);
+    taMisc::ExecuteCommand("svn add " + mbrsincfileh);
+    got_one = true;
+  }
+
+  
+  //////////////////////////////////////////////
+  // CPP files
+
+  if(taMisc::FileExists(cpphfile)) {
+    taMisc::Warning("header file:", cpphfile, "already exists, not changing");
+  }
+  else {
+    String str = crstr;
+    str << "\n#ifndef " << type_nm << "_cpp_h\n"
+        << "#define " << type_nm << "_cpp_h 1\n\n"
+        << "// raw C++ (cpp) version of spec -- ideally no emergent / ta dependencies\n\n"
+        << "// parent includes:\n"
+        << "#include <UnitSpec_cpp> // replace with actual parent\n\n"
+        << "#include <State_cpp>\n\n"
+        << "// member includes:\n\n"
+        << "#include <" << type_nm << "_mbrs.h>\n\n"
+        << "// declare all other types mentioned but not required to include:\n\n"
+        << "class " << type_nm << "_cpp : public UnitSpec_cpp {\n"
+        << "  // <describe here in full detail in one extended line comment>\n"
+        << "INHERITED(UnitSpec)\n"
+        << "public:\n\n"
+        << "#include <" << type_nm << "_core>\n\n"
+        << "  " << type_nm << "_cpp() { Initialize_core(); }\n"
+        << "};\n\n"
+        << "#endif // " << type_nm << "_cpp_h\n";
+
+    str.SaveToFile(cpphfile);
+    taMisc::ExecuteCommand("svn add " + cpphfile);
+    got_one = true;
+  }
+
+  if(taMisc::FileExists(cppcppfile)) {
+    taMisc::Warning("cpp file:", cppcppfile, "already exists, not changing");
+  }
+  else {
+    String str = crstr;
+    str << "\n// contains cpp non-inline (INIMPL) functions from _cpp.h\n\n"
+        << "#include \"" << type_nm << "_cpp.h\"\n\n"
+        << "// #include \"" << type_nm << "_mbrs.cpp\"   // include member impls if defined\n\n"
+        << "// #include \"" << type_nm << "_core.cpp\"   // include member impls if defined\n\n";
+    str.SaveToFile(cppcppfile);
+    taMisc::ExecuteCommand("svn add " + cppcppfile);
+    got_one = true;
+  }
+
+  if(taMisc::FileExists(cppincfile)) {
+    taMisc::Warning("include file:", cppincfile, "already exists, not changing");
+  }
+  else {
+    String str;
+    str << "#include \"" << type_nm << "_cpp.h\"\n";
+    str.SaveToFile(cppincfile);
+    taMisc::ExecuteCommand("svn add " + cppincfile);
+    got_one = true;
+  }
+
+  if(taMisc::FileExists(cppincfileh)) {
+    taMisc::Warning("include file:", cppincfileh, "already exists, not changing");
+  }
+  else {
+    String str;
+    str << "#include \"../" << src_dir << PATH_SEP << type_nm << "_cpp.h\"\n";
+    str.SaveToFile(cppincfileh);
+    taMisc::ExecuteCommand("svn add " + cppincfileh);
+    got_one = true;
+  }
+
+  
+  //////////////////////////////////////////////
+  // CUDA files
+
+  if(taMisc::FileExists(cudahfile)) {
+    taMisc::Warning("header file:", cudahfile, "already exists, not changing");
+  }
+  else {
+    String str = crstr;
+    str << "\n#ifndef " << type_nm << "_cuda_h\n"
+        << "#define " << type_nm << "_cuda_h 1\n\n"
+        << "// raw C++ (cuda) version of spec -- no emergent / ta dependencies\n\n"
+        << "// parent includes:\n"
+        << "#include <UnitSpec_cuda> // replace with actual parent\n\n"
+        << "#include <State_cuda>\n\n"
+        << "// member includes:\n\n"
+        << "#include <" << type_nm << "_mbrs.h>\n\n"
+        << "// declare all other types mentioned but not required to include:\n\n"
+        << "class " << type_nm << "_cuda : public UnitSpec_cuda {\n"
+        << "  // <describe here in full detail in one extended line comment>\n"
+        << "INHERITED(UnitSpec)\n"
+        << "public:\n\n"
+        << "#include <" << type_nm << "_core>\n\n"
+        << "  " << type_nm << "_cuda() { Initialize_core(); }\n"
+        << "};\n\n"
+        << "#endif // " << type_nm << "_cuda_h\n";
+
+    str.SaveToFile(cudahfile);
+    taMisc::ExecuteCommand("svn add " + cudahfile);
+    got_one = true;
+  }
+
+  if(taMisc::FileExists(cudacppfile)) {
+    taMisc::Warning("cuda file:", cudacppfile, "already exists, not changing");
+  }
+  else {
+    String str = crstr;
+    str << "\n// contains cuda non-inline (INIMPL) functions from _cuda.h\n\n"
+        << "#include \"" << type_nm << "_cuda.h\"\n\n"
+        << "// #include \"" << type_nm << "_mbrs.cpp\"   // include member impls if defined\n\n"
+        << "// #include \"" << type_nm << "_core.cpp\"   // include member impls if defined\n\n";
+    str.SaveToFile(cudacppfile);
+    taMisc::ExecuteCommand("svn add " + cudacppfile);
+    got_one = true;
+  }
+
+  if(taMisc::FileExists(cudaincfile)) {
+    taMisc::Warning("include file:", cudaincfile, "already exists, not changing");
+  }
+  else {
+    String str;
+    str << "#include \"" << type_nm << "_cuda.h\"\n";
+    str.SaveToFile(cudaincfile);
+    taMisc::ExecuteCommand("svn add " + cudaincfile);
+    got_one = true;
+  }
+
+  if(taMisc::FileExists(cudaincfileh)) {
+    taMisc::Warning("include file:", cudaincfileh, "already exists, not changing");
+  }
+  else {
+    String str;
+    str << "#include \"../" << src_dir << PATH_SEP << type_nm << "_cuda.h\"\n";
+    str.SaveToFile(cudaincfileh);
+    taMisc::ExecuteCommand("svn add " + cudaincfileh);
+    got_one = true;
+  }
+
+  
+  //////////////////////////////////////////////
+  // CmakeFiles.txt files
+  
+  String cmstr;
+  cmstr.LoadFromFile(cmfile);
+  bool changed = false;
+
+  if(!cmstr.contains(type_nm + ".h")) {
+    if(cmstr.contains(".h\n)")) {
+      String cmrest = cmstr.after(".h\n)");
+      cmstr = cmstr.before(".h\n)");
+      cmstr << ".h\n  " << type_nm << "_cpp.h\n"
+            << "# note: include _core.h, _mbrs.h in non-maketa headers, cuda.h in cuda section\n"
+            << "  " << type_nm << ".h\n)" << cmrest;
+      changed = true;
+    }
+    else {
+      taMisc::Warning("key sequence of: .h\\n) not found in CMakeFiles.txt -- needed for updating file -- please fix file and add your new .h file manually");
+    }
+  }
+  if(!cmstr.contains(type_nm + ".cpp")) {
+    if(cmstr.contains(".cpp\n)")) {
+      String cmrest = cmstr.after(".cpp\n)");
+      cmstr = cmstr.before(".cpp\n)");
+      cmstr << ".cpp\n  " << type_nm << "_cpp.cpp\n"
+            << "# note: include cuda.cpp in cuda section -- need .cu symlinks -- ignore _core.cpp, _mbrs.cpp\n"
+            << "  " << type_nm << ".cpp\n)" << cmrest;
+      changed = true;
+    }
+    else {
+      taMisc::Warning("key sequence of: .cpp\\n) not found in CMakeFiles.txt -- needed for updating file -- please fix file and add your new .cpp file manually");
+    }
+  }
+
+  if(changed) {
+    cmstr.SaveToFile(cmfile);
+  }
+
+  return got_one;
+}
+
+bool taCodeUtils::CreateNewStateFiles(const String& type_nm, const String& top_path,
+                                      const String& src_dir) {
+  String src_path = top_path + PATH_SEP + src_dir + PATH_SEP;
+  String crfile = src_path + "COPYRIGHT.txt";
+  String cmfile = src_path + "CMakeFiles.txt";
+
+  String corehfile = src_path + type_nm + "_core.h";
+  String corecppfile = src_path + type_nm + "_core.cpp";
+  String coreincfile = top_path + "/include/" + type_nm + "_core";
+  String coreincfileh = coreincfile + ".h";
+  
+  String cpphfile = src_path + type_nm + "_cpp.h";
+  String cppcppfile = src_path + type_nm + "_cpp.cpp";
+  String cppincfile = top_path + "/include/" + type_nm + "_cpp";
+  String cppincfileh = cppincfile + ".h";
+
+  String cudahfile = src_path + type_nm + "_cuda.h";
+  String cudacppfile = src_path + type_nm + "_cuda.cpp";
+  String cudaincfile = top_path + "/include/" + type_nm + "_cuda";
+  String cudaincfileh = cudaincfile + ".h";
+  
+  if(!taMisc::FileExists(crfile)) {
+    taMisc::Error("CreateNewSrcFiles: copyright file:", crfile, "not found -- paths must be wrong -- aborting");
+    return false;
+  }
+
+  String crstr;
+  crstr.LoadFromFile(crfile);
+
+  bool got_one = false;
+
+  //////////////////////////////////////////////
+  // CORE files
+  
+  if(taMisc::FileExists(corehfile)) {
+    taMisc::Warning("header file:", corehfile, "already exists, not changing");
+  }
+  else {
+    String str = "";            // no copyright!
+    str << "// this contains core shared code, and is included directly in " << type_nm << " _cpp.h, _cuda.h\n"
+        << "//{\n"
+        << "  float     state_var; // this is my state variable\n\n"
+        << "  INLINE virtual void SampleInlineFun() { do something; }\n"
+        << "  // #CAT_State does something..\n\n"
+        << "  INIMPL virtual void SampleNotInlineFun();\n"
+        << "  // #CAT_State impl in _core.cpp\n\n"
+        << "  INLINE void Initialize_core() {\n"
+        << "    // init all members -- called by constructors\n"
+        << "  };\n\n";
+    str.SaveToFile(corehfile);
+    taMisc::ExecuteCommand("svn add " + corehfile);
+    got_one = true;
+  }
+
+  if(taMisc::FileExists(corecppfile)) {
+    taMisc::Warning("cpp file:", corecppfile, "already exists, not changing");
+  }
+  else {
+    String str = ""; // no copyright
+    str << "// contains core non-inline (INIMPL) functions from _core.h\n"
+        << "// if used, include directly in " << type_nm << ".cpp, _cpp.cpp, _cuda.cpp\n\n";
+    str.SaveToFile(corecppfile);
+    taMisc::ExecuteCommand("svn add " + corecppfile);
+    got_one = true;
+  }
+
+  if(taMisc::FileExists(coreincfile)) {
+    taMisc::Warning("include file:", coreincfile, "already exists, not changing");
+  }
+  else {
+    String str;
+    str << "#include \"" << type_nm << "_core.h\"\n";
+    str.SaveToFile(coreincfile);
+    taMisc::ExecuteCommand("svn add " + coreincfile);
+    got_one = true;
+  }
+
+  if(taMisc::FileExists(coreincfileh)) {
+    taMisc::Warning("include file:", coreincfileh, "already exists, not changing");
+  }
+  else {
+    String str;
+    str << "#include \"../" << src_dir << PATH_SEP << type_nm << "_core.h\"\n";
+    str.SaveToFile(coreincfileh);
+    taMisc::ExecuteCommand("svn add " + coreincfileh);
+    got_one = true;
+  }
+
+  //////////////////////////////////////////////
+  // CPP files
+
+  if(taMisc::FileExists(cpphfile)) {
+    taMisc::Warning("header file:", cpphfile, "already exists, not changing");
+  }
+  else {
+    String str = crstr;
+    str << "\n#ifndef " << type_nm << "_cpp_h\n"
+        << "#define " << type_nm << "_cpp_h 1\n\n"
+        << "// raw C++ (cpp) version of state -- no emergent / ta dependencies\n\n"
+        << "// parent includes:\n"
+        << "#include <UnitState_cpp> // replace with actual parent\n\n"
+        << "#include <State_cpp>\n\n"
+        << "// member includes:\n\n"
+        << "// declare all other types mentioned but not required to include:\n\n"
+        << "class " << type_nm << "_cpp : public UnitState_cpp {\n"
+        << "  // <describe here in full detail in one extended line comment>\n"
+        << "INHERITED(UnitState)\n"
+        << "public:\n\n"
+        << "#include <" << type_nm << "_core>\n\n"
+        << "  " << type_nm << "_cpp() { Initialize_core(); }\n"
+        << "};\n\n"
+        << "#endif // " << type_nm << "_cpp_h\n";
+
+    str.SaveToFile(cpphfile);
+    taMisc::ExecuteCommand("svn add " + cpphfile);
+    got_one = true;
+  }
+
+  if(taMisc::FileExists(cppcppfile)) {
+    taMisc::Warning("cpp file:", cppcppfile, "already exists, not changing");
+  }
+  else {
+    String str = crstr;
+    str << "\n// contains cpp non-inline (INIMPL) functions from _cpp.h\n\n"
+        << "#include \"" << type_nm << "_cpp.h\"\n\n"
+        << "// #include \"" << type_nm << "_core.cpp\"   // include member impls if defined\n\n";
+    str.SaveToFile(cppcppfile);
+    taMisc::ExecuteCommand("svn add " + cppcppfile);
+    got_one = true;
+  }
+
+  if(taMisc::FileExists(cppincfile)) {
+    taMisc::Warning("include file:", cppincfile, "already exists, not changing");
+  }
+  else {
+    String str;
+    str << "#include \"" << type_nm << "_cpp.h\"\n";
+    str.SaveToFile(cppincfile);
+    taMisc::ExecuteCommand("svn add " + cppincfile);
+    got_one = true;
+  }
+
+  if(taMisc::FileExists(cppincfileh)) {
+    taMisc::Warning("include file:", cppincfileh, "already exists, not changing");
+  }
+  else {
+    String str;
+    str << "#include \"../" << src_dir << PATH_SEP << type_nm << "_cpp.h\"\n";
+    str.SaveToFile(cppincfileh);
+    taMisc::ExecuteCommand("svn add " + cppincfileh);
+    got_one = true;
+  }
+
+  
+  //////////////////////////////////////////////
+  // CUDA files
+
+  if(taMisc::FileExists(cudahfile)) {
+    taMisc::Warning("header file:", cudahfile, "already exists, not changing");
+  }
+  else {
+    String str = crstr;
+    str << "\n#ifndef " << type_nm << "_cuda_h\n"
+        << "#define " << type_nm << "_cuda_h 1\n\n"
+        << "// raw C++ (cuda) version of state -- no emergent / ta dependencies\n\n"
+        << "// parent includes:\n"
+        << "#include <UnitState_cuda> // replace with actual parent\n\n"
+        << "#include <State_cuda>\n\n"
+        << "// member includes:\n\n"
+        << "// declare all other types mentioned but not required to include:\n\n"
+        << "class " << type_nm << "_cuda : public UnitState_cuda {\n"
+        << "  // <describe here in full detail in one extended line comment>\n"
+        << "INHERITED(UnitState)\n"
+        << "public:\n\n"
+        << "#include <" << type_nm << "_core>\n\n"
+        << "  INLINE " << type_nm << "_cuda() { Initialize_core(); }\n"
+        << "};\n\n"
+        << "#endif // " << type_nm << "_cuda_h\n";
+
+    str.SaveToFile(cudahfile);
+    taMisc::ExecuteCommand("svn add " + cudahfile);
+    got_one = true;
+  }
+
+  if(taMisc::FileExists(cudacppfile)) {
+    taMisc::Warning("cuda file:", cudacppfile, "already exists, not changing");
+  }
+  else {
+    String str = crstr;
+    str << "\n// contains cuda non-inline (INIMPL) functions from _cuda.h\n\n"
+        << "#include \"" << type_nm << "_cuda.h\"\n\n"
+        << "// #include \"" << type_nm << "_core.cpp\"   // include impls if defined\n\n";
+    str.SaveToFile(cudacppfile);
+    taMisc::ExecuteCommand("svn add " + cudacppfile);
+    got_one = true;
+  }
+
+  if(taMisc::FileExists(cudaincfile)) {
+    taMisc::Warning("include file:", cudaincfile, "already exists, not changing");
+  }
+  else {
+    String str;
+    str << "#include \"" << type_nm << "_cuda.h\"\n";
+    str.SaveToFile(cudaincfile);
+    taMisc::ExecuteCommand("svn add " + cudaincfile);
+    got_one = true;
+  }
+
+  if(taMisc::FileExists(cudaincfileh)) {
+    taMisc::Warning("include file:", cudaincfileh, "already exists, not changing");
+  }
+  else {
+    String str;
+    str << "#include \"../" << src_dir << PATH_SEP << type_nm << "_cuda.h\"\n";
+    str.SaveToFile(cudaincfileh);
+    taMisc::ExecuteCommand("svn add " + cudaincfileh);
+    got_one = true;
+  }
+
+  
+  //////////////////////////////////////////////
+  // CmakeFiles.txt files
+  
+  String cmstr;
+  cmstr.LoadFromFile(cmfile);
+  bool changed = false;
+
+  if(!cmstr.contains(type_nm + ".h")) {
+    if(cmstr.contains(".h\n)")) {
+      String cmrest = cmstr.after(".h\n)");
+      cmstr = cmstr.before(".h\n)");
+      cmstr << ".h\n  " << type_nm << "_cpp.h\n)" << cmrest;
+      changed = true;
+    }
+    else {
+      taMisc::Warning("key sequence of: .h\\n) not found in CMakeFiles.txt -- needed for updating file -- please fix file and add your new .h file manually");
+    }
+  }
+  if(!cmstr.contains(type_nm + ".cpp")) {
+    if(cmstr.contains(".cpp\n)")) {
+      String cmrest = cmstr.after(".cpp\n)");
+      cmstr = cmstr.before(".cpp\n)");
+      cmstr << ".cpp\n  " << type_nm << "_cpp.cpp\n)" << cmrest;
+      changed = true;
+    }
+    else {
+      taMisc::Warning("key sequence of: .cpp\\n) not found in CMakeFiles.txt -- needed for updating file -- please fix file and add your new .cpp file manually");
+    }
+  }
+
+  if(changed) {
+    cmstr.SaveToFile(cmfile);
+  }
+
+  return got_one;
+}
+
 bool taCodeUtils::RenameFileSVN(const String& old_fn, const String& new_fn) {
   String cmd = "svn mv " + old_fn + " " + new_fn;
   taMisc::Info(cmd);

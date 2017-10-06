@@ -42,6 +42,14 @@ public:
                                   const String& src_dir);
   // #CAT_File create new .h header and .cpp source file for type name as top_path/src_dir/<type_nm>.h|.cpp, and create header include stubs in top_path/include/<type_nm>|.h -- top_path must be full path to source top (e.g., $HOME/emergent) -- if files already exist, a _new suffix is added, and return value is false (else true) -- also does svn add using shell to add to svn -- files have src_dir/COPYRIGHT.txt appended at top if avail, and .cpp file automatically includes header
 
+  static bool	CreateNewSpecFiles(const String& type_nm, const String& top_path,
+                                   const String& src_dir);
+  // #CAT_File for Spec files in emergent: create new _core, _mbrs _cpp and _cuda and plain .h header and .cpp source files, for type name as top_path/src_dir/<type_nm>.h|.cpp, and create header include stubs in top_path/include/<type_nm>|.h -- top_path must be full path to source top (e.g., $HOME/emergent) -- if files already exist they are not overwritten, and return value is false (else true) -- also does svn add using shell to add to svn -- files have src_dir/COPYRIGHT.txt appended at top if avail, and .cpp file automatically includes header
+
+  static bool	CreateNewStateFiles(const String& type_nm, const String& top_path,
+                                   const String& src_dir);
+  // #CAT_File for State files in emergent: create new _core, _cpp and _cuda .h header and .cpp source files, for type name as top_path/src_dir/<type_nm>.h|.cpp, and create header include stubs in top_path/include/<type_nm>|.h -- top_path must be full path to source top (e.g., $HOME/emergent) -- if files already exist they are not overwritten, and return value is false (else true) -- also does svn add using shell to add to svn -- files have src_dir/COPYRIGHT.txt appended at top if avail, and .cpp file automatically includes header
+
   static bool   RenameFileSVN(const String& old_filename, const String& new_filename);
   // #CAT_File rename file from old to new name in current working directory (or absolute path) -- returns success -- uses shell command to "svn mv" -- requires svn commandline to be avail
   static bool   RemoveFileSVN(const String& filename);

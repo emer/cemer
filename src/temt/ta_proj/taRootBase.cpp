@@ -893,14 +893,20 @@ bool taRootBase::Startup_InitArgs(int& argc, const char* argv[]) {
   taMisc::AddArgNameDesc("EnableAllPlugins", "\
  -- mark all the available plugins as enabled -- useful for batch run environments where you cannot enable them via the gui.");
 
-  taMisc::AddArgName("--create_new_src", "CreateNewSrc");
-  taMisc::AddArgName("create_new_src=", "CreateNewSrc");
-  taMisc::AddArgName("--make_new_src", "CreateNewSrc");
-  taMisc::AddArgName("make_new_src=", "CreateNewSrc");
   taMisc::AddArgName("--new_src", "CreateNewSrc");
   taMisc::AddArgName("new_src=", "CreateNewSrc");
   taMisc::AddArgNameDesc("CreateNewSrc", "\
  -- create new source code files for given type name -- does basic formatting and adds to svn and creates new include entries and adds to CMakeLists.txt -- must run in directory where you want to create the new source files!");
+
+  taMisc::AddArgName("--new_spec", "CreateNewSpec");
+  taMisc::AddArgName("new_spec=", "CreateNewSpec");
+  taMisc::AddArgNameDesc("CreateNewSpec", "\
+ -- create new Spec source code files for given type name -- including _core _mbrs _cpp _cuda and plain .h, .cpp -- does basic formatting and adds to svn and creates new include entries and adds to CMakeLists.txt -- must run in directory where you want to create the new source files!");
+
+  taMisc::AddArgName("--new_state", "CreateNewState");
+  taMisc::AddArgName("new_state=", "CreateNewState");
+  taMisc::AddArgNameDesc("CreateNewState", "\
+ -- create new State source code files for given type name -- including _core _cpp _cuda .h, .cpp -- does basic formatting and adds to svn and creates new include entries and adds to CMakeLists.txt -- must run in directory where you want to create the new source files!");
 
   taMisc::AddArgName("--rename_type", "RenameType");
   taMisc::AddArgName("rename_type=", "RenameType");
@@ -958,6 +964,7 @@ bool taRootBase::Startup_ProcessGuiArg(int argc, const char* argv[]) {
      || taMisc::CheckArgByName("MakeSystemPlugin")
      || taMisc::CheckArgByName("GenPrngParams")
      || taMisc::CheckArgByName("CreateNewSrc")
+     || taMisc::CheckArgByName("CreateNewSpec")
      || taMisc::CheckArgByName("RenameType")
      || taMisc::CheckArgByName("ReplaceString")
      || taMisc::CheckArgByName("RemoveType")
@@ -1976,6 +1983,28 @@ bool taRootBase::Startup_ProcessArgs() {
     taMisc::Info("creating new source files for type:", srcnm, "in top path:", top_path,
 		 "src_path:", src_path);
     taCodeUtils::CreateNewSrcFiles(srcnm, top_path, src_path);
+    run_startup = false;
+  }
+  if(taMisc::CheckArgByName("CreateNewSpec")) {
+    String srcnm = taMisc::FindArgByName("CreateNewSpec");
+    String curpath = QDir::currentPath();
+    String top_path = curpath.before("/src/",-1);
+    String src_path = curpath.from("/src/",-1);
+    src_path = src_path.after("/");
+    taMisc::Info("creating new spec source files for type:", srcnm, "in top path:", top_path,
+		 "src_path:", src_path);
+    taCodeUtils::CreateNewSpecFiles(srcnm, top_path, src_path);
+    run_startup = false;
+  }
+  if(taMisc::CheckArgByName("CreateNewState")) {
+    String srcnm = taMisc::FindArgByName("CreateNewState");
+    String curpath = QDir::currentPath();
+    String top_path = curpath.before("/src/",-1);
+    String src_path = curpath.from("/src/",-1);
+    src_path = src_path.after("/");
+    taMisc::Info("creating new state source files for type:", srcnm, "in top path:", top_path,
+		 "src_path:", src_path);
+    taCodeUtils::CreateNewStateFiles(srcnm, top_path, src_path);
     run_startup = false;
   }
   if(taMisc::CheckArgByName("RenameType")) {
