@@ -1998,25 +1998,9 @@ String ClusterRun::ReplaceVars(const String& str) {
     if(var_name.endsWith(',') || var_name.endsWith('.')) {
       var_name = var_name.before(var_name.length()-1);
     }
-                         
-    //Search over all parameters in cluster run to find the variable by name
-    FOREACH_ELEM_IN_GROUP(ControlPanelMember, mbr, mbrs) {
-      if (var_name == mbr->GetName()) {
-        String variable_value;
-        const ControlPanelMemberData &ps = mbr->data;
-
-        //If we are in a search algorithm, then we need to use the value
-        //set in the search parameters
-        if (!use_search_algo || !cur_search_algo || !mbr->data.is_numeric || !ps.IsSearch()) {
-          variable_value = mbr->CurValAsString();
-        }
-        else {
-          variable_value = String(ps.next_val);
-        }
-        label_expanded = label_expanded.before(idx) + variable_value
-          + label_expanded.after(end_pos - 1);
-      }
-    }
+    
+    label_expanded = label_expanded.before(idx) + GetRecursiveVariableValue(var_name, use_search_algo)
+    + label_expanded.after(end_pos - 1);
 
     start_pos = idx + 1;
     idx = label_expanded.index('%', start_pos);

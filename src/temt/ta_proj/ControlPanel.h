@@ -158,6 +158,9 @@ public: // public API
   virtual DataTable* ToDataTable(DataTable* table = NULL);
   // #CAT_CtrlPanel #MENU #NULL_OK_0 #NULL_TEXT_0_NewTable save current parameters and notes to given data table -- if null, a new one is automatically ceated in analysis group
 
+  virtual String GetRecursiveVariableValue(String var_name, bool use_search_vals);
+  // #CAT_CtrlPanel return the String value of a variable on a control panel. This recursively runs through paramsets, set on this control panel to find variables further down in the tree in case of nested paramsets
+  
   virtual String ExploreMembersToString(bool use_search_vals = false);
   // #CAT_CtrlPanel return a String with a list of space-separated name=value pairs for the explore / search members in this control panel (if use_search_vals, records current search value -- members marked SEARCH will be saved regardless) -- any ControlPanel's that are linked within this one are recursively processed as well (but its members are not scoped in any way, so for this to be useful, names in general must be unique across the different control panels)
 

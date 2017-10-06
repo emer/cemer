@@ -928,6 +928,40 @@ DataTable* ControlPanel::ToDataTable(DataTable* dt) {
   return dt;
 }
 
+String ControlPanel::GetRecursiveVariableValue(String var_name, bool use_search_vals) {
+  String value = "";
+  FOREACH_ELEM_IN_GROUP(ControlPanelMember, mbr, mbrs) {
+    if(!mbr->base) continue;
+    ControlPanel* sub_panel= mbr->GetControlPanelPointer();
+    if(sub_panel) {
+      String ovalue = sub_panel->GetRecursiveVariableValue(var_name, use_search_vals);
+      if (!value.empty() && !ovalue.empty()) {
+        taMisc::Warning("Variable ", var_name, " doesn't seem to be unique when expanding paramsets for ", this->name);
+      }
+      if (!ovalue.empty()) value = ovalue;
+    }
+    else {
+      if (var_name == mbr->GetName()) {
+        String variable_value;
+        const ControlPanelMemberData &ps = mbr->data;
+        
+        //If we are in a search algorithm, then we need to use the value
+        //set in the search parameters
+        if (!use_search_vals || !mbr->data.is_numeric || !ps.IsSearch()) {
+          variable_value = mbr->CurValAsString();
+        }
+        else {
+          variable_value = String(ps.next_val);
+        }
+        if (!value.empty()) {
+          taMisc::Warning("Variable ", var_name, " doesn't seem to be unique when expanding paramsets for ", this->name);
+        }
+        value = variable_value;
+      }
+    }
+  }
+  return value;
+}
 String ControlPanel::ExploreMembersToString(bool use_search_vals) {
   String params;
   bool first = true;
