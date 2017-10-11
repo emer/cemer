@@ -36,221 +36,20 @@ SMARTREF_OF_CPP(LeabraConSpec);
 eTypeDef_Of(ExtRewLayerSpec);
 
 
-void WtScaleSpec::Initialize() {
-  rel = 1.0f;
-  abs = 1.0f;
-  Defaults_init();
-}
-
-void WtScaleSpec::Defaults_init() {
-  no_plus_net = false;
-}
-
-
-float WtScaleSpec::SLayActScale(const float savg, const float lay_sz, const float n_cons) {
-  const float sem_extra = 2.0f;    // nobody ever modifies this, so keep it const
-
-  int slay_act_n = (int)(savg * lay_sz + .5f); // sending layer actual # active
-  slay_act_n = MAX(slay_act_n, 1);
-  float rval = 1.0f;
-  if(n_cons == lay_sz) {
-    rval = 1.0f / (float)slay_act_n;
-  }
-  else {
-    int r_max_act_n = MIN((int)n_cons, slay_act_n); // max number we could get
-    int r_avg_act_n = (int)(savg * n_cons + .5f);// recv average actual # active if uniform
-    r_avg_act_n = MAX(r_avg_act_n, 1);
-    int r_exp_act_n = r_avg_act_n + sem_extra;
-    r_exp_act_n = MIN(r_exp_act_n, r_max_act_n);
-    rval = 1.0f / (float)r_exp_act_n;
-  }
-  return rval;
-}
-
-void XCalLearnSpec::Initialize() {
-  Defaults_init();
-}
-
-void XCalLearnSpec::Defaults_init() {
-  m_lrn = 1.0f;
-  set_l_lrn = false;
-  l_lrn = 1.0f;
-  d_rev = 0.10f;
-  d_thr = 0.0001f;
-  d_rev_ratio = -(1.0f - d_rev) / d_rev;
-}
-
-void XCalLearnSpec::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-  d_rev_ratio = (1.0f - d_rev) / d_rev;
-  if(d_rev > 0.0f)
-    d_rev_ratio = -(1.0f - d_rev) / d_rev;
-  else
-    d_rev_ratio = -1.0f;
-}
-
-void WtSigSpec::Initialize() {
-  Defaults_init();
-}
-
-void WtSigSpec::Defaults_init() {
-  gain = 6.0f;
-  off = 1.0f;
-  soft_bound = true;
-}
-
-void WtSigSpec::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-  if(owner) owner->UpdateAfterEdit(); // update our conspec so it can recompute lookup function!
-}
-
-void LeabraMomentum::Initialize() {
-  Defaults_init();
-}
-
-void LeabraMomentum::Defaults_init() {
-  taVersion v820(8, 2, 0);
-  if(taMisc::is_loading && taMisc::loading_version < v820) {
-    on = false;
-  }
-  else {
-    on = true;
-  }
-  dwavg_tau = 1000.0f;
-  norm_min = 0.001f;
-  m_tau = 20.0f;
-  lrate_comp = 0.01f;
-
-  dwavg_dt = 1.0f / dwavg_tau;
-  dwavg_dt_c = 1.0f - dwavg_dt;
-  m_dt = 1.0f / m_tau;
-  m_dt_c = 1.0f - m_dt;
-}
-
-void LeabraMomentum::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-  dwavg_dt = 1.0f / dwavg_tau;
-  dwavg_dt_c = 1.0f - dwavg_dt;
-  m_dt = 1.0f / m_tau;
-  m_dt_c = 1.0f - m_dt;
-}
-
-void WtBalanceSpec::Initialize() {
-  Defaults_init();
-}
-
-void WtBalanceSpec::Defaults_init() {
-  taVersion v787(7, 8, 7);
-  if(taMisc::is_loading && taMisc::loading_version < v787) {
-    on = false;
-  }
-  else {
-    on = true;
-  }
-  hi_thr = 0.4f;
-  lo_thr = 0.2f;
-  hi_gain = 4.0f;
-  lo_gain = 4.0f;
-}
-
-// void WtBalanceSpec::UpdateAfterEdit_impl() {
-//   inherited::UpdateAfterEdit_impl();
-// }
-
-
-void AdaptWtScaleSpec::Initialize() {
-  on = false;
-  Defaults_init();
-}
-
-void AdaptWtScaleSpec::Defaults_init() {
-  tau = 5000.0f;
-  lo_thr = 0.25f;
-  hi_thr = 0.75f;
-  lo_scale = 0.01f;
-  hi_scale = 2.0f;
-  dt = 1.0f / tau;
-}
-
-void AdaptWtScaleSpec::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-  dt = 1.0f / tau;
-}
-
-
-void SlowWtsSpec::Initialize() {
-  on = false;
-  wt_tau = 1.0f;
-
-  Defaults_init();
-}
-
-void SlowWtsSpec::Defaults_init() {
-  swt_pct = 0.8f;
-  slow_tau = 100;
-
-  fwt_pct = 1.0f - swt_pct;
-  slow_dt = 1.0f /(float)slow_tau;
-  wt_dt = 1.0f / wt_tau;
-}
-
-void SlowWtsSpec::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-  fwt_pct = 1.0f - swt_pct;
-  slow_dt = 1.0f /(float)slow_tau;
-  wt_dt = 1.0f / wt_tau;
-}
-
-void DeepLrateSpec::Initialize() {
-  on = false;
-  bg_lrate = 1.0f;
-  fg_lrate = 0.0f;
-  Defaults_init();
-}
-
-void DeepLrateSpec::Defaults_init() {
-}
-
-void MarginLearnSpec::Initialize() {
-  lrate_mod = false;
-  sign_dwt = false;
-  Defaults_init();
-}
-
-void MarginLearnSpec::Defaults_init() {
-  stable_lrate = 0.5f;
-  sign_lrn = 0.5f;
-}
-
-
 ////////////////////////////////////////////////////////////////////
 
 void LeabraConSpec::Initialize() {
   min_obj_type = &TA_LeabraCon;
-  inhib = false;
 
-  learn = true;
-  learn_qtr = Q4;
-  
-  use_unlearnable = true;
-
-  // we are no longer going back-and-forth from inv to sig weights 
-  // so we presumably can use an order of magnitude smaller lookup table
-  wt_sig_fun.x_range.min = 0.0f;
-  wt_sig_fun.x_range.max = 1.0f;
-  wt_sig_fun.res = 1.0e-4f;  // 1.0e-5f;     // 1e-6 = 1.9Mb & 33% slower!, but 4x more accurate; 1e-5 = .19Mb
-  wt_sig_fun.UpdateAfterEdit_NoGui();
-
-  wt_sig_fun_inv.x_range.min = 0.0f;
-  wt_sig_fun_inv.x_range.max = 1.0f;
-  wt_sig_fun_inv.res = 1.0e-4f;  // 1.0e-5f; // 1e-6 = 1.9Mb & 33% slower!, but 4x more accurate; 1e-5 = .19Mb
-  wt_sig_fun_inv.UpdateAfterEdit_NoGui();
-
-  wt_sig_fun_lst.off = -1.0f;   wt_sig_fun_lst.gain = -1.0f; // trigger an update
-  wt_sig_fun_res = -1.0f;
-
+  Initialize_core();
   lrate_sched.interpolate = false;
-
+  taVersion v820(8, 2, 0);
+  if(taMisc::is_loading && taMisc::loading_version < v820) {
+    momentum.on = false;
+  }
+  else {
+    momentum.on = true;
+  }
   Defaults_init();
 }
 
@@ -273,8 +72,6 @@ void LeabraConSpec::InitLinks() {
   InitLinks_taAuto(&TA_LeabraConSpec);
   children.SetBaseType(&TA_LeabraConSpec);
   children.el_typ = GetTypeDef(); // but make the default to be me!
-  CreateWtSigFun();
-  // if(taMisc::is_loading || taMisc::is_duplicating) return;
 }
 
 void LeabraConSpec::UpdateAfterEdit_impl() {
@@ -285,7 +82,6 @@ void LeabraConSpec::UpdateAfterEdit_impl() {
   lrate_sched.UpdateAfterEdit_NoGui();
   slow_wts.UpdateAfterEdit_NoGui();
   xcal.UpdateAfterEdit_NoGui(); // this calls owner
-  CreateWtSigFun();
 
   ClearBaseFlag(BF_MISC2);      // done..
 
@@ -311,61 +107,6 @@ void LeabraConSpec::GetPrjnName(Projection& prjn, String& nm) {
 bool LeabraConSpec::CheckConfig_RecvCons(Projection* prjn, bool quiet) {
   bool rval = inherited::CheckConfig_RecvCons(prjn, quiet);
   return rval;
-}
-
-void LeabraConSpec::Compute_NetinScale(LeabraConGroup* recv_gp, LeabraLayer* from, 
-                                       bool plus_phase) {
-  float savg = from->acts_p_avg_eff;
-  float from_sz = (float)from->units.leaves;
-  float n_cons = (float)recv_gp->size;
-  recv_gp->scale_eff = wt_scale.FullScale(savg, from_sz, n_cons);
-}
-
-void LeabraConSpec::ApplySymmetry_s(ConGroup* cg, Network* net, int thr_no) {
-  Unit* su = cg->ThrOwnUn(net, thr_no);
-  if(!wt_limits.sym) return;
-  const int sz = cg->size;
-  for(int i=0; i<sz;i++) {
-    int con_idx = -1;
-    ConGroup* rscg = ConGroup::FindRecipSendCon(con_idx, cg->Un(i,net), su,
-                                                cg->prjn->from.ptr());
-    if(rscg && con_idx >= 0) {
-      ConSpec* rscs = rscg->GetConSpec();
-      if(rscs && rscs->wt_limits.sym) {
-        if(wt_limits.sym_fm_top) {
-          cg->OwnCn(i, WT) = rscg->OwnCn(con_idx, WT);
-          cg->OwnCn(i, SCALE) = rscg->OwnCn(con_idx, SCALE); // only diff: sync scales!
-        }
-        else {
-          rscg->OwnCn(con_idx, WT) = cg->OwnCn(i, WT);
-          rscg->OwnCn(con_idx, SCALE) = cg->OwnCn(i, SCALE);
-        }
-      }
-    }
-  }
-}
-
-void LeabraConSpec::RenormScales(ConGroup* cg, Network* net, int thr_no,
-                                 bool mult_norm, float avg_wt) {
-  const int sz = cg->size;
-  if(sz < 2) return;
-  float avg = 0.0f;
-  for(int i=0; i<sz; i++) {
-    avg += cg->Cn(i, SCALE, net);
-  }
-  avg /= (float)sz;
-  if(mult_norm) {
-    float adj = avg_wt / avg;
-    for(int i=0; i<sz; i++) {
-      cg->Cn(i, SCALE, net) *= adj;
-    }
-  }
-  else {
-    float adj = avg_wt - avg;
-    for(int i=0; i<sz; i++) {
-      cg->Cn(i, SCALE, net) += adj;
-    }
-  }
 }
 
 void LeabraConSpec::Trial_Init_Specs(LeabraNetwork* net) {
@@ -480,26 +221,6 @@ void LeabraConSpec::TriangleLrateSched(int epcs_per_step, int n_cycles, float lo
     }
   }
   UpdateAfterEdit();            // needed to update the sub guys
-}
-
-void LeabraConSpec::CreateWtSigFun() {
-  if((wt_sig_fun_lst.gain == wt_sig.gain) && (wt_sig_fun_lst.off == wt_sig.off)
-     && (wt_sig_fun_res == wt_sig_fun.res))
-    return;
-  wt_sig_fun.AllocForRange();
-  int i;
-  for(i=0; i<wt_sig_fun.size; i++) {
-    float w = wt_sig_fun.Xval(i);
-    wt_sig_fun[i] = wt_sig.SigFmLinWt(w);
-  }
-  wt_sig_fun_inv.AllocForRange();
-  for(i=0; i<wt_sig_fun_inv.size; i++) {
-    float w = wt_sig_fun_inv.Xval(i);
-    wt_sig_fun_inv[i] = wt_sig.LinFmSigWt(w);
-  }
-  // prevent needless recomputation of this lookup table..
-  wt_sig_fun_lst.gain = wt_sig.gain; wt_sig_fun_lst.off = wt_sig.off;
-  wt_sig_fun_res = wt_sig_fun.res;
 }
 
 void LeabraConSpec::GraphWtSigFun(DataTable* graph_data) {
@@ -693,10 +414,192 @@ void LeabraConSpec::WtScaleCvt(float savg, int lay_sz, int n_cons,
   // new_abs = old_abs * (old_sc / new_sc)
 }
 
-bool LeabraConSpec::SaveConVarToWeights(ConGroup* cg, MemberDef* md) {
+bool LeabraConSpec::SaveConVarToWeights(Network* net, ConState_cpp* cg, MemberDef* md) {
   if(!md->HasOption("SAVE")) return false;
   if(md->name != "scale") return true;
   if(adapt_scale.on) return true;
-  ProjectionSpec* ps = cg->prjn->GetPrjnSpec();
+  PrjnState_cpp* pst = cg->GetPrjnState(net->net_state);
+  Projection* prjn = net->PrjnFromState(pst);
+  ProjectionSpec* ps = prjn->GetPrjnSpec();
   return ps->HasRandomScale();  // if random scale, needs to save it!
 }
+
+
+
+///////////////////////////////////////////////////////
+//      Currently Unused Vector-based Code
+
+// NOTE: this is no longer used and is missing a few things!
+// #ifdef TA_VEC_USE
+
+// inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL_vec
+// (LeabraConState_cpp* cg, float* dwts, float* ru_avg_s, float* ru_avg_m, float* ru_avg_l,
+//  float* ru_avg_l_lrn, float* ru_deep,
+//  const bool deep_on, const float clrate, const float bg_lrate, const float fg_lrate,
+//  const float su_avg_s, const float su_avg_m) {
+//   VECF su_avg_s_v(su_avg_s);
+//   VECF su_avg_m_v(su_avg_m);
+
+//   const int sz = cg->size;
+//   const int parsz = cg->vec_chunked_size;
+//   int i;
+//   for(i=0; i<parsz; i += TA_VEC_SIZE) {
+//     const int ru_idx = cg->UnIdx(i);
+//     VECF ru_avg_s_v; VECF ru_avg_m_v;
+//     // VECF ru_avg_l; // VECF ru_avg_l_lrn;
+//     ru_avg_s_v.load(ru_avg_s + ru_idx);
+//     ru_avg_m_v.load(ru_avg_m + ru_idx);
+//     //    ru_avg_l.load(avg_l + ru_idx);
+//     //    ru_avg_l_lrn.load(avg_l_lrn + ru_idx);
+
+//     VECF srs = ru_avg_s_v * su_avg_s_v;
+//     VECF srm = ru_avg_m_v * su_avg_m_v;
+    
+//     for(int j=0; j< TA_VEC_SIZE; j++) {
+//       const float srs_j = srs[j];
+//       const float srm_j = srm[j];
+//       const float ru_avg_l_j = ru_avg_l[ru_idx+j];
+//       const float ru_avg_l_lrn_j = ru_avg_l_lrn[ru_idx+j];
+//       // note: above factor is not always used -- if set_l_lrn for example.
+//       float lrate_eff = clrate;
+//       if(deep_on) {
+//         lrate_eff *= (bg_lrate + fg_lrate * ru_deep[ru_idx+j]);
+//       }
+//       dwts[i+j] += lrate_eff * (ru_avg_l_lrn_j * xcal.dWtFun(srs_j, ru_avg_l_j) +
+//                                 xcal.m_lrn * xcal.dWtFun(srs_j, srm_j));
+//     }
+//   }
+//   for(;i<sz;i++) {              // get the remainder
+//     const int ru_idx = cg->UnIdx(i);
+//     float lrate_eff = clrate;
+//     if(deep_on) {
+//       lrate_eff *= (bg_lrate + fg_lrate * ru_deep[ru_idx]);
+//     }
+//     C_Compute_dWt_CtLeabraXCAL
+//       (dwts[i], lrate_eff, ru_avg_s[ru_idx], ru_avg_m[ru_idx], su_avg_s, su_avg_m,
+//        ru_avg_l[ru_idx], ru_avg_l_lrn[ru_idx]);
+//   }
+// }
+// #endif
+
+// #if 0 // TA_VEC_USE
+//   // at this point, code is so simple that this vec version probably not worth it..
+//   // also, the set_l_lrn is not supported here..
+//   float* avg_s = net->UnVecVar(thr_no, LeabraNetwork::AVG_S);
+//   float* avg_m = net->UnVecVar(thr_no, LeabraNetwork::AVG_M);
+//   float* avg_l = net->UnVecVar(thr_no, LeabraNetwork::AVG_L);
+//   float* avg_l_lrn = net->UnVecVar(thr_no, LeabraNetwork::AVG_L_LRN);
+//   float* deep = net->UnVecVar(thr_no, LeabraNetwork::DEEP);
+//   Compute_dWt_CtLeabraXCAL_vec
+//     (cg, dwts, avg_s, avg_m, avg_l, avg_l_lrn, deep,
+//      deep_on, clrate, bg_lrate, fg_lrate,
+//      su_avg_s, su_avg_m);
+// #else
+
+// NOTE: not using this -- not updated
+// #ifdef TA_VEC_USE
+// inline void LeabraConSpec::Compute_Weights_CtLeabraXCAL_vec
+// (LeabraConState_cpp* cg, float* wts, float* dwts, float* fwts, float* swts, float* scales) {
+
+//   VECF zeros(0.0f);
+//   VECF sig_res_inv(wt_sig_fun.res_inv);
+//   VECI idx;
+
+//   const int sz = cg->size;
+//   const int parsz = cg->vec_chunked_size;
+//   int i;
+//   for(i=0; i<parsz; i += TA_VEC_SIZE) {
+//     VECF wt;  wt.load(wts+i);
+//     VECF dwt; dwt.load(dwts+i);
+//     VECF fwt; fwt.load(fwts+i);
+//     VECF scale; scale.load(scales+i);
+
+//     dwt *= select(dwt > 0.0f, 1.0f - fwt, fwt);
+//     fwt += dwt;
+
+//     // todo: try this also as a sub-loop
+//     // wt = SigFmLinWt(fwt)
+//     idx = truncate_to_int(fwt * sig_res_inv); // min is 0
+//     wt = scale * lookup<10002>(idx, wt_sig_fun.el);
+
+//     dwt = zeros;
+
+//     wt.store(wts+i);
+//     dwt.store(dwts+i);
+//     fwt.store(fwts+i);
+//     //  swt.store(swts+i);  // leave swt as pristine original weight value -- saves time
+//     // and is useful for visualization!
+//   }
+//   for(;i<sz;i++) {              // get the remainder
+//     C_Compute_Weights_CtLeabraXCAL(wts[i], dwts[i], fwts[i], swts[i], scales[i], 1.0f, 1.0f);
+//   }
+// }
+
+// inline void LeabraConSpec::Compute_Weights_CtLeabraXCAL_slow_vec
+// (LeabraConState_cpp* cg, float* wts, float* dwts, float* fwts, float* swts, float* scales) {
+
+//   VECF zeros(0.0f);
+//   VECF sig_res_inv(wt_sig_fun.res_inv);
+//   VECI idx;
+
+//   VECF spct(slow_wts.swt_pct);
+//   VECF fpct(slow_wts.fwt_pct);
+//   VECF wdt(slow_wts.wt_dt);
+//   VECF sdt(slow_wts.slow_dt);
+
+//   const int sz = cg->size;
+//   const int parsz = cg->vec_chunked_size;
+//   int i;
+//   for(i=0; i<parsz; i += TA_VEC_SIZE) {
+//     VECF wt;  wt.load(wts+i);
+//     VECF dwt; dwt.load(dwts+i);
+//     VECF fwt; fwt.load(fwts+i);
+//     VECF swt; swt.load(swts+i);
+//     VECF scale; scale.load(scales+i);
+
+//     dwt *= select(dwt > 0.0f, 1.0f - fwt, fwt);
+//     fwt += dwt;
+//     VECF eff_wt;
+//     eff_wt = spct * swt + fpct * fwt;
+
+//     // todo: try this also as a sub-loop
+//     // wt = SigFmLinWt(fwt)
+//     idx = truncate_to_int(eff_wt * sig_res_inv); // min is 0
+//     VECF nwt;
+//     nwt = scale * lookup<10002>(idx, wt_sig_fun.el);
+//     wt += wdt * (nwt - wt);
+//     swt += sdt * (fwt - swt);
+
+//     dwt = zeros;
+
+//     wt.store(wts+i);
+//     dwt.store(dwts+i);
+//     fwt.store(fwts+i);
+//     swt.store(swts+i);
+//   }
+//   for(;i<sz;i++) {              // get the remainder
+//     C_Compute_Weights_CtLeabraXCAL_slow(wts[i], dwts[i], fwts[i], swts[i], scales[i], 1.0f, 1.0f);
+//   }
+// }
+
+// #endif
+
+//   else {
+//     if(slow_wts.on) {
+// #ifdef TA_VEC_USE
+//       Compute_Weights_CtLeabraXCAL_slow_vec(cg, wts, dwts, fwts, swts, scales);
+// #else
+//       CON_GROUP_LOOP(cg, C_Compute_Weights_CtLeabraXCAL_slow
+//                      (wts[i], dwts[i], fwts[i], swts[i], scales[i]));
+// #endif
+//     }
+//     else {
+// #ifdef TA_VEC_USE
+//       Compute_Weights_CtLeabraXCAL_vec(cg, wts, dwts, fwts, swts, scales);
+// #else
+//       CON_GROUP_LOOP(cg, C_Compute_Weights_CtLeabraXCAL
+//                      (wts[i], dwts[i], fwts[i], swts[i], scales[i]));
+// #endif
+//     }
+//   }
+

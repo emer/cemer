@@ -29,14 +29,14 @@ class E_API ThalSendUnitSpec  : public LeabraUnitSpec {
   // #AKA_ThalUnitSpec Models the dorsal and ventral (TRN) thalamus as it interacts with cortex (mainly secondary cortical areas, not primary sensory areas) -- simply sends current activation to thal variable in units we project to -- also if deep.on is active, we only recv deep_raw_net in the plus phase, like ThalAutoEncodeUnitSpec
 INHERITED(LeabraUnitSpec)
 public:
-  virtual void  Send_Thal(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
+  virtual void  Send_Thal(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no);
   // send the act value as thal to sending projections: every cycle
 
-  void  Compute_Act_Post(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
+  void  Compute_Act_Post(LeabraUnitState_cpp* uv, LeabraNetwork* net, int thr_no) override;
 
   // no learning in this one..
-  void 	Compute_dWt(UnitVars* u, Network* net, int thr_no) override { };
-  void	Compute_Weights(UnitVars* u, Network* net, int thr_no) override { };
+  void 	Compute_dWt(UnitState* u, Network* net, int thr_no) override { };
+  void	Compute_Weights(UnitState* u, Network* net, int thr_no) override { };
 
   TA_SIMPLE_BASEFUNS(ThalSendUnitSpec);
 protected:

@@ -29,14 +29,14 @@ class E_API PatchUnitSpec  : public LeabraUnitSpec {
   // Dorsal striatum patch neurons, which shunt dopamine values in all neurons that they project to (shortcut for shunting SNc dopamine which then projects to other target striatum neurons) -- typically driven by PFC maintenance inputs, blocking learning for anything with ongoing maintenance -- threshold for shunting is opt_thresh.send threshold -- sends to shunt var on recv units
 INHERITED(LeabraUnitSpec)
 public:
-  virtual void  Send_DAShunt(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
+  virtual void  Send_DAShunt(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no);
   // send thresholded shunting factor to shunt on recv units
 
-  void	Compute_Act_Post(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
+  void	Compute_Act_Post(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) override;
 
   // no learning in this one -- just a readout of PFC activation
-  void 	Compute_dWt(UnitVars* u, Network* net, int thr_no) override { };
-  void	Compute_Weights(UnitVars* u, Network* net, int thr_no) override { };
+  void 	Compute_dWt(UnitState* u, Network* net, int thr_no) override { };
+  void	Compute_Weights(UnitState* u, Network* net, int thr_no) override { };
 
   TA_SIMPLE_BASEFUNS(PatchUnitSpec);
 protected:

@@ -212,7 +212,7 @@ bool VTAUnitSpec::GetRecvLayers_P
   
   const int nrg = u->NRecvConGps();
   for(int g=0; g<nrg; g++) {
-    LeabraConGroup* recv_gp = (LeabraConGroup*)u->RecvConGroup(g);
+    LeabraConState_cpp* recv_gp = (LeabraConState_cpp*)u->RecvConState(g);
     if(recv_gp->NotActive()) continue;
     LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
     LeabraLayer* fmlay = (LeabraLayer*)recv_gp->prjn->from.ptr();
@@ -258,7 +258,7 @@ bool VTAUnitSpec::GetRecvLayers_N
   
   const int nrg = u->NRecvConGps();
   for(int g=0; g<nrg; g++) {
-    LeabraConGroup* recv_gp = (LeabraConGroup*)u->RecvConGroup(g);
+    LeabraConState_cpp* recv_gp = (LeabraConState_cpp*)u->RecvConState(g);
     if(recv_gp->NotActive()) continue;
     LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
     LeabraLayer* fmlay = (LeabraLayer*)recv_gp->prjn->from.ptr();
@@ -288,7 +288,7 @@ bool VTAUnitSpec::GetRecvLayers_N
   return true;
 }
 
-void VTAUnitSpec::Compute_DaP(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void VTAUnitSpec::Compute_DaP(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   LeabraLayer* pptg_lay_p = NULL;
   LeabraLayer* lhb_lay = NULL;
   LeabraLayer* pospv_lay = NULL;
@@ -402,7 +402,7 @@ void VTAUnitSpec::Compute_DaP(LeabraUnitVars* u, LeabraNetwork* net, int thr_no)
   }
 }
 
-void VTAUnitSpec::Compute_DaN(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void VTAUnitSpec::Compute_DaN(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   LeabraLayer* negpv_lay = NULL;
   LeabraLayer* pptg_lay_n = NULL;
   LeabraLayer* lhb_lay_n = NULL;
@@ -476,24 +476,24 @@ void VTAUnitSpec::Compute_DaN(LeabraUnitVars* u, LeabraNetwork* net, int thr_no)
   }
 }
 
-void VTAUnitSpec::Send_Da(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void VTAUnitSpec::Send_Da(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   const float snd_val = u->act_eq;
   const int nsg = u->NSendConGps(net, thr_no); 
   for(int g=0; g<nsg; g++) {
-    LeabraConGroup* send_gp = (LeabraConGroup*)u->SendConGroup(net, thr_no, g);
+    LeabraConState_cpp* send_gp = (LeabraConState_cpp*)u->SendConState(net, thr_no, g);
     if(send_gp->NotActive()) continue;
     for(int j=0;j<send_gp->size; j++) {
       if(da_val == DA_P) {
-        ((LeabraUnitVars*)send_gp->UnVars(j,net))->da_p = snd_val;
+        ((LeabraUnitState_cpp*)send_gp->UnState(j,net))->da_p = snd_val;
       }
       else {
-        ((LeabraUnitVars*)send_gp->UnVars(j,net))->da_n = snd_val;
+        ((LeabraUnitState_cpp*)send_gp->UnState(j,net))->da_n = snd_val;
       }
     }
   }
 }
 
-void VTAUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void VTAUnitSpec::Compute_Act_Rate(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   if(Quarter_DeepRawNow(net->quarter)) {
     if(da_val == DA_P) {
       Compute_DaP(u, net, thr_no);
@@ -508,11 +508,11 @@ void VTAUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int th
   u->da = 0.0f;
 }
 
-void VTAUnitSpec::Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void VTAUnitSpec::Compute_Act_Spike(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   Compute_Act_Rate(u, net, thr_no);
 }
 
-void VTAUnitSpec::Compute_Act_Post(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void VTAUnitSpec::Compute_Act_Post(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   inherited::Compute_Act_Post(u, net, thr_no);
   Send_Da(u, net, thr_no);      // note: can only send modulators during post!!
 }

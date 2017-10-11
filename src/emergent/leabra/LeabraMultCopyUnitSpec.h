@@ -32,14 +32,14 @@ public:
   bool		one_minus;	// if true, use 1-mult activation as the multiplier -- this is useful with mutually exclusive options in the multipliers, where you hook each up to the *other* alternative, such that this other alternative inhibits this option
   float		mult_gain;	// multiplier gain -- multiply the mult act value by this gain, with a max overall resulting net mult value of 1
 
-  virtual void	Compute_MultCopy(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
+  virtual void	Compute_MultCopy(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no);
   
-  void	Compute_NetinInteg(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override { };
-  void	Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
-  void	Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
+  void	Compute_NetinInteg(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) override { };
+  void	Compute_Act_Rate(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) override;
+  void	Compute_Act_Spike(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) override;
 
-  void 	Compute_dWt(UnitVars* u, Network* net, int thr_no) override { };
-  void	Compute_Weights(UnitVars* u, Network* net, int thr_no) override { };
+  void 	Compute_dWt(UnitState* u, Network* net, int thr_no) override { };
+  void	Compute_Weights(UnitState* u, Network* net, int thr_no) override { };
 
   bool  CheckConfig_Unit(Layer* lay, bool quiet=false) override;
 

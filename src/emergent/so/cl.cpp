@@ -26,7 +26,7 @@ void ClLayerSpec::Initialize() {
 }
 
 void ClLayerSpec::Compute_Act_post(SoLayer* lay, SoNetwork* net) {
-  if(lay->ext_flag & UnitVars::EXT) { // input layer
+  if(lay->ext_flag & UnitState::EXT) { // input layer
     SoLayerSpec::Compute_Act_post(lay, net);
     return;
   }
@@ -58,9 +58,9 @@ void SoftClUnitSpec::UpdateAfterEdit_impl() {
   denom_const = 0.5f / var;
 }
 
-void SoftClUnitSpec::Compute_Netin(UnitVars* u, Network* net, int thr_no) {
+void SoftClUnitSpec::Compute_Netin(UnitState* u, Network* net, int thr_no) {
   // do distance instead of net input
-  if (u->ext_flag & UnitVars::EXT) {
+  if (u->ext_flag & UnitState::EXT) {
     u->net = u->ext;
   }
   else {
@@ -68,16 +68,16 @@ void SoftClUnitSpec::Compute_Netin(UnitVars* u, Network* net, int thr_no) {
     u->net = 0.0f;
     const int nrcg = net->ThrUnNRecvConGps(thr_no, u->thr_un_idx);
     for(int g=0; g<nrcg; g++) {
-      SoConGroup* rgp = (SoConGroup*)net->ThrUnRecvConGroup(thr_no, u->thr_un_idx, g);
+      SoConState* rgp = (SoConState*)net->ThrUnRecvConState(thr_no, u->thr_un_idx, g);
       if(rgp->NotActive()) continue;
       u->net += rgp->con_spec->Compute_Dist(rgp, net, thr_no);
     }
   }
 }
 
-void SoftClUnitSpec::Compute_Act(UnitVars* u, Network* net, int thr_no) {
-  SoUnitVars* su = (SoUnitVars*)u;
-  if(su->ext_flag & UnitVars::EXT) {
+void SoftClUnitSpec::Compute_Act(UnitState* u, Network* net, int thr_no) {
+  SoUnitState* su = (SoUnitState*)u;
+  if(su->ext_flag & UnitState::EXT) {
     su->act = su->act_i = u->ext;
   }
   else {
@@ -90,7 +90,7 @@ void SoftClLayerSpec::Initialize() {
 }
 
 void SoftClLayerSpec::Compute_Act_post(SoLayer* lay, SoNetwork* net) {
-  if(lay->ext_flag & UnitVars::EXT) { // input layer
+  if(lay->ext_flag & UnitState::EXT) { // input layer
     SoLayerSpec::Compute_Act_post(lay, net);
     return;
   }

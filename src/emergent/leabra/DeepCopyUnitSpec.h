@@ -38,15 +38,15 @@ public:
 
   DeepCopyVar   deep_var;        // which variable to copy from
   
-  virtual void Compute_ActFmSource(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
+  virtual void Compute_ActFmSource(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no);
   // set current act of deep unit to sending super unit activation
 
-  void	Compute_NetinInteg(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override { };
-  void	Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
-  void	Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
+  void	Compute_NetinInteg(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) override { };
+  void	Compute_Act_Rate(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) override;
+  void	Compute_Act_Spike(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) override;
 
-  void 	Compute_dWt(UnitVars* u, Network* net, int thr_no) override { };
-  void	Compute_Weights(UnitVars* u, Network* net, int thr_no) override { };
+  void 	Compute_dWt(UnitState* u, Network* net, int thr_no) override { };
+  void	Compute_Weights(UnitState* u, Network* net, int thr_no) override { };
 
   bool  CheckConfig_Unit(Layer* lay, bool quiet=false) override;
 

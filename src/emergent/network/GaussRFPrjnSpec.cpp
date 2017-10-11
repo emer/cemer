@@ -92,7 +92,7 @@ void GaussRFPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
   }
 }
 
-void GaussRFPrjnSpec::Init_Weights_Prjn(Projection* prjn, ConGroup* cg,
+void GaussRFPrjnSpec::Init_Weights_Prjn(Projection* prjn, ConState_cpp* cg,
                                         Network* net, int thr_no) {
   taVector2i rf_half_wd = rf_width / 2;
   taVector2f rf_ctr = rf_half_wd;

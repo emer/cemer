@@ -19,17 +19,7 @@
 TA_BASEFUNS_CTORS_DEFN(LeabraPrjn);
 
 void LeabraPrjn::Initialize() {
-  netin_avg = 0.0f;
-  netin_rel = 0.0f;
-
-  avg_netin_avg = 0.0f;
-  avg_netin_avg_sum = 0.0f;
-  avg_netin_rel = 0.0f;
-  avg_netin_rel_sum = 0.0f;
-  avg_netin_n = 0;
-
-  wt_avg_max = 0.0f;
-  wt_avg_avg = 0.0f;
+  Initialize_core();
   
 #ifdef DMEM_COMPILE
   dmem_agg_sum.agg_op = MPI_SUM;
@@ -38,20 +28,6 @@ void LeabraPrjn::Initialize() {
 }
 
 void LeabraPrjn::Destroy() {
-}
-
-void LeabraPrjn::Copy_(const LeabraPrjn& cp) {
-  netin_avg = cp.netin_avg;
-  netin_rel = cp.netin_rel;
-
-  avg_netin_avg = cp.avg_netin_avg;
-  avg_netin_avg_sum = cp.avg_netin_avg_sum;
-  avg_netin_rel = cp.avg_netin_rel;
-  avg_netin_rel_sum = cp.avg_netin_rel_sum;
-  avg_netin_n = cp.avg_netin_n;
-
-  wt_avg_max = cp.wt_avg_max;
-  wt_avg_avg = cp.wt_avg_avg;
 }
 
 void LeabraPrjn::Trial_Init_Specs(LeabraNetwork* net) {
@@ -66,20 +42,6 @@ void LeabraPrjn::CheckInhibCons(LeabraNetwork* net) {
     if(((LeabraConSpec*)con_spec.SPtr())->inhib)
       net->net_misc.inhib_cons = true;
   }
-}
-
-void LeabraPrjn::Init_Stats() {
-  netin_avg = 0.0f;
-  netin_rel = 0.0f;
-
-  avg_netin_avg = 0.0f;
-  avg_netin_avg_sum = 0.0f;
-  avg_netin_rel = 0.0f;
-  avg_netin_rel_sum = 0.0f;
-  avg_netin_n = 0;
-
-  wt_avg_max = 0.0f;
-  wt_avg_avg = 0.0f;
 }
 
 #ifdef DMEM_COMPILE

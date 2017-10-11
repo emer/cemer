@@ -226,8 +226,9 @@ void GpRndTesselPrjnSpec::Connect_Gps_Sym(int rgpidx, int sgpidx,
   for(int rui=0; rui < ru_nunits; rui++) {
     Unit* ru = recv_lay->UnitAtUnGpIdx(rui, rgpidx);
     for(int g=0;g<ru->NSendConGps();g++) {
-      ConGroup* scg = ru->SendConGroup(g);
-      if((scg->prjn->layer != send_lay) || (scg->prjn->layer != recv_lay))
+      ConState_cpp* scg = ru->SendConState(g);
+      PrjnState_cpp* pjs = scg->GetPrjnState(net->net_state);
+      if((pjs->recv_lay_idx != send_lay->layer_idx) || (pjs->recv_lay_idx != recv_lay->layer_idx))
         continue;               // only deal with self projections to this same layer
       for(int i=0;i<scg->size;i++) {
         Unit* su = scg->Un(i,net);
@@ -279,8 +280,8 @@ void GpRndTesselPrjnSpec::Connect_Gps_SymSameGp(int rgpidx, int sgpidx,
       if(!self_con && (ru == su)) continue;
       // don't connect to anyone who already recvs from me cuz that will make
       // a symmetric connection which isn't good: symmetry will be enforced later
-      ConGroup* scg = su->RecvConGroupPrjn(prjn);
-      if(scg->FindConFromIdx(ru) >= 0) continue;
+      ConState_cpp* scg = su->RecvConStatePrjn(prjn);
+      if(scg->FindConFromIdx(ru->flat_idx) >= 0) continue;
       perm_list.Link(su);
     }
     perm_list.Permute();
@@ -292,7 +293,7 @@ void GpRndTesselPrjnSpec::Connect_Gps_SymSameGp(int rgpidx, int sgpidx,
   // now go thru and make the symmetric connections
   for(int rui=0; rui < ru_nunits; rui++) {
     Unit* ru = recv_lay->UnitAtUnGpIdx(rui, rgpidx);
-    ConGroup* scg = ru->SendConGroupPrjn(prjn);
+    ConState_cpp* scg = ru->SendConStatePrjn(prjn);
     if(scg == NULL) continue;
     for(int i=0;i<scg->size;i++) {
       Unit* su = scg->Un(i,net);
@@ -314,13 +315,13 @@ void GpRndTesselPrjnSpec::Connect_Gps_SymSameLay(int rgpidx, int sgpidx,
   // so I should just make symmetric versions of its connections
   // take first send unit and find if it recvs from anyone in this prjn yet
   Unit* su = send_lay->UnitAtUnGpIdx(0, sgpidx);
-  ConGroup* scg = su->RecvConGroupPrjn(prjn);
+  ConState_cpp* scg = su->RecvConStatePrjn(prjn);
   if((scg != NULL) && (scg->size > 0)) {        // sender has been connected already: try to connect me!
     int n_con = 0;              // number of actual connections made
 
     for(int rui=0; rui < ru_nunits; rui++) {
       Unit* ru = recv_lay->UnitAtUnGpIdx(rui, rgpidx);
-      ConGroup* rcg = ru->SendConGroupPrjn(prjn);
+      ConState_cpp* rcg = ru->SendConStatePrjn(prjn);
       if(rcg == NULL) continue;
       for(int i=0;i<rcg->size;i++) {
         Unit* ssu = rcg->Un(i,net);

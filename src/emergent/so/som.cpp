@@ -21,8 +21,8 @@ TA_BASEFUNS_CTORS_DEFN(NeighborEl_List);
 TA_BASEFUNS_CTORS_DEFN(NeighborEl);
 TA_BASEFUNS_CTORS_DEFN(SomLayerSpec);
 
-void SomUnitSpec::Compute_Netin(UnitVars* u, Network* net, int thr_no) {
-  if (u->ext_flag & UnitVars::EXT) {
+void SomUnitSpec::Compute_Netin(UnitState* u, Network* net, int thr_no) {
+  if (u->ext_flag & UnitState::EXT) {
     u->net = u->ext;
   }
   else {
@@ -30,7 +30,7 @@ void SomUnitSpec::Compute_Netin(UnitVars* u, Network* net, int thr_no) {
     u->net = 0.0f;
     const int nrcg = net->ThrUnNRecvConGps(thr_no, u->thr_un_idx);
     for(int g=0; g<nrcg; g++) {
-      SoConGroup* rgp = (SoConGroup*)net->ThrUnRecvConGroup(thr_no, u->thr_un_idx, g);
+      SoConState* rgp = (SoConState*)net->ThrUnRecvConState(thr_no, u->thr_un_idx, g);
       if(rgp->NotActive()) continue;
       u->net += rgp->con_spec->Compute_Dist(rgp, net, thr_no);
     }
@@ -192,14 +192,14 @@ int SomLayerSpec::WrapClip(int coord, int max_coord) {
 
 
 void SomLayerSpec::Compute_Act_post(SoLayer* lay, SoNetwork* net) {
-  if(lay->ext_flag & UnitVars::EXT) {  // input layer
+  if(lay->ext_flag & UnitState::EXT) {  // input layer
     SoLayerSpec::Compute_Act_post(lay, net);
     return;
   }
 
   // Added by Danke, Feb. 9, 2003
   if(lay->units.leaves > 0 &&      // sync layer
-     lay->units.FastEl(0)->ext_flag() & UnitVars::EXT) {
+     lay->units.FastEl(0)->ext_flag() & UnitState::EXT) {
     SoLayerSpec::Compute_Act_post(lay, net);
     return;
   }

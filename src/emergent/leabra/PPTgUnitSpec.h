@@ -33,9 +33,9 @@ public:
   bool          clamp_act;      // clamp the activation directly instead of driving net input -- still applies d_net_gain -- provides a purely linear y-dot reference signal
   float         act_thr;        // #DEF_0 minimum activation to have before passing excitatory signal to VTA layers
 
-  void	Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
-  void	Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
-  void	Quarter_Final(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
+  void	Compute_Act_Rate(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) override;
+  void	Compute_Act_Spike(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) override;
+  void	Quarter_Final(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) override;
 
   TA_SIMPLE_BASEFUNS(PPTgUnitSpec);
 protected:

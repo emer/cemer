@@ -28,7 +28,7 @@ __constant__ char const_spec_mem[Network_cuda::max_constant_mem];
 ///////////////////////////////////////////////////////////////////////////
 //      layer-at-a-time netinput and act
 
-__global__ void Kernel_Compute_Netin_ConGroup
+__global__ void Kernel_Compute_Netin_ConState
 (const int st_ui, const int cgp_idx, int* recv_cgp_start, char* recv_cgp_mem,
  const int con_group_size, float* recv_cons_mem, char* units_mem, const int unit_vars_size) {
 
@@ -39,19 +39,19 @@ __global__ void Kernel_Compute_Netin_ConGroup
   const int nthrs = blockDim.x; // threads are connections
   const int thr_no = threadIdx.x;
     
-  ConGroup_cuda* cg = Network_cuda::GetUnConGroup
+  ConState_cuda* cg = Network_cuda::GetUnConState
     (recv_cgp_mem, recv_cgp_start, con_group_size, un_idx, cgp_idx);
 
   const int sz = cg->size;
   int st, ed;
   Network_cuda::GetThreadCons(nthrs, thr_no, sz, st, ed);
      
-  const float* wts = cg->OwnCnVar(recv_cons_mem, ConGroup_cuda::WT);
+  const float* wts = cg->OwnCnVar(recv_cons_mem, ConState_cuda::WT);
 
   float sum = 0.0f;
 
   while(st < ed) {
-    UnitVars_cuda* su = cg->UnVars(recv_cons_mem, units_mem, unit_vars_size, st);
+    UnitState_cuda* su = cg->UnVars(recv_cons_mem, units_mem, unit_vars_size, st);
     sum += wts[st] * su->act;
     st++;
   }
@@ -94,14 +94,14 @@ __global__ void Kernel_Compute_Act_Bp
   const int un_idx = st_ui + blockIdx.x * nthrs + thr_no;
   if(un_idx < ed_ui) {
 
-    UnitVars_cuda* u = Network_cuda::GetUnitVars(units_mem, unit_vars_size, un_idx);
+    UnitState_cuda* u = Network_cuda::GetUnitState(units_mem, unit_vars_size, un_idx);
 
-    if(!(u->ext_flag & UnitVars_cuda::EXT)) {
+    if(!(u->ext_flag & UnitState_cuda::EXT)) {
       // first step is to sum up the netins for this guy
       float netin = 0.0f;
       const int n_cgps = units_n_recv_cgps[un_idx];
       for(int i=0; i<n_cgps; i++) {
-        ConGroup_cuda* cg = Network_cuda::GetUnConGroup
+        ConState_cuda* cg = Network_cuda::GetUnConState
           (recv_cgp_mem, recv_cgp_start, con_group_size, un_idx, i);
         netin += cg->temp1;
       }
@@ -142,7 +142,7 @@ void Bp_cuda::Compute_NetinAct() {
         for(int cgi = 0; cgi < n_cgps; cgi++) {
           //  Invoke kernel -- 3rd arg is size of memory to allocate to shared
           // use act stream here so netin and act are fully sync'd automatically
-          Kernel_Compute_Netin_ConGroup<<<nu, n_threads, n_threads * sizeof(float), strm_compute_act>>>
+          Kernel_Compute_Netin_ConState<<<nu, n_threads, n_threads * sizeof(float), strm_compute_act>>>
             (st_ui, cgi, recv_cgp_start_d, recv_cgp_mem_d, con_group_size,
              recv_cons_mem_d, units_mem_d, unit_vars_size);
         }
@@ -164,7 +164,7 @@ void Bp_cuda::Compute_NetinAct() {
 //      layer-at-a-time dEdA and dEdNet
 
 
-__global__ void Kernel_Compute_dEdA_ConGroup
+__global__ void Kernel_Compute_dEdA_ConState
 (const int st_ui, const int cgp_idx, int* send_cgp_start, char* send_cgp_mem,
  const int con_group_size, float* send_cons_mem, char* units_mem, const int unit_vars_size,
  int* recv_cgp_start, char* recv_cgp_mem, float* recv_cons_mem)
@@ -177,7 +177,7 @@ __global__ void Kernel_Compute_dEdA_ConGroup
   const int nthrs = blockDim.x; // threads are connections
   const int thr_no = threadIdx.x;
     
-  ConGroup_cuda* cg = Network_cuda::GetUnConGroup
+  ConState_cuda* cg = Network_cuda::GetUnConState
     (send_cgp_mem, send_cgp_start, con_group_size, un_idx, cgp_idx);
 
   const int sz = cg->size;
@@ -187,12 +187,12 @@ __global__ void Kernel_Compute_dEdA_ConGroup
   float sum = 0.0f;
 
   while(st < ed) {
-    BpUnitVars_cuda* ru = (BpUnitVars_cuda*)cg->UnVars
+    BpUnitState_cuda* ru = (BpUnitState_cuda*)cg->UnVars
       (send_cons_mem, units_mem, unit_vars_size, st);
     // this is super deadly slow:
     const float wt = cg->PtrCn
       (send_cons_mem, con_group_size, recv_cgp_start, recv_cgp_mem, recv_cons_mem, st,
-       ConGroup_cuda::WT);
+       ConState_cuda::WT);
     sum += wt * ru->dEdNet;
     st++;
   }
@@ -233,14 +233,14 @@ __global__ void Kernel_Compute_Err_dEdNet
 
   if(un_idx < ed_ui) {
     
-    BpUnitVars_cuda* u = (BpUnitVars_cuda*)Network_cuda::GetUnitVars
+    BpUnitState_cuda* u = (BpUnitState_cuda*)Network_cuda::GetUnitState
       (units_mem, unit_vars_size, un_idx);
 
     // first step is to sum up the dEdA's for this guy
     float dEdA = 0.0f;
     const int n_cgps = units_n_send_cgps[un_idx];
     for(int i=0; i<n_cgps; i++) {
-      ConGroup_cuda* cg = Network_cuda::GetUnConGroup
+      ConState_cuda* cg = Network_cuda::GetUnConState
         (send_cgp_mem, send_cgp_start, con_group_size, un_idx, i);
       dEdA += cg->temp1;
     }
@@ -251,7 +251,7 @@ __global__ void Kernel_Compute_Err_dEdNet
     u->dEdA = dEdA;
 
     // compute error
-    if(u->ext_flag & UnitVars_cuda::TARG) {
+    if(u->ext_flag & UnitState_cuda::TARG) {
       float err = u->targ - u->act;
       if(fabsf(err) >= us->err_tol) {
         if(us->error_fun == BpUnitSpec_cuda::SQUARED_ERR
@@ -285,9 +285,9 @@ void Bp_cuda::Compute_dEdA_dEdNet() {
     const int nu = ed_ui - st_ui;
 
     if(nu > 0) {
-      BpUnitVars_cuda* u = (BpUnitVars_cuda*)Network_cuda::GetUnitVars
+      BpUnitState_cuda* u = (BpUnitState_cuda*)Network_cuda::GetUnitState
         (units_mem_h, unit_vars_size, st_ui);
-      if(u->ext_flag & UnitVars_cuda::EXT)
+      if(u->ext_flag & UnitState_cuda::EXT)
         continue;                 // skip it!  todo: could have bp to inputs but..
 
       const int n_cgps = units_n_send_cgps_h[st_ui]; // assume same for all..
@@ -295,7 +295,7 @@ void Bp_cuda::Compute_dEdA_dEdNet() {
         for(int cgi = 0; cgi < n_cgps; cgi++) {
           // Invoke kernel -- 3rd arg is size of memory to allocate to shared
           // use "act" stream to keep deda and dednet synchronized..
-          Kernel_Compute_dEdA_ConGroup<<<nu, n_threads, n_threads * sizeof(float), strm_compute_act>>>
+          Kernel_Compute_dEdA_ConState<<<nu, n_threads, n_threads * sizeof(float), strm_compute_act>>>
             (st_ui, cgi, send_cgp_start_d, send_cgp_mem_d, con_group_size,
              send_cons_mem_d, units_mem_d, unit_vars_size,
              recv_cgp_start_d, recv_cgp_mem_d, recv_cons_mem_d);
@@ -328,9 +328,9 @@ __global__ void Kernel_Compute_dWt_Bp
   const int nthrs = blockDim.x; // threads are connections
   const int thr_no = threadIdx.x;
     
-  ConGroup_cuda* cg = Network_cuda::GetConGroup_Flat(recv_cgp_mem, con_group_size, cgp_idx);
+  ConState_cuda* cg = Network_cuda::GetConState_Flat(recv_cgp_mem, con_group_size, cgp_idx);
 
-  BpUnitVars_cuda* ru = (BpUnitVars_cuda*)cg->OwnUnVars(units_mem, unit_vars_size);
+  BpUnitState_cuda* ru = (BpUnitState_cuda*)cg->OwnUnVars(units_mem, unit_vars_size);
 
   const float ru_dEdNet = ru->dEdNet;
   
@@ -338,10 +338,10 @@ __global__ void Kernel_Compute_dWt_Bp
   int st, ed;
   Network_cuda::GetThreadCons(nthrs, thr_no, sz, st, ed);
      
-  float* dwts = cg->OwnCnVar(recv_cons_mem, ConGroup_cuda::DWT);
+  float* dwts = cg->OwnCnVar(recv_cons_mem, ConState_cuda::DWT);
 
   while(st < ed) {
-    UnitVars_cuda* su = cg->UnVars(recv_cons_mem, units_mem, unit_vars_size, st);
+    UnitState_cuda* su = cg->UnVars(recv_cons_mem, units_mem, unit_vars_size, st);
     dwts[st] += su->act * ru_dEdNet;
     st++;
   }
@@ -356,7 +356,7 @@ __global__ void Kernel_Compute_dWt_Bp_Bias
   const int thr_no = threadIdx.x;
   const int un_idx = st_ui + blockIdx.x * nthrs + thr_no;
   if(un_idx < ed_ui) {
-    BpUnitVars_cuda* u = (BpUnitVars_cuda*)Network_cuda::GetUnitVars
+    BpUnitState_cuda* u = (BpUnitState_cuda*)Network_cuda::GetUnitState
       (units_mem, unit_vars_size, un_idx);
     u->bias_dwt += u->dEdNet;
   }
@@ -391,7 +391,7 @@ __global__ void Kernel_Compute_Weights_Bp_dWtOnly
   const int nthrs = blockDim.x; // threads are connections
   const int thr_no = threadIdx.x;
     
-  ConGroup_cuda* cg = Network_cuda::GetConGroup_Flat(recv_cgp_mem, con_group_size, cgp_idx);
+  ConState_cuda* cg = Network_cuda::GetConState_Flat(recv_cgp_mem, con_group_size, cgp_idx);
 
   BpConSpec_cuda* cs = (BpConSpec_cuda*)Network_cuda::GetConSpec
     (const_spec_mem, con_spec_size, cg->con_spec_idx);
@@ -419,7 +419,7 @@ __global__ void Kernel_Compute_Weights_Bp_Bias_dWtOnly
   const int thr_no = threadIdx.x;
   const int un_idx = st_ui + blockIdx.x * nthrs + thr_no;
   if(un_idx < ed_ui) {
-    BpUnitVars_cuda* u = (BpUnitVars_cuda*)Network_cuda::GetUnitVars
+    BpUnitState_cuda* u = (BpUnitState_cuda*)Network_cuda::GetUnitState
       (units_mem, unit_vars_size, un_idx);
 
     BpUnitSpec_cuda* us = (BpUnitSpec_cuda*)Network_cuda::GetUnitSpec
@@ -442,7 +442,7 @@ __global__ void Kernel_Compute_Weights_Bp_SimpleDecay
   const int nthrs = blockDim.x; // threads are connections
   const int thr_no = threadIdx.x;
     
-  ConGroup_cuda* cg = Network_cuda::GetConGroup_Flat(recv_cgp_mem, con_group_size, cgp_idx);
+  ConState_cuda* cg = Network_cuda::GetConState_Flat(recv_cgp_mem, con_group_size, cgp_idx);
 
   BpConSpec_cuda* cs = (BpConSpec_cuda*)Network_cuda::GetConSpec
     (const_spec_mem, con_spec_size, cg->con_spec_idx);
@@ -470,7 +470,7 @@ __global__ void Kernel_Compute_Weights_Bp_Bias_SimpleDecay
   const int thr_no = threadIdx.x;
   const int un_idx = st_ui + blockIdx.x * nthrs + thr_no;
   if(un_idx < ed_ui) {
-    BpUnitVars_cuda* u = (BpUnitVars_cuda*)Network_cuda::GetUnitVars
+    BpUnitState_cuda* u = (BpUnitState_cuda*)Network_cuda::GetUnitState
       (units_mem, unit_vars_size, un_idx);
 
     BpUnitSpec_cuda* us = (BpUnitSpec_cuda*)Network_cuda::GetUnitSpec
@@ -493,7 +493,7 @@ __global__ void Kernel_Compute_Weights_Bp_Elimination
   const int nthrs = blockDim.x; // threads are connections
   const int thr_no = threadIdx.x;
     
-  ConGroup_cuda* cg = Network_cuda::GetConGroup_Flat(recv_cgp_mem, con_group_size, cgp_idx);
+  ConState_cuda* cg = Network_cuda::GetConState_Flat(recv_cgp_mem, con_group_size, cgp_idx);
 
   BpConSpec_cuda* cs = (BpConSpec_cuda*)Network_cuda::GetConSpec
     (const_spec_mem, con_spec_size, cg->con_spec_idx);
@@ -523,7 +523,7 @@ __global__ void Kernel_Compute_Weights_Bp_Bias_Elimination
   const int thr_no = threadIdx.x;
   const int un_idx = st_ui + blockIdx.x * nthrs + thr_no;
   if(un_idx < ed_ui) {
-    BpUnitVars_cuda* u = (BpUnitVars_cuda*)Network_cuda::GetUnitVars
+    BpUnitState_cuda* u = (BpUnitState_cuda*)Network_cuda::GetUnitState
       (units_mem, unit_vars_size, un_idx);
 
     BpUnitSpec_cuda* us = (BpUnitSpec_cuda*)Network_cuda::GetUnitSpec
@@ -548,7 +548,7 @@ __global__ void Kernel_Compute_Weights_Bp_Moment
   const int nthrs = blockDim.x; // threads are connections
   const int thr_no = threadIdx.x;
     
-  ConGroup_cuda* cg = Network_cuda::GetConGroup_Flat(recv_cgp_mem, con_group_size, cgp_idx);
+  ConState_cuda* cg = Network_cuda::GetConState_Flat(recv_cgp_mem, con_group_size, cgp_idx);
 
   BpConSpec_cuda* cs = (BpConSpec_cuda*)Network_cuda::GetConSpec
     (const_spec_mem, con_spec_size, cg->con_spec_idx);
@@ -578,7 +578,7 @@ __global__ void Kernel_Compute_Weights_Bp_Bias_Moment
   const int thr_no = threadIdx.x;
   const int un_idx = st_ui + blockIdx.x * nthrs + thr_no;
   if(un_idx < ed_ui) {
-    BpUnitVars_cuda* u = (BpUnitVars_cuda*)Network_cuda::GetUnitVars
+    BpUnitState_cuda* u = (BpUnitState_cuda*)Network_cuda::GetUnitState
       (units_mem, unit_vars_size, un_idx);
 
     BpUnitSpec_cuda* us = (BpUnitSpec_cuda*)Network_cuda::GetUnitSpec
@@ -602,7 +602,7 @@ __global__ void Kernel_Compute_Weights_Bp_Moment_Simple
   const int nthrs = blockDim.x; // threads are connections
   const int thr_no = threadIdx.x;
     
-  ConGroup_cuda* cg = Network_cuda::GetConGroup_Flat(recv_cgp_mem, con_group_size, cgp_idx);
+  ConState_cuda* cg = Network_cuda::GetConState_Flat(recv_cgp_mem, con_group_size, cgp_idx);
 
   BpConSpec_cuda* cs = (BpConSpec_cuda*)Network_cuda::GetConSpec
     (const_spec_mem, con_spec_size, cg->con_spec_idx);
@@ -632,7 +632,7 @@ __global__ void Kernel_Compute_Weights_Bp_Bias_Moment_Simple
   const int thr_no = threadIdx.x;
   const int un_idx = st_ui + blockIdx.x * nthrs + thr_no;
   if(un_idx < ed_ui) {
-    BpUnitVars_cuda* u = (BpUnitVars_cuda*)Network_cuda::GetUnitVars
+    BpUnitState_cuda* u = (BpUnitState_cuda*)Network_cuda::GetUnitState
       (units_mem, unit_vars_size, un_idx);
 
     BpUnitSpec_cuda* us = (BpUnitSpec_cuda*)Network_cuda::GetUnitSpec
@@ -657,7 +657,7 @@ __global__ void Kernel_Compute_Weights_Bp_Moment_Elim
   const int nthrs = blockDim.x; // threads are connections
   const int thr_no = threadIdx.x;
     
-  ConGroup_cuda* cg = Network_cuda::GetConGroup_Flat(recv_cgp_mem, con_group_size, cgp_idx);
+  ConState_cuda* cg = Network_cuda::GetConState_Flat(recv_cgp_mem, con_group_size, cgp_idx);
 
   BpConSpec_cuda* cs = (BpConSpec_cuda*)Network_cuda::GetConSpec
     (const_spec_mem, con_spec_size, cg->con_spec_idx);
@@ -690,7 +690,7 @@ __global__ void Kernel_Compute_Weights_Bp_Bias_Moment_Elim
   const int thr_no = threadIdx.x;
   const int un_idx = st_ui + blockIdx.x * nthrs + thr_no;
   if(un_idx < ed_ui) {
-    BpUnitVars_cuda* u = (BpUnitVars_cuda*)Network_cuda::GetUnitVars
+    BpUnitState_cuda* u = (BpUnitState_cuda*)Network_cuda::GetUnitState
       (units_mem, unit_vars_size, un_idx);
 
     BpUnitSpec_cuda* us = (BpUnitSpec_cuda*)Network_cuda::GetUnitSpec

@@ -37,7 +37,7 @@ bool ECoutUnitSpec::CheckConfig_Unit(Layer* lay, bool quiet) {
   bool got_ec_in = false;
   const int nrg = un->NRecvConGps(); 
   for(int g=0; g< nrg; g++) {
-    LeabraConGroup* recv_gp = (LeabraConGroup*)un->RecvConGroup(g);
+    LeabraConState_cpp* recv_gp = (LeabraConState_cpp*)un->RecvConState(g);
     if(recv_gp->prjn->NotActive()) continue; // key!! just check for prjn, not con group!
     LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
     if(cs->IsMarkerCon() && recv_gp->size >= 1) {
@@ -53,17 +53,17 @@ bool ECoutUnitSpec::CheckConfig_Unit(Layer* lay, bool quiet) {
   return true;
 }
 
-void ECoutUnitSpec::ClampFromECin(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void ECoutUnitSpec::ClampFromECin(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   if(deep.on) {
     Compute_DeepMod(u, net, thr_no);
   }
-  const int nrg = u->NRecvConGps(net, thr_no);
+  const int nrg = u->NRecvConGps(net);
   for(int g=0; g<nrg; g++) {
-    LeabraConGroup* recv_gp = (LeabraConGroup*)u->RecvConGroup(net, thr_no, g);
+    LeabraConState_cpp* recv_gp = (LeabraConState_cpp*)u->RecvConState(net, g);
     if(recv_gp->NotActive()) continue;
     LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
     if(!cs->IsMarkerCon()) continue;
-    LeabraUnitVars* su = (LeabraUnitVars*)recv_gp->UnVars(0, net);
+    LeabraUnitState_cpp* su = (LeabraUnitState_cpp*)recv_gp->UnState(0, net);
     float inval = su->act_eq;
     u->act = clamp_range.Clip(inval);
     if(deep.on) {
@@ -75,22 +75,22 @@ void ECoutUnitSpec::ClampFromECin(LeabraUnitVars* u, LeabraNetwork* net, int thr
   }
 }
 
-void ECoutUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void ECoutUnitSpec::Compute_Act_Rate(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   if(net->quarter == 3 && net->train_mode == Network::TRAIN)
     ClampFromECin(u, net, thr_no);
   else
     inherited::Compute_Act_Rate(u, net, thr_no);
 }
 
-void ECoutUnitSpec::Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void ECoutUnitSpec::Compute_Act_Spike(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   if(net->quarter == 3) 
     ClampFromECin(u, net, thr_no);
   else
     inherited::Compute_Act_Spike(u, net, thr_no);
 }
 
-float ECoutUnitSpec::Compute_SSE(UnitVars* ru, Network* rnet, int thr_no, bool& has_targ) {
-  LeabraUnitVars* u = (LeabraUnitVars*)ru;
+float ECoutUnitSpec::Compute_SSE(UnitState* ru, Network* rnet, int thr_no, bool& has_targ) {
+  LeabraUnitState_cpp* u = (LeabraUnitState_cpp*)ru;
   LeabraNetwork* net = (LeabraNetwork*)rnet;
   
   float uerr = u->act_p - u->act_q1;

@@ -68,15 +68,15 @@ public:
 
   bool          deep_mod_zero;  // for unit group-based extinction-coding layers; modulation coming from the corresponding acquisition layer via deep_mod_net -- when this modulation signal is below deep.mod_thr, does it have the ability to zero out the extinction activations?  i.e., is the modulation required to enable extinction firing?
   
-  float Compute_DaModNetin(LeabraUnitVars* uv, LeabraNetwork* net,
+  float Compute_DaModNetin(LeabraUnitState_cpp* uv, LeabraNetwork* net,
                            int thr_no, float& net_syn) override;
 
-  void  Compute_DeepMod(LeabraUnitVars* uv, LeabraNetwork* net,
+  void  Compute_DeepMod(LeabraUnitState_cpp* uv, LeabraNetwork* net,
                         int thr_no) override;
-  float Compute_NetinExtras(LeabraUnitVars* u, LeabraNetwork* net,
+  float Compute_NetinExtras(LeabraUnitState_cpp* u, LeabraNetwork* net,
                             int thr_no, float& net_syn) override;
-  void  Compute_ActFun_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
-  void  Quarter_Final_RecVals(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
+  void  Compute_ActFun_Rate(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) override;
+  void  Quarter_Final_RecVals(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) override;
 
   TA_SIMPLE_BASEFUNS(CElAmygUnitSpec);
 protected:

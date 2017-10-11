@@ -26,15 +26,7 @@ set(network_HEADS_MAKETA_base
   NetworkRef.h
 
   Connection.h
-  ConGroup_core.h
-  ConGroup.h
-  ConSpec.h
-        
-  UnitSpec.h
-  Voxel.h
-  Voxel_List.h
-  UnitVars_core.h
-  UnitVars.h
+
   Unit.h
   UnitPtrList.h
   Unit_Group.h
@@ -44,7 +36,6 @@ set(network_HEADS_MAKETA_base
   Projection_Group.h
 
   LayerSpec.h
-  Layer.h
   Layer_Group.h
   NetworkThreadMgr.h
   Layer_PtrList.h
@@ -58,7 +49,6 @@ set(network_HEADS_MAKETA_base
   ParamSeq.h
   ParamSeq_Group.h
   
-  Network.h
   Network_Group.h
 
   FullPrjnSpec.h
@@ -124,6 +114,8 @@ set(network_HEADS_MAKETA_base
   NetView.h
   iViewPanelOfNetwork.h
 
+  Voxel.h
+  Voxel_List.h
   BrainAtlasRegexpPopulator.h
   BrainView.h
   BrainVolumeView.h
@@ -133,19 +125,63 @@ set(network_HEADS_MAKETA_base
 # multiple inheritence -- in correspondence with deps below
 set(network_HEADS_MAKETA_MI
   ScriptPrjnSpec.h
+  Layer.h
+  Network.h
+  NetworkState_cpp.h
+  LayerState_cpp.h
+  PrjnState_cpp.h
+  UnGpState_cpp.h
+  UnitState_cpp.h
+  ConState_cpp.h
+  LayerSpec_cpp.h
+  UnitSpec_cpp.h
+  ConSpec_cpp.h
+  ConSpec.h
+  UnitSpec.h
 )
 
 # note: there must be exactly same number of dependencies for each item
 # you can just add redundant ones to make it all work out
 set(network_HEADS_MAKETA_MI_DEPS
-"../../temt/ta_core/taBase.h;../../temt/ta_program/ScriptBase.h;ProjectionSpec.h;BaseSpec.h"
+"../../temt/ta_core/taBase.h;ProjectionSpec.h;BaseSpec.h"
+"Layer_core.h;State_defs.h;State_cpp.h"
+"Network_core.h;Network_mbrs.h;State_defs.h"
+"Network_core.h;NetworkState_core.h;Network_mbrs.h"
+"Layer_core.h;LayerState_core.h;State_defs.h"
+"PrjnState_core.h;State_defs.h;State_cpp.h"
+"UnGpState_core.h;State_defs.h;State_cpp.h"
+"UnitState_core.h;State_defs.h;State_cpp.h"
+"ConState_core.h;State_defs.h;State_cpp.h"
+"LayerSpec_core.h;State_defs.h;State_cpp.h"
+"UnitSpec_core.h;State_defs.h;State_cpp.h"
+"ConSpec_core.h;State_defs.h;State_cpp.h"
+"UnitSpec_core.h;State_defs.h;State_cpp.h"
+"ConSpec_core.h;State_defs.h;State_cpp.h"
 )
 
 set(network_HEADS_NOMAKETA
   network_def.h
-  ConGroup_inlines.h
-  ConSpec_inlines.h
   Unit_inlines.h
+
+  State_defs.h
+  State_cpp.h
+  State_main.h
+  State_cuda.h
+
+  Network_mbrs.h
+  Network_core.h
+  NetworkState_core.h
+  Layer_core.h
+  LayerState_core.h
+  PrjnState_core.h
+  UnGpState_core.h
+  UnitState_core.h
+  ConState_core.h
+
+  LayerSpec_core.h
+  UnitSpec_core.h
+  ConSpec_mbrs.h
+  ConSpec_core.h
 
   BrainAtlas.h
   BrainAtlasFileParser.h
@@ -217,7 +253,7 @@ set(network_HEADS
   ${network_HEADS_MAKETA_MI}
 )
 
-# gui-related source files: NOTE: do NOT include TA or .moc files -- auto generated
+# all source: NOTE: do NOT include TA or .moc files -- auto generated
 set(network_SRCS
   EmergentMisc.cpp
 
@@ -236,13 +272,11 @@ set(network_SRCS
   NetworkRef.cpp
 
   Connection.cpp
-  ConGroup.cpp
+  ConSpec_cpp.cpp
   ConSpec.cpp
         
-  Voxel.cpp
-  Voxel_List.cpp
+  UnitSpec_cpp.cpp
   UnitSpec.cpp
-  UnitVars.cpp
   Unit.cpp
   UnitPtrList.cpp
   Unit_Group.cpp
@@ -251,6 +285,7 @@ set(network_SRCS
   Projection.cpp
   Projection_Group.cpp
 
+  LayerSpec_cpp.cpp
   LayerSpec.cpp
   Layer.cpp
   Layer_Group.cpp
@@ -267,6 +302,13 @@ set(network_SRCS
   ParamSeq.cpp
   ParamSeq_Group.cpp
 
+  ConState_cpp.cpp
+  UnitState_cpp.cpp
+  UnGpState_cpp.cpp
+  PrjnState_cpp.cpp
+  LayerState_cpp.cpp
+  NetworkState_cpp.cpp
+  
   Network.cpp
   Network_Group.cpp
 
@@ -344,6 +386,9 @@ set(network_SRCS
   NetView.cpp
   iViewPanelOfNetwork.cpp
 
+  Voxel.cpp
+  Voxel_List.cpp
+  
   BrainAtlas.cpp
   BrainAtlasFileParser.cpp
   BrainAtlasInfo.cpp
@@ -373,7 +418,22 @@ set(network_SRCS
 set(network_FILES ${network_HEADS} ${network_SRCS})
 
 set(network_CUDA
-  ConGroup_cuda.cu
-  UnitVars_cuda.cu
+  NetworkState_cuda.h
+  LayerState_cuda.h
+  PrjnState_cuda.h
+  UnGpState_cuda.h
+  UnitState_cuda.h
+  ConState_cuda.h
+
+  LayerSpec_cuda.h
+  UnitSpec_cuda.h
+  ConSpec_cuda.h
+
+  LayerSpec_cuda.cpp
+  UnitSpec_cuda.cpp
+  ConSpec_cuda.cpp
+  
+  ConState_cuda.cu
+  UnitState_cuda.cu
   Network_cuda.cu
 )

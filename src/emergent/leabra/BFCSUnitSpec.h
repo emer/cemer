@@ -59,20 +59,20 @@ INHERITED(LeabraUnitSpec)
 public:
   BFCSAChSpec     ach;          // parameters for the ach computation
 
-  virtual void  Send_ACh(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
+  virtual void  Send_ACh(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no);
   // send the ach value to sending projections: start of quarters
-  virtual void  Compute_ACh(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
+  virtual void  Compute_ACh(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no);
   // compute ach value from delta change values: at end of trial
 
-  void  Quarter_Init_Unit(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
-  void  Compute_ActTimeAvg(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
+  void  Quarter_Init_Unit(LeabraUnitState_cpp* uv, LeabraNetwork* net, int thr_no) override;
+  void  Compute_ActTimeAvg(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) override;
 
-  void	Compute_NetinInteg(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override { };
-  void	Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
-  void	Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
+  void	Compute_NetinInteg(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) override { };
+  void	Compute_Act_Rate(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) override;
+  void	Compute_Act_Spike(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) override;
   
-  void 	Compute_dWt(UnitVars* u, Network* net, int thr_no) override { };
-  void	Compute_Weights(UnitVars* u, Network* net, int thr_no) override { };
+  void 	Compute_dWt(UnitState* u, Network* net, int thr_no) override { };
+  void	Compute_Weights(UnitState* u, Network* net, int thr_no) override { };
 
   void  HelpConfig();   // #BUTTON get help message for configuring this spec
   bool  CheckConfig_Unit(Layer* lay, bool quiet=false) override;

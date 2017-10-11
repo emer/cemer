@@ -22,7 +22,7 @@
 // how to deal with parameters!?  to share code, need exact same memory footprint!
 
 
-inline void LeabraUnitSpec_Init_Vars(LeabraUnitVars_gen* u, int thr_no) {
+inline void LeabraUnitSpec_Init_Vars(LeabraUnitState_cpp_gen* u, int thr_no) {
   u->bias_fwt = 0.0f;
   u->bias_swt = 0.0f;
   u->ext_orig = 0.0f;
@@ -97,7 +97,7 @@ inline void LeabraUnitSpec_Init_Vars(LeabraUnitVars_gen* u, int thr_no) {
   // spike_i_buf = NULL;
 }
 
-inline void LeabraUnitSpec_Init_Weights(LeabraUnitVars_gen* ru, int thr_no) {
+inline void LeabraUnitSpec_Init_Weights(LeabraUnitState_cpp_gen* ru, int thr_no) {
   u->net_prv_q = 0.0f;
   u->net_prv_trl = 0.0f;
   if(act_misc.avg_trace)
@@ -109,7 +109,7 @@ inline void LeabraUnitSpec_Init_Weights(LeabraUnitVars_gen* ru, int thr_no) {
   // Init_ActAvg(u, net, thr_no);
 }
 
-inline void LeabraUnitSpec_Compute_SelfInhib(LeabraUnitVars_gen* u, int thr_no,
+inline void LeabraUnitSpec_Compute_SelfInhib(LeabraUnitState_cpp_gen* u, int thr_no,
                                               LeabraLayerSpec* lspec) {
   float self = lspec->inhib_misc.self_fb * u->act;
   u->gi_self += lspec->inhib_misc.self_dt * (self - u->gi_self);
@@ -117,7 +117,7 @@ inline void LeabraUnitSpec_Compute_SelfInhib(LeabraUnitVars_gen* u, int thr_no,
 
 
 inline void LeabraUnitSpec_Compute_ApplyInhib
-(LeabraUnitVars_gen* u, int thr_no, float lay_adapt_gi,
+(LeabraUnitState_cpp_gen* u, int thr_no, float lay_adapt_gi,
  LeabraLayerSpec* lspec, LeabraInhib* thr, float ival) {
   LeabraUnitSpoec_Compute_SelfInhib(u, thr_no, lspec);
   float gi_ex = 0.0f;

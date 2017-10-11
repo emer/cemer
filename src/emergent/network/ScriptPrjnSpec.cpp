@@ -61,7 +61,7 @@ void ScriptPrjnSpec::Connect_impl(Projection* prj, bool make_cns) {
   prjn = NULL;
 }
 
-void ScriptPrjnSpec::Init_Weights_Prjn(Projection* prj, ConGroup* cg,
+void ScriptPrjnSpec::Init_Weights_Prjn(Projection* prj, ConState_cpp* cg,
                                        Network* net, int thr_no) {
   prjn = prj;                   // set the arg for the script
   make_cons = false;

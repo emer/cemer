@@ -41,64 +41,24 @@ inline int Unit::NSendConGps() const {
   return own_net()->UnNSendConGps(flat_idx);
 }
 
-inline ConGroup* Unit::RecvConGroup(int rcg_idx) const {
-  return own_net()->RecvConGroup(flat_idx, rcg_idx);
+inline ConState_cpp* Unit::RecvConState(int rcg_idx) const {
+  return own_net()->RecvConState(flat_idx, rcg_idx);
 }
 
-inline ConGroup* Unit::SendConGroup(int scg_idx) const {
-  return own_net()->SendConGroup(flat_idx, scg_idx);
+inline ConState_cpp* Unit::SendConState(int scg_idx) const {
+  return own_net()->SendConState(flat_idx, scg_idx);
 }
 
-inline ConGroup* Unit::RecvConGroupPrjn(Projection* prjn) const {
-  return RecvConGroup(prjn->recv_idx);
+inline ConState_cpp* Unit::RecvConStatePrjn(Projection* prjn) const {
+  return RecvConState(prjn->recv_idx);
 }
 
-inline ConGroup* Unit::SendConGroupPrjn(Projection* prjn) const {
-  return SendConGroup(prjn->send_idx);
+inline ConState_cpp* Unit::SendConStatePrjn(Projection* prjn) const {
+  return SendConState(prjn->send_idx);
 }
 
-inline UnitVars* Unit::GetUnitVars() const {
-  return own_net()->UnUnitVars(flat_idx);
-}
-
-inline int Unit::ThrNo() const {
-  return own_net()->UnThr(flat_idx);
-}
-
-/////////////////////////
-//      UnitVars
-
-
-inline int UnitVars::ThrNo(Network* net) const {
-  return net->UnThr(flat_idx);
-}
-
-inline Unit*  UnitVars::Un(Network* net, int thr_no) const {
-  return net->ThrUnit(thr_no, thr_un_idx);
-}
-
-inline int UnitVars::NRecvConGps(Network* net, int thr_no) const {
-  return net->ThrUnNRecvConGps(thr_no, thr_un_idx);
-}
-
-inline int UnitVars::NSendConGps(Network* net, int thr_no) const {
-  return net->ThrUnNSendConGps(thr_no, thr_un_idx);
-}
-
-inline ConGroup* UnitVars::RecvConGroup(Network* net, int thr_no, int rcg_idx) const {
-  return net->ThrUnRecvConGroup(thr_no, thr_un_idx, rcg_idx);
-}
-
-inline ConGroup* UnitVars::SendConGroup(Network* net, int thr_no, int scg_idx) const {
-  return net->ThrUnSendConGroup(thr_no, thr_un_idx, scg_idx);
-}
-
-inline ConGroup* UnitVars::RecvConGroupPrjn(Network* net, int thr_no, Projection* prjn) const {
-  return net->ThrUnRecvConGroup(thr_no, thr_un_idx, prjn->recv_idx);
-}
-
-inline ConGroup* UnitVars::SendConGroupPrjn(Network* net, int thr_no, Projection* prjn) const {
-  return net->ThrUnSendConGroup(thr_no, thr_un_idx, prjn->send_idx);
+inline UnitState_cpp* Unit::GetUnitState() const {
+  return own_net()->UnUnitState(flat_idx);
 }
 
 #endif // Unit_inlines_h

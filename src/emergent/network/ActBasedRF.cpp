@@ -85,10 +85,10 @@ void ActBasedRF::InitData() {
   wt_array.InitVals();
   rf_data->UpdateAllViews();
 
-  var_md = network->unit_vars_type->members.FindName(var);
+  var_md = network->UnitStateType()->members.FindName(var);
   TestError(!var_md, "InitData", "variable named:", var,
             "not found in unit vars of type:",
-            network->unit_vars_type->name);
+            network->UnitStateType()->name);
 }
 
 void ActBasedRF::InitAll(DataTable* dt, Network* net, Layer* tlay) {
@@ -125,7 +125,7 @@ bool ActBasedRF::IncrementSums() {
     Unit* tu;
     taLeafItr tui;
     for(tu = trg_layer->units.FirstEl(tui); tu; tu = trg_layer->units.NextEl(tui), tidx++) {
-      UnitVars* tuv = tu->GetUnitVars();
+      UnitState_cpp* tuv = tu->GetUnitState();
       const float tact = fabsf(*((float*)var_md->GetOff(tuv)));
       if(tact < threshold) continue; // not this time!
 
@@ -137,7 +137,7 @@ bool ActBasedRF::IncrementSums() {
       Unit* su;
       taLeafItr sui;
       for(su = lay->units.FirstEl(sui); su; su = lay->units.NextEl(sui), sidx++) {
-        UnitVars* suv = su->GetUnitVars();
+        UnitState_cpp* suv = su->GetUnitState();
         const float sact = *((float*)var_md->GetOff(suv));
         sum_mat->FastEl1d(sidx) += tact * sact;
       }

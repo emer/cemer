@@ -42,7 +42,7 @@ public:
   bool                d2r;            // if true, exhibits inverted D2 receptor-driven learning - LTD from phaDA bursts; LTP from dips; i.e., NoGo- / indirect-like pattern
   float               da_dip_gain;    // multply phasic dips to increase or decrease learning effect
 
-  inline float GetActVal(LeabraUnitVars* u, const LearnActVal& val) {
+  inline float GetActVal(LeabraUnitState_cpp* u, const LearnActVal& val) {
     switch(val) {
     case PREV_TRIAL:
       return u->act_q0;
@@ -66,11 +66,11 @@ public:
   }
   // #IGNORE dopamine multiplication
 
-  inline void Compute_dWt(ConGroup* rcg, Network* rnet, int thr_no) override {
+  inline void Compute_dWt(ConState* rcg, Network* rnet, int thr_no) override {
     LeabraNetwork* net = (LeabraNetwork*)rnet;
     if(!learn || (use_unlearnable && net->unlearnable_trial)) return;
-    LeabraConGroup* cg = (LeabraConGroup*)rcg;
-    LeabraUnitVars* su = (LeabraUnitVars*)cg->ThrOwnUnVars(net, thr_no);
+    LeabraConState_cpp* cg = (LeabraConState_cpp*)rcg;
+    LeabraUnitState_cpp* su = (LeabraUnitState_cpp*)cg->ThrOwnUnState(net, thr_no);
     float* dwts = cg->OwnCnVar(DWT);
 
     float su_act = GetActVal(su, su_act_var);
@@ -81,7 +81,7 @@ public:
     
     const int sz = cg->size;
     for(int i=0; i<sz; i++) {
-      LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i, net);
+      LeabraUnitState_cpp* ru = (LeabraUnitState_cpp*)cg->UnState(i, net);
       float lrate_eff = clrate;
       if(deep_on) {
         lrate_eff *= (bg_lrate + fg_lrate * ru->deep_lrn);

@@ -38,18 +38,18 @@ public:
     else dwt += cur_lrate * nerr_lrate * gran_act;  }
   // #IGNORE
 
-  inline void Compute_dWt(ConGroup* rcg, Network* rnet, int thr_no) override {
+  inline void Compute_dWt(ConState* rcg, Network* rnet, int thr_no) override {
     LeabraNetwork* net = (LeabraNetwork*)rnet;
     if(!learn || (use_unlearnable && net->unlearnable_trial)) return;
-    LeabraConGroup* cg = (LeabraConGroup*)rcg;
-    LeabraUnitVars* su = (LeabraUnitVars*)cg->ThrOwnUnVars(net, thr_no);
+    LeabraConState_cpp* cg = (LeabraConState_cpp*)rcg;
+    LeabraUnitState_cpp* su = (LeabraUnitState_cpp*)cg->ThrOwnUnState(net, thr_no);
 
     const float gran_act = su->syn_nr; // special lagged act value for CerebGranuleUnitSpec
     float* dwts = cg->OwnCnVar(DWT);
 
     const int sz = cg->size;
     for(int i=0; i<sz; i++) {
-      LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i,net);
+      LeabraUnitState_cpp* ru = (LeabraUnitState_cpp*)cg->UnState(i,net);
       C_Compute_dWt_PfPc(dwts[i], gran_act, ru->act_eq, ru->targ);
       // target activation trains relative to act_eq
     }

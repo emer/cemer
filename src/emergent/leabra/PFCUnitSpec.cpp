@@ -179,7 +179,7 @@ void PFCUnitSpec::UpdateAfterEdit_impl() {
   UpdtDynTable();
 }
 
-float PFCUnitSpec::Compute_NetinExtras(LeabraUnitVars* u, LeabraNetwork* net,
+float PFCUnitSpec::Compute_NetinExtras(LeabraUnitState_cpp* u, LeabraNetwork* net,
                                           int thr_no, float& net_syn) {
   float net_ex = inherited::Compute_NetinExtras(u, net, thr_no, net_syn);
   if(!deep.IsSuper()) {
@@ -207,7 +207,7 @@ float PFCUnitSpec::Compute_NetinExtras(LeabraUnitVars* u, LeabraNetwork* net,
   return net_ex;
 }
 
-void PFCUnitSpec::Compute_PFCGating(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void PFCUnitSpec::Compute_PFCGating(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   if(!deep.IsSuper()) {
     LeabraUnitSpec::SaveGatingAct(u, net, thr_no); // we save like regular -- don't get gating inputs
     return;
@@ -242,19 +242,19 @@ void PFCUnitSpec::Compute_PFCGating(LeabraUnitVars* u, LeabraNetwork* net, int t
   }
 }
 
-void PFCUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void PFCUnitSpec::Compute_Act_Rate(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   inherited::Compute_Act_Rate(u, net, thr_no);
   // note: we must compute this here based on thal values we got last cycle in Act_Post
   // and we do it after getting new acts so that we can clear them out when gating happens
   Compute_PFCGating(u, net, thr_no);
 }
 
-void PFCUnitSpec::Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void PFCUnitSpec::Compute_Act_Spike(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   inherited::Compute_Act_Spike(u, net, thr_no);
   Compute_PFCGating(u, net, thr_no);
 }
 
-void PFCUnitSpec::Compute_DeepRaw(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void PFCUnitSpec::Compute_DeepRaw(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   if(!deep.on || !Quarter_DeepRawNow(net->quarter)) return;
 
   // NOTE: only super does anything here -- this is where the gating is detected and updated
@@ -278,11 +278,11 @@ void PFCUnitSpec::Compute_DeepRaw(LeabraUnitVars* u, LeabraNetwork* net, int thr
   u->deep_raw = thal_eff * draw;
 }
 
-void PFCUnitSpec::GetThalCntFromSuper(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void PFCUnitSpec::GetThalCntFromSuper(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   // look for layer we recv a deep context con from, that is also a PFCUnitSpec SUPER
-  const int nrg = u->NRecvConGps(net, thr_no); 
+  const int nrg = u->NRecvConGps(net); 
   for(int g=0; g<nrg; g++) {
-    LeabraConGroup* recv_gp = (LeabraConGroup*)u->RecvConGroup(net, thr_no, g);
+    LeabraConState_cpp* recv_gp = (LeabraConState_cpp*)u->RecvConState(net, g);
     if(recv_gp->NotActive()) continue;
     LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
     if(!cs->IsDeepCtxtCon()) continue;
@@ -291,13 +291,13 @@ void PFCUnitSpec::GetThalCntFromSuper(LeabraUnitVars* u, LeabraNetwork* net, int
     if(!fmus->InheritsFrom(&TA_PFCUnitSpec)) continue;
     PFCUnitSpec* pfcus = (PFCUnitSpec*)fmus;
     if(!pfcus->deep.IsSuper() || recv_gp->size == 0) continue;
-    LeabraUnitVars* suv = (LeabraUnitVars*)recv_gp->UnVars(0,net); // get first connection
+    LeabraUnitState_cpp* suv = (LeabraUnitState_cpp*)recv_gp->UnState(0,net); // get first connection
     u->thal_cnt = suv->thal_cnt; // all super guys in same stripe should have same thal_cnt
   }
 }  
 
 
-void PFCUnitSpec::Quarter_Init_Deep(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void PFCUnitSpec::Quarter_Init_Deep(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   if(!deep.on || !Quarter_DeepRawPrevQtr(net->quarter)) return;
 
   // this is first entry point for Quarter_Init -- because of parallel, need to
@@ -307,7 +307,7 @@ void PFCUnitSpec::Quarter_Init_Deep(LeabraUnitVars* u, LeabraNetwork* net, int t
   }
 }
 
-void PFCUnitSpec::Send_DeepCtxtNetin(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void PFCUnitSpec::Send_DeepCtxtNetin(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   if(!deep.on || !Quarter_DeepRawPrevQtr(net->quarter)) return;
 
   if(u->thal_cnt < 0.0f) {      // not maintaining or just gated -- zero!
@@ -327,7 +327,7 @@ void PFCUnitSpec::Send_DeepCtxtNetin(LeabraUnitVars* u, LeabraNetwork* net, int 
 }
 
 
-void PFCUnitSpec::Compute_DeepStateUpdt(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void PFCUnitSpec::Compute_DeepStateUpdt(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   if(!deep.on || !Quarter_DeepRawPrevQtr(net->quarter)) return;
 
   if(maint.use_dyn && deep.IsDeep() && u->thal_cnt >= 0) { // update dynamics!
@@ -347,7 +347,7 @@ void PFCUnitSpec::Compute_DeepStateUpdt(LeabraUnitVars* u, LeabraNetwork* net, i
   inherited::Compute_DeepStateUpdt(u, net, thr_no);
 }
 
-void PFCUnitSpec::ClearOtherMaint(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void PFCUnitSpec::ClearOtherMaint(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   LeabraUnit* un = (LeabraUnit*)u->Un(net, thr_no);
   LeabraLayer* lay = (LeabraLayer*)un->own_lay();
   LeabraUnGpData* ugd = lay->UnGpDataUn(un);
@@ -356,12 +356,12 @@ void PFCUnitSpec::ClearOtherMaint(LeabraUnitVars* u, LeabraNetwork* net, int thr
   
   const int nsg = u->NSendConGps(net, thr_no); 
   for(int g=0; g<nsg; g++) {
-    LeabraConGroup* send_gp = (LeabraConGroup*)u->SendConGroup(net, thr_no, g);
+    LeabraConState_cpp* send_gp = (LeabraConState_cpp*)u->SendConState(net, thr_no, g);
     if(send_gp->NotActive()) continue;
     LeabraConSpec* cs = (LeabraConSpec*)send_gp->GetConSpec();
     if(!cs->IsMarkerCon()) continue;
     for(int j=0;j<send_gp->size; j++) {
-      LeabraUnitVars* uv = (LeabraUnitVars*)send_gp->UnVars(j,net);
+      LeabraUnitState_cpp* uv = (LeabraUnitState_cpp*)send_gp->UnState(j,net);
       if(uv->thal_cnt >= 1.0f) { // important!  only for established maint, not just gated!
         PFCUnitSpec* mus = (PFCUnitSpec*)uv->unit_spec;
         uv->thal_cnt = -1.0f; // terminate!
@@ -373,7 +373,7 @@ void PFCUnitSpec::ClearOtherMaint(LeabraUnitVars* u, LeabraNetwork* net, int thr
   }
 }
 
-void PFCUnitSpec::ClearDeepActs(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void PFCUnitSpec::ClearDeepActs(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   inherited::ClearDeepActs(u, net, thr_no);
   u->thal_cnt = -1.0f; // -1.0 is no gating, 0.0 is beginning of gating, so need to initialize to -1
   u->misc_1 = 0.0f;

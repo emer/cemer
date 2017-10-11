@@ -57,6 +57,10 @@ class DataCol; //
     code \
   } 
 
+#include <NetworkState_cpp>
+#include <UnitState_cpp>
+
+#include <State_main>
 
 eTypeDef_Of(LayerDistances);
 
@@ -154,33 +158,11 @@ class E_API Layer : public SpecUser {
   // ##EXT_lay ##COMPRESS ##CAT_Network ##SCOPE_Network ##HAS_CONDTREE layer containing units
 INHERITED(SpecUser)
 public:
-  enum LayerType {      // type of layer, used to determine various default settings
-    HIDDEN,             // layer does not receive external input of any form
-    INPUT,              // layer receives external input (EXT) that drives activation states directly
-    TARGET,             // layer receives a target input (TARG) that determines correct activation states, used for training
-    OUTPUT,             // layer produces a visible output response but is not a target.  any external input serves as a comparison (COMP) against current activations.
-  };
 
-  enum LayerFlags {                     // #BITS flags for layer
-    LF_NONE             = 0,            // #NO_BIT
-    LESIONED            = 0x0001,       // #READ_ONLY this layer is temporarily lesioned (inactivated for all network-level processing functions) -- IMPORTANT: use the Lesion and UnLesion functions to set this flag -- they provide proper updating after changes -- otherwise network dynamics will be wrong and the display will not be properly updated
-    ICONIFIED           = 0x0002,       // only display a single unit showing icon_value (set in algorithm-specific manner)
-    NO_ADD_SSE          = 0x0004,       // do NOT add this layer's sse value (sum squared error) to the overall network sse value: this is for all types of SSE computed for ext_flag = TARG (layer_type = TARGET) or ext_flag = COMP (layer_type = OUTPUT) layers
-    NO_ADD_COMP_SSE     = 0x0008,       // do NOT add this layer's sse value (sum squared error) to the overall network sse value: ONLY for ext_flag = COMP (OUTPUT) flag settings (NO_ADD_SSE blocks all contributions) -- this is relevant if the layer type or ext_flags are switched dynamically and only TARGET errors are relevant
-    SAVE_UNIT_NAMES     = 0x0010,       // save the names for individual units in the unit_names matrix on this layer (the Units themselves are never saved) -- when the network is built, these names are then assigned to the units -- use SetUnitNames method to update unit names from unit_names matrix if you've changed them, and GetUnitNames to save current unit names into unit_names matrix
-    PROJECT_WTS_NEXT    = 0x0020,       // #HIDDEN this layer is next in line for weight projection operation
-    PROJECT_WTS_DONE    = 0x0040,       // #HIDDEN this layer is done with weight projection operation (prevents loops)
-  };
-
-  enum AccessMode {     // how to access the units in the layer -- only relevant for layers with unit groups (otherwise modes are the same)
-    ACC_LAY,            // access as a single layer-wide set of units
-    ACC_GP,             // access via their subgroup structure, with group and unit index values
-  };
-
+#include <Layer_core>
+  
   String                desc;           // #EDIT_DIALOG Description of this layer -- what functional role it plays, how it maps onto the brain, etc
   Network*              own_net;        // #READ_ONLY #NO_SAVE #HIDDEN #CAT_Structure #NO_SET_POINTER Network this layer is in
-  LayerFlags            flags;          // flags controlling various aspects of layer funcdtion
-  LayerType             layer_type;     // #CAT_Activation type of layer: determines default way that external inputs are presented, and helps with other automatic functions (e.g., wizards)
   LayerRelPos           pos_rel;        // #CAT_Structure position this layer relative to another layer -- this is recommended and keeps positioning adaptive to layer sizes -- just start with one or a few "anchor" layers with absolute positioning, and position everything else relative to them
   PosVector3i           pos;            // #CAT_Structure #READ_ONLY position of layer relative to owning layer group, or overall network position if none (0,0,0 is lower left hand corner) -- see network ABS_POS flag for which position is used by default -- can use SetRelPos or SetAbsPos to set position either way
   PosVector3i           pos_abs;        // #CAT_Structure #CONDEDIT_ON_pos_rel.rel:ABS_POS absolute position of layer always relative to overall network position (0,0,0 is lower left hand corner) -- not relative to owning layer group
@@ -196,51 +178,24 @@ public:
   XYNGeom               disp_geom;      // #AKA_act_geom #HIDDEN #READ_ONLY #CAT_Structure actual view geometry, includes spaces and groups and everything: the full extent of units within the layer
   XYNGeom               scaled_disp_geom; // #AKA_scaled_act_geom #HIDDEN #READ_ONLY #CAT_Structure scaled actual view geometry: disp_scale * disp_geom -- use for view computations
 
-  int                   n_recv_prjns;    // #CAT_Structure #READ_ONLY number of active receiving projections
-  int                   n_send_prjns;    // #CAT_Structure #READ_ONLY number of active sending projections
   Projection_Group      projections;    // #CAT_Structure group of receiving projections
   Projection_Group      send_prjns;     // #CAT_Structure #HIDDEN #LINK_GROUP #NO_DIFF #NO_SEARCH group of sending projections
   Unit_Group            units;          // #CAT_Structure #NO_SEARCH units or groups of units
   UnitSpec_SPtr         unit_spec;      // #CAT_Structure default unit specification for units in this layer
-  UnitVars::ExtFlags    ext_flag;       // #NO_SAVE #CAT_Activation #GUI_READ_ONLY #SHOW indicates which kind of external input layer received -- this is normally set by the ApplyInputData function -- it is not to be manipulated directly
 
   LayerDistances        dist;           // #CAT_Structure #READ_ONLY #SHOW distances from closest input/output layers to this layer
 
   String                output_name;    // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW name for the output produced by the network (algorithm/program dependent, e.g., unit name of most active unit)
   String_Matrix         gp_output_names; // #NO_SAVE #TREE_SHOW #CAT_Statistic #CONDTREE_ON_unit_groups output_name's for unit subgroups -- name for the output produced by the network (algorithm/program dependent, e.g., unit name of most active unit)
-  float                 sse;            // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW sum squared error over the network, for the current external input pattern
-  Average	        avg_sse;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #DMEM_AGG_SUM average sum squared error over an epoch or similar larger set of external input patterns
-  float                 cnt_err;        // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic count of number of times the sum squared error was above cnt_err_tol over an epoch or similar larger set of external input patterns
-  float                 cur_cnt_err;    // #NO_SAVE #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic current cnt_err -- used for computing cnt_err
-  float                 pct_err;        // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic epoch-wise average of count of number of times the sum squared error was above cnt_err_tol over an epoch or similar larger set of external input patterns (= cnt_err / n)
-  float                 pct_cor;        // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic epoch-wise average of count of number of times the sum squared error was below cnt_err_tol over an epoch or similar larger set of external input patterns (= 1 - pct_err -- just for convenience for whichever you want to plot)
-  PRerrVals             prerr;          // #NO_SAVE #GUI_READ_ONLY #CAT_Statistic precision and recall error values for this layer, for the current pattern
-  PRerrVals             sum_prerr;      // #NO_SAVE #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic precision and recall error values over an epoch or similar larger set of external input patterns -- these are always up-to-date as the system is aggregating, given the additive nature of the statistics
-  PRerrVals             epc_prerr;      // #NO_SAVE #GUI_READ_ONLY #SHOW #CONDSHOW_ON_stats.prerr #CAT_Statistic precision and recall error values over an epoch or similar larger set of external input patterns
   float                 icon_value;     // #NO_SAVE #GUI_READ_ONLY #HIDDEN #CAT_Statistic value to display if layer is iconified (algorithmically determined)
-  int                   units_flat_idx; // #NO_SAVE #READ_ONLY starting index for this layer into the network units_flat list, used in threading
   bool                  units_lesioned; // #GUI_READ_ONLY if units were lesioned in this group, don't complain about rebuilding!
   bool                  gp_unit_names_4d; // #CONDSHOW_ON_unit_groups&&flags:SAVE_UNIT_NAMES if there are unit subgroups, create a 4 dimensional set of unit names which allows for distinct names for each unit in the layer -- otherwise a 2d set of names is created of size un_geom, all unit groups have the same repeated set of names
   String_Matrix         unit_names;     // #TREE_SHOW set unit names from corresponding items in this matrix (dims=2 for no group layer or to just label main group, dims=4 for grouped layers, dims=0 to disable)
 
   String                brain_area;     // #CAT_Structure #REGEXP_DIALOG #TYPE_BrainAtlasRegexpPopulator Which brain area this layer's units should be mapped to in a brain view.  Must match a label from the atlas chosen for the network.  Layer will not render to brain view if LESIONED flag is checked.
   float                 voxel_fill_pct; // #CAT_Structure #MIN_0 #MAX_1 Percent of brain_area voxels to be filled by units in this layer.
-  int                   active_lay_idx; // #NO_SAVE #READ_ONLY index of this layer in the network active_layers list -- -1 if not active..
 
   ProjectBase*          project(); // #IGNORE this layer's project
-
-  inline void           SetLayerFlag(LayerFlags flg)   { flags = (LayerFlags)(flags | flg); }
-  // set flag state on
-  inline void           ClearLayerFlag(LayerFlags flg) { flags = (LayerFlags)(flags & ~flg); }
-  // clear flag state (set off)
-  inline bool           HasLayerFlag(LayerFlags flg) const { return (flags & flg); }
-  // check if flag is set
-  inline void           SetLayerFlagState(LayerFlags flg, bool on)
-  { if(on) SetLayerFlag(flg); else ClearLayerFlag(flg); }
-  // set flag state according to on bool (if true, set flag, if false, clear it)
-
-  inline bool           lesioned() const { return HasLayerFlag(LESIONED); }
-  // check if this layer is lesioned -- use in function calls
 
   inline UnitSpec* GetUnitSpec() const { return unit_spec.SPtr(); }
   // #CAT_Structure get the unit spec for this unit -- this is controlled entirely by the layer and all units in the layer have the same unit spec
@@ -313,8 +268,6 @@ public:
   // #CAT_Access get *logical* position for unit within its (virtual) subgroup
   void          UnitInGpLogPos(Unit* un, int& x, int& y) const;
   // #CAT_Access get *logical* position for unit within its (virtual) subgroup
-  int           UnitInGpUnIdx(Unit* un) const;
-  // #CAT_Access get unit index of unit within (virtual) unit group
   int           UnitIdxFmPos(taVector2i& ps) const
   { return ps.y * un_geom.x + ps.x; }
   // #CAT_Access get unit index from position for unit within a subgroup or unit in a layer without any subgroups
@@ -427,11 +380,11 @@ public:
   virtual void  Copy_Weights(const Layer* src);
   // #MENU #MENU_ON_State #MENU_SEP_BEFORE #CAT_ObjectMgmt copies weights from other layer (incl wts assoc with unit bias member)
 
-  virtual void  SaveWeights_strm(std::ostream& strm, ConGroup::WtSaveFormat fmt = ConGroup::TEXT, Projection* prjn = NULL);
+  virtual void  SaveWeights_strm(std::ostream& strm, Unit::WtSaveFormat fmt = Unit::TEXT, Projection* prjn = NULL);
   // #EXT_wts #COMPRESS #CAT_File write weight values out in a simple ordered list of weights (optionally in binary fmt)
-  virtual int   LoadWeights_strm(std::istream& strm, ConGroup::WtSaveFormat fmt = ConGroup::TEXT, bool quiet = false, Projection* prjn = NULL);
+  virtual int   LoadWeights_strm(std::istream& strm, Unit::WtSaveFormat fmt = Unit::TEXT, bool quiet = false, Projection* prjn = NULL);
   // #EXT_wts #COMPRESS #CAT_File read weight values in from a simple ordered list of weights (optionally in binary fmt) -- rval is taMisc::ReadTagStatus = END_TAG if successful
-  static int    SkipWeights_strm(std::istream& strm, ConGroup::WtSaveFormat fmt = ConGroup::TEXT,
+  static int    SkipWeights_strm(std::istream& strm, Unit::WtSaveFormat fmt = Unit::TEXT,
                                  bool quiet = false);
   // #EXT_wts #COMPRESS #CAT_File skip over weight values in from a simple ordered list of weights (optionally in binary fmt) -- rval is taMisc::ReadTagStatus = END_TAG if successful
 
@@ -497,56 +450,18 @@ public:
   virtual int   CountCons(Network* net);
   // #CAT_Structure count connections for all units in layer
 
-  void          SetExtFlag(int flg)   { ext_flag = (UnitVars::ExtFlags)(ext_flag | flg); }
-  // #CAT_Activation set external input data flag
-  void          UnSetExtFlag(int flg) { ext_flag = (UnitVars::ExtFlags)(ext_flag & ~flg); }
-  // #CAT_Activation un-set external input data flag
-  bool          HasExtFlag(int flg)   { return ext_flag & flg; }
-  // #CAT_Activation check if has given ext flag value set
-
   virtual void  SetLayUnitExtFlags(int flg);
   // #CAT_Activation set external input data flags for layer and all units in the layer
 
   virtual void  ApplyInputData
-    (taMatrix* data, UnitVars::ExtFlags ext_flags = UnitVars::NO_EXTERNAL,
+    (taMatrix* data, ExtFlags ext_flags = NO_EXTERNAL,
      Random* ran = NULL, const PosVector2i* offset = NULL, bool na_by_range=false);
   // #CAT_Activation apply the 2d or 4d external input pattern to the network, optional random additional values, and offsetting; uses a flat 2-d model where grouped layer or 4-d data are flattened to 2d; frame<0 means from end; na_by_range means that values are not applicable if they fall outside act_range on unit spec, and thus don't have flags or values set
   virtual void  TriggerContextUpdate() {} // for algorithms/specs that suport context layers (copy of previous state) this manually triggers an update
 
-  ////////////////////////////////////////////////////////////////////////////////
-  //    Below are the primary computational interface to the Network Objects
-  //    for performing algorithm-specific activation and learning
-  //    Many functions operate directly on the units via threads, and then
-  //    call through to the layers for any layer-level subsequent processing
-  //    All functions take the pointer to the parent network, just for
-  //    convenience and consistency with Unit levels etc
-
-  virtual void  Init_InputData(Network* net);
-  // #CAT_Activation Initializes external and target inputs
-  virtual void  Init_Acts(Network* net);
-  // #CAT_Activation Initialize the unit state variables
-  virtual void  Init_Weights_Layer(Network* net);
-  // #CAT_Learning #IGNORE layer-level initialization taking place after Init_Weights on units
-
   virtual void  Init_Weights(bool recv_cons);
   // #CAT_Learning #MENU #MENU_ON_State #MENU_SEP_BEFORE initialize weights for all of the projections into (recv_cons = true) or out of (recv_cons = false) this layer 
   
-  virtual void  Init_Stats(Network* net);
-  // #EXPERT #CAT_Statistic initialize statistic variables on layer -- called by Network Init_Stats
-
-  virtual float Compute_SSE(Network* net, int& n_vals, bool unit_avg = false, bool sqrt = false);
-  // #CAT_Statistic compute sum squared error of activation vs target over the entire layer -- always returns the actual sse, but unit_avg and sqrt flags determine averaging and sqrt of layer's own sse value -- uses sse_tol so error is 0 if within tolerance on a per unit basis
-  virtual int   Compute_PRerr(Network* net);
-  // #CAT_Statistic compute precision and recall error statistics over entire layer -- true positive, false positive, and false negative -- returns number of values entering into computation (depends on number of targets) -- precision = tp / (tp + fp) recall = tp / (tp + fn) fmeasure = 2 * p * r / (p + r) -- uses sse_tol so error is 0 if within tolerance on a per unit basis -- results are stored in prerr values on layer
-
-  virtual void  Compute_EpochSSE(Network* net);
-  // #CAT_Statistic compute epoch-level sum squared error and related statistics
-  virtual void  Compute_EpochPRerr(Network* net);
-  // #CAT_Statistic compute epoch-level precision and recall statistics
-  virtual void  Compute_EpochStats(Network* net);
-  // #CAT_Statistic compute epoch-level statistics; calls DMem_ComputeAggs (if dmem) and EpochSSE -- specific algos may add more
-
-
   ////////////////////////////////////////////////////////////////////////////////
   //    The following are misc functionality not required for primary computing
 
@@ -694,19 +609,19 @@ protected:
 
   void         UpdateAfterEdit_impl() override;
   void         UpdateAfterMove_impl(taBase* old_owner) override;
-  virtual void          ApplyLayerFlags(UnitVars::ExtFlags act_ext_flags);
+  virtual void ApplyLayerFlags(ExtFlags act_ext_flags);
   // #IGNORE set layer flag to reflect the kind of input received
-  virtual void          ApplyInputData_1d(taMatrix* data, UnitVars::ExtFlags ext_flags,
-                               Random* ran, bool na_by_range=false);
+  virtual void ApplyInputData_1d(taMatrix* data, ExtFlags ext_flags,
+                                 Random* ran, bool na_by_range=false);
   // #IGNORE 1d data -- just go in order -- offsets ignored
-  virtual void          ApplyInputData_2d(taMatrix* data, UnitVars::ExtFlags ext_flags,
-                               Random* ran, const taVector2i& offs, bool na_by_range=false);
+  virtual void ApplyInputData_2d(taMatrix* data, ExtFlags ext_flags,
+                                 Random* ran, const taVector2i& offs, bool na_by_range=false);
   // #IGNORE 2d data is always treated the same: UnitAtCoord deals with unit grouping
-  virtual void          ApplyInputData_Flat4d(taMatrix* data, UnitVars::ExtFlags ext_flags,
-                               Random* ran, const taVector2i& offs, bool na_by_range=false);
+  virtual void ApplyInputData_Flat4d(taMatrix* data, ExtFlags ext_flags,
+                                     Random* ran, const taVector2i& offs, bool na_by_range=false);
   // #IGNORE flat layer, 4d data
-  virtual void          ApplyInputData_Gp4d(taMatrix* data, UnitVars::ExtFlags ext_flags,
-                               Random* ran, bool na_by_range=false);
+  virtual void ApplyInputData_Gp4d(taMatrix* data, ExtFlags ext_flags,
+                                   Random* ran, bool na_by_range=false);
   // #IGNORE grouped layer, 4d data -- note this cannot have offsets..
 
   void         CheckThisConfig_impl(bool quiet, bool& rval) override;

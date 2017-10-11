@@ -21,6 +21,8 @@ TA_BASEFUNS_CTORS_DEFN(LayerSpec);
 
 void LayerSpec::Initialize() {
   min_user_type = &TA_Layer;
+
+  Initialize_core();
 }
 
 void LayerSpec::InitLinks() {

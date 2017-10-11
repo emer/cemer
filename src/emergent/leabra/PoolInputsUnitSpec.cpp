@@ -35,7 +35,7 @@ bool PoolInputsUnitSpec::CheckConfig_Unit(Layer* lay, bool quiet) {
   if(lay->units.leaves == 0) return rval;
   LeabraUnit* un = (LeabraUnit*)lay->units.Leaf(0); // take first one
   
-  LeabraConGroup* cg = (LeabraConGroup*)un->RecvConGroupSafe(0);
+  LeabraConState_cpp* cg = (LeabraConState_cpp*)un->RecvConStateSafe(0);
   if(lay->CheckError(!cg, quiet, rval,
                    "Requires one recv projection!")) {
     return false;
@@ -49,23 +49,23 @@ bool PoolInputsUnitSpec::CheckConfig_Unit(Layer* lay, bool quiet) {
   return rval;
 }
 
-void PoolInputsUnitSpec::Compute_PooledAct(LeabraUnitVars* u, LeabraNetwork* net,
+void PoolInputsUnitSpec::Compute_PooledAct(LeabraUnitState_cpp* u, LeabraNetwork* net,
                                            int thr_no) {
   float new_act = 0.0f;
   int tot_n = 0;
-  const int rsz = u->NRecvConGps(net, thr_no);
+  const int rsz = u->NRecvConGps(net);
   for(int g=0; g < rsz; g++) {
-    LeabraConGroup* cg = (LeabraConGroup*)u->RecvConGroup(net, thr_no, g);
+    LeabraConState_cpp* cg = (LeabraConState_cpp*)u->RecvConState(net, g);
     const int sz = cg->size;
     if(pool_fun == MAX_POOL) {
       for(int i=0; i< sz; i++) {
-        LeabraUnitVars* su = (LeabraUnitVars*)cg->UnVars(i, net);
+        LeabraUnitState_cpp* su = (LeabraUnitState_cpp*)cg->UnState(i, net);
         new_act = fmaxf(su->act_eq, new_act);
       }
     }
     else {                        // AVG_POOL
       for(int i=0; i< sz; i++) {
-        LeabraUnitVars* su = (LeabraUnitVars*)cg->UnVars(i, net);
+        LeabraUnitState_cpp* su = (LeabraUnitState_cpp*)cg->UnState(i, net);
         new_act += su->act_eq;
       }
       tot_n += sz;
@@ -84,11 +84,11 @@ void PoolInputsUnitSpec::Compute_PooledAct(LeabraUnitVars* u, LeabraNetwork* net
   // u->AddToActBuf(syn_delay); // todo
 }
 
-void PoolInputsUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void PoolInputsUnitSpec::Compute_Act_Rate(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   Compute_PooledAct(u, net, thr_no);
 }
 
-void PoolInputsUnitSpec::Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void PoolInputsUnitSpec::Compute_Act_Spike(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   Compute_PooledAct(u, net, thr_no);
 }
 

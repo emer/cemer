@@ -55,7 +55,7 @@ INHERITED(LeabraConSpec)
 public:
   ChlSpecs	chl;		// #CAT_Learning CHL learning parameters
 
-  inline float Compute_SAvgCor(LeabraConGroup* cg, LeabraNetwork* net, int thr_no) {
+  inline float Compute_SAvgCor(LeabraConState_cpp* cg, LeabraNetwork* net, int thr_no) {
     LeabraLayer* fm = (LeabraLayer*)cg->prjn->from.ptr();
     float savg = .5f + chl.savg_cor * (fm->acts_p_avg_eff - .5f);
     savg = fmaxf(chl.savg_thresh, savg); // keep this computed value within bounds
@@ -82,15 +82,15 @@ public:
   {  dwt += cur_lrate * (chl.err * err + chl.hebb * heb); }
   // #IGNORE combine associative and error-driven weight change, actually update dwt
 
-  inline void Compute_dWt(ConGroup* rcg, Network* rnet, int thr_no) override {
+  inline void Compute_dWt(ConState* rcg, Network* rnet, int thr_no) override {
     if(!chl.use) {
       Compute_dWt(rcg, rnet, thr_no);
       return;
     }
     LeabraNetwork* net = (LeabraNetwork*)rnet;
     if(!learn || (use_unlearnable && net->unlearnable_trial)) return;
-    LeabraConGroup* cg = (LeabraConGroup*)rcg;
-    LeabraUnitVars* su = (LeabraUnitVars*)cg->ThrOwnUnVars(net, thr_no);
+    LeabraConState_cpp* cg = (LeabraConState_cpp*)rcg;
+    LeabraUnitState_cpp* su = (LeabraUnitState_cpp*)cg->ThrOwnUnState(net, thr_no);
 
     const float savg_cor = Compute_SAvgCor(cg, net, thr_no);
     if(((LeabraLayer*)cg->prjn->from.ptr())->acts_p.avg < chl.savg_thresh) return;
@@ -102,7 +102,7 @@ public:
 
     const int sz = cg->size;
     for(int i=0; i<sz; i++) {
-      LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i,net);
+      LeabraUnitState_cpp* ru = (LeabraUnitState_cpp*)cg->UnState(i,net);
       const float lin_wt = fwts[i];
       C_Compute_dWt_LeabraCHL
         (dwts[i],
@@ -134,14 +134,14 @@ public:
   }
   // #IGNORE 
 
-  inline void Compute_Weights(ConGroup* rcg, Network* net, int thr_no) override {
+  inline void Compute_Weights(ConState* rcg, Network* net, int thr_no) override {
     if(!chl.use) {
       Compute_Weights(rcg, net, thr_no);
       return;
     }
     if(!learn) return;
 
-    LeabraConGroup* cg = (LeabraConGroup*)rcg;
+    LeabraConState_cpp* cg = (LeabraConState_cpp*)rcg;
 
     float* wts = cg->OwnCnVar(WT);
     float* dwts = cg->OwnCnVar(DWT);

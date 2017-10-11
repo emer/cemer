@@ -38,7 +38,7 @@ public:
   bool  IsDeepCtxtCon() override { return true; }
   void  Trial_Init_Specs(LeabraNetwork* net) override;
  
-  inline void Send_DeepCtxtNetin(LeabraConGroup* cg, LeabraNetwork* net,
+  inline void Send_DeepCtxtNetin(LeabraConState_cpp* cg, LeabraNetwork* net,
                                  int thr_no, const float su_act) {
     const float su_act_eff = cg->scale_eff * su_act;
     float* wts = cg->OwnCnVar(WT);
@@ -53,9 +53,9 @@ public:
   // #IGNORE sender-based activation net input for con group (send net input to receivers) -- always goes into tmp matrix (thread_no >= 0!) and is then integrated into net through Compute_DeepCtxt function on units
 
   // don't send regular net inputs..
-  inline void Send_NetinDelta(LeabraConGroup* cg, LeabraNetwork* net, int thr_no, 
+  inline void Send_NetinDelta(LeabraConState_cpp* cg, LeabraNetwork* net, int thr_no, 
                               const float su_act_delta) override { };
-  inline float Compute_Netin(ConGroup* cg, Network* net, int thr_no) override
+  inline float Compute_Netin(ConState* cg, Network* net, int thr_no) override
   { return 0.0f; }
 
   inline float C_Compute_dWt_Delta
@@ -65,11 +65,11 @@ public:
   }
   // #IGNORE
 
-  inline void Compute_dWt(ConGroup* scg, Network* rnet, int thr_no) override {
+  inline void Compute_dWt(ConState* scg, Network* rnet, int thr_no) override {
     LeabraNetwork* net = (LeabraNetwork*)rnet;
     if(!learn || (use_unlearnable && net->unlearnable_trial)) return;
-    LeabraConGroup* cg = (LeabraConGroup*)scg;
-    LeabraUnitVars* su = (LeabraUnitVars*)cg->ThrOwnUnVars(net, thr_no);
+    LeabraConState_cpp* cg = (LeabraConState_cpp*)scg;
+    LeabraUnitState_cpp* su = (LeabraUnitState_cpp*)cg->ThrOwnUnState(net, thr_no);
 
     float clrate, bg_lrate, fg_lrate;
     bool deep_on;
@@ -86,7 +86,7 @@ public:
       float* dwavgs = cg->OwnCnVar(DWAVG);
       float* moments = cg->OwnCnVar(MOMENT);
       for(int i=0; i<sz; i++) {
-        LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i, net);
+        LeabraUnitState_cpp* ru = (LeabraUnitState_cpp*)cg->UnState(i, net);
         // note: applying opt_thresh.xcal_lrn here does NOT work well for dwt_zone..
         float lrate_eff = clrate;
         if(deep_on) {
@@ -110,7 +110,7 @@ public:
     }
     else {
       for(int i=0; i<sz; i++) {
-        LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i, net);
+        LeabraUnitState_cpp* ru = (LeabraUnitState_cpp*)cg->UnState(i, net);
         float lrate_eff = clrate;
         if(deep_on) {
           lrate_eff *= (bg_lrate + fg_lrate * ru->deep_lrn);

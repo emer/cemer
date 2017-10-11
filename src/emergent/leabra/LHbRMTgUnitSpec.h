@@ -89,7 +89,7 @@ INHERITED(LeabraUnitSpec)
 public:
   LHbRMTgSpecs   lhb;         // lhb options and misc specs
   LHbRMTgGains   gains;       // gain parameters (multiplicative constants) for various sources of inputs
-  virtual void	Compute_Lhb(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
+  virtual void	Compute_Lhb(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no);
   // compute the LHb value based on recv projections from VSMatrix_dir/ind, VSPatch_dir/ind, and PV_pos/neg
   
   virtual bool  GetRecvLayers(LeabraUnit* u,
@@ -105,10 +105,10 @@ public:
                               LeabraLayer*& vsmatrix_neg_D2_lay);
   // get the recv layers..
   
-  void	Compute_NetinInteg(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override { };
-  void	Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
-  void	Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
-  void	Quarter_Final(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
+  void	Compute_NetinInteg(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) override { };
+  void	Compute_Act_Rate(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) override;
+  void	Compute_Act_Spike(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) override;
+  void	Quarter_Final(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) override;
 
   bool  CheckConfig_Unit(Layer* lay, bool quiet=false) override;
   void  HelpConfig();   // #BUTTON get help message for configuring this spec

@@ -71,7 +71,7 @@ public:
   String	last_weights_cmd; // #READ_ONLY #SHOW shows the last Weights.. command that was run (if blank, none or it was done prior to the addition of this feature in version 4.1.0) -- useful for modifying later
 
   void	Connect_impl(Projection* prjn, bool make_cons) override;
-  void	Init_Weights_Prjn(Projection* prjn, ConGroup* cg, Network* net,
+  void	Init_Weights_Prjn(Projection* prjn, ConState_cpp* cg, Network* net,
                           int thr_no) override;
   bool  HasRandomScale() override { return false; }
 

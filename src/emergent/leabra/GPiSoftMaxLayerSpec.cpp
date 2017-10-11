@@ -55,7 +55,7 @@ void GPiSoftMaxLayerSpec::Compute_SoftMax(LeabraLayer* lay, LeabraNetwork* net) 
     float sum = 0.0f;
     FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
       if(u->lesioned()) continue;
-      LeabraUnitVars* uv = (LeabraUnitVars*)u->GetUnitVars();
+      LeabraUnitState_cpp* uv = (LeabraUnitState_cpp*)u->GetUnitState();
       float eval = taMath_float::exp(uv->net / soft_max.temp);
       uv->misc_1 = eval;
       sum += eval;
@@ -64,7 +64,7 @@ void GPiSoftMaxLayerSpec::Compute_SoftMax(LeabraLayer* lay, LeabraNetwork* net) 
     if(sum > 0.0f) {
       FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
         if(u->lesioned()) continue;
-        LeabraUnitVars* uv = (LeabraUnitVars*)u->GetUnitVars();
+        LeabraUnitState_cpp* uv = (LeabraUnitState_cpp*)u->GetUnitState();
         uv->misc_1 /= sum;
       }
     }
@@ -81,7 +81,7 @@ void GPiSoftMaxLayerSpec::Compute_SoftMax(LeabraLayer* lay, LeabraNetwork* net) 
           chosen_i++;
           continue;
         }
-        LeabraUnitVars* uv = (LeabraUnitVars*)u->GetUnitVars();
+        LeabraUnitState_cpp* uv = (LeabraUnitState_cpp*)u->GetUnitState();
         sum += uv->misc_1;
         if(sum >= rndval)
           break;
@@ -97,7 +97,7 @@ void GPiSoftMaxLayerSpec::Compute_SoftMax(LeabraLayer* lay, LeabraNetwork* net) 
       leaf++;
       continue;
     }
-    LeabraUnitVars* uv = (LeabraUnitVars*)u->GetUnitVars();
+    LeabraUnitState_cpp* uv = (LeabraUnitState_cpp*)u->GetUnitState();
     float act = 0.0f;
     if(gated.FindEl(leaf) >= 0) {
       act = 1.0f;

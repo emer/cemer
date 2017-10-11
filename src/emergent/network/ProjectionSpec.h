@@ -28,10 +28,10 @@
 
 // declare all other types mentioned but not required to include:
 class Projection; //
-class ConGroup; //
 class Unit; //
 class Layer; //
 class Network; //
+class ConState_cpp; //
 
 eTypeDef_Of(RenormInitWtsSpec);
 
@@ -77,18 +77,18 @@ public:
     virtual int ProbAddCons_impl(Projection* prjn, float p_add_con, float init_wt = 0.0);
     // #CAT_Structure actual implementation: probabilistically add a proportion of new connections to replace those pruned previously, init_wt = initial weight value of new connection
 
-  virtual void  SetCnWt(float wt_val, ConGroup* cg, int cn_idx, Network* net, int thr_no);
+  virtual void  SetCnWt(float wt_val, ConState_cpp* cg, int cn_idx, Network* net, int thr_no);
   // #CAT_Weights set given connection number in con group to given weight value -- this implements the add_rnd_var flag to add random variance to weights if set
-  virtual void  SetCnWtRnd(ConGroup* cg, int cn_idx, Network* net, int thr_no);
+  virtual void  SetCnWtRnd(ConState_cpp* cg, int cn_idx, Network* net, int thr_no);
   // #CAT_Weights set given connection number in con group to standard random weight value as specified in the connection spec
-  virtual void  SetCnScale(float scale_val, ConGroup* cg, int cn_idx, Network* net, int thr_no);
+  virtual void  SetCnScale(float scale_val, ConState_cpp* cg, int cn_idx, Network* net, int thr_no);
   // #CAT_Weights set given connection number in con group to given scale value
 
-  virtual void  Init_Weights_Prjn(Projection* prjn, ConGroup* cg, Network* net,
+  virtual void  Init_Weights_Prjn(Projection* prjn, ConState_cpp* cg, Network* net,
                                   int thr_no);
   // #CAT_Weights #IGNORE when init_wts flag is set, the projection spec sets weights for the entire set of connections, from a recv perspective (always use safe access for Cn that does not depend on who owns it) -- overload in subclasses that set weights
 
-  virtual void  Init_Weights_renorm(Projection* prjn, ConGroup* cg, Network* net, int thr_no);
+  virtual void  Init_Weights_renorm(Projection* prjn, ConState_cpp* cg, Network* net, int thr_no);
   // #CAT_Weights #IGNORE renormalize weights -- done as a second pass after Init_Weights and before Init_Weights_post
 
   virtual bool  HasRandomScale();

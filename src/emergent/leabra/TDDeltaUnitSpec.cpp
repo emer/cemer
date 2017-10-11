@@ -64,7 +64,7 @@ bool TDDeltaUnitSpec::CheckConfig_Unit(Layer* ly, bool quiet) {
   
   const int nrg = un->NRecvConGps(); 
   for(int g=0; g< nrg; g++) {
-    LeabraConGroup* recv_gp = (LeabraConGroup*)un->RecvConGroup(g);
+    LeabraConState_cpp* recv_gp = (LeabraConState_cpp*)un->RecvConState(g);
     if(recv_gp->prjn->NotActive()) continue; // key!! just check for prjn, not con group!
     LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
     if(!cs->IsMarkerCon()) continue;
@@ -89,7 +89,7 @@ bool TDDeltaUnitSpec::CheckConfig_Unit(Layer* ly, bool quiet) {
   return true;
 }
 
-void TDDeltaUnitSpec::Compute_TD(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void TDDeltaUnitSpec::Compute_TD(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   if(!Quarter_DeepRawNow(net->quarter)) { // plus phase marker..
     u->da_p = 0.0f;
     u->ext = u->da_p;
@@ -98,9 +98,9 @@ void TDDeltaUnitSpec::Compute_TD(LeabraUnitVars* u, LeabraNetwork* net, int thr_
   }
   float rew_integ_minus = 0.0f;
   float rew_integ_cur = 0.0f;
-  const int nrg = u->NRecvConGps(net, thr_no); 
+  const int nrg = u->NRecvConGps(net); 
   for(int g=0; g< nrg; g++) {
-    LeabraConGroup* recv_gp = (LeabraConGroup*)u->RecvConGroup(net, thr_no, g);
+    LeabraConState_cpp* recv_gp = (LeabraConState_cpp*)u->RecvConState(net, g);
     if(recv_gp->NotActive()) continue;
     LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
     LeabraLayer* fmlay = (LeabraLayer*)recv_gp->prjn->from.ptr();
@@ -120,27 +120,27 @@ void TDDeltaUnitSpec::Compute_TD(LeabraUnitVars* u, LeabraNetwork* net, int thr_
   u->act_eq = u->act_nd = u->act = u->net = u->ext;
 }
 
-void TDDeltaUnitSpec::Send_TD(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void TDDeltaUnitSpec::Send_TD(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   float snd_val = u->act_eq;
-  const int nsg = u->NSendConGps(net, thr_no); 
+  const int nsg = u->NSendConGps(net); 
   for(int g=0; g<nsg; g++) {
-    LeabraConGroup* send_gp = (LeabraConGroup*)u->SendConGroup(net, thr_no, g);
+    LeabraConState_cpp* send_gp = (LeabraConState_cpp*)u->SendConState(net, g);
     if(send_gp->NotActive()) continue;
     for(int j=0;j<send_gp->size; j++) {
-      ((LeabraUnitVars*)send_gp->UnVars(j,net))->da_p = snd_val;
+      ((LeabraUnitState_cpp*)send_gp->UnState(j,net))->da_p = snd_val;
     }
   }
 }
 
-void TDDeltaUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void TDDeltaUnitSpec::Compute_Act_Rate(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   Compute_TD(u, net, thr_no);
 }
 
-void TDDeltaUnitSpec::Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void TDDeltaUnitSpec::Compute_Act_Spike(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   Compute_Act_Rate(u, net, thr_no);
 }
 
-void TDDeltaUnitSpec::Compute_Act_Post(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void TDDeltaUnitSpec::Compute_Act_Post(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   inherited::Compute_Act_Post(u, net, thr_no);
   Send_TD(u, net, thr_no);      // note: can only send modulators during post!!
 }

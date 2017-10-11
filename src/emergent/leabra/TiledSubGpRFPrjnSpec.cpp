@@ -230,7 +230,7 @@ bool TiledSubGpRFPrjnSpec::TrgSendFmRecv(int recv_x, int recv_y) {
   return (trg_recv_geom.x == recv_x && trg_recv_geom.y == recv_y);
 }
 
-void TiledSubGpRFPrjnSpec::Init_Weights_Prjn(Projection* prjn, ConGroup* cg,
+void TiledSubGpRFPrjnSpec::Init_Weights_Prjn(Projection* prjn, ConState* cg,
                                           Network* net, int thr_no) {
   if(set_scale) {
     if(TestWarning(!cg->GetConSpec()->InheritsFrom(&TA_LeabraConSpec),
@@ -242,7 +242,7 @@ void TiledSubGpRFPrjnSpec::Init_Weights_Prjn(Projection* prjn, ConGroup* cg,
   }
 }
 
-void TiledSubGpRFPrjnSpec::Init_Weights_Gaussian(Projection* prjn, ConGroup* cg,
+void TiledSubGpRFPrjnSpec::Init_Weights_Gaussian(Projection* prjn, ConState* cg,
                                               Network* net, int thr_no) {
   Layer* recv_lay = prjn->layer;
   Layer* send_lay = prjn->from;

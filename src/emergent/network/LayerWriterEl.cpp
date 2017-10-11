@@ -26,7 +26,7 @@ void LayerWriterEl::Initialize() {
   use_layer_type = true;
   quiet = false;
   na_by_range = false;
-  ext_flags = UnitVars::NO_EXTERNAL;
+  ext_flags = UnitState_cpp::NO_EXTERNAL;
   noise.type = Random::NONE;
   noise.mean = 0.0f;
   noise.var = 0.5f;
@@ -88,17 +88,17 @@ bool LayerWriterEl::ApplyInputData(DataTable* db, Network* net) {
   }
   if(use_layer_type) {
     if(lay->layer_type == Layer::INPUT)
-      ext_flags = UnitVars::EXT;
+      ext_flags = UnitState_cpp::EXT;
     else if(lay->layer_type == Layer::TARGET)
-      ext_flags = UnitVars::TARG;
+      ext_flags = UnitState_cpp::TARG;
     else
-      ext_flags = UnitVars::COMP;
+      ext_flags = UnitState_cpp::COMP;
   }
 
   // note: always provide all data, it is up to the network to decide how to use it
   // based on train_mode
   // get the data as a slice -- therefore, frame is always 0
-  lay->ApplyInputData(mat, ext_flags, &noise, &offset, na_by_range);
+  lay->ApplyInputData(mat, (Layer::ExtFlags)ext_flags, &noise, &offset, na_by_range);
   // mat unrefs at this point, or on exit from routine
   return true;
 }

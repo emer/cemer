@@ -239,45 +239,49 @@ void UnitGroupView::UpdateUnitViewBase_Con_impl
 
       if (is_send) {
         for(int g=0;g<unit->NRecvConGps();g++) {
-          ConGroup* tcong = unit->RecvConGroup(g);
-          if(!tcong->prjn) continue;
-          if(tcong->prjn->from.ptr() != src_u_lay) continue;
-          if(check_prjn && !tcong->prjn->name.startsWith(prjn_starts_with))
+          ConState_cpp* tcong = unit->RecvConState(g);
+          if(tcong->NotActive()) continue;
+          PrjnState_cpp* pjs = tcong->GetPrjnState(net->net_state);
+          Projection* prjn = net->PrjnFromState(pjs);
+          if(prjn->from.ptr() != src_u_lay) continue;
+          if(check_prjn && !prjn->name.startsWith(prjn_starts_with))
             continue;
-          MemberDef* act_md = tcong->ConType()->members.FindName(nm);
+          MemberDef* act_md = tcong->ConType(net)->members.FindName(nm);
           if (!act_md)  continue;
-          int con = tcong->FindConFromIdx(src_u);
+          int con = tcong->FindConFromIdx(src_u->flat_idx);
           if (con < 0) continue;
           // have to use safe b/c could be PtrCon and other side might be gone..
-          uvd_bases.Set(&tcong->SafeFastCn(con, act_md->idx, net), coord.x, coord.y, midx);
+          uvd_bases.Set(&tcong->SafeFastCn(con, act_md->idx, net->net_state), coord.x, coord.y, midx);
           break;                // once you've got one, done!
         }
       }
       else {
         for(int g=0;g<unit->NSendConGps();g++) {
-          ConGroup* tcong = unit->SendConGroup(g);
-          if(!tcong->prjn) continue;
-          if(tcong->prjn->layer != src_u_lay) continue;
-          if(check_prjn && tcong->prjn->IsActive() &&
-             !tcong->prjn->name.startsWith(prjn_starts_with))
+          ConState_cpp* tcong = unit->SendConState(g);
+          if(tcong->NotActive()) continue;
+          PrjnState_cpp* pjs = tcong->GetPrjnState(net->net_state);
+          Projection* prjn = net->PrjnFromState(pjs);
+          if(prjn->layer != src_u_lay) continue;
+          if(check_prjn && prjn->IsActive() &&
+             !prjn->name.startsWith(prjn_starts_with))
             continue;
           if(nm == "wt*act") {
-            MemberDef* act_md = tcong->ConType()->members.FindName("wt");
+            MemberDef* act_md = tcong->ConType(net)->members.FindName("wt");
             if (!act_md)  continue;
-            int con = tcong->FindConFromIdx(src_u);
+            int con = tcong->FindConFromIdx(src_u->flat_idx);
             if (con < 0) continue;
             // have to use safe b/c could be PtrCon and other side might be gone..
-            uvd_bases.Set(&tcong->SafeFastCn(con, act_md->idx, net), coord.x, coord.y,
+            uvd_bases.Set(&tcong->SafeFastCn(con, act_md->idx, net->net_state), coord.x, coord.y,
                           midx);
             break;                // once you've got one, done!
           }
           else {
-            MemberDef* act_md = tcong->ConType()->members.FindName(nm);
+            MemberDef* act_md = tcong->ConType(net)->members.FindName(nm);
             if (!act_md)  continue;
-            int con = tcong->FindConFromIdx(src_u);
+            int con = tcong->FindConFromIdx(src_u->flat_idx);
             if (con < 0) continue;
             // have to use safe b/c could be PtrCon and other side might be gone..
-            uvd_bases.Set(&tcong->SafeFastCn(con, act_md->idx, net), coord.x, coord.y,
+            uvd_bases.Set(&tcong->SafeFastCn(con, act_md->idx, net->net_state), coord.x, coord.y,
                           midx);
             break;                // once you've got one, done!
           }
@@ -301,7 +305,7 @@ void UnitGroupView::UpdateUnitViewBase_Unit_impl(int midx, MemberDef* disp_md) {
         uvd_bases.Set(disp_md->GetOff(unit), coord.x, coord.y, midx);
       }
       else {
-        UnitVars* uv = unit->GetUnitVars();
+        UnitState_cpp* uv = unit->GetUnitState();
         if(uv) {
           uvd_bases.Set(disp_md->GetOff(uv), coord.x, coord.y, midx);
         }

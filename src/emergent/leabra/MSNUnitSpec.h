@@ -75,23 +75,23 @@ public:
   MatrixActSpec         matrix;         // #CONDSHOW_ON_matrix_patch:MATRIX parameters for Matrix activation dynamics
   bool                  deep_mod_zero;  // #CONDSHOW_ON_matrix_patch:PATCH for modulation coming from the BLA via deep_mod_net -- when this modulation signal is below zero, does it have the ability to zero out the patch activations?  i.e., is the modulation required to enable patch firing?
   
-  virtual GateType      MatrixGateType(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
+  virtual GateType      MatrixGateType(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no);
   // get type of gating that given unit participates in
   
   void	Compute_ApplyInhib
-    (LeabraUnitVars* uv, LeabraNetwork* net, int thr_no, LeabraLayer* lay,
+    (LeabraUnitState_cpp* uv, LeabraNetwork* net, int thr_no, LeabraLayer* lay,
      LeabraLayerSpec* lspec, LeabraInhib* thr, float ival) override;
   // note: called in compute_act -- applies ach inhibition of output
 
-  virtual void  Compute_PatchShunt(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
+  virtual void  Compute_PatchShunt(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no);
   // compute patch shunting of da and ach from shunt variable received in prior cycle Act_Post stage -- updated in compute_act prior to new acts
-  virtual void  SaveGatingThal(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
+  virtual void  SaveGatingThal(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no);
   // save gating value into thal_cnt and gated activation into act_g when thal_gate indicates gating -- note 1 trial delayed from actual gating -- updated in compute_act *prior* to computing new act, so it reflects actual gating cycle activation
 
-  void  SaveGatingAct(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override { };
-  void	Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
-  void	Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
-  void  Compute_DeepMod(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
+  void  SaveGatingAct(LeabraUnitState_cpp* uv, LeabraNetwork* net, int thr_no) override { };
+  void	Compute_Act_Rate(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) override;
+  void	Compute_Act_Spike(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) override;
+  void  Compute_DeepMod(LeabraUnitState_cpp* uv, LeabraNetwork* net, int thr_no) override;
 
   TA_SIMPLE_BASEFUNS(MSNUnitSpec);
 protected:

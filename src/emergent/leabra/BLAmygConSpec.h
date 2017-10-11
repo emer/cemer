@@ -77,11 +77,11 @@ public:
   }
   // #IGNORE abs(da) modulated delta learning
 
-  inline void Compute_dWt(ConGroup* rcg, Network* rnet, int thr_no) override {
+  inline void Compute_dWt(ConState* rcg, Network* rnet, int thr_no) override {
     LeabraNetwork* net = (LeabraNetwork*)rnet;
     if(!learn || (use_unlearnable && net->unlearnable_trial)) return;
-    LeabraConGroup* cg = (LeabraConGroup*)rcg;
-    LeabraUnitVars* su = (LeabraUnitVars*)cg->ThrOwnUnVars(net, thr_no);
+    LeabraConState_cpp* cg = (LeabraConState_cpp*)rcg;
+    LeabraUnitState_cpp* su = (LeabraUnitState_cpp*)cg->ThrOwnUnState(net, thr_no);
     LeabraLayer* rlay = (LeabraLayer*)cg->prjn->layer;
     
     float su_act = su->act_q0;  // previous trial
@@ -96,7 +96,7 @@ public:
     const int sz = cg->size;
     
     for(int i=0; i<sz; i++) {
-      LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i, net);
+      LeabraUnitState_cpp* ru = (LeabraUnitState_cpp*)cg->UnState(i, net);
       float lrate_eff = clrate; // start fresh each time thru for_loop
       
       // learning dependent on non-zero deep_lrn

@@ -55,7 +55,7 @@ void BasAmygUnitSpec::UpdateAfterEdit_impl() {
   }
 }
 
-void BasAmygUnitSpec::Compute_DeepMod(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void BasAmygUnitSpec::Compute_DeepMod(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
   if(deep.SendDeepMod()) {
     u->deep_lrn = u->deep_mod = u->act;      // record what we send!
@@ -78,7 +78,7 @@ void BasAmygUnitSpec::Compute_DeepMod(LeabraUnitVars* u, LeabraNetwork* net, int
   }
 }
 
-float BasAmygUnitSpec::Compute_DaModNetin(LeabraUnitVars* u, LeabraNetwork* net,
+float BasAmygUnitSpec::Compute_DaModNetin(LeabraUnitState_cpp* u, LeabraNetwork* net,
                                           int thr_no, float& net_syn) {
   float da_val = u->da_p * net_syn;
   if(dar == D2R)

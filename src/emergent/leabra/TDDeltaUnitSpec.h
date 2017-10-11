@@ -29,15 +29,15 @@ class E_API TDDeltaUnitSpec : public LeabraUnitSpec {
   // computes activation = temporal derivative (act_eq - act_m) of sending units in plus phases: note, act will go negative!
 INHERITED(LeabraUnitSpec)
 public:
-  virtual void	Compute_TD(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
+  virtual void	Compute_TD(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no);
   // compute the td value based on recv projections: every cycle in 1+ phases
 
-  virtual void  Send_TD(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
+  virtual void  Send_TD(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no);
   // send the TD value to sending projections in da_p: every cycle
 
-  void	Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
-  void	Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
-  void  Compute_Act_Post(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
+  void	Compute_Act_Rate(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) override;
+  void	Compute_Act_Spike(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) override;
+  void  Compute_Act_Post(LeabraUnitState_cpp* uv, LeabraNetwork* net, int thr_no) override;
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
   bool  CheckConfig_Unit(Layer* lay, bool quiet=false) override;

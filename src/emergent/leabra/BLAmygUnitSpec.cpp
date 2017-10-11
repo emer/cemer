@@ -65,7 +65,7 @@ void BLAmygUnitSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
 }
 
-void BLAmygUnitSpec::Compute_DeepMod(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void BLAmygUnitSpec::Compute_DeepMod(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
   if(deep.SendDeepMod()) {
     u->deep_lrn = u->deep_mod = u->act;      // record what we send!
@@ -97,7 +97,7 @@ void BLAmygUnitSpec::Compute_DeepMod(LeabraUnitVars* u, LeabraNetwork* net, int 
   }
 }
 
-float BLAmygUnitSpec::Compute_DaModNetin(LeabraUnitVars* u, LeabraNetwork* net,
+float BLAmygUnitSpec::Compute_DaModNetin(LeabraUnitState_cpp* u, LeabraNetwork* net,
                                           int thr_no, float& net_syn) {
   float da_val = u->da_p;
   if(da_val > 0.0f) {
@@ -123,7 +123,7 @@ float BLAmygUnitSpec::Compute_DaModNetin(LeabraUnitVars* u, LeabraNetwork* net,
   }
 }
 
-float BLAmygUnitSpec::Compute_NetinExtras(LeabraUnitVars* u, LeabraNetwork* net,
+float BLAmygUnitSpec::Compute_NetinExtras(LeabraUnitState_cpp* u, LeabraNetwork* net,
                                            int thr_no, float& net_syn) {
   LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
   LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->GetLayerSpec();
@@ -132,7 +132,7 @@ float BLAmygUnitSpec::Compute_NetinExtras(LeabraUnitVars* u, LeabraNetwork* net,
   if(bias_spec) {
     net_ex += u->bias_scale * u->bias_wt;
   }
-  if(u->HasExtFlag(UnitVars::EXT)) {
+  if(u->HasExtFlag(UnitState::EXT)) {
     if(ls->clamp.avg)
       net_syn = ls->clamp.ClampAvgNetin(u->ext, net_syn);
     else
@@ -153,7 +153,7 @@ float BLAmygUnitSpec::Compute_NetinExtras(LeabraUnitVars* u, LeabraNetwork* net,
   return net_ex;
 }
 
-void BLAmygUnitSpec::Compute_ActFun_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void BLAmygUnitSpec::Compute_ActFun_Rate(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   inherited::Compute_ActFun_Rate(u, net, thr_no);
   
   // default is to use act_eq for later use by C_Compute__dWt_CEl_Delta() to effect learning *as if* phasic dopamine modulates activations - but without actually doing it!
@@ -170,7 +170,7 @@ void BLAmygUnitSpec::Compute_ActFun_Rate(LeabraUnitVars* u, LeabraNetwork* net, 
   }
 }
 
-void BLAmygUnitSpec::Quarter_Final_RecVals(LeabraUnitVars* u, LeabraNetwork* net,
+void BLAmygUnitSpec::Quarter_Final_RecVals(LeabraUnitState_cpp* u, LeabraNetwork* net,
                                         int thr_no) {
   inherited::Quarter_Final_RecVals(u, net, thr_no);
   if(net->quarter == 3) {

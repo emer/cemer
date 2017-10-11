@@ -27,21 +27,21 @@ void ThalSendUnitSpec::Defaults_init() {
   deep.role = DeepSpec::TRC;
 }
 
-void ThalSendUnitSpec::Send_Thal(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void ThalSendUnitSpec::Send_Thal(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   const float snd_val = u->act_eq;
   const int nsg = u->NSendConGps(net, thr_no); 
   for(int g=0; g<nsg; g++) {
-    LeabraConGroup* send_gp = (LeabraConGroup*)u->SendConGroup(net, thr_no, g);
+    LeabraConState_cpp* send_gp = (LeabraConState_cpp*)u->SendConState(net, thr_no, g);
     if(send_gp->NotActive()) continue;
     for(int j=0;j<send_gp->size; j++) {
-      float& thal = ((LeabraUnitVars*)send_gp->UnVars(j,net))->thal;
+      float& thal = ((LeabraUnitState_cpp*)send_gp->UnState(j,net))->thal;
       if(snd_val > thal)        // max..  thal was reset in Send_NetinDelta
         thal = snd_val;
     }
   }
 }
 
-void ThalSendUnitSpec::Compute_Act_Post(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void ThalSendUnitSpec::Compute_Act_Post(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   inherited::Compute_Act_Post(u, net, thr_no);
   Send_Thal(u, net, thr_no);
 }

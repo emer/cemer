@@ -86,17 +86,17 @@ public:
   virtual void TriggerUpdate(LeabraLayer* lay, bool update);
   // #CAT_Context manually set update trigger status -- must be both set and un-set manually -- flag remains set until explicitly called with update=false -- tested on first cycle of processing within a trial -- can always be called even if not on MANUAL -- sets user data do_update_key as state that triggers update
 
-  virtual void Compute_Context(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
+  virtual void Compute_Context(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no);
   // #CAT_Context compute context activation
-  virtual bool ShouldUpdateNow(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
+  virtual bool ShouldUpdateNow(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no);
   // #CAT_Context test whether it is time to update context rep now..
 
-  void	Compute_NetinInteg(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override { };
-  void	Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
-  void	Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
+  void	Compute_NetinInteg(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) override { };
+  void	Compute_Act_Rate(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) override;
+  void	Compute_Act_Spike(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) override;
 
-  void 	Compute_dWt(UnitVars* u, Network* net, int thr_no) override { };
-  void	Compute_Weights(UnitVars* u, Network* net, int thr_no) override { };
+  void 	Compute_dWt(UnitState* u, Network* net, int thr_no) override { };
+  void	Compute_Weights(UnitState* u, Network* net, int thr_no) override { };
 
   bool  CheckConfig_Unit(Layer* lay, bool quiet=false) override;
 

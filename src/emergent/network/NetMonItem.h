@@ -42,7 +42,7 @@ class Projection; //
 class Projection_Group; //
 class Unit; //
 class Unit_Group; //
-class ConGroup; //
+class ConState_cpp; //
 
 eTypeDef_Of(NetMonItem);
 
@@ -202,8 +202,8 @@ protected:
   void	ScanObject_PrjnCons(Projection* p, String var);
   // #IGNORE known to be a connection variable (r.x or s.x); matrix already allocated
 
-  void	ScanObject_RecvCons(ConGroup* cg, String var); // #IGNORE
-  void	ScanObject_SendCons(ConGroup* cg, String var); // #IGNORE
+  void	ScanObject_RecvCons(ConState_cpp* cg, String var, Network* net); // #IGNORE
+  void	ScanObject_SendCons(ConState_cpp* cg, String var, Network* net); // #IGNORE
 
 private:
   void	Initialize();

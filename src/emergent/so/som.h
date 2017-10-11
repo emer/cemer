@@ -28,7 +28,7 @@ class E_API SomUnitSpec : public SoUnitSpec {
   // self-organizing feature maps: net input is distance, not raw netin
 INHERITED(SoUnitSpec)
 public:
-  void Compute_Netin(UnitVars* u, Network* net, int thr_no) override;
+  void Compute_Netin(UnitState* u, Network* net, int thr_no) override;
 
   TA_BASEFUNS_NOCOPY(SomUnitSpec);
 private:

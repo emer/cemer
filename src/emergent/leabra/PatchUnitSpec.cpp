@@ -26,22 +26,22 @@ void PatchUnitSpec::Initialize() {
 void PatchUnitSpec::Defaults_init() {
 }
 
-void PatchUnitSpec::Send_DAShunt(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void PatchUnitSpec::Send_DAShunt(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   float snd_val = u->act_eq;
   if(u->act_eq < opt_thresh.send) {
     snd_val = 0.0f;
   }
   const int nsg = u->NSendConGps(net, thr_no); 
   for(int g=0; g<nsg; g++) {
-    LeabraConGroup* send_gp = (LeabraConGroup*)u->SendConGroup(net, thr_no, g);
+    LeabraConState_cpp* send_gp = (LeabraConState_cpp*)u->SendConState(net, thr_no, g);
     if(send_gp->NotActive()) continue;
     for(int j=0;j<send_gp->size; j++) {
-      ((LeabraUnitVars*)send_gp->UnVars(j,net))->shunt = snd_val;
+      ((LeabraUnitState_cpp*)send_gp->UnState(j,net))->shunt = snd_val;
     }
   }
 }
 
-void PatchUnitSpec::Compute_Act_Post(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void PatchUnitSpec::Compute_Act_Post(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   inherited::Compute_Act_Post(u, net, thr_no);
   Send_DAShunt(u, net, thr_no);
 }

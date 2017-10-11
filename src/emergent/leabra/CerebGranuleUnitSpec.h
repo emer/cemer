@@ -18,7 +18,7 @@
 
 // parent includes:
 #include <LeabraUnitSpec>
-#include <LeabraUnitVars>
+#include <LeabraUnitState_cpp>
 
 // member includes:
 
@@ -48,7 +48,7 @@ private:
   void	Defaults_init();
 };
 
-// notes on use of LeabraUnitVars variables for the Granule Unit:
+// notes on use of LeabraUnitState_cpp variables for the Granule Unit:
 // we use the stp parameters, and thus Granule units cannot have stp.on set!
 // syn_nr = time-lagged learning activation value -- this is what Purkinje cells use to learn from
 // syn_pr = time since the unit crossed the act_thr threshold activation
@@ -67,24 +67,24 @@ INHERITED(LeabraUnitSpec)
 public:
   CerebGranuleSpecs     cereb;  // specs for cerebellar granule units
 
- inline float& ActLag(LeabraUnitVars* uv)
+ inline float& ActLag(LeabraUnitState_cpp* uv)
  { return uv->syn_nr; }
  // #CAT_CerebGranule time-lagged activation value, used for learning
- inline float& TimeSinceThr(LeabraUnitVars* uv)
+ inline float& TimeSinceThr(LeabraUnitState_cpp* uv)
  { return uv->syn_pr; }
  // #CAT_CerebGranule get time since unit crossed the act_thr threshold activation
- inline float& ActMax(LeabraUnitVars* uv)
+ inline float& ActMax(LeabraUnitState_cpp* uv)
  { return uv->syn_kre; }
  // #CAT_CerebGranule get max activation of unit within activity window
  
-  virtual void	Compute_GranLearnAct(LeabraUnitVars* u, LeabraNetwork* net,
+  virtual void	Compute_GranLearnAct(LeabraUnitState_cpp* u, LeabraNetwork* net,
                                      int thr_no);
   // compute the granule unit learning activation as a function of time
 
-  float	Compute_NetinExtras(LeabraUnitVars* u, LeabraNetwork* net, int thr_no,
+  float	Compute_NetinExtras(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no,
                             float& net_syn) override;
-  void	Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
-  void	Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
+  void	Compute_Act_Rate(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) override;
+  void	Compute_Act_Spike(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) override;
 
   bool CheckConfig_Unit(Layer* lay, bool quiet) override;
 

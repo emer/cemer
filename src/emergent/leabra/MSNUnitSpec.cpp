@@ -49,7 +49,7 @@ void MSNUnitSpec::UpdateAfterEdit_impl() {
   // todo: could enforce various combinations here..
 }
 
-MSNUnitSpec::GateType MSNUnitSpec::MatrixGateType(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+MSNUnitSpec::GateType MSNUnitSpec::MatrixGateType(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   LeabraUnit* un = (LeabraUnit*)u->Un(net, thr_no);
   LeabraLayer* lay = (LeabraLayer*)un->own_lay();
   int ugidx = un->UnitGpIdx();
@@ -70,7 +70,7 @@ MSNUnitSpec::GateType MSNUnitSpec::MatrixGateType(LeabraUnitVars* u, LeabraNetwo
 }
 
 void MSNUnitSpec::Compute_ApplyInhib
-(LeabraUnitVars* u, LeabraNetwork* net, int thr_no, LeabraLayer* lay,
+(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no, LeabraLayer* lay,
  LeabraLayerSpec* lspec, LeabraInhib* thr, float ival) {
   inherited::Compute_ApplyInhib(u, net, thr_no, lay, lspec, thr, ival);
 
@@ -84,7 +84,7 @@ void MSNUnitSpec::Compute_ApplyInhib
 }
 
 
-void MSNUnitSpec::Compute_PatchShunt(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void MSNUnitSpec::Compute_PatchShunt(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   // note: recv this in prior Act_Post from  patch unit spec, apply in Act
   if(u->shunt > 0.0f) {         // todo: could be more quantitative here..
     u->da_p *= matrix.patch_shunt;
@@ -94,7 +94,7 @@ void MSNUnitSpec::Compute_PatchShunt(LeabraUnitVars* u, LeabraNetwork* net, int 
   }
 }
 
-void MSNUnitSpec::SaveGatingThal(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void MSNUnitSpec::SaveGatingThal(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   // if(!Quarter_DeepRawNextQtr(net->quarter))
   //   return;
   // int qtr_cyc;
@@ -108,7 +108,7 @@ void MSNUnitSpec::SaveGatingThal(LeabraUnitVars* u, LeabraNetwork* net, int thr_
   }
 }
 
-void MSNUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void MSNUnitSpec::Compute_Act_Rate(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   // note: critical for this to come BEFORE updating new act!
   if(dorsal_ventral == DORSAL && matrix_patch == MATRIX) {
     Compute_PatchShunt(u, net, thr_no);
@@ -118,7 +118,7 @@ void MSNUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int th
   inherited::Compute_Act_Rate(u, net, thr_no);
 }
 
-void MSNUnitSpec::Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void MSNUnitSpec::Compute_Act_Spike(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   // note: critical for this to come BEFORE updating new act!
   if(dorsal_ventral == DORSAL && matrix_patch == MATRIX) {
     Compute_PatchShunt(u, net, thr_no);
@@ -127,7 +127,7 @@ void MSNUnitSpec::Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int t
   inherited::Compute_Act_Spike(u, net, thr_no);
 }
 
-void MSNUnitSpec::Compute_DeepMod(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void MSNUnitSpec::Compute_DeepMod(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   if(deep.SendDeepMod() || deep.IsTRC()) {
     inherited::Compute_DeepMod(u, net, thr_no);
     return;

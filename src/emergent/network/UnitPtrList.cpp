@@ -27,7 +27,7 @@ int UnitPtrList::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
       if(!itm) continue;
       Layer* old_lay = GET_OWNER(itm,Layer);
       int lidx = old_net->layers.FindLeafEl(old_lay);
-      int uidx = itm->GetMyLeafIndex();
+      int uidx = itm->lay_un_idx;
       if((lidx >= 0) && (uidx >= 0)) {
         Layer* nw_lay = (Layer*)nw_net->layers.Leaf(lidx);
         if(nw_lay) {

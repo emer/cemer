@@ -51,6 +51,9 @@
 // random number generators.   we've converted the original c code
 // into C++
 
+
+// TODO: need to make this fully independent of TA!
+
 // parent includes:
 #include <taBase>
 #include <taList>

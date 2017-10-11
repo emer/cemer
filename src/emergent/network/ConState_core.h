@@ -1,0 +1,385 @@
+// this is included directly in ConState_cpp and _cuda
+// {
+
+  // note: define new enums for other variables, typically in ConSpec, adding from DWT
+  enum ConVars {                // Connection variables -- must align with Connection obj
+    WT,                         // the synaptic weight of connection
+    DWT,                        // change in synaptic weight as computed by learning mechanism
+  };
+
+  enum ConStateFlags {  // #BITS flags for this connection group
+    CG_0 = 0x0,         // #IGNORE 
+    OWN_CONS = 0x0001,  // this guy owns the connections -- else gets links to others
+    RECV_CONS = 0x0002, // we are a recv con group -- else a send con group
+    IS_ACTIVE = 0x0004, // we are an active con group -- projection is active and size > 0
+    SHARING = 0x0008,   // this OWN_CONS group is sharing connection objects from another con group
+    CHUNKS_SAME_SUGP = 0x0010,  // for Leabra: chunks all have the same sender unit group -- important for optimization of netin
+  };
+
+  static const int vec_chunk_targ = 8; // #READ_ONLY #NO_SAVE #DEF_8 target chunk size for vectorized operations over connections -- is currently set to 8 for all types of processors so that the weight files have a consistent layout -- however it can be set dynamically prior to building the network to experiment with different values -- affects allocation modulus
+
+  int           own_flat_idx;   // #CAT_State #READ_ONLY unit flat index of unit that owns us
+  int           own_thr_idx;    // #CAT_State #READ_ONLY unit thread-specific index of unit that owns us
+  int           spec_idx;       // #CAT_State #READ_ONLY index into network state conspecs list for our conspec
+  int           prjn_idx;       // #CAT_State #READ_ONLY index into network state projection state list for the projection that we correspond to
+  ConStateFlags flags;          // #CAT_State #READ_ONLY #SHOW flags for this connection group
+  int           size;           // #CAT_State #READ_ONLY #SHOW number of connections currently active
+  int           alloc_size;     // #CAT_State #READ_ONLY #SHOW allocated size -- no more than this number of connections may be created -- it is a hard limit set by the alloc function
+  int           other_idx;      // #CAT_State #READ_ONLY #SHOW index into other direction's list of cons objects (i.e., send_idx for RecvCons and recv_idx for SendCons)
+  int           share_idx;      // #CAT_State #READ_ONLY #SHOW index of other unit that this congroup shares connection objects with -- unit must be in same layer with same number of connections, and in the same thread (i.e., the number of units in a unit group must be an even multiple of the number of threads), and must be *earlier* in the layer (typically the first unit group) -- projection must set this during the initial pre-allocation phase of connecting -- if -1 then this congroup has its own unique connection objects
+  int           vec_chunked_size; // #CAT_State #READ_ONLY #SHOW number of connections at start of list that are chunked according to vec_chunk_targ -- for sender-based, this means that the recv unit_idx's are sequential for each of the chunks (individually) -- between chunks can be non-sequential
+
+  int           n_con_vars;     // #CAT_State #READ_ONLY number of connection variables
+  con_mem_idx   mem_idx;        // #CAT_State #READ_ONLY index into NetworkState allocated thread-specific connection memory -- for owned, non-shared cons, it is (con_type->members.size + 1) * sizeof(float) * alloc_size, for shared cons it is just sizeof(float) * alloc_size (first slice is index of other unit), for ptr cons, it is 2 * sizeof(float) * alloc_size (first slice is index of other unit, second is connection number there to find con data)
+  con_mem_idx   cnmem_idx;      // #CAT_State #READ_ONLY index into NetworkState allocated thread-specific connection memory -- for shared connections this points to the memory in the source connection. it is of size (con_type->members.size + 1) * sizeof(float) * alloc_size
+  float*        mem_start;      // #IGNORE pointer into Network allocated connection memory -- cached after network is built on device, based on mem_idx -- for owned, non-shared cons, it is (con_type->members.size + 1) * sizeof(float) * alloc_size, for shared cons it is just sizeof(float) * alloc_size (first slice is index of other unit), for ptr cons, it is 2 * sizeof(float) * alloc_size (first slice is index of other unit, second is connection number there to find con data)
+  float*        cnmem_start;    // #IGNORE pointer to start of connection variable memory -- cached after network is built on device, based on mem_idx -- for shared connections this points to the memory in the source connection. it is of size (con_type->members.size + 1) * sizeof(float) * alloc_size
+  float         temp1;          // temporary compute value -- e.g., net input
+
+  
+  INLINE CON_SPEC_CPP* GetConSpec(NETWORK_STATE* net) const {
+    return net->GetConSpec(spec_idx);
+  }
+  INLINE PRJN_STATE* GetPrjnState(NETWORK_STATE* net) const {
+    return net->GetPrjnState(prjn_idx);
+  }
+  INLINE LAYER_STATE* GetPrjnRecvLayer(NETWORK_STATE* net) const {
+    PRJN_STATE* prjn = GetPrjnState(net);
+    if(prjn) {
+      return prjn->GetRecvLayerState(net);
+    }
+    return NULL;
+  }
+  INLINE LAYER_STATE* GetPrjnSendLayer(NETWORK_STATE* net) const {
+    PRJN_STATE* prjn = GetPrjnState(net);
+    if(prjn) {
+      return prjn->GetSendLayerState(net);
+    }
+    return NULL;
+  }
+  
+  INLINE bool           HasConStateFlag(int flag) const 
+  { return (flags & flag); }
+  // #CAT_ObjectMgmt true if flag set, or if multiple, any set
+  INLINE void           SetConStateFlag(int flag)
+  { flags = (ConStateFlags)(flags | flag); }
+  // #CAT_ObjectMgmt sets the flag(s)
+  INLINE void           ClearConStateFlag(int flag)
+  { flags = (ConStateFlags)(flags & ~flag); }
+  // #CAT_ObjectMgmt clears the flag(s)
+  void                  ChangeConStateFlag(int flag, bool set)
+  {if (set) SetConStateFlag(flag); else ClearConStateFlag(flag);}
+  // #CAT_ObjectMgmt sets or clears the flag(s)
+
+  INLINE bool  OwnCons() const { return HasConStateFlag(OWN_CONS); }
+  // #CAT_State do we own the connections?  else just point to them
+  INLINE bool  PtrCons() const { return !HasConStateFlag(OWN_CONS); }
+  // #CAT_State do we have pointers to connections?  else we own them
+  INLINE bool  IsRecv() const  { return HasConStateFlag(RECV_CONS); }
+  // #CAT_State is this a receiving con group?  else sending
+  INLINE bool  IsSend() const  { return !HasConStateFlag(RECV_CONS); }
+  // #CAT_State is this a sending con group?  else receiving
+  INLINE bool  IsActive() const { return HasConStateFlag(IS_ACTIVE); }
+  // #CAT_State is this an active connection group, with connections and an active projection?
+  INLINE bool  NotActive() const { return !HasConStateFlag(IS_ACTIVE); }
+  // #CAT_State is this NOT an active connection group, with connections and an active projection?
+  INLINE bool  Sharing() const { return HasConStateFlag(SHARING); }
+  // #CAT_State is this group sharing connections from another connection group?
+
+  INLINE bool  InRange(int idx) const
+  { return ((idx < size) && (idx >= 0)); }
+  // #CAT_Access is index in range?
+
+  ////////////////////////////////////////////////////////////////////////////////
+  //    Primary infrastructure management routines
+
+  INLINE bool           PrjnIsActive(NETWORK_STATE* net)
+  { PRJN_STATE* prjn = GetPrjnState(net);
+    if(!prjn) return false;
+    return prjn->IsActive(net); }
+  // #IGNORE is the projection active for this connection group?
+
+  INLINE void           UpdtIsActive(NETWORK_STATE* net)
+  { if(alloc_size > 0 && size > 0 && PrjnIsActive(net))
+      SetConStateFlag(IS_ACTIVE);
+    else ClearConStateFlag(IS_ACTIVE);
+  }
+  // #IGNORE update active status: is this an active connection group, with connections and an active projection?
+
+  INLINE void           SetInactive()
+  { ClearConStateFlag(IS_ACTIVE); }
+  // #CAT_State set to inactive status
+
+  INLINE void           CacheMemStart(NETWORK_STATE* net, int thr_no)
+  { if(IsRecv()) {
+      mem_start = net->ThrRecvConMem(thr_no) + mem_idx;
+      cnmem_start = net->ThrRecvConMem(thr_no) + cnmem_idx;
+    }
+    else {
+      mem_start = net->ThrSendConMem(thr_no) + mem_idx;
+      cnmem_start = net->ThrSendConMem(thr_no) + cnmem_idx;
+    }
+  }
+  // #IGNORE cache mem_start and cnmem_start pointers -- must be called on-device after all the ConState has been allocated
+  
+  INLINE float*         MemBlock(int mem_block) const
+  { return mem_start + alloc_size * mem_block; }
+  // #IGNORE access given memory block -- just increments of alloc_size from mem_idx -- for low-level routines
+  INLINE float*         CnMemBlock(int mem_block) const
+  { return cnmem_start + alloc_size * mem_block; }
+  // #IGNORE access given connection memory block -- just increments of alloc_size from cnmem_idx -- for low-level routines
+
+  INLINE int            NConVars() const  { return n_con_vars; }
+  // #CAT_Access number of connection-level variables
+
+  INLINE bool           VarInRange(int var_no) const {
+    if(var_no < 0 || var_no >= NConVars()) return false;
+    return true;
+  }
+
+  INLINE int            OwnMemReq()
+  { if(share_idx > 0) return alloc_size; return alloc_size * (NConVars() + 1); }
+  // #IGNORE memory allocation requirements for con owner, in terms of numbers of float's/int32's
+  INLINE int            PtrMemReq()
+  { return alloc_size * 2; }
+  // #IGNORE memory allocation requirements for con ptr, in terms of numbers of float's/int32's
+  INLINE int            MemReq()
+  { if(OwnCons()) return OwnMemReq(); return PtrMemReq(); }
+  // #IGNORE memory allocation requirements for this connection group, in terms of numbers of float's/int32's
+
+  INLINE void           SetMemStart(NETWORK_STATE* net, con_mem_idx midx) {
+    mem_idx = midx;
+    if(OwnCons()) {
+      cnmem_idx = mem_idx + alloc_size;
+    }
+    ClearConStateFlag(SHARING);
+    if(share_idx > 0) {
+      if(share_idx >= own_flat_idx) {
+        // taMisc::Error("SetMemStart: share_idx cannot be >= our own_flat_idx - can only share from units *earlier* in the layer (i.e., the first units in the layer)");
+        return;
+      }
+      CON_STATE* shcg = SharedUnCons(net);
+      if(!shcg) {
+        // taMisc::Error("SetMemStart: did not find share con group");
+        share_idx = -1;
+        return;
+      }
+      cnmem_idx = shcg->cnmem_idx; // now we're sharing!
+      SetConStateFlag(SHARING);
+    }
+  }
+  // #IGNORE set our starting memory location and index -- called by Network Connect_Alloc routine
+
+  INLINE int            VecChunkMod(int sz) 
+  { return ((int)(sz / vec_chunk_targ) + 1) * vec_chunk_targ; }
+  // #IGNORE return value that is modulus of vec_chunk_targ -- for computing allocation sizes, etc
+
+  INLINE UNIT_STATE*    OwnUnState(NETWORK_STATE* net)
+  { return net->UnUnitState(own_flat_idx); }
+  // #IGNORE #CAT_Access our own unit variables -- for the unit that owns these connections (could be sending or recv unit depending on type of connection group)
+  INLINE UNIT_STATE*    ThrOwnUnState(NETWORK_STATE* net, int thr_no)
+  { return net->ThrUnitState(thr_no, own_thr_idx); }
+  // #IGNORE #CAT_Access thread-optimized version (faster!): our own unit variables -- for the unit that owns these connections (could be sending or recv unit depending on type of connection group)
+
+  INLINE float*         OwnCnVar(int var_no) const {
+#ifdef DEBUG
+    if(!OwnCons()) return NULL;
+#endif
+    return cnmem_start + (alloc_size * var_no); }
+  // #CAT_Access fastest access (no range checking) to owned connection variable value -- get this float* and then index it directly with loop index -- var_no is defined in ConSpec (e.g., ConSpec::WT, DWT or algorithm-specific types (e.g., LeabraConSpec::SCALE)
+
+  INLINE int32_t*       OwnCnVarInt(int var_no) const {
+#ifdef DEBUG
+    if(!OwnCons()) return NULL;
+#endif
+    return ((int32_t*)cnmem_start) + (alloc_size * var_no); }
+  // #CAT_Access fastest access (no range checking) to owned connection variable value of INTEGER type -- get this float* and then index it directly with loop index -- var_no is defined in ConSpec
+
+  INLINE float&          OwnCn(int idx, int var_no) const
+  { return cnmem_start[(alloc_size * var_no) + idx]; }
+  // #CAT_Access fast access (no range checking) to owned connection variable value at given index -- OwnCnVar with index in loop is preferred for fastest access -- var_no is defined in ConSpec (e.g., ConSpec::WT, DWT or algorithm-specific types (e.g., LeabraConSpec::PDW)
+
+  INLINE int32_t&        OwnCnInt(int idx, int var_no) const
+  { return ((int32_t*)cnmem_start)[(alloc_size * var_no) + idx]; }
+  // #CAT_Access fast access (no range checking) to owned connection INTEGER variable value at given index -- OwnCnVar with index in loop is preferred for fastest access -- var_no is defined in ConSpec (e.g., ConSpec::WT, DWT or algorithm-specific types (e.g., LeabraConSpec::PDW)
+
+  INLINE const int32_t& UnIdx(int idx) const 
+  { return ((int32_t*)mem_start)[idx]; }
+  // #CAT_Access fast access (no range checking) to unit flat index at given connection index
+  INLINE int32_t&       UnIdx(int idx)
+  { return ((int32_t*)mem_start)[idx]; }
+  // #CAT_Access fast access (no range checking) to unit flat index at given connection index
+  INLINE UNIT_STATE*    UnState(int idx, NETWORK_STATE* net) const {
+    return net->UnUnitState(UnIdx(idx));
+  }
+  // #IGNORE #CAT_Access fast access (no range checking) to unit pointer at given connection index (goes through flat index at network level) -- this is the unit on the other end of this connection 
+
+  INLINE CON_STATE*      UnCons(int idx, NETWORK_STATE* net) const {
+    if(IsRecv()) return net->SendConState(UnIdx(idx), other_idx);
+    else         return net->RecvConState(UnIdx(idx), other_idx);
+  }
+  // #IGNORE get ConState for this projection in unit at given index at other end of this connection
+  INLINE CON_STATE*      SafeUnCons(int idx, NETWORK_STATE* net) const {
+    if(!InRange(idx)) return NULL;
+    if(IsRecv()) return net->SendConState(UnIdx(idx), other_idx);
+    else         return net->RecvConState(UnIdx(idx), other_idx);
+  }
+  // #IGNORE get ConState for this projection in unit at given index at other end of this connection -- uses safe access
+  INLINE CON_STATE*      SharedUnCons(NETWORK_STATE* net) const {
+    PRJN_STATE* prjn = GetPrjnState(net);
+    if(IsRecv()) return net->RecvConState(share_idx, prjn->recv_idx);
+    else         return net->SendConState(share_idx, prjn->send_idx);
+  }
+  // #CAT_Access get the con group of the unit that we share connections from
+
+  INLINE const int32_t& PtrCnIdx(int idx) const
+  { return ((int32_t*)mem_start)[alloc_size + idx]; }
+  // #CAT_Access fast access (no range checking) to index of connection within unit cons on other side of connection 
+  INLINE int32_t&    PtrCnIdx(int idx)
+  { return ((int32_t*)mem_start)[alloc_size + idx]; }
+  // #CAT_Access fast access (no range checking) to index of connection within unit cons on other side of connection 
+
+  INLINE float&  PtrCn(int idx, int var_no, NETWORK_STATE* net) const
+  { return UnCons(idx, net)->OwnCn(PtrCnIdx(idx), var_no); }
+  // #IGNORE #CAT_Access fast access (no range or own_cons checking) to connection value at given index -- this is MUCH slower than OwnCn due to several index accesses, so where ever possible computations should be performed on the side that owns the connections -- var_no is defined in ConSpec (e.g., ConSpec::WT, DWT or algorithm-specific types (e.g., LeabraConSpec::PDW)
+  INLINE int32_t&  PtrCnInt(int idx, int var_no, NETWORK_STATE* net) const
+  { return UnCons(idx, net)->OwnCnInt(PtrCnIdx(idx), var_no); }
+  // #IGNORE #CAT_Access fast access (no range or own_cons checking) to connection INTEGER value at given index -- this is MUCH slower than OwnCn due to several index accesses, so where ever possible computations should be performed on the side that owns the connections -- var_no is defined in ConSpec (e.g., ConSpec::WT, DWT or algorithm-specific types (e.g., LeabraConSpec::PDW)
+
+  INLINE float&  Cn(int idx, int var_no, NETWORK_STATE* net) const
+  { if(OwnCons()) return OwnCn(idx, var_no); return PtrCn(idx, var_no, net); }
+  // #IGNORE #CAT_Access generic access of connection variable value at given index, regardless of whether it is owned or a pointer -- no range checking -- var_no is defined in ConSpec (e.g., ConSpec::WT, DWT or algorithm-specific types (e.g., LeabraConSpec::PDW) -- do not use in compute algorithm code that knows the ownership status of the connections (use OwnCn* or PtrCn*)
+  INLINE float&  SafeFastCn(int idx, int var_no, NETWORK_STATE* net) const
+  { if(OwnCons()) { if(InRange(idx)) return OwnCn(idx, var_no); return const_cast<float&>(temp1); }
+    CON_STATE* bc = SafeUnCons(idx, net);
+    if(bc) return bc->SafeFastCn(PtrCnIdx(idx), var_no, net); return const_cast<float&>(temp1); }
+  // #IGNORE #CAT_Access generic access of connection variable value at given index, regardless of whether it is owned or a pointer -- does range checking but doesn't issue messages, and is otherwise as fast as possible -- var_no is defined in ConSpec (e.g., ConSpec::WT, DWT or algorithm-specific types (e.g., LeabraConSpec::PDW) -- do not use in compute algorithm code that knows the ownership status of the connections (use OwnCn* or PtrCn*)
+
+  INLINE void    ConnectAllocInc(int inc_n = 1) { size += inc_n; }
+  // #CAT_Modify use this for dynamically figuring out how many connections to allocate, if it is not possible to compute directly -- increments size by given number -- later call AllocConsFmSize to allocate connections based on the size value
+  INLINE void    FreeCons() {
+    mem_start = 0;    cnmem_start = 0;    size = 0;    vec_chunked_size = 0;    alloc_size = 0;
+    SetInactive();
+  }
+  // #CAT_State deallocate all connection-level storage (cons and units)
+  INLINE void    RemoveAll()     { FreeCons(); }
+  // #CAT_Modify remove all conections -- frees all associated memory
+  INLINE void    Reset()         { FreeCons(); }
+  // #CAT_Modify remove all conections -- frees all associated memory
+
+  INLINE int FindConFromIdx(int trg_idx) const {
+    if(size > 10) {
+      // starting point for search: proportional location of unit in its own layer, 
+      // mapped on to size of connections -- then search in both directions out from there
+      // int proploc = (int)(((float)un->idx / (float)un->own_lay()->units.leaves) *
+      //                     (float)size);
+      // todo: add this function to network state to compute this for us..
+      int proploc = size / 2;   // just search from middle -- we don't have access to unit state!
+      int upi = proploc+1;
+      int dni = proploc;
+      while(true) {
+        bool upo = false;
+        if(upi < size) {
+          if(UnIdx(upi) == trg_idx) return upi;
+          ++upi;
+        }
+        else {
+          upo = true;
+        }
+        if(dni >= 0) {
+          if(UnIdx(dni) == trg_idx) return dni;
+          --dni;
+        }
+        else if(upo) {
+          break;
+        }
+      }        
+    }
+    else {
+      for(int i=0; i<size; i++) {
+        if(UnIdx(i) == trg_idx) return i;
+      }
+    }
+    return -1;
+  }
+  // find connection from given unit flat index
+
+  INLINE bool RemoveConIdx(int i, NETWORK_STATE* net) {
+    if(!InRange(i)) return false;
+    if(OwnCons()) {
+      for(int j=i; j<size-1; j++) {
+        // first, have to ensure that other side's indexes are updated for our connections
+        ConState_cpp* othcn = UnCons(j+1, net); 
+        int myidx = othcn->FindConFromIdx(own_flat_idx);
+        if(myidx >= 0) {
+          othcn->PtrCnIdx(myidx)--; // our index is decreased by 1
+        }
+        int ncv = NConVars();
+        for(int k=0; k<ncv; k++) {
+          OwnCn(j,k) = OwnCn(j+1,k);
+        }
+      }
+    }
+    else {
+      for(int j=i; j<size-1; j++) {
+        PtrCnIdx(j) = PtrCnIdx(j+1);
+      }
+    }
+
+    for(int j=i; j<size-1; j++) {
+      UnIdx(j) = UnIdx(j+1);
+    }
+    size--;
+    UpdtIsActive(net);
+    return true;
+  }
+  // remove connection at given index, also updating other unit's information about this connection
+
+  INLINE bool RemoveConUn(int trg_idx, NETWORK_STATE* net) {
+    int idx = FindConFromIdx(trg_idx);
+    if(idx < 0) return false;
+    return RemoveConIdx(idx, net);
+  }
+  // remove connection from given unit with trg_idx flat index number (if found)
+
+
+  INLINE void Copy_Weights(const CON_STATE* src, NETWORK_STATE* net) {
+    int mx = MIN(size, src->size);
+    for(int i=0; i < mx; i++) {
+      Cn(i, WT, net) = src->Cn(i, WT, net);
+    }
+  }
+  // #CAT_ObjectMgmt copies weights from other con_state
+
+  INLINE void AllocCons(NETWORK_STATE* net, int sz) {
+    if(mem_start != 0) {
+      net->StateError("AllocCons: mem_start is not null -- re-allocating already allocated connection -- this is a programmer error in the ProjectionSpec, usually from not following make_cons flag");
+    }
+    mem_start = 0;
+    cnmem_start = 0;
+    size = 0;
+    vec_chunked_size = 0;
+    alloc_size = sz;
+    SetInactive();
+  }
+
+  INLINE void AllocConsFmSize(NETWORK_STATE* net) {
+    AllocCons(net, size);              // this sets size back to zero and does full alloc
+  }
+
+  INLINE void Initialize_core
+  (int own_flt_idx=0, int own_th_idx=0, int spec_dx=0, int flgs=0, int prj_dx=0,
+   int n_con_vr = 0, int oth_idx=0) {
+    own_flat_idx = own_flt_idx;
+    own_thr_idx = own_th_idx;
+    spec_idx = spec_dx;
+    flags = (ConStateFlags)flgs;
+    prjn_idx = prj_dx;
+    alloc_size = 0;
+    size = 0;
+    vec_chunked_size = 0;
+    other_idx = oth_idx;
+    n_con_vars = n_con_vr;
+    share_idx = -1;
+    mem_idx = 0;    cnmem_idx = 0;    mem_start = 0;    cnmem_start = 0;
+  }

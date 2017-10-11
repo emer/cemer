@@ -230,7 +230,7 @@ bool ScalarValLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
 
   const int nrg = u->NRecvConGps();
   for(int g=0; g<nrg; g++) {
-    LeabraConGroup* recv_gp = (LeabraConGroup*)u->RecvConGroup(g);
+    LeabraConState_cpp* recv_gp = (LeabraConState_cpp*)u->RecvConState(g);
     if(recv_gp->NotActive()) continue;
     LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
     if(recv_gp->prjn->spec.SPtr()->InheritsFrom(TA_ScalarValSelfPrjnSpec)) {
@@ -279,13 +279,13 @@ void ScalarValLayerSpec::Compute_WtBias_Val
     float act = .03f * bias_val.wt_gain * scalar.GetUnitAct(i);
     const int nrg = u->NRecvConGps();
     for(int g=0; g<nrg; g++) {
-      LeabraConGroup* recv_gp = (LeabraConGroup*)u->RecvConGroup(g);
+      LeabraConState_cpp* recv_gp = (LeabraConState_cpp*)u->RecvConState(g);
       if(recv_gp->NotActive()) continue;
       LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
       if(recv_gp->prjn->spec.SPtr()->InheritsFrom(TA_ScalarValSelfPrjnSpec) ||
          cs->IsMarkerCon()) continue;
       for(int ci=0;ci<recv_gp->size;ci++) {
-        float& wt = recv_gp->PtrCn(ci, ConGroup::WT, net);
+        float& wt = recv_gp->PtrCn(ci, ConState::WT, net);
         wt += act;
         if(wt < cs->wt_limits.min) wt = cs->wt_limits.min;
         if(wt > cs->wt_limits.max) wt = cs->wt_limits.max;
@@ -302,7 +302,7 @@ void ScalarValLayerSpec::Compute_UnBias_Val
   for(int i=0;i<nunits;i++) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
     if(u->lesioned()) continue;
-    LeabraUnitVars* uv = (LeabraUnitVars*)u->GetUnitVars();
+    LeabraUnitState_cpp* uv = (LeabraUnitState_cpp*)u->GetUnitState();
     float act = bias_val.un_gain * scalar.GetUnitAct(i);
     if(bias_val.un == ScalarValBias::BWT)
       uv->bias_wt = act;
@@ -318,7 +318,7 @@ void ScalarValLayerSpec::Compute_UnBias_NegSlp
   for(int i=0;i<nunits;i++) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
     if(u->lesioned()) continue;
-    LeabraUnitVars* uv = (LeabraUnitVars*)u->GetUnitVars();
+    LeabraUnitState_cpp* uv = (LeabraUnitState_cpp*)u->GetUnitState();
     if(bias_val.un == ScalarValBias::BWT)
       uv->bias_wt = -val;
     val += incr;
@@ -334,7 +334,7 @@ void ScalarValLayerSpec::Compute_UnBias_PosSlp
   for(int i=0;i<nunits;i++) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
     if(u->lesioned()) continue;
-    LeabraUnitVars* uv = (LeabraUnitVars*)u->GetUnitVars();
+    LeabraUnitState_cpp* uv = (LeabraUnitState_cpp*)u->GetUnitState();
     if(bias_val.un == ScalarValBias::BWT)
       uv->bias_wt = val;
     val += incr;
@@ -353,12 +353,12 @@ void ScalarValLayerSpec::ClampValue_ugp
   int nunits = lay->UnitAccess_NUnits(acc_md);
   if(nunits < 1) return;        // must be at least a few units..
   LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, 0, gpidx);
-  LeabraUnitVars* uv = (LeabraUnitVars*)u->GetUnitVars();
+  LeabraUnitState_cpp* uv = (LeabraUnitState_cpp*)u->GetUnitState();
   LeabraUnitSpec* us = (LeabraUnitSpec*)u->GetUnitSpec();
   if(!clamp.hard)
-    uv->ClearExtFlag(UnitVars::EXT);
+    uv->ClearExtFlag(UnitState::EXT);
   else
-    uv->SetExtFlag(UnitVars::EXT);
+    uv->SetExtFlag(UnitState::EXT);
   float val = uv->ext_orig;     // have to use the orig value b/c ext gets computed!
   if(scalar.clip_val)
     val = val_range.Clip(val);          // first unit has the value to clamp
@@ -373,7 +373,7 @@ void ScalarValLayerSpec::ClampValue_ugp
   for(int i=0;i<nunits;i++) {
     u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
     if(u->lesioned()) continue;
-    uv = (LeabraUnitVars*)u->GetUnitVars();
+    uv = (LeabraUnitState_cpp*)u->GetUnitState();
     float act;
     if(scalar.rep == ScalarValSpec::AVG_ACT) {
       act = avg_act;
@@ -383,7 +383,7 @@ void ScalarValLayerSpec::ClampValue_ugp
     }
     if(act < us->opt_thresh.send)
       act = 0.0f;
-    uv->SetExtFlag(UnitVars::EXT);
+    uv->SetExtFlag(UnitState::EXT);
     uv->ext = act;
   }
 }
@@ -412,7 +412,7 @@ float ScalarValLayerSpec::ReadValue_ugp
   for(int i=0;i<nunits;i++) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
     if(u->lesioned()) continue;
-    LeabraUnitVars* uv = (LeabraUnitVars*)u->GetUnitVars();
+    LeabraUnitState_cpp* uv = (LeabraUnitState_cpp*)u->GetUnitState();
     LeabraUnitSpec* us = (LeabraUnitSpec*)u->GetUnitSpec();
     float cur = scalar.GetUnitVal(i);
     float act_val = 0.0f;
@@ -433,7 +433,7 @@ float ScalarValLayerSpec::ReadValue_ugp
   }
   // set the first unit in the group to represent the value
   LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, 0, gpidx);
-  LeabraUnitVars* uv = (LeabraUnitVars*)u->GetUnitVars();
+  LeabraUnitState_cpp* uv = (LeabraUnitState_cpp*)u->GetUnitState();
   uv->misc_1 = avg;
   return avg;
 }
@@ -450,12 +450,12 @@ void ScalarValLayerSpec::Compute_ExtToPlus_ugp
   for(int i=0;i<nunits;i++) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
     if(u->lesioned()) continue;
-    LeabraUnitVars* uv = (LeabraUnitVars*)u->GetUnitVars();
+    LeabraUnitState_cpp* uv = (LeabraUnitState_cpp*)u->GetUnitState();
     uv->act_p = us->clamp_range.Clip(uv->ext);
     uv->act_dif = uv->act_p - uv->act_m;
     // important to clear ext stuff, otherwise it will get added into netin next time around!!
     uv->ext = 0.0f;
-    uv->ClearExtFlag(UnitVars::COMP_TARG_EXT);
+    uv->ClearExtFlag(UnitState::COMP_TARG_EXT);
   }
 }
 
@@ -467,10 +467,10 @@ void ScalarValLayerSpec::Compute_ExtToAct_ugp
   for(int i=0;i<nunits;i++) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
     if(u->lesioned()) continue;
-    LeabraUnitVars* uv = (LeabraUnitVars*)u->GetUnitVars();
+    LeabraUnitState_cpp* uv = (LeabraUnitState_cpp*)u->GetUnitState();
     uv->act_eq = uv->act = us->clamp_range.Clip(uv->ext);
     uv->ext = 0.0f;
-    uv->ClearExtFlag(UnitVars::COMP_TARG_EXT);
+    uv->ClearExtFlag(UnitState::COMP_TARG_EXT);
   }
 }
 
@@ -482,7 +482,7 @@ void ScalarValLayerSpec::HardClampExt_ugp
   for(int i=0;i<nunits;i++) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
     if(u->lesioned()) continue;
-    LeabraUnitVars* uv = (LeabraUnitVars*)u->GetUnitVars();
+    LeabraUnitState_cpp* uv = (LeabraUnitState_cpp*)u->GetUnitState();
     ((LeabraUnitSpec*)u->GetUnitSpec())->Compute_HardClamp(uv, net, u->ThrNo());
   }
 }
@@ -522,7 +522,7 @@ void ScalarValLayerSpec::Quarter_Init_Layer(LeabraLayer* lay, LeabraNetwork* net
     // if using bias-weight bias, keep a constant scaling (independent of layer size)
     FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
       LeabraConSpec* bspec = (LeabraConSpec*)u->GetUnitSpec()->bias_spec.SPtr();
-      LeabraUnitVars* uv = (LeabraUnitVars*)u->GetUnitVars();
+      LeabraUnitState_cpp* uv = (LeabraUnitState_cpp*)u->GetUnitState();
       uv->bias_scale = bspec->wt_scale.abs;  // still have absolute scaling if wanted..
       uv->bias_scale /= 100.0f;
     }
@@ -534,7 +534,7 @@ void ScalarValLayerSpec::Compute_HardClamp_Layer(LeabraLayer* lay, LeabraNetwork
     inherited::Compute_HardClamp_Layer(lay, net);
     return;
   }
-  if(!lay->HasExtFlag(UnitVars::EXT)) {
+  if(!lay->HasExtFlag(UnitState::EXT)) {
     lay->hard_clamped = false;
     return;
   }
@@ -557,7 +557,7 @@ void ScalarValLayerSpec::Compute_OutputName(LeabraLayer* lay, LeabraNetwork* net
 void ScalarValLayerSpec::Quarter_Final_GetMinus_ugp
 (LeabraLayer* lay, LeabraNetwork* net, Layer::AccessMode acc_md, int gpidx) {
   LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, 0, gpidx);
-  LeabraUnitVars* uv = (LeabraUnitVars*)u->GetUnitVars();
+  LeabraUnitState_cpp* uv = (LeabraUnitState_cpp*)u->GetUnitState();
   uv->misc_2 = uv->misc_1;      // save minus phase in misc_2
 }
 
@@ -569,10 +569,10 @@ void ScalarValLayerSpec::Quarter_Final_GetMinus(LeabraLayer* lay, LeabraNetwork*
 float ScalarValLayerSpec::Compute_SSE_ugp(LeabraLayer* lay, LeabraNetwork* net,
                                           Layer::AccessMode acc_md, int gpidx, int& n_vals) {
   LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, 0, gpidx);
-  LeabraUnitVars* uv = (LeabraUnitVars*)u->GetUnitVars();
+  LeabraUnitState_cpp* uv = (LeabraUnitState_cpp*)u->GetUnitState();
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
   // only count if target value is within range -- otherwise considered a non-target
-  if(uv->HasExtFlag(UnitVars::COMP_TARG) && val_range.RangeTestEq(uv->targ)) {
+  if(uv->HasExtFlag(UnitState::COMP_TARG) && val_range.RangeTestEq(uv->targ)) {
     n_vals++;
     float uerr = uv->targ - uv->misc_2;
     if(fabsf(uerr) < us->sse_tol)
@@ -586,7 +586,7 @@ float ScalarValLayerSpec::Compute_SSE
 (LeabraLayer* lay, LeabraNetwork* net, int& n_vals, bool unit_avg, bool sqrt) {
   n_vals = 0;
   lay->sse = 0.0f;
-  if(!(lay->HasExtFlag(UnitVars::COMP_TARG))) return 0.0f;
+  if(!(lay->HasExtFlag(UnitState::COMP_TARG))) return 0.0f;
   if(lay->layer_type == Layer::HIDDEN) return 0.0f;
   UNIT_GP_ITR(lay, lay->sse += Compute_SSE_ugp(lay, net, acc_md, gpidx, n_vals); );
   float rval = lay->sse;
@@ -598,7 +598,7 @@ float ScalarValLayerSpec::Compute_SSE
   if(lay->sse > net->stats.cnt_err_tol)
     lay->cur_cnt_err += 1.0;
   if(lay->HasLayerFlag(Layer::NO_ADD_SSE) ||
-     (lay->HasExtFlag(UnitVars::COMP) && lay->HasLayerFlag(Layer::NO_ADD_COMP_SSE))) {
+     (lay->HasExtFlag(UnitState::COMP) && lay->HasLayerFlag(Layer::NO_ADD_COMP_SSE))) {
     rval = 0.0f;
     n_vals = 0;
   }
@@ -608,10 +608,10 @@ float ScalarValLayerSpec::Compute_SSE
 float ScalarValLayerSpec::Compute_NormErr_ugp
 (LeabraLayer* lay, LeabraNetwork* net, Layer::AccessMode acc_md, int gpidx) {
   LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, 0, gpidx);
-  LeabraUnitVars* uv = (LeabraUnitVars*)u->GetUnitVars();
+  LeabraUnitState_cpp* uv = (LeabraUnitState_cpp*)u->GetUnitState();
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
   // only count if target value is within range -- otherwise considered a non-target
-  if(uv->HasExtFlag(UnitVars::COMP_TARG) && val_range.RangeTestEq(uv->targ)) {
+  if(uv->HasExtFlag(UnitState::COMP_TARG) && val_range.RangeTestEq(uv->targ)) {
     float uerr = uv->targ - uv->misc_2;
     if(fabsf(uerr) < us->sse_tol)
       return 0.0f;
@@ -622,7 +622,7 @@ float ScalarValLayerSpec::Compute_NormErr_ugp
 
 float ScalarValLayerSpec::Compute_NormErr(LeabraLayer* lay, LeabraNetwork* net) {
   lay->norm_err = -1.0f;                                         // assume not contributing
-  if(!lay->HasExtFlag(UnitVars::COMP_TARG)) return -1.0f; // indicates not applicable
+  if(!lay->HasExtFlag(UnitState::COMP_TARG)) return -1.0f; // indicates not applicable
   if(lay->layer_type == Layer::HIDDEN) return -1.0f;
 
   float nerr = 0.0f;
@@ -646,7 +646,7 @@ float ScalarValLayerSpec::Compute_NormErr(LeabraLayer* lay, LeabraNetwork* net) 
   lay->avg_norm_err.Increment(lay->norm_err);
   
   if(lay->HasLayerFlag(Layer::NO_ADD_SSE) ||
-     (lay->HasExtFlag(UnitVars::COMP) && lay->HasLayerFlag(Layer::NO_ADD_COMP_SSE)))
+     (lay->HasExtFlag(UnitState::COMP) && lay->HasLayerFlag(Layer::NO_ADD_COMP_SSE)))
     return -1.0f;               // no contributarse
 
   return lay->norm_err;

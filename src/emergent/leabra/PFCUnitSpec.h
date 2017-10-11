@@ -111,24 +111,24 @@ public:
   virtual void  UpdtDynTable();
   // check and make sure table is all OK
 
-  virtual void GetThalCntFromSuper(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
+  virtual void GetThalCntFromSuper(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no);
   // #IGNORE deep guys get thal_cnt from super
-  virtual void Compute_PFCGating(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
+  virtual void Compute_PFCGating(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no);
   // called 1/2 way through phase prior to official gating phase, determines if gating happened and sets thal_cnt to 0 if so, and clears existing activations per params -- output gating layers call this 1 cycle prior to maint layers, to allow maint to override clear with new gating if present
-  virtual void ClearOtherMaint(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
+  virtual void ClearOtherMaint(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no);
   // clear maintenance in other layers we project to using MarkerConSpec
 
-  float Compute_NetinExtras(LeabraUnitVars* uv, LeabraNetwork* net,
+  float Compute_NetinExtras(LeabraUnitState_cpp* uv, LeabraNetwork* net,
                             int thr_no, float& net_syn) override;
-  void  Compute_DeepRaw(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
-  void  Quarter_Init_Deep(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
-  void  SaveGatingAct(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override { };
-  void	Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
-  void	Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
-  void  Send_DeepCtxtNetin(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
-  void  Compute_DeepStateUpdt(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
+  void  Compute_DeepRaw(LeabraUnitState_cpp* uv, LeabraNetwork* net, int thr_no) override;
+  void  Quarter_Init_Deep(LeabraUnitState_cpp* uv, LeabraNetwork* net, int thr_no) override;
+  void  SaveGatingAct(LeabraUnitState_cpp* uv, LeabraNetwork* net, int thr_no) override { };
+  void	Compute_Act_Rate(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) override;
+  void	Compute_Act_Spike(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) override;
+  void  Send_DeepCtxtNetin(LeabraUnitState_cpp* uv, LeabraNetwork* net, int thr_no) override;
+  void  Compute_DeepStateUpdt(LeabraUnitState_cpp* uv, LeabraNetwork* net, int thr_no) override;
 
-  void  ClearDeepActs(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
+  void  ClearDeepActs(LeabraUnitState_cpp* uv, LeabraNetwork* net, int thr_no) override;
   
   virtual void	GraphPFCDyns(DataTable* graph_data, int n_trials=20);
   // #MENU_BUTTON #MENU_ON_Graph #NULL_OK #NULL_TEXT_NewGraphData graph the pfc dynamics for response of deep_raw over time after gating has taken place -- update occurs once each quarter that deep_raw is computed (typically once per trial)

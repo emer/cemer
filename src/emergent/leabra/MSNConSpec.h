@@ -170,7 +170,7 @@ public:
   // get effective dopamine signal taking into account gains and reversal by D2R
   
 
-  inline void Init_Weights(ConGroup* cg, Network* net, int thr_no) override {
+  inline void Init_Weights(ConState* cg, Network* net, int thr_no) override {
     Init_Weights_symflag(net, thr_no);
 
     float* wts = cg->OwnCnVar(WT);
@@ -196,7 +196,7 @@ public:
     }
   }
 
-  inline float GetActVal(LeabraUnitVars* u, const LearnActVal& val) {
+  inline float GetActVal(LeabraUnitState_cpp* u, const LearnActVal& val) {
     switch(val) {
     case PREV_TRIAL:
       return u->act_q0;
@@ -298,7 +298,7 @@ public:
   }
   // #IGNORE
 
-  inline void ClearMSNTrace(LeabraConGroup* scg, LeabraNetwork* net, int thr_no) {
+  inline void ClearMSNTrace(LeabraConState_cpp* scg, LeabraNetwork* net, int thr_no) {
     float* trs = scg->OwnCnVar(TR);
     const int sz = scg->size;
     for(int i=0; i<sz; i++) {
@@ -307,11 +307,11 @@ public:
   }
   // #IGNORE clear the trace value
 
-  inline void Compute_dWt(ConGroup* scg, Network* rnet, int thr_no) override {
+  inline void Compute_dWt(ConState* scg, Network* rnet, int thr_no) override {
     LeabraNetwork* net = (LeabraNetwork*)rnet;
     if(!learn || (use_unlearnable && net->unlearnable_trial)) return;
-    LeabraConGroup* cg = (LeabraConGroup*)scg;
-    LeabraUnitVars* su = (LeabraUnitVars*)cg->ThrOwnUnVars(net, thr_no);
+    LeabraConState_cpp* cg = (LeabraConState_cpp*)scg;
+    LeabraUnitState_cpp* su = (LeabraUnitState_cpp*)cg->ThrOwnUnState(net, thr_no);
     LeabraLayer* rlay = (LeabraLayer*)cg->prjn->layer;
     MSNUnitSpec* rus = (MSNUnitSpec*)rlay->GetUnitSpec();
     const bool d2r = (rus->dar == MSNUnitSpec::D2R);
@@ -331,7 +331,7 @@ public:
     switch(learn_rule) {
     case DA_HEBB: {
       for(int i=0; i<sz; i++) {
-        LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i,net);
+        LeabraUnitState_cpp* ru = (LeabraUnitState_cpp*)cg->UnState(i,net);
         float lrate_eff = clrate;
         if(deep_on) {
           lrate_eff *= (bg_lrate + fg_lrate * ru->deep_lrn);
@@ -343,7 +343,7 @@ public:
     }
     case DA_HEBB_VS: {
       for(int i=0; i<sz; i++) {
-        LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i,net);
+        LeabraUnitState_cpp* ru = (LeabraUnitState_cpp*)cg->UnState(i,net);
         float lrate_eff = clrate;
         if(deep_on) {
           lrate_eff *= (bg_lrate + fg_lrate * ru->deep_lrn);
@@ -356,7 +356,7 @@ public:
     }
     case TRACE_THAL: {
       for(int i=0; i<sz; i++) {
-        LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i,net);
+        LeabraUnitState_cpp* ru = (LeabraUnitState_cpp*)cg->UnState(i,net);
         float lrate_eff = clrate;
         if(deep_on) {
           lrate_eff *= (bg_lrate + fg_lrate * ru->deep_lrn);
@@ -371,7 +371,7 @@ public:
     }
     case TRACE_NO_THAL: {
       for(int i=0; i<sz; i++) {
-        LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i,net);
+        LeabraUnitState_cpp* ru = (LeabraUnitState_cpp*)cg->UnState(i,net);
         float lrate_eff = clrate;
         if(deep_on) {
           lrate_eff *= (bg_lrate + fg_lrate * ru->deep_lrn);
@@ -385,7 +385,7 @@ public:
     }
     case TRACE_NO_THAL_VS: {
       for(int i=0; i<sz; i++) {
-        LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i,net);
+        LeabraUnitState_cpp* ru = (LeabraUnitState_cpp*)cg->UnState(i,net);
         float lrate_eff = clrate;
         if(deep_on) {
           //            lrate_eff *= (bg_lrate + fg_lrate * ru->deep_lrn);

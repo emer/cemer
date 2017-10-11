@@ -68,16 +68,17 @@ public:
   TypeDef*              con_type;       // #TYPE_Connection #CAT_Structure Type of connection
   ConSpec_SPtr          con_spec;       // #CAT_Structure conspec to use for creating connections
 
-  int                   recv_idx;       // #READ_ONLY #CAT_Structure receiving con_group index
-  int                   send_idx;       // #READ_ONLY #CAT_Structure sending con_group index
-  int                   recv_n;         // #READ_ONLY #CAT_Structure #DEF_1 number of receiving con_groups allocated to this projection: almost always 1 -- some things won't work right if > 1 (e.g., copying)
-  int                   send_n;         // #READ_ONLY #CAT_Structure number of sending con_groups: almost always 1 -- some things won't work right if > 1 (e.g., copying)
+  int                   recv_idx;       // #READ_ONLY #CAT_Structure receiving con_state index
+  int                   send_idx;       // #READ_ONLY #CAT_Structure sending con_state index
+  int                   recv_n;         // #READ_ONLY #CAT_Structure #DEF_1 number of receiving con_states allocated to this projection: almost always 1 -- some things won't work right if > 1 (e.g., copying)
+  int                   send_n;         // #READ_ONLY #CAT_Structure number of sending con_states: almost always 1 -- some things won't work right if > 1 (e.g., copying)
 
   bool                  projected;       // #HIDDEN #CAT_Structure t/f if connected
 
   bool                  dir_fixed;      // fix the direction setting to specific value shown below (cannot fix DIR_UNKNOWN) -- otherwise it is automatically computed based on the layer_type settings
   PrjnDirection         direction;      // #CAT_Structure #NO_DIFF #CONDEDIT_ON_dir_fixed which direction does this projection go (in terms of distance from input and output layers) -- auto computed by Compute_PrjnDirection when network is built, or you can manually set, but be sure to set dir_fixed to keep that setting; optionally used by only some algorithms
   taColor               prjn_clr;       // #CAT_Structure Default color for the projection line and arrow (subservient to the Type-defined color, if applicable)
+  int                   prjn_idx;       // #READ_ONLY #NO_SAVE index into network state list of projections
 
   inline ConSpec*       GetConSpec()    { return con_spec.spec.ptr(); }
   // #CAT_Structure get the connection spec for this projection
@@ -126,10 +127,10 @@ public:
   { return spec->ProbAddCons(this, p_add_con, init_wt); }
   // #MENU #MENU_ON_Actions #USE_RVAL #CAT_Structure probabilistically add a proportion of new connections to replace those pruned previously, init_wt = initial weight value of new connection
 
-  void  Init_Weights_Prjn(ConGroup* cg, Network* net, int thr_no)
+  void  Init_Weights_Prjn(ConState_cpp* cg, Network* net, int thr_no)
   { spec->Init_Weights_Prjn(this, cg, net, thr_no); }
   // #CAT_Weights #IGNORE when ProjectionSpec has init_wts set, this is called by network init weights routine for a given con group for given receiving unit ru
-  void  Init_Weights_renorm(ConGroup* cg, Network* net, int thr_no)
+  void  Init_Weights_renorm(ConState_cpp* cg, Network* net, int thr_no)
   { spec->Init_Weights_renorm(this, cg, net, thr_no); }
   // #CAT_Weights #IGNORE renormalize weights -- done as a second pass after Init_Weights and before Init_Weights_post
 

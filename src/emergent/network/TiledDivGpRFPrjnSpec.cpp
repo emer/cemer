@@ -348,7 +348,7 @@ bool TiledDivGpRFPrjnSpec::TrgSendFmRecv(int recv_x, int recv_y) {
   return (trg_recv_geom.x == recv_x && trg_recv_geom.y == recv_y);
 }
 
-void TiledDivGpRFPrjnSpec::Init_Weights_Prjn(Projection* prjn, ConGroup* cg,
+void TiledDivGpRFPrjnSpec::Init_Weights_Prjn(Projection* prjn, ConState_cpp* cg,
                                           Network* net, int thr_no) {
   if(wts_type == GAUSSIAN) {
     Init_Weights_Gaussian(prjn, cg, net, thr_no);
@@ -358,7 +358,7 @@ void TiledDivGpRFPrjnSpec::Init_Weights_Prjn(Projection* prjn, ConGroup* cg,
   }
 }
 
-void TiledDivGpRFPrjnSpec::Init_Weights_Gaussian(Projection* prjn, ConGroup* cg,
+void TiledDivGpRFPrjnSpec::Init_Weights_Gaussian(Projection* prjn, ConState_cpp* cg,
                                               Network* net, int thr_no) {
   Layer* recv_lay = prjn->layer;
   Layer* send_lay = prjn->from;
@@ -372,7 +372,7 @@ void TiledDivGpRFPrjnSpec::Init_Weights_Gaussian(Projection* prjn, ConGroup* cg,
   float eff_sig = gauss_sig * (float)half_size.x;
   
   taVector2i ru_pos;
-  Unit* ru = cg->ThrOwnUn(net, thr_no);
+  Unit* ru = cg->OwnUn(net);
   ru->UnitGpLogPos(ru_pos);
   
   taVector2f rugpctr = recv_lay->un_geom;
@@ -409,7 +409,7 @@ void TiledDivGpRFPrjnSpec::Init_Weights_Gaussian(Projection* prjn, ConGroup* cg,
   }
 }
 
-void TiledDivGpRFPrjnSpec::Init_Weights_BimodalPermuted(Projection* prjn, ConGroup* cg,
+void TiledDivGpRFPrjnSpec::Init_Weights_BimodalPermuted(Projection* prjn, ConState_cpp* cg,
                                                      Network* net, int thr_no) {
   Layer* recv_lay = prjn->layer;
   Layer* send_lay = prjn->from;

@@ -38,9 +38,9 @@ public:
                               const float sum_in_act, const float wt)
   { dwt += ru_act * ((su_act / sum_in_act) - wt); }
 
-  inline void 	Compute_dWt(ConGroup* gcg, Network* net, int thr_no)  override {
-    SoConGroup* cg = (SoConGroup*)gcg;
-    SoUnitVars* ru = (SoUnitVars*)cg->ThrOwnUnVars(net, thr_no);
+  inline void 	Compute_dWt(ConState* gcg, Network* net, int thr_no)  override {
+    SoConState* cg = (SoConState*)gcg;
+    SoUnitState* ru = (SoUnitState*)cg->ThrOwnUnVars(net, thr_no);
     Compute_AvgInAct(cg, (SoNetwork*)net, thr_no);
     const float sum_in_act = cg->sum_in_act;
     const float ru_act = ru->act;
@@ -67,8 +67,8 @@ public:
                               const float wt)
   { dwt += ru_act * (su_act - wt); }
 
-  inline void 	Compute_dWt(ConGroup* cg, Network* net, int thr_no) override {
-    SoUnitVars* ru = (SoUnitVars*)cg->ThrOwnUnVars(net, thr_no);
+  inline void 	Compute_dWt(ConState* cg, Network* net, int thr_no) override {
+    SoUnitState* ru = (SoUnitState*)cg->ThrOwnUnVars(net, thr_no);
     const float ru_act = ru->act;
     float* dwts = cg->OwnCnVar(DWT);
     float* wts = cg->OwnCnVar(WT);
@@ -107,9 +107,9 @@ public:
   float         norm_const;     // #HIDDEN normalization const for Gaussian
   float         denom_const;    // #HIDDEN denominator const for Gaussian
 
-  void Compute_Netin(UnitVars* u, Network* net, int thr_no) override;
+  void Compute_Netin(UnitState* u, Network* net, int thr_no) override;
   // redefine to call compute_dist
-  void Compute_Act(UnitVars* u, Network* net, int thr_no) override;
+  void Compute_Act(UnitState* u, Network* net, int thr_no) override;
   // activation is a gaussian function of the net input
 
   TA_SIMPLE_BASEFUNS(SoftClUnitSpec);

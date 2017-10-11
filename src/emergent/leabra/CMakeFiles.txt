@@ -10,135 +10,164 @@
 
 # all headers that need maketa run on them
 set(leabra_HEADS_MAKETA
-
-#  Leabra_code.h
-#  LeabraUnitVars_core.h
-#  LeabraUnitSpec_core.h
-#  LeabraConSpec_core.h
-#  LeabraLayerSpec_core.h
-  
   LeabraCon.h
-  LeabraConGroup.h
-  LeabraConSpec.h
-  LeabraBiasSpec.h
-
-  LeabraUnitVars.h
   LeabraUnit.h
-  
   LeabraPrjn.h
 
-  AvgMaxVals.h
-  LeabraInhib.h
-  LeabraUnGpData_List.h
-
-  LeabraNetwork.h
   LeabraProject.h
 
-  LeabraWizard.h
+#   LeabraWizard.h
 
-  DeepCtxtConSpec.h
-  SendDeepRawConSpec.h
-  SendDeepModConSpec.h
-  DeepCopyUnitSpec.h
-  ThalSendUnitSpec.h
-  PoolInputsUnitSpec.h
+#   DeepCtxtConSpec.h
+#   SendDeepRawConSpec.h
+#   SendDeepModConSpec.h
+#   DeepCopyUnitSpec.h
+#   ThalSendUnitSpec.h
+#   PoolInputsUnitSpec.h
 
-  MarkerConSpec.h
-  LeabraDeltaConSpec.h
-  DaDeltaConSpec.h
-  DaHebbConSpec.h
-  CHLConSpec.h
-  LeabraLimPrecConSpec.h
+#   MarkerConSpec.h
+#   LeabraDeltaConSpec.h
+#   DaDeltaConSpec.h
+#   DaHebbConSpec.h
+#   CHLConSpec.h
+#   LeabraLimPrecConSpec.h
   
-  LayerActUnitSpec.h
+#   LayerActUnitSpec.h
     
-  ScalarValLayerSpec.h
-#  MotorForceLayerSpec.h
-    TwoDValLayerSpec.h
-  DecodeTwoDValLayerSpec.h
-  LeabraV1LayerSpec.h
-  TiledGpRFPrjnSpec.h
-  TiledSubGpRFPrjnSpec.h
+#   ScalarValLayerSpec.h
+# #  MotorForceLayerSpec.h
+#   TwoDValLayerSpec.h
+#   DecodeTwoDValLayerSpec.h
+#   LeabraV1LayerSpec.h
+#   TiledGpRFPrjnSpec.h
+#   TiledSubGpRFPrjnSpec.h
 
-  ScalarValSelfPrjnSpec.h
-  SaliencyPrjnSpec.h
-  TiledGpRFOneToOnePrjnSpec.h
-  TiledGpRFOneToOneWtsPrjnSpec.h
-  CerebConj2PrjnSpec.h
+#   ScalarValSelfPrjnSpec.h
+#   SaliencyPrjnSpec.h
+#   TiledGpRFOneToOnePrjnSpec.h
+#   TiledGpRFOneToOneWtsPrjnSpec.h
+#   CerebConj2PrjnSpec.h
 
-  ExtRewLayerSpec.h
-  TDRewPredConSpec.h
-  TDRewPredUnitSpec.h
-  TDRewIntegUnitSpec.h
-  TDDeltaUnitSpec.h
+#   ExtRewLayerSpec.h
+#   TDRewPredConSpec.h
+#   TDRewPredUnitSpec.h
+#   TDRewIntegUnitSpec.h
+#   TDDeltaUnitSpec.h
 
-  BasAmygUnitSpec.h
-  LatAmygConSpec.h
-  BasAmygConSpec.h
-  BLAmygUnitSpec.h
-  BLAmygConSpec.h
-  CElAmygUnitSpec.h
-  CElAmygConSpec.h
-  PPTgUnitSpec.h
-  LHbRMTgUnitSpec.h
-  VTAUnitSpec.h
-  DRNUnitSpec.h
-  ClampDaUnitSpec.h
-  BFCSUnitSpec.h
+#   BasAmygUnitSpec.h
+#   LatAmygConSpec.h
+#   BasAmygConSpec.h
+#   BLAmygUnitSpec.h
+#   BLAmygConSpec.h
+#   CElAmygUnitSpec.h
+#   CElAmygConSpec.h
+#   PPTgUnitSpec.h
+#   LHbRMTgUnitSpec.h
+#   VTAUnitSpec.h
+#   DRNUnitSpec.h
+#   ClampDaUnitSpec.h
+#   BFCSUnitSpec.h
 
-  D1D2UnitSpec.h
-  MSNCon.h
-  MSNConSpec.h
-  MSNUnitSpec.h
-  TANUnitSpec.h
-  PatchUnitSpec.h
-  GPiInvUnitSpec.h
-  InvertUnitSpec.h
-  PFCUnitSpec.h
-  PFCPrjnSpec.h
-  BgPfcPrjnSpec.h
-  GPiSoftMaxLayerSpec.h
+#   D1D2UnitSpec.h
+#   MSNCon.h
+#   MSNConSpec.h
+#   MSNUnitSpec.h
+#   TANUnitSpec.h
+#   PatchUnitSpec.h
+#   GPiInvUnitSpec.h
+#   InvertUnitSpec.h
+#   PFCUnitSpec.h
+#   PFCPrjnSpec.h
+#   BgPfcPrjnSpec.h
+#   GPiSoftMaxLayerSpec.h
     
-  GpCustomPrjnSpecBase.h
-  RowColPrjnSpec.h
-  TopoWtsPrjnSpec.h
+#   GpCustomPrjnSpecBase.h
+#   RowColPrjnSpec.h
+#   TopoWtsPrjnSpec.h
 
-  ECoutUnitSpec.h
-  CA1UnitSpec.h
-  # SubiculumLayerSpec.h
-  HippoEncoderConSpec.h
-  CerebGranuleUnitSpec.h
-  CerebPfPcConSpec.h
-  LeabraMultCopyUnitSpec.h
-  LeabraContextUnitSpec.h
+#   ECoutUnitSpec.h
+#   CA1UnitSpec.h
+#   # SubiculumLayerSpec.h
+#   HippoEncoderConSpec.h
+#   CerebGranuleUnitSpec.h
+#   CerebPfPcConSpec.h
+#   LeabraMultCopyUnitSpec.h
+#   LeabraContextUnitSpec.h
 )
 
 # multiple inheritence -- in correspondence with deps below
 set(leabra_HEADS_MAKETA_MI
-  LeabraLayer.h
-  LeabraUnGpData.h
+  LeabraConState_cpp.h
+  LeabraUnitState_cpp.h
+  LeabraUnGpState_cpp.h
+  LeabraPrjnState_cpp.h
+  LeabraLayerState_cpp.h
+  LeabraNetworkState_cpp.h
+
+  LeabraConSpec_cpp.h
+  LeabraConSpec.h
+  LeabraBiasSpec_cpp.h
+  LeabraBiasSpec.h
+
+  LeabraUnitSpec_cpp.h
   LeabraUnitSpec.h
+
+  LeabraLayerSpec_cpp.h
   LeabraLayerSpec.h
+
+  LeabraLayer.h
+  # 
+  LeabraNetwork.h
 )
 
 # note: there must be exactly same number of dependencies for each item
 # you can just add redundant ones to make it all work out
 set(leabra_HEADS_MAKETA_MI_DEPS
-  "../../temt/ta_core/taBase.h;../network/Layer.h"
-  "../../temt/ta_core/taBase.h;LeabraInhib.h"
-  "LeabraUnitSpec_core.h;../network/UnitSpec.h"
-  "LeabraLayerSpec_core.h;../network/LayerSpec.h"
+  "LeabraConState_core.h;LeabraNetworkState_core.h"
+  "LeabraUnitState_core.h;LeabraNetworkState_core.h"
+  "LeabraUnGpState_core.h;LeabraNetworkState_core.h"
+  "LeabraPrjnState_core.h;LeabraNetworkState_core.h"
+  "LeabraLayerState_core.h;LeabraNetworkState_core.h"
+  "LeabraNetworkState_core.h;LeabraNetwork_core.h"
+
+  "LeabraConSpec_core.h;LeabraConSpec_mbrs.h"
+  "LeabraConSpec_core.h;LeabraConSpec_mbrs.h"
+  "LeabraBiasSpec_core.h;LeabraConSpec_core.h"
+  "LeabraBiasSpec_core.h;LeabraConSpec_core.h"
+
+  "LeabraUnitSpec_core.h;LeabraUnitSpec_mbrs.h"
+  "LeabraUnitSpec_core.h;LeabraUnitSpec_mbrs.h"
+
+  "LeabraLayerSpec_core.h;LeabraLayerSpec_mbrs.h"
+  "LeabraLayerSpec_core.h;LeabraLayerSpec_mbrs.h"
+
+  "LeabraLayerState_core.h;LeabraNetworkState_core.h"
+
+  "LeabraNetworkState_core.h;LeabraNetwork_core.h"
 )
 
 set(leabra_HEADS_NOMAKETA
-  Leabra_code.h
-  LeabraUnitVars_core.h
-  LeabraUnitSpec_core.h
-  LeabraConSpec_core.h
-  LeabraLayerSpec_core.h
+  LeabraConState_core.h
+  LeabraUnitState_core.h
+
+  LeabraAvgMax_core.h
+  LeabraUnGpState_mbrs.h
+  LeabraUnGpState_core.h
+  LeabraPrjnState_core.h
+  LeabraLayer_core.h
+  LeabraLayer_mbrs.h
+  LeabraLayerState_core.h
   
-  LeabraConSpec_inlines.h
-  LeabraUnitSpec_inlines.h
+  LeabraNetwork_mbrs.h
+  LeabraNetwork_core.h
+  LeabraNetworkState_core.h
+
+  LeabraConSpec_mbrs.h
+  LeabraConSpec_core.h
+  LeabraUnitSpec_mbrs.h
+  LeabraUnitSpec_core.h
+  LeabraLayerSpec_mbrs.h
+  LeabraLayerSpec_core.h
 )
 
 # all heads -- include maketa generated ones here
@@ -151,110 +180,109 @@ set(leabra_HEADS
 
 # all source files to compile: NOTE: do NOT include TA_ or .moc files -- auto generated
 set(leabra_SRCS
-#  Leabra_code.cpp
-#  LeabraUnitVars_core.cpp
-#  LeabraUnitSpec_core.cpp
-#  LeabraConSpec_core.cpp
-#  LeabraLayerSpec_core.cpp
-  
   LeabraCon.cpp
-  LeabraConGroup.cpp
+  LeabraConState_cpp.cpp
+  LeabraUnitState_cpp.cpp
+
+  LeabraUnGpState_cpp.cpp
+  LeabraPrjnState_cpp.cpp
+  LeabraNetworkState_cpp.cpp
+
+  LeabraConSpec_cpp.cpp
   LeabraConSpec.cpp
+  LeabraBiasSpec_cpp.cpp
   LeabraBiasSpec.cpp
 
-  LeabraUnit.cpp
-  LeabraUnitVars.cpp
+  LeabraUnitSpec_cpp.cpp
   LeabraUnitSpec.cpp
-  
-  LeabraPrjn.cpp
 
-  AvgMaxVals.cpp
-  LeabraInhib.cpp
-  LeabraUnGpData.cpp
-  LeabraUnGpData_List.cpp
+  LeabraLayerSpec_cpp.cpp
   LeabraLayerSpec.cpp
+  
+  LeabraUnit.cpp
+  LeabraPrjn.cpp
   LeabraLayer.cpp
-
   LeabraNetwork.cpp
+
   LeabraProject.cpp
 
-  LeabraWizard.cpp
+#   LeabraWizard.cpp
 
-  DeepCtxtConSpec.cpp
-  SendDeepRawConSpec.cpp
-  SendDeepModConSpec.cpp
-  DeepCopyUnitSpec.cpp
-  ThalSendUnitSpec.cpp
-  PoolInputsUnitSpec.cpp
+#   DeepCtxtConSpec.cpp
+#   SendDeepRawConSpec.cpp
+#   SendDeepModConSpec.cpp
+#   DeepCopyUnitSpec.cpp
+#   ThalSendUnitSpec.cpp
+#   PoolInputsUnitSpec.cpp
 
-  MarkerConSpec.cpp
-  LeabraDeltaConSpec.cpp
-  DaDeltaConSpec.cpp
-  DaHebbConSpec.cpp
-  CHLConSpec.cpp
-  LeabraLimPrecConSpec.cpp
+#   MarkerConSpec.cpp
+#   LeabraDeltaConSpec.cpp
+#   DaDeltaConSpec.cpp
+#   DaHebbConSpec.cpp
+#   CHLConSpec.cpp
+#   LeabraLimPrecConSpec.cpp
   
-  LayerActUnitSpec.cpp
+#   LayerActUnitSpec.cpp
     
-  ScalarValLayerSpec.cpp
-#  MotorForceLayerSpec.cpp
-  TwoDValLayerSpec.cpp
-  DecodeTwoDValLayerSpec.cpp
-  LeabraV1LayerSpec.cpp
-  TiledGpRFPrjnSpec.cpp
-  TiledSubGpRFPrjnSpec.cpp
+#   ScalarValLayerSpec.cpp
+# #  MotorForceLayerSpec.cpp
+#   TwoDValLayerSpec.cpp
+#   DecodeTwoDValLayerSpec.cpp
+#   LeabraV1LayerSpec.cpp
+#   TiledGpRFPrjnSpec.cpp
+#   TiledSubGpRFPrjnSpec.cpp
 
-  ScalarValSelfPrjnSpec.cpp
-  SaliencyPrjnSpec.cpp
-  TiledGpRFOneToOnePrjnSpec.cpp
-  TiledGpRFOneToOneWtsPrjnSpec.cpp
-  CerebConj2PrjnSpec.cpp
+#   ScalarValSelfPrjnSpec.cpp
+#   SaliencyPrjnSpec.cpp
+#   TiledGpRFOneToOnePrjnSpec.cpp
+#   TiledGpRFOneToOneWtsPrjnSpec.cpp
+#   CerebConj2PrjnSpec.cpp
 
-  ExtRewLayerSpec.cpp
-  TDRewPredConSpec.cpp
-  TDRewPredUnitSpec.cpp
-  TDRewIntegUnitSpec.cpp
-  TDDeltaUnitSpec.cpp
+#   ExtRewLayerSpec.cpp
+#   TDRewPredConSpec.cpp
+#   TDRewPredUnitSpec.cpp
+#   TDRewIntegUnitSpec.cpp
+#   TDDeltaUnitSpec.cpp
                    
-  BasAmygUnitSpec.cpp
-  LatAmygConSpec.cpp
-  BasAmygConSpec.cpp
-  BLAmygUnitSpec.cpp
-  BLAmygConSpec.cpp
-  CElAmygUnitSpec.cpp
-  CElAmygConSpec.cpp
-  PPTgUnitSpec.cpp
-  LHbRMTgUnitSpec.cpp
-  VTAUnitSpec.cpp
-  DRNUnitSpec.cpp
-  ClampDaUnitSpec.cpp
-  BFCSUnitSpec.cpp
+#   BasAmygUnitSpec.cpp
+#   LatAmygConSpec.cpp
+#   BasAmygConSpec.cpp
+#   BLAmygUnitSpec.cpp
+#   BLAmygConSpec.cpp
+#   CElAmygUnitSpec.cpp
+#   CElAmygConSpec.cpp
+#   PPTgUnitSpec.cpp
+#   LHbRMTgUnitSpec.cpp
+#   VTAUnitSpec.cpp
+#   DRNUnitSpec.cpp
+#   ClampDaUnitSpec.cpp
+#   BFCSUnitSpec.cpp
 
-  D1D2UnitSpec.cpp
-  MSNCon.cpp
-  MSNConSpec.cpp
-  MSNUnitSpec.cpp
-  TANUnitSpec.cpp
-  PatchUnitSpec.cpp
-  GPiInvUnitSpec.cpp
-  InvertUnitSpec.cpp
-  PFCUnitSpec.cpp
-  PFCPrjnSpec.cpp
-  BgPfcPrjnSpec.cpp
-  GPiSoftMaxLayerSpec.cpp
+#   D1D2UnitSpec.cpp
+#   MSNCon.cpp
+#   MSNConSpec.cpp
+#   MSNUnitSpec.cpp
+#   TANUnitSpec.cpp
+#   PatchUnitSpec.cpp
+#   GPiInvUnitSpec.cpp
+#   InvertUnitSpec.cpp
+#   PFCUnitSpec.cpp
+#   PFCPrjnSpec.cpp
+#   BgPfcPrjnSpec.cpp
+#   GPiSoftMaxLayerSpec.cpp
     
-  GpCustomPrjnSpecBase.cpp
-  RowColPrjnSpec.cpp
-  TopoWtsPrjnSpec.cpp
+#   GpCustomPrjnSpecBase.cpp
+#   RowColPrjnSpec.cpp
+#   TopoWtsPrjnSpec.cpp
 
-  ECoutUnitSpec.cpp
-  CA1UnitSpec.cpp
-  # SubiculumLayerSpec.cpp
-  HippoEncoderConSpec.cpp
-  CerebGranuleUnitSpec.cpp
-  CerebPfPcConSpec.cpp
-  LeabraMultCopyUnitSpec.cpp
-  LeabraContextUnitSpec.cpp
+#   ECoutUnitSpec.cpp
+#   CA1UnitSpec.cpp
+#   # SubiculumLayerSpec.cpp
+#   HippoEncoderConSpec.cpp
+#   CerebGranuleUnitSpec.cpp
+#   CerebPfPcConSpec.cpp
+#   LeabraMultCopyUnitSpec.cpp
+#   LeabraContextUnitSpec.cpp
 )
 
 set(leabra_CUDA

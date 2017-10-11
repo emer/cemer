@@ -74,8 +74,9 @@ void UniformRndPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
     UnitPtrList ru_list;                // receiver permution list
     UnitPtrList perm_list;      // sender permution list
 
-    FOREACH_ELEM_IN_GROUP(Unit, ru, lay->units)   // need to permute recvs because of exclusion
+    FOREACH_ELEM_IN_GROUP(Unit, ru, lay->units) {  // need to permute recvs because of exclusion
       ru_list.Link(ru);                 // on making a symmetric connection in first pass
+    }
     ru_list.Permute();
 
     for(int i=0;i<ru_list.size; i++) {
@@ -85,8 +86,8 @@ void UniformRndPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
         if(!self_con && (ru == su)) continue;
         // don't connect to anyone who already recvs from me cuz that will make
         // a symmetric connection which isn't good: symmetry will be enforced later
-        ConGroup* scg = su->RecvConGroupPrjn(prjn);
-        if(scg->FindConFromIdx(ru) >= 0) continue;
+        ConState_cpp* scg = su->RecvConStatePrjn(prjn);
+        if(scg->FindConFromIdx(ru->flat_idx) >= 0) continue;
         perm_list.Link(su);
       }
       perm_list.Permute();
@@ -97,7 +98,7 @@ void UniformRndPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
     }
     // now go thru and make the symmetric connections
     FOREACH_ELEM_IN_GROUP(Unit, ru, lay->units) {
-      ConGroup* scg = ru->SendConGroupPrjn(prjn);
+      ConState_cpp* scg = ru->SendConStatePrjn(prjn);
       if(scg == NULL) continue;
       int i;
       for(i=0;i<scg->size;i++) {

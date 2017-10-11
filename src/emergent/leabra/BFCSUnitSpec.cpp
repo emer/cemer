@@ -89,12 +89,12 @@ bool BFCSUnitSpec::CheckConfig_Unit(Layer* lay, bool quiet) {
   return rval;
 }
 
-void BFCSUnitSpec::Compute_ACh(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void BFCSUnitSpec::Compute_ACh(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   float sum_delta = 0.0f;
   int sum_n = 0;
-  const int nrg = u->NRecvConGps(net, thr_no);
+  const int nrg = u->NRecvConGps(net);
   for(int g=0; g<nrg; g++) {
-    LeabraConGroup* recv_gp = (LeabraConGroup*)u->RecvConGroup(net, thr_no, g);
+    LeabraConState_cpp* recv_gp = (LeabraConState_cpp*)u->RecvConState(net, g);
     if(recv_gp->NotActive()) continue;
     LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
     LeabraLayer* fmlay = (LeabraLayer*)recv_gp->prjn->from.ptr();
@@ -104,7 +104,7 @@ void BFCSUnitSpec::Compute_ACh(LeabraUnitVars* u, LeabraNetwork* net, int thr_no
       float avg_del = 0.0f;
       if(us->InheritsFrom(&TA_CElAmygUnitSpec)) {
         for(int j=0;j<recv_gp->size; j++) {
-          LeabraUnitVars* suv = (LeabraUnitVars*)recv_gp->UnVars(j,net);
+          LeabraUnitState_cpp* suv = (LeabraUnitState_cpp*)recv_gp->UnState(j,net);
           float del = suv->act_eq - suv->act_q0; // trial level delta
           if(del < 0.0f) del = 0.0f;             // positive rectification!?
           avg_del += fabsf(del);
@@ -113,7 +113,7 @@ void BFCSUnitSpec::Compute_ACh(LeabraUnitVars* u, LeabraNetwork* net, int thr_no
       }
       else {                    // assume vs, within-trial delta
         for(int j=0;j<recv_gp->size; j++) {
-          LeabraUnitVars* suv = (LeabraUnitVars*)recv_gp->UnVars(j,net);
+          LeabraUnitState_cpp* suv = (LeabraUnitState_cpp*)recv_gp->UnState(j,net);
           float del = suv->act_eq * suv->da_p; // act * dopamine!
           // if(del < 0.0f) del = 0.0f;             // positive rectification!
           avg_del += fabsf(del);
@@ -140,35 +140,35 @@ void BFCSUnitSpec::Compute_ACh(LeabraUnitVars* u, LeabraNetwork* net, int thr_no
   // }
 }
 
-void BFCSUnitSpec::Compute_ActTimeAvg(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) {
+void BFCSUnitSpec::Compute_ActTimeAvg(LeabraUnitState_cpp* uv, LeabraNetwork* net, int thr_no) {
   inherited::Compute_ActTimeAvg(uv, net, thr_no);
   Compute_ACh(uv, net, thr_no);
 }
 
-void BFCSUnitSpec::Quarter_Init_Unit(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) {
+void BFCSUnitSpec::Quarter_Init_Unit(LeabraUnitState_cpp* uv, LeabraNetwork* net, int thr_no) {
   inherited::Quarter_Init_Unit(uv, net, thr_no);
   Send_ACh(uv, net, thr_no);
 }
 
 
-void BFCSUnitSpec::Send_ACh(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void BFCSUnitSpec::Send_ACh(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   float snd_val = u->misc_1;
   const int nsg = u->NSendConGps(net, thr_no); 
   for(int g=0; g<nsg; g++) {
-    LeabraConGroup* send_gp = (LeabraConGroup*)u->SendConGroup(net, thr_no, g);
+    LeabraConState_cpp* send_gp = (LeabraConState_cpp*)u->SendConState(net, thr_no, g);
     if(send_gp->NotActive()) continue;
     for(int j=0;j<send_gp->size; j++) {
-      ((LeabraUnitVars*)send_gp->UnVars(j,net))->ach = snd_val;
+      ((LeabraUnitState_cpp*)send_gp->UnState(j,net))->ach = snd_val;
     }
   }
 }
 
-void BFCSUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void BFCSUnitSpec::Compute_Act_Rate(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   u->act_eq = u->act_nd = u->act = u->net = u->misc_1;
   u->da = 0.0f;
 }
 
-void BFCSUnitSpec::Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void BFCSUnitSpec::Compute_Act_Spike(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   Compute_Act_Rate(u, net, thr_no);
 }
 

@@ -38,7 +38,7 @@ public:
   bool  IsDeepRawCon() override { return true; }
   void  Trial_Init_Specs(LeabraNetwork* net) override;
 
-  inline void Send_DeepRawNetDelta(LeabraConGroup* cg, LeabraNetwork* net,
+  inline void Send_DeepRawNetDelta(LeabraConState_cpp* cg, LeabraNetwork* net,
                                    int thr_no, const float su_act_delta) {
     const float su_act_delta_eff = cg->scale_eff * su_act_delta;
     float* wts = cg->OwnCnVar(WT);
@@ -53,12 +53,12 @@ public:
   // #IGNORE sender-based activation net input for con group (send net input to receivers) -- always goes into tmp matrix (thr_no >= 0!) and is then integrated into net through Compute_NetinInteg function on units
 
   // don't send regular net inputs..
-  inline void Send_NetinDelta(LeabraConGroup* cg, LeabraNetwork* net, int thr_no, 
+  inline void Send_NetinDelta(LeabraConState_cpp* cg, LeabraNetwork* net, int thr_no, 
                               const float su_act_delta) override { };
-  inline float Compute_Netin(ConGroup* cg, Network* net, int thr_no) override
+  inline float Compute_Netin(ConState* cg, Network* net, int thr_no) override
   { return 0.0f; }
 
-  void   Init_Weights_sym_s(ConGroup* cg, Network* net, int thr_no) override;
+  void   Init_Weights_sym_s(ConState* cg, Network* net, int thr_no) override;
 
   void  GetPrjnName(Projection& prjn, String& nm) override;
 

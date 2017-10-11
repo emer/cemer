@@ -25,20 +25,12 @@ TA_BASEFUNS_CTORS_LITE_DEFN(ConSpec_SPtr);
 TA_BASEFUNS_CTORS_DEFN(WeightLimits);
 SMARTREF_OF_CPP(ConSpec);
 
-void WeightLimits::Initialize() {
-  type = NONE;
-  min = -1.0f;
-  max = 1.0f;
-  sym = false;
-  sym_fm_top = false;
-}
 
 void ConSpec::Initialize() {
   min_obj_type = &TA_Connection;
   min_user_type = &TA_Projection;
-  rnd.type = Random::UNIFORM;
-  rnd.mean = 0.0f;
-  rnd.var = .5f;
+
+  Initialize_core();
 }
 
 void ConSpec::InitLinks() {
@@ -72,7 +64,7 @@ bool ConSpec::CheckConfig_RecvCons(Projection* prjn, bool quiet) {
   return true;
 }
 
-bool ConSpec::SaveConVarToWeights(ConGroup* cg, MemberDef* md) {
+bool ConSpec::SaveConVarToWeights(Network* net, ConState_cpp* cg, MemberDef* md) {
   return md->HasOption("SAVE");
 }
 
@@ -84,19 +76,21 @@ void ConSpec::Init_Weights_Net() {
 }
 
 bool ConSpec::CheckObjectType_impl(taBase* obj) {
-  TypeDef* con_tp = &TA_Connection;
-  if(obj->InheritsFrom(&TA_ConGroup)) {
-    con_tp = ((ConGroup*)obj)->ConType();
-  }
-  else if(obj->InheritsFrom(&TA_Projection)) {
-    con_tp = ((Projection*)obj)->con_type;
-  }
-  else if(obj->InheritsFrom(&TA_UnitSpec)) {
-    return true;                // no way to check -- unitspec should check us!
-  }
-  if(!con_tp->InheritsFrom(min_obj_type))
-    return false;
-  return true;
+  return true;          // ConState is not a taBabse obj anymore!
+  // TypeDef* con_tp = &TA_Connection;
+  // if(obj->InheritsFromName("ConState_cpp")) {
+  //   // con_tp = ((ConState_cpp*)obj)->ConType();
+  //   return true;                // can't really check
+  // }
+  // else if(obj->InheritsFrom(&TA_Projection)) {
+  //   con_tp = ((Projection*)obj)->con_type;
+  // }
+  // else if(obj->InheritsFrom(&TA_UnitSpec)) {
+  //   return true;                // no way to check -- unitspec should check us!
+  // }
+  // if(!con_tp->InheritsFrom(min_obj_type))
+  //   return false;
+  // return true;
 }
 
 bool ConSpec::CheckType_impl(TypeDef* td) {
@@ -105,70 +99,3 @@ bool ConSpec::CheckType_impl(TypeDef* td) {
   return inherited::CheckType_impl(td);
 }
 
-void ConSpec::ApplySymmetry_r(ConGroup* cg, Network* net, int thr_no) {
-  Unit* ru = cg->ThrOwnUn(net, thr_no);
-  if(!wt_limits.sym) return;
-  const int sz = cg->size;
-  for(int i=0; i<sz;i++) {
-    int con_idx = -1;
-    ConGroup* rrcg = ConGroup::FindRecipRecvCon(con_idx, cg->Un(i,net), ru,
-                                                cg->prjn->layer);
-    if(rrcg && con_idx >= 0) {
-      ConSpec* rrcs = rrcg->GetConSpec();
-      if(rrcs && rrcs->wt_limits.sym) {
-        if(wt_limits.sym_fm_top)
-          rrcg->OwnCn(con_idx, WT) = cg->OwnCn(i, WT); // todo: not sure this order is right
-        else
-          cg->OwnCn(i, WT) = rrcg->OwnCn(con_idx, WT); // theoretically should be opp of s
-      }
-    }
-  }
-}
-
-void ConSpec::ApplySymmetry_s(ConGroup* cg, Network* net, int thr_no) {
-  Unit* su = cg->ThrOwnUn(net, thr_no);
-  if(!wt_limits.sym) return;
-  const int sz = cg->size;
-  for(int i=0; i<sz;i++) {
-    int con_idx = -1;
-    ConGroup* rscg = ConGroup::FindRecipSendCon(con_idx, cg->Un(i,net), su,
-                                                cg->prjn->from.ptr());
-    if(rscg && con_idx >= 0) {
-      ConSpec* rscs = rscg->GetConSpec();
-      if(rscs && rscs->wt_limits.sym) {
-        if(wt_limits.sym_fm_top)
-          cg->OwnCn(i, WT) = rscg->OwnCn(con_idx, WT);
-        else
-          rscg->OwnCn(con_idx, WT) = cg->OwnCn(i, WT);
-      }
-    }
-  }
-}
-
-void ConSpec::RenormWeights(ConGroup* cg, Network* net, int thr_no,
-                            bool mult_norm, float avg_wt) {
-  const int sz = cg->size;
-  if(sz < 2) return;
-  float avg = 0.0f;
-  for(int i=0; i<sz; i++) {
-    avg += cg->Cn(i, WT, net);
-  }
-  avg /= (float)sz;
-  if(mult_norm) {
-    float adj = avg_wt / avg;
-    for(int i=0; i<sz; i++) {
-      cg->Cn(i, WT, net) *= adj;
-    }
-  }
-  else {
-    float adj = avg_wt - avg;
-    for(int i=0; i<sz; i++) {
-      cg->Cn(i, WT, net) += adj;
-    }
-  }
-}
-
-
-void ConSpec::LoadWeightVal(float wtval, ConGroup* cg, int cidx, Network* net) {
-  cg->Cn(cidx,WT,net) = wtval;
-}

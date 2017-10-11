@@ -29,11 +29,11 @@ class E_API TDRewPredUnitSpec : public LeabraUnitSpec {
   // predicts rewards: minus phase = clamped prior expected reward V^(t), plus = settles on expectation of future reward V^(t+1) -- cons should learn based on da_p * prev sending act (act_q0) -- should recv da_p from TDDeltaUnitSpec
 INHERITED(LeabraUnitSpec)
 public:
-  void	Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
-  void	Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
+  void	Compute_Act_Rate(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) override;
+  void	Compute_Act_Spike(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) override;
 
-  void  Init_Acts(UnitVars* uv, Network* net, int thr_no) override;
-  void  Quarter_Final(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
+  void  Init_Acts(UnitState* uv, Network* net, int thr_no) override;
+  void  Quarter_Final(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) override;
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
   bool  CheckConfig_Unit(Layer* lay, bool quiet=false) override;

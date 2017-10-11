@@ -167,7 +167,7 @@ macro(MAKETA_WRAP_H_MI rval outstr depstr)
       math(EXPR didx "${didx} + 1")
     endforeach()
 
-    message(STATUS "${val} file: ${it}\ndepends on: ${deps}")
+    # message(STATUS "${val} file: ${it}\ndepends on: ${deps}")
 
     get_filename_component(it ${it} ABSOLUTE)
     

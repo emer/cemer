@@ -37,7 +37,7 @@ public:
   SArg_Array	s_args;		// string-valued arguments to pass to the script
 
   void          Connect_impl(Projection* prj, bool make_cns) override;
-  void	        Init_Weights_Prjn(Projection* prjn, ConGroup* cg, Network* net,
+  void	        Init_Weights_Prjn(Projection* prjn, ConState_cpp* cg, Network* net,
                                   int thr_no) override;
 
   TypeDef*	GetThisTypeDef() const override	{ return GetTypeDef(); }

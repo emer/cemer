@@ -37,12 +37,12 @@ bool LeabraMultCopyUnitSpec::CheckConfig_Unit(Layer* lay, bool quiet) {
     return false;               // fatal
   }
 
-  LeabraConGroup* copy_gp = (LeabraConGroup*)un->RecvConGroup(0);
+  LeabraConState_cpp* copy_gp = (LeabraConState_cpp*)un->RecvConState(0);
   if(lay->CheckError(copy_gp->size != 1, quiet, rval,
                 "leabra mult copy first prjn (copy act source) must have exactly 1 connection to copy from")) {
     return false;               // fatal
   }
-  LeabraConGroup* mult_gp = (LeabraConGroup*)un->RecvConGroup(1);
+  LeabraConState_cpp* mult_gp = (LeabraConState_cpp*)un->RecvConState(1);
   if(lay->CheckError(mult_gp->size != 1, quiet, rval,
                 "leabra mult copy second prjn (mult act source) must have exactly 1 connection to get mult act from")) {
     return false;               // fatal
@@ -50,12 +50,12 @@ bool LeabraMultCopyUnitSpec::CheckConfig_Unit(Layer* lay, bool quiet) {
   return rval;
 }
 
-void LeabraMultCopyUnitSpec::Compute_MultCopy(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
-  LeabraConGroup* copy_gp = (LeabraConGroup*)u->RecvConGroup(net, thr_no, 0);
-  LeabraConGroup* mult_gp = (LeabraConGroup*)u->RecvConGroup(net, thr_no, 1);
+void LeabraMultCopyUnitSpec::Compute_MultCopy(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
+  LeabraConState_cpp* copy_gp = (LeabraConState_cpp*)u->RecvConState(net, thr_no, 0);
+  LeabraConState_cpp* mult_gp = (LeabraConState_cpp*)u->RecvConState(net, thr_no, 1);
   
-  LeabraUnitVars* copy_un = (LeabraUnitVars*)copy_gp->UnVars(0,net);
-  LeabraUnitVars* mult_un = (LeabraUnitVars*)mult_gp->UnVars(0,net);
+  LeabraUnitState_cpp* copy_un = (LeabraUnitState_cpp*)copy_gp->UnState(0,net);
+  LeabraUnitState_cpp* mult_un = (LeabraUnitState_cpp*)mult_gp->UnState(0,net);
 
   float mult_eff = mult_gain * mult_un->act_eq;;
   if(mult_eff > 1.0f) mult_eff = 1.0f;
@@ -69,11 +69,11 @@ void LeabraMultCopyUnitSpec::Compute_MultCopy(LeabraUnitVars* u, LeabraNetwork* 
   u->da = 0.0f;               // I'm fully settled!
 }
                                               
-void LeabraMultCopyUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void LeabraMultCopyUnitSpec::Compute_Act_Rate(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   Compute_MultCopy(u, net, thr_no);
 }
 
-void LeabraMultCopyUnitSpec::Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void LeabraMultCopyUnitSpec::Compute_Act_Spike(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   Compute_Act_Rate(u, net, thr_no);
 }
 

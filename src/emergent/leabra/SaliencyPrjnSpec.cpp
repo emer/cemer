@@ -189,7 +189,7 @@ void SaliencyPrjnSpec::Connect_full_dog(Projection* prjn, bool make_cons) {
   }
 }
 
-void SaliencyPrjnSpec::Init_Weights_Prjn(Projection* prjn, ConGroup* cg, Network* net,
+void SaliencyPrjnSpec::Init_Weights_Prjn(Projection* prjn, ConState* cg, Network* net,
                                          int thr_no) {
   if(feat_only) {               // just use regular -- shouldn't happen
     return;
@@ -237,17 +237,17 @@ void SaliencyPrjnSpec::Init_Weights_Prjn(Projection* prjn, ConGroup* cg, Network
       if(wt > 0) {
         for(int sui=0;sui<su_gp->size;sui++) {
           if(sui == feat_no)
-            cg->Cn(su_idx++,ConGroup::WT,net) = wt; // target feature
+            cg->Cn(su_idx++,ConState::WT,net) = wt; // target feature
           else
-            cg->Cn(su_idx++,ConGroup::WT,net) = 0.0f; // everyone else
+            cg->Cn(su_idx++,ConState::WT,net) = 0.0f; // everyone else
         }
       }
       else {
         for(int sui=0;sui<su_gp->size;sui++) {
           if(sui != feat_no && sui >= fg_st && sui < fg_ed)
-            cg->Cn(su_idx++,ConGroup::WT,net) = -surr_mult * wt;
+            cg->Cn(su_idx++,ConState::WT,net) = -surr_mult * wt;
           else
-            cg->Cn(su_idx++,ConGroup::WT,net) = 0.0f; // not in our group or is guy itself
+            cg->Cn(su_idx++,ConState::WT,net) = 0.0f; // not in our group or is guy itself
         }
       }
     }

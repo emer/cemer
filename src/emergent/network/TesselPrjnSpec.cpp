@@ -172,7 +172,7 @@ void TesselPrjnSpec::WeightsFromGausDist(float scale, float sigma) {
 
 // todo: this assumes that things are in order.. (can't really check otherwise)
 // which breaks for clipped patterns
-void TesselPrjnSpec::Init_Weights_Prjn(Projection* prjn, ConGroup* cg,
+void TesselPrjnSpec::Init_Weights_Prjn(Projection* prjn, ConState_cpp* cg,
                                        Network* net, int thr_no) {
   int mxi = MIN(cg->size, send_offs.size);
   for(int i=0; i<mxi; i++) {

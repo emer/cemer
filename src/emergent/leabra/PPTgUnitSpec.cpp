@@ -28,7 +28,7 @@ void PPTgUnitSpec::Initialize() {
 void PPTgUnitSpec::Defaults_init() {
 }
 
-void PPTgUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void PPTgUnitSpec::Compute_Act_Rate(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   float net_save = u->net;
   
   u->net = d_net_gain * (u->net - u->misc_1); // convert to delta OLD GUY
@@ -44,7 +44,7 @@ void PPTgUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int t
   u->net = net_save;           // restore
 }
 
-void PPTgUnitSpec::Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void PPTgUnitSpec::Compute_Act_Spike(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   float net_save = u->net;
   u->net = d_net_gain * (u->net - u->misc_1); // convert to delta
   if(u->net < 0.0f) u->net = 0.0f;
@@ -57,7 +57,7 @@ void PPTgUnitSpec::Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int 
   u->net = net_save;           // restore
 }
 
-void PPTgUnitSpec::Quarter_Final(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void PPTgUnitSpec::Quarter_Final(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   inherited::Quarter_Final(u, net, thr_no);
   if(net->phase == LeabraNetwork::PLUS_PHASE) {
     //u->misc_2 = fminf(u->act_dif, 0.0f); // save any neg phasic DA to filter rebounds

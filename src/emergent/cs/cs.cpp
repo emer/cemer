@@ -152,10 +152,10 @@ void CsUnitSpec::UpdateAfterEdit_impl() {
   sqrt_step = sqrt(step);
 }
 
-void CsUnitSpec::Init_Acts(UnitVars* u, Network* net, int thr_no) {
+void CsUnitSpec::Init_Acts(UnitState* u, Network* net, int thr_no) {
   //  inherited::Init_Acts(u);  // this also initializes input data -- don't
   //  u->Init_InputData();
-  CsUnitVars* cu = (CsUnitVars*)u;
+  CsUnitState* cu = (CsUnitState*)u;
   cu->net = 0.0f;
   cu->act = 0.0f;
   cu->da = 0.0f;
@@ -164,47 +164,47 @@ void CsUnitSpec::Init_Acts(UnitVars* u, Network* net, int thr_no) {
   cu->act = act_range.Clip(initial_act.Gen(thr_no));
 }
 
-void CsUnitSpec::Init_Weights(UnitVars* u, Network* net, int thr_no) {
+void CsUnitSpec::Init_Weights(UnitState* u, Network* net, int thr_no) {
   inherited::Init_Weights(u, net, thr_no);
-  CsUnitVars* cu = (CsUnitVars*)u;
+  CsUnitState* cu = (CsUnitState*)u;
   cu->n_dwt_aggs = 0; // initialize it here
   cu->act_m = cu->act_p = 0.0f;
 }
 
-void CsUnitSpec::Compute_ClampAct(CsUnitVars* u, CsNetwork* net, int thr_no) {
-  if((clamp_type != HARD_FAST_CLAMP) || !(u->ext_flag & UnitVars::EXT))
+void CsUnitSpec::Compute_ClampAct(CsUnitState* u, CsNetwork* net, int thr_no) {
+  if((clamp_type != HARD_FAST_CLAMP) || !(u->ext_flag & UnitState::EXT))
     return;
   u->act = real_range.Clip(u->ext);     // keep everything in range
   u->da = 0.0f;
 }
 
-void CsUnitSpec::Compute_ClampNet(CsUnitVars* u, CsNetwork* net, int thr_no) {
+void CsUnitSpec::Compute_ClampNet(CsUnitState* u, CsNetwork* net, int thr_no) {
   u->clmp_net = 0.0f;
   if(clamp_type != HARD_FAST_CLAMP)
     return;
   const int nrcg = net->ThrUnNRecvConGps(thr_no, u->thr_un_idx);
   for(int g=0; g<nrcg; g++) {
-    ConGroup* rgp = net->ThrUnRecvConGroup(thr_no, u->thr_un_idx, g);
+    ConState* rgp = net->ThrUnRecvConState(thr_no, u->thr_un_idx, g);
     if(rgp->NotActive()) continue;
     Layer* lay = rgp->prjn->from.ptr();
-    if(!(lay->ext_flag & UnitVars::EXT))
+    if(!(lay->ext_flag & UnitState::EXT))
       continue;
     u->clmp_net += rgp->GetConSpec()->Compute_Netin(rgp, net, thr_no);
   }
 }
 
-void CsUnitSpec::Compute_Netin(UnitVars* u, Network* net, int thr_no) {
-  CsUnitVars* cu = (CsUnitVars*)u;
+void CsUnitSpec::Compute_Netin(UnitState* u, Network* net, int thr_no) {
+  CsUnitState* cu = (CsUnitState*)u;
   if(clamp_type == HARD_FAST_CLAMP) {
-    if(cu->ext_flag & UnitVars::EXT)
+    if(cu->ext_flag & UnitState::EXT)
       return;
     float new_net = 0.0f;
     const int nrcg = net->ThrUnNRecvConGps(thr_no, u->thr_un_idx);
     for(int g=0; g<nrcg; g++) {
-      ConGroup* rgp = net->ThrUnRecvConGroup(thr_no, u->thr_un_idx, g);
+      ConState* rgp = net->ThrUnRecvConState(thr_no, u->thr_un_idx, g);
       if(rgp->NotActive()) continue;
       Layer* lay = rgp->prjn->from.ptr();
-      if((lay->ext_flag & UnitVars::EXT)) // don't add from clamped!
+      if((lay->ext_flag & UnitState::EXT)) // don't add from clamped!
         continue;
       new_net += rgp->con_spec->Compute_Netin(rgp, net, thr_no);
     }
@@ -214,7 +214,7 @@ void CsUnitSpec::Compute_Netin(UnitVars* u, Network* net, int thr_no) {
     u->net = new_net;
   }
   else if(clamp_type == HARD_CLAMP) {
-    if(cu->ext_flag & UnitVars::EXT) // no point in computing net for clamped units!
+    if(cu->ext_flag & UnitState::EXT) // no point in computing net for clamped units!
       return;
     inherited::Compute_Netin(u, net, thr_no);
   }
@@ -224,13 +224,13 @@ void CsUnitSpec::Compute_Netin(UnitVars* u, Network* net, int thr_no) {
   cu->net += cu->clmp_net; // add in clamped input
 }
 
-void CsUnitSpec::Compute_Act(UnitVars* u, Network* net, int thr_no) {
+void CsUnitSpec::Compute_Act(UnitState* u, Network* net, int thr_no) {
   CsNetwork* cnet = (CsNetwork*)net;
   int cycle = cnet->cycle;
   int phase = cnet->phase;
 
-  CsUnitVars* cu = (CsUnitVars*)u;
-  if(u->ext_flag & UnitVars::EXT) { // receiving external input
+  CsUnitState* cu = (CsUnitState*)u;
+  if(u->ext_flag & UnitState::EXT) { // receiving external input
     if(clamp_type == HARD_FAST_CLAMP) // already processed this one!
       return;
     ClampType ct = clamp_type;
@@ -272,7 +272,7 @@ void CsUnitSpec::Compute_Act(UnitVars* u, Network* net, int thr_no) {
   //
 }
 
-void CsUnitSpec::DecayState(CsUnitVars* cu, CsNetwork* net, int thr_no) {
+void CsUnitSpec::DecayState(CsUnitState* cu, CsNetwork* net, int thr_no) {
   //  u->Init_InputData();
   float trgact = act_range.Clip(initial_act.Gen(thr_no));
   cu->act -= state_decay * (cu->act - trgact);
@@ -282,41 +282,41 @@ void CsUnitSpec::DecayState(CsUnitVars* cu, CsNetwork* net, int thr_no) {
   cu->clmp_net = 0.0f;
 }
 
-void CsUnitSpec::PhaseInit(CsUnitVars* u, CsNetwork* net, int thr_no) {
-  if(!(u->ext_flag & UnitVars::TARG))
+void CsUnitSpec::PhaseInit(CsUnitState* u, CsNetwork* net, int thr_no) {
+  if(!(u->ext_flag & UnitState::TARG))
     return;
 
   if(net->phase == CsNetwork::MINUS_PHASE) {
     u->ext = 0.0f;
-    u->ClearExtFlag(UnitVars::EXT);
+    u->ClearExtFlag(UnitState::EXT);
   }
   else {
     u->ext = u->targ;
-    u->SetExtFlag(UnitVars::EXT);
+    u->SetExtFlag(UnitState::EXT);
   }
 }
 
-void CsUnitSpec::Aggregate_dWt(CsUnitVars* u, CsNetwork* net, int thr_no) {
+void CsUnitSpec::Aggregate_dWt(CsUnitState* u, CsNetwork* net, int thr_no) {
   float phase = net->phase;
   ((CsConSpec*)bias_spec.SPtr())->B_Aggregate_dWt(u, net, thr_no, phase);
   u->n_dwt_aggs += 1.0f;
 }
 
-void CsUnitSpec::PostSettle(CsUnitVars* u, CsNetwork* net, int thr_no) {
+void CsUnitSpec::PostSettle(CsUnitState* u, CsNetwork* net, int thr_no) {
   if(net->phase == CsNetwork::MINUS_PHASE)
     u->act_m = u->act;
   else
     u->act_p = u->act;
 }
 
-void CsUnitSpec::Compute_dWt(UnitVars* u, Network* net, int thr_no) {
+void CsUnitSpec::Compute_dWt(UnitState* u, Network* net, int thr_no) {
   inherited::Compute_dWt(u, net, thr_no);
-  CsUnitVars* cu = (CsUnitVars*)u;
+  CsUnitState* cu = (CsUnitState*)u;
   ((CsConSpec*)bias_spec.SPtr())->B_Compute_dWt(u, net, thr_no);
   cu->n_dwt_aggs = 0;           // reset after wts are aggd
 }
 
-void CsUnitSpec::Compute_Weights(UnitVars* u, Network* net, int thr_no) {
+void CsUnitSpec::Compute_Weights(UnitState* u, Network* net, int thr_no) {
   inherited::Compute_Weights(u, net, thr_no);
   ((CsConSpec*)bias_spec.SPtr())->B_Compute_Weights(u, net, thr_no);
 }
@@ -333,7 +333,7 @@ void CsUnitSpec::GraphActFun(DataTable* graph_data, float min, float max, int nc
   DataCol* act = graph_data->FindMakeColName("Act", idx, VT_FLOAT);
 
   CsNetwork* net = GET_MY_OWNER(CsNetwork);
-  CsUnitVars un;
+  CsUnitState un;
 
   float x;
   for(x = min; x <= max; x += .01f) {
@@ -360,7 +360,7 @@ void CsUnit::Initialize() {
 ////////////////////////////
 
 // default is inverse-logistic
-void CsUnitSpec::Compute_Act_impl(CsUnitVars* u, CsNetwork* net, int thr_no,
+void CsUnitSpec::Compute_Act_impl(CsUnitState* u, CsNetwork* net, int thr_no,
                                   int cycle, int phase) {
   float noise_anneal = 1.0f;    // like temp
   float gain_sharp = 1.0f;      // sharpening
@@ -383,7 +383,7 @@ void SigmoidCsUnitSpec::Initialize() {
   time_avg = NET_INPUT;
 }
 
-void SigmoidCsUnitSpec::Compute_Act_impl(CsUnitVars* u, CsNetwork* net, int thr_no,
+void SigmoidCsUnitSpec::Compute_Act_impl(CsUnitState* u, CsNetwork* net, int thr_no,
                                   int cycle, int phase) {
   float noise_anneal = 1.0f;
   float gain_sharp = 1.0f;
@@ -418,7 +418,7 @@ void BoltzUnitSpec::UpdateAfterEdit_impl() {
   gain = 1.0f / temp;           // keep gain and temp aligned
 }
 
-void BoltzUnitSpec::Compute_Act_impl(CsUnitVars* u, CsNetwork* net, int thr_no,
+void BoltzUnitSpec::Compute_Act_impl(CsUnitState* u, CsNetwork* net, int thr_no,
                                   int cycle, int phase) {
   float temp_anneal = 1.0f;
 
@@ -446,7 +446,7 @@ void IACUnitSpec::UpdateAfterEdit_impl() {
   gain = 1.0f / decay;          // keep gain and decay aligned
 }
 
-void IACUnitSpec::Compute_Act_impl(CsUnitVars* u, CsNetwork* net, int thr_no,
+void IACUnitSpec::Compute_Act_impl(CsUnitState* u, CsNetwork* net, int thr_no,
                                   int cycle, int phase) {
   float noise_anneal = 1.0f;
   if(cycle != -1) {
@@ -466,7 +466,7 @@ void LinearCsUnitSpec::Initialize() {
   act_range.max = 1e20f;
 }
 
-void LinearCsUnitSpec::Compute_Act_impl(CsUnitVars* u, CsNetwork* net, int thr_no,
+void LinearCsUnitSpec::Compute_Act_impl(CsUnitState* u, CsNetwork* net, int thr_no,
                                   int cycle, int phase) {
   float noise_anneal = 1.0f;
   if(cycle != -1) {
@@ -487,7 +487,7 @@ void ThreshLinCsUnitSpec::Initialize() {
   threshold = 0.0f;
 }
 
-void ThreshLinCsUnitSpec::Compute_Act_impl(CsUnitVars* u, CsNetwork* net, int thr_no,
+void ThreshLinCsUnitSpec::Compute_Act_impl(CsUnitState* u, CsNetwork* net, int thr_no,
                                   int cycle, int phase) {
   float noise_anneal = 1.0f;
   if(cycle != -1) {
@@ -517,7 +517,7 @@ void CsLayer::Initialize() {
 void CsLayer::Init_Acts(Network* net) {
   // This override of Layer::Init_Acts() is done so the following line
   // can be commented out.
-  //  ext_flag = UnitVars::NO_EXTERNAL;
+  //  ext_flag = UnitState::NO_EXTERNAL;
 }
 
 
@@ -527,8 +527,8 @@ void CsLayer::Init_Acts(Network* net) {
 
 void CsNetwork::Initialize() {
   layers.SetBaseType(&TA_CsLayer);
-  unit_vars_type = &TA_CsUnitVars;
-  con_group_type = &TA_ConGroup;
+  unit_vars_type = &TA_CsUnitState;
+  con_group_type = &TA_ConState;
 
   update_mode = SYNCHRONOUS;
   n_updates = 10;
@@ -611,7 +611,7 @@ void CsNetwork::Compute_AsyncAct() {
   if(units_flat.size == 0) return; // error check
   for (int i=0; i < n_updates; i++) {   // do this n_updates times
     int rnd_num = Random::IntMinMax(1, units_flat.size);
-    CsUnitVars* u = (CsUnitVars*) UnUnitVars(rnd_num);
+    CsUnitState* u = (CsUnitState*) UnUnitState(rnd_num);
     int thr_no = UnThr(rnd_num);
     CsUnitSpec* us = (CsUnitSpec*)u->unit_spec;
     us->Compute_Netin(u, this, thr_no);
@@ -640,14 +640,14 @@ void CsNetwork::Aggregate_dWt() {
 void CsNetwork::Aggregate_dWt_Thr(int thr_no) {
   const int nrcg = ThrNRecvConGps(thr_no);
   for(int i=0; i<nrcg; i++) {
-    ConGroup* rcg = ThrRecvConGroup(thr_no, i);
+    ConState* rcg = ThrRecvConState(thr_no, i);
     if(rcg->NotActive()) continue;
     ((CsConSpec*)rcg->con_spec)->Aggregate_dWt(rcg, this, thr_no, (float)phase);
   }
   // also unit-level, as separate pass
   const int nu = ThrNUnits(thr_no);
   for(int i=0; i<nu; i++) {
-    CsUnitVars* uv = (CsUnitVars*)ThrUnitVars(thr_no, i);
+    CsUnitState* uv = (CsUnitState*)ThrUnitState(thr_no, i);
     if(uv->lesioned()) continue;
     ((CsUnitSpec*)uv->unit_spec)->Aggregate_dWt(uv, this, thr_no);
   }
@@ -693,9 +693,9 @@ void CsNetwork::Compute_ClampAct() {
 void CsNetwork::Compute_ClampAct_Thr(int thr_no) {
   const int nu = ThrNUnits(thr_no);
   for(int i=0; i<nu; i++) {
-    CsUnitVars* uv = (CsUnitVars*)ThrUnitVars(thr_no, i);
+    CsUnitState* uv = (CsUnitState*)ThrUnitState(thr_no, i);
     if(uv->lesioned()) continue;
-    if(!uv->HasExtFlag(UnitVars::EXT)) continue; // only ext
+    if(!uv->HasExtFlag(UnitState::EXT)) continue; // only ext
     ((CsUnitSpec*)uv->unit_spec)->Compute_ClampAct(uv, this, thr_no);
   }
 }
@@ -707,9 +707,9 @@ void CsNetwork::Compute_ClampNet() {
 void CsNetwork::Compute_ClampNet_Thr(int thr_no) {
   const int nu = ThrNUnits(thr_no);
   for(int i=0; i<nu; i++) {
-    CsUnitVars* uv = (CsUnitVars*)ThrUnitVars(thr_no, i);
+    CsUnitState* uv = (CsUnitState*)ThrUnitState(thr_no, i);
     if(uv->lesioned()) continue;
-    if(uv->HasExtFlag(UnitVars::EXT)) continue; // NOT ext
+    if(uv->HasExtFlag(UnitState::EXT)) continue; // NOT ext
     ((CsUnitSpec*)uv->unit_spec)->Compute_ClampNet(uv, this, thr_no);
   }
 }
@@ -718,9 +718,9 @@ void CsNetwork::PhaseInit() {
   FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
     if (lay->lesioned())
       continue;
-    if (lay->ext_flag & UnitVars::TARG) {
+    if (lay->ext_flag & UnitState::TARG) {
       if(phase == PLUS_PHASE) {
-        lay->SetExtFlag(UnitVars::EXT);
+        lay->SetExtFlag(UnitState::EXT);
       }
     }
   }
@@ -730,7 +730,7 @@ void CsNetwork::PhaseInit() {
 void CsNetwork::PhaseInit_Thr(int thr_no) {
   const int nu = ThrNUnits(thr_no);
   for(int i=0; i<nu; i++) {
-    CsUnitVars* uv = (CsUnitVars*)ThrUnitVars(thr_no, i);
+    CsUnitState* uv = (CsUnitState*)ThrUnitState(thr_no, i);
     if(uv->lesioned()) continue;
     ((CsUnitSpec*)uv->unit_spec)->PhaseInit(uv, this, thr_no);
   }
@@ -743,7 +743,7 @@ void CsNetwork::DecayState() {
 void CsNetwork::DecayState_Thr(int thr_no) {
   const int nu = ThrNUnits(thr_no);
   for(int i=0; i<nu; i++) {
-    CsUnitVars* uv = (CsUnitVars*)ThrUnitVars(thr_no, i);
+    CsUnitState* uv = (CsUnitState*)ThrUnitState(thr_no, i);
     if(uv->lesioned()) continue;
     ((CsUnitSpec*)uv->unit_spec)->DecayState(uv, this, thr_no);
   }
@@ -756,7 +756,7 @@ void CsNetwork::PostSettle() {
 void CsNetwork::PostSettle_Thr(int thr_no) {
   const int nu = ThrNUnits(thr_no);
   for(int i=0; i<nu; i++) {
-    CsUnitVars* uv = (CsUnitVars*)ThrUnitVars(thr_no, i);
+    CsUnitState* uv = (CsUnitState*)ThrUnitState(thr_no, i);
     if(uv->lesioned()) continue;
     ((CsUnitSpec*)uv->unit_spec)->PostSettle(uv, this, thr_no);
   }
@@ -852,8 +852,8 @@ void CsNetwork::Compute_EpochStats() {
 //     Compute_dWt();
 // }
 
-// void CsMaxDa::Unit_Stat(UnitVars* unit) {
-//   float fda = fabsf(((CsUnitVars*)unit)->da);
+// void CsMaxDa::Unit_Stat(UnitState* unit) {
+//   float fda = fabsf(((CsUnitState*)unit)->da);
 //   net_agg.ComputeAgg(&da, fda);
 // }
 
@@ -1178,11 +1178,11 @@ void CsNetwork::Compute_EpochStats() {
 //   InitStat();
 // }
 
-// void CsGoodStat::Unit_Init(UnitVars*) {
+// void CsGoodStat::Unit_Init(UnitState*) {
 //   netin_hrmny = 0.0f;
 // }
 
-// void CsGoodStat::RecvCon_Run(UnitVars* unit) {
+// void CsGoodStat::RecvCon_Run(UnitState* unit) {
 //   if(use_netin)    return;
 //   Stat::RecvCon_Run(unit);
 //   netin_hrmny *= unit->act * 0.5f;
@@ -1191,14 +1191,14 @@ void CsNetwork::Compute_EpochStats() {
 //   net_agg.ComputeAggNoUpdt(hrmny.val, netin_hrmny);
 // }
 
-// void CsGoodStat::Con_Stat(UnitVars* , Connection* cn, UnitVars* su) {
+// void CsGoodStat::Con_Stat(UnitState* , Connection* cn, UnitState* su) {
 //   netin_hrmny += su->act * cn->wt;
 // }
 
-// void CsGoodStat::Unit_Stat(UnitVars* un) {
+// void CsGoodStat::Unit_Stat(UnitState* un) {
 //   // do harmony first since it was possibly computed before this in the recvcon
 //   if(use_netin) {
-//     CsUnitVars* csun = (CsUnitVars*) un;
+//     CsUnitState* csun = (CsUnitState*) un;
 //     // the .5 is only times the connections, not the bias weight or ext
 //     // since everything is being mult by .5, but bias and ext
 //     // were already included in the net, so they are added again giving 1

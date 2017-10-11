@@ -52,17 +52,17 @@ INHERITED(LeabraUnitSpec)
 public:
   TANActSpec      tan;             // parameters for computing TAN activation
 
-  virtual void  Send_ACh(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
+  virtual void  Send_ACh(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no);
   // send the ach value to sending projections: every cycle
-  virtual void  Compute_PlusPhase_Netin(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
+  virtual void  Compute_PlusPhase_Netin(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no);
   // compute netin from plus phase activations from marker cons inputs
-  virtual void  Compute_PlusPhase_Act(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
+  virtual void  Compute_PlusPhase_Act(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no);
   // activation from netin
 
-  void  Compute_NetinInteg(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
-  void	Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
-  void	Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
-  void  Compute_Act_Post(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
+  void  Compute_NetinInteg(LeabraUnitState_cpp* uv, LeabraNetwork* net, int thr_no) override;
+  void	Compute_Act_Rate(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) override;
+  void	Compute_Act_Spike(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) override;
+  void  Compute_Act_Post(LeabraUnitState_cpp* uv, LeabraNetwork* net, int thr_no) override;
 
   void  HelpConfig();   // #BUTTON get help message for configuring this spec
 

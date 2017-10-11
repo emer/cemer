@@ -18,8 +18,7 @@
 
 #include <TiledGpRFPrjnSpec>
 #include <V1RegionSpec>
-#include <LeabraV1LayerSpec>
-#include <LeabraUnit>
+#include <Unit>
 
 #include <taMisc>
 
@@ -143,7 +142,7 @@ bool WtBasedRF::ComputeV2RF(Network* net, DataTable* dt_trg, DataTable* wts, Lay
             if ((row_unit == snd_layer_unit_grp_geom.y - 1) || (row_unit == snd_layer_unit_grp_geom.y - 2)) {
               int row = (row_grp * snd_layer_unit_grp_geom.y) + row_unit;
               int col = (col_grp * snd_layer_unit_grp_geom.x) + col_unit;
-              LeabraUnit* snd_unit = (LeabraUnit*)snd_layer->UnitAtCoord(col, row);
+              Unit* snd_unit = snd_layer->UnitAtCoord(col, row);
               float snd_act = snd_unit->act();
               float weight = wts_col->GetValAsFloatMDims(wts_row, col, row);
               if (weight > wt_threshold) {
@@ -248,13 +247,13 @@ bool WtBasedRF::ComputeHigherLayerRF(Network* net, DataTable* dt_trg, DataTable*
     if(TestError(!trg_layer_unit, "ComputeHigherLayerRF", "trg_layer_unit is null")) {
       all_good = false;
     }
-    ConGroup* recv_cons = trg_layer_unit->FindRecvConGroupFrom(snd_layer);
+    ConState_cpp* recv_cons = trg_layer_unit->FindRecvConStateFrom(snd_layer);
     if(TestError(!recv_cons, "ComputeHigherLayerRF", "recv_cons is null")) {
       all_good = false;
     }
     if (all_good) {
       for (int u=0; u<recv_cons->size; u++) {
-        Unit* snd_unit = recv_cons->SafeUn(u);
+        Unit* snd_unit = recv_cons->SafeUn(u, net);
         taVector2i snd_layer_unit_grp_logical_position;
         snd_unit->UnitGpLogPos(snd_layer_unit_grp_logical_position);
         

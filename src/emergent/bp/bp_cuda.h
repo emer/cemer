@@ -19,8 +19,8 @@
 // parent includes:
 #include <Network_cuda.h>
 
-class BpUnitVars_cuda : public UnitVars_cuda {
-  // NVIDIA CUDA backprop unit variables: MUST be exact memory-aligned copy of BpUnitVars
+class BpUnitState_cuda : public UnitState_cuda {
+  // NVIDIA CUDA backprop unit variables: MUST be exact memory-aligned copy of BpUnitState
 public:
   float         bias_pdw;       // #VIEW_HOT previous bias weight change
   float 	err; 		// #VIEW_HOT error value -- this is E for target units, not dEdA

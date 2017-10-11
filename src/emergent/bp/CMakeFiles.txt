@@ -10,25 +10,54 @@
 
 # all headers that need maketa run on them
 set(bp_HEADS_MAKETA
-    bp.h
-#    rbp.h
-#    bp_v3_compat.h
+  BpCon.h
+  BpUnitState_cpp.h
+
+  BpConSpec_cpp.h
+  BpConSpec.h
+  BpUnitSpec_cpp.h
+  BpUnitSpec.h
+
+  BpUnit.h
+  BpLayer.h
+  BpNetworkState_cpp.h
+  BpNetwork.h
+  BpProject.h
 )
 
+set(bp_HEADS_NOMAKETA
+  BpUnitState_core.h
+  BpConSpec_core.h
+  BpUnitSpec_mbrs.h
+  BpUnitSpec_core.h
+  BpNetwork_core.h
+  BpNetworkState_core.h
+)
+  
 # all heads -- include maketa generated ones here
 set(bp_HEADS
-    bp.h
-#    rbp.h
-#    bp_v3_compat.h
+  ${bp_HEADS_MAKETA}
+  ${bp_HEADS_NOMAKETA}
 )
 
 # all source files to compile: NOTE: do NOT include TA or .moc files -- auto generated
 set(bp_SRCS
-    bp.cpp
-#    rbp.cpp
-#    bp_v3_compat.cpp
+  BpCon.cpp
+  BpUnitState_cpp.cpp
+  
+  BpConSpec_cpp.cpp
+  BpConSpec.cpp
+  BpUnitSpec_cpp.cpp
+  BpUnitSpec.cpp
+  
+  BpUnit.cpp
+  BpLayer.cpp
+  BpNetworkState_cpp.cpp
+  BpNetwork.cpp
+  BpProject.cpp
 )
 
 set(bp_CUDA
+  # todo: out of date
   bp_cuda.cu
 )

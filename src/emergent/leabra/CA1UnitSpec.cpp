@@ -47,7 +47,7 @@ bool CA1UnitSpec::CheckConfig_Unit(Layer* lay, bool quiet) {
   bool got_ca3 = false;
   const int nrg = un->NRecvConGps(); 
   for(int g=0; g< nrg; g++) {
-    LeabraConGroup* recv_gp = (LeabraConGroup*)un->RecvConGroup(g);
+    LeabraConState_cpp* recv_gp = (LeabraConState_cpp*)un->RecvConState(g);
     if(recv_gp->prjn->NotActive()) continue; // key!! just check for prjn, not con group!
     LeabraLayer* from = (LeabraLayer*) recv_gp->prjn->from.ptr();
     LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
@@ -88,11 +88,11 @@ void CA1UnitSpec::Trial_Init_Specs(LeabraNetwork* net) {
   inherited::Trial_Init_Specs(net);
 }
 
-void CA1UnitSpec::Compute_NetinScale(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void CA1UnitSpec::Compute_NetinScale(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   bool test_mode = (theta.use_test_mode && net->train_mode == Network::TEST);
-  const int nrg = u->NRecvConGps(net, thr_no); 
+  const int nrg = u->NRecvConGps(net); 
   for(int g=0; g< nrg; g++) {
-    LeabraConGroup* recv_gp = (LeabraConGroup*)u->RecvConGroup(net, thr_no, g);
+    LeabraConState_cpp* recv_gp = (LeabraConState_cpp*)u->RecvConState(net, g);
     if(recv_gp->prjn->NotActive()) continue; // key!! just check for prjn, not con group!
     LeabraLayer* from = (LeabraLayer*) recv_gp->prjn->from.ptr();
     LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();

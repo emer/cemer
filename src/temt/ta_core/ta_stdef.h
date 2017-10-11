@@ -13,6 +13,15 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
+// ALWAYS overwrite any exsiting def of this one -- we redefine in network State code
+#ifdef INHERITED
+#undef INHERITED
+#endif
+#ifdef __MAKETA__
+# define INHERITED(c)
+#else
+# define INHERITED(c) typedef c inherited;
+#endif
 
 #ifndef ta_stdef_h
 #define ta_stdef_h 1
@@ -280,12 +289,6 @@ typedef unsigned char   byte;
 
 typedef long long             ta_int64_t;
 typedef unsigned long long    ta_uint64_t;
-
-#ifdef __MAKETA__
-# define INHERITED(c)
-#else
-# define INHERITED(c) typedef c inherited;
-#endif
 
 // define Qt's macros, for Maketa
 // for signals, we must put #ifdef's around the signals (note: moc does not accept preprocessor directives)

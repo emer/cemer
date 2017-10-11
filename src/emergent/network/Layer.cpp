@@ -141,10 +141,11 @@ bool LayerRelPos::ComputePos2D_impl(taVector2i& pos, Layer* lay, const taVector2
 
 
 void Layer::Initialize() {
+
+  Initialize_lay_core();
+  
   // desc = ??
   own_net = NULL;
-  flags = LF_NONE;
-  layer_type = HIDDEN;
   // pos = ??
   disp_scale = 1.0f;
   // un_geom = ??
@@ -159,7 +160,6 @@ void Layer::Initialize() {
   send_prjns.send_prjns = true;
   units.SetBaseType(&TA_Unit);
   // unit_spec = ??
-  ext_flag = UnitVars::NO_EXTERNAL;
   // flat_geom = ??
   disp_geom = un_geom;
   scaled_disp_geom = disp_geom;
@@ -169,21 +169,14 @@ void Layer::Initialize() {
   m_prv_unit_spec = NULL;
   m_prv_layer_flags = LF_NONE;
 
-  sse = 0.0f;
-  cnt_err = 0.0f;
-  cur_cnt_err = 0.0f;
-  pct_err = 0.0f;
-  pct_cor = 0.0f;
-
   // prerr = ??
   icon_value = 0.0f;
-  units_flat_idx = 0;
   units_lesioned = false;
   gp_unit_names_4d = false;
   // unit_names = ??
   brain_area = "";
   voxel_fill_pct = 1.0f;
-  active_lay_idx = -1;
+  layer_idx = -1;
   
 #ifdef DMEM_COMPILE
   dmem_agg_sum.agg_op = MPI_SUM;
@@ -378,8 +371,8 @@ void Layer::UpdateAfterEdit_impl() {
 
     if(lesioned() && !(m_prv_layer_flags & LESIONED)) {
       // clear activity if we're lesioned
-      if(own_net)
-        Init_Acts(own_net);
+      // if(own_net)
+      //   Init_Acts(own_net);
     }
 
     if(HasLayerFlag(SAVE_UNIT_NAMES)) {
@@ -410,8 +403,8 @@ void Layer::Lesion() {
     if(u->lesioned()) continue;
     u->Lesion();
   }
-  if(own_net)
-    Init_Acts(own_net);
+  // if(own_net)
+  //   Init_Acts(own_net);
   m_prv_layer_flags = flags;
   StructUpdate(false);
   if(own_net)
@@ -817,6 +810,7 @@ void Layer::LayoutUnits() {
   StructUpdate(true);
   UpdateGeometry();             // triple sure..
   units.pos = 0;                // our base guy must always be 0..
+  int li = 0;
   if(unit_groups) {
     taVector2i eff_un_sz = un_geom + gp_spc;
     taVector2i gpgeo;
@@ -838,7 +832,11 @@ void Layer::LayoutUnits() {
             if(ui >= eff_ug->size)
               break;
             Unit* un = (Unit*)eff_ug->FastEl(ui++);
-            un->ug_idx = gi;
+            un->lay_un_idx = li++;
+            un->gp_idx = gi;
+            un->ungp_un_idx = ui;
+            un->own_lay_idx = layer_idx;
+            un->own_ungp_idx = ungp_idx + 1 + gi; // skip main one
             taVector2i upos = ugeo;
             if(virt_groups)
               upos += gp_pos;
@@ -850,13 +848,16 @@ void Layer::LayoutUnits() {
   }
   else {
     taVector2i ugeo;
-    int i = 0;
     for(ugeo.y=0; ugeo.y < un_geom.y; ugeo.y++) {
       for(ugeo.x=0; ugeo.x <un_geom.x; ugeo.x++) {
-        if(i >= units.size)
+        if(li >= units.size)
           break;
-        Unit* un = (Unit*)units.FastEl(i++);
-        un->ug_idx = -1;
+        Unit* un = (Unit*)units.FastEl(li++);
+        un->lay_un_idx = li;
+        un->gp_idx = -1;
+        un->ungp_un_idx = li;
+        un->own_lay_idx = layer_idx;
+        un->own_ungp_idx = ungp_idx; // our unit group is the main one
         un->pos.x = ugeo.x; un->pos.y = ugeo.y;
       }
     }
@@ -865,9 +866,9 @@ void Layer::LayoutUnits() {
 }
 
 
-void Layer::SetNUnits(int n_units) {
-  if(un_geom.n == n_units || n_units <= 0) return; // only if diff or sensible
-  un_geom.FitN(n_units);
+void Layer::SetNUnits(int n_un) {
+  if(un_geom.n == n_un || n_un <= 0) return; // only if diff or sensible
+  un_geom.FitN(n_un);
   UpdateAfterEdit();
 }
 
@@ -899,11 +900,13 @@ void Layer::BuildUnits() {
   if(unit_groups) {
     gp_output_names.SetGeom(2,gp_geom.x,gp_geom.y);
     if(virt_groups) {
-      if(units.gp.size > 0)
+      if(units.gp.size > 0) {
         units_changed = true;
+      }
       units.gp.RemoveAll();     // in case there were any subgroups..
-      if(units.size != flat_geom.n)
+      if(units.size != flat_geom.n) {
         units_changed = true;
+      }
       units.SetSize(flat_geom.n);
       units.EnforceType();
       FOREACH_ELEM_IN_GROUP(Unit, u, units) {
@@ -920,8 +923,9 @@ void Layer::BuildUnits() {
         Unit_Group* ug = (Unit_Group*)units.gp.FastEl(k);
         ug->UpdateAfterEdit_NoGui();
         ug->StructUpdate(true);
-        if(ug->size != un_geom.n)
+        if(ug->size != un_geom.n) {
           units_changed = true;
+        }
         ug->SetSize(un_geom.n);
         ug->EnforceType();
         FOREACH_ELEM_IN_GROUP(Unit, u, *ug) {
@@ -933,11 +937,13 @@ void Layer::BuildUnits() {
   }
   else {
     gp_geom.SetXYN(1,1,1);      // reset gp geom to reflect a single group -- used in some computations to generically operate over different geoms
-    if(units.gp.size > 0)
+    if(units.gp.size > 0) {
       units_changed = true;
+    }
     units.gp.RemoveAll();       // in case there were any subgroups..
-    if(units.size != un_geom.n)
+    if(units.size != un_geom.n) {
       units_changed = true;
+    }
     units.SetSize(un_geom.n);
     units.EnforceType();
     FOREACH_ELEM_IN_GROUP(Unit, u, units) {
@@ -994,8 +1000,9 @@ void Layer::BuildUnitsFlatList(Network* net) {
     net->units_flat.Add(un);
   }
   // this is needed after loading for no_build nets -- _threads called then..
-  if(unit_groups && gp_geom.n > 0)
+  if(unit_groups && gp_geom.n > 0) {
     gp_output_names.SetGeom(2,gp_geom.x,gp_geom.y);
+  }
 }
 
 bool Layer::CheckBuild(bool quiet) {
@@ -1155,11 +1162,11 @@ void Layer::SetLayUnitExtFlags(int flg) {
   SetExtFlag(flg);
   FOREACH_ELEM_IN_GROUP(Unit, u, units) {
     if(u->lesioned()) continue;
-    u->GetUnitVars()->SetExtFlag((UnitVars::ExtFlags)flg);
+    u->GetUnitState()->SetExtFlag((UnitState_cpp::ExtFlags)flg);
   }
 }
 
-void Layer::ApplyInputData(taMatrix* data, UnitVars::ExtFlags ext_flags,
+void Layer::ApplyInputData(taMatrix* data, ExtFlags ext_flags,
            Random* ran, const PosVector2i* offset, bool na_by_range)
 {
   // note: when use LayerWriters, we typically always just get a single frame of
@@ -1191,18 +1198,18 @@ void Layer::ApplyInputData(taMatrix* data, UnitVars::ExtFlags ext_flags,
   }
 }
 
-void Layer::ApplyInputData_1d(taMatrix* data, UnitVars::ExtFlags ext_flags,
+void Layer::ApplyInputData_1d(taMatrix* data, ExtFlags ext_flags,
                               Random* ran, bool na_by_range) {
   for(int d_x = 0; d_x < data->dim(0); d_x++) {
     Unit* un = units.Leaf(d_x);
     if(un) {
       float val = data->SafeElAsVar(d_x).toFloat();
-      un->ApplyInputData(val, ext_flags, ran, na_by_range);
+      un->ApplyInputData(val, (UnitState_cpp::ExtFlags)ext_flags, ran, na_by_range);
     }
   }
 }
 
-void Layer::ApplyInputData_2d(taMatrix* data, UnitVars::ExtFlags ext_flags,
+void Layer::ApplyInputData_2d(taMatrix* data, ExtFlags ext_flags,
                               Random* ran, const taVector2i& offs, bool na_by_range) {
   for(int d_y = 0; d_y < data->dim(1); d_y++) {
     int u_y = offs.y + d_y;
@@ -1211,13 +1218,13 @@ void Layer::ApplyInputData_2d(taMatrix* data, UnitVars::ExtFlags ext_flags,
       Unit* un = UnitAtCoord(u_x, u_y);
       if(un) {
         float val = data->SafeElAsVar(d_x, d_y).toFloat();
-        un->ApplyInputData(val, ext_flags, ran, na_by_range);
+        un->ApplyInputData(val, (UnitState_cpp::ExtFlags)ext_flags, ran, na_by_range);
       }
     }
   }
 }
 
-void Layer::ApplyInputData_Flat4d(taMatrix* data, UnitVars::ExtFlags ext_flags,
+void Layer::ApplyInputData_Flat4d(taMatrix* data, ExtFlags ext_flags,
                                   Random* ran, const taVector2i& offs, bool na_by_range) {
   // outer-loop is data-group (groups of x-y data items)
   for(int dg_y = 0; dg_y < data->dim(3); dg_y++) {
@@ -1230,7 +1237,7 @@ void Layer::ApplyInputData_Flat4d(taMatrix* data, UnitVars::ExtFlags ext_flags,
           Unit* un = UnitAtCoord(u_x, u_y);
           if(un) {
             float val = data->SafeElAsVar(d_x, d_y, dg_x, dg_y).toFloat();
-            un->ApplyInputData(val, ext_flags, ran, na_by_range);
+            un->ApplyInputData(val, (UnitState_cpp::ExtFlags)ext_flags, ran, na_by_range);
           }
         }
       }
@@ -1238,7 +1245,7 @@ void Layer::ApplyInputData_Flat4d(taMatrix* data, UnitVars::ExtFlags ext_flags,
   }
 }
 
-void Layer::ApplyInputData_Gp4d(taMatrix* data, UnitVars::ExtFlags ext_flags, Random* ran,
+void Layer::ApplyInputData_Gp4d(taMatrix* data, ExtFlags ext_flags, Random* ran,
                                 bool na_by_range) {
   // outer-loop is data-group (groups of x-y data items)
   for(int dg_y = 0; dg_y < data->dim(3); dg_y++) {
@@ -1249,7 +1256,7 @@ void Layer::ApplyInputData_Gp4d(taMatrix* data, UnitVars::ExtFlags ext_flags, Ra
           Unit* un = UnitAtGpCoord(dg_x, dg_y, d_x, d_y);
           if(un) {
             float val = data->SafeElAsVar(d_x, d_y, dg_x, dg_y).toFloat();
-            un->ApplyInputData(val, ext_flags, ran, na_by_range);
+            un->ApplyInputData(val, (UnitState_cpp::ExtFlags)ext_flags, ran, na_by_range);
           }
         }
       }
@@ -1257,7 +1264,7 @@ void Layer::ApplyInputData_Gp4d(taMatrix* data, UnitVars::ExtFlags ext_flags, Ra
   }
 }
 
-void Layer::ApplyLayerFlags(UnitVars::ExtFlags act_ext_flags) {
+void Layer::ApplyLayerFlags(ExtFlags act_ext_flags) {
   SetExtFlag(act_ext_flags);
 }
 
@@ -1267,18 +1274,6 @@ void Layer::ApplyLayerFlags(UnitVars::ExtFlags act_ext_flags) {
 //  All functions at network level operate directly on the units via threads, with
 //  optional call through to the layers for any layer-level subsequent processing
 
-void Layer::Init_InputData(Network* net) {
-  ext_flag = UnitVars::NO_EXTERNAL;
-  // unit-level done separately!
-}
-
-void  Layer::Init_Acts(Network* net) {
-  ext_flag = UnitVars::NO_EXTERNAL;
-  // unit-level done separately!
-}
-
-void Layer::Init_Weights_Layer(Network* net) {
-}
 
 void Layer::Init_Weights(bool recv_cons) {
   if(!own_net) return;
@@ -1297,108 +1292,14 @@ void Layer::Init_Weights(bool recv_cons) {
   }
 }
 
-void Layer::Init_Stats(Network* net) {
-  sse = 0.0f;
-  avg_sse.ResetAvg();
-  cnt_err = 0.0f;
-  cur_cnt_err = 0.0f;
-  pct_err = 0.0f;
-  pct_cor = 0.0f;
 
-  sum_prerr.InitVals();
-  epc_prerr.InitVals();
+// todo: dmem fix!
 
-  output_name = "";
-}
-
-float Layer::Compute_SSE(Network* net, int& n_vals, bool unit_avg, bool sqrt) {
-  n_vals = 0;
-  sse = 0.0f;
-  if(!HasExtFlag(UnitVars::COMP_TARG)) return 0.0f;
-  if(layer_type == HIDDEN) return 0.0f;
-  
-  const int li = active_lay_idx;
-  for(int thr_no=0; thr_no < net->n_thrs_built; thr_no++) {
-    // integrate over thread raw data
-    float& lay_sse = net->ThrLayStats(thr_no, li, 0, Network::SSE);
-    float& lay_n = net->ThrLayStats(thr_no, li, 1, Network::SSE);
-
-    sse += lay_sse;
-    n_vals += (int)lay_n;
-  }
-  
-  float rval = sse;
-  if(unit_avg && n_vals > 0) {
-    sse /= (float)n_vals;
-  }
-  if(sqrt) {
-    sse = sqrtf(sse);
-  }
-  avg_sse.Increment(sse);
-  if(sse > net->stats.cnt_err_tol)
-    cur_cnt_err += 1.0;
-  if(HasLayerFlag(NO_ADD_SSE) || (HasExtFlag(UnitVars::COMP) &&
-                                  HasLayerFlag(NO_ADD_COMP_SSE))) {
-    rval = 0.0f;
-    n_vals = 0;
-  }
-  return rval;
-}
-
-int Layer::Compute_PRerr(Network* net) {
-  int n_vals = 0;
-  prerr.InitVals();
-  if(!HasExtFlag(UnitVars::COMP_TARG)) return 0;
-  if(layer_type == HIDDEN) return 0;
-
-  const int li = active_lay_idx;
-  for(int thr_no=0; thr_no < net->n_thrs_built; thr_no++) {
-    // integrate over thread raw data
-    float& true_pos = net->ThrLayStats(thr_no, li, 0, Network::PRERR);
-    float& false_pos = net->ThrLayStats(thr_no, li, 1, Network::PRERR);
-    float& false_neg = net->ThrLayStats(thr_no, li, 2, Network::PRERR);
-    float& true_neg = net->ThrLayStats(thr_no, li, 3, Network::PRERR);
-    float& lay_n = net->ThrLayStats(thr_no, li, 4, Network::PRERR);
-
-    n_vals += (int)lay_n;
-    prerr.true_pos += true_pos;
-    prerr.false_pos += false_pos;
-    prerr.false_neg += false_neg;
-    prerr.true_neg += true_neg;
-  }
-  prerr.ComputePR();
-  if(HasLayerFlag(NO_ADD_SSE) || (HasExtFlag(UnitVars::COMP) &&
-                                  HasLayerFlag(NO_ADD_COMP_SSE))) {
-    n_vals = 0;
-  }
-  return n_vals;
-}
-
-void Layer::Compute_EpochSSE(Network* net) {
-  cnt_err = cur_cnt_err;
-  if(avg_sse.n > 0) {
-    pct_err = cnt_err / (float)avg_sse.n;
-    pct_cor = 1.0f - pct_err;
-  }
-  avg_sse.GetAvg_Reset();
-
-  cur_cnt_err = 0.0f;
-}
-
-void Layer::Compute_EpochPRerr(Network* net) {
-  epc_prerr = sum_prerr;
-  epc_prerr.ComputePR();        // make sure, in case of dmem summing
-  sum_prerr.InitVals();         // reset!
-}
-
-void Layer::Compute_EpochStats(Network* net) {
-#ifdef DMEM_COMPILE
-  DMem_ComputeAggs(net->dmem_trl_comm.comm);
-#endif
-  Compute_EpochSSE(net);
-  if(net->stats.prerr)
-    Compute_EpochPRerr(net);
-}
+// void Layer::Compute_EpochStats(Network* net) {
+// #ifdef DMEM_COMPILE
+//   DMem_ComputeAggs(net->dmem_trl_comm.comm);
+// #endif
+// }
 
 ////////////////////////////////////////////////////////////////////////////////
 //      The following are misc functionality not required for primary computing
@@ -1407,7 +1308,7 @@ void Layer::Copy_Weights(const Layer* src) {
   units.Copy_Weights(&(src->units));
 }
 
-void Layer::SaveWeights_strm(ostream& strm, ConGroup::WtSaveFormat fmt, Projection* prjn) {
+void Layer::SaveWeights_strm(ostream& strm, Unit::WtSaveFormat fmt, Projection* prjn) {
   // name etc is saved & processed by network level guy -- this is equiv to unit group
   
   // save any #SAVE_WTS layer vals
@@ -1421,7 +1322,7 @@ void Layer::SaveWeights_strm(ostream& strm, ConGroup::WtSaveFormat fmt, Projecti
   units.SaveWeights_strm(strm, fmt, prjn);
 }
 
-int Layer::LoadWeights_strm(istream& strm, ConGroup::WtSaveFormat fmt, bool quiet, Projection* prjn) {
+int Layer::LoadWeights_strm(istream& strm, Unit::WtSaveFormat fmt, bool quiet, Projection* prjn) {
   // name etc is saved & processed by network level guy -- this is equiv to unit group
 
   // load any #SAVE_WTS layer vals
@@ -1458,7 +1359,7 @@ int Layer::LoadWeights_strm(istream& strm, ConGroup::WtSaveFormat fmt, bool quie
   return units.LoadWeights_strm(strm, fmt, quiet, prjn);
 }
 
-int Layer::SkipWeights_strm(istream& strm, ConGroup::WtSaveFormat fmt, bool quiet) {
+int Layer::SkipWeights_strm(istream& strm, Unit::WtSaveFormat fmt, bool quiet) {
   return Unit_Group::SkipWeights_strm(strm, fmt, quiet);
 }
 
@@ -1474,7 +1375,7 @@ bool Layer::LoadWeights(const String& fname, bool quiet) {
   taFiler* flr = GetLoadFiler(fname, ".wts", true);
   bool rval = false;
   if(flr->istrm) {
-    rval = LoadWeights_strm(*flr->istrm, ConGroup::TEXT, quiet);
+    rval = LoadWeights_strm(*flr->istrm, Unit::TEXT, quiet);
   }
   else {
     TestError(true, "LoadWeights", "aborted due to inability to load weights file");
@@ -2094,19 +1995,6 @@ void Layer::UnitInGpLogPos(Unit* un, int& x, int& y) const {
       x = unidx % un_geom.x;
     }
   }
-}
-
-int Layer::UnitInGpUnIdx(Unit* un) const {
-  Unit_Group* own_sgp = un->own_subgp();
-  if(own_sgp || !unit_groups) {
-    return un->idx;      // just basic index
-  }
-  else {
-    if(unit_groups && virt_groups) {
-      return un->idx % un_geom.n;
-    }
-  }
-  return un->idx;               // bad fallback..
 }
 
 Unit* Layer::UnitAtDispCoord(int x, int y) const {

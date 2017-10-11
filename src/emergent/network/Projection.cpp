@@ -199,6 +199,7 @@ DataTable* Projection::WeightsToTable(DataTable* dt, const String& col_nm_,
                                       bool recv_wts) {
   if(!(bool)from) return NULL;
   Network* net = layer->own_net;
+  NetworkState_cpp* net_state = net->net_state;
   bool new_table = false;
   if (!dt) {
     taProject* proj = GetMyProj();
@@ -217,15 +218,15 @@ DataTable* Projection::WeightsToTable(DataTable* dt, const String& col_nm_,
     DataCol* scol = dt->FindMakeColName(col_nm, idx, VT_FLOAT, 2,
                                         from->flat_geom.x, from->flat_geom.y);
     FOREACH_ELEM_IN_GROUP(Unit, ru, layer->units) {
-      ConGroup* cg = ru->RecvConGroupPrjn(this);
+      ConState_cpp* cg = ru->RecvConStatePrjn(this);
       if(cg == NULL)
         break;
       dt->AddBlankRow();
       int wi;
       for(wi=0;wi<cg->size;wi++) {
-        Unit* ou = cg->Un(wi, net);
+        Unit* ou = net->UnitFromState(cg->UnState(wi, net_state));
         ou->LayerLogPos(log_pos);
-        scol->SetMatrixVal(cg->Cn(wi,ConGroup::WT,net), -1, log_pos.x, log_pos.y);
+        scol->SetMatrixVal(cg->Cn(wi,ConState_cpp::WT,net_state), -1, log_pos.x, log_pos.y);
       }
     }
   }
@@ -234,15 +235,15 @@ DataTable* Projection::WeightsToTable(DataTable* dt, const String& col_nm_,
                                       layer->flat_geom.x, layer->flat_geom.y);
 
     FOREACH_ELEM_IN_GROUP(Unit, ru, from->units) {
-      ConGroup* cg = ru->SendConGroupPrjn(this);
+      ConState_cpp* cg = ru->SendConStatePrjn(this);
       if(cg == NULL)
         break;
       dt->AddBlankRow();
       int wi;
       for(wi=0;wi<cg->size;wi++) {
-        Unit* ou = cg->Un(wi, net);
+        Unit* ou = net->UnitFromState(cg->UnState(wi, net_state));
         ou->LayerLogPos(log_pos);
-        scol->SetMatrixVal(cg->Cn(wi,ConGroup::WT,net), -1, log_pos.x, log_pos.y);
+        scol->SetMatrixVal(cg->Cn(wi,ConState_cpp::WT,net_state), -1, log_pos.x, log_pos.y);
       }
     }
   }
@@ -378,6 +379,7 @@ bool Projection::UpdateConSpecs(bool force) {
   if((!(bool)layer) || (!(bool)from)) return false;
   Network* mynet = GET_MY_OWNER(Network);
   if(!mynet || !mynet->IsBuiltIntact()) return false;
+  NetworkState_cpp* net_state = mynet->net_state;
   ConSpec* sp = con_spec.SPtr();
   if(sp) {
     if(TestWarning(!con_type->InheritsFrom(sp->min_obj_type), "UpdateConSpec",
@@ -389,24 +391,32 @@ bool Projection::UpdateConSpecs(bool force) {
   if(!force && (sp == m_prv_con_spec)) return false;
   if(!sp) return false;
   m_prv_con_spec = sp;          // don't redo it
-  FOREACH_ELEM_IN_GROUP(Unit, u, layer->units) {
-    for(int g=0; g<u->NRecvConGps(); g++) {
-      ConGroup* recv_gp = u->RecvConGroup(g);
-      if(recv_gp->prjn == this) {
-        recv_gp->SetConSpec(sp);
-      }
-    }
-  }
-  // also do the from!
-  FOREACH_ELEM_IN_GROUP(Unit, u, from->units) {
-    int g;
-    for(g=0; g<u->NSendConGps(); g++) {
-      ConGroup* send_gp = u->SendConGroup(g);
-      if(send_gp->prjn == this) {
-        send_gp->SetConSpec(sp);
-      }
-    }
-  }
+
+  // TODO: we can't actually do this!  build must cache m_prv_con_spec and this must just dirty
+  // the network
+  
+  // FOREACH_ELEM_IN_GROUP(Unit, u, layer->units) {
+  //   for(int g=0; g<u->NRecvConGps(); g++) {
+  //     ConState_cpp* cg = u->RecvConState(g);
+  //     PrjnState_cpp* pjs = cg->GetPrjnState(net_state);
+  //     Projection* cg_prjn = net->PrjnFromState(pjs);
+  //     if(cg_prjn == this) {
+  //       cg->SetConSpec(sp);
+  //     }
+  //   }
+  // }
+  // // also do the from!
+  // FOREACH_ELEM_IN_GROUP(Unit, u, from->units) {
+  //   int g;
+  //   for(g=0; g<u->NSendConGps(); g++) {
+  //     ConState_cpp* cg = u->SendConState(g);
+  //     PrjnState_cpp* pjs = cg->GetPrjnState(net_state);
+  //     Projection* cg_prjn = net->PrjnFromState(pjs);
+  //     if(cg_prjn == this) {
+  //       send_gp->SetConSpec(sp);
+  //     }
+  //   }
+  // }
   return true;
 }
 
@@ -457,7 +467,7 @@ void Projection::MonitorVar(NetMonitor* net_mon, const String& variable) {
 void Projection::SaveWeights(const String& fname) {
   taFiler* flr = GetSaveFiler(fname, ".wts", true);
   if(flr->ostrm)
-    layer->SaveWeights_strm(*flr->ostrm, ConGroup::TEXT, this);
+    layer->SaveWeights_strm(*flr->ostrm, Unit::TEXT, this);
   flr->Close();
   taRefN::unRefDone(flr);
 }
@@ -466,7 +476,7 @@ bool Projection::LoadWeights(const String& fname, bool quiet) {
   taFiler* flr = GetLoadFiler(fname, ".wts", true);
   bool rval = false;
   if(flr->istrm) {
-    rval = layer->LoadWeights_strm(*flr->istrm, ConGroup::TEXT, quiet, this);
+    rval = layer->LoadWeights_strm(*flr->istrm, Unit::TEXT, quiet, this);
   }
   else {
     TestError(true, "LoadWeights", "aborted due to inability to load weights file");
@@ -518,19 +528,22 @@ void Projection::Copy_Weights(const Projection* src) {
 
 void Projection::Init_Weights() {
   Network* net = layer->own_net;
+  NetworkState_cpp* net_state = net->net_state;
   if(net->RecvOwnsCons() || spec->init_wts) {
     FOREACH_ELEM_IN_GROUP(Unit, u, layer->units) {
-      int thr_no = u->ThrNo();
+      int thr_no = u->thread_no;
       const int nrcg = u->NRecvConGps();
       for(int i=0; i<nrcg; i++) {
-        ConGroup* rcg = u->RecvConGroup(i);
-        if(rcg->NotActive() || rcg->Sharing()) continue;
-        if(rcg->prjn != this) continue;
-        if(rcg->prjn->spec->init_wts) {
-          rcg->prjn->Init_Weights_Prjn(rcg, net, thr_no);
+        ConState_cpp* cg = u->RecvConState(i);
+        if(cg->NotActive() || cg->Sharing()) continue;
+        PrjnState_cpp* pjs = cg->GetPrjnState(net_state);
+        Projection* cg_prjn = net->PrjnFromState(pjs);
+        if(cg_prjn != this) continue;
+        if(cg_prjn->spec->init_wts) {
+          cg_prjn->Init_Weights_Prjn(cg, net, thr_no);
         }
         else {
-          rcg->con_spec->Init_Weights(rcg, net, thr_no);
+          con_spec->Init_Weights(cg, net_state, thr_no);
         }
       }
     }
@@ -538,13 +551,15 @@ void Projection::Init_Weights() {
   else { // send owns cons, not prjn init
     Layer* fmlay = from.ptr();
     FOREACH_ELEM_IN_GROUP(Unit, u, fmlay->units) {
-      int thr_no = u->ThrNo();
+      int thr_no = u->thread_no;
       const int nscg = u->NSendConGps();
       for(int i=0; i<nscg; i++) {
-        ConGroup* scg = u->SendConGroup(i);
-        if(scg->NotActive()) continue;
-        if(scg->prjn != this) continue;
-        scg->con_spec->Init_Weights(scg, net, thr_no);
+        ConState_cpp* cg = u->SendConState(i);
+        if(cg->NotActive()) continue;
+        PrjnState_cpp* pjs = cg->GetPrjnState(net_state);
+        Projection* cg_prjn = net->PrjnFromState(pjs);
+        if(cg_prjn != this) continue;
+        con_spec->Init_Weights(cg, net_state, thr_no);
       }
     }
   }

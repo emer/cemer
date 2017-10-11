@@ -98,34 +98,34 @@ class E_API TopoWtsPrjnSpec: public FullPrjnSpec {
   GradType grad_type;	// #CONDSHOW_ON_init_wts type of gradient to make -- applies to both axes
   float gauss_sig;		// #CONDSHOW_ON_grad_type:GAUSSIAN #CONDSHOW_ON_init_wts gaussian sigma (width), in normalized units where entire distance across sending layer is 1.0
 
-  void	Init_Weights_Prjn(Projection* prjn, ConGroup* cg, Network* net, int thr_no)
+  void	Init_Weights_Prjn(Projection* prjn, ConState* cg, Network* net, int thr_no)
     override;
   // calls one of the four InitWeights fns below according to use of unit groups
   bool  HasRandomScale() override { return false; }
   
   void Connect_impl(Projection* prjn, bool make_cons) override;
   // enables flexibility whether to use unit group indexing (default) or not
-  virtual void InitWeights_SendFlatRecvFlat(Projection* prjn, ConGroup* cg,
+  virtual void InitWeights_SendFlatRecvFlat(Projection* prjn, ConState* cg,
                                             Unit* ru, Network* net, int thr_no);
   // uses flat idx'ing of both send and recv layers (just unit positions)
-  virtual void InitWeights_SendGpsRecvGps(Projection* prjn, ConGroup* cg,
+  virtual void InitWeights_SendGpsRecvGps(Projection* prjn, ConState* cg,
                                           Unit* ru, Network* net, int thr_no);
   // gp idx'ing of both send and recv layers
-  virtual void InitWeights_SendGpsRecvFlat(Projection* prjn, ConGroup* cg,
+  virtual void InitWeights_SendGpsRecvFlat(Projection* prjn, ConState* cg,
                                            Unit* ru, Network* net, int thr_no);
   // gp idx'ing of send layer, flat idx'ing of recv
-  virtual void InitWeights_SendFlatRecvGps(Projection* prjn, ConGroup* cg,
+  virtual void InitWeights_SendFlatRecvGps(Projection* prjn, ConState* cg,
                                            Unit* ru, Network* net, int thr_no);
   // flat idx'ing of send layer, gp idx'ing of recv
-  virtual void SetWtFmDist(Projection* prjn, ConGroup* cg, Unit* ru,
+  virtual void SetWtFmDist(Projection* prjn, ConState* cg, Unit* ru,
                            Network* net, float dist, int cg_idx, bool dbl_add, int thr_no);
   // actually set the weight value from distance value -- used by above four main routines -- can overload to implement different gradient functions -- cg_idx is index within con group, and dist is computed normalized distance value (0-1)
 
-  virtual float ComputeTopoDist(Projection* prjn, ConGroup* cg, Unit* ru, int i, float ri_x, float ri_y,
+  virtual float ComputeTopoDist(Projection* prjn, ConState* cg, Unit* ru, int i, float ri_x, float ri_y,
 				taVector2i srs, taVector2i sre, taVector2i rrs, taVector2i rre, taVector2i ri_pos);
   // computes the normalized Euclidean distance between idx'd send unit and current recv unit -- used by above four main routines
 
-  virtual bool ReflectClippedWt(Projection* prjn, ConGroup* cg, Unit* ru, int i, taVector2i ri_pos,
+  virtual bool ReflectClippedWt(Projection* prjn, ConState* cg, Unit* ru, int i, taVector2i ri_pos,
 				taVector2i srs, taVector2i sre, taVector2i rrs, taVector2i rre, float ri_x, float ri_y);
   // returns dbl_add = true if a particular sending wt is clipped by recv lay edge
 

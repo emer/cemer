@@ -20,7 +20,7 @@
 #include <LayerDataEl>
 
 // member includes:
-#include <RandomSpec>
+#include <Random>
 
 // declare all other types mentioned but not required to include:
 
@@ -33,8 +33,8 @@ public:
   bool		use_layer_type; // #DEF_true use layer_type information on the layer to determine flags to set (if false, turn on EXPERT showing to view flags)
   bool		quiet;		// turn off warning messages (e.g., about layer_type = HIDDEN)
   bool		na_by_range;	// #EXPERT use act_range on the unitspec for the units to determine inputs that are not appplicable (n/a) and thus do not get relevant flags or values set: those that have input values outside the range are n/a
-  UnitVars::ExtFlags ext_flags;	// #EXPERT #CONDSHOW_OFF_use_layer_type:true how to flag the unit/layer's external input status
-  RandomSpec	noise;		// #EXPERT noise optionally added to values when applied
+  UnitState_cpp::ExtFlags ext_flags;	// #EXPERT #CONDSHOW_OFF_use_layer_type:true how to flag the unit/layer's external input status
+  Random	noise;		// #EXPERT noise optionally added to values when applied
 
   virtual bool	ApplyInputData(DataTable* db, Network* net);
   // #CAT_LayerWriter apply data to the layer on network, using the network's current context settings (TEST,TRAIN,etc) -- returns success

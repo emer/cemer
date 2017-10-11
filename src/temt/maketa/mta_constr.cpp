@@ -442,6 +442,10 @@ void MTA::MethodDef_InitTempArgVars(MethodDef* md, ostream& strm, int act_argc,
   bool got_one = false;
   for(int j=0;j < act_argc; j++) {
     TypeDef* argt = md->arg_types[j];
+    if(argt == NULL)  {
+      taMisc::Error("Null arg type number", String(j), "in method:", md->name);
+      continue;
+    }
     if(!(argt->IsRef() && !argt->IsConst()))
       continue;
     TypeDef* nrt = argt->GetNonRefType();
@@ -474,6 +478,10 @@ void MTA::MethodDef_AssgnTempArgVars(TypeDef* ownr, MethodDef* md, ostream& strm
   int j;
   for(j=0;j < act_argc; j++) {
     TypeDef* argt = md->arg_types[j];
+    if(argt == NULL)  {
+      taMisc::Error("Null arg type number", String(j), "in method:", md->name);
+      continue;
+    }
     if(!(argt->IsRef() && !argt->IsConst()))
       continue;
 
@@ -662,6 +670,10 @@ void MTA::MethodDef_GenArgs(MethodDef* md, ostream& strm, int act_argc, bool add
   int j;
   for(j=0;j < act_argc; j++) {
     TypeDef* argt = md->arg_types[j];
+    if(argt == NULL)  {
+      taMisc::Error("Null arg type number", String(j), "in method:", md->name);
+      continue;
+    }
 
     MethodDef_GenArgCast(md, argt, j, strm, add_typedefs);
 
@@ -1209,7 +1221,12 @@ void MTA::MethodDef_Gen_ArgData(MethodDef* ths, TypeDef* ownr, ostream& strm) {
        << "_MethArgs[]={\n";
 
   for(int i=0; i<ths->arg_types.size; i++) {
-    String tpfld = TypeDef_Gen_TypeName(ths->arg_types[i]);
+    TypeDef* argt = ths->arg_types[i];
+    if(argt == NULL)  {
+      taMisc::Error("Null arg type number", String(i), "in method:", ths->name);
+      continue;
+    }
+    String tpfld = TypeDef_Gen_TypeName(argt);
     strm << "  {" << tpfld << ",\"" << ths->arg_names[i] << "\",\""
          << ths->arg_defs[i] << "\"},\n";
   }

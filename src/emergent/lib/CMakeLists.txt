@@ -61,22 +61,22 @@ MAKETA_WRAP_H_MI(emergent_leabra_SRCS_MAKETA_MI "${emergent_leabra_HEADS_MAKETA_
   "${emergent_leabra_HEADS_MAKETA_MI_DEPS}")
 
 # cs
-include(${PROJECT_SOURCE_DIR}/src/emergent/cs/CMakeFiles.txt)
-ADD_PATH_TO_FILES(emergent_cs_SRCS ${mypath}/cs "${cs_SRCS}")
-ADD_PATH_TO_FILES(emergent_cs_HEADS_MAKETA ${mypath}/cs "${cs_HEADS_MAKETA}")
-ADD_PATH_TO_FILES(emergent_cs_HEADS ${mypath}/cs "${cs_HEADS}")
-SET_TA_PROPS(cs ${PROJECT_SOURCE_DIR}/src/emergent/cs)
+# include(${PROJECT_SOURCE_DIR}/src/emergent/cs/CMakeFiles.txt)
+# ADD_PATH_TO_FILES(emergent_cs_SRCS ${mypath}/cs "${cs_SRCS}")
+# ADD_PATH_TO_FILES(emergent_cs_HEADS_MAKETA ${mypath}/cs "${cs_HEADS_MAKETA}")
+# ADD_PATH_TO_FILES(emergent_cs_HEADS ${mypath}/cs "${cs_HEADS}")
+# SET_TA_PROPS(cs ${PROJECT_SOURCE_DIR}/src/emergent/cs)
 
-MAKETA_WRAP_H(emergent_cs_SRCS_MAKETA ${emergent_cs_HEADS_MAKETA} OPTIONS cs)
+# MAKETA_WRAP_H(emergent_cs_SRCS_MAKETA ${emergent_cs_HEADS_MAKETA} OPTIONS cs)
 
-# so
-include(${PROJECT_SOURCE_DIR}/src/emergent/so/CMakeFiles.txt)
-ADD_PATH_TO_FILES(emergent_so_SRCS ${mypath}/so "${so_SRCS}")
-ADD_PATH_TO_FILES(emergent_so_HEADS_MAKETA ${mypath}/so "${so_HEADS_MAKETA}")
-ADD_PATH_TO_FILES(emergent_so_HEADS ${mypath}/so "${so_HEADS}")
-SET_TA_PROPS(so ${PROJECT_SOURCE_DIR}/src/emergent/so)
+# # so
+# include(${PROJECT_SOURCE_DIR}/src/emergent/so/CMakeFiles.txt)
+# ADD_PATH_TO_FILES(emergent_so_SRCS ${mypath}/so "${so_SRCS}")
+# ADD_PATH_TO_FILES(emergent_so_HEADS_MAKETA ${mypath}/so "${so_HEADS_MAKETA}")
+# ADD_PATH_TO_FILES(emergent_so_HEADS ${mypath}/so "${so_HEADS}")
+# SET_TA_PROPS(so ${PROJECT_SOURCE_DIR}/src/emergent/so)
 
-MAKETA_WRAP_H(emergent_so_SRCS_MAKETA ${emergent_so_HEADS_MAKETA} OPTIONS so)
+# MAKETA_WRAP_H(emergent_so_SRCS_MAKETA ${emergent_so_HEADS_MAKETA} OPTIONS so)
 
 # actr
 include(${PROJECT_SOURCE_DIR}/src/emergent/actr/CMakeFiles.txt)

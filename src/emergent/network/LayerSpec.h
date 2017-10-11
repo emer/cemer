@@ -16,8 +16,16 @@
 #ifndef LayerSpec_h
 #define LayerSpec_h 1
 
+#include <State_main>
+
 // parent includes:
 #include <BaseSpec>
+#include <Random>
+
+// full standalone C++ implementation State code
+#include <NetworkState_cpp>
+
+#include <State_main>
 
 // member includes:
 
@@ -30,6 +38,9 @@ class E_API LayerSpec : public BaseSpec {
   // generic layer specification
 INHERITED(BaseSpec)
 public:
+
+#include <LayerSpec_core>
+  
   virtual bool          CheckConfig_Layer(Layer* lay, bool quiet = false)
     {return true;} // #CAT_ObjectMgmt This is ONLY for spec-specific stuff; the layer still does all its default checking (incl child checking)
 

@@ -34,12 +34,12 @@ public:
   bool  DoesStdDwt() override { return true; }
 
   // don't send regular net inputs or learn!
-  void Send_NetinDelta(LeabraConGroup*, LeabraNetwork* net, int thr_no, 
+  void Send_NetinDelta(LeabraConState_cpp*, LeabraNetwork* net, int thr_no, 
 				const float su_act_delta_eff) override { };
-  float Compute_Netin(ConGroup* cg, Network* net, int thr_no) override
+  float Compute_Netin(ConState* cg, Network* net, int thr_no) override
   { return 0.0f; }
-  void  Compute_dWt(ConGroup*, Network* net, int thr_no) override { };
-  void	Compute_Weights(ConGroup*, Network* net, int thr_no) override { };
+  void  Compute_dWt(ConState*, Network* net, int thr_no) override { };
+  void	Compute_Weights(ConState*, Network* net, int thr_no) override { };
 
   void  GetPrjnName(Projection& prjn, String& nm) override;
 

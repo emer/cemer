@@ -68,7 +68,7 @@ void DRNUnitSpec::HelpConfig() {
   taMisc::Confirm(help);
 }
 
-void DRNUnitSpec::Compute_Se(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void DRNUnitSpec::Compute_Se(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   float pospv = 0.0f;
   int   pospv_n  = 0;
   float negpv = 0.0f;
@@ -78,9 +78,9 @@ void DRNUnitSpec::Compute_Se(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) 
   float negstate = 0.0f;
   int   negstate_n = 0;
 
-  const int nrg = u->NRecvConGps(net, thr_no);
+  const int nrg = u->NRecvConGps(net);
   for(int g=0; g<nrg; g++) {
-    LeabraConGroup* recv_gp = (LeabraConGroup*)u->RecvConGroup(net, thr_no, g);
+    LeabraConState_cpp* recv_gp = (LeabraConState_cpp*)u->RecvConState(net, g);
     if(recv_gp->NotActive()) continue;
     LeabraLayer* from = (LeabraLayer*)recv_gp->prjn->from.ptr();
     LeabraUnitSpec* us = (LeabraUnitSpec*)from->GetUnitSpec();
@@ -145,34 +145,34 @@ void DRNUnitSpec::Compute_Se(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) 
   u->da = 0.0f;
 }
 
-void DRNUnitSpec::Send_Se(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void DRNUnitSpec::Send_Se(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   const float snd_val = se.se_out_gain * u->sev;
   const int nsg = u->NSendConGps(net, thr_no); 
   for(int g=0; g<nsg; g++) {
-    LeabraConGroup* send_gp = (LeabraConGroup*)u->SendConGroup(net, thr_no, g);
+    LeabraConState_cpp* send_gp = (LeabraConState_cpp*)u->SendConState(net, thr_no, g);
     if(send_gp->NotActive()) continue;
     for(int j=0;j<send_gp->size; j++) {
-      ((LeabraUnitVars*)send_gp->UnVars(j,net))->sev = snd_val;
+      ((LeabraUnitState_cpp*)send_gp->UnState(j,net))->sev = snd_val;
     }
   }
 }
 
-void DRNUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void DRNUnitSpec::Compute_Act_Rate(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   Compute_Se(u, net, thr_no);
 }
 
-void DRNUnitSpec::Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void DRNUnitSpec::Compute_Act_Spike(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   Compute_Se(u, net, thr_no);
 }
 
-void DRNUnitSpec::Compute_Act_Post(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void DRNUnitSpec::Compute_Act_Post(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   inherited::Compute_Act_Post(u, net, thr_no);
   Send_Se(u, net, thr_no);      // note: can only send modulators during post!!
 }
 
-void DRNUnitSpec::Init_Weights(UnitVars* ru, Network* rnet, int thr_no) {
+void DRNUnitSpec::Init_Weights(UnitState* ru, Network* rnet, int thr_no) {
   inherited::Init_Weights(ru, rnet, thr_no);
-  LeabraUnitVars* u = (LeabraUnitVars*)ru;
+  LeabraUnitState_cpp* u = (LeabraUnitState_cpp*)ru;
   LeabraNetwork* net = (LeabraNetwork*)rnet;
   u->sev = se.se_base;
 }

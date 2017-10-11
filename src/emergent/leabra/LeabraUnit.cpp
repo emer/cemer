@@ -104,9 +104,9 @@ void LeabraUnit::Copy_(const LeabraUnit& cp) {
   // spk_t = cp.spk_t;
 }
 
-void LeabraUnit::ApplyInputData(float val, UnitVars::ExtFlags act_ext_flags,
+void LeabraUnit::ApplyInputData(float val, UnitState_cpp::ExtFlags act_ext_flags,
                                 Random* ran, bool na_by_range) {
   inherited::ApplyInputData(val, act_ext_flags, ran, na_by_range);
-  LeabraUnitVars* uv = (LeabraUnitVars*)GetUnitVars();
+  LeabraUnitState_cpp* uv = (LeabraUnitState_cpp*)GetUnitState();
   ((LeabraUnitSpec*)GetUnitSpec())->ApplyInputData_post(uv);
 }

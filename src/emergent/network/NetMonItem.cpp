@@ -274,7 +274,7 @@ String NetMonItem::GetObjName(taBase* obj) {
     Unit* u = (Unit*)obj;
     Layer* lay = GET_OWNER(obj, Layer);
     if(lay) {
-      return GetObjName(lay) + "[" + String(u->GetMyLeafIndex()) + "]";
+      return GetObjName(lay) + "[" + String(u->lay_un_idx) + "]";
     }
   }
   else if (obj->InheritsFrom(TA_Unit_Group)) {
@@ -288,25 +288,28 @@ String NetMonItem::GetObjName(taBase* obj) {
         return nm + "_gp_" + String(idx) + "_";
     }
   }
-  else if (obj->InheritsFrom(TA_ConGroup)) {
-    ConGroup* cg = (ConGroup*)obj;
-    if(cg->IsRecv()) {
-      if(cg->prjn && cg->prjn->from.ptr()) {
-        Unit* un = GET_OWNER(obj, Unit);
-        if (un) {
-          return GetObjName(un) + "_r_" + taMisc::StringMaxLen(cg->prjn->from->name, max_name_len);
-        }
-      }
-    }
-    else {
-      if(cg->prjn && cg->prjn->layer) {
-        Unit* un = GET_OWNER(obj, Unit);
-        if (un) {
-          return GetObjName(un) + "_s_" + taMisc::StringMaxLen(cg->prjn->layer->name, max_name_len);
-        }
-      }
-    }
-  }
+  // TODO: invalid -- object is not a taBase!
+  // else if (obj->InheritsFrom(TA_ConState_cpp)) {
+  //   ConState_cpp* cg = (ConState_cpp*)obj;
+  //   PrjnState_cpp* pjs = cg->GetPrjnState(net->net_state);
+  //   Projection* prjn = PrjnFromState(pjs);
+  //   if(cg->IsRecv()) {
+  //     if(prjn && prjn->from.ptr()) {
+  //       Unit* un = GET_OWNER(obj, Unit);
+  //       if (un) {
+  //         return GetObjName(un) + "_r_" + taMisc::StringMaxLen(prjn->from->name, max_name_len);
+  //       }
+  //     }
+  //   }
+  //   else {
+  //     if(prjn && prjn->layer) {
+  //       Unit* un = GET_OWNER(obj, Unit);
+  //       if (un) {
+  //         return GetObjName(un) + "_s_" + taMisc::StringMaxLen(prjn->layer->name, max_name_len);
+  //       }
+  //     }
+  //   }
+  // }
 
   // go with the default name (display name takes care of lots of the logic already)
   String nm = obj->GetDisplayName();
@@ -557,11 +560,11 @@ bool NetMonItem::ScanObject_InObject(taBase* obj, String var, taBase* name_obj, 
       members.Link(md);
       return true;
     }
-    else if(obj->InheritsFrom(&TA_Unit)) { // special case for UnitVars
+    else if(obj->InheritsFrom(&TA_Unit)) { // special case for UnitState
       Unit* un = (Unit*)obj;
         // don't attempt to scan if network not set or intact..
       if(!un->lesioned() && un->own_net()->IsBuiltIntact()) {
-        md = un->own_net()->unit_vars_built->members.FindName(var);
+        md = un->own_net()->UnitStateType()->members.FindName(var);
         if(md) {
           if(name_obj) {
             String valname = GetColName(name_obj, val_specs.size);
@@ -572,7 +575,7 @@ bool NetMonItem::ScanObject_InObject(taBase* obj, String var, taBase* name_obj, 
             }
           }
           // if not adding a column, it is part of a pre-allocated matrix; just add vars
-          ptrs.Add(un->GetUnitVars());
+          ptrs.Add(un->GetUnitState());
           members.Link(md);
           return true;
         }
@@ -839,7 +842,7 @@ void NetMonItem::ScanObject_PrjnCons(Projection* prjn, String var) {
   taVector2i con_geom_min(INT_MAX, INT_MAX);
   FOREACH_ELEM_IN_GROUP(Unit, u, lay->units) {
     if(recv) {
-      ConGroup* cg = u->RecvConGroupPrjn(prjn);
+      ConState_cpp* cg = u->RecvConStatePrjn(prjn);
       if(!cg) continue;
       for(int j=0; j<cg->size; ++j) {
         Unit* su = cg->Un(j,net);
@@ -850,7 +853,7 @@ void NetMonItem::ScanObject_PrjnCons(Projection* prjn, String var) {
       }
     }
     else {                      // send
-      ConGroup* cg = u->SendConGroupPrjn(prjn);
+      ConState_cpp* cg = u->SendConStatePrjn(prjn);
       if(!cg) continue;
       for(int j=0; j<cg->size; ++j) {
         Unit* su = cg->Un(j,net);
@@ -878,7 +881,7 @@ void NetMonItem::ScanObject_PrjnCons(Projection* prjn, String var) {
       ptrs.Add(NULL); members.Link(con_md);
     }
     if(recv) {
-      ConGroup* cg = u->RecvConGroupPrjn(prjn);
+      ConState_cpp* cg = u->RecvConStatePrjn(prjn);
       if(!cg) continue;
       for(int j=0; j<cg->size; ++j) {
         Unit* su = cg->Un(j,net);
@@ -886,11 +889,11 @@ void NetMonItem::ScanObject_PrjnCons(Projection* prjn, String var) {
         taVector2i upos;  su->LayerLogPos(upos);
         upos -= con_geom_min;
         int idx = upos.y * con_geom.x + upos.x;
-        ptrs[st_idx + idx] = &(cg->Cn(j,con_md->idx,net)); // set the ptr
+        ptrs[st_idx + idx] = &(cg->Cn(j,con_md->idx,net->net_state)); // set the ptr
       }
     }
     else {                      // send
-      ConGroup* cg = u->SendConGroupPrjn(prjn);
+      ConState_cpp* cg = u->SendConStatePrjn(prjn);
       if(!cg) continue;
       for(int j=0; j<cg->size; ++j) {
         Unit* su = cg->Un(j,net);
@@ -898,7 +901,7 @@ void NetMonItem::ScanObject_PrjnCons(Projection* prjn, String var) {
         taVector2i upos;  su->LayerLogPos(upos);
         upos -= con_geom_min;
         int idx = upos.y * con_geom.x + upos.x;
-        ptrs[st_idx + idx] = &(cg->Cn(j,con_md->idx,net)); // set the ptr
+        ptrs[st_idx + idx] = &(cg->Cn(j,con_md->idx,net->net_state)); // set the ptr
       }
     }
   }
@@ -978,7 +981,8 @@ void NetMonItem::ScanObject_UnitGroup(Unit_Group* ug, String var) {
 
 void NetMonItem::ScanObject_Unit(Unit* u, String var) {
   if(u->lesioned()) return;
-  if(!u->own_net()->IsBuiltIntact()) // no-can-do
+  Network* net = u->own_net();
+  if(!net->IsBuiltIntact()) // no-can-do
     return;
   if(ScanObject_InObject(u, var, u, false)) return; // false = test
 
@@ -988,22 +992,21 @@ void NetMonItem::ScanObject_Unit(Unit* u, String var) {
   String convar = var.after('.');
   if (subvar=="r") {
     for(int i=0;i<u->NRecvConGps();i++)
-      ScanObject_RecvCons(u->RecvConGroup(i), convar);
+      ScanObject_RecvCons(u->RecvConState(i), convar, net);
   }
   else {                        // must be s
     for(int i=0;i<u->NSendConGps();i++)
-      ScanObject_SendCons(u->SendConGroup(i), convar);
+      ScanObject_SendCons(u->SendConState(i), convar, net);
   }
 }
 
-void NetMonItem::ScanObject_RecvCons(ConGroup* cg, String var) {
+void NetMonItem::ScanObject_RecvCons(ConState_cpp* cg, String var, Network* net) {
   if(!cg || !cg->IsActive()) return;
-  MemberDef* con_md = cg->ConType()->members.FindNameR(var);
-  if(!con_md) return;           // can't find that var!
-
-  Network* net = cg->prjn->layer->own_net;
   if(!net->IsBuiltIntact()) // no-can-do
     return;
+
+  MemberDef* con_md = cg->ConType(net)->members.FindNameR(var);
+  if(!con_md) return;           // can't find that var!
 
   // find the geometry span of the cons
   taVector2i con_geom_max;
@@ -1034,18 +1037,17 @@ void NetMonItem::ScanObject_RecvCons(ConGroup* cg, String var) {
     taVector2i upos;  su->LayerLogPos(upos);
     upos -= con_geom_min;
     int idx = upos.y * con_geom.x + upos.x;
-    ptrs[idx] = &(cg->Cn(j, con_md->idx, net));      // set the ptr
+    ptrs[idx] = &(cg->Cn(j, con_md->idx, net->net_state));      // set the ptr
   }
 }
 
-void NetMonItem::ScanObject_SendCons(ConGroup* cg, String var) {
+void NetMonItem::ScanObject_SendCons(ConState_cpp* cg, String var, Network* net) {
   if(!cg || !cg->IsActive()) return;
-  MemberDef* con_md = cg->ConType()->members.FindNameR(var);
-  if(!con_md) return;           // can't find that var!
-
-  Network* net = cg->prjn->layer->own_net;
   if(!net->IsBuiltIntact()) // no-can-do
     return;
+
+  MemberDef* con_md = cg->ConType(net)->members.FindNameR(var);
+  if(!con_md) return;           // can't find that var!
 
   // find the geometry span of the cons
   taVector2i con_geom_max;
@@ -1076,7 +1078,7 @@ void NetMonItem::ScanObject_SendCons(ConGroup* cg, String var) {
     taVector2i upos;  su->LayerLogPos(upos);
     upos -= con_geom_min;
     int idx = upos.y * con_geom.x + upos.x;
-    ptrs[idx] = &(cg->Cn(j, con_md->idx, net));      // set the ptr
+    ptrs[idx] = &(cg->Cn(j, con_md->idx, net->net_state));      // set the ptr
   }
 }
 

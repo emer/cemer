@@ -77,7 +77,7 @@ bool TDRewIntegUnitSpec::CheckConfig_Unit(Layer* ly, bool quiet) {
   
   const int nrg = un->NRecvConGps(); 
   for(int g=0; g< nrg; g++) {
-    LeabraConGroup* recv_gp = (LeabraConGroup*)un->RecvConGroup(g);
+    LeabraConState_cpp* recv_gp = (LeabraConState_cpp*)un->RecvConState(g);
     if(recv_gp->prjn->NotActive()) continue; // key!! just check for prjn, not con group!
     LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
     if(!cs->IsMarkerCon()) continue;
@@ -118,13 +118,13 @@ bool TDRewIntegUnitSpec::CheckConfig_Unit(Layer* ly, bool quiet) {
 }
 
 
-void TDRewIntegUnitSpec::Compute_TDRewInteg(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void TDRewIntegUnitSpec::Compute_TDRewInteg(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   float rew_pred_val = 0.0f;
   float ext_rew_val = 0.0f;
 
-  const int nrg = u->NRecvConGps(net, thr_no); 
+  const int nrg = u->NRecvConGps(net); 
   for(int g=0; g< nrg; g++) {
-    LeabraConGroup* recv_gp = (LeabraConGroup*)u->RecvConGroup(net, thr_no, g);
+    LeabraConState_cpp* recv_gp = (LeabraConState_cpp*)u->RecvConState(net, g);
     if(recv_gp->NotActive()) continue;
     LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
     if(!cs->IsMarkerCon()) continue;
@@ -158,11 +158,11 @@ void TDRewIntegUnitSpec::Compute_TDRewInteg(LeabraUnitVars* u, LeabraNetwork* ne
   u->da = 0.0f;
 }
 
-void TDRewIntegUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void TDRewIntegUnitSpec::Compute_Act_Rate(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   Compute_TDRewInteg(u, net, thr_no);
 }
 
-void TDRewIntegUnitSpec::Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void TDRewIntegUnitSpec::Compute_Act_Spike(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   Compute_Act_Rate(u, net, thr_no);
 }
 

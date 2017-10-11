@@ -34,6 +34,7 @@ using namespace std;
 void Unit_Group::Initialize() {
   own_lay = NULL;
   idx = -1;
+  state_idx = -1;
 }
 
 void Unit_Group::InitLinks() {
@@ -121,10 +122,10 @@ void Unit_Group::Copy_Weights(const Unit_Group* src) {
   }
 }
 
-void Unit_Group::SaveWeights_strm(ostream& strm, ConGroup::WtSaveFormat fmt, Projection* prjn) {
+void Unit_Group::SaveWeights_strm(ostream& strm, Unit::WtSaveFormat fmt, Projection* prjn) {
   strm << "<Ug>\n";
   FOREACH_ELEM_IN_GROUP(Unit, u, *this) {
-    int lfi = u->GetMyLeafIndex();
+    int lfi = u->lay_un_idx;
     strm << "<UgUn " << lfi << " " << u->name << ">\n";
     u->SaveWeights_strm(strm, fmt, prjn);
     strm << "</UgUn>\n";
@@ -132,9 +133,9 @@ void Unit_Group::SaveWeights_strm(ostream& strm, ConGroup::WtSaveFormat fmt, Pro
   strm << "</Ug>\n";
 }
 
-int Unit_Group::LoadWeights_strm(istream& strm, ConGroup::WtSaveFormat fmt, bool quiet, Projection* prjn) {
+int Unit_Group::LoadWeights_strm(istream& strm, Unit::WtSaveFormat fmt, bool quiet, Projection* prjn) {
   String tag, val;
-  int stat = ConGroup::LoadWeights_StartTag(strm, "Ug", val, quiet);
+  int stat = Unit::LoadWeights_StartTag(strm, "Ug", val, quiet);
   if(stat != taMisc::TAG_GOT) return stat;
 
   while(true) {
@@ -151,16 +152,16 @@ int Unit_Group::LoadWeights_strm(istream& strm, ConGroup::WtSaveFormat fmt, bool
     }
     if(stat != taMisc::TAG_END) break;
     stat = taMisc::TAG_NONE;           // reset so EndTag will definitely read new tag
-    ConGroup::LoadWeights_EndTag(strm, "UgUn", tag, stat, quiet);
+    Unit::LoadWeights_EndTag(strm, "UgUn", tag, stat, quiet);
     if(stat != taMisc::TAG_END) break;
   }
-  ConGroup::LoadWeights_EndTag(strm, "Ug", tag, stat, quiet);
+  Unit::LoadWeights_EndTag(strm, "Ug", tag, stat, quiet);
   return stat;
 }
 
-int Unit_Group::SkipWeights_strm(istream& strm, ConGroup::WtSaveFormat fmt, bool quiet) {
+int Unit_Group::SkipWeights_strm(istream& strm, Unit::WtSaveFormat fmt, bool quiet) {
   String val, tag;
-  int stat = ConGroup::LoadWeights_StartTag(strm, "Ug", val, quiet);
+  int stat = Unit::LoadWeights_StartTag(strm, "Ug", val, quiet);
   if(stat != taMisc::TAG_GOT) return stat;
 
   while(true) {
@@ -170,14 +171,14 @@ int Unit_Group::SkipWeights_strm(istream& strm, ConGroup::WtSaveFormat fmt, bool
     stat = Unit::SkipWeights_strm(strm, fmt, quiet);
     if(stat != taMisc::TAG_END) break;
     stat = taMisc::TAG_NONE;           // reset so EndTag will definitely read new tag
-    ConGroup::LoadWeights_EndTag(strm, "UgUn", tag, stat, quiet);
+    Unit::LoadWeights_EndTag(strm, "UgUn", tag, stat, quiet);
     if(stat != taMisc::TAG_END) break;
   }
-  ConGroup::LoadWeights_EndTag(strm, "Ug", tag, stat, quiet);
+  Unit::LoadWeights_EndTag(strm, "Ug", tag, stat, quiet);
   return stat;
 }
 
-void Unit_Group::SaveWeights(const String& fname, ConGroup::WtSaveFormat fmt) {
+void Unit_Group::SaveWeights(const String& fname, Unit::WtSaveFormat fmt) {
   taFiler* flr = GetSaveFiler(fname, ".wts", true);
   if(flr->ostrm)
     SaveWeights_strm(*flr->ostrm, fmt);
@@ -185,7 +186,7 @@ void Unit_Group::SaveWeights(const String& fname, ConGroup::WtSaveFormat fmt) {
   taRefN::unRefDone(flr);
 }
 
-int Unit_Group::LoadWeights(const String& fname, ConGroup::WtSaveFormat fmt, bool quiet) {
+int Unit_Group::LoadWeights(const String& fname, Unit::WtSaveFormat fmt, bool quiet) {
   taFiler* flr = GetLoadFiler(fname, ".wts", true);
   int rval = false;
   if(flr->istrm)

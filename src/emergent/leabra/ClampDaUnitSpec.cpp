@@ -24,29 +24,29 @@ void ClampDaUnitSpec::Initialize() {
   da_val = DA_P;
 }
 
-void ClampDaUnitSpec::Send_Da(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void ClampDaUnitSpec::Send_Da(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   const float snd_val = u->act;
   const int nsg = u->NSendConGps(net, thr_no); 
   for(int g=0; g<nsg; g++) {
-    LeabraConGroup* send_gp = (LeabraConGroup*)u->SendConGroup(net, thr_no, g);
+    LeabraConState_cpp* send_gp = (LeabraConState_cpp*)u->SendConState(net, thr_no, g);
     if(send_gp->NotActive()) continue;
     for(int j=0;j<send_gp->size; j++) {
       if(da_val == DA_P)
-        ((LeabraUnitVars*)send_gp->UnVars(j,net))->da_p = snd_val;
+        ((LeabraUnitState_cpp*)send_gp->UnState(j,net))->da_p = snd_val;
       else
-        ((LeabraUnitVars*)send_gp->UnVars(j,net))->da_n = snd_val;
+        ((LeabraUnitState_cpp*)send_gp->UnState(j,net))->da_n = snd_val;
     }
   }
 }
 
-void ClampDaUnitSpec::Quarter_Final(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void ClampDaUnitSpec::Quarter_Final(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   inherited::Quarter_Final(u, net, thr_no);
   if(send_da == PLUS_END && net->phase == LeabraNetwork::PLUS_PHASE) {
     Send_Da(u, net, thr_no);
   }
 }
 
-void ClampDaUnitSpec::Compute_Act_Post(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void ClampDaUnitSpec::Compute_Act_Post(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   inherited::Compute_Act_Post(u, net, thr_no);
   if(send_da == CYCLE) {
     Send_Da(u, net, thr_no);

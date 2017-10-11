@@ -177,31 +177,35 @@ void UnitGroupView_MouseCB(void* userData, SoEventCallback* ecb) {
               String nm = nv->unit_disp_md->name.after(".");
               if (is_send) {
                 for(int g=0;g<unit->NRecvConGps();g++) {
-                  ConGroup* tcong = unit->RecvConGroup(g);
-                  if(check_prjn && tcong->prjn &&
-                     !tcong->prjn->name.startsWith(nv->prjn_starts_with))
+                  ConState_cpp* tcong = unit->RecvConState(g);
+                  PrjnState_cpp* pjs = tcong->GetPrjnState(net->net_state);
+                  Projection* prjn = net->PrjnFromState(pjs);
+                  if(check_prjn && prjn &&
+                     !prjn->name.startsWith(nv->prjn_starts_with))
                     continue;
-                  MemberDef* act_md = tcong->ConType()->members.FindName(nm);
+                  MemberDef* act_md = tcong->ConType(net)->members.FindName(nm);
                   if (!act_md)  continue;
-                  int con = tcong->FindConFromIdx(nv->unit_src);
+                  int con = tcong->FindConFromIdx(nv->unit_src->flat_idx);
                   if (con < 0) continue;
                   // have to use safe b/c could be PtrCon and other side might be gone..
-                  nv->last_sel_unit_val = (String)tcong->SafeFastCn(con, act_md->idx, net);
+                  nv->last_sel_unit_val = (String)tcong->SafeFastCn(con, act_md->idx, net->net_state);
                   break;                // once you've got one, done!
                 }
               }
               else {
                 for(int g=0;g<unit->NSendConGps();g++) {
-                  ConGroup* tcong = unit->SendConGroup(g);
-                  if(check_prjn && tcong->prjn && tcong->prjn->IsActive() &&
-                     !tcong->prjn->name.startsWith(nv->prjn_starts_with))
+                  ConState_cpp* tcong = unit->SendConState(g);
+                  PrjnState_cpp* pjs = tcong->GetPrjnState(net->net_state);
+                  Projection* prjn = net->PrjnFromState(pjs);
+                  if(check_prjn && prjn && prjn->IsActive() &&
+                     !prjn->name.startsWith(nv->prjn_starts_with))
                     continue;
-                  MemberDef* act_md = tcong->ConType()->members.FindName(nm);
+                  MemberDef* act_md = tcong->ConType(net)->members.FindName(nm);
                   if (!act_md)  continue;
-                  int con = tcong->FindConFromIdx(nv->unit_src);
+                  int con = tcong->FindConFromIdx(nv->unit_src->flat_idx);
                   if (con < 0) continue;
                   // have to use safe b/c could be PtrCon and other side might be gone..
-                  nv->last_sel_unit_val = (String)tcong->SafeFastCn(con, act_md->idx, net);
+                  nv->last_sel_unit_val = (String)tcong->SafeFastCn(con, act_md->idx, net->net_state);
                   break;                // once you've got one, done!
                 }
               }
@@ -212,7 +216,7 @@ void UnitGroupView_MouseCB(void* userData, SoEventCallback* ecb) {
                 nv->last_sel_unit_val = nv->unit_disp_md->GetValStr((void*)unit);
               }
               else {
-                UnitVars* uv = unit->GetUnitVars();
+                UnitState_cpp* uv = unit->GetUnitState();
                 if(uv) {
                   nv->last_sel_unit_val = nv->unit_disp_md->GetValStr((void*)uv);
                 }
@@ -798,8 +802,8 @@ void NetView::GetMembs() {
   membs.Reset();
 
   // there is now only one global unit variables type!
-  if(net()->unit_vars_built) {
-    TypeDef* td = net()->unit_vars_built;
+  {
+    TypeDef* td = net()->UnitStateType();
 
     for(int m=0; m<td->members.size; m++) {
       MemberDef* md = td->members.FastEl(m);
@@ -1505,7 +1509,7 @@ void NetView::Render_wt_lines() {
   ls->line_width = MAX(wt_line_width, 0.0f);
 
   for(int g=0;g<(swt ? unit_src->NSendConGps() : unit_src->NRecvConGps());g++) {
-    ConGroup* cg = (swt ? unit_src->SendConGroup(g) : unit_src->RecvConGroup(g));
+    ConState_cpp* cg = (swt ? unit_src->SendConState(g) : unit_src->RecvConState(g));
     Projection* prjn = cg->prjn;
     if(!prjn || !prjn->IsActive()) continue;
     if(prjn->from->Iconified()) continue;
@@ -1531,7 +1535,7 @@ void NetView::Render_wt_lines() {
 
     for(int i=0;i< cg->size; i++) {
       Unit* su = cg->Un(i,nt);
-      float wt = cg->Cn(i, ConGroup::WT, nt);
+      float wt = cg->Cn(i, ConState_cpp::WT, nt);
       if(fabsf(wt) < wt_line_thr) continue;
 
       // note: only want layer_rel for ru_pos
@@ -1630,15 +1634,16 @@ void NetView::Render_wt_lines() {
 
   if(wt_line_width >= 0.0f) {
     for(int g=0;g<(swt ? unit_src->NSendConGps() : unit_src->NRecvConGps());g++) {
-      ConGroup* cg = (swt ? unit_src->SendConGroup(g) : unit_src->RecvConGroup(g));
-      Projection* prjn = cg->prjn;
+      ConState_cpp* cg = (swt ? unit_src->SendConState(g) : unit_src->RecvConState(g));
+      PrjnState_cpp* pjs = cg->GetPrjnState(nt->net_state);
+      Projection* prjn = nt->PrjnFromState(pjs);
       if(!prjn || !prjn->IsActive()) continue;
       if(prjn->from->Iconified()) continue;
 
       n_prjns++;
       int n_con = 0;
       for(int i=0;i< cg->size; i++) {
-        float wt = cg->Cn(i,ConGroup::WT,nt);
+        float wt = cg->Cn(i,ConState_cpp::WT,nt->net_state);
         if(wt >= wt_line_thr) n_con++;
       }
       n_vtx += 1 + n_con;   // one for recv + senders
@@ -1673,8 +1678,9 @@ void NetView::Render_wt_lines() {
   int midx = 0;
 
   for(int g=0;g<(swt ? unit_src->NSendConGps() : unit_src->NRecvConGps());g++) {
-    ConGroup* cg = (swt ? unit_src->SendConGroup(g) : unit_src->RecvConGroup(g));
-    Projection* prjn = cg->prjn;
+    ConState_cpp* cg = (swt ? unit_src->SendConState(g) : unit_src->RecvConState(g));
+    PrjnState_cpp* pjs = cg->GetPrjnState(nt->net_state);
+    Projection* prjn = nt->PrjnFromState(pjs);
     if(!prjn || !prjn->IsActive()) continue;
     if(prjn->from->Iconified()) continue;
     Layer* lay_fr = (swt ? prjn->layer : prjn->from);
@@ -1699,7 +1705,7 @@ void NetView::Render_wt_lines() {
 
     for(int i=0;i< cg->size; i++) {
       Unit* su = cg->Un(i,nt);
-      float wt = cg->Cn(i, ConGroup::WT, nt);
+      float wt = cg->Cn(i, ConState_cpp::WT, nt->net_state);
       if(fabsf(wt) < wt_line_thr) continue;
 
       // note: only want layer_rel for ru_pos

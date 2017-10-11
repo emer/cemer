@@ -96,14 +96,14 @@ public:
   taVector2i 	trg_send_geom;	// #READ_ONLY #SHOW target sending layer geometry -- computed from recv and rf_width, move by TrgSendFmRecv button, or given by TrgRecvFmSend
 
   
-  void	Init_Weights_Prjn(Projection* prjn, ConGroup* cg, Network* net,
+  void	Init_Weights_Prjn(Projection* prjn, ConState_cpp* cg, Network* net,
                           int thr_no) override;
   bool  HasRandomScale() override { return false; }
 
-  virtual void	Init_Weights_Gaussian(Projection* prjn, ConGroup* cg, Network* net,
+  virtual void	Init_Weights_Gaussian(Projection* prjn, ConState_cpp* cg, Network* net,
                                       int thr_no);
   // gaussian initial weights
-  virtual void	Init_Weights_Sigmoid(Projection* prjn, ConGroup* cg, Network* net,
+  virtual void	Init_Weights_Sigmoid(Projection* prjn, ConState_cpp* cg, Network* net,
                                       int thr_no);
   // sigmoid initial weights
 

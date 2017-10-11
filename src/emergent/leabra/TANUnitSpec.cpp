@@ -46,18 +46,18 @@ void TANUnitSpec::HelpConfig() {
   taMisc::Confirm(help);
 }
 
-void TANUnitSpec::Compute_PlusPhase_Netin(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void TANUnitSpec::Compute_PlusPhase_Netin(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   float max_send_act = 0.0f;
-  const int nrg = u->NRecvConGps(net, thr_no);
+  const int nrg = u->NRecvConGps(net);
   for(int g=0; g<nrg; g++) {
-    LeabraConGroup* recv_gp = (LeabraConGroup*)u->RecvConGroup(net, thr_no, g);
+    LeabraConState_cpp* recv_gp = (LeabraConState_cpp*)u->RecvConState(net, g);
     if(recv_gp->NotActive()) continue;
     LeabraConSpec* cs = (LeabraConSpec*)recv_gp->con_spec;
     if(!cs->IsMarkerCon()) continue;
     const int sz = recv_gp->size;
     for(int i=0; i< sz; i++) {
       // receiving from act_eq must happen outside of Compute_Act stage!
-      const float act_eq = ((LeabraUnitVars*)recv_gp->UnVars(i,net))->act_eq;
+      const float act_eq = ((LeabraUnitState_cpp*)recv_gp->UnState(i,net))->act_eq;
       max_send_act = fmaxf(act_eq, max_send_act);
     }
   }
@@ -65,24 +65,24 @@ void TANUnitSpec::Compute_PlusPhase_Netin(LeabraUnitVars* u, LeabraNetwork* net,
   u->net = u->ext;
 }
 
-void TANUnitSpec::Compute_PlusPhase_Act(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void TANUnitSpec::Compute_PlusPhase_Act(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   u->act_eq = u->act_nd = u->act = u->net = u->ext;
   u->da = 0.0f;
 }
 
-void TANUnitSpec::Send_ACh(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void TANUnitSpec::Send_ACh(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   const float snd_val = u->act_eq;
-  const int nsg = u->NSendConGps(net, thr_no); 
+  const int nsg = u->NSendConGps(net); 
   for(int g=0; g<nsg; g++) {
-    LeabraConGroup* send_gp = (LeabraConGroup*)u->SendConGroup(net, thr_no, g);
+    LeabraConState_cpp* send_gp = (LeabraConState_cpp*)u->SendConState(net, g);
     if(send_gp->NotActive()) continue;
     for(int j=0;j<send_gp->size; j++) {
-      ((LeabraUnitVars*)send_gp->UnVars(j,net))->ach = snd_val;
+      ((LeabraUnitState_cpp*)send_gp->UnState(j,net))->ach = snd_val;
     }
   }
 }
 
-void TANUnitSpec::Compute_NetinInteg(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void TANUnitSpec::Compute_NetinInteg(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   if(tan.plus_fm_pv_vs && (net->phase == LeabraNetwork::PLUS_PHASE)) {
     Compute_PlusPhase_Netin(u, net, thr_no);
   }
@@ -92,7 +92,7 @@ void TANUnitSpec::Compute_NetinInteg(LeabraUnitVars* u, LeabraNetwork* net, int 
 }
 
 
-void TANUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void TANUnitSpec::Compute_Act_Rate(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   if(tan.plus_fm_pv_vs && (net->phase == LeabraNetwork::PLUS_PHASE)) {
     Compute_PlusPhase_Act(u, net, thr_no);
   }
@@ -101,7 +101,7 @@ void TANUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int th
   }
 }
 
-void TANUnitSpec::Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void TANUnitSpec::Compute_Act_Spike(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   if(tan.plus_fm_pv_vs && (net->phase == LeabraNetwork::PLUS_PHASE)) {
     Compute_PlusPhase_Act(u, net, thr_no);
   }
@@ -110,7 +110,7 @@ void TANUnitSpec::Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int t
   }
 }
 
-void TANUnitSpec::Compute_Act_Post(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void TANUnitSpec::Compute_Act_Post(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   inherited::Compute_Act_Post(u, net, thr_no);
   // must send all modulators in act_post
   if(tan.plus_fm_pv_vs && (net->phase == LeabraNetwork::PLUS_PHASE)) {

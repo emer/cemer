@@ -60,7 +60,7 @@ bool TDRewPredUnitSpec::CheckConfig_Unit(Layer* ly, bool quiet) {
   
   const int nrg = un->NRecvConGps(); 
   for(int g=0; g< nrg; g++) {
-    LeabraConGroup* recv_gp = (LeabraConGroup*)un->RecvConGroup(g);
+    LeabraConState_cpp* recv_gp = (LeabraConState_cpp*)un->RecvConState(g);
     if(recv_gp->prjn->NotActive()) continue; // key!! just check for prjn, not con group!
     LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
     if(cs->IsMarkerCon()) continue;
@@ -72,14 +72,14 @@ bool TDRewPredUnitSpec::CheckConfig_Unit(Layer* ly, bool quiet) {
   return true;
 }
 
-void TDRewPredUnitSpec::Init_Acts(UnitVars* ru, Network* rnet, int thr_no) {
-  LeabraUnitVars* u = (LeabraUnitVars*)ru;
+void TDRewPredUnitSpec::Init_Acts(UnitState* ru, Network* rnet, int thr_no) {
+  LeabraUnitState_cpp* u = (LeabraUnitState_cpp*)ru;
   LeabraNetwork* net = (LeabraNetwork*)rnet;
   inherited::Init_Acts(u, net, thr_no);
   u->misc_1 = 0.0f;             // reset..
 }
   
-void TDRewPredUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void TDRewPredUnitSpec::Compute_Act_Rate(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   if(!Quarter_DeepRawNow(net->quarter)) { // plus phase marker..
     u->ext = u->misc_1;                  // clamp to previous prediction
     u->act_eq = u->act_nd = u->act = u->net = u->ext;
@@ -91,11 +91,11 @@ void TDRewPredUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, 
   }
 }
 
-void TDRewPredUnitSpec::Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void TDRewPredUnitSpec::Compute_Act_Spike(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   Compute_Act_Rate(u, net, thr_no);
 }
 
-void TDRewPredUnitSpec::Quarter_Final(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void TDRewPredUnitSpec::Quarter_Final(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   if(Quarter_DeepRawNow(net->quarter)) { // plus phase marker..
     u->misc_1 = u->act_eq;               // save current prediction for next trial
   }

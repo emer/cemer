@@ -48,7 +48,7 @@ bool LeabraContextUnitSpec::CheckConfig_Unit(Layer* lay, bool quiet) {
   if(lay->units.leaves == 0) return rval;
   LeabraUnit* un = (LeabraUnit*)lay->units.Leaf(0); // take first one
   
-  LeabraConGroup* cg = (LeabraConGroup*)un->RecvConGroupSafe(0);
+  LeabraConState_cpp* cg = (LeabraConState_cpp*)un->RecvConStateSafe(0);
   if(lay->CheckError(!cg, quiet, rval,
                      "Requires one recv projection!")) {
     return false;
@@ -62,7 +62,7 @@ bool LeabraContextUnitSpec::CheckConfig_Unit(Layer* lay, bool quiet) {
   return rval;
 }
 
-bool LeabraContextUnitSpec::ShouldUpdateNow(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+bool LeabraContextUnitSpec::ShouldUpdateNow(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   LeabraUnit* lu = (LeabraUnit*)u->Un(net, thr_no);
   LeabraLayer* lay = (LeabraLayer*)lu->own_lay();
   if(!lay) return false;
@@ -91,9 +91,9 @@ void LeabraContextUnitSpec::TriggerUpdate(LeabraLayer* lay, bool update) {
   lay->SetUserData(do_update_key, update, false); // false = no update
 }
 
-void LeabraContextUnitSpec::Compute_Context(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
-  LeabraConGroup* cg = (LeabraConGroup*)u->RecvConGroupSafe(net, thr_no, 0);
-  LeabraUnitVars* su = (LeabraUnitVars*)cg->UnVars(0, net);
+void LeabraContextUnitSpec::Compute_Context(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
+  LeabraConState_cpp* cg = (LeabraConState_cpp*)u->RecvConStateSafe(net, thr_no, 0);
+  LeabraUnitState_cpp* su = (LeabraUnitState_cpp*)cg->UnState(0, net);
   LeabraLayer* fmlay = (LeabraLayer*)cg->prjn->from.ptr();
   if(fmlay->lesioned()) {
     u->act = 0.0f;
@@ -116,11 +116,11 @@ void LeabraContextUnitSpec::Compute_Context(LeabraUnitVars* u, LeabraNetwork* ne
   }
 }
 
-void LeabraContextUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void LeabraContextUnitSpec::Compute_Act_Rate(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   Compute_Context(u, net, thr_no);
 }
 
-void LeabraContextUnitSpec::Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void LeabraContextUnitSpec::Compute_Act_Spike(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   Compute_Context(u, net, thr_no);
 }
 

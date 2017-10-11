@@ -18,7 +18,7 @@
 
 // parent includes:
 #include <ProjectionSpec>
-#include <RandomSpec>
+#include <Random>
 #include <RndSeed>
 #include <taVector2i>
 #include <taVector2f>
@@ -41,8 +41,8 @@ public:
   };
 
   float		p_con;		// overall probability of connection (number of samples)
-  RandomSpec 	rnd_dist;	// prob density of connectivity as a fctn of distance
-  RandomSpec	rnd_angle;	// prob density of connectivity as a fctn of angle (1 = 2pi)
+  Random 	rnd_dist;	// prob density of connectivity as a fctn of distance
+  Random	rnd_angle;	// prob density of connectivity as a fctn of angle (1 = 2pi)
   UnitDistType	dist_type; 	// type of distance function to use
   bool		wrap;		// wrap around layer coordinates (else clip at ends)
   int	       	max_retries;	// maximum number of times attempt to con same sender allowed
@@ -50,7 +50,7 @@ public:
   RndSeed	rndm_seed;	// #HIDDEN random seed
 
   void	Connect_impl(Projection* prjn, bool make_cons) override;
-  void	Init_Weights_Prjn(Projection* prjn, ConGroup* cg, Network* net,
+  void	Init_Weights_Prjn(Projection* prjn, ConState_cpp* cg, Network* net,
                           int thr_no) override;
   bool  HasRandomScale() override { return false; }
 

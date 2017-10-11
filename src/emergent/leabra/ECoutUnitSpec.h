@@ -29,13 +29,13 @@ class E_API ECoutUnitSpec : public LeabraUnitSpec {
   // unit spec for EC out layers that implements ThetaPhase learning -- automatically clamps to ECin activations in plus phase, based on MarkerConSpec one-to-one prjn from ECin, -- must use HippoEncoderConSpec for connections to learn based on encoder phase of theta cycle -- records encoder error as misc_1 unit variable
 INHERITED(LeabraUnitSpec)
 public:
-  virtual void 	ClampFromECin(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
+  virtual void 	ClampFromECin(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no);
   // clamp ECout values from ECin values, in plus phase
 
-  void	Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
-  void	Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
+  void	Compute_Act_Rate(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) override;
+  void	Compute_Act_Spike(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) override;
 
-  float Compute_SSE(UnitVars* uv, Network* net, int thr_no, bool& has_targ) override;
+  float Compute_SSE(UnitState* uv, Network* net, int thr_no, bool& has_targ) override;
 
   bool CheckConfig_Unit(Layer* lay, bool quiet=false) override; 
 

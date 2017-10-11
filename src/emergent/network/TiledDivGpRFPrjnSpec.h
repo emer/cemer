@@ -55,14 +55,14 @@ public:
   taVector2i 	trg_send_geom;	// #READ_ONLY #SHOW target sending layer geometry -- computed from recv and rf_width, move by TrgSendFmRecv button, or given by TrgRecvFmSend
   int_Array     high_low_wts;   // #HIDDEN #NO_SAVE for bimodal permuted case, gives order of high and low weight values
   
-  void	Init_Weights_Prjn(Projection* prjn, ConGroup* cg, Network* net,
+  void	Init_Weights_Prjn(Projection* prjn, ConState_cpp* cg, Network* net,
                           int thr_no) override;
   bool  HasRandomScale() override;
   
-  virtual void	Init_Weights_Gaussian(Projection* prjn, ConGroup* cg, Network* net,
+  virtual void	Init_Weights_Gaussian(Projection* prjn, ConState_cpp* cg, Network* net,
                                       int thr_no);
   // gaussian initial weights
-  virtual void	Init_Weights_BimodalPermuted(Projection* prjn, ConGroup* cg, Network* net,
+  virtual void	Init_Weights_BimodalPermuted(Projection* prjn, ConState_cpp* cg, Network* net,
                                              int thr_no);
   // permuted bimodal weight values
 

@@ -101,7 +101,7 @@ bool ExtRewLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(1);      // taking *2nd* unit as rep
   const int nrg = u->NRecvConGps();
   for(int g=0; g<nrg; g++) {
-    LeabraConGroup* recv_gp = (LeabraConGroup*)u->RecvConGroup(g);
+    LeabraConState_cpp* recv_gp = (LeabraConState_cpp*)u->RecvConState(g);
     if(recv_gp->NotActive()) continue;
     if(recv_gp->GetConSpec()->IsMarkerCon()) {
       if(recv_gp->prjn->from->name == "RewTarg")
@@ -149,7 +149,7 @@ bool ExtRewLayerSpec::OutErrRewAvail(LeabraLayer* lay, LeabraNetwork*) {
   LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(1);      // taking 2nd unit as representative
   const int nrg = u->NRecvConGps();
   for(int g=0; g<nrg; g++) {
-    LeabraConGroup* recv_gp = (LeabraConGroup*)u->RecvConGroup(g);
+    LeabraConState_cpp* recv_gp = (LeabraConState_cpp*)u->RecvConState(g);
     if(recv_gp->NotActive()) continue;
     if(recv_gp->GetConSpec()->IsMarkerCon()) {
       LeabraLayer* rew_lay = (LeabraLayer*)recv_gp->prjn->from.ptr();
@@ -172,23 +172,23 @@ float ExtRewLayerSpec::GetOutErrRew(LeabraLayer* lay, LeabraNetwork* net) {
   int   n_comps = 0;            // number of comp layers
   const int nrg = u->NRecvConGps();
   for(int g=0; g<nrg; g++) {
-    LeabraConGroup* recv_gp = (LeabraConGroup*)u->RecvConGroup(g);
+    LeabraConState_cpp* recv_gp = (LeabraConState_cpp*)u->RecvConState(g);
     if(recv_gp->NotActive()) continue;
     if(!recv_gp->GetConSpec()->IsMarkerCon()) continue;
     LeabraLayer* rew_lay = (LeabraLayer*)recv_gp->prjn->from.ptr();
     if(rew_lay->name == "RewTarg") continue;
 
-    if(rew_lay->HasExtFlag(UnitVars::TARG)) n_targs++;
-    else if(rew_lay->HasExtFlag(UnitVars::COMP)) n_comps++;
+    if(rew_lay->HasExtFlag(UnitState::TARG)) n_targs++;
+    else if(rew_lay->HasExtFlag(UnitState::COMP)) n_comps++;
   }
 
-  int rew_chk_flag = UnitVars::TARG;
-  if(n_targs == 0) rew_chk_flag |= UnitVars::COMP; // also check comp if no targs!
+  int rew_chk_flag = UnitState::TARG;
+  if(n_targs == 0) rew_chk_flag |= UnitState::COMP; // also check comp if no targs!
 
   float totposs = 0.0f;         // total possible error (unitwise)
   float toterr = 0.0f;          // total error
   for(int g=0; g<nrg; g++) {
-    LeabraConGroup* recv_gp = (LeabraConGroup*)u->RecvConGroup(g);
+    LeabraConState_cpp* recv_gp = (LeabraConState_cpp*)u->RecvConState(g);
     if(recv_gp->NotActive()) continue;
     if(!recv_gp->GetConSpec()->IsMarkerCon()) continue;
     LeabraLayer* rew_lay = (LeabraLayer*)recv_gp->prjn->from.ptr();
@@ -203,7 +203,7 @@ float ExtRewLayerSpec::GetOutErrRew(LeabraLayer* lay, LeabraNetwork* net) {
     float this_err = 0.0f;
     FOREACH_ELEM_IN_GROUP(LeabraUnit, un, rew_lay->units) {
       if(un->lesioned()) continue;
-      LeabraUnitVars* uv = (LeabraUnitVars*)un->GetUnitVars();
+      LeabraUnitState_cpp* uv = (LeabraUnitState_cpp*)un->GetUnitState();
       bool targ_active = false;
       float unerr = us->Compute_NormErr(uv, net, 0, targ_active);
       if(unerr > 0.0f) {
@@ -246,7 +246,7 @@ void ExtRewLayerSpec::Compute_OutErrRew(LeabraLayer* lay, LeabraNetwork* net) {
 }
 
 void ExtRewLayerSpec::Compute_ExtRew(LeabraLayer* lay, LeabraNetwork* net) {
-  if(!lay->HasExtFlag(UnitVars::TARG)) {
+  if(!lay->HasExtFlag(UnitState::TARG)) {
     Compute_NoRewAct(lay, net);
     return;
   }
@@ -257,7 +257,7 @@ void ExtRewLayerSpec::Compute_ExtRew(LeabraLayer* lay, LeabraNetwork* net) {
   UNIT_GP_ITR
     (lay,
      LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, 0, gpidx);
-     LeabraUnitVars* uv = (LeabraUnitVars*)u->GetUnitVars();
+     LeabraUnitState_cpp* uv = (LeabraUnitState_cpp*)u->GetUnitState();
      float er = uv->ext;
      if(er == rew.norew_val) {
        uv->ext = uv->ext_orig = rew.norew_val;  // this is appropriate to set here..
@@ -287,7 +287,7 @@ void ExtRewLayerSpec::Compute_DaRew(LeabraLayer* lay, LeabraNetwork* net) {
   UNIT_GP_ITR
     (lay,
      LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, 0, gpidx);
-     LeabraUnitVars* uv = (LeabraUnitVars*)u->GetUnitVars();
+     LeabraUnitState_cpp* uv = (LeabraUnitState_cpp*)u->GetUnitState();
      float er = uv->da_p;
      if(er == rew.norew_val) {
        uv->ext = uv->ext_orig = rew.norew_val;  // this is appropriate to set here..
@@ -313,7 +313,7 @@ void ExtRewLayerSpec::Compute_DaRew(LeabraLayer* lay, LeabraNetwork* net) {
 void ExtRewLayerSpec::Compute_UnitDa
 (LeabraLayer* lay, LeabraNetwork* net, Layer::AccessMode acc_md, int gpidx,
  float er, LeabraUnit* u) {
-  LeabraUnitVars* uv = (LeabraUnitVars*)u->GetUnitVars();
+  LeabraUnitState_cpp* uv = (LeabraUnitState_cpp*)u->GetUnitState();
   uv->da_p = er;
   uv->ext = uv->ext_orig = uv->da_p;
   ClampValue_ugp(lay, net, acc_md, gpidx);
@@ -333,12 +333,12 @@ void ExtRewLayerSpec::Compute_NoRewAct(LeabraLayer* lay, LeabraNetwork* net) {
 
 void ExtRewLayerSpec::Compute_HardClamp_Layer(LeabraLayer* lay, LeabraNetwork* net) {
   if(net->phase == LeabraNetwork::MINUS_PHASE) {
-    lay->SetExtFlag(UnitVars::EXT);
+    lay->SetExtFlag(UnitState::EXT);
     Compute_NoRewAct(lay, net); // no reward in minus
     HardClampExt(lay, net);
   }
   else {
-    lay->SetExtFlag(UnitVars::EXT);
+    lay->SetExtFlag(UnitState::EXT);
     Compute_Rew(lay, net);
     HardClampExt(lay, net);
   }

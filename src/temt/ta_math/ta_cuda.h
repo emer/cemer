@@ -59,48 +59,10 @@ typedef int cudabigint;
 #define CUDAFUN
 #endif
 
-// cuda versions of base classes, for preserving bit-wise compatibility
-
-class taBase_cuda {
-public:
-  int   base_flags;
-  int   refn;
-
-  taBase_cuda() { Initialize(); }
-
-private:
-  void  Initialize() { base_flags = 0; refn = 0; }
-};
-
-
-class taOBase_cuda : public taBase_cuda {
-public:
-  void*  owner;
-  void*  user_data_;
-  void*  m_sig_link;
-
-  taOBase_cuda() { Initialize(); }
-  
-private:
-  void  Initialize() { owner = NULL; user_data_ = NULL; m_sig_link = NULL; }
-};
-
-
-class taNBase_cuda : public taOBase_cuda {
-public:
-  void*  name_mrep;
-  
-  taNBase_cuda() { Initialize(); }
-  
-private:
-  void  Initialize() { name_mrep = NULL; }
-};
-
-
 // could use different random state -- use define
 #define CU_RAND_STATE curandState
 
-class Random_cuda : public taNBase_cuda {
+class Random_cuda {
   // Random Number Generation in cuda
 public:
   enum Type {
@@ -118,7 +80,7 @@ public:
   double        var;            // #CONDSHOW_OFF_type:NONE 'varibility' parameter for the random numbers (gauss = standard deviation, not variance; uniform = half-range)
   double        par;            // #CONDSHOW_ON_type:GAMMA,BINOMIAL,BETA extra parameter for distribution (depends on each one)
 
-  CUDAFUN inline float Gen(CU_RAND_STATE* state) const {
+  CUDAFUN float Gen(CU_RAND_STATE* state) const {
     if(var == 0.0f) return mean;
     switch(type) {
     case NONE:
@@ -183,14 +145,14 @@ public:
   Random_cuda() { Initialize(); }
   
 private:
-  void Random::Initialize() {
+  void Initialize() {
     type = UNIFORM;
     mean = 0.0f;
     var = 1.0f;
     par = 1.0f;
   }
 
-  void Random::Copy_(const Random& cp){
+  void Copy_(const Random_cuda& cp) {
     type = cp.type;
     mean = cp.mean;
     var = cp.var;
@@ -198,89 +160,6 @@ private:
   }
 };
 
-
-class MinMax_cuda : public taOBase_cuda {
-  // ##NO_TOKENS #NO_UPDATE_AFTER ##INLINE ##CAT_Math minimum-maximum values
-INHERITED(taOBase)
-public:
-  float         min;    // minimum value
-  float         max;    // maximum value
-
-  CUDAFUN inline bool  RangeTest(float val) const { return ((val > min) && (val < max)); }
-  // test whether value is within the range (but not equal to max or min)
-  CUDAFUN inline bool  RangeTestEq(float val) const { return ((val >= min) && (val <= max)); }
-  // test whether value is within the range (or equal)
-
-  CUDAFUN inline bool  operator < (const float val) const   { return (val < min); }
-  CUDAFUN inline bool  operator <= (const float val) const  { return (val <= min); }
-  CUDAFUN inline bool  operator > (const float val) const   { return (val > max); }
-  CUDAFUN inline bool  operator >= (const float val) const  { return (val >= max); }
-
-  CUDAFUN inline void  Init(float it)  { min = max = it; }  // initializes the max and min to this value
-  CUDAFUN inline void  Set(float mn, float mx) { min = mn; max = mx; }  // set values
-
-  CUDAFUN inline float  Range() const  { return (max - min); }
-  CUDAFUN inline float  Scale() const
-  { float rval = Range(); if(rval != 0.0f) rval = 1.0f / rval; return rval; }
-  // scale is the inverse of range
-  CUDAFUN inline float  MidPoint() const { return 0.5f * (min + max); }
-  // returns the range between the min and the max
-
-  CUDAFUN inline void  UpdateRange(MinMax& it)
-  { min = fminf(it.min, min); max = fmaxf(it.max, max); }
-
-  CUDAFUN inline void  UpdateRange(float it)
-  { min = fminf(it, min); max = fmaxf(it, max); }  // updates the range
-
-  CUDAFUN inline void  MaxLT(float it)  { max = fminf(it, max); }
-  // max less than (or equal)
-
-  CUDAFUN inline void  MinGT(float it)  { min = fmaxf(it, min); }
-  // min greater than (or equal)
-
-  CUDAFUN inline void  WithinRange(MinMax& it)         // put my range within given one
-  { min = fmaxf(it.min, min); max = fminf(it.max, max); }
-  CUDAFUN inline void  WithinRange(float min_, float max_) // #IGNORE put my range within given one
-  { min = fmaxf(min_, min); max = fminf(max_, max); }
-  CUDAFUN inline void  SymRange() // symmetrize my range around zero, with max abs value of current min, max
-  { float mxabs = fmaxf(fabsf(min), fabsf(max)); min = -mxabs; max = mxabs; }
-
-  CUDAFUN inline float Normalize(float val) const { return (val - min) * Scale(); }
-  // normalize given value to 0-1 range given current in max
-
-  CUDAFUN inline float Project(float val) const   { return min + (val * Range()); }
-  // project a normalized value into the current min-max range
-
-  CUDAFUN inline float Clip(float val) const
-  { val = fminf(max,val); val = fmaxf(min,val); return val; }
-  // clip given value within current range
-
-  MinMax_cuda() { Initialize(); }
-  
-private:
-  void  Initialize()            { min = max = 0.0f; }
-  void  Copy_(const MinMax_cuda& cp) { min = cp.min; max = cp.max; }
-};
-
-
-class TA_API MinMaxRange_cuda : public MinMax_cuda {
-  // ##UAE_IN_PROGRAM min-max values plus scale and range
-public:
-  float         range;          // #HIDDEN distance between min and max
-  float         scale;          // #HIDDEN scale (1.0 / range)
-
-  CUDAFUN float Normalize(float val) const { return (val - min) * scale; }
-  // normalize given value to 0-1 range given current in max
-
-  CUDAFUN float Project(float val) const   { return min + (val * range); }
-  // project a normalized value into the current min-max range
-
-  MinMaxRange_cuda() { Initialize(); }
-  
-private:
-  void  Initialize()            { range = scale = 0.0f; }
-  void  Copy_(const MinMaxRange& cp) { range = cp.range; scale = cp.scale; }
-};
 
 #endif // CUDA_COMPILE
 

@@ -254,7 +254,7 @@ bool TiledGpRFPrjnSpec::TrgSendFmRecv(int recv_x, int recv_y) {
   return (trg_recv_geom.x == recv_x && trg_recv_geom.y == recv_y);
 }
 
-void TiledGpRFPrjnSpec::Init_Weights_Prjn(Projection* prjn, ConGroup* cg,
+void TiledGpRFPrjnSpec::Init_Weights_Prjn(Projection* prjn, ConState_cpp* cg,
                                           Network* net, int thr_no) {
   if(wts_type == GAUSSIAN) {
     Init_Weights_Gaussian(prjn, cg, net, thr_no);
@@ -264,7 +264,7 @@ void TiledGpRFPrjnSpec::Init_Weights_Prjn(Projection* prjn, ConGroup* cg,
   }
 }
 
-void TiledGpRFPrjnSpec::Init_Weights_Gaussian(Projection* prjn, ConGroup* cg,
+void TiledGpRFPrjnSpec::Init_Weights_Gaussian(Projection* prjn, ConState_cpp* cg,
                                               Network* net, int thr_no) {
   Layer* recv_lay = prjn->layer;
   Layer* send_lay = prjn->from;
@@ -389,7 +389,7 @@ void TiledGpRFPrjnSpec::Init_Weights_Gaussian(Projection* prjn, ConGroup* cg,
   }
 }
 
-void TiledGpRFPrjnSpec::Init_Weights_Sigmoid(Projection* prjn, ConGroup* cg,
+void TiledGpRFPrjnSpec::Init_Weights_Sigmoid(Projection* prjn, ConState_cpp* cg,
                                              Network* net, int thr_no) {
   Layer* recv_lay = prjn->layer;
   Layer* send_lay = prjn->from;

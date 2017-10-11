@@ -84,7 +84,7 @@ public:
   ThetaPhaseSpecs       theta;  // specifications for how the theta phase cycle modulates the inputs from EC and CA3
   
   void Trial_Init_Specs(LeabraNetwork* net) override;
-  void Compute_NetinScale(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
+  void Compute_NetinScale(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) override;
 
   bool CheckConfig_Unit(Layer* lay, bool quiet=false) override;
 

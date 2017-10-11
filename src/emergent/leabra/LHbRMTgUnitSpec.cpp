@@ -160,7 +160,7 @@ bool LHbRMTgUnitSpec::GetRecvLayers(LeabraUnit* u,
   
   const int nrg = u->NRecvConGps();
   for(int g=0; g<nrg; g++) {
-    LeabraConGroup* recv_gp = (LeabraConGroup*)u->RecvConGroup(g);
+    LeabraConState_cpp* recv_gp = (LeabraConState_cpp*)u->RecvConState(g);
     if(recv_gp->NotActive()) continue;
     LeabraLayer* fmlay = (LeabraLayer*) recv_gp->prjn->from.ptr();
     LeabraUnitSpec* us = (LeabraUnitSpec*) fmlay->GetUnitSpec();
@@ -197,7 +197,7 @@ bool LHbRMTgUnitSpec::GetRecvLayers(LeabraUnit* u,
   return true;
 }
 
-void LHbRMTgUnitSpec::Compute_Lhb(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void LHbRMTgUnitSpec::Compute_Lhb(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   LeabraLayer* pv_pos_lay = NULL;
   LeabraLayer* vspatch_pos_D1_lay = NULL;
   LeabraLayer* vspatch_pos_D2_lay = NULL;
@@ -329,7 +329,7 @@ void LHbRMTgUnitSpec::Compute_Lhb(LeabraUnitVars* u, LeabraNetwork* net, int thr
   }
 }
 
-void LHbRMTgUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void LHbRMTgUnitSpec::Compute_Act_Rate(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   if(Quarter_DeepRawNow(net->quarter)) {
     Compute_Lhb(u, net, thr_no);
   }
@@ -338,19 +338,19 @@ void LHbRMTgUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, in
   }
 }
 
-void LHbRMTgUnitSpec::Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void LHbRMTgUnitSpec::Compute_Act_Spike(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   Compute_Act_Rate(u, net, thr_no);
 }
 
 
-void LHbRMTgUnitSpec::Quarter_Final(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void LHbRMTgUnitSpec::Quarter_Final(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   inherited::Quarter_Final(u, net, thr_no);
   if(lhb.matrix_td) {
     if(net->phase == LeabraNetwork::PLUS_PHASE) {
       float matrix_ind = 0.0f;
-      const int nrg = u->NRecvConGps(net, thr_no);
+      const int nrg = u->NRecvConGps(net);
       for(int g=0; g<nrg; g++) {
-        LeabraConGroup* recv_gp = (LeabraConGroup*)u->RecvConGroup(net, thr_no, g);
+        LeabraConState_cpp* recv_gp = (LeabraConState_cpp*)u->RecvConState(net, g);
         if(recv_gp->NotActive()) continue;
         LeabraLayer* from = (LeabraLayer*) recv_gp->prjn->from.ptr();
         if(from->name.contains("Matrix") && (from->name.contains("Ind") ||

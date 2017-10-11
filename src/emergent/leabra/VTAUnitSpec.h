@@ -110,11 +110,11 @@ public:
   PVLVDaGains     gains;        // gains for various parameters
   LVBlockSpec     lv_block;     // how LV signals are blocked by PV and LHbRMTg dip signals -- there are good reasons for these signals to block LV, because they reflect a stronger overall signal about outcomes, compared to the more "speculative" LV signal
 
-  virtual void  Send_Da(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
+  virtual void  Send_Da(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no);
   // send the da value to sending projections: every cycle
-  virtual void  Compute_DaP(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
+  virtual void  Compute_DaP(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no);
   // compute positive-valence dopamine 
-  virtual void  Compute_DaN(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
+  virtual void  Compute_DaN(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no);
   // compute negative-valence dopamine
 
   virtual bool  GetRecvLayers_P
@@ -128,13 +128,13 @@ public:
      LeabraLayer*& vspatchnegd1_lay, LeabraLayer*& vspatchnegd2_lay);
   // get the recv layers to VTAn (DA_N case)
 
-  void	Compute_NetinInteg(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override { };
-  void	Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
-  void	Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
-  void  Compute_Act_Post(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
+  void	Compute_NetinInteg(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) override { };
+  void	Compute_Act_Rate(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) override;
+  void	Compute_Act_Spike(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) override;
+  void  Compute_Act_Post(LeabraUnitState_cpp* uv, LeabraNetwork* net, int thr_no) override;
 
-  void 	Compute_dWt(UnitVars* u, Network* net, int thr_no) override { };
-  void	Compute_Weights(UnitVars* u, Network* net, int thr_no) override { };
+  void 	Compute_dWt(UnitState* u, Network* net, int thr_no) override { };
+  void	Compute_Weights(UnitState* u, Network* net, int thr_no) override { };
 
   void  HelpConfig();   // #BUTTON get help message for configuring this spec
   bool  CheckConfig_Unit(Layer* lay, bool quiet=false) override;

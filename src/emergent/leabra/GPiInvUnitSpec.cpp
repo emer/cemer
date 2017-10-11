@@ -84,16 +84,16 @@ bool GPiInvUnitSpec::CheckConfig_Unit(Layer* lay, bool quiet) {
   return rval;
 }
 
-void GPiInvUnitSpec::Compute_NetinRaw(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void GPiInvUnitSpec::Compute_NetinRaw(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   int nt = net->n_thrs_built;
   int flat_idx = u->flat_idx;
 
   // note: REQUIRES NetinPerPrjn!  Set automatically in CheckConfig
   float go_in = 0.0f;
   float nogo_in = 0.0f;
-  const int nrg = u->NRecvConGps(net, thr_no);
+  const int nrg = u->NRecvConGps(net);
   for(int g=0; g<nrg; g++) {
-    LeabraConGroup* recv_gp = (LeabraConGroup*)u->RecvConGroup(net, thr_no, g);
+    LeabraConState_cpp* recv_gp = (LeabraConState_cpp*)u->RecvConState(net, g);
     if(recv_gp->NotActive()) continue;
     LeabraLayer* from = (LeabraLayer*) recv_gp->prjn->from.ptr();
     LeabraUnitSpec* us = (LeabraUnitSpec*)from->GetUnitSpec();
@@ -151,7 +151,7 @@ void GPiInvUnitSpec::Compute_NetinRaw(LeabraUnitVars* u, LeabraNetwork* net, int
   u->net_raw = gpi_net;
 }
 
-void GPiInvUnitSpec::Send_Thal(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void GPiInvUnitSpec::Send_Thal(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   bool gate_now = Quarter_GateNow(net->quarter);
   int qtr_cyc = net->QuarterCycle();
 
@@ -194,18 +194,18 @@ void GPiInvUnitSpec::Send_Thal(LeabraUnitVars* u, LeabraNetwork* net, int thr_no
   u->thal = snd_val;            // record what we send, always
   const int nsg = u->NSendConGps(net, thr_no); 
   for(int g=0; g<nsg; g++) {
-    LeabraConGroup* send_gp = (LeabraConGroup*)u->SendConGroup(net, thr_no, g);
+    LeabraConState_cpp* send_gp = (LeabraConState_cpp*)u->SendConState(net, thr_no, g);
     if(send_gp->NotActive()) continue;
     LeabraConSpec* cs = (LeabraConSpec*)send_gp->GetConSpec();
     if(!cs->IsMarkerCon()) continue;
     for(int j=0;j<send_gp->size; j++) {
-      ((LeabraUnitVars*)send_gp->UnVars(j,net))->thal = snd_val;
-      ((LeabraUnitVars*)send_gp->UnVars(j,net))->thal_gate = gate_val;
+      ((LeabraUnitState_cpp*)send_gp->UnState(j,net))->thal = snd_val;
+      ((LeabraUnitState_cpp*)send_gp->UnState(j,net))->thal_gate = gate_val;
     }
   }
 }
 
-void GPiInvUnitSpec::Compute_Act_Post(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void GPiInvUnitSpec::Compute_Act_Post(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
   inherited::Compute_Act_Post(u, net, thr_no);
   Send_Thal(u, net, thr_no);    // note: essential to send all modulation in Act_Post
 }

@@ -1,501 +1,733 @@
-// Copyright 2017, Regents of the University of Colorado,
-// Carnegie Mellon University, Princeton University.
-//
-// This file is part of Emergent
-//
-//   Emergent is free software; you can redistribute it and/or modify
-//   it under the terms of the GNU General Public License as published by
-//   the Free Software Foundation; either version 2 of the License, or
-//   (at your option) any later version.
-//
-//   Emergent is distributed in the hope that it will be useful,
-//   but WITHOUT ANY WARRANTY; without even the implied warranty of
-//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//   GNU General Public License for more details.
-
-#ifndef LeabraLayerSpec_core_h
-#define LeabraLayerSpec_core_h 1
-
-// This file contains the core inline Leabra algorithm code for Unit-level computations
-// it can be shared between basic C++ and other systems such as CUDA
-
-// outer context including this MUST have the following defines:
-
-// for member class elements that group together relevant parameters
-// #define LAYERSPEC_MEMBER_SUFFIX _cuda -- or empty for base case
-// #define LAYERSPEC_MEMBER_BASE SpecMemberBase or SpecMemberBase_cuda or ..
-
-// for main spec class
-// #define LAYERSPEC_CLASS_SUFFIX _cuda or _core
-// #define LAYERSPEC_BASE UnitSpec_cuda or UnitSpec
-
-// make sure we have a cudafun defined -- actual cuda needs to include ta_cuda.h
-#ifndef CUDAFUN
-#define CUDAFUN
-#endif
-
-#ifndef INLINE
-#define INLINE CUDAFUN inline
-#endif
-
-#ifndef PASTETWOITEMSTOGETHER
-#define PASTETWOITEMSTOGETHER(c,s) c ## s
-#define CLASS_SUFFIXED(c,s) PASTETWOITEMSTOGETHER(c,s)
-#endif
-
-#define LAYERSPEC_MEMBER(c) CLASS_SUFFIXED(c,LAYERSPEC_MEMBER_SUFFIX)
-
-#define LAYERSPEC_MEMBER_CLASS(c) class E_API CLASS_SUFFIXED(c,LAYERSPEC_MEMBER_SUFFIX) : public LAYERSPEC_MEMBER_BASE
-
-#define LAYERSPEC_CLASS(c) class E_API CLASS_SUFFIXED(c,LAYERSPEC_CLASS_SUFFIX) : public LAYERSPEC_BASE
-
-#ifdef LeabraLayerSpec_h
-// for the standard C++ TA case
-
-#include <LeabraUnitVars>
-
-#define UNITVARS LeabraUnitVars
-
-#define LAYERSPEC_TD_STD_CODE(c) \
-  String        GetTypeDecoKey() const override { return "LayerSpec"; } \
-  \
-  TA_SIMPLE_BASEFUNS(CLASS_SUFFIXED(c, LAYERSPEC_MEMBER_SUFFIX));   \
-protected: \
-  SPEC_DEFAULTS; \
-private: \
-  void Destroy() { }
-
-#define LAYERSPEC_TD_STD_CODE_SPEC(c) \
-  TA_SIMPLE_BASEFUNS(CLASS_SUFFIXED(c, LAYERSPEC_CLASS_SUFFIX));     \
-protected: \
-  SPEC_DEFAULTS; \
-private: \
-  void Destroy() { }
-
-#define UPDATE_AFTER_EDIT(c) \
-  protected: \
-  void UpdateAfterEdit_impl() override { inherited::UpdateAfterEdit_impl(); \
-    c }
-
-#else
-// for cuda / other
-
-#define UNITVARS LeabraUnitVars_gen
-
-#define LAYERSPEC_TD_STD_CODE(c) \
-  CLASS_SUFFIXED(c, LAYERSPEC_MEMBER_SUFFIX) () { Initialize(); }
-
-#define LAYERSPEC_TD_STD_CODE_SPEC(c) \
-  CLASS_SUFFIXED(c, LAYERSPEC_CLASS_SUFFIX) () { Initialize(); }
-
-#define UPDATE_AFTER_EDIT(c) void UpdateAfterEdit_impl() { c }
-
-#endif
+// this contains core shared code, and is included directly in LeabraLayerSpec.h, _cpp.h, _cuda.h
+//{
+  STATE_CLASS(LeabraInhibSpec) lay_inhib;	// #CAT_Activation #AKA_inhib how to compute layer-wide inhibition -- uses feedforward (FF) and feedback (FB) inhibition (FFFB) based on average netinput (FF) and activation (FB) -- net inhibition is MAX of all operative inhibition -- any inhibitory unit inhibition is just added on top of this computed inhibition
+  STATE_CLASS(LeabraInhibSpec) unit_gp_inhib; // #CAT_Activation how to compute unit-group-level inhibition (only relevant if layer actually has unit groups -- net inhibition is MAX of all operative inhibition -- uses feedforward (FF) and feedback (FB) inhibition (FFFB) based on average netinput (FF) and activation (FB) -- any inhibitory unit inhibition is just added on top of this computed inhibition
+  STATE_CLASS(LeabraInhibSpec) lay_gp_inhib;	// #CAT_Activation inhibition computed across layers within layer groups -- only applicable if the layer actually lives in a subgroup with other layers (and only in a first-level subgroup, not a sub-sub-group) -- only the specs of the FIRST layer in the layer group are used for computing inhib -- net inhibition is MAX of all operative inhibition -- uses feedforward (FF) and feedback (FB) inhibition (FFFB) based on average netinput (FF) and activation (FB) -- any inhibitory unit inhibition is just added on top of this computed inhibition
+  STATE_CLASS(LayerAvgActSpec) avg_act;	// #CAT_Activation expected average activity levels in the layer -- used for computing running-average computation that is then used for netinput scaling (also specifies time constant for updating average), and for the target value for adapting inhibition in inhib_adapt
+  STATE_CLASS(LeabraAdaptInhib) inhib_adapt; // #CAT_Activation adapt an extra inhibitory gain value to keep overall layer activation within a given target range, based on avg_act.targ_init target value (TARGET or deep TRC layers use the running-average plus phase average actitvation) -- gain applies to all forms of inhibition (layer, unit group) that are in effect
+  STATE_CLASS(LeabraInhibMisc) inhib_misc;	// #CAT_Activation extra parameters for special forms of inhibition beyond the basic FFFB dynamic specified in inhib
+  STATE_CLASS(LeabraClampSpec) clamp;        // #CAT_Activation how to clamp external inputs to units (hard vs. soft)
+  STATE_CLASS(LayerDecaySpec)  decay;        // #CAT_Activation decay of activity state vars between trials
+  STATE_CLASS(LeabraDelInhib)  del_inhib;	// #CAT_Activation delayed inhibition, as a function of per-unit net input on prior trial and/or phase -- produces temporal derivative effects
+  STATE_CLASS(LeabraActMargin) margin;	// #CAT_Activation marginal activation computation -- detects those units that are on the edges of an attractor and focuses extra learning on them
+  float           lay_lrate;    // #CAT_Statistic layer-level learning rate modulator, multiplies learning rates for all connections coming into layer(s) that this spec applies to -- sets lrate_mod value on layer -- see also cos_diff for additional lrate modulation on top of this
+  STATE_CLASS(LeabraCosDiffMod) cos_diff;    // #CAT_Statistic leabra layer-level cosine of difference between plus and minus phase activations -- used to modulate amount of hebbian learning, and overall learning rate
+  STATE_CLASS(LeabraLayStats)  lstats;       // #CAT_Statistic layer-level statistics parameters
 
 
-////////////////////////////////////////////////////////////////////////////////////
+  INLINE int  GetStateSpecType() const override { return LEABRA_NETWORK_STATE::T_LEABRA_LAYER_SPEC; }
 
-// this takes maketa to treat this file as a target when processing LeabraLayerSpec.h
-// note: it doesn't process the .h extension
-#pragma maketa_file_is_target LeabraLayerSpec
+// Two levels of UnGpState:
+  // GetLayUnGpState -- the unit group state for whole layer -- layer level data
+  // UnGpState for unit groups: per unit group, replacing LeabraUnGpData from before
 
+  ///////////////////////////////////////////////////////////////////////
+  //	Access, status functions
 
-LAYERSPEC_MEMBER_CLASS(LeabraInhibSpec) {
-  // ##INLINE ##NO_TOKENS ##CAT_Leabra specifies how inhibition is computed in Leabra system -- uses feedforward (FF) and feedback (FB) inhibition (FFFB) based on average (or maximum) netinput (FF) and activation (FB) -- any unit-level inhibition is just added on top of this computed inhibition
-INHERITED(LAYERSPEC_MEMBER_BASE)
-public:
-  bool          on;             // enable this form of inhibition (layer or unit group) -- if only using inhibitory interneurons, both can be turned off
-  float         gi;             // #CONDSHOW_ON_on #MIN_0 #AKA_lay_gi #DEF_1.8 [1.5-2.3 typical, can go lower or higher as needed] overall inhibition gain -- this is main paramter to adjust to change overall activation levels -- it scales both the the ff and fb factors uniformly -- also see inhib_adapt which will adapt an additional multiplier on this overall inhibition to keep layer near target activation value specified in avg_act.targ_init
-  float		ff;		// #CONDSHOW_ON_on #MIN_0 #DEF_1 overall inhibitory contribution from feedforward inhibition -- multiplies average netinput (i.e., synaptic drive into layer) -- this anticipates upcoming changes in excitation, but if set too high, it can make activity slow to emerge -- see also ff0 for a zero-point for this value
-  float		fb;		// #CONDSHOW_ON_on #MIN_0 #DEF_1 overall inhibitory contribution from feedback inhibition -- multiplies average activation -- this reacts to layer activation levels and works more like a thermostat (turning up when the 'heat' in the layer is too high)
-  float         fb_tau;         // #CONDSHOW_ON_on #MIN_0 #DEF_1.4 time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly -- 1.4x the half-life) for integrating feedback inhibitory values -- prevents oscillations that otherwise occur -- relatively rapid 1.4 typically works, but may need to go longer if oscillations are a problem
-  float         max_vs_avg;     // #CONDSHOW_ON_on #DEF_0;0.5;1 #AKA_ff_max_vs_avg what proportion of the maximum vs. average netinput to use in the feedforward inhibition computation -- 0 = all average, 1 = all max, and values in between = proportional mix between average and max (ff_netin = avg + ff_max_vs_avg * (max - avg)) -- including more max can be beneficial especially in situations where the average can vary significantly but the activity should not -- max is more robust in many situations but less flexible and sensitive to the overall distribution -- max is better for cases more closely approximating single or strictly fixed winner-take-all behavior -- 0.5 is a good compromize in many cases and generally requires a reduction of .1 or slightly more (up to .3-.5) from the gi value for 0
-  float         ff0;            // #CONDSHOW_ON_on #DEF_0.1 feedforward zero point for average netinput -- below this level, no FF inhibition is computed based on avg netinput, and this value is subtraced from the ff inhib contribution above this value -- the 0.1 default should be good for most cases (and helps FF_FB produce k-winner-take-all dynamics), but if average netinputs are lower than typical, you may need to lower it
+  inline bool   HasUnitGpInhib(LEABRA_LAYER_STATE* lay)
+  { return (unit_gp_inhib.on && lay->n_ungps > 0); }
+  // does this layer have unit-group level inhibition?
+  inline bool   HasLayerInhib()
+  { return (lay_inhib.on); }
+  // does this layer have layer level inhibition
 
-  float		fb_dt;		// #READ_ONLY #EXPERT rate = 1 / tau
+  ///////////////////////////////////////////////////////////////////////
+  //	General Init functions
 
-  INLINE float    FFInhib(const float avg_netin, const float max_netin) {
-    const float ff_netin = avg_netin + max_vs_avg * (max_netin - avg_netin);
-    float ffi = 0.0f;
-    if(ff_netin > ff0) ffi = ff * (ff_netin - ff0);
-    return ffi;
-  }
-  // feedforward inhibition value as function of netinput
-
-  INLINE float    FBInhib(const float avg_act) {
-    float fbi = fb * avg_act;
-    return fbi;
-  }
-  // feedback inhibition value as function of netinput
-
-  LAYERSPEC_TD_STD_CODE(LeabraInhibSpec);
-
-  UPDATE_AFTER_EDIT( fb_dt = 1.0f / fb_tau; );
-  
-private:
-  void	Initialize() {
-    on = true;
-    Defaults_init();
-  }
-    
-  void	Defaults_init() {
-    gi = 1.8f;
-    ff = 1.0f;
-    fb = 1.0f;
-    fb_tau = 1.4f;
-    max_vs_avg = 0.0f;
-    ff0 = 0.1f;
-  
-    fb_dt = 1.0f / fb_tau;
-  }
-    
-};
-
-
-LAYERSPEC_MEMBER_CLASS(LayerAvgActSpec) {
-  // ##INLINE ##NO_TOKENS ##CAT_Leabra expected average activity levels in the layer -- used for computing running-average computation that is then used for netinput scaling (also specifies time constant for updating average), and for the target value for adapting inhibition in inhib_adapt
-INHERITED(LAYERSPEC_MEMBER_BASE)
-public:
-  float		targ_init;	    // #AKA_init #MIN_0 [typically 0.1 - 0.2] target value for adapting inhibition (see inhib_adapt params) and initial estimated average activity level in the layer (see use_first option -- if that is off then it is used as a starting point for running average actual activity level, acts_m_avg and acts_p_avg) -- acts_p_avg is used primarily for automatic netinput scaling, to balance out layers that have different activity levels -- thus it is important that init be relatively accurate -- good idea to update from recorded acts_p_avg levels (see LayerAvgAct button, here and on network) -- see also adjust parameter
-  bool          fixed;      // #DEF_false if true, then the init value is used as a constant for acts_p_avg_eff (the effective value used for netinput rescaling), instead of using the actual running average activation
-  bool          use_ext_act;  // #DEF_false if true, then use the activation level computed from the external inputs to this layer (avg of targ or ext unit vars) -- this will only be applied to layers with INPUT or TARGET / OUTPUT layer types, and falls back on the targ_init value if external inputs are not available or have a zero average -- implies fixed behavior
-  bool          use_first;    // #CONDSHOW_OFF_fixed||use_ext_act #DEF_true use the first actual average value to override targ_init value -- actual value is likely to be a better estimate than our guess
-  float         tau;        // #CONDSHOW_OFF_fixed||use_ext_act #DEF_100 #MIN_1 time constant in trials for integrating time-average values at the layer level -- used for computing acts_m_avg and acts_p_avg
-  float         adjust;     // #CONDSHOW_OFF_fixed||use_ext_act #DEF_1 adjustment multiplier on the computed acts_p_avg value that is used to compute acts_p_avg_eff, which is actually used for netinput rescaling -- if based on connectivity patterns or other factors the actual running-average value is resulting in netinputs that are too high or low, then this can be used to adjust the effective average activity value -- reducing the average activity with a factor < 1 will increase netinput scaling (stronger net inputs from layers that receive from this layer), and vice-versa for increasing (decreases net inputs)
-  
-  float		dt;		// #READ_ONLY #EXPERT rate = 1 / tau
-
-  LAYERSPEC_TD_STD_CODE(LayerAvgActSpec);
-  
-  UPDATE_AFTER_EDIT( dt = 1.0f / tau; );
-  
-private:
-  void	Initialize() { targ_init = 0.15f;  Defaults_init(); }
-
-  void	Defaults_init() {
-    fixed = false;
-    use_ext_act = false;
-    use_first = true;
-    tau = 100.0f;
-    adjust = 1.0f;
-    dt = 1.0f / tau;
-  }
-};
-
-
-
-LAYERSPEC_MEMBER_CLASS(LeabraAdaptInhib) {
-  // ##INLINE ##NO_TOKENS ##CAT_Leabra adapt the overal inhibitory gain value (adapt_gi on layer) to keep overall layer activation within a given target range as specified by avg_act.targ_init
-INHERITED(LAYERSPEC_MEMBER_BASE)
-public:
-  bool          on;             // enable adaptive inhibition function to adapt overall layer inhibition gain as stored in layer adapt_gi value
-  float         tol_pct;        // #CONDSHOW_ON_on #DEF_0.25 tolerance around target average activation of avg_act.targ_init as a proportion of that target value -- only once activations move outside this tolerance are inhibitory values adapted
-  int           trial_interval; // #CONDSHOW_ON_on interval in trials between updates of the adaptive inhibition values -- only check and update this often -- typically the same order as the number of trials per epoch used in training the model
-  float		tau;		// #CONDSHOW_ON_on #DEF_200;500 time constant for rate of updating the inhibitory gain value, in terms of trial_interval periods (e.g., 100 = adapt gain over 100 trial intervals) -- adaptation rate is 1/tau * (acts_m_avg - trg_avg_act) / trg_avg_act
-
-  float		dt;		// #READ_ONLY #EXPERT rate = 1 / tau
-
-  INLINE bool   AdaptInhib(float& gi, const float trg_avg_act, const float acts_m_avg) {
-    float delta_pct = (acts_m_avg - trg_avg_act) / trg_avg_act;
-    if(fabsf(delta_pct) >= tol_pct) {
-      gi += dt * delta_pct;
-      return true;
+  INLINE virtual void	Init_Weights_Layer(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
+    LEABRA_UNGP_STATE* lgpd = lay->GetLayUnGpState(net);
+    lgpd->Init_UnGp_State(avg_act.targ_init, avg_act.targ_init, avg_act.AvgEffInit());
+    for(int g=0; g < lay->n_ungps; g++) {
+      LEABRA_UNGP_STATE* gpd = lay->GetUnGpState(net, g);
+      gpd->Init_UnGp_State(avg_act.targ_init, avg_act.targ_init, avg_act.AvgEffInit());
     }
-    return false;
+    Init_AdaptInhib(lay, net);         // initialize inhibition at start..
   }
-
-  LAYERSPEC_TD_STD_CODE(LeabraAdaptInhib);
+  // #CAT_Learning layer-level initialization taking place after Init_Weights on units
   
-  UPDATE_AFTER_EDIT( dt = 1.0f / tau; );
-  
-private:
-  void	Initialize() {  on = false;  Defaults_init();  }
-  
-  void	Defaults_init() {
-    tol_pct = 0.25f;
-    trial_interval = 100;
-    tau = 200.0f;
-    dt = 1.0f / tau;
+  INLINE virtual void Init_AdaptInhib(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
+    LEABRA_UNGP_STATE* lgpd = lay->GetLayUnGpState(net);
+    lay->adapt_gi = 1.0f;
+    lay->margin.low_thr = margin.low_thr;
+    lay->margin.med_thr = margin.med_thr;
+    lay->margin.hi_thr = margin.hi_thr;
+    float eff_p_avg = lgpd->acts_p_avg / margin.avg_act;
+    lay->margin.low_avg = eff_p_avg;
+    lay->margin.med_avg = margin.MedTarg(eff_p_avg);
+    lay->margin.hi_avg = margin.HiTarg(eff_p_avg);
   }
-};
-
-
-
-LAYERSPEC_MEMBER_CLASS(LeabraActMargin) {
-  // ##INLINE ##NO_TOKENS ##CAT_Leabra marginal activation computation -- detects those units that are on the edges of an attractor and focuses extra learning on them
-INHERITED(LAYERSPEC_MEMBER_BASE)
-public:
-  float         pct_marg;       // #DEF_0.3 proportion of the total number of active units (defined by layer acts_p_avg value) that should fit between the low and high marginal thresholds, on average -- hi_thr is adapted over time to hit this target on average (actually (1-pct_marg) * acts_p_avg above the hi thr, to remove dependence on low_thr), while low_thr is adapted to capture the full set of acts_p_avg units, and med_thr is adapted to roughly split the pct_marg proportion in half
-  float         avg_tau;        // #DEF_100 time constant in terms of trials for computing the average numbers of units in the different marginal categories
-  float         adapt_tau;      // #DEF_500 time constant in terms of trials for adapting the thresholds based on average target values
-  float         tol_pct;        // #DEF_0.25 tolerance around target values as a proportion of that target value -- don't adapt values if values are within this tolerance of their targets
-  float         avg_act;        // #DEF_0.8 expected average activation level for active neurons -- this is a correction factor for converting acts_p_avg into target averages (divide by this avg_act)
-  float	        low_thr;        // #DEF_0.501 initial low threshold for marginal activation, in terms of v_m_eq -- adapts from here so that roughly acts_p_avg units on average are above this low threshold
-  float         med_thr;        // #DEF_0.506 initial medium threshold for marginal activation in terms of v_m_eq -- adapts from here so that the number of marginal units are split evenly on average
-  float         hi_thr;         // #DEF_0.508 initial high threshold for marginal activation in terms of v_m_eq -- adapts from here so that roughly (1-pct_marg) * acts_p_avg are above the hi thr (and thus, pct_marg * acts_p_avg are between low and hi thresholds)
+  // #CAT_Activation called in Init_Weights_Layer initialize the adaptive inhibitory state values
   
-  float		avg_dt;		// #READ_ONLY #EXPERT rate = 1 / tau
-  float		adapt_dt;	// #READ_ONLY #EXPERT rate = 1 / tau
-
-  INLINE void   IncrAvgVal(float& avg, const float new_val) {
-    avg += avg_dt * (new_val - avg);
-  }
-  // increment running average based on new value
-  INLINE float  AdaptThr(float& thr, const float avg, const float trg, const float sgn) {
-    float delta_pct = (avg - trg) / trg;
-    if(fabsf(delta_pct) >= tol_pct) {
-      float del = sgn * adapt_dt * delta_pct;
-      thr += del;
-      return del;
+  INLINE virtual void Init_Stats(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
+    lay->Init_Stats();
+    for(int i=0;i<lay->n_recv_prjns;i++) {
+      LEABRA_PRJN_STATE* prjn = lay->GetPrjnState(net, i);
+      prjn->Init_Stats();
     }
-    return 0.0f;
   }
-  // adadpt a threshold as function of difference between avg and target, in direction given by sign
-  INLINE float  HiTarg(const float acts_p_avg) {
-    return (1.0f - pct_marg) * acts_p_avg;
+  // #CAT_Statistic called in Init_Weights_Layer intialize statistic variables
+
+  INLINE virtual void	Init_Acts_Layer(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
+    lay->ext_flag = LAYER_STATE::NO_EXTERNAL;
+    lay->hard_clamped = false;
+    LEABRA_UNGP_STATE* lgpd = lay->GetLayUnGpState(net);
+    lgpd->UnGp_Init_Acts();
+    for(int g=0; g < lay->n_ungps; g++) {
+      LEABRA_UNGP_STATE* gpd = lay->GetUnGpState(net, g);
+      gpd->UnGp_Init_Acts();
+    }
+  }    
+  // #CAT_Activation initialize unit-level dynamic state variables (activations, etc)
+
+  ///////////////////////////////////////////////////////////////////////
+  //	Trial_Init -- at start of trial
+
+  INIMPL virtual void	Trial_Init_Layer(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net);
+  // #CAT_Learning layer level trial init -- overload where needed
+
+  ///////////////////////////////////////////////////////////////////////
+  //	Quarter_Init -- at start of settling
+
+  INLINE virtual void Quarter_Init_TargFlags_Layer(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net)  {
+    if(lay->HasExtFlag(LAYER_STATE::TARG)) {     // only process target layers..
+      if(net->phase == LEABRA_NETWORK_STATE::PLUS_PHASE)
+        lay->SetExtFlag(LAYER_STATE::EXT);
+    }
   }
-  // the target value for hi threshold as function of acts_p_avg level in layer
-  INLINE float  MedTarg(const float acts_p_avg) {
-    return (0.5f * pct_marg) * acts_p_avg;
+  // #IGNORE layer-level initialize start of a setting phase, set input flags appropriately, etc
+  
+  INLINE virtual void Quarter_Init_AvgAct_Layer(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net)  {
+    LEABRA_UNGP_STATE* lgpd = lay->GetLayUnGpState(net);
+    if(avg_act.fixed) {
+      lgpd->acts_p_avg_eff = avg_act.targ_init;
+    }
+    else if(lay->layer_type != LAYER_STATE::HIDDEN && avg_act.use_ext_act) {
+      // todo: this case is not yet supported!
+      // if(!(lay->HasExtFlag(LAYER_STATE::EXT) || lay->HasExtFlag(LAYER_STATE::TARG))) {
+      //   lgpd->acts_p_avg_eff = avg_act.targ_init;
+      // }
+      // else {
+      //   float avg_ext = Compute_AvgExt(lay, net);
+      //   if(avg_ext == 0.0f) {
+      //     lgpd->acts_p_avg_eff = avg_act.targ_init;
+      //   }
+      //   else {
+      //     lgpd->acts_p_avg_eff = avg_ext;
+      //   }
+      // }
+    }
   }
-  // the target value for med threshold as function of acts_p_avg level in layer
-  
-  
-  LAYERSPEC_TD_STD_CODE(LeabraActMargin);
-  
-  UPDATE_AFTER_EDIT( avg_dt = 1.0f / avg_tau;
-                     adapt_dt = 1.0f / adapt_tau; );
-  
-private:
-  void	Initialize() { Defaults_init(); }
+  // #IGNORE layer-level init avg_act based on fixed, use_ext_act
 
-  void	Defaults_init() {
-    pct_marg = 0.3f;
-    avg_tau = 100.0f;
-    adapt_tau = 500.0f;
-    tol_pct = 0.25f;
-    avg_act = 0.8f;
-    low_thr = 0.501f;
-    med_thr = 0.506f;
-    hi_thr = 0.508f;
-
-    avg_dt = 1.0f / avg_tau;
-    adapt_dt = 1.0f / adapt_tau;
+  INLINE virtual void	Quarter_Init_Layer(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net)  {
+    Quarter_Init_TargFlags_Layer(lay, net);
+    Quarter_Init_AvgAct_Layer(lay, net);
   }
-};
+  // #CAT_Activation initialize start of a setting phase: all layer-level misc init takes place here (calls TargFlags_Layer) -- other stuff all done directly in Quarter_Init_Units call
 
 
-
-LAYERSPEC_MEMBER_CLASS(LeabraInhibMisc) {
-  // ##INLINE ##NO_TOKENS ##CAT_Leabra extra specifications for how inhibition is computed in Leabra system -- these apply across layer and unit group levels
-INHERITED(LAYERSPEC_MEMBER_BASE)
-public:
-  float		net_thr;	// #DEF_0;0.2 threshold on net input for inclusion in the computation of the average netinput, which in turn drives feedforward inhibition -- this is important for preventing units that don't have any significant input from diluting the overall level of inhibition -- prior to version 7.8.7 this was effectively 0 -- set to 0.2 if inhibition is being inappropriately diluted by these off units (not all such cases benefit from this filtering -- experiment) -- see also thr_rel and thr_act options for whether this is a relative vs. absolute threshold, and whether it applies to activations or not
-  bool          thr_rel;        // #CONDSHOW_OFF_net_thr:0 #DEF_true if true, net_thr is relative to the maximum net input within the layer (from the previous cycle) -- this is useful because net input values evolve over time and a fixed threshold prevents any ff inhibition early in settling when net inputs are low
-  float		self_fb;	// #MIN_0 #DEF_0.5;0.02;0;1 individual unit self feedback inhibition -- can produce proportional activation behavior in individual units for specialized cases (e.g., scalar val or BG units), but not so good for typical hidden layers
- float          self_tau;       // #CONDSHOW_OFF_self_fb:0 #MIN_0 #DEF_1.4 time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly -- 1.4x the half-life) for integrating unit self feedback inhibitory values -- prevents oscillations that otherwise occur -- relatively rapid 1.4 typically works, but may need to go longer if oscillations are a problem
-  bool          fb_up_immed;    // should the feedback inhibition rise immediately to the driving value, and then decay with fb_tau time constant?  this is important for spiking activation function.  otherwise, all feedback component changes are goverened by fb_tau, which works better for rate-code case
-
-  float		self_dt;        // #READ_ONLY #EXPERT rate = 1 / tau
-
-  LAYERSPEC_TD_STD_CODE(LeabraInhibMisc);
-  
-  UPDATE_AFTER_EDIT( self_dt = 1.0f / self_tau; );
-  
-private:
-  void	Initialize() {
-    net_thr = 0.0f;
-    thr_rel = true;
-    self_fb = 0.0f;
-    fb_up_immed = false;
-
-    Defaults_init();
+  INLINE virtual void	Compute_HardClamp_Layer(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
+    if(!(clamp.hard && lay->HasExtFlag(LAYER_STATE::EXT))) {
+      lay->hard_clamped = false;
+      return;
+    }
+    lay->hard_clamped = true;     // cache this flag
+    LEABRA_UNGP_STATE* lgpd = lay->GetLayUnGpState(net);
+    lgpd->UnGp_SetVals(0.5f);            // assume 0 - 1 clamped inputs
   }
-  void	Defaults_init() {
-    self_tau = 1.4f;
-    self_dt = 1.0f / self_tau;
+  // #CAT_Activation prior to settling: hard-clamp inputs
+
+  INLINE virtual void	ExtToComp(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
+    if(!lay->HasExtFlag(LAYER_STATE::EXT))       // only process ext
+      return;
+    lay->ext_flag = LAYER_STATE::COMP;   // totally reset to comparison
   }
-};
-
-
-
-LAYERSPEC_MEMBER_CLASS(LeabraClampSpec) {
-  // ##INLINE ##NO_TOKENS ##CAT_Leabra specs for clamping external inputs on INPUT or TARGET layers
-INHERITED(LAYERSPEC_MEMBER_BASE)
-public:
-  bool		hard;		// #DEF_true whether to hard clamp inputs where activation is directly set to external input value (act = ext, computed once at start of quarter) or do soft clamping where ext is added into net input (net += gain * ext)
-  float		gain;		// #CONDSHOW_OFF_hard #DEF_0.02:0.5 soft clamp gain factor (net += gain * ext)
-  bool		avg;		// #CONDSHOW_OFF_hard compute soft clamp as the average of current and target netins, not the sum -- prevents some of the main effect problems associated with adding
-  float         avg_gain;       // #CONDSHOW_OFF_hard||!avg gain factor for averaging the netinput -- clamp value contributes with avg_gain and current netin as (1-avg_gain)
-
-
-  INLINE  float ClampAvgNetin(const float ext, const float net_syn)
-  { return avg_gain * gain * ext + (1.0f - avg_gain) * net_syn; }
-
-  LAYERSPEC_TD_STD_CODE(LeabraClampSpec);
+  // #CAT_Activation change external inputs to comparisons (remove input)
   
-private:
-  
-  void	Initialize() {
-    hard = true;
-    avg = false;
-    avg_gain = 0.2f;
-    Defaults_init();
+  INLINE virtual void	TargExtToComp(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
+    if(!lay->HasExtFlag(LAYER_STATE::TARG_EXT))  // only process w/ external input
+      return;
+    lay->ext_flag = LAYER_STATE::COMP;   // totally reset to comparison
   }
-  void	Defaults_init() { gain = 0.2f; }
-};
+  // #CAT_Activation change target & external inputs to comparisons (remove targ & input)
 
 
+  ///////////////////////////////////////////////////////////////////////
+  //	Cycle Step 1: Netinput 
 
-LAYERSPEC_MEMBER_CLASS(LayerDecaySpec) {
-  // ##INLINE ##NO_TOKENS ##CAT_Leabra holds decay values and other layer-level time constants
-INHERITED(LAYERSPEC_MEMBER_BASE)
-public:
-  float		trial;		// #AKA_event #MIN_0 #MAX_1 [1 to clear] proportion decay of state vars between trials -- if all layers have 0 trial decay, then the net input does not need to be reset between trials, yielding significantly faster performance
-
- LAYERSPEC_TD_STD_CODE(LayerDecaySpec);
- 
-private:
-  void	Initialize() { trial = 1.0f; Defaults_init(); }
-
-  void	Defaults_init() { };
-};
+  // main computation is direct Send_NetinDelta call on units through threading mechanism
+  // followed by Compute_NetinInteg on units
 
 
+  ///////////////////////////////////////////////////////////////////////
+  //	Cycle Step 2: Inhibition
 
-LAYERSPEC_MEMBER_CLASS(LeabraDelInhib) {
-  // ##INLINE ##NO_TOKENS ##CAT_Leabra delayed inhibition, as a function of per-unit net input on prior trial and/or phase -- produces temporal derivative effects
-INHERITED(LAYERSPEC_MEMBER_BASE)
-public:
-  bool          on;             // enable delayed inhibition 
-  float		prv_trl;	// #CONDSHOW_ON_on proportion of per-unit net input on previous trial to add in as inhibition 
-  float		prv_q;	        // #CONDSHOW_ON_on proportion of per-unit net input on previous gamma-frequency quarter to add in as inhibition 
+  INLINE virtual void Compute_Inhib_FfFb
+    (LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net, STATE_CLASS_CPP(LeabraInhibVals)& i_val, const float netin_avg,
+     const float netin_max, const float acts_avg, STATE_CLASS(LeabraInhibSpec)& ispec) {
+    if(!ispec.on) {
+      i_val.ffi = 0.0f;
+      i_val.fbi = 0.0f;
+      i_val.g_i = 0.0f;
+      return;
+    }
 
-  LAYERSPEC_TD_STD_CODE(LeabraDelInhib);
-  
-private:
-  void	Initialize() {
-    on = false;
-    prv_trl = 0.0f;
-    prv_q = 0.0f;
-    Defaults_init();
-  }
+    float nw_ffi = ispec.FFInhib(netin_avg, netin_max);
+    float nw_fbi = ispec.FBInhib(acts_avg);
 
-  void	Defaults_init() { };
-};
+    i_val.ffi = nw_ffi;
 
-
-
-LAYERSPEC_MEMBER_CLASS(LeabraCosDiffMod) {
-  // ##INLINE ##NO_TOKENS ##CAT_Leabra leabra layer-level cosine of difference between plus and minus phase activations -- used to modulate amount of hebbian learning, and overall learning rate
-INHERITED(LAYERSPEC_MEMBER_BASE)
-public:
-  float		avg_tau;  // #DEF_100 #MIN_1 time constant in trials (roughly how long significant change takes, 1.4 x half-life) for computing running average cos_diff value for the layer, cos_diff_avg = cosine difference between act_m and act_p -- this is an important statistic for how much phase-based difference there is between phases in this layer -- it is used in standard X_COS_DIFF modulation of l_mix in LeabraConSpec, and for modulating learning rate as a function of predictability in the DeepLeabra predictive auto-encoder learning -- running average variance also computed with this: cos_diff_var
-  bool          lrate_mod; // modulate learning rate in this layer as a function of the cos_diff on this trial relative to running average cos_diff values (see avg_tau) -- lrate_mod = cos_diff_lrate_mult * (cos_diff / cos_diff_avg) -- if this layer is less predictable than previous trials, we don't learn as much
-  bool          lrmod_fm_trc;   // #CONDSHOW_ON_lrate_mod get our learning rate modulation from our corresponding TRC layer, which has the strongest and most accurate cos_diff signals -- definitely recommended for non-TRC layers assocated with one -- must find a connection
-  float         lrmod_z_thr; // #DEF_-1.5 #CONDSHOW_ON_lrate_mod&&!lrmod_fm_trc threshold for setting learning rate modulation to zero, as function of z-normalized cos_diff value on this trial -- normalization computed using incrementally computed average and variance values -- this essentially has the network ignoring trials where the diff was significantly below average -- replaces the manual unlearnable trial mechanism
-  bool          set_net_unlrn;  // #CONDSHOW_ON_lrate_mod&&!lrmod_fm_trc set the network-level unlearnable_trial flag based on our learning rate modulation factor -- only makes sense for one layer to do this
-
-  float         avg_dt; // #READ_ONLY #EXPERT rate constant = 1 / cos_diff_avg_tau
-  float         avg_dt_c; // #READ_ONLY #EXPERT complement of rate constant = 1 - cos_diff_avg_dt
-
-  INLINE void	UpdtDiffAvgVar(float& diff_avg, float& diff_var, const float cos_diff) {
-    if(diff_avg == 0.0f) {        // first time -- set
-      diff_avg = cos_diff;
-      diff_var = 0.0f;
+    // dt only on fbi part
+    if(inhib_misc.fb_up_immed) {
+      if(nw_fbi > i_val.fbi) { // up_immed case --- best for spiking
+        i_val.fbi = nw_fbi;
+      }
+      else {
+        ispec.FBUpdt(i_val.fbi, nw_fbi);
+      }
     }
     else {
-      float del = cos_diff - diff_avg;
-      float incr = avg_dt * del;
-      diff_avg += incr;
-      // following is magic exponentially-weighted incremental variance formula
-      // derived by Finch, 2009: Incremental calculation of weighted mean and variance
-      if(diff_var == 0.0f)
-        diff_var = 2.0f * avg_dt_c * del * incr;
-      else
-        diff_var = avg_dt_c * (diff_var + del * incr);
+      ispec.FBUpdt(i_val.fbi, nw_fbi);
+    }
+
+    i_val.g_i = lay->adapt_gi * ispec.gi * (nw_ffi + i_val.fbi); // combine
+    i_val.g_i_orig = i_val.g_i; // retain original values..
+  }
+  // #IGNORE implementation of feed-forward, feed-back inhibition computation
+
+  INLINE virtual void	Compute_Inhib(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
+    if(lay->hard_clamped) return; // say no more..
+
+    if(HasUnitGpInhib(lay)) {
+      for(int g=0; g < lay->n_ungps; g++) {
+        LEABRA_UNGP_STATE* gpd = lay->GetUnGpState(net, g);
+        Compute_Inhib_FfFb(lay, net, gpd->i_val, gpd->netin.avg, gpd->netin.max,
+                           gpd->acts.avg, unit_gp_inhib);
+      }
+    }
+    LEABRA_UNGP_STATE* lgpd = lay->GetLayUnGpState(net);
+    if(HasLayerInhib()) {
+      Compute_Inhib_FfFb(lay, net, lgpd->i_val, lgpd->netin.avg, lgpd->netin.max,
+                         lgpd->acts.avg, lay_inhib);
+    }
+    else {                        // initialize lay inhib -- otherwise it will interfere!
+      lgpd->i_val.ffi = 0.0f;
+      lgpd->i_val.fbi = 0.0f;
+      lgpd->i_val.g_i = 0.0f;
+    }
+    Compute_LayInhibToGps(lay, net); // sync it all up..
+  }
+  // #CAT_Activation compute the inhibition for layer -- this is the main call point into this stage of processing
+  
+  INLINE virtual void	Compute_LayInhibToGps(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
+    LEABRA_UNGP_STATE* lgpd = lay->GetLayUnGpState(net);
+    if(lay_gp_inhib.on) {
+      lgpd->i_val.g_i = fmaxf(lgpd->i_val.g_i, lay->laygp_i_val.g_i);
+    }
+  
+    if(lay->n_ungps == 0) return;
+  
+    if(unit_gp_inhib.on) {
+      for(int g=0; g < lay->n_ungps; g++) {
+        LEABRA_UNGP_STATE* gpd = lay->GetUnGpState(net, g);
+        gpd->i_val.lay_g_i = lgpd->i_val.g_i;
+        gpd->i_val.g_i = fmaxf(gpd->i_val.g_i, lgpd->i_val.g_i);
+      }
+    }
+    else {                        // always do this..
+      // propagate layer-level g_i to all subgroups 
+      for(int g=0; g < lay->n_ungps; g++) {
+        LEABRA_UNGP_STATE* gpd = lay->GetUnGpState(net, g);
+        gpd->i_val.g_i = lgpd->i_val.g_i;
+      }
     }
   }
-  // update the running average diff value
+  // #CAT_Activation Stage 2.2: for layer groups, need to propagate inhib out to unit groups
 
-  INLINE float  CosDiffLrateMod(const float cos_diff, const float diff_avg,
-                                const float diff_var) {
-    if(diff_var <= 0.0f) return 1.0f;
-    float zval = (cos_diff - diff_avg) / sqrtf(diff_var); // stdev = sqrt of var
-    // z-normal value is starting point for learning rate factor
-    if(zval < lrmod_z_thr) return 0.0f;
-    return 1.0f;
+  ///////////////////////////////////////////////////////////////////////
+  //	Cycle Step 3: Activation
+
+  // main function is basic Compute_Act which calls a bunch of sub-functions on the unitspec
+  // called directly on units through threading mechanism
+
+  ///////////////////////////////////////////////////////////////////////
+  //	Cycle Stats
+
+  INLINE virtual void	Compute_CycleStats_Pre(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) { };
+  // #CAT_Statistic pre-cycle-stats -- done in single thread prior to cycle stats -- good place to intervene for whole-layer dynamics
+
+  ///////////////////////////////////////////////////////////////////////
+  //	Quarter_Final
+
+  INLINE virtual void	Quarter_Final_Pre(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) { };
+  // #CAT_Activation perform computations in layers at end of settling -- this is a pre-stage that occurs prior to final Quarter_Final -- use this for anything that needs to happen prior to the standard Quarter_Final across layers (called by network Quarter_Final)
+
+  INLINE virtual void Quarter_Final_GetMinus_UnGp(LEABRA_UNGP_STATE* gpd, LEABRA_NETWORK_STATE* net) {
+    gpd->acts_m = gpd->acts_eq;
+    if(avg_act.use_first && gpd->acts_m_avg == avg_act.targ_init) {
+      gpd->acts_m_avg += 0.5f * (gpd->acts_m.avg - gpd->acts_m_avg);
+    }
+    else {
+      gpd->acts_m_avg += avg_act.dt * (gpd->acts_m.avg - gpd->acts_m_avg);
+    }
   }
-  // get lrate modulation based on cos_diff level
-  
-  LAYERSPEC_TD_STD_CODE(LeabraCosDiffMod);
-  
-  UPDATE_AFTER_EDIT( avg_dt = 1.0f / avg_tau; avg_dt_c = 1.0f - avg_dt; );
-  
-private:
-  void	Initialize() {   Defaults_init(); }
-  void	Defaults_init() {
-    avg_tau = 100.0f;
-    lrate_mod = false;
-    lrmod_fm_trc = false;
-    lrmod_z_thr = -1.5f;
-    set_net_unlrn = false;
+  // #IGNORE
 
-    avg_dt = 1.0f / avg_tau;
-    avg_dt_c = 1.0f - avg_dt;
+  INLINE virtual void Quarter_Final_GetMinus(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
+    LEABRA_UNGP_STATE* lgpd = lay->GetLayUnGpState(net);
+    Quarter_Final_GetMinus_UnGp(lgpd, net);
+    for(int g=0; g < lay->n_ungps; g++) {
+      LEABRA_UNGP_STATE* gpd = lay->GetUnGpState(net, g);
+      Quarter_Final_GetMinus_UnGp(gpd, net);
+    }
   }
-};
-
-
-
-LAYERSPEC_MEMBER_CLASS(LeabraLayStats) {
-  // ##INLINE ##NO_TOKENS ##CAT_Leabra leabra layer-level statistics parameters
-INHERITED(LAYERSPEC_MEMBER_BASE)
-public:
-  float         hog_thr;           // #MIN_0 #MAX_1 #DEF_0.3;0.2 threshold on unit avg_act (long time-averaged activation), above which the unit is considered to be a 'hog' that is dominating the representational space
-  float         dead_thr;         // #MIN_0 #MAX_1 #DEF_0.01;0.005 threshold on unit avg_act (long time-averaged activation), below which the unit is considered to be inactive and not participating
-
-  LAYERSPEC_TD_STD_CODE(LeabraLayStats);
-
-private:
-  void	Initialize() {   Defaults_init(); }
-  void	Defaults_init() {
-    hog_thr = 0.3f;
-    dead_thr = 0.01f;
-  }
-};
-
-
-
-LAYERSPEC_CLASS(LeabraLayerSpec) {
-  // #STEM_BASE ##CAT_Leabra Leabra layer specs, computes inhibitory input for all units in layer
-INHERITED(LAYERSPEC_BASE)
-public:
-  LAYERSPEC_MEMBER(LeabraInhibSpec) lay_inhib;	// #CAT_Activation #AKA_inhib how to compute layer-wide inhibition -- uses feedforward (FF) and feedback (FB) inhibition (FFFB) based on average netinput (FF) and activation (FB) -- net inhibition is MAX of all operative inhibition -- any inhibitory unit inhibition is just added on top of this computed inhibition
-  LAYERSPEC_MEMBER(LeabraInhibSpec) unit_gp_inhib; // #CAT_Activation how to compute unit-group-level inhibition (only relevant if layer actually has unit groups -- net inhibition is MAX of all operative inhibition -- uses feedforward (FF) and feedback (FB) inhibition (FFFB) based on average netinput (FF) and activation (FB) -- any inhibitory unit inhibition is just added on top of this computed inhibition
-  LAYERSPEC_MEMBER(LeabraInhibSpec) lay_gp_inhib;	// #CAT_Activation inhibition computed across layers within layer groups -- only applicable if the layer actually lives in a subgroup with other layers (and only in a first-level subgroup, not a sub-sub-group) -- only the specs of the FIRST layer in the layer group are used for computing inhib -- net inhibition is MAX of all operative inhibition -- uses feedforward (FF) and feedback (FB) inhibition (FFFB) based on average netinput (FF) and activation (FB) -- any inhibitory unit inhibition is just added on top of this computed inhibition
-  LAYERSPEC_MEMBER(LayerAvgActSpec) avg_act;	// #CAT_Activation expected average activity levels in the layer -- used for computing running-average computation that is then used for netinput scaling (also specifies time constant for updating average), and for the target value for adapting inhibition in inhib_adapt
-  LAYERSPEC_MEMBER(LeabraAdaptInhib) inhib_adapt; // #CAT_Activation adapt an extra inhibitory gain value to keep overall layer activation within a given target range, based on avg_act.targ_init target value (TARGET or deep TRC layers use the running-average plus phase average actitvation) -- gain applies to all forms of inhibition (layer, unit group) that are in effect
-  LAYERSPEC_MEMBER(LeabraInhibMisc) inhib_misc;	// #CAT_Activation extra parameters for special forms of inhibition beyond the basic FFFB dynamic specified in inhib
-  LAYERSPEC_MEMBER(LeabraClampSpec) clamp;        // #CAT_Activation how to clamp external inputs to units (hard vs. soft)
-  LAYERSPEC_MEMBER(LayerDecaySpec)  decay;        // #CAT_Activation decay of activity state vars between trials
-  LAYERSPEC_MEMBER(LeabraDelInhib)  del_inhib;	// #CAT_Activation delayed inhibition, as a function of per-unit net input on prior trial and/or phase -- produces temporal derivative effects
-  LAYERSPEC_MEMBER(LeabraActMargin) margin;	// #CAT_Activation marginal activation computation -- detects those units that are on the edges of an attractor and focuses extra learning on them
-  float           lay_lrate;    // #CAT_Statistic layer-level learning rate modulator, multiplies learning rates for all connections coming into layer(s) that this spec applies to -- sets lrate_mod value on layer -- see also cos_diff for additional lrate modulation on top of this
-  LAYERSPEC_MEMBER(LeabraCosDiffMod) cos_diff;    // #CAT_Statistic leabra layer-level cosine of difference between plus and minus phase activations -- used to modulate amount of hebbian learning, and overall learning rate
-  LAYERSPEC_MEMBER(LeabraLayStats)  lstats;       // #CAT_Statistic layer-level statistics parameters
-
-
-  LAYERSPEC_TD_STD_CODE_SPEC(LeabraLayerSpec);
+  // #CAT_Activation get minus phase act stats
   
-private:
-  void 	Initialize() {
-   unit_gp_inhib.on = false;
-   lay_gp_inhib.on = false;
-   Defaults_init();
+  INLINE virtual void Quarter_Final_GetPlus_UnGp(LEABRA_UNGP_STATE* gpd, LEABRA_NETWORK_STATE* net) {
+    gpd->acts_p = gpd->acts_eq;
+    if(avg_act.use_first && gpd->acts_p_avg == avg_act.targ_init) {
+      gpd->acts_p_avg += 0.5f * (gpd->acts_p.avg - gpd->acts_p_avg);
+    }
+    else {
+      gpd->acts_p_avg += avg_act.dt * (gpd->acts_p.avg - gpd->acts_p_avg);
+    }
+    if(avg_act.fixed) {
+      gpd->acts_p_avg_eff = avg_act.targ_init;
+    }
+    else {
+      gpd->acts_p_avg_eff = avg_act.adjust * gpd->acts_p_avg;
+    }
   }
-  void	Defaults_init()  { lay_lrate = 1.0f; }
-};
+  // #IGNORE
+
+  INLINE virtual void Quarter_Final_GetPlus(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net)  {
+    LEABRA_UNGP_STATE* lgpd = lay->GetLayUnGpState(net);
+    Quarter_Final_GetPlus_UnGp(lgpd, net);
+    // todo!
+    // else if(avg_act.use_ext_act) {
+    //   // nop -- already set during Quarter_Init
+    // }
+    for(int g=0; g < lay->n_ungps; g++) {
+      LEABRA_UNGP_STATE* gpd = lay->GetUnGpState(net, g);
+      Quarter_Final_GetPlus_UnGp(gpd, net);
+    }
+  }
+  // #CAT_Activation get plus phase act stats
+
+  INLINE virtual void	Quarter_Final_Layer(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
+    LEABRA_UNGP_STATE* lgpd = lay->GetLayUnGpState(net);
+    lgpd->acts_prvq = lgpd->acts_eq;
+    for(int g=0; g < lay->n_ungps; g++) {
+      LEABRA_UNGP_STATE* gpd = lay->GetUnGpState(net, g);
+      gpd->acts_prvq = gpd->acts_eq;
+    }
+    if(net->quarter == 2) {       // quarter still pre-increment?
+      Quarter_Final_GetMinus(lay, net);
+    }
+    else if(net->quarter == 3) {
+      Quarter_Final_GetPlus(lay, net);
+    }
+  }
+  // #CAT_Activation after settling, keep track of phase variables, etc.
+  
+  ///////////////////////////////////////////////////////////////////////
+  //	Learning
+
+  INLINE virtual void	Compute_dWt_Layer_pre(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) { };
+  // #CAT_Learning do special computations at layer level prior to standard unit-level thread dwt computation -- not used in base class but is in various derived classes
+
+  ///////////////////////////////////////////////////////////////////////
+  //	Trial-level Stats
+
+  INLINE virtual float	Compute_SSE(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net,
+			    int& n_vals, bool unit_avg = false, bool sqrt = false) {
+    // use default, but allow subclasses to override in layerspec
+    float rval = lay->LAYER_STATE::Compute_SSE(net, n_vals, unit_avg, sqrt);
+    lay->bin_err = 0.0f;
+    if(!lay->HasExtFlag(LAYER_STATE::COMP_TARG)) return rval;
+    if(lay->layer_type == LAYER_STATE::HIDDEN) return rval;
+    lay->bin_err = (lay->sse > net->stats.cnt_err_tol) ? 1.0f : 0.0f;
+    return rval;
+  }
+  // #CAT_Statistic compute sum squared error of activation vs target over the entire layer -- always returns the actual sse, but unit_avg and sqrt flags determine averaging and sqrt of layer's own sse value
+
+  INLINE virtual float	Compute_MaxErr(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
+    LEABRA_UNGP_STATE* lgpd = lay->GetLayUnGpState(net);
+    lay->max_err = 0.0f;
+    if(!lay->HasExtFlag(LAYER_STATE::COMP_TARG)) return 0.0f;
+    if(HasUnitGpInhib(lay)) {
+      int merr_sum = 0;
+      for(int g=0; g < lay->n_ungps; g++) {
+        LEABRA_UNGP_STATE* gpd = lay->GetUnGpState(net, g);
+        bool max_err = true;
+        if(gpd->acts_m.max_i >= 0) {
+          LEABRA_UNIT_STATE* un = (LEABRA_UNIT_STATE*)net->UnUnitState(gpd->acts_m.max_i);
+          max_err = (un->targ < 0.1f);
+        }
+        gpd->max_err = (float)max_err;
+        merr_sum += (int)max_err;
+      }
+      lay->max_err = (merr_sum > 0);
+    }
+    else {
+      bool max_err = true;
+      if(lgpd->acts_m.max_i >= 0) {
+        LEABRA_UNIT_STATE* un = (LEABRA_UNIT_STATE*)net->UnUnitState(lgpd->acts_m.max_i);
+        max_err = (un->targ < 0.1f);
+      }
+      lay->max_err = (float)max_err;
+    }
+    return lay->max_err;
+  }
+  // #CAT_Statistic compute max_err, across unit groups (if present and used) and the entire layer
+
+  INLINE virtual float	Compute_NormErr(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
+    lay->norm_err = -1.0f;        // assume not contributing
+    if(!lay->HasExtFlag(LAYER_STATE::COMP_TARG)) return -1.0f; // indicates not applicable
+    if(lay->layer_type == LAYER_STATE::HIDDEN) return -1.0f;
+
+    float nerr = 0.0f;
+    int ntrg_act = 0;
+
+    const int li = lay->layer_idx;
+    for(int thr_no=0; thr_no < net->n_thrs_built; thr_no++) {
+      // integrate over thread raw data
+      float& lay_nerr = net->ThrLayStats(thr_no, li, 0, LEABRA_NETWORK_STATE::NORMERR);
+      float& lay_trg_n = net->ThrLayStats(thr_no, li, 1, LEABRA_NETWORK_STATE::NORMERR);
+
+      nerr += lay_nerr;
+      ntrg_act += (int)lay_trg_n;
+    }
+
+    if(net->lstats.on_errs && net->lstats.off_errs)
+      ntrg_act *= 2;              // double count
+
+    if(ntrg_act == 0) return -1.0f;
+
+    lay->norm_err = nerr / (float)ntrg_act;
+    if(lay->norm_err > 1.0f) lay->norm_err = 1.0f; // shouldn't happen...
+
+    lay->avg_norm_err.Increment(lay->norm_err);
+  
+    if(lay->HasLayerFlag(LAYER_STATE::NO_ADD_SSE) ||
+       (lay->HasExtFlag(LAYER_STATE::COMP) && lay->HasLayerFlag(LAYER_STATE::NO_ADD_COMP_SSE)))
+      return -1.0f;               // no contributarse
+
+    return lay->norm_err;
+  }
+  // #CAT_Statistic compute normalized binary error of unit targ vs. act_m -- layer-level value is already normalized, and network just averages across the layers (each layer contributes equally to overal normalized value, instead of contributing in proportion to number of units) -- returns -1 if not an err target defined in same way as sse -- per unit: if (net->lstats.on_errs && act_m > .5 && targ < .5) return 1; if (net->lstats.off_errs && act_m < .5 && targ > .5) return 1; else return 0; normalization is based on k value per layer: total possible err for both on and off errs is 2 * k (on or off alone is just k)
+
+  INLINE virtual float  Compute_CosErr(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net, int& n_vals)  {
+    lay->cos_err = 0.0f;
+    lay->cos_err_prv = 0.0f;
+    lay->cos_err_vs_prv = 0.0f;
+    n_vals = 0;
+    if(!lay->HasExtFlag(LAYER_STATE::COMP_TARG)) return 0.0f;
+    if(lay->layer_type == LAYER_STATE::HIDDEN) return 0.0f;
+    float cosv = 0.0f;
+    float cosvp = 0.0f;
+    float ssm = 0.0f;
+    float ssp = 0.0f;
+    float sst = 0.0f;
+    const int li = lay->layer_idx;
+    for(int thr_no=0; thr_no < net->n_thrs_built; thr_no++) {
+      // integrate over thread raw data
+      float& lcosv = net->ThrLayStats(thr_no, li, 0, LEABRA_NETWORK_STATE::COSERR);
+      float& lcosvp = net->ThrLayStats(thr_no, li, 1, LEABRA_NETWORK_STATE::COSERR);
+      float& lssm = net->ThrLayStats(thr_no, li, 2, LEABRA_NETWORK_STATE::COSERR);
+      float& lssp = net->ThrLayStats(thr_no, li, 3, LEABRA_NETWORK_STATE::COSERR);
+      float& lsst = net->ThrLayStats(thr_no, li, 4, LEABRA_NETWORK_STATE::COSERR);
+      float& lnvals = net->ThrLayStats(thr_no, li, 5, LEABRA_NETWORK_STATE::COSERR);
+
+      n_vals += lnvals;
+      cosv += lcosv;
+      ssm += lssm;
+      sst += lsst;
+      if(net->net_misc.deep) {
+        cosvp += lcosvp;
+        ssp += lssp;
+      }
+    }
+    if(n_vals == 0) return 0.0f;
+    float dist = sqrtf(ssm * sst);
+    if(dist != 0.0f)
+      cosv /= dist;
+    lay->cos_err = cosv;
+
+    lay->avg_cos_err.Increment(lay->cos_err);
+
+    if(net->net_misc.deep) {
+      float pdist = sqrtf(ssp * sst);
+      if(pdist != 0.0f) {
+        cosvp /= pdist;
+      }
+      lay->cos_err_prv = cosvp;
+      lay->cos_err_vs_prv = lay->cos_err - lay->cos_err_prv;
+
+      lay->avg_cos_err_prv.Increment(lay->cos_err_prv);
+      lay->avg_cos_err_vs_prv.Increment(lay->cos_err_vs_prv);
+    }
+    if(lay->HasLayerFlag(LAYER_STATE::NO_ADD_SSE) ||
+       (lay->HasExtFlag(LAYER_STATE::COMP) && lay->HasLayerFlag(LAYER_STATE::NO_ADD_COMP_SSE))) {
+      n_vals = 0;
+      return 0.0f;
+    }
+    return cosv;
+  }
+  // #CAT_Statistic compute cosine (normalized dot product) of target compared to act_m over the layer -- n_vals is number of units contributing
+
+  INLINE virtual float  Compute_CosDiff(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net)  {
+    lay->cos_diff = 0.0f;
+    float cosv = 0.0f;
+    float ssm = 0.0f;
+    float sst = 0.0f;
+
+    const int li = lay->layer_idx;
+    for(int thr_no=0; thr_no < net->n_thrs_built; thr_no++) {
+      // integrate over thread raw data
+      float& lcosv = net->ThrLayStats(thr_no, li, 0, LEABRA_NETWORK_STATE::COSDIFF);
+      float& lssm = net->ThrLayStats(thr_no, li, 1, LEABRA_NETWORK_STATE::COSDIFF);
+      float& lsst = net->ThrLayStats(thr_no, li, 2, LEABRA_NETWORK_STATE::COSDIFF);
+
+      cosv += lcosv;
+      ssm += lssm;
+      sst += lsst;
+    }
+    float dist = sqrtf(ssm * sst);
+    if(dist != 0.0f)
+      cosv /= dist;
+    lay->cos_diff = cosv;
+
+    cos_diff.UpdtDiffAvgVar(lay->cos_diff_avg, lay->cos_diff_var, lay->cos_diff);
+    lay->lrate_mod = lay_lrate;
+
+    if(cos_diff.lrate_mod && !cos_diff.lrmod_fm_trc) {
+      lay->lrate_mod *= cos_diff.CosDiffLrateMod(lay->cos_diff, lay->cos_diff_avg,
+                                                 lay->cos_diff_var);
+      if(cos_diff.set_net_unlrn && lay->lrate_mod == 0.0f) {
+        net->unlearnable_trial = true;
+      }
+    }
+  
+    if(lay->layer_type == LAYER_STATE::HIDDEN) {
+      lay->cos_diff_avg_lrn = 1.0f - lay->cos_diff_avg;
+    }
+    else {
+      lay->cos_diff_avg_lrn = 0.0f; // no mix for TARGET layers; irrelevant for INPUT
+    }
+
+    lay->avg_cos_diff.Increment(lay->cos_diff);
+  
+    return cosv;
+  }
+  // #CAT_Statistic compute cosine (normalized dot product) of phase activation difference in this layer: act_p compared to act_m -- must be called after Quarter_Final for plus phase to get the act_p values
+  
+  INLINE virtual void   Compute_CosDiff_post(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
+    // todo: redo this!
+    // if(cos_diff.lrate_mod && cos_diff.lrmod_fm_trc) {
+    //   for(int i=0;i<lay->projections.size;i++) {
+    //     LeabraPrjn* prjn = (LeabraPrjn*)lay->projections[i];
+    //     if(prjn->NotActive()) continue;
+    //     LEABRA_LAYER_STATE* from = (LEABRA_LAYER_STATE*)prjn->from.ptr();
+    //     LeabraUnitSpec* frus = (LeabraUnitSpec*)from->GetUnitSpec();
+    //     if(frus->deep.IsTRC()) {
+    //       LEABRA_LAYER_STATESpec* frls = (LEABRA_LAYER_STATESpec*)from->GetLayerSpec();
+    //       lay->lrate_mod *= (from->lrate_mod / frls->lay_lrate); // deconfound sender lrate
+    //     }
+    //   }
+    // }
+  }
+  // #CAT_Statistic post step of cos_diff -- needed for sharing cos_diff based lrate mod
+  
+  INLINE virtual float  Compute_AvgActDiff(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
+    lay->avg_act_diff = 0.0f;
+    float adiff = 0.0f;
+    int nd = 0;
+
+    const int li = lay->layer_idx;
+    for(int thr_no=0; thr_no < net->n_thrs_built; thr_no++) {
+      // integrate over thread raw data
+      float& ladiff = net->ThrLayStats(thr_no, li, 0, LEABRA_NETWORK_STATE::AVGACTDIFF);
+      float& lnd = net->ThrLayStats(thr_no, li, 1, LEABRA_NETWORK_STATE::AVGACTDIFF);
+      adiff += ladiff;
+      nd += (int)lnd;
+    }
+  
+    if(nd > 0)
+      adiff /= (float)nd;
+    lay->avg_act_diff = adiff;
+
+    lay->avg_avg_act_diff.Increment(lay->avg_act_diff);
+  
+    return adiff;
+  }
+  // #CAT_Statistic compute average act_diff (act_p - act_m) for this layer -- must be called after Quarter_Final for plus phase to get the act_p values -- this is an important statistic to track overall 'main effect' differences across phases
+  
+  INLINE virtual float  Compute_TrialCosDiff(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
+    lay->trial_cos_diff = 0.0f;
+    float cosv = 0.0f;
+    float ssm = 0.0f;
+    float sst = 0.0f;
+
+    const int li = lay->layer_idx;
+    for(int thr_no=0; thr_no < net->n_thrs_built; thr_no++) {
+      // integrate over thread raw data
+      float& lcosv = net->ThrLayStats(thr_no, li, 0, LEABRA_NETWORK_STATE::TRIALCOSDIFF);
+      float& lssm = net->ThrLayStats(thr_no, li, 1, LEABRA_NETWORK_STATE::TRIALCOSDIFF);
+      float& lsst = net->ThrLayStats(thr_no, li, 2, LEABRA_NETWORK_STATE::TRIALCOSDIFF);
+
+      cosv += lcosv;
+      ssm += lssm;
+      sst += lsst;
+    }
+  
+    float dist = sqrtf(ssm * sst);
+    if(dist != 0.0f)
+      cosv /= dist;
+    lay->trial_cos_diff = cosv;
+
+    lay->avg_trial_cos_diff.Increment(lay->trial_cos_diff);
+  
+    return cosv;
+  }
+  // #CAT_Statistic compute cosine (normalized dot product) of trial activation difference in this layer: act_q4 compared to act_q0 -- must be called after Quarter_Final for plus phase to get the act_q4 values
+  
+  INLINE virtual void   Compute_ActMargin(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
+    LEABRA_UNGP_STATE* lgpd = lay->GetLayUnGpState(net);
+    float low_avg = 0.0f;
+    float med_avg = 0.0f;
+    float hi_avg = 0.0f;
+
+    if(lay->n_units <= 1) return;
+  
+    const int li = lay->layer_idx;
+    for(int thr_no=0; thr_no < net->n_thrs_built; thr_no++) {
+      // integrate over thread raw data
+      float& lowv = net->ThrLayStats(thr_no, li, 0, LEABRA_NETWORK_STATE::ACTMARGIN);
+      float& medv = net->ThrLayStats(thr_no, li, 1, LEABRA_NETWORK_STATE::ACTMARGIN);
+      float& hiv = net->ThrLayStats(thr_no, li, 2, LEABRA_NETWORK_STATE::ACTMARGIN);
+
+      low_avg += lowv;
+      med_avg += medv;
+      hi_avg += hiv;
+    }
+
+    // todo: could agg n too but..
+    low_avg /= (float)lay->n_units;
+    med_avg /= (float)lay->n_units;
+    hi_avg /= (float)lay->n_units;
+
+    margin.IncrAvgVal(lay->margin.low_avg, low_avg);
+    margin.IncrAvgVal(lay->margin.med_avg, med_avg);
+    margin.IncrAvgVal(lay->margin.hi_avg, hi_avg);
+
+    float eff_p_avg = lgpd->acts_p_avg / margin.avg_act;
+  
+    float low_del = margin.AdaptThr(lay->margin.low_thr, lay->margin.low_avg, eff_p_avg, 1.0f);
+    // sign = same direction as diff - if avg > targ, increase thr
+    lay->margin.med_thr += low_del; // med automatically tracks low!
+    margin.AdaptThr(lay->margin.med_thr, lay->margin.med_avg,
+                    margin.MedTarg(eff_p_avg), -1.0f);
+    // sign = opposite direction as diff - if avg > targ, *decrease* thr
+    margin.AdaptThr(lay->margin.hi_thr, lay->margin.hi_avg,
+                    margin.HiTarg(eff_p_avg), 1.0f);
+    // sign = same direction as diff - if avg > targ, *increase* thr
+    // preserve ordering!
+    if(lay->margin.med_thr < lay->margin.low_thr) {
+      lay->margin.med_thr = lay->margin.low_thr + 0.001f;
+    }
+    if(lay->margin.hi_thr < lay->margin.med_thr) {
+      lay->margin.hi_thr = lay->margin.med_thr + 0.001f;
+    }
+  }
+  // #CAT_Statistic compute activation margin stats and adapt thresholds
+  
+  INLINE virtual float   Compute_NetSd(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
+    lay->net_sd = 0.0f;
+    float var = 0.0f;
+
+    const int li = lay->layer_idx;
+    for(int thr_no=0; thr_no < net->n_thrs_built; thr_no++) {
+      // integrate over thread raw data
+      float& lvar = net->ThrLayStats(thr_no, li, 0, LEABRA_NETWORK_STATE::NETSD);
+      var += lvar;
+    }
+    lay->net_sd = sqrt(var);
+    lay->avg_net_sd.Increment(lay->net_sd);
+    return var;
+  }
+  // #CAT_Statistic compute standard deviation of the minus phase net inputs across the layer -- this is a key statistic to monitor over time for how much the units are gaining traction on the problem -- they should be getting more differentiated and sd should go up -- if not, then the network will likely fail -- must be called at end of minus phase
+  
+  INLINE virtual void   Compute_HogDeadPcts(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
+    lay->hog_pct = 0.0f;
+    lay->dead_pct = 0.0f;
+    float hog = 0.0f;
+    float dead = 0.0f;
+    float nu = 0.0f;
+
+    const int li = lay->layer_idx;
+    for(int thr_no=0; thr_no < net->n_thrs_built; thr_no++) {
+      // integrate over thread raw data
+      float& lhog = net->ThrLayStats(thr_no, li, 0, LEABRA_NETWORK_STATE::HOGDEAD);
+      float& ldead = net->ThrLayStats(thr_no, li, 1, LEABRA_NETWORK_STATE::HOGDEAD);
+      float& lnu = net->ThrLayStats(thr_no, li, 2, LEABRA_NETWORK_STATE::HOGDEAD);
+
+      hog += lhog;
+      dead += ldead;
+      nu += lnu;
+    }
+
+    if(nu > 0.0f) {
+      lay->hog_pct = hog / nu;
+      lay->dead_pct = dead / nu;
+    }
+  }
+  // #CAT_Statistic compute percentage of units in the layer that have a long-time-averaged activitation level that is above or below hog / dead thresholds, indicating that they are either 'hogging' the representational space, or 'dead' and not participating in any representations
+
+  INLINE virtual void	Compute_AvgNormErr(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
+    lay->avg_norm_err.GetAvg_Reset();
+  }
+  // #CAT_Statistic compute average norm_err (at an epoch-level timescale)
+  INLINE virtual void	Compute_AvgCosErr(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
+    lay->avg_cos_err.GetAvg_Reset();
+
+    if(net->net_misc.deep) {
+      lay->avg_cos_err_prv.GetAvg_Reset();
+      lay->avg_cos_err_vs_prv.GetAvg_Reset();
+    }
+  }
+  // #CAT_Statistic compute average cos_err (at an epoch-level timescale)
+  INLINE virtual void	Compute_AvgCosDiff(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
+    lay->avg_cos_diff.GetAvg_Reset();
+  }
+  // #CAT_Statistic compute average cos_diff (at an epoch-level timescale)
+  INLINE virtual void	Compute_AvgTrialCosDiff(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
+    lay->avg_trial_cos_diff.GetAvg_Reset();
+  }
+  // #CAT_Statistic compute average trial_cos_diff (at an epoch-level timescale)
+  INLINE virtual void	Compute_AvgAvgActDiff(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
+    lay->avg_avg_act_diff.GetAvg_Reset();
+  }
+  // #CAT_Statistic compute average avg_act_diff (at an epoch-level timescale)
+  INLINE virtual void	Compute_AvgNetSd(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
+    lay->avg_net_sd.GetAvg_Reset();
+  }
+  // #CAT_Statistic compute average net_sd (at an epoch-level timescale)
+  INLINE virtual void	Compute_EpochStats(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
+    lay->LAYER_STATE::Compute_EpochStats(net);
+    Compute_AvgNormErr(lay, net);
+    Compute_AvgCosErr(lay, net);
+    Compute_AvgCosDiff(lay, net);
+    Compute_AvgAvgActDiff(lay, net);
+    Compute_AvgTrialCosDiff(lay, net);
+    Compute_AvgNetSd(lay, net);
+  }
+  // #CAT_Statistic compute epoch-level statistics (averages)
 
 
-#endif // LeabraLayerSpec_core_h
+  INLINE void 	Initialize_core() {
+    unit_gp_inhib.on = false;
+    lay_gp_inhib.on = false;
+    lay_lrate = 1.0f;
+  }
+

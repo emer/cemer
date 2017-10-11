@@ -31,13 +31,13 @@ void SendDeepRawConSpec::Trial_Init_Specs(LeabraNetwork* net) {
   net->deep.raw_net = true;
 }
 
-void SendDeepRawConSpec::Init_Weights_sym_s(ConGroup* cg, Network* net, int thr_no) {
+void SendDeepRawConSpec::Init_Weights_sym_s(ConState* cg, Network* net, int thr_no) {
   if(!wt_limits.sym) return;
   Unit* su = cg->ThrOwnUn(net, thr_no);
   Layer* sl = su->own_lay();
   Projection* oprjn = sl->send_prjns.FindPrjnTo(cg->prjn->layer); // find prjn to other layer -- this assumes that deep prjn always comes *after* the other one..
   if(!oprjn || oprjn == cg->prjn) return;
-  ConGroup* ocg = su->SendConGroupPrjn(oprjn);
+  ConState* ocg = su->SendConStatePrjn(oprjn);
   if(!ocg) return;
   int mx = MIN(cg->size, ocg->size);
   for(int i=0; i<mx; i++) {     // assume to be in 1-to-1 corresp..

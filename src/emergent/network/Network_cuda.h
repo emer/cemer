@@ -55,9 +55,9 @@
 //
 //   code:
 //
-//   const int cgp_idx = blockIdx.x;  // ConGroup index in list of congroups to process
+//   const int cgp_idx = blockIdx.x;  // ConState index in list of congroups to process
 //
-//   then just access the relevant data structures from that -- the ConGroup_cuda
+//   then just access the relevant data structures from that -- the ConState_cuda
 //   structure has the owning unit index in it, so relevant unit-level data can
 //   be accessed from there
 //
@@ -83,8 +83,8 @@
 //   etc, it could be important
 
 
-#include <ConGroup_cuda.h>
-#include <UnitVars_cuda.h>
+#include <ConState_cuda.h>
+#include <UnitState_cuda.h>
 
 class UnitSpec_cuda {
   // cuda unitspec -- empty base class 
@@ -128,11 +128,11 @@ public:
   //    CUDA ONLY WORKS WITH THREADS=1 ON NETWORK -- this makes the memory isomorphic!
   //    All our _h = host memory is for thr_no=0, 
   
-  int           unit_vars_size;  // #NO_SAVE #READ_ONLY #CAT_Threads size in *bytes* of the unit_vars_built UnitVars
+  int           unit_state_size;  // #NO_SAVE #READ_ONLY #CAT_Threads size in *bytes* of the unit_state_built UnitState
   int           n_units_built;  // #NO_SAVE #READ_ONLY #CAT_Threads number of units built -- actually the n+1 size of units_flat
   int           n_layers_built; // #NO_SAVE #READ_ONLY #CAT_Threads number of active layers when built -- size of active_layers array
   int           n_ungps_built;  // #NO_SAVE #READ_ONLY #CAT_Threads number of active unit groups when built -- size of active_ungpss array
-  char*         units_mem_h;  // array of char[n_units_built * unit_vars_size], containing ALL units  -- this is the primary memory allocation of units -- note that corresponding UnitVars_cuda is typically smaller than unit_vars_size (by 1 UnitSpec*), but we use whole thing to avoid duplicate memory stores
+  char*         units_mem_h;  // array of char[n_units_built * unit_state_size], containing ALL units  -- this is the primary memory allocation of units -- note that corresponding UnitState_cuda is typically smaller than unit_state_size (by 1 UnitSpec*), but we use whole thing to avoid duplicate memory stores
   char*         units_mem_d;
   int*          lay_unit_idxs_h; // allocation of units to layers -- arrays of int[n_layers_built * 2], containing start and end unit indexes of units processed by a given thread and a given layer
   int*          lay_unit_idxs_d;
@@ -145,7 +145,7 @@ public:
   float*        lay_stats_d;
 
   bool          recv_owns_cons; // does recv side own connections (and thus the actual weights etc) or does send?
-  int           con_group_size;  // size in *bytes* of ConGroup_cuda con group objects actually built in recv_cgp_mem* and send_cgp_mem*
+  int           con_state_size;  // size in *bytes* of ConState_cuda con group objects actually built in recv_cgp_mem* and send_cgp_mem*
   int*          units_n_recv_cgps_h;  // number of receiving connection groups per unit (flat_idx unit indexing, starts at 1)
   int*          units_n_recv_cgps_d;
   
@@ -155,9 +155,9 @@ public:
   int           n_recv_cgps; // total number of units * recv con groups
   int           n_send_cgps; // total number of units * send con groups
 
-  char*         recv_cgp_mem_h; // memory allocation for ConGroup_cuda for all recv connection group objects, array of char[n_recv_cgps * sizeof(ConGroup_cuda)], containing the recv ConGroup processed -- these must be initialized in Network::Cuda_BuildNet b/c the cuda code cannot access the full C++ ConGroup object, which has necessary fields (mem_start, cmem_start)
+  char*         recv_cgp_mem_h; // memory allocation for ConState_cuda for all recv connection group objects, array of char[n_recv_cgps * sizeof(ConState_cuda)], containing the recv ConState processed -- these must be initialized in Network::Cuda_BuildNet b/c the cuda code cannot access the full C++ ConState object, which has necessary fields (mem_start, cmem_start)
   char*         recv_cgp_mem_d; 
-  char*         send_cgp_mem_h; // memory allocation for ConGroup for all send connection group objects -- see recv for details
+  char*         send_cgp_mem_h; // memory allocation for ConState for all send connection group objects -- see recv for details
   char*         send_cgp_mem_d; 
   
   int*          recv_cgp_start_h; // starting indexes into recv_cgp_mem, per unit -- array of int[n_units_built] -- contains 0 for units that have none
@@ -195,9 +195,9 @@ public:
   //  Key Accessor Routines -- static with all args explicitly passed for use
   //   inside a kernel
   
-  CUDAFUN static inline UnitVars_cuda*  GetUnitVars
-  (char* units_mem, const int unit_vars_size, const int unit_idx)
-  { return (UnitVars_cuda*)(units_mem + (unit_idx * unit_vars_size)); }
+  CUDAFUN static inline UnitState_cuda*  GetUnitState
+  (char* units_mem, const int unit_state_size, const int unit_idx)
+  { return (UnitState_cuda*)(units_mem + (unit_idx * unit_state_size)); }
   // #CAT_Structure unit variables for unit at given unit at unit flat_idx  -- cast into proper algo class
 
   CUDAFUN static inline UnitSpec_cuda*  GetUnitSpec
@@ -205,21 +205,21 @@ public:
   { return (UnitSpec_cuda*)(unit_spec_mem + (us_idx * unit_spec_size)); }
   // #CAT_Structure unit spec from unique unitspec index -- cast into proper algo class
   
-  CUDAFUN static inline int GetNConGroups
+  CUDAFUN static inline int GetNConStates
   (const int* n_recv_cgps, const int unit_idx)
   { return n_recv_cgps[unit_idx]; }
   // #CAT_Structure number of congroups for given unit index -- pass in appropriate recv or send memory
 
-  CUDAFUN static inline ConGroup_cuda*  GetUnConGroup
-  (char* cgp_mem, const int* cgp_start, const int con_group_size,
+  CUDAFUN static inline ConState_cuda*  GetUnConState
+  (char* cgp_mem, const int* cgp_start, const int con_state_size,
    const int unit_idx, const int cgp_idx)
-  { return (ConGroup_cuda*)
-      (cgp_mem + ((cgp_start[unit_idx] + cgp_idx) * con_group_size)); }
+  { return (ConState_cuda*)
+      (cgp_mem + ((cgp_start[unit_idx] + cgp_idx) * con_state_size)); }
   // #CAT_Structure connection group for given unit flat index, con group index, pass in appropriate recv or send cgp_mem and cgp_start from network
 
-  CUDAFUN static inline ConGroup_cuda*  GetConGroup_Flat
-  (char* cgp_mem, const int con_group_size, const int cgp_idx)
-  { return (ConGroup_cuda*)(cgp_mem + (cgp_idx * con_group_size)); }
+  CUDAFUN static inline ConState_cuda*  GetConState_Flat
+  (char* cgp_mem, const int con_state_size, const int cgp_idx)
+  { return (ConState_cuda*)(cgp_mem + (cgp_idx * con_state_size)); }
   // #CAT_Structure connection group for given global con group index, pass in appropriate recv or send cgp_mem and cgp_start from network
   
   // once you have the con group, use accessor routines there for further con access
@@ -254,7 +254,7 @@ public:
 
   void  NetAlloc
   (
-   int    unit_vars_size,  
+   int    unit_state_size,  
    int    n_units_built,  
    int    n_layers_built, 
    int    n_ungps_built,  
@@ -295,9 +295,9 @@ public:
   virtual void  OwnCons_DeviceToHost(bool sync = false);
   // copy all the owned_cons_mem (weights etc) from device to host: for visualization etc -- optionally wait for copy to finish
 
-  virtual void  UnitVars_HostToDevice(bool sync = false);
+  virtual void  UnitState_HostToDevice(bool sync = false);
   // copy all the unit variables from host to device, optionally sync
-  virtual void  UnitVars_DeviceToHost(bool sync = false);
+  virtual void  UnitState_DeviceToHost(bool sync = false);
   // copy all the unit variables from device to host, optionally sync
 
   virtual void  ExtInputToDevice(bool sync = false);

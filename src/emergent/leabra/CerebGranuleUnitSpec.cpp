@@ -45,7 +45,7 @@ bool CerebGranuleUnitSpec::CheckConfig_Unit(Layer* lay, bool quiet) {
 }
 
 
-float CerebGranuleUnitSpec::Compute_NetinExtras(LeabraUnitVars* u, LeabraNetwork* net,
+float CerebGranuleUnitSpec::Compute_NetinExtras(LeabraUnitState_cpp* u, LeabraNetwork* net,
                                                int thr_no, float& net_syn) {
   float rval = inherited::Compute_NetinExtras(u, net, thr_no, net_syn);
   int time_since_thr = (int)TimeSinceThr(u);
@@ -56,7 +56,7 @@ float CerebGranuleUnitSpec::Compute_NetinExtras(LeabraUnitVars* u, LeabraNetwork
   return rval;
 }
 
-void CerebGranuleUnitSpec::Compute_GranLearnAct(LeabraUnitVars* u, LeabraNetwork* net,
+void CerebGranuleUnitSpec::Compute_GranLearnAct(LeabraUnitState_cpp* u, LeabraNetwork* net,
                                                 int thr_no) {
   int time_since_thr = (int)TimeSinceThr(u);
   float& act_lag = ActLag(u);
@@ -92,13 +92,13 @@ void CerebGranuleUnitSpec::Compute_GranLearnAct(LeabraUnitVars* u, LeabraNetwork
   TimeSinceThr(u) = (float)time_since_thr; // update counter
 }
 
-void CerebGranuleUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no)
+void CerebGranuleUnitSpec::Compute_Act_Rate(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no)
 {
   inherited::Compute_Act_Rate(u, net, thr_no);
   Compute_GranLearnAct(u, net, thr_no);
 }
 
-void CerebGranuleUnitSpec::Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no)
+void CerebGranuleUnitSpec::Compute_Act_Spike(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no)
 {
   inherited::Compute_Act_Spike(u, net, thr_no);
   Compute_GranLearnAct(u, net, thr_no);

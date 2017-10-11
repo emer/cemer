@@ -104,23 +104,23 @@ void SoUnitSpec::InitLinks() {
   children.el_typ = GetTypeDef(); // but make the default to be me!
 }
 
-void SoUnitSpec::Init_Acts(UnitVars* u, Network* net, int thr_no) {
+void SoUnitSpec::Init_Acts(UnitState* u, Network* net, int thr_no) {
   inherited::Init_Acts(u, net, thr_no);
-  ((SoUnitVars*)u)->act_i = 0.0f;
+  ((SoUnitState*)u)->act_i = 0.0f;
 }
 
-void SoUnitSpec::Compute_Act(UnitVars* u, Network* net, int thr_no) {
+void SoUnitSpec::Compute_Act(UnitState* u, Network* net, int thr_no) {
   // simple linear function
-  if(u->ext_flag & UnitVars::EXT)
+  if(u->ext_flag & UnitState::EXT)
     u->act = u->ext;
   else
     u->act = u->net;
 }
 
-void SoUnitSpec::Compute_AvgInAct(SoUnitVars* u, SoNetwork* net, int thr_no) {
+void SoUnitSpec::Compute_AvgInAct(SoUnitState* u, SoNetwork* net, int thr_no) {
   const int nrcg = net->ThrUnNRecvConGps(thr_no, u->thr_un_idx);
   for(int g=0; g<nrcg; g++) {
-    SoConGroup* rgp = (SoConGroup*)net->ThrUnRecvConGroup(thr_no, u->thr_un_idx, g);
+    SoConState* rgp = (SoConState*)net->ThrUnRecvConState(thr_no, u->thr_un_idx, g);
     if(rgp->NotActive()) continue;
     ((SoConSpec*)rgp->con_spec)->Compute_AvgInAct(rgp, net, thr_no);
   }
@@ -137,7 +137,7 @@ void SoUnitSpec::GraphActFun(DataTable* graph_data, float min, float max) {
   DataCol* netin = graph_data->FindMakeColName("Netin", idx, VT_FLOAT);
   DataCol* act = graph_data->FindMakeColName("Act", idx, VT_FLOAT);
 
-  SoUnitVars un;
+  SoUnitState un;
   float x;
   for(x = min; x <= max; x += .01f) {
     un.net = x;
@@ -154,8 +154,8 @@ void ThreshLinSoUnitSpec::Initialize() {
   threshold = 0.0f;
 }
 
-void ThreshLinSoUnitSpec::Compute_Act(UnitVars* u, Network* net, int thr_no) {
-  if(u->ext_flag & UnitVars::EXT)
+void ThreshLinSoUnitSpec::Compute_Act(UnitState* u, Network* net, int thr_no) {
+  if(u->ext_flag & UnitState::EXT)
     u->act = u->ext;
   else
     u->act = (u->net > threshold) ? (u->net - threshold) : 0.0f;
@@ -276,7 +276,7 @@ void SoftMaxLayerSpec::Initialize() {
 }
 
 void SoftMaxLayerSpec::Compute_Act_post(SoLayer* lay, SoNetwork* net) {
-  if(lay->ext_flag & UnitVars::EXT) { // input layer
+  if(lay->ext_flag & UnitState::EXT) { // input layer
     SoLayerSpec::Compute_Act_post(lay, net);
     return;
   }
@@ -308,8 +308,8 @@ void SoftMaxLayerSpec::Compute_Act_post(SoLayer* lay, SoNetwork* net) {
 
 void SoNetwork::Initialize() {
   layers.SetBaseType(&TA_SoLayer);
-  unit_vars_type = &TA_SoUnitVars;
-  con_group_type = &TA_SoConGroup;
+  unit_vars_type = &TA_SoUnitState;
+  con_group_type = &TA_SoConState;
 }
 
 void SoNetwork::BuildNullUnit() {

@@ -34,7 +34,7 @@ void Network_cuda::Initialize() {
   cons_per_thread = 0;
   n_threads = 0;
   
-  unit_vars_size = 0;
+  unit_state_size = 0;
   n_units_built = 0;
   n_layers_built = 0;
   n_ungps_built = 0;
@@ -49,7 +49,7 @@ void Network_cuda::Initialize() {
   lay_stats_h = NULL;
   lay_stats_d = NULL;
   recv_owns_cons = true;
-  con_group_size = 0;
+  con_state_size = 0;
   units_n_recv_cgps_h = NULL;
   units_n_recv_cgps_d = NULL;
   units_n_send_cgps_h = NULL;
@@ -180,13 +180,13 @@ void Network_cuda::NetAlloc
     strms_created = true;
   }
   
-  unit_vars_size = uvs;
+  unit_state_size = uvs;
   n_units_built = nub;
   n_layers_built = nlb;
   n_ungps_built = nugb;
 
   units_mem_h = umh;
-  cudaSafeCall(cudaMalloc(&units_mem_d, n_units_built * unit_vars_size));
+  cudaSafeCall(cudaMalloc(&units_mem_d, n_units_built * unit_state_size));
 
   lay_unit_idxs_h = luih;
   cudaSafeCall(cudaMalloc(&lay_unit_idxs_d, n_layers_built * 2 * sizeof(int)));
@@ -208,11 +208,11 @@ void Network_cuda::NetAlloc
   n_recv_cgps = nrcg;
   n_send_cgps = nscg;
 
-  con_group_size = sizeof(ConGroup_cuda);
-  recv_cgp_mem_h = (char*)malloc(n_recv_cgps * con_group_size);
-  cudaSafeCall(cudaMalloc(&recv_cgp_mem_d, n_recv_cgps * con_group_size));
-  send_cgp_mem_h = (char*)malloc(n_send_cgps * con_group_size);
-  cudaSafeCall(cudaMalloc(&send_cgp_mem_d, n_send_cgps * con_group_size));
+  con_state_size = sizeof(ConState_cuda);
+  recv_cgp_mem_h = (char*)malloc(n_recv_cgps * con_state_size);
+  cudaSafeCall(cudaMalloc(&recv_cgp_mem_d, n_recv_cgps * con_state_size));
+  send_cgp_mem_h = (char*)malloc(n_send_cgps * con_state_size);
+  cudaSafeCall(cudaMalloc(&send_cgp_mem_d, n_send_cgps * con_state_size));
   
   recv_cgp_start_h = rcsh;
   cudaSafeCall(cudaMalloc(&recv_cgp_start_d, n_units_built * sizeof(int)));
@@ -250,10 +250,10 @@ void Network_cuda::NetToDevice() {
     (cudaMemcpy(send_cgp_start_d, send_cgp_start_h, n_units_built * sizeof(int),
                 cudaMemcpyHostToDevice));
   cudaSafeCall
-    (cudaMemcpy(recv_cgp_mem_d, recv_cgp_mem_h, n_recv_cgps * con_group_size,
+    (cudaMemcpy(recv_cgp_mem_d, recv_cgp_mem_h, n_recv_cgps * con_state_size,
                           cudaMemcpyHostToDevice));
   cudaSafeCall
-    (cudaMemcpy(send_cgp_mem_d, send_cgp_mem_h, n_send_cgps * con_group_size,
+    (cudaMemcpy(send_cgp_mem_d, send_cgp_mem_h, n_send_cgps * con_state_size,
                           cudaMemcpyHostToDevice));
 
   if(!recv_owns_cons) {         // copy the NON-owned cons -- just structural -- no data
@@ -331,20 +331,20 @@ void Network_cuda::OwnCons_DeviceToHost(bool sync) {
   }
 }
 
-void Network_cuda::UnitVars_HostToDevice(bool sync) {
+void Network_cuda::UnitState_HostToDevice(bool sync) {
   if(!(units_mem_h && units_mem_d)) return;
   cudaSafeCall
-    (cudaMemcpyAsync(units_mem_d, units_mem_h, n_units_built * unit_vars_size,
+    (cudaMemcpyAsync(units_mem_d, units_mem_h, n_units_built * unit_state_size,
                      cudaMemcpyHostToDevice, strm_memcpy_units));
   if(sync) {
     cudaSafeCall(cudaStreamSynchronize(strm_memcpy_units));
   }
 }
 
-void Network_cuda::UnitVars_DeviceToHost(bool sync) {
+void Network_cuda::UnitState_DeviceToHost(bool sync) {
   if(!(units_mem_h && units_mem_d)) return;
   cudaSafeCall
-    (cudaMemcpyAsync(units_mem_h, units_mem_d, n_units_built * unit_vars_size,
+    (cudaMemcpyAsync(units_mem_h, units_mem_d, n_units_built * unit_state_size,
                      cudaMemcpyDeviceToHost, strm_memcpy_units));
   if(sync) {
     cudaSafeCall(cudaStreamSynchronize(strm_memcpy_units));
@@ -358,16 +358,16 @@ void Network_cuda::ExtInputToDevice(bool sync) {
     int ed_ui = LayUnEnd(lay_unit_idxs_h, li);
     int nu = ed_ui - st_ui;
 
-    UnitVars_cuda* u = (UnitVars_cuda*)Network_cuda::GetUnitVars
-      (units_mem_h, unit_vars_size, st_ui);
+    UnitState_cuda* u = (UnitState_cuda*)Network_cuda::GetUnitState
+      (units_mem_h, unit_state_size, st_ui);
     
-    if(!((u->ext_flag & UnitVars_cuda::EXT) || (u->ext_flag & UnitVars_cuda::TARG)))
+    if(!((u->ext_flag & UnitState_cuda::EXT) || (u->ext_flag & UnitState_cuda::TARG)))
       continue;
     
     cudaSafeCall
-      (cudaMemcpyAsync(units_mem_d + st_ui * unit_vars_size,
-                       units_mem_h + st_ui * unit_vars_size,
-                       nu * unit_vars_size,
+      (cudaMemcpyAsync(units_mem_d + st_ui * unit_state_size,
+                       units_mem_h + st_ui * unit_state_size,
+                       nu * unit_state_size,
                        cudaMemcpyHostToDevice, strm_memcpy_units));
   }
   if(sync) {
@@ -382,16 +382,16 @@ void Network_cuda::TargUnitsToHost(bool sync) {
     int ed_ui = LayUnEnd(lay_unit_idxs_h, li);
     int nu = ed_ui - st_ui;
 
-    UnitVars_cuda* u = (UnitVars_cuda*)Network_cuda::GetUnitVars
-      (units_mem_h, unit_vars_size, st_ui);
+    UnitState_cuda* u = (UnitState_cuda*)Network_cuda::GetUnitState
+      (units_mem_h, unit_state_size, st_ui);
     
-    if(!(u->ext_flag & UnitVars_cuda::TARG))
+    if(!(u->ext_flag & UnitState_cuda::TARG))
       continue;
     
     cudaSafeCall
-      (cudaMemcpyAsync(units_mem_h + st_ui * unit_vars_size,
-                       units_mem_d + st_ui * unit_vars_size,
-                       nu * unit_vars_size,
+      (cudaMemcpyAsync(units_mem_h + st_ui * unit_state_size,
+                       units_mem_d + st_ui * unit_state_size,
+                       nu * unit_state_size,
                        cudaMemcpyDeviceToHost, strm_memcpy_units));
   }
   if(sync) {
@@ -446,10 +446,10 @@ bool Network_cuda::AllocConSpecs(int n_us) {
   // host-side updated the con_spec_idx settings in all the congroups -- need to
   // re-copy that over again
   cudaSafeCall
-    (cudaMemcpy(recv_cgp_mem_d, recv_cgp_mem_h, n_recv_cgps * con_group_size,
+    (cudaMemcpy(recv_cgp_mem_d, recv_cgp_mem_h, n_recv_cgps * con_state_size,
                           cudaMemcpyHostToDevice));
   cudaSafeCall
-    (cudaMemcpy(send_cgp_mem_d, send_cgp_mem_h, n_send_cgps * con_group_size,
+    (cudaMemcpy(send_cgp_mem_d, send_cgp_mem_h, n_send_cgps * con_state_size,
                           cudaMemcpyHostToDevice));
   return true;
 }

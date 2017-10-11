@@ -188,7 +188,7 @@ void PolarRndPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
       ru = (Unit*)prjn->layer->units.NextEl(ru_itr), cnt++) {
     ru_pos.y = cnt / ru_geom.x;
     ru_pos.x = cnt % ru_geom.x;
-    ConGroup* recv_gp = NULL;
+    ConState_cpp* recv_gp = NULL;
     taVector2f suc;
     int n_con = 0;
     int n_retry = 0;
@@ -216,7 +216,7 @@ void PolarRndPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
   }
 }
 
-void PolarRndPrjnSpec::Init_Weights_Prjn(Projection* prjn, ConGroup* cg,
+void PolarRndPrjnSpec::Init_Weights_Prjn(Projection* prjn, ConState_cpp* cg,
                                          Network* net, int thr_no) {
   Unit* ru = cg->OwnUn(net);
   for(int i=0; i<cg->size; i++) {

@@ -39,11 +39,11 @@ public:
   }
   // #IGNORE
 
-  inline void Compute_dWt(ConGroup* scg, Network* rnet, int thr_no) override {
+  inline void Compute_dWt(ConState* scg, Network* rnet, int thr_no) override {
     LeabraNetwork* net = (LeabraNetwork*)rnet;
     if(!learn || (use_unlearnable && net->unlearnable_trial)) return;
-    LeabraConGroup* cg = (LeabraConGroup*)scg;
-    LeabraUnitVars* su = (LeabraUnitVars*)cg->ThrOwnUnVars(net, thr_no);
+    LeabraConState_cpp* cg = (LeabraConState_cpp*)scg;
+    LeabraUnitState_cpp* su = (LeabraUnitState_cpp*)cg->ThrOwnUnState(net, thr_no);
 
     float su_act;
     if(use_trace_act_avg)
@@ -54,7 +54,7 @@ public:
 
     const int sz = cg->size;
     for(int i=0; i<sz; i++) {
-      LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i,net);
+      LeabraUnitState_cpp* ru = (LeabraUnitState_cpp*)cg->UnState(i,net);
       C_Compute_dWt_TD(dwts[i], ru->da_p, su_act);
     }
   }
@@ -68,10 +68,10 @@ public:
   }
   // #IGNORE compute weights -- linear, no bounds
 
-  inline void Compute_Weights(ConGroup* scg, Network* net, int thr_no) override {
+  inline void Compute_Weights(ConState* scg, Network* net, int thr_no) override {
     if(!learn) return;
 
-    LeabraConGroup* cg = (LeabraConGroup*)scg;
+    LeabraConState_cpp* cg = (LeabraConState_cpp*)scg;
 
     float* wts = cg->OwnCnVar(WT);
     float* dwts = cg->OwnCnVar(DWT);
