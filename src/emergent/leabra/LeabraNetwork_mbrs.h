@@ -20,7 +20,7 @@
 // this pragma ensures that maketa properly grabs this type information even though
 // this file is included in the other files -- we get ta info for main and _cpp, not cuda
 #pragma maketa_file_is_target LeabraNetwork
-#pragma maketa_file_is_target LeabraNetworkState_cpp
+#pragma maketa_file_is_target LeabraNetworkState
 
 
 class STATE_CLASS(LeabraTimes) : public STATE_CLASS(taOBase) {

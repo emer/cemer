@@ -116,7 +116,7 @@ set(leabra_HEADS_MAKETA_MI
   LeabraLayerSpec.h
 
   LeabraLayer.h
-  # 
+
   LeabraNetwork.h
 )
 

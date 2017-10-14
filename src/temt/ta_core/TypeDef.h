@@ -153,7 +153,7 @@ public:
   String        c_name;         // C name, when diff from name (ex 'unsigned_char' vs 'unsigned char")
   String        namespc;        // name space scope
   
-  String	source_file;	// source file name where defined -- no path information, just file name
+  String	source_file;	// source file name where defined -- no path information, just file name -- this is the effective source file -- any special include file active during transclusion will be in special
   int		source_start;	// starting source code line number
   int		source_end;	// ending source code line number
 

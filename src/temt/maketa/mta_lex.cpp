@@ -315,21 +315,24 @@ int MTA::lex() {
         if(LexBuf.contains("maketa_file_is_target")) {
           c = skipwhite_nocr();
           c = readword(c);
-          if(c == '_') {
-            String tmp = LexBuf;
-            c = readword(c);
-            LexBuf = tmp + LexBuf;
-          }
           LexBuf.trim();
+          if(trg_fname_only.endsWith("_cpp.h")) { // auto match cpp to cpp
+            if(!LexBuf.endsWith("_cpp"))
+              LexBuf += "_cpp";
+          }
           LexBuf += ".h";
           // cout << LexBuf << endl;
           if(LexBuf == trg_fname_only) {
             cur_is_trg = true;
             special_trg_fname = cur_fname_only;
-            Info(0, "turning special target on for:", special_trg_fname);
+            Info(1, "turning special target on for:", special_trg_fname);
           }
         }
-        c = skipline();
+        if(c != '\n' && c != '\r') {
+          c = skipwhite_nocr();
+          if ((c == '\n') || (c == '\r'))
+            Getc();
+        }
 	continue;
       }
       // note: following for MS VC++

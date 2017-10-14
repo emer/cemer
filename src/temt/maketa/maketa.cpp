@@ -330,8 +330,14 @@ void MTA::EndTemplPars() {
 
 void MTA::SetSource(TypeDef* td, bool use_defn_st_line) {
   if(cur_is_trg) {
-    td->source_file = taMisc::PathToUnixSep(trg_fname_only); // cur_fname);
-    Info(1, "set trg source:", td->name);
+    if(td->name.endsWith("_cpp") && !trg_fname_only.endsWith("_cpp.h")) {
+      td->source_file = special_trg_fname;
+      Info(1, "_cpp mismatch, set trg source:", td->name, td->source_file);
+    }
+    else {
+      td->source_file = taMisc::PathToUnixSep(trg_fname_only); // cur_fname);
+      Info(1, "set trg source:", td->name, td->source_file);
+    }
   }
   else {
     td->source_file = taMisc::PathToUnixSep(cur_fname);

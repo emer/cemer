@@ -16,6 +16,9 @@
 // TA-like base classes for State implementation code
 // included in appropriate specific context-setting code: State_core.h, cuda.h
 
+#pragma maketa_file_is_target NetworkState
+
+
 // these are all the base State classes
 
 class STATE_CLASS(NetworkState); //

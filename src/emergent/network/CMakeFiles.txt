@@ -154,9 +154,9 @@ set(network_HEADS_MAKETA_MI_DEPS
 "ConState_core.h;State_defs.h;State_cpp.h"
 "LayerSpec_core.h;State_defs.h;State_cpp.h"
 "UnitSpec_core.h;State_defs.h;State_cpp.h"
-"ConSpec_core.h;State_defs.h;State_cpp.h"
-"UnitSpec_core.h;State_defs.h;State_cpp.h"
-"ConSpec_core.h;State_defs.h;State_cpp.h"
+"ConSpec_core.h;ConSpec_mbrs.h;State_cpp.h"
+"ConSpec_core.h;ConSpec_mbrs.h;State_base.h"
+"UnitSpec_core.h;State_defs.h;State_base.h"
 )
 
 set(network_HEADS_NOMAKETA

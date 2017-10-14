@@ -20,6 +20,7 @@
 // this file is included in the other files -- we get ta info for main and _cpp, not cuda
 
 #pragma maketa_file_is_target LeabraLayer
+#pragma maketa_file_is_target LeabraLayerState
 
 // // member includes:
 // // these are needed for FLT_MAX

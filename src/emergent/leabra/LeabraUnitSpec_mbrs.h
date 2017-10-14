@@ -20,7 +20,6 @@
 // this pragma ensures that maketa properly grabs this type information even though
 // this file is included in the other files -- we get ta info for main and _cpp, not cuda
 #pragma maketa_file_is_target LeabraUnitSpec
-#pragma maketa_file_is_target LeabraUnitSpec_cpp
 
 
 class STATE_CLASS(LeabraActFunSpec) : public STATE_CLASS(SpecMemberBase) {

@@ -20,5 +20,4 @@
 // this pragma ensures that maketa properly grabs this type information even though
 // this file is included in the other files -- we get ta info for main and _cpp, not cuda
 // #pragma maketa_file_is_target LeabraBiasSpec
-// #pragma maketa_file_is_target LeabraBiasSpec_cpp
 

@@ -39,6 +39,7 @@ bool MTA::TypeDef_Gen_Test(TypeDef* ths) {
     }
     return false; // not from target file!
   }
+    
   if(ths->HasOption("IGNORE")) {
     if(dbg_constr) {
       Info(1, "mta_constr: skipping ignored type:", ths->name);

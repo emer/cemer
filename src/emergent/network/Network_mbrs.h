@@ -16,9 +16,9 @@
 // this must be included in a defined State_core/main/cuda context with appropriate
 // #ifndef multiple-include protection AT THAT LEVEL not here..
 
-// include maketa information for these two targets
 #pragma maketa_file_is_target Network
-#pragma maketa_file_is_target NetworkState_cpp
+#pragma maketa_file_is_target NetworkState
+
 
 class STATE_CLASS(NetworkCudaSpec) : public STATE_CLASS(taOBase) {
   // ##INLINE ##NO_TOKENS ##CAT_Network parameters for NVIDA CUDA GPU implementation -- only applicable for CUDA_COMPILE binaries
