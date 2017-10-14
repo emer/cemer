@@ -517,21 +517,6 @@ bool BaseSpec::ChooseMe() {
   return true;
 }
 
-void BaseSpec::CopyFromDiffTypes(TypeDef* trg_td, void* trg_base, TypeDef* src_td, void* src_base,
-                                 MemberDef* trg_md, MemberDef* src_md) {
-  if(trg_td == src_td) {
-    trg_td->CopyFromSameType(trg_base, src_base, trg_md);
-    return;
-  }
-  for(int i=0; i < trg_td->members.size; i++) {
-    MemberDef* tmd = trg_td->members[i];
-    MemberDef* smd = src_td->members.FindName(tmd->name);
-    if(!smd) continue;
-    BaseSpec::CopyFromDiffTypes(tmd->type, tmd->GetOff(trg_base), smd->type, smd->GetOff(src_base),
-                                tmd, smd);
-  }
-}
-
 void BaseSpec::CopyToState(void* state_spec, const char* state_suffix) {
   TypeDef* td = GetTypeDef();
   String state_name = td->name + state_suffix;
@@ -540,11 +525,5 @@ void BaseSpec::CopyToState(void* state_spec, const char* state_suffix) {
     taMisc::Error("CopyToState: corresponding state type name not found!:", state_name);
     return;
   }
-  for(int i=TA_BaseSpec.members.size; i < td->members.size; i++) {
-    MemberDef* md = td->members[i];
-    MemberDef* smd = st_td->members.FindName(md->name);
-    if(!smd) continue;
-    BaseSpec::CopyFromDiffTypes(smd->type, smd->GetOff(state_spec), md->type, md->GetOff(this),
-                                smd, md);
-  }
+  st_td->CopyFromDiffTypes(state_spec, td, (void*)this, 0, false); // no uae
 }

@@ -450,6 +450,11 @@ public:
   virtual int   CountCons(Network* net);
   // #CAT_Structure count connections for all units in layer
 
+  virtual void  CopyToLayerState();
+  // #CAT_State copy layer main state to LayerState computational state object
+  virtual void  CopyFromLayerState();
+  // #CAT_State copy from LayerState computational state objects to our main layer state
+  
   virtual void  SetLayUnitExtFlags(int flg);
   // #CAT_Activation set external input data flags for layer and all units in the layer
 
@@ -535,6 +540,13 @@ public:
   virtual void  SetUnitType(TypeDef* td);
   // #BUTTON #DYN1 #TYPE_Unit #CAT_Structure #INIT_ARGVAL_ON_units.el_typ set unit type for all units in layer (created by Build)
 
+  virtual bool EditState();
+  // #BUTTON edit the layer state values that drive actual C++ computation
+  virtual bool EditLayUnGpState();
+  // #BUTTON edit the layer unit group state values that drive actual C++ computation
+  virtual bool EditUnGpState(int un_gp_no);
+  // #BUTTON edit the unit group state values for given unit group
+  
   virtual void  MonitorVar(NetMonitor* net_mon, const String& variable);
   // #BUTTON #DYN1 #CAT_Statistic monitor (record in a datatable) the given variable on this layer (can be a variable on the units or connections -- in which case a matrix with a value for each will be created -- e.g., 'act' will monitor activations of all units within the layer)
   virtual bool  Snapshot(const String& variable, SimpleMathSpec& math_op, bool arg_is_snap=true);

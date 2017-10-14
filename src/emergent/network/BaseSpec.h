@@ -147,10 +147,6 @@ public:
   taBase*         ChooseNew(taBase* origin, const String& choice_text) override;
   bool            HasChooseNew() override { return true; }
 
-  static void     CopyFromDiffTypes(TypeDef* trg_td, void* trg_base, TypeDef* src_td, void* src_base,
-                                    MemberDef* trg_md = NULL, MemberDef* src_md = NULL);
-  // #IGNORE copy common members between different types
-
   virtual void    CopyToState(void* state_spec, const char* state_suffix);
   // #IGNORE use typedef info to copy all of our parameters to corresponding State version of this spec type
   

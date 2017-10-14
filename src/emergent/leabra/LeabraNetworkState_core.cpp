@@ -107,6 +107,24 @@ CON_SPEC* LEABRA_NETWORK_STATE::NewConSpec(int spec_type) const {
 //      General Init functions
 
 
+void LEABRA_NETWORK_STATE::Init_Weights_Layer() {
+  for(int li=0; li < n_layers_built; li++) {
+    LEABRA_LAYER_STATE* lay = (LEABRA_LAYER_STATE*)GetLayerState(li);
+    if(lay->lesioned()) continue;
+    LEABRA_LAYER_SPEC_CPP* ls = (LEABRA_LAYER_SPEC_CPP*)lay->GetLayerSpec(this);
+    ls->Init_Weights_Layer(lay, this);
+  }
+}
+
+void LEABRA_NETWORK_STATE::Init_Stats_Layer() {
+  for(int li=0; li < n_layers_built; li++) {
+    LEABRA_LAYER_STATE* lay = (LEABRA_LAYER_STATE*)GetLayerState(li);
+    if(lay->lesioned()) continue;
+    LEABRA_LAYER_SPEC_CPP* ls = (LEABRA_LAYER_SPEC_CPP*)lay->GetLayerSpec(this);
+    ls->Init_Stats(lay, this);
+  }
+}
+
 void LEABRA_NETWORK_STATE::Init_AdaptInhib() {
   for(int li=0; li < n_layers_built; li++) {
     LEABRA_LAYER_STATE* lay = (LEABRA_LAYER_STATE*)GetLayerState(li);

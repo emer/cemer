@@ -30,6 +30,7 @@
 #include <NetMonitor>
 #include <taMath_float>
 #include <SpecMemberBase>
+#include <taiEdit>
 
 #include <tabMisc>
 #include <taMisc>
@@ -473,19 +474,6 @@ void Network::BuildNetState() {
   CopyToNetState();
 }
 
-void Network::CopyToNetState() {
-  net_state->own_net = this;
-  net_state->flags = (NetworkState_cpp::NetFlags)flags;
-  net_state->train_mode = (NetworkState_cpp::TrainMode)train_mode;
-  net_state->wt_update = (NetworkState_cpp::WtUpdate)wt_update;
-  net_state->small_batch_n = small_batch_n;
-  net_state->small_batch_n_eff = small_batch_n_eff;
-
-  net_state->dmem_nprocs = taMisc::dmem_nprocs;
-  net_state->dmem_proc = taMisc::dmem_proc;
-  // todo: other state values -- counters, etc!
-}
-
 
 void Network::Build() {
   taMisc::Busy();
@@ -533,6 +521,8 @@ void Network::Build() {
     Init_Weights();
   }
 
+  CopyToNetState();
+  
   StructUpdate(false);
   --taMisc::no_auto_expand;
   taMisc::DoneBusy();
@@ -1634,6 +1624,14 @@ Layer* Network::NewLayer() {
   return layers.NewEl(1);
 }
 
+bool Network::EditState() {
+  if(!taMisc::gui_active || !net_state) return false;
+  if (taiEdit *ie = NetworkStateType()->ie) {
+    return ie->Edit((void*)net_state, false);
+  }
+  return false;
+}
+
 void Network::RemoveUnits() {
   ClearNetFlag(BUILT);
   ClearIntact();
@@ -1701,6 +1699,39 @@ void Network::RemoveCons_Thr(int thr_no) {
 // * Exception to above: if the layer-level is specifically computing layer-level
 //   aggregate stats over units, then that is most efficiently done by layer-level
 // TODO: need to figure out a better soln for layer-level processing!!
+
+void Network::CopyToNetState() {
+  TypeDef* td = GetTypeDef();
+  TypeDef* state_td = NetworkStateType();
+  state_td->CopyFromDiffTypes((void*)net_state, td, (void*)this, 0, false); // no uae
+
+  // special stuff 
+  net_state->own_net = this;
+  net_state->dmem_nprocs = taMisc::dmem_nprocs;
+  net_state->dmem_proc = taMisc::dmem_proc;
+}
+
+void Network::CopyFromNetState() {
+  TypeDef* td = GetTypeDef();
+  TypeDef* state_td = NetworkStateType();
+  td->CopyFromDiffTypes((void*)this, state_td, (void*)net_state, 0, false); // no uae -- too slow -- may need it at some point but need a better soln like overloading this method and doing very targeted ones, nogui
+}
+
+void Network::CopyToLayerState() {
+  for(int li=0; li< n_layers_built; li++) {
+    Layer* lay = StateLayer(li);
+    // note: don't check lesioned here b/c could be sending lesion flag!
+    lay->CopyToLayerState();
+  }
+}
+
+void Network::CopyFromLayerState() {
+  for(int li=0; li< n_layers_built; li++) {
+    Layer* lay = StateLayer(li);
+    if(lay->lesioned()) continue; // do check here b/c state doesn't lesion!
+    lay->CopyFromLayerState();
+  }
+}
 
 void Network::Init_Epoch() {
   if(TestError(!IsBuiltIntact(), "Init_Epoch",
@@ -1882,53 +1913,8 @@ void Network::Init_Weights_renorm_Thr(int thr_no) {
   }
 }
 
-void Network::Init_Weights_sym(int thr_no) {
-  if(RecvOwnsCons()) {
-    const int nrcg = ThrNRecvConGps(thr_no);
-    for(int i=0; i<nrcg; i++) {
-      ConState_cpp* rcg = ThrRecvConState(thr_no, i);
-      if(rcg->NotActive()) continue;
-      rcg->GetConSpec(net_state)->Init_Weights_sym_r(rcg, net_state, thr_no);
-    }
-  }
-  else {
-    const int nscg = ThrNSendConGps(thr_no);
-    for(int i=0; i<nscg; i++) {
-      ConState_cpp* scg = ThrSendConState(thr_no, i);
-      if(scg->NotActive()) continue;
-      scg->GetConSpec(net_state)->Init_Weights_sym_s(scg, net_state, thr_no);
-    }
-  }
-}
-
 void Network::Init_Weights_post() {
   NET_THREAD_CALL(Network::Init_Weights_post_Thr);
-}
-
-void Network::Init_Weights_post_Thr(int thr_no) {
-  if(RecvOwnsCons()) {
-    const int nrcg = ThrNRecvConGps(thr_no);
-    for(int i=0; i<nrcg; i++) {
-      ConState_cpp* rcg = ThrRecvConState(thr_no, i);
-      if(rcg->NotActive()) continue;
-      rcg->GetConSpec(net_state)->Init_Weights_post(rcg, net_state, thr_no);
-    }
-  }
-  else {
-    const int nscg = ThrNSendConGps(thr_no);
-    for(int i=0; i<nscg; i++) {
-      ConState_cpp* scg = ThrSendConState(thr_no, i);
-      if(scg->NotActive()) continue;
-      scg->GetConSpec(net_state)->Init_Weights_post(scg, net_state, thr_no);
-    }
-  }
-  // also unit-level, as separate pass
-  const int nu = ThrNUnits(thr_no);
-  for(int i=0; i<nu; i++) {
-    UnitState_cpp* uv = ThrUnitState(thr_no, i);
-    if(uv->lesioned()) continue;
-    uv->GetUnitSpec(net_state)->Init_Weights_post(uv, net_state, thr_no);
-  }
 }
 
 void Network::Init_Weights_AutoLoad() {
@@ -1976,7 +1962,7 @@ void Network::Init_Stats() {
   output_name = "";
 
   // also call at the layer level
-  net_state->Init_Stats_Layer();
+  Init_Stats_Layer();
 }
 
 void Network::Init_Timers() {

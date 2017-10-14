@@ -64,6 +64,9 @@
   ///////////////////////////////////////////////////////////////////////
   //	General Init functions
 
+  INIMPL void Init_Weights_Layer() override;
+  INIMPL void Init_Stats_Layer() override;
+
   INIMPL virtual void Init_AdaptInhib();
   // #CAT_Activation Initialize adaptive inhibition gain value on all the layers -- undoes any adaptation that has taken place (including from loaded weights - the adaptive gain value is saved with the weights)
 

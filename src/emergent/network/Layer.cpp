@@ -20,6 +20,7 @@
 #include <taFiler>
 #include <NetMonitor>
 #include <DataTable>
+#include <taiEdit>
 
 #include <tabMisc>
 #include <taMisc>
@@ -1158,6 +1159,24 @@ int Layer::CountCons(Network* net) {
   return n_cons;
 }
 
+void Layer::CopyToLayerState() {
+  Network* net = GET_MY_OWNER(Network);
+  if (!net || !net->IsBuiltIntact()) return;
+  TypeDef* td = GetTypeDef();
+  TypeDef* state_td = net->LayerStateType();
+  LayerState_cpp* lay = GetLayerState(net->net_state);
+  state_td->CopyFromDiffTypes((void*)lay, td, (void*)this, 0, false); // no uae
+}
+
+void Layer::CopyFromLayerState() {
+  Network* net = GET_MY_OWNER(Network);
+  if (!net || !net->IsBuiltIntact()) return;
+  TypeDef* td = GetTypeDef();
+  TypeDef* state_td = net->LayerStateType();
+  LayerState_cpp* lay = GetLayerState(net->net_state);
+  td->CopyFromDiffTypes((void*)this, state_td, (void*)lay, 0, false); // no uae
+}
+
 void Layer::SetLayUnitExtFlags(int flg) {
   SetExtFlag(flg);
   FOREACH_ELEM_IN_GROUP(Unit, u, units) {
@@ -1191,10 +1210,12 @@ void Layer::ApplyInputData(taMatrix* data, ExtFlags ext_flags,
     ApplyInputData_2d(data, ext_flags, ran, offs, na_by_range);
   }
   else {
-    if(unit_groups)
+    if(unit_groups) {
       ApplyInputData_Gp4d(data, ext_flags, ran, na_by_range); // note: no offsets -- layerwriter does check
-    else
+    }
+    else {
       ApplyInputData_Flat4d(data, ext_flags, ran, offs, na_by_range);
+    }
   }
 }
 
@@ -1731,6 +1752,42 @@ void Layer::SetUnitType(TypeDef* td) {
       ((Unit_Group*)units.gp.FastEl(j))->el_typ = td;
     }
   }
+}
+
+bool Layer::EditState() {
+  if(!taMisc::gui_active) return false;
+  Network* net = GET_MY_OWNER(Network);
+  if (!net || !net->IsBuiltIntact()) return false;
+  if (taiEdit *ie = net->LayerStateType()->ie) {
+    LayerState_cpp* lay = GetLayerState(net->net_state);
+    if(!lay) return false;
+    return ie->Edit((void*)lay, false);
+  }
+  return false;
+}
+
+bool Layer::EditLayUnGpState() {
+  if(!taMisc::gui_active) return false;
+  Network* net = GET_MY_OWNER(Network);
+  if (!net || !net->IsBuiltIntact()) return false;
+  if (taiEdit *ie = net->UnGpStateType()->ie) {
+    UnGpState_cpp* ugp = GetLayUnGpState(net->net_state);
+    if(!ugp) return false;
+    return ie->Edit((void*)ugp, false);
+  }
+  return false;
+}
+
+bool Layer::EditUnGpState(int un_gp_no) {
+  if(!taMisc::gui_active) return false;
+  Network* net = GET_MY_OWNER(Network);
+  if (!net || !net->IsBuiltIntact()) return false;
+  if (taiEdit *ie = net->UnGpStateType()->ie) {
+    UnGpState_cpp* ugp = GetUnGpState(net->net_state, un_gp_no);
+    if(!ugp) return false;
+    return ie->Edit((void*)ugp, false);
+  }
+  return false;
 }
 
 void Layer::MonitorVar(NetMonitor* net_mon, const String& variable) {

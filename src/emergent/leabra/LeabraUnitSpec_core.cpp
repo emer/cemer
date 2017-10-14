@@ -1,7 +1,7 @@
 // contains core non-inline (INIMPL) functions from _core.h
 // if used, include directly in LeabraUnitSpec.cpp, _cpp.cpp, _cuda.cpp
 
-void STATE_CLASS(LeabraUnitSpec)::Trial_DecayState(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) {
+void LEABRA_UNIT_SPEC::Trial_DecayState(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) {
   LEABRA_LAYER_STATE* lay = (LEABRA_LAYER_STATE*)u->GetOwnLayer(net);
   LEABRA_LAYER_SPEC_CPP* ls = (LEABRA_LAYER_SPEC_CPP*)lay->GetLayerSpec(net);
 
@@ -21,7 +21,7 @@ void STATE_CLASS(LeabraUnitSpec)::Trial_DecayState(LEABRA_UNIT_STATE* u, LEABRA_
 }
 
 
-void STATE_CLASS(LeabraUnitSpec)::Compute_NetinScale(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) {
+void LEABRA_UNIT_SPEC::Compute_NetinScale(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) {
   // this is all receiver-based and done only at beginning of each quarter
   bool plus_phase = (net->phase == LEABRA_NETWORK_STATE::PLUS_PHASE);
   float net_scale = 0.0f;
@@ -95,7 +95,7 @@ void STATE_CLASS(LeabraUnitSpec)::Compute_NetinScale(LEABRA_UNIT_STATE* u, LEABR
   }
 }
 
-void STATE_CLASS(LeabraUnitSpec)::Send_DeepCtxtNetin(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) {
+void LEABRA_UNIT_SPEC::Send_DeepCtxtNetin(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) {
   if(!deep.on || !Quarter_DeepRawPrevQtr(net->quarter)) return;
 
   float act_ts = u->deep_raw;
@@ -115,7 +115,7 @@ void STATE_CLASS(LeabraUnitSpec)::Send_DeepCtxtNetin(LEABRA_UNIT_STATE* u, LEABR
   }
 }
 
-void STATE_CLASS(LeabraUnitSpec)::Send_NetinDelta(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) {
+void LEABRA_UNIT_SPEC::Send_NetinDelta(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) {
   if(net->n_thrs_built == 1) {
     net->send_pct_tot++;        // only safe for non-thread case
   }
@@ -194,7 +194,7 @@ void STATE_CLASS(LeabraUnitSpec)::Send_NetinDelta(LEABRA_UNIT_STATE* u, LEABRA_N
   }
 }
 
-void STATE_CLASS(LeabraUnitSpec)::Compute_NetinRaw(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) {
+void LEABRA_UNIT_SPEC::Compute_NetinRaw(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) {
   // this integrates from SendDelta into net_raw and gi_syn
   int nt = net->n_thrs_built;
   const int flat_idx = u->flat_idx;
@@ -248,7 +248,7 @@ void STATE_CLASS(LeabraUnitSpec)::Compute_NetinRaw(LEABRA_UNIT_STATE* u, LEABRA_
   }
 }
 
-void STATE_CLASS(LeabraUnitSpec)::Compute_NetinInteg(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) {
+void LEABRA_UNIT_SPEC::Compute_NetinInteg(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) {
   if(net->deep.mod_net) {       // if anyone's doing it, we need to integrate!
     DeepModNetin_Integ(u, net, thr_no);
   }
@@ -317,7 +317,7 @@ void STATE_CLASS(LeabraUnitSpec)::Compute_NetinInteg(LEABRA_UNIT_STATE* u, LEABR
   }
 }
 
-float STATE_CLASS(LeabraUnitSpec)::Compute_NetinExtras
+float LEABRA_UNIT_SPEC::Compute_NetinExtras
   (LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no, float& net_syn) {
   LEABRA_LAYER_STATE* lay = (LEABRA_LAYER_STATE*)u->GetOwnLayer(net);
   LEABRA_LAYER_SPEC* ls = (LEABRA_LAYER_SPEC*)lay->GetLayerSpec(net);
@@ -344,7 +344,7 @@ float STATE_CLASS(LeabraUnitSpec)::Compute_NetinExtras
   return net_ex;
 }
 
-void STATE_CLASS(LeabraUnitSpec)::Compute_NetinInteg_Spike_e(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net,
+void LEABRA_UNIT_SPEC::Compute_NetinInteg_Spike_e(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net,
                                                 int thr_no) {
   // netin gets added at the end of the spike_buf -- 0 time is the end
   // STATE_CLASS(CircBufferIndex)::CircAddShift_float
@@ -374,7 +374,7 @@ void STATE_CLASS(LeabraUnitSpec)::Compute_NetinInteg_Spike_e(LEABRA_UNIT_STATE* 
   u->net = fmaxf(u->net, 0.0f); // negative netin doesn't make any sense
 }
 
-void STATE_CLASS(LeabraUnitSpec)::Compute_NetinInteg_Spike_i(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net,
+void LEABRA_UNIT_SPEC::Compute_NetinInteg_Spike_i(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net,
                                                 int thr_no) {
   // netin gets added at the end of the spike_i_buf -- 0 time is the end
   // STATE_CLASS(CircBufferIndex)::CircAddShift_float
@@ -404,7 +404,7 @@ void STATE_CLASS(LeabraUnitSpec)::Compute_NetinInteg_Spike_i(LEABRA_UNIT_STATE* 
 }
 
 
-void STATE_CLASS(LeabraUnitSpec)::Compute_ApplyInhib
+void LEABRA_UNIT_SPEC::Compute_ApplyInhib
   (LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no, LEABRA_LAYER_STATE* lay, float ival) {
   LEABRA_LAYER_SPEC* ls = (LEABRA_LAYER_SPEC*)lay->GetLayerSpec(net);
   Compute_SelfInhib_impl(u, ls->inhib_misc.self_fb, ls->inhib_misc.self_dt);
@@ -412,11 +412,11 @@ void STATE_CLASS(LeabraUnitSpec)::Compute_ApplyInhib
   if(ls->del_inhib.on) {
     gi_ex = ls->del_inhib.DelInhib(u->net_prv_trl, u->net_prv_q);
   }
-  Compute_ApplyInhib_impl(u, gi_ex, ival, lay->adapt_gi);
+  Compute_ApplyInhib_impl(u, ival, gi_ex, lay->adapt_gi);
 }
 
 
-void STATE_CLASS(LeabraUnitSpec)::Compute_Vm(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) {
+void LEABRA_UNIT_SPEC::Compute_Vm(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) {
   bool updt_spk_vm = true;
   if(spike_misc.t_r > 0 && u->spk_t > 0) {
     int spkdel = net->tot_cycle - u->spk_t;
@@ -486,7 +486,7 @@ void STATE_CLASS(LeabraUnitSpec)::Compute_Vm(LEABRA_UNIT_STATE* u, LEABRA_NETWOR
   if(u->v_m_eq > vm_range.max) u->v_m_eq = vm_range.max;
 }
 
-void STATE_CLASS(LeabraUnitSpec)::Send_DeepRawNetin(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) {
+void LEABRA_UNIT_SPEC::Send_DeepRawNetin(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) {
   if(!deep.on || !Quarter_DeepRawNow(net->quarter)) return;
 
   float act_ts = u->deep_raw; // note: no delay for deep

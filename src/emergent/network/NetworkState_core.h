@@ -432,6 +432,10 @@
   // #IGNORE initialize activations
   INIMPL virtual void Init_dWt_Thr(int thr_no);
   // #IGNORE inlitialize delta weight change aggregates
+  INIMPL virtual void Init_Weights_sym(int thr_no);
+  // #IGNORE symmetrize weights after first init pass, called when needed
+  INIMPL virtual void Init_Weights_post_Thr(int thr_no);
+  // #IGNORE
   INIMPL virtual void Init_Weights_Layer();
   // #CAT_Learning call layer-level init weights function -- after all unit-level inits
   INIMPL virtual void Init_Stats_Layer();

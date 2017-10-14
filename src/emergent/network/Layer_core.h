@@ -91,6 +91,10 @@
   { return net->GetUnitSpec(unit_spec_idx); }
   // #CAT_Structure get the unit spec for this layer
 
+  INLINE LAYER_STATE* GetLayerState(NETWORK_STATE* net) const
+  { return net->GetLayerState(layer_idx); }
+  // #CAT_Structure get the layer state for this layer
+
   INLINE UNGP_STATE* GetLayUnGpState(NETWORK_STATE* net) const
   { return net->GetUnGpState(ungp_idx); }
   // #CAT_Structure get the main unit group state for this layer

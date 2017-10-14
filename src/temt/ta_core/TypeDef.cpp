@@ -2812,6 +2812,29 @@ void TypeDef::CopyFromSameType(void* trg_base, void* src_base,
   }
 }
 
+void TypeDef::CopyFromDiffTypes(void* trg_base, TypeDef* src_td, void* src_base,
+                                int start_idx, bool update_after,
+                                MemberDef* trg_md, MemberDef* src_md) {
+  if(this == src_td || name == src_td->name) { // latter allows for enum types in diff classes with same name
+    CopyFromSameType(trg_base, src_base, trg_md);
+  }
+  else {
+    for(int i=start_idx; i < members.size; i++) {
+      MemberDef* tmd = members[i];
+      MemberDef* smd = src_td->members.FindName(tmd->name);
+      if(!smd) continue;
+      tmd->type->CopyFromDiffTypes(tmd->GetOff(trg_base), smd->type, smd->GetOff(src_base),
+                                   0, update_after, tmd, smd);
+    }
+  }
+#ifndef NO_TA_BASE
+  if(update_after && IsTaBase()) {
+    taBase* rbase = (taBase*)trg_base;
+    rbase->UpdateAfterEdit();
+  }
+#endif
+}
+
 void TypeDef::CopyOnlySameType(void* trg_base, void* src_base,
                                MemberDef* memb_def)
 {

@@ -203,9 +203,9 @@ public:
 
   static taBrainAtlas_List* brain_atlases;  // #HIDDEN #READ_ONLY #NO_SAVE #TREE_HIDDEN atlases available
 
-  NetworkState_cpp*  net_state; // #NO_SAVE our C++ network state -- handles full implementation
+  NetworkState_cpp*  net_state; // #HIDDEN #NO_SAVE our C++ network state -- handles full implementation
 #ifdef CUDA_COMPILE
-  NetworkState_cuda* cuda_state; // #NO_SAVE our NVIDIA CUDA network state -- handles full implementation
+  NetworkState_cuda* cuda_state; // #HIDDEN #NO_SAVE our NVIDIA CUDA network state -- handles full implementation
 #endif
   
 
@@ -506,8 +506,6 @@ public:
     // #CAT_Structure check to make sure that specs are not null and set to the right type, and update with new specs etc to fix any errors (with notify), so that at least network operations will not crash -- called in Build and CheckConfig
     virtual void  BuildNetState();
     // #IGNORE build network state object
-    virtual void  CopyToNetState();
-    // #CAT_State copy our state to NetworkState computational state objects
     virtual void  BuildLayers();
     // #MENU #MENU_ON_Structure #CAT_Structure Build any network layers that are dynamically constructed
     virtual void  BuildSpecs();
@@ -649,6 +647,16 @@ public:
   //    Many functions operate directly on the units via threads, with
   //    optional call through to the layers for any layer-level subsequent processing
 
+  virtual void  CopyToNetState();
+  // #CAT_State copy our main state to NetworkState computational state objects
+  virtual void  CopyFromNetState();
+  // #CAT_State copy from NetworkState computational state objects to our main state
+
+  virtual void  CopyToLayerState();
+  // #CAT_State copy all layer main state to LayerState computational state objects
+  virtual void  CopyFromLayerState();
+  // #CAT_State copy from all LayerState computational state objects to our main layer state
+
   virtual void  Init_Epoch();
   // #CAT_Activation Initializes network state at the start of a new epoch -- updates parameters according to param_seq for example
 
@@ -680,9 +688,10 @@ public:
     // #CAT_Learning call layer-level init weights functions -- after all unit-level inits
     virtual void Init_Weights_post();
     // #CAT_Learning post-initialize state variables (ie. for scaling symmetrical weights, other wt state keyed off of weights, etc) -- this MUST be called after any external modifications to the weights, e.g., the TransformWeights or AddNoiseToWeights calls on any lower-level objects (layers, units, con groups)
-    virtual void Init_Weights_sym(int thr_no);
+    inline void Init_Weights_sym(int thr_no) { net_state->Init_Weights_sym(thr_no); }
     // #IGNORE symmetrize weights after first init pass, called when needed
-    virtual void Init_Weights_post_Thr(int thr_no);
+    inline void Init_Weights_post_Thr(int thr_no)
+    { net_state->Init_Weights_post_Thr(thr_no); }
     // #IGNORE
     virtual void Init_Weights_AutoLoad();
     // #CAT_Learning auto-load weights from Weights object, if it has auto_load set..
@@ -694,6 +703,8 @@ public:
   // #EXPERT #CAT_Counter initialize all counter variables on network (called in Init_Weights; except batch because that loops over inits!)
   virtual void  Init_Stats();
   // #EXPERT #CAT_Statistic initialize statistic variables on network
+    inline void  Init_Stats_Layer() { net_state->Init_Stats_Layer(); }
+    // #IGNORE
   virtual void  Init_Timers();
   // #EXPERT #CAT_Statistic initialize statistic variables on network
 
@@ -741,6 +752,9 @@ public:
   virtual Layer* NewLayer();
   // #BUTTON create a new layer in the network, using default layer type
 
+  virtual bool EditState();
+  // #BUTTON edit the network state values that drive actual C++ computation
+  
   virtual void  MonitorVar(NetMonitor* net_mon, const String& variable);
   // #BUTTON #CAT_Statistic monitor (record in a datatable) the given variable on this network
   virtual void  RemoveMonitors();

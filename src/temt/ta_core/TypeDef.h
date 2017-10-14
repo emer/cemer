@@ -537,6 +537,10 @@ public:
   void          CopyFromSameType(void* trg_base, void* src_base,
                                          MemberDef* memb_def = NULL);
   // copy all mmbers from same type
+  void          CopyFromDiffTypes(void* trg_base, TypeDef* src_td, void* src_base,
+                                  int start_memb_idx=0, bool update_after = true,
+                                  MemberDef* trg_md = NULL, MemberDef* src_md = NULL);
+  // copy common members between different types, starting at given member index, and calling update-after-edit on target after copying
   void          CopyOnlySameType(void* trg_base, void* src_base,
                                          MemberDef* memb_def = NULL);
   // copy only those members from same type (no inherited)

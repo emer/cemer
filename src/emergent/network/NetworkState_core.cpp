@@ -368,6 +368,7 @@ void NETWORK_STATE::Init_InputData_Thr(int thr_no) {
 void NETWORK_STATE::Init_InputData_Layer() {
   for(int i=0; i < n_layers_built; i++) {
     LAYER_STATE* lay = GetLayerState(i);
+    if(lay->lesioned()) continue;
     lay->Init_InputData(this);
   }
 }
@@ -411,9 +412,55 @@ void NETWORK_STATE::Init_dWt_Thr(int thr_no) {
   }
 }
 
+void NETWORK_STATE::Init_Weights_sym(int thr_no) {
+  if(RecvOwnsCons()) {
+    const int nrcg = ThrNRecvConGps(thr_no);
+    for(int i=0; i<nrcg; i++) {
+      ConState_cpp* rcg = ThrRecvConState(thr_no, i);
+      if(rcg->NotActive()) continue;
+      rcg->GetConSpec(this)->Init_Weights_sym_r(rcg, this, thr_no);
+    }
+  }
+  else {
+    const int nscg = ThrNSendConGps(thr_no);
+    for(int i=0; i<nscg; i++) {
+      ConState_cpp* scg = ThrSendConState(thr_no, i);
+      if(scg->NotActive()) continue;
+      scg->GetConSpec(this)->Init_Weights_sym_s(scg, this, thr_no);
+    }
+  }
+}
+
+void NETWORK_STATE::Init_Weights_post_Thr(int thr_no) {
+  if(RecvOwnsCons()) {
+    const int nrcg = ThrNRecvConGps(thr_no);
+    for(int i=0; i<nrcg; i++) {
+      ConState_cpp* rcg = ThrRecvConState(thr_no, i);
+      if(rcg->NotActive()) continue;
+      rcg->GetConSpec(this)->Init_Weights_post(rcg, this, thr_no);
+    }
+  }
+  else {
+    const int nscg = ThrNSendConGps(thr_no);
+    for(int i=0; i<nscg; i++) {
+      ConState_cpp* scg = ThrSendConState(thr_no, i);
+      if(scg->NotActive()) continue;
+      scg->GetConSpec(this)->Init_Weights_post(scg, this, thr_no);
+    }
+  }
+  // also unit-level, as separate pass
+  const int nu = ThrNUnits(thr_no);
+  for(int i=0; i<nu; i++) {
+    UnitState_cpp* uv = ThrUnitState(thr_no, i);
+    if(uv->lesioned()) continue;
+    uv->GetUnitSpec(this)->Init_Weights_post(uv, this, thr_no);
+  }
+}
+
 void NETWORK_STATE::Init_Weights_Layer() {
   for(int i=0; i < n_layers_built; i++) {
     LAYER_STATE* lay = GetLayerState(i);
+    if(lay->lesioned()) continue;
     lay->Init_Weights_Layer(this);
   }
 }
@@ -421,6 +468,7 @@ void NETWORK_STATE::Init_Weights_Layer() {
 void NETWORK_STATE::Init_Stats_Layer() {
   for(int i=0; i < n_layers_built; i++) {
     LAYER_STATE* lay = GetLayerState(i);
+    if(lay->lesioned()) continue;
     lay->Init_Stats();
   }
 }
@@ -501,6 +549,7 @@ void NETWORK_STATE::Compute_NetinAct_Thr(int thr_no) {
   const int nlay = n_layers_built;
   for(int li = 0; li < nlay; li++) {
     LAYER_STATE* lay = GetLayerState(li);
+    if(lay->lesioned()) continue;
     const int ust = ThrLayUnStart(thr_no, li);
     const int ued = ThrLayUnEnd(thr_no, li);
     for(int ui = ust; ui < ued; ui++) {
@@ -588,6 +637,7 @@ void NETWORK_STATE::Compute_SSE_Thr(int thr_no) {
   const int nlay = n_layers_built;
   for(int li = 0; li < nlay; li++) {
     LAYER_STATE* lay = GetLayerState(li);
+    if(lay->lesioned()) continue;
     if(!lay->HasExtFlag(UNIT_STATE::COMP_TARG))
       continue;
     if(lay->layer_type == LAYER_STATE::HIDDEN)
@@ -617,6 +667,7 @@ void NETWORK_STATE::Compute_SSE_Agg(bool unit_avg, bool sqrt) {
   const int nlay = n_layers_built;
   for(int li = 0; li < nlay; li++) {
     LAYER_STATE* lay = GetLayerState(li);
+    if(lay->lesioned()) continue;
     sse += lay->Compute_SSE(this, lay_vals, unit_avg, sqrt);
     n_vals += lay_vals;
   }
@@ -634,6 +685,7 @@ void NETWORK_STATE::Compute_PRerr_Thr(int thr_no) {
   const int nlay = n_layers_built;
   for(int li = 0; li < nlay; li++) {
     LAYER_STATE* lay = GetLayerState(li);
+    if(lay->lesioned()) continue;
     if(!lay->HasExtFlag(UNIT_STATE::COMP_TARG))
       continue;
     if(lay->layer_type == LAYER_STATE::HIDDEN)
@@ -665,6 +717,7 @@ void NETWORK_STATE::Compute_PRerr_Agg() {
   const int nlay = n_layers_built;
   for(int li = 0; li < nlay; li++) {
     LAYER_STATE* lay = GetLayerState(li);
+    if(lay->lesioned()) continue;
     int lay_vals = lay->Compute_PRerr(this);
     if(lay_vals > 0) {
       prerr.IncrVals(lay->prerr);
@@ -681,6 +734,7 @@ void NETWORK_STATE::Compute_PRerr_Agg() {
 void NETWORK_STATE::Compute_EpochStats_Layer() {
   for(int i=0; i < n_layers_built; i++) {
     LAYER_STATE* lay = GetLayerState(i);
+    if(lay->lesioned()) continue;
     lay->Compute_EpochStats(this);
   }
 }
