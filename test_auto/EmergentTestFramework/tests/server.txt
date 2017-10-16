@@ -57,18 +57,22 @@ Program RunState
     Status OK Match Result     ${output}             4
 
 OpenProj
+    Ensure Emergent Free
     ${output} =                Run Command Completion          {"command": "OpenProject", "project": "../proj_templates/LeabraFlex.proj"}   300 sec
     Status OK No Result        ${output}
 
 OpenProjNoProject
+    Ensure Emergent Free
     ${output} =                Run Command Completion          {"command": "OpenProject"}   300 sec
     Status Error Match         ${output}   0		       Did not specify valid project file
 
 OpenOpenProj
+    Ensure Emergent Free
     ${output} =                Run Command Completion          {"command": "OpenProject", "project": "../proj_templates/LeabraStd.proj"}   300 sec
     Status OK No Result        ${output}
 
 OpenNonExistentProj
+    Ensure Emergent Free
     ${output} =                Run Command Completion          {"command": "OpenProject", "project": "../proj_templates/LeabraaaaStd.proj"}   300 sec
     Status Error Match         ${output}   0		       file \\\"../proj_templates/LeabraaaaStd.proj\\\" not found   
     
@@ -91,38 +95,47 @@ GetData All Rows of Empty Table
 
 
 RunProgram
+    Ensure Emergent Free
     ${output} =                Run Command Completion          {"command": "RunProgram", "program": "LeabraTrain"}   300 sec
     Status OK No Result        ${output}
 
 Program RunState After Init
+    Ensure Emergent Free
     ${output} =                Run Command Wait      {"command": "GetRunState", "program": "LeabraTrain"}
     Status OK Match Result     ${output}             0
 
 General RunState After Init
+    Ensure Emergent Free
     ${output} =                Run Command Wait      {"command": "GetRunState"}
     Status OK Match Result     ${output}             0
 
 RunProgramRelativePath
+    Ensure Emergent Free
     ${output} =                Run Command Completion          {"command": "RunProgram", "program": ".gp[\\\"LeabraAll_Std\\\"][\\\"LeabraTrain\\\"]"}   300 sec
     Status OK No Result        ${output}
 
 RunProgramRelativeBrokenPath
+    Ensure Emergent Free
     ${output} =                Run Command Completion          {"command": "RunProgram", "program": ".gp[\\\"LeabraAll_Std\\\"][\\\"LeabraBaaatch\\\"]"}   300 sec
     Status Error Match         ${output}   5		       Program '.gp[\\\"LeabraAll_Std\\\"][\\\"LeabraBaaatch\\\"]' not found
 
 RunProgramProgramsPath
+    Ensure Emergent Free
     ${output} =                Run Command Completion          {"command": "RunProgram", "program": ".programs.gp[\\\"LeabraAll_Std\\\"][\\\"LeabraTrain\\\"]"}   300 sec
     Status OK No Result        ${output}
 
 RunProgramProjectPath
+    Ensure Emergent Free
     ${output} =                Run Command Completion          {"command": "RunProgram", "program": ".projects[\\\"LeabraStd\\\"].programs.gp[\\\"LeabraAll_Std\\\"][\\\"LeabraTrain\\\"]"}   300 sec
     Status OK No Result        ${output}
 
 RunProgramOtherProjectPath
+    Ensure Emergent Free
     ${output} =                Run Command Completion          {"command": "RunProgram", "program": ".projects[\\\"LeabraFlex\\\"].programs.gp[\\\"ConfigProgs\\\"][\\\"MasterTrain\\\"]"}   600 sec
     Status OK No Result        ${output}
 
 RunProgramOtherProjectErrorPath
+    Ensure Emergent Free
     ${output} =                Run Command Completion          {"command": "RunProgram", "program": ".projects[\\\"LeabraFlex\\\"].programs.gp[\\\"LeabraAll_Std\\\"][\\\"LeabraTrain\\\"]"}   300 sec
     Status Error Match         ${output}   5		       Program '.projects[\\\"LeabraFlex\\\"].programs.gp[\\\"LeabraAll_Std\\\"][\\\"LeabraTrain\\\"]' not found
     
@@ -557,14 +570,17 @@ SetData Invalid Row Error
 # Column not found
 
 GetData Column Not Found Error
+    Ensure Emergent Free
     ${output} =                Run Command Wait      {"command": "GetData", "table": "StdInputData", "column": "NotAColumn"}
     Status Error Match         ${output}             7                  GetData: column not found
 
 GetDataTableCell Column Not Found Error
+    Ensure Emergent Free
     ${output} =                Run Command Wait      {"command": "GetData", "table": "StdInputData", "row_from": 3, "rows": 1, "column": "NotAColumn"}
     Status Error Match         ${output}             7                  GetData: column not found
 
 GetDataMatrixCell Column Not Found Error
+    Ensure Emergent Free
     ${output} =                Run Command Wait      {"command": "GetDataMatrixCell", "table": "StdInputData", "row_from": 3, "rows": 1, "column": "NotAColumn", "cell": 12}
     Status Error Match         ${output}             7                  GetDataMatrixCell: column not found; column not found
 
