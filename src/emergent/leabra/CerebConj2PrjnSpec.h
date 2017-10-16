@@ -46,7 +46,7 @@ public:
   // outer connect: unit_group position determines sender location
 
   void Connect_impl(Projection* prjn, bool make_cons) override;
-  void	Init_Weights_Prjn(Projection* prjn, ConState* cg, Network* net, int thr_no)
+  void	Init_Weights_Prjn(Projection* prjn, ConState_cpp* cg, Network* net, int thr_no)
     override;
   bool  HasRandomScale() override { return false; }
 

@@ -17,7 +17,7 @@
 #define LeabraUnit_h 1
 
 // parent includes:
-#include <Unit>
+#include <Network>
 
 // member includes:
 #include <LeabraUnitSpec>

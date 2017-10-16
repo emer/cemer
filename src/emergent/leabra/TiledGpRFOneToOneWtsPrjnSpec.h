@@ -33,7 +33,7 @@ public:
   float		one_to_one_wt;	// #CONDEDIT_ON_init_wts weight between units with the same index in the unit group
   float		other_wt;	// #CONDEDIT_ON_init_wts weight between other non-one-to-one units
 
-  void	Init_Weights_Prjn(Projection* prjn, ConState* cg, Network* net, int thr_no)
+  void	Init_Weights_Prjn(Projection* prjn, ConState_cpp* cg, Network* net, int thr_no)
     override;
   bool  HasRandomScale() override { return false; }
 

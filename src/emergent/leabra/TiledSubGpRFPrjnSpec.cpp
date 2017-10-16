@@ -230,19 +230,20 @@ bool TiledSubGpRFPrjnSpec::TrgSendFmRecv(int recv_x, int recv_y) {
   return (trg_recv_geom.x == recv_x && trg_recv_geom.y == recv_y);
 }
 
-void TiledSubGpRFPrjnSpec::Init_Weights_Prjn(Projection* prjn, ConState* cg,
+void TiledSubGpRFPrjnSpec::Init_Weights_Prjn(Projection* prjn, ConState_cpp* cg,
                                           Network* net, int thr_no) {
   if(set_scale) {
-    if(TestWarning(!cg->GetConSpec()->InheritsFrom(&TA_LeabraConSpec),
-                   "Init_Weights_Prjn", "set_scale can only apply to Leabra connections!"))
-      return;
+    // todo:
+    // if(TestWarning(!cg->GetConSpec(net->net_state)->InheritsFrom(&TA_LeabraConSpec),
+    //                "Init_Weights_Prjn", "set_scale can only apply to Leabra connections!"))
+    //   return;
   }
   if(wts_type == GAUSSIAN) {
     Init_Weights_Gaussian(prjn, cg, net, thr_no);
   }
 }
 
-void TiledSubGpRFPrjnSpec::Init_Weights_Gaussian(Projection* prjn, ConState* cg,
+void TiledSubGpRFPrjnSpec::Init_Weights_Gaussian(Projection* prjn, ConState_cpp* cg,
                                               Network* net, int thr_no) {
   Layer* recv_lay = prjn->layer;
   Layer* send_lay = prjn->from;
@@ -256,7 +257,7 @@ void TiledSubGpRFPrjnSpec::Init_Weights_Gaussian(Projection* prjn, ConState* cg,
   float eff_sig = gauss_sig * (float)half_size.x;
   
   taVector2i ru_pos;
-  Unit* ru = cg->ThrOwnUn(net, thr_no);
+  Unit* ru = cg->OwnUn(net);
   ru->UnitGpLogPos(ru_pos);
 
   taVector2f rugpctr = recv_lay->un_geom;

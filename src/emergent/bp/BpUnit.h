@@ -17,7 +17,7 @@
 #define BpUnit_h 1
 
 // parent includes:
-#include <Unit>
+#include <Network>
 
 // member includes:
 #include <BpUnitState_cpp>

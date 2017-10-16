@@ -38,7 +38,7 @@ public:
   virtual void	Connect_UnitGroup(Layer* lay, Layer::AccessMode acc_md, int gpidx,
 				  Projection* prjn, bool make_cons);
   void	Connect_impl(Projection* prjn, bool make_cons) override;
-  void	Init_Weights_Prjn(Projection* prjn, ConState* cg, Network* net, int thr_no)
+  void	Init_Weights_Prjn(Projection* prjn, ConState_cpp* cg, Network* net, int thr_no)
     override;
   bool  HasRandomScale() override { return false; }
 

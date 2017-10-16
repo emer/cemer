@@ -292,7 +292,7 @@ void TiledGpRFPrjnSpec::Init_Weights_Gaussian(Projection* prjn, ConState_cpp* cg
     gp_eff_sig = gp_gauss.sigma;
   
   taVector2i ru_un_pos;
-  Unit* ru = cg->ThrOwnUn(net, thr_no);
+  Unit* ru = cg->OwnUn(net);
   ru->UnitGpLogPos(ru_un_pos);
 
   taVector2f ru_ctr = recv_lay->un_geom -1;
@@ -406,7 +406,7 @@ void TiledGpRFPrjnSpec::Init_Weights_Sigmoid(Projection* prjn, ConState_cpp* cg,
   float gp_eff_gain = gp_sig.gain * gp_half_size.x;
   
   taVector2i ru_pos;
-  Unit* ru = cg->ThrOwnUn(net, thr_no);
+  Unit* ru = cg->OwnUn(net);
   ru->UnitGpLogPos(ru_pos);
 
   taVector2f ru_ctr = recv_lay->un_geom;

@@ -181,7 +181,7 @@ void CerebConj2PrjnSpec::Connect_Inner(Projection* prjn, bool make_cons) {
   }
 }
 
-void CerebConj2PrjnSpec::Init_Weights_Prjn(Projection* prjn, ConState* cg,
+void CerebConj2PrjnSpec::Init_Weights_Prjn(Projection* prjn, ConState_cpp* cg,
                                            Network* net, int thr_no) {
   taVector2i rf_half_wd = rf_width / 2;
   taVector2f rf_ctr = rf_half_wd;
