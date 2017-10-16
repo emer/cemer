@@ -40,7 +40,7 @@ void LEABRA_UNIT_SPEC::Compute_NetinScale(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_S
     // todo: why!!!???
     if(!recv_gp->PrjnIsActive(net)) continue; // key!! just check for prjn, not con group!
     LEABRA_CON_SPEC_CPP* cs = (LEABRA_CON_SPEC_CPP*)recv_gp->GetConSpec(net);
-    LEABRA_LAYER_STATE* from = (LEABRA_LAYER_STATE*)recv_gp->GetPrjnRecvLayer(net);
+    LEABRA_LAYER_STATE* from = (LEABRA_LAYER_STATE*)recv_gp->GetPrjnSendLayer(net);
     LEABRA_UNGP_STATE* fmugps = (LEABRA_UNGP_STATE*)from->GetLayUnGpState(net);
 
     float savg = fmugps->acts_p_avg_eff;
@@ -76,7 +76,6 @@ void LEABRA_UNIT_SPEC::Compute_NetinScale(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_S
   for(int g=0; g< nrg; g++) {
     LEABRA_CON_STATE* recv_gp = (LEABRA_CON_STATE*)u->RecvConState(net, g);
     if(!recv_gp->PrjnIsActive(net)) continue; // key!! just check for prjn, not con group!
-    LEABRA_LAYER_STATE* from = (LEABRA_LAYER_STATE*)recv_gp->GetPrjnRecvLayer(net);
     LEABRA_CON_SPEC_CPP* cs = (LEABRA_CON_SPEC_CPP*)recv_gp->GetConSpec(net);
     if(cs->inhib) {
       if(inhib_net_scale > 0.0f)
