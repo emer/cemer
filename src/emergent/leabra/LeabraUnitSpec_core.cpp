@@ -5,6 +5,8 @@ void LEABRA_UNIT_SPEC::Trial_DecayState(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STA
   LEABRA_LAYER_STATE* lay = (LEABRA_LAYER_STATE*)u->GetOwnLayer(net);
   LEABRA_LAYER_SPEC_CPP* ls = (LEABRA_LAYER_SPEC_CPP*)lay->GetLayerSpec(net);
 
+  DecayState(u, net, thr_no, ls->decay.trial);
+  
   // note: theoretically you could avoid doing Init_Netins if there is no decay between
   // trials, and save some compute time, but the delta-based netin has enough
   // error accumulation that this does NOT work well in practice, so we always do it here

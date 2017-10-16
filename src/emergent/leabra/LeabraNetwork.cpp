@@ -110,56 +110,6 @@ void LeabraNetwork::BuildNullUnit() {
 ///////////////////////////////////////////////////////////////////////
 //      General Init functions
 
-void LeabraNetwork::Init_Counters() {
-  inherited::Init_Counters();
-  quarter = 0;
-  phase = MINUS_PHASE;
-  tot_cycle = 0;
-}
-
-void LeabraNetwork::Init_Stats() {
-  inherited::Init_Stats();
-  trg_max_act = 0.0f;
-
-  rt_cycles = 0.0f;
-  avg_cycles.ResetAvg();
-
-  minus_output_name = "";
-
-  send_pct_n = send_pct_tot = 0;
-  send_pct = 0.0f;
-  avg_send_pct.ResetAvg();
-
-  ext_rew = 0.0f;
-  ext_rew_avail = false;
-  avg_ext_rew.ResetAvg();
-
-  norm_err = 0.0f;
-  avg_norm_err.ResetAvg();
-
-  cos_err = 0.0f;
-  cos_err_prv = 0.0f;
-  cos_err_vs_prv = 0.0f;
-  avg_cos_err.ResetAvg();
-  avg_cos_err_prv.ResetAvg();
-  avg_cos_err_vs_prv.ResetAvg();
-
-  cos_diff = 0.0f;
-  avg_cos_diff.ResetAvg();
-
-  avg_act_diff = 0.0f;
-  avg_avg_act_diff.ResetAvg();
-  
-  trial_cos_diff = 0.0f;
-  avg_trial_cos_diff.ResetAvg();
-
-  net_sd = 0.0f;
-  avg_net_sd.ResetAvg();
-
-  hog_pct = 0.0f;
-  dead_pct = 0.0f;
-}
-
 void LeabraNetwork::Init_Acts() {
   NET_THREAD_CALL(LeabraNetwork::Init_Acts_Thr);
 
@@ -198,11 +148,14 @@ void LeabraNetwork::Trial_Init() {
   //  Trial_NoiseInit(); 
 
   Trial_Init_Layer();
+  SyncAllState();
 }
 
 
 void LeabraNetwork::Trial_Init_Specs() {
-  CopyFromNetState(); // need to update this stuff!
+  SyncAllState();
+
+  // todo: change this over to fully State-based
   
   net_misc.spike = false;
   net_misc.bias_learn = false;
@@ -241,7 +194,7 @@ void LeabraNetwork::Trial_Init_Specs() {
                 "SendDeepModConSpec's were found, but deep.on is not set -- no deep_mod_net or deep_mod will be computed!");
   }
 
-  CopyToNetState(); // need to update this stuff!
+  SyncAllState();
 }
 
 void LeabraNetwork::Trial_Init_Unit() {
@@ -262,11 +215,12 @@ void LeabraNetwork::Quarter_Init() {
       }
     }
   }
-  
-  CopyToNetState();
-  CopyToLayerState();
+
+  SyncAllState();
+
   Quarter_Init_Counters();
   Quarter_Init_Layer();
+  Compute_HardClamp_Layer();    // need layer hard clamp flag before Init_Unit
   Quarter_Init_Unit();           // do chunk of following unit-level functions:
 //   Quarter_Init_TargFlags();
 //   Compute_NetinScale();       // compute net scaling
@@ -285,9 +239,7 @@ void LeabraNetwork::Quarter_Init() {
     Init_Netins();
   }
   
-  Compute_HardClamp_Layer();
-  CopyFromNetState();
-  CopyFromLayerState();
+  SyncAllState();
 }
 
 void LeabraNetwork::Quarter_Init_Unit() {
@@ -346,10 +298,9 @@ void LeabraNetwork::NewInputData_Init() {
 //      Cycle_Run
 
 void LeabraNetwork::Cycle_Run() {
-  CopyToNetState();
+  SyncAllState();
   NET_THREAD_CALL(LeabraNetwork::Cycle_Run_Thr);
-  CopyFromNetState();
-  CopyFromLayerState();
+  SyncAllState();
 }
 
 
@@ -433,6 +384,7 @@ void LeabraNetwork::Quarter_Final() {
   Quarter_Final_Layer();
   Quarter_Compute_dWt();
   Quarter_Final_Counters();
+  SyncAllState();
 }
 
 
@@ -443,16 +395,13 @@ void LeabraNetwork::Quarter_Compute_dWt() {
   Compute_dWt();                // always call -- let units sort it out..
 }
 
-void LeabraNetwork::Quarter_Final_Counters() {
-  quarter++;                    // always shows +1 at end of quarter
-}
-
 
 ///////////////////////////////////////////////////////////////////////
 //      Trial Update and Final
 
 void LeabraNetwork::Trial_Final() {
   Compute_AbsRelNetin();
+  SyncAllState();
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -620,26 +569,25 @@ void LeabraNetwork::Compute_PhaseStats() {
 }
 
 void LeabraNetwork::Compute_MinusStats() {
+  SyncAllState();
   minus_output_name = output_name; // grab and hold..
-  if(rt_cycles < 0) // never reached target
-    rt_cycles = cycle;       // set to current cyc -- better for integrating
-  avg_cycles.Increment(rt_cycles);
 
+  Compute_RTCycles_Agg();
   Compute_NetSd(); // todo: combine as in plus if more than one
 
   FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
     if(!lay->lesioned())
       lay->minus_output_name = lay->output_name;
   }
+  SyncAllState();
 }
 
 void LeabraNetwork::Compute_PlusStats() {
-  CopyToNetState();
+  SyncAllState();
   NET_THREAD_CALL(LeabraNetwork::Compute_PlusStats_Thr); // do all threading at once
   Compute_PlusStats_Agg();
   Compute_ExtRew();
-  CopyFromNetState();
-  CopyFromLayerState();
+  SyncAllState();
 }
 
 void LeabraNetwork::Compute_AbsRelNetin() {
@@ -661,7 +609,7 @@ void LeabraNetwork::Compute_AvgAbsRelNetin() {
 }
 
 void LeabraNetwork::Compute_EpochStats() {
-  CopyToNetState();
+  SyncAllState();
   Compute_EpochWeights();
   inherited::Compute_EpochStats();
   Compute_AvgCycles();
@@ -675,7 +623,7 @@ void LeabraNetwork::Compute_EpochStats() {
   Compute_AvgSendPct();
   Compute_AvgAbsRelNetin();
   Compute_HogDeadPcts();
-  CopyFromNetState();
+  SyncAllState();
 }
 
 void LeabraNetwork::Compute_EpochWeights() {

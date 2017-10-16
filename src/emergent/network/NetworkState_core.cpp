@@ -355,6 +355,7 @@ void NETWORK_STATE::CacheMemStart_Thr(int thr_no) {
 /////////////////////////////////////////////////////////
 //              Main compute algorithm code!
 
+
 void NETWORK_STATE::Init_InputData_Thr(int thr_no) {
   const int nu = ThrNUnits(thr_no);
   for(int i=0; i<nu; i++) {
@@ -463,6 +464,28 @@ void NETWORK_STATE::Init_Weights_Layer() {
     if(lay->lesioned()) continue;
     lay->Init_Weights_Layer(this);
   }
+}
+
+void NETWORK_STATE::Init_Counters_State() {
+  
+}
+
+void NETWORK_STATE::Init_Stats() {
+  sse = 0.0f;
+  sum_sse = 0.0f;
+  avg_sse.ResetAvg();
+  cnt_err = 0.0f;
+  cur_cnt_err = 0.0f;
+  pct_err = 0.0f;
+  pct_cor = 0.0f;
+
+  sum_prerr.InitVals();
+  epc_prerr.InitVals();
+  
+  // output_name = "";
+
+  // also call at the layer level
+  Init_Stats_Layer();
 }
 
 void NETWORK_STATE::Init_Stats_Layer() {
@@ -732,11 +755,29 @@ void NETWORK_STATE::Compute_PRerr_Agg() {
 }
 
 void NETWORK_STATE::Compute_EpochStats_Layer() {
-  for(int i=0; i < n_layers_built; i++) {
-    LAYER_STATE* lay = GetLayerState(i);
+  for(int li=0; li < n_layers_built; li++) {
+    LAYER_STATE* lay = GetLayerState(li);
     if(lay->lesioned()) continue;
     lay->Compute_EpochStats(this);
   }
+}
+
+void NETWORK_STATE::Compute_EpochSSE() {
+  sum_sse = avg_sse.sum;
+  cnt_err = cur_cnt_err;
+  if(avg_sse.n > 0) {
+    pct_err = cnt_err / (float)avg_sse.n;
+    pct_cor = 1.0f - pct_err;
+  }
+  avg_sse.GetAvg_Reset();
+
+  cur_cnt_err = 0.0f;
+}
+
+void NETWORK_STATE::Compute_EpochPRerr() {
+  epc_prerr = sum_prerr;
+  epc_prerr.ComputePR();        // make sure, in case of dmem summing
+  sum_prerr.InitVals();         // reset!
 }
 
 ConState_cpp* NETWORK_STATE::FindRecipRecvCon(int& con_idx, NetworkState_cpp* net,

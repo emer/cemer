@@ -130,7 +130,13 @@ void LeabraUnitSpec::UpdateAfterEdit_impl() {
   stp.UpdateAfterEdit_NoGui();
   deep.UpdateAfterEdit_NoGui();
 
-  // if(deep.on && deep_raw_qtr == QNULL) { // doesn't make sense to not have any deep raw..
+  e_rev_sub_thr.e = e_rev.e - act.thr;
+  e_rev_sub_thr.l = e_rev.l - act.thr;
+  e_rev_sub_thr.i = e_rev.i - act.thr;
+  thr_sub_e_rev_i = (act.thr - e_rev.i);
+  thr_sub_e_rev_e = (act.thr - e_rev.e);
+
+    // if(deep.on && deep_raw_qtr == QNULL) { // doesn't make sense to not have any deep raw..
   //   deep_raw_qtr = Q4;
   // }
 }

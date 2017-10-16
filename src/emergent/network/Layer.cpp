@@ -144,6 +144,7 @@ bool LayerRelPos::ComputePos2D_impl(taVector2i& pos, Layer* lay, const taVector2
 void Layer::Initialize() {
 
   Initialize_lay_core();
+  main_obj = true;
   
   // desc = ??
   own_net = NULL;
@@ -171,7 +172,6 @@ void Layer::Initialize() {
   m_prv_layer_flags = LF_NONE;
 
   // prerr = ??
-  icon_value = 0.0f;
   units_lesioned = false;
   gp_unit_names_4d = false;
   // unit_names = ??
@@ -1159,22 +1159,10 @@ int Layer::CountCons(Network* net) {
   return n_cons;
 }
 
-void Layer::CopyToLayerState() {
+void Layer::SyncLayerState() {
   Network* net = GET_MY_OWNER(Network);
   if (!net || !net->IsBuiltIntact()) return;
-  TypeDef* td = GetTypeDef();
-  TypeDef* state_td = net->LayerStateType();
-  LayerState_cpp* lay = GetLayerState(net->net_state);
-  state_td->CopyFromDiffTypes((void*)lay, td, (void*)this, 0, false); // no uae
-}
-
-void Layer::CopyFromLayerState() {
-  Network* net = GET_MY_OWNER(Network);
-  if (!net || !net->IsBuiltIntact()) return;
-  TypeDef* td = GetTypeDef();
-  TypeDef* state_td = net->LayerStateType();
-  LayerState_cpp* lay = GetLayerState(net->net_state);
-  td->CopyFromDiffTypes((void*)this, state_td, (void*)lay, 0, false); // no uae
+  net->SyncLayerState_Layer(this);
 }
 
 void Layer::SetLayUnitExtFlags(int flg) {
@@ -1217,6 +1205,7 @@ void Layer::ApplyInputData(taMatrix* data, ExtFlags ext_flags,
       ApplyInputData_Flat4d(data, ext_flags, ran, offs, na_by_range);
     }
   }
+  SyncLayerState();
 }
 
 void Layer::ApplyInputData_1d(taMatrix* data, ExtFlags ext_flags,

@@ -1,6 +1,6 @@
 // this is included directly in LayerState_cpp and LayerState_cuda -- only things in addition to Layer_core
+// mark all methods as IGNORE -- no direct access to functions on this or any State objects
 // {
-
 
   ////////////////////////////////////////////////////////////////////////////////
   //    Below are the primary computational interface to the Network Objects
@@ -10,12 +10,12 @@
 
   INLINE void  Init_InputData(NETWORK_STATE* net)
   { ext_flag = NO_EXTERNAL; }
-  // #CAT_Activation Initializes external and target inputs (layer level only)
+  // #IGNORE Initializes external and target inputs (layer level only)
   INLINE void  Init_Acts(NETWORK_STATE* net)
   { ext_flag = NO_EXTERNAL; }
-  // #CAT_Activation Initialize the unit state variables (layer level only)
+  // #IGNORE Initialize the unit state variables (layer level only)
   INLINE void  Init_Weights_Layer(NETWORK_STATE* net) { };
-  // #CAT_Learning #IGNORE layer-level initialization taking place after Init_Weights on units
+  // #IGNORE #IGNORE layer-level initialization taking place after Init_Weights on units
 
   INLINE float Compute_SSE(NETWORK_STATE* net, int& n_vals, bool unit_avg = false, bool sqrt = false)
   {
@@ -51,7 +51,7 @@
     }
     return rval;
   }
-  // #CAT_Statistic compute sum squared error of activation vs target over the entire layer -- always returns the actual sse, but unit_avg and sqrt flags determine averaging and sqrt of layer's own sse value -- uses sse_tol so error is 0 if within tolerance on a per unit basis
+  // #IGNORE compute sum squared error of activation vs target over the entire layer -- always returns the actual sse, but unit_avg and sqrt flags determine averaging and sqrt of layer's own sse value -- uses sse_tol so error is 0 if within tolerance on a per unit basis
   
   INLINE int   Compute_PRerr(NETWORK_STATE* net) {
     int n_vals = 0;
@@ -81,7 +81,7 @@
     }
     return n_vals;
   }    
-  // #CAT_Statistic compute precision and recall error statistics over entire layer -- true positive, false positive, and false negative -- returns number of values entering into computation (depends on number of targets) -- precision = tp / (tp + fp) recall = tp / (tp + fn) fmeasure = 2 * p * r / (p + r) -- uses sse_tol so error is 0 if within tolerance on a per unit basis -- results are stored in prerr values on layer
+  // #IGNORE compute precision and recall error statistics over entire layer -- true positive, false positive, and false negative -- returns number of values entering into computation (depends on number of targets) -- precision = tp / (tp + fp) recall = tp / (tp + fn) fmeasure = 2 * p * r / (p + r) -- uses sse_tol so error is 0 if within tolerance on a per unit basis -- results are stored in prerr values on layer
 
   INLINE void  Compute_EpochSSE(NETWORK_STATE* net) {
     cnt_err = cur_cnt_err;
@@ -93,22 +93,22 @@
 
     cur_cnt_err = 0.0f;
   }
-  // #CAT_Statistic compute epoch-level sum squared error and related statistics
+  // #IGNORE compute epoch-level sum squared error and related statistics
   
   INLINE void  Compute_EpochPRerr(NETWORK_STATE* net) {
     epc_prerr = sum_prerr;
     epc_prerr.ComputePR();        // make sure, in case of dmem summing
     sum_prerr.InitVals();         // reset!
   }
-  // #CAT_Statistic compute epoch-level precision and recall statistics
+  // #IGNORE compute epoch-level precision and recall statistics
   
   INLINE void  Compute_EpochStats(NETWORK_STATE* net) {
     Compute_EpochSSE(net);
     if(net->stats.prerr)
       Compute_EpochPRerr(net);
   }
-  // #CAT_Statistic compute epoch-level statistics; calls DMem_ComputeAggs (if dmem) and EpochSSE -- specific algos may add more
-
+  // #IGNORE compute epoch-level statistics; calls DMem_ComputeAggs (if dmem) and EpochSSE -- specific algos may add more
 
   INLINE void Initialize_core() {
   }
+  // #IGNORE

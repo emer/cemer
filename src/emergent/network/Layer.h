@@ -187,7 +187,6 @@ public:
 
   String                output_name;    // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW name for the output produced by the network (algorithm/program dependent, e.g., unit name of most active unit)
   String_Matrix         gp_output_names; // #NO_SAVE #TREE_SHOW #CAT_Statistic #CONDTREE_ON_unit_groups output_name's for unit subgroups -- name for the output produced by the network (algorithm/program dependent, e.g., unit name of most active unit)
-  float                 icon_value;     // #NO_SAVE #GUI_READ_ONLY #HIDDEN #CAT_Statistic value to display if layer is iconified (algorithmically determined)
   bool                  units_lesioned; // #GUI_READ_ONLY if units were lesioned in this group, don't complain about rebuilding!
   bool                  gp_unit_names_4d; // #CONDSHOW_ON_unit_groups&&flags:SAVE_UNIT_NAMES if there are unit subgroups, create a 4 dimensional set of unit names which allows for distinct names for each unit in the layer -- otherwise a 2d set of names is created of size un_geom, all unit groups have the same repeated set of names
   String_Matrix         unit_names;     // #TREE_SHOW set unit names from corresponding items in this matrix (dims=2 for no group layer or to just label main group, dims=4 for grouped layers, dims=0 to disable)
@@ -450,10 +449,8 @@ public:
   virtual int   CountCons(Network* net);
   // #CAT_Structure count connections for all units in layer
 
-  virtual void  CopyToLayerState();
-  // #CAT_State copy layer main state to LayerState computational state object
-  virtual void  CopyFromLayerState();
-  // #CAT_State copy from LayerState computational state objects to our main layer state
+  virtual void  SyncLayerState();
+  // #CAT_State synchronize layer main state with LayerState computational state object -- each variable is either on one side or the other, and sync copies in proper direction
   
   virtual void  SetLayUnitExtFlags(int flg);
   // #CAT_Activation set external input data flags for layer and all units in the layer
@@ -515,9 +512,6 @@ public:
   // #MENU #MENU_ON_State #DYN1 #CAT_Display de-iconify this layer in the network display (make full size)
   inline void   SetDispScale(float disp_sc)     { disp_scale = disp_sc; UpdateAfterEdit(); }
   // #MENU #MENU_ON_State #DYN1 #CAT_Display set the display scale for the layer -- can change how much space it takes up relative to other layers
-
-  virtual bool  Iconified() const       { return HasLayerFlag(ICONIFIED); }
-  // convenience function for checking iconified flag
 
   virtual void  SetLayerUnitGeom(int x, int y, bool n_not_xy = false, int n = 0);
   // set layer unit geometry (convenience function for programs)

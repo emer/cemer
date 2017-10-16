@@ -35,6 +35,7 @@
     ACC_GP,             // access via their subgroup structure, with group and unit index values
   };
 
+  bool                  main_obj;       // #NO_SAVE #READ_ONLY #CAT_State true if this is a main-side object (emergent, TA-enabled) as opposed to a State-side object 
   int                   layer_idx;      // #NO_SAVE #READ_ONLY index of this layer in the network state_layers list and NetworkState layers array -- -1 if not active..
   int                   laygp_lay0_idx; // #NO_SAVE #READ_ONLY index of first layer in the layer group that this layer belongs in -- the first layer takes the lead for whole group -- -1 if not part of a layer group
   int                   laygp_n;        // #NO_SAVE #READ_ONLY number of layers in the layer group -- set for all members of the group
@@ -47,9 +48,9 @@
   int                   unit_spec_idx;  // #NO_SAVE #READ_ONLY unit spec index in list in NetworkState
   int                   n_recv_prjns;   // #CAT_Structure #READ_ONLY number of active receiving projections
   int                   n_send_prjns;   // #CAT_Structure #READ_ONLY number of active sending projections
-  LayerFlags            flags;          // flags controlling various aspects of layer funcdtion
-  LayerType             layer_type;     // #CAT_Activation type of layer: determines default way that external inputs are presented, and helps with other automatic functions (e.g., wizards)
-  ExtFlags              ext_flag;       // #NO_SAVE #CAT_Activation #GUI_READ_ONLY #SHOW indicates which kind of external input layer received -- this is normally set by the ApplyInputData function -- it is not to be manipulated directly
+  LayerFlags            flags;          // #MAIN #CONDEDIT_ON_main_obj flags controlling various aspects of layer funcdtion
+  LayerType             layer_type;     // #MAIN #CONDEDIT_ON_main_obj #CAT_Activation type of layer: determines default way that external inputs are presented, and helps with other automatic functions (e.g., wizards)
+  ExtFlags              ext_flag;       // #MAIN #CONDEDIT_ON_main_obj #NO_SAVE #CAT_Activation #GUI_READ_ONLY #SHOW indicates which kind of external input layer received -- this is normally set by the ApplyInputData function -- it is not to be manipulated directly
   float                 sse;            // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW sum squared error over the network, for the current external input pattern
   STATE_CLASS(Average)  avg_sse;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #DMEM_AGG_SUM average sum squared error over an epoch or similar larger set of external input patterns
   float                 cnt_err;        // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic count of number of times the sum squared error was above cnt_err_tol over an epoch or similar larger set of external input patterns
@@ -59,6 +60,7 @@
   STATE_CLASS(PRerrVals) prerr;          // #NO_SAVE #GUI_READ_ONLY #CAT_Statistic precision and recall error values for this layer, for the current pattern
   STATE_CLASS(PRerrVals) sum_prerr;      // #NO_SAVE #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic precision and recall error values over an epoch or similar larger set of external input patterns -- these are always up-to-date as the system is aggregating, given the additive nature of the statistics
   STATE_CLASS(PRerrVals) epc_prerr;      // #NO_SAVE #GUI_READ_ONLY #SHOW #CONDSHOW_ON_stats.prerr #CAT_Statistic precision and recall error values over an epoch or similar larger set of external input patterns
+  float                 icon_value;     // #NO_SAVE #GUI_READ_ONLY #HIDDEN #CAT_Statistic value to display if layer is iconified (algorithmically determined)
   
   INLINE void   SetLayerFlag(LayerFlags flg)   { flags = (LayerFlags)(flags | flg); }
   // set flag state on
@@ -82,6 +84,8 @@
 
   INLINE bool   lesioned() const { return HasLayerFlag(LESIONED); }
   // check if this layer is lesioned -- use in function calls
+  INLINE bool   Iconified() const { return HasLayerFlag(ICONIFIED); }
+  // convenience function for checking iconified flag
 
   INLINE LAYER_SPEC_CPP* GetLayerSpec(NETWORK_STATE* net) const
   { return net->GetLayerSpec(spec_idx); }
@@ -127,18 +131,20 @@
   INLINE void  Init_Stats() {
     sse = 0.0f;    avg_sse.ResetAvg();    cnt_err = 0.0f;
     cur_cnt_err = 0.0f;    pct_err = 0.0f;    pct_cor = 0.0f;
-    sum_prerr.InitVals();    epc_prerr.InitVals();
+    sum_prerr.InitVals();    epc_prerr.InitVals(); icon_value = 0.0f;
   }
   // #EXPERT #CAT_Statistic initialize statistic variables on layer -- called by Network Init_Stats
 
-  INLINE void Initialize_lay_core(int lay_dx = 0, int units_dx=0, int ungp_dx = 0, int n_gps=0,
-                              int prjn_st_dx=0, int spec_dx = 0, int uspec_dx=0,
-                              int n_recv = 0, int n_send=0) {
-    layer_idx = lay_dx; laygp_lay0_idx=0; laygp_n=0;
-    units_flat_idx = units_dx;  ungp_idx = ungp_dx; n_units = 0; n_ungps = n_gps;
+  INLINE void Initialize_lay_core
+  (int lay_dx=0, int laygp_lay0_dx=0, int laygpn=0, int units_dx=0, int ungp_dx=0, int n_un=0,
+   int n_gps=0, int prjn_st_dx=0, int spec_dx=0, int uspec_dx=0, int n_recv=0, int n_send=0,
+   int lf=LF_NONE, LayerType lt=HIDDEN) {
+    main_obj = false; layer_idx = lay_dx; laygp_lay0_idx=0; laygp_n=0;
+    units_flat_idx = units_dx;  ungp_idx = ungp_dx; n_units = n_un; n_ungps = n_gps;
     prjn_start_idx = prjn_st_dx;  spec_idx = spec_dx; unit_spec_idx = uspec_dx; 
     n_recv_prjns = n_recv;    n_send_prjns = n_send;
-    flags = LF_NONE;    layer_type = HIDDEN;    ext_flag = NO_EXTERNAL;
+    flags = (LayerFlags)lf;    layer_type = lt;    ext_flag = NO_EXTERNAL;
     Init_Stats();
   }
+  // #IGNORE
   

@@ -160,6 +160,47 @@ private:
   void Destroy()     { };
 };
 
+eTypeDef_Of(NetStateSync);
+
+class E_API NetStateSync : public taOBase {
+  // ##NO_TOKENS ##CAT_Network state synchronization variables
+INHERITED(taOBase)
+public:
+  bool          main_to_state;  // copy main to state -- otherwise state to main
+  int           main_off;       // net offset for address of main item
+  int           state_off;      // net offset for address of state item
+  int           size;           // number of bytes
+  MemberDef*    main_md;        // member def for main item
+  MemberDef*    state_md;       // member def for state item
+
+  String       GetTypeDecoKey() const override { return "Network"; }
+
+  TA_SIMPLE_BASEFUNS(NetStateSync);
+private:
+  void	Initialize()    { };
+  void 	Destroy()	{ };
+};
+
+eTypeDef_Of(NetStateSync_List);
+
+class E_API NetStateSync_List : public taList<NetStateSync> {
+  // ##NO_TOKENS ##NO_UPDATE_AFTER ##NO_EXPAND List of NetStateSync objects
+INHERITED(taList<NetStateSync>)
+public:
+
+  virtual void  ParseTypes_impl(TypeDef* main_td, TypeDef* state_td, int main_off, int state_off,
+                                bool main_to_st);
+  // #IGNORE parse main and state types to get state info
+  virtual void  ParseTypes(TypeDef* main_td, TypeDef* state_td);
+  // parse main and state types to get state info
+  virtual void  DoSync(void* main_addr, void* state_addr);
+  // do the sync between two objects
+  
+  TA_BASEFUNS_NOCOPY(NetStateSync_List);
+private:
+  void Initialize()  { SetBaseType(&TA_NetStateSync); };
+  void Destroy()     { };
+};
 
 eTypeDef_Of(Network);
 
@@ -257,7 +298,11 @@ public:
   taBase_RefList state_prjns;
   // #NO_SAVE #HIDDEN #CAT_State prjns that have been built for running network
   taBase_RefList state_ungps;
-  // #NO_SAVE #HIDDEN #CAT_State unit groups that have been built for running network -- for sub-unit groups within layers (beyond main unit group of layer), if virtual unit groups are used, this is just the main unit group over and over again -- but it will have different unitgroup state information for each when state is built 
+  // #NO_SAVE #HIDDEN #CAT_State unit groups that have been built for running network -- for sub-unit groups within layers (beyond main unit group of layer), if virtual unit groups are used, this is just the main unit group over and over again -- but it will have different unitgroup state information for each when state is built
+  NetStateSync_List net_state_sync;
+  // #NO_SAVE #HIDDEN #CAT_State handles optimized state sync for network object
+  NetStateSync_List layer_state_sync;
+  // #NO_SAVE #HIDDEN #CAT_State handles optimized state sync for layer object
 
   taBase_RefList state_layer_specs;
   // #NO_SAVE #HIDDEN #CAT_State layer_specs that have been built for running network
@@ -500,6 +545,132 @@ public:
   { return net_state->ThrSendNetinTmpPerPrjn(thr_no, recv_idx); }
   // #CAT_State temporary sending netinput memory for given thread -- NETIN_PER_PRJN version
 
+
+  ////////////////////////////////////////////////////////////////////////////////
+  //    Below are the primary computational interface to the Network Objects
+  //    for performing algorithm-specific activation and learning
+  //    Many functions operate directly on the units via threads, with
+  //    optional call through to the layers for any layer-level subsequent processing
+
+  virtual void  SyncAllState();
+  // #CAT_State synchronize all state -- net and layer
+  virtual void  SyncNetState();
+  // #CAT_State synchronize our main state with NetworkState computational state objects -- each variable is either on one side or the other, and sync copies in proper direction
+  virtual void  SyncLayerState();
+  // #CAT_State synchronize all layer main state with LayerState computational state objects -- each variable is either on one side or the other, and sync copies in proper direction
+  virtual void  SyncLayerState_Layer(Layer* lay);
+  // #CAT_State synchronize one layer main state with LayerState computational state object -- each variable is either on one side or the other, and sync copies in proper direction
+
+  virtual void  Init_Epoch();
+  // #CAT_Activation Initializes network state at the start of a new epoch -- updates parameters according to param_seq for example
+
+  virtual void  Init_InputData();
+  // #CAT_Activation Initializes external and target inputs
+    inline void Init_InputData_Thr(int thr_no) { net_state->Init_InputData_Thr(thr_no); }
+    // #IGNORE
+    inline void Init_InputData_Layer() { net_state->Init_InputData_Layer(); }
+    // #IGNORE
+  virtual void  Init_Acts();
+  // #MENU #MENU_ON_State #MENU_SEP_BEFORE #CAT_Activation initialize the unit activation state variables
+    inline void Init_Acts_Thr(int thr_no) { net_state->Init_Acts_Thr(thr_no); }
+    // #IGNORE
+  virtual void  Init_dWt();
+  // #CAT_Learning Initialize the weight change variables
+    inline void Init_dWt_Thr(int thr_no) { net_state->Init_dWt_Thr(thr_no); }
+    // #IGNORE
+  virtual void  Init_Weights();
+  // #BUTTON #MENU #CONFIRM #ENABLE_ON_flags:BUILT,INTACT #CAT_Learning Initialize the weights -- also inits acts, counters and stats -- does unit level threaded and then does Layers after
+    virtual void Init_Weights_Thr(int thr_no);
+    // #IGNORE -- note: uses Projection wt init code so is not on net_state yet
+    virtual void Init_Weights_1Thr();
+    // #IGNORE for INIT_WTS_1_THREAD -- requires consistent order!
+    virtual void Init_Weights_renorm();
+    // #IGNORE renormalize weights after init, before sym
+    virtual void Init_Weights_renorm_Thr(int thr_no);
+    // #IGNORE renormalize weights after init, before sym
+    inline void Init_Weights_Layer() { net_state->Init_Weights_Layer(); }
+    // #CAT_Learning call layer-level init weights functions -- after all unit-level inits
+    virtual void Init_Weights_post();
+    // #CAT_Learning post-initialize state variables (ie. for scaling symmetrical weights, other wt state keyed off of weights, etc) -- this MUST be called after any external modifications to the weights, e.g., the TransformWeights or AddNoiseToWeights calls on any lower-level objects (layers, units, con groups)
+    inline void Init_Weights_sym(int thr_no) { net_state->Init_Weights_sym(thr_no); }
+    // #IGNORE symmetrize weights after first init pass, called when needed
+    inline void Init_Weights_post_Thr(int thr_no)
+    { net_state->Init_Weights_post_Thr(thr_no); }
+    // #IGNORE
+    virtual void Init_Weights_AutoLoad();
+    // #CAT_Learning auto-load weights from Weights object, if it has auto_load set..
+
+  virtual void  Init_Metrics();
+  // #CAT_Statistic this is an omnibus guy that initializes every metric: Counters, Stats, and Timers
+
+  virtual void  Init_Counters();
+  // #EXPERT #CAT_Counter initialize all counter variables on network (called in Init_Weights; except batch because that loops over inits!)
+  inline void  Init_Counters_State() { net_state->Init_Counters_State(); }
+  // #IGNORE initialize counters on the state
+  inline void  Init_Stats() { net_state->Init_Stats(); }
+  // #EXPERT #CAT_Statistic initialize statistic variables on network
+    inline void  Init_Stats_Layer() { net_state->Init_Stats_Layer(); }
+    // #IGNORE
+  virtual void  Init_Timers();
+  // #EXPERT #CAT_Statistic initialize statistic variables on network
+
+  virtual void  Init_Sequence() { };
+  // #CAT_Activation called by NetGroupedDataLoop at the start of a sequence (group) of input data events -- some algorithms may want to have a flag to optionally initialize activations at this point
+
+  virtual void  Compute_Netin();
+  // #CAT_Activation Compute NetInput: weighted activation from other units
+    inline void Compute_Netin_Thr(int thr_no) { net_state->Compute_Netin_Thr(thr_no); }
+    // #IGNORE
+  virtual void  Send_Netin();
+  // #CAT_Activation sender-based computation of net input: weighted activation from other units
+    inline void Send_Netin_Thr(int thr_no) { net_state->Send_Netin_Thr(thr_no); }
+    // #IGNORE
+  virtual void  Compute_Act();
+  // #CAT_Activation Compute Activation based on net input
+    inline void Compute_Act_Thr(int thr_no) { net_state->Compute_Act_Thr(thr_no); }
+    // #IGNORE
+  virtual void  Compute_NetinAct();
+  // #CAT_Activation compute net input from other units and then our own activation value based on that -- use this for feedforward networks to propagate activation through network in one compute cycle
+    inline void Compute_NetinAct_Thr(int thr_no) { net_state->Compute_NetinAct_Thr(thr_no); }
+    // #IGNORE
+
+  virtual void  Compute_dWt();
+  // #CAT_Learning compute weight changes -- the essence of learning
+    inline void Compute_dWt_Thr(int thr_no) { net_state->Compute_dWt_Thr(thr_no); }
+    // #IGNORE
+
+  virtual bool  Compute_Weights_Test(int trial_no);
+  // #CAT_Learning check to see if it is time to update the weights based on the given number of completed trials (typically trial counter + 1): if ON_LINE, always true; if SMALL_BATCH, only if trial_no % batch_n_eff == 0; if BATCH, never (check at end of epoch and run then)
+  virtual void  Compute_Weights();
+  // #CAT_Learning update weights for whole net: calls DMem_SumDWts before doing update if in dmem mode
+    inline void Compute_Weights_Thr(int thr_no) { net_state->Compute_Weights_Thr(thr_no); }
+    // #IGNORE
+
+  virtual void  Compute_SSE(bool unit_avg = false, bool sqrt = false);
+  // #CAT_Statistic compute sum squared error of activations vs targets over the entire network -- optionally taking the average over units, and square root of the final results
+    inline void Compute_SSE_Thr(int thr_no) { net_state->Compute_SSE_Thr(thr_no); }
+    // #IGNORE
+  virtual void  Compute_PRerr();
+  // #CAT_Statistic compute precision and recall error statistics over entire network -- true positive, false positive, and false negative -- precision = tp / (tp + fp) recall = tp / (tp + fn) fmeasure = 2 * p * r / (p + r), specificity, fall-out, mcc.
+    inline void Compute_PRerr_Thr(int thr_no) { net_state->Compute_PRerr_Thr(thr_no); }
+    // #IGNORE
+
+  virtual void  Compute_TrialStats();
+  // #CAT_Statistic compute trial-level statistics (SSE and others defined by specific algorithms)
+  virtual void  DMem_ShareTrialData(DataTable* dt, int n_rows = 1);
+  // #CAT_DMem share trial data from given datatable across the trial-level dmem communicator (outer loop) -- each processor gets data from all other processors; if called every trial with n_rows = 1, data will be identical to non-dmem; if called at end of epoch with n_rows = -1 data will be grouped by processor but this is more efficient
+
+  inline void  Compute_EpochSSE() { net_state->Compute_EpochSSE(); }
+  // #CAT_Statistic compute epoch-level sum squared error and related statistics
+  inline void  Compute_EpochPRerr() { net_state->Compute_EpochPRerr(); }
+  // #CAT_Statistic compute epoch-level precision and recall statistics
+  virtual void  Compute_EpochStats();
+  // #CAT_Statistic compute epoch-level statistics; calls DMem_ComputeAggs (if dmem) and EpochSSE -- specific algos may add more
+
+
+  ////////////////////////////////////////////////////////////////////////////////
+  //    Network Infrastructure etc
+
   virtual void  Build();
   // #BUTTON #CAT_Structure Build the network units and Connect them (calls CheckSpecs/BuildLayers/Units/Prjns and Connect)
     virtual void  CheckSpecs();
@@ -641,114 +812,6 @@ public:
   virtual bool  SaveWeights_ClusterRunTerm();
   // #CAT_File update cluster run job info and check if it is time to save weights before job terminates -- called in Compute_Weights
   
-  ////////////////////////////////////////////////////////////////////////////////
-  //    Below are the primary computational interface to the Network Objects
-  //    for performing algorithm-specific activation and learning
-  //    Many functions operate directly on the units via threads, with
-  //    optional call through to the layers for any layer-level subsequent processing
-
-  virtual void  CopyToNetState();
-  // #CAT_State copy our main state to NetworkState computational state objects
-  virtual void  CopyFromNetState();
-  // #CAT_State copy from NetworkState computational state objects to our main state
-
-  virtual void  CopyToLayerState();
-  // #CAT_State copy all layer main state to LayerState computational state objects
-  virtual void  CopyFromLayerState();
-  // #CAT_State copy from all LayerState computational state objects to our main layer state
-
-  virtual void  Init_Epoch();
-  // #CAT_Activation Initializes network state at the start of a new epoch -- updates parameters according to param_seq for example
-
-  virtual void  Init_InputData();
-  // #CAT_Activation Initializes external and target inputs
-    inline void Init_InputData_Thr(int thr_no) { net_state->Init_InputData_Thr(thr_no); }
-    // #IGNORE
-    inline void Init_InputData_Layer() { net_state->Init_InputData_Layer(); }
-    // #IGNORE
-  virtual void  Init_Acts();
-  // #MENU #MENU_ON_State #MENU_SEP_BEFORE #CAT_Activation initialize the unit activation state variables
-    inline void Init_Acts_Thr(int thr_no) { net_state->Init_Acts_Thr(thr_no); }
-    // #IGNORE
-  virtual void  Init_dWt();
-  // #CAT_Learning Initialize the weight change variables
-    inline void Init_dWt_Thr(int thr_no) { net_state->Init_dWt_Thr(thr_no); }
-    // #IGNORE
-  virtual void  Init_Weights();
-  // #BUTTON #MENU #CONFIRM #ENABLE_ON_flags:BUILT,INTACT #CAT_Learning Initialize the weights -- also inits acts, counters and stats -- does unit level threaded and then does Layers after
-    virtual void Init_Weights_Thr(int thr_no);
-    // #IGNORE -- note: uses Projection wt init code so is not on net_state yet
-    virtual void Init_Weights_1Thr();
-    // #IGNORE for INIT_WTS_1_THREAD -- requires consistent order!
-    virtual void Init_Weights_renorm();
-    // #IGNORE renormalize weights after init, before sym
-    virtual void Init_Weights_renorm_Thr(int thr_no);
-    // #IGNORE renormalize weights after init, before sym
-    inline void Init_Weights_Layer() { net_state->Init_Weights_Layer(); }
-    // #CAT_Learning call layer-level init weights functions -- after all unit-level inits
-    virtual void Init_Weights_post();
-    // #CAT_Learning post-initialize state variables (ie. for scaling symmetrical weights, other wt state keyed off of weights, etc) -- this MUST be called after any external modifications to the weights, e.g., the TransformWeights or AddNoiseToWeights calls on any lower-level objects (layers, units, con groups)
-    inline void Init_Weights_sym(int thr_no) { net_state->Init_Weights_sym(thr_no); }
-    // #IGNORE symmetrize weights after first init pass, called when needed
-    inline void Init_Weights_post_Thr(int thr_no)
-    { net_state->Init_Weights_post_Thr(thr_no); }
-    // #IGNORE
-    virtual void Init_Weights_AutoLoad();
-    // #CAT_Learning auto-load weights from Weights object, if it has auto_load set..
-
-  virtual void  Init_Metrics();
-  // #CAT_Statistic this is an omnibus guy that initializes every metric: Counters, Stats, and Timers
-
-  virtual void  Init_Counters();
-  // #EXPERT #CAT_Counter initialize all counter variables on network (called in Init_Weights; except batch because that loops over inits!)
-  virtual void  Init_Stats();
-  // #EXPERT #CAT_Statistic initialize statistic variables on network
-    inline void  Init_Stats_Layer() { net_state->Init_Stats_Layer(); }
-    // #IGNORE
-  virtual void  Init_Timers();
-  // #EXPERT #CAT_Statistic initialize statistic variables on network
-
-  virtual void  Init_Sequence() { };
-  // #CAT_Activation called by NetGroupedDataLoop at the start of a sequence (group) of input data events -- some algorithms may want to have a flag to optionally initialize activations at this point
-
-  virtual void  Compute_Netin();
-  // #CAT_Activation Compute NetInput: weighted activation from other units
-    inline void Compute_Netin_Thr(int thr_no) { net_state->Compute_Netin_Thr(thr_no); }
-    // #IGNORE
-  virtual void  Send_Netin();
-  // #CAT_Activation sender-based computation of net input: weighted activation from other units
-    inline void Send_Netin_Thr(int thr_no) { net_state->Send_Netin_Thr(thr_no); }
-    // #IGNORE
-  virtual void  Compute_Act();
-  // #CAT_Activation Compute Activation based on net input
-    inline void Compute_Act_Thr(int thr_no) { net_state->Compute_Act_Thr(thr_no); }
-    // #IGNORE
-  virtual void  Compute_NetinAct();
-  // #CAT_Activation compute net input from other units and then our own activation value based on that -- use this for feedforward networks to propagate activation through network in one compute cycle
-    inline void Compute_NetinAct_Thr(int thr_no) { net_state->Compute_NetinAct_Thr(thr_no); }
-    // #IGNORE
-
-  virtual void  Compute_dWt();
-  // #CAT_Learning compute weight changes -- the essence of learning
-    inline void Compute_dWt_Thr(int thr_no) { net_state->Compute_dWt_Thr(thr_no); }
-    // #IGNORE
-
-  virtual bool  Compute_Weights_Test(int trial_no);
-  // #CAT_Learning check to see if it is time to update the weights based on the given number of completed trials (typically trial counter + 1): if ON_LINE, always true; if SMALL_BATCH, only if trial_no % batch_n_eff == 0; if BATCH, never (check at end of epoch and run then)
-  virtual void  Compute_Weights();
-  // #CAT_Learning update weights for whole net: calls DMem_SumDWts before doing update if in dmem mode
-    inline void Compute_Weights_Thr(int thr_no) { net_state->Compute_Weights_Thr(thr_no); }
-    // #IGNORE
-
-  virtual void  Compute_SSE(bool unit_avg = false, bool sqrt = false);
-  // #CAT_Statistic compute sum squared error of activations vs targets over the entire network -- optionally taking the average over units, and square root of the final results
-    inline void Compute_SSE_Thr(int thr_no) { net_state->Compute_SSE_Thr(thr_no); }
-    // #IGNORE
-  virtual void  Compute_PRerr();
-  // #CAT_Statistic compute precision and recall error statistics over entire network -- true positive, false positive, and false negative -- precision = tp / (tp + fp) recall = tp / (tp + fn) fmeasure = 2 * p * r / (p + r), specificity, fall-out, mcc.
-    inline void Compute_PRerr_Thr(int thr_no) { net_state->Compute_PRerr_Thr(thr_no); }
-    // #IGNORE
-
   virtual Layer* NewLayer();
   // #BUTTON create a new layer in the network, using default layer type
 
@@ -817,21 +880,6 @@ public:
   // #IGNORE impl list of projections for all layers in layer group
 
   
-  ////////////////////////////////////////////////////////////////////////////////
-  //    The following are misc functionality not required for primary computing
-
-  virtual void  Compute_TrialStats();
-  // #CAT_Statistic compute trial-level statistics (SSE and others defined by specific algorithms)
-  virtual void  DMem_ShareTrialData(DataTable* dt, int n_rows = 1);
-  // #CAT_DMem share trial data from given datatable across the trial-level dmem communicator (outer loop) -- each processor gets data from all other processors; if called every trial with n_rows = 1, data will be identical to non-dmem; if called at end of epoch with n_rows = -1 data will be grouped by processor but this is more efficient
-
-  virtual void  Compute_EpochSSE();
-  // #CAT_Statistic compute epoch-level sum squared error and related statistics
-  virtual void  Compute_EpochPRerr();
-  // #CAT_Statistic compute epoch-level precision and recall statistics
-  virtual void  Compute_EpochStats();
-  // #CAT_Statistic compute epoch-level statistics; calls DMem_ComputeAggs (if dmem) and EpochSSE -- specific algos may add more
-
   virtual void  LayerPos_RelPos();
   // #CAT_Structure update relative positioning of units in the layer according to any active pos_rel settings -- also checks for any loops and breaks them -- called automatically during build
   virtual void  LayerZPos_Unitize();

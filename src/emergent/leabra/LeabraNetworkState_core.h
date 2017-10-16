@@ -65,7 +65,9 @@
   //	General Init functions
 
   INIMPL void Init_Weights_Layer() override;
+  INIMPL void Init_Stats() override;
   INIMPL void Init_Stats_Layer() override;
+  INIMPL void Init_Counters_State() override;
 
   INIMPL virtual void Init_AdaptInhib();
   // #CAT_Activation Initialize adaptive inhibition gain value on all the layers -- undoes any adaptation that has taken place (including from loaded weights - the adaptive gain value is saved with the weights)
@@ -233,6 +235,8 @@
 
   INIMPL virtual void Quarter_Final_Layer();
   // #CAT_QuarterFinal perform computations in layers at end of quarter (called by Quarter_Final)
+  INIMPL virtual void Quarter_Final_Counters();
+  // #CAT_QuarterFinal update counters at end of quarter
 
   ///////////////////////////////////////////////////////////////////////
   //	Learning
@@ -275,6 +279,8 @@
   INIMPL virtual void Compute_ActMargin_Thr(int thr_no);
   // #IGNORE
   INIMPL virtual void Compute_ActMargin_Agg();
+  // #IGNORE
+  INIMPL virtual void Compute_RTCycles_Agg();
   // #IGNORE
   INIMPL virtual void Compute_NetSd_Thr(int thr_no);
   // #IGNORE

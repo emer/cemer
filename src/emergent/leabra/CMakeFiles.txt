@@ -123,27 +123,27 @@ set(leabra_HEADS_MAKETA_MI
 # note: there must be exactly same number of dependencies for each item
 # you can just add redundant ones to make it all work out
 set(leabra_HEADS_MAKETA_MI_DEPS
-  "LeabraConState_core.h;LeabraNetworkState_core.h"
-  "LeabraUnitState_core.h;LeabraNetworkState_core.h"
-  "LeabraUnGpState_core.h;LeabraNetworkState_core.h"
-  "LeabraPrjnState_core.h;LeabraNetworkState_core.h"
-  "LeabraLayerState_core.h;LeabraNetworkState_core.h"
-  "LeabraNetworkState_core.h;LeabraNetwork_core.h"
+  "LeabraConState_core.h;LeabraNetworkState_core.h;LeabraNetworkState_core.h"
+  "LeabraUnitState_core.h;LeabraNetworkState_core.h;LeabraNetworkState_core.h"
+  "LeabraUnGpState_core.h;LeabraNetworkState_core.h;LeabraNetworkState_core.h"
+  "LeabraPrjnState_core.h;LeabraNetworkState_core.h;LeabraNetworkState_core.h"
+  "LeabraLayerState_core.h;LeabraNetworkState_core.h;LeabraLayer_core.h"
+  "LeabraNetworkState_core.h;LeabraNetwork_core.h;LeabraNetworkState_core.h"
 
-  "LeabraConSpec_core.h;LeabraConSpec_mbrs.h"
-  "LeabraConSpec_core.h;LeabraConSpec_mbrs.h"
-  "LeabraBiasSpec_core.h;LeabraConSpec_core.h"
-  "LeabraBiasSpec_core.h;LeabraConSpec_core.h"
+  "LeabraConSpec_core.h;LeabraConSpec_mbrs.h;LeabraNetworkState_core.h"
+  "LeabraConSpec_core.h;LeabraConSpec_mbrs.h;LeabraNetworkState_core.h"
+  "LeabraBiasSpec_core.h;LeabraConSpec_core.h;LeabraNetworkState_core.h"
+  "LeabraBiasSpec_core.h;LeabraConSpec_core.h;LeabraNetworkState_core.h"
 
-  "LeabraUnitSpec_core.h;LeabraUnitSpec_mbrs.h"
-  "LeabraUnitSpec_core.h;LeabraUnitSpec_mbrs.h"
+  "LeabraUnitSpec_core.h;LeabraUnitSpec_mbrs.h;LeabraNetworkState_core.h"
+  "LeabraUnitSpec_core.h;LeabraUnitSpec_mbrs.h;LeabraNetworkState_core.h"
 
-  "LeabraLayerSpec_core.h;LeabraLayerSpec_mbrs.h"
-  "LeabraLayerSpec_core.h;LeabraLayerSpec_mbrs.h"
+  "LeabraLayerSpec_core.h;LeabraLayerSpec_mbrs.h;LeabraNetworkState_core.h"
+  "LeabraLayerSpec_core.h;LeabraLayerSpec_mbrs.h;LeabraNetworkState_core.h"
 
-  "LeabraLayerState_core.h;LeabraNetworkState_core.h"
+  "LeabraLayer_core.h;LeabraLayerState_core.h;LeabraNetworkState_core.h"
 
-  "LeabraNetworkState_core.h;LeabraNetwork_core.h"
+  "LeabraNetworkState_core.h;LeabraNetwork_core.h;LeabraNetworkState_core.h"
 )
 
 set(leabra_HEADS_NOMAKETA

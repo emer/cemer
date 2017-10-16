@@ -1,5 +1,6 @@
 // this is included directly in NetworkState or NetworkState_cuda -- note must be made with new due to
 // presence of virtual functions and need for virtual table pointer on appropriate device!!
+// mark all methods as IGNORE -- no direct access to functions on this or any State objects
 //{
 
   enum NetThrLayStats {         // stats that require holding threaded layer-level variables for subsequent aggregation
@@ -87,41 +88,41 @@
   INLINE LAYER_SPEC*  GetLayerSpec(int spec_no)
   { if(spec_no >= 0 && spec_no < n_layer_specs_built)  return layer_specs[spec_no];
     return NULL; }
-  // #CAT_Spec Get layer spec at given index
+  // #CAT_State Get layer spec at given index
 
   INLINE UNIT_SPEC*   GetUnitSpec(int spec_no)
   { if(spec_no >= 0 && spec_no < n_unit_specs_built) return unit_specs[spec_no];
     return NULL; }
-  // #CAT_Spec Get unit spec at given index
+  // #CAT_State Get unit spec at given index
   
   INLINE CON_SPEC*    GetConSpec(int spec_no)
   { if(spec_no >= 0 && spec_no < n_con_specs_built) return con_specs[spec_no];
     return NULL; }
-  // #CAT_Spec Get con spec at given index
+  // #CAT_State Get con spec at given index
   
   INLINE bool   ThrInRange(int thr_no, bool err_msg = true) const
   { if(thr_no >= 0 && thr_no < n_thrs_built) return true;
     if(err_msg) StateError("ThrInRange", "thread number:", /* String(thr_no),*/ "out of range");
     return false; }
-  // #CAT_State test if thread number is in range
+  // #IGNORE test if thread number is in range
 
   INLINE bool   LayerInRange(int lay_idx, bool err_msg = true) const
   { if(lay_idx >= 0 && lay_idx < n_layers_built) return true;
     if(err_msg) StateError("LayerInRange", "layer number:", /* String(lay_idx),*/ "out of range");
     return false; }
-  // #CAT_State test if layer number is in range
+  // #IGNORE test if layer number is in range
   
   INLINE bool   PrjnInRange(int prjn_idx, bool err_msg = true) const
   { if(prjn_idx >= 0 && prjn_idx < n_prjns_built) return true;
     if(err_msg) StateError("PrjnInRange", "prjn number:", /*String(prjn_idx),*/ "out of range");
     return false; }
-  // #CAT_State test if prjn number is in range
+  // #IGNORE test if prjn number is in range
   
   INLINE bool   UnGpInRange(int ungp_idx, bool err_msg = true) const
   { if(ungp_idx >= 0 && ungp_idx < n_ungps_built) return true;
     if(err_msg) StateError("UnGpInRange", "ungp number:", /* String(ungp_idx),*/ "out of range");
     return false; }
-  // #CAT_State test if unit group number is in range
+  // #IGNORE test if unit group number is in range
   
   INLINE LAYER_STATE* GetLayerState(int lay_idx) {
 #ifdef DEBUG
@@ -151,21 +152,21 @@
     if(!UnGpInRange(ungp_idx)) return -1;
 #endif
     return ungp_lay_idxs[ungp_idx]; }
-  // #CAT_State layer index for given unit group 
+  // #IGNORE layer index for given unit group 
 
   INLINE bool   UnFlatIdxInRange(int flat_idx, bool err_msg = true) const
   { if(flat_idx >= 1 && flat_idx < n_units_built) return true;
     if(err_msg) StateError("UnFlatIdxInRange", "unit flat index number:"/*, String(flat_idx),*/
                            "out of range");
     return false; }
-  // #CAT_State test if unit flat index is in range
+  // #IGNORE test if unit flat index is in range
   INLINE bool   ThrUnIdxInRange(int thr_no, int thr_un_idx, bool err_msg = true) const
   { if(ThrInRange(thr_no) && thr_un_idx >= 0 && thr_un_idx < ThrNUnits(thr_no))
       return true;
     if(err_msg) StateError("ThrUnIdxInRange", "unit thread index number:",
                            /* String(thr_un_idx),*/ "out of range in thread:"/*, String(thr_no)*/);
     return false; }
-  // #CAT_State test if thread-based unit index is in range
+  // #IGNORE test if thread-based unit index is in range
 
   INLINE bool   UnRecvConGpInRange(int flat_idx, int recv_idx, bool err_msg = true) const
   { if(UnFlatIdxInRange(flat_idx) && recv_idx >= 0 && recv_idx < UnNRecvConGps(flat_idx))
@@ -173,14 +174,14 @@
     if(err_msg) StateError("UnRecvConGpInRange", "unit recv con group index number:",
                            /*String(recv_idx),*/ "out of range in unit flat idx:"/*, String(flat_idx)*/);
     return false; }
-  // #CAT_State test if unit recv con group index is in range
+  // #IGNORE test if unit recv con group index is in range
   INLINE bool   UnSendConGpInRange(int flat_idx, int send_idx, bool err_msg = true) const
   { if(UnFlatIdxInRange(flat_idx) && send_idx >= 0 && send_idx < UnNSendConGps(flat_idx))
       return true;
     if(err_msg) StateError("UnSendConGpInRange", "unit send con group index number:",
                            /* String(send_idx),*/ "out of range in unit flat idx:"/*, String(flat_idx)*/);
     return false; }
-  // #CAT_State test if unit send con group index is in range
+  // #IGNORE test if unit send con group index is in range
   INLINE bool   ThrUnRecvConGpInRange(int thr_no, int thr_un_idx, int recv_idx,
                                       bool err_msg = true) const
   { if(ThrUnIdxInRange(thr_no, thr_un_idx)
@@ -191,7 +192,7 @@
                            "out of range in thread unit idx:", /*String(thr_un_idx),*/
                            "in thread:"/*, String(thr_no)*/);
     return false; }
-  // #CAT_State test if thread-specified unit recv con group index is in range
+  // #IGNORE test if thread-specified unit recv con group index is in range
   INLINE bool   ThrUnSendConGpInRange(int thr_no, int thr_un_idx, int send_idx,
                                       bool err_msg = true) const
   { if(ThrUnIdxInRange(thr_no, thr_un_idx)
@@ -202,7 +203,7 @@
                            "out of range in thread unit idx:", /*String(thr_un_idx),*/
                            "in thread:" /*, String(thr_no)*/ );
     return false; }
-  // #CAT_State test if thread-specified unit send con group index is in range
+  // #IGNORE test if thread-specified unit send con group index is in range
 
 
   INLINE int    UnThr(int flat_idx) const {
@@ -210,46 +211,46 @@
     if(!UnFlatIdxInRange(flat_idx)) return 0;
 #endif
     return units_thrs[flat_idx]; }
-  // #CAT_State thread that owns and processes the given unit (flat_idx)
+  // #IGNORE thread that owns and processes the given unit (flat_idx)
   INLINE int    UnThrUnIdx(int flat_idx) const {
 #ifdef DEBUG
     if(!UnFlatIdxInRange(flat_idx)) return 0;
 #endif
     return units_thr_un_idxs[flat_idx]; }
-  // #CAT_State index in thread-specific memory where that unit lives for given unit (flat_idx)
+  // #IGNORE index in thread-specific memory where that unit lives for given unit (flat_idx)
   INLINE int    ThrNUnits(int thr_no) const {
 #ifdef DEBUG
     if(!ThrInRange(thr_no)) return 0;
 #endif
     return thrs_n_units[thr_no]; }
-  // #CAT_State number of units processed by given thread
+  // #IGNORE number of units processed by given thread
   INLINE int    ThrUnitIdx(int thr_no, int thr_un_idx) const {
 #ifdef DEBUG
     if(!ThrUnIdxInRange(thr_no, thr_un_idx)) return 0;
 #endif
     return thrs_unit_idxs[thr_no][thr_un_idx]; }
-  // #CAT_State flat_idx of unit at given thread, thread-specific unit index (max ThrNUnits()-1)
+  // #IGNORE flat_idx of unit at given thread, thread-specific unit index (max ThrNUnits()-1)
   INLINE UNIT_STATE*  ThrUnitState(int thr_no, int thr_un_idx) const {
 #ifdef DEBUG
     if(!ThrUnIdxInRange(thr_no, thr_un_idx)) return NULL;
 #endif
     return (UNIT_STATE*)(thrs_units_mem[thr_no] + (thr_un_idx * unit_state_size)); }
-  // #CAT_State unit variables for unit at given thread, thread-specific unit index (max ThrNUnits()-1)
+  // #IGNORE unit variables for unit at given thread, thread-specific unit index (max ThrNUnits()-1)
   INLINE UNIT_STATE*  UnUnitState(int flat_idx) const
   { return ThrUnitState(UnThr(flat_idx), UnThrUnIdx(flat_idx)); }
-  // #CAT_State unit variables for unit at given unit at flat_idx 
+  // #IGNORE unit variables for unit at given unit at flat_idx 
   INLINE int    ThrLayUnStart(int thr_no, int lay_no)
   { return thrs_lay_unit_idxs[thr_no][2*lay_no]; }
-  // #CAT_State starting thread-specific unit index for given layer (from active_layers list)
+  // #IGNORE starting thread-specific unit index for given layer (from active_layers list)
   INLINE int    ThrLayUnEnd(int thr_no, int lay_no)
   { return thrs_lay_unit_idxs[thr_no][2*lay_no + 1]; }
-  // #CAT_State ending thread-specific unit index for given layer (from state_layers list) -- this is like the max in a for loop -- valid indexes are < end
+  // #IGNORE ending thread-specific unit index for given layer (from state_layers list) -- this is like the max in a for loop -- valid indexes are < end
   INLINE int    ThrUnGpUnStart(int thr_no, int ugp_no)
   { return thrs_ungp_unit_idxs[thr_no][2*ugp_no]; }
-  // #CAT_State starting thread-specific unit index for given unit group (from state_ungps list)
+  // #IGNORE starting thread-specific unit index for given unit group (from state_ungps list)
   INLINE int    ThrUnGpUnEnd(int thr_no, int ugp_no)
   { return thrs_ungp_unit_idxs[thr_no][2*ugp_no + 1]; }
-  // #CAT_State ending thread-specific unit index for given unit group (from state_ungps list) -- this is like the max in a for loop -- valid indexes are < end
+  // #IGNORE ending thread-specific unit index for given unit group (from state_ungps list) -- this is like the max in a for loop -- valid indexes are < end
 
   INLINE float& ThrLayStats(int thr_no, int lay_idx, int stat_var, int stat_type) 
   { return thrs_lay_stats[thr_no]
@@ -262,75 +263,75 @@
     if(!UnFlatIdxInRange(flat_idx)) return 0;
 #endif
     return units_n_recv_cgps[flat_idx]; }
-  // #CAT_State number of recv connection groups for given unit at flat_idx
+  // #IGNORE number of recv connection groups for given unit at flat_idx
   INLINE int    UnNSendConGps(int flat_idx) const {
 #ifdef DEBUG
     if(!UnFlatIdxInRange(flat_idx)) return 0;
 #endif
     return units_n_send_cgps[flat_idx]; }
-  // #CAT_State number of send connection groups for given unit at flat_idx
+  // #IGNORE number of send connection groups for given unit at flat_idx
   INLINE int    UnNRecvConGpsSafe(int flat_idx) const {
     if(!UnFlatIdxInRange(flat_idx)) return 0;
     return units_n_recv_cgps[flat_idx]; }
-  // #CAT_State number of recv connection groups for given unit at flat_idx
+  // #IGNORE number of recv connection groups for given unit at flat_idx
   INLINE int    UnNSendConGpsSafe(int flat_idx) const {
     if(!UnFlatIdxInRange(flat_idx)) return 0;
     return units_n_send_cgps[flat_idx]; }
-  // #CAT_State number of send connection groups for given unit at flat_idx
+  // #IGNORE number of send connection groups for given unit at flat_idx
 
   INLINE int    ThrUnNRecvConGps(int thr_no, int thr_un_idx) const {
 #ifdef DEBUG
     if(!ThrUnIdxInRange(thr_no, thr_un_idx)) return 0;
 #endif
     return thrs_units_n_recv_cgps[thr_no][thr_un_idx]; }
-  // #CAT_State number of recv connection groups for given unit within thread-specific memory at given thread number and thread-specific unit index
+  // #IGNORE number of recv connection groups for given unit within thread-specific memory at given thread number and thread-specific unit index
   INLINE int    ThrUnNSendConGps(int thr_no, int thr_un_idx) const {
 #ifdef DEBUG
     if(!ThrUnIdxInRange(thr_no, thr_un_idx)) return 0;
 #endif
     return thrs_units_n_send_cgps[thr_no][thr_un_idx]; }
-  // #CAT_State number of send connection groups for given unit within thread-specific memory at given thread number and thread-specific unit index
+  // #IGNORE number of send connection groups for given unit within thread-specific memory at given thread number and thread-specific unit index
   INLINE int    ThrUnNRecvConGpsSafe(int thr_no, int thr_un_idx) const {
     if(!ThrUnIdxInRange(thr_no, thr_un_idx)) return 0;
     return thrs_units_n_recv_cgps[thr_no][thr_un_idx]; }
-  // #CAT_State number of recv connection groups for given unit within thread-specific memory at given thread number and thread-specific unit index
+  // #IGNORE number of recv connection groups for given unit within thread-specific memory at given thread number and thread-specific unit index
   INLINE int    ThrUnNSendConGpsSafe(int thr_no, int thr_un_idx) const {
     if(!ThrUnIdxInRange(thr_no, thr_un_idx)) return 0;
     return thrs_units_n_send_cgps[thr_no][thr_un_idx]; }
-  // #CAT_State number of send connection groups for given unit within thread-specific memory at given thread number and thread-specific unit index
+  // #IGNORE number of send connection groups for given unit within thread-specific memory at given thread number and thread-specific unit index
   
   INLINE int    ThrNRecvConGps(int thr_no) const {
 #ifdef DEBUG
     if(!ThrInRange(thr_no)) return 0;
 #endif
     return thrs_n_recv_cgps[thr_no]; }
-  // #CAT_State number of recv connection groups as a flat list across all units processed by given thread
+  // #IGNORE number of recv connection groups as a flat list across all units processed by given thread
   INLINE int    ThrNSendConGps(int thr_no) const {
 #ifdef DEBUG
     if(!ThrInRange(thr_no)) return 0;
 #endif
     return thrs_n_send_cgps[thr_no]; }
-  // #CAT_State number of send connection groups as a flat list across all units processed by given thread
+  // #IGNORE number of send connection groups as a flat list across all units processed by given thread
 
   INLINE CON_STATE* ThrRecvConState(int thr_no, int thr_cgp_idx) const
   { return (CON_STATE*)(thrs_recv_cgp_mem[thr_no] + (thr_cgp_idx * con_state_size)); }
-  // #CAT_State recv ConState for given thread, thread-specific con-group index 
+  // #IGNORE recv ConState for given thread, thread-specific con-group index 
   INLINE CON_STATE* ThrSendConState(int thr_no, int thr_cgp_idx) const
   { return (CON_STATE*)(thrs_send_cgp_mem[thr_no] + (thr_cgp_idx * con_state_size)); }
-  // #CAT_State send ConState for given thread, thread-specific con-group index 
+  // #IGNORE send ConState for given thread, thread-specific con-group index 
 
   INLINE CON_STATE* ThrUnRecvConState(int thr_no, int thr_un_idx, int recv_idx) const {
 #ifdef DEBUG
     if(!ThrUnRecvConGpInRange(thr_no, thr_un_idx, recv_idx)) return NULL;
 #endif
     return ThrRecvConState(thr_no, thrs_recv_cgp_start[thr_no][thr_un_idx] + recv_idx); }
-  // #CAT_State recv ConState for given thread, thread-specific unit index, and recv group index
+  // #IGNORE recv ConState for given thread, thread-specific unit index, and recv group index
   INLINE CON_STATE* ThrUnSendConState(int thr_no, int thr_un_idx, int send_idx) const {
 #ifdef DEBUG
     if(!ThrUnSendConGpInRange(thr_no, thr_un_idx, send_idx)) return 0;
 #endif
     return ThrSendConState(thr_no, thrs_send_cgp_start[thr_no][thr_un_idx] + send_idx); }
-  // #CAT_State send ConState for given thread, thread-specific unit index, and send group index
+  // #IGNORE send ConState for given thread, thread-specific unit index, and send group index
 
   INLINE CON_STATE* RecvConState(int flat_idx, int recv_idx) const {
 #ifdef DEBUG
@@ -338,55 +339,54 @@
 #endif
     int thr_no = UnThr(flat_idx); 
     return ThrUnRecvConState(thr_no, UnThrUnIdx(flat_idx), recv_idx); }
-  // #CAT_State recv ConState for given flat unit index and recv group index number
+  // #IGNORE recv ConState for given flat unit index and recv group index number
   INLINE CON_STATE* SendConState(int flat_idx, int send_idx) const {
 #ifdef DEBUG
     if(!UnSendConGpInRange(flat_idx, send_idx)) return 0;
 #endif
     int thr_no = UnThr(flat_idx); 
     return ThrUnSendConState(thr_no, UnThrUnIdx(flat_idx), send_idx); }
-  // #CAT_State send ConState for given flat unit index and send index number
+  // #IGNORE send ConState for given flat unit index and send index number
 
   INLINE CON_STATE* ThrUnRecvConStateSafe(int thr_no, int thr_un_idx, int recv_idx) const {
     if(!ThrUnRecvConGpInRange(thr_no, thr_un_idx, recv_idx)) return NULL;
     return ThrRecvConState(thr_no, thrs_recv_cgp_start[thr_no][thr_un_idx] + recv_idx); }
-  // #CAT_State recv ConState for given thread, thread-specific unit index, and recv group index
+  // #IGNORE recv ConState for given thread, thread-specific unit index, and recv group index
   INLINE CON_STATE* ThrUnSendConStateSafe(int thr_no, int thr_un_idx, int send_idx) const {
     if(!ThrUnSendConGpInRange(thr_no, thr_un_idx, send_idx)) return 0;
     return ThrSendConState(thr_no, thrs_send_cgp_start[thr_no][thr_un_idx] + send_idx); }
-  // #CAT_State send ConState for given thread, thread-specific unit index, and send group index
+  // #IGNORE send ConState for given thread, thread-specific unit index, and send group index
 
   INLINE CON_STATE* RecvConStateSafe(int flat_idx, int recv_idx) const {
     if(!UnRecvConGpInRange(flat_idx, recv_idx)) return NULL;
     int thr_no = UnThr(flat_idx); 
     return ThrUnRecvConState(thr_no, UnThrUnIdx(flat_idx), recv_idx); }
-  // #CAT_State recv ConState for given flat unit index and recv group index number
+  // #IGNORE recv ConState for given flat unit index and recv group index number
   INLINE CON_STATE* SendConStateSafe(int flat_idx, int send_idx) const {
     if(!UnSendConGpInRange(flat_idx, send_idx)) return 0;
     int thr_no = UnThr(flat_idx); 
     return ThrUnSendConState(thr_no, UnThrUnIdx(flat_idx), send_idx); }
-  // #CAT_State send ConState for given flat unit index and send index number
+  // #IGNORE send ConState for given flat unit index and send index number
 
   INLINE float* ThrRecvConMem(int thr_no) const {
     return thrs_recv_cons_mem[thr_no];
   }
-  // #CAT_State recv connection state memory for given thread
+  // #IGNORE recv connection state memory for given thread
   INLINE float* ThrSendConMem(int thr_no) const {
     return thrs_send_cons_mem[thr_no];
   }
-  // #CAT_State send connection state memory for given thread
+  // #IGNORE send connection state memory for given thread
 
   INLINE float* ThrSendNetinTmp(int thr_no) const 
   { return thrs_send_netin_tmp[thr_no]; }
-  // #CAT_State temporary sending netinput memory for given thread -- no NETIN_PER_PRJN version
+  // #IGNORE temporary sending netinput memory for given thread -- no NETIN_PER_PRJN version
   INLINE float* ThrSendNetinTmpPerPrjn(int thr_no, int recv_idx) const 
   { return thrs_send_netin_tmp[thr_no] + recv_idx * n_units_built; }
-  // #CAT_State temporary sending netinput memory for given thread -- NETIN_PER_PRJN version
+  // #IGNORE temporary sending netinput memory for given thread -- NETIN_PER_PRJN version
 
 
   /////////////////////////////////////////////////////
   //    Build network
-
 
   INIMPL virtual void AllocSpecMem();
   // #IGNORE allocate spec mem
@@ -437,9 +437,13 @@
   INIMPL virtual void Init_Weights_post_Thr(int thr_no);
   // #IGNORE
   INIMPL virtual void Init_Weights_Layer();
-  // #CAT_Learning call layer-level init weights function -- after all unit-level inits
+  // #IGNORE call layer-level init weights function -- after all unit-level inits
+  INIMPL virtual void Init_Counters_State();
+  // #IGNORE initialize counters controlled by the state-side
+  INIMPL virtual void Init_Stats();
+  // #IGNORE initialize statistics -- also calls Init_Stats_Layer
   INIMPL virtual void Init_Stats_Layer();
-  // #CAT_Learning call layer-level Init stats function
+  // #IGNORE call layer-level Init stats function
   INIMPL virtual void Compute_Netin_Thr(int thr_no);
   // #IGNORE compute net input, receiver based
   INIMPL virtual void Send_Netin_Thr(int thr_no);
@@ -460,15 +464,19 @@
   // #IGNORE compute compute precision and recall error statistics over entire network -- true positive, false positive, and false negative -- precision = tp / (tp + fp) recall = tp / (tp + fn) fmeasure = 2 * p * r / (p + r), specificity, fall-out, mcc. -- into thread-specific stats buffers
   INIMPL virtual void Compute_PRerr_Agg();
   // #IGNORE aggregate thread-specific data
+  INIMPL virtual void Compute_EpochSSE();
+  // #IGNORE compute epoch-level sum squared error and related statistics
+  INIMPL virtual void Compute_EpochPRerr();
+  // #IGNORE compute epoch-level precision and recall statistics
   INIMPL virtual void Compute_EpochStats_Layer();
   // #IGNORE compute epoch-level statistics at the layer level: SSE, PRerr -- overload in derived classes
 
   INIMPL ConState_cpp* FindRecipRecvCon(int& con_idx, NetworkState_cpp* net, UnitState_cpp* su,
                                              UnitState_cpp* ru);
-  // #CAT_State find the reciprocal recv con group and con index for sending unit su to this receiving unit ru
+  // #IGNORE find the reciprocal recv con group and con index for sending unit su to this receiving unit ru
   INIMPL ConState_cpp* FindRecipSendCon(int& con_idx, NetworkState_cpp* net, UnitState_cpp* ru,
                                         UnitState_cpp* su);
-  // #CAT_State find the reciprocal send con group and con index for receiving unit ru from this sending unit su
+  // #IGNORE find the reciprocal send con group and con index for receiving unit ru from this sending unit su
 
   INIMPL void Initialize_core();
   // #IGNORE 

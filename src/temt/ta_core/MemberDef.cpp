@@ -109,17 +109,6 @@ void MemberDef::Copy_(const MemberDef& cp) {
 MemberDef::~MemberDef() {
 }
 
-void* MemberDef::GetOff(const void* base) const {
-  void* rval = addr;
-  if (!is_static)
-    rval = (void*)&((ta_memb_ptr_class*)((char*)base+base_off)->*off);
-  return rval;
-}
-
-void* MemberDef::GetOff_static(const void* base, int base_off_, ta_memb_ptr off_) {
-  return (void*)&((ta_memb_ptr_class*)((char*)base+base_off_)->*off_);
-}
-
 const String MemberDef::GetPathName() const {
   String rval;
   TypeDef* owtp = GetOwnerType();

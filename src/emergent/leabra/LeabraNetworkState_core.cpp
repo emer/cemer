@@ -107,6 +107,13 @@ CON_SPEC* LEABRA_NETWORK_STATE::NewConSpec(int spec_type) const {
 //      General Init functions
 
 
+void LEABRA_NETWORK_STATE::Init_Counters_State() {
+  inherited::Init_Counters_State();
+  quarter = 0;
+  phase = MINUS_PHASE;
+  tot_cycle = 0;
+}
+
 void LEABRA_NETWORK_STATE::Init_Weights_Layer() {
   for(int li=0; li < n_layers_built; li++) {
     LEABRA_LAYER_STATE* lay = (LEABRA_LAYER_STATE*)GetLayerState(li);
@@ -114,6 +121,49 @@ void LEABRA_NETWORK_STATE::Init_Weights_Layer() {
     LEABRA_LAYER_SPEC_CPP* ls = (LEABRA_LAYER_SPEC_CPP*)lay->GetLayerSpec(this);
     ls->Init_Weights_Layer(lay, this);
   }
+}
+
+void LEABRA_NETWORK_STATE::Init_Stats() {
+  inherited::Init_Stats();
+  trg_max_act = 0.0f;
+
+  rt_cycles = 0.0f;
+  avg_cycles.ResetAvg();
+
+  // minus_output_name = "";
+
+  send_pct_n = send_pct_tot = 0;
+  send_pct = 0.0f;
+  avg_send_pct.ResetAvg();
+
+  ext_rew = 0.0f;
+  ext_rew_avail = false;
+  avg_ext_rew.ResetAvg();
+
+  norm_err = 0.0f;
+  avg_norm_err.ResetAvg();
+
+  cos_err = 0.0f;
+  cos_err_prv = 0.0f;
+  cos_err_vs_prv = 0.0f;
+  avg_cos_err.ResetAvg();
+  avg_cos_err_prv.ResetAvg();
+  avg_cos_err_vs_prv.ResetAvg();
+
+  cos_diff = 0.0f;
+  avg_cos_diff.ResetAvg();
+
+  avg_act_diff = 0.0f;
+  avg_avg_act_diff.ResetAvg();
+  
+  trial_cos_diff = 0.0f;
+  avg_trial_cos_diff.ResetAvg();
+
+  net_sd = 0.0f;
+  avg_net_sd.ResetAvg();
+
+  hog_pct = 0.0f;
+  dead_pct = 0.0f;
 }
 
 void LEABRA_NETWORK_STATE::Init_Stats_Layer() {
@@ -853,6 +903,14 @@ void LEABRA_NETWORK_STATE::Compute_CycleStats_Post() {
     acts.CalcAvg();
     acts_eq.CalcAvg();
     acts_raw.CalcAvg();
+    if(gpd->ungp_idx == lay->ungp_idx) { // main layer group
+      if(lay->HasExtFlag(LAYER_STATE::TARG)) {
+        trg_max_act = fmaxf(trg_max_act, acts_eq.max);
+      }
+      if(lay->Iconified()) {
+        lay->icon_value = acts_eq.avg;
+      }
+    }
   }
 
   // Compute_OutputName();
@@ -1061,6 +1119,10 @@ void LEABRA_NETWORK_STATE::Quarter_Final_Layer() {
     LEABRA_LAYER_SPEC_CPP* ls = (LEABRA_LAYER_SPEC_CPP*)lay->GetLayerSpec(this);
     ls->Quarter_Final_Layer(lay, this);
   }
+}
+
+void LEABRA_NETWORK_STATE::Quarter_Final_Counters() {
+  quarter++;                    // always shows +1 at end of quarter
 }
 
 
@@ -1530,6 +1592,12 @@ void LEABRA_NETWORK_STATE::Compute_ActMargin_Agg() {
     LEABRA_LAYER_SPEC_CPP* ls = (LEABRA_LAYER_SPEC_CPP*)lay->GetLayerSpec(this);
     ls->Compute_ActMargin(lay, this);
   }
+}
+
+void LEABRA_NETWORK_STATE::Compute_RTCycles_Agg() {
+  if(rt_cycles < 0) // never reached target
+    rt_cycles = cycle;       // set to current cyc -- better for integrating
+  avg_cycles.Increment(rt_cycles);
 }
 
 void LEABRA_NETWORK_STATE::Compute_NetSd_Thr(int thr_no) {

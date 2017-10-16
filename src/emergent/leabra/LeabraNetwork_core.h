@@ -34,30 +34,30 @@
   };
 
 
-  STATE_CLASS(LeabraTimes)     times;        // #CAT_Learning time parameters
-  STATE_CLASS(LeabraNetStats)  lstats;       // #CAT_Statistic leabra network-level statistics parameters
-  STATE_CLASS(LeabraNetMisc)    net_misc;	// misc network level parameters for leabra -- these determine various algorithm variants, typically auto-detected based on the network configuration in Trial_Init_Specs
-  STATE_CLASS(LeabraNetDeep)    deep; 	// flags for what elements of deep computation need to be performed -- typically auto-detected based on the network configuration in Trial_Init_Specs
-  STATE_CLASS(RelNetinSched)    rel_netin;	// #CAT_Learning #CONDSHOW_OFF_flags:NETIN_PER_PRJN schedule for computing relative netinput values for each projection -- this is very important data for tuning the network to ensure that each layer has the relative impact it should on other layers -- however it is expensive (only if not using NETIN_PER_PRJN, otherwise it is automatic and these options are disabled), so this schedules it to happen just enough to get the results you want
-  bool          unlearnable_trial; // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Learning this trial is flagged as being unlearnable -- blocks Compute_dWt and error stats from being computed -- particularly relevant for TI, where the prior context provides no basis for prediction (see also cos_err_lrn_thr) -- flag is automatically reset at start of trial -- must be actively set every trial
+  STATE_CLASS(LeabraTimes)     times;     // #MAIN #CONDEDIT_ON_main_obj #CAT_Learning time parameters
+  STATE_CLASS(LeabraNetStats)  lstats;    // #MAIN #CONDEDIT_ON_main_obj #CAT_Statistic leabra network-level statistics parameters
+  STATE_CLASS(LeabraNetMisc)    net_misc; // #MAIN #CONDEDIT_ON_main_obj misc network level parameters for leabra -- these determine various algorithm variants, typically auto-detected based on the network configuration in Trial_Init_Specs
+  STATE_CLASS(LeabraNetDeep)    deep;     // #MAIN #CONDEDIT_ON_main_obj flags for what elements of deep computation need to be performed -- typically auto-detected based on the network configuration in Trial_Init_Specs
+  STATE_CLASS(RelNetinSched)    rel_netin; // #MAIN #CONDEDIT_ON_main_obj #CAT_Learning #CONDSHOW_OFF_flags:NETIN_PER_PRJN schedule for computing relative netinput values for each projection -- this is very important data for tuning the network to ensure that each layer has the relative impact it should on other layers -- however it is expensive (only if not using NETIN_PER_PRJN, otherwise it is automatic and these options are disabled), so this schedules it to happen just enough to get the results you want
+  bool          unlearnable_trial; // #MAIN #CONDEDIT_ON_main_obj #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Learning this trial is flagged as being unlearnable -- blocks Compute_dWt and error stats from being computed -- particularly relevant for TI, where the prior context provides no basis for prediction (see also cos_err_lrn_thr) -- flag is automatically reset at start of trial -- must be actively set every trial
 
   ////////////  everything below here should be a counter or statistic -- no params!
 
 #ifdef __MAKETA__
-  int           cycle;          // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW cycle counter: number of iterations of activation updating (settling) on the current alpha-cycle (100 msec / 10 Hz) trial -- this counts time sequentially through the entire trial, typically from 0 to 99 cycles (equivalent to the old ct_cycle, not cycle within a phase as cycle used to be prior to version 7.1.0)
+  int           cycle;          // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW cycle counter: number of iterations of activation updating (settling) on the current alpha-cycle (100 msec / 10 Hz) trial -- this counts time sequentially through the entire trial, typically from 0 to 99 cycles (equivalent to the old ct_cycle, not cycle within a phase as cycle used to be prior to version 7.1.0) -- updated in CycleRun, not updated by program!
 #endif
 
-  int		quarter;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW current gamma-frequency (25 msec / 40 Hz) quarter of alpha-cycle (100 msec / 10 Hz) trial being processed
-  Phase		phase;		// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW type of settling phase (MINUS or PLUS) -- minus is first 3 quarters, plus is last quarter
-  int           tot_cycle;      // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW total cycle count -- this increments from last Init_Weights and just keeps going up (unless otherwise reset) -- used for tracking things like spiking times continuously across time
+  int		quarter;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW current gamma-frequency (25 msec / 40 Hz) quarter of alpha-cycle (100 msec / 10 Hz) trial being processed -- updated by State
+  Phase		phase;		// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW type of settling phase (MINUS or PLUS) -- minus is first 3 quarters, plus is last quarter -- updated by State
+  int           tot_cycle;      // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW total cycle count -- this increments from last Init_Weights and just keeps going up (unless otherwise reset) -- used for tracking things like spiking times continuously across time -- updated by State
 
-  float		rt_cycles;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW cycles to generate an output response (reaction time = RT) -- typically lstats.trg_max_act_crit is used as an activation criterion over the trg_max_act value recorded from target output layer(s) to determine this
+  float		rt_cycles;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW cycles to generate an output response (reaction time = RT) -- typically lstats.trg_max_act_crit is used as an activation criterion over the trg_max_act value recorded from target output layer(s) to determine this -- updated by State
   STATE_CLASS(Average)  avg_cycles;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #DMEM_AGG_SUM average settling cycles in the minus phase (computed over previous epoch)
   float		trg_max_act;	// #NO_SAVE #GUI_READ_ONLY #EXPERT #CAT_Statistic maximum activation of any unit in a target layer -- compared against lstats.trg_max_act_crit to compute rt_cycles
 
   float		send_pct;	// #NO_SAVE #GUI_READ_ONLY #EXPERT #CAT_Statistic proportion of sending units that actually sent activations on this cycle -- only available for non-threading case
-  int		send_pct_n;	// #NO_SAVE #READ_ONLY #CAT_Statistic number of units sending activation this cycle
-  int		send_pct_tot;	// #NO_SAVE #READ_ONLY #CAT_Statistic total number of units that could send activation this cycle
+  int		send_pct_n;	// #NO_SAVE #GUI_READ_ONLY #CAT_Statistic number of units sending activation this cycle
+  int		send_pct_tot;	// #NO_SAVE #GUI_READ_ONLY #CAT_Statistic total number of units that could send activation this cycle
   STATE_CLASS(Average)  avg_send_pct;	// #NO_SAVE #GUI_READ_ONLY #EXPERT #CAT_Statistic #DMEM_AGG_SUM average proportion of units sending activation over an epoch -- only available for non-threading case
 
   float		ext_rew;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW external reward value (on this trial) -- only computed if ExtRewLayerSpec or similar exists in network
@@ -89,8 +89,7 @@ STATE_CLASS(Average)	avg_cos_diff;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statist
 
   INLINE bool  RecvOwnsCons() override { return false; }
 
-
-  INLINE  int   QuarterCycle() { return cycle - quarter * times.quarter; }
+  INLINE  int  QuarterCycle() { return cycle - quarter * times.quarter; }
   // #CAT_Cycle cycles within current cycle -- network cycle counter counts for entire trial across 4 quarters
 
 
@@ -105,6 +104,7 @@ STATE_CLASS(Average)	avg_cos_diff;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statist
     cos_diff = 0.0f;    trial_cos_diff = 0.0f;
     net_sd = 0.0f;    hog_pct = 0.0f;    dead_pct = 0.0f;
   }
+  // #IGNORE
 
 
   

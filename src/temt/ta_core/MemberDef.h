@@ -75,10 +75,18 @@ public:
   MemberDef*    Clone()         { return new MemberDef(*this); }
   MemberDef*    MakeToken()     { return new MemberDef(); }
 
-  void*                 GetOff(const void* base) const;
+  inline void*  GetOff(const void* base) const {
+    if (is_static) return addr;
+    return (void*)&((ta_memb_ptr_class*)((char*)base+base_off)->*off);
+  }
   // get offset of member relative to overall class base pointer
-  static void*          GetOff_static(const void* base, int base_off_, ta_memb_ptr off_);
-  // get offset of member -- static version that takes args
+  static inline void*  GetOff_static(const void* base, int base_off_, ta_memb_ptr off_) {
+    return (void*)&((ta_memb_ptr_class*)((char*)base+base_off_)->*off_);
+  }    
+  inline int   GetRelOff() const {
+    return ((char*)&((ta_memb_ptr_class*)((char*)0+base_off)->*off)) - (char*)0;
+  }
+  // get relative byte offset of member relative to overall class base pointer -- only for non-statics
   const String GetPathName() const override;
     // name used for saving a reference in stream files, can be used to lookup again
 

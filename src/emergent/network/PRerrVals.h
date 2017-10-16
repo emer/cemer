@@ -41,7 +41,7 @@ public:
   float         fdr;           // false discovery rate = fp / (fp + tp)
   float         fmeasure;       // fmeasure = 2 * precision * recall / (precision + recall) -- harmonic mean of precision and recall -- is 1 when network is performing optimally
   float         mcc;            // mcc = ((tp*tn) - (fp*fn)) / sqrt((tp+fp)*(tp+fn)*(tn+fp)*(tn+fn)) -- Matthews Correlation Coefficient. balanced statistic that reflects all of the kinds of errors the network could make. ranges from -1 to 1. this is the best overall value to look at for summary performance
-  void          InitVals() { true_pos = false_pos = false_neg = true_neg = specificity = mcc = precision = recall = fmeasure = 0.0f; }
+  void          InitVals() { true_pos = false_pos = false_neg = true_neg = specificity = mcc = precision = recall = fallout = fdr = fmeasure = 0.0f; }
   // initialize all values to 0
 
   void          IncrVals(const PRerrVals& vls)

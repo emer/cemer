@@ -101,8 +101,6 @@ public:
   //	General Init functions
 
   void	Init_Acts() override;
-  void	Init_Counters() override;
-  void	Init_Stats() override;
 
   inline void  Init_AdaptInhib() { LeabraNetState()->Init_AdaptInhib(); }
   // #CAT_Activation Initialize adaptive inhibition gain value on all the layers -- undoes any adaptation that has taken place (including from loaded weights - the adaptive gain value is saved with the weights)
@@ -314,7 +312,7 @@ public:
     // #CAT_QuarterFinal perform computations in layers at end of quarter (called by Quarter_Final)
     virtual void Quarter_Compute_dWt();
     // #CAT_QuarterFinal compute weight changes at end of each quarter -- units decide when this actually happens
-    virtual void Quarter_Final_Counters();
+    inline void Quarter_Final_Counters()   { LeabraNetState()->Quarter_Final_Counters(); }
     // #CAT_QuarterFinal update counters at end of quarter
 
 
@@ -387,6 +385,8 @@ public:
     inline void Compute_ActMargin_Thr(int thr_no)  { LeabraNetState()->Compute_ActMargin_Thr(thr_no); }
     // #IGNORE
     inline void Compute_ActMargin_Agg()  { LeabraNetState()->Compute_ActMargin_Agg(); }
+    // #IGNORE
+    inline void Compute_RTCycles_Agg()  { LeabraNetState()->Compute_RTCycles_Agg(); }
     // #IGNORE
   virtual float	Compute_NetSd();
   // #CAT_Statistic compute standard deviation of the minus phase net inputs across the layers -- this is a key statistic to monitor over time for how much the units are gaining traction on the problem -- they should be getting more differentiated and sd should go up -- if not, then the network will likely fail -- MUST call this at end of minus phase!

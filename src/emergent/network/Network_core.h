@@ -37,7 +37,7 @@
     N_NetworkConSpecs,     // derived classes start from this one -- use class name for subclasses
   };
 
-
+  bool          main_obj;       // #NO_SAVE #READ_ONLY #CAT_State true if this is a main-side object (emergent, TA-enabled) as opposed to a State-side object 
   int           n_thrs_built;   // #NO_SAVE #READ_ONLY #CAT_State number of threads that the network was built for -- must use this number of threads for running network, and rebuild if the number changes
   int           layer_state_size;  // #NO_SAVE #READ_ONLY #CAT_State size in *bytes* of the layer_state LayerState
   int           prjn_state_size;  // #NO_SAVE #READ_ONLY #CAT_State size in *bytes* of the prjn_state LayerState
@@ -53,22 +53,22 @@
   int           n_con_specs_built;  // #NO_SAVE #READ_ONLY #CAT_Specs number of specs 
 
 
-  NetFlags      flags;          // #CAT_Structure flags controlling various aspects of network function
-  TrainMode     train_mode;     // #CAT_Learning training mode -- determines whether weights are updated or not (and other algorithm-dependent differences as well).  TEST turns off learning
-  WtUpdate      wt_update;      // #CAT_Learning #CONDSHOW_ON_train_mode:TRAIN weight update mode: when are weights updated (only applicable if train_mode = TRAIN)
-  int           small_batch_n;  // #CONDSHOW_ON_wt_update:SMALL_BATCH #CAT_Learning number of events for small_batch learning mode (specifies how often weight changes are synchronized in dmem)
-  int           small_batch_n_eff; // #GUI_READ_ONLY #EXPERT #NO_SAVE #CAT_Learning effective batch_n value = batch_n except for dmem when it = (batch_n / epc_nprocs) >= 1
+  NetFlags      flags;          // #MAIN #CONDEDIT_ON_main_obj #CAT_Structure flags controlling various aspects of network function
+  TrainMode     train_mode;     // #MAIN #CONDEDIT_ON_main_obj #CAT_Learning training mode -- determines whether weights are updated or not (and other algorithm-dependent differences as well).  TEST turns off learning
+  WtUpdate      wt_update;      // #MAIN #CONDEDIT_ON_main_obj #CAT_Learning #CONDSHOW_ON_train_mode:TRAIN weight update mode: when are weights updated (only applicable if train_mode = TRAIN)
+  int           small_batch_n;  // #MAIN #CONDEDIT_ON_main_obj #CONDSHOW_ON_wt_update:SMALL_BATCH #CAT_Learning number of events for small_batch learning mode (specifies how often weight changes are synchronized in dmem)
+  int           small_batch_n_eff; // #MAIN #CONDEDIT_ON_main_obj #GUI_READ_ONLY #EXPERT #NO_SAVE #CAT_Learning effective batch_n value = batch_n except for dmem when it = (batch_n / epc_nprocs) >= 1
   STATE_CLASS(NetStatsSpecs) stats; // #CAT_Statistic parameters controling the computation of statistics
   STATE_CLASS(NetworkCudaSpec)  cuda; // #CAT_CUDA parameters for NVIDA CUDA GPU implementation -- only applicable for CUDA_COMPILE binaries
 
-  int           batch;          // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW batch counter: number of times network has been trained over a full sequence of epochs (updated by program)
-  int           epoch;          // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW epoch counter: number of times a complete set of training patterns has been presented (updated by program)
-  int           group;          // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW group counter: optional extra counter to record sequence-level information (sequence = group of trials)
-  int           trial;          // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW trial counter: number of external input patterns that have been presented in the current epoch (updated by program)
-  int           tick;           // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW tick ..counter: optional extra counter to record a level of organization below the trial level (for cases where trials have multiple component elements)
-  int           cycle;          // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW cycle counter: number of iterations of activation updating (settling) on the current external input pattern (updated by program)
-  float         time;           // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW the current time, relative to some established starting point, in algorithm-specific units (often miliseconds)
-  int           total_trials;   // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW total number of trials counter: number of external input patterns that have been presented since the weights were initialized
+  int           batch;          // #MAIN #CONDEDIT_ON_main_obj #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW batch counter: number of times network has been trained over a full sequence of epochs (updated by program)
+  int           epoch;          // #MAIN #CONDEDIT_ON_main_obj #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW epoch counter: number of times a complete set of training patterns has been presented (updated by program)
+  int           group;          // #MAIN #CONDEDIT_ON_main_obj #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW group counter: optional extra counter to record sequence-level information (sequence = group of trials)
+  int           trial;          // #MAIN #CONDEDIT_ON_main_obj #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW trial counter: number of external input patterns that have been presented in the current epoch (updated by program)
+  int           tick;           // #MAIN #CONDEDIT_ON_main_obj #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW tick ..counter: optional extra counter to record a level of organization below the trial level (for cases where trials have multiple component elements)
+  int           cycle;          // #MAIN #CONDEDIT_ON_main_obj #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW cycle counter: number of iterations of activation updating (settling) on the current external input pattern (updated by program)
+  float         time;           // #MAIN #CONDEDIT_ON_main_obj #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW the current time, relative to some established starting point, in algorithm-specific units (often miliseconds)
+  int           total_trials;   // #MAIN #CONDEDIT_ON_main_obj #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW total number of trials counter: number of external input patterns that have been presented since the weights were initialized
 
   float         sse;            // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW sum squared error over the network, for the current external input pattern
   float         sum_sse;        // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic total sum squared error over an epoch or similar larger set of external input patterns
@@ -134,6 +134,7 @@
   // #IGNORE set spec sizes
 
   INLINE void   Initialize_net_core() {
+    main_obj = false;
     n_thrs_built = 0;     layer_state_size = 0;   prjn_state_size = 0;    ungp_state_size = 0;
     unit_state_size = 0;  con_state_size = 0;     n_layers_built = 0;     n_prjns_built = 0;
     n_ungps_built = 0;    n_units_built = 0;      n_layer_specs_built = 0;
@@ -149,3 +150,4 @@
 
     n_units = 0;    n_cons = 0;    max_prjns = 1;
   }
+  // #IGNORE

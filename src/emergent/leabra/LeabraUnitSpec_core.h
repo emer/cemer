@@ -494,7 +494,7 @@
     if(!u->HasExtFlag(UNIT_STATE::EXT))
       return;
     LEABRA_LAYER_STATE* lay = (LEABRA_LAYER_STATE*)u->GetOwnLayer(net);
-    if(!(lay->hard_clamped && lay->HasExtFlag((LAYER_STATE::ExtFlags)UNIT_STATE::EXT))) {
+    if(!(lay->hard_clamped && lay->HasExtFlag(LAYER_STATE::EXT))) {
       // note: must always use layer state -- if this doesn't work, fix hard_clamped flag!
       // if(!(ls->clamp.hard && lay->HasExtFlag(UNIT_STATE::EXT))) {
       return;

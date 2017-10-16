@@ -48,6 +48,7 @@
   INLINE virtual void Init_AdaptInhib(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
     LEABRA_UNGP_STATE* lgpd = lay->GetLayUnGpState(net);
     lay->adapt_gi = 1.0f;
+    lay->lrate_mod = lay_lrate;
     lay->margin.low_thr = margin.low_thr;
     lay->margin.med_thr = margin.med_thr;
     lay->margin.hi_thr = margin.hi_thr;
@@ -55,6 +56,7 @@
     lay->margin.low_avg = eff_p_avg;
     lay->margin.med_avg = margin.MedTarg(eff_p_avg);
     lay->margin.hi_avg = margin.HiTarg(eff_p_avg);
+    lay->laygp_i_val.InitVals(); lay->laygp_netin.InitVals(); lay->laygp_acts_eq.InitVals();
   }
   // #CAT_Activation called in Init_Weights_Layer initialize the adaptive inhibitory state values
   

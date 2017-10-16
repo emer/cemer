@@ -2757,6 +2757,12 @@ void TypeDef::CopyFromSameType(void* trg_base, void* src_base,
   }
   if(IsNotPtr()) {
     if(IsAtomic()) {
+// #ifdef DEBUG
+//       int diff = memcmp(trg_base, src_base, size);
+//       if(diff != 0 && memb_def) {
+//         taMisc::DebugInfo("diff for member:", memb_def->name, "of type:", name);
+//       }
+// #endif      
       memcpy(trg_base, src_base, size);
     }
     else if(IsAtomicEff()) {
