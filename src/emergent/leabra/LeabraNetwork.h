@@ -94,12 +94,15 @@ public:
   void  BuildNullUnit() override;
   virtual void BuildLeabraThreadMem();
   // #IGNORE
-  inline void InitLeabraThreadMem_Thr(int thr_no)  { LeabraNetState()->InitLeabraThreadMem_Thr(thr_no); }
+  inline void InitLeabraThreadMem_Thr(int thr_no)
+  { LeabraNetState()->InitLeabraThreadMem_Thr(thr_no); }
   // #IGNORE
+  bool  LoadWeights_strm(std::istream& strm, bool quiet = false) override;
 
   ///////////////////////////////////////////////////////////////////////
   //	General Init functions
 
+  void  SyncLayerState_Layer(Layer* lay) override;
   void	Init_Acts() override;
 
   inline void  Init_AdaptInhib() { LeabraNetState()->Init_AdaptInhib(); }

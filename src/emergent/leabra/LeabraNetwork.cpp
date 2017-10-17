@@ -38,6 +38,7 @@ TA_BASEFUNS_CTORS_DEFN(LeabraNetDeep);
 TA_BASEFUNS_CTORS_DEFN(RelNetinSched);
 TA_BASEFUNS_CTORS_DEFN(LeabraNetwork);
 
+using namespace std;
 
 void LeabraNetwork::Initialize() {
   layers.SetBaseType(&TA_LeabraLayer);
@@ -107,8 +108,41 @@ void LeabraNetwork::BuildNullUnit() {
   }
 }
 
+bool LeabraNetwork::LoadWeights_strm(istream& strm, bool quiet) {
+  bool rval = inherited::LoadWeights_strm(strm, quiet);
+  if(!rval) return rval;
+  for(int li=0; li < net_state->n_layers_built; li++) {
+    LEABRA_LAYER_STATE* lst = (LEABRA_LAYER_STATE*)GetLayerState(li);
+    if(lst->lesioned()) continue;
+    LeabraLayer* lay = (LeabraLayer*)StateLayer(li);
+    LEABRA_UNGP_STATE* lgpd = (LEABRA_UNGP_STATE*)lay->GetLayUnGpState(net_state);
+    // these are important for saving in weights files -- keep them updated
+    lst->acts_m_avg = lay->acts_m_avg;
+    lst->acts_p_avg = lay->acts_p_avg;
+    lst->acts_p_avg_eff = lay->acts_p_avg_eff;
+    lgpd->acts_m_avg = lay->acts_m_avg;
+    lgpd->acts_p_avg = lay->acts_p_avg;
+    lgpd->acts_p_avg_eff = lay->acts_p_avg_eff;
+  }
+  return rval;
+}
+
 ///////////////////////////////////////////////////////////////////////
 //      General Init functions
+
+void LeabraNetwork::SyncLayerState_Layer(Layer* ly) {
+  inherited::SyncLayerState_Layer(ly);
+  LeabraLayer* lay = (LeabraLayer*)ly;
+  LEABRA_LAYER_STATE* lst = (LEABRA_LAYER_STATE*)lay->GetLayerState(net_state);
+  LEABRA_UNGP_STATE* lgpd = (LEABRA_UNGP_STATE*)lay->GetLayUnGpState(net_state);
+  // these are important for saving in weights files -- keep them updated
+  lst->acts_m_avg = lgpd->acts_m_avg;
+  lst->acts_p_avg = lgpd->acts_p_avg;
+  lst->acts_p_avg_eff = lgpd->acts_p_avg_eff;
+  lay->acts_m_avg = lgpd->acts_m_avg;
+  lay->acts_p_avg = lgpd->acts_p_avg;
+  lay->acts_p_avg_eff = lgpd->acts_p_avg_eff;
+}
 
 void LeabraNetwork::Init_Acts() {
   NET_THREAD_CALL(LeabraNetwork::Init_Acts_Thr);

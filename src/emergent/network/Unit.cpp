@@ -674,9 +674,8 @@ void Unit::ConsSaveWeights_strm(ostream& strm, ConState_cpp* cg, Unit* un, Netwo
   NetworkState_cpp* net_state = net->net_state;
   if(!net || !net_state) return;
   
-  PrjnState_cpp* pj = cg->GetPrjnState(net->net_state);
-  // todo! need a way to get projection
-  Projection* prjn = NULL;
+  PrjnState_cpp* pjs = cg->GetPrjnState(net->net_state);
+  Projection* prjn = net->PrjnFromState(pjs);
   TypeDef* ct = prjn->con_type;
   ConSpec* con_spec = prjn->GetConSpec();
   int n_vars = 0;

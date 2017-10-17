@@ -34,6 +34,9 @@
   STATE_CLASS(Average)	avg_trial_cos_diff;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #DMEM_AGG_SUM average cosine (normalized dot product) trial diff (computed over previous epoch)
   float		net_sd;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic standard deviation of the minus phase net inputs across the layer -- this is a key statistic to monitor over time for how much the units are gaining traction on the problem -- they should be getting more differentiated and sd should go up -- if not, then the network will likely fail
   STATE_CLASS(Average)	avg_net_sd;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #DMEM_AGG_SUM average net_sd (computed over previous epoch) -- standard deviation of the minus phase net inputs across the layer -- this is a key statistic to monitor over time for how much the units are gaining traction on the problem -- they should be getting more differentiated and sd should go up -- if not, then the network will likely fail
+  float 	acts_m_avg;	// #READ_ONLY #SHOW #CAT_Activation #SAVE_WTS COPIED FROM UNGP STATE: time-averaged minus-phase activation stats for the layer -- this is used for adaptive inhibition tuning (inhib_adapt in LeabraLayerSpec) -- time constant in layer spec avg_act.tau and initialized to avg_act.init -- saved with weights
+  float 	acts_p_avg;	// #READ_ONLY #SHOW #CAT_Activation #SAVE_WTS COPIED FROM UNGP STATE: time-averaged plus-phase activation stats for the layer -- time constant in layer spec avg_act.tau and initialized to avg_act.init -- this is used for netinput scaling (via _eff version) and should match reasonably well with act_avg.init value -- saved with weights
+  float 	acts_p_avg_eff;	// #READ_ONLY #SHOW #CAT_Activation #SAVE_WTS COPIED FROM UNGP STATE: acts_p_avg * avg_act.adjust factor -- this is the effective value actually used for netinput scaling based on layer activation levels -- saved with weights
 
   INLINE LEABRA_LAYER_SPEC_CPP* GetLayerSpec(NETWORK_STATE* net) const
   { return (LEABRA_LAYER_SPEC_CPP*)net->GetLayerSpec(spec_idx); }
@@ -81,6 +84,7 @@
     hard_clamped = false;
     lrate_mod = 1.0f;    deep_lrate_mod = false;  adapt_gi = 1.0f;
     da_p = 0.0f;    da_n = 0.0f;    sev = 0.0f;
+    acts_m_avg = acts_p_avg = acts_p_avg_eff = 0.15f;
     Init_Stats();
   }
   // #IGNORE 

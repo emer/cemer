@@ -832,12 +832,14 @@ void Layer::LayoutUnits() {
           for(ugeo.x=0; ugeo.x < un_geom.x; ugeo.x++) {
             if(ui >= eff_ug->size)
               break;
-            Unit* un = (Unit*)eff_ug->FastEl(ui++);
-            un->lay_un_idx = li++;
+            Unit* un = (Unit*)eff_ug->FastEl(ui);
+            un->lay_un_idx = li;
             un->gp_idx = gi;
             un->ungp_un_idx = ui;
             un->own_lay_idx = layer_idx;
             un->own_ungp_idx = ungp_idx + 1 + gi; // skip main one
+            li++;
+            ui++;
             taVector2i upos = ugeo;
             if(virt_groups)
               upos += gp_pos;
@@ -853,13 +855,14 @@ void Layer::LayoutUnits() {
       for(ugeo.x=0; ugeo.x <un_geom.x; ugeo.x++) {
         if(li >= units.size)
           break;
-        Unit* un = (Unit*)units.FastEl(li++);
+        Unit* un = (Unit*)units.FastEl(li);
         un->lay_un_idx = li;
         un->gp_idx = -1;
         un->ungp_un_idx = li;
         un->own_lay_idx = layer_idx;
         un->own_ungp_idx = ungp_idx; // our unit group is the main one
         un->pos.x = ugeo.x; un->pos.y = ugeo.y;
+        li++;
       }
     }
   }
