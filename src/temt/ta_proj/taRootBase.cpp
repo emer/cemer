@@ -1052,27 +1052,34 @@ bool taRootBase::Startup_InitApp(int& argc, const char* argv[]) {
 
 #ifdef QT_OPEN_GL_WIDGET
     // this is synonymous with QT_VERSION >= 0x050600
-  QSurfaceFormat fmt;
+    QSurfaceFormat fmt = QSurfaceFormat::defaultFormat();
+    if(taMisc::antialiasing_level > 1) {
+      fmt.setSamples(taMisc::antialiasing_level);
+    }
 #ifdef TA_QT3D
 #else
     // set a default format that is quarter compatible
-  if(taMisc::antialiasing_level > 1) {
-    fmt.setSamples(taMisc::antialiasing_level);
-  }
-  fmt.setProfile(QSurfaceFormat::CompatibilityProfile); // quarter requires it
-  QSurfaceFormat::setDefaultFormat(fmt);
+    // fmt.setAlphaBufferSize(8); // this makes network transparent to screen below!
+    fmt.setProfile(QSurfaceFormat::CompatibilityProfile); // quarter requires it
 #endif // TA_QT3D
-  cout << "OpenGL Version: " << fmt.majorVersion() << "." << fmt.minorVersion() << endl;
+    // note: setting this default format here fixes the overly-washed-out extra transparency
+    // on mac!  hmm.
+    QSurfaceFormat::setDefaultFormat(fmt);
+    if(fmt.majorVersion() < 2 || fmt.profile() == QSurfaceFormat::NoProfile) {
+      cerr << "This display likely does NOT have a proper level of OpenGL support (version < 2)\n"
+           << "OpenGL is required for 3D displays!\n"
+           << "Please read the emergent manual for required 3D graphics driver information.\n"
+           << "If you open a project with a 3D display, or create one, the program will likely crash!"
+           << endl;
+    }
     // test for various GL compatibilities now, before we get bitten later!
-
 #else // QT_OPEN_GL_WIDGET
-    
     if(!QGLFormat::hasOpenGL()) {
       cerr << "This display does NOT have OpenGL support, which is required for 3d displays!\n"
            << "Please read the emergent manual for required 3D graphics driver information.\n"
-           << "If you open a project with a 3D display, or create one, the program will likely crash!" << endl;
+           << "If you open a project with a 3D display, or create one, the program will likely crash!"
+           << endl;
     }
-
 #endif
     
 #ifndef TA_QT3D

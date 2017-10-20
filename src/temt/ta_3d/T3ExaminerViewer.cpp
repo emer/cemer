@@ -266,16 +266,16 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
   quarter = new T3QuarterWidget(this);
 
   // now setting this default format in taRootBase.cpp
-  // QSurfaceFormat fmt;
-  // if(taMisc::antialiasing_level > 1) {
-  //   fmt.setSamples(taMisc::antialiasing_level);
-  // }
-  // fmt.setProfile(QSurfaceFormat::CompatibilityProfile);
-  // // fmt.setRedBufferSize(8);
-  // // fmt.setGreenBufferSize(8);
-  // // fmt.setBlueBufferSize(8);
-  // // fmt.setAlphaBufferSize(8);
-  // quarter->setFormat(fmt);
+  QSurfaceFormat fmt = QSurfaceFormat::defaultFormat();
+  if(taMisc::antialiasing_level > 1) {
+    fmt.setSamples(taMisc::antialiasing_level);
+  }
+  fmt.setProfile(QSurfaceFormat::CompatibilityProfile);
+  // fmt.setRedBufferSize(8);
+  // fmt.setGreenBufferSize(8);
+  // fmt.setBlueBufferSize(8);
+  // fmt.setAlphaBufferSize(8);
+  quarter->setFormat(fmt);
   
 #else // QT_OPEN_GL_WIDGET
   
@@ -1434,17 +1434,13 @@ QImage  T3ExaminerViewer::grabImage() {
 #ifdef TA_OS_WIN
   return img;
 #else
-  // this fixes the problem!!  framebuffer is premultiplied but grabFramebuffer routine
-  // doesn't know it! see https://bugreports.qt.io/browse/QTBUG-55245
-  QImage fiximg(img.constBits(), img.width(), img.height(),
-                QImage::Format_ARGB32_Premultiplied);
-  return fiximg;
-  // this was previous "hack" to fix by linear scaling.  but it introduced distortions
-  // for opaque colors.. 
-  // taImage taimg;  taimg.SetImage(img);
-  // taimg.ScaleColors(1.3f);         // linear scaling
-  // img = taimg.GetImage();
-  //  return img;
+  return img;
+  // when setting a defaultFormat in taRootBase startup, this issue goes away!
+  // // this fixes the problem!!  framebuffer is premultiplied but grabFramebuffer routine
+  // // doesn't know it! see https://bugreports.qt.io/browse/QTBUG-55245
+  // QImage fiximg(img.constBits(), img.width(), img.height(),
+  //               QImage::Format_ARGB32_Premultiplied);
+  // return fiximg;
 #endif
 #else
   return quarter->grabFrameBuffer(true); // true = get alpha

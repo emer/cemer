@@ -206,6 +206,11 @@ bool T3Panel::DoRender_pre() {
   return true;
 }
 
+
+T3ExaminerViewer* T3Panel::t3viewer() const {
+  return widget()->t3viewer();
+}
+
 void T3Panel::Render_pre() {
   inherited::Render_pre();
   T3ExaminerViewer* viewer = widget()->t3viewer();

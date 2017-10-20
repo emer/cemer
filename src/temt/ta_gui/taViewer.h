@@ -44,12 +44,12 @@ friend class MainWindowViewer;
 //friend class WindowState;
 public:
   enum ImageFormat {
-    SVG,                        // scalable vector graphic format -- best format for graphs, etc for subsequent editing using virtually any vector graphics program, e.g., InkScape (free open source)
-    PNG,                        // Portable Network Graphics -- best lossless compression (larger files, but better than raw) and ubiquitous
-    JPEG,                       // JPEG -- best lossy compression (small file sizes) and ubiquitous
-    PPM,                        // Portable Pixmap -- good for converting to other formats -- no compression
-    EPS,                        // encapsulated postscript file (only for 3D view objects) -- SVG is recommended instead of EPS for most cases
-    IV,                         // Open Inventor format (only for 3D view objects)
+    SVG, // scalable vector graphic format -- best format for graphs, etc for subsequent editing using virtually any vector graphics program, e.g., InkScape (free open source)
+    PNG, // Portable Network Graphics -- best lossless compression (larger files, but better than raw) and ubiquitous
+    JPEG,  // JPEG -- best lossy compression (small file sizes) and ubiquitous
+    PPM, // Portable Pixmap -- good for converting to other formats -- no compression
+    EPS, // encapsulated postscript file (only for 3D view objects) -- SVG is recommended instead of EPS for most cases
+    IV,  // Open Inventor format (only for 3D view objects)
   };
 
   static void           GetFileProps(TypeDef* td, String& fltr, bool& cmprs);
@@ -61,14 +61,14 @@ public:
 
   virtual bool          deleteOnWinClose() const {return false;}
   inline IViewerWidget* dvwidget() const {return m_dvwidget;} // #IGNORE
-  bool         isMapped() const override; // only true if in gui mode and gui stuff exists
+  bool                  isMapped() const override; // only true if in gui mode and gui stuff exists
   MainWindowViewer*     parent() const;
-  TypeDef*     parentType() const override {return &TA_MainWindowViewer;}
-  QWidget*              widget(); // #IGNORE
+  TypeDef*              parentType() const override {return &TA_MainWindowViewer;}
+  QWidget*              widget() const; // #IGNORE
   virtual iMainWindowViewer* viewerWindow() const;
   // #IGNORE valid if is, or is within, a main window
 
-  bool         isTopLevelView() const override {return true;} //
+  bool                  isTopLevelView() const override {return true;} //
 
   // view state properties (don't require to be mapped)
   virtual bool          isVisible() const; // whether we are supposed to be showing or not (view state)
@@ -100,7 +100,7 @@ public:
   // #BUTTON print the image of this view to printer
   static bool           InitImageExts(); // initialize the image extensions, if not already done
 
-  void          SetDefaultName_impl(int idx) override;
+  void                  SetDefaultName_impl(int idx) override;
 
   void  InitLinks() override;
   void  CutLinks() override;
@@ -109,12 +109,12 @@ public:
 
 protected:
   // from taDataView
-  void         CloseWindow_impl() override; // closes the widget, only called if mapped, default calls the Close on the IDVW
+  void                  CloseWindow_impl() override; // closes the widget, only called if mapped, default calls the Close on the IDVW
 
   virtual IViewerWidget* ConstrWidget_impl(QWidget* gui_parent) {return NULL;}
     // implement this to create and set the m_widget instance -- only called if !m_widget
-  void         Constr_post() override;
-  void         Dump_Save_pre() override;
+  void                  Constr_post() override;
+  void                  Dump_Save_pre() override;
   virtual void          WidgetDeleting_impl(); // lets us do any cleanup -- override the impl
   virtual void          GetWinState_impl() {} // set gui state; only called if mapped
   virtual void          SetWinState_impl() {} // fetch gui state; only called if mapped
@@ -123,7 +123,7 @@ protected:
   virtual void          ResolveChanges_impl(CancelOp& cancel_op); // if mapped
 
 private:
-  IViewerWidget*      m_dvwidget; // this guy can be dangerous, so we bury it
+  IViewerWidget*        m_dvwidget; // this guy can be dangerous, so we bury it
 
   void  Initialize();
   void  Destroy();

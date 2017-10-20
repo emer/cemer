@@ -249,7 +249,7 @@ void taViewer::WidgetDeleting_impl() {
   m_dvwidget = NULL;
 }
 
-QWidget* taViewer::widget() {
+QWidget* taViewer::widget() const {
   return (m_dvwidget) ? m_dvwidget->widget() : NULL;
 }
 

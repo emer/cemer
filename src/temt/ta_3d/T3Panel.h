@@ -30,6 +30,7 @@ class T3DataView; //
 class iT3Panel; //
 class QPixmap; //
 class T3DataViewMain; //
+class T3ExaminerViewer; //
 
 /* T3Panel
 
@@ -86,9 +87,10 @@ public:
   T3DataView*           singleChild() const; // return the single child
   T3DataViewMain*       FirstChild() const; // return the first child, as a main
 
-  inline iT3Panel*      widget() {return (iT3Panel*)inherited::widget();} // lex override
+  inline iT3Panel*      widget() const {return (iT3Panel*)inherited::widget();} // lex override
   const iColor          GetBgColor() const; // #IGNORE get the effective bg color
   const iColor          GetTextColor() const; // #IGNORE get the effective text color
+  T3ExaminerViewer*     t3viewer() const;     // #IGNORE
 
   virtual void          AddView(T3DataView* view); // add a view
   // #IGNORE

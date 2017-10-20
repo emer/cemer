@@ -84,6 +84,10 @@
 #include <QTimer>
 #if (QT_VERSION >= 0x050000)
 #include <QScreen>
+#if (QT_VERSION >= 0x050600)
+#include <QSurfaceFormat>
+#include <T3ExaminerViewer>
+#endif
 #endif
 
 int iMainWindowViewer::s_next_unique_id;
@@ -2663,6 +2667,45 @@ void iMainWindowViewer::viewSetFontSize() {
 void iMainWindowViewer::viewScreenInfo() {
 #if (QT_VERSION >= 0x050000)
   QList<QScreen*> screens = QGuiApplication::screens();
+#if (QT_VERSION >= 0x050600)
+  QSurfaceFormat fmt = QSurfaceFormat::defaultFormat();
+  MainWindowViewer* db = viewer();
+  if(db) {                      // get the actual format if possible
+    T3PanelViewer* pv = db->GetRightViewer();
+    if(pv && pv->panels.size > 0) {
+      T3Panel* pan = (T3Panel*)pv->panels[0];
+      T3ExaminerViewer* t3view = pan->t3viewer();
+      if(t3view && t3view->quarter) {
+        fmt = t3view->quarter->format();
+      }
+    }
+  }
+  String opengl;
+  opengl << "OpenGL Version: " << fmt.majorVersion() << "." << fmt.minorVersion()
+         << " samples: " << fmt.samples()
+         << " RGBA buffer sizes: " << fmt.redBufferSize() << " " << fmt.greenBufferSize()
+         << " " << fmt.blueBufferSize() << " " << fmt.alphaBufferSize()
+         << "\n has alpha: " << fmt.hasAlpha() << " stereo: " << fmt.stereo()
+         << " stencil size: " << fmt.stencilBufferSize() << "\n"
+         << " profile: ";
+  if(fmt.profile() == QSurfaceFormat::CoreProfile)
+    opengl << "core";
+  else if(fmt.profile() == QSurfaceFormat::CompatibilityProfile)
+    opengl << "compatibility";
+  else
+    opengl << "none (bad!)";
+  opengl << " swap: ";
+  if(fmt.swapBehavior() == QSurfaceFormat::DefaultSwapBehavior)
+    opengl << "default";
+  else if(fmt.swapBehavior() == QSurfaceFormat::SingleBuffer)
+    opengl << "single";
+  else if(fmt.swapBehavior() == QSurfaceFormat::DoubleBuffer)
+    opengl << "double";
+  else if(fmt.swapBehavior() == QSurfaceFormat::TripleBuffer)
+    opengl << "triple";
+  opengl << "\n";
+  taMisc::Info(opengl);
+#endif
   for(int i=0; i<screens.count(); i++) {
     QScreen* sc = screens[i];
     QRect geom = sc->geometry();
