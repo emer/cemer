@@ -52,7 +52,7 @@
 #include <Inventor/elements/SoGLCacheContextElement.h>
 
 // needed for offscreen rendering
-#ifdef QT_OPEN_GL_WIDGET  
+#if (QT_VERSION >= 0x050600)
 #include <tabMisc>
 #include <taRootBase>
 #include <QOpenGLWidget>
@@ -83,7 +83,9 @@ void VEWorldView::Initialize() {
 
 #else // TA_QT3D
   cam_renderer = NULL;
+#if (QT_VERSION >= 0x050600)
   nowin_widg = NULL;
+#endif
 #endif // TA_QT3D
   nowin_rebuild_done = false;
 }
@@ -492,7 +494,7 @@ QImage VEWorldView::GetCameraImage(int cam_no) {
       qglwidg = exvw->quarter;
     }
     else {
-#ifdef QT_OPEN_GL_WIDGET  
+#if (QT_VERSION >= 0x050600)
       if(!nowin_widg) {
         MainWindowViewer* vwr = NULL;
         if(tabMisc::root->viewers.size >= 1) {
