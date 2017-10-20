@@ -265,16 +265,17 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
 
   quarter = new T3QuarterWidget(this);
 
-  QSurfaceFormat fmt;
-  if(taMisc::antialiasing_level > 1) {
-    fmt.setSamples(taMisc::antialiasing_level);
-  }
-  fmt.setProfile(QSurfaceFormat::CompatibilityProfile);
-  // fmt.setRedBufferSize(8);
-  // fmt.setGreenBufferSize(8);
-  // fmt.setBlueBufferSize(8);
-  // fmt.setAlphaBufferSize(8);
-  quarter->setFormat(fmt);
+  // now setting this default format in taRootBase.cpp
+  // QSurfaceFormat fmt;
+  // if(taMisc::antialiasing_level > 1) {
+  //   fmt.setSamples(taMisc::antialiasing_level);
+  // }
+  // fmt.setProfile(QSurfaceFormat::CompatibilityProfile);
+  // // fmt.setRedBufferSize(8);
+  // // fmt.setGreenBufferSize(8);
+  // // fmt.setBlueBufferSize(8);
+  // // fmt.setAlphaBufferSize(8);
+  // quarter->setFormat(fmt);
   
 #else // QT_OPEN_GL_WIDGET
   

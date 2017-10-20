@@ -32,7 +32,6 @@
 
 #include <taMisc>
 
-
 #ifdef TA_QT3D
 
 #else // TA_QT3D
@@ -51,6 +50,17 @@
 #include <Inventor/SbViewportRegion.h>
 #include <Inventor/VRMLnodes/SoVRMLImageTexture.h>
 #include <Inventor/elements/SoGLCacheContextElement.h>
+
+// needed for offscreen rendering
+#ifdef QT_OPEN_GL_WIDGET  
+#include <tabMisc>
+#include <taRootBase>
+#include <QOpenGLWidget>
+#include <MainWindowViewer>
+#include <iMainWindowViewer>
+#include <iSplitter>
+#endif
+
 #endif // TA_QT3D
 
 
@@ -73,6 +83,7 @@ void VEWorldView::Initialize() {
 
 #else // TA_QT3D
   cam_renderer = NULL;
+  nowin_widg = NULL;
 #endif // TA_QT3D
   nowin_rebuild_done = false;
 }
@@ -479,6 +490,20 @@ QImage VEWorldView::GetCameraImage(int cam_no) {
     T3ExaminerViewer* exvw = GetViewer();
     if(exvw) {
       qglwidg = exvw->quarter;
+    }
+    else {
+#ifdef QT_OPEN_GL_WIDGET  
+      if(!nowin_widg) {
+        MainWindowViewer* vwr = NULL;
+        if(tabMisc::root->viewers.size >= 1) {
+          vwr = (MainWindowViewer*)tabMisc::root->viewers[0];
+          iMainWindowViewer* ivw = vwr->widget();
+          nowin_widg = new QOpenGLWidget(ivw->body);
+          taMisc::RunPending();
+        }
+      }
+      qglwidg = nowin_widg;
+#endif      
     }
     cam_renderer = new SoOffscreenRendererQt(vpreg, qglwidg);
     SoGLRenderAction* action = cam_renderer->getGLRenderAction();

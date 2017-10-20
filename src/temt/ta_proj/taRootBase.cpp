@@ -70,6 +70,10 @@ taTypeDef_Of(StartupWizard);
 #endif
 #include <QDesktopServices>
 
+#if (QT_VERSION >= 0x050600)
+#include <QSurfaceFormat>
+#endif
+
 #include <css_machine.h>
 #include <css_qtconsole.h>
 
@@ -77,6 +81,7 @@ taTypeDef_Of(StartupWizard);
 
 #else // TA_QT3D
   #include <Quarter/Quarter.h>
+  #include <Quarter/QuarterWidget.h>
   #include <SoImageEx.h>
   #include <Inventor/SbImage.h>
   #include <Inventor/nodes/SoTexture2.h>
@@ -1044,13 +1049,32 @@ bool taRootBase::Startup_InitApp(int& argc, const char* argv[]) {
     SIM::Coin3D::Quarter::Quarter::init();
     milestone |= (SM_QAPP_OBJ | SM_SOQT_INIT);
 #endif // TA_QT3D
+
+#ifdef QT_OPEN_GL_WIDGET
+    // this is synonymous with QT_VERSION >= 0x050600
+  QSurfaceFormat fmt;
+#ifdef TA_QT3D
+#else
+    // set a default format that is quarter compatible
+  if(taMisc::antialiasing_level > 1) {
+    fmt.setSamples(taMisc::antialiasing_level);
+  }
+  fmt.setProfile(QSurfaceFormat::CompatibilityProfile); // quarter requires it
+  QSurfaceFormat::setDefaultFormat(fmt);
+#endif // TA_QT3D
+  cout << "OpenGL Version: " << fmt.majorVersion() << "." << fmt.minorVersion() << endl;
     // test for various GL compatibilities now, before we get bitten later!
+
+#else // QT_OPEN_GL_WIDGET
+    
     if(!QGLFormat::hasOpenGL()) {
       cerr << "This display does NOT have OpenGL support, which is required for 3d displays!\n"
            << "Please read the emergent manual for required 3D graphics driver information.\n"
            << "If you open a project with a 3D display, or create one, the program will likely crash!" << endl;
     }
 
+#endif
+    
 #ifndef TA_QT3D
 # if COIN_MAJOR_VERSION >= 3
     // this installs the callback to eliminate dependency on simage
@@ -1583,10 +1607,12 @@ bool taRootBase::Startup_InitGui() {
 //      emergent_bitmap_height, emergent_bitmap_bits);
 //    qApp->setWindowIcon(QIcon(*(taiM->icon_bitmap)));
 
-    if(taMisc::gui_no_win)
-      taMisc::gui_active = false;       // in effect, we start as use_gui but never get to gui_active -- everything is initialized but no windows are created
-    else
+    // if(taMisc::gui_no_win) {
+    //   taMisc::gui_active = false;       // in effect, we start as use_gui but never get to gui_active -- everything is initialized but no windows are created
+    // }
+    // else {
       taMisc::gui_active = true;        // officially active!
+    // }
     Startup_InitViewColors();
     Startup_InitViewBackgrounds();
     Startup_InitKeyBindings();
@@ -1747,7 +1773,8 @@ bool taRootBase::Startup_InitPlugins() {
 
 bool taRootBase::Startup_MakeMainWin() {
   tabMisc::root->version = taMisc::version;
-  if(!taMisc::gui_active) return true;
+  if(!taMisc::gui_active && !taMisc::gui_no_win) return true;
+  // no win creates this!
 #ifdef TA_GUI
   // TODO: need to better orchestrate the "OpenWindows" call below with
   // create the default application window
@@ -1788,6 +1815,10 @@ bool taRootBase::Startup_MakeMainWin() {
 
   rootwin->setFocus();
 
+  if(taMisc::gui_no_win) {
+    taMisc::gui_active = false;       // in effect, we start as use_gui but never get to gui_active -- everything is initialized but no windows are created
+  }
+  
   //TODO: following prob not necessary
   //  if (taMisc::gui_active) taiMisc::OpenWindows();
 #endif // TA_GUI

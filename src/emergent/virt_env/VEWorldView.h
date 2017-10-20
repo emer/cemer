@@ -36,6 +36,9 @@ class iViewPanelOfVEWorld; //
 
 #else // TA_QT3D
 class SoOffscreenRendererQt; // #IGNORE
+#if (QT_VERSION >= 0x050600)
+class QOpenGLWidget; // #IGNORE
+#endif
 #endif // TA_QT3D
 
 eTypeDef_Of(VEWorldView);
@@ -102,6 +105,9 @@ protected:
 
 #else // TA_QT3D
   SoOffscreenRendererQt*	cam_renderer;
+#if (QT_VERSION >= 0x050600)
+  QOpenGLWidget*                nowin_widg;
+#endif
 #endif // TA_QT3D
 #endif
   bool			nowin_rebuild_done; // #NO_SAVE flag for manual rebuild of scene for nowin mode -- only do this once
