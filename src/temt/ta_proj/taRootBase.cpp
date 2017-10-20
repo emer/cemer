@@ -1606,7 +1606,7 @@ bool taRootBase::Startup_InitCss() {
 
 bool taRootBase::Startup_InitGui() {
 #ifdef TA_GUI
-  if(taMisc::use_gui && (taMisc::dmem_proc == 0)) {
+  if(taMisc::use_gui) {
     taiM_ = taiMisc::New(taMisc::use_gui);
     taiMC_ = taiM_;
     // the following should be done in the specific app's Main function
@@ -1614,12 +1614,8 @@ bool taRootBase::Startup_InitGui() {
 //      emergent_bitmap_height, emergent_bitmap_bits);
 //    qApp->setWindowIcon(QIcon(*(taiM->icon_bitmap)));
 
-    // if(taMisc::gui_no_win) {
-    //   taMisc::gui_active = false;       // in effect, we start as use_gui but never get to gui_active -- everything is initialized but no windows are created
-    // }
-    // else {
-      taMisc::gui_active = true;        // officially active!
-    // }
+    taMisc::gui_active = true;        // officially active!
+    // gui_no_win will turn OFF gui_active after creating the root window!
     Startup_InitViewColors();
     Startup_InitViewBackgrounds();
     Startup_InitKeyBindings();
@@ -1628,10 +1624,6 @@ bool taRootBase::Startup_InitGui() {
 #endif // TA_GUI
   {
     taiMC_ = taiMiscCore::New();
-    if(taMisc::dmem_proc > 0) {
-      taMisc::gui_active = false;
-      taMisc::gui_no_win = false;
-    }
   }
   milestone |= SM_APP_OBJ;
   return true;
@@ -1824,12 +1816,12 @@ bool taRootBase::Startup_MakeMainWin() {
   // tabMisc::root->docs.AutoEdit();
   tabMisc::root->wizards.AutoEdit();
 
-  rootwin->setFocus();
-
   if(taMisc::gui_no_win) {
-    taMisc::gui_active = false;       // in effect, we start as use_gui but never get to gui_active -- everything is initialized but no windows are created
+    taMisc::gui_active = false;       // now we go dark, after creating just one window..
   }
   
+  rootwin->setFocus();
+
   //TODO: following prob not necessary
   //  if (taMisc::gui_active) taiMisc::OpenWindows();
 #endif // TA_GUI
