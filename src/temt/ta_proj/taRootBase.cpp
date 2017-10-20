@@ -1628,6 +1628,10 @@ bool taRootBase::Startup_InitGui() {
 #endif // TA_GUI
   {
     taiMC_ = taiMiscCore::New();
+    if(taMisc::dmem_proc > 0) {
+      taMisc::gui_active = false;
+      taMisc::gui_no_win = false;
+    }
   }
   milestone |= SM_APP_OBJ;
   return true;
