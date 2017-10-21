@@ -392,6 +392,8 @@ void taiMisc::InitMetrics(bool reinit) {
   int avgh = fmn.height();
   scrn_chars.w = scrn_s.w / avgw;
   scrn_chars.h = scrn_s.h / avgh;
+  if(scrn_chars.w < 20) scrn_chars.w = 20;
+  if(scrn_chars.h < 10) scrn_chars.h = 10;
 }
 
 /* Qt Metrics note

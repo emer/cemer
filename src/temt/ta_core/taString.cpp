@@ -1851,6 +1851,7 @@ int taString::FindMatchingParens(int parens_pos) const {
 taString taString::wrap(int width) const {
   if (length() <= width)
     return *this;
+  if(width < 2) width = 2;
 
   taString rval(*this);
   rval.makeUnique();

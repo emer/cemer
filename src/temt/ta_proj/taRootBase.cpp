@@ -1814,13 +1814,14 @@ bool taRootBase::Startup_MakeMainWin() {
   // needs extra time to process window opening
   taMisc::ProcessEvents();
   // tabMisc::root->docs.AutoEdit();
-  tabMisc::root->wizards.AutoEdit();
 
   if(taMisc::gui_no_win) {
     taMisc::gui_active = false;       // now we go dark, after creating just one window..
   }
-  
-  rootwin->setFocus();
+  else {
+    tabMisc::root->wizards.AutoEdit();
+    rootwin->setFocus();
+  }
 
   //TODO: following prob not necessary
   //  if (taMisc::gui_active) taiMisc::OpenWindows();
