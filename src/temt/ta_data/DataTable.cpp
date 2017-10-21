@@ -4927,7 +4927,7 @@ void DataTable::DMem_SplitRowsAcrossProcs() {
       }
     }
     else if(rw == 0) {
-      RemoveRows(0, taMisc::dmem_nprocs); // get rid of the first guys!
+      RemoveRows(0, taMisc::dmem_proc); // get rid of the first guys!
     }
   }
   DataUpdate(false);
