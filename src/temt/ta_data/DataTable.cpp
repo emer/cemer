@@ -4903,16 +4903,18 @@ void DataTable::DMem_ShareRows(MPI_Comm comm, int n_rows) {
 void DataTable::DMem_SplitRowsAcrossProcs() {
   if(taMisc::dmem_nprocs <= 1) return;
   DataUpdate(true);
-  int rmdr = (rows % taMisc::dmem_nprocs == 0);
+  int rmdr = (rows % taMisc::dmem_nprocs);
   if(rmdr != 0) {
     int need = taMisc::dmem_nprocs - rmdr;
     int_Array ary;
     ary.SetSize(rows);
+    ary.FillSeq();
     ary.Permute();
     for(int i=0; i<need; i++) {
       DuplicateRow(ary[i],1);
     }
   }
+  //  cout << "#P:" << taMisc::dmem_proc << " rows: " << rows << endl;
   for(int rw=rows-1; rw >= 0; rw--) {
     if(rw % taMisc::dmem_nprocs == taMisc::dmem_proc) {
       int rw1 = rw+1;
