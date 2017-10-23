@@ -39,39 +39,8 @@ bool GridSearch::StartSearch() {
   m_params.Reset();
   m_yoked.Reset(); 
 
-  bool has_yoked = false;
-  FOREACH_ELEM_IN_GROUP(ControlPanelMember, mbr, m_cluster_run->mbrs) {
-    ControlPanelMemberData &ps = mbr->data;
-    if (ps.IsSearch()) {
-      bool ok = ps.ParseRange();          // just to be sure
-      if(ok) {
-        if(ps.range.startsWith('%')) {
-          has_yoked = true;
-          continue; // skip for now
-        }
-        m_params.Link(mbr);     // link does not transfer ownership to this tmp list!
-        m_counts.Add(ps.srch_vals.size);
-      }
-    }
-  }
-
-  if(has_yoked) {
-    FOREACH_ELEM_IN_GROUP(ControlPanelMember, mbr, m_cluster_run->mbrs) {
-      ControlPanelMemberData &ps = mbr->data;
-      if (ps.IsSearch()) {
-        if(!ps.range.startsWith('%')) continue; // only yoked
-        String prnm = ps.range.after('%');
-        // ControlPanelMember* src = m_params.FindName(prnm); // FindName only works for owned
-        int idx = FindParamNameIdx(prnm);
-        if(TestError(idx < 0, "StartSearch",
-                     "search parameter:", mbr->label,
-                     "copying from other parameter:", prnm,
-                     "which was not found -- aborting search!")) {
-          return false;
-        }
-        m_yoked.Link(mbr);
-      }
-    }
+  if (!m_cluster_run->SearchMembersToList(&m_params, &m_yoked, &m_counts)) {
+    return false;
   }
     
   m_cmd_id = 0;

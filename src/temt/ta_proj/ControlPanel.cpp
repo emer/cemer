@@ -989,6 +989,63 @@ String ControlPanel::ExploreMembersToString(bool use_search_vals) {
   return params;
 }
 
+bool ControlPanel::SearchMembersToList(ControlPanelMember_Group * m_params, ControlPanelMember_Group * m_yoked, int_PArray * m_counts) {
+  
+  bool has_yoked = false;
+  FOREACH_ELEM_IN_GROUP(ControlPanelMember, mbr, mbrs) {
+    ControlPanel* sub_panel= mbr->GetControlPanelPointer();
+    if (sub_panel) {
+      if (!sub_panel->SearchMembersToList(m_params, m_yoked, m_counts)) {
+        return false;
+      }
+    } else {
+      ControlPanelMemberData &ps = mbr->data;
+      if (ps.IsSearch()) {
+        bool ok = ps.ParseRange();          // just to be sure
+        if(ok) {
+          if(ps.range.startsWith('%')) {
+            has_yoked = true;
+            continue; // skip for now
+          }
+          m_params->Link(mbr);     // link does not transfer ownership to this tmp list!
+          m_counts->Add(ps.srch_vals.size);
+        }
+      }
+    }
+  }
+  if(has_yoked) {
+    FOREACH_ELEM_IN_GROUP(ControlPanelMember, mbr, mbrs) {
+      ControlPanel* sub_panel= mbr->GetControlPanelPointer();
+      if (sub_panel) {
+        continue; //Already handled in the above loop
+      } else {
+        ControlPanelMemberData &ps = mbr->data;
+        if (ps.IsSearch()) {
+          if(!ps.range.startsWith('%')) continue; // only yoked
+          String prnm = ps.range.after('%');
+          // ControlPanelMember* src = m_params.FindName(prnm); // FindName only works for owned
+          int idx = -1;
+          for(int i=0;i<m_params->size; i++) {
+            ControlPanelMember* it = (*m_params)[i];
+            if(it->label == prnm) {
+              idx = i;
+              break;
+            }
+          }
+          if(TestError(idx < 0, "StartSearch",
+                       "search parameter:", mbr->label,
+                       "copying from other parameter:", prnm,
+                       "which was not found -- aborting search!")) {
+            return false;
+          }
+          m_yoked->Link(mbr);
+        }
+      }
+    }
+  }
+  return true;
+}
+
 void ControlPanel::SaveNameValueMembers_impl(ParamSet* param_set, String_Array& name_vals) {
   FOREACH_ELEM_IN_GROUP(ControlPanelMember, mbr, mbrs) {
     if(!mbr->base) continue;
