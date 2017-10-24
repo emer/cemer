@@ -99,7 +99,7 @@ public:
   float                 net_text_rot;    // rotation of the text in the Z plane (in degrees) - default is upright, but if text area is rotated, then a different angle might work better
   MemberSpace           membs;          // #NO_SAVE #NO_COPY #READ_ONLY list of all the members possible in units; note: all items are new clones
   String_Array          cur_unit_vals;  // #NO_COPY #READ_ONLY currently selected unit values to display -- theoretically can display multiple values, but this is not currently supported, so it always just has one entry at most
-  UnitRef               unit_src;       // #NO_SAVE #NO_COPY #READ_ONLY unit last picked (if any) for display
+  UnitState_cpp*        unit_src;       // #NO_SAVE #NO_COPY #READ_ONLY unit last picked (if any) for display
   String                unit_src_path;  // ##READ_ONLY path of unit_src unit relative to the network -- used for saving and reloading
   bool                  unit_con_md;    // #NO_SAVE #NO_COPY #READ_ONLY true if memberdef is from a connection as opposed to a direct unit var
   MemberDef*            unit_disp_md;   // #NO_SAVE #NO_COPY #READ_ONLY memberdef (if any) of Unit (or Connection) to display
@@ -114,7 +114,7 @@ public:
 
   Network*              net() const;
   T3NetNode*            node_so() const;
-  void                  setUnitSrc(Unit* unit); // updates picked unit
+  void                  setUnitSrc(UnitState_cpp* unit); // updates picked unit
   void                  setUnitDisp(int value); // sets a new md to display, index in membs
   void                  setUnitDispMd(MemberDef* md); // sets a new md to display, lookup/set scale values
   void                  UpdateViewerModeForMd(MemberDef* md);
@@ -205,7 +205,7 @@ public:
 
   void                  GetUnitColor(float val, iColor& col, float& sc_val);
   // #IGNORE
-  virtual void          GetUnitDisplayVals(BrainVolumeView* bvv, Unit* u, float& val,
+  virtual void          GetUnitDisplayVals(BrainVolumeView* bvv, UnitState_cpp* u, float& val,
                                            iColor& col, float& sc_val);
   virtual void          GetUnitDisplayVals(BrainVolumeView* bvv, taVector2i& co, float& val,
                                            iColor& col, float& sc_val);

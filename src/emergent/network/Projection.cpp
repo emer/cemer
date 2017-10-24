@@ -20,6 +20,10 @@
 #include <taFiler>
 #include <DataTable>
 
+#include <ProjectionSpec_cpp>
+
+#include <State_main>
+
 #include <tabMisc>
 #include <taMisc>
 
@@ -29,16 +33,12 @@ using namespace std;
 
 
 void Projection::Initialize() {
-  off = false;
+  Initialize_core();
+  
   disp = true;
   layer = NULL;
   from_type = INIT; //was: PREV;
   con_type = &TA_Connection;
-  recv_idx = -1;
-  send_idx = -1;
-  recv_n = 1;
-  send_n = 1;
-  projected = false;
   dir_fixed = false;
   direction = DIR_UNKNOWN;
   m_prv_con_spec = NULL;
@@ -51,7 +51,9 @@ void Projection::Destroy(){
 
 void Projection::CutLinks() {
   if(owner == NULL) return;
-  RemoveCons();         // remove actual connections
+  if((bool)layer && layer->own_net) {
+    layer->own_net->ClearIntact();
+  }
   if((bool)from) {
     // remove from sending links, being sure to protect against a spurious re-delete
     taBase::Ref(this);
@@ -105,12 +107,6 @@ void Projection::Copy_(const Projection& cp) {
   con_type = cp.con_type;
   con_spec = cp.con_spec;
   prjn_clr = cp.prjn_clr;
-  // note: these are not copied; fixed after network copy
-//   recv_idx = cp.recv_idx;
-//   send_idx = cp.send_idx;
-//   recv_n = cp.recv_n;
-//   send_n = cp.send_n;
-//   projected = cp.projected;
   dir_fixed = cp.dir_fixed;
   direction = cp.direction;
 
@@ -150,7 +146,19 @@ void Projection::UpdateAfterEdit_impl() {
     UpdateName();
   }
 
-  UpdateConSpecs((bool)taMisc::is_loading);
+  if(!(bool)from || !layer) {
+    lesioned = true;
+  }
+  else {
+    if(layer->lesioned() || from->lesioned()) {
+      lesioned = true;
+    }
+    else {
+      lesioned = false;
+    }
+  }
+  
+  ConSpecUpdated();
 
   // somehow the colors get out-of-whack on these guys
   if(fabsf(prjn_clr.g - .9f) <= .011f) prjn_clr.g = .9f;
@@ -172,131 +180,11 @@ void Projection::UpdateName() {
   }
 }
 
-void Projection::RemoveCons() {
-  if(layer) {
-    // FOREACH_ELEM_IN_GROUP(Unit, u, layer->units) {
-    //   u->recv.RemovePrjn(this);
-    // }
-  }
-
-  if(from) {
-    // FOREACH_ELEM_IN_GROUP(Unit, u, from->units)
-    //   u->send.RemovePrjn(this);
-  }
-
-  recv_idx = -1;
-  send_idx = -1;
-  projected = false;
-}
-
 bool Projection::ChangeMyType(TypeDef* new_typ) {
-  if(TestError(layer && layer->units.leaves > 0, "ChangeMyType", "You must first remove all units in the network before changing the Projection type -- otherwise it takes FOREVER -- do Network/Structure/Remove Units"))
-    return false;
+  if(layer && layer->own_net) {
+    layer->own_net->ClearIntact();
+  }
   return inherited::ChangeMyType(new_typ);
-}
-
-DataTable* Projection::WeightsToTable(DataTable* dt, const String& col_nm_,
-                                      bool recv_wts) {
-  if(!(bool)from) return NULL;
-  Network* net = layer->own_net;
-  NetworkState_cpp* net_state = net->net_state;
-  bool new_table = false;
-  if (!dt) {
-    taProject* proj = GetMyProj();
-    dt = proj->GetNewAnalysisDataTable(name + "_Weights", true);
-    new_table = true;
-  }
-  dt->StructUpdate(true);
-  dt->ResetData();
-
-  String col_nm = col_nm_;
-  if(col_nm.empty()) col_nm = from->name;
-
-  taVector2i log_pos;
-  int idx;
-  if(recv_wts) {
-    DataCol* scol = dt->FindMakeColName(col_nm, idx, VT_FLOAT, 2,
-                                        from->flat_geom.x, from->flat_geom.y);
-    FOREACH_ELEM_IN_GROUP(Unit, ru, layer->units) {
-      ConState_cpp* cg = ru->RecvConStatePrjn(this);
-      if(cg == NULL)
-        break;
-      dt->AddBlankRow();
-      int wi;
-      for(wi=0;wi<cg->size;wi++) {
-        Unit* ou = net->UnitFromState(cg->UnState(wi, net_state));
-        ou->LayerLogPos(log_pos);
-        scol->SetMatrixVal(cg->Cn(wi,ConState_cpp::WT,net_state), -1, log_pos.x, log_pos.y);
-      }
-    }
-  }
-  else {
-    DataCol* scol = dt->FindMakeColName(col_nm, idx, VT_FLOAT, 2,
-                                      layer->flat_geom.x, layer->flat_geom.y);
-
-    FOREACH_ELEM_IN_GROUP(Unit, ru, from->units) {
-      ConState_cpp* cg = ru->SendConStatePrjn(this);
-      if(cg == NULL)
-        break;
-      dt->AddBlankRow();
-      int wi;
-      for(wi=0;wi<cg->size;wi++) {
-        Unit* ou = net->UnitFromState(cg->UnState(wi, net_state));
-        ou->LayerLogPos(log_pos);
-        scol->SetMatrixVal(cg->Cn(wi,ConState_cpp::WT,net_state), -1, log_pos.x, log_pos.y);
-      }
-    }
-  }
-  dt->StructUpdate(false);
-  if(new_table)
-    tabMisc::DelayedFunCall_gui(dt, "BrowserSelectMe");
-  return dt;
-}
-
-DataTable* Projection::VarToTable(DataTable* dt, const String& variable) {
-  bool new_table = false;
-  if (!dt) {
-    taProject* proj = GetMyProj();
-    dt = proj->GetNewAnalysisDataTable(name + "_Var_" + variable, true);
-    new_table = true;
-  }
-
-  Network* net = GET_MY_OWNER(Network);
-  if(!net) return NULL;
-
-  NetMonitor nm;
-  taBase::Own(nm, this);
-  nm.SetDataNetwork(dt, net);
-  nm.AddProjection(this, variable);
-  nm.items[0]->max_name_len = 20; // allow long names
-  nm.UpdateDataTable();
-  dt->AddBlankRow();
-  nm.GetMonVals();
-  dt->WriteClose();
-  if(new_table)
-    tabMisc::DelayedFunCall_gui(dt, "BrowserSelectMe");
-  return dt;
-}
-
-DataTable* Projection::ConVarsToTable(DataTable* dt, const String& var1, const String& var2,
-                                const String& var3, const String& var4, const String& var5,
-                                const String& var6, const String& var7, const String& var8,
-                                const String& var9, const String& var10, const String& var11,
-                                const String& var12, const String& var13, const String& var14) {
-  if(!(bool)layer) return NULL;
-  bool new_table = false;
-  if(!dt) {
-    taProject* proj = GetMyProj();
-    dt = proj->GetNewAnalysisDataTable("ConVars", true);
-    new_table = true;
-  }
-  dt->StructUpdate(true);
-  layer->ConVarsToTable(dt, var1, var2, var3, var4, var5, var6, var7, var8,
-                        var9, var10, var11, var12, var13, var14, this);
-  dt->StructUpdate(false);
-  if(new_table)
-    tabMisc::DelayedFunCall_gui(dt, "BrowserSelectMe");
-  return dt;
 }
 
 void Projection::ToggleOff() {
@@ -375,12 +263,14 @@ void Projection::CheckSpecs() {
   // NOTE: checkspecs does NOT go into units or connections!
 }
 
-bool Projection::UpdateConSpecs(bool force) {
+bool Projection::ConSpecUpdated() {
+  ConSpec* sp = con_spec.SPtr();
+  if(!sp) return false;
+  if(sp == m_prv_con_spec) return false;
   if((!(bool)layer) || (!(bool)from)) return false;
   Network* mynet = GET_MY_OWNER(Network);
   if(!mynet || !mynet->IsBuiltIntact()) return false;
   NetworkState_cpp* net_state = mynet->net_state;
-  ConSpec* sp = con_spec.SPtr();
   if(sp) {
     if(TestWarning(!con_type->InheritsFrom(sp->min_obj_type), "UpdateConSpec",
                    "connection type set to:",sp->min_obj_type->name,
@@ -388,35 +278,9 @@ bool Projection::UpdateConSpecs(bool force) {
       con_type = sp->min_obj_type;
     }
   }
-  if(!force && (sp == m_prv_con_spec)) return false;
-  if(!sp) return false;
+  mynet->ClearIntact();         // spec updated -- need to rebuild network
   m_prv_con_spec = sp;          // don't redo it
-
-  // TODO: we can't actually do this!  build must cache m_prv_con_spec and this must just dirty
-  // the network
   
-  // FOREACH_ELEM_IN_GROUP(Unit, u, layer->units) {
-  //   for(int g=0; g<u->NRecvConGps(); g++) {
-  //     ConState_cpp* cg = u->RecvConState(g);
-  //     PrjnState_cpp* pjs = cg->GetPrjnState(net_state);
-  //     Projection* cg_prjn = net->PrjnFromState(pjs);
-  //     if(cg_prjn == this) {
-  //       cg->SetConSpec(sp);
-  //     }
-  //   }
-  // }
-  // // also do the from!
-  // FOREACH_ELEM_IN_GROUP(Unit, u, from->units) {
-  //   int g;
-  //   for(g=0; g<u->NSendConGps(); g++) {
-  //     ConState_cpp* cg = u->SendConState(g);
-  //     PrjnState_cpp* pjs = cg->GetPrjnState(net_state);
-  //     Projection* cg_prjn = net->PrjnFromState(pjs);
-  //     if(cg_prjn == this) {
-  //       send_gp->SetConSpec(sp);
-  //     }
-  //   }
-  // }
   return true;
 }
 
@@ -449,12 +313,14 @@ bool Projection::SetConSpec(ConSpec* sp) {
       con_type = con_spec->min_obj_type;
     }
   }
-  return UpdateConSpecs();
+  return ConSpecUpdated();
 }
 
 bool Projection::SetConType(TypeDef* td) {
   if(con_type == td) return false;
-  projected = false;
+  if(layer && layer->own_net) {
+    layer->own_net->ClearIntact();
+  }
   con_type = td;
   return true;
 }
@@ -465,18 +331,29 @@ void Projection::MonitorVar(NetMonitor* net_mon, const String& variable) {
 }
 
 void Projection::SaveWeights(const String& fname) {
+  if(!(layer && layer->own_net && layer->own_net->net_state)) return;
+  NetworkState_cpp* net = layer->own_net->net_state;
+  if(!net->IsBuiltIntact()) return;
+  LayerState_cpp* lay = layer->GetLayerState(net);
+  PrjnState_cpp* prjn = GetPrjnState(net);
   taFiler* flr = GetSaveFiler(fname, ".wts", true);
-  if(flr->ostrm)
-    layer->SaveWeights_strm(*flr->ostrm, Unit::TEXT, this);
+  if(flr->ostrm) {
+    net->LayerSaveWeights_strm(*flr->ostrm, lay, NetworkState_cpp::TEXT, prjn);
+  }
   flr->Close();
   taRefN::unRefDone(flr);
 }
 
 bool Projection::LoadWeights(const String& fname, bool quiet) {
+  if(!(layer && layer->own_net && layer->own_net->net_state)) return false;
+  NetworkState_cpp* net = layer->own_net->net_state;
+  if(!net->IsBuiltIntact()) return false;
+  LayerState_cpp* lay = GetRecvLayerState(net);
+  PrjnState_cpp* prjn = GetPrjnState(net);
   taFiler* flr = GetLoadFiler(fname, ".wts", true);
   bool rval = false;
   if(flr->istrm) {
-    rval = layer->LoadWeights_strm(*flr->istrm, Unit::TEXT, quiet, this);
+    rval = net->LayerLoadWeights_strm(*flr->istrm, lay, NetworkState_cpp::TEXT, quiet, prjn);
   }
   else {
     TestError(true, "LoadWeights", "aborted due to inability to load weights file");
@@ -490,7 +367,7 @@ bool Projection::LoadWeights(const String& fname, bool quiet) {
 int Projection::ReplaceConSpec(ConSpec* old_sp, ConSpec* new_sp) {
   if(con_spec.SPtr() != old_sp) return 0;
   con_spec.SetSpec(new_sp);
-  UpdateConSpecs();
+  ConSpecUpdated();
   return 1;
 }
 
@@ -503,107 +380,249 @@ int Projection::ReplacePrjnSpec(ProjectionSpec* old_sp, ProjectionSpec* new_sp) 
 void Projection::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
 
-  if(!IsActive()) return;
+  if(!layer || !layer->own_net || !layer->own_net->net_state)
+    return;
+
+  NetworkState_cpp* net_state = layer->own_net->net_state;
+  
+  if(!IsActive(net_state)) return;
   
   CheckSpecs();                 // just check!
 
-  ConSpec* cs = GetConSpec();
-  if(cs) {
-    bool chk = cs->CheckConfig_RecvCons(this, quiet);
-    if(!chk) rval = false;
-  }
+  ConSpec_cpp* cs = GetConSpec(net_state);
+  // todo..
+  // if(cs) {
+  //   bool chk = cs->CheckConfig_RecvCons(this, quiet);
+  //   if(!chk) rval = false;
+  // }
 }
 
-void Projection::Copy_Weights(const Projection* src) {
-  Unit* u, *su;
-  taLeafItr i,si;
-  for(u = (Unit*)layer->units.FirstEl(i), su = (Unit*)src->layer->units.FirstEl(si);
-      (u) && (su);
-      u = (Unit*)layer->units.NextEl(i), su = (Unit*)src->layer->units.NextEl(si))
-  {
-    u->Copy_Weights(su, this);
-  }
-}
 
+NetworkState_cpp* Projection::GetValidNetState() const {
+  if(!layer) return NULL;
+  NetworkState_cpp* net = layer->GetValidNetState();
+  if(!net) return NULL;
+  if(!IsActive(net)) return NULL;
+  return net;
+}
 
 void Projection::Init_Weights() {
-  Network* net = layer->own_net;
-  NetworkState_cpp* net_state = net->net_state;
-  if(net->RecvOwnsCons() || spec->init_wts) {
-    FOREACH_ELEM_IN_GROUP(Unit, u, layer->units) {
-      int thr_no = u->thread_no;
-      const int nrcg = u->NRecvConGps();
-      for(int i=0; i<nrcg; i++) {
-        ConState_cpp* cg = u->RecvConState(i);
-        if(cg->NotActive() || cg->Sharing()) continue;
-        PrjnState_cpp* pjs = cg->GetPrjnState(net_state);
-        Projection* cg_prjn = net->PrjnFromState(pjs);
-        if(cg_prjn != this) continue;
-        if(cg_prjn->spec->init_wts) {
-          cg_prjn->Init_Weights_Prjn(cg, net, thr_no);
-        }
-        else {
-          con_spec->Init_Weights(cg, net_state, thr_no);
-        }
-      }
-    }
-  }
-  else { // send owns cons, not prjn init
-    Layer* fmlay = from.ptr();
-    FOREACH_ELEM_IN_GROUP(Unit, u, fmlay->units) {
-      int thr_no = u->thread_no;
-      const int nscg = u->NSendConGps();
-      for(int i=0; i<nscg; i++) {
-        ConState_cpp* cg = u->SendConState(i);
-        if(cg->NotActive()) continue;
-        PrjnState_cpp* pjs = cg->GetPrjnState(net_state);
-        Projection* cg_prjn = net->PrjnFromState(pjs);
-        if(cg_prjn != this) continue;
-        con_spec->Init_Weights(cg, net_state, thr_no);
-      }
-    }
-  }
+  NetworkState_cpp* net = GetValidNetState();
+  if(!net) return;
+
+  PRJN_STATE* prjn = GetPrjnState(net);
+  prjn->Init_Weights(net);
+}
+
+void Projection::Copy_Weights(Projection* src) {
+  NetworkState_cpp* net = GetValidNetState();
+  if(!net) return;
+
+  PRJN_STATE* prjn = GetPrjnState(net);
+  PRJN_STATE* src_prjn = src->GetPrjnState(net);
+  prjn->Copy_Weights(net, src_prjn);
 }
 
 void Projection::TransformWeights(const SimpleMathSpec& trans) {
-  FOREACH_ELEM_IN_GROUP(Unit, u, layer->units) {
-    u->TransformWeights(trans, this);
+  NetworkState_cpp* net = GetValidNetState();
+  if(!net) return;
+  
+  PRJN_STATE* prjn = GetPrjnState(net);
+  LAYER_STATE* recv_lay = GetRecvLayerState(net);
+  for(int rui = 0; rui < recv_lay->n_units; rui++) {
+    UNIT_STATE* ru = recv_lay->GetUnitState(net, rui);
+    if(ru->lesioned()) continue;
+    ru->TransformWeights(net, trans, prjn);
   }
 }
 
 void Projection::RenormWeights(bool mult_norm, float avg_wt) {
-  FOREACH_ELEM_IN_GROUP(Unit, u, layer->units) {
-    u->RenormWeights(mult_norm, avg_wt, this);
+  NetworkState_cpp* net = GetValidNetState();
+  if(!net) return;
+
+  PRJN_STATE* prjn = GetPrjnState(net);
+  LAYER_STATE* recv_lay = GetRecvLayerState(net);
+  for(int rui = 0; rui < recv_lay->n_units; rui++) {
+    UNIT_STATE* ru = recv_lay->GetUnitState(net, rui);
+    if(ru->lesioned()) continue;
+    ru->RenormWeights(net, mult_norm, avg_wt, prjn);
   }
 }
 
 void Projection::RescaleWeights(const float rescale_factor) {
-  FOREACH_ELEM_IN_GROUP(Unit, u, layer->units) {
-    u->RescaleWeights(rescale_factor, this);
+  NetworkState_cpp* net = GetValidNetState();
+  if(!net) return;
+
+  PRJN_STATE* prjn = GetPrjnState(net);
+  LAYER_STATE* recv_lay = GetRecvLayerState(net);
+  for(int rui = 0; rui < recv_lay->n_units; rui++) {
+    UNIT_STATE* ru = recv_lay->GetUnitState(net, rui);
+    if(ru->lesioned()) continue;
+    ru->RescaleWeights(net, rescale_factor, prjn);
   }
 }
 
 void Projection::AddNoiseToWeights(const Random& noise_spec) {
-  FOREACH_ELEM_IN_GROUP(Unit, u, layer->units) {
-    u->AddNoiseToWeights(noise_spec, this);
+  NetworkState_cpp* net = GetValidNetState();
+  if(!net) return;
+
+  PRJN_STATE* prjn = GetPrjnState(net);
+  LAYER_STATE* recv_lay = GetRecvLayerState(net);
+  for(int rui = 0; rui < recv_lay->n_units; rui++) {
+    UNIT_STATE* ru = recv_lay->GetUnitState(net, rui);
+    if(ru->lesioned()) continue;
+    ru->AddNoiseToWeights(net, noise_spec, prjn);
   }
 }
 
 int Projection::PruneCons(const SimpleMathSpec& pre_proc,
-                              Relation::Relations rel, float cmp_val)
+                          Relation::Relations rel, float cmp_val)
 {
   int rval = 0;
-  FOREACH_ELEM_IN_GROUP(Unit, u, layer->units) {
-    rval += u->PruneCons(pre_proc, rel, cmp_val, this);
+  NetworkState_cpp* net = GetValidNetState();
+  if(!net) return 0;
+
+  PRJN_STATE* prjn = GetPrjnState(net);
+  LAYER_STATE* recv_lay = GetRecvLayerState(net);
+  for(int rui = 0; rui < recv_lay->n_units; rui++) {
+    UNIT_STATE* ru = recv_lay->GetUnitState(net, rui);
+    if(ru->lesioned()) continue;
+    rval += ru->PruneCons(net, pre_proc, rel, cmp_val, prjn);
   }
+  return rval;
+}
+
+int Projection::ProbAddCons(float p_add_con, float init_wt) {
+  NetworkState_cpp* net = GetValidNetState();
+  if(!net) return 0;
+
+  PRJN_STATE* prjn = GetPrjnState(net);
+  PRJN_SPEC_CPP* pspec = GetPrjnSpec(net);
+  int rval = pspec->ProbAddCons(prjn, net, p_add_con, init_wt);
   return rval;
 }
 
 int Projection::LesionCons(float p_lesion, bool permute) {
   int rval = 0;
-  FOREACH_ELEM_IN_GROUP(Unit, u, layer->units) {
-    rval += u->LesionCons(p_lesion, permute, this);
+  NetworkState_cpp* net = GetValidNetState();
+
+  PRJN_STATE* prjn = GetPrjnState(net);
+  LAYER_STATE* recv_lay = GetRecvLayerState(net);
+  for(int rui = 0; rui < recv_lay->n_units; rui++) {
+    UNIT_STATE* ru = recv_lay->GetUnitState(net, rui);
+    if(ru->lesioned()) continue;
+    rval += ru->LesionCons(net, p_lesion, permute, prjn);
   }
   return rval;
+}
+
+DataTable* Projection::WeightsToTable(DataTable* dt, const String& col_nm_,
+                                      bool recv_wts) {
+  NetworkState_cpp* net = GetValidNetState();
+  if(!net) return NULL;
+
+  PRJN_STATE* prjn = GetPrjnState(net);
+  bool new_table = false;
+  if (!dt) {
+    taProject* proj = GetMyProj();
+    dt = proj->GetNewAnalysisDataTable(name + "_Weights", true);
+    new_table = true;
+  }
+  dt->StructUpdate(true);
+  dt->ResetData();
+
+  String col_nm = col_nm_;
+  if(col_nm.empty()) col_nm = from->name;
+
+  taVector2i log_pos;
+  int idx;
+  if(recv_wts) {
+    DataCol* scol = dt->FindMakeColName(col_nm, idx, VT_FLOAT, 2,
+                                        from->flat_geom.x, from->flat_geom.y);
+    LAYER_STATE* recv_lay = GetRecvLayerState(net);
+    for(int rui = 0; rui < recv_lay->n_units; rui++) {
+      UNIT_STATE* ru = recv_lay->GetUnitState(net, rui);
+      if(ru->lesioned()) continue;
+      ConState_cpp* cg = ru->RecvConStatePrjn(net, prjn);
+      if(cg == NULL) continue;
+      dt->AddBlankRow();
+      int wi;
+      for(wi=0;wi<cg->size;wi++) {
+        UNIT_STATE* ou = cg->UnState(wi, net);
+        scol->SetMatrixVal(cg->Cn(wi,ConState_cpp::WT,net), -1, ou->pos_x, ou->pos_y);
+      }
+    }
+  }
+  else {
+    DataCol* scol = dt->FindMakeColName(col_nm, idx, VT_FLOAT, 2,
+                                      layer->flat_geom.x, layer->flat_geom.y);
+
+    LAYER_STATE* send_lay = prjn->GetSendLayerState(net);
+    for(int sui = 0; sui < send_lay->n_units; sui++) {
+      UNIT_STATE* su = send_lay->GetUnitState(net, sui);
+      if(su->lesioned()) continue;
+      ConState_cpp* cg = su->SendConStatePrjn(net, prjn);
+      if(cg == NULL) continue;
+      dt->AddBlankRow();
+      int wi;
+      for(wi=0;wi<cg->size;wi++) {
+        UNIT_STATE* ou = cg->UnState(wi, net);
+        scol->SetMatrixVal(cg->Cn(wi,ConState_cpp::WT,net), -1, ou->pos_x, ou->pos_y);
+      }
+    }
+  }
+  dt->StructUpdate(false);
+  if(new_table)
+    tabMisc::DelayedFunCall_gui(dt, "BrowserSelectMe");
+  return dt;
+}
+
+DataTable* Projection::VarToTable(DataTable* dt, const String& variable) {
+  bool new_table = false;
+  if (!dt) {
+    taProject* proj = GetMyProj();
+    dt = proj->GetNewAnalysisDataTable(name + "_Var_" + variable, true);
+    new_table = true;
+  }
+
+  Network* net = GET_MY_OWNER(Network);
+  if(!net) return NULL;
+
+  NetMonitor nm;
+  nm.OwnTempObj();
+  nm.SetDataNetwork(dt, net);
+  nm.AddProjection(this, variable);
+  nm.items[0]->max_name_len = 20; // allow long names
+  nm.UpdateDataTable();
+  dt->AddBlankRow();
+  nm.GetMonVals();
+  dt->WriteClose();
+  if(new_table)
+    tabMisc::DelayedFunCall_gui(dt, "BrowserSelectMe");
+  return dt;
+}
+
+DataTable* Projection::ConVarsToTable(DataTable* dt, const String& var1, const String& var2,
+                                const String& var3, const String& var4, const String& var5,
+                                const String& var6, const String& var7, const String& var8,
+                                const String& var9, const String& var10, const String& var11,
+                                const String& var12, const String& var13, const String& var14) {
+  NetworkState_cpp* net = GetValidNetState();
+  if(!net) return NULL;
+
+  PRJN_STATE* prjn = GetPrjnState(net);
+  bool new_table = false;
+  if(!dt) {
+    taProject* proj = GetMyProj();
+    dt = proj->GetNewAnalysisDataTable("ConVars", true);
+    new_table = true;
+  }
+  dt->StructUpdate(true);
+  layer->ConVarsToTable(dt, var1, var2, var3, var4, var5, var6, var7, var8,
+                        var9, var10, var11, var12, var13, var14, prjn);
+  dt->StructUpdate(false);
+  if(new_table)
+    tabMisc::DelayedFunCall_gui(dt, "BrowserSelectMe");
+  return dt;
 }
 

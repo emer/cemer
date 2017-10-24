@@ -13,29 +13,25 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-#ifndef CustomPrjnSpec_h
-#define CustomPrjnSpec_h 1
+#ifndef ProjectionSpec_cpp_h
+#define ProjectionSpec_cpp_h 1
 
 // parent includes:
-#include <ProjectionSpec>
+#include <NetworkState_cpp>
+#include <UnitState_cpp>
 
-// member includes:
+#include <State_cpp>
 
-// declare all other types mentioned but not required to include:
+#include <ProjectionSpec_mbrs>
 
-eTypeDef_Of(CustomPrjnSpec);
-
-class E_API CustomPrjnSpec : public ProjectionSpec {
-  // connectivity is defined manually (i.e. unit-by-unit)
-INHERITED(ProjectionSpec)
+class ProjectionSpec_cpp : public BaseSpec_cpp {
+  // #STEM_BASE #VIRT_BASE ##CAT_Projection Specifies the connectivity between layers (ie. full vs. partial)
+INHERITED(BaseSpec)
 public:
 
-  void	Connect_impl(Projection* prjn, bool make_cons) override;	// do nothing
+#include <ProjectionSpec_core>
 
-  TA_BASEFUNS_NOCOPY(CustomPrjnSpec);
-private:
-  void	Initialize()	{ };
-  void	Destroy()	{ };
+  ProjectionSpec_cpp() { Initialize_core_base(); }
 };
 
-#endif // CustomPrjnSpec_h
+#endif // ProjectionSpec_cpp_h

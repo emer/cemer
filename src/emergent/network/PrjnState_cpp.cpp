@@ -13,9 +13,19 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-// #include <Random>  // gets a lot of stuff needed for State_base
+#include <Random>  // gets a lot of stuff needed for State_base
 
 // all inline
-// #include "PrjnState_cpp.h"
+#include "PrjnState_cpp.h"
+
+#include <LayerState_cpp>
+#include <UnitState_cpp>
+#include <ConState_cpp>
+#include <ProjectionSpec_cpp>
+#include <ConSpec_cpp>
+
+#include <State_cpp>
+
+#include "PrjnState_core.cpp"
 
 

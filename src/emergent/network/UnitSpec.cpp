@@ -22,9 +22,11 @@ TA_BASEFUNS_CTORS_DEFN(UnitSpec);
 TA_BASEFUNS_CTORS_LITE_DEFN(UnitSpec_SPtr);
 SMARTREF_OF_CPP(UnitSpec);
 
+eTypeDef_Of(UnitState_cpp);
+
 void UnitSpec::Initialize() {
   Initialize_core();
-  min_obj_type = &TA_Unit;
+  min_obj_type = &TA_UnitState_cpp;
   min_user_type = &TA_Layer;
 }
 

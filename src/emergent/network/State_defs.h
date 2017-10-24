@@ -76,6 +76,10 @@
 #undef LEABRA_LAYER_SPEC
 #undef LEABRA_LAYER_SPEC_CPP
 #endif
+#ifdef PRJN_SPEC
+#undef PRJN_SPEC
+#undef PRJN_SPEC_CPP
+#endif
 #ifdef UNIT_SPEC
 #undef UNIT_SPEC
 #undef UNIT_SPEC_CPP
@@ -94,6 +98,7 @@
 #endif
 
 #define LAYER_SPEC STATE_CLASS(LayerSpec)
+#define PRJN_SPEC STATE_CLASS(ProjectionSpec)
 #define UNIT_SPEC STATE_CLASS(UnitSpec)
 #define CON_SPEC STATE_CLASS(ConSpec)
 
@@ -164,6 +169,7 @@
 
 // use these in State code when it should be the CPP version for main and otherwise the basic type
 #define LAYER_SPEC_CPP LayerSpec_cpp
+#define PRJN_SPEC_CPP ProjectionSpec_cpp
 #define UNIT_SPEC_CPP UnitSpec_cpp
 #define CON_SPEC_CPP ConSpec_cpp
 
@@ -219,6 +225,7 @@ private: \
 #define LEABRA_CON_STATE STATE_CLASS(LeabraConState)
 
 #define LAYER_SPEC_CPP LAYER_SPEC
+#define PRJN_SPEC_CPP PRJN_SPEC
 #define UNIT_SPEC_CPP UNIT_SPEC
 #define CON_SPEC_CPP CON_SPEC
 

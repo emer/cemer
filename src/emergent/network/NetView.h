@@ -157,7 +157,7 @@ public:
   MemberSpace           membs;          // #NO_SAVE #NO_COPY #READ_ONLY list of all the members possible in units; note: all items are new clones
   String_Array          cur_unit_vals;  // #NO_COPY #READ_ONLY currently selected unit values to display -- theoretically can display multiple values, but this is not currently supported, so it always just has one entry at most
   String_Array          hot_vars;       // current "hot" variables shown directly in explorer view
-  UnitRef               unit_src;       // #NO_SAVE #NO_COPY #READ_ONLY unit last picked (if any) for display
+  UnitState_cpp*        unit_src;       // #NO_SAVE #NO_COPY #READ_ONLY unit last picked (if any) for display
   String                unit_src_path;  // ##READ_ONLY path of unit_src unit relative to the network -- used for saving and reloading
   String                last_sel_unit_val;   // #READ_ONLY #SHOW #NO_SAVE value of last selected unit (for display)
 
@@ -201,7 +201,7 @@ public:
 
   Network*              net() const {return (Network*)data();}
   T3NetNode*            node_so() const {return (T3NetNode*)inherited::node_so();}
-  void                  setUnitSrc(UnitView* uv, Unit* unit); // updates picked unit
+  void                  setUnitSrc(UnitView* uv, UnitState_cpp* unit); // updates picked unit
   void                  setUnitDisp(int value); // sets a new md to display, index in membs
   void                  setUnitDispMd(MemberDef* md); // sets a new md to display, lookup/set scale values
   void                  UpdateViewerModeForMd(MemberDef* md);
@@ -239,7 +239,7 @@ public:
   void                  InitScaleRange(ScaleRange& sr);
   // initialize sr to its defaults; used when creating, and if user clicks 'default' button for the scale
 
-  UnitView*             FindUnitView(Unit* unit); // find the uv for the unit
+  UnitView*             FindUnitView(UnitState_cpp* unit); // find the uv for the unit
   virtual void          SelectVar(const char* var_name, bool add=false, bool update = true);
   // select given variable for viewing on units (add to currently disp vars if add)
   void                  SetScaleData(bool auto_scale, float scale_min, float scale_max,

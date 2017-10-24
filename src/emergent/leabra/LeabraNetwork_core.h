@@ -18,18 +18,18 @@
   };
 
   enum LeabraLayerSpecTypes { // manual type registry system for all spec types used in state code -- any new spec type MUST be added to this list, extending from N case in the last list, for any derived classes, and each spec must return its appropriate enum in GetStateSpecType() method
-    T_LEABRA_LAYER_SPEC = N_NetworkLayerSpecs,
+    T_LeabraLayerSpec = N_NetworkLayerSpecs,
     N_LeabraLayerSpecs,    // derived classes start from this one -- use class name for subclasses
   };
 
   enum LeabraUnitSpecTypes { // manual type registry system for all spec types used in state code -- any new spec type MUST be added to this list, extending from N case in the last list, for any derived classes, and each spec must return its appropriate enum in GetStateSpecType() method
-    T_LEABRA_UNIT_SPEC = N_NetworkUnitSpecs,
+    T_LeabraUnitSpec = N_NetworkUnitSpecs,
     N_LeabraUnitSpecs,    // derived classes start from this one -- use class name for subclasses
   };
 
   enum LeabraConSpecTypes { // manual type registry system for all spec types used in state code -- any new spec type MUST be added to this list, extending from N case in the last list, for any derived classes, and  each spec must return its appropriate enum in GetStateSpecType() method
-    T_LEABRA_CON_SPEC = N_NetworkConSpecs,
-    T_LEABRA_BIAS_SPEC,
+    T_LeabraConSpec = N_NetworkConSpecs,
+    T_LeabraBiasSpec,
     N_LeabraConSpecs,    // derived classes start from this one -- use class name for subclasses
   };
 

@@ -48,8 +48,9 @@ void PrjnView::DoHighlightColor(bool apply) {
   NetView* nv = getNetView();
   Projection* prjn = this->prjn(); // cache
   float prjn_trans = nv->view_params.prjn_trans;
-  if(!prjn->projected)
+  if(!nv || !nv->net() || !nv->net()->IsBuiltIntact()) {
     prjn_trans = .8f;
+  }
 
 #ifdef TA_QT3D
   nd->line->setColor(prjn->prjn_clr.color());
@@ -74,11 +75,15 @@ void PrjnView::DoHighlightColor(bool apply) {
 void PrjnView::Render_pre() {
   NetView* nv = getNetView();
   Projection* prjn = this->prjn(); // cache
+  book projected = true;
+  if(!nv || !nv->net() || !nv->net()->IsBuiltIntact()) {
+    projected = false;
+  }
 #ifdef TA_QT3D
-  setNode(new T3PrjnNode(NULL, this, prjn->projected, nv->view_params.prjn_width,
+  setNode(new T3PrjnNode(NULL, this, projected, nv->view_params.prjn_width,
                          nv->lay_layout == NetView::TWO_D));
 #else // TA_QT3D
-  setNode(new T3PrjnNode(this, prjn->projected, nv->view_params.prjn_width));
+  setNode(new T3PrjnNode(this, projected, nv->view_params.prjn_width));
 #endif // TA_QT3D
   DoHighlightColor(false);
   inherited::Render_pre();

@@ -89,8 +89,8 @@ void NetViewParams::Initialize() {
   prjn_name = false;
   prjn_width = .002f;
   prjn_trans = .5f;
-  lay_trans = .5f;
-  unit_trans = 0.4f;
+  lay_trans = 0.5f;
+  unit_trans = 0.6f;
   laygp_width = 1.0f;
   show_laygp = true;
 }
@@ -166,7 +166,7 @@ void UnitGroupView_MouseCB(void* userData, SoEventCallback* ecb) {
         int yp = (int)(-(pt[2] * tnv->eff_max_size.y) / disp_scale);
         
         if((xp >= 0) && (xp < lay->disp_geom.x) && (yp >= 0) && (yp < lay->disp_geom.y)) {
-          Unit* unit = lay->UnitAtDispCoord(xp, yp);
+          UnitState_cpp* unit = lay->UnitAtDispCoord(xp, yp);
           if (unit && nv->unit_disp_md) {
             if(nv->unit_con_md && nv->unit_src) {
               // see UnitGroupView::UpdateUnitViewBase_Con_impl for relevant code
@@ -321,13 +321,13 @@ bool Network::SetViewVar(const String& view_var) {
   return true;
 }
 
-Unit* Network::GetViewSrcU() {
+UnitState_cpp* Network::GetViewSrcU() {
   NetView* nv = FindView();
   if(nv) return nv->unit_src;
   return NULL;
 }
 
-bool Network::SetViewSrcU(Unit* un) {
+bool Network::SetViewSrcU(UnitState_cpp* un) {
   NetView* nv = FindView();
   if(!nv) return false;
   nv->setUnitSrc(NULL, un);
@@ -459,15 +459,13 @@ void NetView::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   if(taMisc::is_loading) {	// set to initial
     prev_lay_layout = lay_layout;
-#if (QT_VERSION >= 0x050601)
-    taVersion v788(7, 8, 8);
-    if(taMisc::loading_version < v788) { // one-time update..
-      if(view_params.unit_trans > 0.4f)
-        view_params.unit_trans = 0.4f;        // Qt 5.6.1 needs lower transparency
-      if(view_params.lay_trans > 0.4f)
-        view_params.lay_trans = 0.4f;
+    taVersion v822(8, 2, 2);
+    if(taMisc::loading_version < v822) { // one-time update..
+      if(view_params.unit_trans == 0.4f)
+        view_params.unit_trans = 0.6f;        // fixed transparency issues
+      if(view_params.lay_trans == 0.4f)
+        view_params.lay_trans = 0.5f;
     }
-#endif
   }
 }
 
@@ -620,7 +618,7 @@ void NetView::unTrappedKeyPressEvent(QKeyEvent* e) {
   lay->UnitLogPos(unit_src, pos);
   pos += dir;
   if(pos.x < 0 || pos.y < 0) return;
-  Unit* nw_u = lay->UnitAtCoord(pos);
+  UnitState_cpp* nw_u = lay->UnitAtCoord(pos);
   if(nw_u) {
     setUnitSrc(NULL, nw_u);
     InitDisplay();   // this is apparently needed here!!
@@ -767,7 +765,7 @@ taBase::DumpQueryResult NetView::Dump_QuerySaveMember(MemberDef* md) {
   }
 }
 
-UnitView* NetView::FindUnitView(Unit* unit) {
+UnitView* NetView::FindUnitView(UnitState_cpp* unit) {
   UnitView* uv = NULL;
   taSigLink* dl = unit->sig_link();
   if (!dl) return NULL;
@@ -788,7 +786,7 @@ void NetView::GetMembs() {
   if(!unit_src) {
     if(unit_src_path.nonempty()) {
       MemberDef* umd;
-      Unit* nu = (Unit*)net()->FindFromPath(unit_src_path, umd);
+      UnitState_cpp* nu = (UnitState_cpp*)net()->FindFromPath(unit_src_path, umd);
       if(nu) setUnitSrc(NULL, nu);
     }
     if(!unit_src && net()->layers.leaves > 0) {
@@ -1534,7 +1532,7 @@ void NetView::Render_wt_lines() {
     ls->moveTo(src);
 
     for(int i=0;i< cg->size; i++) {
-      Unit* su = cg->Un(i,nt);
+      UnitState_cpp* su = cg->UnState(i,nt);
       float wt = cg->Cn(i, ConState_cpp::WT, nt);
       if(fabsf(wt) < wt_line_thr) continue;
 
@@ -1704,7 +1702,7 @@ void NetView::Render_wt_lines() {
     vertex_dat[v_idx++].setValue(src.x, src.y, src.z);
 
     for(int i=0;i< cg->size; i++) {
-      Unit* su = cg->Un(i,nt);
+      UnitState_cpp* su = cg->Un(i,nt);
       float wt = cg->Cn(i, ConState_cpp::WT, nt->net_state);
       if(fabsf(wt) < wt_line_thr) continue;
 
@@ -1839,7 +1837,7 @@ void NetView::SetColorSpec(ColorScaleSpec* color_spec) {
   UpdateDisplay(true);          // true causes button to remain pressed..
 }
 
-void NetView::setUnitSrc(UnitView* uv, Unit* unit) {
+void NetView::setUnitSrc(UnitView* uv, UnitState_cpp* unit) {
   if (unit_src.ptr() == unit) return; // no change
   // if there was existing unit, unpick it
   if ((bool)unit_src) {
@@ -2049,7 +2047,7 @@ void NetView::viewWin_NotifySignal(ISelectableHost* src, int op) {
   TypeDef* typ = ci->GetTypeDef();
   if (!typ->InheritsFrom(&TA_UnitView)) return;
   UnitView* uv = (UnitView*)ci->This();
-  Unit* unit_new = uv->unit();
+  UnitState_cpp* unit_new = uv->unit();
   setUnitSrc(uv, unit_new);
   InitDisplay();
   UpdateDisplay();

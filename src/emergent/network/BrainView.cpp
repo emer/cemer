@@ -262,7 +262,7 @@ void BrainView::GetMembs() {
   if(!unit_src) {
     if(unit_src_path.nonempty()) {
       MemberDef* umd;
-      Unit* nu = (Unit*)net()->FindFromPath(unit_src_path, umd);
+      UnitState_cpp* nu = (UnitState_cpp*)net()->FindFromPath(unit_src_path, umd);
       if(nu) setUnitSrc(nu);
     }
     if(!unit_src && net()->layers.leaves > 0) {
@@ -400,7 +400,7 @@ void BrainView::GetUnitColor(float val,  iColor& col, float& sc_val) {
   col = fl;
 }
 
-void BrainView::GetUnitDisplayVals(BrainVolumeView* bvv, Unit* u, float& val, iColor& col, float& sc_val) {
+void BrainView::GetUnitDisplayVals(BrainVolumeView* bvv, UnitState_cpp* u, float& val, iColor& col, float& sc_val) {
   sc_val = scale.zero;
   void* base = NULL;
   if(unit_disp_md && unit_md_flags != MD_UNKNOWN)
@@ -787,7 +787,7 @@ void BrainView::SetColorSpec(ColorScaleSpec* color_spec) {
   UpdateDisplay(true);          // true causes button to remain pressed..
 }
 
-void BrainView::setUnitSrc(Unit* unit) {
+void BrainView::setUnitSrc(UnitState_cpp* unit) {
   if (unit_src.ptr() == unit) return; // no change
   // if there was existing unit, unpick it
   unit_src = unit;
@@ -889,7 +889,7 @@ void BrainView::viewWin_NotifySignal(ISelectableHost* src, int op) {
 //   TypeDef* typ = ci->GetTypeDef();
 //   if (!typ->InheritsFrom(&TA_UnitView)) return;
 //   UnitView* uv = (UnitView*)ci->This();
-//   Unit* unit_new = uv->unit();
+//   UnitState_cpp* unit_new = uv->unit();
 //   setUnitSrc(uv, unit_new);
 //   InitDisplay();
 //   UpdateDisplay();

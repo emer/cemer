@@ -152,7 +152,6 @@ void Layer::Initialize() {
   disp_scale = 1.0f;
   // un_geom = ??
   unit_groups = false;
-  virt_groups = true;
   // gp_geom = ??
   gp_spc.x = 1;
   gp_spc.y = 1;
@@ -160,7 +159,6 @@ void Layer::Initialize() {
   n_send_prjns = 0;
   projections.SetBaseType(&TA_Projection);
   send_prjns.send_prjns = true;
-  units.SetBaseType(&TA_Unit);
   // unit_spec = ??
   // flat_geom = ??
   disp_geom = un_geom;
@@ -202,7 +200,6 @@ void Layer::InitLinks() {
   taBase::Own(projections, this);
   taBase::Own(send_prjns, this);
   
-  taBase::Own(units, this);
   taBase::Own(unit_spec, this);
   taBase::Own(unit_names, this);
   taBase::Own(dist, this);
@@ -221,7 +218,6 @@ void Layer::InitLinks() {
   if(!taMisc::is_loading) {
     SetDefaultPos();
   }
-  units.pos.z = 0;
   unit_spec.SetDefaultSpec(this);
 
 #ifdef DMEM_COMPILE
@@ -251,7 +247,6 @@ void Layer::CutLinks() {
   projections.CutLinks();
   send_prjns.CutLinks();
   
-  units.CutLinks();
   unit_spec.CutLinks();
   unit_names.CutLinks();
   dist.CutLinks();
@@ -286,7 +281,6 @@ void Layer::Copy_(const Layer& cp) {
   disp_scale = cp.disp_scale;
   un_geom = cp.un_geom;
   unit_groups = cp.unit_groups;
-  virt_groups = cp.virt_groups;
   gp_geom = cp.gp_geom;
   gp_spc = cp.gp_spc;
   flat_geom = cp.flat_geom;
@@ -295,7 +289,6 @@ void Layer::Copy_(const Layer& cp) {
   n_recv_prjns = cp.n_recv_prjns;
   n_send_prjns = cp.n_send_prjns;
   projections = cp.projections;
-  units = cp.units;
   unit_spec = cp.unit_spec;
   ext_flag = cp.ext_flag;
   m_prv_unit_spec = cp.m_prv_unit_spec;
@@ -332,7 +325,7 @@ void Layer::UpdateAfterEdit_impl() {
   // taMisc::DebugInfo("layer uae", name);
 
   // no negative geoms., y,z must be 1 (for display)
-  UpdateUnitSpecs((bool)taMisc::is_loading); // force if loading
+  UnitSpecUpdated();
   //  SyncSendPrjns(); // this is not a good place to do this -- too frequent and unnec
   // also causes problems during copy..
 
@@ -393,19 +386,24 @@ void Layer::UpdateAfterEdit_impl() {
       unit_names.SetGeom(0, 0);
     }
   }
+
+  if(unit_groups && gp_geom.n > 0) {
+    gp_output_names.SetGeom(2,gp_geom.x,gp_geom.y);
+  }
+
   m_prv_layer_flags = flags;
+}
+
+NetworkState_cpp* Layer::GetValidNetState() const {
+  if(!own_net || !own_net->net_state || !own_net->net_state->IsBuiltIntact())
+    return NULL;
+  return own_net->net_state;
 }
 
 void Layer::Lesion() {
   if(lesioned()) return;
   StructUpdate(true);
   SetLayerFlag(LESIONED);
-  FOREACH_ELEM_IN_GROUP(Unit, u, units) { // unit-level needs lesion flag too
-    if(u->lesioned()) continue;
-    u->Lesion();
-  }
-  // if(own_net)
-  //   Init_Acts(own_net);
   m_prv_layer_flags = flags;
   StructUpdate(false);
   if(own_net)
@@ -452,9 +450,8 @@ int Layer::GetSpecialState() const {
 }
 
 void Layer::ConnectFrom(Layer* from_lay) {
-  Network* net = GET_MY_OWNER(Network);
-  if (!net) return;
-  Projection* prjn = net->FindMakePrjn(this, from_lay);
+  if (!own_net) return;
+  Projection* prjn = own_net->FindMakePrjn(this, from_lay);
   if(prjn) {
     prjn->UpdateAfterEdit();
     if(taMisc::gui_active)
@@ -463,15 +460,14 @@ void Layer::ConnectFrom(Layer* from_lay) {
 }
 
 void Layer::ConnectBidir(Layer* from_lay) {
-  Network* net = GET_MY_OWNER(Network);
-  if (!net) return;
-  Projection* prjn = net->FindMakePrjn(this, from_lay);
+  if (!own_net) return;
+  Projection* prjn = own_net->FindMakePrjn(this, from_lay);
   if(prjn) {
     prjn->UpdateAfterEdit();
     if(taMisc::gui_active)
       tabMisc::DelayedFunCall_gui(prjn, "BrowserSelectMe");
   }
-  prjn = net->FindMakePrjn(from_lay, this);
+  prjn = own_net->FindMakePrjn(from_lay, this);
   if(prjn) {
     prjn->UpdateAfterEdit();
     if(taMisc::gui_active)
@@ -480,9 +476,8 @@ void Layer::ConnectBidir(Layer* from_lay) {
 }
 
 void Layer::ConnectSelf() {
-  Network* net = GET_MY_OWNER(Network);
-  if (!net) return;
-  Projection* prjn = net->FindMakeSelfPrjn(this);
+  if (!own_net) return;
+  Projection* prjn = own_net->FindMakeSelfPrjn(this);
   if(prjn) {
     prjn->UpdateAfterEdit();
     if(taMisc::gui_active)
@@ -495,30 +490,6 @@ taBase::DumpQueryResult Layer::Dump_QuerySaveMember(MemberDef* md) {
   if (md->name != "unit_names")
     return inherited::Dump_QuerySaveMember(md);
   return (unit_names.dims()) ? DQR_SAVE : DQR_NO_SAVE;
-}
-
-void Layer::RecvConsPreAlloc(int alloc_no, Projection* prjn) {
-  FOREACH_ELEM_IN_GROUP(Unit, ru, units) {
-    ru->RecvConsPreAlloc(alloc_no, prjn);
-  }
-}
-
-void Layer::SendConsPreAlloc(int alloc_no, Projection* prjn) {
-  FOREACH_ELEM_IN_GROUP(Unit, su, units) {
-    su->SendConsPreAlloc(alloc_no, prjn);
-  }
-}
-
-void Layer::SendConsPostAlloc(Projection* prjn) {
-  FOREACH_ELEM_IN_GROUP(Unit, su, units) {
-    su->SendConsPostAlloc(prjn);
-  }
-}
-
-void Layer::RecvConsPostAlloc(Projection* prjn) {
-  FOREACH_ELEM_IN_GROUP(Unit, su, units) {
-    su->RecvConsPostAlloc(prjn);
-  }
 }
 
 void Layer::SyncSendPrjns() {
@@ -570,6 +541,7 @@ void Layer::UpdateGeometry() {
   gp_geom.SetGtEq(1);
   un_geom.UpdateAfterEdit_NoGui();
   gp_geom.UpdateAfterEdit_NoGui();
+  SetLayerFlagState(UN_GEOM_NOT_XY, un_geom.n_not_xy);
   if(unit_groups) {
     flat_geom.x = un_geom.x * gp_geom.x;
     flat_geom.y = un_geom.y * gp_geom.y;
@@ -579,13 +551,23 @@ void Layer::UpdateGeometry() {
     taVector2i eff_un_sz = un_geom + gp_spc;
     disp_geom = gp_geom * eff_un_sz;
     disp_geom -= gp_spc;        // no space at the end!
+    n_ungps = gp_geom.n;
   }
   else {
+    gp_geom.SetXYN(1,1,1);      // keep it updated, and non-zero
     flat_geom = un_geom;
     disp_geom = un_geom;
+    n_ungps = 0;                // this is key test for no additional unit groups
   }
   scaled_disp_geom.x = (int)ceil((float)disp_geom.x * disp_scale);
   scaled_disp_geom.y = (int)ceil((float)disp_geom.y * disp_scale);
+
+  // update state versions of key geometry
+  n_units = flat_geom.n;
+  un_geom_x = un_geom.x; un_geom_y = un_geom.y; un_geom_n = un_geom.n;
+  gp_geom_x = gp_geom.x; gp_geom_y = gp_geom.y; gp_geom_n = gp_geom.n;
+  flat_geom_x = flat_geom.x; flat_geom_y = flat_geom.y; flat_geom_n = flat_geom.n;
+  gp_spc_x = gp_spc.x; gp_spc_y = gp_spc.y;
 }
 
 bool Layer::UpdatePosition() {
@@ -747,6 +729,7 @@ void Layer::SetLayerUnitGeom(int x, int y, bool n_not_xy, int n) {
   un_geom.x = x; un_geom.y = y; un_geom.n_not_xy = n_not_xy; un_geom.n = n;
   UpdateAfterEdit();
 }
+
 void Layer::SetLayerUnitGpGeom(int x, int y, bool n_not_xy, int n) {
   unit_groups = true;
   gp_geom.x = x; gp_geom.y = y; gp_geom.n_not_xy = n_not_xy; gp_geom.n = n;
@@ -807,69 +790,6 @@ void Layer::PositionAbove(Layer* lay, int space) {
   lay->UpdatePosition();
 }
 
-void Layer::LayoutUnits() {
-  StructUpdate(true);
-  UpdateGeometry();             // triple sure..
-  units.pos = 0;                // our base guy must always be 0..
-  int li = 0;
-  if(unit_groups) {
-    taVector2i eff_un_sz = un_geom + gp_spc;
-    taVector2i gpgeo;
-    int gi = 0;
-    int ui = 0;
-    Unit_Group* eff_ug = &units;
-    for(gpgeo.y=0; gpgeo.y < gp_geom.y; gpgeo.y++) {
-      for(gpgeo.x=0; gpgeo.x < gp_geom.x; gpgeo.x++, gi++) {
-        taVector2i gp_pos = gpgeo * eff_un_sz;
-        if(!virt_groups) {
-          Unit_Group* ug = (Unit_Group*)units.gp.FastEl(gi);
-          ug->pos.x = gp_pos.x; ug->pos.y = gp_pos.y;
-          eff_ug = ug;
-          ui = 0;
-        }
-        taVector2i ugeo;
-        for(ugeo.y=0; ugeo.y < un_geom.y; ugeo.y++) {
-          for(ugeo.x=0; ugeo.x < un_geom.x; ugeo.x++) {
-            if(ui >= eff_ug->size)
-              break;
-            Unit* un = (Unit*)eff_ug->FastEl(ui);
-            un->lay_un_idx = li;
-            un->gp_idx = gi;
-            un->ungp_un_idx = ui;
-            un->own_lay_idx = layer_idx;
-            un->own_ungp_idx = ungp_idx + 1 + gi; // skip main one
-            li++;
-            ui++;
-            taVector2i upos = ugeo;
-            if(virt_groups)
-              upos += gp_pos;
-            un->pos.x = upos.x; un->pos.y = upos.y;
-          }
-        }
-      }
-    }
-  }
-  else {
-    taVector2i ugeo;
-    for(ugeo.y=0; ugeo.y < un_geom.y; ugeo.y++) {
-      for(ugeo.x=0; ugeo.x <un_geom.x; ugeo.x++) {
-        if(li >= units.size)
-          break;
-        Unit* un = (Unit*)units.FastEl(li);
-        un->lay_un_idx = li;
-        un->gp_idx = -1;
-        un->ungp_un_idx = li;
-        un->own_lay_idx = layer_idx;
-        un->own_ungp_idx = ungp_idx; // our unit group is the main one
-        un->pos.x = ugeo.x; un->pos.y = ugeo.y;
-        li++;
-      }
-    }
-  }
-  StructUpdate(false);
-}
-
-
 void Layer::SetNUnits(int n_un) {
   if(un_geom.n == n_un || n_un <= 0) return; // only if diff or sensible
   un_geom.FitN(n_un);
@@ -885,93 +805,13 @@ void Layer::SetNUnitGroups(int n_groups) {
 
 void Layer::CheckSpecs() {
   // NOTE: if an algo has a layerspec, definitely need to check its spec here!
-  unit_spec.CheckSpec(units.el_typ);
-  UpdateUnitSpecs();
+  if(!own_net) return;
+  
+  unit_spec.CheckSpec(own_net->UnitStateType());
 
   FOREACH_ELEM_IN_GROUP(Projection, prjn, projections) {
     prjn->CheckSpecs();
   }
-}
-
-void Layer::BuildUnits() {
-  taMisc::Busy();
-  StructUpdate(true);
-  UpdateGeometry();
-  UpdatePosition();
-  UpdatePrjnIdxs();
-  units_lesioned = false;
-  bool units_changed = false;
-  if(unit_groups) {
-    gp_output_names.SetGeom(2,gp_geom.x,gp_geom.y);
-    if(virt_groups) {
-      if(units.gp.size > 0) {
-        units_changed = true;
-      }
-      units.gp.RemoveAll();     // in case there were any subgroups..
-      if(units.size != flat_geom.n) {
-        units_changed = true;
-      }
-      units.SetSize(flat_geom.n);
-      units.EnforceType();
-      FOREACH_ELEM_IN_GROUP(Unit, u, units) {
-        u->BuildUnits();
-      }
-    }
-    else {
-      while(units.size > 0) {
-        units_changed = true;
-        units.RemoveIdx(units.size-1); // get rid of any in top-level
-      }
-      units.gp.SetSize(gp_geom.n);
-      for(int k=0; k< units.gp.size; k++) {
-        Unit_Group* ug = (Unit_Group*)units.gp.FastEl(k);
-        ug->UpdateAfterEdit_NoGui();
-        ug->StructUpdate(true);
-        if(ug->size != un_geom.n) {
-          units_changed = true;
-        }
-        ug->SetSize(un_geom.n);
-        ug->EnforceType();
-        FOREACH_ELEM_IN_GROUP(Unit, u, *ug) {
-          u->BuildUnits();
-        }
-        ug->StructUpdate(false);
-      }
-    }
-  }
-  else {
-    gp_geom.SetXYN(1,1,1);      // reset gp geom to reflect a single group -- used in some computations to generically operate over different geoms
-    if(units.gp.size > 0) {
-      units_changed = true;
-    }
-    units.gp.RemoveAll();       // in case there were any subgroups..
-    if(units.size != un_geom.n) {
-      units_changed = true;
-    }
-    units.SetSize(un_geom.n);
-    units.EnforceType();
-    FOREACH_ELEM_IN_GROUP(Unit, u, units) {
-      u->BuildUnits();
-    }
-  }
-
-  LayoutUnits();
-  // assign the spec
-  FOREACH_ELEM_IN_GROUP(Unit, u, units) {
-    u->SetUnitSpec(unit_spec.SPtr());
-  }
-  if(units_changed) {
-    // tell all projections that they need to be connected
-    FOREACH_ELEM_IN_GROUP(Projection, pjn, projections) {
-      pjn->projected = false;
-    }
-    FOREACH_ELEM_IN_GROUP(Projection, pjn, send_prjns) {
-      pjn->projected = false;
-    }
-  }
-  SetUnitNames();
-  StructUpdate(false);
-  taMisc::DoneBusy();
 }
 
 void Layer::UpdatePrjnIdxs() {
@@ -979,7 +819,7 @@ void Layer::UpdatePrjnIdxs() {
   n_recv_prjns = 0;
   n_send_prjns = 0;
   FOREACH_ELEM_IN_GROUP(Projection, prj, projections) {
-    if(prj->IsActive()) {
+    if(prj->MainIsActive()) {
       prj->recv_idx = n_recv_prjns++;
     }
     else {
@@ -987,72 +827,13 @@ void Layer::UpdatePrjnIdxs() {
     }
   }
   FOREACH_ELEM_IN_GROUP(Projection, prj, send_prjns) {
-    if(prj->IsActive()) {
+    if(prj->MainIsActive()) {
       prj->send_idx = n_send_prjns++;
     }
     else {
       prj->send_idx = -1;
     }
   }
-}
-
-void Layer::BuildUnitsFlatList(Network* net) {
-  units_flat_idx = net->units_flat.size;
-  FOREACH_ELEM_IN_GROUP(Unit, un, units) {
-    if(un->lesioned()) continue;
-    un->flat_idx = net->units_flat.size;
-    net->units_flat.Add(un);
-  }
-  // this is needed after loading for no_build nets -- _threads called then..
-  if(unit_groups && gp_geom.n > 0) {
-    gp_output_names.SetGeom(2,gp_geom.x,gp_geom.y);
-  }
-}
-
-bool Layer::CheckBuild(bool quiet) {
-  bool rval = true;
-  if(!units_lesioned) {
-    if(unit_groups && !virt_groups) {
-      if(CheckError((units.gp.size != gp_geom.n), quiet, rval,
-                    "number of unit groups != target -- is:", String(units.gp.size),
-                    "should be:", String(gp_geom.n))) {
-        return false;
-      }
-      for(int g=0; g<units.gp.size; g++) {
-        Unit_Group* ug = (Unit_Group*)units.gp.FastEl(g);
-        if(CheckError((ug->size != un_geom.n), quiet, rval,
-                      "number of units in group:",String(g),"!= target -- is:", String(ug->size),
-                      "should be:", String(un_geom.n))) {
-          return false;
-        }
-      }
-    }
-    else {
-      if(CheckError((units.size != flat_geom.n), quiet, rval,
-                    "number of units != target -- is:", String(units.size),
-                    "should be:", String(flat_geom.n))) {
-        return false;
-      }
-    }
-  }
-
-  FOREACH_ELEM_IN_GROUP(Unit, u, units) {
-    if(CheckError((u->GetTypeDef() != units.el_typ), quiet, rval,
-                  "unit type not correct -- should be:", units.el_typ->name)) {
-      return false;
-    }
-    if(u->lesioned()) continue;
-    if(!u->CheckBuild(quiet))
-      return false;
-  }
-  return true;
-}
-
-bool Layer::CheckConnect(bool quiet) {
-  FOREACH_ELEM_IN_GROUP(Projection, prjn, projections) {
-    if(!prjn->CheckConnect(quiet)) return false;
-  }
-  return true;
 }
 
 void Layer::CheckThisConfig_impl(bool quiet, bool& rval) {
@@ -1063,10 +844,7 @@ void Layer::CheckThisConfig_impl(bool quiet, bool& rval) {
 
   CheckSpecs();
 
-  if (!CheckBuild(quiet)) {rval = false; return;}
-  if (!CheckConnect(quiet)) {rval = false; return;}
-
-  UnitSpec* us = GetUnitSpec();
+  UnitSpec* us = GetMainUnitSpec();
   if(us) {
     bool chk = us->CheckConfig_Unit(this, quiet);
     if(!chk) rval = false;
@@ -1080,56 +858,7 @@ void Layer::CheckChildConfig_impl(bool quiet, bool& rval) {
 
   inherited::CheckChildConfig_impl(quiet, rval);
   // layerspec should take over this function in layers that have them!
-  units.CheckConfig(quiet, rval);
   projections.CheckConfig(quiet, rval);
-}
-
-void Layer::RemoveUnits() {
-  taMisc::Busy();
-  StructUpdate(true);
-  if(units.gp.size == 0) {
-    units.RemoveAll();
-  }
-  else {
-    for(int g=0; g<units.gp.size; g++) {
-      Unit_Group* ug = (Unit_Group*)units.gp.FastEl(g);
-      ug->RemoveAll();
-    }
-  }
-  StructUpdate(false);
-  taMisc::DoneBusy();
-}
-
-void Layer::RemoveUnitGroups() {
-  taMisc::Busy();
-  StructUpdate(true);
-  units.RemoveAll();
-  StructUpdate(false);
-  taMisc::DoneBusy();
-}
-
-void Layer::Connect_Sizes(Network* net) {
-  taMisc::Busy();
-  StructUpdate(true);
-  FOREACH_ELEM_IN_GROUP(Projection, p, projections) {
-    if(p->NotActive()) continue;
-    p->Connect_Sizes();
-  }
-
-  StructUpdate(false);
-  taMisc::DoneBusy();
-}
-
-void Layer::Connect_Cons(Network* net) {
-  taMisc::Busy();
-  StructUpdate(true);
-  FOREACH_ELEM_IN_GROUP(Projection, p, projections) {
-    if(p->NotActive()) continue;
-    p->Connect_Cons();
-  }
-
-  StructUpdate(false);
-  taMisc::DoneBusy();
 }
 
 void Layer::DisConnect() {
@@ -1153,26 +882,22 @@ void Layer::DisConnect_impl() {
   projections.Reset();
 }
 
-int Layer::CountCons(Network* net) {
-  int n_cons = 0;
-  FOREACH_ELEM_IN_GROUP(Unit, u, units) {
-    if(u->lesioned()) continue;
-    n_cons += u->CountCons(net);
-  }
-  return n_cons;
-}
-
 void Layer::SyncLayerState() {
-  Network* net = GET_MY_OWNER(Network);
-  if (!net || !net->IsBuiltIntact()) return;
-  net->SyncLayerState_Layer(this);
+  NetworkState_cpp* net = GetValidNetState();
+  if(!net) return;
+
+  own_net->SyncLayerState_Layer(this);
 }
 
 void Layer::SetLayUnitExtFlags(int flg) {
+  NetworkState_cpp* net = GetValidNetState();
+  if(!net) return;
+  
   SetExtFlag(flg);
-  FOREACH_ELEM_IN_GROUP(Unit, u, units) {
+  for(int ui=0; ui < n_units; ui++) {
+    UnitState_cpp* u = GetUnitState(net, ui);
     if(u->lesioned()) continue;
-    u->GetUnitState()->SetExtFlag((UnitState_cpp::ExtFlags)flg);
+    u->SetExtFlag((UnitState_cpp::ExtFlags)flg);
   }
 }
 
@@ -1190,94 +915,125 @@ void Layer::ApplyInputData(taMatrix* data, ExtFlags ext_flags,
   taVector2i offs(0,0);
   if(offset) offs = *offset;
 
+  NetworkState_cpp* net = GetValidNetState();
+  if(!net) return;
+  
   // apply flags if we are the controller (zero offset)
   if((offs.x == 0) && (offs.y == 0)) {
-    ApplyLayerFlags(ext_flags);
+    ApplyLayerFlags(net, ext_flags);
   }
   if(data->dims() == 1) {
-    ApplyInputData_1d(data, ext_flags, ran, na_by_range);
+    ApplyInputData_1d(net, data, ext_flags, ran, na_by_range);
   }
   else if(data->dims() == 2) {
-    ApplyInputData_2d(data, ext_flags, ran, offs, na_by_range);
+    ApplyInputData_2d(net, data, ext_flags, ran, offs, na_by_range);
   }
   else {
     if(unit_groups) {
-      ApplyInputData_Gp4d(data, ext_flags, ran, na_by_range); // note: no offsets -- layerwriter does check
+      ApplyInputData_Gp4d(net, data, ext_flags, ran, na_by_range); // note: no offsets -- layerwriter does check
     }
     else {
-      ApplyInputData_Flat4d(data, ext_flags, ran, offs, na_by_range);
+      ApplyInputData_Flat4d(net, data, ext_flags, ran, offs, na_by_range);
     }
   }
   SyncLayerState();
 }
 
-void Layer::ApplyInputData_1d(taMatrix* data, ExtFlags ext_flags,
+void Layer::ApplyInputData_1d(NETWORK_STATE* net, taMatrix* data, ExtFlags ext_flags,
                               Random* ran, bool na_by_range) {
-  for(int d_x = 0; d_x < data->dim(0); d_x++) {
-    Unit* un = units.Leaf(d_x);
-    if(un) {
-      float val = data->SafeElAsVar(d_x).toFloat();
-      un->ApplyInputData(val, (UnitState_cpp::ExtFlags)ext_flags, ran, na_by_range);
+  // todo: in the future, put random on unitspec and move this to State
+  int max_x = MIN(data->dim(0), n_units);
+  bool do_rand = (ran && (ran->type != Random::NONE));
+  UNIT_SPEC_CPP* us = GetUnitSpec(net);
+  for(int d_x = 0; d_x < max_x; d_x++) {
+    UNIT_STATE* u = GetUnitStateSafe(net, d_x);
+    if(!u || u->lesioned()) continue;
+    float val = data->SafeElAsVar(d_x).toFloat();
+    if(do_rand) {
+      val += ran->Gen();
     }
+    us->ApplyInputData(u, net, val, (UnitState_cpp::ExtFlags)ext_flags, na_by_range);
   }
 }
 
-void Layer::ApplyInputData_2d(taMatrix* data, ExtFlags ext_flags,
+void Layer::ApplyInputData_2d(NETWORK_STATE* net, taMatrix* data, ExtFlags ext_flags,
                               Random* ran, const taVector2i& offs, bool na_by_range) {
-  for(int d_y = 0; d_y < data->dim(1); d_y++) {
+  int max_x = MIN(data->dim(0)-offs.x, flat_geom.x);
+  int max_y = MIN(data->dim(1)-offs.y, flat_geom.y);
+  bool do_rand = (ran && (ran->type != Random::NONE));
+  UNIT_SPEC_CPP* us = GetUnitSpec(net);
+  for(int d_y = 0; d_y < max_y; d_y++) {
     int u_y = offs.y + d_y;
-    for(int d_x = 0; d_x < data->dim(0); d_x++) {
+    for(int d_x = 0; d_x < max_x; d_x++) {
       int u_x = offs.x + d_x;
-      Unit* un = UnitAtCoord(u_x, u_y);
-      if(un) {
-        float val = data->SafeElAsVar(d_x, d_y).toFloat();
-        un->ApplyInputData(val, (UnitState_cpp::ExtFlags)ext_flags, ran, na_by_range);
+      UNIT_STATE* u = GetUnitStateFlatXY(net, d_x, d_y);
+      if(!u || u->lesioned()) continue;
+      float val = data->SafeElAsVar(d_x, d_y).toFloat();
+      if(do_rand) {
+        val += ran->Gen();
       }
+      us->ApplyInputData(u, net, val, (UnitState_cpp::ExtFlags)ext_flags, na_by_range);
     }
   }
 }
 
-void Layer::ApplyInputData_Flat4d(taMatrix* data, ExtFlags ext_flags,
+void Layer::ApplyInputData_Flat4d(NETWORK_STATE* net, taMatrix* data, ExtFlags ext_flags,
                                   Random* ran, const taVector2i& offs, bool na_by_range) {
   // outer-loop is data-group (groups of x-y data items)
-  for(int dg_y = 0; dg_y < data->dim(3); dg_y++) {
-    for(int dg_x = 0; dg_x < data->dim(2); dg_x++) {
+  int max_x = MIN(data->dim(0), un_geom.x);
+  int max_y = MIN(data->dim(1), un_geom.y);
+  int max_gx = MIN(data->dim(2), gp_geom.x);
+  int max_gy = MIN(data->dim(3), gp_geom.y);
+  bool do_rand = (ran && (ran->type != Random::NONE));
+  UNIT_SPEC_CPP* us = GetUnitSpec(net);
+  for(int dg_y = 0; dg_y < max_gy; dg_y++) {
+    for(int dg_x = 0; dg_x < max_gx; dg_x++) {
 
       for(int d_y = 0; d_y < data->dim(1); d_y++) {
         int u_y = offs.y + dg_y * data->dim(1) + d_y; // multiply out data indicies
         for(int d_x = 0; d_x < data->dim(0); d_x++) {
           int u_x = offs.x + dg_x * data->dim(0) + d_x; // multiply out data indicies
-          Unit* un = UnitAtCoord(u_x, u_y);
-          if(un) {
-            float val = data->SafeElAsVar(d_x, d_y, dg_x, dg_y).toFloat();
-            un->ApplyInputData(val, (UnitState_cpp::ExtFlags)ext_flags, ran, na_by_range);
+          UNIT_STATE* u = GetUnitStateFlatXY(net, d_x, d_y);
+          if(!u || u->lesioned()) continue;
+          float val = data->SafeElAsVar(d_x, d_y, dg_x, dg_y).toFloat();
+          if(do_rand) {
+            val += ran->Gen();
           }
+          us->ApplyInputData(u, net, val, (UnitState_cpp::ExtFlags)ext_flags, na_by_range);
         }
       }
     }
   }
 }
 
-void Layer::ApplyInputData_Gp4d(taMatrix* data, ExtFlags ext_flags, Random* ran,
+void Layer::ApplyInputData_Gp4d(NETWORK_STATE* net, taMatrix* data, ExtFlags ext_flags, Random* ran,
                                 bool na_by_range) {
   // outer-loop is data-group (groups of x-y data items)
-  for(int dg_y = 0; dg_y < data->dim(3); dg_y++) {
-    for(int dg_x = 0; dg_x < data->dim(2); dg_x++) {
+  int max_x = MIN(data->dim(0), un_geom.x);
+  int max_y = MIN(data->dim(1), un_geom.y);
+  int max_gx = MIN(data->dim(2), gp_geom.x);
+  int max_gy = MIN(data->dim(3), gp_geom.y);
+  bool do_rand = (ran && (ran->type != Random::NONE));
+  UNIT_SPEC_CPP* us = GetUnitSpec(net);
+  for(int dg_y = 0; dg_y < max_gy; dg_y++) {
+    for(int dg_x = 0; dg_x < max_gx; dg_x++) {
 
-      for(int d_y = 0; d_y < data->dim(1); d_y++) {
-        for(int d_x = 0; d_x < data->dim(0); d_x++) {
-          Unit* un = UnitAtGpCoord(dg_x, dg_y, d_x, d_y);
-          if(un) {
-            float val = data->SafeElAsVar(d_x, d_y, dg_x, dg_y).toFloat();
-            un->ApplyInputData(val, (UnitState_cpp::ExtFlags)ext_flags, ran, na_by_range);
+      for(int d_y = 0; d_y < max_y; d_y++) {
+        for(int d_x = 0; d_x < max_x; d_x++) {
+          UNIT_STATE* u = GetUnitStateGpUnXY(net, dg_x, dg_y, d_x, d_y);
+          if(!u || u->lesioned()) continue;
+          float val = data->SafeElAsVar(d_x, d_y, dg_x, dg_y).toFloat();
+          if(do_rand) {
+            val += ran->Gen();
           }
+          us->ApplyInputData(u, net, val, (UnitState_cpp::ExtFlags)ext_flags, na_by_range);
         }
       }
     }
   }
 }
 
-void Layer::ApplyLayerFlags(ExtFlags act_ext_flags) {
+void Layer::ApplyLayerFlags(NETWORK_STATE* net, ExtFlags act_ext_flags) {
   SetExtFlag(act_ext_flags);
 }
 
@@ -1289,22 +1045,21 @@ void Layer::ApplyLayerFlags(ExtFlags act_ext_flags) {
 
 
 void Layer::Init_Weights(bool recv_cons) {
-  if(!own_net) return;
-  if(!own_net->IsBuiltIntact()) return;
-  if(recv_cons) {
-    FOREACH_ELEM_IN_GROUP(Projection, p, projections) {
-      if(p->NotActive()) continue;
-      p->Init_Weights();
-    }
-  }
-  else {
-    FOREACH_ELEM_IN_GROUP(Projection, p, send_prjns) {
-      if(p->NotActive()) continue;
-      p->Init_Weights();
-    }
-  }
+  NetworkState_cpp* net = GetValidNetState();
+  if(!net) return;
+
+  LAYER_STATE* lay = GetLayerState(net);
+  lay->Init_Weights(net, recv_cons);
 }
 
+void Layer::Copy_Weights(Layer* src, bool recv_cons) {
+  NetworkState_cpp* net = GetValidNetState();
+  if(!net) return;
+
+  LAYER_STATE* lay = GetLayerState(net);
+  LAYER_STATE* src_lay = src->GetLayerState(net);
+  lay->Copy_Weights(net, src_lay, recv_cons);
+}
 
 // todo: dmem fix!
 
@@ -1317,92 +1072,11 @@ void Layer::Init_Weights(bool recv_cons) {
 ////////////////////////////////////////////////////////////////////////////////
 //      The following are misc functionality not required for primary computing
 
-void Layer::Copy_Weights(const Layer* src) {
-  units.Copy_Weights(&(src->units));
-}
-
-void Layer::SaveWeights_strm(ostream& strm, Unit::WtSaveFormat fmt, Projection* prjn) {
-  // name etc is saved & processed by network level guy -- this is equiv to unit group
-  
-  // save any #SAVE_WTS layer vals
-  TypeDef* td = GetTypeDef();
-  for(int i=0; i<td->members.size; i++) {
-    MemberDef* md = td->members[i];
-    if(!md->HasOption("SAVE_WTS")) continue;
-    strm << "<" << md->name << " " << md->GetValStr((void*)this) << ">\n";
-  }
-  
-  units.SaveWeights_strm(strm, fmt, prjn);
-}
-
-int Layer::LoadWeights_strm(istream& strm, Unit::WtSaveFormat fmt, bool quiet, Projection* prjn) {
-  // name etc is saved & processed by network level guy -- this is equiv to unit group
-
-  // load any #SAVE_WTS layer vals
-  TypeDef* td = GetTypeDef();
-  while(true) {
-    int c = strm.peek();          // check for <U for UnGp
-    if(c == '<') {
-      strm.get();
-      c = strm.peek();
-      if(c == 'U') {
-        strm.unget();           // < goes back
-        break;                  // done
-      }
-      else { // got a SAVE_WTS member
-        strm.unget();           // < goes back
-        String tag;
-        String val;
-        taMisc::read_tag(strm, tag, val);
-        MemberDef* md = td->members.FindName(tag);
-        if(md) {
-          md->SetValStr(val, (void*)this);
-        }
-        else {
-          TestWarning(true, "LoadWeights",
-                      "member not found:", tag, "value:", val);
-        }
-      }
-    }
-    else {
-      break;                  // some other badness
-    }
-  }
-  
-  return units.LoadWeights_strm(strm, fmt, quiet, prjn);
-}
-
-int Layer::SkipWeights_strm(istream& strm, Unit::WtSaveFormat fmt, bool quiet) {
-  return Unit_Group::SkipWeights_strm(strm, fmt, quiet);
-}
-
-void Layer::SaveWeights(const String& fname) {
-  taFiler* flr = GetSaveFiler(fname, ".wts", true);
-  if(flr->ostrm)
-    SaveWeights_strm(*flr->ostrm);
-  flr->Close();
-  taRefN::unRefDone(flr);
-}
-
-bool Layer::LoadWeights(const String& fname, bool quiet) {
-  taFiler* flr = GetLoadFiler(fname, ".wts", true);
-  bool rval = false;
-  if(flr->istrm) {
-    rval = LoadWeights_strm(*flr->istrm, Unit::TEXT, quiet);
-  }
-  else {
-    TestError(true, "LoadWeights", "aborted due to inability to load weights file");
-    // the above should be unnecessary but we're not getting the error sometimes..
-  }
-  flr->Close();
-  taRefN::unRefDone(flr);
-  return rval;
-}
 
 void Layer::PropagateInputDistance() {
   int new_dist = dist.fm_input + 1;
   FOREACH_ELEM_IN_GROUP(Projection, p, send_prjns) {
-    if(p->NotActive()) continue;
+    if(p->MainNotActive()) continue;
     if(p->layer->dist.fm_input >= 0) { // already set
       if(new_dist < p->layer->dist.fm_input) { // but we're closer
         p->layer->dist.fm_input = new_dist;
@@ -1420,7 +1094,7 @@ void Layer::PropagateInputDistance() {
 void Layer::PropagateOutputDistance() {
   int new_dist = dist.fm_output + 1;
   FOREACH_ELEM_IN_GROUP(Projection, p, projections) {
-    if(p->NotActive()) continue;
+    if(p->MainNotActive()) continue;
     if(p->from->dist.fm_output >= 0) { // already set
       if(new_dist < p->from->dist.fm_output) { // but we're closer
         p->from->dist.fm_output = new_dist;
@@ -1439,7 +1113,7 @@ void Layer::Compute_PrjnDirections() {
   FOREACH_ELEM_IN_GROUP(Projection, p, projections) {
     if(p->dir_fixed && p->direction != Projection::DIR_UNKNOWN)
       continue;
-    if(p->NotActive()) {
+    if(p->MainNotActive()) {
       p->direction = Projection::DIR_UNKNOWN;
       continue;
     }
@@ -1469,6 +1143,24 @@ void Layer::Compute_PrjnDirections() {
   }
 }
 
+String Layer::GetUnitNameIdx(int flat_un_idx) {
+  if(!SAVE_UNIT_NAMES) return _nilString;
+  if(unit_groups && gp_unit_names_4d) {
+    int gp_x, gp_y, un_x, un_y;
+    GetGpUnXYFmIdx(flat_un_idx, gp_x, gp_y, un_x, un_y);
+    return unit_names.SafeEl(gp_x, gp_y, un_x, un_y);
+  }
+  else {
+    int un_x, un_y;
+    GetUnFlatXYFmIdx(flat_un_idx, un_x, un_y);
+    return unit_names.SafeEl(un_x, un_y);
+  }
+}
+
+String Layer::GetUnitName(UnitState_cpp* un) {
+  return GetUnitNameIdx(un->lay_un_idx);
+}
+
 bool Layer::SetUnitNames(bool force_use_unit_names) {
   if(!force_use_unit_names && !HasLayerFlag(SAVE_UNIT_NAMES)) return false;
   SetLayerFlag(SAVE_UNIT_NAMES);
@@ -1476,95 +1168,13 @@ bool Layer::SetUnitNames(bool force_use_unit_names) {
   if(unit_groups) {
     if(gp_unit_names_4d) {
       unit_names.SetGeom(4, un_geom.x, un_geom.y, gp_geom.x, gp_geom.y);
-      int gx, gy, ux, uy;
-      for (gy = 0; gy < gp_geom.y; ++gy) {
-        for (gx = 0; gx < gp_geom.x; ++gx) {
-          for (uy = 0; uy < un_geom.y; ++uy) {
-            for (ux = 0; ux < un_geom.x; ++ux) {
-              Unit* un = UnitAtGpCoord(gx, gy, ux, uy);
-              if (!un) continue;
-              un->SetName(unit_names.SafeEl(ux, uy, gx, gy));
-            }
-          }
-        }
-      }
     }
     else {
       unit_names.SetGeom(2, un_geom.x, un_geom.y);
-      int gx, gy, ux, uy;
-      for (gy = 0; gy < gp_geom.y; ++gy) {
-        for (gx = 0; gx < gp_geom.x; ++gx) {
-          for (uy = 0; uy < un_geom.y; ++uy) {
-            for (ux = 0; ux < un_geom.x; ++ux) {
-              Unit* un = UnitAtGpCoord(gx, gy, ux, uy);
-              if (!un) continue;
-              un->SetName(unit_names.SafeEl(ux, uy));
-            }
-          }
-        }
-      }
     }
   }
   else {
     unit_names.SetGeom(2, un_geom.x, un_geom.y);
-    int x, y;
-    for (y = 0; y < un_geom.y; ++y) {
-      for (x = 0; x < un_geom.x; ++x) {
-        Unit* un = UnitAtCoord(x, y);
-        if (!un) continue;
-        un->SetName(unit_names.SafeEl(x, y));
-      }
-    }
-  }
-  return true;
-}
-
-bool Layer::GetUnitNames(bool force_use_unit_names) {
-  if(!force_use_unit_names && !HasLayerFlag(SAVE_UNIT_NAMES)) return false;
-  SetLayerFlag(SAVE_UNIT_NAMES);
-  // first enforce geom, then do it.
-  if(unit_groups) {
-    if(gp_unit_names_4d) {
-      unit_names.SetGeom(4, un_geom.x, un_geom.y, gp_geom.x, gp_geom.y);
-      int gx, gy, ux, uy;
-      for (gy = 0; gy < gp_geom.y; ++gy) {
-        for (gx = 0; gx < gp_geom.x; ++gx) {
-          for (uy = 0; uy < un_geom.y; ++uy) {
-            for (ux = 0; ux < un_geom.x; ++ux) {
-              Unit* un = UnitAtGpCoord(gx, gy, ux, uy);
-              if (!un) continue;
-              unit_names.Set(un->GetName(), ux, uy, gx, gy);
-            }
-          }
-        }
-      }
-    }
-    else {
-      unit_names.SetGeom(2, un_geom.x, un_geom.y);
-      int gx, gy, ux, uy;
-      for (gy = 0; gy < gp_geom.y; ++gy) {
-        for (gx = 0; gx < gp_geom.x; ++gx) {
-          for (uy = 0; uy < un_geom.y; ++uy) {
-            for (ux = 0; ux < un_geom.x; ++ux) {
-              Unit* un = UnitAtGpCoord(gx, gy, ux, uy);
-              if (!un) continue;
-              unit_names.Set(un->GetName(), ux, uy);
-            }
-          }
-        }
-      }
-    }
-  }
-  else {
-    unit_names.SetGeom(2, un_geom.x, un_geom.y);
-    int x, y;
-    for (y = 0; y < un_geom.y; ++y) {
-      for (x = 0; x < un_geom.x; ++x) {
-        Unit* un = UnitAtCoord(x, y);
-        if (!un) continue;
-        unit_names.Set(un->GetName(), x, y);
-      }
-    }
   }
   return true;
 }
@@ -1616,11 +1226,15 @@ bool Layer::SetUnitNamesFromDataCol(const DataCol* unit_names_col, int max_un_ch
 }
 
 void Layer::GetLocalistName() {
-  FOREACH_ELEM_IN_GROUP(Unit, u, units) {
+  NetworkState_cpp* net = GetValidNetState();
+  if(!net) return;
+
+  for(int ui=0; ui < n_units; ui++) {
+    UnitState_cpp* u = GetUnitState(net, ui);
     if(u->lesioned()) continue;
-    u->GetLocalistName();
+    // todo: do
+    // u->GetLocalistName();
   }
-  GetUnitNames(); // grab from units
 }
 
 int Layer::FindUnitNamedIdx(const String& nm, bool err) {
@@ -1630,52 +1244,124 @@ int Layer::FindUnitNamedIdx(const String& nm, bool err) {
   return idx;
 }
 
-Unit* Layer::FindUnitNamed(const String& nm, bool err) {
+UnitState_cpp* Layer::FindUnitNamed(const String& nm, bool err) {
+  NetworkState_cpp* net = GetValidNetState();
+  if(!net) return NULL;
+
   int idx = FindUnitNamedIdx(nm, err);
   if(idx >= 0) {
-    return units.Leaf(idx);
+    return GetUnitState(net, idx);
   }
   return NULL;
 }
 
 void Layer::TransformWeights(const SimpleMathSpec& trans) {
-  units.TransformWeights(trans);
+  NetworkState_cpp* net = GetValidNetState();
+  if(!net) return;
+  
+  for(int ui=0; ui < n_units; ui++) {
+    UnitState_cpp* u = GetUnitState(net, ui);
+    if(u->lesioned()) continue;
+    u->TransformWeights(net, trans);
+  }
 }
 
 void Layer::AddNoiseToWeights(const Random& noise_spec) {
-  units.AddNoiseToWeights(noise_spec);
+  NetworkState_cpp* net = GetValidNetState();
+  if(!net) return;
+  
+  for(int ui=0; ui < n_units; ui++) {
+    UnitState_cpp* u = GetUnitState(net, ui);
+    if(u->lesioned()) continue;
+    u->AddNoiseToWeights(net, noise_spec);
+  }
 }
 
-int Layer::PruneCons(const SimpleMathSpec& pre_proc,
-                        Relation::Relations rel, float cmp_val)
-{
-  return units.PruneCons(pre_proc, rel, cmp_val);
+int Layer::PruneCons(const SimpleMathSpec& pre_proc, Relation::Relations rel, float cmp_val) {
+  NetworkState_cpp* net = GetValidNetState();
+  if(!net) return 0;
+  
+  int rval = 0;
+  for(int ui=0; ui < n_units; ui++) {
+    UnitState_cpp* u = GetUnitState(net, ui);
+    if(u->lesioned()) continue;
+    rval += u->PruneCons(net, pre_proc, rel, cmp_val);
+  }
+  return rval;
 }
 
 int Layer::ProbAddCons(float p_add_con, float init_wt) {
+  NetworkState_cpp* net = GetValidNetState();
+  if(!net) return 0;
+  
   int rval = 0;
   FOREACH_ELEM_IN_GROUP(Projection, p, projections) {
-    if(p->NotActive()) continue;
+    if(p->MainNotActive()) continue;
     rval += p->ProbAddCons(p_add_con, init_wt);
   }
   return rval;
 }
 
 int Layer::LesionCons(float p_lesion, bool permute) {
-  return units.LesionCons(p_lesion, permute);
+  NetworkState_cpp* net = GetValidNetState();
+  if(!net) return 0;
+  
+  int rval = 0;
+  for(int ui=0; ui < n_units; ui++) {
+    UnitState_cpp* u = GetUnitState(net, ui);
+    if(u->lesioned()) continue;
+    rval += u->LesionCons(net, p_lesion, permute);
+  }
+  return rval;
 }
 
 int Layer::LesionUnits(float p_lesion, bool permute) {
+  NetworkState_cpp* net = GetValidNetState();
+  if(!net) return 0;
+  
+  int rval = 0;
   StructUpdate(true);
-  int rval = units.LesionUnits(p_lesion, permute);
+  UnLesionUnits();              // always start unlesioned
+  if(permute) {
+    rval = (int) (p_lesion * (float)n_units);
+    if(rval == 0) return 0;
+    int_Array ary;
+    int j;
+    for(j=0; j<n_units; j++)
+      ary.Add(j);
+    ary.Permute();
+    ary.size = rval;
+    ary.Sort();
+    for(j=ary.size-1; j>=0; j--) {
+      UnitState_cpp* u = GetUnitState(net, ary.FastEl(j));
+      u->Lesion();             // just sets a flag
+    }
+  }
+  else {
+    int j;
+    for(j=n_units-1; j>=0; j--) {
+      if(Random::ZeroOne() <= p_lesion) {
+        UnitState_cpp* u = GetUnitState(net, j);
+        u->Lesion();
+        rval++;
+      }
+    }
+  }
+//   own_lay->units_lesioned = true;       // record that units were lesioned
   StructUpdate(false);
   UpdtAfterNetModIfNecc();
   return rval;
 }
 
 void Layer::UnLesionUnits() {
+  NetworkState_cpp* net = GetValidNetState();
+  if(!net) return;
+
   StructUpdate(true);
-  units.UnLesionUnits();
+  for(int ui=0; ui < n_units; ui++) {
+    UnitState_cpp* u = GetUnitState(net, ui);
+    u->UnLesion();
+  }
   StructUpdate(false);
   UpdtAfterNetModIfNecc();
 }
@@ -1685,29 +1371,15 @@ void Layer::UpdtAfterNetModIfNecc() {
   own_net->UpdtAfterNetMod();
 }
 
-bool Layer::UpdateUnitSpecs(bool force) {
-  if(!force && (unit_spec.SPtr() == m_prv_unit_spec)) return false;
+bool Layer::UnitSpecUpdated() {
+  if(unit_spec.SPtr() == m_prv_unit_spec) return false;
   UnitSpec* sp = unit_spec.SPtr();
   if(!sp) return false;
+  if(own_net)
+    own_net->ClearIntact();
   m_prv_unit_spec = sp;         // don't redo it
-  FOREACH_ELEM_IN_GROUP(Unit, u, units) {
-    if(sp->CheckObjectType(u))
-      u->SetUnitSpec(sp);
-    else
-      return false;             // don't generate a bunch of redundant messages..
-  }
   return true;
 }
-
-bool Layer::UpdateConSpecs(bool force) {
-  bool rval = true;
-  FOREACH_ELEM_IN_GROUP(Projection, p, projections) {
-    if(!p->UpdateConSpecs(force))
-      rval = false;
-  }
-  return rval;
-}
-
 
 bool Layer::ApplySpecToMe(BaseSpec* spec) {
   if(spec == NULL) return false;
@@ -1725,33 +1397,19 @@ bool Layer::ApplySpecToMe(BaseSpec* spec) {
 bool Layer::SetUnitSpec(UnitSpec* sp) {
   if(!sp)       return false;
   if(!unit_spec.SetSpec(sp)) return false;
-  if(!unit_spec.CheckObjTypeForSpec(units.el_typ)) {
-    if(taMisc::Choice("The unit spec you are setting is not compatible with the unit type for units in this layer -- should I change the unit type to be: " +  unit_spec->min_obj_type->name
-                      + " (if you answer No, you will continue to get errors until a compatible selection is made)",
-                      "Yes", "No") == 0) {
-      units.el_typ = unit_spec->min_obj_type;
-    }
+  if(!unit_spec.CheckObjTypeForSpec(own_net->UnitStateType())) {
+    taMisc::Error("The unit spec you are setting is not compatible with the unit type for units in this network -- which is determined by the network type");
   }
-  return UpdateUnitSpecs();
-}
-
-void Layer::SetUnitType(TypeDef* td) {
-  if(td == NULL) return;
-  units.el_typ = td;
-  if(units.gp.size > 0) {
-    int j;
-    for(j=0;j<units.gp.size;j++) {
-      ((Unit_Group*)units.gp.FastEl(j))->el_typ = td;
-    }
-  }
+  return UnitSpecUpdated();
 }
 
 bool Layer::EditState() {
   if(!taMisc::gui_active) return false;
-  Network* net = GET_MY_OWNER(Network);
-  if (!net || !net->IsBuiltIntact()) return false;
-  if (taiEdit *ie = net->LayerStateType()->ie) {
-    LayerState_cpp* lay = GetLayerState(net->net_state);
+  NetworkState_cpp* net = GetValidNetState();
+  if(!net) return false;
+  
+  if (taiEdit *ie = own_net->LayerStateType()->ie) {
+    LayerState_cpp* lay = GetLayerState(net);
     if(!lay) return false;
     return ie->Edit((void*)lay, false);
   }
@@ -1760,10 +1418,11 @@ bool Layer::EditState() {
 
 bool Layer::EditLayUnGpState() {
   if(!taMisc::gui_active) return false;
-  Network* net = GET_MY_OWNER(Network);
-  if (!net || !net->IsBuiltIntact()) return false;
-  if (taiEdit *ie = net->UnGpStateType()->ie) {
-    UnGpState_cpp* ugp = GetLayUnGpState(net->net_state);
+  NetworkState_cpp* net = GetValidNetState();
+  if(!net) return false;
+
+  if (taiEdit *ie = own_net->UnGpStateType()->ie) {
+    UnGpState_cpp* ugp = GetLayUnGpState(net);
     if(!ugp) return false;
     return ie->Edit((void*)ugp, false);
   }
@@ -1772,10 +1431,11 @@ bool Layer::EditLayUnGpState() {
 
 bool Layer::EditUnGpState(int un_gp_no) {
   if(!taMisc::gui_active) return false;
-  Network* net = GET_MY_OWNER(Network);
-  if (!net || !net->IsBuiltIntact()) return false;
-  if (taiEdit *ie = net->UnGpStateType()->ie) {
-    UnGpState_cpp* ugp = GetUnGpState(net->net_state, un_gp_no);
+  NetworkState_cpp* net = GetValidNetState();
+  if(!net) return false;
+  
+  if (taiEdit *ie = own_net->UnGpStateType()->ie) {
+    UnGpState_cpp* ugp = GetUnGpState(net, un_gp_no);
     if(!ugp) return false;
     return ie->Edit((void*)ugp, false);
   }
@@ -1788,15 +1448,34 @@ void Layer::MonitorVar(NetMonitor* net_mon, const String& variable) {
 }
 
 bool Layer::Snapshot(const String& variable, SimpleMathSpec& math_op, bool arg_is_snap) {
-  FOREACH_ELEM_IN_GROUP(Unit, u, units) {
+  NetworkState_cpp* net = GetValidNetState();
+  if(!net) return false;
+  
+  for(int ui=0; ui < n_units; ui++) {
+    UnitState_cpp* u = GetUnitState(net, ui);
     if(u->lesioned()) continue;
-    if(!u->Snapshot(variable, math_op, arg_is_snap)) return false;
+    if(!u->Snapshot(net, variable, math_op, arg_is_snap)) return false;
   }
   return true;
 }
 
-Unit* Layer::MostActiveUnit(int& idx) {
-  return units.MostActiveUnit(idx);
+UnitState_cpp* Layer::MostActiveUnit(int& idx) {
+  NetworkState_cpp* net = GetValidNetState();
+  if(!net) return NULL;
+  
+  idx = -1;
+  if(n_units == 0) return NULL;
+  UnitState_cpp* max_un = GetUnitState(net, 0);
+  float max_act = max_un->act;
+  for(int i=1;i<n_units;i++) {
+    UnitState_cpp* un = GetUnitState(net, i);
+    if(un->act > max_act) {
+      max_un = un;
+      idx = i;
+      max_act = max_un->act;
+    }
+  }
+  return max_un;
 }
 
 int Layer::ReplaceUnitSpec(UnitSpec* old_sp, UnitSpec* new_sp) {
@@ -1805,7 +1484,7 @@ int Layer::ReplaceUnitSpec(UnitSpec* old_sp, UnitSpec* new_sp) {
     unit_spec.SetSpec(new_sp);
     nchg++;
   }
-  UpdateUnitSpecs();
+  UnitSpecUpdated();
   return nchg;
 }
 
@@ -1824,12 +1503,15 @@ int Layer::ReplacePrjnSpec(ProjectionSpec* old_sp, ProjectionSpec* new_sp) {
 }
 
 int Layer::ReplaceLayerSpec(LayerSpec* old_sp, LayerSpec* new_sp) {
-  if(GetLayerSpec() != old_sp) return 0;
+  if(GetMainLayerSpec() != old_sp) return 0;
   SetLayerSpec(new_sp);
   return 1;
 }
 
 DataTable* Layer::WeightsToTable(DataTable* dt, Layer* send_lay) {
+  NetworkState_cpp* net = GetValidNetState();
+  if(!net) return NULL;
+  
   bool new_table = false;
   if (!dt) {
     taProject* proj = GetMyProj();
@@ -1839,7 +1521,7 @@ DataTable* Layer::WeightsToTable(DataTable* dt, Layer* send_lay) {
   if(send_lay == NULL) return NULL;
   bool gotone = false;
   FOREACH_ELEM_IN_GROUP(Projection, p, projections) {
-    if(p->NotActive()) continue;
+    if(p->MainNotActive()) continue;
     if(p->from.ptr() != send_lay) continue;
     p->WeightsToTable(dt);
     gotone = true;
@@ -1851,6 +1533,9 @@ DataTable* Layer::WeightsToTable(DataTable* dt, Layer* send_lay) {
 }
 
 DataTable* Layer::VarToTable(DataTable* dt, const String& variable) {
+  NetworkState_cpp* net = GetValidNetState();
+  if(!net) return NULL;
+  
   bool new_table = false;
   if (!dt) {
     taProject* proj = GetMyProj();
@@ -1858,12 +1543,11 @@ DataTable* Layer::VarToTable(DataTable* dt, const String& variable) {
     new_table = true;
   }
 
-  Network* net = GET_MY_OWNER(Network);
-  if(!net) return NULL;
+  if (!own_net || !own_net->IsBuiltIntact()) return NULL;
 
   NetMonitor nm;
-  taBase::Own(nm, this);
-  nm.SetDataNetwork(dt, net);
+  nm.OwnTempObj();
+  nm.SetDataNetwork(dt, own_net);
   nm.AddLayer(this, variable);
   nm.items[0]->max_name_len = 20; // allow long names
   nm.UpdateDataTable();
@@ -1880,7 +1564,10 @@ DataTable* Layer::ConVarsToTable(DataTable* dt, const String& var1, const String
                            const String& var6, const String& var7, const String& var8,
                            const String& var9, const String& var10, const String& var11,
                            const String& var12, const String& var13, const String& var14,
-                           Projection* prjn) {
+                           PrjnState_cpp* prjn) {
+  NetworkState_cpp* net = GetValidNetState();
+  if(!net) return NULL;
+
   bool new_table = false;
   if(!dt) {
     taProject* proj = GetMyProj();
@@ -1888,8 +1575,12 @@ DataTable* Layer::ConVarsToTable(DataTable* dt, const String& var1, const String
     new_table = true;
   }
   dt->StructUpdate(true);
-  units.ConVarsToTable(dt, var1, var2, var3, var4, var5, var6, var7, var8,
-                       var9, var10, var11, var12, var13, var14, prjn);
+  for(int ui=0; ui < n_units; ui++) {
+    UnitState_cpp* u = GetUnitState(net, ui);
+    if(u->lesioned()) continue;
+    u->ConVarsToTable(net, dt, var1, var2, var3, var4, var5, var6, var7, var8,
+                      var9, var10, var11, var12, var13, var14,  prjn);
+  }
   dt->StructUpdate(false);
   if(new_table)
     tabMisc::DelayedFunCall_gui(dt, "BrowserSelectMe");
@@ -1921,12 +1612,12 @@ DataTable* Layer::PrjnsToTable(DataTable* dt, bool sending) {
       Projection* pj = send_prjns.FastEl(i);
       dt->AddBlankRow();
       dt->SetVal(pj->layer->name, colnm, -1);
-      ProjectionSpec* ps = pj->GetPrjnSpec();
+      ProjectionSpec* ps = pj->GetMainPrjnSpec();
       if(ps)
         dt->SetVal(ps->name, "PrjnSpec", -1);
       else
         dt->SetVal("NULL", "PrjnSpec", -1);
-      ConSpec* cs = pj->GetConSpec();
+      ConSpec* cs = pj->GetMainConSpec();
       if(cs)
         dt->SetVal(cs->name, "ConSpec", -1);
       else
@@ -1938,12 +1629,12 @@ DataTable* Layer::PrjnsToTable(DataTable* dt, bool sending) {
       Projection* pj = projections.FastEl(i);
       dt->AddBlankRow();
       dt->SetVal(pj->from->name, colnm, -1);
-      ProjectionSpec* ps = pj->GetPrjnSpec();
+      ProjectionSpec* ps = pj->GetMainPrjnSpec();
       if(ps)
         dt->SetVal(ps->name, "PrjnSpec", -1);
       else
         dt->SetVal("NULL", "PrjnSpec", -1);
-      ConSpec* cs = pj->GetConSpec();
+      ConSpec* cs = pj->GetMainConSpec();
       if(cs)
         dt->SetVal(cs->name, "ConSpec", -1);
       else
@@ -1957,108 +1648,56 @@ DataTable* Layer::PrjnsToTable(DataTable* dt, bool sending) {
 }
 
 bool Layer::VarToVarCopy(const String& dest_var, const String& src_var) {
-  return units.VarToVarCopy(dest_var, src_var);
+  NetworkState_cpp* net = GetValidNetState();
+  if(!net) return false;
+  
+  TypeDef* unit_typ = own_net->UnitStateType();
+  
+  MemberDef* dest_md = unit_typ->members.FindName(dest_var);
+  if(TestWarning(!dest_md || !dest_md->type->InheritsFrom(TA_float), "VarToVarCopy",
+                 "Variable:", dest_var, "not found or not a float on units of type:",
+                 unit_typ->name)) {
+    return false;
+  }
+  MemberDef* src_md = unit_typ->members.FindName(src_var);
+  if(TestWarning(!src_md || !src_md->type->InheritsFrom(TA_float), "VarToVarCopy",
+                 "Variable:", src_var, "not found or not a float on units of type:",
+                 unit_typ->name)) {
+    return false;
+  }
+  for(int ui=0; ui < n_units; ui++) {
+    UnitState_cpp* u = GetUnitState(net, ui);
+    if(u->lesioned()) continue;
+    *((float*)dest_md->GetOff((void*)u)) = *((float*)src_md->GetOff((void*)u));
+  }
+  return true;
 }
 
 bool Layer::VarToVal(const String& dest_var, float val) {
-  return units.VarToVal(dest_var, val);
+  NetworkState_cpp* net = GetValidNetState();
+  if(!net) return false;
+  
+  TypeDef* unit_typ = own_net->UnitStateType();
+
+  MemberDef* dest_md = unit_typ->members.FindName(dest_var);
+  if(TestWarning(!dest_md || !dest_md->type->InheritsFrom(TA_float), "VarToVarCopy",
+                 "Variable:", dest_var, "not found or not a float on units of type:",
+                 unit_typ->name)) {
+    return false;
+  }
+  for(int ui=0; ui < n_units; ui++) {
+    UnitState_cpp* u = GetUnitState(net, ui);
+    if(u->lesioned()) continue;
+    *((float*)dest_md->GetOff((void*)u)) = val;
+  }
+  return true;
 }
 
-Unit* Layer::UnitAtCoord(int x, int y) const {
+UnitState_cpp* Layer::UnitAtDispCoord(int x, int y) const {
+  NetworkState_cpp* net = GetValidNetState();
+  if(!net) return NULL;
+
   if(unit_groups) {
-    int gp_x = x / un_geom.x;
-    int gp_y = y / un_geom.y;
-    int un_x = x % un_geom.x;
-    int un_y = y % un_geom.y;
-    return UnitAtGpCoord(gp_x, gp_y, un_x, un_y);
-  }
-  else {
-    if(x >= un_geom.x) return NULL; // y will be caught by safe..
-    int idx = y * un_geom.x + x;
-    return units.SafeEl(idx);
-  }
-  return NULL;
-}
-
-Unit* Layer::UnitAtGpCoord(int gp_x, int gp_y, int un_x, int un_y) const {
-  if(TestError(!unit_groups, "UnitAtGpCoord", "Layer is not configured for unit_groups"))
-    return NULL;
-  if(gp_x >= gp_geom.x || gp_y >= gp_geom.y ||
-     un_x >= un_geom.x || un_y >= un_geom.y) return NULL;
-  int gpidx = gp_y * gp_geom.x + gp_x;
-  int unidx = un_y * un_geom.x + un_x;
-  return UnitAtUnGpIdx(unidx, gpidx);
-}
-
-Unit* Layer::UnitAtGpIdxUnCoord(int gpidx, int un_x, int un_y) const {
-  if(TestError(!unit_groups, "UnitAtGpIdxUnCoord", "Layer is not configured for unit_groups"))
-    return NULL;
-  int unidx = un_y * un_geom.x + un_x;
-  return UnitAtUnGpIdx(unidx, gpidx);
-}
-
-Unit_Group* Layer::UnitGpAtCoord(int gp_x, int gp_y) const {
-  if(TestError(!unit_groups, "UnitGpAtCoord", "Layer is not configured for unit_groups"))
-    return NULL;
-  if(gp_x >= gp_geom.x) return NULL; // y will be caught by safe..
-  int gidx = gp_y * gp_geom.x + gp_x;
-  return (Unit_Group*)units.gp.SafeEl(gidx);
-}
-
-void Layer::UnitLogPos(Unit* un, int& x, int& y) const {
-  Unit_Group* own_sgp = un->own_subgp();
-  if(own_sgp) {
-    taVector2i gpos = own_sgp->GpLogPos();
-    x = gpos.x + un->pos.x;
-    y = gpos.y + un->pos.y;
-  }
-  else {
-    if(unit_groups && virt_groups) {
-      int gpidx = un->idx / un_geom.n;
-      int unidx = un->idx % un_geom.n;
-      int gp_y = gpidx / gp_geom.x;
-      int gp_x = gpidx % gp_geom.x;
-      int un_y = unidx / un_geom.x;
-      int un_x = unidx % un_geom.x;
-      y = gp_y * un_geom.y + un_y;
-      x = gp_x * un_geom.x + un_x;
-    }
-    else {
-      y = un->idx / flat_geom.x;  // unit index relative to flat geom
-      x = un->idx % flat_geom.x;
-    }
-  }
-}
-
-void Layer::UnitInGpLogPos(Unit* un, int& x, int& y) const {
-  Unit_Group* own_sgp = un->own_subgp();
-  if(own_sgp || !unit_groups) {
-    x = un->pos.x;
-    y = un->pos.y;
-  }
-  else {
-    if(unit_groups && virt_groups) {
-      int gpidx = un->idx / un_geom.n;
-      int unidx = un->idx % un_geom.n;
-      y = unidx / un_geom.x;
-      x = unidx % un_geom.x;
-    }
-  }
-}
-
-Unit* Layer::UnitAtDispCoord(int x, int y) const {
-  if(unit_groups && !virt_groups) {
-    // unit group can have its own position -- need to search through each one
-    for(int gi = 0; gi< units.gp.size; gi++) {
-      Unit_Group* ug = (Unit_Group*)units.gp.FastEl(gi);
-      if(x >= ug->pos.x && x < ug->pos.x + un_geom.x &&
-         y >= ug->pos.y && y < ug->pos.y + un_geom.y) {
-        return ug->UnitAtCoord(x - ug->pos.x, y - ug->pos.y);
-      }
-    }
-    return NULL;                // not found
-  }
-  else if(unit_groups && virt_groups) {
     int gpsz_x = un_geom.x + gp_spc.x;
     int gpsz_y = un_geom.y + gp_spc.y;
     int gp_x = x / gpsz_x;
@@ -2067,38 +1706,58 @@ Unit* Layer::UnitAtDispCoord(int x, int y) const {
     int gpst_y = gp_y * gpsz_y;
     int un_x = x - gpst_x;
     int un_y = y - gpst_y;
-    return UnitAtGpCoord(gp_x, gp_y, un_x, un_y);
+    return GetUnitStateGpUnXY(net, gp_x, gp_y, un_x, un_y);
   }
   else {
-    int idx = y * un_geom.x + x;
-    return units.SafeEl(idx);
-  }
-}
-
-void Layer::UnitDispPos(Unit* un, int& x, int& y) const {
-  Unit_Group* own_sgp = un->own_subgp();
-  if(own_sgp) {
-    x = own_sgp->pos.x + un->pos.x;
-    y = own_sgp->pos.y + un->pos.y;
-  }
-  else {                        // otherwise unit has it directly..
-    x = un->pos.x;
-    y = un->pos.y;
+    return GetUnitStateFlatXY(net, x, y);
   }
 }
 
 bool Layer::InLayerSubGroup() {
-  if(owner && owner->GetOwner() && owner->GetOwner()->InheritsFrom(&TA_Network))
-    return false;
+  NetworkState_cpp* net = GetValidNetState();
+  if(!net) return false;
   return true;
 }
 
 bool Layer::ChangeMyType(TypeDef* new_typ) {
-  if(TestError(units.leaves > 0, "ChangeMyType", "You must first remove all units in the network before changing type of Layer -- otherwise it takes FOREVER -- do Network/Structure/Remove Units"))
-    return false;
+  if(own_net) {
+    own_net->ClearIntact();
+  }
   return inherited::ChangeMyType(new_typ);
 }
 
+
+void Layer::SaveWeights(const String& fname) {
+  NetworkState_cpp* net = GetValidNetState();
+  if(!net) return;
+
+  LayerState_cpp* lst = GetLayerState(net);
+  taFiler* flr = GetSaveFiler(fname, ".wts", true);
+  if(flr->ostrm) {
+    net->LayerSaveWeights_strm(*flr->ostrm, lst);
+  }
+  flr->Close();
+  taRefN::unRefDone(flr);
+}
+
+bool Layer::LoadWeights(const String& fname, bool quiet) {
+  NetworkState_cpp* net = GetValidNetState();
+  if(!net) return false;
+
+  LayerState_cpp* lst = GetLayerState(net);
+  taFiler* flr = GetLoadFiler(fname, ".wts", true);
+  bool rval = false;
+  if(flr->istrm) {
+    rval = net->LayerLoadWeights_strm(*flr->istrm, lst, NetworkState_cpp::TEXT, quiet);
+  }
+  else {
+    TestError(true, "LoadWeights", "aborted due to inability to load weights file");
+    // the above should be unnecessary but we're not getting the error sometimes..
+  }
+  flr->Close();
+  taRefN::unRefDone(flr);
+  return rval;
+}
 
 #ifdef DMEM_COMPILE
 

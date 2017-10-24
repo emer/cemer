@@ -58,7 +58,8 @@ public:
   String                name;           // #READ_ONLY #SHOW name of the projection -- this is generated automatically based on the from name
 #endif
 
-  bool                  off;            // #DEF_false turn this projection off -- useful for experimenting with projections while being able to keep the specifications in place
+#include <PrjnState_core>
+  
   bool                  disp;           // display this projection in the network view display
   String                notes;          // #EDIT_DIALOG #NO_DIFF notes on this projection: what types of projection spec and conspec have been tried, what parameters are important, etc?
   Layer*                layer;          // #READ_ONLY #NO_SAVE #HIDDEN #NO_SET_POINTER layer this prjn is in
@@ -67,31 +68,22 @@ public:
   ProjectionSpec_SPtr   spec;           // #CAT_Structure spec for this item
   TypeDef*              con_type;       // #TYPE_Connection #CAT_Structure Type of connection
   ConSpec_SPtr          con_spec;       // #CAT_Structure conspec to use for creating connections
-
-  int                   recv_idx;       // #READ_ONLY #CAT_Structure receiving con_state index
-  int                   send_idx;       // #READ_ONLY #CAT_Structure sending con_state index
-  int                   recv_n;         // #READ_ONLY #CAT_Structure #DEF_1 number of receiving con_states allocated to this projection: almost always 1 -- some things won't work right if > 1 (e.g., copying)
-  int                   send_n;         // #READ_ONLY #CAT_Structure number of sending con_states: almost always 1 -- some things won't work right if > 1 (e.g., copying)
-
-  bool                  projected;       // #HIDDEN #CAT_Structure t/f if connected
-
   bool                  dir_fixed;      // fix the direction setting to specific value shown below (cannot fix DIR_UNKNOWN) -- otherwise it is automatically computed based on the layer_type settings
   PrjnDirection         direction;      // #CAT_Structure #NO_DIFF #CONDEDIT_ON_dir_fixed which direction does this projection go (in terms of distance from input and output layers) -- auto computed by Compute_PrjnDirection when network is built, or you can manually set, but be sure to set dir_fixed to keep that setting; optionally used by only some algorithms
   taColor               prjn_clr;       // #CAT_Structure Default color for the projection line and arrow (subservient to the Type-defined color, if applicable)
-  int                   prjn_idx;       // #READ_ONLY #NO_SAVE index into network state list of projections
 
-  inline ConSpec*       GetConSpec()    { return con_spec.spec.ptr(); }
+  inline bool           MainIsActive()      { return ((bool)layer && !off && !lesioned && (bool)from); }
+  // #CAT_Structure active test that works for main code -- before net state is built..
+  inline bool           MainNotActive()     { return !MainIsActive(); }
+  // #CAT_Structure active test that works for main code -- before net state is built..
+  
+  inline ConSpec*       GetMainConSpec()    { return con_spec.spec.ptr(); }
   // #CAT_Structure get the connection spec for this projection
-  inline ProjectionSpec* GetPrjnSpec()  { return spec.spec.ptr(); }
+  inline ProjectionSpec* GetMainPrjnSpec()  { return spec.spec.ptr(); }
   // #CAT_Structure get the projection spec for this projection
 
-  // note: following defined in Layer.h
-  inline bool   IsActive();
-  // #CAT_Access is this projection active and valid?
-
-  inline bool   NotActive() 
-  { return !IsActive(); }
-  // #CAT_Access is this projection NOT active and valid?
+  NetworkState_cpp* GetValidNetState() const;
+  // #CAT_State get our network state -- only will be returned if network is built, intact, and projection is intact..
 
   inline bool   ValidIdxs() 
   { return ((recv_idx >= 0) && (send_idx >= 0)); }
@@ -108,35 +100,14 @@ public:
   virtual void  SetCustomFrom(Layer* from_lay);
   // #MENU #MENU_ON_Actions #MENU_CONTEXT #DROP1 #DYN1 #CAT_Structure #INIT_ARGVAL_ON_from set a CUSTOM projection from given layer (if from_lay == layer, turns into SELF)
 
-  virtual void  RemoveCons();
-  // #MENU #MENU_ON_Actions #CONFIRM #CAT_Structure Reset all connections for this projection
-
-  virtual void  Copy_Weights(const Projection* src);
-  // #MENU #MENU_ON_Actions #MENU_SEP_BEFORE #CAT_Weights copies weights from other projection
-
  virtual void  CheckSpecs();
   // #CAT_Structure check to make sure that specs are not null and set to the right type, and update with new specs etc to fix any errors (with notify), so that at least network operations will not crash -- called in Build and CheckConfig
 
-  // convenience functions for those defined in the spec
-  void  Connect_Sizes()         { spec->Connect_Sizes(this); }
-  // #IGNORE first pass of connecting -- sets up all the Cons objects within units, and computes all the target allocation size information
-  void  Connect_Cons()         { spec->Connect_Cons(this); }
-  // #IGNORE third pass of connecting -- actually make the connections
-
-  int   ProbAddCons(float p_add_con, float init_wt = 0.0)
-  { return spec->ProbAddCons(this, p_add_con, init_wt); }
-  // #MENU #MENU_ON_Actions #USE_RVAL #CAT_Structure probabilistically add a proportion of new connections to replace those pruned previously, init_wt = initial weight value of new connection
-
-  void  Init_Weights_Prjn(ConState_cpp* cg, Network* net, int thr_no)
-  { spec->Init_Weights_Prjn(this, cg, net, thr_no); }
-  // #CAT_Weights #IGNORE when ProjectionSpec has init_wts set, this is called by network init weights routine for a given con group for given receiving unit ru
-  void  Init_Weights_renorm(ConState_cpp* cg, Network* net, int thr_no)
-  { spec->Init_Weights_renorm(this, cg, net, thr_no); }
-  // #CAT_Weights #IGNORE renormalize weights -- done as a second pass after Init_Weights and before Init_Weights_post
-
   virtual void  Init_Weights();
   // #CAT_Weights #MENU #MENU_SEP_BEFORE initialize weights for all the connections associated with this projection
-  
+  virtual void  Copy_Weights(Projection* src);
+  // #MENU #MENU_ON_Actions #MENU_SEP_BEFORE #CAT_Weights copies weights from other projection
+
   virtual void  TransformWeights(const SimpleMathSpec& trans);
   // #MENU #CAT_Weights apply given transformation to weights -- must call Init_Weights_post at network level after running this!
   virtual void  RenormWeights(bool mult_norm, float avg_wt);
@@ -145,14 +116,15 @@ public:
   // #MENU #CAT_Weights rescale weights by multiplying by given factor -- must call Init_Weights_post at network level after running this!
   virtual void  AddNoiseToWeights(const Random& noise_spec);
   // #MENU #CAT_Weights add noise to weights using given noise specification -- must call Init_Weights_post at network level after running this!
-  virtual int   PruneCons(const SimpleMathSpec& pre_proc,
-                             Relation::Relations rel, float cmp_val);
+  virtual int   PruneCons(const SimpleMathSpec& pre_proc, Relation::Relations rel, float cmp_val);
   // #MENU #USE_RVAL #CAT_Weights remove weights that (after pre-proc) meet relation to compare val
+  virtual int   ProbAddCons(float p_add_con, float init_wt = 0.0);
+  // #MENU #MENU_ON_Structure #USE_RVAL #CAT_Structure probabilistically add new connections (assuming prior pruning), init_wt = initial weight value of new connection
   virtual int   LesionCons(float p_lesion, bool permute=true);
   // #MENU #USE_RVAL #CAT_Structure remove connections with prob p_lesion (permute = fixed no. lesioned)
 
-  virtual bool  UpdateConSpecs(bool force = false);
-  // #CAT_Structure update con specs for all connection groups for this projection in the network to use con_spec (only if changed from last update -- force = do regardless); returns true if changed and all cons can use given spec
+  virtual bool  ConSpecUpdated();
+  // #CAT_Structure called when there was a potential update of the con spec
 
   bool  ApplySpecToMe(BaseSpec* spec) override;
   

@@ -92,7 +92,7 @@ void UnitGroupView::AllocUnitViewData() {
       nv->hist_max = 1;
       nwgm2.Set(3, nv->hist_max);
       uvd_hist.SetGeomN(nwgm2); // still might fail, but it's the best we can do.
-        }
+    }
     reset_idx = true;
     nv->hist_reset_req = true;  // tell main netview history guy to reset and reset everyone
   }
@@ -109,17 +109,14 @@ void UnitGroupView::BuildAll() {
 
   Layer* lay = this->layer(); //cache
   if(!lay) return;
-  taVector2i coord;
-  for(coord.y = 0; coord.y < lay->flat_geom.y; coord.y++) {
-    for(coord.x = 0; coord.x < lay->flat_geom.x; coord.x++) {
-      Unit* unit = lay->UnitAtCoord(coord);
-      if (!unit) continue;
-      if(unit->lesioned()) continue;
+  for(int li=0; li < lay->n_units; li++) {
+    UnitState_cpp* unit = lay->GetUnitState(li);
+    if (!unit) continue;
+    if(unit->lesioned()) continue;
 
-      UnitView* uv = new UnitView();
-      uv->SetData(unit);
-      children.Add(uv);
-    }
+    UnitView* uv = new UnitView();
+    uv->SetData(unit);
+    children.Add(uv);
   }
 }
 
@@ -153,9 +150,9 @@ float UnitGroupView::GetUnitDisplayVal(const taVector2i& co, void*& base) {
   else {
     if(nv->unit_wt_act) {
       val = *((float*)base);    // weight
-      Unit* unit = lay->UnitAtCoord(co);
+      UnitState_cpp* unit = lay->GetUnitStateFlatXY(net->net_state, co.x, co.y);
       if(unit) {
-        val *= unit->act();
+        val *= unit->act;
       }
     }
     else {
@@ -193,7 +190,7 @@ float UnitGroupView::GetUnitDisplayVal_Idx(const taVector2i& co, int midx, void*
   return val;
 }
 
-void UnitGroupView::UpdateUnitViewBases(Unit* src_u) {
+void UnitGroupView::UpdateUnitViewBases(UnitState_cpp* src_u) {
   Layer* lay = this->layer(); //cache
   if(!lay) return;
   Network* net = lay->own_net;
@@ -219,7 +216,7 @@ void UnitGroupView::UpdateUnitViewBases(Unit* src_u) {
 }
 
 void UnitGroupView::UpdateUnitViewBase_Con_impl
-(int midx, bool is_send, String nm, Unit* src_u, const String& prjn_starts_with) {
+(int midx, bool is_send, String nm, UnitState_cpp* src_u, const String& prjn_starts_with) {
   if(!src_u) return;
   bool check_prjn = (prjn_starts_with.nonempty());
     
@@ -232,7 +229,7 @@ void UnitGroupView::UpdateUnitViewBase_Con_impl
   taVector2i coord;
   for(coord.y = 0; coord.y < lay->flat_geom.y; coord.y++) {
     for(coord.x = 0; coord.x < lay->flat_geom.x; coord.x++) {
-      Unit* unit = lay->UnitAtCoord(coord);
+      UnitState_cpp* unit = lay->GetUnitStateFlatXY(net->net_state, coord.x, coord.y);
       uvd_bases.Set(NULL, coord.x, coord.y, midx);
       if (!unit) continue;  // rest will be null too, but we loop to null disp_base
       if(unit->lesioned()) continue;
@@ -297,19 +294,11 @@ void UnitGroupView::UpdateUnitViewBase_Unit_impl(int midx, MemberDef* disp_md) {
   taVector2i coord;
   for(coord.y = 0; coord.y < lay->flat_geom.y; coord.y++) {
     for(coord.x = 0; coord.x < lay->flat_geom.x; coord.x++) {
-      Unit* unit = lay->UnitAtCoord(coord);
+      UnitState_cpp* unit = lay->GetUnitStateFlatXY(net->net_state, coord.x, coord.y);
       uvd_bases.Set(NULL, coord.x, coord.y, midx);
       if (!unit) continue;  // rest will be null too, but we loop to null disp_base
       if(unit->lesioned()) continue;
-      if(disp_md->name == "snap" || disp_md->name == "wt_prjn") {
-        uvd_bases.Set(disp_md->GetOff(unit), coord.x, coord.y, midx);
-      }
-      else {
-        UnitState_cpp* uv = unit->GetUnitState();
-        if(uv) {
-          uvd_bases.Set(disp_md->GetOff(uv), coord.x, coord.y, midx);
-        }
-      }
+      uvd_bases.Set(disp_md->GetOff(unit), coord.x, coord.y, midx);
     }
   }
 }
@@ -325,7 +314,7 @@ void UnitGroupView::UpdateUnitViewBase_Sub_impl(int midx, MemberDef* disp_md) {
   taVector2i coord;
   for(coord.y = 0; coord.y < lay->flat_geom.y; coord.y++) {
     for(coord.x = 0; coord.x < lay->flat_geom.x; coord.x++) {
-      Unit* unit = lay->UnitAtCoord(coord);
+      UnitState_cpp* unit = lay->GetUnitStateFlatXY(net->net_state, coord.x, coord.y);
       uvd_bases.Set(NULL, coord.x, coord.y, midx);
       if(!unit || !smd) continue;  // rest will be null too, but we loop to null disp_base
       if(unit->lesioned()) continue;
@@ -420,7 +409,7 @@ void UnitGroupView::DoActionChildren_impl(DataViewAction acts) {
   inherited::DoActionChildren_impl(acts);
 }
 
-void UnitGroupView::GetUnitColor(NetView* nv, const taVector2i& pos, Unit* unit,
+void UnitGroupView::GetUnitColor(NetView* nv, const taVector2i& pos, UnitState_cpp* unit,
                                  iColor& col, float max_z, float& zp1, float& sc_val,
                                  float& val) {
   float trans = nv->view_params.unit_trans;
@@ -494,7 +483,7 @@ void UnitGroupView::Render_impl_children() {
   taVector2i coord;
   for(coord.y = 0; coord.y < lay->flat_geom.y; coord.y++) {
     for(coord.x = 0; coord.x < lay->flat_geom.x; coord.x++) {
-      Unit* unit = lay->UnitAtCoord(coord);
+      UnitState_cpp* unit = lay->GetUnitStateFlatXY(net->net_state, coord.x, coord.y);
       if(!unit) continue;
       if(unit->lesioned()) continue;
       UnitView* uv = (UnitView*)children.FastEl(ui++);
@@ -651,9 +640,11 @@ void UnitGroupView::Render_impl_blocks() {
   
   for(pos.y=lay->flat_geom.y-1; pos.y>=0; pos.y--) { // go back to front
     for(pos.x=0; pos.x<lay->flat_geom.x; pos.x++) { // right to left
-      Unit* unit = lay->UnitAtCoord(pos);
-      if(unit)
-        lay->UnitDispPos(unit, upos);
+      UnitState_cpp* unit = lay->GetUnitStateFlatXY(net->net_state, pos.x, pos.y);
+      if(unit) {
+        upos.x = unit->disp_pos_x;
+        upos.y = unit->disp_pos_y;
+      }
 
       float xp0 = disp_scale * (((float)upos.x + spacing) / nv->eff_max_size.x);
       float yp0 = -disp_scale * (((float)upos.y + spacing) / nv->eff_max_size.y);
@@ -859,9 +850,11 @@ void UnitGroupView::Render_impl_blocks() {
   // these go in normal order; indexes are backwards
   for(pos.y=0; pos.y<lay->flat_geom.y; pos.y++) {
     for(pos.x=0; pos.x<lay->flat_geom.x; pos.x++) { // right to left
-      Unit* unit = lay->UnitAtCoord(pos);
-      if(unit)
-        lay->UnitDispPos(unit, upos);
+      UnitState_cpp* unit = lay->GetUnitStateFlatXY(net->net_state, pos.x, pos.y);
+      if(unit) {
+        upos.x = unit->disp_pos_x;
+        upos.y = unit->disp_pos_y;
+      }
       float xp = disp_scale * (((float)upos.x + spacing) / nv->eff_max_size.x);
       float yp = -disp_scale * (((float)upos.y + spacing) / nv->eff_max_size.y);
       float xp1 = disp_scale * (((float)upos.x+1 - spacing) / nv->eff_max_size.x);
@@ -1039,9 +1032,11 @@ void UnitGroupView::Render_impl_blocks() {
 
       if(nv->render_svg) {
         // this has to be here because of the backward ordering
-        Unit* unit = lay->UnitAtCoord(pos);
-        if(unit)
-          lay->UnitDispPos(unit, upos);
+        UnitState_cpp* unit = lay->GetUnitStateFlatXY(net->net_state, pos.x, pos.y);
+        if(unit) {
+          upos.x = unit->disp_pos_x;
+          upos.y = unit->disp_pos_y;
+        }
         float xp = disp_scale * (((float)upos.x + spacing) / nv->eff_max_size.x);
         float yp = -disp_scale * (((float)upos.y + spacing) / nv->eff_max_size.y);
         float xp1 = disp_scale * (((float)upos.x+1 - spacing) / nv->eff_max_size.x);
@@ -1155,7 +1150,7 @@ void UnitGroupView::UpdateUnitValues_blocks() {
   
   for(pos.y=lay->flat_geom.y-1; pos.y>=0; pos.y--) { // go back to front
     for(pos.x=0; pos.x<lay->flat_geom.x; pos.x++) { // right to left
-      Unit* unit = lay->UnitAtCoord(pos);
+      UnitState_cpp* unit = lay->GetUnitStateFlatXY(net->net_state, pos.x, pos.y);
 
       GetUnitColor(nv, pos, unit, col, max_z, zp1, sc_val, val);
       for(int i=0;i<20;i++) {
@@ -1212,7 +1207,7 @@ void UnitGroupView::UpdateUnitValues_blocks() {
   for(pos.y=0; pos.y<lay->flat_geom.y; pos.y++) {
     for(pos.x=0; pos.x<lay->flat_geom.x; pos.x++) { // right to left
       nv->GetUnitDisplayVals(this, pos, val, col, sc_val);
-      Unit* unit = lay->UnitAtCoord(pos);
+      UnitState_cpp* unit = lay->GetUnitStateFlatXY(net->net_state, pos.x, pos.y);
 
       GetUnitColor(nv, pos, unit, col, max_z, zp, sc_val, val);
       color_dat[c_idx++] = T3Misc::makePackedRGBA(col);
@@ -1284,7 +1279,7 @@ void UnitGroupView::SaveHist() {
   taVector2i coord;
   for(coord.y = 0; coord.y < lay->flat_geom.y; coord.y++) {
     for(coord.x = 0; coord.x < lay->flat_geom.x; coord.x++) {
-      Unit* unit = lay->UnitAtCoord(coord);
+      UnitState_cpp* unit = lay->GetUnitStateFlatXY(net->net_state, coord.x, coord.y);
       for(int midx=0; midx < nv->membs.size; midx++) {
         void* base;
         float val = GetUnitDisplayVal_Idx(coord, midx, base);
@@ -1426,9 +1421,10 @@ void UnitGroupView::Render_impl_snap_bord() {
   taVector2i upos;
   for(pos.y=0; pos.y<lay->flat_geom.y; pos.y++) {
     for(pos.x=0; pos.x<lay->flat_geom.x; pos.x++) { // right to left
-      Unit* unit = lay->UnitAtCoord(pos);
+      UnitState_cpp* unit = lay->GetUnitStateFlatXY(net->net_state, pos.x, pos.y);
       if(unit) {
-        lay->UnitDispPos(unit, upos);
+        upos.x = unit->disp_pos_x;
+        upos.y = unit->disp_pos_y;
         float xp0 = disp_scale * (((float)upos.x + spacing) / nv->eff_max_size.x);
         float yp0 = -disp_scale * (((float)upos.y + spacing) / nv->eff_max_size.y);
         float xp1 = disp_scale * (((float)upos.x+1 - spacing) / nv->eff_max_size.x);
@@ -1488,9 +1484,11 @@ void UnitGroupView::Render_impl_snap_bord() {
   taVector2i upos;
   for(pos.y=0; pos.y<lay->flat_geom.y; pos.y++) {
     for(pos.x=0; pos.x<lay->flat_geom.x; pos.x++) { // right to left
-      Unit* unit = lay->UnitAtCoord(pos);
-      if(unit)
-        lay->UnitDispPos(unit, upos);
+      UnitState_cpp* unit = lay->GetUnitStateFlatXY(net->net_state, pos.x, pos.y);
+      if(unit) {
+        upos.x = unit->disp_pos_x;
+        upos.y = unit->disp_pos_y;
+      }
       float xp = disp_scale * (((float)upos.x + spacing) / nv->eff_max_size.x);
       float yp = -disp_scale * (((float)upos.y + spacing) / nv->eff_max_size.y);
       float xp1 = disp_scale * (((float)upos.x+1 - spacing) / nv->eff_max_size.x);
@@ -1547,7 +1545,7 @@ void UnitGroupView::UpdateUnitValues_snap_bord() {
   for(pos.y=0; pos.y<lay->flat_geom.y; pos.y++) {
     for(pos.x=0; pos.x<lay->flat_geom.x; pos.x++) { // right to left
       val = 0.0f;
-      Unit* unit = lay->UnitAtCoord(pos);
+      UnitState_cpp* unit = lay->GetUnitStateFlatXY(net->net_state, pos.x, pos.y);
       if(unit) {
         void* base;
         val = GetUnitDisplayVal(pos, base);
@@ -1577,7 +1575,7 @@ void UnitGroupView::UpdateUnitValues_snap_bord() {
   for(pos.y=0; pos.y<lay->flat_geom.y; pos.y++) {
     for(pos.x=0; pos.x<lay->flat_geom.x; pos.x++) { // right to left
       val = 0.0f;
-      Unit* unit = lay->UnitAtCoord(pos);
+      UnitState_cpp* unit = lay->GetUnitStateFlatXY(net->net_state, pos.x, pos.y);
       if(unit) {
         void* base;
         val = GetUnitDisplayVal(pos, base);

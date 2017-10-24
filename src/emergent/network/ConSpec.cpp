@@ -64,10 +64,6 @@ bool ConSpec::CheckConfig_RecvCons(Projection* prjn, bool quiet) {
   return true;
 }
 
-bool ConSpec::SaveConVarToWeights(Network* net, ConState_cpp* cg, MemberDef* md) {
-  return md->HasOption("SAVE");
-}
-
 void ConSpec::Init_Weights_Net() {
   Network* net = (Network *) GET_MY_OWNER(Network);
   if (!net) return;

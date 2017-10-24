@@ -152,7 +152,7 @@ void BrainVolumeView::InitDisplay()
   UpdateUnitViewBases(bv->unit_src);
 }
 
-float BrainVolumeView::GetUnitDisplayVal(const Unit* u, void*& base)
+float BrainVolumeView::GetUnitDisplayVal(const UnitState_cpp* u, void*& base)
 {
   BrainView* bv = this->getBrainView();
   float val = bv->scale.zero;
@@ -178,7 +178,7 @@ float BrainVolumeView::GetUnitDisplayVal(const Unit* u, void*& base)
   return val;
 }
 
-void BrainVolumeView::UpdateUnitViewBases(Unit* src_u)
+void BrainVolumeView::UpdateUnitViewBases(UnitState_cpp* src_u)
 {
   BrainView* bv = this->getBrainView();
   AllocUnitViewData();
@@ -198,7 +198,7 @@ void BrainVolumeView::UpdateUnitViewBases(Unit* src_u)
   }
 }
 
-void BrainVolumeView::UpdateUnitViewBase_Con_impl(int midx, bool is_send, String nm, Unit* src_u)
+void BrainVolumeView::UpdateUnitViewBase_Con_impl(int midx, bool is_send, String nm, UnitState_cpp* src_u)
 {
 }
 
@@ -210,7 +210,7 @@ void BrainVolumeView::UpdateUnitViewBase_Unit_impl(int midx, MemberDef* disp_md)
 {
   if (m_uvd_bases_map.size() == 0) return; //we don't have a list of units yet
 
-  foreach (const Unit* u, m_uvd_bases_map.keys()) {
+  foreach (const UnitState_cpp* u, m_uvd_bases_map.keys()) {
     uvd_bases.Set(disp_md->GetOff(u), m_uvd_bases_map.value(u), midx);
   }
 }
@@ -1270,7 +1270,7 @@ void BrainVolumeView::UpdateUnitValues_blocks() {
           make_transparent = true;
         }
       }
-      Unit* u = (Unit*)((taOBase*)v->owner)->owner;
+      UnitState_cpp* u = (UnitState_cpp*)((taOBase*)v->owner)->owner;
       bv->GetUnitDisplayVals(this, u, val, col, sc_val);
 
       if (make_transparent) {

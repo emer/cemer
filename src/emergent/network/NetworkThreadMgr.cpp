@@ -19,7 +19,6 @@
 #include <taMisc>
 
 TA_BASEFUNS_CTORS_DEFN(NetworkThreadMgr);
-
 TA_BASEFUNS_CTORS_DEFN(NetworkThreadTask);
 
 void NetworkThreadTask::Initialize() {

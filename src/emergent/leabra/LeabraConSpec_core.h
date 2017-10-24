@@ -38,7 +38,7 @@
   STATE_CLASS(MarginLearnSpec)  margin;	// #CAT_Learning #CONDSHOW_ON_learn learning specs for modulation as a function of marginal activation status -- emphasize learning for units on the margin
 
 
-  INLINE int  GetStateSpecType() const override { return LEABRA_NETWORK_STATE::T_LEABRA_CON_SPEC; }
+  INLINE int  GetStateSpecType() const override { return LEABRA_NETWORK_STATE::T_LeabraConSpec; }
 
 
   INLINE float	SigFmLinWt(float lw) { return wt_sig.SigFmLinWt(lw);  }
@@ -522,6 +522,21 @@
     C_ApplyLimits(wt);
   }
   
+  INLINE bool   SaveVar(int var_no) const override { return (var_no == WT || var_no == SCALE); }
+
+  INLINE const char*  VarName(int var_no) const override {
+    switch(var_no) {
+    case WT: return "wt";
+    case DWT: return "dwt";
+    case SCALE: return "scale";
+    case DWAVG: return "dwavg";
+    case MOMENT: return "moment";
+    case FWT: return "fwt";
+    case SWT: return "swt";
+    }
+    return "";
+  }
+
   INLINE void Initialize_core() {
     inhib = false;  learn = true;  learn_qtr = Q4;  use_unlearnable = true;
     wt_limits.min = 0.0f;  wt_limits.max = 1.0f;  wt_limits.sym = true;

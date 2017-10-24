@@ -72,29 +72,29 @@ void LEABRA_NETWORK_STATE::InitSendNetinTmp_Thr(int thr_no) {
 }
 
 
-LAYER_SPEC* LEABRA_NETWORK_STATE::NewLayerSpec(int spec_type) const {
+LAYER_SPEC_CPP* LEABRA_NETWORK_STATE::NewLayerSpec(int spec_type) const {
   switch(spec_type) {
-  case T_LEABRA_LAYER_SPEC:
+  case T_LeabraLayerSpec:
     return new STATE_CLASS_CPP(LeabraLayerSpec)();
   }
   StateError("NewLayerSpec, type not recognized");
   return new STATE_CLASS_CPP(LeabraLayerSpec)();
 }
 
-UNIT_SPEC* LEABRA_NETWORK_STATE::NewUnitSpec(int spec_type) const {
+UNIT_SPEC_CPP* LEABRA_NETWORK_STATE::NewUnitSpec(int spec_type) const {
   switch(spec_type) {
-  case T_LEABRA_UNIT_SPEC:
+  case T_LeabraUnitSpec:
     return new STATE_CLASS_CPP(LeabraUnitSpec)();
   }
   StateError("NewUnitSpec, type not recognized");
   return new STATE_CLASS_CPP(LeabraUnitSpec)();
 }
 
-CON_SPEC* LEABRA_NETWORK_STATE::NewConSpec(int spec_type) const {
+CON_SPEC_CPP* LEABRA_NETWORK_STATE::NewConSpec(int spec_type) const {
   switch(spec_type) {
-  case T_LEABRA_CON_SPEC:
+  case T_LeabraConSpec:
     return new STATE_CLASS_CPP(LeabraConSpec)();
-  case T_LEABRA_BIAS_SPEC:
+  case T_LeabraBiasSpec:
     return new STATE_CLASS_CPP(LeabraBiasSpec)();
   }
   StateError("NewConSpec, type not recognized");

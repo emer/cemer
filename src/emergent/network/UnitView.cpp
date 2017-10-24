@@ -59,7 +59,7 @@ void UnitView::Render_pre()
   float max_z = nv->eff_max_size.z;
   float un_spc= nv->view_params.unit_spacing;
 
-  Unit* unit = this->unit(); //cache
+  UnitState_cpp* unit = this->unit(); //cache
   Layer* lay = unit->own_lay();
   float disp_scale = lay->disp_scale;
   taVector2i upos;  unit->LayerDispPos(upos);

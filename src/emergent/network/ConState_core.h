@@ -136,6 +136,7 @@
     if(var_no < 0 || var_no >= NConVars()) return false;
     return true;
   }
+  // #CAT_Access is var number valid?
 
   INLINE int            OwnMemReq()
   { if(share_idx > 0) return alloc_size; return alloc_size * (NConVars() + 1); }
@@ -175,7 +176,7 @@
   // #IGNORE return value that is modulus of vec_chunk_targ -- for computing allocation sizes, etc
 
   INLINE UNIT_STATE*    OwnUnState(NETWORK_STATE* net)
-  { return net->UnUnitState(own_flat_idx); }
+  { return net->GetUnitState(own_flat_idx); }
   // #IGNORE #CAT_Access our own unit variables -- for the unit that owns these connections (could be sending or recv unit depending on type of connection group)
   INLINE UNIT_STATE*    ThrOwnUnState(NETWORK_STATE* net, int thr_no)
   { return net->ThrUnitState(thr_no, own_thr_idx); }
@@ -210,7 +211,7 @@
   { return ((int32_t*)mem_start)[idx]; }
   // #CAT_Access fast access (no range checking) to unit flat index at given connection index
   INLINE UNIT_STATE*    UnState(int idx, NETWORK_STATE* net) const {
-    return net->UnUnitState(UnIdx(idx));
+    return net->GetUnitState(UnIdx(idx));
   }
   // #IGNORE #CAT_Access fast access (no range checking) to unit pointer at given connection index (goes through flat index at network level) -- this is the unit on the other end of this connection 
 
@@ -255,8 +256,6 @@
     if(bc) return bc->SafeFastCn(PtrCnIdx(idx), var_no, net); return const_cast<float&>(temp1); }
   // #IGNORE #CAT_Access generic access of connection variable value at given index, regardless of whether it is owned or a pointer -- does range checking but doesn't issue messages, and is otherwise as fast as possible -- var_no is defined in ConSpec (e.g., ConSpec::WT, DWT or algorithm-specific types (e.g., LeabraConSpec::PDW) -- do not use in compute algorithm code that knows the ownership status of the connections (use OwnCn* or PtrCn*)
 
-  INLINE void    ConnectAllocInc(int inc_n = 1) { size += inc_n; }
-  // #CAT_Modify use this for dynamically figuring out how many connections to allocate, if it is not possible to compute directly -- increments size by given number -- later call AllocConsFmSize to allocate connections based on the size value
   INLINE void    FreeCons() {
     mem_start = 0;    cnmem_start = 0;    size = 0;    vec_chunked_size = 0;    alloc_size = 0;
     SetInactive();
@@ -366,6 +365,51 @@
   INLINE void AllocConsFmSize(NETWORK_STATE* net) {
     AllocCons(net, size);              // this sets size back to zero and does full alloc
   }
+
+  INLINE void    ConnectAllocInc(int inc_n = 1) { size += inc_n; }
+  // #CAT_Modify use this for dynamically figuring out how many connections to allocate, if it is not possible to compute directly -- increments size by given number -- later call AllocConsFmSize to allocate connections based on the size value
+
+  INIMPL int     ConnectUnOwnCn(NETWORK_STATE* net, UNIT_STATE* un, bool ignore_alloc_errs = false,
+                                bool allow_null_unit = false);
+  // #CAT_Modify add a new connection from given unit for OwnCons case -- returns -1 if no more room relative to alloc_size (flag will turn off err msg) -- default is to not allow connections from a unit with flat_idx = 0 (null_unit) but this can be overridden -- returns index of new connection (-1 if failed)
+
+  INIMPL bool    ConnectUnPtrCn(NETWORK_STATE* net, UNIT_STATE* un, int con_idx, bool ignore_alloc_errs = false);
+  // #CAT_Modify add a new connection from given unit and connection index for PtrCons case -- returns false if no more room, else true
+
+  INIMPL int     ConnectUnits
+  (NETWORK_STATE* net, UNIT_STATE* our_un, UNIT_STATE* oth_un, CON_STATE* oth_cons,
+   bool ignore_alloc_errs = false,  bool set_init_wt = false, float init_wt = 0.0f);
+  // #CAT_Modify add a new connection betwee our unit and an other unit and its appropriate cons -- does appropriate things depending on who owns the connects, etc.  enough room must already be allocated on both sides  (flag will turn off err msg) -- returns index of new connection (-1 if failed) -- can also optionally set initial weight value
+
+  INIMPL bool   SetShareFrom(NETWORK_STATE* net, UNIT_STATE* shu);
+  // #CAT_Access set this connection group to share from given other unit -- checks to make sure this works -- returns false if not (will have already emitted warning message)
+
+
+  INLINE float  VecChunkPct()
+  {  if(size > 0) return (float)vec_chunked_size / (float)size; return 0.0f; }
+  // #CAT_Structure return percent of our cons that are vec chunked
+
+  INIMPL void  VecChunk_SendOwns(NETWORK_STATE* net, int* tmp_chunks, int* tmp_not_chunks,
+                                 float* tmp_con_mem);
+  // #CAT_Structure chunks the connections in vectorizable units, for sender own case -- pass in our sending own unit, and temp scratch memory guaranteed to be >= alloc_size for doing the reorganization
+  INIMPL void  VecChunk_RecvOwns(NETWORK_STATE* net, int* tmp_chunks, int* tmp_not_chunks,
+                                 float* tmp_con_mem);
+  // #CAT_Structure chunks the connections in vectorizable units, for recv own case -- pass in our recv own unit, and temp scratch memory guaranteed to be >= alloc_size for doing the reorganization
+
+  INIMPL int   VecChunk_impl(int* tmp_chunks, int* tmp_not_chunks,
+                              float* tmp_con_mem);
+  // #IGNORE impl -- returns first_change index for fixing con ptrs, and sets vec_chunked_size -- chunks the connections in vectorizable units, for sender own case -- gets our sending own unit, and temp scratch memory guaranteed to be >= alloc_size for doing the reorganization
+
+  INIMPL float& SafeCn(NETWORK_STATE* net, int idx, int var_no) const;
+  // #CAT_Access fully safe generic access of connection variable value at given index, regardless of whether it is owned or a pointer -- var_no is defined in ConSpec (e.g., ConSpec::WT, DWT or algorithm-specific types (e.g., LeabraConSpec::PDW) -- this is mainly for program access -- do not use in compute algorithm code that knows the ownership status of the connections (use OwnCn* or PtrCn*)
+  INIMPL float& SafeCnName(NETWORK_STATE* net, int idx, const char* var_nm) const;
+  // #BUTTON #USE_RVAL #CAT_Access generic safe access of connection variable value by name (e.g., wt, dwt, pdw, etc) at given index, regardless of whether it is owned or a pointer -- mainly for program access -- do not use in compute algorithm code that knows the ownership status of the connections (use OwnCn* or PtrCn*)
+
+  INIMPL bool   SetCnVal(NETWORK_STATE* net, float val, int idx, int var_no);
+  // #CAT_Access set connection variable to given value -- for use by programs, which cannot assign the value through the SafeCn function -- var_no is defined in ConSpec (e.g., ConSpec::WT, DWT or algorithm-specific types (e.g., LeabraConSpec::PDW) -- 
+  INIMPL bool   SetCnValName(NETWORK_STATE* net, float val, int idx, const char* var_nm);
+  // #CAT_Access set connection variable (specified by name, e.g., wt, dwt, pdw) to given value -- for use by programs, which cannot assign the value through the SafeCn function 
+
 
   INLINE void Initialize_core
   (int own_flt_idx=0, int own_th_idx=0, int spec_dx=0, int flgs=0, int prj_dx=0,

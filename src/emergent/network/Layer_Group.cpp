@@ -164,39 +164,6 @@ void Layer_Group::UpdateLayerGroupGeom() {
   // SigEmitUpdated();
 }
 
-void Layer_Group::BuildLayers() {
-  BuildLayers_impl();
-}
-
-void Layer_Group::BuildLayers_impl() {
-  Layer_Group* lg;
-  for (int i = 0; i < gp.size; ++i) {
-    lg = (Layer_Group*)gp.FastEl(i);
-    lg->BuildLayers();
-  }
-}
-
-void Layer_Group::BuildPrjns() {
-  BuildPrjns_impl();
-}
-
-void Layer_Group::BuildPrjns_impl() {
-  Layer_Group* lg;
-  for (int i = 0; i < gp.size; ++i) {
-    lg = (Layer_Group*)gp.FastEl(i);
-    lg->BuildPrjns();
-  }
-}
-
-void Layer_Group::Clean() {
-  Layer_Group* lg;
-  for (int i = gp.size - 1;  i >= 0; --i) {
-    lg = (Layer_Group*)gp.FastEl(i);
-    lg->Clean();
-  }
-  Clean_impl();
-}
-
 void Layer_Group::MovePos(int x, int y, int z) {
   taVector3i nwpos = pos;  // temp copy of current group position
   nwpos.x += x;  nwpos.y += y;  nwpos.z += z;
@@ -508,8 +475,3 @@ void Layer_Group::SetUnitSpec(UnitSpec* unitspec) {
   }
 }
 
-void Layer_Group::SetUnitType(TypeDef* td) {
-  FOREACH_ELEM_IN_GROUP(Layer, l, *this) {
-    l->SetUnitType(td);
-  }
-}

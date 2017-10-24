@@ -52,10 +52,6 @@ public:
   void          AddRelPos2d(taVector2i& rel_pos);
   // #CAT_Structure add relative pos from layer groups, which factors in offsets from layer groups
   
-  virtual void  BuildLayers();
-  // #CAT_Structure create any algorithmically specified layers
-  virtual void  BuildPrjns();
-  // #CAT_Structure create any algorithmically specified prjns
   virtual void  UpdateLayerGroupGeom();
   // #IGNORE update max_disp_size of layer group based on current layer layout, and layer group position based on all the lower-left-corner of all layers in the group
 
@@ -69,9 +65,6 @@ public:
   // #BUTTON #DYN1 #CAT_Structure un-set the lesion flag on all the layers within this group
   virtual void  DispScaleLayers(float disp_scale = 1.0f);
   // #BUTTON #DYN1 #CAT_Structure set the display scale on all the layers in the group (scales the size of the units -- 1 = normal, lower = smaller units, higher = larger units.
-
-  virtual void  Clean();
-  // #MENU #MENU_CONTEXT #CAT_Structure remove any algorithmically specified layers/prjns etc.
 
   virtual void  MovePos(int x, int y, int z=0);
   // #BUTTON move layer group position in 3D display by given increments -- moves all the sub-layers by given amount as well, and ensures that position never goes negative
@@ -107,8 +100,6 @@ public:
   // #BUTTON #DROP1 #DYN1 #CAT_Structure set the layer specification for all layers in group
   virtual void  SetUnitSpec(UnitSpec* unitspec);
   // #BUTTON #DROP1 #DYN1 #CAT_Structure set unit spec for all layers in group
-  virtual void  SetUnitType(TypeDef* td);
-  // #BUTTON #DYN1 #TYPE_Unit #CAT_Structure set unit type for layers in group
 
   void          TriggerContextUpdate();
   // #CAT_Activation for context layers, manually triggers the update
@@ -127,9 +118,6 @@ protected:
   PosVector2i    prev_pos2d;    // previous 2d position
 
   void UpdateAfterEdit_impl() override;
-  virtual void  BuildLayers_impl();
-  virtual void  BuildPrjns_impl();
-  virtual void  Clean_impl() {}
 private:
   void  Initialize()            { };
   void  Destroy()               { };

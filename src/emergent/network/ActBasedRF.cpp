@@ -122,7 +122,7 @@ bool ActBasedRF::IncrementSums() {
     }
 
     int tidx = 0;
-    Unit* tu;
+    UnitState_cpp* tu;
     taLeafItr tui;
     for(tu = trg_layer->units.FirstEl(tui); tu; tu = trg_layer->units.NextEl(tui), tidx++) {
       UnitState_cpp* tuv = tu->GetUnitState();
@@ -134,7 +134,7 @@ bool ActBasedRF::IncrementSums() {
       float_Matrix* sum_mat = (float_Matrix*)sum_da->GetValAsMatrix(tidx);
       taBase::Ref(sum_mat);
       int sidx = 0;
-      Unit* su;
+      UnitState_cpp* su;
       taLeafItr sui;
       for(su = lay->units.FirstEl(sui); su; su = lay->units.NextEl(sui), sidx++) {
         UnitState_cpp* suv = su->GetUnitState();
@@ -276,7 +276,7 @@ bool ActBasedRF::CopyRFtoNetWtPrjn(int trg_unit_no) {
     int mx = MAX(lay->units.leaves, rf_da->cell_size());
 
     for(int i=0;i<mx; i++) {
-      Unit* u = lay->units.Leaf(i);
+      UnitState_cpp* u = lay->units.Leaf(i);
       float rfv = rf_da->GetValAsFloatM(trg_unit_no, i);
       u->wt_prjn = rfv;
     }

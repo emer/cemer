@@ -147,6 +147,8 @@ void Network::Initialize() {
   
   main_obj = true;
   net_state = NULL;
+
+  n_threads = taMisc::thread_defaults.n_threads;
   
   flags = (NetFlags)(BUILD_INIT_WTS);
   auto_build = AUTO_BUILD;
@@ -179,8 +181,6 @@ void Network::Initialize() {
 
   proj = NULL;
 
-  null_unit = NULL;
-  
   spec_tables.save_tables = false;     // don't save -- prevents project bloat
 }
 
@@ -203,7 +203,6 @@ void Network::InitLinks() {
   taBase::Own(max_disp_size2d, this);
 
   taBase::Own(stats, this);
-  taBase::Own(threads, this);
   taBase::Own(cuda, this);
   taBase::Own(net_timing, this);
 
@@ -233,8 +232,9 @@ void Network::InitLinks() {
   DMem_InitAggs();
 #endif
 
+  n_threads = taMisc::thread_defaults.n_threads;
 #ifdef CUDA_COMPILE
-  threads.n_threads = 1;        // always must be!
+  n_threads = 1;        // always must be!
 #endif
   
   NetTextUserData();
@@ -249,13 +249,11 @@ void Network::CutLinks() {
 #endif
   state_con_specs.Reset();
   state_unit_specs.Reset();
+  state_prjn_specs.Reset();
   state_layer_specs.Reset();
-  state_ungps.Reset();
   state_prjns.Reset();
   state_layers.Reset();
   
-  units_flat.Reset();
-  threads.CutLinks();
   RemoveUnits();
   misc_time.CutLinks();
   wt_sync_time.CutLinks();
@@ -270,7 +268,6 @@ void Network::CutLinks() {
   layers.CutLinks();            // then std kills
   specs.CutLinks();
   proj = NULL;
-  taBase::DelPointer((taBase**)&null_unit);
   inherited::CutLinks();
 }
 
@@ -336,7 +333,7 @@ void Network::UpdateAfterEdit_impl(){
   inherited::UpdateAfterEdit_impl();
 
 #ifdef CUDA_COMPILE
-  threads.n_threads = 1;        // always must be!
+  n_threads = 1;        // always must be!
 #endif
   
   if(wt_save_fmt == NET_FMT)
@@ -371,7 +368,7 @@ void Network::UpdtAfterNetMod() {
   if(!HasNetFlag(INTACT)) return; // already bad
 
 #ifdef CUDA_COMPILE
-  threads.n_threads = 1;        // always must be!
+  n_threads = 1;        // always must be!
 #endif
 
   if(!net_state) {
@@ -380,11 +377,10 @@ void Network::UpdtAfterNetMod() {
   }
   
   bool units_diff = 
-    (net_state->n_thrs_built != threads.n_threads) ||
+    (net_state->n_thrs_built != n_threads) ||
     (net_state->n_layers_built != state_layers.size) ||
     (net_state->n_prjns_built != state_prjns.size) ||
-    (net_state->n_ungps_built != state_ungps.size) ||
-    (net_state->n_units_built != units_flat.size);
+    (net_state->n_ungps_built != n_ungps_built);
 
   if(units_diff) {
     ClearIntact();
@@ -398,43 +394,6 @@ void Network::UpdtAfterNetMod() {
 #endif
 }
 
-void Network::CountCons() {
-  if(!net_state) return;
-  n_units = net_state->n_units_built;
-  n_cons = 0;
-  net_state->pct_cons_vec_chunked = 0.0f;
-  for(int i=0; i<net_state->n_thrs_built; i++) {
-    n_cons += net_state->thrs_own_cons_tot_size[i];
-    net_state->pct_cons_vec_chunked += net_state->thrs_pct_cons_vec_chunked[i];
-  }
-  if(net_state->n_thrs_built > 0) {
-    net_state->pct_cons_vec_chunked /= (float)net_state->n_thrs_built;
-  }
-  max_prjns = 1;
-  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
-    if(l->lesioned()) continue;
-    max_prjns = MAX(l->projections.size, max_prjns);
-    l->CountCons(this);
-  }
-
-  if(RecvOwnsCons()) {
-    NET_THREAD_CALL(Network::CountNonSharedRecvCons_Thr);
-  }
-  // cannot share any sending connections!
-}
-
-void Network::CountNonSharedRecvCons_Thr(int thr_no) {
-  int64_t ocsum_nonshared = 0;
-  // recv cons only..
-  const int nrcg = ThrNRecvConGps(thr_no);
-  for(int i=0; i<nrcg; i++) {
-    ConState_cpp* rcg = ThrRecvConState(thr_no, i); // guaranteed to be active..
-    if(!rcg->Sharing()) {
-      ocsum_nonshared += rcg->alloc_size;
-    }
-  }
-  net_state->thrs_own_cons_tot_size_nonshared[thr_no] = ocsum_nonshared;
-}
 
 void Network::SetProjectionDefaultTypes(Projection* prjn) {
   // noop for base case: algorithms must override!
@@ -508,7 +467,7 @@ void Network::SyncNetState() {
   net_state_sync.DoSync((void*)this, (void*)net_state);
   
   // special stuff 
-  net_state->own_net = this;
+  net_state->net_owner = this;
   net_state->dmem_nprocs = taMisc::dmem_nprocs;
   net_state->dmem_proc = taMisc::dmem_proc;
 }
@@ -526,6 +485,10 @@ void Network::SyncLayerState_Layer(Layer* lay) {
   layer_state_sync.DoSync((void*)lay, (void*)GetLayerState(lay->layer_idx));
 }
 
+
+////////////////////////////////////////
+//              Init
+
 void Network::Init_Epoch() {
   if(TestError(!IsBuiltIntact(), "Init_Epoch",
                "Network is not built or is not intact -- must Build first")) {
@@ -534,14 +497,12 @@ void Network::Init_Epoch() {
   bool got_some = param_seqs.SetParamsAtEpoch(epoch);
   if(got_some) {
     UpdateAllStateSpecs();
-    Cuda_UpdateSpecs(); 
   }
   SyncAllState();
 }
 
 void Network::Init_InputData() {
-  net_state->Init_InputData_Layer();
-  NET_THREAD_CALL(Network::Init_InputData_Thr);
+  NET_STATE_RUN(Init_InputData());
   SyncLayerState();
 }
 
@@ -550,11 +511,11 @@ void Network::Init_Acts() {
                "Network is not built or is not intact -- must Build first")) {
     return;
   }
-  NET_THREAD_CALL(Network::Init_Acts_Thr);
+  NET_STATE_RUN(Init_Acts());
 }
 
 void Network::Init_dWt(){
-  NET_THREAD_CALL(Network::Init_dWt_Thr);
+  NET_STATE_RUN(Init_dWt());
 }
 
 void Network::Init_Weights() {
@@ -564,28 +525,9 @@ void Network::Init_Weights() {
 
   taMisc::Busy();
 
-  net_state->needs_wt_sym = false;          // will get set to true if needed
-
-  if(HasNetFlag(INIT_WTS_1_THREAD)) {
-    Init_Weights_1Thr();
-    Init_Weights_renorm();
-    if(net_state->needs_wt_sym) {
-      NET_THREAD_CALL(Network::Init_Weights_sym);
-    }
-  }
-  else {
-    NET_THREAD_CALL(Network::Init_Weights_Thr);
-    Init_Weights_renorm();
-    if(net_state->needs_wt_sym) {
-      NET_THREAD_CALL(Network::Init_Weights_sym);
-    }
-  }
-  
-  Init_Weights_post();
-  Init_Weights_Layer();
-
-  Init_Acts();                  // also re-init state at this point..
-  Init_Metrics();
+  NET_STATE_RUN(Init_Weights());
+  Init_Counters_impl();         // int our counters -- they are copied to state so we need to init
+  Init_Timers();                // and our timers..
 
   Init_Weights_AutoLoad();
 
@@ -593,126 +535,18 @@ void Network::Init_Weights() {
   
   UpdateAllViews();
 
-  // Cuda_ConStateToDevice();
-  // Cuda_UnitStateToDevice();      // also need the bias weights!!!
-  // Cuda_UpdateSpecs();
-  
   param_seqs.SetParamsAtEpoch(0);
   
   taMisc::DoneBusy();
 }
 
-void Network::Init_Weights_Thr(int thr_no) {
-  if(RecvOwnsCons()) {
-    const int nrcg = ThrNRecvConGps(thr_no);
-    for(int i=0; i<nrcg; i++) {
-      ConState_cpp* rcg = ThrRecvConState(thr_no, i);
-      if(rcg->NotActive() || rcg->Sharing()) continue;
-      PrjnState_cpp* pjs = rcg->GetPrjnState(net_state);
-      Projection* prjn = PrjnFromState(pjs);
-      if(prjn->spec->init_wts) {
-        prjn->Init_Weights_Prjn(rcg, this, thr_no);
-      }
-      else {
-        rcg->GetConSpec(net_state)->Init_Weights(rcg, net_state, thr_no);
-      }
-    }
-  }
-  else {
-    const int nscg = ThrNSendConGps(thr_no);
-    for(int i=0; i<nscg; i++) {
-      ConState_cpp* scg = ThrSendConState(thr_no, i);
-      if(scg->NotActive()) continue;
-      PrjnState_cpp* pjs = scg->GetPrjnState(net_state);
-      Projection* prjn = PrjnFromState(pjs);
-      if(prjn->spec->init_wts) continue; // do with recv's below
-      prjn->con_spec->Init_Weights(scg, net_state, thr_no);
-    }
-    const int nrcg = ThrNRecvConGps(thr_no);
-    for(int i=0; i<nrcg; i++) {
-      ConState_cpp* rcg = ThrRecvConState(thr_no, i);
-      if(rcg->NotActive()) continue;
-      PrjnState_cpp* pjs = rcg->GetPrjnState(net_state);
-      Projection* prjn = PrjnFromState(pjs);
-      if(prjn->spec->init_wts) {
-        prjn->Init_Weights_Prjn(rcg, this, thr_no);
-      }
-    }
-  }
-  // also unit-level, as separate pass
-  const int nu = ThrNUnits(thr_no);
-  for(int i=0; i<nu; i++) {
-    UnitState_cpp* uv = ThrUnitState(thr_no, i);
-    if(uv->lesioned()) continue;
-    uv->GetUnitSpec(net_state)->Init_Weights(uv, net_state, thr_no);
-  }
-}
-
-void Network::Init_Weights_1Thr() {
-  for(int ui=1; ui<n_units_built; ui++) {
-    Unit* u = UnFmIdx(ui);
-    if(u->lesioned()) continue;
-
-    int thr_no = UnThr(ui);
-    
-    if(RecvOwnsCons()) {
-      const int nrcg = UnNRecvConGps(ui);
-      for(int i=0; i<nrcg; i++) {
-        ConState_cpp* rcg = RecvConState(ui, i);
-        if(rcg->NotActive() || rcg->Sharing()) continue;
-        PrjnState_cpp* pjs = rcg->GetPrjnState(net_state);
-        Projection* prjn = PrjnFromState(pjs);
-        if(prjn->spec->init_wts) {
-          prjn->Init_Weights_Prjn(rcg, this, thr_no);
-        }
-        else {
-          prjn->con_spec->Init_Weights(rcg, net_state, thr_no);
-        }
-      }
-    }
-    else {
-      const int nscg = UnNSendConGps(ui);
-      for(int i=0; i<nscg; i++) {
-        ConState_cpp* scg = SendConState(ui, i);
-        if(scg->NotActive()) continue;
-        PrjnState_cpp* pjs = scg->GetPrjnState(net_state);
-        Projection* prjn = PrjnFromState(pjs);
-        if(prjn->spec->init_wts) continue; // do with recv's below
-        prjn->con_spec->Init_Weights(scg, net_state, thr_no);
-      }
-      const int nrcg = UnNRecvConGps(ui);
-      for(int i=0; i<nrcg; i++) {
-        ConState_cpp* rcg = RecvConState(ui, i);
-        if(rcg->NotActive()) continue;
-        PrjnState_cpp* pjs = rcg->GetPrjnState(net_state);
-        Projection* prjn = PrjnFromState(pjs);
-        if(prjn->spec->init_wts) {
-          prjn->Init_Weights_Prjn(rcg, this, thr_no);
-        }
-      }
-    }
-    UnitState_cpp* uv = u->MyUnitState();
-    uv->GetUnitSpec(net_state)->Init_Weights(uv, net_state, thr_no);
-  }
-}
 
 void Network::Init_Weights_renorm() {
-  NET_THREAD_CALL(Network::Init_Weights_renorm_Thr);
-}
-
-void Network::Init_Weights_renorm_Thr(int thr_no) {
-  const int nrcg = ThrNRecvConGps(thr_no);
-  for(int i=0; i<nrcg; i++) {
-    ConState_cpp* rcg = ThrRecvConState(thr_no, i);
-    if(rcg->NotActive()) continue;
-    PrjnState_cpp* pjs = rcg->GetPrjnState(net_state);
-    Projection* prjn = PrjnFromState(pjs);
-    prjn->Init_Weights_renorm(rcg, this, thr_no);
-  }
+  NET_STATE_RUN(Init_Weights_renorm());
 }
 
 void Network::Init_Weights_post() {
-  NET_THREAD_CALL(Network::Init_Weights_post_Thr);
+  NET_STATE_RUN(Init_Weights_post());
 }
 
 void Network::Init_Weights_AutoLoad() {
@@ -725,28 +559,16 @@ void Network::Init_Weights_AutoLoad() {
   }
 }
 
-void Network::Init_Metrics() {
-  Init_Counters();
-  Init_Stats();
+void Network::Init_Metrics() {  // not called -- Init_Weights on state calls its version
+  NET_STATE_RUN(Init_Metrics());
+  Init_Counters_impl();         // get our own init'd anyway
   Init_Timers();
-
   SyncAllState();
 }
 
-void Network::Init_Counters() {
-  // this is one you do not reinit: loops over inits!
-//   batch = 0;
-  epoch = 0;
-  group = 0;
-  group_name = "";
-  trial = 0;
-  trial_name = "";
-  tick = 0;
-  cycle = 0;
-  time = 0.0f;
-  total_trials = 0;
-
-  Init_Counters_State();
+void Network::Init_Counters() { // not called usually -- only if needed by program
+  Init_Counters_impl();         // get our own init'd anyway
+  NET_STATE_RUN(Init_Counters());
 }
 
 void Network::Init_Timers() {
@@ -759,54 +581,28 @@ void Network::Init_Timers() {
   misc_time.ResetUsed();
 }
 
+
+////////////////////////////////////////
+//              Compute
+
 void Network::Compute_Netin() {
-  NET_THREAD_CALL(Network::Compute_Netin_Thr);
+  NET_STATE_RUN(Compute_Netin());
 }
 
 void Network::Send_Netin() {
-  NET_THREAD_CALL(Network::Send_Netin);
-
-  // now need to roll up the netinput into unit vals
-  const int nu = n_units_built;
-  const int nt = n_thrs_built;
-  if(NetinPerPrjn()) {
-    for(int i=1;i<nu;i++) {     // 0 = dummy idx
-      float nw_nt = 0.0f;
-      for(int p=0;p<UnNRecvConGps(i);p++) {
-        for(int j=0;j<nt;j++) {
-          float& ntmp = net_state->thrs_send_netin_tmp[nt][p * n_units_built + i];
-          nw_nt += ntmp;
-          ntmp = 0.0f; // reset immediately
-        }
-      }
-      UnitState_cpp* uv = UnUnitState(i);
-      uv->GetUnitSpec(net_state)->Compute_SentNetin(uv, net_state, nw_nt);
-    }
-  }
-  else {
-    for(int i=1;i<nu;i++) {     // 0 = dummy idx
-      UnitState_cpp* uv = UnUnitState(i);
-      float nw_nt = 0.0f;
-      for(int j=0;j<nt;j++) {
-        float& ntmp = net_state->thrs_send_netin_tmp[nt][i];
-        nw_nt += ntmp;
-        ntmp = 0.0f;
-      }
-      uv->GetUnitSpec(net_state)->Compute_SentNetin(uv, net_state, nw_nt);
-    }
-  }
+  NET_STATE_RUN(Send_Netin());
 }
 
 void Network::Compute_Act() {
-  NET_THREAD_CALL(Network::Compute_Act_Thr);
+  NET_STATE_RUN(Compute_Act());
 }
 
 void Network::Compute_NetinAct() {
-  NET_THREAD_CALL(Network::Compute_NetinAct_Thr);
+  NET_STATE_RUN(Compute_NetinAct());
 }
 
 void Network::Compute_dWt() {
-  NET_THREAD_CALL(Network::Compute_dWt_Thr);
+  NET_STATE_RUN(Compute_dWt());
 }
 
 bool Network::Compute_Weights_Test(int trial_no) {
@@ -814,45 +610,28 @@ bool Network::Compute_Weights_Test(int trial_no) {
                "Network is not built or is not intact -- must Build first")) {
     return false;
   }
-  if(train_mode == TEST) return false;
-  if(wt_update == ON_LINE) return true;
-  if(wt_update == BATCH) return false;
-  if(wt_update == SMALL_BATCH) {
-    int trial_no_eff = trial_no;
-#ifdef DMEM_COMPILE
-    if(dmem_trl_comm.nprocs > 1) {
-      trial_no_eff = ((trial_no_eff-1) / dmem_trl_comm.nprocs) + 1;
-      // subtract the 1 that was presumably added to trial_no, then add it back
-    }
-#endif
-    return (trial_no_eff % small_batch_n_eff == 0);
-  }
-  return false;
+  return Compute_Weights_Test_impl(trial_no); // in Network_core.h
 }
 
 void Network::Compute_Weights() {
 #ifdef DMEM_COMPILE
   DMem_SumDWts(dmem_trl_comm.comm);
 #endif
-  NET_THREAD_CALL(Network::Compute_Weights_Thr);
+  NET_STATE_RUN(Compute_Weights());
 
   SaveWeights_ClusterRunTerm();
 }
 
 void Network::Compute_SSE(bool unit_avg, bool sqrt) {
-  NET_THREAD_CALL(Network::Compute_SSE_Thr);
-  net_state->Compute_SSE_Agg(unit_avg, sqrt);
+  NET_STATE_RUN(Compute_SSE(unit_avg, sqrt));
 }
 
 void Network::Compute_PRerr() {
-  NET_THREAD_CALL(Network::Compute_PRerr_Thr);
-  net_state->Compute_PRerr_Agg();
+  NET_STATE_RUN(Compute_PRerr());
 }
 
 void Network::Compute_TrialStats() {
-  Compute_SSE(stats.sse_unit_avg, stats.sse_sqrt);
-  if(stats.prerr)
-    Compute_PRerr();
+  NET_STATE_RUN(Compute_TrialStats());
   SyncAllState();
 }
 
@@ -862,15 +641,20 @@ void Network::DMem_ShareTrialData(DataTable* dt, int n_rows) {
 #endif
 }
 
+void  Network::Compute_EpochSSE() {
+  NET_STATE_RUN(Compute_EpochSSE());
+}  
+
+void  Network::Compute_EpochPRerr() {
+  NET_STATE_RUN(Compute_EpochPRerr());
+}
+
 void Network::Compute_EpochStats() {
 #ifdef DMEM_COMPILE
   DMem_ComputeAggs(dmem_trl_comm.comm);
 #endif
-  Compute_EpochSSE();
-  if(stats.prerr)
-    Compute_EpochPRerr();
 
-  net_state->Compute_EpochStats_Layer();
+  NET_STATE_RUN(Compute_EpochStats());
 
   SaveWeights_ClusterRunCmd();  // check for cluster commands!
   SyncAllState();
@@ -880,43 +664,6 @@ void Network::Compute_EpochStats() {
 //////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////
 //      Build etc below here
-
-
-// bool Network::net_aligned_malloc(void** ptr, size_t sz) {
-//   // alignment -- 64 = 64 byte (not bit) -- this is needed for Phi MIC but not clear
-//   // that it is useful for AVX2??  anyway, better safe than sorry?
-//   // 8/23/16 -- unnec to do the 64 byte align -- even any align may be not needed
-//   // and windows requires a different free based on the align alloc type, so
-//   // we are just standardizing on 16 byte align for all..
-//   // if(sz > 1024) {
-// #ifdef TA_OS_WIN
-//   *ptr = _aligned_malloc(sz, 16);
-// #else
-//   posix_memalign(ptr, 16, sz);
-// #endif
-//   // }
-//   // else {                        // don't bother with align for small guys..
-//   //   *ptr = malloc(sz);
-//   // }
-//   if(!*ptr) {
-//     taMisc::Error("Network::net_aligned_alloc memory allocation error! usually fatal -- please quit!  maybe your network is too big to fit into RAM?");
-//     return false;
-//   }
-//   return true;
-// }
-
-// bool Network::net_free(void** ptr) {
-//   if(ptr && *ptr) {
-// #ifdef TA_OS_WIN
-//     _aligned_free(*ptr);
-// #else
-//     free(*ptr);
-// #endif
-//     *ptr = NULL;
-//     return true;
-//   }
-//   return false;
-// }
 
 void Network::BuildNetState() {
   if(net_state)
@@ -928,6 +675,8 @@ void Network::BuildNetState() {
   // virtual way!
 #endif
 
+  net_state->net_owner = this;
+  net_state->threads.InitState(n_threads, net_state);
   net_state_sync.ParseTypes(GetTypeDef(), NetworkStateType());
   layer_state_sync.ParseTypes(layers.el_typ, LayerStateType());
   
@@ -942,21 +691,20 @@ void Network::Build() {
 
   net_state->FreeStateMem();     // free any and all existing memory!  must still have built params from before!
 
+  // todo: for all Build-level code, need to do cuda in parallel (at least for now)
+  
   BuildNetState();
-  BuildLayers();
+  BuildIndexesSizes();
   BuildSpecs();
-  BuildPrjns(); // note: for Area constructs
   CheckSpecs();
-  BuildUnits();
 
   SyncSendPrjns();
   UpdatePrjnIdxs();
   
-  AllocUnitConGpThreadMem();
+  BuildLayerUnitState();
+  BuildConState();
 
   Connect();
-
-  AllocSendNetinTmp();
 
   if(taMisc::gui_active)	// only when gui is active..
     AssignVoxels();
@@ -972,10 +720,6 @@ void Network::Build() {
   net_timing.SetSize(n_thrs_built + 1);
 
   Compute_PrjnDirections();
-  
-#ifdef CUDA_COMPILE
-  Cuda_BuildNet();
-#endif  
   
   if(HasNetFlag(BUILD_INIT_WTS)) {
     Init_Weights();
@@ -994,22 +738,25 @@ void Network::CheckSpecs() {
   }
 }
 
-void Network::BuildLayers() {
+void Network::BuildIndexesSizes() {
   ++taMisc::no_auto_expand;
   StructUpdate(true);
   LayerPos_RelPos();
-  layers.BuildLayers(); // recurses
 
   state_con_specs.Reset();
   state_unit_specs.Reset();
+  state_prjn_specs.Reset();
   state_layer_specs.Reset();
-  state_ungps.Reset();
+
   state_prjns.Reset();
   state_layers.Reset();
 
   Layer_Group* last_laygp = NULL;
   int last_laygp_lay0_idx = -1;
   int last_laygp_n = 0;
+
+  n_ungps_built = 0;
+  n_units_built = 1;            // count 'em up -- first one is null
   
   for(int i=0;i<layers.leaves; i++) {
     Layer* lay = (Layer*)layers.Leaf(i);
@@ -1020,10 +767,11 @@ void Network::BuildLayers() {
       continue;
     }
     lay->layer_idx = state_layers.size;
-    lay->n_units = lay->units.leaves;
+    lay->n_units = lay->flat_geom_n;
     state_layers.Add(lay);
-    lay->ungp_idx = state_ungps.size; // always add the main layer group first!
-    state_ungps.Add(&lay->units);
+    lay->ungp_idx = n_ungps_built; // always add the main layer group first!
+    n_ungps_built++;
+    n_units_built += lay->n_units; // don't factor in lesions yet!
 
     Layer_Group* lg = GET_OWNER(lay,Layer_Group);
     if(lg != &layers) {
@@ -1057,7 +805,7 @@ void Network::BuildLayers() {
     }
     
     // LayerSpec and UnitSpec
-    LayerSpec* ls = lay->GetLayerSpec();
+    LayerSpec* ls = lay->GetMainLayerSpec();
     if(ls) {
       if(state_layer_specs.AddUnique(ls)) {
         ls->spec_idx = state_layer_specs.size-1;
@@ -1068,7 +816,7 @@ void Network::BuildLayers() {
       lay->spec_idx = -1;
     }
           
-    UnitSpec* us = lay->GetUnitSpec();
+    UnitSpec* us = lay->GetMainUnitSpec();
     if(us) {
       if(state_unit_specs.AddUnique(us)) {
         us->spec_idx = state_unit_specs.size-1;
@@ -1092,21 +840,7 @@ void Network::BuildLayers() {
     // sub-unit-groups
     if(lay->unit_groups && lay->gp_geom.n > 0) {
       lay->n_ungps = lay->gp_geom.n;
-      for(int j=0; j < lay->gp_geom.n; j++) {
-        if(lay->virt_groups) {
-          state_ungps.Add(&lay->units);
-        }
-        else {
-          Unit_Group* ug = (Unit_Group*)lay->units.gp.SafeEl(j);
-          if(ug) {
-            ug->state_idx = state_ungps.size;
-            state_ungps.Add(ug);
-          }
-          else {
-            state_ungps.Add(&lay->units);
-          }
-        }
-      }
+      n_ungps_built += lay->gp_geom.n;
     }
     else {
       lay->n_ungps = 0;
@@ -1117,13 +851,25 @@ void Network::BuildLayers() {
       lay->prjn_start_idx = state_prjns.size;
       for(int j=0; j < lay->projections.size; j++) {
         Projection* prjn = lay->projections[j];
-        if(!prjn->IsActive()) {
+        if(!prjn->MainIsActive()) {
           prjn->prjn_idx = -1;
           continue;
         }
         prjn->prjn_idx = state_prjns.size;
         state_prjns.Add(prjn);
-        ConSpec* cs = prjn->GetConSpec();
+
+        ProjectionSpec* ps = prjn->GetMainPrjnSpec();
+        if(ps) {
+          if(state_prjn_specs.AddUnique(ps)) {
+            ps->spec_idx = state_prjn_specs.size-1;
+          }
+          prjn->spec_idx = ps->spec_idx;
+        }
+        else {
+          prjn->spec_idx = -1;
+        }
+
+        ConSpec* cs = prjn->GetMainConSpec();
         if(cs) {
           if(state_con_specs.AddUnique(cs)) {
             cs->spec_idx = state_con_specs.size-1;
@@ -1150,14 +896,19 @@ void Network::BuildLayers() {
 
 
 void Network::BuildSpecs() {
-  SetSpecSizes(state_layer_specs.size, state_unit_specs.size, state_con_specs.size);
-  net_state->SetSpecSizes(state_layer_specs.size, state_unit_specs.size, state_con_specs.size);
+  SetSpecSizes(state_layer_specs.size, state_prjn_specs.size, state_unit_specs.size, state_con_specs.size);
+  net_state->SetSpecSizes(state_layer_specs.size, state_prjn_specs.size, state_unit_specs.size, state_con_specs.size);
   net_state->AllocSpecMem();
 
   for(int i=0; i < state_layer_specs.size; i++) {
     LayerSpec* ls = StateLayerSpec(i);
     net_state->layer_specs[i] = net_state->NewLayerSpec(ls->GetStateSpecType());
     ls->CopyToState(net_state->layer_specs[i], net_state->GetStateSuffix());
+  }
+  for(int i=0; i < state_prjn_specs.size; i++) {
+    ProjectionSpec* ls = StatePrjnSpec(i);
+    net_state->prjn_specs[i] = net_state->NewPrjnSpec(ls->GetStateSpecType());
+    ls->CopyToState(net_state->prjn_specs[i], net_state->GetStateSuffix());
   }
   for(int i=0; i < state_unit_specs.size; i++) {
     UnitSpec* ls = StateUnitSpec(i);
@@ -1169,12 +920,17 @@ void Network::BuildSpecs() {
     net_state->con_specs[i] = net_state->NewConSpec(ls->GetStateSpecType());
     ls->CopyToState(net_state->con_specs[i], net_state->GetStateSuffix());
   }
+  // todo: needs cuda_state update too!
 }
 
 void Network::UpdateAllStateSpecs() {
   for(int i=0; i < n_layer_specs_built; i++) {
     LayerSpec* ls = StateLayerSpec(i);
     ls->CopyToState(net_state->layer_specs[i], net_state->GetStateSuffix());
+  }
+  for(int i=0; i < n_prjn_specs_built; i++) {
+    ProjectionSpec* ls = StatePrjnSpec(i);
+    ls->CopyToState(net_state->prjn_specs[i], net_state->GetStateSuffix());
   }
   for(int i=0; i < n_unit_specs_built; i++) {
     UnitSpec* ls = StateUnitSpec(i);
@@ -1184,55 +940,17 @@ void Network::UpdateAllStateSpecs() {
     ConSpec* ls = StateConSpec(i);
     ls->CopyToState(net_state->con_specs[i], net_state->GetStateSuffix());
   }
+  // todo: needs cuda_state update too!
 }
 
-
-void Network::BuildUnits() {
-  StructUpdate(true);
-  threads.InitAll();
-  BuildNullUnit();
-  FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
-    if(lay->lesioned()) {
-      lay->RemoveUnits();         // unbuilt units won't have unit vars and are dangerous!
-      continue;
-    }
-    lay->BuildUnits();
-  }
-
-  BuildUnitsFlatList();
-
-  StructUpdate(false);
+void Network::BuildLayerUnitState() {
+  BuildStateSizes();
+  net_state->AllocLayerUnitMem();
+  BuildLayerState_FromNet();
+  net_state->BuildUnitState();
 }
 
-void Network::BuildNullUnit() {
-  // in derived classes, just replace the unit type with appropriate one -- do NOT call
-  // inherited!
-  if(!null_unit) {
-    taBase::OwnPointer((taBase**)&null_unit, new Unit, this);
-  }
-}
-
-void Network::BuildUnitsFlatList() {
-  units_flat.Reset();
-  // real indexes start at 1, to allow 0 to be a dummy case for inactive units that may
-  // nevertheless get a send netin call to them -- all those just go to this 0 bin
-  units_flat.Add(null_unit);         // add a dummy null
-  FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
-    if(lay->lesioned()) {
-      lay->units_flat_idx = 0;
-      continue; // don't even add units from lesioned layers!!
-    }
-    lay->BuildUnitsFlatList(this);
-  }
-}
-
-
-void Network::AllocUnitConGpThreadMem() {
-  // absent any other special process, the first thread to touch (write) to a memory block
-  // gets that memory allocated on its physical memory.  so we simplify things
-  // by doing all the malloc here in one method, and then ensure that the threads
-  // initialize the memory during the subsequent Init call
-
+void Network::BuildStateSizes() {
   TypeDef* lay_typ = LayerStateType();
   TypeDef* prjn_typ = PrjnStateType();
   TypeDef* ungp_typ = UnGpStateType();
@@ -1240,30 +958,87 @@ void Network::AllocUnitConGpThreadMem() {
   TypeDef* con_typ = ConStateType();
 
   SetStateSizes
-    (threads.n_threads, lay_typ->size, prjn_typ->size, ungp_typ->size, un_typ->size, con_typ->size,
-     state_layers.size, state_prjns.size, state_ungps.size, units_flat.size);
+    (n_threads, lay_typ->size, prjn_typ->size, ungp_typ->size, un_typ->size, con_typ->size,
+     state_layers.size, state_prjns.size, n_ungps_built, n_units_built);
 
   net_state->SetStateSizes
-    (threads.n_threads, lay_typ->size, prjn_typ->size, ungp_typ->size, un_typ->size, con_typ->size,
-     state_layers.size, state_prjns.size, state_ungps.size, units_flat.size);
+    (n_threads, lay_typ->size, prjn_typ->size, ungp_typ->size, un_typ->size, con_typ->size,
+     state_layers.size, state_prjns.size, n_ungps_built, n_units_built);
+}
 
-  net_state->AllocLayUnitMem();
+void Network::BuildLayerState_FromNet() {
+  // todo: we could save a JSON format network description with all the key info and use
+  // that to build this information in a standalone impl
 
-  for(int i=0; i < n_layers_built; i++) {
-    LayerState_cpp* lst = GetLayerState(i);
-    Layer* lay = StateLayer(i);
+  // at this point all the basic layer and unit level memory has been allocated on net_state
+
+  int un_idx = 1;
+  int ungp_un_idx = 1;
+  int send_prjn_idx = 0;
+  
+  for(int li=0; li < n_layers_built; li++) {
+    LayerState_cpp* lst = GetLayerState(li);
+    Layer* lay = StateLayer(li);
+    lay->units_flat_idx = un_idx;
     lst->Initialize_lay_core
-      (i, lay->laygp_lay0_idx, lay->laygp_n, lay->units_flat_idx, lay->ungp_idx, lay->n_units,
+      (li, lay->laygp_lay0_idx, lay->laygp_n, lay->units_flat_idx, lay->ungp_idx, lay->n_units,
        lay->n_ungps, lay->prjn_start_idx, lay->spec_idx, lay->unit_spec_idx,
        lay->n_recv_prjns, lay->n_send_prjns, lay->flags, (LayerState_cpp::LayerType)lay->layer_type);
-    LayerSpec* ls = lay->GetLayerSpec();
+
+    lst->Initialize_lay_geom
+      (lay->un_geom_x, lay->un_geom_y, lay->un_geom_n, lay->gp_geom_x, lay->gp_geom_y, lay->gp_geom_n,
+       lay->flat_geom_x, lay->flat_geom_y, lay->flat_geom_n, lay->gp_spc_x, lay->gp_spc_y);
+
+    lst->SetLayerName(lay->name);
+    
+    LayerSpec* ls = lay->GetMainLayerSpec();
     if(ls) {
       ls->Init_LayerState(lst, net_state);
     }
 
     net_state->ungp_lay_idxs[lay->ungp_idx] = lay->layer_idx;
-    for(int j=0; j < lay->n_ungps; j++) {
-      net_state->ungp_lay_idxs[lay->ungp_idx + 1 + j] = lay->layer_idx;
+    UnGpState_cpp* lugst = GetUnGpState(lay->ungp_idx);
+    lugst->Initialize_core(lay->ungp_idx, lay->layer_idx, -1, ungp_un_idx, lay->n_units);
+
+    if(lay->n_ungps > 0) {      // has sub unit groups
+      for(int j=0; j < lay->n_ungps; j++) {
+        int ungp_idx = lay->ungp_idx + 1 + j;
+        net_state->ungp_lay_idxs[ungp_idx] = lay->layer_idx;
+        UnGpState_cpp* ugst = GetUnGpState(ungp_idx);
+        ugst->Initialize_core(ungp_idx, lay->layer_idx, j, ungp_un_idx, lay->un_geom.n);
+        for(int ui=0; ui < ugst->n_units; ui++) {
+          net_state->units_ungps[ungp_un_idx++] = ungp_idx;
+        }
+      }
+    }
+    else {
+      for(int ui=0; ui < lst->n_units; ui++) {
+        net_state->units_ungps[ungp_un_idx++] = lay->ungp_idx;
+      }
+    }
+
+    // lookup table from units to layers
+    for(int ui=0; ui < lst->n_units; ui++) {
+      net_state->units_lays[un_idx++] = lst->layer_idx;
+    }
+
+    // sending projection list
+    if(lay->n_send_prjns > 0) {
+      lay->send_prjn_start_idx = send_prjn_idx;
+      lst->send_prjn_start_idx = send_prjn_idx;
+
+      for(int j=0; j < lay->send_prjns.size; j++) {
+        Projection* prjn = lay->send_prjns[j];
+        if(!prjn->MainIsActive()) continue;
+        net_state->lay_send_prjns[send_prjn_idx++] = prjn->prjn_idx;
+        if(send_prjn_idx >= n_prjns_built) {
+          taMisc::Error("programmer error: sending prjn idx > number of projections built!");
+        }
+      }
+    }
+    else {
+      lay->send_prjn_start_idx = -1;
+      lst->send_prjn_start_idx = -1;
     }
   }
   
@@ -1273,202 +1048,16 @@ void Network::AllocUnitConGpThreadMem() {
     Layer* recv_lay = prjn->layer;
     Layer* send_lay = prjn->from;
     ConSpec* cs = prjn->con_spec;
-    pst->Initialize_core(prjn->off, prjn->NotActive(), i, recv_lay->layer_idx,
-                         send_lay->layer_idx, prjn->recv_idx, prjn->send_idx, cs->spec_idx);
-    // note: no virtual in prjnstate and no _core prjnspec -- any init happens elsewhere
-  }
-
-  for(int i=0; i < n_ungps_built; i++) {
-    UnGpState_cpp* ugst = GetUnGpState(i);
-    ugst->Initialize_core(i, net_state->UnGpLayIdx(i));
-  }
-
-  for(int i=1; i< n_units_built; i++) {
-    Unit* un = units_flat[i];
-    int thr_no = (i-1) % n_thrs_built; // just increment sequentialy 0,1,2..n_threads-1
-    net_state->units_thrs[i] = thr_no;
-    un->thread_no = thr_no;
-    int thr_un_idx = net_state->thrs_n_units[thr_no]++;
-    if(TestError(thr_un_idx >= net_state->max_thr_n_units, "AllocUnitConGpThreadMem",
-                 "Programmer error -- thr_un_idx >= max_thr_n_units -- please report!")) {
-      return;
-    }
-    net_state->units_thr_un_idxs[i] = thr_un_idx;
-    un->thr_un_idx = thr_un_idx;
-    Layer* lay = un->own_lay();
-    net_state->units_n_recv_cgps[i] = lay->n_recv_prjns;
-    net_state->units_n_send_cgps[i] = lay->n_send_prjns;
-    net_state->n_recv_cgps += lay->n_recv_prjns;
-    net_state->n_send_cgps += lay->n_send_prjns;
-  }
-
-  NET_THREAD_CALL(Network::InitUnitThreadIdxs);
-
-  net_state->AllocConGpMem();
-  
-  NET_THREAD_CALL(Network::InitUnitConGpThreadMem);
-}
-
-void Network::InitUnitThreadIdxs(int thr_no) {
-
-  for(int i=0; i< 2*n_layers_built; i++) {
-    net_state->thrs_lay_unit_idxs[thr_no][i] = -1;
-  }
-  for(int i=0; i< 2*n_ungps_built; i++) {
-    net_state->thrs_ungp_unit_idxs[thr_no][i] = -1;
-  }
-  for(int i=0; i< net_state->n_lay_stats*n_layers_built; i++) {
-    net_state->thrs_lay_stats[thr_no][i] = 0.0f;
-  }
-
-  int thr_un_idx = 0;
-  
-  int act_lay_idx = 0;
-  int prv_act_lay_idx = -1;
-  int ungp_idx = 0;
-  int prv_lay_ungp_idx = -1;
-  int prv_sub_ungp_idx = -1;
-  Layer* lay = NULL;
-  Layer* prv_lay = NULL;
-  for(int i=1; i< n_units_built; i++) {
-    int th = net_state->units_thrs[i];
-    if(th != thr_no) continue;
-
-    Unit* un = units_flat[i];
-    if(TestError(un->thr_un_idx != thr_un_idx, "InitUnitThreadIdxs",
-                 "Programmer error -- un->thr_un_idx != thr_un_idx -- please report!",
-                 String(un->thr_un_idx), "!=", String(thr_un_idx), "idx:", String(i))) {
-      return;
-    }
-    lay = un->own_lay();
-    
-    if(lay != prv_lay) {        // new layer -- update 
-      act_lay_idx = lay->layer_idx;
-      net_state->thrs_lay_unit_idxs[thr_no][act_lay_idx * 2] = thr_un_idx; // start
-      if(prv_act_lay_idx >= 0)
-        net_state->thrs_lay_unit_idxs[thr_no][prv_act_lay_idx * 2 + 1] = thr_un_idx; // end of prev
-      prv_act_lay_idx = act_lay_idx;
-
-      if(prv_lay_ungp_idx >= 0) {
-        net_state->thrs_ungp_unit_idxs[thr_no][prv_lay_ungp_idx * 2 + 1] = thr_un_idx; // end of prev
-      }
-      if(prv_sub_ungp_idx >= 0) {
-        net_state->thrs_ungp_unit_idxs[thr_no][prv_sub_ungp_idx * 2 + 1] = thr_un_idx; // end of prev
-      }
-      prv_lay = lay;
-      ungp_idx = lay->ungp_idx;                               // new layer ungp idx
-      prv_lay_ungp_idx = ungp_idx;
-      net_state->thrs_ungp_unit_idxs[thr_no][ungp_idx * 2] = thr_un_idx; // start
-      prv_sub_ungp_idx = -1;
-    }
-
-    if(lay->unit_groups) {      // sub unit groups
-      ungp_idx = lay->ungp_idx + 1 + un->gp_idx;
-      if(ungp_idx != prv_sub_ungp_idx) {
-        net_state->thrs_ungp_unit_idxs[thr_no][ungp_idx * 2] = thr_un_idx; // start
-        if(prv_sub_ungp_idx >= 0) {
-          net_state->thrs_ungp_unit_idxs[thr_no][prv_sub_ungp_idx * 2 + 1] = thr_un_idx; // end of prev
-        }
-        prv_sub_ungp_idx = ungp_idx;
-      }
-    }
-
-    net_state->thrs_unit_idxs[thr_no][thr_un_idx] = i;
-    net_state->thrs_units_n_recv_cgps[thr_no][thr_un_idx] = lay->n_recv_prjns;
-    net_state->thrs_units_n_send_cgps[thr_no][thr_un_idx] = lay->n_send_prjns;
-
-    net_state->thrs_recv_cgp_start[thr_no][thr_un_idx] = net_state->thrs_n_recv_cgps[thr_no];
-    net_state->thrs_send_cgp_start[thr_no][thr_un_idx] = net_state->thrs_n_send_cgps[thr_no];
-
-    net_state->thrs_n_recv_cgps[thr_no] += lay->n_recv_prjns;
-    net_state->thrs_n_send_cgps[thr_no] += lay->n_send_prjns;
-
-    thr_un_idx++;
-  }
-  if(prv_act_lay_idx >= 0) {
-    net_state->thrs_lay_unit_idxs[thr_no][prv_act_lay_idx * 2 + 1] = thr_un_idx; // end of prev
-  }
-  if(prv_lay_ungp_idx >= 0) {
-    net_state->thrs_ungp_unit_idxs[thr_no][prv_lay_ungp_idx * 2 + 1] = thr_un_idx; // end of prev
-  }
-  if(prv_sub_ungp_idx >= 0) {
-    net_state->thrs_ungp_unit_idxs[thr_no][prv_sub_ungp_idx * 2 + 1] = thr_un_idx; // end of prev
+    ProjectionSpec* ps = prjn->spec;
+    pst->Initialize_core
+      (prjn->off, prjn->MainNotActive(), i, recv_lay->layer_idx, send_lay->layer_idx, prjn->send_prjn_idx,
+       prjn->recv_idx, prjn->send_idx, prjn->spec_idx, cs->spec_idx, prjn->con_type->members.size);
+    ps->Init_PrjnState(pst, net_state);
   }
 }
 
-
-void Network::InitUnitConGpThreadMem(int thr_no) {
-  // note: cannot just go over ThrsNRecvConGps(thr_no); b/c ConState_cpp doesn't have units etc yet
-
-  int rcg_flags = ConState_cpp::RECV_CONS | ConState_cpp::IS_ACTIVE;
-  int scg_flags = ConState_cpp::CG_0 | ConState_cpp::IS_ACTIVE;
-  if(RecvOwnsCons()) {
-    rcg_flags |= ConState_cpp::OWN_CONS;
-  }
-  else {
-    scg_flags |= ConState_cpp::OWN_CONS;
-  }
-
-  const int nu = ThrNUnits(thr_no);
-  for(int i=0; i < nu; i++) {
-    int flt_idx = ThrUnitIdx(thr_no, i);
-    Unit* un = UnFmIdx(flt_idx);
-    Layer* lay = un->own_lay();
-
-    UnitSpec* us = un->GetUnitSpec();
-    if(!us)
-      us = lay->GetUnitSpec();  // shouldn't happen..
-    if(!us) {
-      taMisc::Error("unit spec is null in network initialization -- typically programmer error due to not setting unit_state_type properly!  stuff will probably crash now..");
-      return;
-    }
-    UnitState_cpp* uv = ThrUnitState(thr_no, i);
-
-    uv->Initialize_core(un->flat_idx, un->lay_un_idx, un->gp_idx, un->ungp_un_idx,
-                        un->thread_no, un->thr_un_idx, un->own_lay_idx, un->own_ungp_idx, us->spec_idx);
-    if(us) {
-      us->Init_UnitState(uv, net_state, thr_no);  // initialze -- causes this thread to own mem
-    }
-
-    int rcg_idx = 0;
-    for(int j=0; j < lay->projections.size; j++) {
-      Projection* prjn = lay->projections[j];
-      if(!prjn->IsActive()) continue;
-      ConState_cpp* rcg = ThrUnRecvConState(thr_no, i, rcg_idx);
-      rcg->Initialize_core
-        (flt_idx, i, prjn->GetConSpec()->spec_idx, rcg_flags, prjn->prjn_idx,
-         prjn->con_type->members.size, prjn->send_idx); 
-      rcg_idx++;
-    }
-    
-    int scg_idx = 0;
-    for(int j=0; j < lay->send_prjns.size; j++) {
-      Projection* prjn = lay->send_prjns[j];
-      if(!prjn || !prjn->IsActive()) continue;
-      ConState_cpp* scg = ThrUnSendConState(thr_no, i, scg_idx);
-      if (scg) {
-        scg->Initialize_core
-          (flt_idx, i, prjn->GetConSpec()->spec_idx, scg_flags, prjn->prjn_idx,
-           prjn->con_type->members.size, prjn->recv_idx);
-        scg_idx++;
-      }
-    }
-  }
-}
-
-void Network::AllocSendNetinTmp() {
-  net_state->AllocSendNetinTmpState();
-  
-  NET_THREAD_CALL(Network::InitSendNetinTmp_Thr);
-}
-
-void Network::BuildPrjns() {
-  ++taMisc::no_auto_expand;
-  StructUpdate(true);
-  layers.BuildPrjns(); // recurses
-  StructUpdate(false);
-  --taMisc::no_auto_expand;
-  if(!taMisc::gui_active)    return;
+void Network::BuildConState() {
+  net_state->BuildConState();
 }
 
 void Network::Connect() {
@@ -1478,189 +1067,13 @@ void Network::Connect() {
   CheckSpecs();
   RemoveCons();
 
-  Connect_Sizes();
-  Connect_Alloc();
-  CacheMemStart();
-  Connect_Cons();
-
-  NET_THREAD_CALL(Network::Connect_VecChunk_Thr);
-  NET_THREAD_CALL(Network::Connect_UpdtActives_Thr);
-
-  CountCons();
+  net_state->Connect();         // does all the heavy lifting
+  // todo: as for all Build-level code, need to do cuda in parallel (at least for now)
+  
   UpdtAfterNetMod();
 
   StructUpdate(false);
   --taMisc::no_auto_expand;
-}
-
-void Network::Connect_Sizes() {
-  // go in reverse order so that symmetric prjns can be made in
-  // response to receiver-based projections
-  Layer* l;
-  int i;
-  for(i=layers.leaves-1;i>=0;i--) {
-    l = (Layer*)layers.Leaf(i);
-    if(l->lesioned()) continue;
-    l->Connect_Sizes(this);
-  }
-}
-
-void Network::Connect_Alloc() {
-
-  net_state->AllocConsCountStateMem();
-  
-  NET_THREAD_CALL(Network::Connect_AllocSizes_Thr);
-
-  net_state->AllocConsStateMem();
-  
-  NET_THREAD_CALL(Network::Connect_Alloc_Thr); // allocate to con groups
-}
-
-void Network::Connect_AllocSizes_Thr(int thr_no) {
-  net_state->thrs_recv_cons_cnt[thr_no] = 0;
-  net_state->thrs_send_cons_cnt[thr_no] = 0;
-  net_state->thrs_own_cons_max_size[thr_no] = 0;
-  net_state->thrs_own_cons_max_vars[thr_no] = 0;
-  int64_t ocsum = 0;
-  int ocn = 0;
-
-  // recv cons
-  const int nrcg = ThrNRecvConGps(thr_no);
-  for(int i=0; i<nrcg; i++) {
-    ConState_cpp* rcg = ThrRecvConState(thr_no, i); // guaranteed to be active..
-    if(rcg->OwnCons()) {
-      net_state->thrs_recv_cons_cnt[thr_no] += rcg->OwnMemReq();
-      net_state->thrs_own_cons_max_size[thr_no] = MAX(net_state->thrs_own_cons_max_size[thr_no],
-                                           rcg->alloc_size);
-      net_state->thrs_own_cons_max_vars[thr_no] = MAX(net_state->thrs_own_cons_max_vars[thr_no],
-                                           rcg->NConVars());
-      ocsum += rcg->alloc_size;
-      ocn++;
-    }
-    else {
-      net_state->thrs_recv_cons_cnt[thr_no] += rcg->PtrMemReq();
-    }
-  }
-
-  // send cons
-  const int nscg = ThrNSendConGps(thr_no);
-  for(int i=0; i<nscg; i++) {
-    ConState_cpp* scg = ThrSendConState(thr_no, i); // guaranteed to be active..
-    if(scg->OwnCons()) {
-      net_state->thrs_send_cons_cnt[thr_no] += scg->OwnMemReq();
-      net_state->thrs_own_cons_max_size[thr_no] = MAX(net_state->thrs_own_cons_max_size[thr_no],
-                                           scg->alloc_size);
-      net_state->thrs_own_cons_max_vars[thr_no] = MAX(net_state->thrs_own_cons_max_vars[thr_no],
-                                           scg->NConVars());
-      ocsum += scg->alloc_size;
-      ocn++;
-    }
-    else {
-      net_state->thrs_send_cons_cnt[thr_no] += scg->PtrMemReq();
-    }
-  }
-
-  net_state->thrs_own_cons_tot_size[thr_no] = ocsum;
-  net_state->thrs_own_cons_tot_size_nonshared[thr_no] = ocsum; // assume all nonshared for now..
-  // see CountNonSharedRecvCons_Thr later..
-  if(ocn > 0) {
-    net_state->thrs_own_cons_avg_size[thr_no] = round((float)ocsum / (float)ocn);
-  }
-}
-
-void Network::Connect_Alloc_Thr(int thr_no) {
-  // then dole it out to the units..
-  int64_t thrs_recv_cons_idx = 0;
-  int64_t thrs_send_cons_idx = 0;
-
-  // recv cons
-  const int nrcg = ThrNRecvConGps(thr_no);
-  for(int i=0; i<nrcg; i++) {
-    ConState_cpp* rcg = ThrRecvConState(thr_no, i); // guaranteed to be active..
-    rcg->SetMemStart(net_state, thrs_recv_cons_idx);
-    // if(TestError(thrs_recv_cons_idx >= thrs_recv_cons_cnt[thr_no],
-    //              "Connect_Alloc_Thr",
-    //              "thrs_recv_cons_idx >= thrs_recv_cons_cnt[thr_no] -- programmer error -- please report!")) {
-    //   return;
-    // }
-    thrs_recv_cons_idx += rcg->MemReq();
-  }
-
-  // send cons
-  const int nscg = ThrNSendConGps(thr_no);
-  for(int i=0; i<nscg; i++) {
-    ConState_cpp* scg = ThrSendConState(thr_no, i); // guaranteed to be active..
-    scg->SetMemStart(net_state, thrs_send_cons_idx);
-    // if(TestError(thrs_send_cons_idx >= thrs_send_cons_cnt[thr_no],
-    //              "Connect_Alloc_Thr",
-    //              "thrs_send_cons_idx >= thrs_send_cons_cnt[thr_no] -- programmer error -- please report!")) {
-    //   return;
-    // }
-    thrs_send_cons_idx += scg->MemReq();
-  }
-}
-
-void Network::Connect_Cons() {
-  // go in reverse order so that symmetric prjns can be made in
-  // response to receiver-based projections
-  Layer* l;
-  int i;
-  for(i=layers.leaves-1;i>=0;i--) {
-    l = (Layer*)layers.Leaf(i);
-    if(l->lesioned()) continue;
-    l->Connect_Cons(this);
-  }
-}
-
-void Network::Connect_VecChunk_Thr(int thr_no) {
-  float pct_chunked = 0.0f;
-  int   ncg = 0;
-  if(RecvOwnsCons()) {
-    const int nrcg = ThrNRecvConGps(thr_no);
-    for(int i=0; i<nrcg; i++) {
-      ConState_cpp* rcg = ThrRecvConState(thr_no, i); // guaranteed to be active..
-      rcg->VecChunk_RecvOwns
-        (this, net_state->thrs_tmp_chunks[thr_no], net_state->thrs_tmp_not_chunks[thr_no],
-         net_state->thrs_tmp_con_mem[thr_no]);
-      pct_chunked += rcg->VecChunkPct();
-      ncg++;
-    }
-  }
-  else {
-    const int nscg = ThrNSendConGps(thr_no);
-    for(int i=0; i<nscg; i++) {
-      ConState_cpp* scg = ThrSendConState(thr_no, i); // guaranteed to be active..
-      scg->VecChunk_SendOwns
-        (this, net_state->thrs_tmp_chunks[thr_no], net_state->thrs_tmp_not_chunks[thr_no],
-         net_state->thrs_tmp_con_mem[thr_no]);
-      pct_chunked += scg->VecChunkPct();
-      ncg++;
-    }
-  }
-
-  if(ncg > 0) {
-    net_state->thrs_pct_cons_vec_chunked[thr_no] = (pct_chunked / (float)ncg);
-  }
-  else {
-    net_state->thrs_pct_cons_vec_chunked[thr_no] = 0.0f;
-  }    
-}
-
-void Network::Connect_UpdtActives_Thr(int thr_no) {
-  const int nrcg = ThrNRecvConGps(thr_no);
-  for(int i=0; i<nrcg; i++) {
-    ConState_cpp* rcg = ThrRecvConState(thr_no, i);
-    rcg->UpdtIsActive(net_state);
-  }
-  const int nscg = ThrNSendConGps(thr_no);
-  for(int i=0; i<nscg; i++) {
-    ConState_cpp* scg = ThrSendConState(thr_no, i);
-    scg->UpdtIsActive(net_state);
-  }
-}
-
-void Network::CacheMemStart() {
-  NET_THREAD_CALL(Network::CacheMemStart_Thr);
 }
 
 void Network::UnBuild() {
@@ -1794,22 +1207,9 @@ bool Network::CheckBuild(bool quiet) {
   return true;
 }
 
-bool Network::CheckConnect(bool quiet) {
-  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
-    if(l->lesioned()) continue;
-    if(!l->CheckConnect(quiet)) {
-      if(!quiet)
-        taMisc::CheckError("Network:",GetName(), "Needs the 'Connect' command to be run");
-      return false;
-    }
-  }
-  return true;
-}
-
 void Network::CheckThisConfig_impl(bool quiet, bool& rval) {
   //NOTE: slightly non-standard, because we bail on first detected issue
   if (!CheckBuild(quiet)) { rval = false; return; }
-  if (!CheckConnect(quiet)) { rval = false; return; }
   UpdtAfterNetMod();            // just to be sure..
   inherited::CheckThisConfig_impl(quiet, rval);
 }
@@ -1818,12 +1218,6 @@ void Network::CheckChildConfig_impl(bool quiet, bool& rval) {
   inherited::CheckChildConfig_impl(quiet, rval);
   specs.CheckConfig(quiet, rval); //note: this checks the specs themselves, not objs
   layers.CheckConfig(quiet, rval);
-}
-
-void Network::SetUnitType(TypeDef* td) {
-  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
-    l->SetUnitType(td);
-  }
 }
 
 void Network::SyncSendPrjns() {
@@ -1838,50 +1232,6 @@ void Network::UpdatePrjnIdxs() {
   }
 }
 
-void Network::ConnectUnits(Unit* u_to, Unit* u_from, bool record, ConSpec* conspec) {
-  if(u_to == NULL) return; // must have reciever
-  if(u_from == NULL)    u_from = u_to; // assume self con if no from
-
-  Layer* lay = GET_OWNER(u_to,Layer);
-  Layer* l_from = GET_OWNER(u_from,Layer);
-  // check to see if a pjrn already exists
-  FOREACH_ELEM_IN_GROUP(Projection, pjn, lay->projections) {
-    if((pjn->from.ptr() == l_from) &&
-       (pjn->spec->InheritsFrom(&TA_CustomPrjnSpec)) &&
-       ((conspec == NULL) || (pjn->con_spec == conspec)))
-    {
-      u_to->ConnectFromCk(u_from,pjn);
-      if (record)
-        taMisc::RecordScript(u_to->GetPath() + ".ConnectFromCk(" + u_from->GetPath() +
-                                                ", " + pjn->GetPath() + ");\n");
-      lay->UpdateAfterEdit();
-      return;
-    }
-  }
-
-  // no such projection found
-  Projection* pjn = 0;
-#ifdef DMEM_COMPILE
-  if(record && (taMisc::dmem_nprocs == 1)) { // don't actually run under gui in dmem mode
-#endif
-    pjn = (Projection*) lay->projections.New(1);
-    pjn->SetCustomFrom(l_from);
-    pjn->spec.type = &TA_CustomPrjnSpec;
-    if(conspec)
-      pjn->con_spec.SetSpec(conspec);
-    pjn->spec.UpdateAfterEdit();
-    pjn->projected = true;
-    pjn->UpdateAfterEdit();
-#ifdef DMEM_COMPILE
-  }
-#endif
-  if (record && pjn) {
-    taMisc::RecordScript(lay->projections.GetPath() + ".NewEl(1);\n");
-    taMisc::SREAssignment(pjn,pjn->FindMemberName("from_type"));
-    taMisc::ScriptRecordAssignment(pjn,pjn->FindMemberName("from"));
-    taMisc::RecordScript(pjn->GetPath() + ".spec.type = CustomPrjnSpec;");
-  }
-}
 
 #if 0 // turn off when not in need for debugging
 
@@ -2099,9 +1449,6 @@ void Network::RemoveUnits() {
   RemoveCons();
   taMisc::Busy();
   StructUpdate(true);
-  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
-    l->RemoveUnits();
-  }
 
   net_state->FreeStateMem();
   n_units = 0;
@@ -2122,27 +1469,8 @@ void Network::RemoveCons_impl() {
   ClearNetFlag(BUILT);
   ClearIntact();
   if(!net_state->thrs_n_recv_cgps) return; // cgps already gone
-  for(int i=0; i<n_thrs_built; i++) { // don't use actual threading -- maybe destroying
-    RemoveCons_Thr(i);
-  }
   net_state->FreeConMem();
   n_cons = 0;
-}
-
-void Network::RemoveCons_Thr(int thr_no) {
-  // recv cons
-  const int nrcg = ThrNRecvConGps(thr_no);
-  for(int i=0; i<nrcg; i++) {
-    ConState_cpp* rcg = ThrRecvConState(thr_no, i); // guaranteed to be active..
-    rcg->FreeCons();
-  }
-
-  // send cons
-  const int nscg = ThrNSendConGps(thr_no);
-  for(int i=0; i<nscg; i++) {
-    ConState_cpp* scg = ThrSendConState(thr_no, i); // guaranteed to be active..
-    scg->FreeCons();
-  }
 }
 
 
@@ -2215,12 +1543,12 @@ DataTable* Network::NetStructToTable(DataTable* dt, bool list_specs) {
     dt->SetVal(snp, "SendPrjns", -1);
 
     if(list_specs) {
-      UnitSpec* us = l->GetUnitSpec();
+      UnitSpec* us = l->GetMainUnitSpec();
       if(us)
         dt->SetVal(us->name, "UnitSpec", -1);
       else
         dt->SetVal("NULL", "UnitSpec", -1);
-      LayerSpec* ls = l->GetLayerSpec();
+      LayerSpec* ls = l->GetMainLayerSpec();
       if(ls)
         dt->SetVal(ls->name, "LayerSpec", -1);
       else
@@ -2349,12 +1677,12 @@ DataTable* Network::NetPrjnsToTable(DataTable* dt, bool include_off) {
       dt->AddBlankRow();
       dt->SetVal(l->name, "LayerName", -1);
       dt->SetVal(pj->name, "PrjnFrom", -1);
-      ProjectionSpec* ps = pj->GetPrjnSpec();
+      ProjectionSpec* ps = pj->GetMainPrjnSpec();
       if(ps)
         dt->SetVal(ps->name, "PrjnSpec", -1);
       else
         dt->SetVal("NULL", "PrjnSpec", -1);
-      ConSpec* cs = pj->GetConSpec();
+      ConSpec* cs = pj->GetMainConSpec();
       if(cs)
         dt->SetVal(cs->name, "ConSpec", -1);
       else
@@ -2404,10 +1732,10 @@ void Network::NetPrjnsToList_gp(Layer_Group* gp, String& rval, taMarkUp::Format 
           rval << taMarkUp::Bold(fmt, pj->name);
         rval << ": ";
         rval << taMarkUp::Escape(fmt, pj->notes) << " ";
-        ProjectionSpec* ps = pj->GetPrjnSpec();
+        ProjectionSpec* ps = pj->GetMainPrjnSpec();
         if(ps)
           rval << "(" << taMarkUp::Escape(fmt, ps->name) << ") ";
-        ConSpec* cs = pj->GetConSpec();
+        ConSpec* cs = pj->GetMainConSpec();
         if(cs)
           rval << "(" << taMarkUp::Escape(fmt, cs->name) << ") ";
         rval << "\n";
@@ -2465,7 +1793,7 @@ void Network::DMem_SumDWts(MPI_Comm comm) {
 
   // note: memory is not contiguous for all DWT vars, so we still need to do this..
 
-  NET_THREAD_CALL(Network::DMem_SumDWts_ToTmp_Thr);
+  NET_STATE_RUN(Network::DMem_SumDWts_ToTmp_Thr);
 
   double timer2s = MPI_Wtime();
 
@@ -2501,7 +1829,7 @@ void Network::DMem_SumDWts(MPI_Comm comm) {
 
   double timer2e = MPI_Wtime();
 
-  NET_THREAD_CALL(Network::DMem_SumDWts_FmTmp_Thr);
+  NET_STATE_RUN(Network::DMem_SumDWts_FmTmp_Thr);
   
   double timer1e = MPI_Wtime();
 
@@ -2593,97 +1921,26 @@ void Network::Copy_Weights(const Network* src) {
       l = (Layer*)layers.NextEl(i), sl = (Layer*)src->layers.NextEl(si))
   {
     if(!l->lesioned() && !sl->lesioned())
-      l->Copy_Weights(sl);
+      l->Copy_Weights(sl, true);
   }
   Cuda_ConStateToDevice();
   UpdateAllViews();
   taMisc::DoneBusy();
 }
 
-void Network::SaveWeights_strm(ostream& strm, Network::WtSaveFormat fmt) {
-  taMisc::Busy();
-  Cuda_ConStateToHost();
+void Network::SaveWeights(const String& fname, WtSaveFormat fmt) {
   if(fmt == NET_FMT) fmt = wt_save_fmt;
 
-  strm << "<Fmt " << GetTypeDef()->GetEnumString("WtSaveFormat", fmt) << ">\n"
-       << "<Name " << GetName() << ">\n"
-       << "<Epoch " << epoch << ">\n";
-  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
-    if(l->lesioned()) continue;
-    strm << "<Lay " << l->name << ">\n";
-    l->SaveWeights_strm(strm, (Unit::WtSaveFormat)fmt);
-    strm << "</Lay>\n";
-  }
-  taMisc::DoneBusy();
-}
-
-bool Network::LoadWeights_strm(istream& strm, bool quiet) {
-  bool rval = false;
-  String tag, val, enum_typ_nm;
-  int stat = 0;
-  Unit::WtSaveFormat fmt;
-  taMisc::Busy();
-  int c = strm.peek();
-  if(TestError(c == '#', "LoadWeights_strm",
-               "cannot read old formats from version 3.2 -- must use network save")) {
-    goto exit;
-  }
-  stat = taMisc::read_tag(strm, tag, val);
-  if(TestError((stat != taMisc::TAG_GOT) || (tag != "Fmt"), "LoadWeights_strm",
-               "did not got find Fmt tag at start of weights file -- probably file not found")) {
-    goto exit;
-  }
-
-  fmt = (Unit::WtSaveFormat)TA_Unit.GetEnumVal(val, enum_typ_nm);
-
-  stat = taMisc::read_tag(strm, tag, val);
-  if((stat != taMisc::TAG_GOT) || (tag != "Name")) goto exit;
-  // don't set the name!!! this causes more trouble than it is worth!!
-//   name = val;
-
-  stat = taMisc::read_tag(strm, tag, val);
-  if((stat != taMisc::TAG_GOT) || (tag != "Epoch")) goto exit;
-  epoch = (int)val;
-
-  while(true) {
-    stat = taMisc::read_tag(strm, tag, val);
-    if(stat != taMisc::TAG_GOT) break;          // *should* break at TAG_END
-    if(tag != "Lay") { stat = taMisc::TAG_NONE;  break; } // bumping up against some other tag
-    Layer* lay = layers.FindLeafName(val);
-    if(lay) {
-      stat = lay->LoadWeights_strm(strm, fmt, quiet);
-    }
-    else {
-      TestWarning(!quiet, "LoadWeights", "Layer not found:", val);
-      stat = Layer::SkipWeights_strm(strm, fmt, quiet);
-    }
-    if(stat != taMisc::TAG_END) break;
-    stat = taMisc::TAG_NONE;           // reset so EndTag will definitely read new tag
-    Unit::LoadWeights_EndTag(strm, "Lay", tag, stat, quiet);
-    if(stat != taMisc::TAG_END) break;
-  }
-
-  // no longer need to do this: is done directly in load weights call
-  // Init_Weights_post();
-  NET_THREAD_CALL(Network::Connect_VecChunk_Thr); // re-chunk just to be sure, in case they moved around
+  // todo: sync weights from cuda
   
-  // could try to read end tag but what is the point?
-  rval = true;
-  UpdateAllViews();
-  Cuda_ConStateToDevice();
-exit:
-  taMisc::DoneBusy();
-  return true;
-}
-
-void Network::SaveWeights(const String& fname, Network::WtSaveFormat fmt) {
   if(TestError(!IsBuiltIntact(), "LoadWeights",
                "network is not built or intact -- cannot save weights")) {
     return;
   }
   taFiler* flr = GetSaveFiler(fname, ".wts", true);
-  if(flr->ostrm)
-    SaveWeights_strm(*flr->ostrm, fmt);
+  if(flr->ostrm) {
+    net_state->NetworkSaveWeights_strm(*flr->ostrm, (NetworkState_cpp::WtSaveFormat)fmt);
+  }
   flr->Close();
   taRefN::unRefDone(flr);
 }
@@ -2696,7 +1953,8 @@ bool Network::LoadWeights(const String& fname, bool quiet) {
   taFiler* flr = GetLoadFiler(fname, ".wts", true);
   bool rval = false;
   if(flr->istrm) {
-    rval = LoadWeights_strm(*flr->istrm, quiet);
+    rval = net_state->NetworkLoadWeights_strm(*flr->istrm, quiet);
+    Cuda_ConStateToDevice();
   }
   else {
     TestError(true, "LoadWeights", "aborted due to inability to load weights file");
@@ -2704,6 +1962,7 @@ bool Network::LoadWeights(const String& fname, bool quiet) {
   }
   flr->Close();
   taRefN::unRefDone(flr);
+  UpdateAllViews();
   return rval;
 }
 
@@ -2715,8 +1974,9 @@ void Network::SaveToWeights(Weights* wts) {
   if(wts == NULL) {
     wts = (Weights*)weights.New(1);
   }
+  // todo: sync weights from cuda
   ostringstream oss;
-  SaveWeights_strm(oss, TEXT);  // always use text for this
+  net_state->NetworkSaveWeights_strm(oss, TEXT);  // always use text for this
   wts->wt_file = oss.str().c_str();
   wts->epoch = epoch;
   wts->batch = batch;
@@ -2736,7 +1996,7 @@ bool Network::LoadFmWeights(Weights* wts, bool quiet) {
   }
   if(!wts->HasWeights(true)) return false;
   istringstream iss(wts->wt_file.chars());
-  return LoadWeights_strm(iss, quiet);
+  return net_state->NetworkLoadWeights_strm(iss, quiet);
 }
 
 void Network::SaveToFirstWeights() {
@@ -2940,14 +2200,6 @@ void Network::SetUnitNamesFromDataTable(DataTable* undt, int max_unit_chars,
   return;
 }
 
-void Network::GetUnitNames(bool force_use_unit_names) {
-  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
-    if(!l->lesioned())
-      l->GetUnitNames(force_use_unit_names);
-  }
-  UpdateAllViews();
-}
-
 void Network::GetLocalistName() {
   FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
     if(!l->lesioned())
@@ -2993,7 +2245,7 @@ bool Network::Snapshot(const String& variable, SimpleMathSpec& math_op, bool arg
       return false;
   }
   if(var.startsWith("r.") || var.startsWith("s.")) {
-    Unit* src_u = GetViewSrcU();
+    UnitState_cpp* src_u = GetViewSrcU();
     if(TestError(!src_u, "Snapshot", "For r. or s. variables, must have a selected unit in the network view!"))
       return false;
   }
@@ -3204,31 +2456,6 @@ void Network::UpdateLayerGroupGeom() {
   }  
 }
 
-bool Network::UpdateUnitSpecs(bool force) {
-  bool rval = true;
-  FOREACH_ELEM_IN_GROUP(Layer, lay, layers){
-    if(!lay->UpdateUnitSpecs(force))
-      rval = false;
-  }
-  return rval;
-}
-
-bool Network::UpdateConSpecs(bool force) {
-  bool rval = true;
-  FOREACH_ELEM_IN_GROUP(Layer, lay, layers){
-    if(!lay->UpdateConSpecs(force))
-      rval = false;
-  }
-  return rval;
-}
-
-bool Network::UpdateAllSpecs(bool force) {
-  bool rval = UpdateUnitSpecs(force);
-  if(!UpdateConSpecs(force))
-    rval = false;
-  return rval;
-}
-
 void Network::ReplaceSpecs(BaseSpec* old_sp, BaseSpec* new_sp) {
   if(old_sp->InheritsFrom(&TA_UnitSpec))
     ReplaceUnitSpec((UnitSpec*)old_sp, (UnitSpec*)new_sp);
@@ -3355,14 +2582,13 @@ bool Network::VarToVal(const String& dest_var, float val) {
   return true;
 }
 
-static bool net_project_wts_propagate(Network* net, Unit* u, bool swt) {
+static bool net_project_wts_propagate(Network* net, UnitState_cpp* u, bool swt) {
   bool got_some = false;
   // propagate!
-  for(int g = 0; g < (swt ? u->NSendConGps() : u->NRecvConGps()); g++) {
-    ConState_cpp* cg = (swt ? u->SendConState(g) : u->RecvConState(g));
-    PrjnState_cpp* pjs = cg->GetPrjnState(net->net_state);
-    Projection* prjn = net->PrjnFromState(pjs);
-    if(!prjn || prjn->NotActive()) continue;
+  for(int g = 0; g < (swt ? u->NSendConGps(net->net_state) : u->NRecvConGps(net->net_state)); g++) {
+    ConState_cpp* cg = (swt ? u->SendConState(net->net_state, g) : u->RecvConState(net->net_state, g));
+    PrjnState_cpp* prjn = cg->GetPrjnState(net->net_state);
+    if(!prjn || prjn->NotActive(net->net_state)) continue;
     Layer* slay = (swt ? prjn->layer : prjn->from);
 
     if(slay->lesioned() || (prjn->from.ptr() == prjn->layer) ||
@@ -3372,7 +2598,7 @@ static bool net_project_wts_propagate(Network* net, Unit* u, bool swt) {
 
     for(int ci = 0; ci < cg->size; ci++) {
       float wtv = cg->Cn(ci, ConState_cpp::WT, net->net_state);
-      Unit* su = cg->Un(ci,net);
+      UnitState_cpp* su = cg->Un(ci,net);
       su->wt_prjn += u->wt_prjn * wtv;
       su->tmp_calc1 += u->wt_prjn;
     }
@@ -3380,7 +2606,7 @@ static bool net_project_wts_propagate(Network* net, Unit* u, bool swt) {
   return got_some;
 }
 
-void Network::ProjectUnitWeights(Unit* src_u, int top_k_un, int top_k_gp, bool swt,
+void Network::ProjectUnitWeights(UnitState_cpp* src_u, int top_k_un, int top_k_gp, bool swt,
                                  bool zero_sub_hiddens) {
   if(!src_u) return;
 
@@ -3401,10 +2627,9 @@ void Network::ProjectUnitWeights(Unit* src_u, int top_k_un, int top_k_gp, bool s
   }
 
   // do initial propagation
-  for(int g = 0; g < (swt ? src_u->NSendConGps() : src_u->NRecvConGps()); g++) {
-    ConState_cpp* cg = (swt ? src_u->SendConState(g) : src_u->RecvConState(g));
-    PrjnState_cpp* pjs = cg->GetPrjnState(net_state);
-    Projection* prjn = PrjnFromState(pjs);
+  for(int g = 0; g < (swt ? src_u->NSendConGps(net_state) : src_u->NRecvConGps(net_state)); g++) {
+    ConState_cpp* cg = (swt ? src_u->SendConState(net_state, g) : src_u->RecvConState(net_state, g));
+    PrjnState_cpp* prjn = cg->GetPrjnState(net_state);
     if(!prjn || prjn->NotActive()) continue;
     Layer* slay = (swt ? prjn->layer : prjn->from);
 
@@ -3413,7 +2638,7 @@ void Network::ProjectUnitWeights(Unit* src_u, int top_k_un, int top_k_gp, bool s
 
     for(int ci = 0; ci < cg->size; ci++) {
       float wtv = cg->Cn(ci, ConState_cpp::WT, net_state);
-      Unit* su = cg->Un(ci,this);
+      UnitState_cpp* su = cg->Un(ci,this);
       su->wt_prjn += wtv;
       su->tmp_calc1 += 1.0f;  // sum to 1
     }

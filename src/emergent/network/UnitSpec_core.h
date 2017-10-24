@@ -10,7 +10,7 @@
   // #READ_ONLY #NO_COPY #NO_SAVE #NO_INHERIT index of bias con spec in list of specs
 
 
-  INLINE virtual int  GetStateSpecType() const { return NETWORK_STATE::T_UNIT_SPEC; }
+  INLINE virtual int  GetStateSpecType() const { return NETWORK_STATE::T_UnitSpec; }
   // #CAT_State derived classes MUST override this and pass correct global type id
 
   INLINE CON_SPEC* GetBiasSpec(NETWORK_STATE* net) {
@@ -77,7 +77,30 @@
     u->bias_wt = bwt;
   }
   // #CAT_Structure load bias weight value into bias weights of given unit -- handles any post-loading updates directly
-    
+
+
+  INLINE virtual void ApplyInputData(UNIT_STATE* u, NETWORK_STATE* net, float val,
+                                     UnitState_cpp::ExtFlags act_ext_flags, bool na_by_range) {
+    // note: not all flag values are valid, so following is a fuzzy cascade
+    if(na_by_range) {
+      if(!act_range.RangeTestEq(val)) {
+        return;
+      }
+    }
+    if (act_ext_flags & UnitState_cpp::EXT) {
+      u->ext = val;
+      u->SetExtFlag(UnitState_cpp::EXT);
+    }
+    else {
+      u->targ = val;
+      if (act_ext_flags & UnitState_cpp::TARG)
+        u->SetExtFlag(UnitState_cpp::TARG);
+      else if (act_ext_flags & UnitState_cpp::COMP)
+        u->SetExtFlag(UnitState_cpp::COMP);
+    }
+  }
+  // #CAT_Activation apply input data value according to ext flags
+
   INLINE virtual void  Compute_Netin(UNIT_STATE* u, NETWORK_STATE* net, int thr_no) {
     float new_net = 0.0f;
     const int nrcg = u->NRecvConGps(net);

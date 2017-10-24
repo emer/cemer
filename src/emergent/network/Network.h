@@ -28,8 +28,6 @@
 #include <taBrainAtlas_List>
 #include <Weights_List>
 #include <TimeUsed>
-#include <NetworkThreadMgr>
-#include <UnitPtrList>
 #include <int_Array>
 #include <float_Matrix>
 #include <DMemComm>
@@ -44,7 +42,6 @@
 // #include <ConSpec>
 // #include <ConState>
 // #include <UnitSpec>
-// #include <Unit>
 // #include <ProjectionSpec>
 // #include <Projection>
 // #include <Layer>
@@ -116,7 +113,6 @@ eTypeDef_Of(LayerSpec_cpp);
 // re-establish main context
 #include <State_main>
 
-eTypeDef_Of(NetworkCudaSpec);
 eTypeDef_Of(NetStatsSpecs);
 
 // this defines shared member state variables with NetworkState, in main context
@@ -127,6 +123,59 @@ eTypeDef_Of(NetStatsSpecs);
 #define NET_THREAD_LOOP(meth) { NetworkThreadCall meth_call((NetworkThreadMethod)(&meth));\
     for(int thr_no=0; thr_no < n_thrs_built; thr_no++) \
       meth_call.call(this, thr_no); }
+
+
+// use this for calling all major State compute code -- runs on proper device!
+#ifdef CUDA_COMPILE
+#define NET_STATE_RUN(meth) if(cuda.on) cuda_state->meth; else net_state->meth
+#else
+#define NET_STATE_RUN(meth) net_state->meth
+#endif
+
+
+eTypeDef_Of(NetworkCudaSpec);
+
+class NetworkCudaSpec : public taOBase {
+  // ##INLINE ##NO_TOKENS ##CAT_Network parameters for NVIDA CUDA GPU implementation -- only applicable for CUDA_COMPILE binaries
+  INHERITED(taOBase)
+public:
+  bool          on;             // #NO_SAVE is CUDA running?  this is true by default when running in an executable compiled with CUDA_COMPILE defined, and false otherwise -- can be turned off to fall back on regular C++ code, but cannot be turned on if CUDA has not been compiled
+  bool          sync_units;     // #CONDSHOW_ON_on for debugging or visualization purposes -- keep the C++ host state Unit variables synchronized with the GPU device state (which is slow!) -- otherwise the GPU just runs, and updates a few key statistics (fastest)
+  bool          sync_cons;      // #CONDSHOW_ON_on for debugging or visualization purposes -- keep the C++ host state Connection variables synchronized with the GPU device state (which is VERY slow!) -- otherwise the GPU just runs, and updates a few key statistics (fastest)
+  int           min_threads;    // #CONDSHOW_ON_on #DEF_32 #MIN_32 minuimum number of CUDA threads to allocate per block -- each block works on all the cons in a single ConState, and the threads divide up the connections in turn -- must be a multiple of 32 (i.e., min of 32) -- actual size will be determined at run-time as function of max number of connections per connection group / cons_per_thread -- to specify an exact number of threads, just set min and max_threads to the same number
+  int           max_threads;    // #CONDSHOW_ON_on #DEF_1024 #MAX_1024 maximum number of CUDA threads to allocate per block (sending group of connections) -- actual size will be determined at run-time as function of max number of connections per connection group / cons_per_thread -- for modern cards (compute capability 2.0 or higher) the max is 1024, but in general you might need to experiment to find the best performing number for your card and network, and interaction with cons_per_thread -- to specify an exact number of threads, just set min and max_threads to the same number
+  int           cons_per_thread; // #CONDSHOW_ON_on #DEF_1:8 when computing number of threads to use, divide max number of connections per unit by this number, and then round to nearest multiple of 32, subject to the min and max_threads constraints
+  bool          timers_on;      // #CONDSHOW_ON_on Accumulate timing information for each step of processing -- for debugging / optimizing threading
+  int           n_threads;      // #READ_ONLY #SHOW computed number of threads it is actually using
+
+  String       GetTypeDecoKey() const override { return "Network"; }
+
+  TA_SIMPLE_BASEFUNS(NetworkCudaSpec);
+protected:
+  void UpdateAfterEdit_impl() override {
+#ifndef CUDA_COMPILE
+    on = false;                   // can never be on!
+#endif
+  }
+  
+private:
+  inline void	Initialize() {
+#ifdef CUDA_COMPILE
+    on = true;
+#else
+    on = false;
+#endif
+    sync_units = false;
+    sync_cons = false;
+    min_threads = 32;
+    max_threads = 1024;
+    cons_per_thread = 2;
+    timers_on = false;
+    n_threads = min_threads;
+  }
+  void Destroy() { };
+};
+
 
 eTypeDef_Of(NetTiming);
 
@@ -268,7 +317,8 @@ public:
   taBrainAtlasRef brain_atlas;  // #FROM_LIST_brain_atlases #NO_SAVE The name of the atlas to use for brain view rendering.  Labels from this atlas can be applied to layers' brain_area member.
   String        brain_atlas_name; // #HIDDEN the name of the brain atlas that we're using -- this is what is actually saved b/c the ref is not saveable
 
-  NetworkThreadMgr threads;     // #CAT_Threads parallel threading of network computation
+  int           n_threads;      // #NO_SAVE #CAT_State number of CPU threads to use -- defaults to value in preferences, but can be overridden.  is copied to net_state->threads.n_threads which is actual thread impl
+  NetworkCudaSpec  cuda;        // #CAT_CUDA parameters for NVIDA CUDA GPU implementation -- only applicable for CUDA_COMPILE binaries
   NetTiming_List net_timing;    // #CAT_Statistic #EXPERT #NO_SAVE timing for different network-level functions -- per thread, plus one summary item at the end
 
   String        group_name;     // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW name associated with the current group of trials, if such a grouping is applicable (typically set by a LayerWriter)
@@ -297,8 +347,6 @@ public:
   // #NO_SAVE #HIDDEN #CAT_State layers that have been built for running network
   taBase_RefList state_prjns;
   // #NO_SAVE #HIDDEN #CAT_State prjns that have been built for running network
-  taBase_RefList state_ungps;
-  // #NO_SAVE #HIDDEN #CAT_State unit groups that have been built for running network -- for sub-unit groups within layers (beyond main unit group of layer), if virtual unit groups are used, this is just the main unit group over and over again -- but it will have different unitgroup state information for each when state is built
   NetStateSync_List net_state_sync;
   // #NO_SAVE #HIDDEN #CAT_State handles optimized state sync for network object
   NetStateSync_List layer_state_sync;
@@ -306,40 +354,39 @@ public:
 
   taBase_RefList state_layer_specs;
   // #NO_SAVE #HIDDEN #CAT_State layer_specs that have been built for running network
+  taBase_RefList state_prjn_specs;
+  // #NO_SAVE #HIDDEN #CAT_State prjn_specs that have been built for running network
   taBase_RefList state_unit_specs;
   // #NO_SAVE #HIDDEN #CAT_State unit_specs that have been built for running network
   taBase_RefList state_con_specs;
   // #NO_SAVE #HIDDEN #CAT_State con_specs that have been built for running network
 
-  UnitPtrList   units_flat;     // #NO_SAVE #READ_ONLY #CAT_Structure flat list of structural Unit's -- first (0 index) is a null unit that is skipped over and should never be computed on -- this is ALL units regardless of unit-level lesion status (but it does account for layer-level lesion status)
-  Unit*         null_unit;      // #HIDDEN #NO_SAVE #CAT_Structure unit for the first null unit in the units_flat list -- created by BuildNullUnit() function, specific to each algorithm
-
   ProjectBase*  proj;           // #IGNORE ProjectBase this network is in
   
-  inline Unit*  UnFmIdx(int flat_idx) const {
-#ifdef DEBUG
-    if(!UnFlatIdxInRange(flat_idx)) return NULL;
-#endif
-    return units_flat.FastEl(flat_idx); }
-  // #CAT_State get the unit from its flat_idx value
-  inline Unit*  UnFmIdx_Safe(int flat_idx) const { return units_flat.SafeEl(flat_idx); }
-  // #CAT_State get the unit from its flat_idx value, with safe range checking (slow -- generally avoid using if possible)
-  inline Unit*  ThrUnit(int thr_no, int thr_un_idx) const {
-#ifdef DEBUG
-    if(!ThrUnIdxInRange(thr_no, thr_un_idx)) return NULL;
-#endif
-    return UnFmIdx(ThrUnitIdx(thr_no, thr_un_idx)); }
-  // #CAT_State structural Unit object at given thread, thread-specific unit index (max ThrNUnits()-1)
+//   inline Unit*  UnFmIdx(int flat_idx) const {
+// #ifdef DEBUG
+//     if(!UnFlatIdxInRange(flat_idx)) return NULL;
+// #endif
+//     return units_flat.FastEl(flat_idx); }
+//   // #CAT_State get the unit from its flat_idx value
+//   inline Unit*  UnFmIdx_Safe(int flat_idx) const { return units_flat.SafeEl(flat_idx); }
+//   // #CAT_State get the unit from its flat_idx value, with safe range checking (slow -- generally avoid using if possible)
+//   inline Unit*  ThrUnit(int thr_no, int thr_un_idx) const {
+// #ifdef DEBUG
+//     if(!ThrUnIdxInRange(thr_no, thr_un_idx)) return NULL;
+// #endif
+//     return UnFmIdx(ThrUnitIdx(thr_no, thr_un_idx)); }
+//   // #CAT_State structural Unit object at given thread, thread-specific unit index (max ThrNUnits()-1)
 
   inline Layer* StateLayer(int idx) const { return (Layer*)state_layers[idx]; }
   // #CAT_State layer at given index in list of state objects built in network state for running
   inline Projection* StatePrjn(int idx) const { return (Projection*)state_prjns[idx]; }
   // #CAT_State prjn at given index in list of state objects built in network state for running
-  inline Unit_Group* StateUnGp(int idx) const { return (Unit_Group*)state_ungps[idx]; }
-  // #CAT_State unit group at given index in list of state objects built in network state for running
 
   inline LayerSpec* StateLayerSpec(int idx) const { return (LayerSpec*)state_layer_specs[idx]; }
   // #CAT_State layer_spec at given index in list of state objects built in network state for running
+  inline ProjectionSpec* StatePrjnSpec(int idx) const { return (ProjectionSpec*)state_prjn_specs[idx]; }
+  // #CAT_State prjn_spec at given index in list of state objects built in network state for running
   inline UnitSpec* StateUnitSpec(int idx) const { return (UnitSpec*)state_unit_specs[idx]; }
   // #CAT_State unit_spec at given index in list of state objects built in network state for running
   inline ConSpec* StateConSpec(int idx) const { return (ConSpec*)state_con_specs[idx]; }
@@ -351,12 +398,6 @@ public:
   inline Projection* PrjnFromState(PrjnState_cpp* state) const
   { return StatePrjn(state->prjn_idx); }
   // #CAT_State get projection corresponding to given prjn state
-  inline Unit_Group* UnGpFromState(UnGpState_cpp* state) const
-  { return StateUnGp(state->ungp_idx); }
-  // #CAT_State get unit group corresponding to given ungp state
-  inline Unit* UnitFromState(UnitState_cpp* state) const
-  { return UnFmIdx(state->flat_idx); }
-  // #CAT_State get unit corresponding to given unit state
   
   inline UnitSpec* UnitSpecFromState(UnitSpec_cpp* state) const
   { return StateUnitSpec(state->spec_idx); }
@@ -451,8 +492,8 @@ public:
   inline UnitState_cpp*  ThrUnitState(int thr_no, int thr_un_idx) const
   { return net_state->ThrUnitState(thr_no, thr_un_idx);}
   // #CAT_State unit state for unit at given thread, thread-specific unit index (max ThrNUnits()-1)
-  inline UnitState_cpp*  UnUnitState(int flat_idx) const
-  { return net_state->UnUnitState(flat_idx); }
+  inline UnitState_cpp*  GetUnitState(int flat_idx) const
+  { return net_state->GetUnitState(flat_idx); }
   // #CAT_State unit state for unit at given unit at flat_idx 
   inline int    ThrLayUnStart(int thr_no, int lay_no)
   { return net_state->ThrLayUnStart(thr_no, lay_no); }
@@ -462,10 +503,10 @@ public:
   // #CAT_State ending thread-specific unit index for given layer (from state_layers list) -- this is like the max in a for loop -- valid indexes are < end
   inline int    ThrUnGpUnStart(int thr_no, int lay_no)
   { return net_state->ThrUnGpUnStart(thr_no, lay_no); }
-  // #CAT_State starting thread-specific unit index for given unit group (from state_ungps list)
+  // #CAT_State starting thread-specific unit index for given unit group 
   inline int    ThrUnGpUnEnd(int thr_no, int lay_no)
   { return net_state->ThrUnGpUnEnd(thr_no, lay_no); }
-  // #CAT_State ending thread-specific unit index for given unit group (from state_ungps list) -- this is like the max in a for loop -- valid indexes are < end
+  // #CAT_State ending thread-specific unit index for given unit group -- this is like the max in a for loop -- valid indexes are < end
   inline float& ThrLayStats(int thr_no, int lay_idx, int stat_var, int stat_type) 
   { return net_state->ThrLayStats(thr_no, lay_idx, stat_var, stat_type); }
   // #IGNORE get layer statistic value for given thread, layer (state layer index), stat variable number (0..n_lay_stats_vars-1 max), and stat type (SSE, PRERR, etc)
@@ -566,47 +607,23 @@ public:
 
   virtual void  Init_InputData();
   // #CAT_Activation Initializes external and target inputs
-    inline void Init_InputData_Thr(int thr_no) { net_state->Init_InputData_Thr(thr_no); }
-    // #IGNORE
-    inline void Init_InputData_Layer() { net_state->Init_InputData_Layer(); }
-    // #IGNORE
   virtual void  Init_Acts();
   // #MENU #MENU_ON_State #MENU_SEP_BEFORE #CAT_Activation initialize the unit activation state variables
-    inline void Init_Acts_Thr(int thr_no) { net_state->Init_Acts_Thr(thr_no); }
-    // #IGNORE
   virtual void  Init_dWt();
   // #CAT_Learning Initialize the weight change variables
-    inline void Init_dWt_Thr(int thr_no) { net_state->Init_dWt_Thr(thr_no); }
-    // #IGNORE
   virtual void  Init_Weights();
   // #BUTTON #MENU #CONFIRM #ENABLE_ON_flags:BUILT,INTACT #CAT_Learning Initialize the weights -- also inits acts, counters and stats -- does unit level threaded and then does Layers after
-    virtual void Init_Weights_Thr(int thr_no);
-    // #IGNORE -- note: uses Projection wt init code so is not on net_state yet
-    virtual void Init_Weights_1Thr();
-    // #IGNORE for INIT_WTS_1_THREAD -- requires consistent order!
     virtual void Init_Weights_renorm();
     // #IGNORE renormalize weights after init, before sym
-    virtual void Init_Weights_renorm_Thr(int thr_no);
-    // #IGNORE renormalize weights after init, before sym
-    inline void Init_Weights_Layer() { net_state->Init_Weights_Layer(); }
-    // #CAT_Learning call layer-level init weights functions -- after all unit-level inits
     virtual void Init_Weights_post();
     // #CAT_Learning post-initialize state variables (ie. for scaling symmetrical weights, other wt state keyed off of weights, etc) -- this MUST be called after any external modifications to the weights, e.g., the TransformWeights or AddNoiseToWeights calls on any lower-level objects (layers, units, con groups)
-    inline void Init_Weights_sym(int thr_no) { net_state->Init_Weights_sym(thr_no); }
-    // #IGNORE symmetrize weights after first init pass, called when needed
-    inline void Init_Weights_post_Thr(int thr_no)
-    { net_state->Init_Weights_post_Thr(thr_no); }
-    // #IGNORE
     virtual void Init_Weights_AutoLoad();
     // #CAT_Learning auto-load weights from Weights object, if it has auto_load set..
 
   virtual void  Init_Metrics();
   // #CAT_Statistic this is an omnibus guy that initializes every metric: Counters, Stats, and Timers
-
   virtual void  Init_Counters();
   // #EXPERT #CAT_Counter initialize all counter variables on network (called in Init_Weights; except batch because that loops over inits!)
-  inline void  Init_Counters_State() { net_state->Init_Counters_State(); }
-  // #IGNORE initialize counters on the state
   inline void  Init_Stats() { net_state->Init_Stats(); }
   // #EXPERT #CAT_Statistic initialize statistic variables on network
     inline void  Init_Stats_Layer() { net_state->Init_Stats_Layer(); }
@@ -619,50 +636,34 @@ public:
 
   virtual void  Compute_Netin();
   // #CAT_Activation Compute NetInput: weighted activation from other units
-    inline void Compute_Netin_Thr(int thr_no) { net_state->Compute_Netin_Thr(thr_no); }
-    // #IGNORE
   virtual void  Send_Netin();
   // #CAT_Activation sender-based computation of net input: weighted activation from other units
-    inline void Send_Netin_Thr(int thr_no) { net_state->Send_Netin_Thr(thr_no); }
-    // #IGNORE
   virtual void  Compute_Act();
   // #CAT_Activation Compute Activation based on net input
-    inline void Compute_Act_Thr(int thr_no) { net_state->Compute_Act_Thr(thr_no); }
-    // #IGNORE
   virtual void  Compute_NetinAct();
   // #CAT_Activation compute net input from other units and then our own activation value based on that -- use this for feedforward networks to propagate activation through network in one compute cycle
-    inline void Compute_NetinAct_Thr(int thr_no) { net_state->Compute_NetinAct_Thr(thr_no); }
-    // #IGNORE
 
   virtual void  Compute_dWt();
   // #CAT_Learning compute weight changes -- the essence of learning
-    inline void Compute_dWt_Thr(int thr_no) { net_state->Compute_dWt_Thr(thr_no); }
-    // #IGNORE
 
   virtual bool  Compute_Weights_Test(int trial_no);
   // #CAT_Learning check to see if it is time to update the weights based on the given number of completed trials (typically trial counter + 1): if ON_LINE, always true; if SMALL_BATCH, only if trial_no % batch_n_eff == 0; if BATCH, never (check at end of epoch and run then)
   virtual void  Compute_Weights();
   // #CAT_Learning update weights for whole net: calls DMem_SumDWts before doing update if in dmem mode
-    inline void Compute_Weights_Thr(int thr_no) { net_state->Compute_Weights_Thr(thr_no); }
-    // #IGNORE
 
   virtual void  Compute_SSE(bool unit_avg = false, bool sqrt = false);
   // #CAT_Statistic compute sum squared error of activations vs targets over the entire network -- optionally taking the average over units, and square root of the final results
-    inline void Compute_SSE_Thr(int thr_no) { net_state->Compute_SSE_Thr(thr_no); }
-    // #IGNORE
   virtual void  Compute_PRerr();
   // #CAT_Statistic compute precision and recall error statistics over entire network -- true positive, false positive, and false negative -- precision = tp / (tp + fp) recall = tp / (tp + fn) fmeasure = 2 * p * r / (p + r), specificity, fall-out, mcc.
-    inline void Compute_PRerr_Thr(int thr_no) { net_state->Compute_PRerr_Thr(thr_no); }
-    // #IGNORE
 
   virtual void  Compute_TrialStats();
   // #CAT_Statistic compute trial-level statistics (SSE and others defined by specific algorithms)
   virtual void  DMem_ShareTrialData(DataTable* dt, int n_rows = 1);
   // #CAT_DMem share trial data from given datatable across the trial-level dmem communicator (outer loop) -- each processor gets data from all other processors; if called every trial with n_rows = 1, data will be identical to non-dmem; if called at end of epoch with n_rows = -1 data will be grouped by processor but this is more efficient
 
-  inline void  Compute_EpochSSE() { net_state->Compute_EpochSSE(); }
+  virtual void  Compute_EpochSSE();
   // #CAT_Statistic compute epoch-level sum squared error and related statistics
-  inline void  Compute_EpochPRerr() { net_state->Compute_EpochPRerr(); }
+  virtual void  Compute_EpochPRerr();
   // #CAT_Statistic compute epoch-level precision and recall statistics
   virtual void  Compute_EpochStats();
   // #CAT_Statistic compute epoch-level statistics; calls DMem_ComputeAggs (if dmem) and EpochSSE -- specific algos may add more
@@ -677,51 +678,22 @@ public:
     // #CAT_Structure check to make sure that specs are not null and set to the right type, and update with new specs etc to fix any errors (with notify), so that at least network operations will not crash -- called in Build and CheckConfig
     virtual void  BuildNetState();
     // #IGNORE build network state object
-    virtual void  BuildLayers();
-    // #MENU #MENU_ON_Structure #CAT_Structure Build any network layers that are dynamically constructed
+    virtual void  BuildIndexesSizes();
+    // #IGNORE compute the indexes and sizes of all network objects
     virtual void  BuildSpecs();
     // #IGNORE Build the specs on the State
     virtual void  UpdateAllStateSpecs();
     // #CAT_State update all the State-side specs based on current settings in main specs
-    virtual void  BuildPrjns();
-    // #MENU #CAT_Structure Build any network prjns that are dynamically constructed
-    virtual void  BuildUnits();
-    // #IGNORE Build the network units in layers according to geometry
-    virtual void  BuildNullUnit();
-    // #IGNORE make the null_unit unit
-    virtual void  BuildUnitsFlatList();
-    // #IGNORE build flat list of units
-    virtual void  AllocUnitConGpThreadMem();
-    // #IGNORE allocate all of the thread-based unit, connection group memory
-    virtual void  InitUnitThreadIdxs(int thr_no);
-    // #IGNORE initialize thread-specific index structures
-    virtual void  InitUnitConGpThreadMem(int thr_no);
-    // #IGNORE initialize thread-based unit and con group memory -- should assign to thread
-    virtual void  AllocSendNetinTmp();
-    // #IGNORE allocate send_netin_tmp for netin computation
-    inline void  InitSendNetinTmp_Thr(int thr_no)  { net_state-> InitSendNetinTmp_Thr(thr_no); }
-    // #IGNORE init send_netin_tmp for netin computation
+    virtual void  BuildLayerUnitState();
+    // #IGNORE initialize layer, projection, unit group, and unit state from corresponding network objects
+    virtual void  BuildStateSizes();
+    // #IGNORE set the sizes of all state objects based on type information
+    virtual void  BuildLayerState_FromNet();
+    // #IGNORE initialize layer, projection, and unit group state from corresponding network objects
+    virtual void  BuildConState();
+    // #IGNORE allocate and build ConState objects to prepare for connecting
   virtual void  Connect();
   // #IGNORE Connect this network according to projections on Layers -- must be done as part of Build to ensure proper sync
-    virtual void  Connect_Sizes();
-    // #IGNORE first pass of connecting -- sets up all the Cons objects within units, and computes all the target allocation size information (done by projection specs)
-    virtual void  Connect_Alloc();
-    // #IGNORE second pass of connecting -- allocate all the memory for all the connections -- managed by the Network and done by thread
-    virtual void  Connect_AllocSizes_Thr(int thr_no);
-    // #IGNORE second pass of connecting -- allocate all the memory for all the connections -- get the total sizes needed
-    virtual void  Connect_Alloc_Thr(int thr_no);
-    // #IGNORE second pass of connecting -- dole out the allocated memory to con groups
-    virtual void  Connect_Cons();
-    // #IGNORE third pass of connecting -- actually make the connections -- done by projection specs
-    virtual void  Connect_VecChunk_Thr(int thr_no);
-    // #IGNORE fourth pass of connecting -- organize connections into optimal vectorizable chunks
-    virtual void  Connect_UpdtActives_Thr(int thr_no);
-    // #IGNORE update the active flag status of all connections
-
-    virtual void CacheMemStart();
-    // #IGNORE cache connection memory start pointers -- after connecting
-    inline void CacheMemStart_Thr(int thr_no) { net_state->CacheMemStart_Thr(thr_no); }
-    // #IGNORE cache connection memory start pointers -- after connecting
     
 #if 0 // turn off when not in need for debugging    
     virtual bool CompareNetThrVal_int
@@ -756,26 +728,14 @@ public:
 
   virtual void  UpdtAfterNetMod();
   // #CAT_ObjectMgmt update network after any network modification (calls appropriate functions)
-  virtual void  SetUnitType(TypeDef* td);
-  // #MENU #TYPE_Unit #CAT_Structure set unit type for all units in layer (created by Build)
 
   virtual void  SyncSendPrjns();
   // #CAT_Structure synchronize sending projections with the recv projections so everyone's happy
-  virtual void  CountCons();
-  // #CAT_Structure count connections for all units in network
-  virtual void  CountNonSharedRecvCons_Thr(int thr_no);
-  // #IGNORE count non-shared recv cons, after cons all made..
-
-  virtual void  ConnectUnits(Unit* u_to, Unit* u_from=NULL, bool record=true,
-                             ConSpec* conspec=NULL);
-  // #CAT_Structure connect u1 so that it recieves from u2. Create projection if necessary
 
   virtual void  RemoveCons();
   // #MENU #MENU_ON_Structure #CONFIRM #MENU_SEP_BEFORE #CAT_Structure Remove all connections in network
     virtual void  RemoveCons_impl();
     // #IGNORE implementation, with no gui updates etc
-    virtual void  RemoveCons_Thr(int thr_no);
-    // #IGNORE thread level remove cons
   virtual void  RemoveUnits();
   // #MENU #CONFIRM #CAT_Structure Remove all units in network -- also calls RemoveCons()
 
@@ -784,11 +744,6 @@ public:
 
   virtual void  Copy_Weights(const Network* src);
   // #MENU #MENU_ON_Object #MENU_SEP_BEFORE #CAT_ObjectMgmt copies weights from other network (incl wts assoc with unit bias member)
-
-  virtual void  SaveWeights_strm(std::ostream& strm, WtSaveFormat fmt = NET_FMT);
-  // #EXT_wts #COMPRESS #CAT_File write weight values out in a simple ordered list of weights (optionally in binary fmt)
-  virtual bool  LoadWeights_strm(std::istream& strm, bool quiet = false);
-  // #EXT_wts #COMPRESS #CAT_File read weight values in from a simple ordered list of weights (fmt is read from file)
 
   virtual void  SaveWeights(const String& fname="", WtSaveFormat fmt = NET_FMT);
   // #BUTTON #MENU #EXT_wts #COMPRESS #ENABLE_ON_flags:BUILT,INTACT #CAT_File #FILETYPE_Weights #FILE_DIALOG_SAVE write weight values out in a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
@@ -850,9 +805,9 @@ public:
   // #CAT_Display get the currently viewed variable name from netview
   virtual bool  SetViewVar(const String& view_var);
   // #CAT_Display set the variable name to view in the netview
-  virtual Unit* GetViewSrcU();
+  virtual UnitState_cpp* GetViewSrcU();
   // #CAT_Display get the currently picked source unit (for viewing weights) from netview
-  virtual bool  SetViewSrcU(Unit* src_u);
+  virtual bool  SetViewSrcU(UnitState_cpp* src_u);
   // #CAT_Display set the picked source unit (for viewing weights) in netview
 #endif
 
@@ -901,8 +856,6 @@ public:
   virtual void  SetUnitNamesFromDataTable(DataTable* unit_names_table, int max_unit_chars=-1,
                                           bool propagate_names=false);
   // #MENU #MENU_ON_State #CAT_Structure label units in the network based on unit names table -- also sets the unit_names matrix in the layer so they are persistent -- max_unit_chars is max length of name to apply to unit (-1 = all) -- if propagate_names is set, then names will be propagated along one-to-one projections to other layers that do not have names in the table (GetLocalistName)
-  virtual void  GetUnitNames(bool force_use_unit_names = true);
-  // #MENU #MENU_ON_State #CAT_Structure for all layers, get unit_names matrix values from current unit name values -- also ensures unit_names fits geometry of layer -- if force_use_unit_names is true, then unit_names will be configured to save values it is not already
   virtual void  GetLocalistName();
   // #CAT_Structure look for a receiving projection from a single unit, which has a name: if found, set our name to that name
 
@@ -945,16 +898,9 @@ public:
   virtual bool  VarToVal(const String& dest_var, float val);
   // #CAT_Structure set variable to given value for all units within this network (must be a float type variable)
 
-  virtual void  ProjectUnitWeights(Unit* un, int top_k_un = 5, int top_k_gp=1, bool swt = false,
+  virtual void  ProjectUnitWeights(UnitState_cpp* un, int top_k_un = 5, int top_k_gp=1, bool swt = false,
                                    bool zero_sub_hiddens=false);
   // #CAT_Statistic project given unit's weights (receiving unless swt = true) through all layers (without any loops) -- results stored in wt_prjn on each unit (tmp_calc1 is used as a sum variable).  top_k_un (< 1 = all) is number of strongest units to allow to pass information further down the chain -- lower numbers generally make the info more interpretable.  top_k_gp is number of unit groups to process for filtering through, if layer has sub groups (< 1 = ignore subgroups). values are always normalized at each layer to prevent exponential decrease/increase effects, so results are only relative indications of influence -- if zero_sub_hiddens then intermediate hidden units (indicated by layer_type == HIDDEN) that have sub-threshold values zeroed
-
-  virtual bool  UpdateUnitSpecs(bool force = false);
-  // #CAT_Structure update unit specs for entire network (calls layer version of this function)
-  virtual bool  UpdateConSpecs(bool force = false);
-  // #CAT_Structure update con specs for entire network (calls layer version of this function)
-  virtual bool  UpdateAllSpecs(bool force = false);
-  // #CAT_Structure update all unit and con specs -- just calls above two functions
 
   virtual void  ReplaceSpecs(BaseSpec* old_sp, BaseSpec* new_sp);
   // #CAT_Structure replace a spec of any kind, including iterating through any children of that spec
@@ -1060,9 +1006,6 @@ public:
   virtual void  Cuda_InitConStates();
   // #IGNORE transfer C++ con group info over to cuda con groups -- they are different!  called in Cuda_BuildNet()
 
-  taBase_RefList cuda_unit_specs;
-  // #IGNORE list of unique unitspecs actually used in projections -- source for the cuda versions of the unitspecs
-  
   virtual void  Cuda_CopyUnitSpec(void* cuda_us, const UnitSpec* source) { };
   // #IGNORE copy parameters from the source unitspec into the cuda unitspec -- algorithms define this
   virtual void  Cuda_MakeUnitSpecs();
@@ -1126,11 +1069,5 @@ private:
   void  Initialize();
   void  Destroy();
 };
-
-
-// these inline functions depend on having all the structure defined already
-// so we include them here, at the very end
-
-#include <Unit_inlines>
 
 #endif // Network_h

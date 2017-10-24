@@ -152,6 +152,7 @@ public: //
   ConState_cpp*         FindSendConStateToName(const String& to_nm) const;
   // #CAT_State get sending connection group to given receiving layer name
 
+  // todo: move these to layer
   bool                  SetUnValName(float val, const String& var_nm);
   // #CAT_Access set unit variable (specified by name, e.g., act, net, bias_wt) to given value -- for use by programs, which cannot assign the value through the direct variable access functions (e.g., act())
   float                 GetUnValName(const String& var_nm);
@@ -237,41 +238,8 @@ public: //
   ////////////////////////////////////////////////////////////////////////////////
   //    The following are misc functionality not required for primary computing
 
-  virtual void  BuildUnits();
-  // #CAT_State build unit -- allocate any extra unit-level memory etc
   virtual bool  CheckBuild(bool quiet=false);
   // #CAT_State check if network is built
-  virtual void  RecvConsPreAlloc(int no, Projection* prjn);
-  // #CAT_State pre-allocate given no of receiving connections -- sufficient connections must be allocated in advance of making specific connections
-  virtual void  SendConsPreAlloc(int no, Projection* prjn);
-  // #CAT_State pre-allocate given no of sending connections -- sufficient connections must be allocated in advance of making specific connections
-  virtual void  SendConsAllocInc(int no, Projection* prjn);
-  // #CAT_State increment size by given no of sending connections -- later call SendConsPostAlloc to actually allocate connections
-  virtual void  RecvConsAllocInc(int no, Projection* prjn);
-  // #CAT_State increment size by given no of recv connections -- later call RecvConsPostAlloc to actually allocate connections
-  virtual void  SendConsPostAlloc(Projection* prjn);
-  // #CAT_State post-allocate given no of sending connections (calls AllocConsFmSize on send con group) -- if connections were initially made using the alloc_send = true, then this must be called to actually allocate connections -- then routine needs to call ConnectFrom again to make the connections
-  virtual void  RecvConsPostAlloc(Projection* prjn);
-  // #CAT_State post-allocate given no of recv connections (calls AllocConsFmSize on recv con group) -- if connections were initially made using the alloc_send = true, then this must be called to actually allocate connections -- then routine needs to call ConnectFrom again to make the connections
-
-  virtual int   ConnectFrom(Unit* su, Projection* prjn, bool alloc_send = false,
-                            bool ignore_alloc_errs = false, bool set_init_wt = false,
-                            float init_wt = 0.0f);
-  // #CAT_State make a recv connection from given unit to this unit using given projection -- requires both recv and sender to have sufficient connections allocated already, unless alloc_send is true, then it only allocates connections on the sender -- does NOT make any connection on the receiver -- use this in a loop that runs connections twice, with first pass as allocation (then call SendConstPostAlloc) and second pass as actual connection making -- return val is index of recv connection -- can also optionally set initial weight value
-  virtual int   ConnectFromCk(Unit* su, Projection* prjn, bool ignore_alloc_errs = false,
-                              bool set_init_wt = false, float init_wt = 0.0f);
-  // #CAT_State does ConnectFrom but checks for an existing connection to prevent double-connections -- note that this is expensive -- only use if there is a risk of multiple connections.  This does not support alloc_send option -- can call in 2nd pass if needed -- return val is index of recv connection -- can also optionally set initial weight value
-  virtual bool  DisConnectFrom(Unit* su, Projection* prjn=NULL);
-  // #CAT_State remove connection from given unit (projection is optional)
-  virtual void  DisConnectAll();
-  // #MENU #MENU_ON_Actions #CAT_State disconnect unit from all other units
-  virtual int   CountCons(Network* net);
-  // #CAT_State count total number of owned connections
-  virtual void  UpdtActiveCons();
-  // #CAT_State update the active state of all connection groups
-
-  virtual bool  ShareRecvConsFrom(Unit* shu, Projection* prjn);
-  // #CAT_State share our receiving connection group connection memory for given projection from given other source unit -- shu must appear prior to this layer in the same layer
   
   virtual void  GetLocalistName();
   // #CAT_State look for a receiving projection from a single unit, which has a name: if found, set our name to that name

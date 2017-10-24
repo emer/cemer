@@ -25,7 +25,7 @@
 // declare all other types mentioned but not required to include:
 class LayerView; //
 eTypeDef_Of(LayerView);
-class Unit; //
+class UnitState_cpp; //
 class NetView; //
 class T3UnitNode; //
 
@@ -39,20 +39,20 @@ public:
 #ifndef __MAKETA__
   int           picked : 1;     // #IGNORE set when unit is picked for display (note: not same as selected)
 #endif
-  Unit*                 unit() const {return (Unit*)data();}
+  UnitState_cpp*        unit() const {return (UnitState_cpp*)data();}
   LayerView*            lay() {return GET_MY_OWNER(LayerView);}
   T3UnitNode*           node_so() const {return (T3UnitNode*)inherited::node_so();}
   NetView*              getNetView();
 
-  void         CutLinks() override;
+  void  CutLinks() override;
   T3_DATAVIEWFUNS(UnitView, T3DataView)
 protected:
-  void         Render_pre() override; //
+  void  Render_pre() override; //
   // note: _impl is done by the LayerView
 private:
-  void Copy_(const UnitView& cp) {m_nv = NULL;}
-  void                  Initialize();
-  void                  Destroy() {CutLinks();}
+  void  Copy_(const UnitView& cp) {m_nv = NULL;}
+  void  Initialize();
+  void  Destroy() {CutLinks();}
 
   NetView*              m_nv; // cache
 };

@@ -27,17 +27,13 @@ set(network_HEADS_MAKETA_base
 
   Connection.h
 
-  Unit.h
-  UnitPtrList.h
-  Unit_Group.h
-
-  ProjectionSpec.h
   Projection.h
   Projection_Group.h
 
+  ProjectionSpec.h
+  ProjectionSpec_cpp.h
   LayerSpec.h
   Layer_Group.h
-  NetworkThreadMgr.h
   Layer_PtrList.h
 
   taBrainAtlas.h
@@ -51,30 +47,9 @@ set(network_HEADS_MAKETA_base
   
   Network_Group.h
 
-  FullPrjnSpec.h
-  TesselPrjnSpec.h
-  OneToOnePrjnSpec.h
-  SmallWorldPrjnSpec.h
-  RandomPrjnSpec.h
-  UniformRndPrjnSpec.h
-  PolarRndPrjnSpec.h
-  SymmetricPrjnSpec.h
-  ProgramPrjnSpec.h
-  CustomPrjnSpec.h
-  GpOneToOnePrjnSpec.h
-  MarkerGpOneToOnePrjnSpec.h
-  RndGpOneToOnePrjnSpec.h
-  GpRndTesselPrjnSpec.h
-  TiledRFPrjnSpec.h
-  TiledNovlpPrjnSpec.h
-  TiledDivGpRFPrjnSpec.h
-  GpMapConvergePrjnSpec.h
-  GpMapDivergePrjnSpec.h
-  TiledGpMapConvergePrjnSpec.h
-  GaussRFPrjnSpec.h
-  GradientWtsPrjnSpec.h
-  ConPoolPrjnSpec.h
-
+  AllProjectionSpecs_cpp.h
+  AllProjectionSpecs.h
+  
   LayerDataEl.h
   LayerDataEl_List.h
   LayerWriterEl.h
@@ -124,8 +99,7 @@ set(network_HEADS_MAKETA_base
 
 # multiple inheritence -- in correspondence with deps below
 set(network_HEADS_MAKETA_MI
-  ScriptPrjnSpec.h
-  Layer.h
+    Layer.h
   Network.h
   NetworkState_cpp.h
   LayerState_cpp.h
@@ -161,7 +135,6 @@ set(network_HEADS_MAKETA_MI_DEPS
 
 set(network_HEADS_NOMAKETA
   network_def.h
-  Unit_inlines.h
 
   State_defs.h
   State_cpp.h
@@ -178,11 +151,36 @@ set(network_HEADS_NOMAKETA
   UnitState_core.h
   ConState_core.h
 
+  ProjectionSpec_mbrs.h
+  ProjectionSpec_core.h
   LayerSpec_core.h
   UnitSpec_core.h
   ConSpec_mbrs.h
   ConSpec_core.h
 
+  AllProjectionSpecs_mbrs.h
+  FullPrjnSpec.h
+  # TesselPrjnSpec.h
+  # OneToOnePrjnSpec.h
+  # SmallWorldPrjnSpec.h
+  # RandomPrjnSpec.h
+  # UniformRndPrjnSpec.h
+  # PolarRndPrjnSpec.h
+  # SymmetricPrjnSpec.h
+  # GpOneToOnePrjnSpec.h
+  # MarkerGpOneToOnePrjnSpec.h
+  # RndGpOneToOnePrjnSpec.h
+  # GpRndTesselPrjnSpec.h
+  # TiledRFPrjnSpec.h
+  # TiledNovlpPrjnSpec.h
+  # TiledDivGpRFPrjnSpec.h
+  # GpMapConvergePrjnSpec.h
+  # GpMapDivergePrjnSpec.h
+  # TiledGpMapConvergePrjnSpec.h
+  # GaussRFPrjnSpec.h
+  # GradientWtsPrjnSpec.h
+  # ConPoolPrjnSpec.h
+  
   BrainAtlas.h
   BrainAtlasFileParser.h
   BrainAtlasInfo.h
@@ -277,10 +275,8 @@ set(network_SRCS
         
   UnitSpec_cpp.cpp
   UnitSpec.cpp
-  Unit.cpp
-  UnitPtrList.cpp
-  Unit_Group.cpp
 
+  ProjectionSpec_cpp.cpp
   ProjectionSpec.cpp
   Projection.cpp
   Projection_Group.cpp
@@ -291,7 +287,6 @@ set(network_SRCS
   Layer_Group.cpp
   Layer_PtrList.cpp
 
-  NetworkThreadMgr.cpp
   taBrainAtlas.cpp
   taBrainAtlas_List.cpp
   BrainAtlasRegexpPopulator.cpp
@@ -312,30 +307,8 @@ set(network_SRCS
   Network.cpp
   Network_Group.cpp
 
-  FullPrjnSpec.cpp
-  TesselPrjnSpec.cpp
-  OneToOnePrjnSpec.cpp
-  SmallWorldPrjnSpec.cpp
-  RandomPrjnSpec.cpp
-  UniformRndPrjnSpec.cpp
-  PolarRndPrjnSpec.cpp
-  SymmetricPrjnSpec.cpp
-  ScriptPrjnSpec.cpp
-  ProgramPrjnSpec.cpp
-  CustomPrjnSpec.cpp
-  GpOneToOnePrjnSpec.cpp
-  MarkerGpOneToOnePrjnSpec.cpp
-  RndGpOneToOnePrjnSpec.cpp
-  GpRndTesselPrjnSpec.cpp
-  TiledRFPrjnSpec.cpp
-  TiledNovlpPrjnSpec.cpp
-  TiledDivGpRFPrjnSpec.cpp
-  GpMapConvergePrjnSpec.cpp
-  GpMapDivergePrjnSpec.cpp
-  TiledGpMapConvergePrjnSpec.cpp
-  GaussRFPrjnSpec.cpp
-  GradientWtsPrjnSpec.cpp
-  ConPoolPrjnSpec.cpp
+  AllProjectionSpecs_cpp.cpp
+  AllProjectionSpecs.cpp
 
   LayerDataEl.cpp
   LayerDataEl_List.cpp
@@ -425,10 +398,15 @@ set(network_CUDA
   UnitState_cuda.h
   ConState_cuda.h
 
+  ProjectionSpec_cuda.h
   LayerSpec_cuda.h
   UnitSpec_cuda.h
   ConSpec_cuda.h
 
+  AllProjectionSpecs_cuda.h
+  AllProjectionSpecs_cuda.cpp
+  
+  ProjectionSpec_cuda.cpp
   LayerSpec_cuda.cpp
   UnitSpec_cuda.cpp
   ConSpec_cuda.cpp

@@ -23,17 +23,43 @@
   };
 
   enum StateLayerSpecTypes { // manual type registry system for all spec types used in state code -- any new spec type MUST be added to this list, extending from N case in the last list, for any derived classes, and each spec must return its appropriate enum in GetStateSpecType() method
-    T_LAYER_SPEC,            // base LayerSpec type
+    T_LayerSpec,            // base LayerSpec type
     N_NetworkLayerSpecs,     // derived classes start from this one -- use class name for subclasses
   };
 
+  enum StatePrjnSpecTypes { // manual type registry system for all spec types used in state code -- any new spec type MUST be added to this list, extending from N case in the last list, for any derived classes, and each spec must return its appropriate enum in GetStateSpecType() method
+    T_ProjectionSpec,            // base PrjnSpec type
+    T_FullPrjnSpec,
+    T_TesselPrjnSpec,
+    T_OneToOnePrjnSpec,
+    T_SmallWorldPrjnSpec,
+    T_RandomPrjnSpec,
+    T_UniformRndPrjnSpec,
+    T_PolarRndPrjnSpec,
+    T_SymmetricPrjnSpec,
+    T_GpOneToOnePrjnSpec,
+    T_MarkerGpOneToOnePrjnSpec,
+    T_RndGpOneToOnePrjnSpec,
+    T_GpRndTesselPrjnSpec,
+    T_TiledRFPrjnSpec,
+    T_TiledNovlpPrjnSpec,
+    T_TiledDivGpRFPrjnSpec,
+    T_GpMapConvergePrjnSpec,
+    T_GpMapDivergePrjnSpec,
+    T_TiledGpMapConvergePrjnSpec,
+    T_GaussRFPrjnSpec,
+    T_GradientWtsPrjnSpec,
+    T_ConPoolPrjnSpec,
+    N_NetworkPrjnSpecs,     // derived classes start from this one -- use class name for subclasses
+  };
+
   enum StateUnitSpecTypes { // manual type registry system for all spec types used in state code -- any new spec type MUST be added to this list, extending from N case in the last list, for any derived classes, and each spec must return its appropriate enum in GetStateSpecType() method
-    T_UNIT_SPEC,            // base UnitSpec type
+    T_UnitSpec,            // base UnitSpec type
     N_NetworkUnitSpecs,     // derived classes start from this one -- use class name for subclasses
   };
 
   enum StateConSpecTypes { // manual type registry system for all spec types used in state code -- any new spec type MUST be added to this list, extending from N case in the last list, for any derived classes, and each spec must return its appropriate enum in GetStateSpecType() method
-    T_CON_SPEC,            // base ConSpec type
+    T_ConSpec,            // base ConSpec type
     N_NetworkConSpecs,     // derived classes start from this one -- use class name for subclasses
   };
 
@@ -49,6 +75,7 @@
   int           n_ungps_built;  // #NO_SAVE #READ_ONLY #CAT_State number of state unit groups when built -- size of state_ungps array
   int           n_units_built;  // #NO_SAVE #READ_ONLY #CAT_State number of units built -- actually the n+1 size of units_flat
   int           n_layer_specs_built;  // #NO_SAVE #READ_ONLY #CAT_Specs number of specs 
+  int           n_prjn_specs_built;  // #NO_SAVE #READ_ONLY #CAT_Specs number of specs 
   int           n_unit_specs_built;  // #NO_SAVE #READ_ONLY #CAT_Specs number of specs 
   int           n_con_specs_built;  // #NO_SAVE #READ_ONLY #CAT_Specs number of specs 
 
@@ -59,7 +86,6 @@
   int           small_batch_n;  // #MAIN #CONDEDIT_ON_main_obj #CONDSHOW_ON_wt_update:SMALL_BATCH #CAT_Learning number of events for small_batch learning mode (specifies how often weight changes are synchronized in dmem)
   int           small_batch_n_eff; // #MAIN #CONDEDIT_ON_main_obj #GUI_READ_ONLY #EXPERT #NO_SAVE #CAT_Learning effective batch_n value = batch_n except for dmem when it = (batch_n / epc_nprocs) >= 1
   STATE_CLASS(NetStatsSpecs) stats; // #CAT_Statistic parameters controling the computation of statistics
-  STATE_CLASS(NetworkCudaSpec)  cuda; // #CAT_CUDA parameters for NVIDA CUDA GPU implementation -- only applicable for CUDA_COMPILE binaries
 
   int           batch;          // #MAIN #CONDEDIT_ON_main_obj #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW batch counter: number of times network has been trained over a full sequence of epochs (updated by program)
   int           epoch;          // #MAIN #CONDEDIT_ON_main_obj #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW epoch counter: number of times a complete set of training patterns has been presented (updated by program)
@@ -128,17 +154,43 @@
   }
   // #IGNORE set state sizes
 
-  INLINE void   SetSpecSizes(int n_lspec, int n_uspec, int n_cspec) {
-    n_layer_specs_built = n_lspec; n_unit_specs_built = n_uspec; n_con_specs_built = n_cspec;
+  INLINE void   SetSpecSizes(int n_lspec, int n_pspec, int n_uspec, int n_cspec) {
+    n_layer_specs_built = n_lspec; n_prjn_specs_built = n_pspec; n_unit_specs_built = n_uspec;
+    n_con_specs_built = n_cspec;
   }
   // #IGNORE set spec sizes
+
+
+  INLINE virtual void Init_Counters_impl() {
+    // this is one you do not reinit: loops over inits: batch = 0;
+    epoch = 0;    group = 0;    trial = 0;    tick = 0;    cycle = 0;    time = 0.0f;
+    total_trials = 0;
+  }
+  // #IGNORE init all counters -- todo: override and call inherited in subclasses
+
+  INLINE virtual bool Compute_Weights_Test_impl(int trial_no) {
+    if(train_mode == TEST) return false;
+    if(wt_update == ON_LINE) return true;
+    if(wt_update == BATCH) return false;
+    if(wt_update == SMALL_BATCH) {
+      int trial_no_eff = trial_no;
+#ifdef DMEM_COMPILE             // todo: how does this work?
+      if(dmem_trl_comm.nprocs > 1) {
+        trial_no_eff = ((trial_no_eff-1) / dmem_trl_comm.nprocs) + 1;
+        // subtract the 1 that was presumably added to trial_no, then add it back
+      }
+#endif
+      return (trial_no_eff % small_batch_n_eff == 0);
+    }
+    return false;
+  }
 
   INLINE void   Initialize_net_core() {
     main_obj = false;
     n_thrs_built = 0;     layer_state_size = 0;   prjn_state_size = 0;    ungp_state_size = 0;
     unit_state_size = 0;  con_state_size = 0;     n_layers_built = 0;     n_prjns_built = 0;
     n_ungps_built = 0;    n_units_built = 0;      n_layer_specs_built = 0;
-    n_unit_specs_built = 0; n_con_specs_built = 0;
+    n_prjn_specs_built = 0; n_unit_specs_built = 0; n_con_specs_built = 0;
     
     train_mode = TRAIN;    wt_update = ON_LINE;    small_batch_n = 10;    small_batch_n_eff = 10;
 

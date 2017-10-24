@@ -317,9 +317,9 @@
   // #CAT_Statistic compute average net_sd (at an epoch-level timescale)
 
 
-  INIMPL LAYER_SPEC*    NewLayerSpec(int spec_type) const override;
-  INIMPL UNIT_SPEC*     NewUnitSpec(int spec_type) const override;
-  INIMPL CON_SPEC*      NewConSpec(int spec_type) const override;
+  INIMPL LAYER_SPEC_CPP*    NewLayerSpec(int spec_type) const override;
+  INIMPL UNIT_SPEC_CPP*     NewUnitSpec(int spec_type) const override;
+  INIMPL CON_SPEC_CPP*      NewConSpec(int spec_type) const override;
 
   
   INLINE void Initialize_core() {

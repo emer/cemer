@@ -56,9 +56,9 @@ public:
   void BuildAll() override; // creates fully populated subviews
   virtual void  InitDisplay();
   void          UpdateSlices(); // #IGNORE
-  float         GetUnitDisplayVal(const Unit* u, void*& base);
+  float         GetUnitDisplayVal(const UnitState_cpp* u, void*& base);
   // get raw floating point value to display at given member index (< membs.size), at given *logical* coordinate -- fills in base for this value as well (NULL if not set)
-  void          UpdateUnitViewBases(Unit* src_u);
+  void          UpdateUnitViewBases(UnitState_cpp* src_u);
   // update base void* for all current nv->membs, src_u only used for s./r. values
   virtual void  UpdateUnitValues();
   // *only* updates unit values
@@ -75,7 +75,7 @@ public:
 protected:
   void          UpdateUnitViewBase_Unit_impl(int midx, MemberDef* disp_md); // for unit members
   void          UpdateUnitViewBase_Sub_impl(int midx, MemberDef* disp_md); // for unit submembers
-  void          UpdateUnitViewBase_Con_impl(int midx, bool is_send, String nm, Unit* src_u);
+  void          UpdateUnitViewBase_Con_impl(int midx, bool is_send, String nm, UnitState_cpp* src_u);
   // for cons
   void  DoActionChildren_impl(DataViewAction acts) override;
   virtual void   Render_impl_children(); // #IGNORE we trap this in DoActionChildren
@@ -111,7 +111,7 @@ private:
   QMultiMap<unsigned int, taVector3f> m_atlas_depth_map; //#IGNORE
   QMultiMap<unsigned int, Voxel*>       m_units_depth_map; //#IGNORE
   QMap<const Voxel*, taVector3f>      m_voxel_map; //#IGNORE
-  QMap<const Unit*, unsigned int>       m_uvd_bases_map; //#IGNORE
+  QMap<const UnitState_cpp*, unsigned int>       m_uvd_bases_map; //#IGNORE
   QList<QColor>                         m_atlasColors; //#IGNORE
 #endif
 };

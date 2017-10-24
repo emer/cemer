@@ -12,7 +12,7 @@
   // #READ_ONLY #NO_COPY #NO_SAVE #NO_INHERIT index of this spec in list of specs
 
 
-  INLINE virtual int  GetStateSpecType() const { return NETWORK_STATE::T_CON_SPEC; }
+  INLINE virtual int  GetStateSpecType() const { return NETWORK_STATE::T_ConSpec; }
   // #CAT_State derived classes MUST override this and pass correct global type id
 
   INLINE float&         C_ApplyLimits(float& wt)
@@ -85,7 +85,7 @@
     const int sz = cg->size;
     for(int i=0; i<sz;i++) {
       int con_idx = -1;
-      CON_STATE* rrcg = net->FindRecipRecvCon(con_idx, net, cg->UnState(i,net), ru);
+      CON_STATE* rrcg = net->FindRecipRecvCon(con_idx, cg->UnState(i,net), ru);
       if(rrcg && con_idx >= 0) {
         CON_SPEC_CPP* rrcs = rrcg->GetConSpec(net);
         if(rrcs && rrcs->wt_limits.sym) {
@@ -107,7 +107,7 @@
     const int sz = cg->size;
     for(int i=0; i<sz;i++) {
       int con_idx = -1;
-      CON_STATE* rscg = net->FindRecipSendCon(con_idx, net, cg->UnState(i,net), su);
+      CON_STATE* rscg = net->FindRecipSendCon(con_idx, cg->UnState(i,net), su);
       if(rscg && con_idx >= 0) {
         CON_SPEC_CPP* rscs = rscg->GetConSpec(net);
         if(rscs && rscs->wt_limits.sym) {
@@ -288,6 +288,31 @@
     C_Compute_Weights(uv->bias_wt, uv->bias_dwt);
   }
   // #CAT_Learning bias weight: update weights (ie. add delta-wt to wt, zero delta-wt)
+
+
+  ///////////////////////////////////////////////////////////////////
+  //    Infrastructure -- need to be able to save / load weights
+  //    without relying on TypeAccess, so we do it manually..
+
+  INLINE virtual bool   SaveVar(int var_no) const { return (var_no == WT); }
+  // #CAT_File should given variable be saved?
+
+  INLINE virtual const char* ConVarName(int var_no) const {
+    switch(var_no) {
+    case WT: return "wt";
+    case DWT: return "dwt";
+    }
+    return "";
+  }
+  // #CAT_Access name of given connection variable
+
+  INLINE int FindConVar(const CON_STATE* cg, const char* var_nm) {
+    for(int i=0; i < cg->n_con_vars; i++) {
+      if(strcmp(ConVarName(i), var_nm) == 0) return i;
+    }
+    return -1;
+  }
+  // #CAT_Access find index of given connection variable, -1 if not found
 
   INLINE void Initialize_core() {
     spec_idx = -1;

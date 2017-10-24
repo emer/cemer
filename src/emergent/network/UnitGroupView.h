@@ -26,7 +26,7 @@
 #include <CircMatrix>
 
 // declare all other types mentioned but not required to include:
-class Unit; //
+class UnitState_cpp; //
 class Layer; //
 class LayerView; //
 class T3UnitGroupNode; //
@@ -52,14 +52,14 @@ public:
   void                  SetLayerView(LayerView* l) { m_lv = l; }
 
   void                  AllocUnitViewData(); // make sure we have correct space in uvd storage
-  void         BuildAll() override; // creates fully populated subviews
+  void                  BuildAll() override; // creates fully populated subviews
   virtual void          InitDisplay();
 
   float                 GetUnitDisplayVal(const taVector2i& co, void*& base);
   // get raw floating point value to display according to current nv settings, at given *logical* coordinate within the layer -- fills in base for this value as well (NULL if not set) -- uses history values if nv hist_idx > 0
   float                 GetUnitDisplayVal_Idx(const taVector2i& co, int midx, void*& base);
   // get raw floating point value to display at given member index (< membs.size), at given *logical* coordinate -- fills in base for this value as well (NULL if not set) -- does NOT use history vals ever
-  void                  UpdateUnitViewBases(Unit* src_u);
+  void                  UpdateUnitViewBases(UnitState_cpp* src_u);
   // update base void* for all current nv->membs, src_u only used for s./r. values
   virtual void          UpdateUnitValues();
   // *only* updates unit values
@@ -78,19 +78,19 @@ public:
   void         CutLinks() override;
   T3_DATAVIEWFUNS(UnitGroupView, nvDataView)
 protected:
-  LayerView*            m_lv;
+  LayerView*    m_lv;
   void          UpdateUnitViewBase_Unit_impl(int midx, MemberDef* disp_md); // for unit members
   void          UpdateUnitViewBase_Sub_impl(int midx, MemberDef* disp_md); // for unit submembers
   void          UpdateUnitViewBase_Con_impl
-    (int midx, bool is_send, String nm, Unit* src_u, const String& prjn_starts_with);
+    (int midx, bool is_send, String nm, UnitState_cpp* src_u, const String& prjn_starts_with);
   // for cons
-  void         DoActionChildren_impl(DataViewAction acts) override;
+  void                  DoActionChildren_impl(DataViewAction acts) override;
   virtual void          Render_impl_children(); // #IGNORE we trap this in DoActionChildren
   virtual void          Render_impl_blocks(); // optimized blocks
   virtual void          Render_impl_outnm(); // output name
   virtual void          Render_impl_snap_bord(); // snap border
 
-  void          GetUnitColor(NetView* nv, const taVector2i& pos, Unit* unit, iColor& col,
+  void          GetUnitColor(NetView* nv, const taVector2i& pos, UnitState_cpp* unit, iColor& col,
                              float max_z, float& zp1, float& sc_val, float& val);
   
   void         Render_pre() override; // #IGNORE

@@ -6,7 +6,7 @@
 
   float		dwt_thresh;  // #CONDSHOW_ON_learn #DEF_0.1 #MIN_0 #CAT_Learning don't change if dwt < thresh, prevents buildup of small changes
 
-  INLINE int  GetStateSpecType() const override { return LEABRA_NETWORK_STATE::T_LEABRA_BIAS_SPEC; }
+  INLINE int  GetStateSpecType() const override { return LEABRA_NETWORK_STATE::T_LeabraBiasSpec; }
 
   INLINE void B_Compute_dWt(UNIT_STATE* u, NETWORK_STATE* net, int thr_no) override {
     if(!learn) return;

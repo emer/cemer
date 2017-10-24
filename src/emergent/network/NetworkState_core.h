@@ -11,11 +11,15 @@
 
   int           max_thr_n_units; // #NO_SAVE #READ_ONLY #CAT_State maximum number of units assigned to any one thread
 
-  char*         layers_mem;    // #NO_SAVE #READ_ONLY #CAT_State LayerState memory for all the state layers in order -- must all be the same type, size layer_state_size
-  char*         prjns_mem;    // #NO_SAVE #READ_ONLY #CAT_State PrjnState memory for all the state projections in order -- must all be the same type, size prjn_state_size
-  char*         ungps_mem;     // #NO_SAVE #READ_ONLY #CAT_State UnGpState memory for all the state unit groups in order -- must all be the same type, size ungp_state_size -- every layer has at least one of these for the global unit group
+  void*         net_owner;      // #IGNORE for emergent code, this is Network* that owns net_state -- for some rare cases that need it..
+  char*         layers_mem;    // #IGNORE LayerState memory for all the state layers in order -- must all be the same type, size layer_state_size
+  char*         prjns_mem;    // #IGNORE PrjnState memory for all the state projections in order -- must all be the same type, size prjn_state_size
+  char*         ungps_mem;     // #IGNORE UnGpState memory for all the state unit groups in order -- must all be the same type, size ungp_state_size -- every layer has at least one of these for the global unit group
   int*          ungp_lay_idxs; // #IGNORE allocation of unit groups to layers -- array of int[n_ungps_built], containing layer indexes for each unit group
+  int*          lay_send_prjns; // #IGNORE ordered list of sending projections for each layer -- layer has starting index into this list for each of its set of sending projections -- index is into prjns_mem 
 
+  int*          units_lays;   // #IGNORE allocation of units to layers -- array of int[n_units_built], indexed starting at 1 (i.e., flat_idx with 0 = null unit) with each int indicating which layer is responsible for that unit
+  int*          units_ungps;   // #IGNORE allocation of units to unit groups -- array of int[n_units_built], indexed starting at 1 (i.e., flat_idx with 0 = null unit) with each int indicating which unit group is responsible for that unit -- layer unit group if layer doesn't have sub unit groups, otherwise always the sub unit group
   int*          units_thrs;   // #IGNORE allocation of units to threads -- array of int[n_units+1], indexed starting at 1 (i.e., flat_idx with 0 = null unit) with each int indicating which thread is responsible for that unit
   int*          units_thr_un_idxs; // #IGNORE allocation of units to threads, thread-specific index for this unit -- array of int[n_units+1], indexed starting at 1 (i.e., flat_idx with 0 = null unit) with each int indicating index in thread-specific memory where that unit lives
   int*          thrs_n_units; // #IGNORE number of units assigned to each thread -- array of int[n_threads_built]
@@ -74,80 +78,135 @@
   //            Specs and spec memory
 
   LAYER_SPEC**  layer_specs; // #NO_SAVE #READ_ONLY #CAT_Specs array of pointers to specs
+  PRJN_SPEC**   prjn_specs; // #NO_SAVE #READ_ONLY #CAT_Specs array of pointers to specs
   UNIT_SPEC**   unit_specs; // #NO_SAVE #READ_ONLY #CAT_Specs array of pointers to specs
   CON_SPEC**    con_specs; // #NO_SAVE #READ_ONLY #CAT_Specs array of pointers to specs
 
-  INIMPL virtual void  StateError(const char* a, const char* b=NULL, const char* c=NULL, const char* d=NULL,
-                           const char* e=NULL, const char* f=NULL, const char* g=NULL,
-                           const char* h=NULL, const char* i=NULL) const;
+
+  /////////////////////////////////////////////////////////
+  //            Access
+
+  INIMPL virtual void  StateError
+  (const char* a, const char* b=NULL, const char* c=NULL, const char* d=NULL, const char* e=NULL,
+   const char* f=NULL, const char* g=NULL, const char* h=NULL, const char* i=NULL) const;
   // #IGNORE every state impl must define this method in their .cpp file -- can be null -- all errors go here
+
+  INIMPL virtual void  StateErrorVals
+  (const char* msg, const char* var1=NULL, float val1=0, const char* var2=NULL, float val2=0,
+   const char* var3=NULL, float val3=0, const char* var4=NULL, float val4=0) const;
+  // #IGNORE for reporting values in error messages -- every state impl must define this method in their .cpp file -- can be null -- all errors go here
 
   INIMPL void   ThreadSyncSpin(int thr_no, int sync_no = 0);
   // #IGNORE net->threads.SyncSpin() for C++ threading -- this is a place where threaded code needs to sync with other threads -- null for cuda.. every machine target should have something or nothing here
 
-  INLINE LAYER_SPEC*  GetLayerSpec(int spec_no)
-  { if(spec_no >= 0 && spec_no < n_layer_specs_built)  return layer_specs[spec_no];
-    return NULL; }
+  INLINE LAYER_SPEC*  GetLayerSpec(int spec_no) const {
+    if(spec_no < 0 || spec_no >= n_layer_specs_built) {
+#ifdef DEBUG    
+      StateErrorVals("GetLayerSpec: spec index out of range", "spec_no", spec_no);
+#endif
+      return NULL;
+    }
+    return layer_specs[spec_no];
+  }
   // #CAT_State Get layer spec at given index
 
-  INLINE UNIT_SPEC*   GetUnitSpec(int spec_no)
-  { if(spec_no >= 0 && spec_no < n_unit_specs_built) return unit_specs[spec_no];
-    return NULL; }
+  INLINE PRJN_SPEC*  GetPrjnSpec(int spec_no) const {
+    if(spec_no < 0 || spec_no >= n_prjn_specs_built) {
+#ifdef DEBUG    
+      StateErrorVals("GetPrjnSpec: spec index out of range", "spec_no", spec_no);
+#endif
+      return NULL;
+    }
+    return prjn_specs[spec_no];
+  }
+  // #CAT_State Get projection spec at given index
+
+  INLINE UNIT_SPEC*   GetUnitSpec(int spec_no) const {
+    if(spec_no < 0 || spec_no >= n_unit_specs_built) {
+#ifdef DEBUG    
+      StateErrorVals("GetUnitSpec: spec index out of range", "spec_no", spec_no);
+#endif
+      return NULL;
+    }
+    return unit_specs[spec_no];
+  }
   // #CAT_State Get unit spec at given index
   
-  INLINE CON_SPEC*    GetConSpec(int spec_no)
-  { if(spec_no >= 0 && spec_no < n_con_specs_built) return con_specs[spec_no];
-    return NULL; }
+  INLINE CON_SPEC*    GetConSpec(int spec_no) const {
+    if(spec_no < 0 || spec_no >= n_con_specs_built) {
+#ifdef DEBUG    
+      StateErrorVals("GetConSpec: spec index out of range", "spec_no", spec_no);
+#endif
+      return NULL;
+    }
+    return con_specs[spec_no];
+  }
   // #CAT_State Get con spec at given index
   
   INLINE bool   ThrInRange(int thr_no, bool err_msg = true) const
   { if(thr_no >= 0 && thr_no < n_thrs_built) return true;
-    if(err_msg) StateError("ThrInRange", "thread number:", /* String(thr_no),*/ "out of range");
+    if(err_msg) StateErrorVals("ThrInRange: thread number out of range", "thread number:", thr_no);
     return false; }
   // #IGNORE test if thread number is in range
 
   INLINE bool   LayerInRange(int lay_idx, bool err_msg = true) const
   { if(lay_idx >= 0 && lay_idx < n_layers_built) return true;
-    if(err_msg) StateError("LayerInRange", "layer number:", /* String(lay_idx),*/ "out of range");
+    if(err_msg) StateErrorVals("LayerInRange: layer number out of range", "layer number:", lay_idx);
     return false; }
   // #IGNORE test if layer number is in range
   
   INLINE bool   PrjnInRange(int prjn_idx, bool err_msg = true) const
   { if(prjn_idx >= 0 && prjn_idx < n_prjns_built) return true;
-    if(err_msg) StateError("PrjnInRange", "prjn number:", /*String(prjn_idx),*/ "out of range");
+    if(err_msg) StateErrorVals("PrjnInRange: projection number out of range", "prjn number:",prjn_idx);
     return false; }
   // #IGNORE test if prjn number is in range
   
   INLINE bool   UnGpInRange(int ungp_idx, bool err_msg = true) const
   { if(ungp_idx >= 0 && ungp_idx < n_ungps_built) return true;
-    if(err_msg) StateError("UnGpInRange", "ungp number:", /* String(ungp_idx),*/ "out of range");
+    if(err_msg) StateErrorVals("UnGpInRange: unit group number out of range", "ungp number:", ungp_idx);
     return false; }
   // #IGNORE test if unit group number is in range
   
-  INLINE LAYER_STATE* GetLayerState(int lay_idx) {
+  INLINE LAYER_STATE* GetLayerState(int lay_idx) const {
 #ifdef DEBUG
     if(!LayerInRange(lay_idx)) return NULL;
 #endif
     return (LAYER_STATE*)(layers_mem + (lay_idx * layer_state_size));
   }
   // #CAT_State get layer state for given layer index
+  INLINE LAYER_STATE* LayerStateForUn(int flat_idx) const {
+    if(!UnFlatIdxInRange(flat_idx)) return NULL;
+    return GetLayerState(units_lays[flat_idx]);
+  }
+  // #CAT_State get layer state for unit at given flat unit index
 
-  INLINE PRJN_STATE* GetPrjnState(int prjn_idx) {
+  INIMPL LAYER_STATE* FindLayerName(const char* lay_name) const;
+  // #CAT_State find layer of given name
+
+  INLINE PRJN_STATE* GetPrjnState(int prjn_idx) const {
 #ifdef DEBUG
     if(!PrjnInRange(prjn_idx)) return NULL;
 #endif
     return (PRJN_STATE*)(prjns_mem + (prjn_idx * prjn_state_size));
   }
-  // #CAT_State get unit group state for given prjn index
+  // #CAT_State get projection state for given prjn index (organized by receiving projections by layer)
 
-  INLINE UNGP_STATE* GetUnGpState(int ungp_idx) {
+  INLINE PRJN_STATE* GetSendPrjnState(int prjn_idx) const {
+#ifdef DEBUG
+    if(!PrjnInRange(prjn_idx)) return NULL;
+#endif
+    return GetPrjnState(lay_send_prjns[prjn_idx]);
+  }
+  // #CAT_State get projection state for given sending projection index (see layer prjn_start_idx)
+
+  INLINE UNGP_STATE* GetUnGpState(int ungp_idx) const {
 #ifdef DEBUG
     if(!UnGpInRange(ungp_idx)) return NULL;
 #endif
     return (UNGP_STATE*)(ungps_mem + (ungp_idx * ungp_state_size));
   }
   // #CAT_State get unit group state for given ungp index
-   INLINE int    UnGpLayIdx(int ungp_idx) {
+   INLINE int    UnGpLayIdx(int ungp_idx) const {
 #ifdef DEBUG
     if(!UnGpInRange(ungp_idx)) return -1;
 #endif
@@ -156,30 +215,30 @@
 
   INLINE bool   UnFlatIdxInRange(int flat_idx, bool err_msg = true) const
   { if(flat_idx >= 1 && flat_idx < n_units_built) return true;
-    if(err_msg) StateError("UnFlatIdxInRange", "unit flat index number:"/*, String(flat_idx),*/
-                           "out of range");
+    if(err_msg) StateErrorVals("UnFlatIdxInRange: unit flat index number out of range",
+                               "unit flat index number:", flat_idx);
     return false; }
   // #IGNORE test if unit flat index is in range
   INLINE bool   ThrUnIdxInRange(int thr_no, int thr_un_idx, bool err_msg = true) const
   { if(ThrInRange(thr_no) && thr_un_idx >= 0 && thr_un_idx < ThrNUnits(thr_no))
       return true;
-    if(err_msg) StateError("ThrUnIdxInRange", "unit thread index number:",
-                           /* String(thr_un_idx),*/ "out of range in thread:"/*, String(thr_no)*/);
+    if(err_msg) StateErrorVals("ThrUnIdxInRange: unit thread index number out of range",
+                               "unit thread index number:", thr_un_idx);
     return false; }
   // #IGNORE test if thread-based unit index is in range
 
   INLINE bool   UnRecvConGpInRange(int flat_idx, int recv_idx, bool err_msg = true) const
   { if(UnFlatIdxInRange(flat_idx) && recv_idx >= 0 && recv_idx < UnNRecvConGps(flat_idx))
       return true;
-    if(err_msg) StateError("UnRecvConGpInRange", "unit recv con group index number:",
-                           /*String(recv_idx),*/ "out of range in unit flat idx:"/*, String(flat_idx)*/);
+    if(err_msg) StateErrorVals("UnRecvConGpInRange: unit recv con group index number out of range",
+                               "unit recv con group index number:", recv_idx);
     return false; }
   // #IGNORE test if unit recv con group index is in range
   INLINE bool   UnSendConGpInRange(int flat_idx, int send_idx, bool err_msg = true) const
   { if(UnFlatIdxInRange(flat_idx) && send_idx >= 0 && send_idx < UnNSendConGps(flat_idx))
       return true;
-    if(err_msg) StateError("UnSendConGpInRange", "unit send con group index number:",
-                           /* String(send_idx),*/ "out of range in unit flat idx:"/*, String(flat_idx)*/);
+    if(err_msg) StateErrorVals("UnSendConGpInRange: unit send con group index number out of range",
+                               "unit send con group index number:", send_idx);
     return false; }
   // #IGNORE test if unit send con group index is in range
   INLINE bool   ThrUnRecvConGpInRange(int thr_no, int thr_un_idx, int recv_idx,
@@ -187,10 +246,9 @@
   { if(ThrUnIdxInRange(thr_no, thr_un_idx)
        && recv_idx >= 0 && recv_idx < ThrUnNRecvConGps(thr_no, thr_un_idx))
       return true;
-    if(err_msg) StateError("ThrUnRecvConGpInRange", "unit recv con group index number:",
-                           /*String(recv_idx),*/
-                           "out of range in thread unit idx:", /*String(thr_un_idx),*/
-                           "in thread:"/*, String(thr_no)*/);
+    if(err_msg) StateErrorVals("ThrUnRecvConGpInRange: unit recv con group index number out of range",
+                               "unit recv con group index number:", recv_idx,
+                               "thread unit idx:", thr_un_idx, "in thread:", thr_no);
     return false; }
   // #IGNORE test if thread-specified unit recv con group index is in range
   INLINE bool   ThrUnSendConGpInRange(int thr_no, int thr_un_idx, int send_idx,
@@ -198,10 +256,9 @@
   { if(ThrUnIdxInRange(thr_no, thr_un_idx)
        && send_idx >= 0 && send_idx < ThrUnNSendConGps(thr_no, thr_un_idx))
       return true;
-    if(err_msg) StateError("ThrUnSendConGpInRange", "unit send con group index number:",
-                           /*String(send_idx),*/
-                           "out of range in thread unit idx:", /*String(thr_un_idx),*/
-                           "in thread:" /*, String(thr_no)*/ );
+    if(err_msg) StateErrorVals("ThrUnSendConGpInRange: unit send con group index number out of range",
+                               "unit send con group index number:", send_idx,
+                               "thread unit idx:", thr_un_idx, "in thread:", thr_no);
     return false; }
   // #IGNORE test if thread-specified unit send con group index is in range
 
@@ -236,7 +293,7 @@
 #endif
     return (UNIT_STATE*)(thrs_units_mem[thr_no] + (thr_un_idx * unit_state_size)); }
   // #IGNORE unit variables for unit at given thread, thread-specific unit index (max ThrNUnits()-1)
-  INLINE UNIT_STATE*  UnUnitState(int flat_idx) const
+  INLINE UNIT_STATE*  GetUnitState(int flat_idx) const
   { return ThrUnitState(UnThr(flat_idx), UnThrUnIdx(flat_idx)); }
   // #IGNORE unit variables for unit at given unit at flat_idx 
   INLINE int    ThrLayUnStart(int thr_no, int lay_no)
@@ -385,44 +442,9 @@
   // #IGNORE temporary sending netinput memory for given thread -- NETIN_PER_PRJN version
 
 
-  /////////////////////////////////////////////////////
-  //    Build network
-
-  INIMPL virtual void AllocSpecMem();
-  // #IGNORE allocate spec mem
-
-  INIMPL virtual LAYER_SPEC*    NewLayerSpec(int spec_type) const;
-  // #IGNORE each type of Network MUST override this to create a new spec of correct type 
-  INIMPL virtual UNIT_SPEC*     NewUnitSpec(int spec_type) const;
-  // #IGNORE each type of Network MUST override this to create a new spec of correct type 
-  INIMPL virtual CON_SPEC*      NewConSpec(int spec_type) const;
-  // #IGNORE each type of Network MUST override this to create a new spec of correct type 
-
-  INIMPL virtual void AllocLayUnitMem();
-  // #IGNORE allocate layer and unit state memory
-  INIMPL virtual void AllocConGpMem();
-  // #IGNORE allocate connection group memory
-  INIMPL virtual void AllocSendNetinTmpState();
-  // #IGNORE allocate temp buffers for sender-based netinput
-  INIMPL virtual void AllocConsCountStateMem();
-  // #IGNORE allocate connection counting state memory -- prior to connecting
-  INIMPL virtual void AllocConsStateMem();
-  // #IGNORE allocate connection state memory, after counts have been aggregated -- then second pass 
-  INIMPL virtual void InitSendNetinTmp_Thr(int thr_no);
-  // #IGNORE init send_netin_tmp for netin computation
-
-  INIMPL virtual void FreeConMem();
-  // #IGNORE free connection memory -- called by FreeStateMem
-  INIMPL virtual void FreeStateMem();
-  // #IGNORE free all state memory
-
-  INIMPL virtual void CacheMemStart_Thr(int thr_no);
-  // #IGNORE cache connection memory start pointers -- after connecting
-
-
   ////////////////////////////////////////////////////////////////
-  //    Network algorithm code -- only the "within a thread" code here -- thread dispatch
-  //    is only supported by main c++ outer loops
+  //    Network algorithm code -- only the "within a thread" code here
+  //    thread dispatch is on NetworkState_cpp, and Network calls into that
   
   INIMPL virtual void Init_InputData_Thr(int thr_no);
   // #IGNORE initialize input data fields (ext, targ, ext_flags)
@@ -432,12 +454,20 @@
   // #IGNORE initialize activations
   INIMPL virtual void Init_dWt_Thr(int thr_no);
   // #IGNORE inlitialize delta weight change aggregates
-  INIMPL virtual void Init_Weights_sym(int thr_no);
+
+  INIMPL virtual void Init_Weights_Thr(int thr_no);
+  // #IGNORE -- note: uses Projection wt init code so is not on net_state yet
+  INIMPL virtual void Init_Weights_1Thr();
+  // #IGNORE for INIT_WTS_1_THREAD -- requires consistent order!
+  INIMPL virtual void Init_Weights_renorm_Thr(int thr_no);
+  // #IGNORE renormalize weights after init, before sym
+  INIMPL virtual void Init_Weights_sym_Thr(int thr_no);
   // #IGNORE symmetrize weights after first init pass, called when needed
   INIMPL virtual void Init_Weights_post_Thr(int thr_no);
   // #IGNORE
   INIMPL virtual void Init_Weights_Layer();
   // #IGNORE call layer-level init weights function -- after all unit-level inits
+
   INIMPL virtual void Init_Counters_State();
   // #IGNORE initialize counters controlled by the state-side
   INIMPL virtual void Init_Stats();
@@ -448,6 +478,8 @@
   // #IGNORE compute net input, receiver based
   INIMPL virtual void Send_Netin_Thr(int thr_no);
   // #IGNORE compute net input, sender based -- requires a wrap-up integration from temp buffers
+  INIMPL virtual void Send_Netin_Integ();
+  // #IGNORE integrate sent netinput across threads -- single thread only
   INIMPL virtual void Compute_Act_Thr(int thr_no);
   // #IGNORE compute activation from netinput
   INIMPL virtual void Compute_NetinAct_Thr(int thr_no);
@@ -471,12 +503,74 @@
   INIMPL virtual void Compute_EpochStats_Layer();
   // #IGNORE compute epoch-level statistics at the layer level: SSE, PRerr -- overload in derived classes
 
-  INIMPL ConState_cpp* FindRecipRecvCon(int& con_idx, NetworkState_cpp* net, UnitState_cpp* su,
-                                             UnitState_cpp* ru);
+  INIMPL CON_STATE* FindRecipRecvCon(int& con_idx, UNIT_STATE* su, UNIT_STATE* ru);
   // #IGNORE find the reciprocal recv con group and con index for sending unit su to this receiving unit ru
-  INIMPL ConState_cpp* FindRecipSendCon(int& con_idx, NetworkState_cpp* net, UnitState_cpp* ru,
-                                        UnitState_cpp* su);
+  INIMPL CON_STATE* FindRecipSendCon(int& con_idx, UNIT_STATE* ru, UNIT_STATE* su);
   // #IGNORE find the reciprocal send con group and con index for receiving unit ru from this sending unit su
+
+  INIMPL PRJN_STATE* FindRecvPrjnFrom(LAYER_STATE* recv_lay, LAYER_STATE* send_lay);
+  // #IGNORE find projection for given sending layer into given recv layer -- null if not existant
+
+
+  /////////////////////////////////////////////////////
+  //    Build network
+
+  INIMPL virtual void AllocSpecMem();
+  // #IGNORE allocate spec mem
+
+  INIMPL virtual LAYER_SPEC_CPP*    NewLayerSpec(int spec_type) const;
+  // #IGNORE each type of Network MUST override this to create a new spec of correct type 
+  INIMPL virtual PRJN_SPEC_CPP*     NewPrjnSpec(int spec_type) const;
+  // #IGNORE add all new projections into main code base if possible -- so this usu not overriden
+  INIMPL virtual UNIT_SPEC_CPP*     NewUnitSpec(int spec_type) const;
+  // #IGNORE each type of Network MUST override this to create a new spec of correct type 
+  INIMPL virtual CON_SPEC_CPP*      NewConSpec(int spec_type) const;
+  // #IGNORE each type of Network MUST override this to create a new spec of correct type 
+
+  INIMPL virtual void AllocLayerUnitMem();
+  // #IGNORE allocate layer-level (prjn, ungp) and unit state memory
+  INIMPL virtual void InitUnitIdxs();
+  // #IGNORE initialize unit indexes to prepare for thread-specific later iteration, including assigning units to threads -- also counts up total number of recv and send ConState objects that we need to make
+  INIMPL virtual void InitUnitState_Thr(int thr_no);
+  // #IGNORE initialize thread-specific unit state memory -- this bind the thread-specific memory to threads, and further initializes all the indexes, and then initializes the UnitState objects, including setting all the relevant indexes etc
+  INIMPL virtual void LayoutUnits();
+  // #CAT_State update the UnitState positions based on layer geometry etc
+  INIMPL virtual void AllocConStateMem();
+  // #IGNORE allocate connection state object memory -- this is not the full connection-variable memory but just the ConState objects that manage that connection memory
+  INIMPL virtual void InitConState_Thr(int thr_no);
+  // #IGNORE initialize thread-specific ConState objects
+  INIMPL virtual void AllocSendNetinTmpState();
+  // #IGNORE allocate temp buffers for sender-based netinput
+  INIMPL virtual void InitSendNetinTmp_Thr(int thr_no);
+  // #IGNORE init send_netin_tmp for netin computation
+  INIMPL virtual void Connect_Sizes();
+  // #IGNORE first pass of connecting -- sets up all the Cons objects within units, and computes all the target allocation size information (done by projection specs)
+  INIMPL virtual void AllocConsCountStateMem();
+  // #IGNORE allocate connection counting state memory -- prior to connecting
+  INIMPL virtual void Connect_AllocSizes_Thr(int thr_no);
+  // #IGNORE second pass of connecting -- allocate all the memory for all the connections -- get the total sizes needed
+  INIMPL virtual void Connect_Alloc_Thr(int thr_no);
+  // #IGNORE second pass of connecting -- dole out the allocated memory to con groups
+  INIMPL virtual void CacheMemStart_Thr(int thr_no);
+  // #IGNORE cache connection memory start pointers -- after allocating but before connecting
+  INIMPL virtual void Connect_Cons();
+  // #IGNORE third pass of connecting -- actually make the connections -- done by projection specs
+  INIMPL virtual void Connect_VecChunk_Thr(int thr_no);
+  // #IGNORE fourth pass of connecting -- organize connections into optimal vectorizable chunks
+  INIMPL virtual void AllocConnectionMem();
+  // #IGNORE allocate full connection-level memory, after counts have been aggregated -- then second pass 
+  INIMPL virtual void Connect_UpdtActives_Thr(int thr_no);
+  // #IGNORE update the active flag status of all connections
+  INIMPL virtual void CountCons();
+  // #CAT_Structure count connections for all units in network
+  INIMPL virtual void CountNonSharedRecvCons_Thr(int thr_no);
+  // #IGNORE count non-shared recv cons, after cons all made..
+
+  INIMPL virtual void FreeConMem();
+  // #IGNORE free connection memory -- called by FreeStateMem
+  INIMPL virtual void FreeStateMem();
+  // #IGNORE free all state memory
+
 
   INIMPL void Initialize_core();
   // #IGNORE 

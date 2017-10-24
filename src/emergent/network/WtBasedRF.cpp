@@ -16,7 +16,6 @@
 #include "WtBasedRF.h"
 #include <taMath_float>
 
-#include <TiledGpRFPrjnSpec>
 #include <V1RegionSpec>
 #include <Unit>
 

@@ -18,6 +18,7 @@
 
 // parent includes:
 #include <NetworkState_cuda>
+#include <PrjnState_cuda>
 
 #include <State_cuda>
 

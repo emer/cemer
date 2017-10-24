@@ -117,7 +117,7 @@ void GridTableView::Initialize() {
   mat_block_spc = 0.1f;
   mat_block_height = 0.0f;
   mat_rot = 0.0f;
-  mat_trans = 0.4f;
+  mat_trans = 0.6f;
 
   mat_size_range.min = 4;
   mat_size_range.max = 16;
@@ -204,13 +204,11 @@ void GridTableView::UpdateAfterEdit_impl(){
   if (grid_margin < 0.0f) grid_margin = 0.0f;
   if (grid_line_size <  0.0f) grid_line_size =  0.0f;
   if(taMisc::is_loading) {	// set to initial
-#if (QT_VERSION >= 0x050601)
-    taVersion v788(7, 8, 8);
-    if(taMisc::loading_version < v788) { // one-time update..
-      if(mat_trans > 0.4f)
-        mat_trans = 0.4f;        // Qt 5.6.1 needs lower transparency
+    taVersion v822(8, 2, 2);
+    if(taMisc::loading_version < v822) { // one-time update..
+      if(mat_trans == 0.4f)
+        mat_trans = 0.6f;        // fixed transparency issues -- back to normal.. :)
     }
-#endif
   }
 }
 

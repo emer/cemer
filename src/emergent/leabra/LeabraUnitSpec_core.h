@@ -46,7 +46,7 @@
   float          thr_sub_e_rev_e;   // #CAT_Activation #READ_ONLY #NO_SAVE #HIDDEN g_bar.e * (act.thr - e_rev.e) used for compute_ethresh
 
   
-  INLINE int  GetStateSpecType() const override { return LEABRA_NETWORK_STATE::T_LEABRA_UNIT_SPEC; }
+  INLINE int  GetStateSpecType() const override { return LEABRA_NETWORK_STATE::T_LeabraUnitSpec; }
 
 
 ///////////////////////////////////////////////////////////////////////

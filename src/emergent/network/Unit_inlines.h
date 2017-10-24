@@ -58,7 +58,7 @@ inline ConState_cpp* Unit::SendConStatePrjn(Projection* prjn) const {
 }
 
 inline UnitState_cpp* Unit::GetUnitState() const {
-  return own_net()->UnUnitState(flat_idx);
+  return own_net()->GetUnitState(flat_idx);
 }
 
 #endif // Unit_inlines_h
