@@ -169,7 +169,6 @@ void Network::Initialize() {
   // units_flat = ??
   // send_netin_tmp = ??
 
-  usr1_save_fmt = FULL_NET;
   wt_save_fmt = TEXT;
 
   max_disp_size.x = 1;
@@ -314,7 +313,6 @@ void Network::Copy_(const Network& cp) {
   sum_prerr = cp.sum_prerr;
   epc_prerr = cp.epc_prerr;
 
-  usr1_save_fmt = cp.usr1_save_fmt;
   wt_save_fmt = cp.wt_save_fmt;
 
   max_disp_size = cp.max_disp_size;
@@ -1052,10 +1050,10 @@ void Network::BuildLayerState_FromNet() {
       for(int j=0; j < lay->send_prjns.size; j++) {
         Projection* prjn = lay->send_prjns[j];
         if(!prjn->MainIsActive()) continue;
-        net_state->lay_send_prjns[send_prjn_idx++] = prjn->prjn_idx;
-        if(send_prjn_idx >= n_prjns_built) {
+        if(send_prjn_idx >= n_prjns_built) { // this should not happen.. just checking..
           taMisc::Error("programmer error: sending prjn idx > number of projections built!");
         }
+        net_state->lay_send_prjns[send_prjn_idx++] = prjn->prjn_idx;
       }
     }
     else {

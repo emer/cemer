@@ -6,12 +6,6 @@
 ////////////////////////////////////////////////////////////////////////
 //              Build
 
-void LEABRA_NETWORK_STATE::BuildLeabraThreadMem() {
-  AllocLeabraStatsMem();
-  
-  NET_THREAD_CALL(LEABRA_NETWORK_STATE::InitLeabraThreadMem_Thr);
-}
-
 void LEABRA_NETWORK_STATE::AllocLeabraStatsMem() {
   NetStateMalloc((void**)&thrs_ungp_avg_max_vals, n_thrs_built * sizeof(char*));
 
@@ -187,12 +181,6 @@ void LEABRA_NETWORK_STATE::Init_AdaptInhib() {
   }
 }
 
-void LEABRA_NETWORK_STATE::Init_Acts() {
-  NET_THREAD_CALL(LEABRA_NETWORK_STATE::Init_Acts_Thr);
-
-  Init_Acts_Layer();
-}
-
 void LEABRA_NETWORK_STATE::Init_Acts_Layer() {
   for(int li=0; li < n_layers_built; li++) {
     LEABRA_LAYER_STATE* lay = (LEABRA_LAYER_STATE*)GetLayerState(li);
@@ -200,10 +188,6 @@ void LEABRA_NETWORK_STATE::Init_Acts_Layer() {
     LEABRA_LAYER_SPEC_CPP* ls = (LEABRA_LAYER_SPEC_CPP*)lay->GetLayerSpec(this);
     ls->Init_Acts_Layer(lay, this);
   }
-}
-
-void LEABRA_NETWORK_STATE::Init_Netins() {
-  NET_THREAD_CALL(LEABRA_NETWORK_STATE::Init_Netins_Thr);
 }
 
 void LEABRA_NETWORK_STATE::Init_Netins_Thr(int thr_no) {
@@ -216,11 +200,6 @@ void LEABRA_NETWORK_STATE::Init_Netins_Thr(int thr_no) {
   }
 }
 
-void LEABRA_NETWORK_STATE::DecayState(float decay) {
-  tmp_arg1 = decay;
-  NET_THREAD_CALL(LEABRA_NETWORK_STATE::DecayState_Thr);
-}
-
 void LEABRA_NETWORK_STATE::DecayState_Thr(int thr_no) {
   float decay = tmp_arg1;
   const int nu = ThrNUnits(thr_no);
@@ -230,10 +209,6 @@ void LEABRA_NETWORK_STATE::DecayState_Thr(int thr_no) {
     LEABRA_UNIT_SPEC* us = (LEABRA_UNIT_SPEC*)uv->GetUnitSpec(this);
     us->DecayState(uv, this, thr_no, decay);
   }
-}
-
-void LEABRA_NETWORK_STATE::ResetSynTR() {
-  NET_THREAD_CALL(LEABRA_NETWORK_STATE::ResetSynTR_Thr);
 }
 
 void LEABRA_NETWORK_STATE::ResetSynTR_Thr(int thr_no) {
@@ -249,18 +224,6 @@ void LEABRA_NETWORK_STATE::ResetSynTR_Thr(int thr_no) {
 ///////////////////////////////////////////////////////////////////////
 //      TrialInit -- at start of trial
 
-void LEABRA_NETWORK_STATE::Trial_Init() {
-  unlearnable_trial = false;
-  Trial_Init_Counters();
-
-  Trial_Init_Unit(); // performs following at unit-level
-  //  Trial_Init_SRAvg();
-  //  Trial_DecayState();
-  //  Trial_NoiseInit(); 
-
-  Trial_Init_Layer();
-}
-
 void LEABRA_NETWORK_STATE::Trial_Init_Counters() {
   times.thal_gate_cycle = -2;
   cycle = 0;
@@ -268,10 +231,6 @@ void LEABRA_NETWORK_STATE::Trial_Init_Counters() {
   phase = MINUS_PHASE;
   rt_cycles = -1;          // signal that nothing has been recorded
   total_trials++;          // this is when we increment it!
-}
-
-void LEABRA_NETWORK_STATE::Trial_Init_Unit() {
-  NET_THREAD_CALL(LEABRA_NETWORK_STATE::Trial_Init_Unit_Thr);
 }
 
 void LEABRA_NETWORK_STATE::Trial_Init_Unit_Thr(int thr_no) {
@@ -297,29 +256,6 @@ void LEABRA_NETWORK_STATE::Trial_Init_Layer() {
 ///////////////////////////////////////////////////////////////////////
 //      QuarterInit -- at start of settling
 
-void LEABRA_NETWORK_STATE::Quarter_Init() {
-
-  Quarter_Init_Counters();
-  Quarter_Init_Layer();
-  Compute_HardClamp_Layer();    // need layer hard clamp flag before Init_Unit
-  Quarter_Init_Unit();           // do chunk of following unit-level functions:
-//   Quarter_Init_TargFlags();
-//   Compute_NetinScale();       // compute net scaling
-//   Compute_HardClamp();        // clamp all hard-clamped input acts
-
-  Quarter_Init_Deep();
-
-  Compute_NetinScale_Senders(); // second phase after recv-based NetinScale
-  // put it after Quarter_Init_Layer to allow for mods to netin scale in that guy..
-
-  // also, super important to do this AFTER the Quarter_Init_Unit call so net is still
-  // around for functions that use the previous value of it
-  // NOTE: *everyone* has to init netins when scales change across quarters, because any existing netin has already been weighted at the previous scaled -- no way to rescale that aggregate -- just have to start over..
-  if((phase == LEABRA_NETWORK_STATE::PLUS_PHASE && net_misc.diff_scale_p) ||
-     (quarter == 1 && net_misc.diff_scale_q1)) {
-    Init_Netins();
-  }
-}
 
 void LEABRA_NETWORK_STATE::Quarter_Init_Counters() {
   // set the phase according to the counter 0,1,2 = MINUS, 3 = PLUS
@@ -327,10 +263,6 @@ void LEABRA_NETWORK_STATE::Quarter_Init_Counters() {
     phase = MINUS_PHASE;
   else
     phase = PLUS_PHASE;
-}
-
-void LEABRA_NETWORK_STATE::Quarter_Init_Unit() {
-  NET_THREAD_CALL(LEABRA_NETWORK_STATE::Quarter_Init_Unit_Thr);
 }
 
 void LEABRA_NETWORK_STATE::Quarter_Init_Unit_Thr(int thr_no) {
@@ -341,13 +273,6 @@ void LEABRA_NETWORK_STATE::Quarter_Init_Unit_Thr(int thr_no) {
     LEABRA_UNIT_SPEC* us = (LEABRA_UNIT_SPEC*)uv->GetUnitSpec(this);
     us->Quarter_Init_Unit(uv, this, thr_no);
   }
-}
-
-void LEABRA_NETWORK_STATE::Quarter_Init_TargFlags() {
-  // NOTE: this is not called by default!  Unit and Layer take care of it
-  NET_THREAD_CALL(LEABRA_NETWORK_STATE::Quarter_Init_TargFlags_Thr);
-
-  Quarter_Init_TargFlags_Layer();
 }
 
 void LEABRA_NETWORK_STATE::Quarter_Init_Layer() {
@@ -378,10 +303,6 @@ void LEABRA_NETWORK_STATE::Quarter_Init_TargFlags_Layer() {
   }
 }
 
-void LEABRA_NETWORK_STATE::Compute_NetinScale() {
-  NET_THREAD_CALL(LEABRA_NETWORK_STATE::Compute_NetinScale_Thr);
-}
-
 void LEABRA_NETWORK_STATE::Compute_NetinScale_Thr(int thr_no) {
   const int nu = ThrNUnits(thr_no);
   for(int i=0; i<nu; i++) {
@@ -390,10 +311,6 @@ void LEABRA_NETWORK_STATE::Compute_NetinScale_Thr(int thr_no) {
     LEABRA_UNIT_SPEC* us = (LEABRA_UNIT_SPEC*)uv->GetUnitSpec(this);
     us->Compute_NetinScale(uv, this, thr_no);
   }
-}
-
-void LEABRA_NETWORK_STATE::Compute_NetinScale_Senders() {
-  NET_THREAD_CALL(LEABRA_NETWORK_STATE::Compute_NetinScale_Senders_Thr);
 }
 
 void LEABRA_NETWORK_STATE::Compute_NetinScale_Senders_Thr(int thr_no) {
@@ -405,13 +322,6 @@ void LEABRA_NETWORK_STATE::Compute_NetinScale_Senders_Thr(int thr_no) {
     LEABRA_CON_STATE* rcg = (LEABRA_CON_STATE*)scg->UnCons(0, this);
     scg->scale_eff = rcg->scale_eff;
   }
-}
-
-void LEABRA_NETWORK_STATE::Quarter_Init_Deep() {
-  if(!deep.on) return;
-  if(!deep.Quarter_DeepRawPrevQtr(quarter)) return; // nobody doing it now..
-
-  NET_THREAD_CALL(LEABRA_NETWORK_STATE::Quarter_Init_Deep_Thr);
 }
 
 void LEABRA_NETWORK_STATE::Quarter_Init_Deep_Thr(int thr_no) {
@@ -502,13 +412,6 @@ void LEABRA_NETWORK_STATE::Compute_DeepCtxtStats_Post() {
   }
 }
 
-void LEABRA_NETWORK_STATE::Compute_HardClamp() {
-  // NOT called by default -- done in Quarter_Init_Unit
-  NET_THREAD_CALL(LEABRA_NETWORK_STATE::Compute_HardClamp_Thr);
-
-  Compute_HardClamp_Layer();
-}
-
 void LEABRA_NETWORK_STATE::Compute_HardClamp_Thr(int thr_no) {
   const int nu = ThrNUnits(thr_no);
   for(int i=0; i<nu; i++) {
@@ -526,12 +429,6 @@ void LEABRA_NETWORK_STATE::Compute_HardClamp_Layer() {
     LEABRA_LAYER_SPEC_CPP* ls = (LEABRA_LAYER_SPEC_CPP*)lay->GetLayerSpec(this);
     ls->Compute_HardClamp_Layer(lay, this);
   }
-}
-
-void LEABRA_NETWORK_STATE::ExtToComp() {
-  ExtToComp_Layer();
-
-  NET_THREAD_CALL(LEABRA_NETWORK_STATE::ExtToComp_Thr);
 }
 
 void LEABRA_NETWORK_STATE::ExtToComp_Layer() {
@@ -553,12 +450,6 @@ void LEABRA_NETWORK_STATE::ExtToComp_Thr(int thr_no) {
   }
 }
 
-void LEABRA_NETWORK_STATE::TargExtToComp() {
-  TargExtToComp_Layer();
-
-  NET_THREAD_CALL(LEABRA_NETWORK_STATE::TargExtToComp_Thr);
-}
-
 void LEABRA_NETWORK_STATE::TargExtToComp_Layer() {
   for(int li=0; li < n_layers_built; li++) {
     LEABRA_LAYER_STATE* lay = (LEABRA_LAYER_STATE*)GetLayerState(li);
@@ -578,19 +469,10 @@ void LEABRA_NETWORK_STATE::TargExtToComp_Thr(int thr_no) {
   }
 }
 
-void LEABRA_NETWORK_STATE::NewInputData_Init() {
-  Quarter_Init_Layer();
-  Quarter_Init_TargFlags();
-  Compute_HardClamp();
-}
 
 ////////////////////////////////////////////////////////////////
 //      Cycle_Run
 
-
-void LEABRA_NETWORK_STATE::Cycle_Run() {
-  NET_THREAD_CALL(LEABRA_NETWORK_STATE::Cycle_Run);
-}
 
 void LEABRA_NETWORK_STATE::Cycle_Run_Thr(int thr_no) {
   int tot_cyc = 1;
@@ -1178,10 +1060,6 @@ void LEABRA_NETWORK_STATE::Compute_DeepRawStats_Post() {
   }
 }
 
-void LEABRA_NETWORK_STATE::ClearDeepActs() {
-  NET_THREAD_CALL(LEABRA_NETWORK_STATE::ClearDeepActs_Thr);
-}
-
 void LEABRA_NETWORK_STATE::ClearDeepActs_Thr(int thr_no) {
   const int nu = ThrNUnits(thr_no);
   for(int i=0; i<nu; i++) {
@@ -1190,10 +1068,6 @@ void LEABRA_NETWORK_STATE::ClearDeepActs_Thr(int thr_no) {
     LEABRA_UNIT_SPEC* us = (LEABRA_UNIT_SPEC*)uv->GetUnitSpec(this);
     us->ClearDeepActs(uv, this, thr_no);
   }
-}
-
-void LEABRA_NETWORK_STATE::ClearMSNTrace() {
-  NET_THREAD_CALL(LEABRA_NETWORK_STATE::ClearMSNTrace_Thr);
 }
 
 void LEABRA_NETWORK_STATE::ClearMSNTrace_Thr(int thr_no) {
@@ -1210,14 +1084,6 @@ void LEABRA_NETWORK_STATE::ClearMSNTrace_Thr(int thr_no) {
 
 ///////////////////////////////////////////////////////////////////////
 //	Quarter Final
-
-void LEABRA_NETWORK_STATE::Quarter_Final() {
-  Quarter_Final_Pre();
-  NET_THREAD_CALL(LEABRA_NETWORK_STATE::Quarter_Final_Unit_Thr);
-  Quarter_Final_Layer();
-  Quarter_Compute_dWt();
-  Quarter_Final_Counters();
-}
 
 void LEABRA_NETWORK_STATE::Quarter_Final_Pre() {
   for(int li=0; li < n_layers_built; li++) {
@@ -1254,13 +1120,6 @@ void LEABRA_NETWORK_STATE::Quarter_Final_Layer() {
   }
 }
 
-void LEABRA_NETWORK_STATE::Quarter_Compute_dWt() {
-  if(train_mode == TEST)
-    return;
-
-  Compute_dWt();                // always call -- let units sort it out..
-}
-
 void LEABRA_NETWORK_STATE::Quarter_Final_Counters() {
   quarter++;                    // always shows +1 at end of quarter
 }
@@ -1268,10 +1127,6 @@ void LEABRA_NETWORK_STATE::Quarter_Final_Counters() {
 
 ///////////////////////////////////////////////////////////////////////
 //      Trial Update and Final
-
-void LEABRA_NETWORK_STATE::Trial_Final() {
-  Compute_AbsRelNetin();
-}
 
 void LEABRA_NETWORK_STATE::Compute_AbsRelNetin() {
   // always get layer-level netin max / avg values
@@ -1296,25 +1151,6 @@ void LEABRA_NETWORK_STATE::Compute_AvgAbsRelNetin() {
 ///////////////////////////////////////////////////////////////////////
 //	Learning
 
-void LEABRA_NETWORK_STATE::Compute_dWt() {
-  Compute_dWt_Layer_pre();
-  NET_THREAD_CALL(LEABRA_NETWORK_STATE::Compute_dWt_Thr);
-}
-
-void LEABRA_NETWORK_STATE::Compute_Weights() {
-#ifdef DMEM_COMPILE
-  DMem_SumDWts(dmem_trl_comm.comm);
-#endif
-
-  NET_THREAD_CALL(LEABRA_NETWORK_STATE::Compute_Weights_Thr);
-  
-  if(net_misc.wt_bal && (total_trials % times.wt_bal_int == 0)) {
-    NET_THREAD_CALL(LEABRA_NETWORK_STATE::Compute_WtBal_Thr);
-    if(lstats.wt_bal) {
-      Compute_WtBalStats();
-    }
-  }
-}
 
 void LEABRA_NETWORK_STATE::Compute_dWt_Layer_pre() {
   for(int li=0; li < n_layers_built; li++) {
@@ -1446,11 +1282,6 @@ void LEABRA_NETWORK_STATE::Compute_ExtRew() {
   }
 }
 
-void LEABRA_NETWORK_STATE::Compute_NormErr() {
-  NET_THREAD_CALL(LEABRA_NETWORK_STATE::Compute_NormErr_Thr);
-  Compute_NormErr_Agg();
-}
-
 void LEABRA_NETWORK_STATE::Compute_NormErr_Thr(int thr_no) {
   const int nlay = n_layers_built;
   for(int li = 0; li < nlay; li++) {
@@ -1501,11 +1332,6 @@ void LEABRA_NETWORK_STATE::Compute_NormErr_Agg() {
   else {
     norm_err = 0.0f;
   }
-}
-
-float LEABRA_NETWORK_STATE::Compute_CosErr() {
-  NET_THREAD_CALL(LEABRA_NETWORK_STATE::Compute_CosErr_Thr);
-  return Compute_CosErr_Agg();
 }
 
 void LEABRA_NETWORK_STATE::Compute_CosErr_Thr(int thr_no) {
@@ -1591,11 +1417,6 @@ float LEABRA_NETWORK_STATE::Compute_CosErr_Agg() {
   return cosv;
 }
 
-float LEABRA_NETWORK_STATE::Compute_CosDiff() {
-  NET_THREAD_CALL(LEABRA_NETWORK_STATE::Compute_CosDiff_Thr);
-  return Compute_CosDiff_Agg();
-}
-    
 void LEABRA_NETWORK_STATE::Compute_CosDiff_Thr(int thr_no) {
   const int nlay = n_layers_built;
   for(int li = 0; li < nlay; li++) {
@@ -1659,11 +1480,6 @@ float LEABRA_NETWORK_STATE::Compute_CosDiff_Agg() {
   return cosv;
 }
 
-float LEABRA_NETWORK_STATE::Compute_AvgActDiff() {
-  NET_THREAD_CALL(LEABRA_NETWORK_STATE::Compute_AvgActDiff_Thr);
-  return Compute_AvgActDiff_Agg();
-}
-
 void LEABRA_NETWORK_STATE::Compute_AvgActDiff_Thr(int thr_no) {
   const int nlay = n_layers_built;
   for(int li = 0; li < nlay; li++) {
@@ -1712,11 +1528,6 @@ float LEABRA_NETWORK_STATE::Compute_AvgActDiff_Agg() {
   return adiff;
 }
 
-float LEABRA_NETWORK_STATE::Compute_TrialCosDiff() {
-  NET_THREAD_CALL(LEABRA_NETWORK_STATE::Compute_TrialCosDiff_Thr);
-  return Compute_TrialCosDiff_Agg();
-}
-    
 void LEABRA_NETWORK_STATE::Compute_TrialCosDiff_Thr(int thr_no) {
   const int nlay = n_layers_built;
   for(int li = 0; li < nlay; li++) {
@@ -1774,11 +1585,6 @@ float LEABRA_NETWORK_STATE::Compute_TrialCosDiff_Agg() {
   return cosv;
 }
 
-void LEABRA_NETWORK_STATE::Compute_ActMargin() {
-  NET_THREAD_CALL(LEABRA_NETWORK_STATE::Compute_ActMargin_Thr);
-  Compute_ActMargin_Agg();
-}
-    
 void LEABRA_NETWORK_STATE::Compute_ActMargin_Thr(int thr_no) {
   const int nlay = n_layers_built;
   for(int li = 0; li < nlay; li++) {
@@ -1830,11 +1636,6 @@ void LEABRA_NETWORK_STATE::Compute_RTCycles_Agg() {
   avg_cycles.Increment(rt_cycles);
 }
 
-float LEABRA_NETWORK_STATE::Compute_NetSd() {
-  NET_THREAD_CALL(LEABRA_NETWORK_STATE::Compute_NetSd_Thr);
-  return Compute_NetSd_Agg();
-}
-    
 void LEABRA_NETWORK_STATE::Compute_NetSd_Thr(int thr_no) {
   const int nlay = n_layers_built;
   for(int li = 0; li < nlay; li++) {
@@ -1882,11 +1683,6 @@ float LEABRA_NETWORK_STATE::Compute_NetSd_Agg() {
   return net_sd;
 }
 
-void LEABRA_NETWORK_STATE::Compute_HogDeadPcts() {
-  NET_THREAD_CALL(LEABRA_NETWORK_STATE::Compute_HogDeadPcts_Thr);
-  Compute_HogDeadPcts_Agg();
-}
-    
 void LEABRA_NETWORK_STATE::Compute_HogDeadPcts_Thr(int thr_no) {
   const int nlay = n_layers_built;
   for(int li = 0; li < nlay; li++) {
@@ -1938,24 +1734,6 @@ void LEABRA_NETWORK_STATE::Compute_HogDeadPcts_Agg() {
   }
 }
 
-void LEABRA_NETWORK_STATE::Compute_PhaseStats() {
-  if(quarter == 3)
-    Compute_MinusStats();
-  else if(quarter == 4)
-    Compute_PlusStats();
-}
-
-void LEABRA_NETWORK_STATE::Compute_MinusStats() {
-  Compute_RTCycles_Agg();
-  Compute_NetSd(); // todo: combine as in plus if more than one
-}
-
-void LEABRA_NETWORK_STATE::Compute_PlusStats() {
-  NET_THREAD_CALL(LEABRA_NETWORK_STATE::Compute_PlusStats_Thr); // do all threading at once
-  Compute_PlusStats_Agg();
-  Compute_ExtRew();
-}
-
 void LEABRA_NETWORK_STATE::Compute_PlusStats_Thr(int thr_no) {
   Compute_SSE_Thr(thr_no);
   if(stats.prerr)
@@ -1987,22 +1765,6 @@ void LEABRA_NETWORK_STATE::Compute_PlusStats_Agg() {
 
 /////////////////////////////////////////////////////
 //              EpochStats
-
-void LEABRA_NETWORK_STATE::Compute_EpochStats() {
-  Compute_EpochWeights();
-  inherited::Compute_EpochStats();
-  Compute_AvgCycles();
-  Compute_AvgNormErr();
-  Compute_AvgCosErr();
-  Compute_AvgCosDiff();
-  Compute_AvgAvgActDiff();
-  Compute_AvgTrialCosDiff();
-  Compute_AvgNetSd();
-  Compute_AvgExtRew();
-  Compute_AvgSendPct();
-  Compute_AvgAbsRelNetin();
-  Compute_HogDeadPcts();
-}
 
 void LEABRA_NETWORK_STATE::Compute_AvgCycles() {
   avg_cycles.GetAvg_Reset();
@@ -2045,10 +1807,6 @@ void LEABRA_NETWORK_STATE::Compute_AvgNetSd() {
   avg_net_sd.GetAvg_Reset();
 }
 
-
-void LEABRA_NETWORK_STATE::Compute_EpochWeights() {
-  NET_THREAD_CALL(LEABRA_NETWORK_STATE::Compute_EpochWeights_Thr);
-}
 
 void LEABRA_NETWORK_STATE::Compute_EpochWeights_Thr(int thr_no) {
   const int nscg = ThrNSendConGps(thr_no);

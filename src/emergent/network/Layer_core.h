@@ -273,9 +273,50 @@
   INIMPL void  LayoutUnits(NETWORK_STATE* net);
   // #IGNORE layout UnitState positions within the layer, for both structural and display positions
 
-  INIMPL void  Init_Weights(NETWORK_STATE* net, bool recv_cons);
+  INLINE void  Init_Weights(NETWORK_STATE* net, bool recv_cons) {
+    if(recv_cons) {
+      if(prjn_start_idx < 0 || n_recv_prjns == 0) return;
+      for(int i = 0; i < n_recv_prjns; i++) {
+        PRJN_STATE* prjn = GetRecvPrjnState(net, i);
+        if(prjn->NotActive(net)) continue;
+        prjn->Init_Weights(net);
+      }
+    }
+    else {
+      if(send_prjn_start_idx < 0 || n_send_prjns == 0) return;
+      for(int i = 0; i < n_send_prjns; i++) {
+        PRJN_STATE* prjn = GetSendPrjnState(net, i);
+        if(prjn->NotActive(net)) continue;
+        prjn->Init_Weights(net);
+      }
+    }
+  }
   // #CAT_State initialize weights for all the recv or send projections in this layer
-  INIMPL void  Copy_Weights(NETWORK_STATE* net, LAYER_STATE* src, bool recv_cons);
+
+  INLINE void  Copy_Weights(NETWORK_STATE* net, LAYER_STATE* src, bool recv_cons) {
+    if(recv_cons) {
+      if(prjn_start_idx < 0 || n_recv_prjns == 0) return;
+      if(src->prjn_start_idx < 0 || src->n_recv_prjns == 0) return;
+      int maxn = MIN(n_recv_prjns, src->n_recv_prjns);
+      for(int i = 0; i < maxn; i++) {
+        PRJN_STATE* prjn = GetRecvPrjnState(net, i);
+        PRJN_STATE* src_prjn = src->GetRecvPrjnState(net, i);
+        if(prjn->NotActive(net) || src_prjn->NotActive(net)) continue;
+        prjn->Copy_Weights(net, src_prjn);
+      }
+    }
+    else {
+      if(send_prjn_start_idx < 0 || n_send_prjns == 0) return;
+      if(src->send_prjn_start_idx < 0 || src->n_send_prjns == 0) return;
+      int maxn = MIN(n_send_prjns, src->n_send_prjns);
+      for(int i = 0; i < maxn; i++) {
+        PRJN_STATE* prjn = GetSendPrjnState(net, i);
+        PRJN_STATE* src_prjn = src->GetSendPrjnState(net, i);
+        if(prjn->NotActive(net) || src_prjn->NotActive(net)) continue;
+        prjn->Copy_Weights(net, src_prjn);
+      }
+    }
+  }
   // #CAT_State copy weights from other layer, going projection-by-projection in order by index (only sensible if the layers have matching projection structure) -- either recv or send
 
   INLINE void  Init_Stats() {

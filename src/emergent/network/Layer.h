@@ -259,10 +259,6 @@ public:
   // #DYN12N #CAT_Structure bidirectionally connect with one or more other layers to (receive from and send to other layer(s)) -- makes new projections between layers
   virtual void  ConnectSelf();
   // #MENU #CONFIRM #CAT_Structure #MENU_CONTEXT create a new self-connection within this layer (a projection to/from this layer)
-  virtual void  Connect_Sizes(Network* net);
-  // #IGNORE first pass of connecting -- sets up all the Cons objects within units, and computes all the target allocation size information (done by projection specs)
-  virtual void  Connect_Cons(Network* net);
-  // #IGNORE third pass of connecting -- actually make the connections -- done by projection specs
   virtual void  SyncSendPrjns();
   // #EXPERT #CAT_Structure synchronize sending projections with the recv projections so everyone's happy
   virtual void  UpdateSendPrjnNames();

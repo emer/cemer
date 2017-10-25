@@ -16,8 +16,11 @@
 #include "AllProjectionSpecs_cpp.h"
 
 #include <ConSpec_cpp>
+#include <PrjnState_cpp>
+
 #include <State_cpp>
 
 // impl
-#include "ProjectionSpec.cpp"
+
+#include "FullPrjnSpec.cpp"
 

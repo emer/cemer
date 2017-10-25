@@ -35,7 +35,12 @@ using namespace std;
 
 #include <State_main>
 
+#undef LAYER_STATE
+#define LAYER_STATE Layer
+
 #include "Layer_core.cpp"
+
+#include <State_main>
 
 void LayerRelPos::Initialize() {
   rel = ABS_POS;

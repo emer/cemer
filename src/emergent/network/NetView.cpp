@@ -172,9 +172,10 @@ void UnitGroupView_MouseCB(void* userData, SoEventCallback* ecb) {
               // see UnitGroupView::UpdateUnitViewBase_Con_impl for relevant code
               // todo: could perhaps put this in a common method or something..
               bool check_prjn = (nv->prjn_starts_with.nonempty());
-              String sr = nv->unit_disp_md->name.before(".");
+              String unm = nv->unit_disp_md->name;
+              String sr = unm.before('.');
               bool is_send = (sr == "s");
-              String nm = nv->unit_disp_md->name.after(".");
+              String nm = unm.after('.');
               if (is_send) {
                 for(int g=0;g<unit->NRecvConGps(net->net_state);g++) {
                   ConState_cpp* tcong = unit->RecvConState(net->net_state, g);
@@ -636,6 +637,7 @@ void NetView::BuildAll() { // populates all T3 guys
     return;
   }
   GetMaxSize();
+  GetMembs();
 
   Network* nt = net();
   if(!nt || !nt->IsBuiltIntact()) return;
@@ -782,7 +784,8 @@ void NetView::GetMembs() {
 
   // try as hard as possible to find a unit to view if nothing selected -- this
   // minimizes issues with history etc
-  if(!unit_src) {
+  // if(!unit_src) {
+  // always get a new src
     if(unit_src_path.nonempty()) {
       UnitState_cpp* nu = nt->GetUnitStateFromPath(unit_src_path);
       if(nu) setUnitSrc(NULL, nu);
@@ -793,7 +796,7 @@ void NetView::GetMembs() {
         setUnitSrc(NULL, lay->GetUnitState(nt->net_state, 0));
       }
     }
-  }
+  // }
 
   setUnitDispMd(NULL);
   membs.Reset();
@@ -913,7 +916,6 @@ void NetView::InitDisplay(bool init_panel) {
   // independently -- deals with some kinds of changes but not really full structural
   // I guess it is just a "non structural state update" container..
   GetMaxSize();
-  GetMembs();
 
   if(lay_layout != prev_lay_layout) {
     if(lay_layout == THREE_D)

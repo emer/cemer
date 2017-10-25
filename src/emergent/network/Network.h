@@ -263,11 +263,6 @@ INHERITED(taFBase)
 public:
   static bool nw_itm_def_arg;   // #IGNORE default arg val for FindMake..
 
-  enum Usr1SaveFmt {            // how to save network on -USR1 signal
-    FULL_NET,                   // save the full network (dump file)
-    JUST_WEIGHTS                // just do a 'write weights' command
-  };
-
   enum WtSaveFormat {
     TEXT,                       // weights are saved as ascii text representation of digits (completely portable)
     BINARY,                     // weights are written directly to the file in binary format (no loss in accuracy and more space efficient, but possibly non-portable)
@@ -338,7 +333,6 @@ public:
   TimeUsed      wt_sync_time;   // #NO_SAVE #GUI_READ_ONLY #EXPERT #CAT_Statistic time used for the DMem_SumDWts operation (trial-level dmem, computed by network)
   TimeUsed      misc_time;      // #NO_SAVE #GUI_READ_ONLY #EXPERT #CAT_Statistic misc timer for ad-hoc use by programs
 
-  Usr1SaveFmt   usr1_save_fmt;  // #CAT_File #EXPERT save network for -USR1 signal: full net or weights
   WtSaveFormat  wt_save_fmt;    // #CAT_File format to save weights in if saving weights
 
   PosVector3i   max_disp_size;  // #AKA_max_size #READ_ONLY #EXPERT #CAT_Structure maximum display size in each dimension of the net
@@ -715,8 +709,6 @@ public:
     
   virtual bool  CheckBuild(bool quiet=false);
   // #CAT_Structure check if network units are built
-  virtual bool  CheckConnect(bool quiet=false);
-  // #CAT_Structure check if network is connected
 
   virtual void  UpdtAfterNetMod();
   // #CAT_ObjectMgmt update network after any network modification (calls appropriate functions)
