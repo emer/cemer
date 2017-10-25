@@ -107,6 +107,7 @@ void BrainView::Initialize() {
   bvp = NULL;
   display = true;
   net_text = false;
+  unit_src = NULL;
   lay_mv = true;
   net_text_xform.translate.SetXYZ(0.0f, 1.0f, -1.0f); // start at top back
   net_text_xform.rotate.SetXYZR(1.0f, 0.0f, 0.0f, 0.5f * taMath_float::pi); // start at right mid
@@ -257,18 +258,20 @@ taBase::DumpQueryResult BrainView::Dump_QuerySaveMember(MemberDef* md) {
 void BrainView::GetMembs() {
   if(!net()) return;
 
+  NetworkState_cpp* net_state = net()->net_state;
+  if(!net_state->IsBuiltIntact()) return;
+  
   // try as hard as possible to find a unit to view if nothing selected -- this
   // minimizes issues with history etc
   if(!unit_src) {
     if(unit_src_path.nonempty()) {
-      MemberDef* umd;
-      UnitState_cpp* nu = (UnitState_cpp*)net()->FindFromPath(unit_src_path, umd);
+      UnitState_cpp* nu = net()->GetUnitStateFromPath(unit_src_path);
       if(nu) setUnitSrc(nu);
     }
     if(!unit_src && net()->layers.leaves > 0) {
       Layer* lay = net()->layers.Leaf(net()->layers.leaves-1);
-      if(lay->units.leaves > 0)
-        setUnitSrc(lay->units.Leaf(0));
+      if(lay->n_units > 0)
+        setUnitSrc(lay->GetUnitState(net_state, 0));
     }
   }
 
@@ -279,55 +282,56 @@ void BrainView::GetMembs() {
   // only get units that have been mapped to voxel coords...
   FOREACH_ELEM_IN_GROUP(Layer, lay, net()->layers) {
     if (lay->lesioned() || lay->Iconified() || lay->brain_area.empty()) continue;
-    FOREACH_ELEM_IN_GROUP_NESTED(Unit, u, lay->units) {
-      if (!u->voxels || u->voxels->size == 0) continue;
-      // TODO: for now, assumes only one voxel per unit.  Update to handle multiple.
-      Voxel *voxel = u->voxels->FastEl(0);
-      if (voxel->size == 0) continue;
-      if (u->lesioned()) continue;
+    // for(int ui = 0; ui < lay->n_units; ui++) {
+    //   UNIT_STATE* u = lay->GetUnitState(net, ui);
+    //   if (!u->voxels || u->voxels->size == 0) continue;
+    //   // TODO: for now, assumes only one voxel per unit.  Update to handle multiple.
+    //   Voxel *voxel = u->voxels->FastEl(0);
+    //   if (voxel->size == 0) continue;
+    //   if (u->lesioned()) continue;
 
-      TypeDef* td = u->GetTypeDef();
-      if(td == prv_td) continue; // don't re-scan!
-      prv_td = td;
+    //   TypeDef* td = u->GetTypeDef();
+    //   if(td == prv_td) continue; // don't re-scan!
+    //   prv_td = td;
 
-      for(int m=0; m<td->members.size; m++) {
-        MemberDef* md = td->members.FastEl(m);
-        if((md->HasOption("NO_VIEW") || md->IsInvisible()))
-          continue;
-        if((md->type->InheritsFrom(&TA_float) || md->type->InheritsFrom(&TA_double))
-           && (membs.FindName(md->name)==NULL))
-        {
-          MemberDef* nmd = md->Clone();
-          membs.Add(nmd);       // index now reflects position in list...
-          nmd->idx = md->idx;   // so restore it to the orig one
-        }       // check for nongroup owned sub fields (ex. bias)
-        else if(md->type->DerivesFrom(&TA_taBase) && !md->type->DerivesFrom(&TA_taGroup)) {
-          if(md->type->IsPtrPtr()) continue; // only one level of pointer tolerated
-          TypeDef* nptd;
-          if(md->type->IsPointer()) {
-            taBase** par_ptr = (taBase**)md->GetOff((void*)u);
-            if(*par_ptr == NULL) continue; // null pointer
-            nptd = (*par_ptr)->GetTypeDef(); // get actual type of connection
-          }
-          else
-            nptd = md->type;
-          int k;
-          for(k=0; k<nptd->members.size; k++) {
-            MemberDef* smd = nptd->members.FastEl(k);
-            if(smd->type->InheritsFrom(&TA_float) || smd->type->InheritsFrom(&TA_double)) {
-              if((smd->HasOption("NO_VIEW") || smd->IsInvisible()))
-                continue;
-              String nm = md->name + "." + smd->name;
-              if(membs.FindName(nm)==NULL) {
-                MemberDef* nmd = smd->Clone();
-                nmd->name = nm;
-                membs.Add(nmd);
-                nmd->idx = smd->idx;
-              }
-            }
-          }
-        }
-      }
+    //   for(int m=0; m<td->members.size; m++) {
+    //     MemberDef* md = td->members.FastEl(m);
+    //     if((md->HasOption("NO_VIEW") || md->IsInvisible()))
+    //       continue;
+    //     if((md->type->InheritsFrom(&TA_float) || md->type->InheritsFrom(&TA_double))
+    //        && (membs.FindName(md->name)==NULL))
+    //     {
+    //       MemberDef* nmd = md->Clone();
+    //       membs.Add(nmd);       // index now reflects position in list...
+    //       nmd->idx = md->idx;   // so restore it to the orig one
+    //     }       // check for nongroup owned sub fields (ex. bias)
+    //     else if(md->type->DerivesFrom(&TA_taBase) && !md->type->DerivesFrom(&TA_taGroup)) {
+    //       if(md->type->IsPtrPtr()) continue; // only one level of pointer tolerated
+    //       TypeDef* nptd;
+    //       if(md->type->IsPointer()) {
+    //         taBase** par_ptr = (taBase**)md->GetOff((void*)u);
+    //         if(*par_ptr == NULL) continue; // null pointer
+    //         nptd = (*par_ptr)->GetTypeDef(); // get actual type of connection
+    //       }
+    //       else
+    //         nptd = md->type;
+    //       int k;
+    //       for(k=0; k<nptd->members.size; k++) {
+    //         MemberDef* smd = nptd->members.FastEl(k);
+    //         if(smd->type->InheritsFrom(&TA_float) || smd->type->InheritsFrom(&TA_double)) {
+    //           if((smd->HasOption("NO_VIEW") || smd->IsInvisible()))
+    //             continue;
+    //           String nm = md->name + "." + smd->name;
+    //           if(membs.FindName(nm)==NULL) {
+    //             MemberDef* nmd = smd->Clone();
+    //             nmd->name = nm;
+    //             membs.Add(nmd);
+    //             nmd->idx = smd->idx;
+    //           }
+    //         }
+    //       }
+    //     }
+    //   }
 
 //      // then do bias weights
 //      if(u->bias.size) {
@@ -347,7 +351,7 @@ void BrainView::GetMembs() {
 //          }
 //        }
 //      }
-    }
+    // }
   }
 
   // then, only do the connections if any Unit guys, otherwise we are
@@ -788,9 +792,12 @@ void BrainView::SetColorSpec(ColorScaleSpec* color_spec) {
 }
 
 void BrainView::setUnitSrc(UnitState_cpp* unit) {
-  if (unit_src.ptr() == unit) return; // no change
+  if (unit_src == unit) return; // no change
   // if there was existing unit, unpick it
   unit_src = unit;
+  if(unit_src) {
+    unit_src_path = net()->GetUnitStatePath(unit_src);
+  }
 }
 
 void BrainView::setUnitDisp(int value) {

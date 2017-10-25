@@ -294,7 +294,8 @@
   //    Infrastructure -- need to be able to save / load weights
   //    without relying on TypeAccess, so we do it manually..
 
-  INLINE virtual bool   SaveVar(int var_no) const { return (var_no == WT); }
+  INLINE virtual bool   SaveVar(CON_STATE* cg, NETWORK_STATE* net, int var_no) const
+  { return (var_no == WT); }
   // #CAT_File should given variable be saved?
 
   INLINE virtual const char* ConVarName(int var_no) const {

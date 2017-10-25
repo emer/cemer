@@ -15,6 +15,7 @@
 
 #include "LeabraPrjn.h"
 #include <LeabraNetwork>
+#include <LeabraConSpec>
 
 TA_BASEFUNS_CTORS_DEFN(LeabraPrjn);
 

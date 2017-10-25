@@ -59,10 +59,6 @@ public:
   // #BUTTON #CAT_Monitor #PROJ_SCOPE monitor a value in the Layer or its subobjects
   NetMonItem* 	AddProjection(Projection* prj, const String& variable);
   // #BUTTON #CAT_Monitor #PROJ_SCOPE monitor a value in the Projection or its subobjects
-  NetMonItem* 	AddUnitGroup(Unit_Group* ug, const String& variable);
-  // #CAT_Monitor #PROJ_SCOPE monitor a value in the UnitGroup or its subobjects
-  NetMonItem* 	AddUnit(Unit* un, const String& variable);
-  // #CAT_Monitor #PROJ_SCOPE monitor a value in the Unit or its subobjects
   
   NetMonItem* 	AddObject(taBase* obj, const String& variable);
   // #CAT_Monitor #PROJ_SCOPE monitor a value in the object or its subobjects

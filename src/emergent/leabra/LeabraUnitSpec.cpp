@@ -86,7 +86,7 @@ void LeabraAvgLSpec::UpdateAfterEdit_impl() {
 */
 
 void LeabraUnitSpec::Initialize() {
-  min_obj_type = &TA_LeabraUnit;
+  min_obj_type = &TA_LeabraUnitState_cpp;
   bias_spec.SetBaseType(&TA_LeabraBiasSpec);
 
   noise.type = Random::GAUSSIAN;

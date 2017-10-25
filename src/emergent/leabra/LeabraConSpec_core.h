@@ -98,7 +98,7 @@
     const int sz = cg->size;
     for(int i=0; i<sz;i++) {
       int con_idx = -1;
-      CON_STATE* rscg = net->FindRecipSendCon(con_idx, net, cg->UnState(i,net), su);
+      CON_STATE* rscg = net->FindRecipSendCon(con_idx, cg->UnState(i,net), su);
       if(rscg && con_idx >= 0) {
         CON_SPEC_CPP* rscs = rscg->GetConSpec(net);
         if(rscs && rscs->wt_limits.sym) {
@@ -522,20 +522,9 @@
     C_ApplyLimits(wt);
   }
   
-  INLINE bool   SaveVar(int var_no) const override { return (var_no == WT || var_no == SCALE); }
+  INIMPL bool   SaveVar(CON_STATE* cg, NETWORK_STATE* net, int var_no) const override;
 
-  INLINE const char*  VarName(int var_no) const override {
-    switch(var_no) {
-    case WT: return "wt";
-    case DWT: return "dwt";
-    case SCALE: return "scale";
-    case DWAVG: return "dwavg";
-    case MOMENT: return "moment";
-    case FWT: return "fwt";
-    case SWT: return "swt";
-    }
-    return "";
-  }
+  INIMPL const char*  ConVarName(int var_no) const override;
 
   INLINE void Initialize_core() {
     inhib = false;  learn = true;  learn_qtr = Q4;  use_unlearnable = true;

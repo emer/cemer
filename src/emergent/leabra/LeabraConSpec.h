@@ -97,8 +97,6 @@ public:
                            int n_recv_cons=5, bool norm_con_n=true);
   // #MENU_BUTTON #MENU_ON_Graph helper for converting from old wt_scale computation to new one -- enter parameters for the sending layer kwta pct (overall layer activit), number of receiving connections, and whether the norm_con_n flag was on or off (effectively always on in new version) -- it reports what the effective weight scaling was in the old version, what it is in the new version, and what you should set the wt_scale.abs to to get equivalent performance, assuming wt_scale.abs reflects what was set previously
 
-  bool          SaveConVarToWeights(Network* net, ConState_cpp* cg, MemberDef* md) override;
-  
   bool          CheckConfig_RecvCons(Projection* prjn, bool quiet=false) override;
   // check for for misc configuration settings required by different algorithms
 

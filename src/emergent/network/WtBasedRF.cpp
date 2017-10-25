@@ -17,7 +17,6 @@
 #include <taMath_float>
 
 #include <V1RegionSpec>
-#include <Unit>
 
 #include <taMisc>
 
@@ -65,6 +64,8 @@ bool WtBasedRF::ComputeV2RF(Network* net, DataTable* dt_trg, DataTable* wts, Lay
   if(!network || !dt_trg_rf || !trg_layer_wts || !trg_layer || !snd_layer || !v1_retinaProc)
     return false;
   
+  if(!net->IsBuiltIntact())
+    return false;
   dt_trg_rf->ResetData();
   
   // build weights table
@@ -141,8 +142,8 @@ bool WtBasedRF::ComputeV2RF(Network* net, DataTable* dt_trg, DataTable* wts, Lay
             if ((row_unit == snd_layer_unit_grp_geom.y - 1) || (row_unit == snd_layer_unit_grp_geom.y - 2)) {
               int row = (row_grp * snd_layer_unit_grp_geom.y) + row_unit;
               int col = (col_grp * snd_layer_unit_grp_geom.x) + col_unit;
-              Unit* snd_unit = snd_layer->UnitAtCoord(col, row);
-              float snd_act = snd_unit->act();
+              UnitState_cpp* snd_unit = snd_layer->GetUnitStateFlatXY(network->net_state, col, row);
+              float snd_act = snd_unit->act;
               float weight = wts_col->GetValAsFloatMDims(wts_row, col, row);
               if (weight > wt_threshold) {
                 int filter_no = col % filter_angles;
@@ -198,6 +199,8 @@ bool WtBasedRF::ComputeHigherLayerRF(Network* net, DataTable* dt_trg, DataTable*
   if(!network || !dt_trg_rf || !dt_snd_rf || !trg_layer_wts || !trg_layer || !snd_layer)
     return false;
 
+  LAYER_STATE* snd_lst = snd_layer->GetLayerState(network->net_state);
+  
   dt_trg_rf->ResetData();
   
   // build weights table
@@ -222,7 +225,8 @@ bool WtBasedRF::ComputeHigherLayerRF(Network* net, DataTable* dt_trg, DataTable*
   dt_trg_rf_values_col = dt_trg_rf->FindMakeColMatrix("values", VT_FLOAT, 2, image_size.x, image_size.y);
   dt_trg_rf->EnforceRows(wt_rows);
   dt_trg_rf->StructUpdate(false);
-  
+
+  // NOTE: using a static matrix here would be much more efficient if this is an inner loop
   float_Matrix* sum_matrix = new float_Matrix(); // sums of sending layer values multiplied by target layer weights
   sum_matrix->SetGeom(2, image_size.x, image_size.y);
   
@@ -242,25 +246,26 @@ bool WtBasedRF::ComputeHigherLayerRF(Network* net, DataTable* dt_trg, DataTable*
   for (int wts_row = first_row; wts_row < last_row; wts_row++) {
     *sum_matrix = 0;
     // get the target layer unit so we can find the sending units it recvs from
-    Unit* trg_layer_unit = trg_layer->UnitAccess(Layer::ACC_LAY, wts_row, 0);
+    UnitState_cpp* trg_layer_unit = trg_layer->GetUnitStateFlatXY(network->net_state, wts_row, 0);
     if(TestError(!trg_layer_unit, "ComputeHigherLayerRF", "trg_layer_unit is null")) {
       all_good = false;
     }
-    ConState_cpp* recv_cons = trg_layer_unit->FindRecvConStateFrom(snd_layer);
+    ConState_cpp* recv_cons = trg_layer_unit->FindRecvConStateFrom(network->net_state, snd_lst);
     if(TestError(!recv_cons, "ComputeHigherLayerRF", "recv_cons is null")) {
       all_good = false;
     }
+    UnGpState_cpp* trg_ugp = trg_layer_unit->GetOwnUnGp(network->net_state);
     if (all_good) {
       for (int u=0; u<recv_cons->size; u++) {
-        Unit* snd_unit = recv_cons->SafeUn(u, net);
+        UnitState_cpp* snd_unit = recv_cons->UnState(u, network->net_state);
         taVector2i snd_layer_unit_grp_logical_position;
-        snd_unit->UnitGpLogPos(snd_layer_unit_grp_logical_position);
+        snd_layer_unit_grp_logical_position.SetXY(trg_ugp->pos_x, trg_ugp->pos_y);
         
         DataCol* wts_col = trg_layer_wts->GetColData(0);  // only one column
-        float weight = wts_col->GetValAsFloatM(wts_row, snd_unit->idx);
+        float weight = wts_col->GetValAsFloatM(wts_row, snd_unit->lay_un_idx);
         if (taMath_float::fabs(weight) < wt_threshold) continue;
         
-        float_Matrix* snd_values_matrix = (float_Matrix*)dt_snd_rf_values_col->GetValAsMatrix(snd_unit->idx);
+        float_Matrix* snd_values_matrix = (float_Matrix*)dt_snd_rf_values_col->GetValAsMatrix(snd_unit->lay_un_idx);
         taBase::Ref(snd_values_matrix);
         for (int s=0; s<snd_values_matrix->size; s++) {
           sum_matrix->FastEl_Flat(s) += snd_values_matrix->FastEl_Flat(s) * weight;

@@ -31,6 +31,12 @@ TA_BASEFUNS_CTORS_DEFN(Layer);
 
 using namespace std;
 
+#include <ProjectionSpec_cpp>
+
+#include <State_main>
+
+#include "Layer_core.cpp"
+
 void LayerRelPos::Initialize() {
   rel = ABS_POS;
   x_align = LEFT;

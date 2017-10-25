@@ -295,7 +295,7 @@
   // #IGNORE unit variables for unit at given thread, thread-specific unit index (max ThrNUnits()-1)
   INLINE UNIT_STATE*  GetUnitState(int flat_idx) const
   { return ThrUnitState(UnThr(flat_idx), UnThrUnIdx(flat_idx)); }
-  // #IGNORE unit variables for unit at given unit at flat_idx 
+  // #IGNORE unit state at given flat_idx 
   INLINE int    ThrLayUnStart(int thr_no, int lay_no)
   { return thrs_lay_unit_idxs[thr_no][2*lay_no]; }
   // #IGNORE starting thread-specific unit index for given layer (from active_layers list)

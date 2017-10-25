@@ -9,6 +9,9 @@
   INIMPL void   Compute_dWt_Thr(int thr_no) override;
   INIMPL void   Compute_Weights_Thr(int thr_no) override;
 
+  INIMPL virtual void  Trial_Run();
+  // #CAT_Bp run one trial of Bp: calls SetCurLrate, Compute_NetinAct, Compute_dEdA_dEdNet, and, if train_mode == TRAIN, Compute_dWt.  If you want to save some speed just for testing, you can just call Compute_NetinAct and skip the other two (esp Compute_dEdA_dEdNet, which does a full backprop and is expensive, but often useful for visualization & testing)
+
   INIMPL virtual void  Trial_Run_Thr(int thr_no); // #IGNORE
 
 

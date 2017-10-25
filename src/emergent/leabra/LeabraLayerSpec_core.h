@@ -81,6 +81,9 @@
   }    
   // #CAT_Activation initialize unit-level dynamic state variables (activations, etc)
 
+  INIMPL virtual void DecayState(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net, float decay);
+  // #CAT_Activation decay the state of this layer -- not normally called but available for programs etc to control specific layers
+
   ///////////////////////////////////////////////////////////////////////
   //	Trial_Init -- at start of trial
 
@@ -363,7 +366,7 @@
         LEABRA_UNGP_STATE* gpd = lay->GetUnGpState(net, g);
         bool max_err = true;
         if(gpd->acts_m.max_i >= 0) {
-          LEABRA_UNIT_STATE* un = (LEABRA_UNIT_STATE*)net->UnUnitState(gpd->acts_m.max_i);
+          LEABRA_UNIT_STATE* un = (LEABRA_UNIT_STATE*)net->GetUnitState(gpd->acts_m.max_i);
           max_err = (un->targ < 0.1f);
         }
         gpd->max_err = (float)max_err;
@@ -374,7 +377,7 @@
     else {
       bool max_err = true;
       if(lgpd->acts_m.max_i >= 0) {
-        LEABRA_UNIT_STATE* un = (LEABRA_UNIT_STATE*)net->UnUnitState(lgpd->acts_m.max_i);
+        LEABRA_UNIT_STATE* un = (LEABRA_UNIT_STATE*)net->GetUnitState(lgpd->acts_m.max_i);
         max_err = (un->targ < 0.1f);
       }
       lay->max_err = (float)max_err;
@@ -725,6 +728,16 @@
     Compute_AvgNetSd(lay, net);
   }
   // #CAT_Statistic compute epoch-level statistics (averages)
+
+
+  INIMPL virtual void Compute_AbsRelNetin(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net);
+  // #CAT_Statistic compute the absolute layer-level and relative netinput from different projections into this layer
+
+  INIMPL virtual void Compute_AvgAbsRelNetin(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net);
+  // #CAT_Statistic compute time-average relative netinput from different projections into this layer (e.g., every epoch)
+
+  INIMPL virtual void ClearDeepActs(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net);
+  // #CAT_Deep clear the deep layer variables -- can be useful to do at discontinuities of experience
 
 
   INLINE void 	Initialize_core() {

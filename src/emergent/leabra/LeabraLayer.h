@@ -64,7 +64,6 @@ public:
 #endif
 
   void  CheckSpecs() override;
-  void	BuildUnits() override;
   void	CheckInhibCons(LeabraNetwork* net);
   // #CAT_Structure check for inhibitory connections -- sets flag on network
 
@@ -74,18 +73,18 @@ public:
   virtual bool   TwoDValMode();
   // #CAT_TwoD are we operating in TwoD value spec mode?  i.e., the layerspec is set to a TwoDValLayerSpec
   
-  void	ApplyInputData_2d(taMatrix* data, ExtFlags ext_flags,
+  void	ApplyInputData_2d(NETWORK_STATE* net, taMatrix* data, ExtFlags ext_flags,
                           Random* ran, const taVector2i& offs, bool na_by_range=false) override;
-  void	ApplyInputData_Flat4d(taMatrix* data, ExtFlags ext_flags,
+  void	ApplyInputData_Flat4d(NETWORK_STATE* net, taMatrix* data, ExtFlags ext_flags,
                               Random* ran, const taVector2i& offs, bool na_by_range=false) override;
-  void	ApplyInputData_Gp4d(taMatrix* data, ExtFlags ext_flags,
+  void	ApplyInputData_Gp4d(NETWORK_STATE* net, taMatrix* data, ExtFlags ext_flags,
                             Random* ran, bool na_by_range=false) override;
   
   ////////////////////////////////////////////
   //	Misc structural routines
 
   bool          SetLayerSpec(LayerSpec* sp) override;
-  LayerSpec*    GetLayerSpec() override	{ return (LayerSpec*)spec.SPtr(); }
+  LayerSpec*    GetMainLayerSpec() const override { return (LayerSpec*)spec.SPtr(); }
   
   void	InitLinks() override;
   void	CutLinks() override;

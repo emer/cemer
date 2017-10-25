@@ -152,3 +152,10 @@ DataTable* UnitState_cpp::ConVarsToTable(NetworkState_cpp* nnet, DataTable* dt, 
   return dt;
 }
 
+void  UnitState_cpp::MonitorVar(NetMonitor* net_mon, const String& variable) {
+  // todo: impl
+}
+
+bool UnitState_cpp::Snapshot(NetworkState_cpp* nnet, const String& variable, SimpleMathSpec& math_op, bool arg_is_snap) {
+  return false;
+}

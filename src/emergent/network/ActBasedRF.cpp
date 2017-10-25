@@ -51,7 +51,7 @@ void ActBasedRF::ConfigDataTable(DataTable* dt, Network* net) {
   excl.Split(exclude_lays, ":");
   dt->StructUpdate(true);
   dt->Reset();                  // nuke cols -- ensure matching
-  int rows = trg_layer->units.leaves;
+  int rows = trg_layer->n_units;
   int idx;
   FOREACH_ELEM_IN_GROUP(Layer, lay, net->layers) {
     if(lay->lesioned() || lay->Iconified()) continue; // iconified also excludes!
@@ -72,7 +72,7 @@ void ActBasedRF::InitData() {
   if(!network || !rf_data || !trg_layer) return;
   ConfigDataTable(rf_data, network);
   ConfigDataTable(&sum_data, network);
-  wt_array.SetGeom(1, trg_layer->units.leaves);
+  wt_array.SetGeom(1, trg_layer->n_units);
 
   for(int i=0;i<rf_data->data.size; i++) {
     DataCol* da = rf_data->data.FastEl(i);
@@ -107,6 +107,10 @@ bool ActBasedRF::IncrementSums() {
   String_Array excl;
   excl.Split(exclude_lays, ":");
 
+  if(!network->IsBuiltIntact())
+    return false;
+  NetworkState_cpp* net = network->net_state;
+  
   int idx;
   FOREACH_ELEM_IN_GROUP(Layer, lay, network->layers) {
     if(lay->lesioned() || lay->Iconified()) continue;
@@ -121,25 +125,19 @@ bool ActBasedRF::IncrementSums() {
                                         lay->un_geom.y);
     }
 
-    int tidx = 0;
-    UnitState_cpp* tu;
-    taLeafItr tui;
-    for(tu = trg_layer->units.FirstEl(tui); tu; tu = trg_layer->units.NextEl(tui), tidx++) {
-      UnitState_cpp* tuv = tu->GetUnitState();
-      const float tact = fabsf(*((float*)var_md->GetOff(tuv)));
+    for(int ui = 0; ui < trg_layer->n_units; ui++) {
+      UNIT_STATE* u = trg_layer->GetUnitState(net, ui);
+      const float tact = fabsf(*((float*)var_md->GetOff(u)));
       if(tact < threshold) continue; // not this time!
 
-      wt_array.FastEl1d(tidx) += tact;
+      wt_array.FastEl1d(ui) += tact;
 
-      float_Matrix* sum_mat = (float_Matrix*)sum_da->GetValAsMatrix(tidx);
+      float_Matrix* sum_mat = (float_Matrix*)sum_da->GetValAsMatrix(ui);
       taBase::Ref(sum_mat);
-      int sidx = 0;
-      UnitState_cpp* su;
-      taLeafItr sui;
-      for(su = lay->units.FirstEl(sui); su; su = lay->units.NextEl(sui), sidx++) {
-        UnitState_cpp* suv = su->GetUnitState();
-        const float sact = *((float*)var_md->GetOff(suv));
-        sum_mat->FastEl1d(sidx) += tact * sact;
+      for(int sui = 0; sui < lay->n_units; sui++) {
+        UNIT_STATE* su = lay->GetUnitState(net, sui);
+        const float sact = *((float*)var_md->GetOff(su));
+        sum_mat->FastEl1d(sui) += tact * sact;
       }
       taBase::UnRef(sum_mat);
     }
@@ -254,6 +252,10 @@ bool ActBasedRF::ComputeRF() {
 bool ActBasedRF::CopyRFtoNetWtPrjn(int trg_unit_no) {
   if(!network || !rf_data || !trg_layer) return false;
 
+  if(!network->IsBuiltIntact())
+    return false;
+  NetworkState_cpp* net = network->net_state;
+
   if(TestError(trg_unit_no >= rf_data->rows, "CopyRFtoNetWtPrjn", "trg_unit_no is greater than number of target units"))
     return false;
 
@@ -273,10 +275,10 @@ bool ActBasedRF::CopyRFtoNetWtPrjn(int trg_unit_no) {
                                         lay->un_geom.y);
     }
 
-    int mx = MAX(lay->units.leaves, rf_da->cell_size());
+    int mx = MAX(lay->n_units, rf_da->cell_size());
 
     for(int i=0;i<mx; i++) {
-      UnitState_cpp* u = lay->units.Leaf(i);
+      UnitState_cpp* u = lay->GetUnitState(net, i);
       float rfv = rf_da->GetValAsFloatM(trg_unit_no, i);
       u->wt_prjn = rfv;
     }

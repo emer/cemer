@@ -104,14 +104,6 @@ NetMonItem* NetMonitor::AddProjection(Projection* prj, const String& variable) {
   return AddObject(prj, variable);
 }
 
-NetMonItem* NetMonitor::AddUnitGroup(Unit_Group* ug, const String& variable) {
-  return AddObject(ug, variable);
-}
-
-NetMonItem* NetMonitor::AddUnit(Unit* un, const String& variable) {
-  return AddObject(un, variable);
-}
-
 NetMonItem* NetMonitor::AddBlank() {
   return (NetMonItem*)items.New_gui(1);             // gui version
 }

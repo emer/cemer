@@ -14,6 +14,10 @@
 //   GNU General Public License for more details.
 
 #include "LeabraNetwork.h"
+#include <LeabraCon>
+#include <LeabraUnitSpec>
+#include <LeabraConSpec>
+
 // #include <MSNConSpec>
 
 #include <taProject>
@@ -97,35 +101,9 @@ void LeabraNetwork::Build() {
 }
 
 void LeabraNetwork::BuildLeabraThreadMem() {
-  LeabraNetState()->AllocLeabraStatsMem();
-  
-  NET_THREAD_CALL(LeabraNetwork::InitLeabraThreadMem_Thr);
+  ((LeabraNetworkState_cpp*)net_state)->BuildLeabraThreadMem();
 }
 
-void LeabraNetwork::BuildNullUnit() {
-  if(!null_unit) {
-    taBase::OwnPointer((taBase**)&null_unit, new LeabraUnit, this);
-  }
-}
-
-bool LeabraNetwork::LoadWeights_strm(istream& strm, bool quiet) {
-  bool rval = inherited::LoadWeights_strm(strm, quiet);
-  if(!rval) return rval;
-  for(int li=0; li < net_state->n_layers_built; li++) {
-    LEABRA_LAYER_STATE* lst = (LEABRA_LAYER_STATE*)GetLayerState(li);
-    if(lst->lesioned()) continue;
-    LeabraLayer* lay = (LeabraLayer*)StateLayer(li);
-    LEABRA_UNGP_STATE* lgpd = (LEABRA_UNGP_STATE*)lay->GetLayUnGpState(net_state);
-    // these are important for saving in weights files -- keep them updated
-    lst->acts_m_avg = lay->acts_m_avg;
-    lst->acts_p_avg = lay->acts_p_avg;
-    lst->acts_p_avg_eff = lay->acts_p_avg_eff;
-    lgpd->acts_m_avg = lay->acts_m_avg;
-    lgpd->acts_p_avg = lay->acts_p_avg;
-    lgpd->acts_p_avg_eff = lay->acts_p_avg_eff;
-  }
-  return rval;
-}
 
 ///////////////////////////////////////////////////////////////////////
 //      General Init functions
@@ -145,22 +123,19 @@ void LeabraNetwork::SyncLayerState_Layer(Layer* ly) {
 }
 
 void LeabraNetwork::Init_Acts() {
-  NET_THREAD_CALL(LeabraNetwork::Init_Acts_Thr);
-
-  Init_Acts_Layer();
+  NET_STATE_RUN(LeabraNetworkState, Init_Acts());
 }
 
 void LeabraNetwork::Init_Netins() {
-  NET_THREAD_CALL(LeabraNetwork::Init_Netins_Thr);
+  NET_STATE_RUN(LeabraNetworkState, Init_Netins());
 }
 
 void LeabraNetwork::DecayState(float decay) {
-  LeabraNetState()->tmp_arg1 = decay;
-  NET_THREAD_CALL(LeabraNetwork::DecayState_Thr);
+  NET_STATE_RUN(LeabraNetworkState, DecayState(decay));
 }
 
 void LeabraNetwork::ResetSynTR() {
-  NET_THREAD_CALL(LeabraNetwork::ResetSynTR_Thr);
+  NET_STATE_RUN(LeabraNetworkState, ResetSynTR());
 }
 
 
@@ -172,16 +147,8 @@ void LeabraNetwork::Trial_Init() {
                "Network is not built or is not intact -- must Build first")) {
     return;
   }
-  unlearnable_trial = false;
-  Trial_Init_Counters();
   Trial_Init_Specs();
-
-  Trial_Init_Unit(); // performs following at unit-level
-  //  Trial_Init_SRAvg();
-  //  Trial_DecayState();
-  //  Trial_NoiseInit(); 
-
-  Trial_Init_Layer();
+  NET_STATE_RUN(LeabraNetworkState, Trial_Init());
   SyncAllState();
 }
 
@@ -231,10 +198,6 @@ void LeabraNetwork::Trial_Init_Specs() {
   SyncAllState();
 }
 
-void LeabraNetwork::Trial_Init_Unit() {
-  NET_THREAD_CALL(LeabraNetwork::Trial_Init_Unit_Thr);
-}
-
 
 ///////////////////////////////////////////////////////////////////////
 //      QuarterInit -- at start of settling
@@ -252,80 +215,41 @@ void LeabraNetwork::Quarter_Init() {
 
   SyncAllState();
 
-  Quarter_Init_Counters();
-  Quarter_Init_Layer();
-  Compute_HardClamp_Layer();    // need layer hard clamp flag before Init_Unit
-  Quarter_Init_Unit();           // do chunk of following unit-level functions:
-//   Quarter_Init_TargFlags();
-//   Compute_NetinScale();       // compute net scaling
-//   Compute_HardClamp();        // clamp all hard-clamped input acts
-
-  Quarter_Init_Deep();
-
-  Compute_NetinScale_Senders(); // second phase after recv-based NetinScale
-  // put it after Quarter_Init_Layer to allow for mods to netin scale in that guy..
-
-  // also, super important to do this AFTER the Quarter_Init_Unit call so net is still
-  // around for functions that use the previous value of it
-  // NOTE: *everyone* has to init netins when scales change across quarters, because any existing netin has already been weighted at the previous scaled -- no way to rescale that aggregate -- just have to start over..
-  if((phase == LeabraNetwork::PLUS_PHASE && net_misc.diff_scale_p) ||
-     (quarter == 1 && net_misc.diff_scale_q1)) {
-    Init_Netins();
-  }
+  NET_STATE_RUN(LeabraNetworkState, Quarter_Init());
   
   SyncAllState();
 }
 
-void LeabraNetwork::Quarter_Init_Unit() {
-  NET_THREAD_CALL(LeabraNetwork::Quarter_Init_Unit_Thr);
-}
 
 void LeabraNetwork::Quarter_Init_TargFlags() {
   // NOTE: this is not called by default!  Unit and Layer take care of it
-  NET_THREAD_CALL(LeabraNetwork::Quarter_Init_TargFlags_Thr);
-
-  Quarter_Init_TargFlags_Layer();
+  NET_STATE_RUN(LeabraNetworkState, Quarter_Init_TargFlags());
 }
 
-void LeabraNetwork::Compute_NetinScale() {
-  NET_THREAD_CALL(LeabraNetwork::Compute_NetinScale_Thr);
-}
-
-void LeabraNetwork::Compute_NetinScale_Senders() {
-  NET_THREAD_CALL(LeabraNetwork::Compute_NetinScale_Senders_Thr);
-}
 
 void LeabraNetwork::Quarter_Init_Deep() {
   if(!deep.on) return;
   if(!deep.Quarter_DeepRawPrevQtr(quarter)) return; // nobody doing it now..
 
-  NET_THREAD_CALL(LeabraNetwork::Quarter_Init_Deep_Thr);
+  NET_STATE_RUN(LeabraNetworkState, Quarter_Init_Deep());
 }
 
 
 void LeabraNetwork::Compute_HardClamp() {
   // NOT called by default -- done in Quarter_Init_Unit
-  NET_THREAD_CALL(LeabraNetwork::Compute_HardClamp_Thr);
-
-  Compute_HardClamp_Layer();
+  NET_STATE_RUN(LeabraNetworkState, Compute_HardClamp());
 }
 
 void LeabraNetwork::ExtToComp() {
-  ExtToComp_Layer();
-
-  NET_THREAD_CALL(LeabraNetwork::ExtToComp_Thr);
+  NET_STATE_RUN(LeabraNetworkState, ExtToComp());
 }
 
 void LeabraNetwork::TargExtToComp() {
-  TargExtToComp_Layer();
-
-  NET_THREAD_CALL(LeabraNetwork::TargExtToComp_Thr);
+  NET_STATE_RUN(LeabraNetworkState, TargExtToComp());
 }
 
 void LeabraNetwork::NewInputData_Init() {
-  Quarter_Init_Layer();
-  Quarter_Init_TargFlags();
-  Compute_HardClamp();
+  NET_STATE_RUN(LeabraNetworkState, NewInputData_Init());
 }
 
 ////////////////////////////////////////////////////////////////
@@ -333,7 +257,7 @@ void LeabraNetwork::NewInputData_Init() {
 
 void LeabraNetwork::Cycle_Run() {
   SyncAllState();
-  NET_THREAD_CALL(LeabraNetwork::Cycle_Run_Thr);
+  NET_STATE_RUN(LeabraNetworkState, Cycle_Run());
   SyncAllState();
 }
 
@@ -401,11 +325,11 @@ void LeabraNetwork::Compute_OutputName() {
 //      DeepLeabra updates
 
 void LeabraNetwork::ClearDeepActs() {
-  NET_THREAD_CALL(LeabraNetwork::ClearDeepActs_Thr);
+  NET_STATE_RUN(LeabraNetworkState, ClearDeepActs());
 }
 
 void LeabraNetwork::ClearMSNTrace() {
-  NET_THREAD_CALL(LeabraNetwork::ClearMSNTrace_Thr);
+  NET_STATE_RUN(LeabraNetworkState, ClearMSNTrace());
 }
 
 
@@ -413,20 +337,13 @@ void LeabraNetwork::ClearMSNTrace() {
 //      Quarter Final
 
 void LeabraNetwork::Quarter_Final() {
-  Quarter_Final_Pre();
-  NET_THREAD_CALL(LeabraNetwork::Quarter_Final_Unit_Thr);
-  Quarter_Final_Layer();
-  Quarter_Compute_dWt();
-  Quarter_Final_Counters();
+  NET_STATE_RUN(LeabraNetworkState, Quarter_Final());
   SyncAllState();
 }
 
 
 void LeabraNetwork::Quarter_Compute_dWt() {
-  if(train_mode == TEST)
-    return;
-
-  Compute_dWt();                // always call -- let units sort it out..
+  NET_STATE_RUN(LeabraNetworkState, Quarter_Compute_dWt());
 }
 
 
@@ -438,69 +355,16 @@ void LeabraNetwork::Trial_Final() {
   SyncAllState();
 }
 
+void LeabraNetwork::Compute_AbsRelNetin() {
+  NET_STATE_RUN(LeabraNetworkState, Compute_AbsRelNetin());
+}
+
+void LeabraNetwork::Compute_AvgAbsRelNetin() {
+  NET_STATE_RUN(LeabraNetworkState, Compute_AvgAbsRelNetin());  
+}
+
 ///////////////////////////////////////////////////////////////////////
 //      Learning
-
-
-// void LeabraNetwork::Compute_dWt_VecVars_Thr(int thr_no) {
-//   float* avg_s = UnVecVar(thr_no, AVG_S);
-//   float* avg_m = UnVecVar(thr_no, AVG_M);
-//   float* avg_l = UnVecVar(thr_no, AVG_L);
-//   float* avg_l_lrn = UnVecVar(thr_no, AVG_L_LRN);
-//   // float* deep =  UnVecVar(thr_no, DEEP);
-// // #ifdef CUDA_COMPILE
-// //   float* act_q0 =  UnVecVar(thr_no, ACT_Q0);
-// // #endif
-
-//   // each thread copies all unit vars into their *own* thread-local mem in unit_vec_vars
-//   for(int i=1; i<units_flat.size; i++) {
-//     LeabraUnitState_cpp* u = (LeabraUnitState_cpp*)UnUnitState(i);
-//     avg_s[i] = u->avg_s_eff;    // key!
-//     avg_m[i] = u->avg_m;
-//     avg_l[i] = u->avg_l;
-//     avg_l_lrn[i] = u->avg_l_lrn;
-//     // deep[i] = u->deep_lrn;
-// // #ifdef CUDA_COMPILE
-// //     act_q0[i] = u->act_q0;
-// //     LeabraUnit* un = (LeabraUnit*)UnFmIdx(i);
-// //     LeabraLayer* rlay = un->own_lay();
-// // #endif
-//   }
-// }
-
-
-void LeabraNetwork::Compute_dWt() {
-  Compute_dWt_Layer_pre();
-
-// #ifdef CUDA_COMPILE
-//   Cuda_Compute_dWt();
-//   return;
-// #endif
-
-  NET_THREAD_CALL(LeabraNetwork::Compute_dWt_Thr);
-}
-
-void LeabraNetwork::Compute_Weights() {
-#ifdef DMEM_COMPILE
-  DMem_SumDWts(dmem_trl_comm.comm);
-#endif
-
-// #ifdef CUDA_COMPILE
-//   Cuda_Compute_Weights();
-//   return;
-// #endif
-  
-  NET_THREAD_CALL(LeabraNetwork::Compute_Weights_Thr);
-  
-  if(net_misc.wt_bal && (total_trials % times.wt_bal_int == 0)) {
-    NET_THREAD_CALL(LeabraNetwork::Compute_WtBal_Thr);
-    if(lstats.wt_bal) {
-      Compute_WtBalStats();
-    }
-  }
-
-  SaveWeights_ClusterRunTerm();
-}
 
 
 ///////////////////////////////////////////////////////////////////////
@@ -522,7 +386,7 @@ void LeabraNetwork::LayerAvgAct(DataTable* report_table, LeabraLayerSpec* lay_sp
 
   FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
     if(lay->lesioned()) continue;
-    LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->GetLayerSpec();
+    LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->GetMainLayerSpec();
     if(lay_spec != NULL) {
       if(ls != lay_spec) continue;
     }
@@ -539,56 +403,43 @@ void LeabraNetwork::LayerAvgAct(DataTable* report_table, LeabraLayerSpec* lay_sp
 }
 
 void LeabraNetwork::Set_ExtRew(bool avail, float ext_rew_val) {
-  ext_rew_avail = avail;
-  ext_rew = ext_rew_val;
+  NET_STATE_RUN(LeabraNetworkState, Set_ExtRew(avail, ext_rew_val));
 }
 
 void LeabraNetwork::Compute_ExtRew() {
-  // assumes any ext rew computation has happened before this point, and set the
-  // network ext_rew and ext_rew_avail flags appropriately
-  if(ext_rew_avail) {
-    avg_ext_rew.Increment(ext_rew);
-  }
+  NET_STATE_RUN(LeabraNetworkState, Compute_ExtRew());  
 }
 
 void LeabraNetwork::Compute_NormErr() {
-  NET_THREAD_CALL(LeabraNetwork::Compute_NormErr_Thr);
-  Compute_NormErr_Agg();
+  NET_STATE_RUN(LeabraNetworkState, Compute_NormErr());
 }
 
-float LeabraNetwork::Compute_CosErr() {
-  NET_THREAD_CALL(LeabraNetwork::Compute_CosErr_Thr);
-  return Compute_CosErr_Agg();
+void LeabraNetwork::Compute_CosErr() {
+  NET_STATE_RUN(LeabraNetworkState, Compute_CosErr());
 }
 
-float LeabraNetwork::Compute_CosDiff() {
-  NET_THREAD_CALL(LeabraNetwork::Compute_CosDiff_Thr);
-  return Compute_CosDiff_Agg();
+void LeabraNetwork::Compute_CosDiff() {
+  NET_STATE_RUN(LeabraNetworkState, Compute_CosDiff());
 }
     
-float LeabraNetwork::Compute_AvgActDiff() {
-  NET_THREAD_CALL(LeabraNetwork::Compute_AvgActDiff_Thr);
-  return Compute_AvgActDiff_Agg();
+void LeabraNetwork::Compute_AvgActDiff() {
+  NET_STATE_RUN(LeabraNetworkState, Compute_AvgActDiff());
 }
 
-float LeabraNetwork::Compute_TrialCosDiff() {
-  NET_THREAD_CALL(LeabraNetwork::Compute_TrialCosDiff_Thr);
-  return Compute_TrialCosDiff_Agg();
+void LeabraNetwork::Compute_TrialCosDiff() {
+  NET_STATE_RUN(LeabraNetworkState, Compute_TrialCosDiff());
 }
     
 void LeabraNetwork::Compute_ActMargin() {
-  NET_THREAD_CALL(LeabraNetwork::Compute_ActMargin_Thr);
-  Compute_ActMargin_Agg();
+  NET_STATE_RUN(LeabraNetworkState, Compute_ActMargin());
 }
     
-float LeabraNetwork::Compute_NetSd() {
-  NET_THREAD_CALL(LeabraNetwork::Compute_NetSd_Thr);
-  return Compute_NetSd_Agg();
+void LeabraNetwork::Compute_NetSd() {
+  NET_STATE_RUN(LeabraNetworkState, Compute_NetSd());
 }
     
 void LeabraNetwork::Compute_HogDeadPcts() {
-  NET_THREAD_CALL(LeabraNetwork::Compute_HogDeadPcts_Thr);
-  Compute_HogDeadPcts_Agg();
+  NET_STATE_RUN(LeabraNetworkState, Compute_HogDeadPcts());
 }
     
 void LeabraNetwork::Compute_TrialStats() {
@@ -606,8 +457,7 @@ void LeabraNetwork::Compute_MinusStats() {
   SyncAllState();
   minus_output_name = output_name; // grab and hold..
 
-  Compute_RTCycles_Agg();
-  Compute_NetSd(); // todo: combine as in plus if more than one
+  NET_STATE_RUN(LeabraNetworkState, Compute_MinusStats());
 
   FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
     if(!lay->lesioned())
@@ -618,51 +468,24 @@ void LeabraNetwork::Compute_MinusStats() {
 
 void LeabraNetwork::Compute_PlusStats() {
   SyncAllState();
-  NET_THREAD_CALL(LeabraNetwork::Compute_PlusStats_Thr); // do all threading at once
-  Compute_PlusStats_Agg();
-  Compute_ExtRew();
+  NET_STATE_RUN(LeabraNetworkState, Compute_PlusStats()); // do all threading at on()ce
   SyncAllState();
-}
-
-void LeabraNetwork::Compute_AbsRelNetin() {
-  // always get layer-level netin max / avg values
-  // decision of whether to run prjn-level is done by layers
-  FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
-    if(lay->lesioned()) continue;
-    LeabraLayerSpec* laysp = (LeabraLayerSpec*)lay->spec.SPtr();
-    laysp->Compute_AbsRelNetin(lay, this);
-  }
-}
-
-void LeabraNetwork::Compute_AvgAbsRelNetin() {
-  FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
-    if(lay->lesioned()) continue;
-    LeabraLayerSpec* laysp = (LeabraLayerSpec*)lay->spec.SPtr();
-    laysp->Compute_AvgAbsRelNetin(lay, this);
-  }
 }
 
 void LeabraNetwork::Compute_EpochStats() {
   SyncAllState();
-  Compute_EpochWeights();
-  inherited::Compute_EpochStats();
-  Compute_AvgCycles();
-  Compute_AvgNormErr();
-  Compute_AvgCosErr();
-  Compute_AvgCosDiff();
-  Compute_AvgAvgActDiff();
-  Compute_AvgTrialCosDiff();
-  Compute_AvgNetSd();
-  Compute_AvgExtRew();
-  Compute_AvgSendPct();
-  Compute_AvgAbsRelNetin();
-  Compute_HogDeadPcts();
+  NET_STATE_RUN(LeabraNetworkState, Compute_EpochStats());
   SyncAllState();
 }
 
 void LeabraNetwork::Compute_EpochWeights() {
-  NET_THREAD_CALL(LeabraNetwork::Compute_EpochWeights_Thr);
+  NET_STATE_RUN(LeabraNetworkState, Compute_EpochWeights());
 }
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////
+
 
 static String pct_val_out(float val, float sum) {
   String rval;
@@ -785,20 +608,20 @@ String LeabraNetwork::TimingReport(DataTable& dt, bool print) {
     thc->SetValAsInt(i, -1);
     stat->SetValAsString("sync_time", -1);
 
-    if(i < n_thrs_built) {
-      TimeUsedHR& wt = ((NetworkThreadTask*)threads.tasks[i])->wait_time;
-      rca->SetValAsFloat(wt.avg_used.avg * rescale, -1);
-      rcs->SetValAsFloat(wt.avg_used.sum, -1);
-      wait_time_avg += wt.avg_used.avg;
-      wait_time_sum += wt.avg_used.sum;
-    }
-    else {
+    // if(i < n_thrs_built) {
+    //   TimeUsedHR& wt = ((NetworkThreadTask*)threads.tasks[i])->wait_time;
+    //   rca->SetValAsFloat(wt.avg_used.avg * rescale, -1);
+    //   rcs->SetValAsFloat(wt.avg_used.sum, -1);
+    //   wait_time_avg += wt.avg_used.avg;
+    //   wait_time_sum += wt.avg_used.sum;
+    // }
+    // else {
       wait_time_avg /= (float)n_thrs_built;
       wait_time_sum /= (float)n_thrs_built;
 
       rca->SetValAsFloat(wait_time_avg * rescale_val, -1);
       rcs->SetValAsFloat(wait_time_sum, -1);
-    }
+    // }
   }
 
   String report = name + " timing report:\n";

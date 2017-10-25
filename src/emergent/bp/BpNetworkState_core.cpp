@@ -120,6 +120,10 @@ void BP_NETWORK_STATE::Compute_Weights_Thr(int thr_no) {
   //   net_timing[thr_no]->wt.EndIncrAvg();
 }
 
+void BP_NETWORK_STATE::Trial_Run() {
+  NET_THREAD_CALL(BP_NETWORK_STATE::Trial_Run_Thr);
+}
+
 void BP_NETWORK_STATE::Trial_Run_Thr(int thr_no) {
   Compute_NetinAct_Thr(thr_no);
 

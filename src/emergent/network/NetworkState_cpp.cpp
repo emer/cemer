@@ -811,7 +811,7 @@ void NetworkState_cpp::ConsSaveWeights_strm(ostream& strm, ConState_cpp* cg, Uni
   int n_vars = 0;
   int smds[10];          // no more than 10!
   for(int i=0; i<cg->n_con_vars; i++) {
-    if(cs->SaveVar(i)) {
+    if(cs->SaveVar(cg, this, i)) {
       smds[n_vars++] = i;
     }
   }
@@ -900,7 +900,7 @@ int NetworkState_cpp::ConsLoadWeights_strm(istream& strm, ConState_cpp* cg, Unit
   int n_vars = 0;
   int smds[10];          // no more than 10!
   for(int i=0; i<cg->n_con_vars; i++) {
-    if(cs->SaveVar(i)) {
+    if(cs->SaveVar(cg, this, i)) {
       smds[n_vars++] = i;
     }
   }

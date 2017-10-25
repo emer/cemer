@@ -98,17 +98,18 @@ void ActrCondition::CheckThisConfig_impl(bool quiet, bool& rval) {
                "network unit name unit_name is empty -- specify name");
     if(src && unit_name.nonempty()) {
       Layer* lay = (Layer*)src.ptr();
-      Unit* un = lay->FindUnitNamed(unit_name, true); // true = error if not found
-      if(un) {
-        MemberDef* md = un->FindMemberName(unit_val);
-        CheckError(!md, quiet, rval,
-                   "network unit unit variable:", unit_val, "not found in unit");
-      }
-      else {
-        CheckError(!un, quiet, rval,
-                   "unit name not found:", unit_name, "in layer:",
-                   lay->name);
-      }
+      // todo: fixme
+      // Unit* un = lay->FindUnitNamed(unit_name, true); // true = error if not found
+      // if(un) {
+      //   MemberDef* md = un->FindMemberName(unit_val);
+      //   CheckError(!md, quiet, rval,
+      //              "network unit unit variable:", unit_val, "not found in unit");
+      // }
+      // else {
+      //   CheckError(!un, quiet, rval,
+      //              "unit name not found:", unit_name, "in layer:",
+      //              lay->name);
+      // }
     }
     break;
   }
@@ -320,26 +321,27 @@ bool ActrCondition::Matches(ActrProduction& prod, bool why_not) {
   }
   case NET_UNIT: {
     Layer* lay = (Layer*)src.ptr();
-    Unit* un = lay->FindUnitNamed(unit_name, true); // true = error if not found
-    if(un) {
-      MemberDef* md = un->FindMemberName(unit_val);
-      if(md) {
-	Variant tval = md->GetValVar(un);
-	match = MatchVarVal(tval, why_not);
-      }
-      else {
-	if(why_not) {
-	  taMisc::Info("net unit:", GetDisplayName(), "member path not found:",
-		       obj_path);
-	}
-      }
-    }
-    else {
+    // todo: fixme
+    // Unit* un = lay->FindUnitNamed(unit_name, true); // true = error if not found
+    // if(un) {
+    //   MemberDef* md = un->FindMemberName(unit_val);
+    //   if(md) {
+    //     Variant tval = md->GetValVar(un);
+    //     match = MatchVarVal(tval, why_not);
+    //   }
+    //   else {
+    //     if(why_not) {
+    //       taMisc::Info("net unit:", GetDisplayName(), "member path not found:",
+    //     	       obj_path);
+    //     }
+    //   }
+    // }
+    // else {
       if(why_not) {
         taMisc::Info("net unit:", GetDisplayName(), "unit name not found:",
                      unit_name);
       }
-    }
+    // }
     break;
   }
   case OBJ_MEMBER: {

@@ -17,7 +17,11 @@
 
 #include "LeabraConSpec_cpp.h"
 
+#include <ProjectionSpec_cpp>
+
+#include <State_cpp>
+
 // #include "LeabraConSpec_mbrs.cpp"   // include member impls if defined
 
-// #include "LeabraConSpec_core.cpp"   // include member impls if defined
+#include "LeabraConSpec_core.cpp"   // include member impls if defined
 

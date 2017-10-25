@@ -40,9 +40,9 @@ class Network; //
 class Layer; //
 class Projection; //
 class Projection_Group; //
-class Unit; //
-class Unit_Group; //
+class UnitState_cpp; //
 class ConState_cpp; //
+class NetworkState_cpp; //
 
 eTypeDef_Of(NetMonItem);
 
@@ -193,8 +193,7 @@ protected:
   // #IGNORE specific subrange of units within a layer
   void	ScanObject_Projection(Projection* p, String var); // #IGNORE
   void	ScanObject_ProjectionGroup(Projection_Group* p, String var); // #IGNORE
-  void	ScanObject_UnitGroup(Unit_Group* ug, String var); // #IGNORE
-  void	ScanObject_Unit(Unit* u, String var);
+  void	ScanObject_Unit(UnitState_cpp* u, String var, NetworkState_cpp* net);
   // #IGNORE this is only when the object itself is a unit
 
   // these are only for r. and s. con variables
@@ -202,8 +201,8 @@ protected:
   void	ScanObject_PrjnCons(Projection* p, String var);
   // #IGNORE known to be a connection variable (r.x or s.x); matrix already allocated
 
-  void	ScanObject_RecvCons(ConState_cpp* cg, String var, Network* net); // #IGNORE
-  void	ScanObject_SendCons(ConState_cpp* cg, String var, Network* net); // #IGNORE
+  void	ScanObject_RecvCons(ConState_cpp* cg, String var, NetworkState_cpp* net); // #IGNORE
+  void	ScanObject_SendCons(ConState_cpp* cg, String var, NetworkState_cpp* net); // #IGNORE
 
 private:
   void	Initialize();

@@ -325,7 +325,6 @@ void Network::UpdatePointersAfterCopy_impl(const taBase& cp) {
   inherited::UpdatePointersAfterCopy_impl(cp);
   SyncSendPrjns();
   UpdatePrjnIdxs();             // fix the recv_idx and send_idx (not copied!)
-  UpdateAllSpecs();
 }
 
 
@@ -502,7 +501,7 @@ void Network::Init_Epoch() {
 }
 
 void Network::Init_InputData() {
-  NET_STATE_RUN(Init_InputData());
+  NET_STATE_RUN(NetworkState, Init_InputData());
   SyncLayerState();
 }
 
@@ -511,11 +510,11 @@ void Network::Init_Acts() {
                "Network is not built or is not intact -- must Build first")) {
     return;
   }
-  NET_STATE_RUN(Init_Acts());
+  NET_STATE_RUN(NetworkState, Init_Acts());
 }
 
 void Network::Init_dWt(){
-  NET_STATE_RUN(Init_dWt());
+  NET_STATE_RUN(NetworkState, Init_dWt());
 }
 
 void Network::Init_Weights() {
@@ -525,7 +524,7 @@ void Network::Init_Weights() {
 
   taMisc::Busy();
 
-  NET_STATE_RUN(Init_Weights());
+  NET_STATE_RUN(NetworkState, Init_Weights());
   Init_Counters_impl();         // int our counters -- they are copied to state so we need to init
   Init_Timers();                // and our timers..
 
@@ -542,11 +541,11 @@ void Network::Init_Weights() {
 
 
 void Network::Init_Weights_renorm() {
-  NET_STATE_RUN(Init_Weights_renorm());
+  NET_STATE_RUN(NetworkState, Init_Weights_renorm());
 }
 
 void Network::Init_Weights_post() {
-  NET_STATE_RUN(Init_Weights_post());
+  NET_STATE_RUN(NetworkState, Init_Weights_post());
 }
 
 void Network::Init_Weights_AutoLoad() {
@@ -560,7 +559,7 @@ void Network::Init_Weights_AutoLoad() {
 }
 
 void Network::Init_Metrics() {  // not called -- Init_Weights on state calls its version
-  NET_STATE_RUN(Init_Metrics());
+  NET_STATE_RUN(NetworkState, Init_Metrics());
   Init_Counters_impl();         // get our own init'd anyway
   Init_Timers();
   SyncAllState();
@@ -568,7 +567,7 @@ void Network::Init_Metrics() {  // not called -- Init_Weights on state calls its
 
 void Network::Init_Counters() { // not called usually -- only if needed by program
   Init_Counters_impl();         // get our own init'd anyway
-  NET_STATE_RUN(Init_Counters());
+  NET_STATE_RUN(NetworkState, Init_Counters());
 }
 
 void Network::Init_Timers() {
@@ -586,23 +585,23 @@ void Network::Init_Timers() {
 //              Compute
 
 void Network::Compute_Netin() {
-  NET_STATE_RUN(Compute_Netin());
+  NET_STATE_RUN(NetworkState, Compute_Netin());
 }
 
 void Network::Send_Netin() {
-  NET_STATE_RUN(Send_Netin());
+  NET_STATE_RUN(NetworkState, Send_Netin());
 }
 
 void Network::Compute_Act() {
-  NET_STATE_RUN(Compute_Act());
+  NET_STATE_RUN(NetworkState, Compute_Act());
 }
 
 void Network::Compute_NetinAct() {
-  NET_STATE_RUN(Compute_NetinAct());
+  NET_STATE_RUN(NetworkState, Compute_NetinAct());
 }
 
 void Network::Compute_dWt() {
-  NET_STATE_RUN(Compute_dWt());
+  NET_STATE_RUN(NetworkState, Compute_dWt());
 }
 
 bool Network::Compute_Weights_Test(int trial_no) {
@@ -617,21 +616,21 @@ void Network::Compute_Weights() {
 #ifdef DMEM_COMPILE
   DMem_SumDWts(dmem_trl_comm.comm);
 #endif
-  NET_STATE_RUN(Compute_Weights());
+  NET_STATE_RUN(NetworkState, Compute_Weights());
 
   SaveWeights_ClusterRunTerm();
 }
 
 void Network::Compute_SSE(bool unit_avg, bool sqrt) {
-  NET_STATE_RUN(Compute_SSE(unit_avg, sqrt));
+  NET_STATE_RUN(NetworkState, Compute_SSE(unit_avg, sqrt));
 }
 
 void Network::Compute_PRerr() {
-  NET_STATE_RUN(Compute_PRerr());
+  NET_STATE_RUN(NetworkState, Compute_PRerr());
 }
 
 void Network::Compute_TrialStats() {
-  NET_STATE_RUN(Compute_TrialStats());
+  NET_STATE_RUN(NetworkState, Compute_TrialStats());
   SyncAllState();
 }
 
@@ -642,11 +641,11 @@ void Network::DMem_ShareTrialData(DataTable* dt, int n_rows) {
 }
 
 void  Network::Compute_EpochSSE() {
-  NET_STATE_RUN(Compute_EpochSSE());
+  NET_STATE_RUN(NetworkState, Compute_EpochSSE());
 }  
 
 void  Network::Compute_EpochPRerr() {
-  NET_STATE_RUN(Compute_EpochPRerr());
+  NET_STATE_RUN(NetworkState, Compute_EpochPRerr());
 }
 
 void Network::Compute_EpochStats() {
@@ -654,7 +653,7 @@ void Network::Compute_EpochStats() {
   DMem_ComputeAggs(dmem_trl_comm.comm);
 #endif
 
-  NET_STATE_RUN(Compute_EpochStats());
+  NET_STATE_RUN(NetworkState, Compute_EpochStats());
 
   SaveWeights_ClusterRunCmd();  // check for cluster commands!
   SyncAllState();
@@ -664,6 +663,29 @@ void Network::Compute_EpochStats() {
 //////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////
 //      Build etc below here
+
+
+String Network::GetUnitStatePath(UnitState_cpp* unit) {
+  if(!IsBuiltIntact()) return _nilString;
+  Layer* lay = StateLayer(unit->own_lay_idx);
+  if(!lay) return _nilString;
+  String path = lay->GetPath(this);
+  path << "[" << unit->lay_un_idx << "]";
+  return path;
+}
+
+UnitState_cpp* Network::GetUnitStateFromPath(const String& path) {
+  if(!IsBuiltIntact()) return NULL;
+  String lay_path = path.before('[',-1);
+  String un_path = path.after('[',-1);
+  MemberDef* md;
+  Layer* lay = (Layer*)FindFromPath(lay_path, md);
+  if(!lay) {
+    return NULL;
+  }
+  int un_idx = (int)un_path.between('[',']');
+  return lay->GetUnitStateSafe(net_state, un_idx);
+}
 
 void Network::BuildNetState() {
   if(net_state)
@@ -1793,7 +1815,7 @@ void Network::DMem_SumDWts(MPI_Comm comm) {
 
   // note: memory is not contiguous for all DWT vars, so we still need to do this..
 
-  NET_STATE_RUN(Network::DMem_SumDWts_ToTmp_Thr);
+  NET_STATE_RUN(NetworkState, Network::DMem_SumDWts_ToTmp_Thr);
 
   double timer2s = MPI_Wtime();
 
@@ -1829,7 +1851,7 @@ void Network::DMem_SumDWts(MPI_Comm comm) {
 
   double timer2e = MPI_Wtime();
 
-  NET_STATE_RUN(Network::DMem_SumDWts_FmTmp_Thr);
+  NET_STATE_RUN(NetworkState, Network::DMem_SumDWts_FmTmp_Thr);
   
   double timer1e = MPI_Wtime();
 
@@ -1976,7 +1998,7 @@ void Network::SaveToWeights(Weights* wts) {
   }
   // todo: sync weights from cuda
   ostringstream oss;
-  net_state->NetworkSaveWeights_strm(oss, TEXT);  // always use text for this
+  net_state->NetworkSaveWeights_strm(oss, NetworkState_cpp::TEXT);  // always use text for this
   wts->wt_file = oss.str().c_str();
   wts->epoch = epoch;
   wts->batch = batch;
@@ -2582,23 +2604,25 @@ bool Network::VarToVal(const String& dest_var, float val) {
   return true;
 }
 
-static bool net_project_wts_propagate(Network* net, UnitState_cpp* u, bool swt) {
+static bool net_project_wts_propagate(NetworkState_cpp* net, UnitState_cpp* u, bool swt) {
   bool got_some = false;
   // propagate!
-  for(int g = 0; g < (swt ? u->NSendConGps(net->net_state) : u->NRecvConGps(net->net_state)); g++) {
-    ConState_cpp* cg = (swt ? u->SendConState(net->net_state, g) : u->RecvConState(net->net_state, g));
-    PrjnState_cpp* prjn = cg->GetPrjnState(net->net_state);
-    if(!prjn || prjn->NotActive(net->net_state)) continue;
-    Layer* slay = (swt ? prjn->layer : prjn->from);
+  for(int g = 0; g < (swt ? u->NSendConGps(net) : u->NRecvConGps(net)); g++) {
+    ConState_cpp* cg = (swt ? u->SendConState(net, g) : u->RecvConState(net, g));
+    PrjnState_cpp* prjn = cg->GetPrjnState(net);
+    if(!prjn || prjn->NotActive(net)) continue;
+    LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
+    LAYER_STATE* send_lay = prjn->GetSendLayerState(net);
+    LAYER_STATE* slay = (swt ? recv_lay : send_lay);
 
-    if(slay->lesioned() || (prjn->from.ptr() == prjn->layer) ||
-       slay->HasLayerFlag(Layer::PROJECT_WTS_DONE)) continue;
-    slay->SetLayerFlag(Layer::PROJECT_WTS_NEXT); // next..
+    if(slay->lesioned() || (send_lay == recv_lay) ||
+       slay->HasLayerFlag(LAYER_STATE::PROJECT_WTS_DONE)) continue;
+    slay->SetLayerFlag(LAYER_STATE::PROJECT_WTS_NEXT); // next..
     got_some = true;                           // keep going..
 
     for(int ci = 0; ci < cg->size; ci++) {
-      float wtv = cg->Cn(ci, ConState_cpp::WT, net->net_state);
-      UnitState_cpp* su = cg->Un(ci,net);
+      float wtv = cg->Cn(ci, ConState_cpp::WT, net);
+      UnitState_cpp* su = cg->UnState(ci,net);
       su->wt_prjn += u->wt_prjn * wtv;
       su->tmp_calc1 += u->wt_prjn;
     }
@@ -2610,35 +2634,42 @@ void Network::ProjectUnitWeights(UnitState_cpp* src_u, int top_k_un, int top_k_g
                                  bool zero_sub_hiddens) {
   if(!src_u) return;
 
-  Cuda_ConStateToHost();
+  // Cuda_ConStateToHost();
 
+  NetworkState_cpp* net = net_state;
+  
   float_Matrix topk_un_vec;             // for computing kwta
   float_Matrix topk_gp_vec;             // for computing kwta
 
   // first initialize all vars
-  FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
+  for(int li=0; li < n_layers_built; li++) {
+    LayerState_cpp* lay = GetLayerState(li);
     if(lay->lesioned()) continue;
-    lay->ClearLayerFlag(Layer::PROJECT_WTS_NEXT);
-    lay->ClearLayerFlag(Layer::PROJECT_WTS_DONE);
-    FOREACH_ELEM_IN_GROUP_NESTED(Unit, u, lay->units) {
+    lay->ClearLayerFlag(LAYER_STATE::PROJECT_WTS_NEXT);
+    lay->ClearLayerFlag(LAYER_STATE::PROJECT_WTS_DONE);
+    for(int ui = 0; ui < lay->n_units; ui++) {
+      UNIT_STATE* u = lay->GetUnitState(net, ui);
       if(u->lesioned()) continue;
       u->wt_prjn = u->tmp_calc1 = 0.0f;
     }
   }
 
   // do initial propagation
-  for(int g = 0; g < (swt ? src_u->NSendConGps(net_state) : src_u->NRecvConGps(net_state)); g++) {
-    ConState_cpp* cg = (swt ? src_u->SendConState(net_state, g) : src_u->RecvConState(net_state, g));
-    PrjnState_cpp* prjn = cg->GetPrjnState(net_state);
-    if(!prjn || prjn->NotActive()) continue;
-    Layer* slay = (swt ? prjn->layer : prjn->from);
+  int maxn = (swt ? src_u->NSendConGps(net) : src_u->NRecvConGps(net));
+  for(int g = 0; g < maxn; g++) {
+    ConState_cpp* cg = (swt ? src_u->SendConState(net, g) : src_u->RecvConState(net, g));
+    PrjnState_cpp* prjn = cg->GetPrjnState(net);
+    if(!prjn || prjn->NotActive(net)) continue;
+    LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
+    LAYER_STATE* send_lay = prjn->GetSendLayerState(net);
+    LAYER_STATE* slay = (swt ? recv_lay : send_lay);
 
-    if(slay->lesioned() || (prjn->from.ptr() == prjn->layer)) continue; // no self prjns!!
-    slay->SetLayerFlag(Layer::PROJECT_WTS_NEXT);
+    if(slay->lesioned() || (send_lay == recv_lay)) continue; // no self prjns!!
+    slay->SetLayerFlag(LAYER_STATE::PROJECT_WTS_NEXT);
 
     for(int ci = 0; ci < cg->size; ci++) {
-      float wtv = cg->Cn(ci, ConState_cpp::WT, net_state);
-      UnitState_cpp* su = cg->Un(ci,this);
+      float wtv = cg->Cn(ci, ConState_cpp::WT, net);
+      UnitState_cpp* su = cg->UnState(ci,net);
       su->wt_prjn += wtv;
       su->tmp_calc1 += 1.0f;  // sum to 1
     }
@@ -2648,16 +2679,17 @@ void Network::ProjectUnitWeights(UnitState_cpp* src_u, int top_k_un, int top_k_g
   bool got_some = false;
   do {
     got_some = false;
-    FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
-      if(lay->lesioned() || !lay->HasLayerFlag(Layer::PROJECT_WTS_NEXT)) continue;
+    for(int li=0; li < n_layers_built; li++) {
+      LayerState_cpp* lay = GetLayerState(li);
+      if(lay->lesioned() || !lay->HasLayerFlag(LAYER_STATE::PROJECT_WTS_NEXT)) continue;
+      lay->SetLayerFlag(LAYER_STATE::PROJECT_WTS_DONE); // we're done!
 
-      lay->SetLayerFlag(Layer::PROJECT_WTS_DONE); // we're done!
-
-      topk_un_vec.SetGeom(1, lay->units.leaves);
+      topk_un_vec.SetGeom(1, lay->n_units);
       // first normalize the weights on this guy
       float abs_max = 0.0f;
       int uidx = 0;
-      FOREACH_ELEM_IN_GROUP_NESTED(Unit, u, lay->units) {
+      for(int ui = 0; ui < lay->n_units; ui++) {
+        UNIT_STATE* u = lay->GetUnitState(net, ui);
         if(u->lesioned()) continue;
         if(u->tmp_calc1 > 0.0f)
           u->wt_prjn /= u->tmp_calc1;
@@ -2667,19 +2699,19 @@ void Network::ProjectUnitWeights(UnitState_cpp* src_u, int top_k_un, int top_k_g
       }
       if(abs_max == 0.0f) abs_max = 1.0f;
 
-      if(lay->layer_type == Layer::HIDDEN && lay->units.gp.size > 0 && top_k_gp > 0) {
+      if(lay->layer_type == LAYER_STATE::HIDDEN && lay->n_ungps > 0 && top_k_gp > 0) {
         // units group version -- only for hidden layers..
 
         // pick the top k groups in terms of weighting for top-k guys from that group -- not all..
-        float k_val = lay->units.gp.size * top_k_un;
+        float k_val = lay->n_ungps * top_k_un;
         float thr_eff = taMath_float::vec_kwta(&topk_un_vec, (int)k_val, true); // descending
 
-        topk_gp_vec.SetGeom(1, lay->units.gp.size);
+        topk_gp_vec.SetGeom(1, lay->n_ungps);
 
-        for(int gi=0;gi<lay->units.gp.size;gi++) {
-          Unit_Group* ug = (Unit_Group*)lay->units.gp[gi];
+        for(int gi=0;gi<lay->n_ungps;gi++) {
           float gp_val = 0.0f;
-          FOREACH_ELEM_IN_GROUP_NEST2(Unit, u, *ug) {
+          for(int ui = 0; ui < lay->un_geom_n; ui++) {
+            UNIT_STATE* u = lay->GetUnitStateGpUnIdx(net, gi, ui);
             if(u->lesioned()) continue;
             if(u->wt_prjn > thr_eff) // only for those above threshold
               gp_val += u->wt_prjn;
@@ -2688,19 +2720,20 @@ void Network::ProjectUnitWeights(UnitState_cpp* src_u, int top_k_un, int top_k_g
         }
 
         float gp_thr_eff = taMath_float::vec_kwta(&topk_gp_vec, top_k_gp, true); // descending
-        for(int gi=0;gi<lay->units.gp.size;gi++) {
-          Unit_Group* ug = (Unit_Group*)lay->units.gp[gi];
-          topk_un_vec.SetGeom(1, ug->leaves);
+        for(int gi=0;gi<lay->n_ungps;gi++) {
+          topk_un_vec.SetGeom(1, lay->un_geom_n);
 
           int tuidx = 0;
-          FOREACH_ELEM_IN_GROUP_NEST2(Unit, u, *ug) {
+          for(int ui = 0; ui < lay->un_geom_n; ui++) {
+            UNIT_STATE* u = lay->GetUnitStateGpUnIdx(net, gi, ui);
             if(u->lesioned()) continue;
             topk_un_vec.FastEl_Flat(tuidx) = u->wt_prjn;
             tuidx++;
           }
 
           thr_eff = taMath_float::vec_kwta(&topk_un_vec, top_k_un, true); // descending
-          FOREACH_ELEM_IN_GROUP_NEST2(Unit, u, *ug) {
+          for(int ui = 0; ui < lay->un_geom_n; ui++) {
+            UNIT_STATE* u = lay->GetUnitStateGpUnIdx(net, gi, ui);
             if(u->lesioned()) continue;
             float prjval = u->wt_prjn;
             u->wt_prjn /= abs_max;      // normalize --
@@ -2711,7 +2744,7 @@ void Network::ProjectUnitWeights(UnitState_cpp* src_u, int top_k_un, int top_k_g
               continue;
             }
 
-            bool got = net_project_wts_propagate(this, u, swt);
+            bool got = net_project_wts_propagate(net, u, swt);
             got_some |= got;
           }
         }
@@ -2719,17 +2752,18 @@ void Network::ProjectUnitWeights(UnitState_cpp* src_u, int top_k_un, int top_k_g
       else {                                            // flat layer version
         float thr_eff = taMath_float::vec_kwta(&topk_un_vec, top_k_un, true); // descending
 
-        FOREACH_ELEM_IN_GROUP_NEST2(Unit, u, lay->units) {
+        for(int ui = 0; ui < lay->n_units; ui++) {
+          UNIT_STATE* u = lay->GetUnitState(net, ui);
           if(u->lesioned()) continue;
           float prjval = u->wt_prjn;
           u->wt_prjn /= abs_max;        // normalize
           if(top_k_un > 0 && prjval < thr_eff) {
-            if(lay->layer_type == Layer::HIDDEN && zero_sub_hiddens)
+            if(lay->layer_type == LAYER_STATE::HIDDEN && zero_sub_hiddens)
               u->wt_prjn = 0.0f;
             continue; // bail
           }
 
-          bool got = net_project_wts_propagate(this, u, swt);
+          bool got = net_project_wts_propagate(net, u, swt);
           got_some |= got;
         }
       }

@@ -62,9 +62,6 @@ public:
 
 #include <LeabraLayerSpec_core>
 
-  virtual void	DecayState(LeabraLayer* lay, LeabraNetwork* net, float decay);
-  // #CAT_Activation decay the state of this layer -- not normally called but available for programs etc to control specific layers
-
   virtual void	Trial_Init_Specs(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Learning initialize specs and specs update network flags
   
@@ -81,15 +78,6 @@ public:
   virtual void  LayerAvgAct(DataTable* report_table = NULL);
   // #BUTTON #NULL_OK #NULL_TEXT_NewReportData create a data table with the current layer average activations (acts_m_avg, acts_p_avg, acts_p_avg_eff) and the values specified in the layerspec avg_act.init -- this is useful for setting the .init values accurately based on actual levels 
 
-  virtual void	Compute_AbsRelNetin(LeabraLayer* lay, LeabraNetwork* net);
-  // #CAT_Statistic compute the absolute layer-level and relative netinput from different projections into this layer
-  virtual void	Compute_AvgAbsRelNetin(LeabraLayer* lay, LeabraNetwork* net);
-  // #CAT_Statistic compute time-average relative netinput from different projections into this layer (e.g., every epoch)
-
-  virtual void	ClearDeepActs(LeabraLayer* lay, LeabraNetwork* net);
-  // #CAT_Deep clear the deep layer variables -- can be useful to do at discontinuities of experience
-
-  
   ////////////////////////////////////////////
   //	Misc structural routines
 

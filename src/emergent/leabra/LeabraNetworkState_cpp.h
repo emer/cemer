@@ -47,6 +47,8 @@ public:
 #include <LeabraNetwork_core>
 #include <LeabraNetworkState_core>
 
+  bool  NetworkLoadWeights_strm(std::istream& strm, bool quiet = false) override;
+
   LeabraNetworkState_cpp() { Initialize_core(); }
 };
 

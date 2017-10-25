@@ -43,21 +43,19 @@ public:
   
   void  Init_Weights() override;
  
-  virtual void  Trial_Run(); // #CAT_Bp run one trial of Bp: calls SetCurLrate, Compute_NetinAct, Compute_dEdA_dEdNet, and, if train_mode == TRAIN, Compute_dWt.  If you want to save some speed just for testing, you can just call Compute_NetinAct and skip the other two (esp Compute_dEdA_dEdNet, which does a full backprop and is expensive, but often useful for visualization & testing)
+  virtual void  Trial_Run();
+  // #CAT_Bp run one trial of Bp: calls SetCurLrate, Compute_NetinAct, Compute_dEdA_dEdNet, and, if train_mode == TRAIN, Compute_dWt.  If you want to save some speed just for testing, you can just call Compute_NetinAct and skip the other two (esp Compute_dEdA_dEdNet, which does a full backprop and is expensive, but often useful for visualization & testing)
 
-  virtual void  SetCurLrate_Thr(int thr_no);
+  virtual void  SetCurLrate();
+  // #CAT_Bp set the current lrate based on current network epoch -- operates over the list of ConSpecs in main network object -- automatically called by Trial_Run()
   
-  inline void  Trial_Run_Thr(int thr_no)
-  { ((BpNetworkState_cpp*)net_state)->Trial_Run_Thr(thr_no); }
-  // #IGNORE
 
   NetworkState_cpp* NewNetworkState() const override;
-  TypeDef*      NetworkStateType() const override;
+  TypeDef* NetworkStateType() const override;
   TypeDef* UnitStateType() const override;
   TypeDef* ConStateType() const override;
   
   void	SetProjectionDefaultTypes(Projection* prjn) override;
-  void  BuildNullUnit() override;
 
   TA_SIMPLE_BASEFUNS(BpNetwork);
 private:

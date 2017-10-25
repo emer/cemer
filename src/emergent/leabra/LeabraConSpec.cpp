@@ -15,6 +15,7 @@
 
 #include "LeabraConSpec.h"
 #include <LeabraNetwork>
+#include <LeabraBiasSpec>
 #include <taProject>
 #include <DataTable>
 #include <MemberDef>
@@ -34,6 +35,12 @@ TA_BASEFUNS_CTORS_DEFN(LeabraConSpec);
 SMARTREF_OF_CPP(LeabraConSpec);
 
 eTypeDef_Of(ExtRewLayerSpec);
+
+#include <ProjectionSpec_cpp>
+
+#include <State_main>
+
+#include "LeabraConSpec_core.cpp"
 
 
 ////////////////////////////////////////////////////////////////////
@@ -413,17 +420,6 @@ void LeabraConSpec::WtScaleCvt(float savg, int lay_sz, int n_cons,
   // new_abs * new_sc = old_abs * old_sc
   // new_abs = old_abs * (old_sc / new_sc)
 }
-
-bool LeabraConSpec::SaveConVarToWeights(Network* net, ConState_cpp* cg, MemberDef* md) {
-  if(!md->HasOption("SAVE")) return false;
-  if(md->name != "scale") return true;
-  if(adapt_scale.on) return true;
-  PrjnState_cpp* pst = cg->GetPrjnState(net->net_state);
-  Projection* prjn = net->PrjnFromState(pst);
-  ProjectionSpec* ps = prjn->GetPrjnSpec();
-  return ps->HasRandomScale();  // if random scale, needs to save it!
-}
-
 
 
 ///////////////////////////////////////////////////////

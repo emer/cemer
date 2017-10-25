@@ -15,6 +15,8 @@
 
 #include "LeabraLayerSpec.h"
 #include <LeabraNetwork>
+#include <LeabraUnitSpec>
+#include <LeabraConSpec>
 #include <MemberDef>
 
 #include <taMisc>
@@ -38,10 +40,12 @@ SMARTREF_OF_CPP(LeabraLayerSpec);
 eTypeDef_Of(MarkerConSpec);
 
 #include <LeabraUnitSpec_cpp>
+#include <LeabraConSpec_cpp>
 
 #include <State_main>
 
 #include "LeabraLayerSpec_core.cpp"
+
 
 //////////////////////////////////////////////////////////
 
@@ -142,26 +146,17 @@ void LeabraLayer::CheckInhibCons(LeabraNetwork* net) {
   }
 }
 
-void LeabraLayerSpec::DecayState(LeabraLayer* lay, LeabraNetwork* net, float decay_val) {
-  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
-    if(u->lesioned()) continue;
-    ((LeabraUnitSpec*)u->GetUnitSpec())->DecayState
-      ((LeabraUnitState_cpp*)u->GetUnitState(), (LeabraNetworkState_cpp*)net->net_state,
-       u->thread_no, decay_val);
-  }
-}
-
-
 ///////////////////////////////////////////////////////////////////////
 //      TrialInit -- at start of trial
 
 void LeabraLayerSpec::Trial_Init_Specs(LeabraLayer* lay, LeabraNetwork* net) {
+  // NOTE: this must be called by regular LeabraNetwork and is not called in state!
   if(lay->unit_spec.SPtr()) {
     ((LeabraUnitSpec*)lay->unit_spec.SPtr())->Trial_Init_Specs(net);
   }
 
   FOREACH_ELEM_IN_GROUP(LeabraPrjn, p, lay->projections) {
-    if(p->NotActive()) continue;
+    if(p->MainNotActive()) continue;
     p->Trial_Init_Specs(net);
   }
 
@@ -181,13 +176,14 @@ float LeabraLayerSpec::Compute_AvgExt(LeabraLayer* lay, LeabraNetwork* net) {
   // todo: could do this in a state / thread compatible way..
   float avg_ext = 0.0f;
   int avg_n = 0;
-  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
+  for(int ui = 0; ui < lay->n_units; ui++) {
+    LEABRA_UNIT_STATE* u = (LEABRA_UNIT_STATE*)lay->GetUnitState(net->net_state, ui);
     if(u->lesioned()) continue;
     if(lay->HasExtFlag(UnitState_cpp::TARG)) { // targ comes first b/c not copied to ext at this point yet!
-      avg_ext += u->targ();
+      avg_ext += u->targ;
     }
     else if(lay->HasExtFlag(UnitState_cpp::EXT)) {
-      avg_ext += u->ext();
+      avg_ext += u->ext;
     }
     avg_n++;
   }
@@ -213,25 +209,26 @@ void LeabraLayerSpec::Compute_OutputName_ugp
     *onm = "n/a";
     return;
   }
-  LeabraUnit* u = (LeabraUnit*)net->UnFmIdx(gpd->acts_eq.max_i); // max_i = flat now
+  LeabraUnitState_cpp* u = (LeabraUnitState_cpp*)net->GetUnitState(gpd->acts_eq.max_i); // max_i = flat now
   if(!u || u->lesioned()) {
     *onm = "n/a";
     return;
   }
+  String un_nm = lay->GetUnitName(u);
   // for target/output layers, if we set something, set network name!
-  if(u->name.empty()) return;
-  *onm = u->name;       // if it is something..
+  if(un_nm.empty()) return;
+  *onm = un_nm;       // if it is something..
 
   if(lay->unit_groups) {        // also aggregate the layer name
     if(lay->output_name.nonempty())
       lay->output_name += "_";
-    lay->output_name += u->name;
+    lay->output_name += un_nm;
   }
 
   if((lay->layer_type != Layer::OUTPUT) && (lay->layer_type != Layer::TARGET)) return;
   if(net->output_name.nonempty())
     net->output_name += "_";
-  net->output_name += u->name;
+  net->output_name += un_nm;
 }
 
 void LeabraLayerSpec::Compute_OutputName(LeabraLayer* lay, LeabraNetwork* net) {
@@ -261,100 +258,4 @@ void LeabraLayerSpec::LayerAvgAct(DataTable* report_table) {
   net->LayerAvgAct(report_table, this);
 }
 
-
-// todo: move to state
-
-void LeabraLayerSpec::Compute_AbsRelNetin(LeabraLayer* lay, LeabraNetwork* net) {
-  NetworkState_cpp* net_state = net->net_state;
-  
-  LeabraLayerState_cpp* lst = (LeabraLayerState_cpp*)net_state->GetLayerState(lay->layer_idx);
-  LeabraUnGpState_cpp* lgpd = (LeabraUnGpState_cpp*)lst->GetLayUnGpState(net_state);
-
-  if(lgpd->netin.max < 0.01f) return; // not getting enough activation to count!
-
-  // layer is automatic
-  lay->avg_netin_sum.avg += lgpd->netin_m.avg;
-  lay->avg_netin_sum.max += lgpd->netin_m.max;
-  lay->avg_netin_n++;
-
-  // but projection level is not
-  if(net->NetinPerPrjn() || net->rel_netin.ComputeNow(net->epoch, net->trial)) {
-    float sum_net = 0.0f;
-    for(int i=0;i<lay->projections.size;i++) {
-      LeabraPrjn* prjn = (LeabraPrjn*)lay->projections[i];
-      if(prjn->NotActive()) continue;
-      LeabraConSpec* cs = (LeabraConSpec*)prjn->GetConSpec();
-      prjn->netin_avg = 0.0f;
-      int netin_avg_n = 0;
-      FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
-        if(u->lesioned()) continue;
-        LeabraUnitSpec* us = (LeabraUnitSpec*)u->GetUnitSpec();
-        if(u->act_eq() < us->opt_thresh.send) continue; // ignore if not above sending thr
-        LeabraConState_cpp* cg = (LeabraConState_cpp*)u->RecvConStatePrjn(prjn);
-        if(!cg) continue;
-        float netin;
-        if(net->NetinPerPrjn()) {
-          netin = cg->net_raw;
-        }
-        else {
-          netin = cs->Compute_Netin(cg, net_state, u->thread_no);
-          // otherwise have to compute it
-        }
-        cg->net = netin;
-        prjn->netin_avg += netin;
-        netin_avg_n++;
-      }
-      if(netin_avg_n > 0)
-        prjn->netin_avg /= (float)netin_avg_n;
-      sum_net += prjn->netin_avg;
-    }
-
-    for(int i=0;i<lay->projections.size;i++) {
-      LeabraPrjn* prjn = (LeabraPrjn*)lay->projections[i];
-      if(prjn->NotActive()) continue;
-      if(sum_net > 0.0f)
-        prjn->netin_rel = prjn->netin_avg / sum_net;
-      // increment epoch-level
-      prjn->avg_netin_avg_sum += prjn->netin_avg;
-      prjn->avg_netin_rel_sum += prjn->netin_rel;
-      prjn->avg_netin_n++;
-    }
-  }
-}
-
-void LeabraLayerSpec::Compute_AvgAbsRelNetin(LeabraLayer* lay, LeabraNetwork* net) {
-#ifdef DMEM_COMPILE
-  lay->DMem_ComputeAggs(net->dmem_trl_comm.comm);
-#endif
-  if(lay->avg_netin_n > 0) {
-    lay->avg_netin.avg = lay->avg_netin_sum.avg / (float)lay->avg_netin_n;
-    lay->avg_netin.max = lay->avg_netin_sum.max / (float)lay->avg_netin_n;
-  }
-  lay->avg_netin_sum.avg = 0.0f;
-  lay->avg_netin_sum.max = 0.0f;
-  lay->avg_netin_n = 0;
-  for(int i=0;i<lay->projections.size;i++) {
-    LeabraPrjn* prjn = (LeabraPrjn*)lay->projections[i];
-    if(prjn->NotActive()) continue;
-#ifdef DMEM_COMPILE
-    prjn->DMem_ComputeAggs(net->dmem_trl_comm.comm);
-#endif
-    if(prjn->avg_netin_n > 0) {
-      prjn->avg_netin_avg = prjn->avg_netin_avg_sum / (float)prjn->avg_netin_n;
-      prjn->avg_netin_rel = prjn->avg_netin_rel_sum / (float)prjn->avg_netin_n;
-    }
-    prjn->avg_netin_n = 0;
-    prjn->avg_netin_avg_sum = 0.0f;
-    prjn->avg_netin_rel_sum = 0.0f;
-  }
-}
-
-void LeabraLayerSpec::ClearDeepActs(LeabraLayer* lay, LeabraNetwork* net) {
-  LeabraNetworkState_cpp* net_state = (LeabraNetworkState_cpp*)net->net_state;
-  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
-    if(u->lesioned()) continue;
-    ((LeabraUnitSpec*)u->GetUnitSpec())->ClearDeepActs
-      ((LeabraUnitState_cpp*)u->GetUnitState(), net_state, u->thread_no);
-  }
-}
 

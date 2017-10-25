@@ -21,6 +21,7 @@
 
 
 #include <LeabraUnitSpec_cpp>
+#include <LeabraConSpec_cpp>
 
 #include <State_cpp>
 

@@ -402,6 +402,40 @@
   }
   // #CAT_Activation calculates short term depression of units by a trial by trial basis
   
+  INLINE void ApplyInputData(UNIT_STATE* u, NETWORK_STATE* net, float val,
+                             UnitState_cpp::ExtFlags act_ext_flags, bool na_by_range) override {
+    inherited::ApplyInputData(u, net, val, act_ext_flags, na_by_range);
+    ApplyInputData_post((LEABRA_UNIT_STATE*)u, net);
+  }
+  // #CAT_Activation apply input data value according to ext flags
+
+  INLINE virtual void ApplyInputData_post(LEABRA_UNIT_STATE* u, NETWORK_STATE* net) {
+    if(!u->HasExtFlag(UNIT_STATE::EXT))
+      return;
+    u->ext_orig = u->ext;
+  }
+  // #CAT_Activation post-apply input data -- cache the ext value b/c it might get overwritten in transforms of the input data, as in ScalarValLayerSpec
+
+  INLINE virtual void ExtToComp(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no)  {
+    if(!u->HasExtFlag(UNIT_STATE::EXT))
+      return;
+    u->ClearExtFlag(UNIT_STATE::EXT);
+    u->SetExtFlag(UNIT_STATE::COMP);
+    u->targ = u->ext_orig;        // orig is safer
+    u->ext = 0.0f;
+  }
+  // #CAT_Activation change external inputs to comparisons (remove input)
+  
+  INLINE virtual void TargExtToComp(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) {
+    if(!u->HasExtFlag(UNIT_STATE::TARG_EXT))
+      return;
+    if(u->HasExtFlag(UNIT_STATE::EXT))
+      u->targ = u->ext_orig;      // orig is safer
+    u->ext = 0.0f;
+    u->ClearExtFlag(UNIT_STATE::TARG_EXT);
+    u->SetExtFlag(UNIT_STATE::COMP);
+  }
+  // #IGNORE change target & external inputs to comparisons (remove targ & input)
 
   ///////////////////////////////////////////////////////////////////////
   //        QuarterInit -- at start of new gamma-quarter
@@ -531,35 +565,6 @@
   }
   // #CAT_Deep state update for deep leabra -- typically at start of new alpha trial
   
-  
-  INLINE virtual void ApplyInputData_post(LEABRA_UNIT_STATE* u) {
-    if(!u->HasExtFlag(UNIT_STATE::EXT))
-      return;
-    u->ext_orig = u->ext;
-  }
-  // #CAT_Activation post-apply input data -- cache the ext value b/c it might get overwritten in transforms of the input data, as in ScalarValLayerSpec
-
-  INLINE virtual void ExtToComp(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no)  {
-    if(!u->HasExtFlag(UNIT_STATE::EXT))
-      return;
-    u->ClearExtFlag(UNIT_STATE::EXT);
-    u->SetExtFlag(UNIT_STATE::COMP);
-    u->targ = u->ext_orig;        // orig is safer
-    u->ext = 0.0f;
-  }
-  // #CAT_Activation change external inputs to comparisons (remove input)
-  
-  INLINE virtual void TargExtToComp(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) {
-    if(!u->HasExtFlag(UNIT_STATE::TARG_EXT))
-      return;
-    if(u->HasExtFlag(UNIT_STATE::EXT))
-      u->targ = u->ext_orig;      // orig is safer
-    u->ext = 0.0f;
-    u->ClearExtFlag(UNIT_STATE::TARG_EXT);
-    u->SetExtFlag(UNIT_STATE::COMP);
-  }
-  // #IGNORE change target & external inputs to comparisons (remove targ & input)
-
   INIMPL virtual void Send_DeepCtxtNetin(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no);
   // #CAT_Deep send deep_raw to deep_ctxt netinput, using deepraw netin temp buffer -- not delta based
   

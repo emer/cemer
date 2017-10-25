@@ -75,7 +75,7 @@ void PrjnView::DoHighlightColor(bool apply) {
 void PrjnView::Render_pre() {
   NetView* nv = getNetView();
   Projection* prjn = this->prjn(); // cache
-  book projected = true;
+  bool projected = true;
   if(!nv || !nv->net() || !nv->net()->IsBuiltIntact()) {
     projected = false;
   }

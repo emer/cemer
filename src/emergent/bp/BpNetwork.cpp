@@ -16,7 +16,6 @@
 #include "BpNetwork.h"
 
 #include <BpLayer>
-#include <BpUnit>
 #include <BpUnitSpec_cpp>
 #include <BpUnitSpec>
 #include <BpConSpec>
@@ -37,12 +36,6 @@ void BpNetwork::Init_Weights() {
   prev_epoch = -1;
 }
   
-void BpNetwork::BuildNullUnit() {
-  if(!null_unit) {
-    taBase::OwnPointer((taBase**)&null_unit, new BpUnit, this);
-  }
-}
-
 NetworkState_cpp* BpNetwork::NewNetworkState() const {
   return new BpNetworkState_cpp;
 }
@@ -61,37 +54,34 @@ void BpNetwork::SetProjectionDefaultTypes(Projection* prjn) {
   prjn->con_spec.SetBaseType(&TA_BpConSpec);
 }
 
-void BpNetwork::SetCurLrate_Thr(int thr_no) {
-  const int nu = ThrNUnits(thr_no);
+void BpNetwork::SetCurLrate() {
+  const int nu = n_con_specs_built;
   for(int i=0; i<nu; i++) {
-    BpUnitState_cpp* uv = (BpUnitState_cpp*)ThrUnitState(thr_no, i);
-    if(uv->lesioned()) continue;
-    BpUnitSpec_cpp* bus = (BpUnitSpec_cpp*)uv->GetUnitSpec(net_state);
-    BpUnitSpec* bs = (BpUnitSpec*)UnitSpecFromState(bus);
-    bs->SetCurLrate(uv, (BpNetworkState_cpp*)net_state, thr_no);
+    BpConSpec* cs = (BpConSpec*)StateConSpec(i);
+    cs->SetCurLrate((BpNetworkState_cpp*)net_state);
   }
 }
 
 void BpNetwork::Trial_Run() {
   if(prev_epoch != epoch) {
     lrate_updtd = false;
-    NET_THREAD_CALL(BpNetwork::SetCurLrate_Thr);
+    SetCurLrate();
     prev_epoch = epoch;
     if(lrate_updtd) {
       taMisc::Info("cur_lrate updated at epoch:", String(epoch));
-      Cuda_UpdateSpecs();
+      // Cuda_UpdateSpecs();
     }
   }
-#ifdef CUDA_COMPILE
-  if(cuda.on) {
-    DataUpdate(true);
-    Cuda_Trial_Run();
-    DataUpdate(false);
-    return;
-  }
-#endif
+// #ifdef CUDA_COMPILE
+//   if(cuda.on) {
+//     DataUpdate(true);
+//     Cuda_Trial_Run();
+//     DataUpdate(false);
+//     return;
+//   }
+// #endif
   DataUpdate(true);
-  NET_THREAD_CALL(BpNetwork::Trial_Run_Thr);
+  NET_STATE_RUN(BpNetworkState, Trial_Run());
   DataUpdate(false);
 }
 

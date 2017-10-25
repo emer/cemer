@@ -16,6 +16,8 @@
 #include "NetworkVoxelMapper.h"
 #include <Network>
 #include <BrainAtlas>
+#include <taVector3f>
+#include <Voxel>
 
 #include <taMisc>
 
@@ -38,7 +40,7 @@ class NetworkVoxelMapper::LayerInfo
 {
 public:
   LayerInfo(Layer *layer);
-  Unit *GetUnit(unsigned idx) const;
+  UnitState_cpp *GetUnit(unsigned idx) const;
 
   const Layer *lay;
   const unsigned num_units;
@@ -49,17 +51,18 @@ public:
 
 NetworkVoxelMapper::LayerInfo::LayerInfo(Layer *layer)
   : lay(layer)
-  , num_units(layer->UnitAccess_NUnits(Layer::ACC_LAY))
+  , num_units(layer->n_units)
   , adjusted_fill_pct(0.0)
   , num_subvoxels(0)
 {
 }
 
-Unit *
+UnitState_cpp *
 NetworkVoxelMapper::LayerInfo::GetUnit(unsigned idx) const
 {
   assert(idx < num_units);
-  Unit *unit = lay->UnitAccess(Layer::ACC_LAY, idx, 0);
+  
+  UnitState_cpp *unit = lay->GetUnitState(lay->own_net->net_state, idx);
   // May be null, if Layer was just created and Network not rebuilt.
   return unit;
 }
@@ -270,9 +273,10 @@ NetworkVoxelMapper::AssignVoxelsToLayers(
     // Point at the first unit in the layer to start with, then when
     // the algo "bumps" the Y dimension, move on to the next unit.
     unsigned unit_idx = 0;
-    Unit *unit = li->GetUnit(unit_idx);
-    unit->MakeVoxelsList();
-    unit->voxels->Reset();
+    UnitState_cpp *unit = li->GetUnit(unit_idx);
+    // unit->MakeVoxelsList();
+    // unit->voxels->Reset();
+    // todo: need to put these voxels all on the layer!
 
     // Repeat until all subvoxels for this layer have been assigned.
     for (unsigned count = 0; count < li->num_subvoxels; ++count) {
@@ -285,7 +289,7 @@ NetworkVoxelMapper::AssignVoxelsToLayers(
       voxel->size = unit->lesioned() ? 0.0 : voxel_size;
 
       // Add it to this unit's voxel list.
-      unit->voxels->Add(voxel);
+      // unit->voxels->Add(voxel);
 
       if (DEBUG_LEVEL > 1) {
         std::cout << "  Added voxel to unit " << li->lay->name.chars()
@@ -314,8 +318,8 @@ NetworkVoxelMapper::AssignVoxelsToLayers(
 
         // Update the pointer and reset the new unit's voxel list.
         unit = li->GetUnit(unit_idx);
-	unit->MakeVoxelsList();
-        unit->voxels->Reset();
+	// unit->MakeVoxelsList();
+        // unit->voxels->Reset();
       }
 
       D += dy;
@@ -357,9 +361,9 @@ NetworkVoxelMapper::ClearVoxelAssignmentForLayer(LayerInfo *li)
   // Iterate through units.
   for (unsigned idx = 0; idx < li->num_units; ++idx) {
     // Reset each unit's voxel list.
-    if (Unit *unit = li->GetUnit(idx)) {
-      if(unit->voxels)
-	unit->voxels->Reset();
+    if (UnitState_cpp *unit = li->GetUnit(idx)) {
+      // if(unit->voxels)
+      //   unit->voxels->Reset();
     }
   }
 }

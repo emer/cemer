@@ -271,7 +271,7 @@
   // #IGNORE allocate sending connections based on those allocated previously
 
   INIMPL void  LayoutUnits(NETWORK_STATE* net);
-  // #CAT_State layout UnitState positions within the layer, for both structural and display positions
+  // #IGNORE layout UnitState positions within the layer, for both structural and display positions
 
   INIMPL void  Init_Weights(NETWORK_STATE* net, bool recv_cons);
   // #CAT_State initialize weights for all the recv or send projections in this layer

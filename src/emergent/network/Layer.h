@@ -247,8 +247,6 @@ public:
 
   virtual void  CheckSpecs();
   // #CAT_Structure check to make sure that specs are not null and set to the right type, and update with new specs etc to fix any errors (with notify), so that at least network operations will not crash -- called in Build and CheckConfig
-  virtual void  BuildUnits();
-  // #IGNORE build the units based current geometry configuration
   virtual void  UpdatePrjnIdxs();
   // #IGNORE update the recv_idx, send_idx guys for active projections, and count number of prjns of each type
   virtual void  UpdateGeometry();
@@ -313,8 +311,8 @@ public:
   virtual UnitState_cpp* FindUnitNamed(const String& nm, bool err = true);
   // #CAT_Structure look in unit_names for given name -- returns flat index of the corresponding unit in the layer if err = true, issues an error if not found
 
-  virtual String GetUnitNameIdx(int flat_un_idx);
-  // #CAT_Structure get name for given unit flat index within layer
+  virtual String GetUnitNameIdx(int un_idx);
+  // #CAT_Structure get name for given unit index within layer
   virtual String GetUnitName(UnitState_cpp* un);
   // #CAT_Structure get name for given unit
 

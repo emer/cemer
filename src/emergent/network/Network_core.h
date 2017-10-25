@@ -126,14 +126,14 @@
 
   INLINE void    ClearIntact()  { ClearNetFlag(INTACT); }
   // call this when any element in the network is updated such that the current built status is no longer valid 
-  INLINE bool    IsIntact()  { return HasNetFlag(INTACT); }
+  INLINE bool    IsIntact() const { return HasNetFlag(INTACT); }
   // is this network currently intact?
-  INLINE bool    IsBuiltIntact()  { return HasNetFlag(BUILT) && HasNetFlag(INTACT); }
+  INLINE bool    IsBuiltIntact() const { return HasNetFlag(BUILT) && HasNetFlag(INTACT); }
   // is this network currently built and intact?
-  INLINE bool    NetinPerPrjn() { return HasNetFlag(NETIN_PER_PRJN); }
+  INLINE bool    NetinPerPrjn() const { return HasNetFlag(NETIN_PER_PRJN); }
   // #CAT_Activation is this network configured to compute net input on a per-prjn basis?
 
-  INLINE virtual bool  RecvOwnsCons() { return true; }
+  INLINE virtual bool  RecvOwnsCons() const { return true; }
   // #CAT_Structure does the receiver own the connections (default) or does the sender?
 
   // NOTE: specific classes must define these methods!
@@ -143,7 +143,7 @@
   // INLINE bool  NetStateFree(void** ptr) const { *ptr = NULL; return false; }
   // // #IGNORE free previously-malloc'd memory for network state in pointer and set *ptr = NULL -- each platform needs this defined
 
-  INLINE const char* GetStateSuffix() { return STATE_SUFFIX_STR; }
+  INLINE const char* GetStateSuffix() const { return STATE_SUFFIX_STR; }
   // #CAT_State get the suffix string for this state type ("_cpp", "_cuda", or blank for main)
   
   INLINE void   SetStateSizes(int nthr, int lay_sz, int prjn_sz, int ungp_sz, int unit_sz,

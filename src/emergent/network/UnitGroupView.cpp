@@ -109,13 +109,17 @@ void UnitGroupView::BuildAll() {
 
   Layer* lay = this->layer(); //cache
   if(!lay) return;
+
+  Network* net = lay->own_net;
+  if(!net->IsBuiltIntact()) return;
+  
   for(int li=0; li < lay->n_units; li++) {
-    UnitState_cpp* unit = lay->GetUnitState(li);
+    UnitState_cpp* unit = lay->GetUnitState(net->net_state, li);
     if (!unit) continue;
     if(unit->lesioned()) continue;
 
     UnitView* uv = new UnitView();
-    uv->SetData(unit);
+    uv->SetData((taBase*)unit);
     children.Add(uv);
   }
 }
@@ -224,7 +228,7 @@ void UnitGroupView::UpdateUnitViewBase_Con_impl
   if(!lay) return;
   Network* net = lay->own_net;
 
-  Layer* src_u_lay = src_u->own_lay();
+  LAYER_STATE* src_u_lay = src_u->GetOwnLayer(net->net_state);
   
   taVector2i coord;
   for(coord.y = 0; coord.y < lay->flat_geom.y; coord.y++) {
@@ -235,13 +239,14 @@ void UnitGroupView::UpdateUnitViewBase_Con_impl
       if(unit->lesioned()) continue;
 
       if (is_send) {
-        for(int g=0;g<unit->NRecvConGps();g++) {
-          ConState_cpp* tcong = unit->RecvConState(g);
+        int nrcg = unit->NRecvConGps(net->net_state);
+        for(int g=0; g < nrcg; g++) {
+          ConState_cpp* tcong = unit->RecvConState(net->net_state, g);
           if(tcong->NotActive()) continue;
-          PrjnState_cpp* pjs = tcong->GetPrjnState(net->net_state);
-          Projection* prjn = net->PrjnFromState(pjs);
-          if(prjn->from.ptr() != src_u_lay) continue;
-          if(check_prjn && !prjn->name.startsWith(prjn_starts_with))
+          PrjnState_cpp* prjn = tcong->GetPrjnState(net->net_state);
+          Projection* mprjn = net->PrjnFromState(prjn);
+          if(prjn->send_lay_idx != src_u_lay->layer_idx) continue;
+          if(check_prjn && !mprjn->name.startsWith(prjn_starts_with))
             continue;
           MemberDef* act_md = tcong->ConType(net)->members.FindName(nm);
           if (!act_md)  continue;
@@ -253,14 +258,15 @@ void UnitGroupView::UpdateUnitViewBase_Con_impl
         }
       }
       else {
-        for(int g=0;g<unit->NSendConGps();g++) {
-          ConState_cpp* tcong = unit->SendConState(g);
+        int nscg = unit->NSendConGps(net->net_state);
+        for(int g=0; g < nscg; g++) {
+          ConState_cpp* tcong = unit->SendConState(net->net_state, g);
           if(tcong->NotActive()) continue;
-          PrjnState_cpp* pjs = tcong->GetPrjnState(net->net_state);
-          Projection* prjn = net->PrjnFromState(pjs);
-          if(prjn->layer != src_u_lay) continue;
-          if(check_prjn && prjn->IsActive() &&
-             !prjn->name.startsWith(prjn_starts_with))
+          PrjnState_cpp* prjn = tcong->GetPrjnState(net->net_state);
+          Projection* mprjn = net->PrjnFromState(prjn);
+          if(prjn->recv_lay_idx != src_u_lay->layer_idx) continue;
+          if(check_prjn && mprjn->MainIsActive() &&
+             !mprjn->name.startsWith(prjn_starts_with))
             continue;
           if(nm == "wt*act") {
             MemberDef* act_md = tcong->ConType(net)->members.FindName("wt");
@@ -291,6 +297,7 @@ void UnitGroupView::UpdateUnitViewBase_Con_impl
 void UnitGroupView::UpdateUnitViewBase_Unit_impl(int midx, MemberDef* disp_md) {
   Layer* lay = this->layer(); //cache
   if(!lay) return;
+  Network* net = lay->own_net;
   taVector2i coord;
   for(coord.y = 0; coord.y < lay->flat_geom.y; coord.y++) {
     for(coord.x = 0; coord.x < lay->flat_geom.x; coord.x++) {
@@ -306,7 +313,8 @@ void UnitGroupView::UpdateUnitViewBase_Unit_impl(int midx, MemberDef* disp_md) {
 void UnitGroupView::UpdateUnitViewBase_Sub_impl(int midx, MemberDef* disp_md) {
   Layer* lay = this->layer(); //cache
   if(!lay) return;
-  TypeDef* own_td = lay->units.el_typ; // should be unit type
+  Network* net = lay->own_net;
+  TypeDef* own_td = net->UnitStateType();
   ta_memb_ptr net_mbr_off = 0;
   int net_base_off = 0;
   MemberDef* smd = TypeDef::FindMemberPathStatic(own_td, net_base_off, net_mbr_off,
@@ -414,7 +422,7 @@ void UnitGroupView::GetUnitColor(NetView* nv, const taVector2i& pos, UnitState_c
                                  float& val) {
   float trans = nv->view_params.unit_trans;
   nv->GetUnitDisplayVals(this, pos, val, col, sc_val);
-  if(nv->unit_con_md && (unit == nv->unit_src.ptr())) {
+  if(nv->unit_con_md && (unit == nv->unit_src)) {
     col.r = 0.0f; col.g = 1.0f; col.b = 0.0f;
   }
   if(unit && unit->lesioned()) {
@@ -432,6 +440,8 @@ void UnitGroupView::Render_impl_children() {
   NetView* nv = getNetView(); //cache
   Layer* lay = this->layer(); //cache
   if(!lay || !nv) return;
+  Network* net = lay->own_net;
+  if(!net->IsBuiltIntact()) return;
 
   if(lay->Iconified() || !lv() || (lv()->disp_mode == LayerView::DISP_FRAME)) {
     return;                     // don't render anything!
@@ -538,24 +548,25 @@ void UnitGroupView::Render_impl_children() {
           at = unit_so->captionNode(true);
         SoMFString* mfs = &(at->string);
         // fastest is to do each case in one operation
+        String un_nm = lay->GetUnitName(unit);
         switch (nv->unit_text_disp) {
         case NetView::UTD_VALUES:
           mfs->setValue(val_str.chars());
           break;
         case NetView::UTD_NAMES:
-          if(unit->name.empty())
+          if(un_nm.empty())
             mfs->setValue(" "); // need a non-empty string for SoAsciiText on some Coin versions
           else
-            mfs->setValue(unit->name.chars());
+            mfs->setValue(un_nm.chars());
           break;
         case NetView::UTD_BOTH:
-          if(unit->name.empty()) {
+          if(un_nm.empty()) {
             mfs->setValue(val_str.chars());
           }
           else {
             const char* strs[2];
             strs[0] = val_str.chars();
-            strs[1] = unit->name.chars();
+            strs[1] = un_nm.chars();
             mfs->setValues(0, 2, strs);
           }
           break;
@@ -575,6 +586,8 @@ void UnitGroupView::Render_impl_blocks() {
   NetView* nv = getNetView(); //cache
   Layer* lay = this->layer(); //cache
   if(!lay) return;
+  Network* net = lay->own_net;
+  if(!net->IsBuiltIntact()) return;
   T3UnitGroupNode* node_so = this->node_so(); // cache
 
   const float disp_scale = lay->disp_scale;
@@ -892,7 +905,7 @@ void UnitGroupView::Render_impl_blocks() {
 //      }
         if(nv->unit_text_disp & NetView::UTD_NAMES) {
           if(unit)
-            unit_name = unit->name;
+            unit_name = lay->GetUnitName(unit);
         }
         SoMFString* mfs = &(txt->string);
         // fastest is to do each case in one operation
@@ -1123,6 +1136,8 @@ void UnitGroupView::UpdateUnitValues_blocks() {
   NetView* nv = getNetView(); //cache
   Layer* lay = this->layer(); //cache
   if(!lay) return;
+  Network* net = lay->own_net;
+  if(!net->IsBuiltIntact()) return;
   T3UnitGroupNode* node_so = this->node_so(); // cache
   if(!node_so) return;
 
@@ -1249,6 +1264,8 @@ void UnitGroupView::UpdateUnitValues() {
   NetView* nv = getNetView(); //cache
   Layer* lay = this->layer(); //cache
   if(!lay) return;
+  Network* net = lay->own_net;
+  if(!net->IsBuiltIntact()) return;
   if(lay->Iconified() || !lv() || lv()->disp_mode == LayerView::DISP_FRAME) {
     return;                     // don't render anything!
   }
@@ -1271,6 +1288,8 @@ void UnitGroupView::SaveHist() {
   NetView* nv = getNetView(); //cache
   Layer* lay = this->layer(); //cache
   if(!lay) return;
+  Network* net = lay->own_net;
+  if(!net->IsBuiltIntact()) return;
 
   // bump up the frame circ idx..
   int circ_idx = uvd_hist_idx.CircAddLimit(nv->hist_max);
@@ -1304,6 +1323,8 @@ void UnitGroupView::Render_impl_outnm() {
   NetView* nv = getNetView(); //cache
   Layer* lay = this->layer(); //cache
   if(!lay) return;
+  Network* net = lay->own_net;
+  if(!net->IsBuiltIntact()) return;
   T3UnitGroupNode* node_so = this->node_so(); // cache
 
 #ifdef TA_QT3D
@@ -1361,6 +1382,8 @@ void UnitGroupView::UpdateUnitValues_outnm() {
   //  NetView* nv = getNetView(); //cache
   Layer* lay = this->layer(); //cache
   if(!lay) return;
+  Network* net = lay->own_net;
+  if(!net->IsBuiltIntact()) return;
   T3UnitGroupNode* node_so = this->node_so(); // cache
   if(!node_so) return;
 
@@ -1389,6 +1412,8 @@ void UnitGroupView::Render_impl_snap_bord() {
 
   Layer* lay = this->layer(); //cache
   if(!lay) return;
+  Network* net = lay->own_net;
+  if(!net->IsBuiltIntact()) return;
 
   bool do_lines = nv->snap_bord_disp;
 
@@ -1521,6 +1546,8 @@ void UnitGroupView::UpdateUnitValues_snap_bord() {
 
   Layer* lay = this->layer(); //cache
   if(!lay) return;
+  Network* net = lay->own_net;
+  if(!net->IsBuiltIntact()) return;
   T3UnitGroupNode* node_so = this->node_so(); // cache
 
   float trans = nv->view_params.unit_trans;

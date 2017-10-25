@@ -15,6 +15,7 @@
 
 #include "LeabraLayer.h"
 #include <LeabraNetwork>
+#include <LeabraUnitSpec>
 
 eTypeDef_Of(TwoDValLayerSpec);
 
@@ -25,7 +26,6 @@ void LeabraLayer::Initialize() {
   spec.SetBaseType(&TA_LeabraLayerSpec);
   projections.SetBaseType(&TA_LeabraPrjn);
   send_prjns.SetBaseType(&TA_LeabraPrjn);
-  units.SetBaseType(&TA_LeabraUnit);
   unit_spec.SetBaseType(&TA_LeabraUnitSpec);
 
   Initialize_lay_core();
@@ -80,10 +80,6 @@ bool LeabraLayer::SetLayerSpec(LayerSpec* sp) {
   return true;
 }
 
-void LeabraLayer::BuildUnits() {
-  inherited::BuildUnits();
-}
-
 
 #ifdef DMEM_COMPILE
 void LeabraLayer::DMem_InitAggs() {
@@ -96,14 +92,14 @@ void LeabraLayer::DMem_ComputeAggs(MPI_Comm comm) {
 #endif
 
 bool LeabraLayer::TwoDValMode() {
-  LeabraLayerSpec* ls = (LeabraLayerSpec*)GetLayerSpec();
+  LeabraLayerSpec* ls = (LeabraLayerSpec*)GetMainLayerSpec();
   if(!ls) return false;
   // return (ls->InheritsFrom(&TA_TwoDValLayerSpec));
   return false;
 }
 
-void LeabraLayer::ApplyInputData_2d(taMatrix* data, ExtFlags ext_flags,
-                              Random* ran, const taVector2i& offs, bool na_by_range) {
+void LeabraLayer::ApplyInputData_2d(NETWORK_STATE* net, taMatrix* data, ExtFlags ext_flags,
+                                    Random* ran, const taVector2i& offs, bool na_by_range) {
   if(TwoDValMode()) {
     // todo: needs lgpd
     // only no unit_group supported!
@@ -128,12 +124,12 @@ void LeabraLayer::ApplyInputData_2d(taMatrix* data, ExtFlags ext_flags,
     }
   }
   else {
-    inherited::ApplyInputData_2d(data, ext_flags, ran, offs, na_by_range);
+    inherited::ApplyInputData_2d(net, data, ext_flags, ran, offs, na_by_range);
   }
 }
 
-void LeabraLayer::ApplyInputData_Flat4d(taMatrix* data, ExtFlags ext_flags,
-                                  Random* ran, const taVector2i& offs, bool na_by_range) {
+void LeabraLayer::ApplyInputData_Flat4d(NETWORK_STATE* net, taMatrix* data, ExtFlags ext_flags,
+                                        Random* ran, const taVector2i& offs, bool na_by_range) {
   if(TwoDValMode()) {
     // outer-loop is data-group (groups of x-y data items)
     if(TestError(!unit_groups, "ApplyInputData_Flat4d",
@@ -147,23 +143,24 @@ void LeabraLayer::ApplyInputData_Flat4d(taMatrix* data, ExtFlags ext_flags,
           int u_y = offs.y + dg_y * data->dim(1) + d_y; // multiply out data indicies
           for(int d_x = 0; d_x < data->dim(0); d_x++) {
             int u_x = offs.x + dg_x * data->dim(0) + d_x; // multiply out data indicies
-            Unit* un = UnitAtCoord(u_x, u_y);
-            if(un) {
-              float val = data->SafeElAsVar(d_x, d_y, dg_x, dg_y).toFloat();
-              un->ApplyInputData(val, (UnitState_cpp::ExtFlags)ext_flags, ran, na_by_range);
-            }
+            // todo: I don't get what is going on here!?
+            // Unit* un = UnitAtCoord(u_x, u_y);
+            // if(un) {
+            //   float val = data->SafeElAsVar(d_x, d_y, dg_x, dg_y).toFloat();
+            //   un->ApplyInputData(val, (UnitState_cpp::ExtFlags)ext_flags, ran, na_by_range);
+            // }
           }
         }
       }
     }
   }
   else {
-    inherited::ApplyInputData_Flat4d(data, ext_flags, ran, offs, na_by_range);
+    inherited::ApplyInputData_Flat4d(net, data, ext_flags, ran, offs, na_by_range);
   }
 }
 
-void LeabraLayer::ApplyInputData_Gp4d(taMatrix* data, ExtFlags ext_flags, Random* ran,
-                                bool na_by_range) {
+void LeabraLayer::ApplyInputData_Gp4d(NETWORK_STATE* net, taMatrix* data, ExtFlags ext_flags,
+                                      Random* ran, bool na_by_range) {
   if(TwoDValMode()) {
     // outer-loop is data-group (groups of x-y data items)
     for(int dg_y = 0; dg_y < data->dim(3); dg_y++) {
@@ -185,6 +182,6 @@ void LeabraLayer::ApplyInputData_Gp4d(taMatrix* data, ExtFlags ext_flags, Random
     }
   }
   else {
-    inherited::ApplyInputData_Gp4d(data, ext_flags, ran, na_by_range);
+    inherited::ApplyInputData_Gp4d(net, data, ext_flags, ran, na_by_range);
   }
 }

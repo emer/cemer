@@ -22,6 +22,7 @@
 #include <T3Color>
 #include <BrainAtlas>
 #include <taMath_float>
+#include <Voxel>
 
 #include <T3Misc>
 #include <taMisc>
@@ -124,11 +125,13 @@ void BrainVolumeView::AllocUnitViewData()
   // need to determine number of units that are mapped...
   FOREACH_ELEM_IN_GROUP(Layer, lay, net->layers) {
     if (lay->lesioned() || lay->Iconified() || lay->brain_area.empty()) continue;
-    FOREACH_ELEM_IN_GROUP_NESTED(Unit, u, lay->units) {
-      if (!u->voxels || u->voxels->size == 0) continue;
-      if (u->lesioned()) continue;
-      i++;
-    }
+    // todo: put voxels in layer!
+    // for(int ui = 0; ui < lay->n_units; ui++) {
+    //   UNIT_STATE* u = lay->GetUnitState(net, ui);
+    //   if (!u->voxels || u->voxels->size == 0) continue;
+    //   if (u->lesioned()) continue;
+    //   i++;
+    // }
   }
   if (i == 0) return;
 
@@ -813,37 +816,39 @@ void BrainVolumeView::CreateFaceSets()
   int i=0;
   FOREACH_ELEM_IN_GROUP_NESTED(Layer, lay, net->layers) {
     if (lay->lesioned() || lay->Iconified() || lay->brain_area.empty()) continue;
-    FOREACH_ELEM_IN_GROUP_NEST2(Unit, u, lay->units) {
-      if (u->lesioned()) continue;
-      if (!u->voxels || u->voxels->size == 0) continue;
-      // TODO: for now, assumes only one voxel per unit.  Update to handle multiple.
-      FOREACH_ELEM_IN_LIST(Voxel, v, *(u->voxels)) {
-        if (v->size == 0) continue;
+    // todo:
+    // for(int ui = 0; ui < lay->n_units; ui++) {
+    //   UNIT_STATE* u = lay->GetUnitState(net, ui);
+    //   if (u->lesioned()) continue;
+    //   // if (!u->voxels || u->voxels->size == 0) continue;
+    //   // TODO: for now, assumes only one voxel per unit.  Update to handle multiple.
+    //   FOREACH_ELEM_IN_LIST(Voxel, v, *(u->voxels)) {
+    //     if (v->size == 0) continue;
 
-        taVector3f mniCoord(v->coord);
-        taVector3f ijkCoord(m_brain_data->XyzToIjk(mniCoord));
-        if ((view_plane == BrainView::AXIAL) || (view_plane == BrainView::SAGITTAL)) {
-          // reverse x coordinates:
-          // we must do this for these views since we don't render the brain in neurological
-          // convention (which would be looking from the feet in Axial) - thus our X and
-          // how X in the data is stored are reversed
-            ijkCoord.x = taMath_float::fabs(ijkCoord.x - (dims.x - 1));
-        }
+    //     taVector3f mniCoord(v->coord);
+    //     taVector3f ijkCoord(m_brain_data->XyzToIjk(mniCoord));
+    //     if ((view_plane == BrainView::AXIAL) || (view_plane == BrainView::SAGITTAL)) {
+    //       // reverse x coordinates:
+    //       // we must do this for these views since we don't render the brain in neurological
+    //       // convention (which would be looking from the feet in Axial) - thus our X and
+    //       // how X in the data is stored are reversed
+    //         ijkCoord.x = taMath_float::fabs(ijkCoord.x - (dims.x - 1));
+    //     }
 
-        if (view_plane == BrainView::AXIAL) {
-          m_units_depth_map.insert((unsigned int)ijkCoord.z, v);
-        }
-        else if (view_plane == BrainView::SAGITTAL) {
-          m_units_depth_map.insert((unsigned int)ijkCoord.x, v);
-        }
-        else { //CORONAL
-          m_units_depth_map.insert((unsigned int)ijkCoord.y, v);
-        }
-        m_voxel_map.insert(v, ijkCoord);
-        m_uvd_bases_map.insert(u,i); //map unit* to index, so we can index into uvd_bases
-      }
-      i++;
-    }
+    //     if (view_plane == BrainView::AXIAL) {
+    //       m_units_depth_map.insert((unsigned int)ijkCoord.z, v);
+    //     }
+    //     else if (view_plane == BrainView::SAGITTAL) {
+    //       m_units_depth_map.insert((unsigned int)ijkCoord.x, v);
+    //     }
+    //     else { //CORONAL
+    //       m_units_depth_map.insert((unsigned int)ijkCoord.y, v);
+    //     }
+    //     m_voxel_map.insert(v, ijkCoord);
+    //     m_uvd_bases_map.insert(u,i); //map unit* to index, so we can index into uvd_bases
+    //   }
+    //   i++;
+    // }
   }
 
   // iterate over all slices, and for each voxel at that slice depth, create face in face set

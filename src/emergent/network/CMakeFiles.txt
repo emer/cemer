@@ -20,7 +20,6 @@ set(network_HEADS_MAKETA_base
   Schedule.h
   PRerrVals.h
 
-  UnitRef.h
   LayerRef.h
   ProjectionRef.h
   NetworkRef.h
@@ -30,8 +29,6 @@ set(network_HEADS_MAKETA_base
   Projection.h
   Projection_Group.h
 
-  ProjectionSpec.h
-  ProjectionSpec_cpp.h
   LayerSpec.h
   Layer_Group.h
   Layer_PtrList.h
@@ -47,9 +44,6 @@ set(network_HEADS_MAKETA_base
   
   Network_Group.h
 
-  AllProjectionSpecs_cpp.h
-  AllProjectionSpecs.h
-  
   LayerDataEl.h
   LayerDataEl_List.h
   LayerWriterEl.h
@@ -99,7 +93,7 @@ set(network_HEADS_MAKETA_base
 
 # multiple inheritence -- in correspondence with deps below
 set(network_HEADS_MAKETA_MI
-    Layer.h
+  Layer.h
   Network.h
   NetworkState_cpp.h
   LayerState_cpp.h
@@ -112,12 +106,15 @@ set(network_HEADS_MAKETA_MI
   ConSpec_cpp.h
   ConSpec.h
   UnitSpec.h
+  ProjectionSpec_cpp.h
+  ProjectionSpec.h
+  AllProjectionSpecs_cpp.h
+  AllProjectionSpecs.h
 )
 
 # note: there must be exactly same number of dependencies for each item
 # you can just add redundant ones to make it all work out
 set(network_HEADS_MAKETA_MI_DEPS
-"../../temt/ta_core/taBase.h;ProjectionSpec.h;BaseSpec.h"
 "Layer_core.h;State_defs.h;State_cpp.h"
 "Network_core.h;Network_mbrs.h;State_defs.h"
 "Network_core.h;NetworkState_core.h;Network_mbrs.h"
@@ -131,6 +128,10 @@ set(network_HEADS_MAKETA_MI_DEPS
 "ConSpec_core.h;ConSpec_mbrs.h;State_cpp.h"
 "ConSpec_core.h;ConSpec_mbrs.h;State_base.h"
 "UnitSpec_core.h;State_defs.h;State_base.h"
+"ProjectionSpec_core.h;ProjectionSpec_mbrs.h;State_base.h"
+"ProjectionSpec_core.h;ProjectionSpec_mbrs.h;State_base.h"
+"ProjectionSpec_core.h;ProjectionSpec_mbrs.h;FullPrjnSpec.h"
+"ProjectionSpec_core.h;ProjectionSpec_mbrs.h;FullPrjnSpec.h"
 )
 
 set(network_HEADS_NOMAKETA
@@ -375,7 +376,6 @@ set(network_SRCS
   BrainAtlasFileComposerFactory.cpp
   FSLBrainAtlasFileComposer.cpp
   BrainView.cpp
-  UnitRef.cpp
   BrainVolumeView.cpp
   LayerRef.cpp
   ProjectionRef.cpp

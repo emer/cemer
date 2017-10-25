@@ -17,11 +17,9 @@
 
 TA_BASEFUNS_CTORS_DEFN(BpLayer);
 
-eTypeDef_Of(BpUnit);
 eTypeDef_Of(BpUnitSpec);
 
 void BpLayer::Initialize() {
-  units.SetBaseType(&TA_BpUnit);
   unit_spec.SetBaseType(&TA_BpUnitSpec);
 }
 

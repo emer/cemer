@@ -45,9 +45,6 @@ public:
 
 #include <BpUnitSpec_core>
 
-  virtual void  SetCurLrate(BpUnitState_cpp* u, BpNetworkState_cpp* net, int thr_no);
-  // set current learning rate based on epoch
- 
   virtual void	GraphActFun(DataTable* graph_data, float min = -5.0, float max = 5.0);
   // #BUTTON #NULL_OK graph the activation function along with derivative (NULL = new graph log)
 

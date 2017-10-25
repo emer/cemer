@@ -16,7 +16,6 @@
 #include "BpUnitSpec.h"
 
 #include <BpNetwork>
-#include <BpUnit>
 #include <BpConSpec>
 #include <taProject>
 #include <DataTable>
@@ -33,7 +32,7 @@ TA_BASEFUNS_CTORS_DEFN(GaussActSpec);
 // const float BpUnitSpec::SIGMOID_MAX_NET = 13.81551f;
 
 void BpUnitSpec::Initialize() {
-  min_obj_type = &TA_BpUnit;
+  min_obj_type = &TA_BpUnitState_cpp;
   bias_spec.SetBaseType(&TA_BpConSpec);
 
   Initialize_core();
@@ -96,21 +95,6 @@ void BpUnitSpec::UpdateAfterEdit_impl() {
       SetUnique("error_fun", true);
       error_fun = SQUARED_ERR;
     }
-  }
-}
-
-void BpUnitSpec::SetCurLrate(BpUnitState_cpp* u, BpNetworkState_cpp* net, int thr_no) {
-  BpConSpec* bs = (BpConSpec*)bias_spec.SPtr();
-  if(bs) {
-    bs->SetCurLrate(net);
-  }
-  const int nrcg = u->NRecvConGps(net);
-  for(int g=0; g<nrcg; g++) {
-    ConState_cpp* rgp = u->RecvConState(net, g);
-    if(rgp->NotActive()) continue;
-    ConSpec_cpp* cs = rgp->GetConSpec(net);
-    BpConSpec* bcs = (BpConSpec*)net->own_net->ConSpecFromState(cs);
-    bcs->SetCurLrate(net);
   }
 }
 

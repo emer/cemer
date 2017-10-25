@@ -87,9 +87,9 @@ STATE_CLASS(Average)	avg_cos_diff;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statist
   float         hog_pct;           // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic the percentage of units in the network that have a long-time-averaged activitation level that is above a layer-specific threshold, indicating that they are 'hogging' the representational space (because this is computed on a time average, there is no epoch average of this statistic)
   float         dead_pct;           // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic the percentage of units in the network that have a long-time-averaged activitation level that is below a layer-specific threshold, indicating that they are effectively 'dead' and not participating in any representations (because this is computed on a time average, there is no epoch average of this statistic)
 
-  INLINE bool  RecvOwnsCons() override { return false; }
+  INLINE bool  RecvOwnsCons() const override { return false; }
 
-  INLINE  int  QuarterCycle() { return cycle - quarter * times.quarter; }
+  INLINE  int  QuarterCycle() const { return cycle - quarter * times.quarter; }
   // #CAT_Cycle cycles within current cycle -- network cycle counter counts for entire trial across 4 quarters
 
 

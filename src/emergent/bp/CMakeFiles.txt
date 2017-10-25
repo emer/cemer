@@ -18,7 +18,6 @@ set(bp_HEADS_MAKETA
   BpUnitSpec_cpp.h
   BpUnitSpec.h
 
-  BpUnit.h
   BpLayer.h
   BpNetworkState_cpp.h
   BpNetwork.h
@@ -50,7 +49,6 @@ set(bp_SRCS
   BpUnitSpec_cpp.cpp
   BpUnitSpec.cpp
   
-  BpUnit.cpp
   BpLayer.cpp
   BpNetworkState_cpp.cpp
   BpNetwork.cpp

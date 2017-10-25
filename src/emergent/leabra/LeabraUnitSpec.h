@@ -42,7 +42,6 @@ eTypeDef_Of(LeabraTwoDVals);
 class Unit; // 
 class Network; // 
 class LeabraNetwork; // 
-class LeabraUnit; // 
 class DataTable; //
 class LeabraLayer; //
 class LeabraLayerSpec; //

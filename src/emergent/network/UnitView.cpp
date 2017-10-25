@@ -54,15 +54,18 @@ NetView* UnitView::getNetView()
 void UnitView::Render_pre()
 {
   NetView* nv = getNetView();
+  Network* net = nv->net();
+  if(!net->IsBuiltIntact()) return;
   float max_x = nv->eff_max_size.x;
   float max_y = nv->eff_max_size.y;
   float max_z = nv->eff_max_size.z;
   float un_spc= nv->view_params.unit_spacing;
 
   UnitState_cpp* unit = this->unit(); //cache
-  Layer* lay = unit->own_lay();
+  Layer* lay = net->StateLayer(unit->own_lay_idx);
   float disp_scale = lay->disp_scale;
-  taVector2i upos;  unit->LayerDispPos(upos);
+  taVector2i upos;
+  upos.SetXY(unit->disp_pos_x, unit->disp_pos_y);
 
 #ifdef TA_QT3D
 

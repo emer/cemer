@@ -176,8 +176,8 @@ void UnitGroupView_MouseCB(void* userData, SoEventCallback* ecb) {
               bool is_send = (sr == "s");
               String nm = nv->unit_disp_md->name.after(".");
               if (is_send) {
-                for(int g=0;g<unit->NRecvConGps();g++) {
-                  ConState_cpp* tcong = unit->RecvConState(g);
+                for(int g=0;g<unit->NRecvConGps(net->net_state);g++) {
+                  ConState_cpp* tcong = unit->RecvConState(net->net_state, g);
                   PrjnState_cpp* pjs = tcong->GetPrjnState(net->net_state);
                   Projection* prjn = net->PrjnFromState(pjs);
                   if(check_prjn && prjn &&
@@ -193,11 +193,11 @@ void UnitGroupView_MouseCB(void* userData, SoEventCallback* ecb) {
                 }
               }
               else {
-                for(int g=0;g<unit->NSendConGps();g++) {
-                  ConState_cpp* tcong = unit->SendConState(g);
+                for(int g=0;g<unit->NSendConGps(net->net_state);g++) {
+                  ConState_cpp* tcong = unit->SendConState(net->net_state, g);
                   PrjnState_cpp* pjs = tcong->GetPrjnState(net->net_state);
                   Projection* prjn = net->PrjnFromState(pjs);
-                  if(check_prjn && prjn && prjn->IsActive() &&
+                  if(check_prjn && prjn && prjn->MainIsActive() &&
                      !prjn->name.startsWith(nv->prjn_starts_with))
                     continue;
                   MemberDef* act_md = tcong->ConType(net)->members.FindName(nm);
@@ -211,16 +211,7 @@ void UnitGroupView_MouseCB(void* userData, SoEventCallback* ecb) {
               }
             }
             else {
-              // see UnitGroupView::UpdateUnitViewBase_Unit_impl for relevant code
-              if(nv->unit_disp_md->name == "snap" || nv->unit_disp_md->name == "wt_prjn") {
-                nv->last_sel_unit_val = nv->unit_disp_md->GetValStr((void*)unit);
-              }
-              else {
-                UnitState_cpp* uv = unit->GetUnitState();
-                if(uv) {
-                  nv->last_sel_unit_val = nv->unit_disp_md->GetValStr((void*)uv);
-                }
-              }
+              nv->last_sel_unit_val = nv->unit_disp_md->GetValStr((void*)unit);
             }
           }
           
@@ -389,6 +380,7 @@ void NetView::Initialize() {
   display = true;
   lay_layout = THREE_D;
   prev_lay_layout = lay_layout;
+  unit_src = NULL;
   lay_mv = true;
   net_text = true;
   show_iconified = false;
@@ -612,13 +604,15 @@ void NetView::unTrappedKeyPressEvent(QKeyEvent* e) {
   }
   if(!got_arw) return;
   if(!(bool)unit_src) return;
-  Layer* lay = unit_src->own_lay();
-  if(!lay) return;
+  Network* nt = net();
+  if(!nt || !nt->IsBuiltIntact()) return;
+
+  Layer* lay = nt->StateLayer(unit_src->own_lay_idx);
   taVector2i pos;
-  lay->UnitLogPos(unit_src, pos);
+  pos.SetXY(unit_src->pos_x, unit_src->pos_y);
   pos += dir;
   if(pos.x < 0 || pos.y < 0) return;
-  UnitState_cpp* nw_u = lay->UnitAtCoord(pos);
+  UnitState_cpp* nw_u = lay->GetUnitStateFlatXY(nt->net_state, pos.x, pos.y);
   if(nw_u) {
     setUnitSrc(NULL, nw_u);
     InitDisplay();   // this is apparently needed here!!
@@ -644,6 +638,7 @@ void NetView::BuildAll() { // populates all T3 guys
   GetMaxSize();
 
   Network* nt = net();
+  if(!nt || !nt->IsBuiltIntact()) return;
 
   // cannot preserve LayerView objects, so recording disp_mode info separately
   // layers grab from us when made, instead of pushing on them.
@@ -682,7 +677,7 @@ void NetView::BuildAll() { // populates all T3 guys
   FOREACH_ELEM_IN_GROUP(Layer, lay, net()->layers) {
     if(lay->lesioned() || lay->Iconified()) continue;
     FOREACH_ELEM_IN_GROUP_NESTED(Projection, prjn, lay->projections) {
-      if(prjn->NotActive() || prjn->from->Iconified() || !prjn->disp) continue;
+      if(prjn->MainNotActive() || prjn->from->Iconified() || !prjn->disp) continue;
       PrjnView* pv = new PrjnView();
       pv->SetData(prjn);
       //nn prjns.Add(pv); // this is automatic from the childadding thing
@@ -767,13 +762,14 @@ taBase::DumpQueryResult NetView::Dump_QuerySaveMember(MemberDef* md) {
 
 UnitView* NetView::FindUnitView(UnitState_cpp* unit) {
   UnitView* uv = NULL;
-  taSigLink* dl = unit->sig_link();
-  if (!dl) return NULL;
-  taSigLinkItr i;
-  FOR_DLC_EL_OF_TYPE(UnitView, uv, dl, i) {
-    if (uv->GetOwner(&TA_NetView) == this)
-      return uv;
-  }
+  // todo: we can't do this!?
+  // taSigLink* dl = unit->sig_link();
+  // if (!dl) return NULL;
+  // taSigLinkItr i;
+  // FOR_DLC_EL_OF_TYPE(UnitView, uv, dl, i) {
+  //   if (uv->GetOwner(&TA_NetView) == this)
+  //     return uv;
+  // }
   return NULL;
 }
 
@@ -781,18 +777,21 @@ UnitView* NetView::FindUnitView(UnitState_cpp* unit) {
 void NetView::GetMembs() {
   if(!net()) return;
 
+  Network* nt = net();
+  if(!nt || !nt->IsBuiltIntact()) return;
+
   // try as hard as possible to find a unit to view if nothing selected -- this
   // minimizes issues with history etc
   if(!unit_src) {
     if(unit_src_path.nonempty()) {
-      MemberDef* umd;
-      UnitState_cpp* nu = (UnitState_cpp*)net()->FindFromPath(unit_src_path, umd);
+      UnitState_cpp* nu = nt->GetUnitStateFromPath(unit_src_path);
       if(nu) setUnitSrc(NULL, nu);
     }
-    if(!unit_src && net()->layers.leaves > 0) {
-      Layer* lay = net()->layers.Leaf(net()->layers.leaves-1);
-      if(lay->units.leaves > 0)
-        setUnitSrc(NULL, lay->units.Leaf(0));
+    if(!unit_src && nt->layers.leaves > 0) {
+      Layer* lay = nt->layers.Leaf(nt->layers.leaves-1);
+      if(lay->n_units > 0) {
+        setUnitSrc(NULL, lay->GetUnitState(nt->net_state, 0));
+      }
     }
   }
 
@@ -801,7 +800,7 @@ void NetView::GetMembs() {
 
   // there is now only one global unit variables type!
   {
-    TypeDef* td = net()->UnitStateType();
+    TypeDef* td = nt->UnitStateType();
 
     for(int m=0; m<td->members.size; m++) {
       MemberDef* md = td->members.FastEl(m);
@@ -815,28 +814,11 @@ void NetView::GetMembs() {
     }
   }
 
-  // we only support two standard unit-specific variables: snap and wt_prjn
-  if (membs.size > 0) {
-    TypeDef* td = &TA_Unit;
-    MemberDef* md = td->members.FindName("snap");
-    if(md) {
-      MemberDef* nmd = md->Clone();
-      membs.Add(nmd);       // index now reflects position in list...
-      nmd->idx = md->idx;   // so restore it to the orig one
-    }
-    md = td->members.FindName("wt_prjn");
-    if(md) {
-      MemberDef* nmd = md->Clone();
-      membs.Add(nmd);       // index now reflects position in list...
-      nmd->idx = md->idx;   // so restore it to the orig one
-    }
-  }
-
   TypeDef* prv_td = NULL;
   // then, only do the connections if any Unit guys, otherwise we are
   // not built yet, so we leave ourselves empty to signal that
   if (membs.size > 0) {
-    FOREACH_ELEM_IN_GROUP(Layer, lay, net()->layers) {
+    FOREACH_ELEM_IN_GROUP(Layer, lay, nt->layers) {
       FOREACH_ELEM_IN_GROUP_NESTED(Projection, prjn, lay->projections) {
         TypeDef* td = prjn->con_type;
         if(td == prv_td) continue; // don't re-scan!
@@ -1465,24 +1447,27 @@ void NetView::Render_wt_lines() {
   T3NetNode* node_so = this->node_so(); //cache
   if(!node_so) return;
 
+  Network* nt = net();
+  if(!nt || !nt->IsBuiltIntact()) return;
+  
   bool do_lines = (bool)unit_src && wt_line_disp;
   Layer* src_lay = NULL;
-  if(unit_src)
-    src_lay =GET_OWNER(unit_src, Layer);
+  if(unit_src) {
+    src_lay = nt->StateLayer(unit_src->own_lay_idx);
+  }
   if(!src_lay || src_lay->Iconified()) do_lines = false;
 
   taVector3i src_lay_pos;
   if(src_lay)
     src_lay->GetAbsPos(src_lay_pos);
 
-  Network* nt = net();
-  if(!nt) return;
   bool swt = wt_line_swt;
   
   // note: only want layer_rel for ru_pos
   taVector2i ru_pos;
-  if(unit_src)
-    unit_src->LayerDispPos(ru_pos);
+  if(unit_src) {
+    ru_pos.SetXY(unit_src->disp_pos_x, unit_src->disp_pos_y);
+  }
   taVector3f src;             // source and dest coords
   taVector3f dst;
 
@@ -1630,12 +1615,14 @@ void NetView::Render_wt_lines() {
   int n_coord = 0;
   int n_mat = 0;
 
+  const int ncg = (swt ? unit_src->NSendConGps(nt->net_state) : unit_src->NRecvConGps(nt->net_state));
   if(wt_line_width >= 0.0f) {
-    for(int g=0;g<(swt ? unit_src->NSendConGps() : unit_src->NRecvConGps());g++) {
-      ConState_cpp* cg = (swt ? unit_src->SendConState(g) : unit_src->RecvConState(g));
+    for(int g=0; g < ncg; g++) {
+      ConState_cpp* cg = (swt ? unit_src->SendConState(nt->net_state, g) :
+                          unit_src->RecvConState(nt->net_state, g));
       PrjnState_cpp* pjs = cg->GetPrjnState(nt->net_state);
       Projection* prjn = nt->PrjnFromState(pjs);
-      if(!prjn || !prjn->IsActive()) continue;
+      if(!prjn || !prjn->MainIsActive()) continue;
       if(prjn->from->Iconified()) continue;
 
       n_prjns++;
@@ -1652,8 +1639,9 @@ void NetView::Render_wt_lines() {
 
   if((bool)wt_prjn_lay && (wt_line_width >= 0.0f)) {
     int n_con = 0;
-    FOREACH_ELEM_IN_GROUP(Unit, u, wt_prjn_lay->units) {
-      if(fabsf(u->wt_prjn) >= wt_line_thr) n_con++;
+    for(int ui = 0; ui < wt_prjn_lay->n_units; ui++) {
+      UNIT_STATE* su = wt_prjn_lay->GetUnitState(nt->net_state, ui);
+      if(fabsf(su->wt_prjn) >= wt_line_thr) n_con++;
     }
 
     n_vtx += 1 + n_con;   // one for recv + senders
@@ -1675,11 +1663,12 @@ void NetView::Render_wt_lines() {
   int cidx = 0;
   int midx = 0;
 
-  for(int g=0;g<(swt ? unit_src->NSendConGps() : unit_src->NRecvConGps());g++) {
-    ConState_cpp* cg = (swt ? unit_src->SendConState(g) : unit_src->RecvConState(g));
+  for(int g=0; g < ncg; g++) {
+    ConState_cpp* cg = (swt ? unit_src->SendConState(nt->net_state, g) :
+                        unit_src->RecvConState(nt->net_state, g));
     PrjnState_cpp* pjs = cg->GetPrjnState(nt->net_state);
     Projection* prjn = nt->PrjnFromState(pjs);
-    if(!prjn || !prjn->IsActive()) continue;
+    if(!prjn || !prjn->MainIsActive()) continue;
     if(prjn->from->Iconified()) continue;
     Layer* lay_fr = (swt ? prjn->layer : prjn->from);
     Layer* lay_to = (swt ? prjn->from : prjn->layer);
@@ -1702,12 +1691,13 @@ void NetView::Render_wt_lines() {
     vertex_dat[v_idx++].setValue(src.x, src.y, src.z);
 
     for(int i=0;i< cg->size; i++) {
-      UnitState_cpp* su = cg->Un(i,nt);
+      UnitState_cpp* su = cg->UnState(i,nt->net_state);
       float wt = cg->Cn(i, ConState_cpp::WT, nt->net_state);
       if(fabsf(wt) < wt_line_thr) continue;
 
       // note: only want layer_rel for ru_pos
-      taVector2i su_pos; su->LayerDispPos(su_pos);
+      taVector2i su_pos; //su->LayerDispPos(su_pos);
+      su_pos.SetXY(su->disp_pos_x, su->disp_pos_y);
       dst.x = ((float)lay_fr_pos.x + (float)su_pos.x + .5f) / max_size.x;
       dst.z = -((float)lay_fr_pos.y + (float)su_pos.y + .5f) / max_size.y;
 
@@ -1742,11 +1732,13 @@ void NetView::Render_wt_lines() {
     int ru_idx = v_idx;
     vertex_dat[v_idx++].setValue(src.x, src.y, src.z);
 
-    FOREACH_ELEM_IN_GROUP(Unit, su, wt_prjn_lay->units) {
+    for(int ui = 0; ui < wt_prjn_lay->n_units; ui++) {
+      UNIT_STATE* su = wt_prjn_lay->GetUnitState(nt->net_state, ui);
       float wt = su->wt_prjn;
       if(fabsf(wt) < wt_line_thr) continue;
 
-      taVector2i su_pos; su->LayerDispPos(su_pos);
+      taVector2i su_pos; //su->LayerDispPos(su_pos);
+      su_pos.SetXY(su->disp_pos_x, su->disp_pos_y);
       dst.x = ((float)wt_prjn_lay_pos.x + (float)su_pos.x + .5f) / max_size.x;
       dst.z = -((float)wt_prjn_lay_pos.y + (float)su_pos.y + .5f) / max_size.y;
 
@@ -1838,7 +1830,7 @@ void NetView::SetColorSpec(ColorScaleSpec* color_spec) {
 }
 
 void NetView::setUnitSrc(UnitView* uv, UnitState_cpp* unit) {
-  if (unit_src.ptr() == unit) return; // no change
+  if (unit_src == unit) return; // no change
   // if there was existing unit, unpick it
   if ((bool)unit_src) {
     UnitView* uv_src = FindUnitView(unit_src);
@@ -1850,10 +1842,8 @@ void NetView::setUnitSrc(UnitView* uv, UnitState_cpp* unit) {
   if ((bool)unit_src) {
     if(uv)
       uv->picked = true;
-    unit_src_path = unit_src->GetPath(net());
+    unit_src_path = net()->GetUnitStatePath(unit_src);
   }
-  // Rohrlich 8/16/2015 - reset reported as bug and I agree - can't see why we would reset history here
-//  hist_idx = 0;    // reset index to current time for new unit selection
 }
 
 void NetView::setUnitDisp(int value) {
