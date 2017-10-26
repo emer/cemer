@@ -14,6 +14,7 @@
 //   GNU General Public License for more details.
 
 #include <Network>
+#include <Projection>
 #include <NetMonitor>
 #include <SimpleMathSpec>
 #include <float_Array>

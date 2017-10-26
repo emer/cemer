@@ -217,23 +217,6 @@ void LeabraUnitSpec::CreateNXX1Fun(LeabraActFunSpec& act_spec, FunLookup& nxx1_f
 ///////////////////////////////////////////////////////////////////////
 //      TrialInit functions
 
-void LeabraUnitSpec::Trial_Init_Specs(LeabraNetwork* net) {
-  if(act_fun == SPIKE) {
-    net->net_misc.spike = true;
-  }
-  else {
-    TestWarning(net->net_misc.spike, "Trial_Init_Specs",
-                "detected a mix of SPIKE and NOISY_XX1 activation functions -- due to code optimizations, must all be either one or the other!");
-  }
-  if(deep.on) {
-    net->deep.on = true;
-    net->deep.raw_qtr = (LeabraNetDeep::Quarters)(net->deep.raw_qtr | deep_raw_qtr);
-  }
-  if(bias_spec) {
-    ((LeabraConSpec*)bias_spec.SPtr())->Trial_Init_Specs(net);
-  }
-}
-
 
 //////////////////////////////////////////
 //       Misc Functions                 //

@@ -336,6 +336,23 @@
   ///////////////////////////////////////////////////////////////////////
   //        TrialInit -- at start of trial
 
+  INLINE virtual void Trial_Init_Specs(LEABRA_NETWORK_STATE* net) {
+    if(act_fun == SPIKE) {
+      net->net_misc.spike = true;
+    }
+    else {
+      if(net->net_misc.spike) {
+        net->StateError("Trial_Init_Specs:",
+                        "detected a mix of SPIKE and NOISY_XX1 activation functions -- due to code optimizations, must all be either one or the other!");
+      }
+    }
+    if(deep.on) {
+      net->deep.on = true;
+      net->deep.raw_qtr = (STATE_CLASS_CPP(LeabraNetDeep)::Quarters)(net->deep.raw_qtr | deep_raw_qtr);
+    }
+  }
+  // #CAT_Learning initialize specs and specs update network flags 
+
   INLINE virtual void Trial_Init_Unit(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) {
     Trial_STP_TrialBinary_Updt(u, net, thr_no); //do this b4 decay, because using act_q3 from previous trial
     Trial_Init_PrvVals(u, net, thr_no);   // do this b4 decay, so vals are intact

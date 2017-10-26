@@ -15,6 +15,7 @@
 
 #include "BrainVolumeView.h"
 #include <Network>
+#include <Layer>
 #include <T3BrainNode>
 #include <NiftiReader>
 #include <MemberDef>

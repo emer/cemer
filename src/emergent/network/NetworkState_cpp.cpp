@@ -108,7 +108,7 @@ void NetworkState_cpp::StateErrorVals
   if(var2) { cc = var2; dd = String(val2); }
   if(var3) { ee = var3; ff = String(val3); }
   if(var4) { gg = var4; hh = String(val4); }
-  taMisc::Error(aa, bb, cc, dd, ee, ff, gg, hh, ii);
+  taMisc::Error(msg, aa, bb, cc, dd, ee, ff, gg, hh);
 }
 
 void NetworkState_cpp::ThreadSyncSpin(int thr_no, int sync_no) {

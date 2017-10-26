@@ -147,57 +147,28 @@ void LeabraNetwork::Trial_Init() {
                "Network is not built or is not intact -- must Build first")) {
     return;
   }
-  Trial_Init_Specs();
   NET_STATE_RUN(LeabraNetworkState, Trial_Init());
   SyncAllState();
+  SetCurLrate();
 }
 
 
-void LeabraNetwork::Trial_Init_Specs() {
-  SyncAllState();
-
-  // todo: change this over to fully State-based
-  
-  net_misc.spike = false;
-  net_misc.bias_learn = false;
-  net_misc.trial_decay = false;
-  net_misc.diff_scale_p = false;
-  net_misc.diff_scale_q1 = false;
-  net_misc.wt_bal = false;
-  net_misc.lay_gp_inhib = false;
-  net_misc.lrate_updtd = false;
-
-  deep.on = false;
-  deep.ctxt = false;
-  deep.raw_net = false;
-  deep.mod_net = false;
-  deep.raw_qtr = LeabraNetDeep::QNULL;
-  
-  FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
-    if(!lay->lesioned()) {
-      LeabraLayerSpec* laysp = (LeabraLayerSpec*)lay->spec.SPtr();
-      laysp->Trial_Init_Specs(lay, this);
-    }
+void LeabraNetwork::SetCurLrate() {
+  // this must be here because lrate schedule is complex obj not in State specs
+  bool lrate_updtd = false;
+  for(int i=0; i < n_con_specs_built; i++) {
+    LeabraConSpec* ls = (LeabraConSpec*)StateConSpec(i);
+    bool updt = ls->SetCurLrate((LeabraNetworkState_cpp*)net_state);
+    if(updt) lrate_updtd = true;
   }
-  if(net_misc.lrate_updtd) {
+
+  if(lrate_updtd) {
     taMisc::Info("cur_lrate updated at epoch:", String(epoch));
 // #ifdef CUDA_COMPILE
 //     Cuda_UpdateConParams();     // push new params to cuda
 // #endif
   }
-
-  if(!deep.on) {
-    TestWarning(deep.ctxt, "Trial_Init_Specs",
-                "DeepCtxtConSpec's were found, but deep.on is not set -- no deep_ctxt will be computed!");
-    TestWarning(deep.raw_net, "Trial_Init_Specs",
-                "SendDeepRawConSpec's were found, but deep.on is not set -- no deep_raw_net will be computed!");
-    TestWarning(deep.mod_net, "Trial_Init_Specs",
-                "SendDeepModConSpec's were found, but deep.on is not set -- no deep_mod_net or deep_mod will be computed!");
-  }
-
-  SyncAllState();
 }
-
 
 ///////////////////////////////////////////////////////////////////////
 //      QuarterInit -- at start of settling

@@ -140,16 +140,23 @@
     }
   }
 
-  void  LoadWeightVal(float wtval, CON_STATE* cg, int cidx, NETWORK_STATE* net) override {
+  INLINE void  LoadWeightVal(float wtval, CON_STATE* cg, int cidx, NETWORK_STATE* net) override {
     cg->Cn(cidx, WT, net) = wtval;
     float linwt = LinFmSigWt(wtval / cg->Cn(cidx, SCALE, net));
     cg->Cn(cidx, SWT, net) = linwt;
     cg->Cn(cidx, FWT, net) = linwt;
   }
 
-  void  SetConScale(float scale, CON_STATE* cg, int cidx, NETWORK_STATE* net, int thr_no) override {
+  INLINE void SetConScale(float scale, CON_STATE* cg, int cidx, NETWORK_STATE* net, int thr_no) override {
     cg->Cn(cidx, SCALE, net) = scale;
   }
+
+  INLINE virtual void  Trial_Init_Specs(LEABRA_NETWORK_STATE* net) {
+    if(wt_bal.on) {
+      net->net_misc.wt_bal = true;
+    }
+  }
+  // #CAT_Learning initialize specs and specs update network flags -- e.g., set current learning rate based on schedule given epoch (or error value)
 
   INLINE void  RenormScales(CON_STATE* cg, NETWORK_STATE* net, int thr_no, bool mult_norm,
                             float avg_wt) override {

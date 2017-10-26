@@ -80,13 +80,6 @@ public:
 #include <LeabraUnitSpec_core>
   
   ///////////////////////////////////////////////////////////////////////
-  //        TrialInit -- at start of trial
-
-  virtual void Trial_Init_Specs(LeabraNetwork* net);
-  // #CAT_Learning initialize specs and specs update network flags 
-
-
-  ///////////////////////////////////////////////////////////////////////
   //        Misc Housekeeping, non Compute functions
 
   virtual void        CreateNXX1Fun(LeabraActFunSpec& act_spec, FunLookup& nxx1_fl,

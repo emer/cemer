@@ -17,6 +17,7 @@
 #include <T3LayerGroupNode>
 #include <T3LayerNode>
 #include <Network>
+#include <Layer>
 #include <NetView>
 #include <LayerView>
 #include <MemberDef>

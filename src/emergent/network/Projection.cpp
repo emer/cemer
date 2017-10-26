@@ -15,6 +15,7 @@
 
 #include "Projection.h"
 #include <Network>
+#include <Layer>
 #include <taProject>
 #include <NetMonitor>
 #include <taFiler>

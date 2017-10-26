@@ -33,7 +33,6 @@
 #include <State_main>
 
 // declare all other types mentioned but not required to include:
-class Unit; //
 class Layer; //
 class Network; //
 
@@ -58,6 +57,8 @@ public:
   String        GetTypeDecoKey() const override { return "UnitSpec"; }
   String        GetToolbarName() const override { return "unit spec"; }
 
+  void  UpdateStateSpecs() override;
+  
   void  InitLinks() override;
   void  CutLinks() override;
   void  Copy_(const UnitSpec& cp);

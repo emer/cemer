@@ -18,6 +18,9 @@
 
 // parent includes:
 #include <LayerDataEl>
+#include <UnitState_cpp>
+
+#include <State_main>
 
 // member includes:
 #include <Random>

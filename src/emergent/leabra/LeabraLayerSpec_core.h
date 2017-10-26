@@ -87,12 +87,18 @@
   ///////////////////////////////////////////////////////////////////////
   //	Trial_Init -- at start of trial
 
-  INIMPL virtual void	Trial_Init_Layer(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net);
+  INIMPL virtual void Trial_Init_Specs(LEABRA_NETWORK_STATE* net);
+  // #CAT_Learning initialize specs and specs update network flags
+  
+  INIMPL virtual void Trial_Init_Layer(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net);
   // #CAT_Learning layer level trial init -- overload where needed
 
   ///////////////////////////////////////////////////////////////////////
   //	Quarter_Init -- at start of settling
 
+  INIMPL virtual float Compute_AvgExt(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net);
+  // #CAT_Activation compute average of unit ext or targ values, depending on ext flags
+  
   INLINE virtual void Quarter_Init_TargFlags_Layer(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net)  {
     if(lay->HasExtFlag(LAYER_STATE::TARG)) {     // only process target layers..
       if(net->phase == LEABRA_NETWORK_STATE::PLUS_PHASE)

@@ -16,6 +16,7 @@
 #include "UnitView.h"
 #include <NetView>
 #include <Network>
+#include <Layer>
 #include <LayerView>
 #include <iColor>
 

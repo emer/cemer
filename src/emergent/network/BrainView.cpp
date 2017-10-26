@@ -14,6 +14,7 @@
 //   GNU General Public License for more details.
 
 #include "BrainView.h"
+#include <Layer>
 #include <NewViewHelper>
 #include <T3BrainNode>
 #include <T3NetNode>

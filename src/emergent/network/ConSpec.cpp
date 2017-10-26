@@ -95,3 +95,11 @@ bool ConSpec::CheckType_impl(TypeDef* td) {
   return inherited::CheckType_impl(td);
 }
 
+void ConSpec::UpdateStateSpecs() {
+  Network* net = GET_MY_OWNER(Network);
+  if(!net || !net->IsBuiltIntact()) return;
+  CopyToState(net->net_state->con_specs[spec_idx], net->net_state->GetStateSuffix());
+#ifdef CUDA_COMPILE
+  CopyToState(net->cuda_state->con_specs[spec_idx], net->cuda_state->GetStateSuffix());
+#endif
+}

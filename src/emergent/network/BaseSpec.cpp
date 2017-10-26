@@ -18,11 +18,13 @@
 #include <MemberDef>
 #include <taSigLinkItr>
 #include <SpecPtr>
+#include <SpecUser>
+#include <Network>
+#include <Layer>
 
 #include <taMisc>
 #include <taBase_PtrList>
 #include <taiWidgetTypeDefChooser>
-#include <Network>
 #include <NameVar_Array>
 
 
@@ -66,6 +68,10 @@ void BaseSpec::InitLinks() {
 }
 
 void BaseSpec::CutLinks() {
+  Network* net = GET_MY_OWNER(Network);
+  if(net) {
+    net->ClearIntact();         // no more!
+  }
   children.CutLinks();
   inherited::CutLinks();
 }
@@ -87,6 +93,7 @@ void BaseSpec::UpdateAfterEdit_impl() {
     }
   }
   UpdateSpec();
+  UpdateStateSpecs();
 }
 
 void BaseSpec::MemberUpdateAfterEdit(MemberDef* md, bool edit_dialog) {
@@ -170,12 +177,12 @@ bool BaseSpec::RemoveChild(const String& nm, TypeDef* td) {
 }
 
 void BaseSpec::CompareWithChildren() {
-  Network* network = (Network*)GetOwnerOfType(&TA_Network);
+  Network* network = GET_MY_OWNER(Network);
   network->SpecCompareWithChildren(this);
 }
 
 void BaseSpec::ComparePeers(BaseSpec* spec) {
-  Network* network = (Network*)GetOwnerOfType(&TA_Network);
+  Network* network = GET_MY_OWNER(Network);
   network->SpecComparePeers(this, spec);
 }
 
@@ -527,3 +534,4 @@ void BaseSpec::CopyToState(void* state_spec, const char* state_suffix) {
   }
   st_td->CopyFromDiffTypes(state_spec, td, (void*)this, 0, false); // no uae
 }
+

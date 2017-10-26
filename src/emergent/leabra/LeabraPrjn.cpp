@@ -31,11 +31,6 @@ void LeabraPrjn::Initialize() {
 void LeabraPrjn::Destroy() {
 }
 
-void LeabraPrjn::Trial_Init_Specs(LeabraNetwork* net) {
-  if(con_spec.SPtr())
-    ((LeabraConSpec*)con_spec.SPtr())->Trial_Init_Specs(net);
-}
-
 void LeabraPrjn::CheckInhibCons(LeabraNetwork* net) {
   LeabraLayer* fmlay = (LeabraLayer*)from.ptr();
   if(!fmlay || fmlay->lesioned()) return;

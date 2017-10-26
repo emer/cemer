@@ -233,6 +233,36 @@ void LEABRA_NETWORK_STATE::Trial_Init_Counters() {
   total_trials++;          // this is when we increment it!
 }
 
+void LEABRA_NETWORK_STATE::Trial_Init_Specs() {
+  net_misc.spike = false;
+  net_misc.bias_learn = false;
+  net_misc.trial_decay = false;
+  net_misc.diff_scale_p = false;
+  net_misc.diff_scale_q1 = false;
+  net_misc.wt_bal = false;
+  net_misc.lay_gp_inhib = false;
+
+  deep.on = false;
+  deep.ctxt = false;
+  deep.raw_net = false;
+  deep.mod_net = false;
+  deep.raw_qtr = STATE_CLASS_CPP(LeabraNetDeep)::QNULL;
+
+  for(int i=0; i < n_layer_specs_built; i++) {
+    LEABRA_LAYER_SPEC_CPP* ls = (LEABRA_LAYER_SPEC_CPP*)GetLayerSpec(i);
+    ls->Trial_Init_Specs(this);
+  }
+  for(int i=0; i < n_unit_specs_built; i++) {
+    LEABRA_UNIT_SPEC_CPP* ls = (LEABRA_UNIT_SPEC_CPP*)GetUnitSpec(i);
+    ls->Trial_Init_Specs(this);
+  }
+  for(int i=0; i < n_con_specs_built; i++) {
+    LEABRA_CON_SPEC_CPP* ls = (LEABRA_CON_SPEC_CPP*)GetConSpec(i);
+    ls->Trial_Init_Specs(this);
+  }
+}
+
+
 void LEABRA_NETWORK_STATE::Trial_Init_Unit_Thr(int thr_no) {
   const int nu = ThrNUnits(thr_no);
   for(int i=0; i<nu; i++) {

@@ -84,17 +84,15 @@ class STATE_CLASS(LeabraNetMisc) : public STATE_CLASS(taOBase) {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra misc network-level parameters for Leabra
 INHERITED(taOBase)
 public:
-  bool          spike;         // #READ_ONLY #SHOW using discrete spiking -- all units must be either rate code or spiking, to optimize the computation -- updated in Trial_Init_Specs call
-  bool          deep;         // #READ_ONLY #SHOW deep processing is active -- updated in Trial_Init_Specs call
-  bool		bias_learn;     // #READ_ONLY #SHOW do any of the bias connections have learning enabled?  if true, then an extra unit-level computational step is required -- bias learning is now OFF by default, as it has no obvious benefits in large models, but may be useful for smaller networks
-  bool          trial_decay;   // #READ_ONLY #SHOW at least one layer spec has a non-zero level of trial decay -- if all layers have 0 trial decay, then the net input does not need to be reset between trials, yielding significantly faster performance
-  bool          diff_scale_p;   // #READ_ONLY #SHOW a unitspec such as the hippocampus ThetaPhase units rescales inputs in plus phase -- this requires initializing the net inputs between these phases
-  bool          diff_scale_q1;  // #READ_ONLY #SHOW at least one unit spec rescales inputs at start of second quarter, such as hippocampus ThetaPhase units -- this requires initializing the net inputs at this point
-  bool		wt_bal;       // #READ_ONLY #SHOW wt_bal weight balancing is being used -- this must be done as a separate step -- LeabraConSpec will set this flag if LeabraConSpec::wt_norm_bal.bal_on flag is on, and off if not -- updated in Trial_Init_Specs call
-  bool          lay_gp_inhib;   // #READ_ONLY #SHOW layer group level inhibition is active for some layer groups -- may cause some problems with asynchronous threading operation -- updated in Trial_Init_Specs call
-  bool		inhib_cons;     // #READ_ONLY #SHOW inhibitory connections are being used in this network -- detected during buildunits_threads to determine how netinput is computed -- sets NETIN_PER_PRJN flag
-  bool          lrate_updtd;
-  // #IGNORE flag used to determine when the learning rate was updated -- e.g., needed for CUDA to update parameters 
+  bool          spike;         // #GUI_READ_ONLY #SHOW using discrete spiking -- all units must be either rate code or spiking, to optimize the computation -- updated in Trial_Init_Specs call
+  bool          deep;         // #GUI_READ_ONLY #SHOW deep processing is active -- updated in Trial_Init_Specs call
+  bool		bias_learn;     // #GUI_READ_ONLY #SHOW do any of the bias connections have learning enabled?  if true, then an extra unit-level computational step is required -- bias learning is now OFF by default, as it has no obvious benefits in large models, but may be useful for smaller networks
+  bool          trial_decay;   // #GUI_READ_ONLY #SHOW at least one layer spec has a non-zero level of trial decay -- if all layers have 0 trial decay, then the net input does not need to be reset between trials, yielding significantly faster performance
+  bool          diff_scale_p;   // #GUI_READ_ONLY #SHOW a unitspec such as the hippocampus ThetaPhase units rescales inputs in plus phase -- this requires initializing the net inputs between these phases
+  bool          diff_scale_q1;  // #GUI_READ_ONLY #SHOW at least one unit spec rescales inputs at start of second quarter, such as hippocampus ThetaPhase units -- this requires initializing the net inputs at this point
+  bool		wt_bal;       // #GUI_READ_ONLY #SHOW wt_bal weight balancing is being used -- this must be done as a separate step -- LeabraConSpec will set this flag if LeabraConSpec::wt_norm_bal.bal_on flag is on, and off if not -- updated in Trial_Init_Specs call
+  bool          lay_gp_inhib;   // #GUI_READ_ONLY #SHOW layer group level inhibition is active for some layer groups -- may cause some problems with asynchronous threading operation -- updated in Trial_Init_Specs call
+  bool		inhib_cons;     // #GUI_READ_ONLY #SHOW inhibitory connections are being used in this network -- detected during buildunits_threads to determine how netinput is computed -- sets NETIN_PER_PRJN flag
 
   STATE_DECO_KEY("Network");
   STATE_TA_STD_CODE(LeabraNetMisc);
@@ -126,11 +124,11 @@ public:
     QALL = Q1 | Q2 | Q3 | Q4,  // #NO_BIT all quarters
   };
 
-  bool         on;           // #READ_ONLY #SHOW deep.on was on in some units
-  bool         ctxt;         // #READ_ONLY #SHOW DeepCtxtConSpec's were found -- deep context values will be updated
-  bool         raw_net;      // #READ_ONLY #SHOW SendDeepRawConSpec's were found -- deep_raw_net values will be updated
-  bool         mod_net;      // #READ_ONLY #SHOW SendDeepModConSpec's were found -- deep_mod_net values will be updated
-  Quarters     raw_qtr;      // #READ_ONLY #SHOW aggregated from LeabraUnitSpec deep_raw_qtr values: quarter(s) during which deep_raw layer 5 intrinsic bursting activations should be updated -- deep_raw is updated and sent to deep_raw_net during this quarter, and deep_ctxt is updated right after this quarter (wrapping around to the first quarter for the 4th quarter)
+  bool         on;           // #GUI_READ_ONLY #SHOW deep.on was on in some units
+  bool         ctxt;         // #GUI_READ_ONLY #SHOW DeepCtxtConSpec's were found -- deep context values will be updated
+  bool         raw_net;      // #GUI_READ_ONLY #SHOW SendDeepRawConSpec's were found -- deep_raw_net values will be updated
+  bool         mod_net;      // #GUI_READ_ONLY #SHOW SendDeepModConSpec's were found -- deep_mod_net values will be updated
+  Quarters     raw_qtr;      // #GUI_READ_ONLY #SHOW aggregated from LeabraUnitSpec deep_raw_qtr values: quarter(s) during which deep_raw layer 5 intrinsic bursting activations should be updated -- deep_raw is updated and sent to deep_raw_net during this quarter, and deep_ctxt is updated right after this quarter (wrapping around to the first quarter for the 4th quarter)
 
   INLINE  bool Quarter_DeepRawNow(int qtr)
   { return raw_qtr & (1 << qtr); }

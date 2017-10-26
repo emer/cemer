@@ -16,6 +16,8 @@
 #include "iViewPanelOfNetwork.h"
 #include <NetView>
 #include <Network>
+#include <Layer>
+#include <BaseSpec>
 #include <T3ExaminerViewer>
 #include <taiWidgetField>
 #include <taiWidgetComboBox>

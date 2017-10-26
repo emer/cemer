@@ -15,6 +15,7 @@
 
 #include "LayerSpec.h"
 
+#include <Network>
 #include <Layer>
 
 TA_BASEFUNS_CTORS_DEFN(LayerSpec);
@@ -35,3 +36,11 @@ void LayerSpec::CutLinks() {
   BaseSpec::CutLinks();
 }
 
+void LayerSpec::UpdateStateSpecs() {
+  Network* net = GET_MY_OWNER(Network);
+  if(!net || !net->IsBuiltIntact()) return;
+  CopyToState(net->net_state->layer_specs[spec_idx], net->net_state->GetStateSuffix());
+#ifdef CUDA_COMPILE
+  CopyToState(net->cuda_state->layer_specs[spec_idx], net->cuda_state->GetStateSuffix());
+#endif
+}

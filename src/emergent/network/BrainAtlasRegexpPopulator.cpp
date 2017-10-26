@@ -19,6 +19,7 @@
 #include <BrainAtlasFactory>
 #include <BrainAtlas>
 #include <Network>
+#include <Layer>
 
 #include <taMisc>
 

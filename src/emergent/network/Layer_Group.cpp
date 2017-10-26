@@ -15,6 +15,7 @@
 
 #include "Layer_Group.h"
 #include <Network>
+#include <Layer>
 
 #include <SigLinkSignal>
 

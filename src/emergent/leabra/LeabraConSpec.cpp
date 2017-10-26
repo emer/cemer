@@ -116,23 +116,20 @@ bool LeabraConSpec::CheckConfig_RecvCons(Projection* prjn, bool quiet) {
   return rval;
 }
 
-void LeabraConSpec::Trial_Init_Specs(LeabraNetwork* net) {
+bool LeabraConSpec::SetCurLrate(LeabraNetworkState_cpp* net) {
+  bool rval = false;
   float prv_cur_lrate = cur_lrate;
   cur_lrate = lrate;            // as a backup..
   lrs_mult = 1.0f;
-  if(!InheritsFrom(&TA_LeabraBiasSpec)) { // bias spec doesn't count
-    if(wt_bal.on) {
-      net->net_misc.wt_bal = true;
-    }
-  }
-
   if(use_lrate_sched) {
     lrs_mult = lrate_sched.GetVal(net->epoch);
     cur_lrate *= lrs_mult;
     if(cur_lrate != prv_cur_lrate) {
-      net->net_misc.lrate_updtd = true;
+      rval = true;
+      UpdateStateSpecs();       // update my state-side guys!
     }
   }
+  return rval;
 }
 
 void LeabraConSpec::LogLrateSched(int epcs_per_step, int n_steps, int bump_step) {

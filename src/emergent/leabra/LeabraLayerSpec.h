@@ -62,12 +62,6 @@ public:
 
 #include <LeabraLayerSpec_core>
 
-  virtual void	Trial_Init_Specs(LeabraLayer* lay, LeabraNetwork* net);
-  // #CAT_Learning initialize specs and specs update network flags
-  
-  virtual float Compute_AvgExt(LeabraLayer* lay, LeabraNetwork* net);
-  // #CAT_Activation compute average of unit ext or targ values, depending on ext flags
-  
   virtual void Compute_OutputName(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Statistic compute the output_name field from the layer acts.max_i (only for OUTPUT or TARGET layers)
   virtual void Compute_OutputName_ugp(LeabraLayer* lay, 

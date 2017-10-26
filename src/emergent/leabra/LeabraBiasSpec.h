@@ -23,7 +23,6 @@
 
 // declare all other types mentioned but not required to include:
 class LeabraCon; // 
-class LeabraUnit; // 
 class LeabraLayer; // 
 
 eTypeDef_Of(LeabraBiasSpec);
@@ -35,8 +34,6 @@ public:
 
 #include <LeabraBiasSpec_core>
   
-  void	Trial_Init_Specs(LeabraNetwork* net) override;
-
   bool	CheckObjectType_impl(taBase* obj) override;
 
   TA_SIMPLE_BASEFUNS(LeabraBiasSpec);

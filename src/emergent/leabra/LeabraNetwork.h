@@ -114,10 +114,10 @@ public:
 
   virtual void 	Trial_Init();
   // #CAT_TrialInit initialize at start of trial (init specs, Decay state)
-  inline void Trial_Init_Counters() { LeabraNetState()->Trial_Init_Counters(); }
+    inline void Trial_Init_Counters() { LeabraNetState()->Trial_Init_Counters(); }
     // #CAT_TrialInit init counters -- network only
-    virtual void Trial_Init_Specs();
-    // #CAT_TrialInit initialize specs and specs update network flags
+    virtual void SetCurLrate();
+    // #CAT_TrialInit set current learning rate based on network epoch and schedule
 
   ///////////////////////////////////////////////////////////////////////
   //	QuarterInit -- at start of a given quarter trial of processing

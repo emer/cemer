@@ -16,6 +16,7 @@
 #include "Wizard.h"
 #include <ProjectBase>
 #include <Network>
+#include <Layer>
 #include <DataTable>
 #include <Program>
 #include <StdNetWizDlg>

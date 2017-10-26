@@ -16,6 +16,9 @@
 #include "Network.h"
 
 #include <Network_Group>
+#include <BaseSpec>
+#include <Layer>
+#include <Projection>
 #include <NetView>
 #include <NetworkVoxelMapper>
 #include <BrainView>
@@ -920,47 +923,76 @@ void Network::BuildSpecs() {
   net_state->SetSpecSizes(state_layer_specs.size, state_prjn_specs.size, state_unit_specs.size, state_con_specs.size);
   net_state->AllocSpecMem();
 
-  for(int i=0; i < state_layer_specs.size; i++) {
-    LayerSpec* ls = StateLayerSpec(i);
-    net_state->layer_specs[i] = net_state->NewLayerSpec(ls->GetStateSpecType());
-    ls->CopyToState(net_state->layer_specs[i], net_state->GetStateSuffix());
-  }
-  for(int i=0; i < state_prjn_specs.size; i++) {
-    ProjectionSpec* ls = StatePrjnSpec(i);
-    net_state->prjn_specs[i] = net_state->NewPrjnSpec(ls->GetStateSpecType());
-    ls->CopyToState(net_state->prjn_specs[i], net_state->GetStateSuffix());
+  // todo: CUDA TOO
+
+  for(int i=0; i < state_con_specs.size; i++) {
+    ConSpec* ls = StateConSpec(i);
+    net_state->con_specs[i] = net_state->NewConSpec(ls->GetStateSpecType());
+    // note: cannot use UpdateStateSpecs because it has check for build intact..
+    ls->CopyToState(net_state->con_specs[i], net_state->GetStateSuffix());
+#ifdef CUDA_COMPILE
+    ls->CopyToState(cuda_state->con_specs[i], cuda_state->GetStateSuffix());
+#endif
   }
   for(int i=0; i < state_unit_specs.size; i++) {
     UnitSpec* ls = StateUnitSpec(i);
     net_state->unit_specs[i] = net_state->NewUnitSpec(ls->GetStateSpecType());
     ls->CopyToState(net_state->unit_specs[i], net_state->GetStateSuffix());
+#ifdef CUDA_COMPILE
+    ls->CopyToState(cuda_state->unit_specs[i], cuda_state->GetStateSuffix());
+#endif
   }
-  for(int i=0; i < state_con_specs.size; i++) {
-    ConSpec* ls = StateConSpec(i);
-    net_state->con_specs[i] = net_state->NewConSpec(ls->GetStateSpecType());
-    ls->CopyToState(net_state->con_specs[i], net_state->GetStateSuffix());
+  for(int i=0; i < state_prjn_specs.size; i++) {
+    ProjectionSpec* ls = StatePrjnSpec(i);
+    net_state->prjn_specs[i] = net_state->NewPrjnSpec(ls->GetStateSpecType());
+    ls->CopyToState(net_state->prjn_specs[i], net_state->GetStateSuffix());
+#ifdef CUDA_COMPILE
+    ls->CopyToState(cuda_state->prjn_specs[i], cuda_state->GetStateSuffix());
+#endif
   }
-  // todo: needs cuda_state update too!
+  for(int i=0; i < state_layer_specs.size; i++) {
+    LayerSpec* ls = StateLayerSpec(i);
+    net_state->layer_specs[i] = net_state->NewLayerSpec(ls->GetStateSpecType());
+    ls->CopyToState(net_state->layer_specs[i], net_state->GetStateSuffix());
+#ifdef CUDA_COMPILE
+    ls->CopyToState(cuda_state->layer_specs[i], cuda_state->GetStateSuffix());
+#endif
+  }
 }
 
 void Network::UpdateAllStateSpecs() {
+  UpdateAllStateLayerSpecs();
+  UpdateAllStatePrjnSpecs();
+  UpdateAllStateUnitSpecs();
+  UpdateAllStateConSpecs();
+}
+
+void Network::UpdateAllStateLayerSpecs() {
   for(int i=0; i < n_layer_specs_built; i++) {
     LayerSpec* ls = StateLayerSpec(i);
-    ls->CopyToState(net_state->layer_specs[i], net_state->GetStateSuffix());
+    ls->UpdateStateSpecs();
   }
+}
+
+void Network::UpdateAllStatePrjnSpecs() {
   for(int i=0; i < n_prjn_specs_built; i++) {
     ProjectionSpec* ls = StatePrjnSpec(i);
-    ls->CopyToState(net_state->prjn_specs[i], net_state->GetStateSuffix());
+    ls->UpdateStateSpecs();
   }
+}
+
+void Network::UpdateAllStateUnitSpecs() {
   for(int i=0; i < n_unit_specs_built; i++) {
     UnitSpec* ls = StateUnitSpec(i);
-    ls->CopyToState(net_state->unit_specs[i], net_state->GetStateSuffix());
+    ls->UpdateStateSpecs();
   }
+}
+
+void Network::UpdateAllStateConSpecs() {
   for(int i=0; i < n_con_specs_built; i++) {
     ConSpec* ls = StateConSpec(i);
-    ls->CopyToState(net_state->con_specs[i], net_state->GetStateSuffix());
+    ls->UpdateStateSpecs();
   }
-  // todo: needs cuda_state update too!
 }
 
 void Network::BuildLayerUnitState() {

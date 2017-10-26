@@ -24,6 +24,7 @@
 #include <taTransform>
 #include <String_Array>
 #include <Network>
+#include <LayerRef>
 #include <String_Matrix>
 #include <CircMatrix>
 #include <ColorScale>

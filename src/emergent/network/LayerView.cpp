@@ -16,6 +16,7 @@
 #include "LayerView.h"
 #include <T3LayerNode>
 #include <Network>
+#include <Layer>
 #include <NetView>
 #include <UnitView>
 #include <LayerView>

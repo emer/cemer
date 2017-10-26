@@ -15,6 +15,7 @@
 
 #include "UnitSpec.h"
 #include <Network>
+#include <Layer>
 
 #include <taMisc>
 
@@ -85,3 +86,11 @@ void UnitSpec::UpdateAfterEdit_impl() {
   act_range.UpdateAfterEdit_NoGui();
 }
 
+void UnitSpec::UpdateStateSpecs() {
+  Network* net = GET_MY_OWNER(Network);
+  if(!net || !net->IsBuiltIntact()) return;
+  CopyToState(net->net_state->unit_specs[spec_idx], net->net_state->GetStateSuffix());
+#ifdef CUDA_COMPILE
+  CopyToState(net->cuda_state->unit_specs[spec_idx], net->cuda_state->GetStateSuffix());
+#endif
+}

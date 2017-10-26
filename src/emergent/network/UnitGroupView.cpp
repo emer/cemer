@@ -17,6 +17,7 @@
 #include <T3UnitGroupNode>
 #include <T3UnitNode>
 #include <Network>
+#include <Layer>
 #include <NetView>
 #include <UnitView>
 #include <LayerView>

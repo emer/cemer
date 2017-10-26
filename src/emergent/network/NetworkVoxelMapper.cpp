@@ -15,6 +15,7 @@
 
 #include "NetworkVoxelMapper.h"
 #include <Network>
+#include <Layer>
 #include <BrainAtlas>
 #include <taVector3f>
 #include <Voxel>

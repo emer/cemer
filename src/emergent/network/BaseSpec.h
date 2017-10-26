@@ -58,7 +58,7 @@ public:
   };
   static bool       nw_itm_def_arg;	// #IGNORE default arg val for FindMake..
 
-  bool              is_used;      // #READ_ONLY #HIDDEN #NO_INHERIT is THIS spec used - ignore usage of children
+  bool              is_used;    // #READ_ONLY #HIDDEN #NO_INHERIT is THIS spec used - ignore usage of children
   UsedStatus        used_status;  // #HIDDEN #NO_INHERIT for gui use only to indicate to user the usage of this spec and child specs
   
   bool              is_new;     // #READ_ONLY #HIDDEN #NO_INHERIT #NO_SAVE is this spec newly created?  if so, prompt user to apply it to some objects..
@@ -149,6 +149,8 @@ public:
 
   virtual void    CopyToState(void* state_spec, const char* state_suffix);
   // #IGNORE use typedef info to copy all of our parameters to corresponding State version of this spec type
+  virtual void    UpdateStateSpecs() { };
+  // Update our corresponding state-side specs -- called in UAE, and call when specifically updating parameters -- each base class needs to define this, getting the proper specs etc
   
   void	InitLinks() override;
   void	CutLinks() override;

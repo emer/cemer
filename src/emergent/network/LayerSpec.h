@@ -47,6 +47,8 @@ public:
   String        GetTypeDecoKey() const override { return "LayerSpec"; }
   String        GetToolbarName() const override { return "layer spec"; }
 
+  void  UpdateStateSpecs() override;
+  
   void  InitLinks() override;
   void  CutLinks() override;
   TA_BASEFUNS_NOCOPY(LayerSpec); //

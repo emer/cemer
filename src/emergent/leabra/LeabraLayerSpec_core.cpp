@@ -11,6 +11,39 @@ void LEABRA_LAYER_SPEC::DecayState(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE
   }
 }
 
+void LEABRA_LAYER_SPEC::Trial_Init_Specs(LEABRA_NETWORK_STATE* net) {
+  if(lay_gp_inhib.on) {
+    net->net_misc.lay_gp_inhib = true;
+  }
+  if(decay.trial > 0.0f) {
+    net->net_misc.trial_decay = true;
+  }
+}
+
+
+///////////////////////////////////////////////////////////////////////
+//      QuarterInit -- at start of settling
+
+float LEABRA_LAYER_SPEC::Compute_AvgExt(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
+  float avg_ext = 0.0f;
+  int avg_n = 0;
+  for(int ui = 0; ui < lay->n_units; ui++) {
+    LEABRA_UNIT_STATE* u = (LEABRA_UNIT_STATE*)lay->GetUnitState(net, ui);
+    if(u->lesioned()) continue;
+    if(lay->HasExtFlag(UnitState_cpp::TARG)) { // targ comes first b/c not copied to ext at this point yet!
+      avg_ext += u->targ;
+    }
+    else if(lay->HasExtFlag(UnitState_cpp::EXT)) {
+      avg_ext += u->ext;
+    }
+    avg_n++;
+  }
+  if(avg_n > 0) {
+    avg_ext /= (float)avg_n;
+  }
+  return avg_ext;
+}
+
 void LEABRA_LAYER_SPEC::Trial_Init_Layer(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
   LEABRA_UNIT_SPEC_CPP* us = (LEABRA_UNIT_SPEC_CPP*)lay->GetUnitSpec(net);
   LEABRA_UNGP_STATE* lgpd = lay->GetLayUnGpState(net);

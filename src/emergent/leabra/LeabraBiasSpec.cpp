@@ -49,11 +49,3 @@ bool LeabraBiasSpec::CheckObjectType_impl(taBase* obj) {
   return true;
 }
 
-void LeabraBiasSpec::Trial_Init_Specs(LeabraNetwork* net) {
-  if(!learn) {
-    return;
-  }
-  inherited::Trial_Init_Specs(net);
-  net->net_misc.bias_learn = true;
-}
-

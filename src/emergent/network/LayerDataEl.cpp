@@ -15,6 +15,8 @@
 
 #include "LayerDataEl.h"
 #include <LayerWriter>
+#include <Network>
+#include <Layer>
 #include <DataTable>
 #include <MemberDef>
 #include <Completions>

@@ -41,7 +41,6 @@ eTypeDef_Of(WeightLimits);
 #include <State_main>
 
 // declare all other types mentioned but not required to include:
-class Unit; //
 class Network; //
 class Projection; //
 
@@ -79,6 +78,8 @@ public:
   String          GetTypeDecoKey() const override { return "ConSpec"; }
   String          GetToolbarName() const override { return "con spec"; }
 
+  void  UpdateStateSpecs() override;
+  
   void  InitLinks() override;
   void  CutLinks() override;
   void  Copy_(const ConSpec& cp);

@@ -18,16 +18,23 @@
 
 // parent includes:
 #include <taGroup>
-#include <Layer>
+
+#include "network_def.h"
 
 // smartptr, ref:
 #include <taSmartPtrT>
 #include <taSmartRefT>
 
 // member includes:
+#include <PosVector3i>
+#include <PosVector2i>
 
 // declare all other types mentioned but not required to include:
 class Network; //
+class Layer; //
+class LayerSpec; //
+class UnitSpec; //
+
 
 eTypeDef_Of(Layer_Group);
 

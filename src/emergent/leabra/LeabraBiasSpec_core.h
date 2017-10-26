@@ -8,6 +8,13 @@
 
   INLINE int  GetStateSpecType() const override { return LEABRA_NETWORK_STATE::T_LeabraBiasSpec; }
 
+  INLINE void  Trial_Init_Specs(LEABRA_NETWORK_STATE* net) override {
+    // do NOT apply wt_bal for bias specs!
+    if(learn) {
+      net->net_misc.bias_learn = true;
+    }
+  }
+
   INLINE void B_Compute_dWt(UNIT_STATE* u, NETWORK_STATE* net, int thr_no) override {
     if(!learn) return;
     LEABRA_UNIT_STATE* uv = (LEABRA_UNIT_STATE*)u;

@@ -35,7 +35,6 @@
 #include <State_main>
 
 // declare all other types mentioned but not required to include:
-class LeabraUnit; // 
 class LeabraLayer; // 
 class LeabraConState_cpp; // 
 class LeabraNetwork; // 
@@ -70,9 +69,9 @@ public:
   /////////////////////////////////////
   // General 
 
-  virtual void	Trial_Init_Specs(LeabraNetwork* net);
-  // #CAT_Learning initialize specs and specs update network flags -- e.g., set current learning rate based on schedule given epoch (or error value)
-
+  virtual bool	SetCurLrate(LeabraNetworkState_cpp* net);
+  // set current learning rate based on epoch-wise schedule -- called during Trial_Init -- returns true if learning rate updated
+  
   virtual void	LogLrateSched(int epcs_per_step = 50, int n_steps=5, int bump_step=-1);
   // #MENU_BUTTON #MENU_ON_LrateSched #CAT_Learning establish a logarithmic learning rate schedule with given total number of steps (including first step at lrate) and epochs per step: numbers go down in sequence: 1, .5, .2, .1, .05, .02, .01, etc.. this is a particularly good lrate schedule for large nets on hard tasks -- if bump_step > 0 (3 is a good default), the lrate bumps back up to 1 and back down to that step level, and then proceeds from there -- this can pop a model out of a local minimum and result in better final performance
   virtual void	ExpLrateSched(int epcs_per_step = 50, int n_steps=7, float pct_per_step = 0.5);

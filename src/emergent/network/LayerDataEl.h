@@ -21,8 +21,9 @@
 #include <taOBase>
 
 // member includes:
-#include <Network>
+#include <NetworkRef>
 #include <DataTableRef>
+#include <PosVector2i>
 
 // declare all other types mentioned but not required to include:
 class DataTableCols; //

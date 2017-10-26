@@ -15,6 +15,7 @@
 
 #include "LayerWriter.h"
 #include <Network>
+#include <Layer>
 #include <DataTable>
 
 TA_BASEFUNS_CTORS_DEFN(LayerWriter);

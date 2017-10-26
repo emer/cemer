@@ -16,6 +16,8 @@
 #include "LayerWriterEl.h"
 #include <DataTable>
 #include <LayerWriter>
+#include <Network>
+#include <Layer>
 
 #include <taMisc>
 

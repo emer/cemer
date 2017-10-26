@@ -149,50 +149,6 @@ void LeabraLayer::CheckInhibCons(LeabraNetwork* net) {
 ///////////////////////////////////////////////////////////////////////
 //      TrialInit -- at start of trial
 
-void LeabraLayerSpec::Trial_Init_Specs(LeabraLayer* lay, LeabraNetwork* net) {
-  // NOTE: this must be called by regular LeabraNetwork and is not called in state!
-  if(lay->unit_spec.SPtr()) {
-    ((LeabraUnitSpec*)lay->unit_spec.SPtr())->Trial_Init_Specs(net);
-  }
-
-  FOREACH_ELEM_IN_GROUP(LeabraPrjn, p, lay->projections) {
-    if(p->MainNotActive()) continue;
-    p->Trial_Init_Specs(net);
-  }
-
-  if(lay_gp_inhib.on) {
-    net->net_misc.lay_gp_inhib = true;
-  }
-  if(decay.trial > 0.0f) {
-    net->net_misc.trial_decay = true;
-  }
-}
-
-
-///////////////////////////////////////////////////////////////////////
-//      QuarterInit -- at start of settling
-
-float LeabraLayerSpec::Compute_AvgExt(LeabraLayer* lay, LeabraNetwork* net) {
-  // todo: could do this in a state / thread compatible way..
-  float avg_ext = 0.0f;
-  int avg_n = 0;
-  for(int ui = 0; ui < lay->n_units; ui++) {
-    LEABRA_UNIT_STATE* u = (LEABRA_UNIT_STATE*)lay->GetUnitState(net->net_state, ui);
-    if(u->lesioned()) continue;
-    if(lay->HasExtFlag(UnitState_cpp::TARG)) { // targ comes first b/c not copied to ext at this point yet!
-      avg_ext += u->targ;
-    }
-    else if(lay->HasExtFlag(UnitState_cpp::EXT)) {
-      avg_ext += u->ext;
-    }
-    avg_n++;
-  }
-  if(avg_n > 0) {
-    avg_ext /= (float)avg_n;
-  }
-  return avg_ext;
-}
-
 
 ///////////////////////////////////////////////////////////////////////
 //      Cycle Stats

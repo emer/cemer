@@ -15,6 +15,8 @@
 
 #include "NetMonItem.h"
 #include <Network>
+#include <Projection>
+#include <Layer>
 #include <MemberDef>
 #include <UserDataItemBase>
 #include <taMath_float>

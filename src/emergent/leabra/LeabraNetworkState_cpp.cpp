@@ -54,6 +54,7 @@ void LeabraNetworkState_cpp::Trial_Init_Unit() {
 void LeabraNetworkState_cpp::Trial_Init() {
   unlearnable_trial = false;
   Trial_Init_Counters();
+  Trial_Init_Specs();
 
   Trial_Init_Unit(); // performs following at unit-level
   //  Trial_Init_SRAvg();

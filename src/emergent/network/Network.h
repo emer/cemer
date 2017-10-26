@@ -26,6 +26,7 @@
 #include <BaseSpec_Group>
 #include <Layer_Group>
 #include <taBrainAtlas_List>
+#include <PRerrVals>
 #include <Weights_List>
 #include <TimeUsed>
 #include <int_Array>
@@ -37,21 +38,12 @@
 #include <taMarkUp>
 #include <taBase_RefList>
 
-// NOTE: by including network, you end up including all the network code:
-// #include <Connection>
-// #include <ConSpec>
-// #include <ConState>
-// #include <UnitSpec>
-// #include <ProjectionSpec>
-// #include <Projection>
-// #include <Layer>
-// #include <LayerSpec>
-
 // declare all other types mentioned but not required to include:
 class ProjectBase; //
 class NetView; //
 class BrainView; //
 class T3Panel; //
+class ProjectionSpec; //
 
 ////////////////////////////////////////////////////////
 //      Memory structure for version 8.0.0 
@@ -669,6 +661,14 @@ public:
     virtual void  BuildSpecs();
     // #IGNORE Build the specs on the State
     virtual void  UpdateAllStateSpecs();
+    // #CAT_State update all the State-side specs based on current settings in main specs
+    virtual void  UpdateAllStateLayerSpecs();
+    // #CAT_State update all the State-side specs based on current settings in main specs
+    virtual void  UpdateAllStatePrjnSpecs();
+    // #CAT_State update all the State-side specs based on current settings in main specs
+    virtual void  UpdateAllStateUnitSpecs();
+    // #CAT_State update all the State-side specs based on current settings in main specs
+    virtual void  UpdateAllStateConSpecs();
     // #CAT_State update all the State-side specs based on current settings in main specs
     virtual void  BuildLayerUnitState();
     // #IGNORE initialize layer, projection, unit group, and unit state from corresponding network objects

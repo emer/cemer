@@ -16,6 +16,8 @@
 #include "ActBasedRF.h"
 #include <taMath_float>
 #include <MemberDef>
+#include <Network>
+#include <Layer>
 
 TA_BASEFUNS_CTORS_DEFN(ActBasedRF);
 

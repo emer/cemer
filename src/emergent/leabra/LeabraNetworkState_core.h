@@ -82,6 +82,8 @@
 
   INIMPL virtual void Trial_Init_Counters();
   // #CAT_TrialInit init counters -- network only
+  INIMPL virtual void Trial_Init_Specs();
+  // #CAT_TrialInit initialize specs and specs update network flags
   INIMPL virtual void Trial_Init_Unit_Thr(int thr_no);
   // #IGNORE trial unit-level initialization functions: Trial_Init_SRAvg, DecayState, NoiseInit
   INIMPL virtual void Trial_Init_Layer();

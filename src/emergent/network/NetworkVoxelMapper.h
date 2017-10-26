@@ -27,7 +27,6 @@
 // declare all other types mentioned but not required to include:
 class Network;
 class Layer;
-class Unit;
 class taVector3f;
 class taBrainAtlas;
 

@@ -14,6 +14,8 @@
 //   GNU General Public License for more details.
 
 #include "NetView.h"
+#include <Layer>
+#include <Projection>
 #include <T3NetNode>
 #include <iViewPanelOfNetwork>
 #include <LayerGroupView>

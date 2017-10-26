@@ -17,10 +17,11 @@
 
 #include <ConSpec_cpp>
 #include <Projection>
+#include <Layer>
 
 #include <State_main>
 
-#include <Layer>
+#include <Network>
 
 TA_BASEFUNS_CTORS_DEFN(RenormInitWtsSpec);
 TA_BASEFUNS_CTORS_DEFN(ProjectionSpec);
@@ -68,6 +69,15 @@ bool ProjectionSpec::CheckConnect(Projection* prjn, bool quiet) {
     return false;
   }
   return true;
+}
+
+void ProjectionSpec::UpdateStateSpecs() {
+  Network* net = GET_MY_OWNER(Network);
+  if(!net || !net->IsBuiltIntact()) return;
+  CopyToState(net->net_state->prjn_specs[spec_idx], net->net_state->GetStateSuffix());
+#ifdef CUDA_COMPILE
+  CopyToState(net->cuda_state->prjn_specs[spec_idx], net->cuda_state->GetStateSuffix());
+#endif
 }
 
 // impl

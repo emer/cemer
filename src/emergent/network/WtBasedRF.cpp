@@ -15,7 +15,8 @@
 
 #include "WtBasedRF.h"
 #include <taMath_float>
-
+#include <Network>
+#include <Layer>
 #include <V1RegionSpec>
 
 #include <taMisc>

@@ -35,7 +35,6 @@
 // declare all other types mentioned but not required to include:
 class Network; //
 class Voxel; //
-class Unit; //
 class T3BrainNode; //
 class NiftiReader; // #IGNORE
 
