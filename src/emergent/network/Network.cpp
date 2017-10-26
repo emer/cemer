@@ -454,7 +454,6 @@ int Network::Save_strm(ostream& strm, taBase* par, int indent) {
 //   should generally NOT then do the unit level (per above)
 // * Exception to above: if the layer-level is specifically computing layer-level
 //   aggregate stats over units, then that is most efficiently done by layer-level
-// TODO: need to figure out a better soln for layer-level processing!!
 
 
 void Network::SyncAllState() {

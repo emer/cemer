@@ -154,19 +154,16 @@ void NetMonItem::CheckThisConfig_impl(bool quiet, bool& rval) {
   }
 }
 
-String NetMonItem::GetAutoName(taBase* obj) {
-  if(!obj) return "";
+String NetMonItem::GetAutoName(const String& obj_nm) {
   String rval;
   if(agg.op != Aggregate::NONE) {
     rval = agg.GetAggName() + "_";
     rval.downcase();
   }
-  if(obj->InheritsFrom(&TA_Network)) { // special case
-    rval += (var_label.empty() ? variable : var_label);
+  if(obj_nm.nonempty()) {
+    rval += obj_nm + "_";
   }
-  else {
-    rval += GetObjName(obj) + "_" + (var_label.empty() ? variable : var_label);
-  }
+  rval += (var_label.empty() ? variable : var_label);
   return rval;
 }
 
@@ -216,12 +213,12 @@ void NetMonItem::UpdateAfterEdit_impl() {
     if(name_style == MY_NAME) {
       if(!computed) {
         if(name.empty()) {
-          SetName(GetAutoName(object));
+          SetName(GetAutoName(GetObjName(object)));
         }
       }
     }
     else {                      // AUTO_NAME = always update!
-      SetName(GetAutoName(object));
+      SetName(GetAutoName(GetObjName(object)));
     }
     name = taMisc::StringCVar(name);            // keep it clean for css var names
     ScanObject();
@@ -265,54 +262,15 @@ String NetMonItem::GetObjName(taBase* obj) {
   if (!obj) return _nilString;
 
   // cases where default name is not what we want:
-
   if(obj->InheritsFrom(TA_Projection)) {
     Projection* prjn = (Projection*)obj;
     if(prjn->layer) {
       return taMisc::StringMaxLen(prjn->layer->name, max_name_len) + "_" + prjn->name;
     }
   }
-  // todo: need special code for unit, constate
-  // else if(obj->InheritsFrom(TA_Unit)) {
-  //   UnitState_cpp* u = (UnitState_cpp*)obj;
-  //   Layer* lay = GET_OWNER(obj, Layer);
-  //   if(lay) {
-  //     return GetObjName(lay) + "[" + String(u->lay_un_idx) + "]";
-  //   }
-  // }
-  // else if (obj->InheritsFrom(TA_Unit_Group)) {
-  //   Unit_Group* ug = (Unit_Group*)obj;
-  //   Layer* lay = GET_OWNER(obj, Layer);
-  //   if(lay) {
-  //     String nm = GetObjName(lay);
-  //     if(ug->owner == lay) return nm; // synoymous with layer
-  //     int idx = ug->idx;
-  //     if(idx >= 0)
-  //       return nm + "_gp_" + String(idx) + "_";
-  //   }
-  // }
-  // TODO: invalid -- object is not a taBase!
-  // else if (obj->InheritsFrom(TA_ConState_cpp)) {
-  //   ConState_cpp* cg = (ConState_cpp*)obj;
-  //   PrjnState_cpp* pjs = cg->GetPrjnState(net->net_state);
-  //   Projection* prjn = PrjnFromState(pjs);
-  //   if(cg->IsRecv()) {
-  //     if(prjn && prjn->from.ptr()) {
-  //       UnitState_cpp* un = GET_OWNER(obj, Unit);
-  //       if (un) {
-  //         return GetObjName(un) + "_r_" + taMisc::StringMaxLen(prjn->from->name, max_name_len);
-  //       }
-  //     }
-  //   }
-  //   else {
-  //     if(prjn && prjn->layer) {
-  //       UnitState_cpp* un = GET_OWNER(obj, Unit);
-  //       if (un) {
-  //         return GetObjName(un) + "_s_" + taMisc::StringMaxLen(prjn->layer->name, max_name_len);
-  //       }
-  //     }
-  //   }
-  // }
+  else if(obj->InheritsFrom(&TA_Network)) { // special case
+    return _nilString;                      // just use the var
+  }
 
   // go with the default name (display name takes care of lots of the logic already)
   String nm = obj->GetDisplayName();
@@ -329,7 +287,9 @@ String NetMonItem::GetObjName(taBase* obj) {
   return nm;
 }
 
-String NetMonItem::GetColName(taBase* obj, int col_idx) {
+String NetMonItem::GetColName(taBase* obj, int col_idx, String obj_nm) {
+  if(obj && obj_nm.empty())
+    obj_nm = GetObjName(obj);
   String rval;
   if(name_style == MY_NAME) {
     if(col_idx == 0)
@@ -342,19 +302,22 @@ String NetMonItem::GetColName(taBase* obj, int col_idx) {
                 "conflicts with another monitor item of the same name -- please rename one of them!");
   }
   else {
-    rval = GetAutoName(obj);
+    rval = GetAutoName(obj_nm);
     rval = taMisc::StringCVar(rval); // keep it clean for css var names
-    if(val_specs.FindNameIdx(rval) >= 0) {   // NOTE: N^2 kind of thing, but done infrequently so ok..
-      for(max_name_len++; max_name_len < 50; max_name_len++) { // hard coded max here..
-        rval = GetAutoName(obj);
-        rval = taMisc::StringCVar(rval); // keep it clean for css var names
-        if(val_specs.FindNameIdx(rval) < 0) {
-          break;                // safe!
+    if(obj) {                        // if we have an object we can try to make an unambig name
+      if(val_specs.FindNameIdx(rval) >= 0) {   // NOTE: N^2 kind of thing, but done infrequently so ok..
+        for(max_name_len++; max_name_len < 50; max_name_len++) { // hard coded max here..
+          obj_nm = GetObjName(obj);
+          rval = GetAutoName(obj_nm);
+          rval = taMisc::StringCVar(rval); // keep it clean for css var names
+          if(val_specs.FindNameIdx(rval) < 0) {
+            break;                // safe!
+          }
         }
+        TestWarning(max_name_len >= 50, "NetMonItem::GetColName",
+                    "Monitor item:",name,"with auto-name of:",rval,
+                    "is conflicting with another item of the same name, despite an attempt to increase the max_name_len up to 50 -- either manually incease further or fix underlying naming conflict");
       }
-      TestWarning(max_name_len >= 50, "NetMonItem::GetColName",
-                  "Monitor item:",name,"with auto-name of:",rval,
-                  "is conflicting with another item of the same name, despite an attempt to increase the max_name_len up to 50 -- either manually incease further or fix underlying naming conflict");
     }
   }
   return rval;
@@ -428,13 +391,9 @@ void NetMonItem::ScanObject() {
 
   if (!object) return;
 
-  // if (object->InheritsFrom(&TA_Unit))
-  //   ScanObject_Unit((UnitState_cpp*)object.ptr(), variable);
   if (object->InheritsFrom(&TA_Layer)) {
     ScanObject_Layer((Layer*)object.ptr(), variable);
   }
-  // else if (object->InheritsFrom(&TA_Unit_Group))
-  //   ScanObject_UnitGroup((Unit_Group*)object.ptr(), variable);
   else if (object->InheritsFrom(&TA_Projection)) {
     ScanObject_Projection((Projection*)object.ptr(), variable);
   }
@@ -567,29 +526,36 @@ bool NetMonItem::ScanObject_InObject(taBase* obj, String var, taBase* name_obj, 
       members.Link(md);
       return true;
     }
-    // else if(obj->InheritsFrom(&TA_Unit)) { // special case for UnitState
-    //   UnitState_cpp* un = (UnitState_cpp*)obj;
-    //     // don't attempt to scan if network not set or intact..
-    //   if(!un->lesioned() && un->own_net()->IsBuiltIntact()) {
-    //     md = un->own_net()->UnitStateType()->members.FindName(var);
-    //     if(md) {
-    //       if(name_obj) {
-    //         String valname = GetColName(name_obj, val_specs.size);
-    //         ValType vt = ValTypeForType(md->type);
-    //         AddScalarCol(valname, vt);
-    //         if(agg.op != Aggregate::NONE) {
-    //           AddScalarCol_Agg(valname, vt); // add the agg guy just to keep it consistent
-    //         }
-    //       }
-    //       // if not adding a column, it is part of a pre-allocated matrix; just add vars
-    //       ptrs.Add(un->GetUnitState());
-    //       members.Link(md);
-    //       return true;
-    //     }
-    //   }
-    // }
   }
   return false;
+}
+
+bool NetMonItem::ScanObject_InNonTAObject(void* obj, TypeDef* typ, String var, taBase* name_obj,
+                                          bool err_not_found) {
+  if (!obj) return false;
+
+  // first, try the recursive end, look for terminal member in ourself
+  if(var.startsWith('.'))
+    var = var.after('.');
+
+  TypeDef* own_td = typ;
+  int net_base_off = 0;
+  ta_memb_ptr net_mbr_off;
+  MemberDef* md = TypeDef::FindMemberPathStatic(own_td, net_base_off, net_mbr_off, var, err_not_found);
+  // special case for Average objects -- they automatically get their avg member
+  if(!md) return false;
+  if(md && name_obj) {
+    String valname = GetColName(name_obj, val_specs.size);
+    ValType vt = ValTypeForType(md->type);
+    AddScalarCol(valname, vt);
+    if(agg.op != Aggregate::NONE) {
+      AddScalarCol_Agg(valname, vt); // add the agg guy just to keep it consistent
+    }
+  }
+  // if not adding a column, it is part of a pre-allocated matrix; just add vars
+  ptrs.Add(obj);
+  members.Link(md);
+  return true;
 }
 
 void NetMonItem::ScanObject_Network(Network* net, String var) {
@@ -657,6 +623,9 @@ void NetMonItem::ScanObject_Layer(Layer* lay, String var) {
   if (ScanObject_InObject(lay, var, lay, false)) return; // false = just test, no error
 
   // we now know it must be a regular unit variable (or invalid); do that
+  NetworkState_cpp* net_state = lay->GetValidNetState();
+  if(!net_state) return;
+  
   MatrixGeom geom;
   if(lay->unit_groups) {
     if(lay->gp_geom.n_not_xy || lay->un_geom.n_not_xy)
@@ -672,41 +641,18 @@ void NetMonItem::ScanObject_Layer(Layer* lay, String var) {
   }
   String valname = GetColName(lay, val_specs.size);
   AddMatrixCol(valname, VT_FLOAT, &geom);
-  if (geom.dims() == 1) {
-    // for (int i = 0; i < lay->n_units; ++i) {
-    //   ScanObject_InObject(lay->units.Leaf(i), var, NULL); // don't make a col
-    // }
-  }
-  else if(geom.dims() == 2) {
-    taVector2i c;
-    for (c.y = 0; c.y < lay->un_geom.y; ++c.y) {
-      for (c.x = 0; c.x < lay->un_geom.x; ++c.x) {
-        // UnitState_cpp* u = lay->UnitAtCoord(c); // NULL if odd size or not built
-        // if(u && !u->lesioned())
-        //   ScanObject_InObject(u, var, NULL); // don't make a col
-      }
-    }
-  }
-  else if(geom.dims() == 4) {
-    taVector2i gc;
-    for (gc.y = 0; gc.y < lay->gp_geom.y; ++gc.y) {
-      for (gc.x = 0; gc.x < lay->gp_geom.x; ++gc.x) {
-        taVector2i c;
-        for (c.y = 0; c.y < lay->un_geom.y; ++c.y) {
-          for (c.x = 0; c.x < lay->un_geom.x; ++c.x) {
-            // UnitState_cpp* u = lay->UnitAtGpCoord(gc, c);
-            // if(u && !u->lesioned())
-            //   ScanObject_InObject(u, var, NULL); // don't make a col
-          }
-        }
-      }
+  String un_obj_nm = GetObjName(lay);
+  for (int i = 0; i < lay->n_units; ++i) {
+    UnitState_cpp* un = lay->GetUnitState(net_state, i);
+    if(un) {
+      ScanObject_Unit(un, var, un_obj_nm + "[" + String(i) + "]", net_state);
     }
   }
 }
 
 void NetMonItem::ScanObject_LayerUnits(Layer* lay, String var) {
-  if(!lay->own_net->IsBuiltIntact()) // no-can-do
-    return;
+  NetworkState_cpp* net_state = lay->GetValidNetState();
+  if(!net_state) return;
   
   String range2;
   String range1 = var.between('[', ']');
@@ -720,70 +666,88 @@ void NetMonItem::ScanObject_LayerUnits(Layer* lay, String var) {
   String valname = GetColName(lay, val_specs.size);
   MatrixGeom geom;
 
-  if(range2.nonempty()) { // group case
-    if(range1.contains('-')) {
-      int gpidx1 = (int)range1.before('-');
-      int gpidx2 = (int)range1.after('-');
+  String un_obj_nm = GetObjName(lay);
 
-      if(range2.contains('-')) {
-        int unidx1 = (int)range2.before('-');
-        int unidx2 = (int)range2.after('-');
-        geom.SetGeom(2, 1+unidx2-unidx1, 1+gpidx2-gpidx1);
-        AddMatrixCol(valname, VT_FLOAT, &geom);
-        // for (int gi = gpidx1; gi <= lay->units.gp.size && gi <= gpidx2; ++gi) {
-        //   Unit_Group* gp = (Unit_Group*)lay->units.gp.SafeEl(gi);
-        //   if(!gp) break;
-        //   for (int i = unidx1; i < gp->size && i <= unidx2; ++i) {
-        //     ScanObject_InObject(gp->SafeEl(i), rmdr, NULL); // don't make a col
-        //   }
-        // }
-      }
-      else {
-        int idx = (int)range2;
-        geom.SetGeom(1, 1+gpidx2-gpidx1);
-        AddMatrixCol(valname, VT_FLOAT, &geom);
-        // for (int gi = gpidx1; gi <= lay->units.gp.size && gi <= gpidx2; ++gi) {
-        //   Unit_Group* gp = (Unit_Group*)lay->units.gp.SafeEl(gi);
-        //   if(!gp) break;
-        //   ScanObject_InObject(gp->SafeEl(idx), rmdr, NULL); // don't make a col
-        // }
-      }
+  String un_range;
+  String gp_range;
+  if(range2.nonempty()) {
+    un_range = range2;
+    gp_range = range1;
+  }
+  else {
+    un_range = range1;
+  }
+  
+  int unidx1 = 0; 
+  int unidx2 = 0; 
+  if(un_range.contains('-')) {
+    unidx1 = (int)un_range.before('-');
+    unidx2 = (int)un_range.after('-');
+    if(unidx2 < 0)
+      unidx2 = lay->un_geom_n-1;
+  }
+  else {
+    unidx1 = (int)un_range;
+    unidx2 = unidx1;
+  }
+
+  int gpidx1 = 0; 
+  int gpidx2 = 0; 
+  if(gp_range.contains('-')) {
+    gpidx1 = (int)gp_range.before('-');
+    gpidx2 = (int)gp_range.after('-');
+    if(gpidx2 < 0)
+      gpidx2 = lay->n_ungps-1;
+  }
+  else {
+    gpidx1 = (int)gp_range;
+    gpidx2 = gpidx1;
+  }
+  
+  gpidx1 = MIN(gpidx1, lay->n_ungps-1);
+  gpidx2 = MIN(gpidx2, lay->n_ungps-1);
+  int ngp = 1+gpidx2-gpidx1;
+  unidx1 = MIN(unidx1, lay->un_geom_n-1);
+  unidx2 = MIN(unidx2, lay->un_geom_n-1);
+  int nun = 1+unidx2-unidx1;
+  
+  
+  if(gp_range.nonempty()) { // group case
+    if(ngp > 1 && nun > 1) {
+      geom.SetGeom(2, nun, ngp);
+      AddMatrixCol(valname, VT_FLOAT, &geom);
+    }
+    else if(ngp > 1) {
+      geom.SetGeom(1, ngp);
+      AddMatrixCol(valname, VT_FLOAT, &geom);
+    }
+    else if(nun > 1) {
+      geom.SetGeom(1, nun);
+      AddMatrixCol(valname, VT_FLOAT, &geom);
     }
     else {
-      int gpidx = (int)range1;
-      // Unit_Group* gp = (Unit_Group*)lay->units.gp.SafeEl(gpidx);
-      // if(!gp) return;
-      // if(range2.contains('-')) {
-      //   int unidx1 = (int)range2.before('-');
-      //   int unidx2 = (int)range2.after('-');
-      //   geom.SetGeom(1, 1+unidx2-unidx1);
-      //   AddMatrixCol(valname, VT_FLOAT, &geom);
-      //   for (int i = unidx1; i < gp->size && i <= unidx2; ++i) {
-      //     ScanObject_InObject(gp->SafeEl(i), rmdr, NULL); // don't make a col
-      //   }
-      // }
-      // else {
-        int idx = (int)range2;
-        AddScalarCol(valname, VT_FLOAT);
-        // ScanObject_InObject(gp->SafeEl(idx), rmdr, NULL); // don't make a col
-      // }
+      AddScalarCol(valname, VT_FLOAT);
+    }
+    for (int gi = gpidx1; gi <= gpidx2; ++gi) {
+      for (int i = unidx1; i <= unidx2; ++i) {
+        UnitState_cpp* unit = lay->GetUnitStateGpUnIdx(net_state, gi, i);
+        String un_nm = un_obj_nm + "[" + String(gi) + "][" + String(i) + "]";
+        ScanObject_Unit(unit, rmdr, un_nm, net_state);
+      }
     }
   }
   else {                        // just unit idxs
-    if(range1.contains('-')) {
-      int idx1 = (int)range1.before('-');
-      int idx2 = (int)range1.after('-');
-      geom.SetGeom(1, 1+idx2-idx1);
+    if(nun > 1) {
+      geom.SetGeom(1, nun);
       AddMatrixCol(valname, VT_FLOAT, &geom);
-      // for (int i = idx1; i < lay->n_units && i <= idx2; ++i) {
-      //   ScanObject_InObject(lay->units.Leaf(i), rmdr, NULL); // don't make a col
-      // }
     }
     else {
-      int idx = (int)range1;
-      String valnm = GetColName(lay, val_specs.size);
-      AddScalarCol(valnm, VT_FLOAT);
-      // ScanObject_InObject(lay->units.Leaf(idx), rmdr, NULL); // don't make a col
+      AddScalarCol(valname, VT_FLOAT);
+    }
+    for (int i = unidx1; i <= unidx2; ++i) {
+      UnitState_cpp* unit = lay->GetUnitState(net_state, i);
+      String un_nm = un_obj_nm + "[" + String(i) + "]";
+      ScanObject_Unit(unit, rmdr, un_nm, net_state);
     }
   }
 }
@@ -943,76 +907,39 @@ void NetMonItem::ScanObject_Projection(Projection* prjn, String var) {
   }
 }
 
-// void NetMonItem::ScanObject_UnitGroup(Unit_Group* ug, String var) {
-//   // check for projection monitor
-//   if(var.startsWith('.'))
-//     var = var.after('.');
-//   if(var.contains('.')) {
-//     String subvar = var.before('.');
-//     if(TestError((subvar == "projections") || (subvar == "prjns"), "ScanObject_UnitGroup",
-//                  "cannot monitor projections group from UnitGroup object")) {
-//       return;
-//     }
-//     // todo: could do this but is it really needed??  would need to pass ug pointer to
-//     // a special version of PrjnCons fun
-//     if(TestError((subvar == "r") || (subvar == "s"), "ScanObject_UnitGroup",
-//                  "cannot monitor connection weights from UnitGroup object")) {
-//       return;
-//     }
-//   }
-
-//   if (ScanObject_InObject(ug, var, ug, false)) return; // false = test
-
-//   if(!ug->own_lay->own_net->IsBuiltIntact()) // no-can-do
-//     return;
-  
-//   // we now know it must be a regular unit variable (or invalid); do that
-//   MatrixGeom geom;
-//   if(ug->own_lay->un_geom.n_not_xy)
-//     geom.SetGeom(1, ug->size);  // irregular: flatten!
-//   else
-//     geom.SetGeom(2, ug->own_lay->un_geom.x, ug->own_lay->un_geom.y);
-
-//   String valname = GetColName(ug, val_specs.size);
-//   AddMatrixCol(valname, VT_FLOAT, &geom);
-//   if(geom.dims() == 1) {
-//     for(int i = 0; i < ug->size; i++) {
-//       ScanObject_InObject(ug->FastEl(i), var, NULL); // don't make a col
-//     }
-//   }
-//   else {
-//     taVector2i c;
-//     for (c.y = 0; c.y < ug->own_lay->un_geom.y; ++c.y) {
-//       for (c.x = 0; c.x < ug->own_lay->un_geom.x; ++c.x) {
-//         UnitState_cpp* u = ug->UnitAtCoord(c); // NULL if odd size or not built
-//         if(u)
-//           ScanObject_InObject(u, var, NULL); // don't make a col
-//       }
-//     }
-//   }
-// }
-
-void NetMonItem::ScanObject_Unit(UnitState_cpp* u, String var, NetworkState_cpp* net) {
-  if(u->lesioned()) return;
+void NetMonItem::ScanObject_Unit(UnitState_cpp* u, String var, String obj_nm, NetworkState_cpp* net) {
+  if(!u || u->lesioned()) return;
   if(!net->IsBuiltIntact()) // no-can-do
     return;
-  // if(ScanObject_InObject(u, var, u, false)) return; // false = test
+
+  TypeDef* unit_typ = ((Network*)net->net_owner)->UnitStateType();
+  if(ScanObject_InNonTAObject(u, unit_typ, var, NULL, false)) return; // false = no err
 
   // otherwise, we only grok the special s. and r. indicating conns
   if (!var.contains('.')) return;
   String subvar = var.before('.');
   String convar = var.after('.');
   if (subvar=="r") {
-    for(int i=0;i<u->NRecvConGps(net);i++)
-      ScanObject_RecvCons(u->RecvConState(net, i), convar, net);
+    int ncg = u->NRecvConGps(net);
+    for(int i=0;i<ncg;i++) {
+      ConState_cpp* cg = u->RecvConState(net, i);
+      LayerState_cpp* fmlay = cg->GetPrjnSendLayer(net);
+      String cg_nm = obj_nm + "_r_" + taMisc::StringMaxLen(fmlay->layer_name, max_name_len);
+      ScanObject_RecvCons(cg, convar, cg_nm, net);
+    }
   }
   else {                        // must be s
-    for(int i=0;i<u->NSendConGps(net);i++)
-      ScanObject_SendCons(u->SendConState(net, i), convar, net);
+    int ncg = u->NSendConGps(net);
+    for(int i=0;i<ncg;i++) {
+      ConState_cpp* cg = u->SendConState(net, i);
+      LayerState_cpp* tolay = cg->GetPrjnRecvLayer(net);
+      String cg_nm = obj_nm + "_s_" + taMisc::StringMaxLen(tolay->layer_name, max_name_len);
+      ScanObject_SendCons(cg, convar, cg_nm, net);
+    }
   }
 }
 
-void NetMonItem::ScanObject_RecvCons(ConState_cpp* cg, String var, NetworkState_cpp* net) {
+void NetMonItem::ScanObject_RecvCons(ConState_cpp* cg, String var, String obj_nm, NetworkState_cpp* net) {
   if(!cg || !cg->IsActive()) return;
   if(!net->IsBuiltIntact()) // no-can-do
     return;
@@ -1038,12 +965,11 @@ void NetMonItem::ScanObject_RecvCons(ConState_cpp* cg, String var, NetworkState_
   int n_cons = con_geom.Product();
   MatrixGeom geom;
   geom.SetGeom(2, con_geom.x, con_geom.y);
-  // String valname = GetColName(cg->OwnUnState(net), val_specs.size);
-  String valname; // todo!
+  String valname = GetColName(NULL, val_specs.size, obj_nm);
   AddMatrixCol(valname, VT_FLOAT, &geom);
 
   for(int j=0;j<n_cons;j++) {   // add blanks -- set them later
-    ptrs.Add(NULL); members.Link(con_md); // ak!
+    ptrs.Add(NULL); members.Link(con_md);
   }
   for(int j=0; j<cg->size; ++j) {
     UnitState_cpp* su = cg->UnState(j,net);
@@ -1056,7 +982,7 @@ void NetMonItem::ScanObject_RecvCons(ConState_cpp* cg, String var, NetworkState_
   }
 }
 
-void NetMonItem::ScanObject_SendCons(ConState_cpp* cg, String var, NetworkState_cpp* net) {
+void NetMonItem::ScanObject_SendCons(ConState_cpp* cg, String var, String obj_nm, NetworkState_cpp* net) {
   if(!cg || !cg->IsActive()) return;
   if(!net->IsBuiltIntact()) // no-can-do
     return;
@@ -1082,8 +1008,7 @@ void NetMonItem::ScanObject_SendCons(ConState_cpp* cg, String var, NetworkState_
   int n_cons = con_geom.Product();
   MatrixGeom geom;
   geom.SetGeom(2, con_geom.x, con_geom.y);
-  // String valname = GetColName(cg->OwnUnState(net), val_specs.size);
-  String valname; // todo!
+  String valname = GetColName(NULL, val_specs.size, obj_nm);
   AddMatrixCol(valname, VT_FLOAT, &geom);
 
   for(int j=0;j<n_cons;j++) {   // add blanks -- set them later

@@ -54,7 +54,8 @@ void LAYER_STATE::SendConsPostAlloc(NETWORK_STATE* net, PRJN_STATE* prjn) {
 }
 
 void LAYER_STATE::LayoutUnits(NETWORK_STATE* net) {
-  if(!net->IsBuiltIntact()) return;
+  // this happens only during build so you cannot have this dependency!
+  // if(!net->IsBuiltIntact()) return;
   int li = 0;
   if(n_ungps > 0) {
     int eff_un_sz_x = un_geom_x + gp_spc_x;

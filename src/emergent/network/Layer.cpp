@@ -1155,7 +1155,7 @@ void Layer::Compute_PrjnDirections() {
 }
 
 String Layer::GetUnitNameIdx(int flat_un_idx) {
-  if(!SAVE_UNIT_NAMES) return _nilString;
+  if(!HasLayerFlag(SAVE_UNIT_NAMES)) return _nilString;
   if(unit_groups && gp_unit_names_4d) {
     int gp_x, gp_y, un_x, un_y;
     GetGpUnXYFmIdx(flat_un_idx, gp_x, gp_y, un_x, un_y);

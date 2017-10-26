@@ -31,6 +31,7 @@ TA_BASEFUNS_CTORS_DEFN(UnitView);
 
 void UnitView::Initialize()
 {
+  unit = NULL;
   m_nv = NULL;
   picked = 0;
 }
@@ -62,7 +63,6 @@ void UnitView::Render_pre()
   float max_z = nv->eff_max_size.z;
   float un_spc= nv->view_params.unit_spacing;
 
-  UnitState_cpp* unit = this->unit(); //cache
   Layer* lay = net->StateLayer(unit->own_lay_idx);
   float disp_scale = lay->disp_scale;
   taVector2i upos;

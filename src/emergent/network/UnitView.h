@@ -39,7 +39,7 @@ public:
 #ifndef __MAKETA__
   int           picked : 1;     // #IGNORE set when unit is picked for display (note: not same as selected)
 #endif
-  UnitState_cpp*        unit() const {return (UnitState_cpp*)data();}
+  UnitState_cpp*        unit;
   LayerView*            lay() {return GET_MY_OWNER(LayerView);}
   T3UnitNode*           node_so() const {return (T3UnitNode*)inherited::node_so();}
   NetView*              getNetView();

@@ -2041,7 +2041,7 @@ void NetView::viewWin_NotifySignal(ISelectableHost* src, int op) {
   TypeDef* typ = ci->GetTypeDef();
   if (!typ->InheritsFrom(&TA_UnitView)) return;
   UnitView* uv = (UnitView*)ci->This();
-  UnitState_cpp* unit_new = uv->unit();
+  UnitState_cpp* unit_new = uv->unit;
   setUnitSrc(uv, unit_new);
   InitDisplay();
   UpdateDisplay();

@@ -120,7 +120,7 @@ void UnitGroupView::BuildAll() {
     if(unit->lesioned()) continue;
 
     UnitView* uv = new UnitView();
-    uv->SetData((taBase*)unit);
+    uv->unit = unit;
     children.Add(uv);
   }
 }

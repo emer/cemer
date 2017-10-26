@@ -113,12 +113,12 @@ public:
   { if(on) SetMonOption(flg); else ClearMonOption(flg); }
   // set flag state according to on bool (if true, set flag, if false, clear it)
   
-  String        GetAutoName(taBase* obj);
+  String        GetAutoName(const String& obj_nm);
   // get auto-name value based on current values
   String        GetObjName(taBase* obj);
   // get name of object for naming monitored values -- uses GetDisplayName by default but is optimized for various network objects; uses max_name_len constraint
-  String        GetColName(taBase* obj, int col_idx);
-  // get name for given column of data, taking into account namestyle preferences; col_idx is index within the columnspec_list for this guy
+  String        GetColName(taBase* obj, int col_idx, String obj_nm = "");
+  // #IGNORE get name for given column of data, taking into account namestyle preferences; col_idx is index within the columnspec_list for this guy
 
   void          SetMonVals(taBase* obj, const String& var);
   // #CAT_Monitor set object and variable, and update appropriately
@@ -184,6 +184,9 @@ protected:
   
   bool 	ScanObject_InObject(taBase* obj, String var, taBase* name_obj, bool err_not_found = true);
   // #IGNORE if name_obj == NULL, don't make a column for this guy
+  bool 	ScanObject_InNonTAObject(void* obj, TypeDef* typ, String var, taBase* name_obj,
+                                 bool err_not_found = true);
+  // #IGNORE if name_obj == NULL, don't make a column for this guy
   bool ScanObject_InUserData(taBase* obj, String var, taBase* name_obj);
   // #IGNORE called when an InObject var is "user_data.xxx[.yyy]"
   void	ScanObject_Network(Network* net, String var); // #IGNORE
@@ -193,7 +196,7 @@ protected:
   // #IGNORE specific subrange of units within a layer
   void	ScanObject_Projection(Projection* p, String var); // #IGNORE
   void	ScanObject_ProjectionGroup(Projection_Group* p, String var); // #IGNORE
-  void	ScanObject_Unit(UnitState_cpp* u, String var, NetworkState_cpp* net);
+  void	ScanObject_Unit(UnitState_cpp* u, String var, String obj_nm, NetworkState_cpp* net);
   // #IGNORE this is only when the object itself is a unit
 
   // these are only for r. and s. con variables
@@ -201,8 +204,10 @@ protected:
   void	ScanObject_PrjnCons(Projection* p, String var);
   // #IGNORE known to be a connection variable (r.x or s.x); matrix already allocated
 
-  void	ScanObject_RecvCons(ConState_cpp* cg, String var, NetworkState_cpp* net); // #IGNORE
-  void	ScanObject_SendCons(ConState_cpp* cg, String var, NetworkState_cpp* net); // #IGNORE
+  void	ScanObject_RecvCons(ConState_cpp* cg, String var, String obj_nm, NetworkState_cpp* net);
+  // #IGNORE
+  void	ScanObject_SendCons(ConState_cpp* cg, String var, String obj_nm, NetworkState_cpp* net);
+  // #IGNORE
 
 private:
   void	Initialize();
