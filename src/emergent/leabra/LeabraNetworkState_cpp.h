@@ -121,7 +121,10 @@ public:
   virtual void BuildLeabraThreadMem();
   // #IGNORE
   
-  bool  NetworkLoadWeights_strm(std::istream& strm, bool quiet = false) override;
+  void  LayerSaveWeights_LayerVars(std::ostream& strm, LayerState_cpp* lay, WtSaveFormat fmt = TEXT) override;
+
+  int   LayerLoadWeights_LayerVars(std::istream& strm, LayerState_cpp* lay,
+                                   WtSaveFormat fmt = TEXT, bool quiet = false) override;
 
   LeabraNetworkState_cpp() { Initialize_core(); }
 };

@@ -276,21 +276,89 @@ void LeabraNetworkState_cpp::BuildLeabraThreadMem() {
 }
 
 
-bool LeabraNetworkState_cpp::NetworkLoadWeights_strm(istream& strm, bool quiet) {
-  bool rval = inherited::NetworkLoadWeights_strm(strm, quiet);
-  if(!rval) return rval;
-  for(int li=0; li < n_layers_built; li++) {
-    LEABRA_LAYER_STATE* lay = (LEABRA_LAYER_STATE*)GetLayerState(li);
-    if(lay->lesioned()) continue;
-    LEABRA_UNGP_STATE* lgpd = (LEABRA_UNGP_STATE*)lay->GetLayUnGpState(this);
-    // these are important for saving in weights files -- keep them updated
-    // todo: fixme!
-    // lst->acts_m_avg = lay->acts_m_avg;
-    // lst->acts_p_avg = lay->acts_p_avg;
-    // lst->acts_p_avg_eff = lay->acts_p_avg_eff;
-    // lgpd->acts_m_avg = lay->acts_m_avg;
-    // lgpd->acts_p_avg = lay->acts_p_avg;
-    // lgpd->acts_p_avg_eff = lay->acts_p_avg_eff;
+int LeabraNetworkState_cpp::LayerLoadWeights_LayerVars
+(istream& strm, LayerState_cpp* play, WtSaveFormat fmt, bool quiet) {
+
+  LEABRA_LAYER_STATE* lay = (LEABRA_LAYER_STATE*)play;
+  
+  while(true) {
+    int c = strm.peek();          // check for <U for UnGp
+    if(c == '<') {
+      strm.get();
+      c = strm.peek();
+      if(c == 'U') {
+        strm.unget();           // < goes back
+        break;                  // done
+      }
+      else { // got a SAVE_WTS member
+        strm.unget();           // < goes back
+        String tag;
+        String val;
+        read_tag(strm, tag, val);
+        float fval = (float)val;
+        if(tag == "acts_m_avg")
+          lay->acts_m_avg = fval;
+        else if(tag == "acts_p_avg")
+          lay->acts_p_avg = fval;
+        else if(tag == "acts_p_avg")
+          lay->acts_p_avg = fval;
+        else if(tag == "acts_p_avg_eff")
+          lay->acts_p_avg_eff = fval;
+        else if(tag == "adapt_gi")
+          lay->adapt_gi = fval;
+        else if(tag == "margin_low_thr")
+          lay->margin.low_thr = fval;
+        else if(tag == "margin_med_thr")
+          lay->margin.med_thr = fval;
+        else if(tag == "margin_hi_thr")
+          lay->margin.hi_thr = fval;
+        else if(tag == "margin_low_avg")
+          lay->margin.low_avg = fval;
+        else if(tag == "margin_med_avg")
+          lay->margin.med_avg = fval;
+        else if(tag == "margin_hi_avg")
+          lay->margin.hi_avg = fval;
+        else {
+#ifdef DEBUG
+          StateError("LayerLoadWeights_LayerVals: member not found:", tag, "value:", val);
+#endif          
+        }
+      }
+    }
+    else {
+      break;                  // some other badness
+    }
   }
-  return rval;
+
+  // these vars actually live on the unit group
+  LEABRA_UNGP_STATE* lgpd = (LEABRA_UNGP_STATE*)lay->GetLayUnGpState(this);
+  lgpd->acts_m_avg = lay->acts_m_avg;
+  lgpd->acts_p_avg = lay->acts_p_avg;
+  lgpd->acts_p_avg_eff = lay->acts_p_avg_eff;
+  
+  return TAG_END;
 }
+
+void LeabraNetworkState_cpp::LayerSaveWeights_LayerVars
+(ostream& strm, LayerState_cpp* play, WtSaveFormat fmt) {
+
+  LEABRA_LAYER_STATE* lay = (LEABRA_LAYER_STATE*)play;
+  // these vars actually live on the unit group
+  LEABRA_UNGP_STATE* lgpd = (LEABRA_UNGP_STATE*)lay->GetLayUnGpState(this);
+  lay->acts_m_avg     = lgpd->acts_m_avg;
+  lay->acts_p_avg     = lgpd->acts_p_avg;
+  lay->acts_p_avg_eff = lgpd->acts_p_avg_eff;
+  
+  strm
+    << "<acts_m_avg " << lay->acts_m_avg << ">\n"
+    << "<acts_p_avg " << lay->acts_p_avg << ">\n"
+    << "<acts_p_avg_eff " << lay->acts_p_avg_eff << ">\n"
+    << "<adapt_gi " << lay->adapt_gi << ">\n"
+    << "<margin_low_thr " << lay->margin.low_thr << ">\n"
+    << "<margin_med_thr " << lay->margin.med_thr << ">\n"
+    << "<margin_hi_thr "  << lay->margin.hi_thr << ">\n"
+    << "<margin_low_avg " << lay->margin.low_avg << ">\n"
+    << "<margin_med_avg " << lay->margin.med_avg << ">\n"
+    << "<margin_hi_avg " << lay->margin.hi_avg << ">\n";
+}
+

@@ -55,6 +55,9 @@ void NetStateThreadMgr::Initialize() {
 void NetStateThreadMgr::InitState(int n_thr, NetworkState_cpp* ns) {
   n_threads = n_thr;
   net_state = ns;
+  if(GetOwner() == NULL) {
+    OwnTempObj();
+  }
   InitAll();
 }
 
@@ -339,38 +342,11 @@ void NetworkState_cpp::Connect_Alloc() {
 //            Weight Save / Load -- Network has all the code..
 
 
-// basic infrastructure -- copied from taMisc etc -- could put this in a class or something, but...
-
-enum ReadTagStatus {
-  TAG_GOT,                    // got a starting tag <xxx...>
-  TAG_END,                    // got an ending tag </xx>
-  TAG_NONE,                   // no start of < tag there
-  TAG_EOF,                    // got an EOF
-};
-
-
 // todo: need some kind of string class.. could figure out std::string..
-static String LayerStateLexBuf; 
 
-// static int    skip_white(std::istream& strm, bool peek = false);
-// // #CAT_Parse skip over all whitespace
-// static ReadTagStatus read_tag(std::istream& strm, String& tag, String& val);
-// // #CAT_Parse read an html-style tag from the file: <XXX ...> tag = XXX, val = ... (optional)
-// static int    read_till_rangle(std::istream& strm, bool peek = false);
-// // #CAT_Parse rangle = >
+String NetworkState_cpp::StateLexBuf;
 
-// static int    LoadWeights_StartTag(std::istream& strm, const String& tag,
-//                                    String& val, bool quiet);
-// // #IGNORE read in a start tag -- makes sure it matches tag, returns TAG_GOT if got it
-// static int    LoadWeights_EndTag(std::istream& strm, const String& trg_tag,
-//                                  String& cur_tag, int& stat, bool quiet);
-// // #IGNORE read in an end tag -- makes sure it matches trg_tag, cur_tag, stat are current read_tag & status (if !END_TAG, will try to read end)
-// static int    SkipWeights_strm(std::istream& strm, WtSaveFormat fmt = TEXT, bool quiet = false);
-// // #EXT_wts #COMPRESS #CAT_File skip over weight values in from a simple ordered list of weights (optionally in binary fmt) -- rval is ReadTagStatus = END_TAG if successful
-// static int    ConsSkipWeights_strm(std::istream& strm, WtSaveFormat fmt = TEXT,  bool quiet = false);
-// // #IGNORE skip over saved weight values -- rval is ReadTagStatus, TAG_END if successful
-
-static int skip_white_noeol(istream& strm, bool peek = false) {
+int NetworkState_cpp::skip_white_noeol(istream& strm, bool peek ) {
   int c;
   while (((c=strm.peek()) == ' ') || (c == '\t') || (c == '\r'))
     strm.get();
@@ -379,11 +355,11 @@ static int skip_white_noeol(istream& strm, bool peek = false) {
   return c;
 }
 
-static int read_till_eol(istream& strm, bool peek = false) {
+int NetworkState_cpp::read_till_eol(istream& strm, bool peek ) {
   int c = skip_white_noeol(strm, true);
-  LayerStateLexBuf = "";
+  StateLexBuf = "";
   while (((c = strm.peek()) != EOF) && !((c == '\n'))) {
-    if(c != '\r') LayerStateLexBuf += (char)c;
+    if(c != '\r') StateLexBuf += (char)c;
     strm.get();
   }
   if(!peek)
@@ -392,7 +368,7 @@ static int read_till_eol(istream& strm, bool peek = false) {
 }
 
 
-static int skip_white(istream& strm, bool peek = false) {
+int NetworkState_cpp::skip_white(istream& strm, bool peek ) {
   int c;
   while (((c=strm.peek()) == ' ') || (c == '\t') || (c == '\n') || (c == '\r'))
     strm.get();
@@ -401,12 +377,12 @@ static int skip_white(istream& strm, bool peek = false) {
   return c;
 }
 
-static int read_till_rangle(istream& strm, bool peek = false) {
+int NetworkState_cpp::read_till_rangle(istream& strm, bool peek ) {
   int c;
-  LayerStateLexBuf = "";
+  StateLexBuf = "";
   int depth = 0;
   while (((c = strm.peek()) != EOF) && !((c == '>') && (depth <= 0))) {
-    LayerStateLexBuf += (char)c;
+    StateLexBuf += (char)c;
     if(c == '<')      depth++;
     if(c == '>')      depth--;
     strm.get();
@@ -416,7 +392,7 @@ static int read_till_rangle(istream& strm, bool peek = false) {
   return c;
 }
 
-static ReadTagStatus read_tag(istream& strm, String& tag, String& val) {
+NetworkState_cpp::ReadTagStatus NetworkState_cpp::read_tag(istream& strm, String& tag, String& val) {
   int c = skip_white(strm, true);
   if(c == EOF) return TAG_EOF;
   if(c != '<') return TAG_NONE;
@@ -429,12 +405,12 @@ static ReadTagStatus read_tag(istream& strm, String& tag, String& val) {
     rval = TAG_END;
   }
   read_till_rangle(strm, false);
-  if(LayerStateLexBuf.contains(' ')) {
-    tag = LayerStateLexBuf.before(' ');
-    val = LayerStateLexBuf.after(' ');
+  if(StateLexBuf.contains(' ')) {
+    tag = StateLexBuf.before(' ');
+    val = StateLexBuf.after(' ');
   }
   else {
-    tag = LayerStateLexBuf;
+    tag = StateLexBuf;
     val = "";
   }
   c = strm.peek();
@@ -451,7 +427,7 @@ static ReadTagStatus read_tag(istream& strm, String& tag, String& val) {
 // TAG_NONE = some kind of error
 // TAG_EOF = EOF
 
-static int LoadWeights_StartTag(istream& strm, const String& tag, String& val, bool quiet) {
+int NetworkState_cpp::LoadWeights_StartTag(istream& strm, const String& tag, String& val, bool quiet) {
   String in_tag;
   int stat = read_tag(strm, in_tag, val);
   if(stat == TAG_END) return TAG_NONE; // some other end -- not good
@@ -468,7 +444,7 @@ static int LoadWeights_StartTag(istream& strm, const String& tag, String& val, b
 }
 
 // static
-static int LoadWeights_EndTag(istream& strm, const String& trg_tag, String& cur_tag,
+int NetworkState_cpp::LoadWeights_EndTag(istream& strm, const String& trg_tag, String& cur_tag,
                               int& stat, bool quiet) {
   String val;
   if(stat != TAG_END)   // haven't already hit the end
@@ -481,7 +457,7 @@ static int LoadWeights_EndTag(istream& strm, const String& trg_tag, String& cur_
   return stat;
 }
 
-static int ConsSkipWeights_strm(istream& strm, NetworkState_cpp::WtSaveFormat fmt, bool quiet) {
+int NetworkState_cpp::ConsSkipWeights_strm(istream& strm, NetworkState_cpp::WtSaveFormat fmt, bool quiet) {
   String tag, val;
   int stat = LoadWeights_StartTag(strm, "Cn", val, quiet);
   if(stat != TAG_GOT) return stat;
@@ -506,7 +482,7 @@ static int ConsSkipWeights_strm(istream& strm, NetworkState_cpp::WtSaveFormat fm
   return stat;
 }
 
-static int SkipWeights_strm(istream& strm, NetworkState_cpp::WtSaveFormat fmt, bool quiet) {
+int NetworkState_cpp::SkipWeights_strm(istream& strm, NetworkState_cpp::WtSaveFormat fmt, bool quiet) {
   String tag, val;
   int stat = LoadWeights_StartTag(strm, "Un", val, quiet);
   if(stat != TAG_GOT) return stat;
@@ -515,7 +491,7 @@ static int SkipWeights_strm(istream& strm, NetworkState_cpp::WtSaveFormat fmt, b
   switch(fmt) {
   case NetworkState_cpp::TEXT:
     read_till_eol(strm);
-    bwt = (float)LayerStateLexBuf;
+    bwt = (float)StateLexBuf;
     break;
   case NetworkState_cpp::BINARY:
     strm.read((char*)&bwt, sizeof(bwt));
@@ -604,7 +580,7 @@ bool NetworkState_cpp::NetworkLoadWeights_strm(istream& strm, bool quiet) {
   }
 
   NET_THREAD_CALL(NetworkState_cpp::Connect_VecChunk_Thr);
-  
+
   // could try to read end tag but what is the point?
   return true;
 }
@@ -613,20 +589,16 @@ bool NetworkState_cpp::NetworkLoadWeights_strm(istream& strm, bool quiet) {
 //  Layer-level  Save/Load Weights
 
 
+void NetworkState_cpp::LayerSaveWeights_LayerVars(ostream& strm, LayerState_cpp* lay, WtSaveFormat fmt) {
+  // overload this to save specific layer state -- see Leabra for example
+}
+
 void NetworkState_cpp::LayerSaveWeights_strm(ostream& strm, LayerState_cpp* lay, WtSaveFormat fmt,
                                              PrjnState_cpp* prjn) {
   // name etc is saved & processed by network level guy -- this is equiv to unit group
 
-  // todo: need a way to do this without TypeDef
+  LayerSaveWeights_LayerVars(strm, lay, fmt);
   
-  // save any #SAVE_WTS layer vals
-  // TypeDef* td = GetTypeDef();
-  // for(int i=0; i<td->members.size; i++) {
-  //   MemberDef* md = td->members[i];
-  //   if(!md->HasOption("SAVE_WTS")) continue;
-  //   strm << "<" << md->name << " " << md->GetValStr((void*)this) << ">\n";
-  // }
-
   strm << "<Ug>\n";
   for(int ui = 0; ui < lay->n_units; ui++) {
     UNIT_STATE* u = lay->GetUnitState(this, ui);
@@ -639,42 +611,18 @@ void NetworkState_cpp::LayerSaveWeights_strm(ostream& strm, LayerState_cpp* lay,
   strm << "</Ug>\n";
 }
 
+int NetworkState_cpp::LayerLoadWeights_LayerVars(istream& strm, LayerState_cpp* lay, WtSaveFormat fmt,
+                                                  bool quiet) {
+  // overload this to load specific layer state -- see Leabra for example
+  return TAG_END;
+}
+
 int NetworkState_cpp::LayerLoadWeights_strm(istream& strm, LayerState_cpp* lay, WtSaveFormat fmt,
                                             bool quiet, PrjnState_cpp* prjn) {
   // name etc is saved & processed by network level guy -- this is equiv to unit group
 
-  // load any #SAVE_WTS layer vals
-  // todo!
-  // TypeDef* td = GetTypeDef();
-  // while(true) {
-  //   int c = strm.peek();          // check for <U for UnGp
-  //   if(c == '<') {
-  //     strm.get();
-  //     c = strm.peek();
-  //     if(c == 'U') {
-  //       strm.unget();           // < goes back
-  //       break;                  // done
-  //     }
-  //     else { // got a SAVE_WTS member
-  //       strm.unget();           // < goes back
-  //       String tag;
-  //       String val;
-  //       read_tag(strm, tag, val);
-  //       MemberDef* md = td->members.FindName(tag);
-  //       if(md) {
-  //         md->SetValStr(val, (void*)this);
-  //       }
-  //       else {
-  //         TestWarning(true, "LoadWeights",
-  //                     "member not found:", tag, "value:", val);
-  //       }
-  //     }
-  //   }
-  //   else {
-  //     break;                  // some other badness
-  //   }
-  // }
-
+  LayerLoadWeights_LayerVars(strm, lay, fmt, quiet);
+  
   String tag, val;
   int stat = LoadWeights_StartTag(strm, "Ug", val, quiet);
   if(stat != TAG_GOT) return stat;
@@ -743,7 +691,7 @@ int NetworkState_cpp::UnitLoadWeights_strm(istream& strm, UnitState_cpp* u, WtSa
   switch(fmt) {
   case TEXT:
     read_till_eol(strm);
-    bwt = (float)LayerStateLexBuf;
+    bwt = (float)StateLexBuf;
     break;
   case BINARY:
     strm.read((char*)&bwt, sizeof(bwt));
@@ -914,20 +862,20 @@ int NetworkState_cpp::ConsLoadWeights_strm(istream& strm, ConState_cpp* cg, Unit
       read_till_eol(strm);
       int vidx = 0;
       int last_ci = 0;
-      const int lbln = LayerStateLexBuf.length();
+      const int lbln = StateLexBuf.length();
       int ci;
       for(ci = 1; ci < lbln; ci++) {
-        if(LayerStateLexBuf[ci] != ' ') continue;
+        if(StateLexBuf[ci] != ' ') continue;
         if(last_ci == 0) {
-          lidx = (int)LayerStateLexBuf.before(ci);
+          lidx = (int)StateLexBuf.before(ci);
         }
         else {
-          wtvals[vidx++] = (float)LayerStateLexBuf.at(last_ci, ci-last_ci);
+          wtvals[vidx++] = (float)StateLexBuf.at(last_ci, ci-last_ci);
         }
         last_ci = ci+1;
       }
       if(ci > last_ci) {
-        wtvals[vidx++] = (float)LayerStateLexBuf.at(last_ci, ci-last_ci);
+        wtvals[vidx++] = (float)StateLexBuf.at(last_ci, ci-last_ci);
       }
       n_wts_loaded = MIN(vidx, n_vars); // can't effectively load more than we can use!
     }

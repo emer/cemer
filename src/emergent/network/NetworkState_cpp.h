@@ -64,12 +64,14 @@ class E_API NetStateThreadTask : public taTask {
 typedef taTask inherited;
 public:
   NetStateThreadCall     meth_call; // #IGNORE method to call on the network
-  NetworkState_cpp*     net_state; // #IGNORE network state
+  NetworkState_cpp*      net_state; // #IGNORE network state
   
   void run() override {
     meth_call.call(net_state, task_id); // task id indicates threading, and which thread
   }
 
+  NetStateThreadMgr* mgr() { return (NetStateThreadMgr*)owner->GetOwner(); }
+  
   TA_BASEFUNS_NOCOPY(NetStateThreadTask);
 private:
   void  Initialize() { net_state =  NULL; }
@@ -110,6 +112,14 @@ public:
     TEXT,                       // weights are saved as ascii text representation of digits (completely portable)
     BINARY,                     // weights are written directly to the file in binary format (no loss in accuracy and more space efficient, but possibly non-portable)
   };
+  
+  enum ReadTagStatus {
+    TAG_GOT,                    // got a starting tag <xxx...>
+    TAG_END,                    // got an ending tag </xx>
+    TAG_NONE,                   // no start of < tag there
+    TAG_EOF,                    // got an EOF
+  };
+
 
 // this directly defines a bunch of shared vars with Network
 #include <Network_core>
@@ -213,6 +223,12 @@ public:
                                       bool quiet = false, PrjnState_cpp* prjn = NULL);
   // #EXT_wts #COMPRESS #CAT_File read weight values in from a simple ordered list of weights (optionally in binary fmt) -- rval is taMisc::ReadTagStatus = END_TAG if successful
 
+  virtual void  LayerSaveWeights_LayerVars(std::ostream& strm, LayerState_cpp* lay, WtSaveFormat fmt = TEXT);
+  // #EXT_wts #COMPRESS #CAT_File write layer state values that are key adaptive state that determines network function
+  virtual int   LayerLoadWeights_LayerVars(std::istream& strm, LayerState_cpp* lay,
+                                           WtSaveFormat fmt = TEXT, bool quiet = false);
+  // #EXT_wts #COMPRESS #CAT_File write layer state values that are key adaptive state that determines network function
+  
   virtual void  UnitSaveWeights_strm(std::ostream& strm, UnitState_cpp* ru, WtSaveFormat fmt = TEXT,
                                      PrjnState_cpp* prjn = NULL);
   // #EXT_wts #COMPRESS #CAT_File write weight values out in a simple ordered list of weights (optionally in binary fmt)
@@ -227,7 +243,33 @@ public:
                                      WtSaveFormat fmt = TEXT, bool quiet = false);
   // #EXT_wts #COMPRESS #CAT_File read weight values in from a simple ordered list of weights (optionally in binary format) -- rval is taMisc::ReadTagStatus, TAG_END if successful -- the connections for both sides must already be allocated, but it can rearrange connections based on save unit indexes for random connectivity etc
 
+  ////////////////////////////////////////////////////////////
+  //            Basic Parsing Code -- reads into this LexBuf
   
+  static String StateLexBuf;    // #NO_SAVE #HIDDEN buffer for reading state info from parsing routines
+  
+  static int    skip_white_noeol(std::istream& strm, bool peek = false);
+  // #CAT_Parse don't skip end-of-line
+  static int    read_till_eol(std::istream& strm, bool peek = false);
+  // #CAT_Parse eol = end of line
+  static int    skip_white(std::istream& strm, bool peek = false);
+  // #CAT_Parse skip over all whitespace
+  static int    read_till_rangle(std::istream& strm, bool peek = false);
+  // #CAT_Parse rangle = >
+  static ReadTagStatus read_tag(std::istream& strm, String& tag, String& val);
+  // #CAT_Parse read an html-style tag from the file: <XXX ...> tag = XXX, val = ... (optional)
+
+  static int    LoadWeights_StartTag(std::istream& strm, const String& tag,
+                                     String& val, bool quiet);
+  // #IGNORE read in a start tag -- makes sure it matches tag, returns TAG_GOT if got it
+  static int    LoadWeights_EndTag(std::istream& strm, const String& trg_tag,
+                                   String& cur_tag, int& stat, bool quiet);
+  // #IGNORE read in an end tag -- makes sure it matches trg_tag, cur_tag, stat are current read_tag & status (if !END_TAG, will try to read end)
+  static int    SkipWeights_strm(std::istream& strm, WtSaveFormat fmt = TEXT, bool quiet = false);
+  // #EXT_wts #COMPRESS #CAT_File skip over weight values in from a simple ordered list of weights (optionally in binary fmt) -- rval is ReadTagStatus = END_TAG if successful
+  static int    ConsSkipWeights_strm(std::istream& strm, WtSaveFormat fmt = TEXT,  bool quiet = false);
+  // #IGNORE skip over saved weight values -- rval is ReadTagStatus, TAG_END if successful
+
   NetworkState_cpp() { Initialize_net_core(); Initialize_core(); }
 };
 

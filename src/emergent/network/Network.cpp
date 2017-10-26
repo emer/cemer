@@ -2006,7 +2006,7 @@ bool Network::LoadWeights(const String& fname, bool quiet) {
   bool rval = false;
   if(flr->istrm) {
     rval = net_state->NetworkLoadWeights_strm(*flr->istrm, quiet);
-    Cuda_ConStateToDevice();
+    SyncAllState();
   }
   else {
     TestError(true, "LoadWeights", "aborted due to inability to load weights file");
@@ -2048,7 +2048,9 @@ bool Network::LoadFmWeights(Weights* wts, bool quiet) {
   }
   if(!wts->HasWeights(true)) return false;
   istringstream iss(wts->wt_file.chars());
-  return net_state->NetworkLoadWeights_strm(iss, quiet);
+  bool rval = net_state->NetworkLoadWeights_strm(iss, quiet);
+  SyncAllState();
+  return rval;
 }
 
 void Network::SaveToFirstWeights() {
