@@ -14,4 +14,6 @@
 
   INIMPL virtual void  Trial_Run_Thr(int thr_no); // #IGNORE
 
+  INIMPL UNIT_SPEC_CPP*     NewUnitSpec(int spec_type) const override;
+  INIMPL CON_SPEC_CPP*      NewConSpec(int spec_type) const override;
 

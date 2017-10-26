@@ -39,7 +39,7 @@
   BpNoiseType   noise_type;     // type of noise to use
   STATE_CLASS(Random)        noise; // #CONDSHOW_OFF_noise_type:NO_NOISE distribution parameters for random added noise
   
-  INLINE int  GetStateSpecType() const override { return BP_NETWORK_STATE::T_BP_UNIT_SPEC; }
+  INLINE int  GetStateSpecType() const override { return BP_NETWORK_STATE::T_BpUnitSpec; }
 
   // these methods keep sigmoidal-type values within the correct range to prevent numerical errors
   INLINE float  ClipSigAct(float y)

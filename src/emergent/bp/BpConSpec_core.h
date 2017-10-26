@@ -27,7 +27,7 @@
   float 	decay;		// #CONDSHOW_OFF_decay_type:NO_DECAY decay rate -- the learning rate is also applied to the decay -- i.e., decay comes before the learning rate factor
   WtUpdtType    wt_updt;        // #READ_ONLY type of weight update to perform -- computed from other parameters set -- used to optimize computation
 
-  INLINE int  GetStateSpecType() const override { return BP_NETWORK_STATE::T_BP_CON_SPEC; }
+  INLINE int  GetStateSpecType() const override { return BP_NETWORK_STATE::T_BpConSpec; }
 
   INLINE void   Init_dWt(CON_STATE* cg, NETWORK_STATE* net, int thr_no) override {
     float* dwts = cg->OwnCnVar(DWT);

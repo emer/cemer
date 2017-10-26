@@ -40,13 +40,10 @@ NetworkState_cpp* BpNetwork::NewNetworkState() const {
   return new BpNetworkState_cpp;
 }
 
-TypeDef* BpNetwork::NetworkStateType() const {
-  return &TA_BpNetworkState_cpp;
-}
-
+TypeDef* BpNetwork::NetworkStateType() const { return &TA_BpNetworkState_cpp; }
 TypeDef* BpNetwork::UnitStateType() const { return &TA_BpUnitState_cpp; }
-
 TypeDef* BpNetwork::ConStateType() const { return &TA_ConState_cpp; }
+
 
 void BpNetwork::SetProjectionDefaultTypes(Projection* prjn) {
   inherited::SetProjectionDefaultTypes(prjn);

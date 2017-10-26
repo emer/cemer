@@ -2,12 +2,12 @@
 //{
 
   enum BpUnitSpecTypes { // manual type registry system for all spec types used in state code -- any new spec type MUST be added to this list, extending from N case in the last list, for any derived classes, and each spec must return its appropriate enum in GetStateSpecType() method
-    T_BP_UNIT_SPEC = N_NetworkUnitSpecs,
+    T_BpUnitSpec = N_NetworkUnitSpecs,
     N_BpUnitSpecs,    // derived classes start from this one -- use class name for subclasses
   };
 
   enum BpConSpecTypes { // manual type registry system for all spec types used in state code -- any new spec type MUST be added to this list, extending from N case in the last list, for any derived classes, and  each spec must return its appropriate enum in GetStateSpecType() method
-    T_BP_CON_SPEC = N_NetworkConSpecs,
+    T_BpConSpec = N_NetworkConSpecs,
     N_BpConSpecs,    // derived classes start from this one -- use class name for subclasses
   };
 

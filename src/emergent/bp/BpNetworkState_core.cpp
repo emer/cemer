@@ -1,6 +1,25 @@
 // contains core non-inline (INIMPL) functions from _core.h
 // if used, include directly in BpNetworkState.cpp, _cpp.cpp, _cuda.cpp
 
+UNIT_SPEC_CPP* BP_NETWORK_STATE::NewUnitSpec(int spec_type) const {
+  switch(spec_type) {
+  case T_BpUnitSpec:
+    return new STATE_CLASS_CPP(BpUnitSpec)();
+  }
+  StateError("NewUnitSpec, type not recognized");
+  return new STATE_CLASS_CPP(BpUnitSpec)();
+}
+
+CON_SPEC_CPP* BP_NETWORK_STATE::NewConSpec(int spec_type) const {
+  switch(spec_type) {
+  case T_BpConSpec:
+    return new STATE_CLASS_CPP(BpConSpec)();
+  }
+  StateError("NewConSpec, type not recognized");
+  return new STATE_CLASS_CPP(BpConSpec)();
+}
+
+
 void BP_NETWORK_STATE::Compute_NetinAct_Thr(int thr_no) {
   const int nlay = n_layers_built;
   for(int li = 0; li < nlay; li++) {
