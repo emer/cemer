@@ -7,9 +7,14 @@
   float	        wb_inc;	        // #NO_SAVE #CAT_Learning weight balance increment factor -- extra multiplier to add to weight increases to maintain overall weight balance
   float	        wb_dec;	        // #NO_SAVE #CAT_Learning weight balance decrement factor -- extra multiplier to add to weight decreases to maintain overall weight balance
 
-  INLINE void  Initialize_core()
-  { scale_eff = 0.0f; net = 0.0f; net_raw = 0.0f; wt_avg = 0.5f; 
+  INLINE void  Init_ConState() {
+    scale_eff = 1.0f; net = 0.0f; net_raw = 0.0f; wt_avg = 0.5f; 
     wb_inc = 1.0f; wb_dec = 1.0f;
+  }
+  // #IGNORE leabra initialize
+
+  INLINE void  Initialize_core() {
+    Init_ConState();
   }
   // #IGNORE leabra initialize
 

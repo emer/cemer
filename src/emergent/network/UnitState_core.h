@@ -234,7 +234,7 @@
       }
     }
   }
-  // #MENU #MENU_ON_Actions #CAT_State disconnect unit from all other units
+  // #CAT_State disconnect unit from all other units
   
   INLINE void   CountCons(NETWORK_STATE* nnet, int& n_recv, int& n_send) {
     const int rsz = NRecvConGps(nnet);
@@ -296,7 +296,7 @@
     flat_idx = fl_dx; lay_un_idx = layu_dx;  gp_idx = gp_dx; ungp_un_idx = ugpu_dx;
     thread_no = thr_no; thr_un_idx = thr_dx; own_lay_idx = lay_dx; own_ungp_idx = ugp_dx;
     spec_idx = spec_dx;  ext_flag = NO_EXTERNAL;
-    targ = ext = act = net = bias_wt = bias_dwt = 0.0f;
+    targ = ext = act = net = bias_wt = bias_dwt = wt_prjn = snap = 0.0f;
     pos_x = pos_y = 0; disp_pos_x = disp_pos_y = 0;
   }
   // #IGNORE

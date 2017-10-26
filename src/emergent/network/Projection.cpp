@@ -326,6 +326,16 @@ bool Projection::SetConType(TypeDef* td) {
   return true;
 }
 
+bool Projection::EditConState(int unit_no, bool recv) {
+  if(recv && layer) {
+    return layer->EditConState(unit_no, recv_idx, true);
+  }
+  else if((bool)from) {
+    return from->EditConState(unit_no, send_idx, false);
+  }
+  return false;
+}
+
 void Projection::MonitorVar(NetMonitor* net_mon, const String& variable) {
   if(!net_mon) return;
   net_mon->AddObject(this, variable);

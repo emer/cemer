@@ -356,11 +356,15 @@ public:
   // #CAT_Structure get the unit spec for this unit -- this is controlled entirely by the layer and all units in the layer have the same unit spec
 
   virtual bool EditState();
-  // #BUTTON edit the layer state values that drive actual C++ computation
+  // #MENU_BUTTON #MENU_ON_Edit edit the layer state values that drive actual C++ computation
   virtual bool EditLayUnGpState();
-  // #BUTTON edit the layer unit group state values that drive actual C++ computation
+  // #MENU_BUTTON #MENU_ON_Edit edit the layer unit group state values that drive actual C++ computation
   virtual bool EditUnGpState(int un_gp_no);
-  // #BUTTON edit the unit group state values for given unit group
+  // #MENU_BUTTON #MENU_ON_Edit edit the unit group state values for given unit group
+  virtual bool EditUnitState(int unit_no);
+  // #MENU_BUTTON #MENU_ON_Edit edit the unit state values for given unit number (0 .. n_units-1)
+  virtual bool EditConState(int unit_no, int prjn_idx, bool recv=true);
+  // #MENU_BUTTON #MENU_ON_Edit edit the connection state object containing connections for given unit and projection number, for either recv or sending projections
   
   virtual void  MonitorVar(NetMonitor* net_mon, const String& variable);
   // #BUTTON #DYN1 #CAT_Statistic monitor (record in a datatable) the given variable on this layer (can be a variable on the units or connections -- in which case a matrix with a value for each will be created -- e.g., 'act' will monitor activations of all units within the layer)

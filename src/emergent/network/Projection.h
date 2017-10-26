@@ -143,6 +143,9 @@ public:
   virtual bool  SetConType(TypeDef* td);
   // #BUTTON #DYN1 #CAT_Structure #TYPE_Connection #INIT_ARGVAL_ON_con_type set the connection type for all connections in this prjn
 
+  virtual bool EditConState(int unit_no, bool recv=true);
+  // #BUTTON edit the connection state object containing connections for given unit, for this projection, for either recv or sending direction
+
   virtual void  MonitorVar(NetMonitor* net_mon, const String& variable);
   // #BUTTON #DYN1 #CAT_Statistic monitor (record in a datatable) the given variable on this projection
 

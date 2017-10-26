@@ -50,8 +50,9 @@
   { return learn_qtr & (1 << qtr); }
   // #CAT_Learning test whether to learn at given quarter (pass net->quarter as arg)
 
-  INLINE void Init_Weights(CON_STATE* cg, NETWORK_STATE* net, int thr_no) override {
+  INLINE void Init_Weights(CON_STATE* pcg, NETWORK_STATE* net, int thr_no) override {
     Init_Weights_symflag(net, thr_no);
+    LEABRA_CON_STATE* cg = (LEABRA_CON_STATE*)pcg;
 
     float* wts = cg->OwnCnVar(WT);
     float* dwts = cg->OwnCnVar(DWT);
@@ -115,15 +116,9 @@
     }
   }
 
-  INLINE void Init_Weights_rcgp(LEABRA_CON_STATE* cg, LEABRA_NETWORK_STATE* net, int thr_no) {
-    cg->wt_avg = 0.5f;
-    cg->wb_inc = 1.0f;
-    cg->wb_dec = 1.0f;
-  }
-  // #IGNORE recv con group init weights -- for weight balance params
-  
-  INLINE void Init_Weights_post(CON_STATE* cg, NETWORK_STATE* net, int thr_no) override {
-    Init_Weights_rcgp((LEABRA_CON_STATE*)cg, (LEABRA_NETWORK_STATE*)net, thr_no);
+  INLINE void Init_Weights_post(CON_STATE* pcg, NETWORK_STATE* net, int thr_no) override {
+    LEABRA_CON_STATE* cg = (LEABRA_CON_STATE*)pcg;
+    cg->Init_ConState();
     
     float* wts = cg->OwnCnVar(WT);
     float* swts = cg->OwnCnVar(SWT);
@@ -137,6 +132,10 @@
       moments[i] = 0.0f;
       swts[i] = fwts[i];
       wts[i] *= scales[i];
+
+      LEABRA_UNIT_STATE* ru = (LEABRA_UNIT_STATE*)cg->UnState(i, net);
+      LEABRA_CON_STATE* rcg = (LEABRA_CON_STATE*)ru->RecvConState(net, cg->other_idx);
+      rcg->Init_ConState();    // recv based otherwise doesn't get initialized!
     }
   }
 
@@ -428,18 +427,14 @@
     if(wt_bal.on) {
       if(slow_wts.on) {
         for(int i=0; i<sz; i++) {
-          LEABRA_UNIT_STATE* ru = (LEABRA_UNIT_STATE*)cg->UnState(i, net);
-          LEABRA_CON_STATE* rcg = (LEABRA_CON_STATE*)ru->RecvConState(net, cg->other_idx);
           C_Compute_Weights_CtLeabraXCAL_slow
-            (wts[i], dwts[i], fwts[i], swts[i], scales[i],rcg->wb_inc, rcg->wb_dec);
+            (wts[i], dwts[i], fwts[i], swts[i], scales[i], cg->wb_inc, cg->wb_dec);
         }
       }
       else {
         for(int i=0; i<sz; i++) {
-          LEABRA_UNIT_STATE* ru = (LEABRA_UNIT_STATE*)cg->UnState(i, net);
-          LEABRA_CON_STATE* rcg = (LEABRA_CON_STATE*)ru->RecvConState(net, cg->other_idx);
           C_Compute_Weights_CtLeabraXCAL
-            (wts[i], dwts[i], fwts[i], swts[i], scales[i], rcg->wb_inc, rcg->wb_dec);
+            (wts[i], dwts[i], fwts[i], swts[i], scales[i], cg->wb_inc, cg->wb_dec);
         }
       }
     }
@@ -469,6 +464,13 @@
     sum_wt /= (float)cg->size;
     cg->wt_avg = sum_wt;
     wt_bal.WtBal(sum_wt, cg->wb_inc, cg->wb_dec);
+    // if we copy wb factors to send then that is a 10x savings by avoiding non-local access on each updt
+    for(int i=0; i<cg->size; i++) {
+      LEABRA_UNIT_STATE* su = (LEABRA_UNIT_STATE*)cg->UnState(i, net);
+      LEABRA_CON_STATE* scg = (LEABRA_CON_STATE*)su->SendConState(net, cg->other_idx);
+      scg->wb_inc = cg->wb_inc;
+      scg->wb_dec = cg->wb_dec;
+    }
   }
   // #IGNORE compute weight balance factors
 

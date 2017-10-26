@@ -1453,6 +1453,40 @@ bool Layer::EditUnGpState(int un_gp_no) {
   return false;
 }
 
+bool Layer::EditUnitState(int unit_no) {
+  if(!taMisc::gui_active) return false;
+  NetworkState_cpp* net = GetValidNetState();
+  if(!net) return false;
+  
+  if (taiEdit *ie = own_net->UnitStateType()->ie) {
+    UnitState_cpp* un = GetUnitStateSafe(net, unit_no);
+    if(!un) return false;
+    return ie->Edit((void*)un, false);
+  }
+  return false;
+}
+
+bool Layer::EditConState(int unit_no, int prjn_idx, bool recv) {
+  if(!taMisc::gui_active) return false;
+  NetworkState_cpp* net = GetValidNetState();
+  if(!net) return false;
+  
+  if (taiEdit *ie = own_net->ConStateType()->ie) {
+    UnitState_cpp* un = GetUnitStateSafe(net, unit_no);
+    if(!un) return false;
+    ConState_cpp* cg = NULL;
+    if(recv) {
+      cg = un->RecvConStateSafe(net, prjn_idx);
+    }
+    else {
+      cg = un->SendConStateSafe(net, prjn_idx);
+    }
+    if(!cg) return false;
+    return ie->Edit((void*)cg, false);
+  }
+  return false;
+}
+
 void Layer::MonitorVar(NetMonitor* net_mon, const String& variable) {
   if(!net_mon) return;
   net_mon->AddObject(this, variable);

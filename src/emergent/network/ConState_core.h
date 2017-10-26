@@ -403,7 +403,7 @@
   INIMPL float& SafeCn(NETWORK_STATE* net, int idx, int var_no) const;
   // #CAT_Access fully safe generic access of connection variable value at given index, regardless of whether it is owned or a pointer -- var_no is defined in ConSpec (e.g., ConSpec::WT, DWT or algorithm-specific types (e.g., LeabraConSpec::PDW) -- this is mainly for program access -- do not use in compute algorithm code that knows the ownership status of the connections (use OwnCn* or PtrCn*)
   INIMPL float& SafeCnName(NETWORK_STATE* net, int idx, const char* var_nm) const;
-  // #BUTTON #USE_RVAL #CAT_Access generic safe access of connection variable value by name (e.g., wt, dwt, pdw, etc) at given index, regardless of whether it is owned or a pointer -- mainly for program access -- do not use in compute algorithm code that knows the ownership status of the connections (use OwnCn* or PtrCn*)
+  // #CAT_Access generic safe access of connection variable value by name (e.g., wt, dwt, pdw, etc) at given index, regardless of whether it is owned or a pointer -- mainly for program access -- do not use in compute algorithm code that knows the ownership status of the connections (use OwnCn* or PtrCn*)
 
   INIMPL bool   SetCnVal(NETWORK_STATE* net, float val, int idx, int var_no);
   // #CAT_Access set connection variable to given value -- for use by programs, which cannot assign the value through the SafeCn function -- var_no is defined in ConSpec (e.g., ConSpec::WT, DWT or algorithm-specific types (e.g., LeabraConSpec::PDW) -- 
@@ -414,16 +414,8 @@
   INLINE void Initialize_core
   (int own_flt_idx=0, int own_th_idx=0, int spec_dx=0, int flgs=0, int prj_dx=0,
    int n_con_vr = 0, int oth_idx=0) {
-    own_flat_idx = own_flt_idx;
-    own_thr_idx = own_th_idx;
-    spec_idx = spec_dx;
-    flags = (ConStateFlags)flgs;
-    prjn_idx = prj_dx;
-    alloc_size = 0;
-    size = 0;
-    vec_chunked_size = 0;
-    other_idx = oth_idx;
-    n_con_vars = n_con_vr;
-    share_idx = -1;
-    mem_idx = 0;    cnmem_idx = 0;    mem_start = 0;    cnmem_start = 0;
+    own_flat_idx = own_flt_idx;    own_thr_idx = own_th_idx;    spec_idx = spec_dx;
+    flags = (ConStateFlags)flgs;    prjn_idx = prj_dx;    alloc_size = 0;
+    size = 0;    vec_chunked_size = 0;    other_idx = oth_idx;    n_con_vars = n_con_vr;
+    share_idx = -1;  mem_idx = 0;    cnmem_idx = 0;    mem_start = 0;  cnmem_start = 0; temp1 = 0.0f;
   }

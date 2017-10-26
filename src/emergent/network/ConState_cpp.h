@@ -108,7 +108,7 @@ public:
                   Relation::Relations rel, float cmp_val);
   // #CAT_Structure remove weights that (after pre-proc) meet relation to compare val
   int   LesionCons(NetworkState_cpp* net, UnitState_cpp* un, float p_lesion, bool permute=true);
-  // #MENU #USE_RVAL #CAT_Structure remove weights with prob p_lesion (permute = fixed no. lesioned)
+  // #CAT_Structure remove weights with prob p_lesion (permute = fixed no. lesioned)
 
   bool  ConValuesToArray(NetworkState_cpp* net, float_Array& ary, const String& variable);
   // #CAT_Structure adds values of variable from the connections into the given array (false if var not found)
@@ -125,7 +125,7 @@ public:
            const String& var6 = "", const String& var7 = "", const String& var8 = "",
            const String& var9 = "", const String& var10 = "", const String& var11 = "",
            const String& var12 = "", const String& var13 = "", const String& var14 = "");
-  // #MENU #NULL_OK_0 #NULL_TEXT_0_NewTable #CAT_Statistics record given connection-level variable to data table with column names the same as the variable names, and one row per *connection* (unlike monitor-based operations which create matrix columns) -- this is useful for performing analyses on learning rules as a function of sending and receiving unit variables -- uses receiver-based connection traversal -- connection variables are just specified directly by name -- corresponding receiver unit variables are "r.var" and sending unit variables are "s.var"
+  // #CAT_Statistics record given connection-level variable to data table with column names the same as the variable names, and one row per *connection* (unlike monitor-based operations which create matrix columns) -- this is useful for performing analyses on learning rules as a function of sending and receiving unit variables -- uses receiver-based connection traversal -- connection variables are just specified directly by name -- corresponding receiver unit variables are "r.var" and sending unit variables are "s.var"
 
   ConState_cpp() { Initialize_core(); }
 };

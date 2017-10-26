@@ -266,14 +266,6 @@
     u->misc_2 = 0.0f;
 
     Init_ActAvg(u, (LEABRA_NETWORK_STATE*)net, thr_no);
-
-    // TODO: why is this going through cons?  recv?  seems like it should not be here!
-    // const int nrg = u->NRecvConGps(net); 
-    // for(int g=0; g< nrg; g++) {
-    //   LeabraConState_cpp* recv_gp = (LeabraConState_cpp*)u->RecvConState(net, thr_no, g);
-    //   LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
-    //   cs->Init_Weights_rcgp(recv_gp, net, thr_no);
-    // }
   }
 
   INLINE void LoadBiasWtVal(float bwt, UNIT_STATE* uv, NETWORK_STATE* net) override {
