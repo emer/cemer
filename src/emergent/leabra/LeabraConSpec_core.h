@@ -427,14 +427,20 @@
     if(wt_bal.on) {
       if(slow_wts.on) {
         for(int i=0; i<sz; i++) {
+          // note: MUST get these from ru -- diff for each con -- can't copy to sender!
+          LEABRA_UNIT_STATE* ru = (LEABRA_UNIT_STATE*)cg->UnState(i, net);
+          LEABRA_CON_STATE* rcg = (LEABRA_CON_STATE*)ru->SendConState(net, cg->other_idx);
           C_Compute_Weights_CtLeabraXCAL_slow
-            (wts[i], dwts[i], fwts[i], swts[i], scales[i], cg->wb_inc, cg->wb_dec);
+            (wts[i], dwts[i], fwts[i], swts[i], scales[i], rcg->wb_inc, rcg->wb_dec);
         }
       }
       else {
         for(int i=0; i<sz; i++) {
+          // note: MUST get these from ru -- diff for each con -- can't copy to sender!
+          LEABRA_UNIT_STATE* ru = (LEABRA_UNIT_STATE*)cg->UnState(i, net);
+          LEABRA_CON_STATE* rcg = (LEABRA_CON_STATE*)ru->SendConState(net, cg->other_idx);
           C_Compute_Weights_CtLeabraXCAL
-            (wts[i], dwts[i], fwts[i], swts[i], scales[i], cg->wb_inc, cg->wb_dec);
+            (wts[i], dwts[i], fwts[i], swts[i], scales[i], rcg->wb_inc, rcg->wb_dec);
         }
       }
     }
@@ -464,13 +470,7 @@
     sum_wt /= (float)cg->size;
     cg->wt_avg = sum_wt;
     wt_bal.WtBal(sum_wt, cg->wb_inc, cg->wb_dec);
-    // if we copy wb factors to send then that is a 10x savings by avoiding non-local access on each updt
-    for(int i=0; i<cg->size; i++) {
-      LEABRA_UNIT_STATE* su = (LEABRA_UNIT_STATE*)cg->UnState(i, net);
-      LEABRA_CON_STATE* scg = (LEABRA_CON_STATE*)su->SendConState(net, cg->other_idx);
-      scg->wb_inc = cg->wb_inc;
-      scg->wb_dec = cg->wb_dec;
-    }
+    // note: these are specific to recv unit and cannot be copied to sender!
   }
   // #IGNORE compute weight balance factors
 
