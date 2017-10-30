@@ -1,74 +1,62 @@
-// Copyright 2017, Regents of the University of Colorado,
-// Carnegie Mellon University, Princeton University.
-//
-// This file is part of Emergent
-//
-//   Emergent is free software; you can redistribute it and/or modify
-//   it under the terms of the GNU General Public License as published by
-//   the Free Software Foundation; either version 2 of the License, or
-//   (at your option) any later version.
-//
-//   Emergent is distributed in the hope that it will be useful,
-//   but WITHOUT ANY WARRANTY; without even the implied warranty of
-//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//   GNU General Public License for more details.
+// this is included directly in AllProjectionSpecs_cpp / _cuda
+// {
 
-#include "RandomPrjnSpec.h"
-#include <Network>
-#include <int_Matrix>
-
-TA_BASEFUNS_CTORS_DEFN(RandomPrjnSpec);
-
-void RandomPrjnSpec::Initialize() {
-  p_con = .25;
-  sym_self = false;
-}
-
-void RandomPrjnSpec::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-  if(p_con > 1.0f) p_con = 1.0f;
-  if(p_con < 0.0f) p_con = 0.0f;
-}
-
-void RandomPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
-  if(!(bool)prjn->from) return;
+void STATE_CLASS(RandomPrjnSpec)::Connect_impl(PRJN_STATE* prjn, NETWORK_STATE* net, bool make_cons) { 
   rndm_seed.OldSeed();
 
-  int n_send_units = prjn->from->units.leaves;
-  int n_recv_units = prjn->layer->units.leaves;
+  LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
+  LAYER_STATE* send_lay = prjn->GetSendLayerState(net);
+  
+  int n_send_units = send_lay->n_units;
+  int n_recv_units = recv_lay->n_units;
 
-  int_Matrix* send_alloc = new int_Matrix;
-  int_Matrix* recv_alloc = new int_Matrix;
-  int_Matrix* cons = new int_Matrix;
-
-  send_alloc->SetGeom(1, n_send_units);
-  recv_alloc->SetGeom(1, n_recv_units);
-  cons->SetGeom(2, n_recv_units, n_send_units);
+  int* send_alloc = new int[n_send_units];
+  int* recv_alloc = new int[n_recv_units];
+  bool* cons = NULL;
+  
+  if(make_cons) {
+    cons = new bool[n_recv_units * n_send_units];
+    memset(cons, 0, n_recv_units * n_send_units * sizeof(bool));
+  }
 
   for (int i = 0; i < n_recv_units; i++) {
     for (int j= 0; j < n_send_units; j++) {
       if (Random::BoolProb(p_con)) {
-        cons->Set(1, i, j);
-        send_alloc->Set(send_alloc->FastEl1d(j) + 1, j);
-        recv_alloc->Set(recv_alloc->FastEl1d(i) + 1, i);
+        if(make_cons) {
+          cons[ j * n_recv_units + i] = true;
+        }
+        send_alloc[j]++;
+        recv_alloc[i]++;
       }
     }
   }
 
   if(!make_cons) {
-    for (int i = 0; i < n_recv_units; i++)
-      prjn->layer->units.FastEl(i)->RecvConsPreAlloc(recv_alloc->FastEl1d(i), prjn);
-
-    for (int j = 0; j < n_send_units; j++)
-      prjn->from->units.FastEl(j)->SendConsPreAlloc(send_alloc->FastEl1d(j), prjn);
+    for (int i = 0; i < n_recv_units; i++) {
+      UNIT_STATE* ru = recv_lay->GetUnitState(net, i);
+      ru->RecvConsPreAlloc(net, prjn, recv_alloc[i]);
+    }
+    for (int j = 0; j < n_send_units; j++) {
+      UNIT_STATE* su = send_lay->GetUnitState(net, j);
+      su->SendConsPreAlloc(net, prjn, send_alloc[j]);
+    }
   }
   else {
     for (int i = 0; i < n_recv_units; i++) {
       for (int j = 0; j < n_send_units; j++) {
-        if (cons->FastEl2d(i, j))
-          prjn->layer->units.FastEl(i)->ConnectFrom(prjn->from->units.FastEl(j), prjn);
+        if (cons[j * n_recv_units + i]) {
+          UNIT_STATE* ru = recv_lay->GetUnitState(net, i);
+          UNIT_STATE* su = send_lay->GetUnitState(net, j);
+          ru->ConnectFrom(net, su, prjn);
+        }
       }
     }
+  }
+
+  delete [] send_alloc;
+  delete [] recv_alloc;
+  if(cons) {
+    delete [] cons;
   }
 }
 

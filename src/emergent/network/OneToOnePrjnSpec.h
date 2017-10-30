@@ -1,47 +1,19 @@
-// Copyright 2017, Regents of the University of Colorado,
-// Carnegie Mellon University, Princeton University.
-//
-// This file is part of Emergent
-//
-//   Emergent is free software; you can redistribute it and/or modify
-//   it under the terms of the GNU General Public License as published by
-//   the Free Software Foundation; either version 2 of the License, or
-//   (at your option) any later version.
-//
-//   Emergent is distributed in the hope that it will be useful,
-//   but WITHOUT ANY WARRANTY; without even the implied warranty of
-//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//   GNU General Public License for more details.
-
-#ifndef OneToOnePrjnSpec_h
-#define OneToOnePrjnSpec_h 1
-
-// parent includes:
-#include <ProjectionSpec>
-
-// member includes:
-
-// declare all other types mentioned but not required to include:
-
-eTypeDef_Of(OneToOnePrjnSpec);
-
-class E_API OneToOnePrjnSpec : public ProjectionSpec {
-  // one-to-one connectivity (1st unit to 1st unit, etc)
-INHERITED(ProjectionSpec)
-public:
+// this is included directly in AllProjectionSpecs_cpp / _cuda
+// {
   int	n_conns;		// number of connections to make (-1 for size of layer)
   int	recv_start;		// starting unit index for recv connections
   int 	send_start;		// starting unit index for sending connections
   bool  use_gp;                 // if unit groups are present in the recv or sender layer, and the other layer fits within one unit group, then connectivity will be replicated for across groups in that layer
 
-  void	Connect_impl(Projection* prjn, bool make_cons) override;
-  virtual void	ConnectRecvGp_impl(Projection* prjn, bool make_cons); // recv is using groups
-  virtual void	ConnectSendGp_impl(Projection* prjn, bool make_cons); // send is using groups
+  INIMPL void  Connect_impl(PRJN_STATE* prjn, NETWORK_STATE* net, bool make_cons) override;
+  INIMPL virtual void ConnectRecvGp_impl(PRJN_STATE* prjn, NETWORK_STATE* net, bool make_cons); // recv is using groups
+  INIMPL virtual void ConnectSendGp_impl(PRJN_STATE* prjn, NETWORK_STATE* net, bool make_cons); // send is using groups
 
-  TA_SIMPLE_BASEFUNS(OneToOnePrjnSpec);
-private:
-  void	Initialize();
-  void 	Destroy()		{ };
-};
+  INLINE void Initialize_core() {
+    n_conns = -1;
+    recv_start = 0;
+    send_start = 0;
+    use_gp = false;
+  }
 
-#endif // OneToOnePrjnSpec_h
+  INLINE int  GetStateSpecType() const override { return NETWORK_STATE::T_OneToOnePrjnSpec; }

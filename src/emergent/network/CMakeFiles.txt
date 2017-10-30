@@ -161,11 +161,10 @@ set(network_HEADS_NOMAKETA
 
   AllProjectionSpecs_mbrs.h
   FullPrjnSpec.h
-  # TesselPrjnSpec.h
-  # OneToOnePrjnSpec.h
-  # SmallWorldPrjnSpec.h
-  # RandomPrjnSpec.h
-  # UniformRndPrjnSpec.h
+  OneToOnePrjnSpec.h
+  RandomPrjnSpec.h
+  UniformRndPrjnSpec.h
+  TesselPrjnSpec.h
   # PolarRndPrjnSpec.h
   # SymmetricPrjnSpec.h
   # GpOneToOnePrjnSpec.h
@@ -181,6 +180,7 @@ set(network_HEADS_NOMAKETA
   # GaussRFPrjnSpec.h
   # GradientWtsPrjnSpec.h
   # ConPoolPrjnSpec.h
+  # SmallWorldPrjnSpec.h
   
   BrainAtlas.h
   BrainAtlasFileParser.h

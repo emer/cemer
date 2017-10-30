@@ -34,31 +34,35 @@ void STATE_CLASS(FullPrjnSpec)::Connect_impl(PRJN_STATE* prjn, NETWORK_STATE* ne
 
 int STATE_CLASS(FullPrjnSpec)::ProbAddCons_impl(PRJN_STATE* prjn, NETWORK_STATE* net, float p_add_con,
                                                 float init_wt) {
-  // todo: depends on int_Array!
+  LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
+  LAYER_STATE* send_lay = prjn->GetSendLayerState(net);
   
-  // if(!(bool)prjn->from) return 0;
-
   int rval = 0;
 
-  // int no = prjn->from->units.leaves;
-  // if(!self_con && (prjn->from.ptr() == prjn->layer))
-  //   no--;
+  int no = send_lay->n_units;
+  if(!self_con && (send_lay == recv_lay))
+    no--;
 
-  // int n_new_cons = (int)(p_add_con * (float)no);
-  // if(n_new_cons <= 0) return 0;
-  // int_Array new_idxs;
-  // new_idxs.SetSize(no);
-  // new_idxs.FillSeq();
-  // FOREACH_ELEM_IN_GROUP(Unit, ru, prjn->layer->units) {
-  //   new_idxs.Permute();
-  //   for(int i=0;i<n_new_cons;i++) {
-  //     Unit* su = (Unit*)prjn->from->units.Leaf(new_idxs[i]);
-  //     int cn = ru->ConnectFromCk(su, prjn, false, true, init_wt); // set init_wt
-  //     // check means that it won't add any new connections if already there!
-  //     if(cn >= 0) {
-  //       rval++;
-  //     }
-  //   }
-  // }
+  int n_new_cons = (int)(p_add_con * (float)no);
+  if(n_new_cons <= 0) return 0;
+  int* new_idxs = new int[no];
+  IntArrayFillSeq(new_idxs, no);
+  
+  for(int rui = 0; rui < recv_lay->n_units; rui++) {
+    UNIT_STATE* ru = recv_lay->GetUnitState(net, rui);
+    if(ru->lesioned()) continue;
+    IntArrayPermute(new_idxs, no);
+    for(int sui=0; sui < n_new_cons; sui++) {
+      UNIT_STATE* su = send_lay->GetUnitState(net, new_idxs[sui]);
+      int cn = ru->ConnectFromCk(net, su, prjn, false, true, init_wt); // set init_wt
+      // check means that it won't add any new connections if already there!
+      if(cn >= 0) {
+        rval++;
+      }
+    }
+  }
+
+  delete [] new_idxs;
+  
   return rval;
 }

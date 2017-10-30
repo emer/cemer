@@ -16,6 +16,8 @@
 // establishes defines for TA-independent C++-based core code compilation
 // can be included multiple times to establish context
 
+#include <MTRnd>
+
 #define STATE_CPP
 
 #ifdef STATE_CUDA

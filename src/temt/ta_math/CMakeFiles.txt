@@ -43,7 +43,6 @@ set(ta_math_HEADS_MAKETA
   taMath_float.h
   cssMath.h
 
-  MTRnd.h
   RndSeed.h
   RndSeed_List.h
   Random.h
@@ -54,6 +53,7 @@ set(ta_math_HEADS_MAKETA
 )
 
 set(ta_math_HEADS_NOMAKETA
+  MTRnd.h
   ta_vector_ops.h
   vectorclass.h
   vectormath.h

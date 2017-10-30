@@ -59,12 +59,13 @@
 
 #include "MTRnd.h"
 
-#include <taMisc>
 #include <cmath>
+#include <iostream>
+#include <fstream>
+#include <unistd.h>
+#include <time.h>
 
-TA_BASEFUNS_CTORS_DEFN(MTRndPar);
-TA_BASEFUNS_CTORS_DEFN(MTRndPar_List);
-TA_BASEFUNS_CTORS_DEFN(MTRnd);
+using namespace std;
 
 ///////////////////////////////////////////////////////////////////
 //              First, we include the MT19937 basic RNG
@@ -241,13 +242,11 @@ int _CheckPeriod_dc(check32_t *ck, _org_state *st,
   p = n*w-r;
   x = (uint32_t*) malloc (2*p*sizeof(uint32_t));
   if (NULL==x) {
-    taMisc::Error("malloc error in \"_CheckPeriod_dc()\"");
     exit(1);
   }
 
   init = (uint32_t*) malloc (n*sizeof(uint32_t));
   if (NULL==init) {
-    taMisc::Error("malloc error \"_CheckPeriod_dc()\"");
     free(x);
     exit(1);
   }
@@ -389,21 +388,18 @@ void _InitPrescreening_dc(prescr_t *pre, int m, int n, int r, int w) {
   pre->preModPolys = (Polynomial **)malloc(
                                            (pre->sizeofA+1)*(sizeof(Polynomial*)));
   if (NULL == pre->preModPolys) {
-    taMisc::Error ("malloc error in \"InitPrescreening\"");
     exit(1);
   }
   MakepreModPolys(pre, m,n,r,w);
 
   pre->modlist = (uint32_t**)malloc(NIRREDPOLY * sizeof(uint32_t*));
   if (NULL == pre->modlist) {
-    taMisc::Error ("malloc error in \"InitPrescreening()\"");
     exit(1);
   }
   for (i=0; i<NIRREDPOLY; i++) {
     pre->modlist[i]
       = (uint32_t*)malloc( (pre->sizeofA + 1) * (sizeof(uint32_t)) );
     if (NULL == pre->modlist[i]) {
-      taMisc::Error ("malloc error in \"InitPrescreening()\"");
       exit(1);
     }
   }
@@ -500,7 +496,6 @@ static Polynomial *NewPoly(int degree) {
 
   p = (Polynomial *)calloc( 1, sizeof(Polynomial));
   if( p==NULL ){
-    taMisc::Error("calloc error in \"NewPoly()\"");
     exit(1);
   }
   p->deg = degree;
@@ -512,7 +507,6 @@ static Polynomial *NewPoly(int degree) {
 
   p->x = (int *)calloc( degree + 1, sizeof(int));
   if( p->x == NULL ){
-    taMisc::Error("calloc error");
     exit(1);
   }
 
@@ -999,13 +993,11 @@ static Vector *new_Vector(int nnn) {
 
   v = (Vector *)malloc( sizeof( Vector ) );
   if( v == NULL ){
-    taMisc::Error("malloc error in \"new_Vector()\"");
     exit(1);
   }
 
   v->cf = (uint32_t *)calloc( nnn, sizeof( uint32_t ) );
   if( v->cf == NULL ){
-    taMisc::Error("calloc error in \"new_Vector()\"");
     exit(1);
   }
 
@@ -1052,7 +1044,6 @@ static Vector **make_lattice(eqdeg_t *eq, int v) {
 
   lattice = (Vector **)malloc( (v+1) * sizeof( Vector *) );
   if( NULL == lattice ){
-    taMisc::Error("malloc error in \"make_lattice\"");
     exit(1);
   }
 
@@ -1108,7 +1099,6 @@ static MaskNode *cons_MaskNode(MaskNode *head, uint32_t b, uint32_t c, int leng)
 
   t = (MaskNode*)malloc(sizeof(MaskNode));
   if (t == NULL) {
-    taMisc::Error("malloc error in \"cons_MaskNode\"");
     exit(1);
   }
 
@@ -1206,7 +1196,7 @@ static int get_irred_param(check32_t *ck, prescr_t *pre, _org_state *org,
   }
 
   if (MAX_SEARCH == i) {
-    taMisc::Error("was not able to find a good parameter for id:", String(id), "bailing!");
+    cerr << "was not able to find a good parameter for id: " << id << " bailing!" << endl;
     return NOT_FOUND;
   }
   return FOUND;
@@ -1269,21 +1259,21 @@ static bool init_mt_search(MTRndPar *mts, check32_t *ck, prescr_t *pre, int w, i
   int n, m, r;
 
   if ( (w>32) || (w<31) ) {
-    taMisc::Error ("Sorry, currently only w = 32 or 31 is allowded.");
+    cerr << "Sorry, currently only w = 32 or 31 is allowded." << endl;
     return false;
   }
 
   if ( !proper_mersenne_exponent(p) ) {
     if (p<521) {
-      taMisc::Error ("\"p\" is too small.");
+      cerr << "\"p\" is too small." << endl;
       return false;
     }
     else if (p>44497){
-      taMisc::Error ("\"p\" is too large.");
+      cerr << "\"p\" is too large." << endl;
       return false;
     }
     else {
-      taMisc::Error ("\"p\" is not a Mersenne exponent.");
+      cerr << "\"p\" is not a Mersenne exponent." << endl;
       return false;
     }
   }
@@ -1348,20 +1338,21 @@ static int proper_mersenne_exponent(int p) {
 //              Main Gen Code
 
 void MTRndPar::Initialize() {
-  aaa = 0;
-  mm = 0;
-  nn = 0;
-  rr = 0;
+  // these are default vals, for first thread
+  aaa = 3065184256;
+  mm = 312;
+  nn = 624;
+  rr = 31;
   ww = 0;
-  wmask = 0;
-  umask = 0;
-  lmask = 0;
-  shift0 = 0;
-  shift1 = 0;
-  shiftB = 0;
-  shiftC = 0;
-  maskB = 0;
-  maskC = 0;
+  wmask = 4294967295; 
+  umask = 2147483648;
+  lmask = 2147483647;
+  shift0 = 12;
+  shift1 = 18;
+  shiftB = 7;
+  shiftC = 15;
+  maskB = 2362800000;
+  maskC = 3999760384;
   mti = 0;
   double_cached = false;
   cached_double = 0.0f;
@@ -1416,11 +1407,11 @@ bool MTRndPar::GenerateParamsID(int w, int p, int id, uint32_t seed) {
 
   _sgenrand_dc(&org, seed);
   if (id > 0xffff) {
-    taMisc::Error("\"id\" must be less than 65536");
+    cerr << "\"id\" must be less than 65536" << endl;
     return false;
   }
   if (id < 0) {
-    taMisc::Error("\"id\" must be positive");
+    cerr << "\"id\" must be positive" << endl;
     return false;
   }
 
@@ -1497,7 +1488,6 @@ uint32_t MTRndPar::GenRandInt32() {
   x ^= (x << shiftC) & maskC;
   x ^= x >> shift1;
 
-  // taMisc::Info(String(x));
   return x;
 }
 
@@ -1529,11 +1519,11 @@ uint32_t MTRndPar::GetCurSeed() {
 }
 
 
-////////////////////////////////
-//      MTRndPar_List
-
-bool MTRndPar_List::GenerateParamsID(int w, int p, int n_ids, uint32_t seed) {
-  SetSize(n_ids);
+bool MTRnd::GenerateParamsID(int w, int p, int n_ids, uint32_t seed) {
+  if(n_ids > max_gens) {
+    cerr << "only up to max_gens allowed: max_gens: " << max_gens << " n_ids: " << n_ids << endl;
+    return false;
+  }
 
   prescr_t pre;
   _org_state org;
@@ -1548,7 +1538,7 @@ bool MTRndPar_List::GenerateParamsID(int w, int p, int n_ids, uint32_t seed) {
   int id = 0;
   int count = 0;
   while(count < n_ids) {
-    MTRndPar* mts = FastEl(count);
+    MTRndPar* mts = mtrnds + count;
     copy_params_of_MTRndPar(&template_mts, mts);
 
     if ( NOT_FOUND == get_irred_param(&ck, &pre, &org, mts,
@@ -1557,8 +1547,8 @@ bool MTRndPar_List::GenerateParamsID(int w, int p, int n_ids, uint32_t seed) {
       continue;
     }
     _get_tempering_parameter_hard_dc(mts);
-    taMisc::Info("successfully completed params for MT PRNG id:", String(id),
-                 "count:", String(count));
+    cout << "successfully completed params for MT PRNG id: " << id
+         << " count: " << count << endl;
     id++;
     count++;
   }
@@ -1567,181 +1557,224 @@ bool MTRndPar_List::GenerateParamsID(int w, int p, int n_ids, uint32_t seed) {
   return rval;
 }
 
-void MTRndPar_List::InitSeeds(uint32_t seed) {
-  for(int i=0; i<size; i++) {
-    FastEl(i)->InitSeed(seed);
-  }
-}
 
 ////////////////////////////////
 //      MTRnd
 
-const int MTRnd::max_gens = 100;
-MTRndPar_List MTRnd::mtrnds;
 
-void MTRnd::Initialize() {
-}
+int MTRnd::dmem_proc = 0;
+MTRndPar MTRnd::mtrnds[max_gens];
 
-void MTRnd::Destroy() {
-}
 
 MTRndPar* MTRnd::GetRnd(int thr_no) {
-  if(thr_no < 0) thr_no = taMisc::dmem_proc;
-  // if(thr_no > 0) {
-  //   taMisc::Info("rnd thr_no > 0:", String(thr_no));
-  // }
-  if(thr_no >= mtrnds.size) {
-    taMisc::Error("MTRnd: thread number:", String(thr_no),
-                  "out of range for number of parallel RNG's:", String(mtrnds.size));
+  if(thr_no < 0) {
+    thr_no = dmem_proc;
+  }
+  if(thr_no >= max_gens) {
+    cerr << "MTRnd: thread number: " << thr_no
+         << " out of range for number of parallel RNG's: " << max_gens << endl;;
     return NULL;
   }
-  return mtrnds.FastEl(thr_no);
+  return mtrnds + thr_no;
 }
     
 void MTRnd::InitSeeds(uint32_t seed) {
-  mtrnds.InitSeeds(seed);
+  for(int i=0; i<max_gens; i++) {
+    mtrnds[i].InitSeed(seed);
+  }
 }
 
 uint32_t MTRnd::GetTimePidSeed() {
-  int pid = taMisc::ProcessId();
-  int tc = taMisc::TickCount(); // ms since system started
-  ulong sdval = (ulong)tc * (ulong)pid;
+  int pid, tc;
+#ifdef TA_OS_WIN
+  pid = (int)GetCurrentProcessId();
+#else
+  pid = (int)getpid();
+#endif
+#ifdef TA_OS_WIN
+  tc = (int)GetTickCount(); // is in ms
+#else
+  tc = (int)clock();
+#endif
+  uint64_t sdval = (uint64_t)tc * (uint64_t)pid;
   uint32_t rval = sdval & 0xffffffffUL;
   return rval;
 }
 
-void MTRnd::GenInitParams(int n_gens, const String& save_file_name) {
+void MTRnd::GenInitParams(int n_gens, const char* save_file_name) {
   // int prime = 521;     // for testing -- runs in a few seconds
   // int prime = 4423;    // takes under an hour for 100
   // int prime = 9941;    // takes several hours
   int prime = 19937;   // this takes several days
 
-  taMisc::Warning("This can take quite a long time -- be patient or kill it!!!  Using  prime value:", String(prime), "(19937 takes several days for 100, computation is O(prime^3)) -- generating a total of:", String(n_gens),
-                  "generators");
+  cout << "Warning: This can take quite a long time -- be patient or kill it!!!\n"
+       << "Using  prime value: " << prime << "\n"
+       << "(19937 takes several days for 100, computation is O(prime^3)) --\n"
+       << "generating a total of: " << n_gens << " generators" << endl;
 
-  mtrnds.GenerateParamsID(32, prime, n_gens, GetTimePidSeed());
-  String svstr = "static const char* mtdefparams[] = {\n";
-  for(int i=0;i<mtrnds.size;i++) {
-    MTRndPar* rnd = mtrnds.FastEl(i);
-    String vlstr = rnd->GetValStr();
-    vlstr.gsub(" mti=17: double_cached=false: cached_double=0:", ""); // get rid..
-    svstr << "\"" << vlstr << "\",\n";
+  GenerateParamsID(32, prime, n_gens, GetTimePidSeed());
+  fstream strm;
+  strm.open(save_file_name, ios::out);
+
+  MTRndPar* rnd0 = mtrnds + 0;
+  strm << "static uint32_t mtdefconstparams[] = { "
+       << rnd0->mm << ", "
+       << rnd0->nn << ", "
+       << rnd0->rr << ", "
+       << rnd0->ww << ", "
+       << rnd0->wmask << ", "
+       << rnd0->umask << ", "
+       << rnd0->lmask << ", "
+       << rnd0->shift0 << ", "
+       << rnd0->shift1 << ", "
+       << rnd0->shiftB << ", "
+       << rnd0->shiftC << "};\n\n";
+
+  strm << "static uint32_t mtdefthrparams[" << n_gens << "][3] = {\n";
+  for(int i=0; i<n_gens; i++) {
+    MTRndPar* rnd = mtrnds + i;
+    strm << "  {" << rnd->aaa << ", " << rnd->maskB << ", " << rnd->maskC << "},\n";
   }
-  svstr << "};\n";
-  svstr.SaveToFile(save_file_name);
-  taMisc::Info("MTRnd params saved to:", save_file_name);
+  strm.close();
+  cout << "MTRnd params saved to: " << save_file_name << endl;
 }
 
 // this is 100 with prime = 19937
 
-static const char* mtdefparams[] = {
-"{aaa=3065184256: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=2362800000: maskC=3999760384: }",
-"{aaa=3187146753: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=1851112064: maskC=4225073152: }",
-"{aaa=2463825922: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=2874521472: maskC=1985183744: }",
-"{aaa=3035168771: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=2536733568: maskC=3881140224: }",
-"{aaa=3032612868: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=4107630464: maskC=3715465216: }",
-"{aaa=3278700549: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=3712937088: maskC=4023615488: }",
-"{aaa=3612540934: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=1291139712: maskC=4157964288: }",
-"{aaa=2564161543: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=3974413184: maskC=2008449024: }",
-"{aaa=3449552904: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=1299529344: maskC=4141187072: }",
-"{aaa=2217672713: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=3972888448: maskC=3715596288: }",
-"{aaa=2927886346: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=2578889600: maskC=4149575680: }",
-"{aaa=4052942859: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=3433396096: maskC=4000808960: }",
-"{aaa=2473459724: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=3941906048: maskC=2010284032: }",
-"{aaa=2977234957: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=2813130368: maskC=3989143552: }",
-"{aaa=2904817678: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=2899655552: maskC=4149575680: }",
-"{aaa=3237019663: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=1687600000: maskC=4149575680: }",
-"{aaa=4217110544: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=3109351040: maskC=3721756672: }",
-"{aaa=2941779985: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=3652680576: maskC=4149575680: }",
-"{aaa=4169531410: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=1971027328: maskC=3990323200: }",
-"{aaa=4234084371: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=2333441920: maskC=3983638528: }",
-"{aaa=2765750292: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=1322728192: maskC=4157964288: }",
-"{aaa=2888695829: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=2629065600: maskC=4145512448: }",
-"{aaa=3936485398: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=3667324032: maskC=4023615488: }",
-"{aaa=3527999511: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=2607594368: maskC=4159012864: }",
-"{aaa=3397124120: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=3409279872: maskC=3881271296: }",
-"{aaa=2865561625: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=1735750784: maskC=4025974784: }",
-"{aaa=2554855450: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=3134569344: maskC=4139220992: }",
-"{aaa=3448176667: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=3701271168: maskC=4023746560: }",
-"{aaa=3336634396: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=2480192384: maskC=4149510144: }",
-"{aaa=3062300701: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=4120213376: maskC=3715465216: }",
-"{aaa=2610757662: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=3139813248: maskC=4139089920: }",
-"{aaa=4088987679: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=1533885184: maskC=4159143936: }",
-"{aaa=2212888608: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=1727314816: maskC=4149313536: }",
-"{aaa=2403401761: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=2901243520: maskC=3723853824: }",
-"{aaa=2358706210: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=2645997184: maskC=4153769984: }",
-"{aaa=2171666467: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=1825946496: maskC=4149575680: }",
-"{aaa=2834497572: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=3594840704: maskC=4023746560: }",
-"{aaa=2997354533: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=4093080960: maskC=3746922496: }",
-"{aaa=3827171366: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=4132797056: maskC=3690233856: }",
-"{aaa=2818637863: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=2597632896: maskC=4153901056: }",
-"{aaa=2478637096: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=2578889600: maskC=4149444608: }",
-"{aaa=2664169513: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=1987410816: maskC=3881861120: }",
-"{aaa=2160001066: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=3707074432: maskC=4000808960: }",
-"{aaa=3823435820: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=2597632896: maskC=4149510144: }",
-"{aaa=3370975277: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=1322596992: maskC=4159799296: }",
-"{aaa=2554855470: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=1291139712: maskC=4157964288: }",
-"{aaa=4062314543: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=1291139968: maskC=4149575680: }",
-"{aaa=2967732272: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=857009792: maskC=3721887744: }",
-"{aaa=3138388017: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=2643750272: maskC=4015882240: }",
-"{aaa=4275699762: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=1291139712: maskC=4157964288: }",
-"{aaa=2346188851: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=3138763648: maskC=2001829888: }",
-"{aaa=2311192628: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=1859500800: maskC=4157964288: }",
-"{aaa=2818900022: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=961998464: maskC=3721756672: }",
-"{aaa=2207907897: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=2577709952: maskC=4151672832: }",
-"{aaa=2424307770: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=4120213376: maskC=3715334144: }",
-"{aaa=4294770747: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=3688689024: maskC=4015489024: }",
-"{aaa=3136421948: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=4147494784: maskC=3130359808: }",
-"{aaa=2653618237: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=1322598016: maskC=4124409856: }",
-"{aaa=3208052798: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=2623696512: maskC=3990192128: }",
-"{aaa=2776498239: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=3147153280: maskC=4116021248: }",
-"{aaa=2469986368: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=3561156224: maskC=3990192128: }",
-"{aaa=3989766209: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=3059021440: maskC=4023746560: }",
-"{aaa=2598830146: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=2371188608: maskC=4000808960: }",
-"{aaa=3273850947: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=3142380672: maskC=4023877632: }",
-"{aaa=3590127684: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=3034019712: maskC=3715465216: }",
-"{aaa=3432644677: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=2607594368: maskC=4152852480: }",
-"{aaa=3557294150: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=3702844032: maskC=4023746560: }",
-"{aaa=2678063175: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=1534278400: maskC=4158095360: }",
-"{aaa=2746089544: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=3126521472: maskC=3738140672: }",
-"{aaa=3302490185: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=2603531648: maskC=4123361280: }",
-"{aaa=3313369162: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=1897166464: maskC=3990192128: }",
-"{aaa=3435528267: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=3598154624: maskC=3881140224: }",
-"{aaa=3288334412: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=4120344192: maskC=3990192128: }",
-"{aaa=4090822733: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=651490944: maskC=4006969344: }",
-"{aaa=2230386766: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=970405504: maskC=4157964288: }",
-"{aaa=2389508175: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=3046602624: maskC=3715465216: }",
-"{aaa=3020161104: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=3181178496: maskC=4022829056: }",
-"{aaa=4131323986: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=2482289536: maskC=4151803904: }",
-"{aaa=3905093716: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=3979704192: maskC=3713368064: }",
-"{aaa=2397372501: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=3143036288: maskC=3717562368: }",
-"{aaa=2655846487: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=2582952832: maskC=4149575680: }",
-"{aaa=3926065240: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=3143953792: maskC=3748102144: }",
-"{aaa=2676097113: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=4145511040: maskC=3690299392: }",
-"{aaa=4224254042: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=4080364160: maskC=1876262912: }",
-"{aaa=3134586971: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=2627565440: maskC=3982983168: }",
-"{aaa=4165795932: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=3108691328: maskC=3717562368: }",
-"{aaa=2510880861: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=2607987584: maskC=4149641216: }",
-"{aaa=3512336478: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=1826994816: maskC=4160061440: }",
-"{aaa=3895001183: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=3069507200: maskC=4023746560: }",
-"{aaa=2223439968: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=3590157952: maskC=4142628864: }",
-"{aaa=4079747169: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=3713985664: maskC=4023615488: }",
-"{aaa=2903572578: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=2597632896: maskC=4149510144: }",
-"{aaa=2427453539: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=1291139968: maskC=4149575680: }",
-"{aaa=3242000484: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=4122310272: maskC=3722805248: }",
-"{aaa=2921529445: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=3878910848: maskC=3612704768: }",
-"{aaa=2371682406: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=995552896: maskC=3721756672: }",
-"{aaa=2657747048: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=596964480: maskC=4024795136: }",
-"{aaa=4162584681: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=3132550784: maskC=3716382720: }",
-"{aaa=2301952106: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=4109465472: maskC=3713236992: }",
-"{aaa=3518955627: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=1706914688: maskC=4015357952: }",
+
+// "{aaa=3065184256: mm=312: nn=624: rr=31: ww=32: wmask=4294967295: umask=2147483648: lmask=2147483647: shift0=12: shift1=18: shiftB=7: shiftC=15: maskB=2362800000: maskC=3999760384: }"
+
+//                                mm   nn   rr ww  wmask,      umask,      lmask,      shift0 shift1 shiftB shiftC
+static uint32_t mtdefconstparams[] = {  312, 624, 31, 32, 4294967295, 2147483648, 2147483647, 12,    18,    7,     15 };
+
+// aaa, maskB, maskC 
+static uint32_t mtdefthrparams[100][3] = {
+  {3065184256, 2362800000, 3999760384},
+  {3187146753, 1851112064, 4225073152},
+  {2463825922, 2874521472, 1985183744},
+  {3035168771, 2536733568, 3881140224},
+  {3032612868, 4107630464, 3715465216},
+  {3278700549, 3712937088, 4023615488},
+  {3612540934, 1291139712, 4157964288},
+  {2564161543, 3974413184, 2008449024},
+  {3449552904, 1299529344, 4141187072},
+  {2217672713, 3972888448, 3715596288},
+  {2927886346, 2578889600, 4149575680},
+  {4052942859, 3433396096, 4000808960},
+  {2473459724, 3941906048, 2010284032},
+  {2977234957, 2813130368, 3989143552},
+  {2904817678, 2899655552, 4149575680},
+  {3237019663, 1687600000, 4149575680},
+  {4217110544, 3109351040, 3721756672},
+  {2941779985, 3652680576, 4149575680},
+  {4169531410, 1971027328, 3990323200},
+  {4234084371, 2333441920, 3983638528},
+  {2765750292, 1322728192, 4157964288},
+  {2888695829, 2629065600, 4145512448},
+  {3936485398, 3667324032, 4023615488},
+  {3527999511, 2607594368, 4159012864},
+  {3397124120, 3409279872, 3881271296},
+  {2865561625, 1735750784, 4025974784},
+  {2554855450, 3134569344, 4139220992},
+  {3448176667, 3701271168, 4023746560},
+  {3336634396, 2480192384, 4149510144},
+  {3062300701, 4120213376, 3715465216},
+  {2610757662, 3139813248, 4139089920},
+  {4088987679, 1533885184, 4159143936},
+  {2212888608, 1727314816, 4149313536},
+  {2403401761, 2901243520, 3723853824},
+  {2358706210, 2645997184, 4153769984},
+  {2171666467, 1825946496, 4149575680},
+  {2834497572, 3594840704, 4023746560},
+  {2997354533, 4093080960, 3746922496},
+  {3827171366, 4132797056, 3690233856},
+  {2818637863, 2597632896, 4153901056},
+  {2478637096, 2578889600, 4149444608},
+  {2664169513, 1987410816, 3881861120},
+  {2160001066, 3707074432, 4000808960},
+  {3823435820, 2597632896, 4149510144},
+  {3370975277, 1322596992, 4159799296},
+  {2554855470, 1291139712, 4157964288},
+  {4062314543, 1291139968, 4149575680},
+  {2967732272, 857009792, 3721887744},
+  {3138388017, 2643750272, 4015882240},
+  {4275699762, 1291139712, 4157964288},
+  {2346188851, 3138763648, 2001829888},
+  {2311192628, 1859500800, 4157964288},
+  {2818900022, 961998464, 3721756672},
+  {2207907897, 2577709952, 4151672832},
+  {2424307770, 4120213376, 3715334144},
+  {4294770747, 3688689024, 4015489024},
+  {3136421948, 4147494784, 3130359808},
+  {2653618237, 1322598016, 4124409856},
+  {3208052798, 2623696512, 3990192128},
+  {2776498239, 3147153280, 4116021248},
+  {2469986368, 3561156224, 3990192128},
+  {3989766209, 3059021440, 4023746560},
+  {2598830146, 2371188608, 4000808960},
+  {3273850947, 3142380672, 4023877632},
+  {3590127684, 3034019712, 3715465216},
+  {3432644677, 2607594368, 4152852480},
+  {3557294150, 3702844032, 4023746560},
+  {2678063175, 1534278400, 4158095360},
+  {2746089544, 3126521472, 3738140672},
+  {3302490185, 2603531648, 4123361280},
+  {3313369162, 1897166464, 3990192128},
+  {3435528267, 3598154624, 3881140224},
+  {3288334412, 4120344192, 3990192128},
+  {4090822733, 651490944, 4006969344},
+  {2230386766, 970405504, 4157964288},
+  {2389508175, 3046602624, 3715465216},
+  {3020161104, 3181178496, 4022829056},
+  {4131323986, 2482289536, 4151803904},
+  {3905093716, 3979704192, 3713368064},
+  {2397372501, 3143036288, 3717562368},
+  {2655846487, 2582952832, 4149575680},
+  {3926065240, 3143953792, 3748102144},
+  {2676097113, 4145511040, 3690299392},
+  {4224254042, 4080364160, 1876262912},
+  {3134586971, 2627565440, 3982983168},
+  {4165795932, 3108691328, 3717562368},
+  {2510880861, 2607987584, 4149641216},
+  {3512336478, 1826994816, 4160061440},
+  {3895001183, 3069507200, 4023746560},
+  {2223439968, 3590157952, 4142628864},
+  {4079747169, 3713985664, 4023615488},
+  {2903572578, 2597632896, 4149510144},
+  {2427453539, 1291139968, 4149575680},
+  {3242000484, 4122310272, 3722805248},
+  {2921529445, 3878910848, 3612704768},
+  {2371682406, 995552896, 3721756672},
+  {2657747048, 596964480, 4024795136},
+  {4162584681, 3132550784, 3716382720},
+  {2301952106, 4109465472, 3713236992},
+  {3518955627, 1706914688, 4015357952},
 };
 
 void MTRnd::LoadInitParams() {
-  mtrnds.SetSize(max_gens);
+#ifdef DMEM_COMPILE    
+    MPI_Comm_rank(MPI_COMM_WORLD, &dmem_proc);
+#else
+    dmem_proc = 0;
+#endif    
   for(int i=0; i<max_gens; i++) {
-    String ldstr = mtdefparams[i];
-    GetRnd(i)->SetValStr(ldstr);
+    MTRndPar* rnd = mtrnds + i;
+    rnd->mm = mtdefconstparams[0];
+    rnd->nn = mtdefconstparams[1];
+    rnd->rr = mtdefconstparams[2];
+    rnd->ww = mtdefconstparams[3];
+    rnd->wmask = mtdefconstparams[4];
+    rnd->umask = mtdefconstparams[5];
+    rnd->lmask = mtdefconstparams[6];
+    rnd->shift0 = mtdefconstparams[7];
+    rnd->shift1 = mtdefconstparams[8];
+    rnd->shiftB = mtdefconstparams[9];
+    rnd->shiftC = mtdefconstparams[10];
+    rnd->mm = mtdefconstparams[0];
+
+    rnd->aaa = mtdefthrparams[i][0];
+    rnd->maskB = mtdefthrparams[i][1];
+    rnd->maskC = mtdefthrparams[i][2];
   }
   InitSeeds(GetTimePidSeed());
 }

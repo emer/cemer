@@ -31,7 +31,6 @@
 // todo: need to eliminate this dependency later to make fully standalone
 
 #include <State_cpp>
-class ProjectionSpec_cpp; //
 
 // this defines classes that are members of NetworkState -- as _cpp
 #include <Network_mbrs>

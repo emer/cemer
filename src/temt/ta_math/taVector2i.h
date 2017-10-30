@@ -131,12 +131,12 @@ public:
 
   inline int SqMag() const { return x * x + y * y; }
   // squared magnitude of vector
-  inline float Mag() const { return sqrt((float)SqMag()); }
+  inline float Mag() const { return sqrtf((float)SqMag()); }
 
   inline float  SqDist(const taVector2i& td) const { // squared distance between two vectors
     taVector2i dist = *this - td; return dist.SqMag();
   }
-  inline float  Dist(const taVector2i& td) const { return sqrt(SqDist(td)); }
+  inline float  Dist(const taVector2i& td) const { return sqrtf(SqDist(td)); }
   inline int    Sum() const     { return x + y; }
   inline int    Product() const { return x * y; }
 

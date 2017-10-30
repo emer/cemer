@@ -16,6 +16,8 @@
 // establishes defines for TA-based C++-based main code compilation
 // can be included multiple times to establish context
 
+#include <MTRnd>
+
 #define STATE_MAIN
 
 #ifdef STATE_CUDA

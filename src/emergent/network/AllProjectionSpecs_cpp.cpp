@@ -24,3 +24,10 @@
 
 #include "FullPrjnSpec.cpp"
 
+#include "OneToOnePrjnSpec.cpp"
+
+#include "RandomPrjnSpec.cpp"
+
+#include "UniformRndPrjnSpec.cpp"
+
+#include "TesselPrjnSpec.cpp"

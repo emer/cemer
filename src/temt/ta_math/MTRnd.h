@@ -51,21 +51,10 @@
 // random number generators.   we've converted the original c code
 // into C++
 
+#include <cstdint>
 
-// TODO: need to make this fully independent of TA!
-
-// parent includes:
-#include <taBase>
-#include <taList>
-
-// member includes:
-
-
-taTypeDef_Of(MTRndPar);
-
-class TA_API MTRndPar : public taBase {
+class MTRndPar {
   // #STEM_BASE ##NO_UPDATE_AFTER ##INLINE ##CAT_MATH one mersenne twister pseudo-random number generator, with dynamically generated parameters -- these can be dynamically created for parallel use by separate threads
-INHERITED(taBase)
 public:
   uint32_t aaa;
   int      mm;
@@ -112,14 +101,17 @@ public:
   { return (((double)GenRandInt32()) + 0.5) * (1.0/4294967296.0); }
   // generates a random number on (0,1)-real-interval
   inline double GenRandRes53()
-  { ulong a=GenRandInt32() >> 5; ulong b=GenRandInt32() >> 6;
+  { uint64_t a=GenRandInt32() >> 5; uint64_t b=GenRandInt32() >> 6;
     return(a*67108864.0+b)*(1.0/9007199254740992.0); }
   // generates a random number on [0,1) with 53-bit resolution
 
   double GenRandGaussDev();
   // generate a gaussian-distributed random deviate -- generates 2x at a time, so it caches the 2nd one for greater efficiency -- (0 <= thr_no < 100) specifies thread or dmem proc number for parallel safe random sequences (-1 = taMisc::dmem_proc for auto-safe dmem)
 
-  TA_SIMPLE_BASEFUNS(MTRndPar);
+
+  MTRndPar()  { Initialize(); }
+  ~MTRndPar() { Destroy(); }
+  
 protected:
   uint32_t* state;              // internal state for PRNG generator -- these are not params but rather internal state variables used dynamically during generation
 
@@ -128,35 +120,15 @@ private:
   void  Destroy();
 };
 
-taTypeDef_Of(MTRndPar_List);
 
-class TA_API MTRndPar_List: public taList<MTRndPar> {
-  // ##CAT_Math a list of parameters for one mersenne twister pseudo-random number generator -- these can be dynamically created 
-INHERITED(taList<MTRndPar>)
-public:
-
-  bool GenerateParamsID(int w, int p, int n_ids, uint32_t seed);
-  // generate n_ids of DCMT parameters with given parameters, embedding the ID number into each: w is number of bits in one word (31 or 32 only), p is exponent of the period -- the period should be 2^p-1 -- usable values are: 521 607 1279 2203 2281 3217 4253 4423 9689 9941 11213 19937 21701 23209 44497 -- seed initializes an internal PRNG used in creating the PRNG parameters -- this can take a very long time to run, O(p^3)
-
-  void  InitSeeds(uint32_t seed);
-  // initialize state vector for all PRNG's in the list from given seed
- 
-  TA_BASEFUNS_NOCOPY(MTRndPar_List);
-private:
-  void          Initialize() { SetBaseType(&TA_MTRndPar); }
-  void          Destroy() {}
-};
-
-
-taTypeDef_Of(MTRnd);
-
-class TA_API MTRnd : public taNBase {
+class MTRnd  {
   // ##STATIC_MEMBERS A container for the Mersenne Twister (MT19937) random number generator by Makoto Matsumoto and Takuji Nishimura -- maintains list of dynamically created MT generators, each designed to be as different from each other as possible -- because generation takes a very long time, we initialize from a saved list of generators
-INHERITED(taNBase)
 public:
-  static const int      max_gens; // maximum number of generators -- defaults to 100 -- cannot use more than this number of threads in parallel unless new parameters are generated and saved in the code
-  static MTRndPar_List  mtrnds;
+  static const int      max_gens = 100; // maximum number of generators -- defaults to 100 -- cannot use more than this number of threads in parallel unless new parameters are generated and saved in the code
+  static MTRndPar       mtrnds[max_gens];
   // list of MT generators -- of max_gens size
+  static int            dmem_proc;
+  // number of dmem processor that we're running on -- used for default arg when thr_no = -1
 
   static uint32_t  GetTimePidSeed();
   // get a new random seed produced from the time and the process id
@@ -199,13 +171,12 @@ public:
 
   static void  LoadInitParams();
   // #IGNORE load the initial parameters that were previously generated and saved within the source code -- this is called at an initialization step
-  static void  GenInitParams(int n_gens, const String& save_file_name);
+  static void  GenInitParams(int n_gens, const char* save_file_name);
   // #IGNORE generate a new set of generator parameters, saving result to given file name
-    
-  TA_ABSTRACT_BASEFUNS_NOCOPY(MTRnd) //
-private:
-  void Initialize();
-  void Destroy();
+
+  static bool  GenerateParamsID(int w, int p, int n_ids, uint32_t seed);
+  // generate n_ids of DCMT parameters with given parameters, embedding the ID number into each: w is number of bits in one word (31 or 32 only), p is exponent of the period -- the period should be 2^p-1 -- usable values are: 521 607 1279 2203 2281 3217 4253 4423 9689 9941 11213 19937 21701 23209 44497 -- seed initializes an internal PRNG used in creating the PRNG parameters -- this can take a very long time to run, O(p^3)
+
 };
 
 

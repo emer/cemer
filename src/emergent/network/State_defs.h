@@ -251,6 +251,9 @@ private: \
 #endif // STATE_MAIN
 
 
+#define TAVECTOR2I      STATE_CLASS(taVector2i)
+#define TAVECTOR2F      STATE_CLASS(taVector2f)
+
 ////////////////////////////////////////////////////////////////
 //      Misc other global defines etc
 
@@ -267,3 +270,39 @@ typedef long long con_mem_idx; // connection memory index type
   for(int i=0; i<sz; i++) \
     expr
 #endif
+
+
+#ifndef StateIntArrayFuns_h
+#define StateIntArrayFuns_h 1
+
+///////////////////////////////////////////////////////////////
+//   State int array functions for replicating basic int_Array functionality
+
+INLINE void IntArrayPermute(int* array, int size, int thr_no=-1) {
+  int i, nv;
+  int tmp;
+  for(i=0; i<size; i++) {
+#if defined(STATE_MAIN) || defined(STATE_CPP)
+    nv = (int) ((MTRnd::GenRandInt32(thr_no) % (size - i)) + i); // get someone from the future
+#else
+    nv = (int) ((rand() % (size - i)) + i);
+#endif
+    // swap:
+    tmp = array[i];
+    array[i] = array[nv];
+    array[nv] = tmp;
+  }
+}
+
+INLINE void IntArrayFillSeq(int* array, int size, int start=0, int inc=1) {
+  for(int i=0; i<size; i++) {
+    array[i] = start + inc * i;
+  }
+}
+
+INLINE void IntArraySeqPermute(int* array, int size, int thr_no=-1) {
+  IntArrayFillSeq(array, size);
+  IntArrayPermute(array, size, thr_no);
+}
+
+#endif // StateIntArrayFuns_h

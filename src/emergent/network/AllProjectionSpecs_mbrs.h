@@ -18,19 +18,21 @@
 
 #pragma maketa_file_is_target AllProjectionSpecs
 
-// class STATE_CLASS(RenormInitWtsSpec) : public STATE_CLASS(taOBase) {
-//   // #STEM_BASE ##INLINE ##CAT_Projection parameters for renormalizing initial weight values
-// INHERITED(taOBase)
-// public:
-//   bool          on;             // renormalize initial weight values
-//   bool          mult_norm;      // #CONDSHOW_ON_on use multiplicative normalization to rescale the weight values to hit the target value, which is appropriate for all-positive weight values (e.g., Leabra) -- otherwise use addition to add/subtract a constant from all weights to hit the target value, which is approparite for pos/neg signed weight values (e.g., backprop)
-//   float		avg_wt;	        // #CONDSHOW_ON_on target average weight value per connection to renormalize to -- e.g., the sum across all weights will be adjusted so that it equals n_cons * avg_wt
+class STATE_CLASS(TessEl) : public STATE_CLASS(taOBase) {
+  // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Spec one element of a tesselation specification
+INHERITED(taOBase)
+public:
+  TAVECTOR2I	send_off;	// offset from current receiving unit
+  float		wt_val;		// value to assign to weight
 
-//   STATE_DECO_KEY("ProjectionSpec");
-//   STATE_TA_STD_CODE(RenormInitWtsSpec);
-// private:
-//   void 	Initialize()  { on = false;  mult_norm = true;  avg_wt = 0.5f; }
-//   void	Destroy() { };
-// };
+  STATE_DECO_KEY("ProjectionSpec");
+  STATE_TA_STD_CODE(TessEl);
+private:
+  INLINE void	Initialize() {
+    wt_val = 1;
+  }
+};
+
+
 
 

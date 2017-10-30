@@ -19,9 +19,6 @@
 // parent includes:
 #include <taNBase>
 
-// member includes:
-#include <int_Array>
-
 // declare all other types mentioned but not required to include:
 
 

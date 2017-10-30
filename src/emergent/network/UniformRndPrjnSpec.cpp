@@ -1,126 +1,110 @@
-// Copyright 2017, Regents of the University of Colorado,
-// Carnegie Mellon University, Princeton University.
-//
-// This file is part of Emergent
-//
-//   Emergent is free software; you can redistribute it and/or modify
-//   it under the terms of the GNU General Public License as published by
-//   the Free Software Foundation; either version 2 of the License, or
-//   (at your option) any later version.
-//
-//   Emergent is distributed in the hope that it will be useful,
-//   but WITHOUT ANY WARRANTY; without even the implied warranty of
-//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//   GNU General Public License for more details.
+// this is included directly in AllProjectionSpecs_cpp / _cuda
+// {
 
-#include "UniformRndPrjnSpec.h"
-#include <Network>
-
-TA_BASEFUNS_CTORS_DEFN(UniformRndPrjnSpec);
-
-void UniformRndPrjnSpec::Initialize() {
-  p_con = .25;
-  sym_self = true;
-  same_seed = false;
-}
-
-void UniformRndPrjnSpec::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-  if(p_con > 1.0f) p_con = 1.0f;
-  if(p_con < 0.0f) p_con = 0.0f;
-}
-
-void UniformRndPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
-  if(!(bool)prjn->from) return;
+void STATE_CLASS(UniformRndPrjnSpec)::Connect_impl(PRJN_STATE* prjn, NETWORK_STATE* net, bool make_cons) { 
   if(same_seed)
     rndm_seed.OldSeed();
 
-  Network* net = prjn->layer->own_net;
+  LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
+  LAYER_STATE* send_lay = prjn->GetSendLayerState(net);
 
+  const int rlay_no = recv_lay->n_units;
+  const int slay_no = send_lay->n_units;
   int recv_no;
-  if(!self_con && (prjn->from.ptr() == prjn->layer))
-    recv_no = (int) ((p_con * (float)(prjn->from->units.leaves-1)) + .5f);
+  if(!self_con && (send_lay == recv_lay))
+    recv_no = (int) ((p_con * (float)(slay_no-1)) + .5f);
   else
-    recv_no = (int) ((p_con * ((float)prjn->from->units.leaves)) + .5f);
+    recv_no = (int) ((p_con * ((float)slay_no)) + .5f);
   if(recv_no <= 0) recv_no = 1;
 
   // sending number is even distribution across senders plus some imbalance factor
-  float send_no_flt = (float)(prjn->layer->units.leaves * recv_no) / (float)prjn->from->units.leaves;
+  float send_no_flt = (float)(rlay_no * recv_no) / (float)slay_no;
   // add SEM as corrective factor
   float send_sem = send_no_flt / sqrtf(send_no_flt);
   int send_no = (int)(send_no_flt + 2.0f * send_sem + 5.0f);
-  if(send_no > prjn->layer->units.leaves) send_no = prjn->layer->units.leaves;
+  if(send_no > rlay_no) send_no = rlay_no;
 
   // pre-allocate connections!
   if(!make_cons) {
-    prjn->layer->RecvConsPreAlloc(recv_no, prjn);
-    prjn->from->SendConsPreAlloc(send_no, prjn);
+    recv_lay->RecvConsPreAlloc(net, prjn, recv_no);
+    send_lay->SendConsPreAlloc(net, prjn, send_no);
     return;
   }
 
-  if((prjn->from.ptr() == prjn->layer) && sym_self) {
-    Layer* lay = prjn->layer;
+  if((send_lay == recv_lay) && sym_self) {
     // trick is to divide cons in half, choose recv, send at random
     // for 1/2 cons, then go through all units and make the symmetric cons..
-    TestWarning(p_con > .95f, "Connect_impl", "there is usually less than complete connectivity for high values of p_con (>.95) in symmetric, self-connected layers using permute!");
+    // TestWarning(p_con > .95f, "Connect_impl", "there is usually less than complete connectivity for high values of p_con (>.95) in symmetric, self-connected layers using permute!");
     // pre-allocate connections!
     int first;
     if(!self_con)
-      first = (int) (.5f * p_con * (float)(prjn->from->units.leaves-1));
+      first = (int) (.5f * p_con * (float)(slay_no-1));
     else
-      first = (int) (.5f * p_con * (float)prjn->from->units.leaves);
+      first = (int) (.5f * p_con * (float)slay_no);
     if(first <= 0) first = 1;
 
-    UnitPtrList ru_list;                // receiver permution list
-    UnitPtrList perm_list;      // sender permution list
+    int* ru_list = new int[rlay_no]; // receiver permution list
+    int* perm_list = new int[rlay_no]; // sender permution list
 
-    FOREACH_ELEM_IN_GROUP(Unit, ru, lay->units) {  // need to permute recvs because of exclusion
-      ru_list.Link(ru);                 // on making a symmetric connection in first pass
-    }
-    ru_list.Permute();
+    IntArraySeqPermute(ru_list, rlay_no);
 
-    for(int i=0;i<ru_list.size; i++) {
-      Unit* ru = ru_list.FastEl(i);
-      perm_list.Reset();
-      FOREACH_ELEM_IN_GROUP(Unit, su, lay->units) {
+    for(int rui=0; rui < rlay_no; rui++) {
+      UNIT_STATE* ru = recv_lay->GetUnitState(net, ru_list[rui]);
+      if(ru->lesioned()) continue;
+
+      int n_send = 0;
+      for(int sui=0; sui < rlay_no; sui++) {
+        UNIT_STATE* su = recv_lay->GetUnitState(net, sui);
+        if(su->lesioned()) continue;
         if(!self_con && (ru == su)) continue;
         // don't connect to anyone who already recvs from me cuz that will make
         // a symmetric connection which isn't good: symmetry will be enforced later
-        ConState_cpp* scg = su->RecvConStatePrjn(prjn);
+        CON_STATE* scg = su->RecvConStatePrjn(net, prjn);
         if(scg->FindConFromIdx(ru->flat_idx) >= 0) continue;
-        perm_list.Link(su);
+        perm_list[n_send++] = sui;
       }
-      perm_list.Permute();
-      int j;
-      for(j=0; j<first && j<perm_list.size; j++)        // only connect 1/2 of the units
-        ru->ConnectFrom((Unit*)perm_list[j], prjn, false, true);
-      // true = ignore errs -- to be expected
+      IntArrayPermute(perm_list, n_send);
+      for(int j=0; j < first && j < n_send; j++) {       // only connect 1/2 of the units
+        UNIT_STATE* su = recv_lay->GetUnitState(net, perm_list[j]);
+        ru->ConnectFrom(net, su, prjn, false, true); // true = ignore errs -- to be expected
+      }
     }
     // now go thru and make the symmetric connections
-    FOREACH_ELEM_IN_GROUP(Unit, ru, lay->units) {
-      ConState_cpp* scg = ru->SendConStatePrjn(prjn);
+    for(int rui=0; rui < rlay_no; rui++) {
+      UNIT_STATE* ru = recv_lay->GetUnitState(net, ru_list[rui]);
+      if(ru->lesioned()) continue;
+      CON_STATE* scg = ru->SendConStatePrjn(net, prjn);
       if(scg == NULL) continue;
-      int i;
-      for(i=0;i<scg->size;i++) {
-        Unit* su = scg->Un(i,net);
-        ru->ConnectFromCk(su, prjn, true);
-        // true = ignore errs -- to be expected
+      for(int i=0; i < scg->size; i++) {
+        UNIT_STATE* su = scg->UnState(i,net);
+        ru->ConnectFromCk(net, su, prjn, true); // true = ignore errs -- to be expected
       }
     }
+
+    delete [] ru_list;
+    delete [] perm_list;
   }
   else {                        // not a symmetric self projection
-    UnitPtrList perm_list;      // permution list
-    FOREACH_ELEM_IN_GROUP(Unit, ru, prjn->layer->units) {
-      perm_list.Reset();
-      FOREACH_ELEM_IN_GROUP_NESTED(Unit, su, prjn->from->units) {
+    int* perm_list = new int[slay_no]; // sender permution list
+    
+    for(int rui=0; rui < rlay_no; rui++) {
+      UNIT_STATE* ru = recv_lay->GetUnitState(net, rui);
+      if(ru->lesioned()) continue;
+      int n_send = 0;
+      for(int sui=0; sui < slay_no; sui++) {
+        UNIT_STATE* su = send_lay->GetUnitState(net, sui);
+        if(su->lesioned()) continue;
         if(!self_con && (ru == su)) continue;
-        perm_list.Link(su);
+        perm_list[n_send++] = sui;
       }
-      perm_list.Permute();
-      for(int i=0; i<recv_no && i<perm_list.size; i++)
-        ru->ConnectFrom((Unit*)perm_list[i], prjn, false, true);
-      // true = ignore errs -- to be expected
+      IntArrayPermute(perm_list, n_send);
+      for(int j=0; j < n_send; j++) {
+        UNIT_STATE* su = send_lay->GetUnitState(net, perm_list[j]);
+        ru->ConnectFrom(net, su, prjn, false, true); // true = ignore errs -- to be expected
+      }
     }
+
+    delete [] perm_list;
   }
 }
 
