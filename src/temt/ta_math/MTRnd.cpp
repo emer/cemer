@@ -62,6 +62,7 @@
 #include <cmath>
 #include <iostream>
 #include <fstream>
+#include <stdlib.h>
 #include <unistd.h>
 #include <time.h>
 
