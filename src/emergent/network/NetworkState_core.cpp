@@ -675,8 +675,8 @@ PRJN_SPEC_CPP* NETWORK_STATE::NewPrjnSpec(int spec_type) const {
   //   return new STATE_CLASS_CPP(MarkerGpOneToOnePrjnSpec)();
   // case T_RndGpOneToOnePrjnSpec:
   //   return new STATE_CLASS_CPP(RndGpOneToOnePrjnSpec)();
-  // case T_GpRndTesselPrjnSpec:
-  //   return new STATE_CLASS_CPP(GpRndTesselPrjnSpec)();
+  // case T_GpTesselPrjnSpec:
+  //   return new STATE_CLASS_CPP(GpTesselPrjnSpec)();
   // case T_TiledRFPrjnSpec:
   //   return new STATE_CLASS_CPP(TiledRFPrjnSpec)();
   // case T_TiledNovlpPrjnSpec:

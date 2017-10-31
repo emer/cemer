@@ -13,10 +13,10 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-#include "GpRndTesselPrjnSpec.h"
+#include "GpTesselPrjnSpec.h"
 #include <Network>
 
-TA_BASEFUNS_CTORS_DEFN(GpRndTesselPrjnSpec);
+TA_BASEFUNS_CTORS_DEFN(GpTesselPrjnSpec);
 
 TA_BASEFUNS_CTORS_DEFN(GpTessEl);
 
@@ -26,7 +26,7 @@ void GpTessEl::Initialize() {
   p_con = 1.0f;
 }
 
-void GpRndTesselPrjnSpec::Initialize() {
+void GpTesselPrjnSpec::Initialize() {
   recv_gp_n = -1;
   recv_gp_skip = 1;
   recv_gp_group = 1;
@@ -38,13 +38,13 @@ void GpRndTesselPrjnSpec::Initialize() {
   same_seed = false;
 }
 
-void GpRndTesselPrjnSpec::UpdateAfterEdit_impl() {
+void GpTesselPrjnSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   recv_gp_skip.SetGtEq(1);
   recv_gp_group.SetGtEq(1);
 }
 
-void GpRndTesselPrjnSpec::MakeEllipse(int half_width, int half_height, int ctr_x, int ctr_y) {
+void GpTesselPrjnSpec::MakeEllipse(int half_width, int half_height, int ctr_x, int ctr_y) {
   last_make_cmd = "MakeEllipse( half_width=" + String(half_width)
     + ", half_height=" + String(half_height)
     + ", ctr_x=" + String(ctr_x) + ", ctr_y=" + String(ctr_y) + ")";
@@ -108,7 +108,7 @@ void GpRndTesselPrjnSpec::MakeEllipse(int half_width, int half_height, int ctr_x
   }
 }
 
-void GpRndTesselPrjnSpec::MakeRectangle(int width, int height, int left, int bottom) {
+void GpTesselPrjnSpec::MakeRectangle(int width, int height, int left, int bottom) {
   last_make_cmd = "MakeRectangle(width=" + String(width) + ", height=" + String(height)
     + ", left=" + String(left) + ", bottom=" + String(bottom) + ")";
   SigEmitUpdated();
@@ -125,7 +125,7 @@ void GpRndTesselPrjnSpec::MakeRectangle(int width, int height, int left, int bot
   }
 }
 
-void GpRndTesselPrjnSpec::SetPCon(float p_con, int start, int end) {
+void GpTesselPrjnSpec::SetPCon(float p_con, int start, int end) {
   if(end == -1) end = send_gp_offs.size;  else end = MIN(send_gp_offs.size, end);
   int i;
   for(i=start;i<end;i++) {
@@ -135,7 +135,7 @@ void GpRndTesselPrjnSpec::SetPCon(float p_con, int start, int end) {
 }
 
 
-void GpRndTesselPrjnSpec::GetCtrFmRecv(taVector2i& sctr, taVector2i ruc) {
+void GpTesselPrjnSpec::GetCtrFmRecv(taVector2i& sctr, taVector2i ruc) {
   ruc -= recv_gp_off;
   ruc /= recv_gp_group; ruc *= recv_gp_group;   // this takes int part of
   ruc += recv_gp_off;   // then re-add offset
@@ -145,7 +145,7 @@ void GpRndTesselPrjnSpec::GetCtrFmRecv(taVector2i& sctr, taVector2i ruc) {
   sctr += send_gp_border;
 }
 
-void GpRndTesselPrjnSpec::Connect_Gps(int rgpidx, int sgpidx, float p_con,
+void GpTesselPrjnSpec::Connect_Gps(int rgpidx, int sgpidx, float p_con,
                                       Projection* prjn, bool send_alloc) {
   Layer* recv_lay = prjn->layer;
   Layer* send_lay = prjn->from;
@@ -212,7 +212,7 @@ void GpRndTesselPrjnSpec::Connect_Gps(int rgpidx, int sgpidx, float p_con,
   }
 }
 
-void GpRndTesselPrjnSpec::Connect_Gps_Sym(int rgpidx, int sgpidx,
+void GpTesselPrjnSpec::Connect_Gps_Sym(int rgpidx, int sgpidx,
                                           float p_con, Projection* prjn) {
   Layer* recv_lay = prjn->layer;
   Layer* send_lay = prjn->from;
@@ -242,7 +242,7 @@ void GpRndTesselPrjnSpec::Connect_Gps_Sym(int rgpidx, int sgpidx,
   }
 }
 
-void GpRndTesselPrjnSpec::Connect_Gps_SymSameGp(int rgpidx, int sgpidx,
+void GpTesselPrjnSpec::Connect_Gps_SymSameGp(int rgpidx, int sgpidx,
                                 float p_con, Projection* prjn) {
   Layer* recv_lay = prjn->layer;
   Layer* send_lay = prjn->from;
@@ -302,7 +302,7 @@ void GpRndTesselPrjnSpec::Connect_Gps_SymSameGp(int rgpidx, int sgpidx,
   }
 }
 
-void GpRndTesselPrjnSpec::Connect_Gps_SymSameLay(int rgpidx, int sgpidx,
+void GpTesselPrjnSpec::Connect_Gps_SymSameLay(int rgpidx, int sgpidx,
                                                  float p_con, Projection* prjn) {
   Layer* recv_lay = prjn->layer;
   Layer* send_lay = prjn->from;
@@ -340,7 +340,7 @@ void GpRndTesselPrjnSpec::Connect_Gps_SymSameLay(int rgpidx, int sgpidx,
   Connect_Gps_Std(rgpidx, sgpidx, p_con, prjn);
 }
 
-void GpRndTesselPrjnSpec::Connect_Gps_Std(int rgpidx, int sgpidx,
+void GpTesselPrjnSpec::Connect_Gps_Std(int rgpidx, int sgpidx,
                                           float p_con, Projection* prjn) {
   Layer* recv_lay = prjn->layer;
   Layer* send_lay = prjn->from;
@@ -370,7 +370,7 @@ void GpRndTesselPrjnSpec::Connect_Gps_Std(int rgpidx, int sgpidx,
   }
 }
 
-void GpRndTesselPrjnSpec::Connect_Gps_Full(int rgpidx, int sgpidx,
+void GpTesselPrjnSpec::Connect_Gps_Full(int rgpidx, int sgpidx,
                                            Projection* prjn) {
   Layer* recv_lay = prjn->layer;
   Layer* send_lay = prjn->from;
@@ -387,7 +387,7 @@ void GpRndTesselPrjnSpec::Connect_Gps_Full(int rgpidx, int sgpidx,
   }
 }
 
-void GpRndTesselPrjnSpec::Connect_RecvGp(int rgpidx, const taVector2i& ruc,
+void GpTesselPrjnSpec::Connect_RecvGp(int rgpidx, const taVector2i& ruc,
                                          Projection* prjn, bool send_alloc) {
 
   Layer* recv_lay = prjn->layer;
@@ -409,7 +409,7 @@ void GpRndTesselPrjnSpec::Connect_RecvGp(int rgpidx, const taVector2i& ruc,
   }
 }
 
-void GpRndTesselPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
+void GpTesselPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
   if(!(bool)prjn->from) return;
   if(same_seed)
     rndm_seed.OldSeed();

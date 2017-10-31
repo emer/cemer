@@ -38,14 +38,6 @@ set(leabra_HEADS_MAKETA
 #   TwoDValLayerSpec.h
 #   DecodeTwoDValLayerSpec.h
 #   LeabraV1LayerSpec.h
-  # TiledGpRFPrjnSpec.h
-  # TiledSubGpRFPrjnSpec.h
-
-  # ScalarValSelfPrjnSpec.h
-  # SaliencyPrjnSpec.h
-  # TiledGpRFOneToOnePrjnSpec.h
-  # TiledGpRFOneToOneWtsPrjnSpec.h
-  # CerebConj2PrjnSpec.h
 
 #   ExtRewLayerSpec.h
 #   TDRewPredConSpec.h
@@ -76,14 +68,8 @@ set(leabra_HEADS_MAKETA
 #   GPiInvUnitSpec.h
 #   InvertUnitSpec.h
 #   PFCUnitSpec.h
-#   PFCPrjnSpec.h
-#   BgPfcPrjnSpec.h
 #   GPiSoftMaxLayerSpec.h
     
-#   GpCustomPrjnSpecBase.h
-#   RowColPrjnSpec.h
-#   TopoWtsPrjnSpec.h
-
 #   ECoutUnitSpec.h
 #   CA1UnitSpec.h
 #   # SubiculumLayerSpec.h
@@ -227,14 +213,6 @@ set(leabra_SRCS
 #   TwoDValLayerSpec.cpp
 #   DecodeTwoDValLayerSpec.cpp
 #   LeabraV1LayerSpec.cpp
-  # TiledGpRFPrjnSpec.cpp
-  # TiledSubGpRFPrjnSpec.cpp
-
-  # ScalarValSelfPrjnSpec.cpp
-  # SaliencyPrjnSpec.cpp
-  # TiledGpRFOneToOnePrjnSpec.cpp
-  # TiledGpRFOneToOneWtsPrjnSpec.cpp
-  # CerebConj2PrjnSpec.cpp
 
 #   ExtRewLayerSpec.cpp
 #   TDRewPredConSpec.cpp
@@ -265,14 +243,8 @@ set(leabra_SRCS
 #   GPiInvUnitSpec.cpp
 #   InvertUnitSpec.cpp
 #   PFCUnitSpec.cpp
-#   PFCPrjnSpec.cpp
-#   BgPfcPrjnSpec.cpp
 #   GPiSoftMaxLayerSpec.cpp
     
-#   GpCustomPrjnSpecBase.cpp
-#   RowColPrjnSpec.cpp
-#   TopoWtsPrjnSpec.cpp
-
 #   ECoutUnitSpec.cpp
 #   CA1UnitSpec.cpp
 #   # SubiculumLayerSpec.cpp

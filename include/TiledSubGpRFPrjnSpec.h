@@ -1,1 +1,1 @@
-#include "../src/emergent/leabra/TiledSubGpRFPrjnSpec.h"
+#include "../src/emergent/network/TiledSubGpRFPrjnSpec.h"

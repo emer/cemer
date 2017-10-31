@@ -30,7 +30,7 @@ TA_BASEFUNS_CTORS_DEFN(LeabraWizard);
 #include <MarkerGpOneToOnePrjnSpec>
 #include <TesselPrjnSpec>
 #include <UniformRndPrjnSpec>
-#include <GpRndTesselPrjnSpec>
+#include <GpTesselPrjnSpec>
 #include <TiledGpRFPrjnSpec>
 #include <TiledGpRFOneToOnePrjnSpec>
 

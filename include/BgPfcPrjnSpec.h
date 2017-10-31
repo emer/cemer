@@ -1,1 +1,1 @@
-#include "../src/emergent/leabra/BgPfcPrjnSpec.h"
+#include "../src/emergent/network/BgPfcPrjnSpec.h"

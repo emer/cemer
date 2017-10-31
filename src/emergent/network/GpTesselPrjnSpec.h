@@ -13,8 +13,8 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-#ifndef GpRndTesselPrjnSpec_h
-#define GpRndTesselPrjnSpec_h 1
+#ifndef GpTesselPrjnSpec_h
+#define GpTesselPrjnSpec_h 1
 
 // parent includes:
 #include <ProjectionSpec>
@@ -53,9 +53,9 @@ void	Initialize() 		{ SetBaseType(&TA_GpTessEl); }
   void 	Destroy()		{ };
 };
 
-eTypeDef_Of(GpRndTesselPrjnSpec);
+eTypeDef_Of(GpTesselPrjnSpec);
 
-class E_API GpRndTesselPrjnSpec : public ProjectionSpec {
+class E_API GpTesselPrjnSpec : public ProjectionSpec {
   // specifies tesselated patterns of groups to connect with (both recv and send layers must have unit groups), optionally with random connectivity within each group (also very useful for full connectivity -- has optimized support for that) -- only 'permute' style randomness is supported, producing same number of recv connections per unit
 INHERITED(ProjectionSpec)
 public:
@@ -106,7 +106,7 @@ public:
   virtual void	SetPCon(float p_con, int start = 0, int end = -1);
   // #BUTTON set p_con value for a range of send_gp_offs (default = all; end-1 = all)
 
-  TA_SIMPLE_BASEFUNS(GpRndTesselPrjnSpec);
+  TA_SIMPLE_BASEFUNS(GpTesselPrjnSpec);
 protected:
   void UpdateAfterEdit_impl() override;
 
@@ -114,4 +114,4 @@ private:
   void	Initialize();
   void	Destroy()	{ };
 };
-#endif // GpRndTesselPrjnSpec_h
+#endif // GpTesselPrjnSpec_h

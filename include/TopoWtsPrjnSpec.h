@@ -1,1 +1,1 @@
-#include "../src/emergent/leabra/TopoWtsPrjnSpec.h"
+#include "../src/emergent/network/TopoWtsPrjnSpec.h"

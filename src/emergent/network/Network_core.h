@@ -40,7 +40,7 @@
     T_GpOneToOnePrjnSpec,
     T_MarkerGpOneToOnePrjnSpec,
     T_RndGpOneToOnePrjnSpec,
-    T_GpRndTesselPrjnSpec,
+    T_GpTesselPrjnSpec,
     T_TiledRFPrjnSpec,
     T_TiledNovlpPrjnSpec,
     T_TiledDivGpRFPrjnSpec,

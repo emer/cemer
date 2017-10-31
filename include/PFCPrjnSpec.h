@@ -1,1 +1,1 @@
-#include "../src/emergent/leabra/PFCPrjnSpec.h"
+#include "../src/emergent/network/PFCPrjnSpec.h"

@@ -1,1 +1,1 @@
-#include "../src/emergent/leabra/RowColPrjnSpec.h"
+#include "../src/emergent/network/RowColPrjnSpec.h"

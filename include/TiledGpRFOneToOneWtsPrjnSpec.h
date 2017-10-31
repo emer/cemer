@@ -1,1 +1,1 @@
-#include "../src/emergent/leabra/TiledGpRFOneToOneWtsPrjnSpec.h"
+#include "../src/emergent/network/TiledGpRFOneToOneWtsPrjnSpec.h"
