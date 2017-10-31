@@ -51,7 +51,21 @@
 // random number generators.   we've converted the original c code
 // into C++
 
-#include <cstdint>
+#ifdef TA_OS_WIN
+# define _USE_MATH_DEFINES
+#else
+# include <stdint.h>
+#endif
+
+#ifndef __MAKETA__ // we define all these in maketa/ta_type.h so don't need them during scanning
+# ifdef _MSC_VER
+  typedef int		        int32_t;
+  typedef unsigned int          uint;
+  typedef unsigned int          uint32_t;
+  typedef long long             int64_t;
+  typedef unsigned long long    uint64_t;
+#endif
+#endif
 
 class MTRndPar {
   // #STEM_BASE ##NO_UPDATE_AFTER ##INLINE ##CAT_MATH one mersenne twister pseudo-random number generator, with dynamically generated parameters -- these can be dynamically created for parallel use by separate threads
