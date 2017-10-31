@@ -3076,7 +3076,7 @@ String TypeDef::GetHTML(bool gendoc) const {
   rval.cat("<iframe src=\"").cat(wiki_help_url).cat(name).cat("\" width=\"99%\" height=\"40%\" style=\"border:5px solid #000000\"></iframe>\n");
   rval.cat("<head>\n");
   // following is magic code viewer incantation
-  rval.cat("<script>function writesrc(t,signature){t.innerHTML='<iframe width=\"100%\" height=\"50%\" src=\"http://grey.colorado.edu/gendoc.py?q='+signature+'\"></iframe>';}</script>\n");
+  rval.cat("<script>function writesrc(t,signature){t.innerHTML='<iframe width=\"100%\" height=\"50%\" src=\"https://grey.colorado.edu/gendoc.py?q='+signature+'\"></iframe>';}</script>\n");
   rval.cat("<title>").cat(taMisc::app_name).cat(" ").cat(taMisc::version).cat(" ").cat(name).cat(" Class Reference</title>\n");
   // include style sheet right in the thing
   rval.cat("<style type=\"text/css\">\n");
