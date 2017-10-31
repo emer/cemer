@@ -64,6 +64,7 @@
 #include <fstream>
 #include <stdlib.h>
 #include <unistd.h>
+#include <string.h>
 #include <time.h>
 
 using namespace std;
@@ -775,9 +776,8 @@ static int calc_pivot(uint32_t v) {
 static int is_zero(int size, Vector *v) {
   if (v->cf[0] != 0) {
     return 0;
-  } else {
-    return (memcmp(v->cf, v->cf + 1, sizeof(uint32_t) * (size - 1)) == 0);
   }
+  return (memcmp(v->cf, v->cf + 1, sizeof(uint32_t) * (size - 1)) == 0);
 }
 
 static void init_tempering(eqdeg_t *eq, MTRndPar *mts) {
