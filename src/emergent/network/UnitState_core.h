@@ -17,31 +17,31 @@
   };
 
   int           flat_idx;
-  // #READ_ONLY #HIDDEN #NO_COPY #NO_SAVE #CAT_State index of this unit in a flat array of unit state -- 0 is special null case -- real idx's start at 1
+  // #READ_ONLY #HIDDEN #NO_SAVE #CAT_State index of this unit in a flat array of unit state -- 0 is special null case -- real idx's start at 1
   int           lay_un_idx;
-  // #READ_ONLY #HIDDEN #NO_COPY #NO_SAVE #CAT_State index of this unit in owning layer ("leaf index") -- index in flat list of units irrespective of group structure
+  // #READ_ONLY #HIDDEN #NO_SAVE #CAT_State index of this unit in owning layer ("leaf index") -- index in flat list of units irrespective of group structure
   int		gp_idx;
-  // #READ_ONLY #HIDDEN #NO_COPY #NO_SAVE #CAT_State index of the sub-unit group this unit belongs in, if this unit belongs in a unit group (always -1 if no unit groups) -- same as layer_gp_idx of owning unit gp
+  // #READ_ONLY #HIDDEN #NO_SAVE #CAT_State index of the sub-unit group this unit belongs in, if this unit belongs in a unit group (always -1 if no unit groups) -- same as layer_gp_idx of owning unit gp
   int           ungp_un_idx;
-  // #READ_ONLY #HIDDEN #NO_COPY #NO_SAVE #CAT_State index of unit within owning unit group -- either for a sub-unit-group (at gp_idx) if layer has them, or within master layer units group
+  // #READ_ONLY #HIDDEN #NO_SAVE #CAT_State index of unit within owning unit group -- either for a sub-unit-group (at gp_idx) if layer has them, or within master layer units group
   int           thread_no;
-  // #READ_ONLY #HIDDEN #NO_COPY #NO_SAVE #CAT_State which thread we live on
+  // #READ_ONLY #HIDDEN #NO_SAVE #CAT_State which thread we live on
   int           thr_un_idx;
-  // #READ_ONLY #HIDDEN #NO_COPY #NO_SAVE #CAT_State thread-based unit index where this unit state lives
+  // #READ_ONLY #HIDDEN #NO_SAVE #CAT_State thread-based unit index where this unit state lives
   int           own_lay_idx;
-  // #READ_ONLY #HIDDEN #NO_COPY #NO_SAVE #CAT_State index of layer that we live in
+  // #READ_ONLY #HIDDEN #NO_SAVE #CAT_State index of layer that we live in
   int           own_ungp_idx;
-  // #READ_ONLY #HIDDEN #NO_COPY #NO_SAVE #CAT_State index of unitgroup that we live in within networkstate master list of unit groups (either a sub unit group or the master layer units group)
+  // #READ_ONLY #HIDDEN #NO_SAVE #CAT_State index of unitgroup that we live in within networkstate master list of unit groups (either a sub unit group or the master layer units group)
   int           spec_idx;
-  // #READ_ONLY #HIDDEN #NO_COPY #NO_SAVE #CAT_State index of unit spec in NetworkState
+  // #READ_ONLY #HIDDEN #NO_SAVE #CAT_State index of unit spec in NetworkState
   int           pos_x;
-  // #NO_COPY #NO_SAVE #CAT_State structural position within group (if unit groups used) or layer -- can also use GetGp/UnXY methods to get structural coordinates based on layer geometry
+  // #NO_SAVE #CAT_State structural position within group (if unit groups used) or layer -- can also use GetGp/UnXY methods to get structural coordinates based on layer geometry
   int           pos_y;
-  // #NO_COPY #NO_SAVE #CAT_State structural position within group (if unit groups used) or layer -- can also use GetGp/UnXY methods to get structural coordinates based on layer geometry
+  // #NO_SAVE #CAT_State structural position within group (if unit groups used) or layer -- can also use GetGp/UnXY methods to get structural coordinates based on layer geometry
   int           disp_pos_x;
-  // #NO_COPY #NO_SAVE #CAT_State display position within layer (not unit group) -- requires special non-optimized display style if not default position
+  // #NO_SAVE #CAT_State display position within layer (not unit group) -- requires special non-optimized display style if not default position
   int           disp_pos_y;
-  // #NO_COPY #NO_SAVE #CAT_State display position within layer (not unit group) -- requires special non-optimized display style if not default position
+  // #NO_SAVE #CAT_State display position within layer (not unit group) -- requires special non-optimized display style if not default position
   float         tmp_calc1;
   // #NO_SAVE #READ_ONLY #HIDDEN #CAT_Statistic temporary calculation variable (used for computing wt_prjn and prossibly other things)
   ExtFlags      ext_flag;

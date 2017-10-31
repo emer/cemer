@@ -159,8 +159,7 @@ protected:
   void UpdateAfterEdit_impl() override;
 private:
   void	Initialize() { Initialize_core(); send_offs.SetBaseType(&TA_TessEl); }
-
-  void	Destroy()	{ };
+  void	Destroy()    { CutLinks(); FreeSendOffs(); }
 };
 
 #endif // AllProjectionSpecs_h

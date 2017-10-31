@@ -51,7 +51,18 @@ private:
 // TODO: need to eliminate taMath_double depend
 #include <taMath_double>
 
-class STATE_CLASS(taVector2i) : public STATE_CLASS(taBase) {
+#ifdef TAVECTOR2I
+#undef TAVECTOR2I
+#endif
+#define TAVECTOR2I      STATE_CLASS(taVector2i)
+
+#ifdef TAVECTOR2F
+#undef TAVECTOR2F
+#endif
+#define TAVECTOR2F      STATE_CLASS(taVector2f)
+
+
+class TAVECTOR2I : public STATE_CLASS(taBase) {
   // #STEM_BASE ##NO_TOKENS #NO_UPDATE_AFTER ##INLINE ##CAT_Math an integer value in 2D coordinate space
 INHERITED(taBase)
 public:
@@ -63,74 +74,74 @@ public:
   INLINE void   SetXY(float xx, float yy) { x = (int)xx; y = (int)yy; }
   INLINE void   GetXY(float& xx, float& yy) { xx = (float)x; yy = (float)y; }
 
-  STATE_CLASS(taVector2i)()                           { SetXY(0, 0); }
-  STATE_CLASS(taVector2i)(int xx)                     { SetXY(xx, xx); }
-  STATE_CLASS(taVector2i)(int xx, int yy)             { SetXY(xx, yy); }
-  STATE_CLASS(taVector2i)(float xx, float yy)         { SetXY(xx, yy); }
+  TAVECTOR2I()                           { SetXY(0, 0); }
+  TAVECTOR2I(int xx)                     { SetXY(xx, xx); }
+  TAVECTOR2I(int xx, int yy)             { SetXY(xx, yy); }
+  TAVECTOR2I(float xx, float yy)         { SetXY(xx, yy); }
 
   // INLINE taVector2i& operator=(const taVector2f& cp) {
   //   x = (int)cp.x; y = (int)cp.y;
   //   return *this;
   // }
 
-  INLINE STATE_CLASS(taVector2i)& operator=(int cp)           { x = cp; y = cp; return *this;}
-  INLINE STATE_CLASS(taVector2i)& operator=(float cp)         { x = (int)cp; y = (int)cp; return *this;}
-  INLINE STATE_CLASS(taVector2i)& operator=(double cp)        { x = (int)cp; y = (int)cp; return *this;}
+  INLINE TAVECTOR2I& operator=(int cp)           { x = cp; y = cp; return *this;}
+  INLINE TAVECTOR2I& operator=(float cp)         { x = (int)cp; y = (int)cp; return *this;}
+  INLINE TAVECTOR2I& operator=(double cp)        { x = (int)cp; y = (int)cp; return *this;}
 
-  INLINE STATE_CLASS(taVector2i)&     operator += (const STATE_CLASS(taVector2i)& td)   { x += td.x; y += td.y; return *this;}
-  INLINE STATE_CLASS(taVector2i)&     operator -= (const STATE_CLASS(taVector2i)& td)   { x -= td.x; y -= td.y; return *this;}
-  INLINE STATE_CLASS(taVector2i)&     operator *= (const STATE_CLASS(taVector2i)& td)   { x *= td.x; y *= td.y; return *this;}
-  INLINE STATE_CLASS(taVector2i)&     operator /= (const STATE_CLASS(taVector2i)& td)   { x /= td.x; y /= td.y; return *this;}
-  INLINE STATE_CLASS(taVector2i)&     operator %= (const STATE_CLASS(taVector2i)& td)   { x %= td.x; y %= td.y; return *this;}
+  INLINE TAVECTOR2I&     operator += (const TAVECTOR2I& td)   { x += td.x; y += td.y; return *this;}
+  INLINE TAVECTOR2I&     operator -= (const TAVECTOR2I& td)   { x -= td.x; y -= td.y; return *this;}
+  INLINE TAVECTOR2I&     operator *= (const TAVECTOR2I& td)   { x *= td.x; y *= td.y; return *this;}
+  INLINE TAVECTOR2I&     operator /= (const TAVECTOR2I& td)   { x /= td.x; y /= td.y; return *this;}
+  INLINE TAVECTOR2I&     operator %= (const TAVECTOR2I& td)   { x %= td.x; y %= td.y; return *this;}
 
-  INLINE STATE_CLASS(taVector2i)&     operator += (int td)    { x += td; y += td; return *this;}
-  INLINE STATE_CLASS(taVector2i)&     operator -= (int td)    { x -= td; y -= td; return *this;}
-  INLINE STATE_CLASS(taVector2i)&     operator *= (int td)    { x *= td; y *= td; return *this;}
-  INLINE STATE_CLASS(taVector2i)&     operator /= (int td)    { x /= td; y /= td; return *this;}
-  INLINE STATE_CLASS(taVector2i)&     operator %= (int td)    { x %= td; y %= td; return *this;}
+  INLINE TAVECTOR2I&     operator += (int td)    { x += td; y += td; return *this;}
+  INLINE TAVECTOR2I&     operator -= (int td)    { x -= td; y -= td; return *this;}
+  INLINE TAVECTOR2I&     operator *= (int td)    { x *= td; y *= td; return *this;}
+  INLINE TAVECTOR2I&     operator /= (int td)    { x /= td; y /= td; return *this;}
+  INLINE TAVECTOR2I&     operator %= (int td)    { x %= td; y %= td; return *this;}
 
-  INLINE STATE_CLASS(taVector2i) operator + (const STATE_CLASS(taVector2i)& td) const {
-    STATE_CLASS(taVector2i) rv; rv.x = x + td.x; rv.y = y + td.y; return rv;
+  INLINE TAVECTOR2I operator + (const TAVECTOR2I& td) const {
+    TAVECTOR2I rv; rv.x = x + td.x; rv.y = y + td.y; return rv;
   }
-  INLINE STATE_CLASS(taVector2i) operator - (const STATE_CLASS(taVector2i)& td) const {
-    STATE_CLASS(taVector2i) rv; rv.x = x - td.x; rv.y = y - td.y; return rv;
+  INLINE TAVECTOR2I operator - (const TAVECTOR2I& td) const {
+    TAVECTOR2I rv; rv.x = x - td.x; rv.y = y - td.y; return rv;
   }
-  INLINE STATE_CLASS(taVector2i) operator * (const STATE_CLASS(taVector2i)& td) const {
-    STATE_CLASS(taVector2i) rv; rv.x = x * td.x; rv.y = y * td.y; return rv;
+  INLINE TAVECTOR2I operator * (const TAVECTOR2I& td) const {
+    TAVECTOR2I rv; rv.x = x * td.x; rv.y = y * td.y; return rv;
   }
-  INLINE STATE_CLASS(taVector2i) operator / (const STATE_CLASS(taVector2i)& td) const {
-    STATE_CLASS(taVector2i) rv; rv.x = x / td.x; rv.y = y / td.y; return rv;
-  }
-
-  INLINE STATE_CLASS(taVector2i) operator + (int td) const {
-    STATE_CLASS(taVector2i) rv; rv.x = x + td; rv.y = y + td; return rv;
-  }
-  INLINE STATE_CLASS(taVector2i) operator - (int td) const {
-    STATE_CLASS(taVector2i) rv; rv.x = x - td; rv.y = y - td; return rv;
-  }
-  INLINE STATE_CLASS(taVector2i) operator * (int td) const {
-    STATE_CLASS(taVector2i) rv; rv.x = x * td; rv.y = y * td; return rv;
-  }
-  INLINE STATE_CLASS(taVector2i) operator / (int td) const {
-    STATE_CLASS(taVector2i) rv; rv.x = x / td; rv.y = y / td; return rv;
+  INLINE TAVECTOR2I operator / (const TAVECTOR2I& td) const {
+    TAVECTOR2I rv; rv.x = x / td.x; rv.y = y / td.y; return rv;
   }
 
-  INLINE STATE_CLASS(taVector2i) operator - () const {
-    STATE_CLASS(taVector2i) rv; rv.x = -x; rv.y = -y; return rv;
+  INLINE TAVECTOR2I operator + (int td) const {
+    TAVECTOR2I rv; rv.x = x + td; rv.y = y + td; return rv;
   }
-  INLINE STATE_CLASS(taVector2i) operator -- () const {
-    STATE_CLASS(taVector2i) rv = *this; rv.x--; rv.y--; return rv;
+  INLINE TAVECTOR2I operator - (int td) const {
+    TAVECTOR2I rv; rv.x = x - td; rv.y = y - td; return rv;
   }
-  INLINE STATE_CLASS(taVector2i) operator ++ () const {
-    STATE_CLASS(taVector2i) rv = *this; rv.x++; rv.y++; return rv;
+  INLINE TAVECTOR2I operator * (int td) const {
+    TAVECTOR2I rv; rv.x = x * td; rv.y = y * td; return rv;
+  }
+  INLINE TAVECTOR2I operator / (int td) const {
+    TAVECTOR2I rv; rv.x = x / td; rv.y = y / td; return rv;
   }
 
-  INLINE bool operator < (const STATE_CLASS(taVector2i)& td) const { return (x < td.x) && (y < td.y); }
-  INLINE bool operator > (const STATE_CLASS(taVector2i)& td) const { return (x > td.x) && (y > td.y); }
-  INLINE bool operator <= (const STATE_CLASS(taVector2i)& td) const { return (x <= td.x) && (y <= td.y); }
-  INLINE bool operator >= (const STATE_CLASS(taVector2i)& td) const { return (x >= td.x) && (y >= td.y); }
-  INLINE bool operator == (const STATE_CLASS(taVector2i)& td) const { return (x == td.x) && (y == td.y); }
-  INLINE bool operator != (const STATE_CLASS(taVector2i)& td) const { return (x != td.x) || (y != td.y); }
+  INLINE TAVECTOR2I operator - () const {
+    TAVECTOR2I rv; rv.x = -x; rv.y = -y; return rv;
+  }
+  INLINE TAVECTOR2I operator -- () const {
+    TAVECTOR2I rv = *this; rv.x--; rv.y--; return rv;
+  }
+  INLINE TAVECTOR2I operator ++ () const {
+    TAVECTOR2I rv = *this; rv.x++; rv.y++; return rv;
+  }
+
+  INLINE bool operator < (const TAVECTOR2I& td) const { return (x < td.x) && (y < td.y); }
+  INLINE bool operator > (const TAVECTOR2I& td) const { return (x > td.x) && (y > td.y); }
+  INLINE bool operator <= (const TAVECTOR2I& td) const { return (x <= td.x) && (y <= td.y); }
+  INLINE bool operator >= (const TAVECTOR2I& td) const { return (x >= td.x) && (y >= td.y); }
+  INLINE bool operator == (const TAVECTOR2I& td) const { return (x == td.x) && (y == td.y); }
+  INLINE bool operator != (const TAVECTOR2I& td) const { return (x != td.x) || (y != td.y); }
 
   INLINE bool operator <  (int td) const { return (x < td) && (y < td); }
   INLINE bool operator >  (int td) const { return (x > td) && (y > td); }
@@ -140,16 +151,16 @@ public:
   INLINE bool operator != (int td) const { return (x != td) || (y != td); }
 
   INLINE bool OrEq(int td) const { return (x == td) || (y == td); }
-  INLINE bool OrEq(const STATE_CLASS(taVector2i)& td) const { return (x == td.x) || (y == td.y); }
+  INLINE bool OrEq(const TAVECTOR2I& td) const { return (x == td.x) || (y == td.y); }
 
   INLINE int SqMag() const { return x * x + y * y; }
   // squared magnitude of vector
   INLINE float Mag() const { return sqrtf((float)SqMag()); }
 
-  INLINE float  SqDist(const STATE_CLASS(taVector2i)& td) const { // squared distance between two vectors
-    STATE_CLASS(taVector2i) dist = *this - td; return dist.SqMag();
+  INLINE float  SqDist(const TAVECTOR2I& td) const { // squared distance between two vectors
+    TAVECTOR2I dist = *this - td; return dist.SqMag();
   }
-  INLINE float  Dist(const STATE_CLASS(taVector2i)& td) const { return sqrtf(SqDist(td)); }
+  INLINE float  Dist(const TAVECTOR2I& td) const { return sqrtf(SqDist(td)); }
   INLINE int    Sum() const     { return x + y; }
   INLINE int    Product() const { return x * y; }
 
@@ -159,8 +170,8 @@ public:
   INLINE void   Invert()        { x = -x; y = -y; }
   INLINE void   SumNorm()       { int mg = Sum(); if(mg != 0.0) *this /= mg; }
   INLINE void   Abs()           { x = Absv(x); y = Absv(y); }
-  INLINE void   Min(STATE_CLASS(taVector2i)& td) { x = MIN(x,td.x); y = MIN(y,td.y); }
-  INLINE void   Max(STATE_CLASS(taVector2i)& td) { x = MAX(x,td.x); y = MAX(y,td.y); }
+  INLINE void   Min(TAVECTOR2I& td) { x = MIN(x,td.x); y = MIN(y,td.y); }
+  INLINE void   Max(TAVECTOR2I& td) { x = MAX(x,td.x); y = MAX(y,td.y); }
 
   INLINE int MaxVal() const     { int mx = MAX(x, y); return mx; }
   INLINE int MinVal() const     { int mn = MIN(x, y); return mn; }
@@ -212,8 +223,8 @@ public:
   }
   // in computing the distance between two coord vals: dst = pos-cmp, consider whether the distance is shorter if pos is wrapped around as a function of pos_max size (condition on which side of the half-way point of the range for cmp value, cmp_half, for which way to wrap) -- if it is shorter, then update pos to new extended value (beyond normal range either - or +) and also update the distance value
 
-  INLINE void   WrapMinDist(STATE_CLASS(taVector2i)& dst, const STATE_CLASS(taVector2i)& max, const STATE_CLASS(taVector2i)& cmp,
-                            const STATE_CLASS(taVector2i)& cmp_half) {
+  INLINE void   WrapMinDist(TAVECTOR2I& dst, const TAVECTOR2I& max, const TAVECTOR2I& cmp,
+                            const TAVECTOR2I& cmp_half) {
     WrapMinDistOne(x, dst.x, max.x, cmp.x, cmp_half.x);
     WrapMinDistOne(y, dst.y, max.y, cmp.y, cmp_half.y);
   }
@@ -222,7 +233,7 @@ public:
   static INLINE void    WrapOne(int& c, int max)
   { if(c >= 0 && c < max) return; if(c < 0) c = max + (c % max); else c = c % max; }
   // wrap-around one dimension
-  INLINE void   Wrap(const STATE_CLASS(taVector2i)& max)
+  INLINE void   Wrap(const TAVECTOR2I& max)
   { WrapOne(x, max.x); WrapOne(y, max.y); }
   // wrap-around coordinates within 0,0 - max range
 
@@ -232,7 +243,7 @@ public:
     else      { if(c > max + max/2) out_of_range = true; c = c % max; }
     return out_of_range; }
   // wrap-around one dimension, return true if out of range (more than half way around other side)
-  INLINE bool   WrapHalf(const STATE_CLASS(taVector2i)& max)
+  INLINE bool   WrapHalf(const TAVECTOR2I& max)
   { bool wcx = WrapOneHalf(x, max.x); bool wcy = WrapOneHalf(y, max.y);
     return wcx || wcy; }
   // wrap-around coordinates within 0,0 - max range, return true if out of range (more than half way around other side)
@@ -240,7 +251,7 @@ public:
   static INLINE bool   ClipOne(int& c, int max)
   { if(c >= 0 && c < max) return false; if(c < 0) c = 0; else c = max-1; return true; }
   // clip one dimension, true if out of range
-  INLINE bool    Clip(const STATE_CLASS(taVector2i)& max)
+  INLINE bool    Clip(const TAVECTOR2I& max)
   { bool wcx = ClipOne(x, max.x); bool wcy = ClipOne(y, max.y);
     return wcx || wcy; }
   // clip coordinates within 0,0 - max range, true if out of range
@@ -251,26 +262,26 @@ public:
   }
   // set x, y values from a "cell" index in a 2d matrix-like space organized with x as the inner loop and y as the outer loop, with a given x dimension size
 
-  INLINE bool   WrapClip(bool wrap, const STATE_CLASS(taVector2i)& max)
+  INLINE bool   WrapClip(bool wrap, const TAVECTOR2I& max)
   { if(wrap) { Wrap(max); return false; } return Clip(max); }
   // wrap-around or clip coordinates within 0,0 - max range, true if clipped out of range -- for performance, it is better to use separate code for wrap and clip cases
 };
 
-// INLINE STATE_CLASS(taVector2i) operator + (int td, const STATE_CLASS(taVector2i)& v) {
-//   STATE_CLASS(taVector2i) rv; rv.x = td + v.x; rv.y = td + v.y; return rv;
+// INLINE TAVECTOR2I operator + (int td, const TAVECTOR2I& v) {
+//   TAVECTOR2I rv; rv.x = td + v.x; rv.y = td + v.y; return rv;
 // }
-// INLINE STATE_CLASS(taVector2i) operator - (int td, const STATE_CLASS(taVector2i)& v) {
-//   STATE_CLASS(taVector2i) rv; rv.x = td - v.x; rv.y = td - v.y; return rv;
+// INLINE TAVECTOR2I operator - (int td, const TAVECTOR2I& v) {
+//   TAVECTOR2I rv; rv.x = td - v.x; rv.y = td - v.y; return rv;
 // }
-// INLINE STATE_CLASS(taVector2i) operator * (int td, const STATE_CLASS(taVector2i)& v) {
-//   STATE_CLASS(taVector2i) rv; rv.x = td * v.x; rv.y = td * v.y; return rv;
+// INLINE TAVECTOR2I operator * (int td, const TAVECTOR2I& v) {
+//   TAVECTOR2I rv; rv.x = td * v.x; rv.y = td * v.y; return rv;
 // }
-// INLINE STATE_CLASS(taVector2i) operator / (int td, const STATE_CLASS(taVector2i)& v) {
-//   STATE_CLASS(taVector2i) rv; rv.x = td / v.x; rv.y = td / v.y; return rv;
+// INLINE TAVECTOR2I operator / (int td, const TAVECTOR2I& v) {
+//   TAVECTOR2I rv; rv.x = td / v.x; rv.y = td / v.y; return rv;
 // }
 
 
-class STATE_CLASS(taVector2f) : public STATE_CLASS(taBase) {
+class TAVECTOR2F : public STATE_CLASS(taBase) {
   // #STEM_BASE ##NO_TOKENS #NO_UPDATE_AFTER ##INLINE ##CAT_Math a value in 2D coordinate space
 INHERITED(taBase)
 public:
@@ -280,66 +291,66 @@ public:
   INLINE void   SetXY(float xx, float yy)       { x = xx; y = yy; }
   INLINE void   GetXY(float& xx, float& yy)     { xx = x; yy = y; }
 
-  STATE_CLASS(taVector2f)()                     { SetXY(0, 0); }
-  STATE_CLASS(taVector2f)(float xx)             { SetXY(xx, xx); }
-  STATE_CLASS(taVector2f)(float xx, float yy)   { SetXY(xx, yy); }
-  STATE_CLASS(taVector2f)(int xx)               { SetXY(xx, xx); }
-  STATE_CLASS(taVector2f)(int xx, int yy)       { SetXY(xx, yy); }
-  STATE_CLASS(taVector2f)(const STATE_CLASS(taVector2i)& cp) { SetXY(cp.x, cp.y); }
+  TAVECTOR2F()                     { SetXY(0, 0); }
+  TAVECTOR2F(float xx)             { SetXY(xx, xx); }
+  TAVECTOR2F(float xx, float yy)   { SetXY(xx, yy); }
+  TAVECTOR2F(int xx)               { SetXY(xx, xx); }
+  TAVECTOR2F(int xx, int yy)       { SetXY(xx, yy); }
+  TAVECTOR2F(const TAVECTOR2I& cp) { SetXY(cp.x, cp.y); }
 
-  INLINE STATE_CLASS(taVector2f)& operator=(const STATE_CLASS(taVector2i)& cp) {
+  INLINE TAVECTOR2F& operator=(const TAVECTOR2I& cp) {
     x = (float)cp.x; y = (float)cp.y;
     return *this;
   }
-  INLINE STATE_CLASS(taVector2f)& operator=(float cp)            { x = cp; y = cp; return *this;}
-  INLINE STATE_CLASS(taVector2f)& operator=(double cp)           { x = (float)cp; y = (float)cp; return *this;}
+  INLINE TAVECTOR2F& operator=(float cp)            { x = cp; y = cp; return *this;}
+  INLINE TAVECTOR2F& operator=(double cp)           { x = (float)cp; y = (float)cp; return *this;}
 
-  INLINE STATE_CLASS(taVector2f)& operator += (const STATE_CLASS(taVector2f)& td) { x += td.x; y += td.y; return *this;}
-  INLINE STATE_CLASS(taVector2f)& operator -= (const STATE_CLASS(taVector2f)& td) { x -= td.x; y -= td.y; return *this;}
-  INLINE STATE_CLASS(taVector2f)& operator *= (const STATE_CLASS(taVector2f)& td) { x *= td.x; y *= td.y; return *this;}
-  INLINE STATE_CLASS(taVector2f)& operator /= (const STATE_CLASS(taVector2f)& td) { x /= td.x; y /= td.y; return *this;}
+  INLINE TAVECTOR2F& operator += (const TAVECTOR2F& td) { x += td.x; y += td.y; return *this;}
+  INLINE TAVECTOR2F& operator -= (const TAVECTOR2F& td) { x -= td.x; y -= td.y; return *this;}
+  INLINE TAVECTOR2F& operator *= (const TAVECTOR2F& td) { x *= td.x; y *= td.y; return *this;}
+  INLINE TAVECTOR2F& operator /= (const TAVECTOR2F& td) { x /= td.x; y /= td.y; return *this;}
 
-  INLINE STATE_CLASS(taVector2f)& operator += (float td) { x += td; y += td; return *this;}
-  INLINE STATE_CLASS(taVector2f)& operator -= (float td) { x -= td; y -= td; return *this;}
-  INLINE STATE_CLASS(taVector2f)& operator *= (float td) { x *= td; y *= td; return *this;}
-  INLINE STATE_CLASS(taVector2f)& operator /= (float td) { x /= td; y /= td; return *this;}
+  INLINE TAVECTOR2F& operator += (float td) { x += td; y += td; return *this;}
+  INLINE TAVECTOR2F& operator -= (float td) { x -= td; y -= td; return *this;}
+  INLINE TAVECTOR2F& operator *= (float td) { x *= td; y *= td; return *this;}
+  INLINE TAVECTOR2F& operator /= (float td) { x /= td; y /= td; return *this;}
 
-  INLINE STATE_CLASS(taVector2f) operator + (const STATE_CLASS(taVector2f)& td) const {
-    STATE_CLASS(taVector2f) rv; rv.x = x + td.x; rv.y = y + td.y; return rv;
+  INLINE TAVECTOR2F operator + (const TAVECTOR2F& td) const {
+    TAVECTOR2F rv; rv.x = x + td.x; rv.y = y + td.y; return rv;
   }
-  INLINE STATE_CLASS(taVector2f) operator - (const STATE_CLASS(taVector2f)& td) const {
-    STATE_CLASS(taVector2f) rv; rv.x = x - td.x; rv.y = y - td.y; return rv;
+  INLINE TAVECTOR2F operator - (const TAVECTOR2F& td) const {
+    TAVECTOR2F rv; rv.x = x - td.x; rv.y = y - td.y; return rv;
   }
-  INLINE STATE_CLASS(taVector2f) operator * (const STATE_CLASS(taVector2f)& td) const {
-    STATE_CLASS(taVector2f) rv; rv.x = x * td.x; rv.y = y * td.y; return rv;
+  INLINE TAVECTOR2F operator * (const TAVECTOR2F& td) const {
+    TAVECTOR2F rv; rv.x = x * td.x; rv.y = y * td.y; return rv;
   }
-  INLINE STATE_CLASS(taVector2f) operator / (const STATE_CLASS(taVector2f)& td) const {
-    STATE_CLASS(taVector2f) rv; rv.x = x / td.x; rv.y = y / td.y; return rv;
-  }
-
-  INLINE STATE_CLASS(taVector2f) operator + (float td) const {
-    STATE_CLASS(taVector2f) rv; rv.x = x + td; rv.y = y + td; return rv;
-  }
-  INLINE STATE_CLASS(taVector2f) operator - (float td) const {
-    STATE_CLASS(taVector2f) rv; rv.x = x - td; rv.y = y - td; return rv;
-  }
-  INLINE STATE_CLASS(taVector2f) operator * (float td) const {
-    STATE_CLASS(taVector2f) rv; rv.x = x * td; rv.y = y * td; return rv;
-  }
-  INLINE STATE_CLASS(taVector2f) operator / (float td) const {
-    STATE_CLASS(taVector2f) rv; rv.x = x / td; rv.y = y / td; return rv;
+  INLINE TAVECTOR2F operator / (const TAVECTOR2F& td) const {
+    TAVECTOR2F rv; rv.x = x / td.x; rv.y = y / td.y; return rv;
   }
 
-  INLINE STATE_CLASS(taVector2f) operator - () const {
-    STATE_CLASS(taVector2f) rv; rv.x = -x; rv.y = -y; return rv;
+  INLINE TAVECTOR2F operator + (float td) const {
+    TAVECTOR2F rv; rv.x = x + td; rv.y = y + td; return rv;
+  }
+  INLINE TAVECTOR2F operator - (float td) const {
+    TAVECTOR2F rv; rv.x = x - td; rv.y = y - td; return rv;
+  }
+  INLINE TAVECTOR2F operator * (float td) const {
+    TAVECTOR2F rv; rv.x = x * td; rv.y = y * td; return rv;
+  }
+  INLINE TAVECTOR2F operator / (float td) const {
+    TAVECTOR2F rv; rv.x = x / td; rv.y = y / td; return rv;
   }
 
-  INLINE bool operator < (const STATE_CLASS(taVector2f)& td) const { return (x < td.x) && (y < td.y); }
-  INLINE bool operator > (const STATE_CLASS(taVector2f)& td) const { return (x > td.x) && (y > td.y); }
-  INLINE bool operator <= (const STATE_CLASS(taVector2f)& td) const { return (x <= td.x) && (y <= td.y); }
-  INLINE bool operator >= (const STATE_CLASS(taVector2f)& td) const { return (x >= td.x) && (y >= td.y); }
-  INLINE bool operator == (const STATE_CLASS(taVector2f)& td) const { return (x == td.x) && (y == td.y); }
-  INLINE bool operator != (const STATE_CLASS(taVector2f)& td) const { return (x != td.x) || (y != td.y); }
+  INLINE TAVECTOR2F operator - () const {
+    TAVECTOR2F rv; rv.x = -x; rv.y = -y; return rv;
+  }
+
+  INLINE bool operator < (const TAVECTOR2F& td) const { return (x < td.x) && (y < td.y); }
+  INLINE bool operator > (const TAVECTOR2F& td) const { return (x > td.x) && (y > td.y); }
+  INLINE bool operator <= (const TAVECTOR2F& td) const { return (x <= td.x) && (y <= td.y); }
+  INLINE bool operator >= (const TAVECTOR2F& td) const { return (x >= td.x) && (y >= td.y); }
+  INLINE bool operator == (const TAVECTOR2F& td) const { return (x == td.x) && (y == td.y); }
+  INLINE bool operator != (const TAVECTOR2F& td) const { return (x != td.x) || (y != td.y); }
 
   INLINE bool operator <  (float td) const { return (x < td) && (y < td); }
   INLINE bool operator >  (float td) const { return (x > td) && (y > td); }
@@ -352,10 +363,10 @@ public:
   // squared magnitude of vector
   INLINE float Mag() const      { return sqrtf(SqMag()); }
 
-  INLINE float  SqDist(const STATE_CLASS(taVector2f)& td) const { // squared distance between two vectors
-    STATE_CLASS(taVector2f) dist = *this - td; return dist.Mag();
+  INLINE float  SqDist(const TAVECTOR2F& td) const { // squared distance between two vectors
+    TAVECTOR2F dist = *this - td; return dist.Mag();
   }
-  INLINE float  Dist(const STATE_CLASS(taVector2f)& td) const { return sqrtf(SqDist(td)); }
+  INLINE float  Dist(const TAVECTOR2F& td) const { return sqrtf(SqDist(td)); }
   INLINE float  Sum() const     { return x + y; }
   INLINE float  Product() const { return x * y; }
 
@@ -369,19 +380,18 @@ public:
 };
 
 
-// INLINE STATE_CLASS(taVector2f) operator + (float td, const STATE_CLASS(taVector2f)& v) {
-//   STATE_CLASS(taVector2f) rv; rv.x = td + v.x; rv.y = td + v.y; return rv;
+// INLINE TAVECTOR2F operator + (float td, const TAVECTOR2F& v) {
+//   TAVECTOR2F rv; rv.x = td + v.x; rv.y = td + v.y; return rv;
 // }
-// INLINE STATE_CLASS(taVector2f) operator - (float td, const STATE_CLASS(taVector2f)& v) {
-//   STATE_CLASS(taVector2f) rv; rv.x = td - v.x; rv.y = td - v.y; return rv;
+// INLINE TAVECTOR2F operator - (float td, const TAVECTOR2F& v) {
+//   TAVECTOR2F rv; rv.x = td - v.x; rv.y = td - v.y; return rv;
 // }
-// INLINE STATE_CLASS(taVector2f) operator * (float td, const STATE_CLASS(taVector2f)& v) {
-//   STATE_CLASS(taVector2f) rv; rv.x = td * v.x; rv.y = td * v.y; return rv;
+// INLINE TAVECTOR2F operator * (float td, const TAVECTOR2F& v) {
+//   TAVECTOR2F rv; rv.x = td * v.x; rv.y = td * v.y; return rv;
 // }
-// INLINE STATE_CLASS(taVector2f) operator / (float td, const STATE_CLASS(taVector2f)& v) {
-//   STATE_CLASS(taVector2f) rv; rv.x = td / v.x; rv.y = td / v.y; return rv;
+// INLINE TAVECTOR2F operator / (float td, const TAVECTOR2F& v) {
+//   TAVECTOR2F rv; rv.x = td / v.x; rv.y = td / v.y; return rv;
 // }
-
 
 class STATE_CLASS(Random) : public STATE_CLASS(taNBase) {
   // #STEM_BASE #NO_UPDATE_AFTER ##INLINE ##CAT_Math ##NO_TOKENS ##STATIC_COMPLETION Random Number Generation

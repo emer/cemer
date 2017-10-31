@@ -661,8 +661,8 @@ PRJN_SPEC_CPP* NETWORK_STATE::NewPrjnSpec(int spec_type) const {
     return new STATE_CLASS_CPP(RandomPrjnSpec)();
   case T_UniformRndPrjnSpec:
     return new STATE_CLASS_CPP(UniformRndPrjnSpec)();
-  // case T_TesselPrjnSpec:
-  //   return new STATE_CLASS_CPP(TesselPrjnSpec)();
+  case T_TesselPrjnSpec:
+    return new STATE_CLASS_CPP(TesselPrjnSpec)();
   // case T_SmallWorldPrjnSpec:
   //   return new STATE_CLASS_CPP(SmallWorldPrjnSpec)();
   // case T_PolarRndPrjnSpec:

@@ -9,7 +9,7 @@
   STATE_CLASS(Random)  rnd;     // #CAT_ConSpec Weight randomization specification.  Note that NONE means no value at all, not the mean, and should be used if some other source is setting the weights, e.g., from a projectionspec or loading from a file etc
   STATE_CLASS(WeightLimits)  wt_limits;      // #CAT_ConSpec limits on weight sign, symmetry
   int           spec_idx;
-  // #READ_ONLY #NO_COPY #NO_SAVE #NO_INHERIT index of this spec in list of specs
+  // #READ_ONLY #NO_SAVE #NO_INHERIT index of this spec in list of specs
 
 
   INLINE virtual int  GetStateSpecType() const { return NETWORK_STATE::T_ConSpec; }

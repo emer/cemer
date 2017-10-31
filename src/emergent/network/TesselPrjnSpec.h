@@ -7,9 +7,9 @@
   bool		wrap;		// whether to wrap coordinates around in the sending layer (e.g., if it goes past the right side, then it continues back on the left).  otherwise it will clip off connections at the edges.  Any clipping will affect the ability to initialize weight patterns properly, so it is best to avoid that.
   TAVECTOR2F    send_scale;	// scale to apply to transform receiving unit coords into sending unit coords -- can use this to compensate for differences in the sizes between the two layers
   TAVECTOR2F    send_off;	// #AKA_send_border constant offset to add to sending offsets relative to the position of the receiving unit -- this just adds a constant to the specific send_offs that specify the detailed pattern of connectivity
-  int           n_send_offs;      // #READ_ONLY number of sending offsets to use
-  int           alloc_send_offs;  // #READ_ONLY number of sending offsets allocated
-  STATE_CLASS(TessEl)*   send_offs_m;      // #READ_ONLY n_send_offs sending offsets
+  int           n_send_offs;      // #READ_ONLY #NO_COPY #NO_SAVE number of sending offsets to use
+  int           alloc_send_offs;  // #READ_ONLY #NO_COPY #NO_SAVE number of sending offsets allocated
+  STATE_CLASS(TessEl)*   send_offs_m; // #IGNORE n_send_offs sending offsets
 
   // TODO: need to add to StateBaseSpec copy to copy offsets
 

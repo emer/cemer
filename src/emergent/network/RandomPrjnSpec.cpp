@@ -7,11 +7,14 @@ void STATE_CLASS(RandomPrjnSpec)::Connect_impl(PRJN_STATE* prjn, NETWORK_STATE* 
   LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
   LAYER_STATE* send_lay = prjn->GetSendLayerState(net);
   
-  int n_send_units = send_lay->n_units;
   int n_recv_units = recv_lay->n_units;
+  int n_send_units = send_lay->n_units;
 
   int* send_alloc = new int[n_send_units];
   int* recv_alloc = new int[n_recv_units];
+  memset(recv_alloc, 0, n_recv_units * sizeof(int));
+  memset(send_alloc, 0, n_send_units * sizeof(int));
+  
   bool* cons = NULL;
   
   if(make_cons) {

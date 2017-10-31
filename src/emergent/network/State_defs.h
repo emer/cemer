@@ -251,9 +251,6 @@ private: \
 #endif // STATE_MAIN
 
 
-#define TAVECTOR2I      STATE_CLASS(taVector2i)
-#define TAVECTOR2F      STATE_CLASS(taVector2f)
-
 ////////////////////////////////////////////////////////////////
 //      Misc other global defines etc
 

@@ -5,9 +5,9 @@
   float         sse_tol;
   // #CAT_Statistic tolerance for computing sum-squared error and other error metrics on a per-unit basis
   int           spec_idx;
-  // #READ_ONLY #NO_COPY #NO_SAVE #NO_INHERIT index of this spec in list of specs
+  // #READ_ONLY #NO_SAVE #NO_INHERIT index of this spec in list of specs
   int           bias_spec_idx;
-  // #READ_ONLY #NO_COPY #NO_SAVE #NO_INHERIT index of bias con spec in list of specs
+  // #READ_ONLY #NO_SAVE #NO_INHERIT index of bias con spec in list of specs
 
 
   INLINE virtual int  GetStateSpecType() const { return NETWORK_STATE::T_UnitSpec; }

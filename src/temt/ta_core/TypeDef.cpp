@@ -2827,6 +2827,7 @@ void TypeDef::CopyFromDiffTypes(void* trg_base, TypeDef* src_td, void* src_base,
   else {
     for(int i=start_idx; i < members.size; i++) {
       MemberDef* tmd = members[i];
+      if(tmd->HasOption("NO_COPY")) continue;
       MemberDef* smd = src_td->members.FindName(tmd->name);
       if(!smd) continue;
       tmd->type->CopyFromDiffTypes(tmd->GetOff(trg_base), smd->type, smd->GetOff(src_base),

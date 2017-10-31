@@ -88,7 +88,7 @@ void STATE_CLASS(TesselPrjnSpec)::Connect_RecvUnit(PRJN_STATE* prjn, NETWORK_STA
     if((su_u == NULL) || (!self_con && (su_u == ru_u)))
       continue;
     if(!make_cons)
-      ru_u->ConnectFrom(net, su_u, prjn);
+      ru_u->ConnectFrom(net, su_u, prjn, true); // true = alloc_send
     else
       ru_u->ConnectFromCk(net, su_u, prjn); // check on 2nd pass
   }
@@ -119,7 +119,7 @@ void STATE_CLASS(TesselPrjnSpec)::Connect_impl(PRJN_STATE* prjn, NETWORK_STATE* 
           UNIT_STATE* ru_u = recv_lay->GetUnitStateFlatXY(net, ruc.x, ruc.y);
           if(ru_u == NULL)
             continue;
-          Connect_RecvUnit(prjn, net, ru_u, ruc, !make_cons);
+          Connect_RecvUnit(prjn, net, ru_u, ruc, make_cons);
         }
     }
 

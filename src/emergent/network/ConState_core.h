@@ -353,6 +353,11 @@
   INLINE void AllocCons(NETWORK_STATE* net, int sz) {
     if(mem_start != 0) {
       net->StateError("AllocCons: mem_start is not null -- re-allocating already allocated connection -- this is a programmer error in the ProjectionSpec, usually from not following make_cons flag");
+      return;
+    }
+    if(sz < 0) {
+      net->StateError("AllocCons: size is negative -- some kind of programming bug in projection spec");
+      return;
     }
     mem_start = 0;
     cnmem_start = 0;
