@@ -9,7 +9,7 @@ $wgExtensionCredits['other'][] = array(
 				       'name' => 'PatchOutput + HTMLets + BoilerPlateSelection = GenDoc',
 				       'version' => '1.0',
 				       'author' => 'User:RV1971, User:Dtsig, Daniel Kinzler, Brian Mingus ',
-				       'url' => 'http://grey.colorado.edu',
+				       'url' => 'https://grey.colorado.edu',
 				       'description' => 'Insert an Iframe if the page title matches an available gendoc page in /usr/local/gendoc.'
 				       );
 
@@ -23,7 +23,7 @@ function GendocSetOutput( &$outputPage, &$text ) {
   if((sizeof($name) == 2)) {
     $name[0] = strtolower($name[0]);
     $name = implode('/',$name);
-    $dir = "http://grey.colorado.edu/gendoc/";
+    $dir = "https://grey.colorado.edu/gendoc/";
     $output = "<iframe src=\"".$dir.$name.".html\" width=\"100%\" name=\"".$name."\" style=\"frameborder:0;marginwidth:0;marginheight:0;scrolling:no;\" title=\"".$dir.$name."\">[Your user agent does not support frames or is currently configured not to display frames. However, you may visit <a href=\"".$dir.$name."\">The original page</a></iframe>";
     $gendocFile =  '/usr/local/gendoc/'.$name.'.html';
 
@@ -76,7 +76,7 @@ function wfRenderHTMLet( $name, $argv, &$parser ) {
     else if ( $hack == 'none' || $hack == 'no' ) $hack = HTMLETS_NO_HACK;
     else $hack = $wgHTMLetsHack;
 
-    $dir = "http://grey.colorado.edu/gendoc/";
+    $dir = "https://grey.colorado.edu/gendoc/";
     $output = "<iframe src=\"".$dir.$name.".html\" width=\"100%\" name=\"".$name."\" style=\"frameborder:0;marginwidth:0;marginheight:0;scrolling:no;\" title=\"".$dir.$name."\">[Your user agent does not support frames or is currently configured not to display frames. However, you may visit <a href=\"".$dir.$name."\">The original page</a></iframe>";
 
     if ($output === false) $output = '<div class="error">Failed to load html file '.htmlspecialchars($name).'</div>';

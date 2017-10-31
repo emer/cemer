@@ -98,7 +98,7 @@ if __name__ == "__main__":
         # CSS
         css = ".navcontainer ul li {align:left; list-style-type: none;margin:0px;display: block;float: left;font: 13px \"Lucida Grande\", verdana, sans-serif;text-align: center;}\n"
         css += "a {color: #000;text-decoration: none;display: block;border: 1px solid #A8B090;padding-left:6px;padding-right:6px;padding-top:4px;padding-bottom:4px;}\n"
-        css += "a:hover  { background: url(\"http://grey.colorado.edu/emergent/images/c/c9/NavBarBgHover.gif\") repeat-x 20px; }\n"
+        css += "a:hover  { background: url(\"https://grey.colorado.edu/emergent/images/c/c9/NavBarBgHover.gif\") repeat-x 20px; }\n"
         css += ".met_def {clear:both;word-wrap: break-word;margin-top:20px;margin-left:30px;border:1px;background-color:#f8f8f8;font-size:12px;}\n"
         css += ".metdefh3 {clear:both;}\n"
         css += "table.prettytable {clear:both;margin: 1em 1em 1em 2em;background: whitesmoke;border-collapse: collapse; font: 12px \"Lucida Grande\", verdana, sans-serif;}\n"
@@ -645,7 +645,7 @@ position: absolute;
                         alpha_index_html += "<div id=\"col" + str(columnssofar) + "\">\n"
                         alpha_index_html += "<ul>\n"
 
-                    alpha_index_html += "<li><a href=\"http://grey.colorado.edu/emergent/index.php/Emergent/" + clas + "\">" + clas + "</a></li>\n"
+                    alpha_index_html += "<li><a href=\"https://grey.colorado.edu/emergent/index.php/Emergent/" + clas + "\">" + clas + "</a></li>\n"
                     typessofar += 1
 
             # Add closing tags

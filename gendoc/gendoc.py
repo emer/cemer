@@ -37,7 +37,7 @@ def intercept(url, prefix):
     if links is not None:
         for tag in links:
             if not 'http' in tag['href'] and not tag['href'][0] == '#':
-                tag['href'] = 'http://grey.colorado.edu/gendoc.py?proxy=' + quote_plus(tag['href'].replace('?','QUESTION_MARK'))
+                tag['href'] = 'https://grey.colorado.edu/gendoc.py?proxy=' + quote_plus(tag['href'].replace('?','QUESTION_MARK'))
 
 
     # There are various features of OpenGrok that this proxy does not support. Nuke them.
@@ -65,7 +65,7 @@ def redirect(url):
     if '#' in url:
         url, rel = url.split('#')
         output = '<html><head><meta http-equiv="refresh" content="0; url=' + \
-                 'http://grey.colorado.edu/gendoc.py?url=' + url + '#' + rel + '"/>'\
+                 'https://grey.colorado.edu/gendoc.py?url=' + url + '#' + rel + '"/>'\
                  '</head><body></body></html>'
     return output
 
