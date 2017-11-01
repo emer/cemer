@@ -524,6 +524,9 @@ void Network::Init_Weights() {
 
   taMisc::Busy();
 
+  SyncAllState();
+  UpdateAllStateSpecs();
+  
   NET_STATE_RUN(NetworkState, Init_Weights());
   Init_Counters_impl();         // int our counters -- they are copied to state so we need to init
   Init_Timers();                // and our timers..
