@@ -31,6 +31,9 @@ TA_BASEFUNS_CTORS_DEFN(FullPrjnSpec);
 TA_BASEFUNS_CTORS_DEFN(OneToOnePrjnSpec);
 #include "OneToOnePrjnSpec.cpp"
 
+TA_BASEFUNS_CTORS_DEFN(GpOneToOnePrjnSpec);
+#include "GpOneToOnePrjnSpec.cpp"
+
 TA_BASEFUNS_CTORS_DEFN(RandomPrjnSpec);
 #include "RandomPrjnSpec.cpp"
 

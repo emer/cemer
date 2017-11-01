@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+// ta_Dump File v3.0 -- code v8.2.2.0 rev11137
 LeabraProject .projects[0] { 
  Doc_Group @.docs = [3] {
   taDoc @[0] { 
@@ -14,12 +14,7 @@ LeabraProject .projects[0] {
   taDoc @[2] { };
  };
 
- Wizard_Group @.wizards = [1] {
-  LeabraWizard @[0] { 
-   UserDataItem_List @*(.user_data_) {
-    UserDataItem @[0] { };
-   };
-  };
+ Wizard_Group @.wizards = [0] {
  };
 
  ControlPanel_Group @.ctrl_panels = [2] {
@@ -169,6 +164,9 @@ LeabraProject .projects[0] {
    ProgObjList @.objs = [0] {
    };
 
+   ProgVar_List @.objs_vars = [0] {
+   };
+
    ProgType_List @.types = [0] {
    };
 
@@ -263,6 +261,9 @@ LeabraProject .projects[0] {
      DataOpList @.last_sort_spec.ops = [0] {
      };
     };
+   };
+
+   ProgVar_List @.objs_vars = [0] {
    };
 
    ProgType_List @.types = [0] {
@@ -435,6 +436,10 @@ LeabraProject .projects[0] {
      };
     };
 
+    ProgVar_List @.objs_vars = [1] {
+     ProgVar @[0] { };
+    };
+
     ProgType_List @.types = [0] {
     };
 
@@ -443,7 +448,7 @@ LeabraProject .projects[0] {
      ProgVar @[1] { };
     };
 
-    ProgVar_List @.vars = [11] {
+    ProgVar_List @.vars = [10] {
      ProgVar @[0] { };
      ProgVar @[1] { };
      ProgVar @[2] { };
@@ -454,7 +459,6 @@ LeabraProject .projects[0] {
      ProgVar @[7] { };
      ProgVar @[8] { };
      ProgVar @[9] { };
-     ProgVar @[10] { };
     };
 
     Function_List @.functions = [1] {
@@ -621,6 +625,9 @@ LeabraProject .projects[0] {
      };
     };
 
+    ProgVar_List @.objs_vars = [0] {
+    };
+
     ProgType_List @.types = [0] {
     };
 
@@ -693,6 +700,9 @@ LeabraProject .projects[0] {
     ProgObjList @.objs = [0] {
     };
 
+    ProgVar_List @.objs_vars = [0] {
+    };
+
     ProgType_List @.types = [0] {
     };
 
@@ -747,6 +757,9 @@ LeabraProject .projects[0] {
        NetMonItem @[12] { };
       };
      };
+    };
+
+    ProgVar_List @.objs_vars = [0] {
     };
 
     ProgType_List @.types = [0] {
@@ -836,6 +849,9 @@ LeabraProject .projects[0] {
       DataOpList @.last_sort_spec.ops = [0] {
       };
      };
+    };
+
+    ProgVar_List @.objs_vars = [0] {
     };
 
     ProgType_List @.types = [0] {
@@ -1350,9 +1366,6 @@ LeabraProject .projects[0] {
     LeabraUnitSpec @[0] { 
      BaseSpec_Group @.children = [0] {
      };
-
-     Schedule @.noise_sched = [0] {
-     };
     };
     LeabraConSpec @[1] { 
      BaseSpec_Group @.children = [1] {
@@ -1385,16 +1398,10 @@ LeabraProject .projects[0] {
     LeabraLayer @[0] { 
      Projection_Group @.projections = [0] {
      };
-
-     Unit_Group @.units = [1] {
-     };
     };
     LeabraLayer @[1] { 
      Projection_Group @.projections = [1] {
       LeabraPrjn @[0] { };
-     };
-
-     Unit_Group @.units = [1] {
      };
     };
    };
@@ -2030,17 +2037,8 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
  };
  wizards {
   name="wizards";
-  el_typ=LeabraWizard;
+  el_typ=Wizard;
   el_def=0;
-  LeabraWizard @[0] {
-   UserDataItem_List @*(.user_data_) {
-    name=;
-    el_typ=UserDataItemBase;
-    el_def=0;
-    UserDataItem @[0] {name="NO_CLIP": value=1: val_type_fixed=0: };
-   };
-   name="LeabraWizard_1";
-  };
  };
  ctrl_panels {
   name="ctrl_panels";
@@ -2305,6 +2303,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
    exe_cmd="emergent";
    ram_gb=0;
    n_threads=1;
+   use_cuda=0;
    use_mpi=0;
    mpi_nodes=10;
    mpi_per_node=1;
@@ -2434,7 +2433,27 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
       matrix_col_width=10;
       ar {
        name="ar";
-      [0]       };
+      [200] 1;2;3;4;5;6;7;8;9;10;
+11;12;13;14;15;16;17;18;19;20;
+21;22;23;24;25;26;27;28;29;30;
+31;32;33;34;35;36;37;38;39;40;
+41;42;43;44;45;46;47;48;49;50;
+51;52;53;54;55;56;57;58;59;60;
+61;62;63;64;65;66;67;68;69;70;
+71;72;73;74;75;76;77;78;79;80;
+81;82;83;84;85;86;87;88;89;90;
+91;92;93;94;95;96;97;98;99;100;
+101;102;103;104;105;106;107;108;109;110;
+111;112;113;114;115;116;117;118;119;120;
+121;122;123;124;125;126;127;128;129;130;
+131;132;133;134;135;136;137;138;139;140;
+141;142;143;144;145;146;147;148;149;150;
+151;152;153;154;155;156;157;158;159;160;
+161;162;163;164;165;166;167;168;169;170;
+171;172;173;174;175;176;177;178;179;180;
+181;182;183;184;185;186;187;188;189;190;
+191;192;193;194;195;196;197;198;199;200;
+      };
      };
      float_Data @[1] {
       name="net";
@@ -2451,7 +2470,27 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
       matrix_col_width=10;
       ar {
        name="ar";
-      [0]       };
+      [200] 0;0;0;0;0;0;0;0;0;0;
+0.21428573;0.27551022;0.29300293;0.29800084;0.29942882;0.29983681;0.29995337;0.29998669;0.2999962;0.29999891;
+0.29999971;0.29999992;0.29999998;0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;
+0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;
+0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;
+0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;
+0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;
+0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;
+0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;
+0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;
+0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;
+0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;
+0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;
+0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;
+0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;
+0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;0.30000001;
+0.085714281;0.024489794;0.0069970833;0.0019991668;0.00057119038;0.00016319723;4.6627778e-05;1.3322221e-05;3.806349e-06;1.0875283e-06;
+3.107223e-07;8.8777796e-08;2.5365084e-08;7.2471673e-09;2.070619e-09;5.9160532e-10;1.690301e-10;4.8294313e-11;1.3798373e-11;3.9423924e-12;
+1.1263977e-12;3.2182793e-13;9.1950834e-14;2.6271665e-14;7.5061891e-15;2.144625e-15;6.1274993e-16;1.750714e-16;5.0020396e-17;1.4291542e-17;
+4.0832969e-18;1.1666563e-18;3.3333034e-19;9.5237239e-20;2.7210636e-20;7.774467e-21;2.2212762e-21;6.3465034e-22;1.8132865e-22;5.1808184e-23;
+      };
      };
      float_Data @[2] {
       name="I_net";
@@ -2468,7 +2507,27 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
       matrix_col_width=10;
       ar {
        name="ar";
-      [0]       };
+      [200] -0.028604155;-0.026132887;-0.023871865;-0.021804603;-0.019915268;-0.018188972;-0.016611889;-0.015171289;-0.013855444;-0.012653615;
+0.11917768;0.1359044;0.12344361;0.10689898;0.095095687;0.097719036;0.15227878;0.80970621;0;0.19090976;
+0.15937214;0.13317774;0.11204118;0.097359277;0.095043316;0.12976193;0.45191637;0;0.19091043;0.15937218;
+0.13317768;0.11204109;0.09735921;0.095043369;0.12976228;0.45192003;0;0.19091043;0.15937218;0.13317768;
+0.11204109;0.09735921;0.095043369;0.12976228;0.45192003;0;0.19091043;0.15937218;0.13317768;0.11204109;
+0.09735921;0.095043369;0.12976228;0.45192003;0;0.19091043;0.15937218;0.13317768;0.11204109;0.09735921;
+0.095043369;0.12976228;0.45192003;0;0.19091043;0.15937218;0.13317768;0.11204109;0.09735921;0.095043369;
+0.12976228;0.45192003;0;0.19091043;0.15937218;0.13317768;0.11204109;0.09735921;0.095043369;0.12976228;
+0.45192003;0;0.19091043;0.15937218;0.13317768;0.11204109;0.09735921;0.095043369;0.12976228;0.45192003;
+0;0.19091043;0.15937218;0.13317768;0.11204109;0.09735921;0.095043369;0.12976228;0.45192003;0;
+0.19091043;0.15937218;0.13317768;0.11204109;0.09735921;0.095043369;0.12976228;0.45192003;0;0.19091043;
+0.15937218;0.13317768;0.11204109;0.09735921;0.095043369;0.12976228;0.45192003;0;0.19091043;0.15937218;
+0.13317768;0.11204109;0.09735921;0.095043369;0.12976228;0.45192003;0;0.19091043;0.15937218;0.13317768;
+0.11204109;0.09735921;0.095043369;0.12976228;0.45192003;0;0.19091043;0.15937218;0.13317768;0.11204109;
+0.09735921;0.095043369;0.12976228;0.45192003;0;0.19091043;0.15937218;0.13317768;0.11204109;0.09735921;
+0.095043369;0.12976228;0.45192003;0;0.19091043;0.15937218;0.13317768;0.11204109;0.09735921;0.095043369;
+0.002456639;-0.030264091;-0.046145685;-0.052640703;-0.053219173;-0.050887756;-0.04746706;-0.043792818;-0.040200971;-0.036815356;
+-0.033674162;-0.030781269;-0.028126877;-0.025696067;-0.023472387;-0.021439457;-0.019581597;-0.017884132;-0.01633342;-0.014916934;
+-0.013623126;-0.012441424;-0.011362147;-0.010376459;-0.0094762379;-0.0086540859;-0.0079032481;-0.0072175437;-0.0065913196;-0.006019413;
+-0.0054971324;-0.0050201626;-0.0045845713;-0.0041867741;-0.0038234924;-0.0034917309;-0.0031887547;-0.0029120699;-0.0026593881;-0.0024286271;
+      };
      };
      float_Data @[3] {
       name="v_m";
@@ -2485,7 +2544,27 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
       matrix_col_width=10;
       ar {
        name="ar";
-      [0]       };
+      [200] 0.39133209;0.38341305;0.37617916;0.36957172;0.36353678;0.35802495;0.35299104;0.34839368;0.34419507;0.34036064;
+0.3764751;0.41765824;0.4550654;0.48745903;0.51627588;0.54588771;0.59203279;0.83739829;0.30000001;0.35785145;
+0.40614605;0.44650295;0.48045483;0.50995767;0.5387587;0.57808048;0.71502483;0.30000001;0.35785165;0.40614626;
+0.44650313;0.48045498;0.50995779;0.53875881;0.57808071;0.7150262;0.30000001;0.35785165;0.40614626;0.44650313;
+0.48045498;0.50995779;0.53875881;0.57808071;0.7150262;0.30000001;0.35785165;0.40614626;0.44650313;0.48045498;
+0.50995779;0.53875881;0.57808071;0.7150262;0.30000001;0.35785165;0.40614626;0.44650313;0.48045498;0.50995779;
+0.53875881;0.57808071;0.7150262;0.30000001;0.35785165;0.40614626;0.44650313;0.48045498;0.50995779;0.53875881;
+0.57808071;0.7150262;0.30000001;0.35785165;0.40614626;0.44650313;0.48045498;0.50995779;0.53875881;0.57808071;
+0.7150262;0.30000001;0.35785165;0.40614626;0.44650313;0.48045498;0.50995779;0.53875881;0.57808071;0.7150262;
+0.30000001;0.35785165;0.40614626;0.44650313;0.48045498;0.50995779;0.53875881;0.57808071;0.7150262;0.30000001;
+0.35785165;0.40614626;0.44650313;0.48045498;0.50995779;0.53875881;0.57808071;0.7150262;0.30000001;0.35785165;
+0.40614626;0.44650313;0.48045498;0.50995779;0.53875881;0.57808071;0.7150262;0.30000001;0.35785165;0.40614626;
+0.44650313;0.48045498;0.50995779;0.53875881;0.57808071;0.7150262;0.30000001;0.35785165;0.40614626;0.44650313;
+0.48045498;0.50995779;0.53875881;0.57808071;0.7150262;0.30000001;0.35785165;0.40614626;0.44650313;0.48045498;
+0.50995779;0.53875881;0.57808071;0.7150262;0.30000001;0.35785165;0.40614626;0.44650313;0.48045498;0.50995779;
+0.53875881;0.57808071;0.7150262;0.30000001;0.35785165;0.40614626;0.44650313;0.48045498;0.50995779;0.53875881;
+0.53950328;0.53033233;0.51634878;0.50039703;0.48427001;0.46884948;0.45446551;0.44119495;0.42901284;0.41785666;
+0.40765238;0.39832473;0.38980144;0.38201475;0.37490192;0.3684051;0.36247128;0.35705185;0.35210234;0.34758204;
+0.34345382;0.33968368;0.33624062;0.33309624;0.33022466;0.32760221;0.32520729;0.32302016;0.32102278;0.31919873;
+0.31753293;0.31601167;0.3146224;0.31335369;0.31219506;0.31113696;0.31017068;0.30928823;0.30848235;0.30774641;
+      };
      };
      float_Data @[4] {
       name="act";
@@ -2502,7 +2581,27 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
       matrix_col_width=10;
       ar {
        name="ar";
-      [0]       };
+      [200] 2.940194e-16;2.295611e-16;1.6258379e-16;1.136493e-16;7.9261862e-17;5.5252631e-17;3.8511451e-17;2.6841817e-17;1.8708074e-17;1.3039005e-17;
+1.5204629e-17;4.2507369e-12;7.0825183e-07;0.012753071;0.27486065;0.45761549;0.58501112;0.67380804;0.73569846;0.7788347;
+0.80889952;0.82985383;0.84445834;0.85463727;0.86173165;0.86667621;0.87012243;0.87252432;0.87419838;0.87536514;
+0.87617832;0.8767451;0.87714016;0.87741548;0.87760735;0.8777411;0.87783432;0.87789929;0.87794459;0.87797612;
+0.87799811;0.87801343;0.8780241;0.87803155;0.87803674;0.87804037;0.87804288;0.87804466;0.87804592;0.87804675;
+0.87804735;0.87804776;0.87804806;0.87804824;0.87804836;0.87804848;0.87804854;0.8780486;0.87804866;0.87804866;
+0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;
+0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;
+0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;
+0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;
+0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;
+0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;
+0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;
+0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;
+0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;
+0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;
+0.61197495;0.42652798;0.29727709;0.20719312;0.14440733;0.10064753;0.071195439;0.049627535;0.034588948;0.024107449;
+0.016802162;0.011710597;0.0081619313;0.0056886189;0.0039647948;0.0027633416;0.0019259653;0.0013423394;0.00093556987;0.00065206387;
+0.00045446877;0.00031675096;0.00022076583;0.00015386709;0.0001072407;7.4743519e-05;5.2093965e-05;3.6307916e-05;2.5305517e-05;1.7637178e-05;
+1.2292578e-05;8.5675538e-06;5.9713252e-06;4.1618327e-06;2.9006712e-06;2.0216798e-06;1.4090496e-06;9.8206488e-07;6.8446946e-07;4.7705447e-07;
+      };
      };
      float_Data @[5] {
       name="act_eq";
@@ -2519,7 +2618,27 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
       matrix_col_width=10;
       ar {
        name="ar";
-      [0]       };
+      [200] 2.940194e-16;2.295611e-16;1.6258379e-16;1.136493e-16;7.9261862e-17;5.5252631e-17;3.8511451e-17;2.6841817e-17;1.8708074e-17;1.3039005e-17;
+1.5204629e-17;4.2507369e-12;7.0825183e-07;0.012753071;0.27486065;0.45761549;0.58501112;0.67380804;0.73569846;0.7788347;
+0.80889952;0.82985383;0.84445834;0.85463727;0.86173165;0.86667621;0.87012243;0.87252432;0.87419838;0.87536514;
+0.87617832;0.8767451;0.87714016;0.87741548;0.87760735;0.8777411;0.87783432;0.87789929;0.87794459;0.87797612;
+0.87799811;0.87801343;0.8780241;0.87803155;0.87803674;0.87804037;0.87804288;0.87804466;0.87804592;0.87804675;
+0.87804735;0.87804776;0.87804806;0.87804824;0.87804836;0.87804848;0.87804854;0.8780486;0.87804866;0.87804866;
+0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;
+0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;
+0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;
+0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;
+0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;
+0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;
+0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;
+0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;
+0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;
+0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;
+0.61197495;0.42652798;0.29727709;0.20719312;0.14440733;0.10064753;0.071195439;0.049627535;0.034588948;0.024107449;
+0.016802162;0.011710597;0.0081619313;0.0056886189;0.0039647948;0.0027633416;0.0019259653;0.0013423394;0.00093556987;0.00065206387;
+0.00045446877;0.00031675096;0.00022076583;0.00015386709;0.0001072407;7.4743519e-05;5.2093965e-05;3.6307916e-05;2.5305517e-05;1.7637178e-05;
+1.2292578e-05;8.5675538e-06;5.9713252e-06;4.1618327e-06;2.9006712e-06;2.0216798e-06;1.4090496e-06;9.8206488e-07;6.8446946e-07;4.7705447e-07;
+      };
      };
      float_Data @[6] {
       name="spike";
@@ -2536,7 +2655,27 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
       matrix_col_width=10;
       ar {
        name="ar";
-      [0]       };
+      [200] 0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;1;0;
+0;0;0;0;0;0;0;1;0;0;
+0;0;0;0;0;0;1;0;0;0;
+0;0;0;0;0;1;0;0;0;0;
+0;0;0;0;1;0;0;0;0;0;
+0;0;0;1;0;0;0;0;0;0;
+0;0;1;0;0;0;0;0;0;0;
+0;1;0;0;0;0;0;0;0;0;
+1;0;0;0;0;0;0;0;0;1;
+0;0;0;0;0;0;0;0;1;0;
+0;0;0;0;0;0;0;1;0;0;
+0;0;0;0;0;0;1;0;0;0;
+0;0;0;0;0;1;0;0;0;0;
+0;0;0;0;1;0;0;0;0;0;
+0;0;0;1;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+      };
      };
      float_Data @[7] {
       name="adapt";
@@ -2553,7 +2692,27 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
       matrix_col_width=10;
       ar {
        name="ar";
-      [0]       };
+      [200] 0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+      };
      };
      float_Data @[8] {
       name="syn_tr";
@@ -2570,7 +2729,27 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
       matrix_col_width=10;
       ar {
        name="ar";
-      [0]       };
+      [200] 1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;1;1;1;1;1;1;
+      };
      };
      float_Data @[9] {
       name="syn_nr";
@@ -2587,7 +2766,27 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
       matrix_col_width=10;
       ar {
        name="ar";
-      [0]       };
+      [200] 1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;1;1;1;1;1;1;
+      };
      };
      float_Data @[10] {
       name="syn_pr";
@@ -2604,7 +2803,27 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
       matrix_col_width=10;
       ar {
        name="ar";
-      [0]       };
+      [200] 0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;
+0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;
+0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;
+0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;
+0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;
+0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;
+0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;
+0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;
+0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;
+0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;
+0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;
+0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;
+0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;
+0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;
+0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;
+0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;
+0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;
+0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;
+0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;
+0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;
+      };
      };
      float_Data @[11] {
       name="syn_kre";
@@ -2621,7 +2840,27 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
       matrix_col_width=10;
       ar {
        name="ar";
-      [0]       };
+      [200] 0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+      };
      };
      float_Data @[12] {
       name="vm_eq";
@@ -2638,7 +2877,27 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
       matrix_col_width=10;
       ar {
        name="ar";
-      [0]       };
+      [200] 0.39090911;0.38264465;0.37513152;0.36830139;0.36209217;0.35644743;0.35131586;0.34665078;0.34240979;0.33855435;
+0.37800044;0.42283896;0.46291721;0.49660689;0.52440941;0.54722053;0.56590128;0.58119023;0.59370059;0.60393673;
+0.61231184;0.61916423;0.62477076;0.62935787;0.633111;0.63618171;0.63869411;0.64074975;0.64243162;0.64380771;
+0.64493358;0.64585477;0.64660847;0.64722514;0.64772964;0.64814246;0.64848018;0.6487565;0.64898258;0.6491676;
+0.64931893;0.64944279;0.64954412;0.64962703;0.64969486;0.64975035;0.64979577;0.6498329;0.6498633;0.64988816;
+0.64990848;0.64992511;0.6499387;0.64994985;0.64995897;0.64996642;0.6499725;0.64997751;0.64998162;0.64998496;
+0.6499877;0.64998996;0.64999181;0.6499933;0.64999449;0.64999551;0.64999634;0.649997;0.64999753;0.64999801;
+0.64999837;0.64999866;0.6499989;0.64999908;0.64999926;0.64999938;0.6499995;0.64999962;0.64999968;0.64999974;
+0.6499998;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;
+0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;
+0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;
+0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;
+0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;
+0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;
+0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;
+0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;
+0.62727261;0.6002866;0.57383537;0.5491994;0.52662295;0.50604427;0.48731995;0.47029293;0.45481235;0.44073868;
+0.4279443;0.41631302;0.40573913;0.39612648;0.38738772;0.37944338;0.37222126;0.36565569;0.359687;0.35426092;
+0.3493281;0.34484372;0.34076703;0.33706093;0.33369175;0.33062887;0.32784444;0.32531312;0.32301193;0.32091993;
+0.31901813;0.3172892;0.31571746;0.31428859;0.31298962;0.31180874;0.31073523;0.30975929;0.30887207;0.30806553;
+      };
      };
     };
     data_flags=SAVE_ROWS|AUTO_CALC;
@@ -2649,7 +2908,27 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
     keygen 4 0=0;
     row_indexes {
      name="row_indexes";
-    [0]     };
+    [200] 0;1;2;3;4;5;6;7;8;9;
+10;11;12;13;14;15;16;17;18;19;
+20;21;22;23;24;25;26;27;28;29;
+30;31;32;33;34;35;36;37;38;39;
+40;41;42;43;44;45;46;47;48;49;
+50;51;52;53;54;55;56;57;58;59;
+60;61;62;63;64;65;66;67;68;69;
+70;71;72;73;74;75;76;77;78;79;
+80;81;82;83;84;85;86;87;88;89;
+90;91;92;93;94;95;96;97;98;99;
+100;101;102;103;104;105;106;107;108;109;
+110;111;112;113;114;115;116;117;118;119;
+120;121;122;123;124;125;126;127;128;129;
+130;131;132;133;134;135;136;137;138;139;
+140;141;142;143;144;145;146;147;148;149;
+150;151;152;153;154;155;156;157;158;159;
+160;161;162;163;164;165;166;167;168;169;
+170;171;172;173;174;175;176;177;178;179;
+180;181;182;183;184;185;186;187;188;189;
+190;191;192;193;194;195;196;197;198;199;
+    };
     last_sort_spec {
      name="last_sort_spec";
      ops {
@@ -3571,6 +3850,11 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
     el_typ=taNBase;
     el_def=0;
    };
+   objs_vars {
+    name="objs_vars";
+    el_typ=ProgVar;
+    el_def=0;
+   };
    types {
     name="types";
     el_typ=DynEnumType;
@@ -4247,6 +4531,11 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
      };
      row_with_hilite=-1;
     };
+   };
+   objs_vars {
+    name="objs_vars";
+    el_typ=ProgVar;
+    el_def=0;
    };
    types {
     name="types";
@@ -5103,6 +5392,8 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Group from:  src table = SpikeVsRate_raw dest table = SpikeVsRate";
+     src_table=;
+     dest_table=;
      src_data_var=$.programs[1].vars[0]$;
      dest_data_var=$.programs[1].vars[1]$;
      group_spec {
@@ -5637,6 +5928,23 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
       rmv_orphan_cols=1;
      };
     };
+    objs_vars {
+     name="objs_vars";
+     el_typ=ProgVar;
+     el_def=0;
+     ProgVar @[0] {
+      name="trial_netmon";
+      var_type=T_Object;
+      object_type=NetMonitor;
+      object_val=.programs.gp[0][0].objs[0]$$;
+      object_scope=NULL;
+      objs_ptr=1;
+      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+    };
     types {
      name="types";
      el_typ=DynEnumType;
@@ -5706,7 +6014,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
      ProgVar @[3] {
       name="cycle";
       var_type=T_Int;
-      int_val=0;
+      int_val=200;
       object_scope=NULL;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -5745,18 +6053,6 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       init_from=NULL;
      };
      ProgVar @[7] {
-      name="trial_netmon";
-      var_type=T_Object;
-      object_type=NetMonitor;
-      object_val=.programs.gp[0][0].objs[0]$$;
-      object_scope=NULL;
-      objs_ptr=1;
-      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-      reference=0;
-      desc=;
-      init_from=NULL;
-     };
-     ProgVar @[8] {
       name="trial_mon_data";
       var_type=T_Object;
       object_type=DataTable;
@@ -5768,17 +6064,17 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       desc="data table to record trial-level data to (this program writes new data to this table!)";
       init_from=NULL;
      };
-     ProgVar @[9] {
+     ProgVar @[8] {
       name="net";
       var_type=T_Real;
-      real_val=5.180820093317018e-23;
+      real_val=5.180818578704019e-23;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc=;
       init_from=NULL;
      };
-     ProgVar @[10] {
+     ProgVar @[9] {
       name="unit_spec_0";
       var_type=T_Object;
       object_type=LeabraUnitSpec;
@@ -5828,7 +6124,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
 	flags=CAN_REVERT_TO_CODE;
 	code_string="trial_mon_data->DataUpdate(true)";
 	result_var=NULL;
-	obj=.programs.gp[0][0].vars[8]$$;
+	obj=.programs.gp[0][0].vars[7]$$;
 	method=taBase::DataUpdate;
 	meth_args {
 	 name="meth_args";
@@ -5855,7 +6151,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
 	flags=CAN_REVERT_TO_CODE;
 	code_string="trial_mon_data->AddBlankRow()";
 	result_var=NULL;
-	obj=$.programs.gp[0][0].vars[8]$;
+	obj=$.programs.gp[0][0].vars[7]$;
 	method=DataTable::AddBlankRow;
 	meth_args {
 	 name="meth_args";
@@ -5871,7 +6167,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
 	flags=CAN_REVERT_TO_CODE;
 	code_string="trial_netmon->GetMonVals()";
 	result_var=NULL;
-	obj=.programs.gp[0][0].vars[7]$$;
+	obj=.programs.gp[0][0].objs_vars[0]$$;
 	method=NetMonitor::GetMonVals;
 	meth_args {
 	 name="meth_args";
@@ -5886,13 +6182,13 @@ sets the minimum number of cycles to settle for, regardless of network state cha
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="Data From:  table=trial_mon_data  row_spec=cur_row  set=from  all_matches=false  var_1=net  var_2=?  var_3=?  var_4=? ";
-	data_var=$.programs.gp[0][0].vars[8]$;
+	data_var=$.programs.gp[0][0].vars[7]$;
 	row_spec=CUR_ROW;
 	row_var=NULL;
 	set_data=0;
 	all_matches=0;
 	quiet=0;
-	var_1=.programs.gp[0][0].vars[9]$$;
+	var_1=.programs.gp[0][0].vars[8]$$;
 	var_2=NULL;
 	var_3=NULL;
 	var_4=NULL;
@@ -5902,7 +6198,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
 	desc="net does not contain g_bar.e anymore";
 	flags=CAN_REVERT_TO_CODE;
 	code_string="net = net * unit_spec_0.g_bar.e";
-	result_var=$.programs.gp[0][0].vars[9]$;
+	result_var=$.programs.gp[0][0].vars[8]$;
 	expr {
 	 expr="net * unit_spec_0.g_bar.e";
 	};
@@ -5912,13 +6208,13 @@ sets the minimum number of cycles to settle for, regardless of network state cha
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="Data To:  table=trial_mon_data  row_spec=cur_row  set=to  all_matches=false  var_1=net  var_2=?  var_3=?  var_4=? ";
-	data_var=$.programs.gp[0][0].vars[8]$;
+	data_var=$.programs.gp[0][0].vars[7]$;
 	row_spec=CUR_ROW;
 	row_var=NULL;
 	set_data=1;
 	all_matches=0;
 	quiet=0;
-	var_1=$.programs.gp[0][0].vars[9]$;
+	var_1=$.programs.gp[0][0].vars[8]$;
 	var_2=NULL;
 	var_3=NULL;
 	var_4=NULL;
@@ -5929,7 +6225,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
 	flags=CAN_REVERT_TO_CODE;
 	code_string="trial_mon_data->WriteClose()";
 	result_var=NULL;
-	obj=$.programs.gp[0][0].vars[8]$;
+	obj=$.programs.gp[0][0].vars[7]$;
 	method=DataTable::WriteClose;
 	meth_args {
 	 name="meth_args";
@@ -5945,7 +6241,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
 	flags=CAN_REVERT_TO_CODE;
 	code_string="trial_mon_data->DataUpdate(false)";
 	result_var=NULL;
-	obj=$.programs.gp[0][0].vars[8]$;
+	obj=$.programs.gp[0][0].vars[7]$;
 	method=taBase::DataUpdate;
 	meth_args {
 	 name="meth_args";
@@ -5989,7 +6285,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       flags=CAN_REVERT_TO_CODE;
       code_string="trial_mon_data->ResetData()";
       result_var=NULL;
-      obj=$.programs.gp[0][0].vars[8]$;
+      obj=$.programs.gp[0][0].vars[7]$;
       method=DataTable::ResetData;
       meth_args {
        name="meth_args";
@@ -6090,7 +6386,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       flags=CAN_REVERT_TO_CODE;
       code_string="trial_mon_data->ResetData()";
       result_var=NULL;
-      obj=$.programs.gp[0][0].vars[8]$;
+      obj=$.programs.gp[0][0].vars[7]$;
       method=DataTable::ResetData;
       meth_args {
        name="meth_args";
@@ -6888,6 +7184,11 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       rmv_orphan_cols=1;
      };
     };
+    objs_vars {
+     name="objs_vars";
+     el_typ=ProgVar;
+     el_def=0;
+    };
     types {
      name="types";
      el_typ=DynEnumType;
@@ -7234,6 +7535,11 @@ sets the minimum number of cycles to settle for, regardless of network state cha
      el_typ=taNBase;
      el_def=0;
     };
+    objs_vars {
+     name="objs_vars";
+     el_typ=ProgVar;
+     el_def=0;
+    };
     types {
      name="types";
      el_typ=DynEnumType;
@@ -7315,12 +7621,12 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       debug=0;
      };
      CssExpr @[1] {
-      name="CssExpr_networklayers0un_tVarsactsendact";
+      name="CssExpr_networklayers0Ge_tate0actsendact";
       desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="network.layers[0].units[0].MyUnitVars().act = send_act;";
+      code_string="network.layers[0].GetUnitState(network.net_state, 0).act = send_act;";
       expr {
-       expr="network.layers[0].units[0].MyUnitVars().act = send_act;";
+       expr="network.layers[0].GetUnitState(network.net_state, 0).act = send_act;";
       };
      };
      MethodCall @[2] {
@@ -7340,21 +7646,21 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       meth_desc=" compute cycle(s) of updating: netinput, inhibition, activations -- multiple cycles can be run depending on lthreads.n_cycles setting and whether multiple threads are actually being used -- see lthreads.n_threads_act";
      };
      CssExpr @[3] {
-      name="CssExpr_networklayers0un_tVarsactsendact_1";
-      desc="need to set agaijn for display..";
+      name="CssExpr_networklayers0Ge_tate0actsendact_1";
+      desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="network.layers[0].units[0].MyUnitVars().act = send_act;";
+      code_string="network.layers[0].GetUnitState(network.net_state, 0).act = send_act;";
       expr {
-       expr="network.layers[0].units[0].MyUnitVars().act = send_act;";
+       expr="network.layers[0].GetUnitState(network.net_state, 0).act = send_act;";
       };
      };
      CssExpr @[4] {
-      name="CssExpr_receiveactnetwor_s0MyUnitVarsact";
+      name="CssExpr_receiveactnetwor_orknetstate0act";
       desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="receive_act = network.layers[1].units[0].MyUnitVars().act;";
+      code_string="receive_act = network.layers[1].GetUnitState(network.net_state, 0).act;";
       expr {
-       expr="receive_act = network.layers[1].units[0].MyUnitVars().act;";
+       expr="receive_act = network.layers[1].GetUnitState(network.net_state, 0).act;";
       };
      };
      NetUpdateView @[5] {
@@ -7860,6 +8166,11 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       rmv_orphan_cols=1;
      };
     };
+    objs_vars {
+     name="objs_vars";
+     el_typ=ProgVar;
+     el_def=0;
+    };
     types {
      name="types";
      el_typ=DynEnumType;
@@ -8331,6 +8642,11 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       };
       row_with_hilite=-1;
      };
+    };
+    objs_vars {
+     name="objs_vars";
+     el_typ=ProgVar;
+     el_def=0;
     };
     types {
      name="types";
@@ -8886,9 +9202,9 @@ sets the minimum number of cycles to settle for, regardless of network state cha
     el_typ=UserDataItem;
     el_def=0;
     UserDataItem @[0] {name="view_win_lft": value=0: val_type_fixed=0: };
-    UserDataItem @[1] {name="view_win_top": value=0.01784197: val_type_fixed=0: };
-    UserDataItem @[2] {name="view_win_wd": value=0.9989373: val_type_fixed=0: };
-    UserDataItem @[3] {name="view_win_ht": value=0.7943925: val_type_fixed=0: };
+    UserDataItem @[1] {name="view_win_top": value=0.01752678: val_type_fixed=0: };
+    UserDataItem @[2] {name="view_win_wd": value=0.9987879: val_type_fixed=0: };
+    UserDataItem @[3] {name="view_win_ht": value=0.7935735: val_type_fixed=0: };
     UserDataItem @[4] {name="view_win_iconified": value=0: val_type_fixed=0: };
     UserDataItem @[5] {name="view_splitter_state": value=AAAA/wAAAAEAAAADAAABGQAAAqYAAAHQAQAAAAYBAAAAAQE=: val_type_fixed=0: };
    };
@@ -8996,19 +9312,20 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	  net_text_rot=0;
 	  cur_unit_vals{ act;	  };
 	  hot_vars{ act;net;act_eq;act_nd;r.wt;gc_i;I_net;v_m;adapt;E_i;syn_tr;syn_nr;syn_pr;syn_kre;	  };
-	  unit_src_path=".layers[1].units[0]";
+	  unit_src_path=".layers[1][0]";
 	  con_type=ANY_CON;
 	  hist_idx=0;
 	  hist_save=1;
 	  hist_max=100;
 	  hist_ff=5;
+	  movie_size {x=720: y=720: };
 	  unit_disp_mode=UDM_BLOCK;
 	  unit_text_disp=UTD_VALUES;
 	  max_size {x=1: y=1: z=1.5: };
 	  max_size2d {x=1: y=4: z=1: };
 	  eff_max_size {x=1: y=1: z=1.5: };
 	  font_sizes {net_name=0.05: net_vals=0.05: layer=0.04: layer_min=0.01: layer_vals=0.03: prjn=0.01: unit=0.1: un_nm_len=3: };
-	  view_params {xy_square=0: unit_spacing=0.05: prjn_disp=L_R_F: prjn_name=0: prjn_width=0.002: prjn_trans=0.5: lay_trans=0.4: unit_trans=0.4: laygp_width=1: show_laygp=1: };
+	  view_params {xy_square=0: unit_spacing=0.05: prjn_disp=L_R_F: prjn_name=0: prjn_width=0.002: prjn_trans=0.5: lay_trans=0.5: unit_trans=0.6: laygp_width=1: show_laygp=1: };
 	  wt_line_disp=0;
 	  wt_line_width=4;
 	  wt_line_thr=0.5;
@@ -9371,7 +9688,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   el_def=0;
 	  };
 	  view_rows=10000;
-	  view_range {min=0: max=-1: };
+	  view_range {min=0: max=199: };
 	  page_rows=0;
 	  display_on=1;
 	  manip_ctrl_on=0;
@@ -9386,6 +9703,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  bar_space=0.2;
 	  bar_depth=0.01;
 	  label_spacing=-1;
+	  string_spacing=1;
 	  width=1.5;
 	  depth=1;
 	  axis_font_size=0.05;
@@ -9414,6 +9732,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   labels_on=0;
 	   labels_col_name=;
 	   row_num=0;
+	   axis_label=;
 	  };
 	  z_axis {
 	   name="z_axis";
@@ -9438,6 +9757,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   labels_on=0;
 	   labels_col_name=;
 	   row_num=0;
+	   axis_label=;
 	  };
 	  tot_plots=16;
 	  plots {
@@ -9467,6 +9787,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=CIRCLE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[1] {
 	    name="CycleOutputData_Graph_plot_2";
@@ -9481,7 +9803,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    is_matrix=0;
 	    n_cells=1;
 	    matrix_cell=0;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	    fixed_range {fix_min=0: min=-0.05321917: fix_max=0: max=0.8097062: };
 	    show_axis_label=1;
 	    show_alt_axis_label=1;
 	    color {name="red": r=1: g=0: b=0: a=1: desc="": };
@@ -9491,6 +9813,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=SQUARE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[2] {
 	    name="CycleOutputData_Graph_plot_3";
@@ -9505,7 +9829,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    is_matrix=0;
 	    n_cells=1;
 	    matrix_cell=0;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	    fixed_range {fix_min=0: min=0.3: fix_max=0: max=0.8373983: };
 	    show_axis_label=1;
 	    show_alt_axis_label=1;
 	    color {name="blue": r=0: g=0: b=1: a=1: desc="": };
@@ -9515,6 +9839,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=DIAMOND;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[3] {
 	    name="CycleOutputData_Graph_plot_4";
@@ -9529,7 +9855,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    is_matrix=0;
 	    n_cells=1;
 	    matrix_cell=0;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	    fixed_range {fix_min=0: min=1.303901e-17: fix_max=0: max=0.8780487: };
 	    show_axis_label=1;
 	    show_alt_axis_label=1;
 	    color {name="green3": r=0: g=0.8039216: b=0: a=1: desc="": };
@@ -9539,6 +9865,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=TRIANGLE_UP;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[4] {
 	    name="CycleOutputData_Graph_plot_5";
@@ -9553,7 +9881,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    is_matrix=0;
 	    n_cells=1;
 	    matrix_cell=0;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	    fixed_range {fix_min=0: min=1.303901e-17: fix_max=0: max=0.8780487: };
 	    show_axis_label=1;
 	    show_alt_axis_label=1;
 	    color {name="purple": r=0.627451: g=0.1254902: b=0.9411765: a=1: desc="": };
@@ -9563,6 +9891,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=TRIANGLE_DN;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[5] {
 	    name="CycleOutputData_Graph_plot_6";
@@ -9587,6 +9917,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=PLUS;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[6] {
 	    name="CycleOutputData_Graph_plot_7";
@@ -9601,7 +9933,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    is_matrix=0;
 	    n_cells=1;
 	    matrix_cell=0;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    show_axis_label=1;
 	    show_alt_axis_label=1;
 	    color {name="brown": r=0.6470588: g=0.1647059: b=0.1647059: a=1: desc="": };
@@ -9611,6 +9943,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=CROSS;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[7] {
 	    name="CycleOutputData_Graph_plot_8";
@@ -9635,6 +9969,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=STAR;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[8] {
 	    name="CycleOutputData_Graph_plot_9";
@@ -9659,6 +9995,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=DOT;
 	    point_style=CIRCLE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[9] {
 	    name="CycleOutputData_Graph_plot_10";
@@ -9683,6 +10021,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=DOT;
 	    point_style=SQUARE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[10] {
 	    name="CycleOutputData_Graph_plot_11";
@@ -9707,6 +10047,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=DOT;
 	    point_style=DIAMOND;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[11] {
 	    name="CycleOutputData_Graph_plot_12";
@@ -9731,6 +10073,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=DOT;
 	    point_style=TRIANGLE_UP;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[12] {
 	    name="CycleOutputData_Graph_plot_13";
@@ -9755,6 +10099,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=DOT;
 	    point_style=TRIANGLE_DN;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[13] {
 	    name="CycleOutputData_Graph_plot_14";
@@ -9779,6 +10125,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=DOT;
 	    point_style=PLUS;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[14] {
 	    name="CycleOutputData_Graph_plot_15";
@@ -9803,6 +10151,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=DOT;
 	    point_style=CROSS;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[15] {
 	    name="CycleOutputData_Graph_plot_16";
@@ -9827,6 +10177,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=DOT;
 	    point_style=STAR;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	  };
 	  errbars {
@@ -9856,6 +10208,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=CIRCLE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[1] {
 	    name="CycleOutputData_Graph_err_2";
@@ -9880,6 +10234,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=CIRCLE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[2] {
 	    name="CycleOutputData_Graph_err_3";
@@ -9904,6 +10260,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=CIRCLE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[3] {
 	    name="CycleOutputData_Graph_err_4";
@@ -9928,6 +10286,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=CIRCLE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[4] {
 	    name="CycleOutputData_Graph_err_5";
@@ -9952,6 +10312,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=CIRCLE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[5] {
 	    name="CycleOutputData_Graph_err_6";
@@ -9976,6 +10338,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=CIRCLE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[6] {
 	    name="CycleOutputData_Graph_err_7";
@@ -10000,6 +10364,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=CIRCLE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[7] {
 	    name="CycleOutputData_Graph_err_8";
@@ -10024,6 +10390,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=CIRCLE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[8] {
 	    name="CycleOutputData_Graph_err_9";
@@ -10048,6 +10416,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=CIRCLE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[9] {
 	    name="CycleOutputData_Graph_err_10";
@@ -10072,6 +10442,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=CIRCLE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[10] {
 	    name="CycleOutputData_Graph_err_11";
@@ -10096,6 +10468,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=CIRCLE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[11] {
 	    name="CycleOutputData_Graph_err_12";
@@ -10120,6 +10494,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=CIRCLE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[12] {
 	    name="CycleOutputData_Graph_err_13";
@@ -10144,6 +10520,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=CIRCLE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[13] {
 	    name="CycleOutputData_Graph_err_14";
@@ -10168,6 +10546,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=CIRCLE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[14] {
 	    name="CycleOutputData_Graph_err_15";
@@ -10192,6 +10572,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=CIRCLE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[15] {
 	    name="CycleOutputData_Graph_err_16";
@@ -10216,11 +10598,18 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=CIRCLE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	  };
+	  x_axis_label=;
+	  y_axis_label=;
+	  alt_y_axis_label=;
+	  z_axis_label=;
 	  err_spacing=1;
 	  err_bar_width=0.02;
 	  color_mode=FIXED;
+	  color_gp_use_y=0;
 	  color_axis {
 	   name="color_axis";
 	   m_data=NULL;
@@ -10244,6 +10633,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   labels_on=0;
 	   labels_col_name=;
 	   row_num=0;
+	   axis_label=;
 	  };
 	  colorscale {
 	   name="colorscale";
@@ -10280,6 +10670,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   labels_on=0;
 	   labels_col_name=;
 	   row_num=0;
+	   axis_label=;
 	  };
 	  thresh=0.5;
 	  thr_line_len=0.48;
@@ -10434,6 +10825,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  bar_space=0.2;
 	  bar_depth=0.01;
 	  label_spacing=-1;
+	  string_spacing=1;
 	  width=1.5;
 	  depth=1;
 	  axis_font_size=0.05;
@@ -10462,6 +10854,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   labels_on=0;
 	   labels_col_name=;
 	   row_num=0;
+	   axis_label=;
 	  };
 	  z_axis {
 	   name="z_axis";
@@ -10486,6 +10879,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   labels_on=0;
 	   labels_col_name=;
 	   row_num=0;
+	   axis_label=;
 	  };
 	  tot_plots=16;
 	  plots {
@@ -10515,6 +10909,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=CIRCLE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[1] {
 	    name="CycleOutputData_copy_1_Graph_plot_2";
@@ -10539,6 +10935,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=SQUARE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[2] {
 	    name="CycleOutputData_copy_1_Graph_plot_3";
@@ -10563,6 +10961,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=DIAMOND;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[3] {
 	    name="CycleOutputData_copy_1_Graph_plot_4";
@@ -10587,6 +10987,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=TRIANGLE_UP;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[4] {
 	    name="CycleOutputData_copy_1_Graph_plot_5";
@@ -10611,6 +11013,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=TRIANGLE_DN;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[5] {
 	    name="CycleOutputData_copy_1_Graph_plot_6";
@@ -10635,6 +11039,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=PLUS;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[6] {
 	    name="CycleOutputData_copy_1_Graph_plot_7";
@@ -10659,6 +11065,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=CROSS;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[7] {
 	    name="CycleOutputData_copy_1_Graph_plot_8";
@@ -10683,6 +11091,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=STAR;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[8] {
 	    name="CycleOutputData_copy_1_Graph_plot_9";
@@ -10707,6 +11117,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=DOT;
 	    point_style=CIRCLE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[9] {
 	    name="CycleOutputData_copy_1_Graph_plot_10";
@@ -10731,6 +11143,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=DOT;
 	    point_style=SQUARE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[10] {
 	    name="CycleOutputData_copy_1_Graph_plot_11";
@@ -10755,6 +11169,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=DOT;
 	    point_style=DIAMOND;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[11] {
 	    name="CycleOutputData_copy_1_Graph_plot_12";
@@ -10779,6 +11195,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=DOT;
 	    point_style=TRIANGLE_UP;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[12] {
 	    name="CycleOutputData_copy_1_Graph_plot_13";
@@ -10803,6 +11221,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=DOT;
 	    point_style=TRIANGLE_DN;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[13] {
 	    name="CycleOutputData_copy_1_Graph_plot_14";
@@ -10827,6 +11247,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=DOT;
 	    point_style=PLUS;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[14] {
 	    name="CycleOutputData_copy_1_Graph_plot_15";
@@ -10851,6 +11273,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=DOT;
 	    point_style=CROSS;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[15] {
 	    name="CycleOutputData_copy_1_Graph_plot_16";
@@ -10875,6 +11299,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=DOT;
 	    point_style=STAR;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	  };
 	  errbars {
@@ -10904,6 +11330,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=CIRCLE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[1] {
 	    name="CycleOutputData_copy_1_Graph_err_2";
@@ -10928,6 +11356,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=CIRCLE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[2] {
 	    name="CycleOutputData_copy_1_Graph_err_3";
@@ -10952,6 +11382,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=CIRCLE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[3] {
 	    name="CycleOutputData_copy_1_Graph_err_4";
@@ -10976,6 +11408,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=CIRCLE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[4] {
 	    name="CycleOutputData_copy_1_Graph_err_5";
@@ -11000,6 +11434,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=CIRCLE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[5] {
 	    name="CycleOutputData_copy_1_Graph_err_6";
@@ -11024,6 +11460,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=CIRCLE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[6] {
 	    name="CycleOutputData_copy_1_Graph_err_7";
@@ -11048,6 +11486,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=CIRCLE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[7] {
 	    name="CycleOutputData_copy_1_Graph_err_8";
@@ -11072,6 +11512,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=CIRCLE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[8] {
 	    name="CycleOutputData_copy_1_Graph_err_9";
@@ -11096,6 +11538,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=CIRCLE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[9] {
 	    name="CycleOutputData_copy_1_Graph_err_10";
@@ -11120,6 +11564,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=CIRCLE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[10] {
 	    name="CycleOutputData_copy_1_Graph_err_11";
@@ -11144,6 +11590,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=CIRCLE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[11] {
 	    name="CycleOutputData_copy_1_Graph_err_12";
@@ -11168,6 +11616,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=CIRCLE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[12] {
 	    name="CycleOutputData_copy_1_Graph_err_13";
@@ -11192,6 +11642,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=CIRCLE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[13] {
 	    name="CycleOutputData_copy_1_Graph_err_14";
@@ -11216,6 +11668,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=CIRCLE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[14] {
 	    name="CycleOutputData_copy_1_Graph_err_15";
@@ -11240,6 +11694,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=CIRCLE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[15] {
 	    name="CycleOutputData_copy_1_Graph_err_16";
@@ -11264,11 +11720,18 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=CIRCLE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	  };
+	  x_axis_label=;
+	  y_axis_label=;
+	  alt_y_axis_label=;
+	  z_axis_label=;
 	  err_spacing=1;
 	  err_bar_width=0.02;
 	  color_mode=FIXED;
+	  color_gp_use_y=0;
 	  color_axis {
 	   name="color_axis";
 	   m_data=NULL;
@@ -11292,6 +11755,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   labels_on=0;
 	   labels_col_name=;
 	   row_num=0;
+	   axis_label=;
 	  };
 	  colorscale {
 	   name="colorscale";
@@ -11328,6 +11792,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   labels_on=0;
 	   labels_col_name=;
 	   row_num=0;
+	   axis_label=;
 	  };
 	  thresh=0.5;
 	  thr_line_len=0.48;
@@ -11500,6 +11965,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  bar_space=0.2;
 	  bar_depth=0.01;
 	  label_spacing=-1;
+	  string_spacing=1;
 	  width=1;
 	  depth=1;
 	  axis_font_size=0.05;
@@ -11528,6 +11994,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   labels_on=0;
 	   labels_col_name=;
 	   row_num=0;
+	   axis_label=;
 	  };
 	  z_axis {
 	   name="z_axis";
@@ -11552,6 +12019,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   labels_on=0;
 	   labels_col_name=;
 	   row_num=0;
+	   axis_label=;
 	  };
 	  tot_plots=16;
 	  plots {
@@ -11581,6 +12049,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=CIRCLE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[1] {
 	    name="UnitSpec_0_ActFmNetFun_Graph_plot_2";
@@ -11605,6 +12075,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=SQUARE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[2] {
 	    name="UnitSpec_0_ActFmNetFun_Graph_plot_3";
@@ -11629,6 +12101,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=DIAMOND;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[3] {
 	    name="UnitSpec_0_ActFmNetFun_Graph_plot_4";
@@ -11653,6 +12127,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=TRIANGLE_UP;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[4] {
 	    name="UnitSpec_0_ActFmNetFun_Graph_plot_5";
@@ -11677,6 +12153,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=PLUS;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[5] {
 	    name="UnitSpec_0_ActFmNetFun_Graph_plot_6";
@@ -11701,6 +12179,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=CROSS;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[6] {
 	    name="UnitSpec_0_ActFmNetFun_Graph_plot_7";
@@ -11725,6 +12205,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=STAR;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[7] {
 	    name="UnitSpec_0_ActFmNetFun_Graph_plot_8";
@@ -11749,6 +12231,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=TRIANGLE_DN;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[8] {
 	    name="UnitSpec_0_ActFmNetFun_Graph_plot_9";
@@ -11773,6 +12257,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=DOT;
 	    point_style=CIRCLE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[9] {
 	    name="UnitSpec_0_ActFmNetFun_Graph_plot_10";
@@ -11797,6 +12283,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=DOT;
 	    point_style=SQUARE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[10] {
 	    name="UnitSpec_0_ActFmNetFun_Graph_plot_11";
@@ -11821,6 +12309,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=DOT;
 	    point_style=DIAMOND;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[11] {
 	    name="UnitSpec_0_ActFmNetFun_Graph_plot_12";
@@ -11845,6 +12335,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=DOT;
 	    point_style=TRIANGLE_UP;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[12] {
 	    name="UnitSpec_0_ActFmNetFun_Graph_plot_13";
@@ -11869,6 +12361,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=DOT;
 	    point_style=TRIANGLE_DN;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[13] {
 	    name="UnitSpec_0_ActFmNetFun_Graph_plot_14";
@@ -11893,6 +12387,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=DOT;
 	    point_style=PLUS;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[14] {
 	    name="UnitSpec_0_ActFmNetFun_Graph_plot_15";
@@ -11917,6 +12413,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=DOT;
 	    point_style=CROSS;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[15] {
 	    name="UnitSpec_0_ActFmNetFun_Graph_plot_16";
@@ -11941,6 +12439,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=DOT;
 	    point_style=STAR;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	  };
 	  errbars {
@@ -11970,6 +12470,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=CIRCLE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[1] {
 	    name="UnitSpec_0_ActFmNetFun_Graph_err_2";
@@ -11994,6 +12496,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=CIRCLE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[2] {
 	    name="UnitSpec_0_ActFmNetFun_Graph_err_3";
@@ -12018,6 +12522,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=CIRCLE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[3] {
 	    name="UnitSpec_0_ActFmNetFun_Graph_err_4";
@@ -12042,6 +12548,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=CIRCLE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[4] {
 	    name="UnitSpec_0_ActFmNetFun_Graph_err_5";
@@ -12066,6 +12574,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=CIRCLE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[5] {
 	    name="UnitSpec_0_ActFmNetFun_Graph_err_6";
@@ -12090,6 +12600,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=CIRCLE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[6] {
 	    name="UnitSpec_0_ActFmNetFun_Graph_err_7";
@@ -12114,6 +12626,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=CIRCLE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[7] {
 	    name="UnitSpec_0_ActFmNetFun_Graph_err_8";
@@ -12138,6 +12652,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=CIRCLE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[8] {
 	    name="UnitSpec_0_ActFmNetFun_Graph_err_9";
@@ -12162,6 +12678,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=CIRCLE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[9] {
 	    name="UnitSpec_0_ActFmNetFun_Graph_err_10";
@@ -12186,6 +12704,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=CIRCLE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[10] {
 	    name="UnitSpec_0_ActFmNetFun_Graph_err_11";
@@ -12210,6 +12730,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=CIRCLE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[11] {
 	    name="UnitSpec_0_ActFmNetFun_Graph_err_12";
@@ -12234,6 +12756,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=CIRCLE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[12] {
 	    name="UnitSpec_0_ActFmNetFun_Graph_err_13";
@@ -12258,6 +12782,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=CIRCLE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[13] {
 	    name="UnitSpec_0_ActFmNetFun_Graph_err_14";
@@ -12282,6 +12808,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=CIRCLE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[14] {
 	    name="UnitSpec_0_ActFmNetFun_Graph_err_15";
@@ -12306,6 +12834,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=CIRCLE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[15] {
 	    name="UnitSpec_0_ActFmNetFun_Graph_err_16";
@@ -12330,11 +12860,18 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=CIRCLE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	  };
+	  x_axis_label=;
+	  y_axis_label=;
+	  alt_y_axis_label=;
+	  z_axis_label=;
 	  err_spacing=1;
 	  err_bar_width=0.02;
 	  color_mode=FIXED;
+	  color_gp_use_y=0;
 	  color_axis {
 	   name="color_axis";
 	   m_data=NULL;
@@ -12358,6 +12895,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   labels_on=0;
 	   labels_col_name=;
 	   row_num=0;
+	   axis_label=;
 	  };
 	  colorscale {
 	   name="colorscale";
@@ -12394,6 +12932,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   labels_on=0;
 	   labels_col_name=;
 	   row_num=0;
+	   axis_label=;
 	  };
 	  thresh=0.5;
 	  thr_line_len=0.48;
@@ -12575,6 +13114,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  bar_space=0.2;
 	  bar_depth=0.01;
 	  label_spacing=-1;
+	  string_spacing=1;
 	  width=1;
 	  depth=1;
 	  axis_font_size=0.05;
@@ -12603,6 +13143,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   labels_on=0;
 	   labels_col_name=;
 	   row_num=0;
+	   axis_label=;
 	  };
 	  z_axis {
 	   name="z_axis";
@@ -12627,6 +13168,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   labels_on=0;
 	   labels_col_name=;
 	   row_num=0;
+	   axis_label=;
 	  };
 	  tot_plots=16;
 	  plots {
@@ -12656,6 +13198,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=CIRCLE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[1] {
 	    name="SpikeVsRate_Graph_plot_2";
@@ -12680,6 +13224,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=SQUARE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[2] {
 	    name="SpikeVsRate_Graph_plot_3";
@@ -12704,6 +13250,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=DIAMOND;
 	    alt_y=1;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[3] {
 	    name="SpikeVsRate_Graph_plot_4";
@@ -12728,6 +13276,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=TRIANGLE_UP;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[4] {
 	    name="SpikeVsRate_Graph_plot_5";
@@ -12752,6 +13302,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=PLUS;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[5] {
 	    name="SpikeVsRate_Graph_plot_6";
@@ -12776,6 +13328,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=CROSS;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[6] {
 	    name="SpikeVsRate_Graph_plot_7";
@@ -12800,6 +13354,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=STAR;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[7] {
 	    name="SpikeVsRate_Graph_plot_8";
@@ -12824,6 +13380,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=TRIANGLE_DN;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[8] {
 	    name="SpikeVsRate_Graph_plot_9";
@@ -12848,6 +13406,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=DOT;
 	    point_style=CIRCLE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[9] {
 	    name="SpikeVsRate_Graph_plot_10";
@@ -12872,6 +13432,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=DOT;
 	    point_style=SQUARE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[10] {
 	    name="SpikeVsRate_Graph_plot_11";
@@ -12896,6 +13458,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=DOT;
 	    point_style=DIAMOND;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[11] {
 	    name="SpikeVsRate_Graph_plot_12";
@@ -12920,6 +13484,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=DOT;
 	    point_style=TRIANGLE_UP;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[12] {
 	    name="SpikeVsRate_Graph_plot_13";
@@ -12944,6 +13510,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=DOT;
 	    point_style=TRIANGLE_DN;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[13] {
 	    name="SpikeVsRate_Graph_plot_14";
@@ -12968,6 +13536,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=DOT;
 	    point_style=PLUS;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[14] {
 	    name="SpikeVsRate_Graph_plot_15";
@@ -12992,6 +13562,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=DOT;
 	    point_style=CROSS;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[15] {
 	    name="SpikeVsRate_Graph_plot_16";
@@ -13016,6 +13588,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=DOT;
 	    point_style=STAR;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	  };
 	  errbars {
@@ -13045,6 +13619,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=CIRCLE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[1] {
 	    name="SpikeVsRate_Graph_err_2";
@@ -13069,6 +13645,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=CIRCLE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[2] {
 	    name="SpikeVsRate_Graph_err_3";
@@ -13093,6 +13671,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=CIRCLE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[3] {
 	    name="SpikeVsRate_Graph_err_4";
@@ -13117,6 +13697,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=CIRCLE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[4] {
 	    name="SpikeVsRate_Graph_err_5";
@@ -13141,6 +13723,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=CIRCLE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[5] {
 	    name="SpikeVsRate_Graph_err_6";
@@ -13165,6 +13749,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=CIRCLE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[6] {
 	    name="SpikeVsRate_Graph_err_7";
@@ -13189,6 +13775,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=CIRCLE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[7] {
 	    name="SpikeVsRate_Graph_err_8";
@@ -13213,6 +13801,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=CIRCLE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[8] {
 	    name="SpikeVsRate_Graph_err_9";
@@ -13237,6 +13827,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=CIRCLE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[9] {
 	    name="SpikeVsRate_Graph_err_10";
@@ -13261,6 +13853,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=CIRCLE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[10] {
 	    name="SpikeVsRate_Graph_err_11";
@@ -13285,6 +13879,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=CIRCLE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[11] {
 	    name="SpikeVsRate_Graph_err_12";
@@ -13309,6 +13905,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=CIRCLE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[12] {
 	    name="SpikeVsRate_Graph_err_13";
@@ -13333,6 +13931,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=CIRCLE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[13] {
 	    name="SpikeVsRate_Graph_err_14";
@@ -13357,6 +13957,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=CIRCLE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[14] {
 	    name="SpikeVsRate_Graph_err_15";
@@ -13381,6 +13983,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=CIRCLE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	   GraphPlotView @[15] {
 	    name="SpikeVsRate_Graph_err_16";
@@ -13405,11 +14009,18 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    line_style=SOLID;
 	    point_style=CIRCLE;
 	    alt_y=0;
+	    axis_label=;
+	    alt_axis_label=;
 	   };
 	  };
+	  x_axis_label=;
+	  y_axis_label=;
+	  alt_y_axis_label=;
+	  z_axis_label=;
 	  err_spacing=1;
 	  err_bar_width=0.02;
 	  color_mode=FIXED;
+	  color_gp_use_y=0;
 	  color_axis {
 	   name="color_axis";
 	   m_data=NULL;
@@ -13433,6 +14044,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   labels_on=0;
 	   labels_col_name=;
 	   row_num=0;
+	   axis_label=;
 	  };
 	  colorscale {
 	   name="colorscale";
@@ -13469,6 +14081,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   labels_on=0;
 	   labels_col_name=;
 	   row_num=0;
+	   axis_label=;
 	  };
 	  thresh=0.5;
 	  thr_line_len=0.48;
@@ -13576,9 +14189,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       el_typ=UserDataItem;
       el_def=0;
       UserDataItem @[0] {name="view_win_lft": value=0: val_type_fixed=0: };
-      UserDataItem @[1] {name="view_win_top": value=0.008496176: val_type_fixed=0: };
-      UserDataItem @[2] {name="view_win_wd": value=0.04357067: val_type_fixed=0: };
-      UserDataItem @[3] {name="view_win_ht": value=0.7306712: val_type_fixed=0: };
+      UserDataItem @[1] {name="view_win_top": value=0.01168452: val_type_fixed=0: };
+      UserDataItem @[2] {name="view_win_wd": value=0.04969697: val_type_fixed=0: };
+      UserDataItem @[3] {name="view_win_ht": value=0.7185978: val_type_fixed=0: };
       UserDataItem @[4] {name="view_win_iconified": value=0: val_type_fixed=0: };
       UserDataItem @[5] {name="view_visible": value=0: val_type_fixed=0: };
      };
@@ -13597,7 +14210,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
  save_as_only=0;
  auto_name=1;
  last_change_desc="Project updated on wiki: CCN changes: got rid of app toolbar";
- tree_state{ .;.docs;.wizards;.ctrl_panels;.data;.data.gp[0];.data.gp[1];.data.gp[2];.programs;.programs.gp[0];.programs.gp[1];.networks;.networks[0];.networks[0].specs;.networks[0].layers; };
+ tree_state{ .;.patches;.docs;.wizards;.ctrl_panels;.active_params;.data;.data.gp[0];.data.gp[1];.data.gp[2];.programs;.programs.break_points;.programs.gp[0];.programs.gp[1];.networks;.networks[0];.networks[0].spec_tables;.networks[0].specs;.networks[0].specs[1];.networks[0].param_seqs;.networks[0].layers;.networks[0].weights; };
  networks {
   name="networks";
   el_typ=LeabraNetwork;
@@ -13641,6 +14254,14 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
    };
    name="UnitNet";
    desc=;
+   flags=BUILD_INIT_WTS;
+   train_mode=TRAIN;
+   wt_update=ON_LINE;
+   small_batch_n=10;
+   stats {sse_unit_avg=0: sse_sqrt=0: cnt_err_tol=0: prerr=0: };
+   n_units=0;
+   n_cons=0;
+   max_prjns=1;
    specs {
     name="specs";
     el_typ=BaseSpec;
@@ -13651,20 +14272,21 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      used_status=USED;
      desc=;
      unique{      };
+     saved{      };
      children {
       name="children";
       el_typ=LeabraUnitSpec;
       el_def=0;
      };
-     act_range {min=0: max=1: range=1: scale=1: };
      bias_spec {type=LeabraBiasSpec: spec=.networks[0].specs[1].children[0]$$: };
+     act_range {min=0: max=1: range=1: scale=1: };
      sse_tol=0.5;
      act_fun=NOISY_XX1;
-     act {thr=0.5: gain=40: nvar=0.01: };
+     act {thr=0.5: gain=40: nvar=0.01: sig_mult=0.33: sig_mult_pow=0.8: sig_gain=3: interp_range=0.01: gain_cor_range=10: gain_cor=0.1: sig_gain_nvar=300: sig_mult_eff=0.1585484: sig_val_at_0=0.07927421: interp_val=0.187588: };
      act_misc {rec_nd=1: avg_nd=1: dif_avg=0: net_gain=1: act_max_hz=100: avg_trace=0: lambda=0: avg_tau=200: avg_init=0.15: avg_dt=0.005: };
      spike {rise=0: decay=5: g_gain=1: window=3: eq_gain=10: eq_tau=50: eq_dt=0.02: };
      spike_misc {ex=1: exp_slope=0.02: spk_thr=1.2: vm_r=0.3: t_r=0: clamp_max_p=0.12: clamp_type=REGULAR: eff_spk_thr=1.2: };
-     opt_thresh {send=0.1: delta=0.005: xcal_lrn=0.01: };
+     opt_thresh {send=0.1: delta=0.005: };
      clamp_range {min=0: max=0.95: range=0.95: scale=1.052632: };
      vm_range {min=0: max=2: range=2: scale=0.5: };
      init {v_m=0.4: act=0: netin=0: };
@@ -13675,21 +14297,14 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      g_bar {e=0.3: l=0.3: i=1: };
      e_rev {e=1: l=0.3: i=0.25: };
      adapt {on=0: tau=144: vm_gain=0.04: spike_gain=0.00805: Ei_dyn=0: Ei_gain=0.001: Ei_tau=50: dt=0.006944444: Ei_dt=0.02: };
-     stp {on=0: f_r_ratio=0.02: rec_tau=200: p0=0.2: p0_norm=0.2: kre_tau=100: kre=0.002: fac_tau=4: fac=0.3: rec_dt=0.005: fac_dt=0.25: kre_dt=0.01: oneo_p0_norm=5: };
+     stp {on=0: algorithm=CYCLES: f_r_ratio=0.02: rec_tau=200: p0=0.2: p0_norm=0.2: kre_tau=100: kre=0.002: fac_tau=4: fac=0.3: thresh=0.5: n_trials=1: rec_prob=0.1: rec_dt=0.005: fac_dt=0.25: kre_dt=0.01: oneo_p0_norm=5: };
      syn_delay {on=0: delay=4: };
      deep_raw_qtr=Q4;
-     deep {on=0: role=SUPER: raw_thr_rel=0.1: raw_thr_abs=0.1: mod_min=0.8: mod_thr=0.1: trc_p_only_m=0: trc_thal_gate=0: trc_avg_clamp=0: trc_deep_gain=0.2: mod_range=0.2: trc_std_gain=0.8: };
+     deep {on=0: role=SUPER: raw_thr_rel=0.1: raw_thr_abs=0.1: mod_min=0.8: mod_thr=0.1: ctxt_prv=0: tick_updt=-1: else_prv=0.9: mod_range=0.2: ctxt_new=1: else_new=0.1: };
+     trc {p_only_m=0: thal_gate=0: avg_clamp=0: deep_gain=0.2: clip=0: clip_max=0.4: std_gain=0.8: };
      da_mod {on=0: minus=0: plus=0.1: };
-     noise_type=NETIN_NOISE;
+     noise_type {type=NO_NOISE: trial_fixed=1: };
      noise {name="noise": type=GAUSSIAN: mean=0: var=0: par=1: };
-     noise_adapt {trial_fixed=0: mode=FIXED_NOISE: };
-     noise_sched {
-      name="noise_sched";
-      el_typ=SchedItem;
-      el_def=0;
-      default_val=1;
-      interpolate=1;
-     };
     };
     LeabraConSpec @[1] {
      name="ConSpec_0";
@@ -13697,6 +14312,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      used_status=USED;
      desc=;
      unique{ wt_limits;     };
+     saved{      };
      children {
       name="children";
       el_typ=LeabraConSpec;
@@ -13707,6 +14323,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        used_status=USED;
        desc=;
        unique{ rnd;wt_limits;wt_scale;wt_scale_init;       };
+       saved{        };
        children {
 	name="children";
 	el_typ=LeabraBiasSpec;
@@ -13719,9 +14336,18 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        learn=0;
        learn_qtr=Q4;
        lrate=0;
-       use_lrate_sched=1;
        cur_lrate=0;
        lrs_mult=1;
+       use_unlearnable=1;
+       xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: lrn_thr=0.01: d_rev_ratio=-9: };
+       wt_sig {gain=6: off=1.25: soft_bound=1: };
+       momentum {on=0: dwavg_tau=1000: norm_min=0.001: m_tau=20: lrate_comp=0.01: dwavg_dt=0.001: dwavg_dt_c=0.999: m_dt=0.05: m_dt_c=0.95: };
+       wt_bal {on=0: hi_thr=0.4: hi_gain=4: lo_thr=0.2: lo_gain=4: };
+       adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
+       slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
+       deep {on=0: bg_lrate=1: fg_lrate=0: };
+       margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_lrn=0.001: };
+       use_lrate_sched=1;
        lrate_sched {
 	name="lrate_sched";
 	el_typ=SchedItem;
@@ -13729,15 +14355,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	default_val=1;
 	interpolate=0;
        };
-       use_unlearnable=1;
-       xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
-       wt_sig {gain=6: off=1.25: soft_bound=1: };
-       dwt_zone {on=0: con_norm=1: s_tau=50: l_tau=2: norm_tau=100: gain=2: lrate_mult=3: s_dt=0.02: l_dt=0.5: norm_dt=0.01: };
-       wt_bal {on=0: hi_thr=0.4: hi_gain=4: lo_thr=0.2: lo_gain=4: };
-       adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
-       slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
-       deep {on=0: bg_lrate=1: fg_lrate=0: };
-       margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_l_lrn=0: sign_lrn=0.001: };
        dwt_thresh=0.1;
       };
      };
@@ -13748,9 +14365,18 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      learn=0;
      learn_qtr=Q4;
      lrate=0;
-     use_lrate_sched=1;
      cur_lrate=0;
      lrs_mult=1;
+     use_unlearnable=1;
+     xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: lrn_thr=0.01: d_rev_ratio=-9: };
+     wt_sig {gain=6: off=1.25: soft_bound=1: };
+     momentum {on=0: dwavg_tau=1000: norm_min=0.001: m_tau=20: lrate_comp=0.01: dwavg_dt=0.001: dwavg_dt_c=0.999: m_dt=0.05: m_dt_c=0.95: };
+     wt_bal {on=0: hi_thr=0.4: hi_gain=4: lo_thr=0.2: lo_gain=4: };
+     adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
+     slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
+     deep {on=0: bg_lrate=1: fg_lrate=0: };
+     margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_lrn=0.001: };
+     use_lrate_sched=1;
      lrate_sched {
       name="lrate_sched";
       el_typ=SchedItem;
@@ -13758,15 +14384,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       default_val=1;
       interpolate=0;
      };
-     use_unlearnable=1;
-     xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
-     wt_sig {gain=6: off=1.25: soft_bound=1: };
-     dwt_zone {on=0: con_norm=1: s_tau=50: l_tau=2: norm_tau=100: gain=2: lrate_mult=3: s_dt=0.02: l_dt=0.5: norm_dt=0.01: };
-     wt_bal {on=0: hi_thr=0.4: hi_gain=4: lo_thr=0.2: lo_gain=4: };
-     adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
-     slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
-     deep {on=0: bg_lrate=1: fg_lrate=0: };
-     margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_l_lrn=0: sign_lrn=0.001: };
     };
     LeabraLayerSpec @[2] {
      name="LayerSpec_0";
@@ -13774,6 +14391,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      used_status=USED;
      desc=;
      unique{      };
+     saved{      };
      children {
       name="children";
       el_typ=LeabraLayerSpec;
@@ -13781,10 +14399,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      };
      lay_inhib {on=1: gi=0: ff=1: fb=0.5: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
      unit_gp_inhib {on=0: gi=0: ff=1: fb=0.5: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
-     multi_gp_inhib {on=0: gi=1.8: ff=1: fb=1: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
-     multi_gp_geom {size={x=3: y=3: }: st_off={x=-1: y=-1: }: sub_size={x=1: y=1: }: wrap=1: };
      lay_gp_inhib {on=0: gi=1.8: ff=1: fb=1: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
-     avg_act {targ_init=0.2: fixed=1: use_ext_act=0: tau=100: adjust=1: dt=0.01: };
+     avg_act {targ_init=0.2: fixed=1: use_ext_act=0: use_first=1: tau=100: adjust=1: dt=0.01: };
      inhib_adapt {on=0: tol_pct=0.25: trial_interval=100: tau=200: dt=0.005: };
      inhib_misc {net_thr=0: thr_rel=1: self_fb=0: self_tau=1.4: fb_up_immed=0: self_dt=0.7142857: };
      clamp {hard=0: gain=0.5: avg=0: avg_gain=0.2: };
@@ -13801,6 +14417,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      used_status=USED;
      desc=;
      unique{      };
+     saved{      };
      children {
       name="children";
       el_typ=FullPrjnSpec;
@@ -13829,9 +14446,23 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     max_disp_size2d {x=1: y=4: };
     LeabraLayer @[0] {
      name="Input";
-     desc=;
+     n_recv_prjns=0;
+     n_send_prjns=1;
+     un_geom_x=1;
+     un_geom_y=1;
+     un_geom_n=1;
+     gp_geom_x=1;
+     gp_geom_y=1;
+     gp_geom_n=1;
+     flat_geom_x=1;
+     flat_geom_y=1;
+     flat_geom_n=1;
+     gp_spc_x=0;
+     gp_spc_y=0;
      flags=0;
      layer_type=INPUT;
+     desc=;
+     pos_rel {rel=ABS_POS: other=NULL: x_align=LEFT: x_off=0: y_align=FRONT: y_off=0: space=2: };
      pos {x=0: y=0: z=0: };
      pos_abs {x=0: y=0: z=0: };
      pos2d {x=0: y=0: };
@@ -13839,14 +14470,11 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      disp_scale=1;
      un_geom {x=1: y=1: n_not_xy=0: n=1: };
      unit_groups=0;
-     virt_groups=1;
      gp_geom {x=1: y=1: n_not_xy=0: n=1: };
      gp_spc {x=0: y=0: };
      flat_geom {x=1: y=1: n_not_xy=0: n=1: };
      disp_geom {x=1: y=1: n_not_xy=0: n=1: };
      scaled_disp_geom {x=1: y=1: n_not_xy=0: n=1: };
-     n_recv_prjns=0;
-     n_send_prjns=1;
      projections {
       name="projections";
       el_typ=LeabraPrjn;
@@ -13858,36 +14486,37 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       el_def=0;
       Projection_Group @. = [0] = LeabraPrjn .networks[0].layers[1].projections[0];
      };
-     units {
-      name="units";
-      el_typ=LeabraUnit;
-      el_def=0;
-      pos {x=0: y=0: z=0: };
-      output_name=;
-     };
      unit_spec {type=LeabraUnitSpec: spec=$.networks[0].specs[0]$: };
      dist {fm_input=0: fm_output=-1: };
      units_lesioned=0;
      gp_unit_names_4d=0;
      brain_area=;
      voxel_fill_pct=1;
+     spec {type=LeabraLayerSpec: spec=.networks[0].specs[2]$$: };
+     adapt_gi=1;
      acts_m_avg=0.2;
      acts_p_avg=0.2;
      acts_p_avg_eff=0.2;
-     spec {type=LeabraLayerSpec: spec=.networks[0].specs[2]$$: };
-     adapt_gi=1;
-     margin_low_thr=0.501;
-     margin_med_thr=0.506;
-     margin_hi_thr=0.508;
-     margin_low_avg=0.25;
-     margin_med_avg=0.0375;
-     margin_hi_avg=0.175;
     };
     LeabraLayer @[1] {
      name="Receiver";
-     desc=;
+     n_recv_prjns=1;
+     n_send_prjns=0;
+     un_geom_x=1;
+     un_geom_y=1;
+     un_geom_n=1;
+     gp_geom_x=1;
+     gp_geom_y=1;
+     gp_geom_n=1;
+     flat_geom_x=1;
+     flat_geom_y=1;
+     flat_geom_n=1;
+     gp_spc_x=0;
+     gp_spc_y=0;
      flags=0;
      layer_type=HIDDEN;
+     desc=;
+     pos_rel {rel=ABS_POS: other=NULL: x_align=LEFT: x_off=0: y_align=FRONT: y_off=0: space=2: };
      pos {x=0: y=0: z=1: };
      pos_abs {x=0: y=0: z=1: };
      pos2d {x=0: y=3: };
@@ -13895,14 +14524,11 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      disp_scale=1;
      un_geom {x=1: y=1: n_not_xy=0: n=1: };
      unit_groups=0;
-     virt_groups=1;
      gp_geom {x=1: y=1: n_not_xy=0: n=1: };
      gp_spc {x=0: y=0: };
      flat_geom {x=1: y=1: n_not_xy=0: n=1: };
      disp_geom {x=1: y=1: n_not_xy=0: n=1: };
      scaled_disp_geom {x=1: y=1: n_not_xy=0: n=1: };
-     n_recv_prjns=1;
-     n_send_prjns=0;
      projections {
       name="projections";
       el_typ=LeabraPrjn;
@@ -13911,16 +14537,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        name="Fm_Input";
        off=0;
        disp=1;
+       notes=;
        from_type=CUSTOM;
        from=.networks[0].layers[0]$$;
        spec {type=FullPrjnSpec: spec=.networks[0].specs[3]$$: };
        con_type=LeabraCon;
        con_spec {type=LeabraConSpec: spec=.networks[0].specs[1]$$: };
-       recv_idx=0;
-       send_idx=0;
-       recv_n=1;
-       send_n=1;
-       projected=1;
        dir_fixed=0;
        direction=FM_INPUT;
        prjn_clr {r=1: g=0.9: b=0.5: a=1: };
@@ -13931,30 +14553,17 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       el_typ=LeabraPrjn;
       el_def=0;
      };
-     units {
-      name="units";
-      el_typ=LeabraUnit;
-      el_def=0;
-      pos {x=0: y=0: z=0: };
-      output_name=;
-     };
      unit_spec {type=LeabraUnitSpec: spec=$.networks[0].specs[0]$: };
      dist {fm_input=1: fm_output=-1: };
      units_lesioned=0;
      gp_unit_names_4d=0;
      brain_area=;
      voxel_fill_pct=1;
+     spec {type=LeabraLayerSpec: spec=$.networks[0].specs[2]$: };
+     adapt_gi=1;
      acts_m_avg=0.2;
      acts_p_avg=0.2;
      acts_p_avg_eff=0.2;
-     spec {type=LeabraLayerSpec: spec=$.networks[0].specs[2]$: };
-     adapt_gi=1;
-     margin_low_thr=0.501;
-     margin_med_thr=0.506;
-     margin_hi_thr=0.508;
-     margin_low_avg=0.25;
-     margin_med_avg=0.0375;
-     margin_hi_avg=0.175;
     };
    };
    weights {
@@ -13962,27 +14571,15 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     el_typ=Weights;
     el_def=0;
    };
-   flags=BUILD_INIT_WTS;
-   unit_vars_type=LeabraUnitVars;
-   con_group_type=LeabraConGroup;
    auto_build=AUTO_BUILD;
    auto_load_wts=NO_AUTO_LOAD;
    auto_load_file=;
    brain_atlas_name=;
-   train_mode=TRAIN;
-   wt_update=ON_LINE;
-   small_batch_n=10;
-   stats {sse_unit_avg=0: sse_sqrt=0: cnt_err_tol=0: prerr=0: };
-   threads {run_time={name="": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: }: sync_time={name="": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: }: total_time={name="": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: }: n_wake_in_sync=0: run_time_pct=0: sync_time_pct=0: wake_in_sync_pct=6.169293311314099e-71: };
    cuda {sync_units=0: sync_cons=0: min_threads=32: max_threads=1024: cons_per_thread=2: timers_on=0: n_threads=32: };
-   usr1_save_fmt=FULL_NET;
    wt_save_fmt=TEXT;
-   n_units=3;
-   n_cons=1;
-   max_prjns=1;
    max_disp_size {x=1: y=1: z=2: };
    max_disp_size2d {x=1: y=4: };
-   times {quarter=1: gate_cyc=18: deep_cyc=5: time_inc=0.001: wt_bal_int=10: minus=3: plus=1: total_cycles=4: current_cycle_gate_cycle=0: };
+   times {quarter=1: deep_cyc=5: time_inc=0.001: wt_bal_int=10: minus=3: plus=1: total_cycles=4: thal_gate_cycle=-2: };
    lstats {trg_max_act_crit=0.5: off_errs=1: on_errs=1: agg_unlearnable=0: wt_bal=0: };
    net_misc {spike=0: deep=0: bias_learn=0: trial_decay=1: diff_scale_p=0: diff_scale_q1=0: wt_bal=0: lay_gp_inhib=0: inhib_cons=0: };
    deep {on=0: ctxt=0: raw_net=0: mod_net=0: raw_qtr=0: };

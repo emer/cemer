@@ -26,6 +26,8 @@
 
 #include "OneToOnePrjnSpec.cpp"
 
+#include "GpOneToOnePrjnSpec.cpp"
+
 #include "RandomPrjnSpec.cpp"
 
 #include "UniformRndPrjnSpec.cpp"

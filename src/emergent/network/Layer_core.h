@@ -207,20 +207,24 @@
   /////////////////////////////////////////////////////////////////
   //            UnitState access
   
-  INLINE bool UnIdxInRange(int un_no) const
+  INLINE bool FlatUnIdxInRange(int un_no) const
   { return (un_no >= 0 && un_no < n_units); }
-  // #CAT_State is unit index in range?
+  // #CAT_State is flat unit index (for full set of units in layer, regardless of sub unit groups) in range (0 <= idx < n_units)?
+    
+  INLINE bool UnIdxInRange(int un_no) const
+  { return (un_no >= 0 && un_no < un_geom_n); }
+  // #CAT_State is unit index in range according to un_geom_n (0 <= idx < un_geom_n) -- valid for units without sub unit groups or for accessing units within unit group
     
   INLINE bool GpIdxInRange(int gp_no) const
   { return (gp_no >= 0 && gp_no < n_ungps); }
-  // #CAT_State is group index in range?
+  // #CAT_State is sub unit group index in range?  always false if layer does not have unit groups
     
   INLINE UNIT_STATE* GetUnitState(NETWORK_STATE* net, int un_no) const
   { return net->GetUnitState(units_flat_idx + un_no); }
   // #CAT_State get the unit state at given index within full list of units in the layer
 
   INLINE UNIT_STATE* GetUnitStateSafe(NETWORK_STATE* net, int un_no) const
-  { if(!UnIdxInRange(un_no)) return NULL;
+  { if(!FlatUnIdxInRange(un_no)) return NULL;
     return net->GetUnitState(units_flat_idx + un_no); }
   // #CAT_State get the unit state at given index within full list of units in the layer -- safe range checking
 
@@ -233,9 +237,11 @@
   // #CAT_State get the unit state at given flat X,Y coordinates -- NULL if out of range
 
   INLINE UNIT_STATE* GetUnitStateGpUnIdx(NETWORK_STATE* net, int gp_dx, int un_dx) const
-  { if(un_dx >= un_geom_n || gp_dx >= gp_geom_n) return NULL;
-    return GetUnitStateSafe(net, gp_dx * un_geom_n + un_dx); }
-  // #CAT_State get the unit state at given group and unit indexes
+  { if(!UnIdxInRange(un_dx)) return NULL;
+    if(HasUnitGroups())  return GetUnitStateSafe(net, gp_dx * un_geom_n + un_dx);
+    else                 return GetUnitStateSafe(net, un_dx);
+  }
+  // #CAT_State get the unit state at given group and unit indexes -- also works for gp_dx = 0 if there are no sub unit groups
     
   INLINE UNIT_STATE* GetUnitStateGpXYUnIdx(NETWORK_STATE* net, int gp_x, int gp_y, int un_dx) const
   { if(gp_x >= gp_geom_x) return NULL; return GetUnitStateGpUnIdx(net, (gp_y * gp_geom_x + gp_x), un_dx); }

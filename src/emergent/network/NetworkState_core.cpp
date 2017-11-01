@@ -657,8 +657,8 @@ PRJN_SPEC_CPP* NETWORK_STATE::NewPrjnSpec(int spec_type) const {
     return new STATE_CLASS_CPP(FullPrjnSpec)();
   case T_OneToOnePrjnSpec:
     return new STATE_CLASS_CPP(OneToOnePrjnSpec)();
-  // case T_GpOneToOnePrjnSpec:
-  //   return new STATE_CLASS_CPP(GpOneToOnePrjnSpec)();
+  case T_GpOneToOnePrjnSpec:
+    return new STATE_CLASS_CPP(GpOneToOnePrjnSpec)();
   case T_RandomPrjnSpec:
     return new STATE_CLASS_CPP(RandomPrjnSpec)();
   case T_UniformRndPrjnSpec:

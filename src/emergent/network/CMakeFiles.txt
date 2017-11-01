@@ -162,7 +162,7 @@ set(network_HEADS_NOMAKETA
   AllProjectionSpecs_mbrs.h
   FullPrjnSpec.h
   OneToOnePrjnSpec.h
-  # GpOneToOnePrjnSpec.h
+  GpOneToOnePrjnSpec.h
   RandomPrjnSpec.h
   UniformRndPrjnSpec.h
   # PolarRndPrjnSpec.h
