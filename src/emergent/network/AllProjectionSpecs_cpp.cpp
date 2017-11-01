@@ -31,3 +31,5 @@
 #include "UniformRndPrjnSpec.cpp"
 
 #include "TesselPrjnSpec.cpp"
+
+#include "TiledGpRFPrjnSpec.cpp"

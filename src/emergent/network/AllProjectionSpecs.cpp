@@ -18,7 +18,9 @@
 #include <ConSpec_cpp>
 #include <Projection>
 #include <AllProjectionSpecs_cpp> // need the _cpp versions..
+
 #include <taMisc>
+#include <taMath_float>
 
 #include <State_main>
 
@@ -34,6 +36,10 @@ TA_BASEFUNS_CTORS_DEFN(RandomPrjnSpec);
 
 TA_BASEFUNS_CTORS_DEFN(UniformRndPrjnSpec);
 #include "UniformRndPrjnSpec.cpp"
+
+
+////////////////////////////////////////////////////////////////////////////////////
+//              TesselPrjnSpec
 
 TA_BASEFUNS_CTORS_DEFN(TesselPrjnSpec);
 TA_BASEFUNS_CTORS_DEFN(TessEl);
@@ -70,12 +76,7 @@ void TesselPrjnSpec::UpdateStateSpecs() {
   inherited::UpdateStateSpecs();
 }
 
-
-// todo: the problem here is that we either have to use direct access to type info to
-// cast state_spec as TesselPrjnSpec_cpp, or we have to do something else more strange
-// no longer fully general purpose sharing mech.
-
-// not sure about including the full _cpp version shere but I guess ok..
+// note: following requires access to TessEl_cpp -- hence AllProjectionSpecs_cpp include..
 
 void TesselPrjnSpec::CopyToState_SendOffs(void* state_spec, const char* state_suffix) {
   String ss = state_suffix;
@@ -220,3 +221,73 @@ void TesselPrjnSpec::WeightsFromGausDist(float scale, float sigma) {
     te->wt_val = scale * exp(-0.5 * dist / (sigma * sigma));
   }
 }
+
+////////////////////////////////////////////////////////////////////////////////////
+//              TesselPrjnSpec
+
+TA_BASEFUNS_CTORS_DEFN(GaussInitWtsSpec);
+TA_BASEFUNS_CTORS_DEFN(SigmoidInitWtsSpec);
+TA_BASEFUNS_CTORS_DEFN(TiledGpRFPrjnSpec);
+
+#include "TiledGpRFPrjnSpec.cpp"
+
+void TiledGpRFPrjnSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+
+  wt_range.UpdateAfterEdit_NoGui();
+  if(TestWarning(full_send == ALL_SAME, "UAE",
+                 "full_send == ALL_SAME is not a valid option, switching back to BY_UNIT")) {
+    full_send = BY_UNIT;
+  }
+  
+  if(taMisc::is_loading) {
+    taVersion v705(7, 0, 5);
+    if(taMisc::loading_version < v705) { // set send_gp_start to prev val
+      if(wrap) {
+        send_gp_start = -send_gp_skip;
+      }
+      else {
+        send_gp_start = 0;
+      }
+    }
+  }
+}
+
+bool TiledGpRFPrjnSpec::TrgRecvFmSend(int send_x, int send_y) {
+  trg_send_geom.x = send_x;
+  trg_send_geom.y = send_y;
+
+  if(wrap)
+    trg_recv_geom = (trg_send_geom / send_gp_skip);
+  else
+    trg_recv_geom = (trg_send_geom / send_gp_skip) - 1;
+
+  // now fix it the other way
+  if(wrap)
+    trg_send_geom = (trg_recv_geom * send_gp_skip);
+  else
+    trg_send_geom = ((trg_recv_geom +1) * send_gp_skip);
+
+  SigEmitUpdated();
+  return (trg_send_geom.x == send_x && trg_send_geom.y == send_y);
+}
+
+bool TiledGpRFPrjnSpec::TrgSendFmRecv(int recv_x, int recv_y) {
+  trg_recv_geom.x = recv_x;
+  trg_recv_geom.y = recv_y;
+
+  if(wrap)
+    trg_send_geom = (trg_recv_geom * send_gp_skip);
+  else
+    trg_send_geom = ((trg_recv_geom+1) * send_gp_skip);
+
+  // now fix it the other way
+  if(wrap)
+    trg_recv_geom = (trg_send_geom / send_gp_skip);
+  else
+    trg_recv_geom = (trg_send_geom / send_gp_skip) - 1;
+
+  SigEmitUpdated();
+  return (trg_recv_geom.x == recv_x && trg_recv_geom.y == recv_y);
+}
+

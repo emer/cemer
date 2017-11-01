@@ -178,7 +178,7 @@ set(network_HEADS_NOMAKETA
 
   # SymmetricPrjnSpec.h
   
-  # TiledGpRFPrjnSpec.h
+  TiledGpRFPrjnSpec.h
   # TiledSubGpRFPrjnSpec.h
   # TiledGpRFOneToOnePrjnSpec.h
   # TiledGpRFOneToOneWtsPrjnSpec.h

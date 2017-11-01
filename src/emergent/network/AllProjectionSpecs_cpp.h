@@ -78,5 +78,16 @@ public:
 };
 
 
+class TiledGpRFPrjnSpec_cpp : public ProjectionSpec_cpp {
+  // Tiled receptive field projection spec for entirely group-to-group connections: connects entire receiving layer unit groups with overlapping tiled regions of sending layer groups -- if init_wts is on, gaussian or sigmoid topographic weights are initialized
+INHERITED(ProjectionSpec)
+public:
+
+#include <TiledGpRFPrjnSpec>  
+
+  TiledGpRFPrjnSpec_cpp() { Initialize_core(); }
+};
+
+
 
 #endif // AllProjectionSpecs_cpp_h

@@ -33,6 +33,32 @@ private:
   }
 };
 
+class STATE_CLASS(GaussInitWtsSpec) : public STATE_CLASS(taOBase) {
+  // #STEM_BASE ##INLINE ##CAT_Projection parameters for initializing gaussian projection weights
+INHERITED(taOBase)
+public:
+  bool          on;             // initialize gaussian weights at this level scale
+  float		sigma;		// #CONDSHOW_ON_on gaussian sigma (width) in normalized units where entire distance across relevant dimension is 1.0 -- typical useful values range from .3 to 1.5
+  bool          wrap_wts;       // #CONDSHOW_ON_on wrap the gaussian around on other sides of the receptive field -- this removes strict topography but ensures a more uniform distribution of weight values so edge units don't have weaker overall weights -- often useful to use for unit-group level but not for full level
+  float         ctr_mv;         // #CONDSHOW_ON_on #DEF_0.8;1 how much the center of the gaussian moves with respect to the position of the receiving unit within its unit group -- 1.0 = centers span the entire range of the receptive field -- typically want to use 1.0 for wrap_wts = true, and 0.8 for wrap_wts = false
 
+  STATE_DECO_KEY("ProjectionSpec");
+  STATE_TA_STD_CODE(GaussInitWtsSpec);
+private:
+  void 	Initialize() {  on = true;  sigma = 0.6f;  wrap_wts = false;  ctr_mv = 0.8f; }
+};
 
+class STATE_CLASS(SigmoidInitWtsSpec) : public STATE_CLASS(taOBase) {
+  // #STEM_BASE ##INLINE ##CAT_Projection parameters for initializing sigmoid projection weights
+INHERITED(taOBase)
+public:
+  bool          on;             // initialize sigmoid weights at this level scale
+  float		gain;		// #CONDSHOW_ON_on sigmoid gain (contrast) in normalized units where entire distance across relevant dimension is 1.0 -- typical useful values range from 0.01..0.1
+  float         ctr_mv;         // #CONDSHOW_ON_on #DEF_0.5;1 how much the center of the sigmoid moves with respect to the position of the receiving unit within its unit group -- 1.0 = centers span the entire range of the receptive field -- typically 0.5 to 0.8 is best
+
+  STATE_DECO_KEY("ProjectionSpec");
+  STATE_TA_STD_CODE(SigmoidInitWtsSpec);
+private:
+  void 	Initialize()  {  on = true;  gain = 0.02f;  ctr_mv = 0.5f; }
+};
 

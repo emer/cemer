@@ -23,7 +23,7 @@
   INIMPL void Init_Weights_Prjn(PRJN_STATE* prjn, NETWORK_STATE* net, int thr_no,
                                 CON_STATE* cg) override;
 
-  bool  HasRandomScale() override { return false; }
+  INLINE bool  HasRandomScale() override { return false; }
 
   INIMPL virtual void	GetCtrFmRecv(TAVECTOR2I& sctr, TAVECTOR2I ruc);
   // #IGNORE get center of sender coords from receiving coords

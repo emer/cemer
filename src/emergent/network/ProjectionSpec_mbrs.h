@@ -32,4 +32,3 @@ private:
   void 	Initialize()  { on = false;  mult_norm = true;  avg_wt = 0.5f; }
 };
 
-

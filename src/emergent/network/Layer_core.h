@@ -129,6 +129,9 @@
   { return net->GetUnGpState(ungp_idx); }
   // #CAT_State get the main unit group state for this layer
 
+  INLINE bool HasUnitGroups() const { return (n_ungps > 0); }
+  // #CAT_State does this layer have sub-unit groups
+
   INLINE UNGP_STATE* GetUnGpState(NETWORK_STATE* net, int ungp_no) const
   { if(ungp_no < 0 || ungp_no >= n_ungps) return NULL;
     return net->GetUnGpState(ungp_idx + 1 + ungp_no); }
@@ -204,12 +207,20 @@
   /////////////////////////////////////////////////////////////////
   //            UnitState access
   
+  INLINE bool UnIdxInRange(int un_no) const
+  { return (un_no >= 0 && un_no < n_units); }
+  // #CAT_State is unit index in range?
+    
+  INLINE bool GpIdxInRange(int gp_no) const
+  { return (gp_no >= 0 && gp_no < n_ungps); }
+  // #CAT_State is group index in range?
+    
   INLINE UNIT_STATE* GetUnitState(NETWORK_STATE* net, int un_no) const
   { return net->GetUnitState(units_flat_idx + un_no); }
   // #CAT_State get the unit state at given index within full list of units in the layer
 
   INLINE UNIT_STATE* GetUnitStateSafe(NETWORK_STATE* net, int un_no) const
-  { if(un_no < 0 || un_no >= n_units) return NULL;
+  { if(!UnIdxInRange(un_no)) return NULL;
     return net->GetUnitState(units_flat_idx + un_no); }
   // #CAT_State get the unit state at given index within full list of units in the layer -- safe range checking
 
@@ -252,7 +263,12 @@
   { int gp_dx = un_idx / un_geom_n; int un_dx = un_idx % un_geom_n;
     GetUnXYFmIdx(un_dx, un_x, un_y);  GetGpXYFmIdx(gp_dx, gp_x, gp_y); }
   // #CAT_State get group X,Y and unit X,Y coordinates from overall unit index within the layer
-
+  INLINE int GetUnIdxFmXY(int un_x, int un_y) const
+  { int idx = un_y * un_geom_x + un_x; return idx; }
+  // #CAT_State get unit-level index for unit X,Y coordinates -- valid for index within unit group or within entire layer if no unit groups
+  INLINE int GetGpIdxFmXY(int gp_x, int gp_y) const
+  { int idx = gp_y * gp_geom_x + gp_x; return idx; }
+  // #CAT_State get group-level index for group X,Y coordinates -- valid for unit groups
 
   /////////////////////////////////////////////////////////////////
   //            Build / Connect / Infrastructure

@@ -21,11 +21,14 @@
 #include <RndSeed>
 #include <taVector2i>
 #include <taVector2f>
+#include <MinMaxRange>
 
 #include <State_main>
 
 // need to define all the ones for _mbrs here
 eTypeDef_Of(TessEl);
+eTypeDef_Of(GaussInitWtsSpec);
+eTypeDef_Of(SigmoidInitWtsSpec);
 
 #include <AllProjectionSpecs_mbrs>
 
@@ -161,5 +164,32 @@ private:
   void	Initialize() { Initialize_core(); send_offs.SetBaseType(&TA_TessEl); }
   void	Destroy()    { CutLinks(); FreeSendOffs(); }
 };
+
+
+eTypeDef_Of(TiledGpRFPrjnSpec);
+
+class E_API TiledGpRFPrjnSpec : public ProjectionSpec {
+  // Tiled receptive field projection spec for entirely group-to-group connections: connects entire receiving layer unit groups with overlapping tiled regions of sending layer groups -- if init_wts is on, gaussian or sigmoid topographic weights are initialized
+INHERITED(ProjectionSpec)
+public:
+
+#include <TiledGpRFPrjnSpec>  
+
+  
+  virtual bool	TrgRecvFmSend(int send_x, int send_y);
+  // #BUTTON compute target recv layer geometry based on given sending layer geometry -- updates trg_recv_geom and trg_send_geom members, including fixing send to be an appropriate even multiple of rf_move -- returns true if send values provided result are same "good" ones that come out the end
+  virtual bool	TrgSendFmRecv(int recv_x, int recv_y);
+  // #BUTTON compute target recv layer geometry based on given sending layer geometry -- updates trg_recv_geom and trg_send_geom members, including fixing recv to be an appropriate even multiple of rf_move --  -- returns true if send values provided result are same "good" ones that come out the end
+
+  TA_SIMPLE_BASEFUNS(TiledGpRFPrjnSpec);
+protected:
+  void  UpdateAfterEdit_impl() override;
+  
+private:
+  void	Initialize()            { Initialize_core(); }
+  void 	Destroy()		{ };
+};
+
+
 
 #endif // AllProjectionSpecs_h

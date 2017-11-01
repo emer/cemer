@@ -657,44 +657,72 @@ PRJN_SPEC_CPP* NETWORK_STATE::NewPrjnSpec(int spec_type) const {
     return new STATE_CLASS_CPP(FullPrjnSpec)();
   case T_OneToOnePrjnSpec:
     return new STATE_CLASS_CPP(OneToOnePrjnSpec)();
+  // case T_GpOneToOnePrjnSpec:
+  //   return new STATE_CLASS_CPP(GpOneToOnePrjnSpec)();
   case T_RandomPrjnSpec:
     return new STATE_CLASS_CPP(RandomPrjnSpec)();
   case T_UniformRndPrjnSpec:
     return new STATE_CLASS_CPP(UniformRndPrjnSpec)();
-  case T_TesselPrjnSpec:
-    return new STATE_CLASS_CPP(TesselPrjnSpec)();
-  // case T_SmallWorldPrjnSpec:
-  //   return new STATE_CLASS_CPP(SmallWorldPrjnSpec)();
   // case T_PolarRndPrjnSpec:
   //   return new STATE_CLASS_CPP(PolarRndPrjnSpec)();
-  // case T_SymmetricPrjnSpec:
-  //   return new STATE_CLASS_CPP(SymmetricPrjnSpec)();
-  // case T_GpOneToOnePrjnSpec:
-  //   return new STATE_CLASS_CPP(GpOneToOnePrjnSpec)();
+  case T_TesselPrjnSpec:
+    return new STATE_CLASS_CPP(TesselPrjnSpec)();
+  // case T_GpTesselPrjnSpec:
+  //   return new STATE_CLASS_CPP(GpTesselPrjnSpec)();
+  // case T_GpMapConvergePrjnSpec:
+  //   return new STATE_CLASS_CPP(GpMapConvergePrjnSpec)();
+  // case T_GpMapDivergePrjnSpec:
+  //   return new STATE_CLASS_CPP(GpMapDivergePrjnSpec)();
   // case T_MarkerGpOneToOnePrjnSpec:
   //   return new STATE_CLASS_CPP(MarkerGpOneToOnePrjnSpec)();
   // case T_RndGpOneToOnePrjnSpec:
   //   return new STATE_CLASS_CPP(RndGpOneToOnePrjnSpec)();
-  // case T_GpTesselPrjnSpec:
-  //   return new STATE_CLASS_CPP(GpTesselPrjnSpec)();
+  // case T_SymmetricPrjnSpec:
+  //   return new STATE_CLASS_CPP(SymmetricPrjnSpec)();
+  case T_TiledGpRFPrjnSpec:
+    return new STATE_CLASS_CPP(TiledGpRFPrjnSpec)();
+  // case T_TiledSubGpRFPrjnSpec:
+  //   return new STATE_CLASS_CPP(TiledSubGpRFPrjnSpec)();
+  // case T_TiledGpRFOneToOnePrjnSpec:
+  //   return new STATE_CLASS_CPP(TiledGpRFOneToOnePrjnSpec)();
+  // case T_TiledGpRFOneToOneWtsPrjnSpec:
+  //   return new STATE_CLASS_CPP(TiledGpRFOneToOneWtsPrjnSpec)();
   // case T_TiledRFPrjnSpec:
   //   return new STATE_CLASS_CPP(TiledRFPrjnSpec)();
   // case T_TiledNovlpPrjnSpec:
   //   return new STATE_CLASS_CPP(TiledNovlpPrjnSpec)();
   // case T_TiledDivGpRFPrjnSpec:
   //   return new STATE_CLASS_CPP(TiledDivGpRFPrjnSpec)();
-  // case T_GpMapConvergePrjnSpec:
-  //   return new STATE_CLASS_CPP(GpMapConvergePrjnSpec)();
-  // case T_GpMapDivergePrjnSpec:
-  //   return new STATE_CLASS_CPP(GpMapDivergePrjnSpec)();
   // case T_TiledGpMapConvergePrjnSpec:
   //   return new STATE_CLASS_CPP(TiledGpMapConvergePrjnSpec)();
   // case T_GaussRFPrjnSpec:
   //   return new STATE_CLASS_CPP(GaussRFPrjnSpec)();
   // case T_GradientWtsPrjnSpec:
   //   return new STATE_CLASS_CPP(GradientWtsPrjnSpec)();
+  // case T_GpCustomPrjnSpecBase:
+  //   return new STATE_CLASS_CPP(GpCustomPrjnSpecBase)();
+  // case T_PFCPrjnSpec:
+  //   return new STATE_CLASS_CPP(PFCPrjnSpec)();
+  // case T_BgPfcPrjnSpec:
+  //   return new STATE_CLASS_CPP(BgPfcPrjnSpec)();
   // case T_ConPoolPrjnSpec:
   //   return new STATE_CLASS_CPP(ConPoolPrjnSpec)();
+  // case T_SmallWorldPrjnSpec:
+  //   return new STATE_CLASS_CPP(SmallWorldPrjnSpec)();
+  // case T_ScalarValSelfPrjnSpec:
+  //   return new STATE_CLASS_CPP(ScalarValSelfPrjnSpec)();  
+  // case T_SaliencyPrjnSpec:
+  //   return new STATE_CLASS_CPP(SaliencyPrjnSpec)();
+  // case T_CerebConj2PrjnSpec:
+  //   return new STATE_CLASS_CPP(CerebConj2PrjnSpec)();  
+  // case T_RowColPrjnSpec:
+  //   return new STATE_CLASS_CPP(RowColPrjnSpec)();
+  // case T_TopoWtsPrjnSpec:
+  //   return new STATE_CLASS_CPP(TopoWtsPrjnSpec)();
+  // case T_:
+  //   return new STATE_CLASS_CPP()();
+  // case T_:
+  //   return new STATE_CLASS_CPP()();
   }    
   StateError("NewPrjnSpec, type not recognized");
   return new STATE_CLASS_CPP(ProjectionSpec)();
