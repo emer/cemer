@@ -17,6 +17,7 @@
 #include <MethodDef>
 #include <taiWidgetMethod>
 
+#include <taMisc>
 
 void taiMethod::AddMethod(MethodDef* md) {
   InsertThisIntoBidList(md->im);
@@ -37,6 +38,10 @@ taiWidgetMethod* taiMethod::GetGenericMethodRep(void* base, taiWidget* par) {
   // a taBase->CallFun call
 //   taiWidgetMethod* rval = new taiWidgetMethod(base, meth, meth->type, NULL, par, NULL, 0);
   // the above generic guy doesn't have all the right stuff -- use menu as default..
+  if(!meth->GetOwnerType()->IsTaBase()) {
+    taMisc::Error("Method is trying to establish a GUI interface via #MENU or #BUTTON -- only available for taBase objects -- please remove those directives!  method:", meth->name, "on type:", meth->GetOwnerType()->name);
+    return NULL;
+  }
   taiWidgetMethod* rval = GetMenuMethodRep_impl(base, NULL, par, NULL, 0);
   rval->SetBase((taBase*)base); // pray!
   return rval;

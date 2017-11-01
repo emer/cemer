@@ -62,6 +62,7 @@ public:
 
 class STATE_CLASS(taMath_float) {
 public:
+#ifndef __MAKETA__  
   typedef union {
     double d;
     struct {
@@ -72,6 +73,7 @@ public:
 #endif
     } n;
   } _eco;
+#endif
 
   static double exp_fast(double x) {
     _eco tmp;

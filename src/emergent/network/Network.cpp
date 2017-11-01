@@ -1986,6 +1986,7 @@ void Network::SaveWeights(const String& fname, WtSaveFormat fmt) {
   if(fmt == NET_FMT) fmt = wt_save_fmt;
 
   // todo: sync weights from cuda
+  SyncAllState();
   
   if(TestError(!IsBuiltIntact(), "LoadWeights",
                "network is not built or intact -- cannot save weights")) {
@@ -2008,7 +2009,9 @@ bool Network::LoadWeights(const String& fname, bool quiet) {
   bool rval = false;
   if(flr->istrm) {
     rval = net_state->NetworkLoadWeights_strm(*flr->istrm, quiet);
+    epoch = net_state->epoch;   // this usually sync's the other way..
     SyncAllState();
+    // sync wieghts..
   }
   else {
     TestError(true, "LoadWeights", "aborted due to inability to load weights file");

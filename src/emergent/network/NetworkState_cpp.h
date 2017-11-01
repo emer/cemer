@@ -134,11 +134,11 @@ public:
   virtual void  Init_InputData();
   // #CAT_Activation Initializes external and target inputs
   virtual void  Init_Acts();
-  // #MENU #MENU_ON_State #MENU_SEP_BEFORE #CAT_Activation initialize the unit activation state variables
+  // #CAT_Activation initialize the unit activation state variables
   virtual void  Init_dWt();
   // #CAT_Learning Initialize the weight change variables
   virtual void  Init_Weights();
-  // #BUTTON #MENU #CONFIRM #ENABLE_ON_flags:BUILT,INTACT #CAT_Learning Initialize the weights -- also inits acts, counters and stats -- does unit level threaded and then does Layers after
+  // #CAT_Learning Initialize the weights -- also inits acts, counters and stats -- does unit level threaded and then does Layers after
     virtual void Init_Weights_renorm();
     // #IGNORE renormalize weights after init, before sym
     virtual void Init_Weights_sym();
