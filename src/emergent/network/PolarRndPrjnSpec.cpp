@@ -1,32 +1,15 @@
-// Copyright 2017, Regents of the University of Colorado,
-// Carnegie Mellon University, Princeton University.
-//
-// This file is part of Emergent
-//
-//   Emergent is free software; you can redistribute it and/or modify
-//   it under the terms of the GNU General Public License as published by
-//   the Free Software Foundation; either version 2 of the License, or
-//   (at your option) any later version.
-//
-//   Emergent is distributed in the hope that it will be useful,
-//   but WITHOUT ANY WARRANTY; without even the implied warranty of
-//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//   GNU General Public License for more details.
-
-#include "PolarRndPrjnSpec.h"
-#include <Network>
-
-TA_BASEFUNS_CTORS_DEFN(PolarRndPrjnSpec);
+// this is included directly in AllPRJN_STATESpecs_cpp / _cuda
+// {
 
 
-void PolarRndPrjnSpec::Initialize() {
+void STATE_CLASS(PolarRndPrjnSpec)::Initialize_core() {
   p_con = .25;
 
-  rnd_dist.type = Random::GAUSSIAN;
+  rnd_dist.type = STATE_CLASS(Random)::GAUSSIAN;
   rnd_dist.mean = 0.0f;
   rnd_dist.var = .25f;
 
-  rnd_angle.type = Random::UNIFORM;
+  rnd_angle.type = STATE_CLASS(Random)::UNIFORM;
   rnd_angle.mean = 0.5f;
   rnd_angle.var = 0.5f;
 
@@ -37,78 +20,155 @@ void PolarRndPrjnSpec::Initialize() {
   same_seed = false;
 }
 
-void PolarRndPrjnSpec::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-  if(p_con > 1.0f) p_con = 1.0f;
-  if(p_con < 0.0f) p_con = 0.0f;
+void STATE_CLASS(PolarRndPrjnSpec)::Connect_impl(PRJN_STATE* prjn, NETWORK_STATE* net, bool make_cons) { 
+  if(same_seed)
+    rndm_seed.OldSeed();
+
+  LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
+  LAYER_STATE* send_lay = prjn->GetSendLayerState(net);
+
+  const int rlay_no = recv_lay->n_units;
+  const int slay_no = send_lay->n_units;
+  int recv_no;
+  if(!self_con && (send_lay == recv_lay))
+    recv_no = (int) ((p_con * (float)(slay_no-1)) + .5f) + 1;
+  else
+    recv_no = (int) ((p_con * (float)slay_no) + .5f) + 1;
+  if(recv_no <= 0) recv_no = 1;
+
+  // sending number is even distribution across senders plus some imbalance factor
+  float send_no_flt = (float)(recv_lay->n_units * recv_no) / (float)slay_no;
+  if(send_no_flt < 2.0f)
+    send_no_flt = 2.0f;
+  // add SEM as corrective factor
+  float send_sem = send_no_flt / sqrtf(send_no_flt);
+  if(send_sem < 1.0f)
+    send_sem = 1.0f;
+  int send_no = (int)(send_no_flt + 3.0f * send_sem + 5.0f); // polar needs some extra insurance
+  if(send_no > recv_lay->n_units) send_no = recv_lay->n_units;
+
+  // pre-allocate connections!
+  if(!make_cons) {
+    recv_lay->RecvConsPreAlloc(net, prjn, recv_no);
+    send_lay->SendConsPreAlloc(net, prjn, send_no);
+    return;
+  }
+
+  TAVECTOR2I ru_geom;
+  TAVECTOR2I ru_pos;             // do this according to act_geom..
+  ru_geom.SetXY(recv_lay->flat_geom_x, recv_lay->flat_geom_x);
+  for(int rui=0; rui < rlay_no; rui++) {
+    UNIT_STATE* ru = recv_lay->GetUnitState(net, rui);
+    if(ru->lesioned()) continue;
+    ru_pos.SetXY(ru->pos_x, ru->pos_y);
+    ConState_cpp* recv_gp = NULL;
+    TAVECTOR2F suc;
+    int n_con = 0;
+    int n_retry = 0;
+    while((n_con < recv_no) && (n_retry < max_retries)) { // limit number of retries
+      float dist = rnd_dist.Gen();              // just get random deviate from distribution
+      float angle = 2.0f * 3.14159265f * rnd_angle.Gen(); // same for angle
+      suc.x = dist * cosf(angle);
+      suc.y = dist * sinf(angle);
+      UNIT_STATE* su = GetUnitFmOff(prjn, net, ru_pos, suc);
+      if((su == NULL) || (!self_con && (ru == su))) {
+        n_retry++;
+        continue;
+      }
+      if(ru->ConnectFromCk(net, su, prjn)) {
+        n_con++;
+      }
+      else {
+        n_retry++;              // already connected, retry
+        continue;
+      }
+    }
+#ifdef STATE_CPP
+    if(n_con < recv_no) {
+      std::cout << "PolarRndPrjnSpec::Connect_impl target number of connections: " << recv_no
+                << " not made, only made: " << n_con << std::endl;
+    }
+#endif    
+  }
 }
 
-float PolarRndPrjnSpec::UnitDist(UnitDistType typ, Projection* prjn,
-                               const taVector2i& ru, const taVector2i& su)
+float STATE_CLASS(PolarRndPrjnSpec)::UnitDist
+  (PRJN_STATE* prjn, NETWORK_STATE* net, UnitDistType typ, 
+   const TAVECTOR2I& ru, const TAVECTOR2I& su)
 {
-  taVector2f half(.5f);
-  PosVector2i ru_geom = prjn->layer->flat_geom;
-  PosVector2i su_geom = prjn->from->flat_geom;
+  LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
+  LAYER_STATE* send_lay = prjn->GetSendLayerState(net);
+
+  TAVECTOR2F half(.5f);
+  TAVECTOR2I ru_geom;
+  ru_geom.SetXY(recv_lay->flat_geom_x, recv_lay->flat_geom_x);
+  TAVECTOR2I su_geom;
+  su_geom.SetXY(send_lay->flat_geom_x, send_lay->flat_geom_x);
   switch(typ) {
   case XY_DIST:
     return ru.Dist(su);
   case XY_DIST_CENTER: {
-    taVector2f rctr = ru_geom;   rctr *= half;
-    taVector2f sctr = su_geom;    sctr *= half;
-    taVector2i ruc = ru - (taVector2i)rctr;
-    taVector2i suc = su - (taVector2i)sctr;
+    TAVECTOR2F rctr = ru_geom;   rctr *= half;
+    TAVECTOR2F sctr = su_geom;    sctr *= half;
+    TAVECTOR2I ruc = ru - (TAVECTOR2I)rctr;
+    TAVECTOR2I suc = su - (TAVECTOR2I)sctr;
     return ruc.Dist(suc);
   }
   case XY_DIST_NORM: {
-    taVector2f ruc = ru;    ruc /= (taVector2f)ru_geom;
-    taVector2f suc = su;    suc /= (taVector2f)su_geom;
+    TAVECTOR2F ruc = ru;    ruc /= (TAVECTOR2F)ru_geom;
+    TAVECTOR2F suc = su;    suc /= (TAVECTOR2F)su_geom;
     return ruc.Dist(suc);
   }
   case XY_DIST_CENTER_NORM: {
-    taVector2f rctr = ru_geom;   rctr *= half;
-    taVector2f sctr = su_geom;    sctr *= half;
-    taVector2f ruc = ((taVector2f)ru - rctr) / rctr;
-    taVector2f suc = ((taVector2f)su - sctr) / sctr;
+    TAVECTOR2F rctr = ru_geom;   rctr *= half;
+    TAVECTOR2F sctr = su_geom;    sctr *= half;
+    TAVECTOR2F ruc = ((TAVECTOR2F)ru - rctr) / rctr;
+    TAVECTOR2F suc = ((TAVECTOR2F)su - sctr) / sctr;
     return ruc.Dist(suc);
   }
   }
   return 0.0f;
 }
 
-Unit* PolarRndPrjnSpec::GetUnitFmOff(UnitDistType typ, bool wrap, Projection* prjn,
-                                   const taVector2i& ru, const taVector2f& su_off)
+UNIT_STATE* STATE_CLASS(PolarRndPrjnSpec)::GetUnitFmOff
+(PRJN_STATE* prjn, NETWORK_STATE* net, const TAVECTOR2I& ru, const TAVECTOR2F& su_off)
 {
-  taVector2f half(.5f);
-  PosVector2i ru_geom = prjn->layer->flat_geom;
-  PosVector2i su_geom = prjn->from->flat_geom;
-  taVector2i suc;                // actual su coordinates
-  switch(typ) {
+  LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
+  LAYER_STATE* send_lay = prjn->GetSendLayerState(net);
+
+  TAVECTOR2F half(.5f);
+  TAVECTOR2I ru_geom;
+  ru_geom.SetXY(recv_lay->flat_geom_x, recv_lay->flat_geom_x);
+  TAVECTOR2I su_geom;
+  su_geom.SetXY(send_lay->flat_geom_x, send_lay->flat_geom_x);
+  TAVECTOR2I suc;                // actual su coordinates
+  switch(dist_type) {
   case XY_DIST: {
     suc = su_off;
     suc += ru;
     break;
   }
   case XY_DIST_CENTER: {        // do everything relative to center
-    taVector2f rctr = ru_geom;   rctr *= half;
-    taVector2f sctr = su_geom;    sctr *= half;
-    taVector2i ruc = ru - (taVector2i)rctr;
+    TAVECTOR2F rctr = ru_geom;   rctr *= half;
+    TAVECTOR2F sctr = su_geom;    sctr *= half;
+    TAVECTOR2I ruc = ru - (TAVECTOR2I)rctr;
     suc = su_off;
     suc += ruc;                 // add the centerized coordinates
-    suc += (taVector2i)sctr;     // then add the sending center back into it..
+    suc += (TAVECTOR2I)sctr;     // then add the sending center back into it..
     break;
   }
   case XY_DIST_NORM: {
-    taVector2f ruc = ru;    ruc /= (taVector2f)ru_geom;
-    taVector2f suf = su_off + ruc; // su_off is in normalized coords, so normalize ru
-    suf *= (taVector2f)su_geom;
+    TAVECTOR2F ruc = ru;    ruc /= (TAVECTOR2F)ru_geom;
+    TAVECTOR2F suf = su_off + ruc; // su_off is in normalized coords, so normalize ru
+    suf *= (TAVECTOR2F)su_geom;
     suc = suf;
     break;
   }
   case XY_DIST_CENTER_NORM: {
-    taVector2f rctr = ru_geom;   rctr *= half;
-    taVector2f sctr = su_geom;    sctr *= half;
-    taVector2f ruc = ((taVector2f)ru - rctr) / rctr;
-    taVector2f suf = su_off + ruc;
+    TAVECTOR2F rctr = ru_geom;   rctr *= half;
+    TAVECTOR2F sctr = su_geom;    sctr *= half;
+    TAVECTOR2F ruc = ((TAVECTOR2F)ru - rctr) / rctr;
+    TAVECTOR2F suf = su_off + ruc;
     suf *= sctr;    suf += sctr;
     suc = suf;
     break;
@@ -117,116 +177,59 @@ Unit* PolarRndPrjnSpec::GetUnitFmOff(UnitDistType typ, bool wrap, Projection* pr
   if(suc.WrapClip(wrap, su_geom) && !wrap)
     return NULL;
 
-  Unit* su_u = (Unit*)prjn->from->UnitAtCoord(suc);
+  UNIT_STATE* su_u = (UNIT_STATE*)send_lay->GetUnitStateFlatXY(net, suc.x, suc.y);
   return su_u;
 }
 
 
-float PolarRndPrjnSpec::GetDistProb(Projection* prjn, Unit* ru, Unit* su) {
-  if(rnd_dist.type == Random::UNIFORM)
+float STATE_CLASS(PolarRndPrjnSpec)::GetDistProb
+(PRJN_STATE* prjn, NETWORK_STATE* net, UNIT_STATE* ru, UNIT_STATE* su) {
+  if(rnd_dist.type == STATE_CLASS(Random)::UNIFORM)
     return p_con;
-  float prob = p_con * rnd_dist.Density(UnitDist(dist_type, prjn, ru->pos, su->pos));
+  
+  LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
+  LAYER_STATE* send_lay = prjn->GetSendLayerState(net);
+
+  TAVECTOR2I ruc;
+  ruc.SetXY(ru->pos_x, ru->pos_y);
+  TAVECTOR2I suc;
+  suc.SetXY(su->pos_x, su->pos_y);
+
+  float dist = UnitDist(prjn, net, dist_type, ruc, suc);
+  float prob = p_con * rnd_dist.Density(dist);
   if(wrap) {
-    PosVector2i su_geom = prjn->from->flat_geom;
-    taVector2i suc = su->pos;
+    TAVECTOR2I su_geom;
+    su_geom.SetXY(send_lay->flat_geom_x, send_lay->flat_geom_x);
     suc.x += su_geom.x; // wrap around in x
-    prob += p_con * rnd_dist.Density(UnitDist(dist_type, prjn, ru->pos, suc));
+    prob += p_con * rnd_dist.Density(UnitDist(prjn, net, dist_type, ruc, suc));
     suc.y += su_geom.y; // wrap around in x & y
-    prob += p_con * rnd_dist.Density(UnitDist(dist_type, prjn, ru->pos, suc));
-    suc.x = su->pos.x;          // just y
-    prob += p_con * rnd_dist.Density(UnitDist(dist_type, prjn, ru->pos, suc));
-    suc = su->pos;
+    prob += p_con * rnd_dist.Density(UnitDist(prjn, net, dist_type, ruc, suc));
+    suc.x = suc.x;          // just y
+    prob += p_con * rnd_dist.Density(UnitDist(prjn, net, dist_type, ruc, suc));
+    suc = suc;
     suc.x -= su_geom.x; // wrap around in x
-    prob -= p_con * rnd_dist.Density(UnitDist(dist_type, prjn, ru->pos, suc));
+    prob -= p_con * rnd_dist.Density(UnitDist(prjn, net, dist_type, ruc, suc));
     suc.y -= su_geom.y; // wrap around in y
-    prob += p_con * rnd_dist.Density(UnitDist(dist_type, prjn, ru->pos, suc));
-    suc.x = su->pos.x;          // just y
-    prob += p_con * rnd_dist.Density(UnitDist(dist_type, prjn, ru->pos, suc));
+    prob += p_con * rnd_dist.Density(UnitDist(prjn, net, dist_type, ruc, suc));
+    suc.x = suc.x;          // just y
+    prob += p_con * rnd_dist.Density(UnitDist(prjn, net, dist_type, ruc, suc));
   }
   return prob;
 }
 
 // todo: could put in some sending limits, and do recvs in random order
 
-void PolarRndPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
-  if(!(bool)prjn->from) return;
-  if(same_seed)
-    rndm_seed.OldSeed();
-
-  int recv_no;
-  if(!self_con && (prjn->from.ptr() == prjn->layer))
-    recv_no = (int) ((p_con * (float)(prjn->from->units.leaves-1)) + .5f) + 1;
-  else
-    recv_no = (int) ((p_con * (float)prjn->from->units.leaves) + .5f) + 1;
-  if(recv_no <= 0) recv_no = 1;
-
-  // sending number is even distribution across senders plus some imbalance factor
-  float send_no_flt = (float)(prjn->layer->units.leaves * recv_no) /
-    (float)prjn->from->units.leaves;
-  if(send_no_flt < 2.0f)
-    send_no_flt = 2.0f;
-  // add SEM as corrective factor
-  float send_sem = send_no_flt / sqrtf(send_no_flt);
-  if(send_sem < 1.0f)
-    send_sem = 1.0f;
-  int send_no = (int)(send_no_flt + 3.0f * send_sem + 5.0f); // polar needs some extra insurance
-  if(send_no > prjn->layer->units.leaves) send_no = prjn->layer->units.leaves;
-
-  // pre-allocate connections!
-  if(!make_cons) {
-    prjn->layer->RecvConsPreAlloc(recv_no, prjn);
-    prjn->from->SendConsPreAlloc(send_no, prjn);
-    return;
-  }
-
-  Unit* ru, *su;
-  taLeafItr ru_itr;
-  PosVector2i ru_geom = prjn->layer->flat_geom;
-  taVector2i ru_pos;             // do this according to act_geom..
-  int cnt = 0;
-  for(ru = (Unit*)prjn->layer->units.FirstEl(ru_itr); ru;
-      ru = (Unit*)prjn->layer->units.NextEl(ru_itr), cnt++) {
-    ru_pos.y = cnt / ru_geom.x;
-    ru_pos.x = cnt % ru_geom.x;
-    ConState_cpp* recv_gp = NULL;
-    taVector2f suc;
-    int n_con = 0;
-    int n_retry = 0;
-    while((n_con < recv_no) && (n_retry < max_retries)) { // limit number of retries
-      float dist = rnd_dist.Gen();              // just get random deviate from distribution
-      float angle = 2.0 * 3.14159265 * rnd_angle.Gen(); // same for angle
-      suc.x = dist * cos(angle);
-      suc.y = dist * sin(angle);
-      su = GetUnitFmOff(dist_type, wrap, prjn, ru_pos, suc);
-      if((su == NULL) || (!self_con && (ru == su))) {
-        n_retry++;
-        continue;
-      }
-      if(ru->ConnectFromCk(su, prjn, recv_gp)) {
-        n_con++;
-      }
-      else {
-        n_retry++;              // already connected, retry
-        continue;
-      }
-    }
-    TestWarning(n_con < recv_no, "Connect_impl",
-                "target number of connections:",String(recv_no),
-                "not made, only made:",String(n_con));
-  }
-}
-
-void PolarRndPrjnSpec::Init_Weights_Prjn(Projection* prjn, ConState_cpp* cg,
-                                         Network* net, int thr_no) {
-  Unit* ru = cg->OwnUn(net);
+void STATE_CLASS(PolarRndPrjnSpec)::Init_Weights_Prjn
+(PRJN_STATE* prjn, NETWORK_STATE* net, int thr_no, CON_STATE* cg) {
+  UNIT_STATE* ru = cg->OwnUnState(net);
   for(int i=0; i<cg->size; i++) {
-    float wt = GetDistProb(prjn, ru, cg->Un(i,net));
+    float wt = GetDistProb(prjn, net, ru, cg->UnState(i,net));
     if(set_scale) {
-      SetCnWtRnd(cg, i, net, thr_no);
-      SetCnScale(wt, cg, i, net, thr_no);
+      SetCnWtRnd(prjn, net, thr_no, cg, i);
+      SetCnScale(prjn, net, thr_no, cg, i, wt);
     }
     else {
-      SetCnWt(wt, cg, i, net, thr_no);
+      SetCnWt(prjn, net, thr_no, cg, i, wt);
     }
   }
 }

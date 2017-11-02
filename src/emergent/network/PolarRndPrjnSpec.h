@@ -1,38 +1,6 @@
-// Copyright 2017, Regents of the University of Colorado,
-// Carnegie Mellon University, Princeton University.
-//
-// This file is part of Emergent
-//
-//   Emergent is free software; you can redistribute it and/or modify
-//   it under the terms of the GNU General Public License as published by
-//   the Free Software Foundation; either version 2 of the License, or
-//   (at your option) any later version.
-//
-//   Emergent is distributed in the hope that it will be useful,
-//   but WITHOUT ANY WARRANTY; without even the implied warranty of
-//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//   GNU General Public License for more details.
+// this is included directly in AllProjectionSpecs_cpp / _cuda
+// {
 
-#ifndef PolarRndPrjnSpec_h
-#define PolarRndPrjnSpec_h 1
-
-// parent includes:
-#include <ProjectionSpec>
-#include <Random>
-#include <RndSeed>
-#include <taVector2i>
-#include <taVector2f>
-
-// member includes:
-
-// declare all other types mentioned but not required to include:
-
-eTypeDef_Of(PolarRndPrjnSpec);
-
-class E_API PolarRndPrjnSpec : public ProjectionSpec {
-  // random connectivity defined as a function of distance and angle
-INHERITED(ProjectionSpec)
-public:
   enum UnitDistType {	// how to compute the distance between two units
     XY_DIST,		// X-Y axis distance between units
     XY_DIST_CENTER, 	// centered distance (layers centered over each other)
@@ -41,35 +9,33 @@ public:
   };
 
   float		p_con;		// overall probability of connection (number of samples)
-  Random 	rnd_dist;	// prob density of connectivity as a fctn of distance
-  Random	rnd_angle;	// prob density of connectivity as a fctn of angle (1 = 2pi)
+  STATE_CLASS(Random) 	rnd_dist;	// prob density of connectivity as a fctn of distance
+  STATE_CLASS(Random)	rnd_angle;	// prob density of connectivity as a fctn of angle (1 = 2pi)
   UnitDistType	dist_type; 	// type of distance function to use
   bool		wrap;		// wrap around layer coordinates (else clip at ends)
   int	       	max_retries;	// maximum number of times attempt to con same sender allowed
   bool		same_seed;	// use the same random seed each time (same connect pattern)
-  RndSeed	rndm_seed;	// #HIDDEN random seed
+  STATE_CLASS(RndSeed)	rndm_seed;	// #HIDDEN random seed
 
-  void	Connect_impl(Projection* prjn, bool make_cons) override;
-  void	Init_Weights_Prjn(Projection* prjn, ConState_cpp* cg, Network* net,
-                          int thr_no) override;
-  bool  HasRandomScale() override { return false; }
+  INIMPL void Connect_impl(PRJN_STATE* prjn, NETWORK_STATE* net, bool make_cons) override;
 
-  static float	UnitDist(UnitDistType typ, Projection* prjn,
-			 const taVector2i& ru, const taVector2i& su);
+  INIMPL void Init_Weights_Prjn(PRJN_STATE* prjn, NETWORK_STATE* net, int thr_no,
+                                CON_STATE* cg) override;
+
+  INLINE bool  HasRandomScale() override { return false; }
+
+  INIMPL virtual float	UnitDist(PRJN_STATE* prjn, NETWORK_STATE* net, UnitDistType typ,
+                                 const TAVECTOR2I& ru, const TAVECTOR2I& su);
   // computes the distance between two units according to distance type
-  static Unit*	GetUnitFmOff(UnitDistType typ, bool wrap, Projection* prjn,
-			     const taVector2i& ru, const taVector2f& su_off);
+  INIMPL virtual UNIT_STATE*	GetUnitFmOff
+  (PRJN_STATE* prjn, NETWORK_STATE* net, const TAVECTOR2I& ru, const TAVECTOR2F& su_off);
   // gets unit from real-valued offset scaled according to distance type
 
-  virtual float	GetDistProb(Projection* prjn, Unit* ru, Unit* su);
+  INIMPL virtual float	GetDistProb(PRJN_STATE* prjn, NETWORK_STATE* net,
+                                    UNIT_STATE* ru, UNIT_STATE* su);
   // compute the probability for connecting two units as a fctn of distance
 
-  TA_SIMPLE_BASEFUNS(PolarRndPrjnSpec);
-protected:
-  void UpdateAfterEdit_impl() override;
-private:
-  void	Initialize();
-  void	Destroy()	{ };
-};
+  INIMPL void	Initialize_core();
 
-#endif // PolarRndPrjnSpec_h
+  INLINE int  GetStateSpecType() const override { return NETWORK_STATE::T_PolarRndPrjnSpec; }
+

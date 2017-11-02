@@ -111,6 +111,7 @@ private:
   void 	Destroy()	{ };
 };
 
+
 eTypeDef_Of(UniformRndPrjnSpec);
 
 class E_API UniformRndPrjnSpec : public ProjectionSpec {
@@ -131,6 +132,24 @@ protected:
 private:
   void	Initialize()    { Initialize_core(); }
   void 	Destroy()	{ };
+};
+
+
+eTypeDef_Of(PolarRndPrjnSpec);
+
+class E_API PolarRndPrjnSpec : public ProjectionSpec {
+  // random connectivity defined as a function of distance and angle
+INHERITED(ProjectionSpec)
+public:
+
+#include <PolarRndPrjnSpec>
+  
+  TA_SIMPLE_BASEFUNS(PolarRndPrjnSpec);
+protected:
+  void UpdateAfterEdit_impl() override;
+private:
+  void	Initialize()    { Initialize_core(); }
+  void	Destroy()	{ };
 };
 
 

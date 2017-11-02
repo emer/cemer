@@ -83,6 +83,17 @@ public:
 };
 
 
+class PolarRndPrjnSpec_cpp : public ProjectionSpec_cpp {
+  // random connectivity defined as a function of distance and angle
+INHERITED(ProjectionSpec)
+public:
+
+#include <PolarRndPrjnSpec>
+  
+  PolarRndPrjnSpec_cpp() { Initialize_core(); }
+};
+
+
 class TesselPrjnSpec_cpp : public ProjectionSpec_cpp {
   // arbitrary tesselations (repeating patterns) of connectivity -- sweeps over receiving units and connects with sending units based on projection of recv unit position into sending layer, plus sending offsets that specify the connectivity pattern
 INHERITED(ProjectionSpec)

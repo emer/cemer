@@ -150,12 +150,12 @@ public:
   INLINE float  ComputeAlpha(float t) {
     if(decay == 0.0f) return (t == 0.0f) ? g_gain : 0.0f; // delta function
     // todo: replace with exp_fast -- and benchmark!
-    if(rise == 0.0f) return gg_decay * expf(-t * oneo_decay);         // exponential
-    if(rise == decay) return t * gg_decay_sq * expf(-t * oneo_decay); // symmetric alpha
-    return gg_decay_rise * (expf(-t * oneo_decay) - expf(-t * oneo_rise)); // full alpha
-    // if(rise == 0.0f) return gg_decay * taMath_float::exp_fast(-t * oneo_decay);         // exponential
-    // if(rise == decay) return t * gg_decay_sq * taMath_float::exp_fast(-t * oneo_decay); // symmetric alpha
-    // return gg_decay_rise * (taMath_float::exp_fast(-t * oneo_decay) - taMath_float::exp_fast(-t * oneo_rise)); // full alpha
+    // if(rise == 0.0f) return gg_decay * expf(-t * oneo_decay);         // exponential
+    // if(rise == decay) return t * gg_decay_sq * expf(-t * oneo_decay); // symmetric alpha
+    // return gg_decay_rise * (expf(-t * oneo_decay) - expf(-t * oneo_rise)); // full alpha
+    if(rise == 0.0f) return gg_decay * STATE_CLASS(taMath_float)::exp_fast(-t * oneo_decay);         // exponential
+    if(rise == decay) return t * gg_decay_sq * STATE_CLASS(taMath_float)::exp_fast(-t * oneo_decay); // symmetric alpha
+    return gg_decay_rise * (STATE_CLASS(taMath_float)::exp_fast(-t * oneo_decay) - STATE_CLASS(taMath_float)::exp_fast(-t * oneo_rise)); // full alpha
   }
 
   STATE_DECO_KEY("UnitSpec");

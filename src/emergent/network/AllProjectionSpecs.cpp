@@ -40,6 +40,14 @@ TA_BASEFUNS_CTORS_DEFN(RandomPrjnSpec);
 TA_BASEFUNS_CTORS_DEFN(UniformRndPrjnSpec);
 #include "UniformRndPrjnSpec.cpp"
 
+TA_BASEFUNS_CTORS_DEFN(PolarRndPrjnSpec);
+#include "PolarRndPrjnSpec.cpp"
+
+void PolarRndPrjnSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  if(p_con > 1.0f) p_con = 1.0f;
+  if(p_con < 0.0f) p_con = 0.0f;
+}
 
 ////////////////////////////////////////////////////////////////////////////////////
 //              TesselPrjnSpec

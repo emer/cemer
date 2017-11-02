@@ -40,6 +40,7 @@
 TA_BASEFUNS_CTORS_DEFN(NetStateThreadMgr);
 TA_BASEFUNS_CTORS_DEFN(NetStateThreadTask);
 
+#include "Network_mbrs.cpp"
 
 using namespace std;
 

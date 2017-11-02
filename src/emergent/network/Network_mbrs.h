@@ -48,9 +48,6 @@ private:
 
 #include <MTRnd>
 
-// TODO: need to eliminate taMath_double depend
-#include <taMath_double>
-
 #ifdef TAVECTOR2I
 #undef TAVECTOR2I
 #endif
@@ -61,6 +58,7 @@ private:
 #endif
 #define TAVECTOR2F      STATE_CLASS(taVector2f)
 
+class TAVECTOR2F;
 
 class TAVECTOR2I : public STATE_CLASS(taBase) {
   // #STEM_BASE ##NO_TOKENS #NO_UPDATE_AFTER ##INLINE ##CAT_Math an integer value in 2D coordinate space
@@ -78,11 +76,9 @@ public:
   TAVECTOR2I(int xx)                     { SetXY(xx, xx); }
   TAVECTOR2I(int xx, int yy)             { SetXY(xx, yy); }
   TAVECTOR2I(float xx, float yy)         { SetXY(xx, yy); }
+  INLINE TAVECTOR2I(const TAVECTOR2F& cp);
 
-  // INLINE taVector2i& operator=(const taVector2f& cp) {
-  //   x = (int)cp.x; y = (int)cp.y;
-  //   return *this;
-  // }
+  INLINE TAVECTOR2I& operator=(const TAVECTOR2F& cp);
 
   INLINE TAVECTOR2I& operator=(int cp)           { x = cp; y = cp; return *this;}
   INLINE TAVECTOR2I& operator=(float cp)         { x = (int)cp; y = (int)cp; return *this;}
@@ -267,18 +263,18 @@ public:
   // wrap-around or clip coordinates within 0,0 - max range, true if clipped out of range -- for performance, it is better to use separate code for wrap and clip cases
 };
 
-// INLINE TAVECTOR2I operator + (int td, const TAVECTOR2I& v) {
-//   TAVECTOR2I rv; rv.x = td + v.x; rv.y = td + v.y; return rv;
-// }
-// INLINE TAVECTOR2I operator - (int td, const TAVECTOR2I& v) {
-//   TAVECTOR2I rv; rv.x = td - v.x; rv.y = td - v.y; return rv;
-// }
-// INLINE TAVECTOR2I operator * (int td, const TAVECTOR2I& v) {
-//   TAVECTOR2I rv; rv.x = td * v.x; rv.y = td * v.y; return rv;
-// }
-// INLINE TAVECTOR2I operator / (int td, const TAVECTOR2I& v) {
-//   TAVECTOR2I rv; rv.x = td / v.x; rv.y = td / v.y; return rv;
-// }
+INLINE TAVECTOR2I operator + (int td, const TAVECTOR2I& v) {
+  TAVECTOR2I rv; rv.x = td + v.x; rv.y = td + v.y; return rv;
+}
+INLINE TAVECTOR2I operator - (int td, const TAVECTOR2I& v) {
+  TAVECTOR2I rv; rv.x = td - v.x; rv.y = td - v.y; return rv;
+}
+INLINE TAVECTOR2I operator * (int td, const TAVECTOR2I& v) {
+  TAVECTOR2I rv; rv.x = td * v.x; rv.y = td * v.y; return rv;
+}
+INLINE TAVECTOR2I operator / (int td, const TAVECTOR2I& v) {
+  TAVECTOR2I rv; rv.x = td / v.x; rv.y = td / v.y; return rv;
+}
 
 
 class TAVECTOR2F : public STATE_CLASS(taBase) {
@@ -379,19 +375,155 @@ public:
   INLINE float MinVal() const   { float mn = fminf(x, y); return mn; }
 };
 
+ 
+TAVECTOR2I::TAVECTOR2I(const TAVECTOR2F& cp) { SetXY(cp.x, cp.y); }
 
-// INLINE TAVECTOR2F operator + (float td, const TAVECTOR2F& v) {
-//   TAVECTOR2F rv; rv.x = td + v.x; rv.y = td + v.y; return rv;
-// }
-// INLINE TAVECTOR2F operator - (float td, const TAVECTOR2F& v) {
-//   TAVECTOR2F rv; rv.x = td - v.x; rv.y = td - v.y; return rv;
-// }
-// INLINE TAVECTOR2F operator * (float td, const TAVECTOR2F& v) {
-//   TAVECTOR2F rv; rv.x = td * v.x; rv.y = td * v.y; return rv;
-// }
-// INLINE TAVECTOR2F operator / (float td, const TAVECTOR2F& v) {
-//   TAVECTOR2F rv; rv.x = td / v.x; rv.y = td / v.y; return rv;
-// }
+TAVECTOR2I& TAVECTOR2I::operator=(const TAVECTOR2F& cp) {
+  x = (int)cp.x; y = (int)cp.y;
+  return *this;
+}
+
+INLINE TAVECTOR2F operator + (float td, const TAVECTOR2F& v) {
+  TAVECTOR2F rv; rv.x = td + v.x; rv.y = td + v.y; return rv;
+}
+INLINE TAVECTOR2F operator - (float td, const TAVECTOR2F& v) {
+  TAVECTOR2F rv; rv.x = td - v.x; rv.y = td - v.y; return rv;
+}
+INLINE TAVECTOR2F operator * (float td, const TAVECTOR2F& v) {
+  TAVECTOR2F rv; rv.x = td * v.x; rv.y = td * v.y; return rv;
+}
+INLINE TAVECTOR2F operator / (float td, const TAVECTOR2F& v) {
+  TAVECTOR2F rv; rv.x = td / v.x; rv.y = td / v.y; return rv;
+}
+
+
+class STATE_CLASS(taMath_double) {
+  // double-precision floating point math
+public:
+#ifndef __MAKETA__  
+  typedef union {
+    double d;
+    struct {
+#ifdef TA_LITTLE_ENDIAN
+      int j, i;
+#else
+      int i, j;
+#endif
+    } n;
+  } _eco;
+#endif
+
+  static double pi;
+  // #NO_SAVE #READ_ONLY the value of pi
+
+  static double exp_fast(double x) {
+    _eco tmp;
+    tmp.n.j = 0;
+    tmp.n.i = (int)((1048576/M_LN2)*x + (1072693248 - 60801));
+    return tmp.d;
+  }
+  // #CAT_ExpLog a fast approximation to the exponential function from Nicol Schraudolph Neural Computation, 1999
+
+  static double fact_ln(int n);
+  // #CAT_Probability natural log (ln) of n factorial (n!)
+  static double bico_ln(int n, int j) {  return fact_ln(n)-fact_ln(j)-fact_ln(n-j); }
+  // #CAT_Probability natural log (ln) of n choose j (binomial)
+  static double gamma_ln(double z);
+  // #CAT_Probability natural log (ln) of gamma function (not gamma distribution): generalization of (n-1)! to real values
+  static double beta_i(double a, double b, double x);
+  // #CAT_Probability incomplete beta function
+  
+  static double beta_den(double x, double a, double b);
+  // #CAT_Probability beta probability density function evaluated at 0 < x < 1 for shape parameters a, b
+  static double beta_dev(double a, double b, int thr_no = -1) {
+    double x1 = gamma_dev(a, 1.0, thr_no);
+    double x2 = gamma_dev(b, 1.0, thr_no);
+    return x1 / (x1 + x2);
+  }
+  // #CAT_Probability return a beta distribution deviate, characterized by parameters a > 0, b > 0 -- uses gamma_dev -- (0 <= thr_no < 100) specifies thread or dmem proc number for parallel safe random sequences (-1 = taMisc::dmem_proc for auto-safe dmem)
+
+  static double binom_den(int n, int j, double p) {
+    if(j > n) { return 0; }
+    return exp(bico_ln(n,j) + (double)j * log(p) + (double)(n-j) * log(1.0 - p));
+  }
+  // #CAT_Probability binomial probability function
+  static double binom_dev(int n, double p, int thr_no = -1);
+  // #CAT_Probability binomial deviate: p prob with n trials -- (0 <= thr_no < 100) specifies thread or dmem proc number for parallel safe random sequences (-1 = taMisc::dmem_proc for auto-safe dmem)
+
+  static double poisson_den(int j, double l) {
+    return exp((double)j * log(l) - fact_ln(j) - l);
+  }
+  // #CAT_Probability poisson distribution
+  static double poisson_dev(double l, int thr_no = -1);
+  // #CAT_Probability poisson deviate:  mean is l -- (0 <= thr_no < 100) specifies thread or dmem proc number for parallel safe random sequences (-1 = taMisc::dmem_proc for auto-safe dmem)
+
+  static double gamma_den(int j, double l, double t) {
+    if(t < 0) return 0;
+    return exp((double)j * log(l) + (double)(j-1) * log(t) - gamma_ln(j) - (l * t));
+  }
+  // #CAT_Probability gamma probability distribution: j events, l lambda, t time
+  static double gamma_dev(double k, double lambda = 1.0, int thr_no = -1);
+  // #CAT_Probability gamma deviate: how long to wait until k events with given lambda variance -- (0 <= thr_no < 100) specifies thread or dmem proc number for parallel safe random sequences (-1 = taMisc::dmem_proc for auto-safe dmem)
+
+  static double gauss_den(double x) {
+    return 0.398942280 * exp(-0.5 * x * x);
+  }
+  // #CAT_Probability gaussian (normal) distribution with uniform standard deviation: 1 / sqrt(2 * PI) * exp(-x^2 / 2)
+  static float gauss_den_sig(float x, float sigma) {
+    x /= sigma;  return 0.398942280 * exp(-0.5 * x * x) / sigma;
+  }
+  // #CAT_Probability gaussian (normal) distribution with explicit sigma: 1 / (sigma * sqrt(2 * PI)) * exp(-x^2 / (2 * sigma^2))
+  static double gauss_dev(int thr_no = -1) {
+    return MTRnd::GenRandGaussDev(thr_no);
+  }
+  // #CAT_Probability gaussian deviate: normally distributed -- (0 <= thr_no < 100) specifies thread or dmem proc number for parallel safe random sequences (-1 = taMisc::dmem_proc for auto-safe dmem)
+  
+};
+
+
+
+class STATE_CLASS(taMath_float) {
+  // single-precision floating point math
+public:
+
+  static float exp_fast(float x) {
+    return (float)STATE_CLASS(taMath_double)::exp_fast(x);
+  }
+  // #CAT_ExpLog a fast approximation to the exponential function from Nicol Schraudolph Neural Computation, 1999
+  
+  static float  euc_dist_sq(float x1, float y1, float x2, float y2)
+  { return ((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2)); }
+  // #CAT_Trigonometry the squared Euclidean distance between two coordinates ((x1-x2)^2 + (y1-y2)^2)
+  static float  euc_dist(float x1, float y1, float x2, float y2)
+  { return sqrt(euc_dist_sq(x1, y1, x2, y2)); }
+  // #CAT_Trigonometry the Euclidean distance between two coordinates ((x1-x2)^2 + (y1-y2)^2)
+
+  static float gauss_den(float x) { return 0.398942280 * exp(-0.5 * x * x); }
+  // #CAT_Probability gaussian (normal) distribution with uniform standard deviation: 1 / sqrt(2 * PI) * exp(-x^2 / 2)
+  static float gauss_den_sig(float x, float sigma) {
+    x /= sigma;
+    return 0.398942280 * exp(-0.5 * x * x) / sigma;
+  }
+  // #CAT_Probability gaussian (normal) distribution with explicit sigma: 1 / (sigma * sqrt(2 * PI)) * exp(-x^2 / (2 * sigma^2))
+  static float gauss_den_sq_sig(float x_sq, float sigma) {
+    return 0.398942280 * exp(-0.5 * x_sq / (sigma * sigma)) / sigma;
+  }
+  // #CAT_Probability gaussian (normal) distribution with x already squared and explicit sigma: 1 / (sigma * sqrt(2 * PI)) * exp(-x_sq / (2 * sigma^2))
+  static float gauss_den_nonorm(float x, float sigma) {
+    x /= sigma; return exp(-0.5 * x * x);
+  }
+  // #CAT_Probability non-normalized gaussian (normal) distribution with uniform standard deviation: exp(-x^2 / (2 * sigma^2))
+  static float logistic(float x, float gain=1.0, float off=0.0)
+  { return 1.0 / (1.0 + exp(-gain*(x-off))); }
+  // #CAT_ExpLog logistic (sigmoid) function of x: 1/(1 + e^(-gain*(x-off)))
+  static float logistic_fast(float x, float gain=1.0, float off=0.0)
+  { return 1.0 / (1.0 + exp_fast(-gain*(x-off))); }
+  // #CAT_ExpLog logistic (sigmoid) function of x: 1/(1 + e^(-gain*(x-off))) -- using exp_fast function
+  
+};
+
+
+
 
 class STATE_CLASS(Random) : public STATE_CLASS(taNBase) {
   // #STEM_BASE #NO_UPDATE_AFTER ##INLINE ##CAT_Math ##NO_TOKENS ##STATIC_COMPLETION Random Number Generation
@@ -433,7 +565,30 @@ public:
     return 0.0f;
   }
   // generate a random variable according to current parameters -- (0 <= thr_no < 100) specifies thread or dmem proc number for parallel safe random sequences (-1 = taMisc::dmem_proc for auto-safe dmem)
-  
+
+  INLINE double  Density(double x) const {
+    if(var == 0.0f) return 0.0f;
+    switch(type) {
+    case NONE:
+      return 0.0f;
+    case UNIFORM:
+      return UniformDen(x - mean, var);
+    case BINOMIAL:
+      return BinomDen((int)par, (int)(x-mean), var);
+    case POISSON:
+      return PoissonDen((int)(x-mean), var);
+    case GAMMA:
+      return GammaDen((int)par, var, x - mean);
+    case GAUSSIAN:
+      return GaussDen(x-mean, var);
+    case BETA:
+      return BetaDen(x-mean, var, par);
+    }
+    return 0.0f;
+  }
+  // get density of random variable according to current params
+
+
   ////////////////////////////////////////////////////////////////////////
   // various handy static random number generation functions:
 
@@ -458,24 +613,49 @@ public:
   // #CAT_Float uniform random number with given range on either size of the mean: [mean - range, mean + range] -- (0 <= thr_no < 100) specifies thread or dmem proc number for parallel safe random sequences (-1 = taMisc::dmem_proc for auto-safe dmem)
 
   static double Binom(int n, double p, int thr_no = -1)
-  { return taMath_double::binom_dev(n,p,thr_no); }
+  { return STATE_CLASS(taMath_double)::binom_dev(n,p,thr_no); }
   // #CAT_Float binomial with n trials (par) each of probability p (var) -- (0 <= thr_no < 100) specifies thread or dmem proc number for parallel safe random sequences (-1 = taMisc::dmem_proc for auto-safe dmem)
   static double Poisson(double l, int thr_no = -1)
-  { return taMath_double::poisson_dev(l,thr_no); }
+  { return STATE_CLASS(taMath_double)::poisson_dev(l,thr_no); }
   // #CAT_Float poisson with parameter l (var) -- (0 <= thr_no < 100) specifies thread or dmem proc number for parallel safe random sequences (-1 = taMisc::dmem_proc for auto-safe dmem)
   static double Gamma(double var, double j, int thr_no = -1)
-  { return taMath_double::gamma_dev(j, var, thr_no); }
+  { return STATE_CLASS(taMath_double)::gamma_dev(j, var, thr_no); }
   // #CAT_Float gamma with given variance, number of exponential stages (par) -- (0 <= thr_no < 100) specifies thread or dmem proc number for parallel safe random sequences (-1 = taMisc::dmem_proc for auto-safe dmem)
   static double Gauss(double stdev, int thr_no = -1)
-  { return stdev * taMath_double::gauss_dev(thr_no); }
+  { return stdev * STATE_CLASS(taMath_double)::gauss_dev(thr_no); }
   // #CAT_Float gaussian (normal) random number with given standard deviation -- (0 <= thr_no < 100) specifies thread or dmem proc number for parallel safe random sequences (-1 = taMisc::dmem_proc for auto-safe dmem)
   static double Beta(double a, double b, int thr_no = -1)
-  { return taMath_double::beta_dev(a, b, thr_no); }
+  { return STATE_CLASS(taMath_double)::beta_dev(a, b, thr_no); }
   // #CAT_Float beta random number with two shape parameters a > 0 and b > 0 -- (0 <= thr_no < 100) specifies thread or dmem proc number for parallel safe random sequences (-1 = taMisc::dmem_proc for auto-safe dmem)
 
   static bool   BoolProb(double p, int thr_no = -1)
   { return (ZeroOne(thr_no) < p); }
   // #CAT_Bool boolean true/false with given probability -- (0 <= thr_no < 100) specifies thread or dmem proc number for parallel safe random sequences (-1 = taMisc::dmem_proc for auto-safe dmem)
+
+  
+  static double UniformDen(double x, double range)
+  { double rval = 0.0; if(fabs(x) <= range) rval = 1.0 / (2.0 * range); return rval; }
+  // #CAT_Float uniform density at x with given range on either size of 0 (subtr mean from x before)
+  static double BinomDen(int n, int j, double p) {
+    return STATE_CLASS(taMath_double)::binom_den(n,j,p);
+  }
+  // #CAT_Float binomial density at j with n trials (par) each of probability p (var)
+  static double PoissonDen(int j, double l) {
+    return STATE_CLASS(taMath_double)::poisson_den(j,l);
+  }
+  // #CAT_Float poisson density with parameter l (var)
+  static double GammaDen(int j, double l, double t) {
+    return STATE_CLASS(taMath_double)::gamma_den(j,l,t);
+  }
+  // #CAT_Float gamma density at time t with given number of stages (par), lambda (var)
+  static double GaussDen(double x, double stdev) {
+    return STATE_CLASS(taMath_double)::gauss_den_sig(x, stdev);
+  }
+  // #CAT_Float gaussian (normal) density for given standard deviation (0 mean)
+  static double BetaDen(double x, double a, double b) {
+    return STATE_CLASS(taMath_double)::beta_den(x, a, b);
+  }
+  // #CAT_Float beta density at value 0 < x < 1 for shape parameters a, b
 
   STATE_CLASS(Random)() { Initialize(); }
 private:
@@ -705,6 +885,5 @@ public:
 
   STATE_CLASS(PRerrVals)() { InitVals(); }
 };
-
 
 #endif // STATE_MAIN

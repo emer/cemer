@@ -108,19 +108,21 @@ double taMath_double::rad_per_deg = M_PI / 180.0;
 // Probability distributions, etc
 
 double taMath_double::fact_ln(int n) {
-  static double_Array table(false);
+  return gsl_sf_lnfact(n);
+  
+  // static double_Array table(false);
 
-  if(n < 0) { fprintf(stderr, "Negative factorial fact_ln()\n"); return 0; }
-  if(n <= 1) return 0.0;
-  if(n < table.size) return table[n] ? table[n] : (table[n] = gamma_ln(n + 1.0));
+  // if(n < 0) { fprintf(stderr, "Negative factorial fact_ln()\n"); return 0; }
+  // if(n <= 1) return 0.0;
+  // if(n < table.size) return table[n] ? table[n] : (table[n] = gamma_ln(n + 1.0));
 
-  table.Alloc(n+1);             // allocate new size
-  int i=table.size;
-  for(; i<=n; i++)
-    table.FastEl(i) = 0.0;
-  table.size = n+1;
+  // table.Alloc(n+1);             // allocate new size
+  // int i=table.size;
+  // for(; i<=n; i++)
+  //   table.FastEl(i) = 0.0;
+  // table.size = n+1;
 
-  return (table[n] = gamma_ln(n + 1.0));
+  // return (table[n] = gamma_ln(n + 1.0));
 }
 
 double taMath_double::fact(int n) {

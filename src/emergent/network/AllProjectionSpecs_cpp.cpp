@@ -32,6 +32,8 @@
 
 #include "UniformRndPrjnSpec.cpp"
 
+#include "PolarRndPrjnSpec.cpp"
+
 #include "TesselPrjnSpec.cpp"
 
 #include "TiledGpRFPrjnSpec.cpp"

@@ -165,7 +165,7 @@ set(network_HEADS_NOMAKETA
   GpOneToOnePrjnSpec.h
   RandomPrjnSpec.h
   UniformRndPrjnSpec.h
-  # PolarRndPrjnSpec.h
+  PolarRndPrjnSpec.h
 
   TesselPrjnSpec.h
   # GpTesselPrjnSpec.h
