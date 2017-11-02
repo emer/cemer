@@ -64,7 +64,8 @@ void STATE_CLASS(UniformRndPrjnSpec)::Connect_impl(PRJN_STATE* prjn, NETWORK_STA
         perm_list[n_send++] = sui;
       }
       IntArrayPermute(perm_list, n_send);
-      for(int j=0; j < first && j < n_send; j++) {       // only connect 1/2 of the units
+      int mxno = MIN(first, n_send);
+      for(int j=0; j < mxno; j++) {       // only connect 1/2 of the units
         UNIT_STATE* su = recv_lay->GetUnitState(net, perm_list[j]);
         ru->ConnectFrom(net, su, prjn, false, true); // true = ignore errs -- to be expected
       }

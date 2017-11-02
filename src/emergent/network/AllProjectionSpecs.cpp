@@ -233,8 +233,158 @@ void TesselPrjnSpec::WeightsFromGausDist(float scale, float sigma) {
   }
 }
 
+
 ////////////////////////////////////////////////////////////////////////////////////
-//              TesselPrjnSpec
+//              GpTesselPrjnSpec
+
+TA_BASEFUNS_CTORS_DEFN(GpTesselPrjnSpec);
+TA_BASEFUNS_CTORS_DEFN(GpTessEl);
+TA_BASEFUNS_CTORS_LITE_DEFN(GpTessEl_List);
+
+#include "GpTesselPrjnSpec.cpp"
+
+void GpTesselPrjnSpec::UpdateAfterEdit_impl() {
+  SyncSendOffs();
+  inherited::UpdateAfterEdit_impl();
+  recv_gp_skip.SetGtEq(1);
+  recv_gp_group.SetGtEq(1);
+}
+
+void GpTesselPrjnSpec::SyncSendOffs() {
+  if(send_gp_offs.size > alloc_send_gp_offs) {
+    AllocSendOffs(send_gp_offs.size);
+  }
+  for(int i=0; i<send_gp_offs.size; i++) {
+    GpTessEl* so = send_gp_offs[i];
+    GpTessEl* cp = send_gp_offs_m + i;
+    cp->send_gp_off.SetXY(so->send_gp_off.x, so->send_gp_off.y);
+    cp->p_con = so->p_con;
+  }
+  n_send_gp_offs = send_gp_offs.size;
+}
+
+void GpTesselPrjnSpec::CopyToState(void* state_spec, const char* state_suffix) {
+  inherited::CopyToState(state_spec, state_suffix);
+  CopyToState_SendOffs(state_spec, state_suffix);
+}
+
+void GpTesselPrjnSpec::UpdateStateSpecs() {
+  SyncSendOffs();
+  inherited::UpdateStateSpecs();
+}
+
+// note: following requires access to GpTessEl_cpp -- hence AllProjectionSpecs_cpp include..
+
+void GpTesselPrjnSpec::CopyToState_SendOffs(void* state_spec, const char* state_suffix) {
+  String ss = state_suffix;
+  if(ss == "_cpp") {
+    GpTesselPrjnSpec_cpp* tcc = (GpTesselPrjnSpec_cpp*)state_spec;
+    tcc->AllocSendOffs(n_send_gp_offs);
+    for(int i=0; i<n_send_gp_offs; i++) {
+      GpTessEl* so = send_gp_offs_m + i;
+      GpTessEl_cpp* cp = tcc->send_gp_offs_m + i;
+      cp->send_gp_off.SetXY(so->send_gp_off.x, so->send_gp_off.y);
+      cp->p_con = so->p_con;
+    }
+    tcc->n_send_gp_offs = n_send_gp_offs;
+  }
+}
+
+void GpTesselPrjnSpec::MakeEllipse(int half_width, int half_height, int ctr_x, int ctr_y) {
+  last_make_cmd = "MakeEllipse( half_width=" + String(half_width)
+    + ", half_height=" + String(half_height)
+    + ", ctr_x=" + String(ctr_x) + ", ctr_y=" + String(ctr_y) + ")";
+  SigEmitUpdated();
+  send_gp_offs.Reset();
+  int strt_x = ctr_x - half_width;
+  int end_x = ctr_x + half_width;
+  int strt_y = ctr_y - half_height;
+  int end_y = ctr_y + half_height;
+  if(half_width == half_height) { // circle
+    int y;
+    for(y = strt_y; y <= end_y; y++) {
+      int x;
+      for(x = strt_x; x <= end_x; x++) {
+        int dist = ((x - ctr_x) * (x - ctr_x)) + ((y - ctr_y) * (y - ctr_y));
+        if(dist > (half_width * half_width))
+          continue;             // outside the circle
+        GpTessEl* te = (GpTessEl*)send_gp_offs.New(1, &TA_GpTessEl);
+        te->send_gp_off.x = x;
+        te->send_gp_off.y = y;
+        te->p_con = def_p_con;
+      }
+    }
+  }
+  else {                        // ellipse
+    float f1_x, f1_y;           // foci
+    float f2_x, f2_y;
+    float two_a;                        // two times largest axis
+
+    if(half_width > half_height) {
+      two_a = (float)half_width * 2;
+      float c = sqrtf((float)(half_width * half_width) - (float)(half_height * half_height));
+      f1_x = (float)ctr_x - c;
+      f1_y = (float)ctr_y;
+      f2_x = (float)ctr_x + c;
+      f2_y = (float)ctr_y;
+    }
+    else {
+      two_a = (float)half_height * 2;
+      float c = sqrtf((float)(half_height * half_height) - (float)(half_width * half_width));
+      f1_x = (float)ctr_x;
+      f1_y = (float)ctr_y - c;
+      f2_x = (float)ctr_x;
+      f2_y = (float)ctr_y + c;
+    }
+
+    int y;
+    for(y = strt_y; y <= end_y; y++) {
+      int x;
+      for(x = strt_x; x <= end_x; x++) {
+        float dist = sqrtf((((float)x - f1_x) * ((float)x - f1_x)) + (((float)y - f1_y) * ((float)y - f1_y))) +
+          sqrtf((((float)x - f2_x) * ((float)x - f2_x)) + (((float)y - f2_y) * ((float)y - f2_y)));
+        if(dist > two_a)
+          continue;
+        GpTessEl* te = (GpTessEl*)send_gp_offs.New(1, &TA_GpTessEl);
+        te->send_gp_off.x = x;
+        te->send_gp_off.y = y;
+        te->p_con = def_p_con;
+      }
+    }
+  }
+}
+
+void GpTesselPrjnSpec::MakeRectangle(int width, int height, int left, int bottom) {
+  last_make_cmd = "MakeRectangle(width=" + String(width) + ", height=" + String(height)
+    + ", left=" + String(left) + ", bottom=" + String(bottom) + ")";
+  SigEmitUpdated();
+  send_gp_offs.Reset();
+  int y;
+  for(y = bottom; y < bottom + height; y++) {
+    int x;
+    for(x = left; x < left + width; x++) {
+      GpTessEl* te = (GpTessEl*)send_gp_offs.New(1, &TA_GpTessEl);
+      te->send_gp_off.x = x;
+      te->send_gp_off.y = y;
+      te->p_con = def_p_con;
+    }
+  }
+}
+
+void GpTesselPrjnSpec::SetPCon(float p_con, int start, int end) {
+  if(end == -1) end = send_gp_offs.size;  else end = MIN(send_gp_offs.size, end);
+  int i;
+  for(i=start;i<end;i++) {
+    GpTessEl* te = (GpTessEl*)send_gp_offs.FastEl(i);
+    te->p_con = p_con;
+  }
+}
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////////
+//              TiledGpRFPrjnSpec
 
 TA_BASEFUNS_CTORS_DEFN(GaussInitWtsSpec);
 TA_BASEFUNS_CTORS_DEFN(SigmoidInitWtsSpec);

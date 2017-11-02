@@ -47,33 +47,12 @@ void STATE_CLASS(GpOneToOnePrjnSpec)::Connect_impl(PRJN_STATE* prjn, NETWORK_STA
     int rgpidx = i + r_st;
     int sgpidx = i + s_st;
 
-    if(!make_cons) {
-      // pre-allocate connections
-      for(int rui=0; rui < ru_nunits; rui++) {
-        UNIT_STATE* ru = recv_lay->GetUnitStateGpUnIdx(net, rgpidx, rui);
-        if(ru) {
-          ru->RecvConsPreAlloc(net, prjn, su_nunits);
-        }
-      }
-      for(int sui=0; sui < su_nunits; sui++) {
-        UNIT_STATE* su = send_lay->GetUnitStateGpUnIdx(net, sgpidx, sui);
-        if(su) {
-          su->SendConsPreAlloc(net, prjn, ru_nunits);
-        }
-      }
-    }
-    else {
-      for(int rui=0; rui < ru_nunits; rui++) {
-        UNIT_STATE* ru = recv_lay->GetUnitStateGpUnIdx(net, rgpidx, rui);
-        if(!ru) continue;
-        for(int sui=0; sui < su_nunits; sui++) {
-          UNIT_STATE* su = send_lay->GetUnitStateGpUnIdx(net, sgpidx, sui);
-          if(!su) continue;
-          if(self_con || (ru != su))
-            ru->ConnectFrom(net, su, prjn);
-        }
-      }
-    }
+    Connect_Gps(prjn, net, rgpidx, sgpidx, p_con, sym_self, make_cons);
+  }
+  
+  if(!make_cons) { // on first pass through alloc loop, do sending allocations
+    recv_lay->RecvConsPostAlloc(net, prjn);
+    send_lay->SendConsPostAlloc(net, prjn);
   }
 }
 

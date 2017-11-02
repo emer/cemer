@@ -667,8 +667,8 @@ PRJN_SPEC_CPP* NETWORK_STATE::NewPrjnSpec(int spec_type) const {
     return new STATE_CLASS_CPP(PolarRndPrjnSpec)();
   case T_TesselPrjnSpec:
     return new STATE_CLASS_CPP(TesselPrjnSpec)();
-  // case T_GpTesselPrjnSpec:
-  //   return new STATE_CLASS_CPP(GpTesselPrjnSpec)();
+  case T_GpTesselPrjnSpec:
+    return new STATE_CLASS_CPP(GpTesselPrjnSpec)();
   // case T_GpMapConvergePrjnSpec:
   //   return new STATE_CLASS_CPP(GpMapConvergePrjnSpec)();
   // case T_GpMapDivergePrjnSpec:
@@ -699,8 +699,6 @@ PRJN_SPEC_CPP* NETWORK_STATE::NewPrjnSpec(int spec_type) const {
   //   return new STATE_CLASS_CPP(GaussRFPrjnSpec)();
   // case T_GradientWtsPrjnSpec:
   //   return new STATE_CLASS_CPP(GradientWtsPrjnSpec)();
-  // case T_GpCustomPrjnSpecBase:
-  //   return new STATE_CLASS_CPP(GpCustomPrjnSpecBase)();
   // case T_PFCPrjnSpec:
   //   return new STATE_CLASS_CPP(PFCPrjnSpec)();
   // case T_BgPfcPrjnSpec:

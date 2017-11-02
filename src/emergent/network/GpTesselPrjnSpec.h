@@ -1,117 +1,34 @@
-// Copyright 2017, Regents of the University of Colorado,
-// Carnegie Mellon University, Princeton University.
-//
-// This file is part of Emergent
-//
-//   Emergent is free software; you can redistribute it and/or modify
-//   it under the terms of the GNU General Public License as published by
-//   the Free Software Foundation; either version 2 of the License, or
-//   (at your option) any later version.
-//
-//   Emergent is distributed in the hope that it will be useful,
-//   but WITHOUT ANY WARRANTY; without even the implied warranty of
-//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//   GNU General Public License for more details.
-
-#ifndef GpTesselPrjnSpec_h
-#define GpTesselPrjnSpec_h 1
-
-// parent includes:
-#include <ProjectionSpec>
-
-// member includes:
-#include <taVector2i>
-#include <taVector2f>
-#include <RndSeed>
-
-// declare all other types mentioned but not required to include:
-
-eTypeDef_Of(GpTessEl);
-
-class E_API GpTessEl : public taOBase {
-  // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Spec one element of a tesselation specification for groups
-INHERITED(taOBase)
-public:
-  taVector2i	send_gp_off;	// offset of group from current receiving group
-  float		p_con;		// proportion connectivity from this group -- negative value means just make symmetric cons
-
-  TA_SIMPLE_BASEFUNS(GpTessEl);
-private:
-  void	Initialize();
-  void	Destroy()	{ };
-};
-
-eTypeDef_Of(GpTessEl_List);
-
-class E_API GpTessEl_List : public taList<GpTessEl> {
-  // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Spec list of GpTessEl objects
-INHERITED(taList<GpTessEl>)
-public:
-  TA_BASEFUNS_LITE_NOCOPY(GpTessEl_List);
-private:
-void	Initialize() 		{ SetBaseType(&TA_GpTessEl); }
-  void 	Destroy()		{ };
-};
-
-eTypeDef_Of(GpTesselPrjnSpec);
-
-class E_API GpTesselPrjnSpec : public ProjectionSpec {
-  // specifies tesselated patterns of groups to connect with (both recv and send layers must have unit groups), optionally with random connectivity within each group (also very useful for full connectivity -- has optimized support for that) -- only 'permute' style randomness is supported, producing same number of recv connections per unit
-INHERITED(ProjectionSpec)
-public:
-  taVector2i	recv_gp_off; 	// offset for start of recv group to begin connecting
-  taVector2i	recv_gp_n;    	// number of receiving groups to connect in each dimension (-1 for all)
-  taVector2i	recv_gp_skip; 	// increment for recv groups in each dimension -- 1 = connect all groups; 2 = skip every other group, etc
-  taVector2i	recv_gp_group;	// group together this many unit groups under the same starting coord, resulting in a tile pattern
-  taVector2f send_gp_scale;	// scale to apply to transform receiving unit group coords into sending unit group coords
-  taVector2i	send_gp_border; // border size around sending layer (constant offset to add to sending offsets)
-  GpTessEl_List	send_gp_offs;	// offsets of the sending unit groups
+// this is included directly in AllProjectionSpecs_cpp / _cuda
+// {
+  TAVECTOR2I	recv_gp_off; 	// offset for start of recv group to begin connecting
+  TAVECTOR2I	recv_gp_n;    	// number of receiving groups to connect in each dimension (-1 for all)
+  TAVECTOR2I	recv_gp_skip; 	// increment for recv groups in each dimension -- 1 = connect all groups; 2 = skip every other group, etc
+  TAVECTOR2I	recv_gp_group;	// group together this many unit groups under the same starting coord, resulting in a tile pattern
+  TAVECTOR2F    send_gp_scale;	// scale to apply to transform receiving unit group coords into sending unit group coords
+  TAVECTOR2I	send_gp_border; // border size around sending layer (constant offset to add to sending offsets)
   bool		wrap;		// whether to wrap coordinates around (else clip)
   float		def_p_con;	// default probability of connectivity when new send_gp_offs are created
-  bool		sym_self;	// if a self projection, make it symmetric (senders = receivers) otherwise it is not
+  bool		sym_self;	// if a self projection with p_con < 1 (full), make it symmetric (senders = receivers) otherwise it is not
   bool		same_seed;	// use the same random seed each time (same connect pattern)
-  RndSeed	rndm_seed;	// #HIDDEN random seed
+  STATE_CLASS(RndSeed)	rndm_seed;  // #HIDDEN random seed
+  int           n_send_gp_offs;     // #READ_ONLY #NO_COPY #NO_SAVE number of sending group offsets to use
+  int           alloc_send_gp_offs; // #READ_ONLY #NO_COPY #NO_SAVE number of sending group offsets allocated
+  STATE_CLASS(GpTessEl)* send_gp_offs_m; // #IGNORE n_send_gp_offs sending group offsets
 
-  String	last_make_cmd; // #READ_ONLY #SHOW shows the last Make.. command that was run (if blank, none or it was done prior to the addition of this feature in version 8.0.0) -- useful for modifying later
+  INIMPL void  AllocSendOffs(int ns);
+  // #IGNORE allocate the send_offs_m array -- done by parent emergent obj
+  INIMPL void  FreeSendOffs();
+  // #IGNORE free any allocated send_offs_m
+  
+  INIMPL void Connect_impl(PRJN_STATE* prjn, NETWORK_STATE* net, bool make_cons) override;
 
-  void	Connect_impl(Projection* prjn, bool make_cons) override;
-
-  virtual void	GetCtrFmRecv(taVector2i& sctr, taVector2i ruc);
+  INIMPL virtual void	GetCtrFmRecv(TAVECTOR2I& sctr, TAVECTOR2I ruc);
   // get center of sender coords from receiving coords
-  virtual void  Connect_Gps(int rgpidx, int sgpidx, float p_con,
-			    Projection* prjn, bool send_alloc);
-  // #IGNORE impl connect send/recv gps
-  virtual void  Connect_Gps_Sym(int rgpidx, int sgpidx, float p_con,
-				Projection* prjn);
-  // #IGNORE symmetric (p_con < 0)
-  virtual void  Connect_Gps_SymSameGp(int rgpidx, int sgpidx, float p_con,
-				      Projection* prjn);
-  // #IGNORE symmetric, same unit group
-  virtual void  Connect_Gps_SymSameLay(int rgpidx, int sgpidx, float p_con,
-				      Projection* prjn);
-  // #IGNORE symmetric, same layer
-  virtual void  Connect_Gps_Std(int rgpidx, int sgpidx, float p_con,
-				Projection* prjn);
-  // #IGNORE standard, not symmetric/same
-  virtual void  Connect_Gps_Full(int rgpidx, int sgpidx, Projection* prjn);
-  // #IGNORE full connectivity, 
-  virtual void	Connect_RecvGp(int rgpidx, const taVector2i& ruc, Projection* prjn,
-			       bool send_alloc);
-  // connects one recv unit to all senders
+  INIMPL virtual void	Connect_RecvGp
+  (PRJN_STATE* prjn, NETWORK_STATE* net, int rgpidx, const TAVECTOR2I& ruc,
+   bool make_cons);
+  // #IGNORE connects one recv unit to all senders
 
-  virtual void	MakeRectangle(int width, int height, int left, int bottom);
-  // #BUTTON make a connection pattern in the form of a rectangle starting at left, bottom coordinate and going right and up by width, height
-  virtual void	MakeEllipse(int half_width, int half_height, int ctr_x, int ctr_y);
-  // #BUTTON make a connection pattern in the form of an elipse: center is located at ctr_x,y and extends half_width and half_height therefrom
-  virtual void	SetPCon(float p_con, int start = 0, int end = -1);
-  // #BUTTON set p_con value for a range of send_gp_offs (default = all; end-1 = all)
+  INIMPL void	Initialize_core();
 
-  TA_SIMPLE_BASEFUNS(GpTesselPrjnSpec);
-protected:
-  void UpdateAfterEdit_impl() override;
-
-private:
-  void	Initialize();
-  void	Destroy()	{ };
-};
-#endif // GpTesselPrjnSpec_h
+  INLINE int  GetStateSpecType() const override { return NETWORK_STATE::T_GpTesselPrjnSpec; }

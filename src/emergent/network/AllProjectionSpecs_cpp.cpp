@@ -36,4 +36,6 @@
 
 #include "TesselPrjnSpec.cpp"
 
+#include "GpTesselPrjnSpec.cpp"
+
 #include "TiledGpRFPrjnSpec.cpp"

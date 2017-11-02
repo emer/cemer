@@ -168,7 +168,7 @@ set(network_HEADS_NOMAKETA
   PolarRndPrjnSpec.h
 
   TesselPrjnSpec.h
-  # GpTesselPrjnSpec.h
+  GpTesselPrjnSpec.h
 
   # GpMapConvergePrjnSpec.h
   # GpMapDivergePrjnSpec.h
@@ -190,7 +190,6 @@ set(network_HEADS_NOMAKETA
   # GaussRFPrjnSpec.h
   # GradientWtsPrjnSpec.h
 
-#   GpCustomPrjnSpecBase.h
 #   PFCPrjnSpec.h
 #   BgPfcPrjnSpec.h
   

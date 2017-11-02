@@ -33,19 +33,35 @@ void STATE_CLASS(TesselPrjnSpec)::FreeSendOffs() {
   n_send_offs = 0;
 }
 
-// todo: this assumes that things are in order.. (can't really check otherwise)
-// which breaks for clipped patterns
-void STATE_CLASS(TesselPrjnSpec)::Init_Weights_Prjn(PRJN_STATE* prjn, NETWORK_STATE* net, int thr_no, CON_STATE* cg) {
-  int mxi = MIN(cg->size, n_send_offs);
-  for(int i=0; i<mxi; i++) {
-    TESS_EL& te = send_offs_m[i];
-    if(set_scale) {
-      SetCnWtRnd(prjn, net, thr_no, cg, i);
-      SetCnScale(prjn, net, thr_no, cg, i, te.wt_val);
+void STATE_CLASS(TesselPrjnSpec)::Connect_impl(PRJN_STATE* prjn, NETWORK_STATE* net, bool make_cons) {
+  LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
+  LAYER_STATE* send_lay = prjn->GetSendLayerState(net);
+
+  TAVECTOR2I ru_geo;
+  ru_geo.SetXY(recv_lay->flat_geom_x, recv_lay->flat_geom_y);
+  TAVECTOR2I use_recv_n = recv_n;
+
+  if(recv_n.x == -1)
+    use_recv_n.x = ru_geo.x;
+  if(recv_n.y == -1)
+    use_recv_n.y = ru_geo.y;
+
+  TAVECTOR2I ruc, nuc;
+  for(ruc.y = recv_off.y, nuc.y = 0; (ruc.y < ru_geo.y) && (nuc.y < use_recv_n.y);
+      ruc.y += recv_skip.y, nuc.y++)
+    {
+      for(ruc.x = recv_off.x, nuc.x = 0; (ruc.x < ru_geo.x) && (nuc.x < use_recv_n.x);
+          ruc.x += recv_skip.x, nuc.x++)
+        {
+          UNIT_STATE* ru_u = recv_lay->GetUnitStateFlatXY(net, ruc.x, ruc.y);
+          if(ru_u == NULL)
+            continue;
+          Connect_RecvUnit(prjn, net, ru_u, ruc, make_cons);
+        }
     }
-    else {
-      SetCnWt(prjn, net, thr_no, cg, i, te.wt_val);
-    }
+
+  if(!make_cons) { // on first pass through alloc loop, do sending allocations
+    send_lay->SendConsPostAlloc(net, prjn);
   }
 }
 
@@ -77,10 +93,8 @@ void STATE_CLASS(TesselPrjnSpec)::Connect_RecvUnit(PRJN_STATE* prjn, NETWORK_STA
   // positions of center of recv in sending layer
   TAVECTOR2I sctr;
   GetCtrFmRecv(sctr, ruc);
-  int i;
-  TESS_EL* te;
-  for(i = 0; i< n_send_offs; i++) {
-    te = (TESS_EL*)send_offs_m + i;
+  for(int i = 0; i< n_send_offs; i++) {
+    TESS_EL* te = send_offs_m + i;
     TAVECTOR2I suc = te->send_off + sctr;
     if(suc.WrapClip(wrap, su_geo) && !wrap)
       continue;
@@ -94,38 +108,19 @@ void STATE_CLASS(TesselPrjnSpec)::Connect_RecvUnit(PRJN_STATE* prjn, NETWORK_STA
   }
 }
 
-void STATE_CLASS(TesselPrjnSpec)::Connect_impl(PRJN_STATE* prjn, NETWORK_STATE* net, bool make_cons) {
-  LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
-  LAYER_STATE* send_lay = prjn->GetSendLayerState(net);
-  if(recv_lay->n_units == 0) // an empty layer!
-    return;
-
-  TAVECTOR2I ru_geo;
-  ru_geo.SetXY(recv_lay->flat_geom_x, recv_lay->flat_geom_y);
-  TAVECTOR2I use_recv_n = recv_n;
-
-  if(recv_n.x == -1)
-    use_recv_n.x = ru_geo.x;
-  if(recv_n.y == -1)
-    use_recv_n.y = ru_geo.y;
-
-  TAVECTOR2I ruc, nuc;
-  for(ruc.y = recv_off.y, nuc.y = 0; (ruc.y < ru_geo.y) && (nuc.y < use_recv_n.y);
-      ruc.y += recv_skip.y, nuc.y++)
-    {
-      for(ruc.x = recv_off.x, nuc.x = 0; (ruc.x < ru_geo.x) && (nuc.x < use_recv_n.x);
-          ruc.x += recv_skip.x, nuc.x++)
-        {
-          UNIT_STATE* ru_u = recv_lay->GetUnitStateFlatXY(net, ruc.x, ruc.y);
-          if(ru_u == NULL)
-            continue;
-          Connect_RecvUnit(prjn, net, ru_u, ruc, make_cons);
-        }
+// todo: this assumes that things are in order.. (can't really check otherwise)
+// which breaks for clipped patterns
+void STATE_CLASS(TesselPrjnSpec)::Init_Weights_Prjn(PRJN_STATE* prjn, NETWORK_STATE* net, int thr_no, CON_STATE* cg) {
+  int mxi = MIN(cg->size, n_send_offs);
+  for(int i=0; i<mxi; i++) {
+    TESS_EL& te = send_offs_m[i];
+    if(set_scale) {
+      SetCnWtRnd(prjn, net, thr_no, cg, i);
+      SetCnScale(prjn, net, thr_no, cg, i, te.wt_val);
     }
-
-  if(!make_cons) { // on first pass through alloc loop, do sending allocations
-    send_lay->SendConsPostAlloc(net, prjn);
+    else {
+      SetCnWt(prjn, net, thr_no, cg, i, te.wt_val);
+    }
   }
 }
-
 

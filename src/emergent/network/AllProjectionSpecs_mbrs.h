@@ -28,10 +28,23 @@ public:
   STATE_DECO_KEY("ProjectionSpec");
   STATE_TA_STD_CODE(TessEl);
 private:
-  INLINE void	Initialize() {
-    wt_val = 1;
-  }
+  INLINE void	Initialize() { wt_val = 1; }
 };
+
+
+class STATE_CLASS(GpTessEl) : public STATE_CLASS(taOBase) {
+  // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Spec one element of a tesselation specification for groups
+INHERITED(taOBase)
+public:
+  TAVECTOR2I	send_gp_off;	// offset of group from current receiving group
+  float		p_con;		// proportion connectivity from this group -- negative value means make symmetric cons within the same layer -- also optimized for full connectivity when = 1
+
+  STATE_DECO_KEY("ProjectionSpec");
+  STATE_TA_STD_CODE(GpTessEl);
+private:
+  void	Initialize() { p_con = 1.0f; }
+};
+
 
 class STATE_CLASS(GaussInitWtsSpec) : public STATE_CLASS(taOBase) {
   // #STEM_BASE ##INLINE ##CAT_Projection parameters for initializing gaussian projection weights

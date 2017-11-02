@@ -105,6 +105,17 @@ public:
 };
 
 
+class GpTesselPrjnSpec_cpp : public ProjectionSpec_cpp {
+  // specifies tesselated patterns of groups to connect with (both recv and send layers must have unit groups), optionally with random connectivity within each group (also very useful for full connectivity -- has optimized support for that) -- only 'permute' style randomness is supported, producing same number of recv connections per unit
+INHERITED(ProjectionSpec)
+public:
+
+#include <GpTesselPrjnSpec>
+  
+  GpTesselPrjnSpec_cpp() { Initialize_core(); }
+};
+
+
 class TiledGpRFPrjnSpec_cpp : public ProjectionSpec_cpp {
   // Tiled receptive field projection spec for entirely group-to-group connections: connects entire receiving layer unit groups with overlapping tiled regions of sending layer groups -- if init_wts is on, gaussian or sigmoid topographic weights are initialized
 INHERITED(ProjectionSpec)

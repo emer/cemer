@@ -27,6 +27,7 @@
 
 // need to define all the ones for _mbrs here
 eTypeDef_Of(TessEl);
+eTypeDef_Of(GpTessEl);
 eTypeDef_Of(GaussInitWtsSpec);
 eTypeDef_Of(SigmoidInitWtsSpec);
 
@@ -208,6 +209,57 @@ private:
   void	Initialize() { Initialize_core(); send_offs.SetBaseType(&TA_TessEl); }
   void	Destroy()    { CutLinks(); FreeSendOffs(); }
 };
+
+
+eTypeDef_Of(GpTessEl_List);
+
+class E_API GpTessEl_List : public taList<GpTessEl> {
+  // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Spec list of GpTessEl objects
+INHERITED(taList<GpTessEl>)
+public:
+  TA_BASEFUNS_LITE_NOCOPY(GpTessEl_List);
+private:
+void	Initialize() 		{ SetBaseType(&TA_GpTessEl); }
+  void 	Destroy()		{ };
+};
+
+eTypeDef_Of(GpTesselPrjnSpec);
+
+class E_API GpTesselPrjnSpec : public ProjectionSpec {
+  // #AKA_GpRndTesselPrjnSpec specifies tesselated patterns of groups to connect with (both recv and send layers must have unit groups), optionally with random connectivity within each group (also very useful for full connectivity -- has optimized support for that) -- only 'permute' style randomness is supported, producing same number of recv connections per unit
+INHERITED(ProjectionSpec)
+public:
+
+#include <GpTesselPrjnSpec>
+
+  String	last_make_cmd; // #READ_ONLY #SHOW shows the last Make.. command that was run (if blank, none or it was done prior to the addition of this feature in version 8.0.0) -- useful for modifying later
+  GpTessEl_List	send_gp_offs;	// offsets of the sending unit groups
+
+  
+  virtual void	MakeRectangle(int width, int height, int left, int bottom);
+  // #BUTTON make a connection pattern in the form of a rectangle starting at left, bottom coordinate and going right and up by width, height
+  virtual void	MakeEllipse(int half_width, int half_height, int ctr_x, int ctr_y);
+  // #BUTTON make a connection pattern in the form of an elipse: center is located at ctr_x,y and extends half_width and half_height therefrom
+  virtual void	SetPCon(float p_con, int start = 0, int end = -1);
+  // #BUTTON set p_con value for a range of send_gp_offs (default = all; end-1 = all)
+
+  virtual void  SyncSendOffs();
+  // #IGNORE sync our dynamic send_offs array with the compiled version used by actual State projection code
+  virtual void  CopyToState_SendOffs(void* state_spec, const char* state_suffix);
+  // #IGNORE copy our compiled send offs data to other state spec
+
+  void    CopyToState(void* state_spec, const char* state_suffix) override;
+  void    UpdateStateSpecs() override;
+
+  TA_SIMPLE_BASEFUNS(GpTesselPrjnSpec);
+protected:
+  void UpdateAfterEdit_impl() override;
+
+private:
+  void	Initialize() { Initialize_core(); send_gp_offs.SetBaseType(&TA_GpTessEl); }
+  void	Destroy()	{ };
+};
+
 
 
 eTypeDef_Of(TiledGpRFPrjnSpec);

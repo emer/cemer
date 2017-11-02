@@ -52,7 +52,6 @@
     T_TiledGpMapConvergePrjnSpec,
     T_GaussRFPrjnSpec,
     T_GradientWtsPrjnSpec,
-    T_GpCustomPrjnSpecBase,
     T_PFCPrjnSpec,
     T_BgPfcPrjnSpec,
     T_ConPoolPrjnSpec,
