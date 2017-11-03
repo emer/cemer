@@ -28,9 +28,6 @@
   STATE_CLASS(SigmoidInitWtsSpec) gp_sig;            // #CONDSHOW_ON_init_wts&&wts_type:SIGMOID parameters for sigmoid initial weight distribution for each individual sending unit group
   STATE_CLASS(MinMaxRange)	wt_range;               // #CONDSHOW_ON_init_wts range of weakest (min) to strongest (max) weight values generated -- typically want to center this around .5, and often fairly subtle differences (.4 - .6) produce reasonably strong effects on Leabra networks
 
-  TAVECTOR2I 	trg_recv_geom;	// #READ_ONLY #SHOW target receiving layer gp geometry -- computed from send and rf_width, move by TrgRecvFmSend button, or given by TrgSendFmRecv
-  TAVECTOR2I 	trg_send_geom;	// #READ_ONLY #SHOW target sending layer geometry -- computed from recv and rf_width, move by TrgSendFmRecv button, or given by TrgRecvFmSend
-
   
   INIMPL void Connect_impl(PRJN_STATE* prjn, NETWORK_STATE* net, bool make_cons) override;
 
@@ -46,11 +43,6 @@
   INIMPL virtual void	Init_Weights_Sigmoid
     (PRJN_STATE* prjn, NETWORK_STATE* net, int thr_no, CON_STATE* cg);
   // sigmoid initial weights
-
-  INIMPL virtual void	Connect_UnitGroup
-    (PRJN_STATE* prjn, NETWORK_STATE* net, LAYER_STATE* recv_lay, LAYER_STATE* send_lay,
-     int rgpidx, int sgpidx, bool make_cons);
-  // #IGNORE connect one unit group to another -- rgpidx = recv unit group idx, sgpidx = send unit group idx
 
   INIMPL void	Initialize_core();
 

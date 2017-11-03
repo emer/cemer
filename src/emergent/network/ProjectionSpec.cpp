@@ -46,11 +46,11 @@ void ProjectionSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
 
   if(set_scale) {
-    // Network* net = GET_MY_OWNER(Network);
-    // if(TestWarning(net && !net->InheritsFromName("LeabraNetwork"),
-    //                "Init_Weights_Prjn", "set_scale can only be used with Leabra networks -- turning off")) {
-    //   set_scale = false;
-    // }
+    Network* net = GET_MY_OWNER(Network);
+    if(TestWarning(net && !net->InheritsFromName("LeabraNetwork"),
+                   "Connect_impl", "set_scale can only be used with Leabra networks -- turning off")) {
+      set_scale = false;
+    }
   }
 }
 

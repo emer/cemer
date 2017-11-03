@@ -334,3 +334,68 @@ void STATE_CLASS(ProjectionSpec)::Connect_Gps_Sym
   }
 }
 
+void STATE_CLASS(ProjectionSpec)::Connect_UnitGroupRF
+  (PRJN_STATE* prjn, NETWORK_STATE* net, LAYER_STATE* recv_lay, LAYER_STATE* send_lay,
+   int rgpidx, int sgpidx, bool make_cons, bool share_con, bool recip) {
+  int ru_nunits = recv_lay->un_geom_n;
+  int su_nunits = send_lay->un_geom_n;
+
+  if(recip) {              // reciprocal is backwards!
+    for(int sui=0; sui < su_nunits; sui++) {
+      UNIT_STATE* su;
+      if(sgpidx >= 0)
+        su = send_lay->GetUnitStateGpUnIdx(net, sgpidx, sui);
+      else
+        su = send_lay->GetUnitState(net, sui);
+      if(su->lesioned()) continue;
+      for(int rui=0; rui < ru_nunits; rui++) {
+        UNIT_STATE* ru;
+        if(rgpidx >= 0)
+          ru = recv_lay->GetUnitStateGpUnIdx(net, rgpidx, rui);
+        else
+          ru = recv_lay->GetUnitState(net, rui);
+        if(ru->lesioned()) continue;
+        if(!self_con && (su == ru)) continue;
+        if(!make_cons) {
+          su->RecvConsAllocInc(net, prjn, 1); // recip!
+          ru->SendConsAllocInc(net, prjn, 1); // recip!
+        }
+        else {
+          su->ConnectFrom(net, ru, prjn); // recip!
+        }
+      }
+    }
+  }
+  else {
+    for(int rui=0; rui < ru_nunits; rui++) {
+      UNIT_STATE* ru;
+      if(rgpidx >= 0) {
+        ru = recv_lay->GetUnitStateGpUnIdx(net, rgpidx, rui);
+        if(share_con && net->RecvOwnsCons() && rgpidx > 0) {
+          UNIT_STATE* shru = recv_lay->GetUnitStateGpUnIdx(net, 0, rui); // group 0
+          ru->ShareRecvConsFrom(net, shru, prjn);
+        }
+      }
+      else {
+        ru = recv_lay->GetUnitState(net, rui);
+      }
+      if(ru->lesioned()) continue;
+      for(int sui=0; sui < su_nunits; sui++) {
+        UNIT_STATE* su;
+        if(sgpidx >= 0)
+          su = send_lay->GetUnitStateGpUnIdx(net, sgpidx, sui);
+        else
+          su = send_lay->GetUnitState(net, sui);
+        if(su->lesioned()) continue;
+        if(!self_con && (su == ru)) continue;
+        if(!make_cons) {
+          ru->RecvConsAllocInc(net, prjn, 1);
+          su->SendConsAllocInc(net, prjn, 1);
+        }
+        else {
+          ru->ConnectFrom(net, su, prjn);
+        }
+      }
+    }
+  }
+}

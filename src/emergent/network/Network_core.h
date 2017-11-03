@@ -46,9 +46,10 @@
     T_SymmetricPrjnSpec,
 
     T_TiledGpRFPrjnSpec,
-    T_TiledSubGpRFPrjnSpec,
     T_TiledGpRFOneToOnePrjnSpec,
     T_TiledGpRFOneToOneWtsPrjnSpec,
+    T_TiledSubGpRFPrjnSpec,
+
     T_TiledRFPrjnSpec,
     T_TiledNovlpPrjnSpec,
     T_TiledDivGpRFPrjnSpec,

@@ -160,5 +160,37 @@ public:
 };
 
 
+class TiledGpRFOneToOnePrjnSpec_cpp : public TiledGpRFPrjnSpec_cpp {
+  // TiledGpRFPrjnSpec connectvity with one-to-one connections for units with the same index within a unit group -- useful for establishing connections among layers with the same unit-group structure (see also TiledGpRFOneToOneWtsPrjnSpec for a softer version where only weights are set)
+INHERITED(TiledGpRFPrjnSpec)
+public:
+
+#include <TiledGpRFOneToOnePrjnSpec>
+  
+  TiledGpRFOneToOnePrjnSpec_cpp() { Initialize_core(); }
+};
+
+
+class TiledGpRFOneToOneWtsPrjnSpec_cpp : public TiledGpRFPrjnSpec_cpp {
+  // TiledGpRFPrjnSpec connectvity with initial weights (when init_wts is set) that have differential weights for units with the same index within a unit group vs. differential weights -- useful for establishing connections among layers with the same unit-group structure (see also TiledGpRFOnetToOnePrjnSpec for harder version where connections are only made among units with same index within group)
+INHERITED(TiledGpRFPrjnSpec)
+public:
+
+#include <TiledGpRFOneToOneWtsPrjnSpec>
+
+  TiledGpRFOneToOneWtsPrjnSpec_cpp()  { Initialize_core(); }
+};
+
+
+class TiledSubGpRFPrjnSpec_cpp : public ProjectionSpec_cpp {
+  // Tiled receptive field projection spec for topographic tiled group-to-group connections, with a sub-tiling of unit groups within the larger receptive field tiling, to divide the larger problem into more managable subsets: connects entire receiving layer unit groups with overlapping tiled regions of sending layer groups -- if init_wts is on, gaussian topographic weights are initialized
+INHERITED(ProjectionSpec)
+public:
+
+#include <TiledSubGpRFPrjnSpec>
+  
+  TiledSubGpRFPrjnSpec_cpp() { Initialize_core(); }
+};
+
 
 #endif // AllProjectionSpecs_cpp_h

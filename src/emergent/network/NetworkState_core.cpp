@@ -679,12 +679,12 @@ PRJN_SPEC_CPP* NETWORK_STATE::NewPrjnSpec(int spec_type) const {
   //   return new STATE_CLASS_CPP(SymmetricPrjnSpec)();
   case T_TiledGpRFPrjnSpec:
     return new STATE_CLASS_CPP(TiledGpRFPrjnSpec)();
-  // case T_TiledSubGpRFPrjnSpec:
-  //   return new STATE_CLASS_CPP(TiledSubGpRFPrjnSpec)();
-  // case T_TiledGpRFOneToOnePrjnSpec:
-  //   return new STATE_CLASS_CPP(TiledGpRFOneToOnePrjnSpec)();
-  // case T_TiledGpRFOneToOneWtsPrjnSpec:
-  //   return new STATE_CLASS_CPP(TiledGpRFOneToOneWtsPrjnSpec)();
+  case T_TiledGpRFOneToOnePrjnSpec:
+    return new STATE_CLASS_CPP(TiledGpRFOneToOnePrjnSpec)();
+  case T_TiledGpRFOneToOneWtsPrjnSpec:
+    return new STATE_CLASS_CPP(TiledGpRFOneToOneWtsPrjnSpec)();
+  case T_TiledSubGpRFPrjnSpec:
+    return new STATE_CLASS_CPP(TiledSubGpRFPrjnSpec)();
   // case T_TiledRFPrjnSpec:
   //   return new STATE_CLASS_CPP(TiledRFPrjnSpec)();
   // case T_TiledNovlpPrjnSpec:

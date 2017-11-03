@@ -1,53 +1,34 @@
-// Copyright 2017, Regents of the University of Colorado,
-// Carnegie Mellon University, Princeton University.
-//
-// This file is part of Emergent
-//
-//   Emergent is free software; you can redistribute it and/or modify
-//   it under the terms of the GNU General Public License as published by
-//   the Free Software Foundation; either version 2 of the License, or
-//   (at your option) any later version.
-//
-//   Emergent is distributed in the hope that it will be useful,
-//   but WITHOUT ANY WARRANTY; without even the implied warranty of
-//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//   GNU General Public License for more details.
+// this is included directly in AllProjectionSpecs_cpp / _cuda
+// {
 
-#include "TiledGpRFOneToOneWtsPrjnSpec.h"
-#include <Network>
-
-TA_BASEFUNS_CTORS_DEFN(TiledGpRFOneToOneWtsPrjnSpec);
-
-
-void TiledGpRFOneToOneWtsPrjnSpec::Initialize() {
+void STATE_CLASS(TiledGpRFOneToOneWtsPrjnSpec)::Initialize_core() {
   one_to_one_wt = 0.8f;
   other_wt = 0.2f;
   init_wts = true;
 }
 
-void TiledGpRFOneToOneWtsPrjnSpec::Init_Weights_Prjn
-(Projection* prjn, ConState_cpp* cg, Network* net, int thr_no) {
-  Layer* recv_lay = prjn->layer;
-  Layer* send_lay = prjn->from;
-  Unit* ru = cg->OwnUn(net);
+void STATE_CLASS(TiledGpRFOneToOneWtsPrjnSpec)::Init_Weights_Prjn
+  (PRJN_STATE* prjn, NETWORK_STATE* net, int thr_no, CON_STATE* cg) {
 
-  int rgpidx;
-  int rui;
-  recv_lay->UnGpIdxFmUnitIdx(ru->idx, rui, rgpidx);
+  LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
+  LAYER_STATE* send_lay = prjn->GetSendLayerState(net);
+  UNIT_STATE* ru = cg->OwnUnState(net);
+
+  int rgpidx = ru->gp_idx;
+  int rui = ru->ungp_un_idx;
   for(int i=0; i < cg->size; i++) {
-    Unit* su = cg->Un(i,net);
-    int sgpidx;
-    int sui;
-    send_lay->UnGpIdxFmUnitIdx(su->idx, sui, sgpidx);
+    UNIT_STATE* su = cg->UnState(i,net);
+    int sgpidx = su->gp_idx;
+    int sui = su->ungp_un_idx;
     float wt = other_wt;
     if(sui == rui)
       wt = one_to_one_wt;
     if(set_scale) {
-      SetCnWtRnd(cg, i, net, thr_no);
-      SetCnScale(wt, cg, i, net, thr_no);
+      SetCnWtRnd(prjn, net, thr_no, cg, i);
+      SetCnScale(prjn, net, thr_no, cg, i, wt);
     }
     else {
-      SetCnWt(wt, cg, i, net, thr_no);
+      SetCnWt(prjn, net, thr_no, cg, i, wt);
     }
   }
 }

@@ -16,10 +16,6 @@ void STATE_CLASS(TiledGpRFPrjnSpec)::Initialize_core() {
 }
 
 void STATE_CLASS(TiledGpRFPrjnSpec)::Connect_impl(PRJN_STATE* prjn, NETWORK_STATE* net, bool make_cons) {
-  // if(TestWarning(set_scale && net && !net->InheritsFromName("LeabraNetwork"),
-  //                "Connect_impl", "set_scale can only be used with Leabra networks -- turning off")) {
-  //   set_scale = false;
-  // }
   LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
   LAYER_STATE* send_lay = prjn->GetSendLayerState(net);
   if(reciprocal) {
@@ -74,8 +70,9 @@ void STATE_CLASS(TiledGpRFPrjnSpec)::Connect_impl(PRJN_STATE* prjn, NETWORK_STAT
             sgpidx = send_lay->GetGpIdxFmXY(suc_wrp.x, suc_wrp.y);
             if(!send_lay->GpIdxInRange(sgpidx)) continue;
           }
-
-          Connect_UnitGroup(prjn, net, recv_lay, send_lay, rgpidx, sgpidx, make_cons);
+          // in base prjnspec
+          Connect_UnitGroupRF(prjn, net, recv_lay, send_lay, rgpidx, sgpidx, make_cons,
+                            share_cons, reciprocal);
         }
       }
     }
@@ -83,68 +80,6 @@ void STATE_CLASS(TiledGpRFPrjnSpec)::Connect_impl(PRJN_STATE* prjn, NETWORK_STAT
   if(!make_cons) { // on first pass through alloc loop, do sending allocations
     prjn->GetRecvLayerState(net)->RecvConsPostAlloc(net, prjn);
     prjn->GetSendLayerState(net)->SendConsPostAlloc(net, prjn);
-  }
-}
-
-void STATE_CLASS(TiledGpRFPrjnSpec)::Connect_UnitGroup
-  (PRJN_STATE* prjn, NETWORK_STATE* net, LAYER_STATE* recv_lay, LAYER_STATE* send_lay,
-   int rgpidx, int sgpidx, bool make_cons) {
-  int ru_nunits = recv_lay->un_geom_n;
-  int su_nunits = send_lay->un_geom_n;
-
-  if(reciprocal) {              // reciprocal is backwards!
-    for(int sui=0; sui < su_nunits; sui++) {
-      UNIT_STATE* su_u;
-      if(sgpidx >= 0)
-        su_u = send_lay->GetUnitStateGpUnIdx(net, sgpidx, sui);
-      else
-        su_u = send_lay->GetUnitState(net, sui);
-      for(int rui=0; rui < ru_nunits; rui++) {
-        UNIT_STATE* ru_u;
-        if(rgpidx >= 0)
-          ru_u = recv_lay->GetUnitStateGpUnIdx(net, rgpidx, rui);
-        else
-          ru_u = recv_lay->GetUnitState(net, rui);
-        if(!self_con && (su_u == ru_u)) continue;
-        if(!make_cons) {
-          su_u->RecvConsAllocInc(net, prjn, 1); // recip!
-          ru_u->SendConsAllocInc(net, prjn, 1); // recip!
-        }
-        else {
-          su_u->ConnectFrom(net, ru_u, prjn); // recip!
-        }
-      }
-    }
-  }
-  else {
-    for(int rui=0; rui < ru_nunits; rui++) {
-      UNIT_STATE* ru_u;
-      if(rgpidx >= 0) {
-        ru_u = recv_lay->GetUnitStateGpUnIdx(net, rgpidx, rui);
-        if(share_cons && net->RecvOwnsCons() && rgpidx > 0) {
-          UNIT_STATE* shru = recv_lay->GetUnitStateGpUnIdx(net, 0, rui); // group 0
-          ru_u->ShareRecvConsFrom(net, shru, prjn);
-        }
-      }
-      else {
-        ru_u = recv_lay->GetUnitState(net, rui);
-      }
-      for(int sui=0; sui < su_nunits; sui++) {
-        UNIT_STATE* su_u;
-        if(sgpidx >= 0)
-          su_u = send_lay->GetUnitStateGpUnIdx(net, sgpidx, sui);
-        else
-          su_u = send_lay->GetUnitState(net, sui);
-        if(!self_con && (su_u == ru_u)) continue;
-        if(!make_cons) {
-          ru_u->RecvConsAllocInc(net, prjn, 1);
-          su_u->SendConsAllocInc(net, prjn, 1);
-        }
-        else {
-          ru_u->ConnectFrom(net, su_u, prjn);
-        }
-      }
-    }
   }
 }
 
@@ -259,7 +194,6 @@ void STATE_CLASS(TiledGpRFPrjnSpec)::Init_Weights_Gaussian
           sucw.y = sucw.y - un_full_size.y;
       }
 
-      // todo: need in non-ta
       float dst = STATE_CLASS(taMath_float)::euc_dist(sucw.x, sucw.y, s_un_ctr.x, s_un_ctr.y);
       fwt = STATE_CLASS(taMath_float)::gauss_den_nonorm(dst, full_eff_sig);
     }
@@ -278,7 +212,6 @@ void STATE_CLASS(TiledGpRFPrjnSpec)::Init_Weights_Gaussian
           suncw.y = suncw.y - gp_full_size.y;
       }
     
-      // todo: need in non-ta
       float dst = STATE_CLASS(taMath_float)::euc_dist(suncw.x, suncw.y, s_gp_ctr.x, s_gp_ctr.y);
       gwt = STATE_CLASS(taMath_float)::gauss_den_nonorm(dst, gp_eff_sig);
     }

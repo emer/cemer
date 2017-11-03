@@ -38,3 +38,6 @@
 #include "GpTesselPrjnSpec.cpp"
 
 #include "TiledGpRFPrjnSpec.cpp"
+#include "TiledGpRFOneToOnePrjnSpec.cpp"
+#include "TiledGpRFOneToOneWtsPrjnSpec.cpp"
+#include "TiledSubGpRFPrjnSpec.cpp"

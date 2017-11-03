@@ -410,7 +410,7 @@ void TiledGpRFPrjnSpec::UpdateAfterEdit_impl() {
                  "full_send == ALL_SAME is not a valid option, switching back to BY_UNIT")) {
     full_send = BY_UNIT;
   }
-  
+
   if(taMisc::is_loading) {
     taVersion v705(7, 0, 5);
     if(taMisc::loading_version < v705) { // set send_gp_start to prev val
@@ -458,6 +458,85 @@ bool TiledGpRFPrjnSpec::TrgSendFmRecv(int recv_x, int recv_y) {
   else
     trg_recv_geom = (trg_send_geom / send_gp_skip) - 1;
 
+  SigEmitUpdated();
+  return (trg_recv_geom.x == recv_x && trg_recv_geom.y == recv_y);
+}
+
+
+
+TA_BASEFUNS_CTORS_DEFN(TiledGpRFOneToOnePrjnSpec);
+#include "TiledGpRFOneToOnePrjnSpec.cpp"
+
+TA_BASEFUNS_CTORS_DEFN(TiledGpRFOneToOneWtsPrjnSpec);
+#include "TiledGpRFOneToOneWtsPrjnSpec.cpp"
+
+
+////////////////////////////////////////////////////////////////////////////////////
+//              TiledSubGpRFPrjnSpec
+
+TA_BASEFUNS_CTORS_DEFN(TiledSubGpRFPrjnSpec);
+
+#include "TiledSubGpRFPrjnSpec.cpp"
+
+void TiledSubGpRFPrjnSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+
+  wt_range.UpdateAfterEdit_NoGui();
+  
+  if(TestError(send_subgp_size.x > recv_subgp_size.x, "UAE",
+               "send_subgp_size must be smaller than or equal to recv_subgp_size")) {
+  }
+  if(TestError(send_subgp_size.y > recv_subgp_size.y, "UAE",
+               "send_subgp_size must be smaller than or equal to recv_subgp_size")) {
+  }
+  if(TestError(recv_subgp_size.x % send_subgp_size.x != 0, "UAE",
+               "recv_subgp_size must be an even multiple of send_subgp_size")) {
+  }
+  if(TestError(recv_subgp_size.y % send_subgp_size.y != 0, "UAE",
+               "recv_subgp_size must be an even multiple of send_subgp_size")) {
+  }
+}
+
+bool TiledSubGpRFPrjnSpec::TrgRecvFmSend(int send_x, int send_y) {
+  trg_send_geom.x = send_x;
+  trg_send_geom.y = send_y;
+
+  if(wrap)
+    trg_recv_geom = (trg_send_geom / send_gp_skip);
+  else
+    trg_recv_geom = (trg_send_geom / send_gp_skip) - 1;
+
+  // now fix it the other way
+  if(wrap)
+    trg_send_geom = (trg_recv_geom * send_gp_skip);
+  else
+    trg_send_geom = ((trg_recv_geom +1) * send_gp_skip);
+
+  trg_recv_geom *= recv_subgp_size;
+  trg_send_geom *= send_subgp_size;
+  
+  SigEmitUpdated();
+  return (trg_send_geom.x == send_x && trg_send_geom.y == send_y);
+}
+
+bool TiledSubGpRFPrjnSpec::TrgSendFmRecv(int recv_x, int recv_y) {
+  trg_recv_geom.x = recv_x;
+  trg_recv_geom.y = recv_y;
+
+  if(wrap)
+    trg_send_geom = (trg_recv_geom * send_gp_skip);
+  else
+    trg_send_geom = ((trg_recv_geom+1) * send_gp_skip);
+
+  // now fix it the other way
+  if(wrap)
+    trg_recv_geom = (trg_send_geom / send_gp_skip);
+  else
+    trg_recv_geom = (trg_send_geom / send_gp_skip) - 1;
+
+  trg_recv_geom *= recv_subgp_size;
+  trg_send_geom *= send_subgp_size;
+  
   SigEmitUpdated();
   return (trg_recv_geom.x == recv_x && trg_recv_geom.y == recv_y);
 }

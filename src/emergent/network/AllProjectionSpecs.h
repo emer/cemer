@@ -329,7 +329,9 @@ public:
 
 #include <TiledGpRFPrjnSpec>  
 
-  
+  taVector2i 	trg_recv_geom;	// #READ_ONLY #SHOW target receiving layer gp geometry -- computed from send and rf_width, move by TrgRecvFmSend button, or given by TrgSendFmRecv
+  taVector2i 	trg_send_geom;	// #READ_ONLY #SHOW target sending layer geometry -- computed from recv and rf_width, move by TrgSendFmRecv button, or given by TrgRecvFmSend
+
   virtual bool	TrgRecvFmSend(int send_x, int send_y);
   // #BUTTON compute target recv layer geometry based on given sending layer geometry -- updates trg_recv_geom and trg_send_geom members, including fixing send to be an appropriate even multiple of rf_move -- returns true if send values provided result are same "good" ones that come out the end
   virtual bool	TrgSendFmRecv(int recv_x, int recv_y);
@@ -344,5 +346,64 @@ private:
   void 	Destroy()		{ };
 };
 
+
+eTypeDef_Of(TiledGpRFOneToOnePrjnSpec);
+
+class E_API TiledGpRFOneToOnePrjnSpec : public TiledGpRFPrjnSpec {
+  // TiledGpRFPrjnSpec connectvity with one-to-one connections for units with the same index within a unit group -- useful for establishing connections among layers with the same unit-group structure (see also TiledGpRFOneToOneWtsPrjnSpec for a softer version where only weights are set)
+INHERITED(TiledGpRFPrjnSpec)
+public:
+
+#include <TiledGpRFOneToOnePrjnSpec>
+  
+  TA_SIMPLE_BASEFUNS(TiledGpRFOneToOnePrjnSpec);
+private:
+  void	Initialize()    { Initialize_core(); }
+  void	Destroy()	{ };
+};
+
+
+eTypeDef_Of(TiledGpRFOneToOneWtsPrjnSpec);
+
+class E_API TiledGpRFOneToOneWtsPrjnSpec : public TiledGpRFPrjnSpec {
+  // TiledGpRFPrjnSpec connectvity with initial weights (when init_wts is set) that have differential weights for units with the same index within a unit group vs. differential weights -- useful for establishing connections among layers with the same unit-group structure (see also TiledGpRFOnetToOnePrjnSpec for harder version where connections are only made among units with same index within group)
+INHERITED(TiledGpRFPrjnSpec)
+public:
+
+#include <TiledGpRFOneToOneWtsPrjnSpec>
+
+  TA_SIMPLE_BASEFUNS(TiledGpRFOneToOneWtsPrjnSpec);
+private:
+  void	Initialize()    { Initialize_core(); }
+  void	Destroy()	{ };
+};
+
+
+
+eTypeDef_Of(TiledSubGpRFPrjnSpec);
+
+class E_API TiledSubGpRFPrjnSpec : public ProjectionSpec {
+  // Tiled receptive field projection spec for topographic tiled group-to-group connections, with a sub-tiling of unit groups within the larger receptive field tiling, to divide the larger problem into more managable subsets: connects entire receiving layer unit groups with overlapping tiled regions of sending layer groups -- if init_wts is on, gaussian topographic weights are initialized
+INHERITED(ProjectionSpec)
+public:
+
+#include <TiledSubGpRFPrjnSpec>
+  
+  taVector2i 	trg_recv_geom;	// #READ_ONLY #SHOW target receiving layer gp geometry -- computed from send and rf_width, move by TrgRecvFmSend button, or given by TrgSendFmRecv
+  taVector2i 	trg_send_geom;	// #READ_ONLY #SHOW target sending layer geometry -- computed from recv and rf_width, move by TrgSendFmRecv button, or given by TrgRecvFmSend
+
+  virtual bool	TrgRecvFmSend(int send_x, int send_y);
+  // #BUTTON compute target recv layer geometry based on given sending layer geometry -- updates trg_recv_geom and trg_send_geom members, including fixing send to be an appropriate even multiple of rf_move -- returns true if send values provided result are same "good" ones that come out the end
+  virtual bool	TrgSendFmRecv(int recv_x, int recv_y);
+  // #BUTTON compute target recv layer geometry based on given sending layer geometry -- updates trg_recv_geom and trg_send_geom members, including fixing recv to be an appropriate even multiple of rf_move --  -- returns true if send values provided result are same "good" ones that come out the end
+
+  TA_SIMPLE_BASEFUNS(TiledSubGpRFPrjnSpec);
+protected:
+  void  UpdateAfterEdit_impl() override;
+  
+private:
+  void Initialize()  { Initialize_core(); }
+  void Destroy()     { };
+};
 
 #endif // AllProjectionSpecs_h

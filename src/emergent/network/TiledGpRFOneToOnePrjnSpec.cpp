@@ -1,85 +1,73 @@
-// Copyright 2017, Regents of the University of Colorado,
-// Carnegie Mellon University, Princeton University.
-//
-// This file is part of Emergent
-//
-//   Emergent is free software; you can redistribute it and/or modify
-//   it under the terms of the GNU General Public License as published by
-//   the Free Software Foundation; either version 2 of the License, or
-//   (at your option) any later version.
-//
-//   Emergent is distributed in the hope that it will be useful,
-//   but WITHOUT ANY WARRANTY; without even the implied warranty of
-//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//   GNU General Public License for more details.
+// this is included directly in AllProjectionSpecs_cpp / _cuda
+// {
 
-#include "TiledGpRFOneToOnePrjnSpec.h"
-#include <Network>
-#include <taMath_float>
-
-TA_BASEFUNS_CTORS_DEFN(TiledGpRFOneToOnePrjnSpec);
-
-void TiledGpRFOneToOnePrjnSpec::Initialize() {
+void STATE_CLASS(TiledGpRFOneToOnePrjnSpec)::Initialize_core() {
   gauss_sigma = 1.0f;
   su_idx_st = 0;
   ru_idx_st = 0;
   gp_n_cons = -1;
 }
 
-void TiledGpRFOneToOnePrjnSpec::Connect_UnitGroup(Projection* prjn, Layer* recv_lay,
-                                Layer* send_lay, int rgpidx, int sgpidx, bool make_cons) {
-  int ru_nunits = recv_lay->un_geom.n - ru_idx_st;
-  int su_nunits = send_lay->un_geom.n - su_idx_st;
+void STATE_CLASS(TiledGpRFOneToOnePrjnSpec)::Connect_UnitGroupRF
+  (PRJN_STATE* prjn, NETWORK_STATE* net, LAYER_STATE* recv_lay, LAYER_STATE* send_lay,
+   int rgpidx, int sgpidx, bool make_cons, bool share_con, bool recip) {
+
+  int ru_nunits = recv_lay->un_geom_n - ru_idx_st;
+  int su_nunits = send_lay->un_geom_n - su_idx_st;
   int maxn = MIN(ru_nunits, su_nunits);
   if(gp_n_cons > 0)
     maxn = MIN(gp_n_cons, maxn);
 
-  Network* net = recv_lay->own_net;
-
-  if(reciprocal) {              // reciprocal is backwards!
+  if(recip) {              // reciprocal is backwards!
     for(int ui=0; ui < maxn; ui++) {
-      Unit* su_u = send_lay->UnitAtUnGpIdx(su_idx_st + ui, sgpidx);
-      Unit* ru_u = recv_lay->UnitAtUnGpIdx(ru_idx_st + ui, rgpidx);
-      if(!self_con && (su_u == ru_u)) continue;
+      UNIT_STATE* su = send_lay->GetUnitStateGpUnIdx(net, sgpidx, su_idx_st + ui);
+      UNIT_STATE* ru = recv_lay->GetUnitStateGpUnIdx(net, rgpidx, ru_idx_st + ui);
+      if(su->lesioned()) continue;
+      if(ru->lesioned()) continue;
+      if(!self_con && (su == ru)) continue;
       if(!make_cons) {
-        su_u->RecvConsAllocInc(1, prjn); // recip!
-        ru_u->SendConsAllocInc(1, prjn); // recip!
+        su->RecvConsAllocInc(net, prjn, 1); // recip!
+        ru->SendConsAllocInc(net, prjn, 1); // recip!
       }
       else {
-        su_u->ConnectFrom(ru_u, prjn); // recip!
+        su->ConnectFrom(net, ru, prjn); // recip!
       }
     }
   }
   else {
     for(int ui=0; ui < maxn; ui++) {
-      Unit* ru_u;
+      UNIT_STATE* ru;
       if(rgpidx >= 0) {
-        ru_u = recv_lay->UnitAtUnGpIdx(ru_idx_st + ui, rgpidx);
+        ru = recv_lay->GetUnitStateGpUnIdx(net, rgpidx, ru_idx_st + ui);
         if(share_cons && net->RecvOwnsCons() && rgpidx > 0) {
-          Unit* shru = recv_lay->UnitAtUnGpIdx(ru_idx_st + ui, 0); // group 0
-          ru_u->ShareRecvConsFrom(shru, prjn);
+          UNIT_STATE* shru = recv_lay->GetUnitStateGpUnIdx(net, 0, ru_idx_st + ui);
+          // group 0
+          ru->ShareRecvConsFrom(net, shru, prjn);
         }
       }
       else {
-        ru_u = recv_lay->units.SafeEl(ru_idx_st + ui);
+        ru = recv_lay->GetUnitState(net, ru_idx_st + ui);
       }
-      Unit* su_u = send_lay->UnitAtUnGpIdx(su_idx_st + ui, sgpidx);
-      if(!self_con && (su_u == ru_u)) continue;
+      UNIT_STATE* su = send_lay->GetUnitStateGpUnIdx(net, sgpidx, su_idx_st + ui);
+      if(su->lesioned()) continue;
+      if(ru->lesioned()) continue;
+      if(!self_con && (su == ru)) continue;
       if(!make_cons) {
-        ru_u->RecvConsAllocInc(1, prjn);
-        su_u->SendConsAllocInc(1, prjn);
+        ru->RecvConsAllocInc(net, prjn, 1);
+        su->SendConsAllocInc(net, prjn, 1);
       }
       else {
-        ru_u->ConnectFrom(su_u, prjn);
+        ru->ConnectFrom(net, su, prjn);
       }
     }
   }
 }
 
-void TiledGpRFOneToOnePrjnSpec::Init_Weights_Prjn
-(Projection* prjn, ConState_cpp* cg, Network* net, int thr_no) {
-  taVector2i rf_half_wd = send_gp_size / 2;
-  taVector2f rf_ctr = rf_half_wd;
+void STATE_CLASS(TiledGpRFOneToOnePrjnSpec)::Init_Weights_Prjn
+  (PRJN_STATE* prjn, NETWORK_STATE* net, int thr_no, CON_STATE* cg) {
+
+  TAVECTOR2I rf_half_wd = send_gp_size / 2;
+  TAVECTOR2F rf_ctr = rf_half_wd;
   if(rf_half_wd * 2 == send_gp_size) // even
     rf_ctr -= .5f;
 
@@ -89,15 +77,15 @@ void TiledGpRFOneToOnePrjnSpec::Init_Weights_Prjn
     int su_x = i % send_gp_size.x;
     int su_y = i / send_gp_size.x;
 
-    float dst = taMath_float::euc_dist_sq(su_x, su_y, rf_ctr.x, rf_ctr.y);
+    float dst = STATE_CLASS(taMath_float)::euc_dist_sq(su_x, su_y, rf_ctr.x, rf_ctr.y);
     float wt = expf(-0.5 * dst / sig_sq);
 
     if(set_scale) {
-      SetCnWtRnd(cg, i, net, thr_no);
-      SetCnScale(wt, cg, i, net, thr_no);
+      SetCnWtRnd(prjn, net, thr_no, cg, i);
+      SetCnScale(prjn, net, thr_no, cg, i, wt);
     }
     else {
-      SetCnWt(wt, cg, i, net, thr_no);
+      SetCnWt(prjn, net, thr_no, cg, i, wt);
     }
   }
 }
