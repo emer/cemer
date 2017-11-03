@@ -185,7 +185,7 @@ set(network_HEADS_NOMAKETA
   # TiledNovlpPrjnSpec.h
   # TiledDivGpRFPrjnSpec.h
   
-  # GaussRFPrjnSpec.h
+  GaussRFPrjnSpec.h
   # GradientWtsPrjnSpec.h
 
 #   PFCPrjnSpec.h

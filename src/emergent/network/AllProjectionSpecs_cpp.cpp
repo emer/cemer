@@ -41,3 +41,5 @@
 #include "TiledGpRFOneToOnePrjnSpec.cpp"
 #include "TiledGpRFOneToOneWtsPrjnSpec.cpp"
 #include "TiledSubGpRFPrjnSpec.cpp"
+
+#include "GaussRFPrjnSpec.cpp"

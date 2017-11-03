@@ -1,59 +1,20 @@
-// Copyright 2017, Regents of the University of Colorado,
-// Carnegie Mellon University, Princeton University.
-//
-// This file is part of Emergent
-//
-//   Emergent is free software; you can redistribute it and/or modify
-//   it under the terms of the GNU General Public License as published by
-//   the Free Software Foundation; either version 2 of the License, or
-//   (at your option) any later version.
-//
-//   Emergent is distributed in the hope that it will be useful,
-//   but WITHOUT ANY WARRANTY; without even the implied warranty of
-//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//   GNU General Public License for more details.
+// this is included directly in AllProjectionSpecs_cpp / _cuda
+// {
 
-#ifndef GaussRFPrjnSpec_h
-#define GaussRFPrjnSpec_h 1
-
-// parent includes:
-#include <ProjectionSpec>
-
-// member includes:
-#include <taVector2i>
-#include <taVector2f>
-
-// declare all other types mentioned but not required to include:
-
-eTypeDef_Of(GaussRFPrjnSpec);
-
-class E_API GaussRFPrjnSpec : public ProjectionSpec {
-  // a simple receptive-field (RF) projection spec with gaussian weight values over a receptive-field window onto the sending layer that moves as a function of the receiving unit's position (like TesselPrjnSpec and other RF prjn specs, but does NOT use unit groups) -- useful for reducing larger layers to smaller ones for example
-INHERITED(ProjectionSpec)
-public:
-  taVector2i 	 rf_width;	// size of the receptive field -- should be an even number
-  taVector2f     rf_move;	// how much to move in input coordinates per each receiving increment (unit group or unit within group, depending on whether inner or outer) -- typically 1/2 rf_width
+  TAVECTOR2I 	 rf_width;	// size of the receptive field -- should be an even number
+  TAVECTOR2F     rf_move;	// how much to move in input coordinates per each receiving increment (unit group or unit within group, depending on whether inner or outer) -- typically 1/2 rf_width
   float		gauss_sigma;	// #CONDEDIT_ON_init_wts gaussian width parameter for initial weight values to give a tuning curve
   bool		wrap;		// if true, then connectivity has a wrap-around structure so it starts at -rf_move (wrapped to right/top) and goes +rf_move past the right/top edge (wrapped to left/bottom)
 
-  taVector2i 	 trg_recv_geom;	// #READ_ONLY #SHOW target receiving layer geometry (either gp or unit, depending on outer vs. inner) -- computed from send and rf_width, move by TrgRecvFmSend button, or given by TrgSendFmRecv
-  taVector2i 	 trg_send_geom;	// #READ_ONLY #SHOW target sending layer geometry -- computed from recv and rf_width, move by TrgSendFmRecv button, or given by TrgRecvFmSend
 
-  void  Connect_impl(Projection* prjn, bool make_cons) override;
+  INIMPL void Connect_impl(PRJN_STATE* prjn, NETWORK_STATE* net, bool make_cons) override;
 
-  void  Init_Weights_Prjn(Projection* prjn, ConState_cpp* cg, Network* net,
-                          int thr_no) override;
-  bool  HasRandomScale() override { return false; }
- 
-  virtual bool	TrgRecvFmSend(int send_x, int send_y);
-  // #BUTTON compute target recv layer geometry based on given sending layer geometry -- updates trg_recv_geom and trg_send_geom members, including fixing send to be an appropriate even multiple of rf_move -- returns true if send values provided result are same "good" ones that come out the end
-  virtual bool	TrgSendFmRecv(int recv_x, int recv_y);
-  // #BUTTON compute target recv layer geometry based on given sending layer geometry -- updates trg_recv_geom and trg_send_geom members, including fixing recv to be an appropriate even multiple of rf_move --  -- returns true if send values provided result are same "good" ones that come out the end
+  INIMPL void Init_Weights_Prjn
+    (PRJN_STATE* prjn, NETWORK_STATE* net, int thr_no, CON_STATE* cg) override;
 
-  TA_SIMPLE_BASEFUNS(GaussRFPrjnSpec);
-private:
-  void	Initialize();
-  void 	Destroy()		{ };
-};
+  INLINE bool  HasRandomScale() override { return false; }
 
-#endif // GaussRFPrjnSpec_h
+  INIMPL void	Initialize_core();
+  // #IGNORE
+
+  INLINE int  GetStateSpecType() const override { return NETWORK_STATE::T_GaussRFPrjnSpec; }

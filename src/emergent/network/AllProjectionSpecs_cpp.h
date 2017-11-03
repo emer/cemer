@@ -193,4 +193,15 @@ public:
 };
 
 
+class GaussRFPrjnSpec_cpp : public ProjectionSpec_cpp {
+  // a simple receptive-field (RF) projection spec with gaussian weight values over a receptive-field window onto the sending layer that moves as a function of the receiving unit's position (like TesselPrjnSpec and other RF prjn specs, but does NOT use unit groups) -- useful for reducing larger layers to smaller ones for example
+INHERITED(ProjectionSpec)
+public:
+
+#include <GaussRFPrjnSpec>
+
+  GaussRFPrjnSpec_cpp() { Initialize_core(); }
+};
+
+
 #endif // AllProjectionSpecs_cpp_h

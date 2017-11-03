@@ -541,3 +541,52 @@ bool TiledSubGpRFPrjnSpec::TrgSendFmRecv(int recv_x, int recv_y) {
   return (trg_recv_geom.x == recv_x && trg_recv_geom.y == recv_y);
 }
 
+
+////////////////////////////////////////////////////////////////////////////////////
+//              GaussRFPrjnSpec
+
+TA_BASEFUNS_CTORS_DEFN(GaussRFPrjnSpec);
+
+#include "GaussRFPrjnSpec.cpp"
+
+bool GaussRFPrjnSpec::TrgRecvFmSend(int send_x, int send_y) {
+  trg_send_geom.x = send_x;
+  trg_send_geom.y = send_y;
+
+  if(wrap)
+    trg_recv_geom = (trg_send_geom / rf_move);
+  else
+    trg_recv_geom = (trg_send_geom / rf_move) - 1;
+
+  // now fix it the other way
+  if(wrap)
+    trg_send_geom = (trg_recv_geom * rf_move);
+  else
+    trg_send_geom = ((trg_recv_geom +1) * rf_move);
+
+  SigEmitUpdated();
+  return (trg_send_geom.x == send_x && trg_send_geom.y == send_y);
+}
+
+bool GaussRFPrjnSpec::TrgSendFmRecv(int recv_x, int recv_y) {
+  trg_recv_geom.x = recv_x;
+  trg_recv_geom.y = recv_y;
+
+  if(wrap)
+    trg_send_geom = (trg_recv_geom * rf_move);
+  else
+    trg_send_geom = ((trg_recv_geom+1) * rf_move);
+
+  // now fix it the other way
+  if(wrap)
+    trg_recv_geom = (trg_send_geom / rf_move);
+  else
+    trg_recv_geom = (trg_send_geom / rf_move) - 1;
+
+  SigEmitUpdated();
+  return (trg_recv_geom.x == recv_x && trg_recv_geom.y == recv_y);
+}
+
+
+
+
