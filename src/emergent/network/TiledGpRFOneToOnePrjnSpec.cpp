@@ -80,12 +80,6 @@ void STATE_CLASS(TiledGpRFOneToOnePrjnSpec)::Init_Weights_Prjn
     float dst = STATE_CLASS(taMath_float)::euc_dist_sq(su_x, su_y, rf_ctr.x, rf_ctr.y);
     float wt = expf(-0.5 * dst / sig_sq);
 
-    if(set_scale) {
-      SetCnWtRnd(prjn, net, thr_no, cg, i);
-      SetCnScale(prjn, net, thr_no, cg, i, wt);
-    }
-    else {
-      SetCnWt(prjn, net, thr_no, cg, i, wt);
-    }
+    SetCnWtScale(prjn, net, thr_no, cg, i, wt);
   }
 }

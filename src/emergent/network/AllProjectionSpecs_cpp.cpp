@@ -42,4 +42,8 @@
 #include "TiledGpRFOneToOneWtsPrjnSpec.cpp"
 #include "TiledSubGpRFPrjnSpec.cpp"
 
+#include "TiledRFPrjnSpec.cpp"
+#include "TiledNovlpPrjnSpec.cpp"
+
 #include "GaussRFPrjnSpec.cpp"
+#include "GradientWtsPrjnSpec.cpp"

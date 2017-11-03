@@ -193,6 +193,28 @@ public:
 };
 
 
+class TiledRFPrjnSpec_cpp : public ProjectionSpec_cpp {
+  // Tiled receptive field projection spec: connects entire receiving layer unit groups with overlapping tiled regions of sending layers
+INHERITED(ProjectionSpec)
+public:
+
+#include <TiledRFPrjnSpec>
+
+  TiledRFPrjnSpec_cpp() { Initialize_core(); }
+};
+
+
+class TiledNovlpPrjnSpec_cpp : public ProjectionSpec_cpp {
+  // Tiled non-overlapping projection spec: connects entire receiving layer unit groups with non-overlapping tiled regions of sending units
+INHERITED(ProjectionSpec)
+public:
+
+#include <TiledNovlpPrjnSpec>
+
+  TiledNovlpPrjnSpec_cpp()  { Initialize_core(); }
+};
+
+
 class GaussRFPrjnSpec_cpp : public ProjectionSpec_cpp {
   // a simple receptive-field (RF) projection spec with gaussian weight values over a receptive-field window onto the sending layer that moves as a function of the receiving unit's position (like TesselPrjnSpec and other RF prjn specs, but does NOT use unit groups) -- useful for reducing larger layers to smaller ones for example
 INHERITED(ProjectionSpec)
@@ -202,6 +224,18 @@ public:
 
   GaussRFPrjnSpec_cpp() { Initialize_core(); }
 };
+
+
+class GradientWtsPrjnSpec_cpp : public FullPrjnSpec_cpp {
+  // full connectivity with a gradient of weight strengths (requires init_wts = true, otherwise is just like Full Prjn), where weights are strongest from sending units in same relative location as the receiving unit, and fall off from there (either linearly or as a Guassian) -- if recv layer has unit groups, then it is the unit group position that counts, and all units within the recv group have the same connectivity (can override with use_gps flag)
+INHERITED(FullPrjnSpec)
+public:
+
+#include <GradientWtsPrjnSpec>
+  
+  GradientWtsPrjnSpec_cpp() { Initialize_core(); }
+};
+
 
 
 #endif // AllProjectionSpecs_cpp_h

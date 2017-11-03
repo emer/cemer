@@ -23,13 +23,7 @@ void STATE_CLASS(TiledGpRFOneToOneWtsPrjnSpec)::Init_Weights_Prjn
     float wt = other_wt;
     if(sui == rui)
       wt = one_to_one_wt;
-    if(set_scale) {
-      SetCnWtRnd(prjn, net, thr_no, cg, i);
-      SetCnScale(prjn, net, thr_no, cg, i, wt);
-    }
-    else {
-      SetCnWt(prjn, net, thr_no, cg, i, wt);
-    }
+    SetCnWtScale(prjn, net, thr_no, cg, i, wt);
   }
 }
 

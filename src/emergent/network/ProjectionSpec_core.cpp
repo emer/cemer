@@ -29,6 +29,16 @@ int STATE_CLASS(ProjectionSpec)::ProbAddCons(PRJN_STATE* prjn, NETWORK_STATE* ne
   return rval;
 }
 
+void STATE_CLASS(ProjectionSpec)::SetCnWtScale(PRJN_STATE* prjn, NETWORK_STATE* net, int thr_no, CON_STATE* cg, int cn_idx, float wt_val) {
+  if(set_scale) {
+    SetCnWtRnd(prjn, net, thr_no, cg, cn_idx);
+    SetCnScale(prjn, net, thr_no, cg, cn_idx, wt_val);
+  }
+  else {
+    SetCnWt(prjn, net, thr_no, cg, cn_idx, wt_val);
+  }
+}
+
 void STATE_CLASS(ProjectionSpec)::SetCnWt(PRJN_STATE* prjn, NETWORK_STATE* net, int thr_no, CON_STATE* cg, int cn_idx, float wt_val) {
   CON_SPEC_CPP* cs = cg->GetConSpec(net);
   if(add_rnd_var) {

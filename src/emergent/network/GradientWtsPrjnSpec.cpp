@@ -1,28 +1,10 @@
-// Copyright 2017, Regents of the University of Colorado,
-// Carnegie Mellon University, Princeton University.
-//
-// This file is part of Emergent
-//
-//   Emergent is free software; you can redistribute it and/or modify
-//   it under the terms of the GNU General Public License as published by
-//   the Free Software Foundation; either version 2 of the License, or
-//   (at your option) any later version.
-//
-//   Emergent is distributed in the hope that it will be useful,
-//   but WITHOUT ANY WARRANTY; without even the implied warranty of
-//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//   GNU General Public License for more details.
+// this is included directly in AllProjectionSpecs_cpp / _cuda
+// {
 
-#include "GradientWtsPrjnSpec.h"
-#include <Network>
-#include <taMath_float>
-
-TA_BASEFUNS_CTORS_DEFN(GradientWtsPrjnSpec);
-
-void GradientWtsPrjnSpec::Initialize() {
+void STATE_CLASS(GradientWtsPrjnSpec)::Initialize_core() {
   wt_range.min = 0.0f;
   wt_range.max = 0.5f;
-  wt_range.UpdateAfterEdit_NoGui();
+  wt_range.UpdateRange();
   invert = false;
   grad_x = true;
   grad_y = true;
@@ -30,27 +12,30 @@ void GradientWtsPrjnSpec::Initialize() {
   grad_type = LINEAR;
   use_gps = true;
   gauss_sig = 0.3f;
-  Defaults_init();
-}
-
-void GradientWtsPrjnSpec::Defaults_init() {
   init_wts = true;
   add_rnd_var = true;
 }
 
+void STATE_CLASS(GradientWtsPrjnSpec)::Init_Weights_Prjn
+(PRJN_STATE* prjn, NETWORK_STATE* net, int thr_no, CON_STATE* cg) {
 
-void GradientWtsPrjnSpec::Init_Weights_Prjn(Projection* prjn, ConState_cpp* cg,
-                                            Network* net, int thr_no) {
-  Unit* ru = cg->OwnUn(net);
-  if(use_gps && prjn->layer->unit_groups)
-    InitWeights_RecvGps(prjn, cg, ru, net, thr_no);
-  else
-    InitWeights_RecvFlat(prjn, cg, ru, net, thr_no);
+  UNIT_STATE* ru = cg->OwnUnState(net);
+  LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
+  LAYER_STATE* send_lay = prjn->GetSendLayerState(net);
+
+  if(use_gps && recv_lay->HasUnitGroups()) {
+    InitWeights_RecvGps(prjn, net, thr_no, cg, ru);
+  }
+  else {
+    InitWeights_RecvFlat(prjn, net, thr_no, cg, ru);
+  }
 }
 
 
-void GradientWtsPrjnSpec::SetWtFmDist(Projection* prjn, ConState_cpp* cg, Unit* ru,
-                                      Network* net, float dist, int cg_idx, int thr_no) {
+void STATE_CLASS(GradientWtsPrjnSpec)::SetWtFmDist
+(PRJN_STATE* prjn, NETWORK_STATE* net, int thr_no, CON_STATE* cg, UNIT_STATE* ru,
+ float dist, int cg_idx) {
+
   float wt_val = wt_range.min;
   if(grad_type == LINEAR) {
     if(invert)
@@ -59,19 +44,13 @@ void GradientWtsPrjnSpec::SetWtFmDist(Projection* prjn, ConState_cpp* cg, Unit* 
       wt_val = wt_range.max - dist * wt_range.Range();
   }
   else if(grad_type == GAUSSIAN) {
-    float gaus = taMath_float::gauss_den_nonorm(dist, gauss_sig);
+    float gaus = STATE_CLASS(taMath_float)::gauss_den_nonorm(dist, gauss_sig);
     if(invert)
       wt_val = wt_range.max - gaus * wt_range.Range();
     else
       wt_val = wt_range.min + gaus * wt_range.Range();
   }
-  if(set_scale) {
-    SetCnWtRnd(cg, cg_idx, net, thr_no);
-    SetCnScale(wt_val, cg, cg_idx, net, thr_no);
-  }
-  else {
-    SetCnWt(wt_val, cg, cg_idx, net, thr_no);
-  }
+  SetCnWtScale(prjn, net, thr_no, cg, cg_idx, wt_val);
 }
 
 ///////////////////////////////////////////////
@@ -85,51 +64,53 @@ void GradientWtsPrjnSpec::SetWtFmDist(Projection* prjn, ConState_cpp* cg, Unit* 
 //      -4      -3      -2      -1   wrp_x < .5  int
 //      -1.33   -1      -.66    -.33 wrp_x < .5  flt
 
-void GradientWtsPrjnSpec::InitWeights_RecvGps(Projection* prjn, ConState_cpp* cg, Unit* ru,
-                                              Network* net, int thr_no) {
-  Layer* recv_lay = (Layer*)prjn->layer;
-  Layer* send_lay = (Layer*)prjn->from.ptr();
-  Unit* lru = (Unit*)ru;
-  int rgpidx = lru->UnitGpIdx();
-  taVector2i rgp_pos = recv_lay->UnitGpPosFmIdx(rgpidx); // position relative to overall gp geom
-  float rgp_x = (float)rgp_pos.x / (float)MAX(recv_lay->gp_geom.x-1, 1);
-  float rgp_y = (float)rgp_pos.y / (float)MAX(recv_lay->gp_geom.y-1, 1);
+void STATE_CLASS(GradientWtsPrjnSpec)::InitWeights_RecvGps
+(PRJN_STATE* prjn, NETWORK_STATE* net, int thr_no, CON_STATE* cg, UNIT_STATE* ru) {
+
+  LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
+  LAYER_STATE* send_lay = prjn->GetSendLayerState(net);
+
+  int rgpidx = ru->gp_idx;
+  TAVECTOR2I rgp_pos;
+  recv_lay->GetGpXYFmIdx(rgpidx, rgp_pos.x, rgp_pos.y); // position relative to overall gp geom
+  float rgp_x = (float)rgp_pos.x / (float)MAX(recv_lay->gp_geom_x-1, 1);
+  float rgp_y = (float)rgp_pos.y / (float)MAX(recv_lay->gp_geom_y-1, 1);
 
   float max_dist = 1.0f;
   if(grad_x && grad_y)
     max_dist = sqrtf(2.0f);
 
-  float mxs_x = (float)MAX(send_lay->flat_geom.x-1, 1);
-  float mxs_y = (float)MAX(send_lay->flat_geom.y-1, 1);
+  float mxs_x = (float)MAX(send_lay->flat_geom_x-1, 1);
+  float mxs_y = (float)MAX(send_lay->flat_geom_y-1, 1);
 
   for(int i=0; i<cg->size; i++) {
-    Unit* su = cg->Un(i,net);
-    taVector2i su_pos;
-    send_lay->UnitLogPos(su, su_pos);
+    UNIT_STATE* su = cg->UnState(i,net);
+    TAVECTOR2I su_pos;
+    su_pos.SetXY(su->pos_x, su->pos_y);
     float su_x = (float)su_pos.x / mxs_x;
     float su_y = (float)su_pos.y / mxs_y;
 
     float wrp_x, wrp_y;
     if(wrap) {
-      if(rgp_x > .5f)   wrp_x = (float)(su_pos.x + send_lay->flat_geom.x) / mxs_x;
-      else              wrp_x = (float)(su_pos.x - send_lay->flat_geom.x) / mxs_x;
-      if(rgp_y > .5f)   wrp_y = (float)(su_pos.y + send_lay->flat_geom.y) / mxs_y;
-      else              wrp_y = (float)(su_pos.y - send_lay->flat_geom.y) / mxs_y;
+      if(rgp_x > .5f)   wrp_x = (float)(su_pos.x + send_lay->flat_geom_x) / mxs_x;
+      else              wrp_x = (float)(su_pos.x - send_lay->flat_geom_x) / mxs_x;
+      if(rgp_y > .5f)   wrp_y = (float)(su_pos.y + send_lay->flat_geom_y) / mxs_y;
+      else              wrp_y = (float)(su_pos.y - send_lay->flat_geom_y) / mxs_y;
     }
 
     float dist = 0.0f;
     if(grad_x && grad_y) {
-      dist = taMath_float::euc_dist(su_x, su_y, rgp_x, rgp_y);
+      dist = STATE_CLASS(taMath_float)::euc_dist(su_x, su_y, rgp_x, rgp_y);
       if(wrap) {
-        float wrp_dist = taMath_float::euc_dist(wrp_x, su_y, rgp_x, rgp_y);
+        float wrp_dist = STATE_CLASS(taMath_float)::euc_dist(wrp_x, su_y, rgp_x, rgp_y);
         if(wrp_dist < dist) {
           dist = wrp_dist;
-          wrp_dist = taMath_float::euc_dist(wrp_x, wrp_y, rgp_x, rgp_y);
+          wrp_dist = STATE_CLASS(taMath_float)::euc_dist(wrp_x, wrp_y, rgp_x, rgp_y);
           if(wrp_dist < dist)
             dist = wrp_dist;
         }
         else {
-          wrp_dist = taMath_float::euc_dist(su_x, wrp_y, rgp_x, rgp_y);
+          wrp_dist = STATE_CLASS(taMath_float)::euc_dist(su_x, wrp_y, rgp_x, rgp_y);
           if(wrp_dist < dist)
             dist = wrp_dist;
         }
@@ -152,54 +133,55 @@ void GradientWtsPrjnSpec::InitWeights_RecvGps(Projection* prjn, ConState_cpp* cg
 
     dist /= max_dist;           // keep it normalized
 
-    SetWtFmDist(prjn, cg, ru, net, dist, i, thr_no);
+    SetWtFmDist(prjn, net, thr_no, cg, ru, dist, i);
   }
 }
 
-void GradientWtsPrjnSpec::InitWeights_RecvFlat(Projection* prjn, ConState_cpp* cg, Unit* ru,
-                                               Network* net, int thr_no) {
-  Layer* recv_lay = (Layer*)prjn->layer;
-  Layer* send_lay = (Layer*)prjn->from.ptr();
-  taVector2i ru_pos;
-  recv_lay->UnitLogPos(ru, ru_pos);
-  float ru_x = (float)ru_pos.x / (float)MAX(recv_lay->flat_geom.x-1, 1);
-  float ru_y = (float)ru_pos.y / (float)MAX(recv_lay->flat_geom.y-1, 1);
+void STATE_CLASS(GradientWtsPrjnSpec)::InitWeights_RecvFlat
+  (PRJN_STATE* prjn, NETWORK_STATE* net, int thr_no, CON_STATE* cg, UNIT_STATE* ru) {
+
+  LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
+  LAYER_STATE* send_lay = prjn->GetSendLayerState(net);
+  TAVECTOR2I ru_pos;
+  ru_pos.SetXY(ru->pos_x, ru->pos_y);
+  float ru_x = (float)ru_pos.x / (float)MAX(recv_lay->flat_geom_x-1, 1);
+  float ru_y = (float)ru_pos.y / (float)MAX(recv_lay->flat_geom_y-1, 1);
 
   float max_dist = 1.0f;
   if(grad_x && grad_y)
     max_dist = sqrtf(2.0f);
 
-  float mxs_x = (float)MAX(send_lay->flat_geom.x-1, 1);
-  float mxs_y = (float)MAX(send_lay->flat_geom.y-1, 1);
+  float mxs_x = (float)MAX(send_lay->flat_geom_x-1, 1);
+  float mxs_y = (float)MAX(send_lay->flat_geom_y-1, 1);
 
   for(int i=0; i<cg->size; i++) {
-    Unit* su = cg->Un(i,net);
-    taVector2i su_pos;
-    send_lay->UnitLogPos(su, su_pos);
+    UNIT_STATE* su = cg->UnState(i,net);
+    TAVECTOR2I su_pos;
+    su_pos.SetXY(su->pos_x, su->pos_y);
     float su_x = (float)su_pos.x / mxs_x;
     float su_y = (float)su_pos.y / mxs_y;
 
     float wrp_x, wrp_y;
     if(wrap) {
-      if(ru_x > .5f)    wrp_x = (float)(su_pos.x + send_lay->flat_geom.x) / mxs_x;
-      else              wrp_x = (float)(su_pos.x - send_lay->flat_geom.x) / mxs_x;
-      if(ru_y > .5f)    wrp_y = (float)(su_pos.y + send_lay->flat_geom.y) / mxs_y;
-      else              wrp_y = (float)(su_pos.y - send_lay->flat_geom.y) / mxs_y;
+      if(ru_x > .5f)    wrp_x = (float)(su_pos.x + send_lay->flat_geom_x) / mxs_x;
+      else              wrp_x = (float)(su_pos.x - send_lay->flat_geom_x) / mxs_x;
+      if(ru_y > .5f)    wrp_y = (float)(su_pos.y + send_lay->flat_geom_y) / mxs_y;
+      else              wrp_y = (float)(su_pos.y - send_lay->flat_geom_y) / mxs_y;
     }
 
     float dist = 0.0f;
     if(grad_x && grad_y) {
-      dist = taMath_float::euc_dist(su_x, su_y, ru_x, ru_y);
+      dist = STATE_CLASS(taMath_float)::euc_dist(su_x, su_y, ru_x, ru_y);
       if(wrap) {
-        float wrp_dist = taMath_float::euc_dist(wrp_x, su_y, ru_x, ru_y);
+        float wrp_dist = STATE_CLASS(taMath_float)::euc_dist(wrp_x, su_y, ru_x, ru_y);
         if(wrp_dist < dist) {
           dist = wrp_dist;
-          wrp_dist = taMath_float::euc_dist(wrp_x, wrp_y, ru_x, ru_y);
+          wrp_dist = STATE_CLASS(taMath_float)::euc_dist(wrp_x, wrp_y, ru_x, ru_y);
           if(wrp_dist < dist)
             dist = wrp_dist;
         }
         else {
-          wrp_dist = taMath_float::euc_dist(su_x, wrp_y, ru_x, ru_y);
+          wrp_dist = STATE_CLASS(taMath_float)::euc_dist(su_x, wrp_y, ru_x, ru_y);
           if(wrp_dist < dist)
             dist = wrp_dist;
         }
@@ -222,7 +204,7 @@ void GradientWtsPrjnSpec::InitWeights_RecvFlat(Projection* prjn, ConState_cpp* c
 
     dist /= max_dist;           // keep it normalized
 
-    SetWtFmDist(prjn, cg, ru, net, dist, i, thr_no);
+    SetWtFmDist(prjn, net, thr_no, cg, ru, dist, i);
   }
 }
 

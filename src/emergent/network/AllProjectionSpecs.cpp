@@ -543,6 +543,60 @@ bool TiledSubGpRFPrjnSpec::TrgSendFmRecv(int recv_x, int recv_y) {
 
 
 ////////////////////////////////////////////////////////////////////////////////////
+//              TiledRFPrjnSpec
+
+TA_BASEFUNS_CTORS_DEFN(TiledRFPrjnSpec);
+
+#include "TiledRFPrjnSpec.cpp"
+
+void TiledRFPrjnSpec::SelectRF(Projection* prjn) {
+  // if(!InitRFSizes(prjn, net)) return;
+  // todo: fixme
+
+  /*  Network* net = prjn->layer->own_net;
+  if(net == NULL) return;
+  NetView* nv = (NetView*)net->views.DefaultEl();
+  if(nv == NULL) return;
+
+  taBase_List* selgp = nv->GetSelectGroup();
+  selgp->Reset();
+
+  taVector2i ruc;
+  for(ruc.y = recv_gp_border.y; ruc.y < recv_gp_ed.y; ruc.y++) {
+    for(ruc.x = recv_gp_border.x; ruc.x < recv_gp_ed.x; ruc.x++) {
+      if((ruc.y >= recv_gp_ex_st.y) && (ruc.y < recv_gp_ex_ed.y) &&
+         (ruc.x >= recv_gp_ex_st.x) && (ruc.x < recv_gp_ex_ed.x)) continue;
+      Unit_Group* ru_gp = prjn->layer->UnitGpAtCoord(ruc);
+      if(ru_gp == NULL) continue;
+
+      selgp->LinkUnique(ru_gp);
+
+      taVector2i su_st;
+      su_st.x = send_border.x + (int)floor((float)(ruc.x - recv_gp_border.x) * rf_move.x);
+      su_st.y = send_border.y + (int)floor((float)(ruc.y - recv_gp_border.y) * rf_move.y);
+
+      taVector2i suc;
+      for(suc.y = su_st.y; suc.y < su_st.y + rf_width.y; suc.y++) {
+        for(suc.x = su_st.x; suc.x < su_st.x + rf_width.x; suc.x++) {
+          Unit* su_u = prjn->from->UnitAtCoord(suc);
+          if(su_u == NULL) continue;
+
+          selgp->LinkUnique(su_u);
+        }
+      }
+    }
+  }
+  nv->UpdateSelect();
+  */
+}
+
+
+TA_BASEFUNS_CTORS_DEFN(TiledNovlpPrjnSpec);
+
+#include "TiledNovlpPrjnSpec.cpp"
+
+
+////////////////////////////////////////////////////////////////////////////////////
 //              GaussRFPrjnSpec
 
 TA_BASEFUNS_CTORS_DEFN(GaussRFPrjnSpec);
@@ -587,6 +641,10 @@ bool GaussRFPrjnSpec::TrgSendFmRecv(int recv_x, int recv_y) {
   return (trg_recv_geom.x == recv_x && trg_recv_geom.y == recv_y);
 }
 
+
+TA_BASEFUNS_CTORS_DEFN(GradientWtsPrjnSpec);
+
+#include "GradientWtsPrjnSpec.cpp"
 
 
 

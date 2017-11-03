@@ -79,13 +79,7 @@ void ScalarValSelfPrjnSpec::Init_Weights_Prjn(Projection* prjn, ConState_cpp* cg
     int su_idx = su->idx;
     float dist = (float)(ru_idx - su_idx) / wt_width;
     float wtval = scale_val * expf(-(dist * dist));
-    if(set_scale) {
-      SetCnWtRnd(cg, i, net, thr_no);
-      SetCnScale(wtval, cg, i, net, thr_no);
-    }
-    else {
-      SetCnWt(wtval, cg, i, net, thr_no);
-    }
+    SetCnWtScale(prjn, net, thr_no, cg, i, wtval);
   }
 }
 

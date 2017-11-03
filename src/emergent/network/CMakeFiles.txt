@@ -181,18 +181,18 @@ set(network_HEADS_NOMAKETA
   TiledGpRFOneToOneWtsPrjnSpec.h
   TiledSubGpRFPrjnSpec.h
   
-  # TiledRFPrjnSpec.h
-  # TiledNovlpPrjnSpec.h
+  TiledRFPrjnSpec.h
+  TiledNovlpPrjnSpec.h
   # TiledDivGpRFPrjnSpec.h
+  # TiledGpMapConvergePrjnSpec.h
   
   GaussRFPrjnSpec.h
-  # GradientWtsPrjnSpec.h
+  GradientWtsPrjnSpec.h
 
 #   PFCPrjnSpec.h
 #   BgPfcPrjnSpec.h
   
   # not going to convert right away
-  # TiledGpMapConvergePrjnSpec.h
   # ConPoolPrjnSpec.h
   # SmallWorldPrjnSpec.h
   

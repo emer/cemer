@@ -224,13 +224,7 @@ void STATE_CLASS(PolarRndPrjnSpec)::Init_Weights_Prjn
   UNIT_STATE* ru = cg->OwnUnState(net);
   for(int i=0; i<cg->size; i++) {
     float wt = GetDistProb(prjn, net, ru, cg->UnState(i,net));
-    if(set_scale) {
-      SetCnWtRnd(prjn, net, thr_no, cg, i);
-      SetCnScale(prjn, net, thr_no, cg, i, wt);
-    }
-    else {
-      SetCnWt(prjn, net, thr_no, cg, i, wt);
-    }
+    SetCnWtScale(prjn, net, thr_no, cg, i, wt);
   }
 }
 

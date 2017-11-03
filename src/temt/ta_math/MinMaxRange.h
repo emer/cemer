@@ -32,17 +32,20 @@ public:
   float         range;          // #HIDDEN distance between min and max
   float         scale;          // #HIDDEN scale (1.0 / range)
 
-  float Normalize(float val) const      { return (val - min) * scale; }
+  inline float Normalize(float val) const      { return (val - min) * scale; }
   // normalize given value to 0-1 range given current in max
 
-  float Project(float val) const        { return min + (val * range); }
+  inline float Project(float val) const        { return min + (val * range); }
   // project a normalized value into the current min-max range
+
+  inline void  UpdateRange()
+  { range = Range(); if(range != 0.0f) scale = 1.0f / range; }
+  // update the saved range value from current min / max
 
   TA_BASEFUNS_LITE(MinMaxRange);
 protected:
   void  UpdateAfterEdit_impl() override
-  { inherited::UpdateAfterEdit_impl();
-    range = Range(); if(range != 0.0f) scale = 1.0f / range; }
+  { inherited::UpdateAfterEdit_impl(); UpdateRange(); }
 private:
   void  Initialize()            { range = scale = 0.0f; }
   void  Destroy()               { };

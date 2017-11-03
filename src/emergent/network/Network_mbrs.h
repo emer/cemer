@@ -838,6 +838,10 @@ public:
   INLINE float Project(float val) const   { return min + (val * range); }
   // project a normalized value into the current min-max range
 
+  INLINE void  UpdateRange()
+  { range = Range(); if(range != 0.0f) scale = 1.0f / range; }
+  // update the saved range value from current min / max
+
   STATE_CLASS(MinMaxRange)() { Initialize(); }
   
 private:

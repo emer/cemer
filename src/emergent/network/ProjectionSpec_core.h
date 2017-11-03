@@ -23,12 +23,14 @@
   INIMPL virtual int  ProbAddCons_impl(PRJN_STATE* prjn, NETWORK_STATE* net, float p_add_con, float init_wt = 0.0);
   // #CAT_State actual implementation: probabilistically add a proportion of new connections to replace those pruned previously, init_wt = initial weight value of new connection
 
-  INIMPL virtual void SetCnWt(PRJN_STATE* prjn, NETWORK_STATE* net, int thr_no, CON_STATE* cg, int cn_idx, float wt_val);
-  // #CAT_Weights set given connection number in con group to given weight value -- this implements the add_rnd_var flag to add random variance to weights if set
-  INIMPL virtual void SetCnWtRnd(PRJN_STATE* prjn, NETWORK_STATE* net, int thr_no, CON_STATE* cg, int cn_idx);
-  // #CAT_Weights set given connection number in con group to standard random weight value as specified in the connection spec
-  INIMPL virtual void SetCnScale(PRJN_STATE* prjn, NETWORK_STATE* net, int thr_no, CON_STATE* cg, int cn_idx, float scale_val);
-  // #CAT_Weights set given connection number in con group to given scale value
+  INIMPL virtual void SetCnWtScale(PRJN_STATE* prjn, NETWORK_STATE* net, int thr_no, CON_STATE* cg, int cn_idx, float wt_val);
+  // #CAT_Weights standard function for setting weight or scale value depending on relevant prjnspec params (set_scale) -- calls following functions:
+    INIMPL virtual void SetCnWt(PRJN_STATE* prjn, NETWORK_STATE* net, int thr_no, CON_STATE* cg, int cn_idx, float wt_val);
+    // #CAT_Weights set given connection number in con group to given weight value -- this implements the add_rnd_var flag to add random variance to weights if set
+    INIMPL virtual void SetCnWtRnd(PRJN_STATE* prjn, NETWORK_STATE* net, int thr_no, CON_STATE* cg, int cn_idx);
+    // #CAT_Weights set given connection number in con group to standard random weight value as specified in the connection spec
+    INIMPL virtual void SetCnScale(PRJN_STATE* prjn, NETWORK_STATE* net, int thr_no, CON_STATE* cg, int cn_idx, float scale_val);
+    // #CAT_Weights set given connection number in con group to given scale value
 
   INIMPL virtual void Init_Weights_Prjn(PRJN_STATE* prjn, NETWORK_STATE* net, int thr_no, CON_STATE* cg);
   // #CAT_Weights #IGNORE when init_wts flag is set, the projection spec sets weights for the entire set of connections, from a recv perspective (always use safe access for Cn that does not depend on who owns it) -- overload in subclasses that set weights

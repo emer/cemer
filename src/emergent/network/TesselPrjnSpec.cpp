@@ -114,13 +114,7 @@ void STATE_CLASS(TesselPrjnSpec)::Init_Weights_Prjn(PRJN_STATE* prjn, NETWORK_ST
   int mxi = MIN(cg->size, n_send_offs);
   for(int i=0; i<mxi; i++) {
     TESS_EL& te = send_offs_m[i];
-    if(set_scale) {
-      SetCnWtRnd(prjn, net, thr_no, cg, i);
-      SetCnScale(prjn, net, thr_no, cg, i, te.wt_val);
-    }
-    else {
-      SetCnWt(prjn, net, thr_no, cg, i, te.wt_val);
-    }
+    SetCnWtScale(prjn, net, thr_no, cg, i, te.wt_val);
   }
 }
 

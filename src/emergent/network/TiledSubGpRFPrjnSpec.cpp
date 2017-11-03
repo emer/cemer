@@ -153,13 +153,7 @@ void STATE_CLASS(TiledSubGpRFPrjnSpec)::Init_Weights_Gaussian
     float wt = STATE_CLASS(taMath_float)::gauss_den_nonorm(dst, eff_sig);
     wt = wt_range.min + wt_range.range * wt;
 
-    if(set_scale) {
-      SetCnWtRnd(prjn, net, thr_no, cg, i);
-      SetCnScale(prjn, net, thr_no, cg, i, wt);
-    }
-    else {
-      SetCnWt(prjn, net, thr_no, cg, i, wt);
-    }
+    SetCnWtScale(prjn, net, thr_no, cg, i, wt);
   }
 }
 

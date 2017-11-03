@@ -407,6 +407,44 @@ private:
 };
 
 
+eTypeDef_Of(TiledRFPrjnSpec);
+
+class E_API TiledRFPrjnSpec : public ProjectionSpec {
+  // Tiled receptive field projection spec: connects entire receiving layer unit groups with overlapping tiled regions of sending layers
+INHERITED(ProjectionSpec)
+public:
+
+#include <TiledRFPrjnSpec>
+
+  virtual void	SelectRF(Projection* prjn);
+  // #BUTTON select all sending and receiving units in the receptive field of this projection
+
+  TA_SIMPLE_BASEFUNS(TiledRFPrjnSpec);
+private:
+  void	Initialize()    { Initialize_core(); }
+  void 	Destroy()	{ };
+};
+
+
+eTypeDef_Of(TiledNovlpPrjnSpec);
+
+class E_API TiledNovlpPrjnSpec : public ProjectionSpec {
+  // Tiled non-overlapping projection spec: connects entire receiving layer unit groups with non-overlapping tiled regions of sending units
+INHERITED(ProjectionSpec)
+public:
+
+#include <TiledNovlpPrjnSpec>
+  
+//   virtual void	SelectRF(Projection* prjn);
+  // #BUTTON select all sending and receiving units in the receptive field of this projection
+
+  TA_SIMPLE_BASEFUNS(TiledNovlpPrjnSpec);
+private:
+  void	Initialize()    { Initialize_core(); }
+  void 	Destroy()       { };
+};
+
+
 ///////////////////////////////////////////////////////////
 //      Gaussian, Gradient..
 
@@ -433,6 +471,23 @@ private:
   void	Initialize()    { Initialize_core(); }
   void 	Destroy()	{ };
 };
+
+
+eTypeDef_Of(GradientWtsPrjnSpec);
+
+class E_API GradientWtsPrjnSpec : public FullPrjnSpec {
+  // full connectivity with a gradient of weight strengths (requires init_wts = true, otherwise is just like Full Prjn), where weights are strongest from sending units in same relative location as the receiving unit, and fall off from there (either linearly or as a Guassian) -- if recv layer has unit groups, then it is the unit group position that counts, and all units within the recv group have the same connectivity (can override with use_gps flag)
+INHERITED(FullPrjnSpec)
+public:
+
+#include <GradientWtsPrjnSpec>
+  
+  TA_SIMPLE_BASEFUNS(GradientWtsPrjnSpec);
+private:
+ void	Initialize()    { Initialize_core(); }
+  void 	Destroy()	{ };
+};
+
 
 
 #endif // AllProjectionSpecs_h

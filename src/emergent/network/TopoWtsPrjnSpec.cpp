@@ -190,13 +190,8 @@ void TopoWtsPrjnSpec::SetWtFmDist(Projection* prjn, ConState* cg, Unit* ru,
   }
   wt_add = wt_val - wt_range.min; // how much did we just add over baseline minimum?
   if(dbl_add) { wt_val += wt_add; } // add that amount again to make up for mirror-image partner that got clipped!
-  if(set_scale) {
-    SetCnWtRnd(cg, cg_idx, net, thr_no);
-    SetCnScale(wt_val, cg, cg_idx, net, thr_no);
-  }
-  else {
-    SetCnWt(wt_val, cg, cg_idx, net, thr_no);
-  }
+
+  SetCnWtScale(prjn, net, thr_no, cg, cg_idx, wt_val);
 }
 
 bool TopoWtsPrjnSpec::ReflectClippedWt(Projection* prjn, ConState* cg, Unit* ru, int i, taVector2i ri_pos,

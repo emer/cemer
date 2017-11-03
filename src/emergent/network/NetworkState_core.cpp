@@ -665,18 +665,21 @@ PRJN_SPEC_CPP* NETWORK_STATE::NewPrjnSpec(int spec_type) const {
     return new STATE_CLASS_CPP(GpMapConvergePrjnSpec)();
   case T_GpMapDivergePrjnSpec:
     return new STATE_CLASS_CPP(GpMapDivergePrjnSpec)();
+
   case T_RandomPrjnSpec:
     return new STATE_CLASS_CPP(RandomPrjnSpec)();
   case T_UniformRndPrjnSpec:
     return new STATE_CLASS_CPP(UniformRndPrjnSpec)();
   case T_PolarRndPrjnSpec:
     return new STATE_CLASS_CPP(PolarRndPrjnSpec)();
+
   case T_TesselPrjnSpec:
     return new STATE_CLASS_CPP(TesselPrjnSpec)();
   case T_GpTesselPrjnSpec:
     return new STATE_CLASS_CPP(GpTesselPrjnSpec)();
   // case T_SymmetricPrjnSpec:
   //   return new STATE_CLASS_CPP(SymmetricPrjnSpec)();
+
   case T_TiledGpRFPrjnSpec:
     return new STATE_CLASS_CPP(TiledGpRFPrjnSpec)();
   case T_TiledGpRFOneToOnePrjnSpec:
@@ -685,22 +688,26 @@ PRJN_SPEC_CPP* NETWORK_STATE::NewPrjnSpec(int spec_type) const {
     return new STATE_CLASS_CPP(TiledGpRFOneToOneWtsPrjnSpec)();
   case T_TiledSubGpRFPrjnSpec:
     return new STATE_CLASS_CPP(TiledSubGpRFPrjnSpec)();
-  // case T_TiledRFPrjnSpec:
-  //   return new STATE_CLASS_CPP(TiledRFPrjnSpec)();
-  // case T_TiledNovlpPrjnSpec:
-  //   return new STATE_CLASS_CPP(TiledNovlpPrjnSpec)();
+
+  case T_TiledRFPrjnSpec:
+    return new STATE_CLASS_CPP(TiledRFPrjnSpec)();
+  case T_TiledNovlpPrjnSpec:
+    return new STATE_CLASS_CPP(TiledNovlpPrjnSpec)();
   // case T_TiledDivGpRFPrjnSpec:
   //   return new STATE_CLASS_CPP(TiledDivGpRFPrjnSpec)();
   // case T_TiledGpMapConvergePrjnSpec:
   //   return new STATE_CLASS_CPP(TiledGpMapConvergePrjnSpec)();
+
   case T_GaussRFPrjnSpec:
     return new STATE_CLASS_CPP(GaussRFPrjnSpec)();
-  // case T_GradientWtsPrjnSpec:
-  //   return new STATE_CLASS_CPP(GradientWtsPrjnSpec)();
-  // case T_PFCPrjnSpec:
+  case T_GradientWtsPrjnSpec:
+    return new STATE_CLASS_CPP(GradientWtsPrjnSpec)();
+
+    // case T_PFCPrjnSpec:
   //   return new STATE_CLASS_CPP(PFCPrjnSpec)();
   // case T_BgPfcPrjnSpec:
   //   return new STATE_CLASS_CPP(BgPfcPrjnSpec)();
+
   // case T_ConPoolPrjnSpec:
   //   return new STATE_CLASS_CPP(ConPoolPrjnSpec)();
   // case T_SmallWorldPrjnSpec:

@@ -195,13 +195,7 @@ void CerebConj2PrjnSpec::Init_Weights_Prjn(Projection* prjn, ConState_cpp* cg,
     float dst = taMath_float::euc_dist_sq(su_x, su_y, rf_ctr.x, rf_ctr.y);
     float wt = expf(-0.5 * dst / (gauss_sigma * gauss_sigma));
 
-    if(set_scale) {
-      SetCnWtRnd(cg, i, net, thr_no);
-      SetCnScale(wt, cg, i, net, thr_no);
-    }
-    else {
-      SetCnWt(wt, cg, i, net, thr_no);
-    }
+    SetCnWtScale(prjn, net, thr_no, cg, i, wt);
   }
 }
 

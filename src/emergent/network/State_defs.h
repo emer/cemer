@@ -297,6 +297,12 @@ INLINE void IntArrayFillSeq(int* array, int size, int start=0, int inc=1) {
   }
 }
 
+INLINE void IntArrayInitVals(int* array, int size, int val=0) {
+  for(int i=0; i<size; i++) {
+    array[i] = val;
+  }
+}
+
 INLINE void IntArraySeqPermute(int* array, int size, int thr_no=-1) {
   IntArrayFillSeq(array, size);
   IntArrayPermute(array, size, thr_no);
