@@ -52,6 +52,9 @@ private:
 };
 
 
+///////////////////////////////////////////////////////////
+//      OneToOne
+
 eTypeDef_Of(OneToOnePrjnSpec);
 
 class E_API OneToOnePrjnSpec : public ProjectionSpec {
@@ -71,7 +74,7 @@ private:
 eTypeDef_Of(GpOneToOnePrjnSpec);
 
 class E_API GpOneToOnePrjnSpec : public OneToOnePrjnSpec {
-  // unit_group based one-to-one connectivity, with full connectivity within unit groups (all in 1st group to all in 1st group, etc) -- if one layer has same number of units as the other does unit groups, then each unit connects to entire unit group
+  // #AKA_RndGpOneToOnePrjnSpec unit_group based one-to-one connectivity, with full or uniform random partial connectivity within unit groups -- if one layer has same number of units as the other does unit groups, then each unit connects to entire unit group
 INHERITED(OneToOnePrjnSpec)
 public:
 #ifdef __MAKETA__
@@ -85,10 +88,60 @@ public:
 
   TA_BASEFUNS_NOCOPY(GpOneToOnePrjnSpec);
 private:
-  void	Initialize()		{ };
+  void	Initialize()		{ Initialize_core(); }
   void 	Destroy()		{ };
 };
 
+
+eTypeDef_Of(MarkerGpOneToOnePrjnSpec);
+
+class E_API MarkerGpOneToOnePrjnSpec : public OneToOnePrjnSpec {
+  // unit_group based one-to-one connectivity for marking a projection -- all of the recv units receive from just the first unit in the sending unit group, thus providing a marker for where to receive information from the sending group
+INHERITED(OneToOnePrjnSpec)
+public:
+
+#include <MarkerGpOneToOnePrjnSpec>  
+  
+  TA_SIMPLE_BASEFUNS(MarkerGpOneToOnePrjnSpec);
+private:
+  void Initialize()  { Initialize_core(); }
+  void Destroy()     { };
+};
+
+
+eTypeDef_Of(GpMapConvergePrjnSpec);
+
+class E_API GpMapConvergePrjnSpec : public ProjectionSpec {
+  // #AKA_GpAggregatePrjnSpec generates a converging map of the units within a sending layer that has unit groups into a receiving layer that has the same geometry as one of the unit groups -- each recv unit receives from the corresponding unit in all of the sending unit groups
+INHERITED(ProjectionSpec)
+public:
+
+#include <GpMapConvergePrjnSpec>
+
+  TA_SIMPLE_BASEFUNS(GpMapConvergePrjnSpec);
+private:
+  void	Initialize()            { Initialize_core(); }
+  void 	Destroy()		{ };
+};
+
+eTypeDef_Of(GpMapDivergePrjnSpec);
+
+class E_API GpMapDivergePrjnSpec : public ProjectionSpec {
+  // projects from a layer without unit groups into a receiving layer with unit groups and that has the same unit geometry in each of its unit groups as the sending layer -- each unit projects to the corresponding unit in all of the receiving unit groups
+INHERITED(ProjectionSpec)
+public:
+  
+#include <GpMapDivergePrjnSpec>
+
+  TA_SIMPLE_BASEFUNS(GpMapDivergePrjnSpec);
+private:
+  void	Initialize()            { Initialize_core(); }
+  void 	Destroy()		{ };
+};
+
+
+///////////////////////////////////////////////////////////
+//      Random
 
 eTypeDef_Of(RandomPrjnSpec);
 
@@ -154,7 +207,7 @@ private:
 };
 
 
-////////////////////
+///////////////////////////////////////////////////////////
 //      Tessel 
 
 eTypeDef_Of(TessEl_List);
@@ -211,6 +264,9 @@ private:
 };
 
 
+///////////////////////////////////////////////////////////
+//      GpTessel 
+
 eTypeDef_Of(GpTessEl_List);
 
 class E_API GpTessEl_List : public taList<GpTessEl> {
@@ -257,10 +313,12 @@ protected:
 
 private:
   void	Initialize() { Initialize_core(); send_gp_offs.SetBaseType(&TA_GpTessEl); }
-  void	Destroy()	{ };
+  void	Destroy()    { CutLinks(); FreeSendOffs(); }
 };
 
 
+///////////////////////////////////////////////////////////
+//      Tiled..
 
 eTypeDef_Of(TiledGpRFPrjnSpec);
 

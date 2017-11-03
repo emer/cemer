@@ -30,18 +30,21 @@
   enum StatePrjnSpecTypes { // manual type registry system for all spec types used in state code -- any new spec type MUST be added to this list, extending from N case in the last list, for any derived classes, and each spec must return its appropriate enum in GetStateSpecType() method
     T_ProjectionSpec,            // base PrjnSpec type
     T_FullPrjnSpec,
+
     T_OneToOnePrjnSpec,
     T_GpOneToOnePrjnSpec,
+    T_MarkerGpOneToOnePrjnSpec,
+    T_GpMapConvergePrjnSpec,
+    T_GpMapDivergePrjnSpec,
+
     T_RandomPrjnSpec,
     T_UniformRndPrjnSpec,
     T_PolarRndPrjnSpec,
+
     T_TesselPrjnSpec,
     T_GpTesselPrjnSpec,
-    T_GpMapConvergePrjnSpec,
-    T_GpMapDivergePrjnSpec,
-    T_MarkerGpOneToOnePrjnSpec,
-    T_RndGpOneToOnePrjnSpec,
     T_SymmetricPrjnSpec,
+
     T_TiledGpRFPrjnSpec,
     T_TiledSubGpRFPrjnSpec,
     T_TiledGpRFOneToOnePrjnSpec,
@@ -50,16 +53,19 @@
     T_TiledNovlpPrjnSpec,
     T_TiledDivGpRFPrjnSpec,
     T_TiledGpMapConvergePrjnSpec,
+
     T_GaussRFPrjnSpec,
     T_GradientWtsPrjnSpec,
+
     T_PFCPrjnSpec,
     T_BgPfcPrjnSpec,
-    T_ConPoolPrjnSpec,
-    T_SmallWorldPrjnSpec,
-    T_ScalarValSelfPrjnSpec,
-    T_SaliencyPrjnSpec,
-    T_CerebConj2PrjnSpec,
-    T_TopoWtsPrjnSpec,
+
+    T_ConPoolPrjnSpec,          // not converted
+    T_SmallWorldPrjnSpec,       // not converted
+    T_ScalarValSelfPrjnSpec,    // not converted
+    T_SaliencyPrjnSpec,         // not converted
+    T_CerebConj2PrjnSpec,       // not converted
+    T_TopoWtsPrjnSpec,          // not converted
     
     N_NetworkPrjnSpecs,     // derived classes start from this one -- use class name for subclasses
   };

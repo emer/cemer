@@ -1,70 +1,46 @@
-// Copyright 2017, Regents of the University of Colorado,
-// Carnegie Mellon University, Princeton University.
-//
-// This file is part of Emergent
-//
-//   Emergent is free software; you can redistribute it and/or modify
-//   it under the terms of the GNU General Public License as published by
-//   the Free Software Foundation; either version 2 of the License, or
-//   (at your option) any later version.
-//
-//   Emergent is distributed in the hope that it will be useful,
-//   but WITHOUT ANY WARRANTY; without even the implied warranty of
-//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//   GNU General Public License for more details.
+// this is included directly in AllProjectionSpecs_cpp / _cuda
+// {
 
-#include "GpMapConvergePrjnSpec.h"
-#include <Network>
+void STATE_CLASS(GpMapConvergePrjnSpec)::Connect_impl
+  (PRJN_STATE* prjn, NETWORK_STATE* net, bool make_cons) {
 
-TA_BASEFUNS_CTORS_DEFN(GpMapConvergePrjnSpec);
+  LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
+  LAYER_STATE* send_lay = prjn->GetSendLayerState(net);
 
-void GpMapConvergePrjnSpec::Initialize() {
-}
-
-void GpMapConvergePrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
-  if(!(bool)prjn->from) return;
-  if(prjn->layer->units.leaves == 0) // an empty layer!
-    return;
-  if(TestWarning(!prjn->from->unit_groups, "Connect_impl",
-                 "requires sending layer to have unit groups!")) {
-    return;
-  }
-  // below assumes the "==" operator has been overloaded for object un_geom in the intuitive way
-  if(TestWarning(!(prjn->from->un_geom==prjn->layer->un_geom), "GpMapConvergePrjnSpec::Connect_impl",
-                 "requires sending layer unit geometry to match receiving layer unit geometry, i.e., within each unit group!")) {
+  if(!send_lay->HasUnitGroups()) {
+    net->StateError("GpMapConvergePrjnSpec::Connect_impl requires send layer to have unit groups!");
     return;
   }
 
-  Layer* recv_lay = prjn->layer;
-  Layer* send_lay = prjn->from;
-  taVector2i su_geo = send_lay->gp_geom;
-  int n_su_gps = send_lay->gp_geom.n;
+  if((send_lay->un_geom_x != recv_lay->un_geom_x) ||
+     (send_lay->un_geom_y != recv_lay->un_geom_y)) {
+    net->StateError("GpMapConvergePrjnSpec::Connect_impl requires sending layer unit geometry to match receiving layer unit geometry, i.e., within each unit group!");
+    return;
+  }
+
+  TAVECTOR2I su_geo;
+  su_geo.SetXY(send_lay->gp_geom_x, send_lay->gp_geom_y);
+  int n_su_gps = send_lay->gp_geom_n;
 
   int alloc_no = n_su_gps;      // number of cons per recv unit
 
   // pre-alloc senders -- only 1
   if(!make_cons) {
-    FOREACH_ELEM_IN_GROUP(Unit, su, prjn->from->units)
-      su->SendConsPreAlloc(1, prjn);
+    send_lay->SendConsPreAlloc(net, prjn, 1);
+    recv_lay->RecvConsPreAlloc(net, prjn, alloc_no);
+    return;
   }
 
-  for(int ri = 0; ri<recv_lay->units.leaves; ri++) {
-    Unit* ru_u = (Unit*)recv_lay->units.Leaf(ri);
-    if(!ru_u) break;
-
-    if(!make_cons) {
-      ru_u->RecvConsPreAlloc(alloc_no, prjn);
-    }
-    else {
-      taVector2i suc;
-      for(suc.y = 0; suc.y < su_geo.y; suc.y++) {
-        for(suc.x = 0; suc.x < su_geo.x; suc.x++) {
-          int sgpidx = send_lay->UnitGpIdxFmPos(suc);
-          Unit* su_u = send_lay->UnitAtUnGpIdx(ri, sgpidx);
-          if(su_u) {
-            ru_u->ConnectFrom(su_u, prjn);
-          }
-        }
+  for(int rui = 0; rui < recv_lay->n_units; rui++) {
+    UNIT_STATE* ru = recv_lay->GetUnitState(net, rui);
+    if(ru->lesioned()) continue;
+    TAVECTOR2I suc;
+    for(suc.y = 0; suc.y < su_geo.y; suc.y++) {
+      for(suc.x = 0; suc.x < su_geo.x; suc.x++) {
+        int sgpidx = send_lay->GetGpIdxFmXY(suc.x, suc.y);
+        UNIT_STATE* su = send_lay->GetUnitStateGpUnIdx(net, sgpidx, rui);
+        if(su->lesioned()) continue;
+        ru->ConnectFrom(net, su, prjn);
       }
     }
   }

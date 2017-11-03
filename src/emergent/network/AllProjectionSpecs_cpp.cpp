@@ -25,17 +25,16 @@
 #include "FullPrjnSpec.cpp"
 
 #include "OneToOnePrjnSpec.cpp"
-
 #include "GpOneToOnePrjnSpec.cpp"
+#include "MarkerGpOneToOnePrjnSpec.cpp"
+#include "GpMapConvergePrjnSpec.cpp"
+#include "GpMapDivergePrjnSpec.cpp"
 
 #include "RandomPrjnSpec.cpp"
-
 #include "UniformRndPrjnSpec.cpp"
-
 #include "PolarRndPrjnSpec.cpp"
 
 #include "TesselPrjnSpec.cpp"
-
 #include "GpTesselPrjnSpec.cpp"
 
 #include "TiledGpRFPrjnSpec.cpp"

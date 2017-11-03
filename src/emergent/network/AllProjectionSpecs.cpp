@@ -34,6 +34,16 @@ TA_BASEFUNS_CTORS_DEFN(OneToOnePrjnSpec);
 TA_BASEFUNS_CTORS_DEFN(GpOneToOnePrjnSpec);
 #include "GpOneToOnePrjnSpec.cpp"
 
+TA_BASEFUNS_CTORS_DEFN(MarkerGpOneToOnePrjnSpec);
+#include "MarkerGpOneToOnePrjnSpec.cpp"
+
+TA_BASEFUNS_CTORS_DEFN(GpMapConvergePrjnSpec);
+#include "GpMapConvergePrjnSpec.cpp"
+
+TA_BASEFUNS_CTORS_DEFN(GpMapDivergePrjnSpec);
+#include "GpMapDivergePrjnSpec.cpp"
+
+
 TA_BASEFUNS_CTORS_DEFN(RandomPrjnSpec);
 #include "RandomPrjnSpec.cpp"
 

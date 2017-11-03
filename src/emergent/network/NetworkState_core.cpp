@@ -659,6 +659,12 @@ PRJN_SPEC_CPP* NETWORK_STATE::NewPrjnSpec(int spec_type) const {
     return new STATE_CLASS_CPP(OneToOnePrjnSpec)();
   case T_GpOneToOnePrjnSpec:
     return new STATE_CLASS_CPP(GpOneToOnePrjnSpec)();
+  case T_MarkerGpOneToOnePrjnSpec:
+    return new STATE_CLASS_CPP(MarkerGpOneToOnePrjnSpec)();
+  case T_GpMapConvergePrjnSpec:
+    return new STATE_CLASS_CPP(GpMapConvergePrjnSpec)();
+  case T_GpMapDivergePrjnSpec:
+    return new STATE_CLASS_CPP(GpMapDivergePrjnSpec)();
   case T_RandomPrjnSpec:
     return new STATE_CLASS_CPP(RandomPrjnSpec)();
   case T_UniformRndPrjnSpec:
@@ -669,14 +675,6 @@ PRJN_SPEC_CPP* NETWORK_STATE::NewPrjnSpec(int spec_type) const {
     return new STATE_CLASS_CPP(TesselPrjnSpec)();
   case T_GpTesselPrjnSpec:
     return new STATE_CLASS_CPP(GpTesselPrjnSpec)();
-  // case T_GpMapConvergePrjnSpec:
-  //   return new STATE_CLASS_CPP(GpMapConvergePrjnSpec)();
-  // case T_GpMapDivergePrjnSpec:
-  //   return new STATE_CLASS_CPP(GpMapDivergePrjnSpec)();
-  // case T_MarkerGpOneToOnePrjnSpec:
-  //   return new STATE_CLASS_CPP(MarkerGpOneToOnePrjnSpec)();
-  // case T_RndGpOneToOnePrjnSpec:
-  //   return new STATE_CLASS_CPP(RndGpOneToOnePrjnSpec)();
   // case T_SymmetricPrjnSpec:
   //   return new STATE_CLASS_CPP(SymmetricPrjnSpec)();
   case T_TiledGpRFPrjnSpec:

@@ -3,7 +3,7 @@
   float		p_con;		// overall probability of connection
   bool		sym_self;	// if a self projection, make it symmetric (senders = receivers) otherwise it is not
   bool		same_seed;	// use the same random seed each time (same connect pattern)
-  STATE_CLASS(RndSeed)	rndm_seed;	// #HIDDEN random seed
+  STATE_CLASS(RndSeed)	rndm_seed;	// #HIDDEN random seed -- new one auto-generated at first use
 
   INIMPL void Connect_impl(PRJN_STATE* prjn, NETWORK_STATE* net, bool make_cons) override;
 

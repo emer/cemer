@@ -163,18 +163,16 @@ set(network_HEADS_NOMAKETA
   FullPrjnSpec.h
   OneToOnePrjnSpec.h
   GpOneToOnePrjnSpec.h
+  MarkerGpOneToOnePrjnSpec.h
+  GpMapConvergePrjnSpec.h
+  GpMapDivergePrjnSpec.h
+
   RandomPrjnSpec.h
   UniformRndPrjnSpec.h
   PolarRndPrjnSpec.h
 
   TesselPrjnSpec.h
   GpTesselPrjnSpec.h
-
-  # GpMapConvergePrjnSpec.h
-  # GpMapDivergePrjnSpec.h
-
-  # MarkerGpOneToOnePrjnSpec.h
-  # RndGpOneToOnePrjnSpec.h
 
   # SymmetricPrjnSpec.h
   

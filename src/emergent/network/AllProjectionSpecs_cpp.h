@@ -61,6 +61,39 @@ public:
 };
 
 
+class MarkerGpOneToOnePrjnSpec_cpp : public OneToOnePrjnSpec_cpp {
+  // unit_group based one-to-one connectivity for marking a projection -- all of the recv units receive from just the first unit in the sending unit group, thus providing a marker for where to receive information from the sending group
+INHERITED(OneToOnePrjnSpec)
+public:
+
+#include <MarkerGpOneToOnePrjnSpec>  
+  
+  MarkerGpOneToOnePrjnSpec_cpp() { Initialize_core(); }
+};
+
+
+class GpMapConvergePrjnSpec_cpp : public ProjectionSpec_cpp {
+  // generates a converging map of the units within a sending layer that has unit groups into a receiving layer that has the same geometry as one of the unit groups -- each recv unit receives from the corresponding unit in all of the sending unit groups
+INHERITED(ProjectionSpec)
+public:
+
+#include <GpMapConvergePrjnSpec>
+
+  GpMapConvergePrjnSpec_cpp() { Initialize_core(); }
+};
+
+
+class GpMapDivergePrjnSpec_cpp : public ProjectionSpec_cpp {
+  // projects from a layer without unit groups into a receiving layer with unit groups and that has the same unit geometry in each of its unit groups as the sending layer -- each unit projects to the corresponding unit in all of the receiving unit groups
+INHERITED(ProjectionSpec)
+public:
+  
+#include <GpMapDivergePrjnSpec>
+
+  GpMapDivergePrjnSpec_cpp()      { Initialize_core(); }
+};
+
+
 class RandomPrjnSpec_cpp : public ProjectionSpec_cpp {
   // Connects all units with probability p_con -- note it ALWAYS uses the same seed, because of the two-pass nature of the connection process -- you can update rndm_seed prior to connecting to get different patterns of connectivity
 INHERITED(ProjectionSpec)
