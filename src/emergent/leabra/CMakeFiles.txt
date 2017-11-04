@@ -111,25 +111,29 @@ set(leabra_HEADS_NOMAKETA
   LeabraLayerSpec_core.h
 
   # all of these are included in the appropriate ExtraSpecs file
-#   DeepCtxtConSpec.h
-#   SendDeepRawConSpec.h
-#   SendDeepModConSpec.h
+  LeabraExtraConSpecs_mbrs.h
 
-#   MarkerConSpec.h
-#   LeabraDeltaConSpec.h
-#   DaDeltaConSpec.h
-#   DaHebbConSpec.h
-#   CHLConSpec.h
-#   LeabraLimPrecConSpec.h
+  DeepCtxtConSpec.h
+  SendDeepRawConSpec.h
+  SendDeepModConSpec.h
 
-#   TDRewPredConSpec.h
-#   LatAmygConSpec.h
-#   BasAmygConSpec.h
-#   BLAmygConSpec.h
-#   CElAmygConSpec.h
-#   HippoEncoderConSpec.h
-#   CerebPfPcConSpec.h
+  MarkerConSpec.h
+  LeabraLimPrecConSpec.h
+
+  LeabraDeltaConSpec.h
+  DaDeltaConSpec.h
+  DaHebbConSpec.h
+  CHLConSpec.h
+
+  TDRewPredConSpec.h
+  LatAmygConSpec.h
+  BasAmygConSpec.h
+  BLAmygConSpec.h
+  CElAmygConSpec.h
+  HippoEncoderConSpec.h
+  CerebPfPcConSpec.h
   
+  LeabraExtraUnitSpecs_mbrs.h
 #   LayerActUnitSpec.h
 #   DeepCopyUnitSpec.h
 #   ThalSendUnitSpec.h
@@ -165,6 +169,7 @@ set(leabra_HEADS_NOMAKETA
 #   LeabraMultCopyUnitSpec.h
 #   LeabraContextUnitSpec.h
 
+  LeabraExtraLayerSpecs_mbrs.h
 #   ScalarValLayerSpec.h
 # #  MotorForceLayerSpec.h
 #   TwoDValLayerSpec.h
@@ -223,6 +228,9 @@ set(leabra_SRCS
   LeabraExtraLayerSpecs.cpp
 
 #   MSNCon.cpp
+  LeabraExtraConSpecs_mbrs.cpp
+  LeabraExtraUnitSpecs_mbrs.cpp
+  LeabraExtraLayerSpecs_mbrs.cpp
 )
 
 set(leabra_CUDA

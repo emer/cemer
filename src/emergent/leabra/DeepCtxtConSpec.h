@@ -39,8 +39,8 @@
   }
   // #IGNORE
 
-  INLINE void Compute_dWt(CON_STATE* scg, NETWORK_STATE* rnet, int thr_no) override {
-    LEABRA_NETWORK_STATE* net = (LEABRA_NETWORK_STATE*)rnet;
+  INLINE void Compute_dWt(CON_STATE* scg, NETWORK_STATE* snet, int thr_no) override {
+    LEABRA_NETWORK_STATE* net = (LEABRA_NETWORK_STATE*)snet;
     if(!learn || (use_unlearnable && net->unlearnable_trial)) return;
     LEABRA_CON_STATE* cg = (LEABRA_CON_STATE*)scg;
     LEABRA_UNIT_STATE* su = (LEABRA_UNIT_STATE*)cg->ThrOwnUnState(net, thr_no);
@@ -115,6 +115,7 @@
     delta_dwt = false;
     momentum.on = false;
   }
+  // #IGNORE
 
   INLINE int  GetStateSpecType() const override
   { return LEABRA_NETWORK_STATE::T_DeepCtxtConSpec; }

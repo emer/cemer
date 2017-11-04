@@ -38,12 +38,43 @@ public:
   Valence       valence;        // US valence coding -- appetitive vs. aversive
   DAReceptor    dar;            // #READ_ONLY #SHOW type of dopamine receptor: D1 vs. D2 -- computed automatically from acq_ext and valence
 
+  INLINE void  Init_Weights(UNIT_STATE* uv, NETWORK_STATE* net, int thr_no) override {
+    inherited::Init_Weights(uv, net, thr_no);
+    LEABRA_UNIT_STATE* u = (LEABRA_UNIT_STATE*)uv;
+    if(dar == D1R) {
+      u->SetExtFlag(LEABRA_UNIT_STATE::D1R);
+      u->ClearExtFlag(LEABRA_UNIT_STATE::D2R);
+    }
+    else {
+      u->SetExtFlag(LEABRA_UNIT_STATE::D2R);
+      u->ClearExtFlag(LEABRA_UNIT_STATE::D1R);
+    }
+    if(acq_ext == ACQ) {
+      u->SetExtFlag(LEABRA_UNIT_STATE::ACQUISITION);
+      u->ClearExtFlag(LEABRA_UNIT_STATE::EXTINCTION);
+    }
+    else {
+      u->SetExtFlag(LEABRA_UNIT_STATE::EXTINCTION);
+      u->ClearExtFlag(LEABRA_UNIT_STATE::ACQUISITION);
+    }
+    if(valence == APPETITIVE) {
+      u->SetExtFlag(LEABRA_UNIT_STATE::APPETITIVE);
+      u->ClearExtFlag(LEABRA_UNIT_STATE::AVERSIVE);
+    }
+    else {
+      u->SetExtFlag(LEABRA_UNIT_STATE::AVERSIVE);
+      u->ClearExtFlag(LEABRA_UNIT_STATE::APPETITIVE);
+    }
+  }
+
   float Compute_DaModNetin(LeabraUnitState_cpp* uv, LeabraNetwork* net,
                            int thr_no, float& net_syn) override;
 
   void  Compute_DeepMod(LeabraUnitState_cpp* uv, LeabraNetwork* net,
                         int thr_no) override;
 
+
+  
   TA_SIMPLE_BASEFUNS(BasAmygUnitSpec);
 protected:
   SPEC_DEFAULTS;

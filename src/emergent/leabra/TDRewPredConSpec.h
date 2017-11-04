@@ -1,49 +1,19 @@
-// Copyright 2017, Regents of the University of Colorado,
-// Carnegie Mellon University, Princeton University.
-//
-// This file is part of Emergent
-//
-//   Emergent is free software; you can redistribute it and/or modify
-//   it under the terms of the GNU General Public License as published by
-//   the Free Software Foundation; either version 2 of the License, or
-//   (at your option) any later version.
-//
-//   Emergent is distributed in the hope that it will be useful,
-//   but WITHOUT ANY WARRANTY; without even the implied warranty of
-//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//   GNU General Public License for more details.
+// this is included directly in LeabraExtraConSpecs_cpp / _cuda
+// {
 
-#ifndef TDRewPredConSpec_h
-#define TDRewPredConSpec_h 1
-
-// parent includes:
-#include <LeabraConSpec>
-
-// member includes:
-#include <LeabraNetwork>
-
-// declare all other types mentioned but not required to include:
-
-eTypeDef_Of(TDRewPredConSpec);
-
-class E_API TDRewPredConSpec : public LeabraConSpec {
-  // Reward Prediction connections: for TD RewPred Unit, uses TD algorithm for predicting rewards -- learns on da_p (TD) * sending trace activation from prev timestep (act_q0)
-INHERITED(LeabraConSpec)
-public:
   bool          use_trace_act_avg;
   // if true, use act_avg value as sending activation in learning rule -- else uses prior activation state, act_q0
 
-  inline void C_Compute_dWt_TD(float& dwt, const float ru_da_p, 
-                                       const float su_act) {
+  INLINE void C_Compute_dWt_TD(float& dwt, const float ru_da_p, const float su_act) {
     dwt += cur_lrate * ru_da_p * su_act;
   }
   // #IGNORE
 
-  inline void Compute_dWt(ConState* scg, Network* rnet, int thr_no) override {
-    LeabraNetwork* net = (LeabraNetwork*)rnet;
+  INLINE void Compute_dWt(CON_STATE* scg, NETWORK_STATE* snet, int thr_no) override {
+    LEABRA_NETWORK_STATE* net = (LEABRA_NETWORK_STATE*)snet;
     if(!learn || (use_unlearnable && net->unlearnable_trial)) return;
-    LeabraConState_cpp* cg = (LeabraConState_cpp*)scg;
-    LeabraUnitState_cpp* su = (LeabraUnitState_cpp*)cg->ThrOwnUnState(net, thr_no);
+    LEABRA_CON_STATE* cg = (LEABRA_CON_STATE*)scg;
+    LEABRA_UNIT_STATE* su = (LEABRA_UNIT_STATE*)cg->ThrOwnUnState(net, thr_no);
 
     float su_act;
     if(use_trace_act_avg)
@@ -54,12 +24,12 @@ public:
 
     const int sz = cg->size;
     for(int i=0; i<sz; i++) {
-      LeabraUnitState_cpp* ru = (LeabraUnitState_cpp*)cg->UnState(i,net);
+      LEABRA_UNIT_STATE* ru = (LEABRA_UNIT_STATE*)cg->UnState(i,net);
       C_Compute_dWt_TD(dwts[i], ru->da_p, su_act);
     }
   }
 
-  inline void	C_Compute_Weights_LinNoBound(float& wt, float& dwt, float& fwt) {
+  INLINE void  C_Compute_Weights_LinNoBound(float& wt, float& dwt, float& fwt) {
     if(dwt != 0.0f) {
       wt += dwt;
       fwt = wt;
@@ -68,10 +38,9 @@ public:
   }
   // #IGNORE compute weights -- linear, no bounds
 
-  inline void Compute_Weights(ConState* scg, Network* net, int thr_no) override {
+  INLINE void Compute_Weights(CON_STATE* scg, NETWORK_STATE* snet, int thr_no) override {
     if(!learn) return;
-
-    LeabraConState_cpp* cg = (LeabraConState_cpp*)scg;
+    LEABRA_CON_STATE* cg = (LEABRA_CON_STATE*)scg;
 
     float* wts = cg->OwnCnVar(WT);
     float* dwts = cg->OwnCnVar(DWT);
@@ -82,14 +51,14 @@ public:
       C_Compute_Weights_LinNoBound(wts[i], dwts[i], fwts[i]);
     }
   }
-  
-  TA_BASEFUNS_NOCOPY(TDRewPredConSpec);
-protected:
-  SPEC_DEFAULTS;
-private:
-  void 	Initialize();
-  void	Destroy()		{ };
-  void	Defaults_init() { Initialize(); }
-};
 
-#endif // TDRewPredConSpec_h
+  INLINE void Initialize_core() {
+    use_trace_act_avg = false;    rnd.mean = 0.0f;    rnd.var = 0.0f;
+    wt_limits.type = STATE_CLASS(WeightLimits)::NONE;    wt_limits.sym = false;
+    wt_sig.gain = 1.0f;    wt_sig.off = 1.0f;    wt_bal.on = false;
+  }
+  // #IGNORE
+
+  INLINE int  GetStateSpecType() const override
+  { return LEABRA_NETWORK_STATE::T_TDRewPredConSpec; }
+

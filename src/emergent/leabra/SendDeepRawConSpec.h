@@ -1,44 +1,16 @@
-// Copyright 2017, Regents of the University of Colorado,
-// Carnegie Mellon University, Princeton University.
-//
-// This file is part of Emergent
-//
-//   Emergent is free software; you can redistribute it and/or modify
-//   it under the terms of the GNU General Public License as published by
-//   the Free Software Foundation; either version 2 of the License, or
-//   (at your option) any later version.
-//
-//   Emergent is distributed in the hope that it will be useful,
-//   but WITHOUT ANY WARRANTY; without even the implied warranty of
-//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//   GNU General Public License for more details.
-
-#ifndef SendDeepRawConSpec_h
-#define SendDeepRawConSpec_h 1
-
-// parent includes:
-#include <LeabraConSpec>
-
-// member includes:
-#include <LeabraNetwork>
-#include "ta_vector_ops.h"
-
-// declare all other types mentioned but not required to include:
-
-eTypeDef_Of(SendDeepRawConSpec);
-
-class E_API SendDeepRawConSpec : public LeabraConSpec {
-  // #AKA_Deep5bConSpec sends deep_raw activation values instead of usual act values -- stored into deep_raw_net var on recv unit -- used e.g., in projections to thalamus
-INHERITED(LeabraConSpec)
-public:
+// this is included directly in LeabraExtraConSpecs_cpp / _cuda
+// {
 
   // special!
-  bool  DoesStdNetin() override { return false; }
-  bool  DoesStdDwt() override { return false; }
-  bool  IsDeepRawCon() override { return true; }
-  void  Trial_Init_Specs(LeabraNetwork* net) override;
+  INLINE bool  DoesStdNetin() override { return false; }
+  INLINE bool  DoesStdDwt() override { return false; }
+  INLINE bool  IsDeepRawCon() override { return true; }
+  INLINE void  Trial_Init_Specs(LEABRA_NETWORK_STATE* net) override {
+    inherited::Trial_Init_Specs(net);
+    net->deep.raw_net = true;
+  }
 
-  inline void Send_DeepRawNetDelta(LeabraConState_cpp* cg, LeabraNetwork* net,
+  INLINE void Send_DeepRawNetDelta(LEABRA_CON_STATE* cg, LEABRA_NETWORK_STATE* net,
                                    int thr_no, const float su_act_delta) {
     const float su_act_delta_eff = cg->scale_eff * su_act_delta;
     float* wts = cg->OwnCnVar(WT);
@@ -46,26 +18,39 @@ public:
 #ifdef TA_VEC_USE
     Send_NetinDelta_vec(cg, su_act_delta_eff, send_deepnet_vec, wts);
 #else
-    CON_GROUP_LOOP(cg, C_Send_NetinDelta(wts[i], send_deepnet_vec,
+    CON_STATE_LOOP(cg, C_Send_NetinDelta(wts[i], send_deepnet_vec,
                                          cg->UnIdx(i), su_act_delta_eff));
 #endif
   }
   // #IGNORE sender-based activation net input for con group (send net input to receivers) -- always goes into tmp matrix (thr_no >= 0!) and is then integrated into net through Compute_NetinInteg function on units
 
   // don't send regular net inputs..
-  inline void Send_NetinDelta(LeabraConState_cpp* cg, LeabraNetwork* net, int thr_no, 
+  INLINE void Send_NetinDelta(LEABRA_CON_STATE* cg, LEABRA_NETWORK_STATE* net, int thr_no, 
                               const float su_act_delta) override { };
-  inline float Compute_Netin(ConState* cg, Network* net, int thr_no) override
+  INLINE float Compute_Netin(CON_STATE* cg, NETWORK_STATE* net, int thr_no) override
   { return 0.0f; }
 
-  void   Init_Weights_sym_s(ConState* cg, Network* net, int thr_no) override;
+  INLINE void   Init_Weights_sym_s(CON_STATE* cg, NETWORK_STATE* net, int thr_no) override {
+    if(!wt_limits.sym) return;
+    UNIT_STATE* su = cg->ThrOwnUnState(net, thr_no);
+    LAYER_STATE* slay = cg->GetPrjnSendLayer(net);
+    PRJN_STATE* prjn = cg->GetPrjnState(net);
+    PRJN_STATE* oprjn = slay->FindSendPrjnTo(net, prjn->recv_lay_idx); // find other prjn to this same layer -- this assumes that deep prjn always comes *after* the other one..
+    if(!oprjn || oprjn == prjn) return; // don't do if it is us!
+    CON_STATE* ocg = su->SendConStatePrjn(net, oprjn);
+    if(!ocg) return;
+    int mx = MIN(cg->size, ocg->size);
+    for(int i=0; i<mx; i++) {     // assume to be in 1-to-1 corresp..
+      cg->OwnCn(i, WT) = ocg->OwnCn(i, WT);
+    }
+  }
+  // #IGNORE we copy our weights from other sending projection to this same recv layer, if wt_limits.sym is active
 
-  void  GetPrjnName(Projection& prjn, String& nm) override;
+  INLINE void Initialize_core() {
+    learn = false;
+  }
+  // #IGNORE
 
-  TA_SIMPLE_BASEFUNS(SendDeepRawConSpec);
-private:
-  void Initialize();
-  void Destroy()     { };
-};
+  INLINE int  GetStateSpecType() const override
+  { return LEABRA_NETWORK_STATE::T_SendDeepRawConSpec; }
 
-#endif // SendDeepRawConSpec_h

@@ -81,11 +81,12 @@
     T_SendDeepModConSpec,
 
     T_MarkerConSpec,
+    T_LeabraLimPrecConSpec,
+    
     T_LeabraDeltaConSpec,
     T_DaDeltaConSpec,
     T_DaHebbConSpec,
     T_CHLConSpec,
-    T_LeabraLimPrecConSpec,
 
     T_TDRewPredConSpec,
     T_LatAmygConSpec,

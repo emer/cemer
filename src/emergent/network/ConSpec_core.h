@@ -123,7 +123,7 @@
   }
   // #CAT_Learning apply weight symmetrizing between reciprocal units -- send owns cons version
 
-  INLINE void Init_Weights_sym_r(CON_STATE* cg, NETWORK_STATE* net, int thr_no) {
+  INLINE virtual void Init_Weights_sym_r(CON_STATE* cg, NETWORK_STATE* net, int thr_no) {
     LAYER_STATE* rlay = cg->GetPrjnRecvLayer(net);
     LAYER_STATE* slay = cg->GetPrjnSendLayer(net);
     if(rlay->units_flat_idx < slay->units_flat_idx)
@@ -132,7 +132,7 @@
   }
   // #CAT_State apply symmetry after weight init, recv based
 
-  INLINE void Init_Weights_sym_s(CON_STATE* cg, NETWORK_STATE* net, int thr_no) {
+  INLINE virtual void Init_Weights_sym_s(CON_STATE* cg, NETWORK_STATE* net, int thr_no) {
     LAYER_STATE* rlay = cg->GetPrjnRecvLayer(net);
     LAYER_STATE* slay = cg->GetPrjnSendLayer(net);
     if(rlay->units_flat_idx < slay->units_flat_idx)

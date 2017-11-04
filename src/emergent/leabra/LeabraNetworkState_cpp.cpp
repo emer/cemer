@@ -22,6 +22,10 @@
 #include <LeabraLayerSpec_cpp>
 #include <LeabraBiasSpec_cpp>
 
+#include <LeabraExtraConSpecs_cpp>
+#include <LeabraExtraUnitSpecs_cpp>
+#include <LeabraExtraLayerSpecs_cpp>
+
 #include <State_cpp>
 
 #include "LeabraNetworkState_core.cpp"

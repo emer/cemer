@@ -1,5 +1,15 @@
 // this is directly included in LeabraUnitState_cpp and LeabraUnitState_cuda etc
 //{
+  // important: coordinate with any changes to UnitState_core ExtFlags -- ends at UN_FLAG_4 at 0x0800
+  enum LeabraUnitFlags {        // extra flags on top of ext flags for leabra
+    D1R = 0x0010000,            // has predominantly D1 receptors
+    D2R = 0x0020000,            // has predominantly D2 receptors
+    ACQUISITION = 0x0040000,     // involved in Acquisition
+    EXTINCTION = 0x0080000,     // involved in Extinction
+    APPETITIVE = 0x0100000,     // appetitive (positive valence) coding
+    AVERSIVE   = 0x0200000,     // aversive (negative valence) coding
+  };
+  
   float      bias_fwt;       // #NO_SAVE #CAT_Learning bias weight: fast learning linear (underlying) weight value -- learns according to the lrate specified in the connection spec -- this is converted into the effective weight value, "wt", via sigmoidal contrast enhancement (wt_sig)
   float      bias_swt;       // #NO_SAVE #CAT_Learning bias weight: slow learning linear (underlying) weight value -- learns more slowly from weight changes than fast weights, and fwt decays down to swt over time
   float      ext_orig;       // #NO_SAVE #CAT_Activation original external input value (ext) -- need to save this in case ext gets transformed in various ways in the clamping process e.g., for ScalarValue layers

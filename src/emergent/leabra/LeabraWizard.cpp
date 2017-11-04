@@ -23,55 +23,11 @@ TA_BASEFUNS_CTORS_DEFN(LeabraWizard);
 #include <DataTable>
 #include <ControlPanel>
 
-#include <FullPrjnSpec>
-#include <OneToOnePrjnSpec>
-#include <ScalarValLayerSpec>
-#include <GpOneToOnePrjnSpec>
-#include <MarkerGpOneToOnePrjnSpec>
-#include <TesselPrjnSpec>
-#include <UniformRndPrjnSpec>
-#include <GpTesselPrjnSpec>
-#include <TiledGpRFPrjnSpec>
-#include <TiledGpRFOneToOnePrjnSpec>
+#include <AllProjectionSpecs>
 
-#include <TwoDValLayerSpec>
-#include <DeepCtxtConSpec>
-#include <MarkerConSpec>
-#include <LayerActUnitSpec>
-#include <LeabraContextUnitSpec>
-
-#include <ExtRewLayerSpec>
-#include <TDRewPredConSpec>
-#include <TDRewPredUnitSpec>
-#include <TDRewIntegUnitSpec>
-#include <TDDeltaUnitSpec>
-
-#include <PPTgUnitSpec>
-#include <LHbRMTgUnitSpec>
-#include <VTAUnitSpec>
-#include <DRNUnitSpec>
-#include <LeabraDeltaConSpec>
-#include <BasAmygConSpec>
-#include <LatAmygConSpec>
-#include <TANUnitSpec>
-
-#include <MSNUnitSpec>
-#include <PatchUnitSpec>
-#include <GPiInvUnitSpec>
-#include <PFCUnitSpec>
-#include <DeepCopyUnitSpec>
-#include <MSNConSpec>
-#include <SendDeepRawConSpec>
-#include <SendDeepModConSpec>
-
-#include <BgPfcPrjnSpec>
-#include <TopoWtsPrjnSpec>
-
-#include <HippoEncoderConSpec>
-#include <CHLConSpec>
-#include <ECoutUnitSpec>
-#include <CA1UnitSpec>
-//#include <SubiculumLayerSpec>
+#include <LeabraExtraConSpecs>
+#include <LeabraExtraUnitSpecs>
+#include <LeabraExtraLayerSpecs>
 
 #include <taMisc>
 #include <tabMisc>

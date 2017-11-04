@@ -13,22 +13,8 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-#include "LeabraExtraConSpecs_cpp.h"
+// this must be included in a defined State_core/main/cuda context with appropriate
+// #ifndef multiple-include protection AT THAT LEVEL not here..
 
-#include <State_cpp>
+#pragma maketa_file_is_target LeabraExtraUnitSpecs
 
-#include "DeepCtxtConSpec.cpp"
-#include "SendDeepRawConSpec.cpp"
-#include "SendDeepModConSpec.cpp"
-#include "MarkerConSpec.cpp"
-#include "LeabraLimPrecConSpec.cpp"
-#include "LeabraDeltaConSpec.cpp"
-#include "DaDeltaConSpec.cpp"
-#include "DaHebbConSpec.cpp"
-#include "TDRewPredConSpec.cpp"
-#include "LatAmygConSpec.cpp"
-#include "BasAmygConSpec.cpp"
-#include "BLAmygConSpec.cpp"
-#include "CElAmygConSpec.cpp"
-#include "HippoEncoderConSpec.cpp"
-#include "CerebPfPcConSpec.cpp"

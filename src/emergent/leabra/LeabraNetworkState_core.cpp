@@ -73,6 +73,20 @@ LAYER_SPEC_CPP* LEABRA_NETWORK_STATE::NewLayerSpec(int spec_type) const {
   switch(spec_type) {
   case T_LeabraLayerSpec:
     return new STATE_CLASS_CPP(LeabraLayerSpec)();
+  // case T_ScalarValLayerSpec:
+  //   return new STATE_CLASS_CPP(ScalarValLayerSpec)();
+  // case T_MotorForceLayerSpec:
+  //   return new STATE_CLASS_CPP(MotorForceLayerSpec)();
+  // case T_TwoDValLayerSpec:
+  //   return new STATE_CLASS_CPP(TwoDValLayerSpec)();
+  // case T_DecodeTwoDValLayerSpec:
+  //   return new STATE_CLASS_CPP(DecodeTwoDValLayerSpec)();
+  // case T_LeabraV1LayerSpec:
+  //   return new STATE_CLASS_CPP(LeabraV1LayerSpec)();
+  // case T_SubiculumLayerSpec:
+  //   return new STATE_CLASS_CPP(SubiculumLayerSpec)();
+  // case T_GPiSoftMaxLayerSpec:
+  //   return new STATE_CLASS_CPP(GPiSoftMaxLayerSpec)();
   }
   StateError("NewLayerSpec, type not recognized");
   return new STATE_CLASS_CPP(LeabraLayerSpec)();
@@ -82,6 +96,70 @@ UNIT_SPEC_CPP* LEABRA_NETWORK_STATE::NewUnitSpec(int spec_type) const {
   switch(spec_type) {
   case T_LeabraUnitSpec:
     return new STATE_CLASS_CPP(LeabraUnitSpec)();
+  // case T_LayerActUnitSpec:
+  //   return new STATE_CLASS_CPP(LayerActUnitSpec)();
+  // case T_DeepCopyUnitSpec:
+  //   return new STATE_CLASS_CPP(DeepCopyUnitSpec)();
+  // case T_ThalSendUnitSpec:
+  //   return new STATE_CLASS_CPP(ThalSendUnitSpec)();
+  // case T_PoolInputsUnitSpec:
+  //   return new STATE_CLASS_CPP(PoolInputsUnitSpec)();
+    
+  // case T_ExtRewLayerSpec:
+  //   return new STATE_CLASS_CPP(ExtRewLayerSpec)();
+  // case T_TDRewPredUnitSpec:
+  //   return new STATE_CLASS_CPP(TDRewPredUnitSpec)();
+  // case T_TDRewIntegUnitSpec:
+  //   return new STATE_CLASS_CPP(TDRewIntegUnitSpec)();
+  // case T_TDDeltaUnitSpec:
+  //   return new STATE_CLASS_CPP(TDDeltaUnitSpec)();
+
+  // case T_BasAmygUnitSpec:
+  //   return new STATE_CLASS_CPP(BasAmygUnitSpec)();
+  // case T_BLAmygUnitSpec:
+  //   return new STATE_CLASS_CPP(BLAmygUnitSpec)();
+  // case T_CElAmygUnitSpec:
+  //   return new STATE_CLASS_CPP(CElAmygUnitSpec)();
+  // case T_PPTgUnitSpec:
+  //   return new STATE_CLASS_CPP(PPTgUnitSpec)();
+  // case T_LHbRMTgUnitSpec:
+  //   return new STATE_CLASS_CPP(LHbRMTgUnitSpec)();
+  // case T_VTAUnitSpec:
+  //   return new STATE_CLASS_CPP(VTAUnitSpec)();
+  // case T_DRNUnitSpec:
+  //   return new STATE_CLASS_CPP(DRNUnitSpec)();
+  // case T_ClampDaUnitSpec:
+  //   return new STATE_CLASS_CPP(ClampDaUnitSpec)();
+  // case T_BFCSUnitSpec:
+  //   return new STATE_CLASS_CPP(BFCSUnitSpec)();
+
+  // case T_D1D2UnitSpec:
+  //   return new STATE_CLASS_CPP(D1D2UnitSpec)();
+  // case T_MSNConSpec:
+  //   return new STATE_CLASS_CPP(MSNConSpec)();
+  // case T_MSNUnitSpec:
+  //   return new STATE_CLASS_CPP(MSNUnitSpec)();
+  // case T_TANUnitSpec:
+  //   return new STATE_CLASS_CPP(TANUnitSpec)();
+  // case T_PatchUnitSpec:
+  //   return new STATE_CLASS_CPP(PatchUnitSpec)();
+  // case T_GPiInvUnitSpec:
+  //   return new STATE_CLASS_CPP(GPiInvUnitSpec)();
+  // case T_InvertUnitSpec:
+  //   return new STATE_CLASS_CPP(InvertUnitSpec)();
+  // case T_PFCUnitSpec:
+  //   return new STATE_CLASS_CPP(PFCUnitSpec)();
+    
+  // case T_ECoutUnitSpec:
+  //   return new STATE_CLASS_CPP(ECoutUnitSpec)();
+  // case T_CA1UnitSpec:
+  //   return new STATE_CLASS_CPP(CA1UnitSpec)();
+  // case T_CerebGranuleUnitSpec:
+  //   return new STATE_CLASS_CPP(CerebGranuleUnitSpec)();
+  // case T_LeabraMultCopyUnitSpec:
+  //   return new STATE_CLASS_CPP(LeabraMultCopyUnitSpec)();
+  // case T_LeabraContextUnitSpec:
+  //   return new STATE_CLASS_CPP(LeabraContextUnitSpec)();
   }
   StateError("NewUnitSpec, type not recognized");
   return new STATE_CLASS_CPP(LeabraUnitSpec)();
@@ -93,6 +171,42 @@ CON_SPEC_CPP* LEABRA_NETWORK_STATE::NewConSpec(int spec_type) const {
     return new STATE_CLASS_CPP(LeabraConSpec)();
   case T_LeabraBiasSpec:
     return new STATE_CLASS_CPP(LeabraBiasSpec)();
+
+  case T_DeepCtxtConSpec:
+    return new STATE_CLASS_CPP(DeepCtxtConSpec)();
+  case T_SendDeepRawConSpec:
+    return new STATE_CLASS_CPP(SendDeepRawConSpec)();
+  case T_SendDeepModConSpec:
+    return new STATE_CLASS_CPP(SendDeepModConSpec)();
+
+  case T_MarkerConSpec:
+    return new STATE_CLASS_CPP(MarkerConSpec)();
+  case T_LeabraLimPrecConSpec:
+    return new STATE_CLASS_CPP(LeabraLimPrecConSpec)();
+    
+  case T_LeabraDeltaConSpec:
+    return new STATE_CLASS_CPP(LeabraDeltaConSpec)();
+  case T_DaDeltaConSpec:
+    return new STATE_CLASS_CPP(DaDeltaConSpec)();
+  case T_DaHebbConSpec:
+    return new STATE_CLASS_CPP(DaHebbConSpec)();
+  case T_CHLConSpec:
+    return new STATE_CLASS_CPP(CHLConSpec)();
+
+  case T_TDRewPredConSpec:
+    return new STATE_CLASS_CPP(TDRewPredConSpec)();
+  case T_LatAmygConSpec:
+    return new STATE_CLASS_CPP(LatAmygConSpec)();
+  case T_BasAmygConSpec:
+    return new STATE_CLASS_CPP(BasAmygConSpec)();
+  case T_BLAmygConSpec:
+    return new STATE_CLASS_CPP(BLAmygConSpec)();
+  case T_CElAmygConSpec:
+    return new STATE_CLASS_CPP(CElAmygConSpec)();
+  case T_HippoEncoderConSpec:
+    return new STATE_CLASS_CPP(HippoEncoderConSpec)();
+  case T_CerebPfPcConSpec:
+    return new STATE_CLASS_CPP(CerebPfPcConSpec)();
   }
   StateError("NewConSpec, type not recognized");
   return new STATE_CLASS_CPP(LeabraConSpec)();

@@ -21,10 +21,14 @@
 
 // parent includes:
 #include <LeabraConSpec_cpp>
+#include <LeabraUnGpState_cpp>
 
 #include <State_cpp>
 
 // member includes:
+#include <LeabraExtraConSpecs_mbrs>
+
+#include <State_cpp>
 
 // declare all other types mentioned but not required to include:
 
@@ -39,5 +43,170 @@ public:
 };
 
 
+class SendDeepRawConSpec_cpp : public LeabraConSpec_cpp {
+  // #AKA_Deep5bConSpec sends deep_raw activation values instead of usual act values -- stored into deep_raw_net var on recv unit -- used e.g., in projections to thalamus
+INHERITED(LeabraConSpec)
+public:
+
+#include <SendDeepRawConSpec>
+  
+  SendDeepRawConSpec_cpp() { Initialize_core(); }
+};
+
+
+class SendDeepModConSpec_cpp : public LeabraConSpec_cpp {
+  // sends regular activation values to deep_net variable on recv units, which is then used to drive deep_mod activation state directly -- used for predictive auto-encoder units -- no defined learning rule at this point -- use fixed one-to-one cons usually
+INHERITED(LeabraConSpec)
+public:
+
+#include <SendDeepModConSpec>
+
+  SendDeepModConSpec_cpp() { Initialize_core(); }
+};
+
+
+class MarkerConSpec_cpp : public LeabraConSpec_cpp {
+  // connection spec that marks special projections: doesn't send netin or adapt weights
+INHERITED(LeabraConSpec)
+public:
+
+#include <MarkerConSpec>
+
+  MarkerConSpec_cpp() { Initialize_core(); }
+};
+
+
+class LeabraLimPrecConSpec_cpp : public LeabraConSpec_cpp {
+  // ##CAT_Leabra Leabra limited precision connection specs: limits weight values to specified level of precision between 0-1
+INHERITED(LeabraConSpec)
+public:
+
+#include <LeabraLimPrecConSpec>
+
+  LeabraLimPrecConSpec_cpp() { Initialize_core(); }
+};
+
+
+class LeabraDeltaConSpec_cpp : public LeabraConSpec_cpp {
+  // basic delta-rule learning (plus - minus) * sender, with sender in the minus phase -- soft bounding as specified in spec -- no hebbian or anything else
+INHERITED(LeabraConSpec)
+public:
+
+#include <LeabraDeltaConSpec>
+
+  LeabraDeltaConSpec_cpp() { Initialize_core(); }
+};
+
+
+class DaDeltaConSpec_cpp : public LeabraConSpec_cpp {
+  // basic delta-rule learning (plus - minus) * sender, with sender in the minus phase -- soft bounding as specified in spec -- no hebbian or anything else
+INHERITED(LeabraConSpec)
+public:
+
+#include <DaDeltaConSpec>
+
+  DaDeltaConSpec_cpp() { Initialize_core(); }
+};
+
+
+class DaHebbConSpec_cpp : public LeabraConSpec_cpp {
+  // basic dopamine-modulated hebbian learning -- dwt = da * ru_act * su_act
+INHERITED(LeabraConSpec)
+public:
+
+#include <DaHebbConSpec>
+
+  DaHebbConSpec_cpp() { Initialize_core(); }
+};
+
+
+class CHLConSpec_cpp : public LeabraConSpec_cpp {
+  // #AKA_XCalCHLConSpec does CHL-based Leabra learning under XCAL and CAL learning framework -- sometimes CHL performs better, e.g., in the hippocampus..
+INHERITED(LeabraConSpec)
+public:
+
+#include <CHLConSpec>
+
+  CHLConSpec_cpp() { Initialize_core(); }
+};
+
+
+///////////////////////////////////////////////////////////////////
+//              Special Algos: TD, PVLV, PBWM, Cereb
+
+class TDRewPredConSpec_cpp : public LeabraConSpec_cpp {
+  // Reward Prediction connections: for TD RewPred Unit, uses TD algorithm for predicting rewards -- learns on da_p (TD) * sending trace activation from prev timestep (act_q0)
+INHERITED(LeabraConSpec)
+public:
+
+#include <TDRewPredConSpec>
+  
+  TDRewPredConSpec_cpp() { Initialize_core(); }
+};
+
+
+class LatAmygConSpec_cpp : public LeabraConSpec_cpp {
+  // #OBSOLETE OLD PVLV: simulates learning in the lateral amygdala, based on CS-specific input weights, with learning modulated by phasic dopamine from either da_p (positive-valence) or da_n (negative valence), but predominantly the positive values of these signals. To prevent CS self-training positive feedback, the CS must generally have been active in the prior trial, using act_q0.  there is no dependence on postsynaptic activation
+INHERITED(LeabraConSpec)
+public:
+
+#include <LatAmygConSpec>
+  
+  LatAmygConSpec_cpp() { Initialize_core(); }
+};
+
+
+class BasAmygConSpec_cpp : public LeabraConSpec_cpp {
+  // #OBSOLETE OLD PVLV: simulates learning in the basal amygdala, with separate equations for acquisition vs. extinction subpoplations -- acquisition recv from LatAmyg, learn from da_p and postsynaptic activity -- extinction recv from context / pfc, and learn from ACQ up-state signal and da_p using D2 receptors
+INHERITED(LeabraConSpec)
+public:
+
+#include <BasAmygConSpec>
+
+  BasAmygConSpec_cpp() { Initialize_core(); }
+};
+
+
+class BLAmygConSpec_cpp : public LeabraConSpec_cpp {
+  // simulates learning in the Basal Lateral Amygdala using a simple delta-rule between this trial and previous trial, modulated also by absolute value of phasic dopamine -- delta influence comes from unit spec dopamine da_mod and US drive
+INHERITED(LeabraConSpec)
+public:
+  #include <BLAmygConSpec>
+
+  BLAmygConSpec_cpp() { Initialize_core(); }
+};
+
+
+class CElAmygConSpec_cpp : public LeabraConSpec_cpp {
+  // simulates learning in the central amygdala (lateral) using a simple delta-rule between this trial and previous trial, modulated also by absolute value of phasic dopamine -- delta influence comes from unit spec dopamine da_mod and US drive
+INHERITED(LeabraConSpec)
+public:
+
+#include <CElAmygConSpec>
+
+  CElAmygConSpec_cpp() { Initialize_core(); }
+};
+
+
+class HippoEncoderConSpec_cpp : public LeabraConSpec_cpp {
+  // for EC <-> CA1 connections: CHL learning on encoder variables (act_p vs. act_q1)
+INHERITED(LeabraConSpec)
+public:
+
+#include <HippoEncoderConSpec>
+
+  HippoEncoderConSpec_cpp() { Initialize_core(); }
+};
+
+
+class CerebPfPcConSpec_cpp : public LeabraConSpec_cpp {
+  // The parallel-fiber to Purkinje cell connection spec -- special learning rule driven by IO error values clamped onto the Purkinje cell -- if targ value is 0, then no error (weights slowly increase) else an error and LTD occurs
+INHERITED(LeabraConSpec)
+public:
+
+#include <CerebPfPcConSpec>
+
+  CerebPfPcConSpec_cpp() { Initialize_core(); }
+};
 
 #endif // LeabraExtraConSpecs_cpp_h

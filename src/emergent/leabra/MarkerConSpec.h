@@ -1,55 +1,28 @@
-// Copyright 2017, Regents of the University of Colorado,
-// Carnegie Mellon University, Princeton University.
-//
-// This file is part of Emergent
-//
-//   Emergent is free software; you can redistribute it and/or modify
-//   it under the terms of the GNU General Public License as published by
-//   the Free Software Foundation; either version 2 of the License, or
-//   (at your option) any later version.
-//
-//   Emergent is distributed in the hope that it will be useful,
-//   but WITHOUT ANY WARRANTY; without even the implied warranty of
-//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//   GNU General Public License for more details.
+// this is included directly in LeabraExtraConSpecs_cpp / _cuda
+// {
 
-#ifndef MarkerConSpec_h
-#define MarkerConSpec_h 1
+  INLINE bool  IsMarkerCon() override { return true; }
+  INLINE bool  DoesStdNetin() override { return false; }
+  INLINE bool  DoesStdDwt() override { return true; } //
 
-// parent includes:
-#include <LeabraConSpec>
-
-// member includes:
-
-// declare all other types mentioned but not required to include:
-
-eTypeDef_Of(MarkerConSpec);
-
-class E_API MarkerConSpec : public LeabraConSpec {
-  // connection spec that marks special projections: doesn't send netin or adapt weights
-INHERITED(LeabraConSpec)
-public:
-  bool  IsMarkerCon() override { return true; }
-  bool  DoesStdNetin() override { return false; }
-  bool  DoesStdDwt() override { return true; }
-
-  // don't send regular net inputs or learn!
-  void Send_NetinDelta(LeabraConState_cpp*, LeabraNetwork* net, int thr_no, 
-				const float su_act_delta_eff) override { };
-  float Compute_Netin(ConState* cg, Network* net, int thr_no) override
+  // don't send regular net inputs or learn
+  INLINE void  Send_NetinDelta(LEABRA_CON_STATE* cg, LEABRA_NETWORK_STATE* net, int thr_no, 
+                               const float su_act_delta) override { };
+  INLINE float Compute_Netin(CON_STATE* cg, NETWORK_STATE* net, int thr_no) override
   { return 0.0f; }
-  void  Compute_dWt(ConState*, Network* net, int thr_no) override { };
-  void	Compute_Weights(ConState*, Network* net, int thr_no) override { };
+  INLINE void  Compute_dWt(CON_STATE* cg, NETWORK_STATE* net, int thr_no) override { };
+  INLINE void  Compute_Weights(CON_STATE* cg, NETWORK_STATE* net, int thr_no) override { };
 
-  void  GetPrjnName(Projection& prjn, String& nm) override;
+  INLINE void Initialize_core() {
+    rnd.mean = 0.0f; rnd.var = 0.0f;
+    wt_limits.sym = false;
+    wt_scale.rel = 0.0f;
+    lrate = 0.0f;
+    cur_lrate = 0.0f;
+    learn = false;
+  }
+  // #IGNORE
 
-  TA_BASEFUNS_NOCOPY(MarkerConSpec);
-protected:
-  SPEC_DEFAULTS;
-private:
-  void 	Initialize();
-  void	Destroy()		{ };
-  void	Defaults_init();
-};
+  INLINE int  GetStateSpecType() const override
+  { return LEABRA_NETWORK_STATE::T_MarkerConSpec; }
 
-#endif // MarkerConSpec_h

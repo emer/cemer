@@ -18,17 +18,15 @@
 #include <LeabraUnitSpec>
 #include <LeabraConSpec>
 
-// #include <MSNConSpec>
+#include <LeabraExtraConSpecs>
+#include <LeabraExtraUnitSpecs>
+#include <LeabraExtraLayerSpecs>
 
 #include <taProject>
 #include <DataTable>
 #include <Program>
 #include <taMisc>
 #include <tabMisc>
-
-// #ifdef CUDA_COMPILE
-// #include "LeabraConSpec_cuda.h"
-// #endif
 
 TA_BASEFUNS_CTORS_DEFN(LeabraAvgMax);
 TA_BASEFUNS_CTORS_DEFN(LeabraMarginVals);
