@@ -597,6 +597,52 @@ TA_BASEFUNS_CTORS_DEFN(TiledNovlpPrjnSpec);
 
 
 ////////////////////////////////////////////////////////////////////////////////////
+//              TiledGpMapConvergePrjnSpec
+
+TA_BASEFUNS_CTORS_DEFN(TiledGpMapConvergePrjnSpec);
+
+#include "TiledGpMapConvergePrjnSpec.cpp"
+
+bool TiledGpMapConvergePrjnSpec::TrgRecvFmSend(int send_x, int send_y) {
+  trg_send_geom.x = send_x;
+  trg_send_geom.y = send_y;
+
+  if(wrap)
+    trg_recv_geom = (trg_send_geom / send_tile_skip);
+  else
+    trg_recv_geom = (trg_send_geom / send_tile_skip) - 1;
+
+  // now fix it the other way
+  if(wrap)
+    trg_send_geom = (trg_recv_geom * send_tile_skip);
+  else
+    trg_send_geom = ((trg_recv_geom +1) * send_tile_skip);
+
+  SigEmitUpdated();
+  return (trg_send_geom.x == send_x && trg_send_geom.y == send_y);
+}
+
+bool TiledGpMapConvergePrjnSpec::TrgSendFmRecv(int recv_x, int recv_y) {
+  trg_recv_geom.x = recv_x;
+  trg_recv_geom.y = recv_y;
+
+  if(wrap)
+    trg_send_geom = (trg_recv_geom * send_tile_skip);
+  else
+    trg_send_geom = ((trg_recv_geom+1) * send_tile_skip);
+
+  // now fix it the other way
+  if(wrap)
+    trg_recv_geom = (trg_send_geom / send_tile_skip);
+  else
+    trg_recv_geom = (trg_send_geom / send_tile_skip) - 1;
+
+  SigEmitUpdated();
+  return (trg_recv_geom.x == recv_x && trg_recv_geom.y == recv_y);
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////
 //              GaussRFPrjnSpec
 
 TA_BASEFUNS_CTORS_DEFN(GaussRFPrjnSpec);

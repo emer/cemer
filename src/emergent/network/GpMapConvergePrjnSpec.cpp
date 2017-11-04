@@ -33,13 +33,11 @@ void STATE_CLASS(GpMapConvergePrjnSpec)::Connect_impl
 
   for(int rui = 0; rui < recv_lay->n_units; rui++) {
     UNIT_STATE* ru = recv_lay->GetUnitState(net, rui);
-    if(ru->lesioned()) continue;
     TAVECTOR2I suc;
     for(suc.y = 0; suc.y < su_geo.y; suc.y++) {
       for(suc.x = 0; suc.x < su_geo.x; suc.x++) {
         int sgpidx = send_lay->GetGpIdxFmXY(suc.x, suc.y);
         UNIT_STATE* su = send_lay->GetUnitStateGpUnIdx(net, sgpidx, rui);
-        if(su->lesioned()) continue;
         ru->ConnectFrom(net, su, prjn);
       }
     }

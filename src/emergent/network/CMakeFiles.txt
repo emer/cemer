@@ -183,8 +183,8 @@ set(network_HEADS_NOMAKETA
   
   TiledRFPrjnSpec.h
   TiledNovlpPrjnSpec.h
+  TiledGpMapConvergePrjnSpec.h
   # TiledDivGpRFPrjnSpec.h
-  # TiledGpMapConvergePrjnSpec.h
   
   GaussRFPrjnSpec.h
   GradientWtsPrjnSpec.h

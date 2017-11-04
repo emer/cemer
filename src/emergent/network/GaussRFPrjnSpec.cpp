@@ -27,7 +27,7 @@ void STATE_CLASS(GaussRFPrjnSpec)::Connect_impl
   for(ruc.y = 0; ruc.y < ru_geo.y; ruc.y++) {
     for(ruc.x = 0; ruc.x < ru_geo.x; ruc.x++) {
       UNIT_STATE* ru = recv_lay->GetUnitStateFlatXY(net, ruc.x, ruc.y);
-      if(!ru || ru->lesioned()) continue;
+      if(!ru) continue;
 
       if(!make_cons) {
         ru->RecvConsPreAlloc(net, prjn, n_cons);

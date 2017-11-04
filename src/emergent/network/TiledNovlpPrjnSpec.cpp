@@ -55,7 +55,6 @@ void STATE_CLASS(TiledNovlpPrjnSpec)::Connect_impl
 
       for(int rui=0; rui < ru_nunits; rui++) {
         UNIT_STATE* ru = recv_lay->GetUnitStateGpUnIdx(net, rgpidx, rui);
-        if(ru->lesioned()) continue;
         int alloc_sz = ((int)(rf_width.x) + 1) * ((int)(rf_width.y) + 1);
         if(!make_cons) {
           ru->RecvConsPreAlloc(net, prjn, alloc_sz);
@@ -66,7 +65,6 @@ void STATE_CLASS(TiledNovlpPrjnSpec)::Connect_impl
           for(suc.x = su_st.x; suc.x < su_st.x + rf_width.x; suc.x++) {
             UNIT_STATE* su = send_lay->GetUnitStateFlatXY(net, suc.x, suc.y);
             if(su == NULL) continue;
-            if(su->lesioned()) continue;
 
             if(!self_con && (su == ru)) continue;
             ru->ConnectFrom(net, su, prjn, !make_cons);
@@ -112,7 +110,6 @@ void STATE_CLASS(TiledNovlpPrjnSpec)::Connect_Reciprocal
           for(suc.x = su_st.x; suc.x < su_st.x + rf_width.x; suc.x++) {
             UNIT_STATE* su = send_lay->GetUnitStateFlatXY(net, suc.x, suc.y);
             if(su == NULL) continue;
-            if(su->lesioned()) continue;
 
             int sugp_idx = suc.y * su_geo.x + suc.x;
             alloc_sz[sugp_idx] += ru_nunits;
@@ -127,7 +124,6 @@ void STATE_CLASS(TiledNovlpPrjnSpec)::Connect_Reciprocal
       for(suc.x = 0; suc.x < su_geo.x; suc.x++) {
         UNIT_STATE* su = send_lay->GetUnitStateFlatXY(net, suc.x, suc.y);
         if(su == NULL) continue;
-        if(su->lesioned()) continue;
         int sugp_idx = suc.y * su_geo.x + suc.x;
         su->RecvConsPreAlloc(net, prjn, alloc_sz[sugp_idx]);
       }
@@ -149,11 +145,9 @@ void STATE_CLASS(TiledNovlpPrjnSpec)::Connect_Reciprocal
         for(suc.x = su_st.x; suc.x < su_st.x + rf_width.x; suc.x++) {
           UNIT_STATE* su = send_lay->GetUnitStateFlatXY(net, suc.x, suc.y);
           if(su == NULL) continue;
-          if(su->lesioned()) continue;
 
           for(int rui=0; rui < ru_nunits; rui++) {
             UNIT_STATE* ru = recv_lay->GetUnitStateGpUnIdx(net, rgpidx, rui);
-            if(ru->lesioned()) continue;
             if(!self_con && (su == ru)) continue;
             su->ConnectFrom(net, ru, prjn, !make_cons); // recip
           }

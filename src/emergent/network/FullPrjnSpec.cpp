@@ -21,10 +21,8 @@ void STATE_CLASS(FullPrjnSpec)::Connect_impl(PRJN_STATE* prjn, NETWORK_STATE* ne
   else {
     for(int rui = 0; rui < recv_lay->n_units; rui++) {
       UNIT_STATE* ru = recv_lay->GetUnitState(net, rui);
-      if(ru->lesioned()) continue;
       for(int sui = 0; sui < send_lay->n_units; sui++) {
         UNIT_STATE* su = send_lay->GetUnitState(net, sui);
-        if(su->lesioned()) continue;
         if(self_con || (ru != su))
           ru->ConnectFrom(net, su, prjn);
       }
@@ -50,7 +48,6 @@ int STATE_CLASS(FullPrjnSpec)::ProbAddCons_impl(PRJN_STATE* prjn, NETWORK_STATE*
   
   for(int rui = 0; rui < recv_lay->n_units; rui++) {
     UNIT_STATE* ru = recv_lay->GetUnitState(net, rui);
-    if(ru->lesioned()) continue;
     IntArrayPermute(new_idxs, no);
     for(int sui=0; sui < n_new_cons; sui++) {
       UNIT_STATE* su = send_lay->GetUnitState(net, new_idxs[sui]);

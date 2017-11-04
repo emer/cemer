@@ -52,8 +52,8 @@
 
     T_TiledRFPrjnSpec,
     T_TiledNovlpPrjnSpec,
-    T_TiledDivGpRFPrjnSpec,
     T_TiledGpMapConvergePrjnSpec,
+    T_TiledDivGpRFPrjnSpec,
 
     T_GaussRFPrjnSpec,
     T_GradientWtsPrjnSpec,

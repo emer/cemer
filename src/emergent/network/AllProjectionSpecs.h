@@ -445,6 +445,29 @@ private:
 };
 
 
+eTypeDef_Of(TiledGpMapConvergePrjnSpec);
+
+class E_API TiledGpMapConvergePrjnSpec : public ProjectionSpec {
+  // generates a converging map of the units within a sending layer with unit groups, using tiled overlapping receptive fields within each unit group -- each recv unit receives from the corresponding unit in all of the sending unit groups, with the recv units organized into unit groups that each recv from one tiled subset of sending units within all the sending unit groups -- there must be the same number of recv unit groups as tiled subsets within the sending unit groups
+INHERITED(ProjectionSpec)
+public:
+
+#include <TiledGpMapConvergePrjnSpec>
+
+  taVector2i 	 trg_recv_geom;	// #READ_ONLY #SHOW target receiving layer gp geometry -- computed from send and rf_width, move by TrgRecvFmSend button, or given by TrgSendFmRecv
+  taVector2i 	 trg_send_geom;	// #READ_ONLY #SHOW target sending layer *unit group* geometry -- computed from recv and rf_width, move by TrgSendFmRecv button, or given by TrgRecvFmSend
+
+  virtual bool	TrgRecvFmSend(int send_x, int send_y);
+  // #BUTTON compute target recv layer geometry based on given sending unit group geometry (size of one unit group within sending layer) -- updates trg_recv_geom and trg_send_geom members, including fixing send to be an appropriate even multiple of rf_move -- returns true if send values provided result are same "good" ones that come out the end
+  virtual bool	TrgSendFmRecv(int recv_x, int recv_y);
+  // #BUTTON compute target recv layer geometry based on given sending layer geometry -- updates trg_recv_geom and trg_send_geom members, including fixing recv to be an appropriate even multiple of rf_move --  -- returns true if send values provided result are same "good" ones that come out the end
+
+  TA_SIMPLE_BASEFUNS(TiledGpMapConvergePrjnSpec);
+private:
+  void	Initialize()    { Initialize_core(); }
+  void 	Destroy()	{ };
+};
+
 ///////////////////////////////////////////////////////////
 //      Gaussian, Gradient..
 

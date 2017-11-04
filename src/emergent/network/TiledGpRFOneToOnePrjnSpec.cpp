@@ -22,8 +22,6 @@ void STATE_CLASS(TiledGpRFOneToOnePrjnSpec)::Connect_UnitGroupRF
     for(int ui=0; ui < maxn; ui++) {
       UNIT_STATE* su = send_lay->GetUnitStateGpUnIdx(net, sgpidx, su_idx_st + ui);
       UNIT_STATE* ru = recv_lay->GetUnitStateGpUnIdx(net, rgpidx, ru_idx_st + ui);
-      if(su->lesioned()) continue;
-      if(ru->lesioned()) continue;
       if(!self_con && (su == ru)) continue;
       if(!make_cons) {
         su->RecvConsAllocInc(net, prjn, 1); // recip!
@@ -49,8 +47,6 @@ void STATE_CLASS(TiledGpRFOneToOnePrjnSpec)::Connect_UnitGroupRF
         ru = recv_lay->GetUnitState(net, ru_idx_st + ui);
       }
       UNIT_STATE* su = send_lay->GetUnitStateGpUnIdx(net, sgpidx, su_idx_st + ui);
-      if(su->lesioned()) continue;
-      if(ru->lesioned()) continue;
       if(!self_con && (su == ru)) continue;
       if(!make_cons) {
         ru->RecvConsAllocInc(net, prjn, 1);

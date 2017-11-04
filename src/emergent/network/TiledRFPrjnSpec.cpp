@@ -87,7 +87,6 @@ void STATE_CLASS(TiledRFPrjnSpec)::Connect_impl
 
       for(int rui=0;rui < ru_nunits; rui++) {
         UNIT_STATE* ru = recv_lay->GetUnitStateGpUnIdx(net, rgpidx, rui);
-        if(ru->lesioned()) continue;
         if(!make_cons) {
           ru->RecvConsPreAlloc(net, prjn, n_cons);
         }
@@ -97,7 +96,6 @@ void STATE_CLASS(TiledRFPrjnSpec)::Connect_impl
           for(suc.x = su_st.x; suc.x < su_ed.x; suc.x++) {
             UNIT_STATE* su = send_lay->GetUnitStateFlatXY(net, suc.x, suc.y);
             if(su == NULL) continue;
-            if(su->lesioned()) continue;
             if(!self_con && (su == ru)) continue;
             ru->ConnectFrom(net, su, prjn, !make_cons);
           }

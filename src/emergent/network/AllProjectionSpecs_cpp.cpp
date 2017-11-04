@@ -44,6 +44,7 @@
 
 #include "TiledRFPrjnSpec.cpp"
 #include "TiledNovlpPrjnSpec.cpp"
+#include "TiledGpMapConvergePrjnSpec.cpp"
 
 #include "GaussRFPrjnSpec.cpp"
 #include "GradientWtsPrjnSpec.cpp"

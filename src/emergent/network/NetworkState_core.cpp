@@ -693,10 +693,10 @@ PRJN_SPEC_CPP* NETWORK_STATE::NewPrjnSpec(int spec_type) const {
     return new STATE_CLASS_CPP(TiledRFPrjnSpec)();
   case T_TiledNovlpPrjnSpec:
     return new STATE_CLASS_CPP(TiledNovlpPrjnSpec)();
+  case T_TiledGpMapConvergePrjnSpec:
+    return new STATE_CLASS_CPP(TiledGpMapConvergePrjnSpec)();
   // case T_TiledDivGpRFPrjnSpec:
   //   return new STATE_CLASS_CPP(TiledDivGpRFPrjnSpec)();
-  // case T_TiledGpMapConvergePrjnSpec:
-  //   return new STATE_CLASS_CPP(TiledGpMapConvergePrjnSpec)();
 
   case T_GaussRFPrjnSpec:
     return new STATE_CLASS_CPP(GaussRFPrjnSpec)();

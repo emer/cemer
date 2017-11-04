@@ -50,12 +50,10 @@ void STATE_CLASS(UniformRndPrjnSpec)::Connect_impl(PRJN_STATE* prjn, NETWORK_STA
 
     for(int rui=0; rui < rlay_no; rui++) {
       UNIT_STATE* ru = recv_lay->GetUnitState(net, ru_list[rui]);
-      if(ru->lesioned()) continue;
 
       int n_send = 0;
       for(int sui=0; sui < rlay_no; sui++) {
         UNIT_STATE* su = recv_lay->GetUnitState(net, sui);
-        if(su->lesioned()) continue;
         if(!self_con && (ru == su)) continue;
         // don't connect to anyone who already recvs from me cuz that will make
         // a symmetric connection which isn't good: symmetry will be enforced later
@@ -73,7 +71,6 @@ void STATE_CLASS(UniformRndPrjnSpec)::Connect_impl(PRJN_STATE* prjn, NETWORK_STA
     // now go thru and make the symmetric connections
     for(int rui=0; rui < rlay_no; rui++) {
       UNIT_STATE* ru = recv_lay->GetUnitState(net, ru_list[rui]);
-      if(ru->lesioned()) continue;
       CON_STATE* scg = ru->SendConStatePrjn(net, prjn);
       if(scg == NULL) continue;
       for(int i=0; i < scg->size; i++) {
@@ -90,11 +87,9 @@ void STATE_CLASS(UniformRndPrjnSpec)::Connect_impl(PRJN_STATE* prjn, NETWORK_STA
     
     for(int rui=0; rui < rlay_no; rui++) {
       UNIT_STATE* ru = recv_lay->GetUnitState(net, rui);
-      if(ru->lesioned()) continue;
       int n_send = 0;
       for(int sui=0; sui < slay_no; sui++) {
         UNIT_STATE* su = send_lay->GetUnitState(net, sui);
-        if(su->lesioned()) continue;
         if(!self_con && (ru == su)) continue;
         perm_list[n_send++] = sui;
       }

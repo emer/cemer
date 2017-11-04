@@ -215,6 +215,17 @@ public:
 };
 
 
+class TiledGpMapConvergePrjnSpec_cpp : public ProjectionSpec_cpp {
+  // generates a converging map of the units within a sending layer with unit groups, using tiled overlapping receptive fields within each unit group -- each recv unit receives from the corresponding unit in all of the sending unit groups, with the recv units organized into unit groups that each recv from one tiled subset of sending units within all the sending unit groups -- there must be the same number of recv unit groups as tiled subsets within the sending unit groups
+INHERITED(ProjectionSpec)
+public:
+
+#include <TiledGpMapConvergePrjnSpec>
+
+  TiledGpMapConvergePrjnSpec_cpp()  { Initialize_core(); }
+};
+
+
 class GaussRFPrjnSpec_cpp : public ProjectionSpec_cpp {
   // a simple receptive-field (RF) projection spec with gaussian weight values over a receptive-field window onto the sending layer that moves as a function of the receiving unit's position (like TesselPrjnSpec and other RF prjn specs, but does NOT use unit groups) -- useful for reducing larger layers to smaller ones for example
 INHERITED(ProjectionSpec)

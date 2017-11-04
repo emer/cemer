@@ -59,7 +59,6 @@ void STATE_CLASS(PolarRndPrjnSpec)::Connect_impl(PRJN_STATE* prjn, NETWORK_STATE
   ru_geom.SetXY(recv_lay->flat_geom_x, recv_lay->flat_geom_x);
   for(int rui=0; rui < rlay_no; rui++) {
     UNIT_STATE* ru = recv_lay->GetUnitState(net, rui);
-    if(ru->lesioned()) continue;
     ru_pos.SetXY(ru->pos_x, ru->pos_y);
     ConState_cpp* recv_gp = NULL;
     TAVECTOR2F suc;

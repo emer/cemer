@@ -46,10 +46,8 @@ void STATE_CLASS(MarkerGpOneToOnePrjnSpec)::Connect_impl
     else {
       for(int rui=0; rui < ru_nunits; rui++) {
         UNIT_STATE* ru = recv_lay->GetUnitStateGpUnIdx(net, rgpidx, rui);
-        if(ru->lesioned()) continue;
         int sui = rui % su_nunits;
         UNIT_STATE* su = send_lay->GetUnitStateGpUnIdx(net, sgpidx, sui);
-        if(su->lesioned()) continue;
         if(self_con || (ru != su))
           ru->ConnectFrom(net, su, prjn);
       }
