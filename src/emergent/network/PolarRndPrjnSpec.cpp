@@ -54,11 +54,14 @@ void STATE_CLASS(PolarRndPrjnSpec)::Connect_impl(PRJN_STATE* prjn, NETWORK_STATE
     return;
   }
 
+  int* ruorder = new int[rlay_no];
+  IntArraySeqPermute(ruorder, rlay_no);
+  
   TAVECTOR2I ru_geom;
   TAVECTOR2I ru_pos;             // do this according to act_geom..
   ru_geom.SetXY(recv_lay->flat_geom_x, recv_lay->flat_geom_x);
   for(int rui=0; rui < rlay_no; rui++) {
-    UNIT_STATE* ru = recv_lay->GetUnitState(net, rui);
+    UNIT_STATE* ru = recv_lay->GetUnitState(net, ruorder[rui]);
     ru_pos.SetXY(ru->pos_x, ru->pos_y);
     ConState_cpp* recv_gp = NULL;
     TAVECTOR2F suc;
@@ -74,7 +77,7 @@ void STATE_CLASS(PolarRndPrjnSpec)::Connect_impl(PRJN_STATE* prjn, NETWORK_STATE
         n_retry++;
         continue;
       }
-      if(ru->ConnectFromCk(net, su, prjn)) {
+      if(ru->ConnectFromCk(net, su, prjn) >= 0) {
         n_con++;
       }
       else {
@@ -89,6 +92,8 @@ void STATE_CLASS(PolarRndPrjnSpec)::Connect_impl(PRJN_STATE* prjn, NETWORK_STATE
     }
 #endif    
   }
+
+  delete [] ruorder;
 }
 
 float STATE_CLASS(PolarRndPrjnSpec)::UnitDist
@@ -215,8 +220,6 @@ float STATE_CLASS(PolarRndPrjnSpec)::GetDistProb
   }
   return prob;
 }
-
-// todo: could put in some sending limits, and do recvs in random order
 
 void STATE_CLASS(PolarRndPrjnSpec)::Init_Weights_Prjn
 (PRJN_STATE* prjn, NETWORK_STATE* net, int thr_no, CON_STATE* cg) {

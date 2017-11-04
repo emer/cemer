@@ -719,13 +719,13 @@ void Network::Build() {
   // todo: for all Build-level code, need to do cuda in parallel (at least for now)
   
   BuildNetState();
+  SyncSendPrjns();
+  UpdatePrjnIdxs();
+
   BuildIndexesSizes();
   BuildSpecs();
   CheckSpecs();
 
-  SyncSendPrjns();
-  UpdatePrjnIdxs();
-  
   BuildLayerUnitState();
   BuildConState();
 

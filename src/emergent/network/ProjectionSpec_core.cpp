@@ -165,10 +165,8 @@ void STATE_CLASS(ProjectionSpec)::Connect_Gps_Full
 
   for(int rui=0; rui < ru_nunits; rui++) {
     UNIT_STATE* ru = recv_lay->GetUnitStateGpUnIdx(net, rgpidx, rui);
-    if(ru->lesioned()) continue;
     for(int sui=0; sui < su_nunits; sui++) {
       UNIT_STATE* su = send_lay->GetUnitStateGpUnIdx(net, sgpidx, sui);
-      if(su->lesioned()) continue;
       if(self_con || (ru != su))
         ru->ConnectFrom(net, su, prjn);
     }
@@ -195,12 +193,10 @@ void STATE_CLASS(ProjectionSpec)::Connect_Gps_Prob
   int* perm_list = new int[su_nunits]; // sender permution list
   for(int rui=0; rui < ru_nunits; rui++) {
     UNIT_STATE* ru = recv_lay->GetUnitStateGpUnIdx(net, rgpidx, rui);
-    if(ru->lesioned()) continue;
     
     int n_send = 0;
     for(int sui=0; sui < su_nunits; sui++) {
       UNIT_STATE* su = send_lay->GetUnitStateGpUnIdx(net, sgpidx, sui);
-      if(su->lesioned()) continue;
       if(!self_con && (ru == su)) continue;
       perm_list[n_send++] = sui;
     }
@@ -240,12 +236,10 @@ void STATE_CLASS(ProjectionSpec)::Connect_Gps_ProbSymSameGp
   int* perm_list = new int[su_nunits]; // sender permution list
   for(int rui=0; rui < ru_nunits; rui++) {
     UNIT_STATE* ru = recv_lay->GetUnitStateGpUnIdx(net, rgpidx, ru_list[rui]);
-    if(ru->lesioned()) continue;
     
     int n_send = 0;
     for(int sui=0; sui < su_nunits; sui++) {
       UNIT_STATE* su = send_lay->GetUnitStateGpUnIdx(net, sgpidx, sui);
-      if(su->lesioned()) continue;
       if(!self_con && (ru == su)) continue;
       // don't connect to anyone who already recvs from me cuz that will make
       // a symmetric connection which isn't good: symmetry will be enforced later
@@ -262,14 +256,12 @@ void STATE_CLASS(ProjectionSpec)::Connect_Gps_ProbSymSameGp
   }
   // now go thru and make the symmetric connections
   for(int rui=0; rui < ru_nunits; rui++) {
-    UNIT_STATE* ru = recv_lay->GetUnitStateGpUnIdx(net, rgpidx, rui);
-    if(ru->lesioned()) continue;
+    UNIT_STATE* ru = recv_lay->GetUnitStateGpUnIdx(net, rgpidx, ru_list[rui]);
     CON_STATE* scg = ru->SendConStatePrjn(net, prjn);
     if(scg == NULL) continue;
     for(int i=0;i<scg->size;i++) {
       UNIT_STATE* su = scg->UnState(i,net);
-      if(su->lesioned()) continue;
-      ru->ConnectFromCk(net, su, prjn);
+      ru->ConnectFromCk(net, su, prjn, true); // ignore errs
     }
   }
 }
@@ -292,7 +284,6 @@ void STATE_CLASS(ProjectionSpec)::Connect_Gps_ProbSymSameLay
 
     for(int rui=0; rui < ru_nunits; rui++) {
       UNIT_STATE* ru = recv_lay->GetUnitStateGpUnIdx(net, rgpidx, rui);
-      if(ru->lesioned()) continue;
       CON_STATE* rcg = ru->SendConStatePrjn(net, prjn);
       if(rcg == NULL) continue;
       for(int i=0;i<rcg->size;i++) {
@@ -300,7 +291,7 @@ void STATE_CLASS(ProjectionSpec)::Connect_Gps_ProbSymSameLay
         // only connect if this sender is in actual group I'm trying to connect
         int osgpidx = ssu->gp_idx;
         if(osgpidx == sgpidx) {
-          if(ru->ConnectFromCk(net, ssu, prjn))
+          if(ru->ConnectFromCk(net, ssu, prjn) >= 0)
             n_con++;
         }
       }
@@ -357,14 +348,12 @@ void STATE_CLASS(ProjectionSpec)::Connect_UnitGroupRF
         su = send_lay->GetUnitStateGpUnIdx(net, sgpidx, sui);
       else
         su = send_lay->GetUnitState(net, sui);
-      if(su->lesioned()) continue;
       for(int rui=0; rui < ru_nunits; rui++) {
         UNIT_STATE* ru;
         if(rgpidx >= 0)
           ru = recv_lay->GetUnitStateGpUnIdx(net, rgpidx, rui);
         else
           ru = recv_lay->GetUnitState(net, rui);
-        if(ru->lesioned()) continue;
         if(!self_con && (su == ru)) continue;
         if(!make_cons) {
           su->RecvConsAllocInc(net, prjn, 1); // recip!
@@ -389,14 +378,12 @@ void STATE_CLASS(ProjectionSpec)::Connect_UnitGroupRF
       else {
         ru = recv_lay->GetUnitState(net, rui);
       }
-      if(ru->lesioned()) continue;
       for(int sui=0; sui < su_nunits; sui++) {
         UNIT_STATE* su;
         if(sgpidx >= 0)
           su = send_lay->GetUnitStateGpUnIdx(net, sgpidx, sui);
         else
           su = send_lay->GetUnitState(net, sui);
-        if(su->lesioned()) continue;
         if(!self_con && (su == ru)) continue;
         if(!make_cons) {
           ru->RecvConsAllocInc(net, prjn, 1);
