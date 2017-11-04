@@ -34,4 +34,5 @@
 
   INIMPL void Initialize_core();
 
-  INLINE int  GetStateSpecType() const override { return NETWORK_STATE::T_TiledSubGpRFPrjnSpec; }
+  INLINE int  GetStateSpecType() const override
+  { return NETWORK_STATE::T_TiledSubGpRFPrjnSpec; }

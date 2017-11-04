@@ -11,4 +11,5 @@
 
   INIMPL void	Initialize_core();
 
-  INLINE int  GetStateSpecType() const override { return NETWORK_STATE::T_TiledGpRFOneToOneWtsPrjnSpec; }
+  INLINE int  GetStateSpecType() const override
+  { return NETWORK_STATE::T_TiledGpRFOneToOneWtsPrjnSpec; }

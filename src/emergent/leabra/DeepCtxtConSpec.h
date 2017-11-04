@@ -1,44 +1,18 @@
-// Copyright 2017, Regents of the University of Colorado,
-// Carnegie Mellon University, Princeton University.
-//
-// This file is part of Emergent
-//
-//   Emergent is free software; you can redistribute it and/or modify
-//   it under the terms of the GNU General Public License as published by
-//   the Free Software Foundation; either version 2 of the License, or
-//   (at your option) any later version.
-//
-//   Emergent is distributed in the hope that it will be useful,
-//   but WITHOUT ANY WARRANTY; without even the implied warranty of
-//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//   GNU General Public License for more details.
+// this is included directly in LeabraExtraConSpecs_cpp / _cuda
+// {
 
-#ifndef DeepCtxtConSpec_h
-#define DeepCtxtConSpec_h 1
-
-// parent includes:
-#include <LeabraConSpec>
-
-// member includes:
-#include <LeabraNetwork>
-
-// declare all other types mentioned but not required to include:
-
-eTypeDef_Of(DeepCtxtConSpec);
-
-class E_API DeepCtxtConSpec : public LeabraConSpec {
-  // #AKA_LeabraTICtxtConSpec sends deep layer deep_raw activation values to deep_ctxt_net variable on receiving units -- typically used to integrate across the local context within a layer, providing both temporal integration (TI) learning, and the basis for normalizing attentional signals -- use for SELF projection in a layer -- wt_scale should be set to 1, 1
-INHERITED(LeabraConSpec)
-public:
   bool  delta_dwt;              // use simple delta-dwt change rule, instead of full xcal learning rule -- key problem is that delta-dwt does NOT include hebbian component for controlling hog-unit dynamics, etc
   
   // special!
-  bool  DoesStdNetin() override { return false; }
-  bool  DoesStdDwt() override { return false; }
-  bool  IsDeepCtxtCon() override { return true; }
-  void  Trial_Init_Specs(LeabraNetwork* net) override;
- 
-  inline void Send_DeepCtxtNetin(LeabraConState_cpp* cg, LeabraNetwork* net,
+  INLINE bool  DoesStdNetin() override { return false; }
+  INLINE bool  DoesStdDwt() override { return false; }
+  INLINE bool  IsDeepCtxtCon() override { return true; }
+  INLINE void  Trial_Init_Specs(LEABRA_NETWORK_STATE* net) override {
+    inherited::Trial_Init_Specs(net);
+    net->deep.ctxt = true;
+  }
+
+  INLINE void Send_DeepCtxtNetin(LEABRA_CON_STATE* cg, LEABRA_NETWORK_STATE* net,
                                  int thr_no, const float su_act) {
     const float su_act_eff = cg->scale_eff * su_act;
     float* wts = cg->OwnCnVar(WT);
@@ -46,34 +20,34 @@ public:
 #ifdef TA_VEC_USE
     Send_NetinDelta_vec(cg, su_act_eff, send_deepnet_vec, wts);
 #else
-    CON_GROUP_LOOP(cg, C_Send_NetinDelta(wts[i], send_deepnet_vec,
+    CON_STATE_LOOP(cg, C_Send_NetinDelta(wts[i], send_deepnet_vec,
                                          cg->UnIdx(i), su_act_eff));
 #endif
   }
   // #IGNORE sender-based activation net input for con group (send net input to receivers) -- always goes into tmp matrix (thread_no >= 0!) and is then integrated into net through Compute_DeepCtxt function on units
 
   // don't send regular net inputs..
-  inline void Send_NetinDelta(LeabraConState_cpp* cg, LeabraNetwork* net, int thr_no, 
+  INLINE void Send_NetinDelta(LEABRA_CON_STATE* cg, LEABRA_NETWORK_STATE* net, int thr_no, 
                               const float su_act_delta) override { };
-  inline float Compute_Netin(ConState* cg, Network* net, int thr_no) override
+  INLINE float Compute_Netin(CON_STATE* cg, NETWORK_STATE* net, int thr_no) override
   { return 0.0f; }
 
-  inline float C_Compute_dWt_Delta
+  INLINE float C_Compute_dWt_Delta
     (const float ru_avg_s, const float ru_avg_m, const float su_deep_prv) {
     float new_dwt = (ru_avg_s - ru_avg_m) * su_deep_prv;
     return new_dwt;
   }
   // #IGNORE
 
-  inline void Compute_dWt(ConState* scg, Network* rnet, int thr_no) override {
-    LeabraNetwork* net = (LeabraNetwork*)rnet;
+  INLINE void Compute_dWt(CON_STATE* scg, NETWORK_STATE* rnet, int thr_no) override {
+    LEABRA_NETWORK_STATE* net = (LEABRA_NETWORK_STATE*)rnet;
     if(!learn || (use_unlearnable && net->unlearnable_trial)) return;
-    LeabraConState_cpp* cg = (LeabraConState_cpp*)scg;
-    LeabraUnitState_cpp* su = (LeabraUnitState_cpp*)cg->ThrOwnUnState(net, thr_no);
+    LEABRA_CON_STATE* cg = (LEABRA_CON_STATE*)scg;
+    LEABRA_UNIT_STATE* su = (LEABRA_UNIT_STATE*)cg->ThrOwnUnState(net, thr_no);
 
     float clrate, bg_lrate, fg_lrate;
     bool deep_on;
-    GetLrates(cg, clrate, deep_on, bg_lrate, fg_lrate);
+    GetLrates(cg, net, thr_no, clrate, deep_on, bg_lrate, fg_lrate);
 
     const float su_avg_s = su->deep_raw_prv; // value sent on prior trial..
     const float su_avg_m = su->deep_raw_prv;
@@ -86,7 +60,7 @@ public:
       float* dwavgs = cg->OwnCnVar(DWAVG);
       float* moments = cg->OwnCnVar(MOMENT);
       for(int i=0; i<sz; i++) {
-        LeabraUnitState_cpp* ru = (LeabraUnitState_cpp*)cg->UnState(i, net);
+        LEABRA_UNIT_STATE* ru = (LEABRA_UNIT_STATE*)cg->UnState(i, net);
         // note: applying opt_thresh.xcal_lrn here does NOT work well for dwt_zone..
         float lrate_eff = clrate;
         if(deep_on) {
@@ -110,7 +84,7 @@ public:
     }
     else {
       for(int i=0; i<sz; i++) {
-        LeabraUnitState_cpp* ru = (LeabraUnitState_cpp*)cg->UnState(i, net);
+        LEABRA_UNIT_STATE* ru = (LEABRA_UNIT_STATE*)cg->UnState(i, net);
         float lrate_eff = clrate;
         if(deep_on) {
           lrate_eff *= (bg_lrate + fg_lrate * ru->deep_lrn);
@@ -136,14 +110,12 @@ public:
     }
   }
 
-  bool  CheckConfig_RecvCons(Projection* prjn, bool quiet=false) override;
+  INLINE void Initialize_core() {
+    wt_scale.rel = 1.0;
+    delta_dwt = false;
+    momentum.on = false;
+  }
 
-  void  GetPrjnName(Projection& prjn, String& nm) override;
+  INLINE int  GetStateSpecType() const override
+  { return LEABRA_NETWORK_STATE::T_DeepCtxtConSpec; }
 
-  TA_SIMPLE_BASEFUNS(DeepCtxtConSpec);
-private:
-  void Initialize();
-  void Destroy()     { };
-};
-
-#endif // DeepCtxtConSpec_h

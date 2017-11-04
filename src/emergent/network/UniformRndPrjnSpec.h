@@ -9,5 +9,6 @@
 
   INLINE void Initialize_core() {   p_con = .25;  sym_self = false; same_seed = false; }
 
-  INLINE int  GetStateSpecType() const override { return NETWORK_STATE::T_UniformRndPrjnSpec; }
+  INLINE int  GetStateSpecType() const override
+  { return NETWORK_STATE::T_UniformRndPrjnSpec; }
 

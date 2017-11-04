@@ -34,4 +34,5 @@
 
   INIMPL void	Initialize_core();
 
-  INLINE int  GetStateSpecType() const override { return NETWORK_STATE::T_TesselPrjnSpec; }
+  INLINE int  GetStateSpecType() const override
+  { return NETWORK_STATE::T_TesselPrjnSpec; }

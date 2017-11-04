@@ -19,17 +19,82 @@
 
   enum LeabraLayerSpecTypes { // manual type registry system for all spec types used in state code -- any new spec type MUST be added to this list, extending from N case in the last list, for any derived classes, and each spec must return its appropriate enum in GetStateSpecType() method
     T_LeabraLayerSpec = N_NetworkLayerSpecs,
+
+    T_ScalarValLayerSpec,
+    T_MotorForceLayerSpec,
+    T_TwoDValLayerSpec,
+    T_DecodeTwoDValLayerSpec,
+    T_LeabraV1LayerSpec,
+    T_SubiculumLayerSpec,
+    T_GPiSoftMaxLayerSpec,
+    
     N_LeabraLayerSpecs,    // derived classes start from this one -- use class name for subclasses
   };
 
   enum LeabraUnitSpecTypes { // manual type registry system for all spec types used in state code -- any new spec type MUST be added to this list, extending from N case in the last list, for any derived classes, and each spec must return its appropriate enum in GetStateSpecType() method
     T_LeabraUnitSpec = N_NetworkUnitSpecs,
+
+    T_LayerActUnitSpec,
+    T_DeepCopyUnitSpec,
+    T_ThalSendUnitSpec,
+    T_PoolInputsUnitSpec,
+    
+    T_ExtRewLayerSpec,
+    T_TDRewPredUnitSpec,
+    T_TDRewIntegUnitSpec,
+    T_TDDeltaUnitSpec,
+
+    T_BasAmygUnitSpec,
+    T_BLAmygUnitSpec,
+    T_CElAmygUnitSpec,
+    T_PPTgUnitSpec,
+    T_LHbRMTgUnitSpec,
+    T_VTAUnitSpec,
+    T_DRNUnitSpec,
+    T_ClampDaUnitSpec,
+    T_BFCSUnitSpec,
+
+    T_D1D2UnitSpec,
+    T_MSNConSpec,
+    T_MSNUnitSpec,
+    T_TANUnitSpec,
+    T_PatchUnitSpec,
+    T_GPiInvUnitSpec,
+    T_InvertUnitSpec,
+    T_PFCUnitSpec,
+    
+    T_ECoutUnitSpec,
+    T_CA1UnitSpec,
+    T_CerebGranuleUnitSpec,
+    T_LeabraMultCopyUnitSpec,
+    T_LeabraContextUnitSpec,
+    
     N_LeabraUnitSpecs,    // derived classes start from this one -- use class name for subclasses
   };
 
   enum LeabraConSpecTypes { // manual type registry system for all spec types used in state code -- any new spec type MUST be added to this list, extending from N case in the last list, for any derived classes, and  each spec must return its appropriate enum in GetStateSpecType() method
     T_LeabraConSpec = N_NetworkConSpecs,
     T_LeabraBiasSpec,
+
+    T_DeepCtxtConSpec,
+    T_SendDeepRawConSpec,
+    T_SendDeepModConSpec,
+
+    T_MarkerConSpec,
+    T_LeabraDeltaConSpec,
+    T_DaDeltaConSpec,
+    T_DaHebbConSpec,
+    T_CHLConSpec,
+    T_LeabraLimPrecConSpec,
+
+    T_TDRewPredConSpec,
+    T_LatAmygConSpec,
+    T_BasAmygConSpec,
+    T_BLAmygConSpec,
+    T_CElAmygConSpec,
+    T_HippoEncoderConSpec,
+    T_CerebPfPcConSpec,
+
     N_LeabraConSpecs,    // derived classes start from this one -- use class name for subclasses
   };
 

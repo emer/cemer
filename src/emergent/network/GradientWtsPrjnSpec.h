@@ -34,5 +34,6 @@
   INIMPL void	Initialize_core();
   // #IGNORE
 
-  INLINE int  GetStateSpecType() const override { return NETWORK_STATE::T_GradientWtsPrjnSpec; }
+  INLINE int  GetStateSpecType() const override
+  { return NETWORK_STATE::T_GradientWtsPrjnSpec; }
 

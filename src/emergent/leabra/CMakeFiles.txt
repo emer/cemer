@@ -17,67 +17,7 @@ set(leabra_HEADS_MAKETA
 
 #   LeabraWizard.h
 
-#   DeepCtxtConSpec.h
-#   SendDeepRawConSpec.h
-#   SendDeepModConSpec.h
-#   DeepCopyUnitSpec.h
-#   ThalSendUnitSpec.h
-#   PoolInputsUnitSpec.h
-
-#   MarkerConSpec.h
-#   LeabraDeltaConSpec.h
-#   DaDeltaConSpec.h
-#   DaHebbConSpec.h
-#   CHLConSpec.h
-#   LeabraLimPrecConSpec.h
-  
-#   LayerActUnitSpec.h
-    
-#   ScalarValLayerSpec.h
-# #  MotorForceLayerSpec.h
-#   TwoDValLayerSpec.h
-#   DecodeTwoDValLayerSpec.h
-#   LeabraV1LayerSpec.h
-
-#   ExtRewLayerSpec.h
-#   TDRewPredConSpec.h
-#   TDRewPredUnitSpec.h
-#   TDRewIntegUnitSpec.h
-#   TDDeltaUnitSpec.h
-
-#   BasAmygUnitSpec.h
-#   LatAmygConSpec.h
-#   BasAmygConSpec.h
-#   BLAmygUnitSpec.h
-#   BLAmygConSpec.h
-#   CElAmygUnitSpec.h
-#   CElAmygConSpec.h
-#   PPTgUnitSpec.h
-#   LHbRMTgUnitSpec.h
-#   VTAUnitSpec.h
-#   DRNUnitSpec.h
-#   ClampDaUnitSpec.h
-#   BFCSUnitSpec.h
-
-#   D1D2UnitSpec.h
-#   MSNCon.h
-#   MSNConSpec.h
-#   MSNUnitSpec.h
-#   TANUnitSpec.h
-#   PatchUnitSpec.h
-#   GPiInvUnitSpec.h
-#   InvertUnitSpec.h
-#   PFCUnitSpec.h
-#   GPiSoftMaxLayerSpec.h
-    
-#   ECoutUnitSpec.h
-#   CA1UnitSpec.h
-#   # SubiculumLayerSpec.h
-#   HippoEncoderConSpec.h
-#   CerebGranuleUnitSpec.h
-#   CerebPfPcConSpec.h
-#   LeabraMultCopyUnitSpec.h
-#   LeabraContextUnitSpec.h
+  MSNCon.h
 )
 
 # multiple inheritence -- in correspondence with deps below
@@ -103,6 +43,13 @@ set(leabra_HEADS_MAKETA_MI
   LeabraLayer.h
 
   LeabraNetwork.h
+
+  LeabraExtraConSpecs_cpp.h
+  LeabraExtraConSpecs.h
+  LeabraExtraUnitSpecs_cpp.h
+  LeabraExtraUnitSpecs.h
+  LeabraExtraLayerSpecs_cpp.h
+  LeabraExtraLayerSpecs.h
 )
 
 # note: there must be exactly same number of dependencies for each item
@@ -129,6 +76,15 @@ set(leabra_HEADS_MAKETA_MI_DEPS
   "LeabraLayer_core.h;LeabraLayerState_core.h;LeabraNetworkState_core.h"
 
   "LeabraNetworkState_core.h;LeabraNetwork_core.h;LeabraNetworkState_core.h"
+
+  "LeabraConSpec_core.h;LeabraConSpec_mbrs.h;LeabraNetworkState_core.h"
+  "LeabraConSpec_core.h;LeabraConSpec_mbrs.h;LeabraNetworkState_core.h"
+  
+  "LeabraUnitSpec_core.h;LeabraUnitSpec_mbrs.h;LeabraNetworkState_core.h"
+  "LeabraUnitSpec_core.h;LeabraUnitSpec_mbrs.h;LeabraNetworkState_core.h"
+  
+  "LeabraLayerSpec_core.h;LeabraLayerSpec_mbrs.h;LeabraNetworkState_core.h"
+  "LeabraLayerSpec_core.h;LeabraLayerSpec_mbrs.h;LeabraNetworkState_core.h"
 )
 
 set(leabra_HEADS_NOMAKETA
@@ -153,6 +109,73 @@ set(leabra_HEADS_NOMAKETA
   LeabraUnitSpec_core.h
   LeabraLayerSpec_mbrs.h
   LeabraLayerSpec_core.h
+
+  # all of these are included in the appropriate ExtraSpecs file
+#   DeepCtxtConSpec.h
+#   SendDeepRawConSpec.h
+#   SendDeepModConSpec.h
+
+#   MarkerConSpec.h
+#   LeabraDeltaConSpec.h
+#   DaDeltaConSpec.h
+#   DaHebbConSpec.h
+#   CHLConSpec.h
+#   LeabraLimPrecConSpec.h
+
+#   TDRewPredConSpec.h
+#   LatAmygConSpec.h
+#   BasAmygConSpec.h
+#   BLAmygConSpec.h
+#   CElAmygConSpec.h
+#   HippoEncoderConSpec.h
+#   CerebPfPcConSpec.h
+  
+#   LayerActUnitSpec.h
+#   DeepCopyUnitSpec.h
+#   ThalSendUnitSpec.h
+#   PoolInputsUnitSpec.h
+    
+#   ExtRewLayerSpec.h
+#   TDRewPredUnitSpec.h
+#   TDRewIntegUnitSpec.h
+#   TDDeltaUnitSpec.h
+
+#   BasAmygUnitSpec.h
+#   BLAmygUnitSpec.h
+#   CElAmygUnitSpec.h
+#   PPTgUnitSpec.h
+#   LHbRMTgUnitSpec.h
+#   VTAUnitSpec.h
+#   DRNUnitSpec.h
+#   ClampDaUnitSpec.h
+#   BFCSUnitSpec.h
+
+#   D1D2UnitSpec.h
+#   MSNConSpec.h
+#   MSNUnitSpec.h
+#   TANUnitSpec.h
+#   PatchUnitSpec.h
+#   GPiInvUnitSpec.h
+#   InvertUnitSpec.h
+#   PFCUnitSpec.h
+    
+#   ECoutUnitSpec.h
+#   CA1UnitSpec.h
+#   CerebGranuleUnitSpec.h
+#   LeabraMultCopyUnitSpec.h
+#   LeabraContextUnitSpec.h
+
+#   ScalarValLayerSpec.h
+# #  MotorForceLayerSpec.h
+#   TwoDValLayerSpec.h
+#   DecodeTwoDValLayerSpec.h
+#   LeabraV1LayerSpec.h
+#   # SubiculumLayerSpec.h
+#   GPiSoftMaxLayerSpec.h
+
+#  LeabraExtraConSpecs_cuda.h
+#  LeabraExtraUnitSpecs_cuda.h
+#  LeabraExtraLayerSpecs_cuda.h
 )
 
 # all heads -- include maketa generated ones here
@@ -192,69 +215,20 @@ set(leabra_SRCS
 
 #   LeabraWizard.cpp
 
-#   DeepCtxtConSpec.cpp
-#   SendDeepRawConSpec.cpp
-#   SendDeepModConSpec.cpp
-#   DeepCopyUnitSpec.cpp
-#   ThalSendUnitSpec.cpp
-#   PoolInputsUnitSpec.cpp
+  LeabraExtraConSpecs_cpp.cpp
+  LeabraExtraConSpecs.cpp
+  LeabraExtraUnitSpecs_cpp.cpp
+  LeabraExtraUnitSpecs.cpp
+  LeabraExtraLayerSpecs_cpp.cpp
+  LeabraExtraLayerSpecs.cpp
 
-#   MarkerConSpec.cpp
-#   LeabraDeltaConSpec.cpp
-#   DaDeltaConSpec.cpp
-#   DaHebbConSpec.cpp
-#   CHLConSpec.cpp
-#   LeabraLimPrecConSpec.cpp
-  
-#   LayerActUnitSpec.cpp
-    
-#   ScalarValLayerSpec.cpp
-# #  MotorForceLayerSpec.cpp
-#   TwoDValLayerSpec.cpp
-#   DecodeTwoDValLayerSpec.cpp
-#   LeabraV1LayerSpec.cpp
-
-#   ExtRewLayerSpec.cpp
-#   TDRewPredConSpec.cpp
-#   TDRewPredUnitSpec.cpp
-#   TDRewIntegUnitSpec.cpp
-#   TDDeltaUnitSpec.cpp
-                   
-#   BasAmygUnitSpec.cpp
-#   LatAmygConSpec.cpp
-#   BasAmygConSpec.cpp
-#   BLAmygUnitSpec.cpp
-#   BLAmygConSpec.cpp
-#   CElAmygUnitSpec.cpp
-#   CElAmygConSpec.cpp
-#   PPTgUnitSpec.cpp
-#   LHbRMTgUnitSpec.cpp
-#   VTAUnitSpec.cpp
-#   DRNUnitSpec.cpp
-#   ClampDaUnitSpec.cpp
-#   BFCSUnitSpec.cpp
-
-#   D1D2UnitSpec.cpp
 #   MSNCon.cpp
-#   MSNConSpec.cpp
-#   MSNUnitSpec.cpp
-#   TANUnitSpec.cpp
-#   PatchUnitSpec.cpp
-#   GPiInvUnitSpec.cpp
-#   InvertUnitSpec.cpp
-#   PFCUnitSpec.cpp
-#   GPiSoftMaxLayerSpec.cpp
-    
-#   ECoutUnitSpec.cpp
-#   CA1UnitSpec.cpp
-#   # SubiculumLayerSpec.cpp
-#   HippoEncoderConSpec.cpp
-#   CerebGranuleUnitSpec.cpp
-#   CerebPfPcConSpec.cpp
-#   LeabraMultCopyUnitSpec.cpp
-#   LeabraContextUnitSpec.cpp
 )
 
 set(leabra_CUDA
   LeabraConSpec_cuda.cu
+
+  LeabraExtraConSpecs_cuda.cpp
+  LeabraExtraUnitSpecs_cuda.cpp
+  LeabraExtraLayerSpecs_cuda.cpp
 )

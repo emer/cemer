@@ -319,7 +319,7 @@
     LEABRA_NETWORK_STATE* net = (LEABRA_NETWORK_STATE*)rnet;
     if(!learn || (use_unlearnable && net->unlearnable_trial)) return;
     LEABRA_CON_STATE* cg = (LEABRA_CON_STATE*)scg;
-    LEABRA_UNIT_STATE* su = (LEABRA_UNIT_STATE*)cg->OwnUnState(net);
+    LEABRA_UNIT_STATE* su = (LEABRA_UNIT_STATE*)cg->ThrOwnUnState(net, thr_no);
     if(su->avg_s < xcal.lrn_thr && su->avg_m < xcal.lrn_thr) return;
     // no need to learn!
 
@@ -429,7 +429,7 @@
         for(int i=0; i<sz; i++) {
           // note: MUST get these from ru -- diff for each con -- can't copy to sender!
           LEABRA_UNIT_STATE* ru = (LEABRA_UNIT_STATE*)cg->UnState(i, net);
-          LEABRA_CON_STATE* rcg = (LEABRA_CON_STATE*)ru->SendConState(net, cg->other_idx);
+          LEABRA_CON_STATE* rcg = (LEABRA_CON_STATE*)ru->RecvConState(net, cg->other_idx);
           C_Compute_Weights_CtLeabraXCAL_slow
             (wts[i], dwts[i], fwts[i], swts[i], scales[i], rcg->wb_inc, rcg->wb_dec);
         }
@@ -438,7 +438,7 @@
         for(int i=0; i<sz; i++) {
           // note: MUST get these from ru -- diff for each con -- can't copy to sender!
           LEABRA_UNIT_STATE* ru = (LEABRA_UNIT_STATE*)cg->UnState(i, net);
-          LEABRA_CON_STATE* rcg = (LEABRA_CON_STATE*)ru->SendConState(net, cg->other_idx);
+          LEABRA_CON_STATE* rcg = (LEABRA_CON_STATE*)ru->RecvConState(net, cg->other_idx);
           C_Compute_Weights_CtLeabraXCAL
             (wts[i], dwts[i], fwts[i], swts[i], scales[i], rcg->wb_inc, rcg->wb_dec);
         }

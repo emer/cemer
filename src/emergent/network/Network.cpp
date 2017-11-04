@@ -725,7 +725,7 @@ void Network::Build() {
   BuildIndexesSizes();
   BuildSpecs();
   CheckSpecs();
-
+  
   BuildLayerUnitState();
   BuildConState();
 

@@ -25,9 +25,11 @@
   INIMPL virtual bool InitRFSizes(PRJN_STATE* prjn, NETWORK_STATE* net);
   // #IGNORE initialize sending receptive field sizes
 
+  // int 	ProbAddCons_impl(PRJN_STATE* prjn, NETWORK_STATE* net, float p_add_con, float init_wt = 0.0f) override;
+
   INIMPL void	Initialize_core();
   // #IGNORE
 
-  INLINE int  GetStateSpecType() const override { return NETWORK_STATE::T_TiledRFPrjnSpec; }
+  INLINE int  GetStateSpecType() const override
+  { return NETWORK_STATE::T_TiledRFPrjnSpec; }
 
-  // int 	ProbAddCons_impl(PRJN_STATE* prjn, NETWORK_STATE* net, float p_add_con, float init_wt = 0.0f) override;

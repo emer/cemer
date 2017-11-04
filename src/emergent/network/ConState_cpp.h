@@ -25,6 +25,7 @@
 #include <taString>
 #include <Connection>
 
+// todo: ifdef around these for making fully independent of ta/emergent
 #include <Random>
 #include <SimpleMathSpec>
 #include <Relation>
@@ -74,7 +75,7 @@ class DataTable; //
 
 
 // TODO: at some point may want to make this code fully independent of TA / emergent framework
-// and move the load / save etc kind of stuff to UnitSpec or something 
+
 
 
 class ConState_cpp {

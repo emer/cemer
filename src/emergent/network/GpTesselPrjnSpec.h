@@ -31,4 +31,5 @@
 
   INIMPL void	Initialize_core();
 
-  INLINE int  GetStateSpecType() const override { return NETWORK_STATE::T_GpTesselPrjnSpec; }
+  INLINE int  GetStateSpecType() const override
+  { return NETWORK_STATE::T_GpTesselPrjnSpec; }

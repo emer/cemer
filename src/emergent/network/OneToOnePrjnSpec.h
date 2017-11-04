@@ -16,4 +16,5 @@
     use_gp = false;
   }
 
-  INLINE int  GetStateSpecType() const override { return NETWORK_STATE::T_OneToOnePrjnSpec; }
+  INLINE int  GetStateSpecType() const override
+  { return NETWORK_STATE::T_OneToOnePrjnSpec; }

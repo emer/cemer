@@ -5,4 +5,5 @@
 
   INLINE void Initialize_core()  { };
 
-  INLINE int  GetStateSpecType() const override { return NETWORK_STATE::T_MarkerGpOneToOnePrjnSpec; }
+  INLINE int  GetStateSpecType() const override
+  { return NETWORK_STATE::T_MarkerGpOneToOnePrjnSpec; }

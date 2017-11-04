@@ -221,6 +221,21 @@ set(network_HEADS_NOMAKETA
   nifti1.h
   nifti1_io.h
   NiftiReader.h
+
+  # CUDA headers go here -- could separate out -- just for including elsewhere
+  NetworkState_cuda.h
+  LayerState_cuda.h
+  PrjnState_cuda.h
+  UnGpState_cuda.h
+  UnitState_cuda.h
+  ConState_cuda.h
+
+  ProjectionSpec_cuda.h
+  LayerSpec_cuda.h
+  UnitSpec_cuda.h
+  ConSpec_cuda.h
+
+  AllProjectionSpecs_cuda.h
 )
 
 # headers that need Qt moc run -- this includes items from above -- not a mutex list
@@ -412,27 +427,15 @@ set(network_SRCS
 set(network_FILES ${network_HEADS} ${network_SRCS})
 
 set(network_CUDA
-  NetworkState_cuda.h
-  LayerState_cuda.h
-  PrjnState_cuda.h
-  UnGpState_cuda.h
-  UnitState_cuda.h
-  ConState_cuda.h
-
-  ProjectionSpec_cuda.h
-  LayerSpec_cuda.h
-  UnitSpec_cuda.h
-  ConSpec_cuda.h
-
-  AllProjectionSpecs_cuda.h
-  AllProjectionSpecs_cuda.cpp
+  ConState_cuda.cu
+  UnitState_cuda.cu
+  NetworkState_cuda.cpp
+  Network_cuda.cu
   
   ProjectionSpec_cuda.cpp
   LayerSpec_cuda.cpp
   UnitSpec_cuda.cpp
   ConSpec_cuda.cpp
   
-  ConState_cuda.cu
-  UnitState_cuda.cu
-  Network_cuda.cu
+  AllProjectionSpecs_cuda.cpp
 )

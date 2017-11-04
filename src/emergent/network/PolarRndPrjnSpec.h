@@ -37,5 +37,6 @@
 
   INIMPL void	Initialize_core();
 
-  INLINE int  GetStateSpecType() const override { return NETWORK_STATE::T_PolarRndPrjnSpec; }
+  INLINE int  GetStateSpecType() const override
+  { return NETWORK_STATE::T_PolarRndPrjnSpec; }
 

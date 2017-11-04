@@ -8,4 +8,5 @@
 
   INLINE void Initialize_core() {   p_con = .25;  sym_self = false; }
 
-  INLINE int  GetStateSpecType() const override { return NETWORK_STATE::T_RandomPrjnSpec; }
+  INLINE int  GetStateSpecType() const override
+  { return NETWORK_STATE::T_RandomPrjnSpec; }

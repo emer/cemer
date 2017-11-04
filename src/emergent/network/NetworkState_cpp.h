@@ -20,15 +20,17 @@
 // State classes so it cannot depend on any of them -- every other class uses
 // NetworkState to access their State variables which are allocated here
 
+#ifndef __MAKETA__
+# include <cmath>
+# include <math.h>
+#endif
+
 #include "network_def.h"
 
 #include <State_main>
 
 #include <taTask>
 #include <taThreadMgr>
-#include <Random>
-// including random seems to get all the relevant emergent background for _cpp files
-// todo: need to eliminate this dependency later to make fully standalone
 
 #include <State_cpp>
 

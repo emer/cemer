@@ -13,8 +13,6 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-#include <Random>  // gets a lot of stuff needed for State_base
-
 #include "LayerState_cpp.h"
 
 #include <UnitState_cpp>
