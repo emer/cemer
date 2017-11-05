@@ -144,6 +144,10 @@ public:
   // #BUTTON #CONFIRM #ENABLE_OFF_enable_kill:false running jobs in the jobs_running datatable (must select rows for jobs in gui)
   virtual void  LoadData(bool remove_existing = false);
   // #BUTTON #ENABLE_OFF_enable_load:false load the data for the selected rows in the jobs_running, jobs_done or file_list data tables (all rows if none selected) -- loads each of the job's data into data.ClusterRun datatables with file name = tag, and columns added for each of the parameter values that were set in the command -- if remove_existing is set, any existing files are removed prior to loading the new ones
+               
+  virtual void LoadDataByTable(bool remove_existing, const DataTable& table, int st_row, int n_row);
+  // load the data for the specified rows and table into data.ClusterRun datatables with file name = tag, and columns added for each of the parameter values that were set in the command -- if remove_existing is set, any existing files are removed prior to loading the new ones
+  
   
   virtual void  DeleteJobs();
   // #MENU_BUTTON #MENU_ON_Jobs #CONFIRM move jobs to the deleted table, including all their data that has been checked in (according to the local contents of the repository) -- jobs in the deleted table can be undeleted or permanently deleted -- (good idea to do an Update before running this) -- for cleaning up old unneeded jobs

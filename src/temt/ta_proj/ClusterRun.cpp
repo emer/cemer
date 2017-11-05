@@ -511,6 +511,24 @@ void ClusterRun::LoadData(bool remove_existing) {
   ClearAllSelections();       // done
 }
 
+void ClusterRun::LoadDataByTable(bool remove_existing, const DataTable& table, int st_row, int n_row) {
+  if (TestWarning(((n_row < 0) || (st_row < 0)),"LoadDataByTable","Row selection is not valid ")) return;
+  taProject* proj = GetMyProj();
+  if(!proj) return;
+  
+  DataTable_Group* dgp = (DataTable_Group*)proj->data.FindMakeGpName("ClusterRun");
+  dgp->save_tables = false;     // don't save -- prevents project bloat
+  dgp->StructUpdate(true);
+  if(remove_existing) {
+    dgp->Reset();
+  }
+  for (int row = st_row; row < (st_row + n_row); ++row) {
+    LoadData_impl(dgp, table, row);
+  }
+  dgp->StructUpdate(false);
+  ClearAllSelections();       // done
+}
+
 void ClusterRun::LoadData_impl(DataTable_Group* dgp, const DataTable& table, int row) {
   String tag = table.GetValAsString("tag", row);
   if(TestWarning(tag.empty(), "LoadData", "tag is empty for row:", String(row),
