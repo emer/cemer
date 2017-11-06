@@ -923,7 +923,7 @@ void NetMonItem::ScanObject_Unit(UnitState_cpp* u, String var, String obj_nm, Ne
     int ncg = u->NRecvConGps(net);
     for(int i=0;i<ncg;i++) {
       ConState_cpp* cg = u->RecvConState(net, i);
-      LayerState_cpp* fmlay = cg->GetPrjnSendLayer(net);
+      LayerState_cpp* fmlay = cg->GetSendLayer(net);
       String cg_nm = obj_nm + "_r_" + taMisc::StringMaxLen(fmlay->layer_name, max_name_len);
       ScanObject_RecvCons(cg, convar, cg_nm, net);
     }
@@ -932,7 +932,7 @@ void NetMonItem::ScanObject_Unit(UnitState_cpp* u, String var, String obj_nm, Ne
     int ncg = u->NSendConGps(net);
     for(int i=0;i<ncg;i++) {
       ConState_cpp* cg = u->SendConState(net, i);
-      LayerState_cpp* tolay = cg->GetPrjnRecvLayer(net);
+      LayerState_cpp* tolay = cg->GetRecvLayer(net);
       String cg_nm = obj_nm + "_s_" + taMisc::StringMaxLen(tolay->layer_name, max_name_len);
       ScanObject_SendCons(cg, convar, cg_nm, net);
     }

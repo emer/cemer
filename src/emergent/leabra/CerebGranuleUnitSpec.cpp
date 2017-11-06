@@ -1,63 +1,9 @@
-// Copyright 2017, Regents of the University of Colorado,
-// Carnegie Mellon University, Princeton University.
-//
-// This file is part of Emergent
-//
-//   Emergent is free software; you can redistribute it and/or modify
-//   it under the terms of the GNU General Public License as published by
-//   the Free Software Foundation; either version 2 of the License, or
-//   (at your option) any later version.
-//
-//   Emergent is distributed in the hope that it will be useful,
-//   but WITHOUT ANY WARRANTY; without even the implied warranty of
-//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//   GNU General Public License for more details.
+// this is included directly in LeabraExtraUnitSpecs_cpp / _cuda
+// {
 
-#include "CerebGranuleUnitSpec.h"
-#include <LeabraUnit>
-
-TA_BASEFUNS_CTORS_DEFN(CerebGranuleUnitSpec);
-
-TA_BASEFUNS_CTORS_DEFN(CerebGranuleSpecs);
-
-
-void CerebGranuleSpecs::Initialize() {
-  act_thr = 0.5f;
-  inhib_start_time = 10;
-  lrn_start_time = 60;
-  lrn_end_time = 90;
-  inhib_net_pct = 0.5f;
-}
-
-void CerebGranuleSpecs::Defaults_init() {
-}
-
-bool CerebGranuleUnitSpec::CheckConfig_Unit(Layer* lay, bool quiet) {
-  if(!inherited::CheckConfig_Unit(lay, quiet)) return false;
-
-  bool rval = true;
-
-  if(lay->CheckError(stp.on, quiet, rval,
-                     "Cannot have stp activated for Granule neurons -- using the stp parameters for special variables in granule cells -- I just turned it back off.")) {
-    stp.on = false;
-  }
-  return true;
-}
-
-
-float CerebGranuleUnitSpec::Compute_NetinExtras(LeabraUnitState_cpp* u, LeabraNetwork* net,
-                                               int thr_no, float& net_syn) {
-  float rval = inherited::Compute_NetinExtras(u, net, thr_no, net_syn);
-  int time_since_thr = (int)TimeSinceThr(u);
-  if(time_since_thr > cereb.inhib_start_time) {
-    // by turning net input down here, we allow other gran cells to win the competition
-    net_syn *= cereb.inhib_net_pct;
-  }
-  return rval;
-}
-
-void CerebGranuleUnitSpec::Compute_GranLearnAct(LeabraUnitState_cpp* u, LeabraNetwork* net,
-                                                int thr_no) {
+void STATE_CLASS(CerebGranuleUnitSpec)::Compute_GranLearnAct
+  (LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) {
+  
   int time_since_thr = (int)TimeSinceThr(u);
   float& act_lag = ActLag(u);
   float& act_max = ActMax(u);
@@ -92,14 +38,3 @@ void CerebGranuleUnitSpec::Compute_GranLearnAct(LeabraUnitState_cpp* u, LeabraNe
   TimeSinceThr(u) = (float)time_since_thr; // update counter
 }
 
-void CerebGranuleUnitSpec::Compute_Act_Rate(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no)
-{
-  inherited::Compute_Act_Rate(u, net, thr_no);
-  Compute_GranLearnAct(u, net, thr_no);
-}
-
-void CerebGranuleUnitSpec::Compute_Act_Spike(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no)
-{
-  inherited::Compute_Act_Spike(u, net, thr_no);
-  Compute_GranLearnAct(u, net, thr_no);
-}

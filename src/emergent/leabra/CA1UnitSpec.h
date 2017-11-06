@@ -1,23 +1,5 @@
-// Copyright 2017, Regents of the University of Colorado,
-// Carnegie Mellon University, Princeton University.
-//
-// This file is part of Emergent
-//
-//   Emergent is free software; you can redistribute it and/or modify
-//   it under the terms of the GNU General Public License as published by
-//   the Free Software Foundation; either version 2 of the License, or
-//   (at your option) any later version.
-//
-//   Emergent is distributed in the hope that it will be useful,
-//   but WITHOUT ANY WARRANTY; without even the implied warranty of
-//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//   GNU General Public License for more details.
-
-#ifndef CA1UnitSpec_h
-#define CA1UnitSpec_h 1
-
-// parent includes:
-#include <LeabraUnitSpec>
+// this is included directly in LeabraExtraUnitSpecs_cpp / _cuda
+// {
 
 // member includes:
 
@@ -51,51 +33,20 @@
 // todo: implement a two-trial version of the code to produce a true theta rhythm
 // integrating over two adjacent alpha trials..
 
-eTypeDef_Of(ThetaPhaseSpecs);
-
-class E_API ThetaPhaseSpecs : public SpecMemberBase {
-  // ##INLINE ##NO_TOKENS ##CAT_Leabra ThetaPhase hippocampal dynamic specifications, affecting how the different inputs to the CA1 are modulated as a function of position within the theta phase cycle
-INHERITED(SpecMemberBase)
-public:
-  bool          mod_ec_out;             // #DEF_true modulate ECout projection strength in same way as ECin projections -- i.e., when ECin is off and CA3 is on during recall mode, ECout projections to CA1 are also off 
-  bool          ca3_on_p;               // #DEF_false are CA3 projections active into CA1 during the plus phase?  according to phase modulation these should be off, but on the other hand, error-driven learning theory says that they should be on in the plus phase, so that the plus is as similar to the minus as possible.  the need for this option results from a fundamental confusion of training signals due to the common plus phase used for both the EC-CA1 auto-encoder and the CA3->CA1 recall pathway
-  float		recall_decay; 		// #DEF_0;1 proportion to decay activations at start of recall phase
-  float		plus_decay; 		// #DEF_0;1 proportion to decay activations at start of plus phase
-  bool		use_test_mode;		// #DEF_true if network train_mode == TEST, then don't modulate CA3 off in plus phase, and keep ECin -> CA1 on, and don't decay -- makes it more likely to at least get input parts right
-
-  String       GetTypeDecoKey() const override { return "UnitSpec"; }
-
-  TA_SIMPLE_BASEFUNS(ThetaPhaseSpecs);
-protected:
-  SPEC_DEFAULTS;
-private:
-  void	Initialize();
-  void	Destroy()	{ };
-  void	Defaults_init();
-};
-
-
-eTypeDef_Of(CA1UnitSpec);
-
-class E_API CA1UnitSpec : public LeabraUnitSpec {
-  // unit spec for CA1 layers that implements ThetaPhase learning -- modulates ECin and CA1 weight scale strengths (wt_scale.abs = 0 or 1) in conspecs -- must use unique conspecs for these projections -- ECin = 1, CA3 = 0 for 1st quarter, then ECin = 0, CA3 = 1 until q4, where it goes back to ECin = 1, CA3 = 0 for plus phase
-INHERITED(LeabraUnitSpec)
-public:
-  ThetaPhaseSpecs       theta;  // specifications for how the theta phase cycle modulates the inputs from EC and CA3
+  STATE_CLASS(ThetaPhaseSpecs)       theta;  // specifications for how the theta phase cycle modulates the inputs from EC and CA3
   
-  void Trial_Init_Specs(LeabraNetwork* net) override;
-  void Compute_NetinScale(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) override;
+  INLINE void Trial_Init_Specs(LEABRA_NETWORK_STATE* net) override {
+    net->net_misc.diff_scale_p = true;
+    net->net_misc.diff_scale_q1 = true;
+    inherited::Trial_Init_Specs(net);
+  }
+  
+  INIMPL void Compute_NetinScale(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) override;
 
-  bool CheckConfig_Unit(Layer* lay, bool quiet=false) override;
+  INLINE void Initialize_core() {
+  }
+  // #IGNORE
 
-  TA_SIMPLE_BASEFUNS(CA1UnitSpec);
-protected:
-  SPEC_DEFAULTS;
+  INLINE int  GetStateSpecType() const override
+  { return LEABRA_NETWORK_STATE::T_CA1UnitSpec; }
 
-private:
-  void 	Initialize();
-  void	Destroy()		{ };
-  void	Defaults_init()		{ };
-};
-
-#endif // CA1UnitSpec_h

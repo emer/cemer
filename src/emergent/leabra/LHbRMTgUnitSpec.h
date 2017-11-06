@@ -1,125 +1,44 @@
-// Copyright 2017, Regents of the University of Colorado,
-// Carnegie Mellon University, Princeton University.
-//
-// This file is part of Emergent
-//
-//   Emergent is free software; you can redistribute it and/or modify
-//   it under the terms of the GNU General Public License as published by
-//   the Free Software Foundation; either version 2 of the License, or
-//   (at your option) any later version.
-//
-//   Emergent is distributed in the hope that it will be useful,
-//   but WITHOUT ANY WARRANTY; without even the implied warranty of
-//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//   GNU General Public License for more details.
+// this is included directly in LeabraExtraUnitSpecs_cpp / _cuda
+//{
 
-#ifndef LHbRMTgUnitSpec_h
-#define LHbRMTgUnitSpec_h 1
+  STATE_CLASS(LHbRMTgSpecs)   lhb;         // lhb options and misc specs
+  STATE_CLASS(LHbRMTgGains)   gains;       // gain parameters (multiplicative constants) for various sources of inputs
 
-// parent includes:
-#include <LeabraUnitSpec>
-
-// member includes:
-
-// declare all other types mentioned but not required to include:
-class LeabraLayer; //
-
-eTypeDef_Of(LHbRMTgSpecs);
-
-class E_API LHbRMTgSpecs : public SpecMemberBase {
-  // ##INLINE ##NO_TOKENS ##CAT_Leabra misc specs and params for LHbRMTg inputs
-INHERITED(SpecMemberBase)
-public:
-  bool          patch_cur;      // #DEF_true use current trial patch activations -- otherwise use previous trial -- current trial is appropriate for simple discrete trial environments (e.g., with some PBWM models), whereas previous is more approprate for trials with more realistic temporal structure
-  
-  // TODO: matrix_td will need extensive rework if we still want to use it because of four different matrix inputs now entering LHb - LHbRMTgUnitSpec::see Quarter_Final()
-  bool          matrix_td;      // #DEF_false compute temporal derivative over matrix pos inputs to produce a dip when LV values go down (misc_1 holds the prior trial net input) -- otherwise matrix is matrix_ind - matrix_dir difference between NoGo and Go (dips driven by greater NoGo than Go balance)
-
-  float         pvneg_discount;      // #DEF_0.8 #MIN_0 #MAX_1 reduction in effective PVNeg net value (when positive) so that negative outcomes can never be completely predicted away -- still allows for positive da for less-bad outcomes
-  
-  bool          rec_data;       // #DEF_true record values
-
-  String       GetTypeDecoKey() const override { return "UnitSpec"; }
-
-  TA_SIMPLE_BASEFUNS(LHbRMTgSpecs);
-protected:
-  SPEC_DEFAULTS;
-private:
-  void  Initialize();
-  void  Destroy()       { };
-  void  Defaults_init();
-};
-
-eTypeDef_Of(LHbRMTgGains);
-
-class E_API LHbRMTgGains : public SpecMemberBase {
-  // ##INLINE ##NO_TOKENS ##CAT_Leabra gains for LHbRMTg inputs
-INHERITED(SpecMemberBase)
-public:
-  float         all;            // #MIN_0 #DEF_1 final overall gain on everything
-  float         vspatch_pos_D1;      // #MIN_0 #DEF_1 VS patch D1 APPETITIVE pathway - versus pos PV outcomes
-  float         vspatch_pos_D2;      // #MIN_0 #DEF_1 VS patch D2 APPETITIVE pathway versus vspatch_pos_D1
-  float         vspatch_pos_disinhib_gain; // #DEF_0.2 proportion of positive reward prediction error (RPE) to use if RPE results from a predicted omission of positive reinforcement - e.g., conditioned inhibitor
-  float         vsmatrix_pos_D1;  // #MIN_0 #DEF_1 gain on VS matrix D1 APPETITIVE guys
-  float         vsmatrix_pos_D2;  // #MIN_0 #DEF_1 - VS matrix D2 APPETITIVE
-  
-  float         vspatch_neg_D1;      // #MIN_0 #DEF_1 VS patch D1 pathway versus neg PV outcomes
-  float         vspatch_neg_D2;      // #MIN_0 #DEF_1 VS patch D2 pathway versus vspatch_neg_D1
-  
-  float         vsmatrix_neg_D1; // #MIN_0 #DEF_1 - VS matrix D1 AVERSIVE
-  float         vsmatrix_neg_D2; // #MIN_0 #DEF_1 - VS matrix D2 AVERSIVE
-
-  String       GetTypeDecoKey() const override { return "UnitSpec"; }
-
-  TA_SIMPLE_BASEFUNS(LHbRMTgGains);
-protected:
-  SPEC_DEFAULTS;
-private:
-  void  Initialize();
-  void  Destroy()       { };
-  void  Defaults_init();
-};
-
-
-eTypeDef_Of(LHbRMTgUnitSpec);
-
-class E_API LHbRMTgUnitSpec : public LeabraUnitSpec {
-  // combined lateral habenula and RMTg units -- receives from Patch and Matrix Direct and Indirect pathways, along with primary value (PV) positive and negative valence drivers, and computes dopamine dip signals, represented as positive activations in these units, which are then translated into dips through a projection to the VTAUnitSpec
-INHERITED(LeabraUnitSpec)
-public:
-  LHbRMTgSpecs   lhb;         // lhb options and misc specs
-  LHbRMTgGains   gains;       // gain parameters (multiplicative constants) for various sources of inputs
-  virtual void	Compute_Lhb(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no);
+  INIMPL virtual void	Compute_Lhb(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no);
   // compute the LHb value based on recv projections from VSMatrix_dir/ind, VSPatch_dir/ind, and PV_pos/neg
   
-  virtual bool  GetRecvLayers(LeabraUnit* u,
-                              LeabraLayer*& pv_pos_lay,
-                              LeabraLayer*& vspatch_pos_D1_lay,
-                              LeabraLayer*& vspatch_pos_D2_lay,
-                              LeabraLayer*& vsmatrix_pos_D1_lay,
-                              LeabraLayer*& vsmatrix_pos_D2_lay,
-                              LeabraLayer*& pv_neg_lay,
-                              LeabraLayer*& vspatch_neg_D1_lay,
-                              LeabraLayer*& vspatch_neg_D2_lay,
-                              LeabraLayer*& vsmatrix_neg_D1_lay,
-                              LeabraLayer*& vsmatrix_neg_D2_lay);
+  INIMPL virtual bool  GetRecvLayers
+  (LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, 
+   LEABRA_LAYER_STATE*& pv_pos_lay,   LEABRA_LAYER_STATE*& vspatch_pos_D1_lay,
+   LEABRA_LAYER_STATE*& vspatch_pos_D2_lay,   LEABRA_LAYER_STATE*& vsmatrix_pos_D1_lay,
+   LEABRA_LAYER_STATE*& vsmatrix_pos_D2_lay,   LEABRA_LAYER_STATE*& pv_neg_lay,
+   LEABRA_LAYER_STATE*& vspatch_neg_D1_lay,   LEABRA_LAYER_STATE*& vspatch_neg_D2_lay,
+   LEABRA_LAYER_STATE*& vsmatrix_neg_D1_lay,   LEABRA_LAYER_STATE*& vsmatrix_neg_D2_lay);
   // get the recv layers..
   
-  void	Compute_NetinInteg(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) override { };
-  void	Compute_Act_Rate(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) override;
-  void	Compute_Act_Spike(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) override;
-  void	Quarter_Final(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) override;
+  INLINE void  Compute_NetinInteg(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) override { };
+  INLINE void  Compute_Act_Rate(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) override {
+    if(Quarter_DeepRawNow(net->quarter)) {
+      Compute_Lhb(u, net, thr_no);
+    }
+    else {
+      // todo: why not all the time?
+    }
+  }
 
-  bool  CheckConfig_Unit(Layer* lay, bool quiet=false) override;
-  void  HelpConfig();   // #BUTTON get help message for configuring this spec
+  INLINE void  Compute_Act_Spike(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) override {
+    Compute_Act_Rate(u, net, thr_no);
+  }
 
-  TA_SIMPLE_BASEFUNS(LHbRMTgUnitSpec);
-protected:
-  SPEC_DEFAULTS;
-private:
-  void  Initialize();
-  void  Destroy()     { };
-  void	Defaults_init();
-};
+  INLINE void 	Compute_dWt(UNIT_STATE* u, NETWORK_STATE* net, int thr_no) override { };
+  INLINE void	Compute_Weights(UNIT_STATE* u, NETWORK_STATE* net, int thr_no) override { };
 
-#endif // LHbRMTgUnitSpec_h
+  INLINE void Initialize_core() {
+    deep_raw_qtr = Q4;
+    act_range.max = 2.0f;    act_range.min = -2.0f;    act_range.UpdateRange();
+    clamp_range.max = 2.0f;  clamp_range.min = -2.0f;  clamp_range.UpdateRange();
+  }
+  // #IGNORE
+
+  INLINE int  GetStateSpecType() const override
+  { return LEABRA_NETWORK_STATE::T_LHbRMTgUnitSpec; }

@@ -33,7 +33,7 @@
   INLINE void   Init_Weights_sym_s(CON_STATE* cg, NETWORK_STATE* net, int thr_no) override {
     if(!wt_limits.sym) return;
     UNIT_STATE* su = cg->ThrOwnUnState(net, thr_no);
-    LAYER_STATE* slay = cg->GetPrjnSendLayer(net);
+    LAYER_STATE* slay = cg->GetSendLayer(net);
     PRJN_STATE* prjn = cg->GetPrjnState(net);
     PRJN_STATE* oprjn = slay->FindSendPrjnTo(net, prjn->recv_lay_idx); // find other prjn to this same layer -- this assumes that deep prjn always comes *after* the other one..
     if(!oprjn || oprjn == prjn) return; // don't do if it is us!

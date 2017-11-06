@@ -1,52 +1,29 @@
-// Copyright 2017, Regents of the University of Colorado,
-// Carnegie Mellon University, Princeton University.
-//
-// This file is part of Emergent
-//
-//   Emergent is free software; you can redistribute it and/or modify
-//   it under the terms of the GNU General Public License as published by
-//   the Free Software Foundation; either version 2 of the License, or
-//   (at your option) any later version.
-//
-//   Emergent is distributed in the hope that it will be useful,
-//   but WITHOUT ANY WARRANTY; without even the implied warranty of
-//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//   GNU General Public License for more details.
+// this is included directly in LeabraExtraUnitSpecs_cpp / _cuda
+// {
 
-#ifndef ECoutUnitSpec_h
-#define ECoutUnitSpec_h 1
-
-// parent includes:
-#include <LeabraUnitSpec>
-
-// member includes:
-
-// declare all other types mentioned but not required to include:
-
-eTypeDef_Of(ECoutUnitSpec);
-
-class E_API ECoutUnitSpec : public LeabraUnitSpec {
-  // unit spec for EC out layers that implements ThetaPhase learning -- automatically clamps to ECin activations in plus phase, based on MarkerConSpec one-to-one prjn from ECin, -- must use HippoEncoderConSpec for connections to learn based on encoder phase of theta cycle -- records encoder error as misc_1 unit variable
-INHERITED(LeabraUnitSpec)
-public:
-  virtual void 	ClampFromECin(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no);
+  INIMPL virtual void  ClampFromECin(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no);
   // clamp ECout values from ECin values, in plus phase
 
-  void	Compute_Act_Rate(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) override;
-  void	Compute_Act_Spike(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) override;
+  INLINE void  Compute_Act_Rate(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) override {
+    if(net->quarter == 3 && net->train_mode == NETWORK_STATE::TRAIN)
+      ClampFromECin(u, net, thr_no);
+    else
+      inherited::Compute_Act_Rate(u, net, thr_no);
+  }
+   
+  INLINE void  Compute_Act_Spike(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) override {
+    if(net->quarter == 3) 
+      ClampFromECin(u, net, thr_no);
+    else
+      inherited::Compute_Act_Spike(u, net, thr_no);
+  }
+    
+  INIMPL float Compute_SSE(UNIT_STATE* u, NETWORK_STATE* net, int thr_no, bool& has_targ) override;
 
-  float Compute_SSE(UnitState* uv, Network* net, int thr_no, bool& has_targ) override;
+  INLINE void Initialize_core() {
+  }
+  // #IGNORE
 
-  bool CheckConfig_Unit(Layer* lay, bool quiet=false) override; 
+  INLINE int  GetStateSpecType() const override
+  { return LEABRA_NETWORK_STATE::T_ECoutUnitSpec; }
 
-  TA_SIMPLE_BASEFUNS(ECoutUnitSpec);
-protected:
-  SPEC_DEFAULTS;
-
-private:
-  void 	Initialize();
-  void	Destroy()		{ };
-  void	Defaults_init();
-};
-
-#endif // ECoutUnitSpec_h

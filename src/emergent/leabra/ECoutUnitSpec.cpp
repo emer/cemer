@@ -1,69 +1,17 @@
-// Copyright 2017, Regents of the University of Colorado,
-// Carnegie Mellon University, Princeton University.
-//
-// This file is part of Emergent
-//
-//   Emergent is free software; you can redistribute it and/or modify
-//   it under the terms of the GNU General Public License as published by
-//   the Free Software Foundation; either version 2 of the License, or
-//   (at your option) any later version.
-//
-//   Emergent is distributed in the hope that it will be useful,
-//   but WITHOUT ANY WARRANTY; without even the implied warranty of
-//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//   GNU General Public License for more details.
+// this is included directly in LeabraExtraUnitSpecs_cpp / _cuda
+// {
 
-#include "ECoutUnitSpec.h"
-#include <LeabraNetwork>
-
-TA_BASEFUNS_CTORS_DEFN(ECoutUnitSpec);
-
-void ECoutUnitSpec::Initialize() {
-  Defaults_init();
-}
-
-void ECoutUnitSpec::Defaults_init() {
-
-}
-
-bool ECoutUnitSpec::CheckConfig_Unit(Layer* lay, bool quiet) {
-  if(!inherited::CheckConfig_Unit(lay, quiet)) return false;
-
-  bool rval = true;
-
-  if(lay->units.leaves == 0) return rval;
-  LeabraUnit* un = (LeabraUnit*)lay->units.Leaf(0); // take first one
-  
-  bool got_ec_in = false;
-  const int nrg = un->NRecvConGps(); 
-  for(int g=0; g< nrg; g++) {
-    LeabraConState_cpp* recv_gp = (LeabraConState_cpp*)un->RecvConState(g);
-    if(recv_gp->prjn->NotActive()) continue; // key!! just check for prjn, not con group!
-    LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
-    if(cs->IsMarkerCon() && recv_gp->size >= 1) {
-      got_ec_in = true;
-    }
-  }
-
-  if(lay->CheckError(!got_ec_in, quiet, rval,
-                "no projection from ECin Layer found: must recv a MarkerConSpec prjn from it, with at least one unit")) {
-    return false;
-  }
-
-  return true;
-}
-
-void ECoutUnitSpec::ClampFromECin(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
+void STATE_CLASS(ECoutUnitSpec)::ClampFromECin(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) {
   if(deep.on) {
     Compute_DeepMod(u, net, thr_no);
   }
   const int nrg = u->NRecvConGps(net);
   for(int g=0; g<nrg; g++) {
-    LeabraConState_cpp* recv_gp = (LeabraConState_cpp*)u->RecvConState(net, g);
+    LEABRA_CON_STATE* recv_gp = (LEABRA_CON_STATE*)u->RecvConState(net, g);
     if(recv_gp->NotActive()) continue;
-    LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
+    LEABRA_CON_SPEC_CPP* cs = (LEABRA_CON_SPEC_CPP*)recv_gp->GetConSpec(net);
     if(!cs->IsMarkerCon()) continue;
-    LeabraUnitState_cpp* su = (LeabraUnitState_cpp*)recv_gp->UnState(0, net);
+    LEABRA_UNIT_STATE* su = (LEABRA_UNIT_STATE*)recv_gp->UnState(0, net);
     float inval = su->act_eq;
     u->act = clamp_range.Clip(inval);
     if(deep.on) {
@@ -75,23 +23,9 @@ void ECoutUnitSpec::ClampFromECin(LeabraUnitState_cpp* u, LeabraNetwork* net, in
   }
 }
 
-void ECoutUnitSpec::Compute_Act_Rate(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
-  if(net->quarter == 3 && net->train_mode == Network::TRAIN)
-    ClampFromECin(u, net, thr_no);
-  else
-    inherited::Compute_Act_Rate(u, net, thr_no);
-}
-
-void ECoutUnitSpec::Compute_Act_Spike(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
-  if(net->quarter == 3) 
-    ClampFromECin(u, net, thr_no);
-  else
-    inherited::Compute_Act_Spike(u, net, thr_no);
-}
-
-float ECoutUnitSpec::Compute_SSE(UnitState* ru, Network* rnet, int thr_no, bool& has_targ) {
-  LeabraUnitState_cpp* u = (LeabraUnitState_cpp*)ru;
-  LeabraNetwork* net = (LeabraNetwork*)rnet;
+float STATE_CLASS(ECoutUnitSpec)::Compute_SSE(UNIT_STATE* ru, NETWORK_STATE* rnet, int thr_no, bool& has_targ) {
+  LEABRA_UNIT_STATE* u = (LEABRA_UNIT_STATE*)ru;
+  LEABRA_NETWORK_STATE* net = (LEABRA_NETWORK_STATE*)rnet;
   
   float uerr = u->act_p - u->act_q1;
   if(fabsf(uerr) >= sse_tol) {

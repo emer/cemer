@@ -1,83 +1,42 @@
-// Copyright 2017, Regents of the University of Colorado,
-// Carnegie Mellon University, Princeton University.
-//
-// This file is part of Emergent
-//
-//   Emergent is free software; you can redistribute it and/or modify
-//   it under the terms of the GNU General Public License as published by
-//   the Free Software Foundation; either version 2 of the License, or
-//   (at your option) any later version.
-//
-//   Emergent is distributed in the hope that it will be useful,
-//   but WITHOUT ANY WARRANTY; without even the implied warranty of
-//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//   GNU General Public License for more details.
+// this is included directly in LeabraExtraUnitSpecs_cpp / _cuda
+// {
 
-#include "CElAmygUnitSpec.h"
+void STATE_CLASS(CElAmygUnitSpec)::Init_Weights
+  (UNIT_STATE* uv, NETWORK_STATE* net, int thr_no)  {
 
-#include <LeabraNetwork>
-
-TA_BASEFUNS_CTORS_DEFN(CElAmygDaMod);
-TA_BASEFUNS_CTORS_DEFN(CElAmygUnitSpec);
-
-void CElAmygDaMod::Initialize() {
-  burst_da_gain = 0.0f;
-  dip_da_gain = 0.1f;
-  acq_deep_mod = true;
-  us_clamp_avg = 0.2f;
-  Defaults_init();
-}
-
-void CElAmygDaMod::Defaults_init() {
-}
-
-void CElAmygUnitSpec::Initialize() {
-  acq_ext = ACQ;
-  valence = APPETITIVE;
-  dar = D1R;
-  Defaults_init();
-}
-
-void CElAmygUnitSpec::Defaults_init() {
-  SetUnique("deep", true);
-  deep.on = true;
-  deep.role = DeepSpec::DEEP;
-  deep.raw_thr_rel = 0.1f;
-  deep.raw_thr_abs = 0.1f;
-  deep.mod_thr = 0.01f;         // default .1
-
-  // these are params to produce low-level baseline tonic activation
-  SetUnique("init", true);
-  init.v_m = 0.55f;
-  SetUnique("g_bar", true);
-  g_bar.l = 0.6f;               // todo: maybe higher?
-  SetUnique("e_rev", true);
-  e_rev.l = 0.55f;
-  e_rev.i = 0.4f;
-}
-
-void CElAmygUnitSpec::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
+  inherited::Init_Weights(uv, net, thr_no);
+  LEABRA_UNIT_STATE* u = (LEABRA_UNIT_STATE*)uv;
+  if(dar == D1R) {
+    u->SetExtFlag(LEABRA_UNIT_STATE::D1R);
+    u->ClearExtFlag(LEABRA_UNIT_STATE::D2R);
+  }
+  else {
+    u->SetExtFlag(LEABRA_UNIT_STATE::D2R);
+    u->ClearExtFlag(LEABRA_UNIT_STATE::D1R);
+  }
   if(acq_ext == ACQ) {
-    if(valence == APPETITIVE) {
-      dar = D1R;
-    }
-    else {     // AVERSIVE
-      dar = D2R;
-    }
+    u->SetExtFlag(LEABRA_UNIT_STATE::ACQUISITION);
+    u->ClearExtFlag(LEABRA_UNIT_STATE::EXTINCTION);
   }
-  else {      // EXT
-    if(valence == APPETITIVE) {
-      dar = D2R;                // reversed!
-    }
-    else {     // AVERSIVE
-      dar = D1R;
-    }
+  else {
+    u->SetExtFlag(LEABRA_UNIT_STATE::EXTINCTION);
+    u->ClearExtFlag(LEABRA_UNIT_STATE::ACQUISITION);
+  }
+  if(valence == APPETITIVE) {
+    u->SetExtFlag(LEABRA_UNIT_STATE::APPETITIVE);
+    u->ClearExtFlag(LEABRA_UNIT_STATE::AVERSIVE);
+  }
+  else {
+    u->SetExtFlag(LEABRA_UNIT_STATE::AVERSIVE);
+    u->ClearExtFlag(LEABRA_UNIT_STATE::APPETITIVE);
   }
 }
 
-void CElAmygUnitSpec::Compute_DeepMod(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
-  LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
+void STATE_CLASS(CElAmygUnitSpec)::Compute_DeepMod
+  (LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) {
+  
+  LEABRA_LAYER_STATE* lay = (LEABRA_LAYER_STATE*)u->GetOwnLayer(net);
+  LEABRA_UNGP_STATE* lgpd = lay->GetLayUnGpState(net);
   if(deep.SendDeepMod()) {
     u->deep_lrn = u->deep_mod = u->act;      // record what we send!
   }
@@ -99,13 +58,14 @@ void CElAmygUnitSpec::Compute_DeepMod(LeabraUnitState_cpp* u, LeabraNetwork* net
     }
   }
   else {
-    u->deep_lrn = u->deep_mod_net / lay->am_deep_mod_net.max;
+    u->deep_lrn = u->deep_mod_net / lgpd->am_deep_mod_net.max;
     u->deep_mod = 1.0f;                               // do not modulate with deep_mod!
   }
 }
 
-float CElAmygUnitSpec::Compute_DaModNetin(LeabraUnitState_cpp* u, LeabraNetwork* net,
-                                          int thr_no, float& net_syn) {
+float STATE_CLASS(CElAmygUnitSpec)::Compute_DaModNetin
+  (LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no, float& net_syn) {
+  
   float da_val = u->da_p;
   if(da_val > 0.0f) {
     da_val *= cel_da_mod.burst_da_gain;
@@ -120,7 +80,7 @@ float CElAmygUnitSpec::Compute_DaModNetin(LeabraUnitState_cpp* u, LeabraNetwork*
     da_val *= mod_val;
     if(dar == D2R)
       da_val = -da_val;           // flip the sign
-    if(net->phase == LeabraNetwork::PLUS_PHASE) {
+    if(net->phase == LEABRA_NETWORK_STATE::PLUS_PHASE) {
       return da_mod.plus * da_val;
     }
     else {                      // MINUS_PHASE
@@ -136,7 +96,7 @@ float CElAmygUnitSpec::Compute_DaModNetin(LeabraUnitState_cpp* u, LeabraNetwork*
     }
     if(dar == D2R)
       da_val = -da_val;           // flip the sign
-    if(net->phase == LeabraNetwork::PLUS_PHASE) {
+    if(net->phase == LEABRA_NETWORK_STATE::PLUS_PHASE) {
       return da_mod.plus * da_val;
     }
     else {                      // MINUS_PHASE
@@ -145,16 +105,18 @@ float CElAmygUnitSpec::Compute_DaModNetin(LeabraUnitState_cpp* u, LeabraNetwork*
   }
 }
 
-float CElAmygUnitSpec::Compute_NetinExtras(LeabraUnitState_cpp* u, LeabraNetwork* net,
-                                           int thr_no, float& net_syn) {
-  LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
-  LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->GetLayerSpec();
+float STATE_CLASS(CElAmygUnitSpec)::Compute_NetinExtras
+  (LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no, float& net_syn) {
+  
+  LEABRA_LAYER_STATE* lay = (LEABRA_LAYER_STATE*)u->GetOwnLayer(net);
+  LEABRA_LAYER_SPEC_CPP* ls = (LEABRA_LAYER_SPEC_CPP*)lay->GetLayerSpec(net);
 
   float net_ex = init.netin;
-  if(bias_spec) {
+  LEABRA_CON_SPEC_CPP* bs = (LEABRA_CON_SPEC_CPP*)GetBiasSpec(net);
+  if(bs) {
     net_ex += u->bias_scale * u->bias_wt;
   }
-  if(u->HasExtFlag(UnitState::EXT)) {
+  if(u->HasExtFlag(UNIT_STATE::EXT)) {
     if(ls->clamp.avg)
       net_syn = ls->clamp.ClampAvgNetin(u->ext, net_syn);
     else
@@ -178,7 +140,9 @@ float CElAmygUnitSpec::Compute_NetinExtras(LeabraUnitState_cpp* u, LeabraNetwork
   return net_ex;
 }
 
-void CElAmygUnitSpec::Compute_ActFun_Rate(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
+void STATE_CLASS(CElAmygUnitSpec)::Compute_ActFun_Rate
+(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) {
+  
   inherited::Compute_ActFun_Rate(u, net, thr_no);
   // default is to use act_eq for later use by C_Compute__dWt_CEl_Delta() to effect learning *as if* phasic dopamine modulates activations - but without actually doing it!
   if(!cel_da_mod.lrn_mod_act) {
@@ -199,10 +163,3 @@ void CElAmygUnitSpec::Compute_ActFun_Rate(LeabraUnitState_cpp* u, LeabraNetwork*
   // ELSE: actually *DOES* modulate actual activations - CAUTION - very brittle!
 }
 
-void CElAmygUnitSpec::Quarter_Final_RecVals(LeabraUnitState_cpp* u, LeabraNetwork* net,
-                                            int thr_no) {
-  inherited::Quarter_Final_RecVals(u, net, thr_no);
-  if(net->quarter == 3) {
-    u->act_dif = u->act_p - u->act_q0; // prior trial -- this is learning delta
-  }
-}

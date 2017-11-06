@@ -1,105 +1,19 @@
-// Copyright 2017, Regents of the University of Colorado,
-// Carnegie Mellon University, Princeton University.
-//
-// This file is part of Emergent
-//
-//   Emergent is free software; you can redistribute it and/or modify
-//   it under the terms of the GNU General Public License as published by
-//   the Free Software Foundation; either version 2 of the License, or
-//   (at your option) any later version.
-//
-//   Emergent is distributed in the hope that it will be useful,
-//   but WITHOUT ANY WARRANTY; without even the implied warranty of
-//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//   GNU General Public License for more details.
+// this is included directly in LeabraExtraUnitSpecs_cpp / _cuda
+// {
 
-#include "CA1UnitSpec.h"
-#include <LeabraNetwork>
-
-TA_BASEFUNS_CTORS_DEFN(ThetaPhaseSpecs);
-TA_BASEFUNS_CTORS_DEFN(CA1UnitSpec);
-
-void ThetaPhaseSpecs::Initialize() {
-  Defaults_init();
-}
-
-void ThetaPhaseSpecs::Defaults_init() {
-  mod_ec_out = true;
-  ca3_on_p = false;
-  recall_decay = 1.0f;
-  plus_decay = 0.0f;
-  use_test_mode = true;
-}
-
-void CA1UnitSpec::Initialize() {
-}
-
-bool CA1UnitSpec::CheckConfig_Unit(Layer* lay, bool quiet) {
-  if(!inherited::CheckConfig_Unit(lay, quiet)) return false;
-
-  bool rval = true;
-
-  if(lay->units.leaves == 0) return rval;
-  LeabraUnit* un = (LeabraUnit*)lay->units.Leaf(0); // take first one
-  
-  bool got_ec_in = false;
-  bool got_ec_out = false;
-  bool got_ca3 = false;
-  const int nrg = un->NRecvConGps(); 
-  for(int g=0; g< nrg; g++) {
-    LeabraConState_cpp* recv_gp = (LeabraConState_cpp*)un->RecvConState(g);
-    if(recv_gp->prjn->NotActive()) continue; // key!! just check for prjn, not con group!
-    LeabraLayer* from = (LeabraLayer*) recv_gp->prjn->from.ptr();
-    LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
-    cs->SetUnique("wt_scale", true); // be sure!
-    if(from->name.contains("EC")) {
-      if(from->name.contains("out")) {
-        got_ec_out = true;
-      }
-      else if(from->name.contains("in")) {
-        got_ec_in = true;
-      }
-    }
-    if(from->name.contains("CA3")) {
-      got_ca3 = true;
-    }
-  }
-
-  // if(lay->CheckError(!got_ca3, quiet, rval,
-  //                    "no projection from CA3 Layer found: must recv from layer with a name that contains the string 'CA3'")) {
-  //   return false;
-  // }
-  // it may be OK to not include ECout as that pathway is a bit more suspect?
-  // if(lay->CheckError(!got_ec_out, quiet, rval,
-  //               "no projection from ECout Layer found: must recv from layer with a name that contains 'EC' and 'out'")) {
-  //   return false;
-  // }
-  if(lay->CheckError(!got_ec_in, quiet, rval,
-                "no projection from ECin Layer found: must recv from layer with a name that contains 'EC' and 'in'")) {
-    return false;
-  }
-
-  return true;
-}
-
-void CA1UnitSpec::Trial_Init_Specs(LeabraNetwork* net) {
-  net->net_misc.diff_scale_p = true;
-  net->net_misc.diff_scale_q1 = true;
-  inherited::Trial_Init_Specs(net);
-}
-
-void CA1UnitSpec::Compute_NetinScale(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
-  bool test_mode = (theta.use_test_mode && net->train_mode == Network::TEST);
+void STATE_CLASS(CA1UnitSpec)::Compute_NetinScale(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) {
+  bool test_mode = (theta.use_test_mode && net->train_mode == NETWORK_STATE::TEST);
   const int nrg = u->NRecvConGps(net); 
   for(int g=0; g< nrg; g++) {
-    LeabraConState_cpp* recv_gp = (LeabraConState_cpp*)u->RecvConState(net, g);
-    if(recv_gp->prjn->NotActive()) continue; // key!! just check for prjn, not con group!
-    LeabraLayer* from = (LeabraLayer*) recv_gp->prjn->from.ptr();
-    LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
+    LEABRA_CON_STATE* recv_gp = (LEABRA_CON_STATE*)u->RecvConState(net, g);
+    // todo: why!!!???
+    if(!recv_gp->PrjnIsActive(net)) continue; // key!! just check for prjn, not con group!
+    LEABRA_LAYER_STATE* from = (LEABRA_LAYER_STATE*) recv_gp->GetSendLayer(net);
+    LEABRA_CON_SPEC_CPP* cs = (LEABRA_CON_SPEC_CPP*)recv_gp->GetConSpec(net);
     if(!cs->DoesStdNetin()) continue; // skip any special guys
 
-    if(from->name.contains("EC")) {
-      if(!theta.mod_ec_out && from->name.contains("out"))
+    if(from->LayerNameContains("EC")) {
+      if(!theta.mod_ec_out && from->LayerNameContains("out"))
         continue;
       switch(net->quarter) {
       case 0:
@@ -114,7 +28,7 @@ void CA1UnitSpec::Compute_NetinScale(LeabraUnitState_cpp* u, LeabraNetwork* net,
         break;
       }
     }
-    else if(from->name.contains("CA3")) {
+    else if(from->LayerNameContains("CA3")) {
       switch(net->quarter) {
       case 0:
         cs->wt_scale.abs = 0.0f;

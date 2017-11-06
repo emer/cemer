@@ -135,6 +135,7 @@ public:
 #include <TesselPrjnSpec>
   
   TesselPrjnSpec_cpp() { Initialize_core(); }
+  ~TesselPrjnSpec_cpp() { FreeSendOffs(); }
 };
 
 
@@ -146,6 +147,7 @@ public:
 #include <GpTesselPrjnSpec>
   
   GpTesselPrjnSpec_cpp() { Initialize_core(); }
+  ~GpTesselPrjnSpec_cpp() { FreeSendOffs(); }
 };
 
 

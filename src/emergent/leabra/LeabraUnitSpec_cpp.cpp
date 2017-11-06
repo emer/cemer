@@ -17,14 +17,11 @@
 
 #include "LeabraUnitSpec_cpp.h"
 
-// #include "LeabraUnitSpec_mbrs.cpp"   // include member impls if defined
-
-// #include <DeepCtxtConSpec_cpp>
-// #include <SendDeepRawConSpec_cpp>
-// #include <SendDeepModConSpec_cpp>
+#include "LeabraUnitSpec_mbrs.cpp"
 
 #include <LeabraLayerSpec_cpp>
-#include <LeabraConSpec_cpp>
+//#include <LeabraConSpec_cpp>
+#include <LeabraExtraConSpecs_cpp> // includes base
 
 #include <State_cpp>
 

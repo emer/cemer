@@ -1,51 +1,22 @@
-// Copyright 2017, Regents of the University of Colorado,
-// Carnegie Mellon University, Princeton University.
-//
-// This file is part of Emergent
-//
-//   Emergent is free software; you can redistribute it and/or modify
-//   it under the terms of the GNU General Public License as published by
-//   the Free Software Foundation; either version 2 of the License, or
-//   (at your option) any later version.
-//
-//   Emergent is distributed in the hope that it will be useful,
-//   but WITHOUT ANY WARRANTY; without even the implied warranty of
-//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//   GNU General Public License for more details.
+// this is included directly in LeabraExtraUnitSpecs_cpp / _cuda
+// {
 
-#ifndef PatchUnitSpec_h
-#define PatchUnitSpec_h 1
-
-// parent includes:
-#include <LeabraUnitSpec>
-
-// member includes:
-
-// declare all other types mentioned but not required to include:
-
-eTypeDef_Of(PatchUnitSpec);
-
-class E_API PatchUnitSpec  : public LeabraUnitSpec {
-  // Dorsal striatum patch neurons, which shunt dopamine values in all neurons that they project to (shortcut for shunting SNc dopamine which then projects to other target striatum neurons) -- typically driven by PFC maintenance inputs, blocking learning for anything with ongoing maintenance -- threshold for shunting is opt_thresh.send threshold -- sends to shunt var on recv units
-INHERITED(LeabraUnitSpec)
-public:
-  virtual void  Send_DAShunt(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no);
+  INIMPL virtual void  Send_DAShunt(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no);
   // send thresholded shunting factor to shunt on recv units
 
-  void	Compute_Act_Post(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) override;
+  INLINE void  Compute_Act_Post(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) override {
+    inherited::Compute_Act_Post(u, net, thr_no);
+    Send_DAShunt(u, net, thr_no);
+  }
 
   // no learning in this one -- just a readout of PFC activation
-  void 	Compute_dWt(UnitState* u, Network* net, int thr_no) override { };
-  void	Compute_Weights(UnitState* u, Network* net, int thr_no) override { };
+  INLINE void 	Compute_dWt(UNIT_STATE* u, NETWORK_STATE* net, int thr_no) override { };
+  INLINE void	Compute_Weights(UNIT_STATE* u, NETWORK_STATE* net, int thr_no) override { };
 
-  TA_SIMPLE_BASEFUNS(PatchUnitSpec);
-protected:
-  SPEC_DEFAULTS;
-private:
-  void  Initialize();
-  void  Destroy()     { };
-  void  Defaults_init();
-};
+  INLINE void Initialize_core() {
+  }
+  // #IGNORE
 
+  INLINE int  GetStateSpecType() const override
+  { return LEABRA_NETWORK_STATE::T_PatchUnitSpec; }
 
-#endif // PatchUnitSpec_h

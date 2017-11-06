@@ -1,74 +1,8 @@
-// Copyright 2017, Regents of the University of Colorado,
-// Carnegie Mellon University, Princeton University.
-//
-// This file is part of Emergent
-//
-//   Emergent is free software; you can redistribute it and/or modify
-//   it under the terms of the GNU General Public License as published by
-//   the Free Software Foundation; either version 2 of the License, or
-//   (at your option) any later version.
-//
-//   Emergent is distributed in the hope that it will be useful,
-//   but WITHOUT ANY WARRANTY; without even the implied warranty of
-//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//   GNU General Public License for more details.
-
-#include "DRNUnitSpec.h"
-
-#include <LeabraNetwork>
-#include <VTAUnitSpec>
-
-#include <taMisc>
-
-TA_BASEFUNS_CTORS_DEFN(DRNUnitSpec);
-
-TA_BASEFUNS_CTORS_DEFN(DRN5htSpec);
-
-void DRN5htSpec::Initialize() {
-  Defaults_init();
-}
-
-void DRN5htSpec::Defaults_init() {
-  se_out_gain = 1.0f;
-  se_base = 0.0f;
-  se_inc_tau = 50.0f;
-  da_pos_tau = 10.0f;
-  da_neg_tau = 10.0f;
-  se_pv_tau = 20.0f;
-  se_state_tau = 200.0f;
-  sub_pos = true;
-
-  se_inc_dt = 1.0f / se_inc_tau;
-  da_pos_dt = 1.0f / da_pos_tau;
-  da_neg_dt = 1.0f / da_neg_tau;
-  se_pv_dt = 1.0f / se_pv_tau;
-  se_state_dt = 1.0f / se_state_tau;
-}
-  
-void DRN5htSpec::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-  se_inc_dt = 1.0f / se_inc_tau;
-  da_pos_dt = 1.0f / da_pos_tau;
-  da_neg_dt = 1.0f / da_neg_tau;
-  se_pv_dt = 1.0f / se_pv_tau;
-  se_state_dt = 1.0f / se_state_tau;
-}
+// this is included directly in LeabraExtraUnitSpecs_cpp / _cuda
+// {
 
 
-void DRNUnitSpec::Initialize() {
-}
-
-void DRNUnitSpec::HelpConfig() {
-  String help = "DRNUnitSpec (5HT serotonin value) Computation:\n\
- - Computes SE value based on inputs from PV and State layers.\n\
- - No Learning\n\
- \nDRNUnitSpec Configuration:\n\
- - Use the Wizard PVLV button to automatically configure layers.\n\
- - Recv cons marked with a MarkerConSpec from inputs";
-  taMisc::Confirm(help);
-}
-
-void DRNUnitSpec::Compute_Se(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
+void STATE_CLASS(DRNUnitSpec)::Compute_Se(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) {
   float pospv = 0.0f;
   int   pospv_n  = 0;
   float negpv = 0.0f;
@@ -80,18 +14,19 @@ void DRNUnitSpec::Compute_Se(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr
 
   const int nrg = u->NRecvConGps(net);
   for(int g=0; g<nrg; g++) {
-    LeabraConState_cpp* recv_gp = (LeabraConState_cpp*)u->RecvConState(net, g);
+    LEABRA_CON_STATE* recv_gp = (LEABRA_CON_STATE*)u->RecvConState(net, g);
     if(recv_gp->NotActive()) continue;
-    LeabraLayer* from = (LeabraLayer*)recv_gp->prjn->from.ptr();
-    LeabraUnitSpec* us = (LeabraUnitSpec*)from->GetUnitSpec();
+    LEABRA_LAYER_STATE* from = (LEABRA_LAYER_STATE*)recv_gp->GetSendLayer(net);
+    LEABRA_UNIT_SPEC_CPP* us = (LEABRA_UNIT_SPEC_CPP*)from->GetUnitSpec(net);
+    LEABRA_UNGP_STATE* lgpd = from->GetLayUnGpState(net);
 
-    const float act_avg = from->acts_eq.avg;
-    if(us->InheritsFrom(&TA_VTAUnitSpec)) {
+    const float act_avg = lgpd->acts_eq.avg;
+    if(us->GetStateSpecType() == LEABRA_NETWORK_STATE::T_VTAUnitSpec) {
       continue;                 // skip -- just read from dav
     }
     else {
-      if(from->name.contains("Pos")) {
-        if(from->name.contains("State")) {
+      if(from->LayerNameContains("Pos")) {
+        if(from->LayerNameContains("State")) {
           posstate += act_avg;
           posstate_n++;
         }
@@ -101,7 +36,7 @@ void DRNUnitSpec::Compute_Se(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr
         }
       }
       else {
-        if(from->name.contains("State")) {
+        if(from->LayerNameContains("State")) {
           negstate += act_avg;
           negstate_n++;
         }
@@ -145,34 +80,15 @@ void DRNUnitSpec::Compute_Se(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr
   u->da = 0.0f;
 }
 
-void DRNUnitSpec::Send_Se(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
+void STATE_CLASS(DRNUnitSpec)::Send_Se(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) {
   const float snd_val = se.se_out_gain * u->sev;
-  const int nsg = u->NSendConGps(net, thr_no); 
+  const int nsg = u->NSendConGps(net); 
   for(int g=0; g<nsg; g++) {
-    LeabraConState_cpp* send_gp = (LeabraConState_cpp*)u->SendConState(net, thr_no, g);
+    LEABRA_CON_STATE* send_gp = (LEABRA_CON_STATE*)u->SendConState(net, g);
     if(send_gp->NotActive()) continue;
     for(int j=0;j<send_gp->size; j++) {
-      ((LeabraUnitState_cpp*)send_gp->UnState(j,net))->sev = snd_val;
+      ((LEABRA_UNIT_STATE*)send_gp->UnState(j,net))->sev = snd_val;
     }
   }
 }
 
-void DRNUnitSpec::Compute_Act_Rate(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
-  Compute_Se(u, net, thr_no);
-}
-
-void DRNUnitSpec::Compute_Act_Spike(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
-  Compute_Se(u, net, thr_no);
-}
-
-void DRNUnitSpec::Compute_Act_Post(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
-  inherited::Compute_Act_Post(u, net, thr_no);
-  Send_Se(u, net, thr_no);      // note: can only send modulators during post!!
-}
-
-void DRNUnitSpec::Init_Weights(UnitState* ru, Network* rnet, int thr_no) {
-  inherited::Init_Weights(ru, rnet, thr_no);
-  LeabraUnitState_cpp* u = (LeabraUnitState_cpp*)ru;
-  LeabraNetwork* net = (LeabraNetwork*)rnet;
-  u->sev = se.se_base;
-}

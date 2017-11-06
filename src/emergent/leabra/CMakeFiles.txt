@@ -130,44 +130,43 @@ set(leabra_HEADS_NOMAKETA
   BasAmygConSpec.h
   BLAmygConSpec.h
   CElAmygConSpec.h
+  MSNConSpec.h
   HippoEncoderConSpec.h
   CerebPfPcConSpec.h
   
   LeabraExtraUnitSpecs_mbrs.h
-#   LayerActUnitSpec.h
-#   DeepCopyUnitSpec.h
-#   ThalSendUnitSpec.h
-#   PoolInputsUnitSpec.h
-    
-#   ExtRewLayerSpec.h
-#   TDRewPredUnitSpec.h
-#   TDRewIntegUnitSpec.h
-#   TDDeltaUnitSpec.h
+  LayerActUnitSpec.h
+  DeepCopyUnitSpec.h
+  ThalSendUnitSpec.h
+  PoolInputsUnitSpec.h
+  
+  TDRewPredUnitSpec.h
+  TDRewIntegUnitSpec.h
+  TDDeltaUnitSpec.h
 
-#   BasAmygUnitSpec.h
-#   BLAmygUnitSpec.h
-#   CElAmygUnitSpec.h
-#   PPTgUnitSpec.h
-#   LHbRMTgUnitSpec.h
-#   VTAUnitSpec.h
-#   DRNUnitSpec.h
-#   ClampDaUnitSpec.h
-#   BFCSUnitSpec.h
+  D1D2UnitSpec.h
+  BasAmygUnitSpec.h
+  BLAmygUnitSpec.h
+  CElAmygUnitSpec.h
+  PPTgUnitSpec.h
+  LHbRMTgUnitSpec.h
+  VTAUnitSpec.h
+  DRNUnitSpec.h
+  ClampDaUnitSpec.h
+  BFCSUnitSpec.h
 
-#   D1D2UnitSpec.h
-#   MSNConSpec.h
-#   MSNUnitSpec.h
-#   TANUnitSpec.h
-#   PatchUnitSpec.h
-#   GPiInvUnitSpec.h
-#   InvertUnitSpec.h
-#   PFCUnitSpec.h
-    
-#   ECoutUnitSpec.h
-#   CA1UnitSpec.h
-#   CerebGranuleUnitSpec.h
-#   LeabraMultCopyUnitSpec.h
-#   LeabraContextUnitSpec.h
+  MSNUnitSpec.h
+  TANUnitSpec.h
+  PatchUnitSpec.h
+  GPiInvUnitSpec.h
+  InvertUnitSpec.h
+  PFCUnitSpec.h
+  
+  ECoutUnitSpec.h
+  CA1UnitSpec.h
+  CerebGranuleUnitSpec.h
+  LeabraMultCopyUnitSpec.h
+  LeabraContextUnitSpec.h
 
   LeabraExtraLayerSpecs_mbrs.h
 #   ScalarValLayerSpec.h
@@ -175,6 +174,7 @@ set(leabra_HEADS_NOMAKETA
 #   TwoDValLayerSpec.h
 #   DecodeTwoDValLayerSpec.h
 #   LeabraV1LayerSpec.h
+#  ExtRewLayerSpec.h
 #   # SubiculumLayerSpec.h
 #   GPiSoftMaxLayerSpec.h
 

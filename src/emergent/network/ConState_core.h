@@ -43,14 +43,14 @@
   INLINE PRJN_STATE* GetPrjnState(NETWORK_STATE* net) const {
     return net->GetPrjnState(prjn_idx);
   }
-  INLINE LAYER_STATE* GetPrjnRecvLayer(NETWORK_STATE* net) const {
+  INLINE LAYER_STATE* GetRecvLayer(NETWORK_STATE* net) const {
     PRJN_STATE* prjn = GetPrjnState(net);
     if(prjn) {
       return prjn->GetRecvLayerState(net);
     }
     return NULL;
   }
-  INLINE LAYER_STATE* GetPrjnSendLayer(NETWORK_STATE* net) const {
+  INLINE LAYER_STATE* GetSendLayer(NETWORK_STATE* net) const {
     PRJN_STATE* prjn = GetPrjnState(net);
     if(prjn) {
       return prjn->GetSendLayerState(net);
@@ -211,6 +211,11 @@
   { return ((int32_t*)mem_start)[idx]; }
   // #CAT_Access fast access (no range checking) to unit flat index at given connection index
   INLINE UNIT_STATE*    UnState(int idx, NETWORK_STATE* net) const {
+    return net->GetUnitState(UnIdx(idx));
+  }
+  // #IGNORE #CAT_Access fast access (no range checking) to unit pointer at given connection index (goes through flat index at network level) -- this is the unit on the other end of this connection 
+  INLINE UNIT_STATE*    SafeUnState(int idx, NETWORK_STATE* net) const {
+    if(!InRange(idx)) return NULL;
     return net->GetUnitState(UnIdx(idx));
   }
   // #IGNORE #CAT_Access fast access (no range checking) to unit pointer at given connection index (goes through flat index at network level) -- this is the unit on the other end of this connection 

@@ -1,78 +1,64 @@
-// Copyright 2017, Regents of the University of Colorado,
-// Carnegie Mellon University, Princeton University.
-//
-// This file is part of Emergent
-//
-//   Emergent is free software; you can redistribute it and/or modify
-//   it under the terms of the GNU General Public License as published by
-//   the Free Software Foundation; either version 2 of the License, or
-//   (at your option) any later version.
-//
-//   Emergent is distributed in the hope that it will be useful,
-//   but WITHOUT ANY WARRANTY; without even the implied warranty of
-//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//   GNU General Public License for more details.
+// this is included directly in LeabraExtraUnitSpecs_cpp / _cuda
+// {
 
-#ifndef TANUnitSpec_h
-#define TANUnitSpec_h 1
+  STATE_CLASS(TANActSpec)      tan;             // parameters for computing TAN activation
 
-// parent includes:
-#include <LeabraUnitSpec>
-
-// member includes:
-
-// declare all other types mentioned but not required to include:
-
-eTypeDef_Of(TANActSpec);
-
-class E_API TANActSpec : public SpecMemberBase {
-  // ##INLINE ##NO_TOKENS ##CAT_Leabra specs for TAN activation 
-INHERITED(SpecMemberBase)
-public:
-  bool          plus_fm_pv_vs;  // #DEF_true drive plus phase activation from the MAX sending activation over any MarkerConSpec inputs -- allows TAN's to learn to fire for expected or actual outcomes conveyed from PV and VSPatch outcome-predicting neurons
-  bool          send_plus;      // #CONDSHOW_ON_plus_fm_pv_vs send the plus phase training values to ach on receivers (otherwise only send the learned minus phase activation)
-  
-  String       GetTypeDecoKey() const override { return "UnitSpec"; }
-
-  TA_SIMPLE_BASEFUNS(TANActSpec);
-protected:
-  SPEC_DEFAULTS;
-private:
-  void  Initialize();
-  void  Destroy()       { };
-  void  Defaults_init() { Initialize(); }
-};
-
-
-eTypeDef_Of(TANUnitSpec);
-
-class E_API TANUnitSpec : public LeabraUnitSpec {
-  // Models the Tonically Active Neurons of the Striatum, which are driven in part by the parafasicular pathway conveying projections from the CNA, PPTG, and OFC, and exhibit a burst-pause firing dynamic at the time of actual rewards and expected rewards, which has a net disinhibitory effect on MSN's -- we hypothesize that this drives consolidation of MSN synaptic traces and updates the sign with concurrent dopamine firing, and then clears the trace -- only sends ACh during deep_raw_qtr
-INHERITED(LeabraUnitSpec)
-public:
-  TANActSpec      tan;             // parameters for computing TAN activation
-
-  virtual void  Send_ACh(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no);
+  INIMPL virtual void  Send_ACh(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no);
   // send the ach value to sending projections: every cycle
-  virtual void  Compute_PlusPhase_Netin(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no);
+  INIMPL virtual void  Compute_PlusPhase_Netin(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no);
   // compute netin from plus phase activations from marker cons inputs
-  virtual void  Compute_PlusPhase_Act(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no);
+
+  INLINE virtual void  Compute_PlusPhase_Act(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) {
+    u->act_eq = u->act_nd = u->act = u->net = u->ext;
+    u->da = 0.0f;
+  }
   // activation from netin
 
-  void  Compute_NetinInteg(LeabraUnitState_cpp* uv, LeabraNetwork* net, int thr_no) override;
-  void	Compute_Act_Rate(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) override;
-  void	Compute_Act_Spike(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) override;
-  void  Compute_Act_Post(LeabraUnitState_cpp* uv, LeabraNetwork* net, int thr_no) override;
+  INLINE void  Compute_NetinInteg(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) override {
+    if(tan.plus_fm_pv_vs && (net->phase == LEABRA_NETWORK_STATE::PLUS_PHASE)) {
+      Compute_PlusPhase_Netin(u, net, thr_no);
+    }
+    else {
+      inherited::Compute_NetinInteg(u, net, thr_no);
+    }
+  }
+  INLINE void  Compute_Act_Rate(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) override {
+    if(tan.plus_fm_pv_vs && (net->phase == LEABRA_NETWORK_STATE::PLUS_PHASE)) {
+      Compute_PlusPhase_Act(u, net, thr_no);
+    }
+    else {
+      inherited::Compute_Act_Rate(u, net, thr_no);
+    }
+  }
+    
+  INLINE void  Compute_Act_Spike(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) override {
+    if(tan.plus_fm_pv_vs && (net->phase == LEABRA_NETWORK_STATE::PLUS_PHASE)) {
+      Compute_PlusPhase_Act(u, net, thr_no);
+    }
+    else {
+      inherited::Compute_Act_Spike(u, net, thr_no);
+    }
+  }
+    
+  INLINE void  Compute_Act_Post(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) override {
+    inherited::Compute_Act_Post(u, net, thr_no);
+    // must send all modulators in act_post
+    if(tan.plus_fm_pv_vs && (net->phase == LEABRA_NETWORK_STATE::PLUS_PHASE)) {
+      if(tan.send_plus) {
+        Send_ACh(u, net, thr_no);
+      }
+    }
+    else {
+      if(Quarter_DeepRawNow(net->quarter))
+        Send_ACh(u, net, thr_no);
+    }
+  }
+  
+  INLINE void Initialize_core() {
+    deep_raw_qtr = QALL;
+  }
+  // #IGNORE
 
-  void  HelpConfig();   // #BUTTON get help message for configuring this spec
+  INLINE int  GetStateSpecType() const override
+  { return LEABRA_NETWORK_STATE::T_TANUnitSpec; }
 
-  TA_SIMPLE_BASEFUNS(TANUnitSpec);
-protected:
-  SPEC_DEFAULTS;
-private:
-  void  Initialize();
-  void  Destroy()     { };
-  void  Defaults_init();
-};
-
-#endif // TANUnitSpec_h

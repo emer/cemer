@@ -188,6 +188,17 @@ public:
 };
 
 
+class MSNConSpec_cpp : public LeabraConSpec_cpp {
+  // Learning of striatal medium spiny neurons input (afferent) connections -- must have an MSNUnitSpec on recv neuron -- based on dopamine, sender * receiver activation product, and (optionally) thal gating activation signal -- supports a trace mechanism which accumulates an ongoing synaptic trace over time, which is then multiplied by a later dopamine da_p value that is typically driven by primary value (US) outcome at end of a sequence of actions -- dwt = da_p * tr; tr = [thal] * su * ru - otr_lrate * su * ru, representing a contrast between gated activations that go one way, and other non-gated activations that go the opposite way (which supports engagement of alternative gating strategies, and avoids overall reductions in weights) -- the trace is reset when this weight change is computed, as a result of an over-threshold level of dopamine.  Patch units shunt dopamine from actively maintaining stripes / information processing channels, to prevent this clearing.
+INHERITED(LeabraConSpec)
+public:
+
+#include <MSNConSpec>
+  
+  MSNConSpec_cpp() { Initialize_core(); }
+};
+
+
 class HippoEncoderConSpec_cpp : public LeabraConSpec_cpp {
   // for EC <-> CA1 connections: CHL learning on encoder variables (act_p vs. act_q1)
 INHERITED(LeabraConSpec)

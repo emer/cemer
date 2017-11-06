@@ -11,8 +11,6 @@
   int           alloc_send_offs;  // #READ_ONLY #NO_COPY #NO_SAVE number of sending offsets allocated
   STATE_CLASS(TessEl)*   send_offs_m; // #IGNORE n_send_offs sending offsets
 
-  // TODO: need to add to StateBaseSpec copy to copy offsets
-
   INIMPL void  AllocSendOffs(int ns);
   // #IGNORE allocate the send_offs_m array -- done by parent emergent obj
   INIMPL void  FreeSendOffs();

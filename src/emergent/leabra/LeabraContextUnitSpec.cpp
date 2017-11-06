@@ -1,72 +1,11 @@
-// Copyright 2017, Regents of the University of Colorado,
-// Carnegie Mellon University, Princeton University.
-//
-// This file is part of Emergent
-//
-//   Emergent is free software; you can redistribute it and/or modify
-//   it under the terms of the GNU General Public License as published by
-//   the Free Software Foundation; either version 2 of the License, or
-//   (at your option) any later version.
-//
-//   Emergent is distributed in the hope that it will be useful,
-//   but WITHOUT ANY WARRANTY; without even the implied warranty of
-//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//   GNU General Public License for more details.
+// this is included directly in LeabraExtraUnitSpecs_cpp / _cuda
+// {
 
-#include "LeabraContextUnitSpec.h"
-#include <LeabraNetwork>
+bool STATE_CLASS(LeabraContextUnitSpec)::ShouldUpdateNow
+  (LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) {
 
-TA_BASEFUNS_CTORS_DEFN(CtxtUpdateSpec);
-TA_BASEFUNS_CTORS_DEFN(CtxtNSpec);
-TA_BASEFUNS_CTORS_DEFN(LeabraContextUnitSpec);
-
-void CtxtUpdateSpec::Initialize() {
-  fm_hid = 1.0f;
-  fm_prv = 0.0f;
-  to_out = 1.0f;
-}
-
-const String
-LeabraContextUnitSpec::do_update_key("LeabraContextUnitSpec__do_update");
-
-void LeabraContextUnitSpec::Initialize() {
-  updt.fm_prv = 0.0f;
-  updt.fm_hid = 1.0f;
-  updt.to_out = 1.0f;
-  update_criteria = UC_TRIAL;
-  Defaults_init();
-}
-
-void LeabraContextUnitSpec::Defaults_init() {
-}
-
-bool LeabraContextUnitSpec::CheckConfig_Unit(Layer* lay, bool quiet) {
-  bool rval = inherited::CheckConfig_Unit(lay, quiet);
-
-  LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
-
-  if(lay->units.leaves == 0) return rval;
-  LeabraUnit* un = (LeabraUnit*)lay->units.Leaf(0); // take first one
-  
-  LeabraConState_cpp* cg = (LeabraConState_cpp*)un->RecvConStateSafe(0);
-  if(lay->CheckError(!cg, quiet, rval,
-                     "Requires one recv projection!")) {
-    return false;
-  }
-  LeabraUnit* su = (LeabraUnit*)cg->SafeUn(0);
-  if(lay->CheckError(!su, quiet, rval, 
-                     "Requires one unit in recv projection!")) {
-    return false;
-  }
-
-  return rval;
-}
-
-bool LeabraContextUnitSpec::ShouldUpdateNow(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
-  LeabraUnit* lu = (LeabraUnit*)u->Un(net, thr_no);
-  LeabraLayer* lay = (LeabraLayer*)lu->own_lay();
-  if(!lay) return false;
-  bool do_update = lay->GetUserDataDef(do_update_key, false).toBool();
+  LEABRA_LAYER_STATE* lay = (LEABRA_LAYER_STATE*)u->GetOwnLayer(net);
+  bool do_update = lay->HasLayerFlag(LAYER_STATE::LAY_FLAG_4);
   if(!do_update) {              // check other criteria
     switch (update_criteria) {
     case UC_TRIAL:
@@ -83,18 +22,12 @@ bool LeabraContextUnitSpec::ShouldUpdateNow(LeabraUnitState_cpp* u, LeabraNetwor
   return do_update;
 }
 
-void LeabraContextUnitSpec::TriggerUpdate(LeabraLayer* lay, bool update) {
-  if (!lay) return;
-  if (TestError((lay->unit_spec.spec.ptr() != this),
-    "TriggerUpdate", "UnitSpec not set on the layer passed as arg -- must be"))
-    return;
-  lay->SetUserData(do_update_key, update, false); // false = no update
-}
-
-void LeabraContextUnitSpec::Compute_Context(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
-  LeabraConState_cpp* cg = (LeabraConState_cpp*)u->RecvConStateSafe(net, thr_no, 0);
-  LeabraUnitState_cpp* su = (LeabraUnitState_cpp*)cg->UnState(0, net);
-  LeabraLayer* fmlay = (LeabraLayer*)cg->prjn->from.ptr();
+void STATE_CLASS(LeabraContextUnitSpec)::Compute_Context
+  (LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) {
+  
+  LEABRA_CON_STATE* cg = (LEABRA_CON_STATE*)u->RecvConState(net, 0);
+  LEABRA_UNIT_STATE* su = (LEABRA_UNIT_STATE*)cg->UnState(0, net);
+  LEABRA_LAYER_STATE* fmlay = (LEABRA_LAYER_STATE*)cg->GetSendLayer(net);
   if(fmlay->lesioned()) {
     u->act = 0.0f;
   }
@@ -116,11 +49,4 @@ void LeabraContextUnitSpec::Compute_Context(LeabraUnitState_cpp* u, LeabraNetwor
   }
 }
 
-void LeabraContextUnitSpec::Compute_Act_Rate(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
-  Compute_Context(u, net, thr_no);
-}
-
-void LeabraContextUnitSpec::Compute_Act_Spike(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
-  Compute_Context(u, net, thr_no);
-}
 

@@ -17,7 +17,10 @@
 
 #include <ConSpec_cpp>
 #include <Projection>
+
 #include <AllProjectionSpecs_cpp> // need the _cpp versions..
+
+#include <State_main>
 
 #include <taMisc>
 #include <taMath_float>

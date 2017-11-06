@@ -244,7 +244,7 @@
     for(int g=0; g<nscg; g++) {
       CON_STATE* sgp = net->ThrUnSendConState(thr_no, u->thr_un_idx, g);
       if(sgp->NotActive()) continue;
-      LAYER_STATE* tolay = sgp->GetPrjnSendLayer(net);
+      LAYER_STATE* tolay = sgp->GetSendLayer(net);
       BP_UNIT_SPEC_CPP* tous = (BP_UNIT_SPEC_CPP*)tolay->GetUnitSpec(net);
       if(tous->act_fun == BP_UNIT_SPEC_CPP::MAX_POOL) {
         for(int i=0; i<sgp->size; i++) {

@@ -20,7 +20,8 @@
 
 // parent includes:
 #include <LeabraNetworkState_cpp>
-#include <LayerState_cpp> 
+#include <LayerState_cpp>
+#include <LeabraUnGpState_cpp>
 
 #include <LeabraAvgMax_cpp>
 #include <LeabraLayer_mbrs>

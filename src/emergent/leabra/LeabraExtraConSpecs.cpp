@@ -17,6 +17,7 @@
 
 #include <LeabraNetwork>
 #include <LeabraUnitSpec>
+#include <MSNCon>
 
 #include <State_main>
 
@@ -226,8 +227,11 @@ void TDRewPredConSpec::Defaults_init() {
 }
 
 
-#include "LatAmygConSpec.cpp"
+////////////////////////////////////////////////////////////////////
+//              PVLV -- Amyg
 
+
+#include "LatAmygConSpec.cpp"
 TA_BASEFUNS_CTORS_DEFN(LatAmygGains);
 TA_BASEFUNS_CTORS_DEFN(LatAmygConSpec);
 
@@ -240,7 +244,6 @@ void LatAmygConSpec::Defaults_init() {
 
 
 #include "BasAmygConSpec.cpp"
-
 TA_BASEFUNS_CTORS_DEFN(BasAmygLearnSpec);
 TA_BASEFUNS_CTORS_DEFN(BasAmygConSpec);
 
@@ -267,7 +270,6 @@ bool BasAmygConSpec::CheckConfig_RecvCons(Projection* prjn, bool quiet) {
 
 
 #include "BLAmygConSpec.cpp"
-
 TA_BASEFUNS_CTORS_DEFN(BLAmygLearnSpec);
 TA_BASEFUNS_CTORS_DEFN(BLAmygConSpec);
 
@@ -294,7 +296,6 @@ bool BLAmygConSpec::CheckConfig_RecvCons(Projection* prjn, bool quiet) {
 
 
 #include "CElAmygConSpec.cpp"
-
 TA_BASEFUNS_CTORS_DEFN(CElAmygLearnSpec);
 TA_BASEFUNS_CTORS_DEFN(CElAmygConSpec);
 
@@ -320,6 +321,46 @@ bool CElAmygConSpec::CheckConfig_RecvCons(Projection* prjn, bool quiet) {
 }
 
 
+////////////////////////////////////////////////////////////////////
+//              PVLV -- BG / VS
+
+#include "MSNConSpec.cpp"
+TA_BASEFUNS_CTORS_DEFN(MSNTraceSpec);
+TA_BASEFUNS_CTORS_DEFN(MSNTraceThalLrates);
+TA_BASEFUNS_CTORS_DEFN(MSNConSpec);
+
+void MSNConSpec::Initialize() {
+  Defaults_init();
+  Initialize_core();
+}
+
+void MSNConSpec::Defaults_init() {
+  burst_da_gain = 1.0f;
+  dip_da_gain = 1.0f;
+
+  SetUnique("wt_limits", true);
+  wt_limits.sym = false;
+  // SetUnique("lrate", true);
+  lrate = 0.005f;
+  learn_qtr = Q2_Q4;            // beta frequency default
+  // use_unlearnable = false;
+}
+
+bool MSNConSpec::CheckConfig_RecvCons(Projection* prjn, bool quiet) {
+  bool rval = inherited::CheckConfig_RecvCons(prjn, quiet);
+  LeabraLayer* rlay = (LeabraLayer*)prjn->layer;
+  LeabraUnitSpec* rus = (LeabraUnitSpec*)rlay->GetMainUnitSpec();
+  
+  if(rlay->CheckError(rus->GetStateSpecType() != LEABRA_NETWORK_STATE::T_MSNUnitSpec, quiet, rval,
+                      "requires receiving unit to use an MSNUnitSpec"))
+    return false;
+  return rval;
+}
+
+
+////////////////////////////////////////////////////////////////////
+//              Hippo
+
 #include "HippoEncoderConSpec.cpp"
 TA_BASEFUNS_CTORS_DEFN(HippoEncoderConSpec);
 
@@ -331,6 +372,9 @@ void HippoEncoderConSpec::Initialize() {
 void HippoEncoderConSpec::Defaults_init() {
 }
 
+
+////////////////////////////////////////////////////////////////////
+//              Cerebellum
 
 #include "CerebPfPcConSpec.cpp"
 TA_BASEFUNS_CTORS_DEFN(CerebPfPcConSpec);

@@ -17,6 +17,10 @@
     PROJECT_WTS_NEXT    = 0x0020,       // #HIDDEN this layer is next in line for weight projection operation
     PROJECT_WTS_DONE    = 0x0040,       // #HIDDEN this layer is done with weight projection operation (prevents loops)
     UN_GEOM_NOT_XY      = 0x0080,       // #HIDDEN unit geometry n != x*y -- requires extra math
+    LAY_FLAG_1          = 0x0100,       // misc layer flag 1
+    LAY_FLAG_2          = 0x0200,       // misc layer flag 2
+    LAY_FLAG_3          = 0x0400,       // misc layer flag 3
+    LAY_FLAG_4          = 0x0800,       // misc layer flag 2
   };
 
   // note: must keep syncrhonized with UnitState
@@ -78,13 +82,13 @@
   STATE_CLASS(PRerrVals) epc_prerr;      // #NO_SAVE #GUI_READ_ONLY #SHOW #CONDSHOW_ON_stats.prerr #CAT_Statistic precision and recall error values over an epoch or similar larger set of external input patterns
   float                 icon_value;     // #NO_SAVE #GUI_READ_ONLY #HIDDEN #CAT_Statistic value to display if layer is iconified (algorithmically determined)
   
-  INLINE void   SetLayerFlag(LayerFlags flg)   { flags = (LayerFlags)(flags | flg); }
+  INLINE void   SetLayerFlag(int flg)   { flags = (LayerFlags)(flags | flg); }
   // set flag state on
-  INLINE void   ClearLayerFlag(LayerFlags flg) { flags = (LayerFlags)(flags & ~flg); }
+  INLINE void   ClearLayerFlag(int flg) { flags = (LayerFlags)(flags & ~flg); }
   // clear flag state (set off)
-  INLINE bool   HasLayerFlag(LayerFlags flg) const { return (flags & flg); }
+  INLINE bool   HasLayerFlag(int flg) const { return (flags & flg); }
   // check if flag is set
-  INLINE void   SetLayerFlagState(LayerFlags flg, bool on)
+  INLINE void   SetLayerFlagState(int flg, bool on)
   { if(on) SetLayerFlag(flg); else ClearLayerFlag(flg); }
   // set flag state according to on bool (if true, set flag, if false, clear it)
 
@@ -112,6 +116,10 @@
     return (strncmp(layer_name, lay_name, LAYER_STATE::LAY_NAME_MAX_LEN) == 0);
   }
   // #CAT_State return true if that is the name of the layer
+  INLINE bool   LayerNameContains(const char* lay_name) const {
+    return (strstr(layer_name, lay_name) != NULL);
+  }
+  // #CAT_State return true if the layer name contains the given string
 
   INLINE LAYER_SPEC_CPP* GetLayerSpec(NETWORK_STATE* net) const
   { return net->GetLayerSpec(spec_idx); }

@@ -1,34 +1,9 @@
-// Copyright 2017, Regents of the University of Colorado,
-// Carnegie Mellon University, Princeton University.
-//
-// This file is part of Emergent
-//
-//   Emergent is free software; you can redistribute it and/or modify
-//   it under the terms of the GNU General Public License as published by
-//   the Free Software Foundation; either version 2 of the License, or
-//   (at your option) any later version.
-//
-//   Emergent is distributed in the hope that it will be useful,
-//   but WITHOUT ANY WARRANTY; without even the implied warranty of
-//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//   GNU General Public License for more details.
+// this is included directly in LeabraExtraUnitSpecs_cpp / _cuda
+// {
 
-#include "PPTgUnitSpec.h"
-
-#include <LeabraNetwork>
-
-TA_BASEFUNS_CTORS_DEFN(PPTgUnitSpec);
-
-void PPTgUnitSpec::Initialize() {
-  d_net_gain = 1.0f;
-  clamp_act = true;
-  act_thr = 0.0f;
-}
-
-void PPTgUnitSpec::Defaults_init() {
-}
-
-void PPTgUnitSpec::Compute_Act_Rate(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
+void STATE_CLASS(PPTgUnitSpec)::Compute_Act_Rate
+  (LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) {
+  
   float net_save = u->net;
   
   u->net = d_net_gain * (u->net - u->misc_1); // convert to delta OLD GUY
@@ -44,7 +19,9 @@ void PPTgUnitSpec::Compute_Act_Rate(LeabraUnitState_cpp* u, LeabraNetwork* net, 
   u->net = net_save;           // restore
 }
 
-void PPTgUnitSpec::Compute_Act_Spike(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
+void STATE_CLASS(PPTgUnitSpec)::Compute_Act_Spike
+  (LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) {
+  
   float net_save = u->net;
   u->net = d_net_gain * (u->net - u->misc_1); // convert to delta
   if(u->net < 0.0f) u->net = 0.0f;
@@ -55,13 +32,5 @@ void PPTgUnitSpec::Compute_Act_Spike(LeabraUnitState_cpp* u, LeabraNetwork* net,
     u->da = 0.0f;
   }
   u->net = net_save;           // restore
-}
-
-void PPTgUnitSpec::Quarter_Final(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
-  inherited::Quarter_Final(u, net, thr_no);
-  if(net->phase == LeabraNetwork::PLUS_PHASE) {
-    //u->misc_2 = fminf(u->act_dif, 0.0f); // save any neg phasic DA to filter rebounds
-    u->misc_1 = u->net;       // save new guy for next time -- this is the raw net..
-  }
 }
 

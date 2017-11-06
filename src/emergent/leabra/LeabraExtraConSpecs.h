@@ -31,7 +31,8 @@ eTypeDef_Of(LatAmygGains);
 eTypeDef_Of(BasAmygLearnSpec);
 eTypeDef_Of(BLAmygLearnSpec);
 eTypeDef_Of(CElAmygLearnSpec);
-
+eTypeDef_Of(MSNTraceSpec);
+eTypeDef_Of(MSNTraceThalLrates);
 
 #include <LeabraExtraConSpecs_mbrs>
 
@@ -321,6 +322,27 @@ private:
   void  Initialize();
   void	Defaults_init();
   void  Destroy()     { };
+};
+
+
+eTypeDef_Of(MSNConSpec);
+
+class E_API MSNConSpec : public LeabraConSpec {
+  // Learning of striatal medium spiny neurons input (afferent) connections -- must have an MSNUnitSpec on recv neuron -- based on dopamine, sender * receiver activation product, and (optionally) thal gating activation signal -- supports a trace mechanism which accumulates an ongoing synaptic trace over time, which is then multiplied by a later dopamine da_p value that is typically driven by primary value (US) outcome at end of a sequence of actions -- dwt = da_p * tr; tr = [thal] * su * ru - otr_lrate * su * ru, representing a contrast between gated activations that go one way, and other non-gated activations that go the opposite way (which supports engagement of alternative gating strategies, and avoids overall reductions in weights) -- the trace is reset when this weight change is computed, as a result of an over-threshold level of dopamine.  Patch units shunt dopamine from actively maintaining stripes / information processing channels, to prevent this clearing.
+INHERITED(LeabraConSpec)
+public:
+
+#include <MSNConSpec>
+  
+  bool  CheckConfig_RecvCons(Projection* prjn, bool quiet=false) override;
+  
+  TA_SIMPLE_BASEFUNS(MSNConSpec);
+protected:
+  SPEC_DEFAULTS;
+private:
+  void 	Initialize();
+  void	Defaults_init();
+  void	Destroy()		{ };
 };
 
 

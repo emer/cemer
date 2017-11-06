@@ -16,9 +16,8 @@
 #include "LeabraUnitSpec.h"
 #include <LeabraNetwork>
 #include <LeabraBiasSpec>
-// #include <DeepCtxtConSpec>
-// #include <SendDeepRawConSpec>
-// #include <SendDeepModConSpec>
+#include <LeabraExtraConSpecs>
+
 #include <taProject>
 #include <taMath_double>
 #include <DataTable>
@@ -51,7 +50,8 @@ TA_BASEFUNS_CTORS_DEFN(LeabraUnitSpec);
 SMARTREF_OF_CPP(LeabraUnitSpec);
 
 #include <LeabraLayerSpec_cpp>
-#include <LeabraConSpec_cpp>
+//#include <LeabraConSpec_cpp>
+#include <LeabraExtraConSpecs_cpp> // includes base
 
 #include <State_main>
 

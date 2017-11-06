@@ -1,58 +1,12 @@
-// Copyright 2017, Regents of the University of Colorado,
-// Carnegie Mellon University, Princeton University.
-//
-// This file is part of Emergent
-//
-//   Emergent is free software; you can redistribute it and/or modify
-//   it under the terms of the GNU General Public License as published by
-//   the Free Software Foundation; either version 2 of the License, or
-//   (at your option) any later version.
-//
-//   Emergent is distributed in the hope that it will be useful,
-//   but WITHOUT ANY WARRANTY; without even the implied warranty of
-//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//   GNU General Public License for more details.
+// this is included directly in LeabraExtraUnitSpecs_cpp / _cuda
+// {
 
-#include "DeepCopyUnitSpec.h"
-#include <LeabraNetwork>
+void STATE_CLASS(DeepCopyUnitSpec)::Compute_ActFmSource
+  (LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) {
 
-TA_BASEFUNS_CTORS_DEFN(DeepCopyUnitSpec);
-
-void DeepCopyUnitSpec::Initialize() {
-  deep_var = DEEP_RAW;
-  Defaults_init();
-}
-
-void DeepCopyUnitSpec::Defaults_init() {
-}
-
-bool DeepCopyUnitSpec::CheckConfig_Unit(Layer* lay, bool quiet) {
-  bool rval = inherited::CheckConfig_Unit(lay, quiet);
-
-  LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
-
-  if(lay->units.leaves == 0) return rval;
-  LeabraUnit* un = (LeabraUnit*)lay->units.Leaf(0); // take first one
-  
-  LeabraConState_cpp* cg = (LeabraConState_cpp*)un->RecvConStateSafe(0);
-  if(lay->CheckError(!cg, quiet, rval,
-                     "Requires one recv projection!")) {
-    return false;
-  }
-  LeabraUnit* su = (LeabraUnit*)cg->SafeUn(0);
-  if(lay->CheckError(!su, quiet, rval, 
-                     "Requires one unit in recv projection!")) {
-    return false;
-  }
-
-  return rval;
-}
-
-void DeepCopyUnitSpec::Compute_ActFmSource(LeabraUnitState_cpp* u, LeabraNetwork* net,
-                                         int thr_no) {
-  LeabraConState_cpp* cg = (LeabraConState_cpp*)u->RecvConStateSafe(net, thr_no, 0);
-  LeabraUnitState_cpp* su = (LeabraUnitState_cpp*)cg->UnState(0, net);
-  LeabraLayer* fmlay = (LeabraLayer*)cg->prjn->from.ptr();
+  LEABRA_CON_STATE* cg = (LEABRA_CON_STATE*)u->RecvConStateSafe(net, 0);
+  LEABRA_UNIT_STATE* su = (LEABRA_UNIT_STATE*)cg->UnState(0, net);
+  LEABRA_LAYER_STATE* fmlay = (LEABRA_LAYER_STATE*)cg->GetSendLayer(net);
   if(fmlay->lesioned()) {
     u->act = 0.0f;
     return;
@@ -81,12 +35,3 @@ void DeepCopyUnitSpec::Compute_ActFmSource(LeabraUnitState_cpp* u, LeabraNetwork
     Compute_DeepRaw(u, net, thr_no);
   }
 }
-
-void DeepCopyUnitSpec::Compute_Act_Rate(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
-  Compute_ActFmSource(u, net, thr_no);
-}
-
-void DeepCopyUnitSpec::Compute_Act_Spike(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) {
-  Compute_ActFmSource(u, net, thr_no);
-}
-

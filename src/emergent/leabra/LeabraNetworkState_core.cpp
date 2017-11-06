@@ -83,6 +83,8 @@ LAYER_SPEC_CPP* LEABRA_NETWORK_STATE::NewLayerSpec(int spec_type) const {
   //   return new STATE_CLASS_CPP(DecodeTwoDValLayerSpec)();
   // case T_LeabraV1LayerSpec:
   //   return new STATE_CLASS_CPP(LeabraV1LayerSpec)();
+  // case T_ExtRewLayerSpec:
+  //   return new STATE_CLASS_CPP(ExtRewLayerSpec)();
   // case T_SubiculumLayerSpec:
   //   return new STATE_CLASS_CPP(SubiculumLayerSpec)();
   // case T_GPiSoftMaxLayerSpec:
@@ -96,70 +98,66 @@ UNIT_SPEC_CPP* LEABRA_NETWORK_STATE::NewUnitSpec(int spec_type) const {
   switch(spec_type) {
   case T_LeabraUnitSpec:
     return new STATE_CLASS_CPP(LeabraUnitSpec)();
-  // case T_LayerActUnitSpec:
-  //   return new STATE_CLASS_CPP(LayerActUnitSpec)();
-  // case T_DeepCopyUnitSpec:
-  //   return new STATE_CLASS_CPP(DeepCopyUnitSpec)();
-  // case T_ThalSendUnitSpec:
-  //   return new STATE_CLASS_CPP(ThalSendUnitSpec)();
-  // case T_PoolInputsUnitSpec:
-  //   return new STATE_CLASS_CPP(PoolInputsUnitSpec)();
-    
-  // case T_ExtRewLayerSpec:
-  //   return new STATE_CLASS_CPP(ExtRewLayerSpec)();
-  // case T_TDRewPredUnitSpec:
-  //   return new STATE_CLASS_CPP(TDRewPredUnitSpec)();
-  // case T_TDRewIntegUnitSpec:
-  //   return new STATE_CLASS_CPP(TDRewIntegUnitSpec)();
-  // case T_TDDeltaUnitSpec:
-  //   return new STATE_CLASS_CPP(TDDeltaUnitSpec)();
+  case T_LayerActUnitSpec:
+    return new STATE_CLASS_CPP(LayerActUnitSpec)();
+  case T_DeepCopyUnitSpec:
+    return new STATE_CLASS_CPP(DeepCopyUnitSpec)();
+  case T_ThalSendUnitSpec:
+    return new STATE_CLASS_CPP(ThalSendUnitSpec)();
+  case T_PoolInputsUnitSpec:
+    return new STATE_CLASS_CPP(PoolInputsUnitSpec)();
 
-  // case T_BasAmygUnitSpec:
-  //   return new STATE_CLASS_CPP(BasAmygUnitSpec)();
-  // case T_BLAmygUnitSpec:
-  //   return new STATE_CLASS_CPP(BLAmygUnitSpec)();
-  // case T_CElAmygUnitSpec:
-  //   return new STATE_CLASS_CPP(CElAmygUnitSpec)();
-  // case T_PPTgUnitSpec:
-  //   return new STATE_CLASS_CPP(PPTgUnitSpec)();
-  // case T_LHbRMTgUnitSpec:
-  //   return new STATE_CLASS_CPP(LHbRMTgUnitSpec)();
-  // case T_VTAUnitSpec:
-  //   return new STATE_CLASS_CPP(VTAUnitSpec)();
-  // case T_DRNUnitSpec:
-  //   return new STATE_CLASS_CPP(DRNUnitSpec)();
-  // case T_ClampDaUnitSpec:
-  //   return new STATE_CLASS_CPP(ClampDaUnitSpec)();
-  // case T_BFCSUnitSpec:
-  //   return new STATE_CLASS_CPP(BFCSUnitSpec)();
+  case T_TDRewPredUnitSpec:
+    return new STATE_CLASS_CPP(TDRewPredUnitSpec)();
+  case T_TDRewIntegUnitSpec:
+    return new STATE_CLASS_CPP(TDRewIntegUnitSpec)();
+  case T_TDDeltaUnitSpec:
+    return new STATE_CLASS_CPP(TDDeltaUnitSpec)();
 
-  // case T_D1D2UnitSpec:
-  //   return new STATE_CLASS_CPP(D1D2UnitSpec)();
-  // case T_MSNConSpec:
-  //   return new STATE_CLASS_CPP(MSNConSpec)();
-  // case T_MSNUnitSpec:
-  //   return new STATE_CLASS_CPP(MSNUnitSpec)();
-  // case T_TANUnitSpec:
-  //   return new STATE_CLASS_CPP(TANUnitSpec)();
-  // case T_PatchUnitSpec:
-  //   return new STATE_CLASS_CPP(PatchUnitSpec)();
-  // case T_GPiInvUnitSpec:
-  //   return new STATE_CLASS_CPP(GPiInvUnitSpec)();
-  // case T_InvertUnitSpec:
-  //   return new STATE_CLASS_CPP(InvertUnitSpec)();
-  // case T_PFCUnitSpec:
-  //   return new STATE_CLASS_CPP(PFCUnitSpec)();
-    
-  // case T_ECoutUnitSpec:
-  //   return new STATE_CLASS_CPP(ECoutUnitSpec)();
-  // case T_CA1UnitSpec:
-  //   return new STATE_CLASS_CPP(CA1UnitSpec)();
-  // case T_CerebGranuleUnitSpec:
-  //   return new STATE_CLASS_CPP(CerebGranuleUnitSpec)();
-  // case T_LeabraMultCopyUnitSpec:
-  //   return new STATE_CLASS_CPP(LeabraMultCopyUnitSpec)();
-  // case T_LeabraContextUnitSpec:
-  //   return new STATE_CLASS_CPP(LeabraContextUnitSpec)();
+  case T_BasAmygUnitSpec:
+    return new STATE_CLASS_CPP(BasAmygUnitSpec)();
+  case T_BLAmygUnitSpec:
+    return new STATE_CLASS_CPP(BLAmygUnitSpec)();
+  case T_CElAmygUnitSpec:
+    return new STATE_CLASS_CPP(CElAmygUnitSpec)();
+  case T_PPTgUnitSpec:
+    return new STATE_CLASS_CPP(PPTgUnitSpec)();
+  case T_LHbRMTgUnitSpec:
+    return new STATE_CLASS_CPP(LHbRMTgUnitSpec)();
+  case T_VTAUnitSpec:
+    return new STATE_CLASS_CPP(VTAUnitSpec)();
+  case T_DRNUnitSpec:
+    return new STATE_CLASS_CPP(DRNUnitSpec)();
+  case T_ClampDaUnitSpec:
+    return new STATE_CLASS_CPP(ClampDaUnitSpec)();
+  case T_BFCSUnitSpec:
+    return new STATE_CLASS_CPP(BFCSUnitSpec)();
+
+  case T_D1D2UnitSpec:
+    return new STATE_CLASS_CPP(D1D2UnitSpec)();
+  case T_MSNUnitSpec:
+    return new STATE_CLASS_CPP(MSNUnitSpec)();
+  case T_TANUnitSpec:
+    return new STATE_CLASS_CPP(TANUnitSpec)();
+  case T_PatchUnitSpec:
+    return new STATE_CLASS_CPP(PatchUnitSpec)();
+  case T_GPiInvUnitSpec:
+    return new STATE_CLASS_CPP(GPiInvUnitSpec)();
+  case T_InvertUnitSpec:
+    return new STATE_CLASS_CPP(InvertUnitSpec)();
+  case T_PFCUnitSpec:
+    return new STATE_CLASS_CPP(PFCUnitSpec)();
+
+  case T_ECoutUnitSpec:
+    return new STATE_CLASS_CPP(ECoutUnitSpec)();
+  case T_CA1UnitSpec:
+    return new STATE_CLASS_CPP(CA1UnitSpec)();
+  case T_CerebGranuleUnitSpec:
+    return new STATE_CLASS_CPP(CerebGranuleUnitSpec)();
+  case T_LeabraMultCopyUnitSpec:
+    return new STATE_CLASS_CPP(LeabraMultCopyUnitSpec)();
+  case T_LeabraContextUnitSpec:
+    return new STATE_CLASS_CPP(LeabraContextUnitSpec)();
   }
   StateError("NewUnitSpec, type not recognized");
   return new STATE_CLASS_CPP(LeabraUnitSpec)();
@@ -203,6 +201,9 @@ CON_SPEC_CPP* LEABRA_NETWORK_STATE::NewConSpec(int spec_type) const {
     return new STATE_CLASS_CPP(BLAmygConSpec)();
   case T_CElAmygConSpec:
     return new STATE_CLASS_CPP(CElAmygConSpec)();
+  case T_MSNConSpec:
+    return new STATE_CLASS_CPP(MSNConSpec)();
+
   case T_HippoEncoderConSpec:
     return new STATE_CLASS_CPP(HippoEncoderConSpec)();
   case T_CerebPfPcConSpec:
@@ -309,7 +310,7 @@ void LEABRA_NETWORK_STATE::Init_Netins_Thr(int thr_no) {
   for(int i=0; i<nu; i++) {
     LEABRA_UNIT_STATE* uv = (LEABRA_UNIT_STATE*)ThrUnitState(thr_no, i);
     if(uv->lesioned()) continue;
-    LEABRA_UNIT_SPEC* us = (LEABRA_UNIT_SPEC*)uv->GetUnitSpec(this);
+    LEABRA_UNIT_SPEC_CPP* us = (LEABRA_UNIT_SPEC_CPP*)uv->GetUnitSpec(this);
     us->Init_Netins(uv, this, thr_no);
   }
 }
@@ -320,7 +321,7 @@ void LEABRA_NETWORK_STATE::DecayState_Thr(int thr_no) {
   for(int i=0; i<nu; i++) {
     LEABRA_UNIT_STATE* uv = (LEABRA_UNIT_STATE*)ThrUnitState(thr_no, i);
     if(uv->lesioned()) continue;
-    LEABRA_UNIT_SPEC* us = (LEABRA_UNIT_SPEC*)uv->GetUnitSpec(this);
+    LEABRA_UNIT_SPEC_CPP* us = (LEABRA_UNIT_SPEC_CPP*)uv->GetUnitSpec(this);
     us->DecayState(uv, this, thr_no, decay);
   }
 }
@@ -330,7 +331,7 @@ void LEABRA_NETWORK_STATE::ResetSynTR_Thr(int thr_no) {
   for(int i=0; i<nu; i++) {
     LEABRA_UNIT_STATE* uv = (LEABRA_UNIT_STATE*)ThrUnitState(thr_no, i);
     if(uv->lesioned()) continue;
-    LEABRA_UNIT_SPEC* us = (LEABRA_UNIT_SPEC*)uv->GetUnitSpec(this);
+    LEABRA_UNIT_SPEC_CPP* us = (LEABRA_UNIT_SPEC_CPP*)uv->GetUnitSpec(this);
     us->ResetSynTR(uv, this, thr_no);
   }
 }
@@ -382,7 +383,7 @@ void LEABRA_NETWORK_STATE::Trial_Init_Unit_Thr(int thr_no) {
   for(int i=0; i<nu; i++) {
     LEABRA_UNIT_STATE* uv = (LEABRA_UNIT_STATE*)ThrUnitState(thr_no, i);
     if(uv->lesioned()) continue;
-    LEABRA_UNIT_SPEC* us = (LEABRA_UNIT_SPEC*)uv->GetUnitSpec(this);
+    LEABRA_UNIT_SPEC_CPP* us = (LEABRA_UNIT_SPEC_CPP*)uv->GetUnitSpec(this);
     us->Trial_Init_Unit(uv, this, thr_no);
   }
 }
@@ -414,7 +415,7 @@ void LEABRA_NETWORK_STATE::Quarter_Init_Unit_Thr(int thr_no) {
   for(int i=0; i<nu; i++) {
     LEABRA_UNIT_STATE* uv = (LEABRA_UNIT_STATE*)ThrUnitState(thr_no, i);
     if(uv->lesioned()) continue;
-    LEABRA_UNIT_SPEC* us = (LEABRA_UNIT_SPEC*)uv->GetUnitSpec(this);
+    LEABRA_UNIT_SPEC_CPP* us = (LEABRA_UNIT_SPEC_CPP*)uv->GetUnitSpec(this);
     us->Quarter_Init_Unit(uv, this, thr_no);
   }
 }
@@ -433,7 +434,7 @@ void LEABRA_NETWORK_STATE::Quarter_Init_TargFlags_Thr(int thr_no) {
   for(int i=0; i<nu; i++) {
     LEABRA_UNIT_STATE* uv = (LEABRA_UNIT_STATE*)ThrUnitState(thr_no, i);
     if(uv->lesioned()) continue;
-    LEABRA_UNIT_SPEC* us = (LEABRA_UNIT_SPEC*)uv->GetUnitSpec(this);
+    LEABRA_UNIT_SPEC_CPP* us = (LEABRA_UNIT_SPEC_CPP*)uv->GetUnitSpec(this);
     us->Quarter_Init_TargFlags(uv, this, thr_no);
   }
 }
@@ -452,7 +453,7 @@ void LEABRA_NETWORK_STATE::Compute_NetinScale_Thr(int thr_no) {
   for(int i=0; i<nu; i++) {
     LEABRA_UNIT_STATE* uv = (LEABRA_UNIT_STATE*)ThrUnitState(thr_no, i);
     if(uv->lesioned()) continue;
-    LEABRA_UNIT_SPEC* us = (LEABRA_UNIT_SPEC*)uv->GetUnitSpec(this);
+    LEABRA_UNIT_SPEC_CPP* us = (LEABRA_UNIT_SPEC_CPP*)uv->GetUnitSpec(this);
     us->Compute_NetinScale(uv, this, thr_no);
   }
 }
@@ -475,7 +476,7 @@ void LEABRA_NETWORK_STATE::Quarter_Init_Deep_Thr(int thr_no) {
     for(int i=0; i<nu; i++) {
       LEABRA_UNIT_STATE* uv = (LEABRA_UNIT_STATE*)ThrUnitState(thr_no, i);
       if(uv->lesioned()) continue;
-      LEABRA_UNIT_SPEC* us = (LEABRA_UNIT_SPEC*)uv->GetUnitSpec(this);
+      LEABRA_UNIT_SPEC_CPP* us = (LEABRA_UNIT_SPEC_CPP*)uv->GetUnitSpec(this);
       us->Quarter_Init_Deep(uv, this, thr_no);
     }
     ThreadSyncSpin(thr_no, 0);
@@ -483,7 +484,7 @@ void LEABRA_NETWORK_STATE::Quarter_Init_Deep_Thr(int thr_no) {
     for(int i=0; i<nu; i++) {
       LEABRA_UNIT_STATE* uv = (LEABRA_UNIT_STATE*)ThrUnitState(thr_no, i);
       if(uv->lesioned()) continue;
-      LEABRA_UNIT_SPEC* us = (LEABRA_UNIT_SPEC*)uv->GetUnitSpec(this);
+      LEABRA_UNIT_SPEC_CPP* us = (LEABRA_UNIT_SPEC_CPP*)uv->GetUnitSpec(this);
       us->Send_DeepCtxtNetin(uv, this, thr_no);
     }
     ThreadSyncSpin(thr_no, 1);
@@ -491,7 +492,7 @@ void LEABRA_NETWORK_STATE::Quarter_Init_Deep_Thr(int thr_no) {
     for(int i=0; i<nu; i++) {
       LEABRA_UNIT_STATE* uv = (LEABRA_UNIT_STATE*)ThrUnitState(thr_no, i);
       if(uv->lesioned()) continue;
-      LEABRA_UNIT_SPEC* us = (LEABRA_UNIT_SPEC*)uv->GetUnitSpec(this);
+      LEABRA_UNIT_SPEC_CPP* us = (LEABRA_UNIT_SPEC_CPP*)uv->GetUnitSpec(this);
       us->Compute_DeepCtxt(uv, this, thr_no);
     }
     ThreadSyncSpin(thr_no, 2);
@@ -508,7 +509,7 @@ void LEABRA_NETWORK_STATE::Quarter_Init_Deep_Thr(int thr_no) {
   for(int i=0; i<nu; i++) {
     LEABRA_UNIT_STATE* uv = (LEABRA_UNIT_STATE*)ThrUnitState(thr_no, i);
     if(uv->lesioned()) continue;
-    LEABRA_UNIT_SPEC* us = (LEABRA_UNIT_SPEC*)uv->GetUnitSpec(this);
+    LEABRA_UNIT_SPEC_CPP* us = (LEABRA_UNIT_SPEC_CPP*)uv->GetUnitSpec(this);
     us->Compute_DeepStateUpdt(uv, this, thr_no);
   }
 }
@@ -561,7 +562,7 @@ void LEABRA_NETWORK_STATE::Compute_HardClamp_Thr(int thr_no) {
   for(int i=0; i<nu; i++) {
     LEABRA_UNIT_STATE* uv = (LEABRA_UNIT_STATE*)ThrUnitState(thr_no, i);
     if(uv->lesioned()) continue;
-    LEABRA_UNIT_SPEC* us = (LEABRA_UNIT_SPEC*)uv->GetUnitSpec(this);
+    LEABRA_UNIT_SPEC_CPP* us = (LEABRA_UNIT_SPEC_CPP*)uv->GetUnitSpec(this);
     us->Compute_HardClamp(uv, this, thr_no);
   }
 }
@@ -589,7 +590,7 @@ void LEABRA_NETWORK_STATE::ExtToComp_Thr(int thr_no) {
   for(int i=0; i<nu; i++) {
     LEABRA_UNIT_STATE* uv = (LEABRA_UNIT_STATE*)ThrUnitState(thr_no, i);
     if(uv->lesioned()) continue;
-    LEABRA_UNIT_SPEC* us = (LEABRA_UNIT_SPEC*)uv->GetUnitSpec(this);
+    LEABRA_UNIT_SPEC_CPP* us = (LEABRA_UNIT_SPEC_CPP*)uv->GetUnitSpec(this);
     us->ExtToComp(uv, this, thr_no);
   }
 }
@@ -608,7 +609,7 @@ void LEABRA_NETWORK_STATE::TargExtToComp_Thr(int thr_no) {
   for(int i=0; i<nu; i++) {
     LEABRA_UNIT_STATE* uv = (LEABRA_UNIT_STATE*)ThrUnitState(thr_no, i);
     if(uv->lesioned()) continue;
-    LEABRA_UNIT_SPEC* us = (LEABRA_UNIT_SPEC*)uv->GetUnitSpec(this);
+    LEABRA_UNIT_SPEC_CPP* us = (LEABRA_UNIT_SPEC_CPP*)uv->GetUnitSpec(this);
     us->TargExtToComp(uv, this, thr_no);
   }
 }
@@ -715,7 +716,7 @@ void LEABRA_NETWORK_STATE::Send_Netin_Thr(int thr_no) {
   for(int i=0; i<nu; i++) {
     LEABRA_UNIT_STATE* uv = (LEABRA_UNIT_STATE*)ThrUnitState(thr_no, i);
     if(uv->lesioned()) continue;
-    LEABRA_UNIT_SPEC* us = (LEABRA_UNIT_SPEC*)uv->GetUnitSpec(this);
+    LEABRA_UNIT_SPEC_CPP* us = (LEABRA_UNIT_SPEC_CPP*)uv->GetUnitSpec(this);
     us->Send_NetinDelta(uv, this, thr_no);
   }
   if(send_pct_tot > 0) {        // only avail for one-threaded calls
@@ -735,7 +736,7 @@ void LEABRA_NETWORK_STATE::Compute_NetinInteg_Thr(int thr_no) {
   for(int i=0; i<nu; i++) {
     LEABRA_UNIT_STATE* uv = (LEABRA_UNIT_STATE*)ThrUnitState(thr_no, i);
     if(uv->lesioned()) continue;
-    LEABRA_UNIT_SPEC* us = (LEABRA_UNIT_SPEC*)uv->GetUnitSpec(this);
+    LEABRA_UNIT_SPEC_CPP* us = (LEABRA_UNIT_SPEC_CPP*)uv->GetUnitSpec(this);
     us->Compute_NetinInteg(uv, this, thr_no);
   }
 
@@ -896,7 +897,7 @@ void LEABRA_NETWORK_STATE::Compute_Act_Rate_Thr(int thr_no) {
   for(int i=0; i<nu; i++) {
     LEABRA_UNIT_STATE* uv = (LEABRA_UNIT_STATE*)ThrUnitState(thr_no, i);
     if(uv->lesioned()) continue;
-    LEABRA_UNIT_SPEC* us = (LEABRA_UNIT_SPEC*)uv->GetUnitSpec(this);
+    LEABRA_UNIT_SPEC_CPP* us = (LEABRA_UNIT_SPEC_CPP*)uv->GetUnitSpec(this);
     us->Compute_Act_Rate(uv, this, thr_no);
   }
 
@@ -912,7 +913,7 @@ void LEABRA_NETWORK_STATE::Compute_Act_Spike_Thr(int thr_no) {
   for(int i=0; i<nu; i++) {
     LEABRA_UNIT_STATE* uv = (LEABRA_UNIT_STATE*)ThrUnitState(thr_no, i);
     if(uv->lesioned()) continue;
-    LEABRA_UNIT_SPEC* us = (LEABRA_UNIT_SPEC*)uv->GetUnitSpec(this);
+    LEABRA_UNIT_SPEC_CPP* us = (LEABRA_UNIT_SPEC_CPP*)uv->GetUnitSpec(this);
     us->Compute_Act_Spike(uv, this, thr_no);
   }
 
@@ -928,7 +929,7 @@ void LEABRA_NETWORK_STATE::Compute_Act_Post_Thr(int thr_no) {
   for(int i=0; i<nu; i++) {
     LEABRA_UNIT_STATE* uv = (LEABRA_UNIT_STATE*)ThrUnitState(thr_no, i);
     if(uv->lesioned()) continue;
-    LEABRA_UNIT_SPEC* us = (LEABRA_UNIT_SPEC*)uv->GetUnitSpec(this);
+    LEABRA_UNIT_SPEC_CPP* us = (LEABRA_UNIT_SPEC_CPP*)uv->GetUnitSpec(this);
     us->Compute_Act_Post(uv, this, thr_no);
   }
 
@@ -1125,7 +1126,7 @@ void LEABRA_NETWORK_STATE::Compute_DeepRaw_Thr(int thr_no) {
   for(int i=0; i<nu; i++) {
     LEABRA_UNIT_STATE* uv = (LEABRA_UNIT_STATE*)ThrUnitState(thr_no, i);
     if(uv->lesioned()) continue;
-    LEABRA_UNIT_SPEC* us = (LEABRA_UNIT_SPEC*)uv->GetUnitSpec(this);
+    LEABRA_UNIT_SPEC_CPP* us = (LEABRA_UNIT_SPEC_CPP*)uv->GetUnitSpec(this);
     us->Compute_DeepRaw(uv, this, thr_no);
   }
   ThreadSyncSpin(thr_no, 0);
@@ -1134,7 +1135,7 @@ void LEABRA_NETWORK_STATE::Compute_DeepRaw_Thr(int thr_no) {
     for(int i=0; i<nu; i++) {
       LEABRA_UNIT_STATE* uv = (LEABRA_UNIT_STATE*)ThrUnitState(thr_no, i);
       if(uv->lesioned()) continue;
-      LEABRA_UNIT_SPEC* us = (LEABRA_UNIT_SPEC*)uv->GetUnitSpec(this);
+      LEABRA_UNIT_SPEC_CPP* us = (LEABRA_UNIT_SPEC_CPP*)uv->GetUnitSpec(this);
       us->Send_DeepRawNetin(uv, this, thr_no);
     }
     ThreadSyncSpin(thr_no, 1);
@@ -1142,7 +1143,7 @@ void LEABRA_NETWORK_STATE::Compute_DeepRaw_Thr(int thr_no) {
     for(int i=0; i<nu; i++) {
       LEABRA_UNIT_STATE* uv = (LEABRA_UNIT_STATE*)ThrUnitState(thr_no, i);
       if(uv->lesioned()) continue;
-      LEABRA_UNIT_SPEC* us = (LEABRA_UNIT_SPEC*)uv->GetUnitSpec(this);
+      LEABRA_UNIT_SPEC_CPP* us = (LEABRA_UNIT_SPEC_CPP*)uv->GetUnitSpec(this);
       us->DeepRawNetin_Integ(uv, this, thr_no);
     }
     ThreadSyncSpin(thr_no, 2);
@@ -1209,7 +1210,7 @@ void LEABRA_NETWORK_STATE::ClearDeepActs_Thr(int thr_no) {
   for(int i=0; i<nu; i++) {
     LEABRA_UNIT_STATE* uv = (LEABRA_UNIT_STATE*)ThrUnitState(thr_no, i);
     if(uv->lesioned()) continue;
-    LEABRA_UNIT_SPEC* us = (LEABRA_UNIT_SPEC*)uv->GetUnitSpec(this);
+    LEABRA_UNIT_SPEC_CPP* us = (LEABRA_UNIT_SPEC_CPP*)uv->GetUnitSpec(this);
     us->ClearDeepActs(uv, this, thr_no);
   }
 }
@@ -1243,7 +1244,7 @@ void LEABRA_NETWORK_STATE::Quarter_Final_Unit_Thr(int thr_no) {
   for(int i=0; i<nu; i++) {
     LEABRA_UNIT_STATE* uv = (LEABRA_UNIT_STATE*)ThrUnitState(thr_no, i);
     if(uv->lesioned()) continue;
-    LEABRA_UNIT_SPEC* us = (LEABRA_UNIT_SPEC*)uv->GetUnitSpec(this);
+    LEABRA_UNIT_SPEC_CPP* us = (LEABRA_UNIT_SPEC_CPP*)uv->GetUnitSpec(this);
     us->Quarter_Final(uv, this, thr_no);
   }
   if(quarter == 3) {
@@ -1327,7 +1328,7 @@ void LEABRA_NETWORK_STATE::Compute_dWt_Thr(int thr_no) {
     for(int i=0; i<nu; i++) {
       LEABRA_UNIT_STATE* uv = (LEABRA_UNIT_STATE*)ThrUnitState(thr_no, i);
       if(uv->lesioned()) continue;
-      LEABRA_UNIT_SPEC* us = (LEABRA_UNIT_SPEC*)uv->GetUnitSpec(this);
+      LEABRA_UNIT_SPEC_CPP* us = (LEABRA_UNIT_SPEC_CPP*)uv->GetUnitSpec(this);
       us->Compute_dWt(uv, this, thr_no); // just bias weights
     }
   }
@@ -1353,7 +1354,7 @@ void LEABRA_NETWORK_STATE::Compute_Weights_Thr(int thr_no) {
     for(int i=0; i<nu; i++) {
       LEABRA_UNIT_STATE* uv = (LEABRA_UNIT_STATE*)ThrUnitState(thr_no, i);
       if(uv->lesioned()) continue;
-      LEABRA_UNIT_SPEC* us = (LEABRA_UNIT_SPEC*)uv->GetUnitSpec(this);
+      LEABRA_UNIT_SPEC_CPP* us = (LEABRA_UNIT_SPEC_CPP*)uv->GetUnitSpec(this);
       us->Compute_Weights(uv, this, thr_no); // just bias weights
     }
   }
@@ -1444,7 +1445,7 @@ void LEABRA_NETWORK_STATE::Compute_NormErr_Thr(int thr_no) {
     for(int ui = ust; ui < ued; ui++) {
       LEABRA_UNIT_STATE* uv = (LEABRA_UNIT_STATE*)ThrUnitState(thr_no, ui);
       if(uv->lesioned()) continue;
-      LEABRA_UNIT_SPEC* us = (LEABRA_UNIT_SPEC*)uv->GetUnitSpec(this);
+      LEABRA_UNIT_SPEC_CPP* us = (LEABRA_UNIT_SPEC_CPP*)uv->GetUnitSpec(this);
       lay_nerr += us->Compute_NormErr(uv, this, thr_no, targ_active);
       if(targ_active) lay_trg_n += 1.0f;
     }

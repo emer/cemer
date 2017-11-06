@@ -19,11 +19,11 @@
 // raw C++ (cuda) version of state -- no emergent / ta dependencies
 
 // parent includes:
+#include <LeabraNetworkState_cuda>
 #include <LayerState_cuda> 
+#include <LeabraUnGpState_cuda>
 
 #include <LeabraAvgMax_cuda>
-#include <LeabraUnGpState_mbrs>
-#include <LeabraUnGpState_mbrs>
 #include <LeabraLayer_mbrs>
 
 #include <State_cuda>
@@ -37,11 +37,10 @@ class LeabraLayerState_cuda : public LayerState_cuda {
 INHERITED(LayerState)
 public:
 
-#include <LeabraUnGpState_core>
 #include <LeabraLayer_core>
 #include <LeabraLayerState_core>
 
-  LeabraLayerState_cuda() { Initialize_ungp_core(); Initialize_lay_core(); Initialize_core(); }
+  LeabraLayerState_cuda() { Initialize_lay_core(); Initialize_core(); }
 };
 
 #endif // LeabraLayerState_cuda_h

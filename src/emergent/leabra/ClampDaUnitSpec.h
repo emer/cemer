@@ -1,34 +1,6 @@
-// Copyright 2017, Regents of the University of Colorado,
-// Carnegie Mellon University, Princeton University.
-//
-// This file is part of Emergent
-//
-//   Emergent is free software; you can redistribute it and/or modify
-//   it under the terms of the GNU General Public License as published by
-//   the Free Software Foundation; either version 2 of the License, or
-//   (at your option) any later version.
-//
-//   Emergent is distributed in the hope that it will be useful,
-//   but WITHOUT ANY WARRANTY; without even the implied warranty of
-//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//   GNU General Public License for more details.
+// this is included directly in LeabraExtraUnitSpecs_cpp / _cuda
+// {
 
-#ifndef ClampDaUnitSpec_h
-#define ClampDaUnitSpec_h 1
-
-// parent includes:
-#include <LeabraUnitSpec>
-
-// member includes:
-
-// declare all other types mentioned but not required to include:
-
-eTypeDef_Of(ClampDaUnitSpec);
-
-class E_API ClampDaUnitSpec : public LeabraUnitSpec {
-  // a dopamine unit that you can just clamp to any value and it will send it to other unit's da_p or da_v values
-INHERITED(LeabraUnitSpec)
-public:
   enum  SendDaMode {            // when to send da values to other layers
     CYCLE,                      // send every cycle
     PLUS_START,                 // start sending at start of plus phase
@@ -42,20 +14,31 @@ public:
   SendDaMode    send_da;        // when to send da values
   SendDaVal     da_val;         // what da value to send to
 
-  virtual void  Send_Da(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no);
+  INIMPL virtual void  Send_Da(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no);
   // send the da value to sending projections
 
-  void  Compute_Act_Post(LeabraUnitState_cpp* uv, LeabraNetwork* net, int thr_no) override;
+  INLINE void  Compute_Act_Post(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) override {
+    inherited::Compute_Act_Post(u, net, thr_no);
+    if(send_da == CYCLE) {
+      Send_Da(u, net, thr_no);
+    }
+    else if(send_da == PLUS_START && net->phase == LEABRA_NETWORK_STATE::PLUS_PHASE) {
+      Send_Da(u, net, thr_no);
+    }
+  }
 
-  void	Quarter_Final(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) override;
+  INLINE void  Quarter_Final(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) override {
+    inherited::Quarter_Final(u, net, thr_no);
+    if(send_da == PLUS_END && net->phase == LEABRA_NETWORK_STATE::PLUS_PHASE) {
+      Send_Da(u, net, thr_no);
+    }
+  }
 
-  TA_SIMPLE_BASEFUNS(ClampDaUnitSpec);
-protected:
-  SPEC_DEFAULTS;
-private:
-  void  Initialize();
-  void  Destroy()     { };
-  void	Defaults_init() { };
-};
+  INLINE void Initialize_core() {
+    send_da = CYCLE;
+    da_val = DA_P;
+  }
+  // #IGNORE
 
-#endif // ClampDaUnitSpec_h
+  INLINE int  GetStateSpecType() const override
+  { return LEABRA_NETWORK_STATE::T_ClampDaUnitSpec; }

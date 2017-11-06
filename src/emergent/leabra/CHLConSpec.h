@@ -4,7 +4,7 @@
   STATE_CLASS(ChlSpecs)	chl;		// #CAT_Learning CHL learning parameters
 
   INLINE float Compute_SAvgCor(LEABRA_CON_STATE* cg, LEABRA_NETWORK_STATE* net, int thr_no) {
-    LEABRA_LAYER_STATE* slay = (LEABRA_LAYER_STATE*)cg->GetPrjnSendLayer(net);
+    LEABRA_LAYER_STATE* slay = (LEABRA_LAYER_STATE*)cg->GetSendLayer(net);
     float savg = .5f + chl.savg_cor * (slay->acts_p_avg_eff - .5f);
     savg = fmaxf(chl.savg_thresh, savg); // keep this computed value within bounds
     return .5f / savg;
@@ -39,7 +39,7 @@
     if(!learn || (use_unlearnable && net->unlearnable_trial)) return;
     LEABRA_CON_STATE* cg = (LEABRA_CON_STATE*)scg;
     LEABRA_UNIT_STATE* su = (LEABRA_UNIT_STATE*)cg->ThrOwnUnState(net, thr_no);
-    LEABRA_LAYER_STATE* slay = (LEABRA_LAYER_STATE*)cg->GetPrjnSendLayer(net);
+    LEABRA_LAYER_STATE* slay = (LEABRA_LAYER_STATE*)cg->GetSendLayer(net);
     LEABRA_UNGP_STATE* lgpd = (LEABRA_UNGP_STATE*)slay->GetLayUnGpState(net);
  
     if(lgpd->acts_p.avg < chl.savg_thresh) return;

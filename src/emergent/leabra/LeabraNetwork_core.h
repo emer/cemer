@@ -26,6 +26,7 @@
     T_DecodeTwoDValLayerSpec,
     T_LeabraV1LayerSpec,
     T_SubiculumLayerSpec,
+    T_ExtRewLayerSpec,
     T_GPiSoftMaxLayerSpec,
     
     N_LeabraLayerSpecs,    // derived classes start from this one -- use class name for subclasses
@@ -39,11 +40,11 @@
     T_ThalSendUnitSpec,
     T_PoolInputsUnitSpec,
     
-    T_ExtRewLayerSpec,
     T_TDRewPredUnitSpec,
     T_TDRewIntegUnitSpec,
     T_TDDeltaUnitSpec,
 
+    T_D1D2UnitSpec,
     T_BasAmygUnitSpec,
     T_BLAmygUnitSpec,
     T_CElAmygUnitSpec,
@@ -54,8 +55,6 @@
     T_ClampDaUnitSpec,
     T_BFCSUnitSpec,
 
-    T_D1D2UnitSpec,
-    T_MSNConSpec,
     T_MSNUnitSpec,
     T_TANUnitSpec,
     T_PatchUnitSpec,
@@ -93,6 +92,8 @@
     T_BasAmygConSpec,
     T_BLAmygConSpec,
     T_CElAmygConSpec,
+    T_MSNConSpec,
+
     T_HippoEncoderConSpec,
     T_CerebPfPcConSpec,
 

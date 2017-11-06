@@ -1,5 +1,6 @@
 // this contains core shared code, and is included directly in LeabraLayer* _cpp.h, _cuda.h
 //{
+
   bool		hard_clamped;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Activation if true, indicates that this layer was actually hard clamped -- this is normally set by the Compute_HardClamp function called by Quarter_Init() or NewInputData_Init() -- see LayerSpec clamp.hard parameter to determine whether layer is hard clamped or not -- this flag is not to be manipulated directly
   float		lrate_mod;      // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Learning learning rate modulation factor based on layer_lrate for this layer, and cos_diff.lrate_mod result for this layer
   bool		deep_lrate_mod;  // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Learning apply deep learning rate modulation to this layer -- set from the unit spec, used by conspec in setting learning rates
@@ -59,6 +60,17 @@
   { if(prjn_start_idx < 0) return NULL;
     return (LEABRA_PRJN_STATE*)net->GetPrjnState(prjn_start_idx + prjn_no); }
   // #IGNORE
+
+  INLINE float  GetTotalActEq(NETWORK_STATE* net)  {
+    LEABRA_UNGP_STATE* lugp = GetLayUnGpState(net);
+    return lugp->GetTotalActEq(n_units);
+  }
+  // Get the total act_eq activation in the layer based on average and number of units
+  INLINE float  GetTotalActQ0(NETWORK_STATE* net)  {
+    LEABRA_UNGP_STATE* lugp = GetLayUnGpState(net);
+    return lugp->GetTotalActQ0(n_units);
+  } 
+  // Get the total act_q0 activation in the layer based on average and number of units
 
 
   INLINE void Init_Stats() {

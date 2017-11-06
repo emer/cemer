@@ -1,89 +1,41 @@
-// Copyright 2017, Regents of the University of Colorado,
-// Carnegie Mellon University, Princeton University.
-//
-// This file is part of Emergent
-//
-//   Emergent is free software; you can redistribute it and/or modify
-//   it under the terms of the GNU General Public License as published by
-//   the Free Software Foundation; either version 2 of the License, or
-//   (at your option) any later version.
-//
-//   Emergent is distributed in the hope that it will be useful,
-//   but WITHOUT ANY WARRANTY; without even the implied warranty of
-//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//   GNU General Public License for more details.
+// this is included directly in LeabraExtraUnitSpecs_cpp / _cuda
+// {
 
-#ifndef BFCSUnitSpec_h
-#define BFCSUnitSpec_h 1
+  STATE_CLASS(BFCSAChSpec)     ach;          // parameters for the ach computation
 
-// parent includes:
-#include <LeabraUnitSpec>
-
-// member includes:
-
-// declare all other types mentioned but not required to include:
-class LeabraLayer; //
-
-eTypeDef_Of(BFCSAChSpec);
-
-class E_API BFCSAChSpec : public SpecMemberBase {
-  // ##INLINE ##NO_TOKENS ##CAT_Leabra basal forebrain cholinergic system (BFCS) specs for ach computation 
-INHERITED(SpecMemberBase)
-public:
-  float         tonic_ach;      // #DEF_0.5 set a tonic basline level of ach
-  float         tau;            // time constant of integration over trials for delta input signals to drive changes in ach levels -- updates are computed at the trial time scale so that is the operative scale for this time scale 
-  float         cea_gain;       // central nucleus of the amygdala input gain -- how strongly delta factor here contributes to overall BFCS activation
-  float         vs_gain;        // ventral striatum input gain -- how strongly delta factor here contributes to overall BFCS activation
-
-  float         dt;             // #READ_ONLY #EXPERT rate = 1 / tau
-  
-  String       GetTypeDecoKey() const override { return "UnitSpec"; }
-
-  TA_SIMPLE_BASEFUNS(BFCSAChSpec);
-protected:
-  SPEC_DEFAULTS;
-  void  UpdateAfterEdit_impl() override;
-  
-private:
-  void  Initialize();
-  void  Destroy()       { };
-  void  Defaults_init();
-};
-
-
-eTypeDef_Of(BFCSUnitSpec);
-
-class E_API BFCSUnitSpec : public LeabraUnitSpec {
-  // Models basal forebrain cholinergic system (BFCS) according to a Pearce-Hall style saliency dynamic, where lack of predictability in reward predictions drives increased ACh attentional modulation output -- updates and sends ACh at start of trial, based on trial-level delta values (act - act_q0) over its inputs
-INHERITED(LeabraUnitSpec)
-public:
-  BFCSAChSpec     ach;          // parameters for the ach computation
-
-  virtual void  Send_ACh(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no);
+  virtual void  Send_ACh(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no);
   // send the ach value to sending projections: start of quarters
-  virtual void  Compute_ACh(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no);
+  virtual void  Compute_ACh(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no);
   // compute ach value from delta change values: at end of trial
 
-  void  Quarter_Init_Unit(LeabraUnitState_cpp* uv, LeabraNetwork* net, int thr_no) override;
-  void  Compute_ActTimeAvg(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) override;
-
-  void	Compute_NetinInteg(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) override { };
-  void	Compute_Act_Rate(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) override;
-  void	Compute_Act_Spike(LeabraUnitState_cpp* u, LeabraNetwork* net, int thr_no) override;
+  INLINE void  Quarter_Init_Unit(LEABRA_UNIT_STATE* uv, LEABRA_NETWORK_STATE* net, int thr_no) override {
+    inherited::Quarter_Init_Unit(uv, net, thr_no);
+    Send_ACh(uv, net, thr_no);
+  }
+  INLINE void  Compute_ActTimeAvg(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) override {
+    inherited::Compute_ActTimeAvg(u, net, thr_no);
+    Compute_ACh(u, net, thr_no);
+  }
+    
+  INLINE void  Compute_NetinInteg(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) override { };
+  INLINE void  Compute_Act_Rate(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) override {
+    u->act_eq = u->act_nd = u->act = u->net = u->misc_1;
+    u->da = 0.0f;
+  }
+  INLINE void  Compute_Act_Spike(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) override {
+    Compute_Act_Rate(u, net, thr_no);
+  }
   
-  void 	Compute_dWt(UnitState* u, Network* net, int thr_no) override { };
-  void	Compute_Weights(UnitState* u, Network* net, int thr_no) override { };
+  INLINE void  Compute_dWt(UNIT_STATE* u, NETWORK_STATE* net, int thr_no) override { };
+  INLINE void  Compute_Weights(UNIT_STATE* u, NETWORK_STATE* net, int thr_no) override { };
 
-  void  HelpConfig();   // #BUTTON get help message for configuring this spec
-  bool  CheckConfig_Unit(Layer* lay, bool quiet=false) override;
+  INLINE void Initialize_core() {
+    // deep_raw_qtr = Q4;
+    // act_range.max = 2.0f;   act_range.min = -2.0f;   act_range.UpdateRange();
+    // clamp_range.max = 2.0f; clamp_range.min = -2.0f; clamp_range.UpdateRange();
+  }
+  // #IGNORE
 
-  TA_SIMPLE_BASEFUNS(BFCSUnitSpec);
-protected:
-  SPEC_DEFAULTS;
-private:
-  void  Initialize();
-  void  Destroy()     { };
-  void  Defaults_init() { Initialize(); }
-};
+  INLINE int  GetStateSpecType() const override
+  { return LEABRA_NETWORK_STATE::T_BFCSUnitSpec; }
 
-#endif // BFCSUnitSpec_h

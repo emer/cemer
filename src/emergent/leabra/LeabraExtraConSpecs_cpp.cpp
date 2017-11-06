@@ -30,5 +30,6 @@
 #include "BasAmygConSpec.cpp"
 #include "BLAmygConSpec.cpp"
 #include "CElAmygConSpec.cpp"
+#include "MSNConSpec.cpp"
 #include "HippoEncoderConSpec.cpp"
 #include "CerebPfPcConSpec.cpp"

@@ -278,7 +278,7 @@
 
   INLINE void   GetLrates(LEABRA_CON_STATE* cg, LEABRA_NETWORK_STATE* net, int thr_no,
                           float& clrate, bool& deep_on, float& bg_lrate, float& fg_lrate)  {
-    LEABRA_LAYER_STATE* rlay = (LEABRA_LAYER_STATE*)cg->GetPrjnRecvLayer(net);
+    LEABRA_LAYER_STATE* rlay = (LEABRA_LAYER_STATE*)cg->GetRecvLayer(net);
     clrate = cur_lrate * rlay->lrate_mod;
     deep_on = deep.on;
     if(deep_on) {
