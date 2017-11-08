@@ -15,6 +15,23 @@
   }
   // get the owning layer
 
+  INLINE bool UnIdxInRange(int un_no) const
+  { return (un_no >= 0 && un_no < n_units); }
+  // #CAT_State is unit index in range according to n_units (0 <= idx < n_units)
+
+  INLINE UNIT_STATE*  GetUnitState(NETWORK_STATE* net, int un_idx) {
+    LAYER_STATE* lay = GetLayerState(net);
+    return lay->GetUnitStateGpUnIdx(net, layer_gp_idx, un_idx);
+  }
+  // get unit within this unit group at given unit index
+
+  INLINE UNIT_STATE*  GetUnitStateSafe(NETWORK_STATE* net, int un_idx) {
+    if(!UnIdxInRange(un_idx)) return NULL;
+    LAYER_STATE* lay = GetLayerState(net);
+    return lay->GetUnitStateGpUnIdx(net, layer_gp_idx, un_idx);
+  }
+  // get unit within this unit group at given unit index, safe range checking
+
   INLINE bool lesioned(NETWORK_STATE* net) {
     LAYER_STATE* lay = GetLayerState(net); return lay->lesioned();
   }

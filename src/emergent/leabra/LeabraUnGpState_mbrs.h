@@ -45,13 +45,16 @@ public:
   float act_p2_y;      // second plus phase activations
   float act_dif2_x;    // difference between second plus and minus phase activations
   float act_dif2_y;    // difference between second plus and minus phase activations
-  float err;           // error from target: targ - act_m
-  float sqerr;         // squared error from target: (targ - act_m)^2
+  float err_x;         // error from target: targ - act_m
+  float err_y;         // error from target: targ - act_m
+  float sqerr_x;       // squared error from target: (targ - act_m)^2
+  float sqerr_y;       // squared error from target: (targ - act_m)^2
 
   INLINE void   InitVals() {
     ext_x = ext_y = targ_x = targ_y = act_x = act_y = 0.0f;
     act_m_x = act_m_y =  act_p_x = act_p_y =  act_dif_x = act_dif_y = 0.0f;
     act_m2_x = act_m2_y = act_p2_x = act_p2_y = act_dif2_x = act_dif2_y = 0.0f;
+    err_x = err_y = sqerr_x = sqerr_y = 0.0f;
   }
   // initialize the values
 

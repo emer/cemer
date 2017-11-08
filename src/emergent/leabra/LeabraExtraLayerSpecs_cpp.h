@@ -23,7 +23,48 @@
 
 // member includes:
 
+#include <LeabraExtraLayerSpecs_mbrs>
+
 // declare all other types mentioned but not required to include:
 
+class ScalarValLayerSpec_cpp : public LeabraLayerSpec_cpp {
+  // represents a scalar value using a coarse-coded distributed code over units.  the external input to the first unit is used to generate distributed inputs to the rest of the units, but unlike in earlier versions, all the units represent the distributed representation - the first unit is not just for display anymore, though it does contain the scalar readout val in misc_1 unit variable, and misc_2 has the minus phase read out
+INHERITED(LeabraLayerSpec)
+public:
+
+#include <ScalarValLayerSpec>
+  
+  ScalarValLayerSpec_cpp() { Initialize_core(); }
+};
+
+
+class ExtRewLayerSpec_cpp : public ScalarValLayerSpec_cpp {
+  // computes external reward feedback: minus phase is zero, plus phase is reward value derived from network performance or other inputs (computed at start of 1+)
+INHERITED(ScalarValLayerSpec)
+public:
+
+#include <ExtRewLayerSpec>
+
+  ExtRewLayerSpec_cpp() { Initialize_core(); }
+};
+
+
+class TwoDValLayerSpec_cpp : public LeabraLayerSpec_cpp {
+  // represents one or more two-d value(s) using a coarse-coded distributed code over units.  one val readout is weighted-average; multiple vals = max bumps over 3x3 local grid
+INHERITED(LeabraLayerSpec)
+public:
+
+#include <TwoDValLayerSpec>
+
+  TwoDValLayerSpec_cpp() { Initialize_core(); }
+};
+
+// #include <DecodeTwoDValLayerSpec>
+
+// not converting below:
+// #include <MotorForceLayerSpec>
+// #include <LeabraV1LayerSpec>
+// #include <GPiSoftMaxLayerSpec>
+// #include <SubiculumLayerSpec>
 
 #endif // LeabraExtraLayerSpecs_cpp_h

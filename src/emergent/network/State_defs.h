@@ -268,6 +268,20 @@ typedef long long con_mem_idx; // connection memory index type
     expr
 #endif
 
+// unit group iterator -- sets gpidx to either -1 for whole-layer unit group, or 0..n_ungps for unit groups
+#ifndef UNIT_GP_ITR
+#define UNIT_GP_ITR(lay, expr) \
+  if(lay->HasUnitGroups()) {\
+    for(int gpidx=0; gpidx < lay->n_ungps; gpidx++) {\
+      expr \
+    }\
+  }\
+  else {\
+    int gpidx = -1;\
+    expr \
+  }
+#endif
+
 
 #ifndef StateIntArrayFuns_h
 #define StateIntArrayFuns_h 1

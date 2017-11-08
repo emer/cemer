@@ -15,4 +15,14 @@
 
 #include "LeabraExtraLayerSpecs_cpp.h"
 
+#include <LeabraConSpec_cpp>
+#include <LeabraUnitSpec_cpp>
+#include <LeabraLayerSpec_cpp>
+#include <ProjectionSpec_cpp>
+
+#include <State_cpp>
+
+#include "ScalarValLayerSpec.cpp"
+#include "ExtRewLayerSpec.cpp"
+#include "TwoDValLayerSpec.cpp"
 

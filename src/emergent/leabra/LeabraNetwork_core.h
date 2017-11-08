@@ -21,13 +21,14 @@
     T_LeabraLayerSpec = N_NetworkLayerSpecs,
 
     T_ScalarValLayerSpec,
-    T_MotorForceLayerSpec,
+    T_ExtRewLayerSpec,
     T_TwoDValLayerSpec,
     T_DecodeTwoDValLayerSpec,
-    T_LeabraV1LayerSpec,
-    T_SubiculumLayerSpec,
-    T_ExtRewLayerSpec,
-    T_GPiSoftMaxLayerSpec,
+    
+    // T_MotorForceLayerSpec,
+    // T_LeabraV1LayerSpec,
+    // T_GPiSoftMaxLayerSpec,
+    // T_SubiculumLayerSpec,
     
     N_LeabraLayerSpecs,    // derived classes start from this one -- use class name for subclasses
   };

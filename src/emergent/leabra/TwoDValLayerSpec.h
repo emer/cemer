@@ -1,200 +1,90 @@
-// Copyright 2017, Regents of the University of Colorado,
-// Carnegie Mellon University, Princeton University.
-//
-// This file is part of Emergent
-//
-//   Emergent is free software; you can redistribute it and/or modify
-//   it under the terms of the GNU General Public License as published by
-//   the Free Software Foundation; either version 2 of the License, or
-//   (at your option) any later version.
-//
-//   Emergent is distributed in the hope that it will be useful,
-//   but WITHOUT ANY WARRANTY; without even the implied warranty of
-//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//   GNU General Public License for more details.
+// this is included directly in LeabraExtraLayerSpecs_cpp / _cuda
+// {
 
-#ifndef TwoDValLayerSpec_h
-#define TwoDValLayerSpec_h 1
+  STATE_CLASS(TwoDValSpec)       twod;		// specifies how values are represented in terms of distributed patterns of activation across the layer
+  STATE_CLASS(MinMaxRange)       x_range;	// range of values represented across the X (horizontal) axis; for GAUSSIAN, add extra values above and below true useful range to prevent edge effects.
+  STATE_CLASS(MinMaxRange)       y_range;	// range of values represented across the Y (vertical) axis; for GAUSSIAN, add extra values above and below true useful range to prevent edge effects.
+  STATE_CLASS(TwoDValBias)       bias_val;	// specifies bias values
+  STATE_CLASS(MinMaxRange)       x_val_range;	// #READ_ONLY #NO_INHERIT actual range of values (scalar.min/max taking into account un_range)
+  STATE_CLASS(MinMaxRange)       y_val_range;	// #READ_ONLY #NO_INHERIT actual range of values (scalar.min/max taking into account un_range)
 
-// parent includes:
-#include <LeabraLayerSpec>
-
-// member includes:
-#include <MinMaxRange>
-
-// declare all other types mentioned but not required to include:
-
-eTypeDef_Of(TwoDValSpec);
-
-class E_API TwoDValSpec : public SpecMemberBase {
-  // ##INLINE ##NO_TOKENS ##CAT_Leabra specs for two-dimensional values
-INHERITED(SpecMemberBase)
-public:
-  enum	RepType {
-    GAUSSIAN,			// gaussian bump, with value = weighted average of tuned unit values
-    LOCALIST			// each unit represents a distinct value; intermediate values represented by graded activity of neighbors; overall activity is weighted-average across all units
-  };
-
-  RepType	rep;		// type of representation of scalar value to use
-  int		n_vals;		// number of distinct sets of X,Y values to represent in layer (i.e., if > 1, then multiple bumps are encoded -- uses peaks to locate values for multiple, and full weighted average for single value
-  float		un_width;	// #CONDEDIT_ON_rep:GAUSSIAN sigma parameter of a gaussian specifying the tuning width of the coarse-coded units (in unit_range min-max units, unless norm_width is true, meaning use normalized 0-1 proportion of unit range)
-  bool		norm_width;	// un_width is specified in normalized 0-1 proportion of unit range
-  bool		clamp_pat;	// #DEF_false if true, environment provides full set of values to clamp over entire layer (instead of providing single scalar value to clamp on 1st unit, which then generates a corresponding distributed pattern)
-  float		min_sum_act;	// #DEF_0.2 minimum total activity of all the units representing a value: when computing weighted average value, this is used as a minimum for the sum that you divide by
-  float		mn_dst;		// #DEF_0.5 minimum distance factor for reading out multiple bumps: must be at least this times un_width far away from other bumps
-  bool		clip_val;	// #DEF_true ensure that value remains within specified range
-
-  float		x_min;		// #READ_ONLY #NO_SAVE #NO_INHERIT minimum unit value
-  float		x_range;	// #READ_ONLY #NO_SAVE #NO_INHERIT range of unit values
-  float		y_min;		// #READ_ONLY #NO_SAVE #NO_INHERIT minimum unit value
-  float		y_range;	// #READ_ONLY #NO_SAVE #NO_INHERIT range of unit values
-  float		x_val;		// #READ_ONLY #NO_SAVE #NO_INHERIT current val being represented (implementational, computed in InitVal())
-  float		y_val;		// #READ_ONLY #NO_SAVE #NO_INHERIT current val being represented (implementational, computed in InitVal())
-  float		x_incr;		// #READ_ONLY #NO_SAVE #NO_INHERIT increment per unit (implementational, computed in InitVal())
-  float		y_incr;		// #READ_ONLY #NO_SAVE #NO_INHERIT increment per unit (implementational, computed in InitVal())
-  int		x_size;		// #READ_ONLY #NO_SAVE #NO_INHERIT size of axis
-  int		y_size;		// #READ_ONLY #NO_SAVE #NO_INHERIT size of axis
-  float		un_width_x;	// #READ_ONLY #NO_SAVE #NO_INHERIT unit width, x axis (use for all computations -- can be normalized)
-  float		un_width_y;	// #READ_ONLY #NO_SAVE #NO_INHERIT unit width, y axis (use for all computations -- can be normalized)
-
-  virtual void	InitRange(float xmin, float xrng, float ymin, float yrng);
-  // initialize range values, including normalized unit width values per axis
-  virtual void	InitVal(float xval, float yval, int xsize, int ysize, float xmin, float xrng, float ymin, float yrng);
-  // initialize implementational values for subsequently computing GetUnitAct to represent scalar val sval over unit group of ugp_size
-  virtual float	GetUnitAct(int unit_idx);
-  // get activation under current representation for unit at given index: MUST CALL InitVal first!
-  virtual void	GetUnitVal(int unit_idx, float& x_cur, float& y_cur);
-  // get target values associated with unit at given index: MUST CALL InitVal first!
-
-  String       GetTypeDecoKey() const override { return "LayerSpec"; }
-
-  SIMPLE_COPY(TwoDValSpec);
-  TA_BASEFUNS(TwoDValSpec);
-protected:
-  SPEC_DEFAULTS;
-private:
-  void	Initialize();
-  void 	Destroy()	{ };
-  void	Defaults_init() { };
-};
-
-eTypeDef_Of(TwoDValBias);
-
-class E_API TwoDValBias : public SpecMemberBase {
-  // ##INLINE ##NO_TOKENS ##CAT_Leabra initial bias for given activation value for scalar value units
-INHERITED(SpecMemberBase)
-public:
-  enum UnitBias {		// bias on individual units
-    NO_UN,			// no unit bias
-    BWT,			// bias value enters as a bias.wt
-  };
-
-  enum WeightBias {		// bias on weights into units
-    NO_WT,			// no weight bias
-    WT,				// input weights
-  };
-
-  UnitBias	un;		// bias on individual units
-  float		un_gain;	// #CONDEDIT_OFF_un:NO_UN #DEF_1 gain multiplier (strength) of bias to apply for units.  WT = .03 as basic weight multiplier
-  WeightBias	wt;		// bias on weights: always uses a val-shaped bias
-  float		wt_gain;	// #CONDEDIT_OFF_wt:NO_WT #DEF_1 gain multiplier (strength) of bias to apply for weights (gain 1 = .03 wt value)
-  float		x_val;		// X axis value location (center of gaussian bump)
-  float		y_val;		// Y axis value location (center of gaussian bump)
-
-  String       GetTypeDecoKey() const override { return "LayerSpec"; }
-
-  SIMPLE_COPY(TwoDValBias);
-  TA_BASEFUNS(TwoDValBias);
-protected:
-  SPEC_DEFAULTS;
-private:
-  void	Initialize();
-  void 	Destroy()	{ };
-  void	Defaults_init() { };	// note: does NOT do any init -- these vals are not really subject to defaults in the usual way, so don't mess with them
-};
-
-eTypeDef_Of(TwoDValLayerSpec);
-
-class E_API TwoDValLayerSpec : public LeabraLayerSpec {
-  // represents one or more two-d value(s) using a coarse-coded distributed code over units.  one val readout is weighted-average; multiple vals = max bumps over 3x3 local grid
-INHERITED(LeabraLayerSpec)
-public:
-  TwoDValSpec	 twod;		// specifies how values are represented in terms of distributed patterns of activation across the layer
-  MinMaxRange	 x_range;	// range of values represented across the X (horizontal) axis; for GAUSSIAN, add extra values above and below true useful range to prevent edge effects.
-  MinMaxRange	 y_range;	// range of values represented across the Y (vertical) axis; for GAUSSIAN, add extra values above and below true useful range to prevent edge effects.
-  TwoDValBias	 bias_val;	// specifies bias values
-  MinMaxRange	 x_val_range;	// #READ_ONLY #NO_INHERIT actual range of values (scalar.min/max taking into account un_range)
-  MinMaxRange	 y_val_range;	// #READ_ONLY #NO_INHERIT actual range of values (scalar.min/max taking into account un_range)
-
-  virtual void	ClampValue_ugp(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
-			       LeabraNetwork* net, float rescale=1.0f);
+  INIMPL virtual void  ClampValue_ugp(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net, int gpidx,
+			       float rescale=1.0f);
   // #CAT_TwoDVal clamp value in the first unit's ext field to the units in the group
-  virtual void	ReadValue(LeabraLayer* lay, LeabraNetwork* net);
+  INIMPL virtual void  ReadValue(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net);
   // #CAT_TwoDVal read out current value represented by activations in layer
-    virtual void ReadValue_ugp(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
-			       LeabraNetwork* net);
+  INIMPL virtual void  ReadValue_ugp(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net, int gpidx);
     // #CAT_TwoDVal unit group version: read out current value represented by activations in layer
-  virtual void HardClampExt(LeabraLayer* lay, LeabraNetwork* net);
+  INIMPL virtual void  HardClampExt(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net);
   // #CAT_ScalarVal hard clamp current ext values (on all units, after ClampValue called) to all the units
-    virtual void HardClampExt_ugp(LeabraLayer* lay, LeabraNetwork* net,
-                                  Layer::AccessMode acc_md, int gpidx);
-    // #IGNORE
+  INIMPL virtual void  HardClampExt_ugp(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net,
+                                        int gpidx);
+  // #IGNORE
 
-  virtual void	LabelUnits(LeabraLayer* lay, LeabraNetwork* net);
+  INIMPL virtual void	LabelUnits(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net);
   // #CAT_TwoDVal label units in given layer with their underlying values
-    virtual void LabelUnits_ugp(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx);
-    // #CAT_TwoDVal label units with their underlying values
-  virtual void	LabelUnitsNet(LeabraNetwork* net);
+  INIMPL virtual void LabelUnits_ugp(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net, int gpidx);
+  // #CAT_TwoDVal label units with their underlying values
+  INIMPL virtual void	LabelUnitsNet(LEABRA_NETWORK_STATE* net);
   // #BUTTON #CAT_TwoDVal label all layers in given network using this spec
 
-  virtual void	Compute_BiasVal(LeabraLayer* lay, LeabraNetwork* net);
+  INIMPL virtual void	Compute_BiasVal(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net);
   // #CAT_TwoDVal initialize the bias value 
-    virtual void Compute_WtBias_Val(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
-				    float x_val, float y_val);
+    INIMPL virtual void Compute_WtBias_Val(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net, int gpidx,
+                                           float x_val, float y_val);
     // #IGNORE
-    virtual void Compute_UnBias_Val(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
-				    float x_val, float y_val);
-    // #IGNORE
-
-  void  Init_Weights_Layer(LeabraLayer* lay, LeabraNetwork* net) override;
-  void	Quarter_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) override;
-    void Quarter_Init_TargFlags_Layer(LeabraLayer* lay, LeabraNetwork* net) override;
-    virtual void Quarter_Init_TargFlags_Layer_ugp(LeabraLayer* lay,
-						 Layer::AccessMode acc_md, int gpidx,
-						 LeabraNetwork* net);
-    // #IGNORE
-  void	Compute_HardClamp_Layer(LeabraLayer* lay, LeabraNetwork* net) override;
-  void	Compute_OutputName(LeabraLayer* lay, LeabraNetwork* net) override;
-  void	Quarter_Final_Layer(LeabraLayer* lay, LeabraNetwork* net) override;
-    virtual void Quarter_Final_ugp(LeabraLayer* lay,
-				Layer::AccessMode acc_md, int gpidx, LeabraNetwork* net);
-    // #CAT_TwoDVal unit group version: update variables based on phase
-
-  float Compute_SSE(LeabraLayer* lay, LeabraNetwork* net, int& n_vals,
-			     bool unit_avg = false, bool sqrt = false) override;
-    virtual float Compute_SSE_ugp(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
-				  int& n_vals);
-    // #IGNORE
-  float Compute_NormErr(LeabraLayer* lay, LeabraNetwork* net) override;
-    virtual float Compute_NormErr_ugp(LeabraLayer* lay,
-				      Layer::AccessMode acc_md, int gpidx,
-				      LeabraInhib* thr, LeabraNetwork* net);
+    INIMPL virtual void Compute_UnBias_Val(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net, int gpidx,
+                                           float x_val, float y_val);
     // #IGNORE
 
-  virtual void	ReConfig(Network* net, int n_units = -1);
-  // #BUTTON reconfigure layer and associated specs for current scalar.rep type; if n_units > 0, changes number of units in layer to specified value
+  INLINE void  Init_Weights_Layer(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) override {
+    inherited::Init_Weights_Layer(lay, net);
+    Compute_BiasVal(lay, net);
+  }
+      
+  INIMPL void	Quarter_Init_Layer(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) override;
+    INIMPL void Quarter_Init_TargFlags_Layer(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) override;
+    INIMPL virtual void Quarter_Init_TargFlags_Layer_ugp
+      (LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net, int gpidx);
+    // #IGNORE
+  INIMPL void  Compute_HardClamp_Layer(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) override;
+  
+  // INLINE void  Compute_OutputName(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) override {
+  //   inherited::Compute_OutputName(lay, net);
+  //   ReadValue((LEABRA_LAYER_STATE*)lay, net);             // always read out the value
+  // }
 
-  void	HelpConfig() override;	// #BUTTON get help message for configuring this spec
-  bool  CheckConfig_Layer(Layer* lay, bool quiet=false) override;
+  INLINE void  Quarter_Final_Layer(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) override {
+    inherited::Quarter_Final_Layer(lay, net);
+    UNIT_GP_ITR(lay, Quarter_Final_ugp(lay, net, gpidx); );
+  }
+  
+  INIMPL virtual void Quarter_Final_ugp(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net, int gpidx);
+  // #CAT_TwoDVal unit group version: update variables based on phase
 
-  TA_SIMPLE_BASEFUNS(TwoDValLayerSpec);
-protected:
-  SPEC_DEFAULTS;
-  void	UpdateAfterEdit_impl() override;
-private:
-  void 	Initialize();
-  void	Destroy()		{ };
-  void	Defaults_init() 	{ };
-};
+  INIMPL float Compute_SSE(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net, int& n_vals,
+                           bool unit_avg = false, bool sqrt = false) override;
+  INIMPL virtual float Compute_SSE_ugp
+    (LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net, int gpidx, int& n_vals);
+    // #IGNORE
+  INIMPL float Compute_NormErr(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) override;
+  INIMPL virtual float Compute_NormErr_ugp
+    (LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net,  int gpidx);
+    // #IGNORE
+    
+  INLINE void Initialize_core() {
+    // gaussian:
+    x_range.min = -0.5f;   x_range.max = 1.5f; x_range.UpdateRange();
+    y_range.min = -0.5f;   y_range.max = 1.5f; y_range.UpdateRange();
+    twod.InitRange(x_range.min, x_range.range, y_range.min, y_range.range);
+    x_val_range.min = x_range.min + (.5f * twod.un_width_x);
+    x_val_range.max = x_range.max - (.5f * twod.un_width_x);
+    y_val_range.min = y_range.min + (.5f * twod.un_width_y);
+    y_val_range.max = y_range.max - (.5f * twod.un_width_y);
+    x_val_range.UpdateRange(); y_val_range.UpdateRange();
+  }
+  // #IGNORE
 
-#endif // TwoDValLayerSpec_h
+  INLINE int  GetStateSpecType() const override
+  { return LEABRA_NETWORK_STATE::T_TwoDValLayerSpec; }
+  

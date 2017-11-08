@@ -169,14 +169,14 @@ set(leabra_HEADS_NOMAKETA
   LeabraContextUnitSpec.h
 
   LeabraExtraLayerSpecs_mbrs.h
-#   ScalarValLayerSpec.h
-# #  MotorForceLayerSpec.h
-#   TwoDValLayerSpec.h
-#   DecodeTwoDValLayerSpec.h
-#   LeabraV1LayerSpec.h
-#  ExtRewLayerSpec.h
-#   # SubiculumLayerSpec.h
-#   GPiSoftMaxLayerSpec.h
+  ScalarValLayerSpec.h
+  ExtRewLayerSpec.h
+  TwoDValLayerSpec.h
+  DecodeTwoDValLayerSpec.h
+#  MotorForceLayerSpec.h
+#  LeabraV1LayerSpec.h
+#  GPiSoftMaxLayerSpec.h
+#  SubiculumLayerSpec.h
 
 #  LeabraExtraConSpecs_cuda.h
 #  LeabraExtraUnitSpecs_cuda.h
