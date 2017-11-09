@@ -703,10 +703,10 @@ PRJN_SPEC_CPP* NETWORK_STATE::NewPrjnSpec(int spec_type) const {
   case T_GradientWtsPrjnSpec:
     return new STATE_CLASS_CPP(GradientWtsPrjnSpec)();
 
-    // case T_PFCPrjnSpec:
-  //   return new STATE_CLASS_CPP(PFCPrjnSpec)();
-  // case T_BgPfcPrjnSpec:
-  //   return new STATE_CLASS_CPP(BgPfcPrjnSpec)();
+  case T_PFCPrjnSpec:
+    return new STATE_CLASS_CPP(PFCPrjnSpec)();
+  case T_BgPfcPrjnSpec:
+    return new STATE_CLASS_CPP(BgPfcPrjnSpec)();
 
   // case T_ConPoolPrjnSpec:
   //   return new STATE_CLASS_CPP(ConPoolPrjnSpec)();

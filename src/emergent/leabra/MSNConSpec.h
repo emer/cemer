@@ -199,7 +199,7 @@
     case DA_HEBB: {
       for(int i=0; i<sz; i++) {
         LEABRA_UNIT_STATE* ru = (LEABRA_UNIT_STATE*)cg->UnState(i,net);
-        bool d2r = (ru->HasExtFlag(LEABRA_UNIT_STATE::D2R));
+        bool d2r = (ru->HasUnitFlag(LEABRA_UNIT_STATE::D2R));
         float lrate_eff = clrate;
         if(deep_on) {
           lrate_eff *= (bg_lrate + fg_lrate * ru->deep_lrn);
@@ -212,7 +212,7 @@
     case DA_HEBB_VS: {
       for(int i=0; i<sz; i++) {
         LEABRA_UNIT_STATE* ru = (LEABRA_UNIT_STATE*)cg->UnState(i,net);
-        bool d2r = (ru->HasExtFlag(LEABRA_UNIT_STATE::D2R));
+        bool d2r = (ru->HasUnitFlag(LEABRA_UNIT_STATE::D2R));
         float lrate_eff = clrate;
         if(deep_on) {
           lrate_eff *= (bg_lrate + fg_lrate * ru->deep_lrn);
@@ -226,7 +226,7 @@
     case TRACE_THAL: {
       for(int i=0; i<sz; i++) {
         LEABRA_UNIT_STATE* ru = (LEABRA_UNIT_STATE*)cg->UnState(i,net);
-        bool d2r = (ru->HasExtFlag(LEABRA_UNIT_STATE::D2R));
+        bool d2r = (ru->HasUnitFlag(LEABRA_UNIT_STATE::D2R));
         float lrate_eff = clrate;
         if(deep_on) {
           lrate_eff *= (bg_lrate + fg_lrate * ru->deep_lrn);
@@ -242,7 +242,7 @@
     case TRACE_NO_THAL: {
       for(int i=0; i<sz; i++) {
         LEABRA_UNIT_STATE* ru = (LEABRA_UNIT_STATE*)cg->UnState(i,net);
-        bool d2r = (ru->HasExtFlag(LEABRA_UNIT_STATE::D2R));
+        bool d2r = (ru->HasUnitFlag(LEABRA_UNIT_STATE::D2R));
         float lrate_eff = clrate;
         if(deep_on) {
           lrate_eff *= (bg_lrate + fg_lrate * ru->deep_lrn);
@@ -257,7 +257,7 @@
     case TRACE_NO_THAL_VS: {
       for(int i=0; i<sz; i++) {
         LEABRA_UNIT_STATE* ru = (LEABRA_UNIT_STATE*)cg->UnState(i,net);
-        bool d2r = (ru->HasExtFlag(LEABRA_UNIT_STATE::D2R));
+        bool d2r = (ru->HasUnitFlag(LEABRA_UNIT_STATE::D2R));
         float lrate_eff = clrate;
         if(deep_on) {
           //            lrate_eff *= (bg_lrate + fg_lrate * ru->deep_lrn);

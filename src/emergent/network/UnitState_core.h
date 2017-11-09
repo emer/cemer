@@ -9,11 +9,15 @@
     COMP_TARG           = 0x0005, // #NO_BIT as a comparision and target layer
     COMP_EXT            = 0x0006, // #NO_BIT as a comparison and external input layer
     COMP_TARG_EXT       = 0x0007, // #NO_BIT as a comparison, target, and external input layer
-    LESIONED            = 0x0010, // #READ_ONLY unit is temporarily lesioned (inactivated for all network-level processing functions) -- copied from Unit -- should not be set directly here
-    UN_FLAG_1           = 0x0100, // #READ_ONLY misc unit-level flag for use by algorithms to set binary state (e.g., used in backprop to mark units that have been dropped)
-    UN_FLAG_2           = 0x0200, // #READ_ONLY misc unit-level flag for use by algorithms to set binary state
-    UN_FLAG_3           = 0x0400, // #READ_ONLY misc unit-level flag for use by algorithms to set binary state
-    UN_FLAG_4           = 0x0800, // #READ_ONLY misc unit-level flag for use by algorithms to set binary state
+  };
+
+  enum UnitFlags {    // #BITS misc unit flags for binary state values
+    NO_UNIT_FLAG        = 0x0000, // #NO_BIT no flags set
+    LESIONED            = 0x0001, // #READ_ONLY unit is temporarily lesioned (inactivated for all network-level processing functions) -- copied from Unit -- should not be set directly here
+    UN_FLAG_1           = 0x0002, // #READ_ONLY misc unit-level flag for use by algorithms to set binary state (e.g., used in backprop to mark units that have been dropped)
+    UN_FLAG_2           = 0x0004, // #READ_ONLY misc unit-level flag for use by algorithms to set binary state
+    UN_FLAG_3           = 0x0008, // #READ_ONLY misc unit-level flag for use by algorithms to set binary state
+    UN_FLAG_4           = 0x0010, // #READ_ONLY misc unit-level flag for use by algorithms to set binary state
   };
 
   int           flat_idx;
@@ -46,6 +50,8 @@
   // #NO_SAVE #READ_ONLY #HIDDEN #CAT_Statistic temporary calculation variable (used for computing wt_prjn and prossibly other things)
   ExtFlags      ext_flag;
   // #GUI_READ_ONLY #SHOW #CAT_Activation tells what kind of external input unit received -- this is normally set by the ApplyInputData function -- it is not to be manipulated directly
+  UnitFlags     unit_flag;
+  // #GUI_READ_ONLY #SHOW #CAT_Activation misc unit binary state flags -- can be extended in subclasses
   float         targ;
   // #VIEW_HOT #CAT_Activation target value: drives learning to produce this activation value
   float         ext;
@@ -73,11 +79,21 @@
   { if(on) SetExtFlag(flg); else ClearExtFlag(flg); }
   // set flag state according to on bool (if true, set flag, if false, clear it)
 
-  INLINE bool   lesioned() const { return HasExtFlag(LESIONED); }
+  INLINE void   SetUnitFlag(int flg)   { unit_flag = (UnitFlags)(unit_flag | flg); }
+  // set flag state on
+  INLINE void   ClearUnitFlag(int flg) { unit_flag = (UnitFlags)(unit_flag & ~flg); }
+  // clear flag state (set off)
+  INLINE bool   HasUnitFlag(int flg) const { return (unit_flag & flg); }
+  // check if flag is set
+  INLINE void   SetUnitFlagState(int flg, bool on)
+  { if(on) SetUnitFlag(flg); else ClearUnitFlag(flg); }
+  // set flag state according to on bool (if true, set flag, if false, clear it)
+
+  INLINE bool   lesioned() const { return HasUnitFlag(LESIONED); }
   // #CAT_State check if this unit is lesioned -- must check for all processing functions (threaded calls automatically exclude lesioned units)
-  INLINE void   Lesion() { SetExtFlag(LESIONED); }
+  INLINE void   Lesion() { SetUnitFlag(LESIONED); }
   // #CAT_State lesion this unit
-  INLINE void   UnLesion() { ClearExtFlag(LESIONED); }
+  INLINE void   UnLesion() { ClearUnitFlag(LESIONED); }
   // #CAT_State un-lesion this unit
 
   INLINE UNIT_SPEC* GetUnitSpec(NETWORK_STATE* nnet) const {
@@ -295,7 +311,7 @@
                               int thr_dx=0, int lay_dx=0, int ugp_dx=0, int spec_dx=0) {
     flat_idx = fl_dx; lay_un_idx = layu_dx;  gp_idx = gp_dx; ungp_un_idx = ugpu_dx;
     thread_no = thr_no; thr_un_idx = thr_dx; own_lay_idx = lay_dx; own_ungp_idx = ugp_dx;
-    spec_idx = spec_dx;  ext_flag = NO_EXTERNAL;
+    spec_idx = spec_dx;  ext_flag = NO_EXTERNAL; unit_flag = NO_UNIT_FLAG;
     targ = ext = act = net = bias_wt = bias_dwt = wt_prjn = snap = 0.0f;
     pos_x = pos_y = 0; disp_pos_x = disp_pos_y = 0;
   }

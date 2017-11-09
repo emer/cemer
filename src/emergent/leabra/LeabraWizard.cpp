@@ -29,6 +29,8 @@ TA_BASEFUNS_CTORS_DEFN(LeabraWizard);
 #include <LeabraExtraUnitSpecs>
 #include <LeabraExtraLayerSpecs>
 
+#include <LeabraBiasSpec>
+
 #include <taMisc>
 #include <tabMisc>
 
@@ -349,7 +351,7 @@ bool LeabraWizard::UpdateInputDataFmNet(Network* net, DataTable* data_table) {
     if(lay->layer_type == Layer::HIDDEN) continue;
     int lay_idx = 0;
 
-    LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->GetLayerSpec();
+    LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->GetMainLayerSpec();
     if(ls->InheritsFrom(&TA_ScalarValLayerSpec) && !((ScalarValLayerSpec*)ls)->scalar.clamp_pat) {
       if(lay->unit_groups) {
         data_table->FindMakeColName
@@ -635,16 +637,16 @@ bool LeabraWizard::DeepLeabraCopy(LeabraNetwork* net, const String& lay_name_con
   ProjectionSpec* s_fm_trc_prjn = NULL;
   ProjectionSpec* s_fm_d_prjn = NULL;
 
-  d_uns = (LeabraUnitSpec*)src_d_lay->GetUnitSpec();
-  d_ls = (LeabraLayerSpec*)src_d_lay->GetLayerSpec();
+  d_uns = (LeabraUnitSpec*)src_d_lay->GetMainUnitSpec();
+  d_ls = (LeabraLayerSpec*)src_d_lay->GetMainLayerSpec();
   
   Projection* prjn;
   for(int ip=0; ip<src_d_lay->projections.size; ip++) {
     prjn = src_d_lay->projections[ip];
     if(prjn->off) continue;
     LeabraLayer* fm = (LeabraLayer*)prjn->from.ptr();
-    ProjectionSpec* ps = prjn->GetPrjnSpec();
-    LeabraConSpec* cs = (LeabraConSpec*)prjn->GetConSpec();
+    ProjectionSpec* ps = prjn->GetMainPrjnSpec();
+    LeabraConSpec* cs = (LeabraConSpec*)prjn->GetMainConSpec();
     if(!ti_ctxt && cs->InheritsFrom(&TA_DeepCtxtConSpec)) {
       ti_ctxt = (DeepCtxtConSpec*)cs;
       if(!src_s_lay)
@@ -664,18 +666,18 @@ bool LeabraWizard::DeepLeabraCopy(LeabraNetwork* net, const String& lay_name_con
                "could not find source TRC layer from source deep layer -- looked for recv prjn from layer ending with trc"))
     return false;
 
-  s_uns = (LeabraUnitSpec*)src_s_lay->GetUnitSpec();
-  s_ls = (LeabraLayerSpec*)src_s_lay->GetLayerSpec();
+  s_uns = (LeabraUnitSpec*)src_s_lay->GetMainUnitSpec();
+  s_ls = (LeabraLayerSpec*)src_s_lay->GetMainLayerSpec();
   
-  trc_uns = (LeabraUnitSpec*)src_trc_lay->GetUnitSpec();
-  trc_ls = (LeabraLayerSpec*)src_trc_lay->GetLayerSpec();
+  trc_uns = (LeabraUnitSpec*)src_trc_lay->GetMainUnitSpec();
+  trc_ls = (LeabraLayerSpec*)src_trc_lay->GetMainLayerSpec();
   
   for(int ip=0; ip<src_s_lay->projections.size; ip++) {
     prjn = src_s_lay->projections[ip];
     if(prjn->off) continue;
     LeabraLayer* fm = (LeabraLayer*)prjn->from.ptr();
-    ProjectionSpec* ps = prjn->GetPrjnSpec();
-    LeabraConSpec* cs = (LeabraConSpec*)prjn->GetConSpec();
+    ProjectionSpec* ps = prjn->GetMainPrjnSpec();
+    LeabraConSpec* cs = (LeabraConSpec*)prjn->GetMainConSpec();
     if(!s_fm_trc && fm->name.endsWith("trc")) {
       s_fm_trc = cs;
       s_fm_trc_prjn = ps;
@@ -690,8 +692,8 @@ bool LeabraWizard::DeepLeabraCopy(LeabraNetwork* net, const String& lay_name_con
     prjn = src_trc_lay->projections[ip];
     if(prjn->off) continue;
     LeabraLayer* fm = (LeabraLayer*)prjn->from.ptr();
-    ProjectionSpec* ps = prjn->GetPrjnSpec();
-    LeabraConSpec* cs = (LeabraConSpec*)prjn->GetConSpec();
+    ProjectionSpec* ps = prjn->GetMainPrjnSpec();
+    LeabraConSpec* cs = (LeabraConSpec*)prjn->GetMainConSpec();
     if(fm == src_d_lay) {
       to_trc = cs;
       to_trc_prjn = ps;
@@ -727,7 +729,7 @@ bool LeabraWizard::DeepLeabraCopy(LeabraNetwork* net, const String& lay_name_con
     net->layers.MoveAfter(lay, deep);
     deep->PositionBehind(lay, 2);
     deep->SetUnitSpec(d_uns);
-    deep->SetLayerSpec(lay->GetLayerSpec()); // deep gets same as super by default
+    deep->SetLayerSpec(lay->GetMainLayerSpec()); // deep gets same as super by default
 
     LeabraLayer* trc = (LeabraLayer*)net->FindMakeLayer(lay->name + "_trc");
     trc->un_geom = 4;
@@ -800,7 +802,7 @@ bool LeabraWizard::SRNContext(LeabraNetwork* net, const String& lay_name_contain
     net->layers.MoveAfter(lay, ctxt);
     ctxt->PositionBehind(lay, 2);
     ctxt->SetUnitSpec(ctxts);
-    ctxt->SetLayerSpec(lay->GetLayerSpec());
+    ctxt->SetLayerSpec(lay->GetMainLayerSpec());
     net->FindMakePrjn(ctxt, lay, otop, marker); // one-to-one into the ctxt layer
     net->FindMakePrjn(lay, ctxt);       // std prjn back into the hidden from context
   }

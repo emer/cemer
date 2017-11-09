@@ -115,7 +115,22 @@ private:
   void	Destroy()		{ };
 };
 
-// #include <DecodeTwoDValLayerSpec>
+
+eTypeDef_Of(DecodeTwoDValLayerSpec);
+
+class E_API DecodeTwoDValLayerSpec : public TwoDValLayerSpec {
+  // a two-d-value layer spec that copies its activations from one-to-one input prjns, to act as a decoder of another layer
+INHERITED(TwoDValLayerSpec)
+public:
+
+#include <DecodeTwoDValLayerSpec>
+
+  TA_BASEFUNS_NOCOPY(DecodeTwoDValLayerSpec);
+private:
+ void 	Initialize()            { };
+  void	Destroy()		{ };
+};
+
 
 // not converting below:
 // #include <MotorForceLayerSpec>

@@ -73,22 +73,22 @@ LAYER_SPEC_CPP* LEABRA_NETWORK_STATE::NewLayerSpec(int spec_type) const {
   switch(spec_type) {
   case T_LeabraLayerSpec:
     return new STATE_CLASS_CPP(LeabraLayerSpec)();
-  // case T_ScalarValLayerSpec:
-  //   return new STATE_CLASS_CPP(ScalarValLayerSpec)();
+  case T_ScalarValLayerSpec:
+    return new STATE_CLASS_CPP(ScalarValLayerSpec)();
+  case T_ExtRewLayerSpec:
+    return new STATE_CLASS_CPP(ExtRewLayerSpec)();
+  case T_TwoDValLayerSpec:
+    return new STATE_CLASS_CPP(TwoDValLayerSpec)();
+  case T_DecodeTwoDValLayerSpec:
+    return new STATE_CLASS_CPP(DecodeTwoDValLayerSpec)();
   // case T_MotorForceLayerSpec:
   //   return new STATE_CLASS_CPP(MotorForceLayerSpec)();
-  // case T_TwoDValLayerSpec:
-  //   return new STATE_CLASS_CPP(TwoDValLayerSpec)();
-  // case T_DecodeTwoDValLayerSpec:
-  //   return new STATE_CLASS_CPP(DecodeTwoDValLayerSpec)();
   // case T_LeabraV1LayerSpec:
   //   return new STATE_CLASS_CPP(LeabraV1LayerSpec)();
-  // case T_ExtRewLayerSpec:
-  //   return new STATE_CLASS_CPP(ExtRewLayerSpec)();
-  // case T_SubiculumLayerSpec:
-  //   return new STATE_CLASS_CPP(SubiculumLayerSpec)();
   // case T_GPiSoftMaxLayerSpec:
   //   return new STATE_CLASS_CPP(GPiSoftMaxLayerSpec)();
+  // case T_SubiculumLayerSpec:
+  //   return new STATE_CLASS_CPP(SubiculumLayerSpec)();
   }
   StateError("NewLayerSpec, type not recognized");
   return new STATE_CLASS_CPP(LeabraLayerSpec)();

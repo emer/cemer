@@ -1,34 +1,34 @@
 // this is included directly in LeabraExtraUnitSpecs_cpp / _cuda
 // {
 
-void STATE_CLASS(CElAmygUnitSpec)::Init_Weights
+void STATE_CLASS(CElAmygUnitSpec)::Init_UnitState
   (UNIT_STATE* uv, NETWORK_STATE* net, int thr_no)  {
 
-  inherited::Init_Weights(uv, net, thr_no);
+  inherited::Init_UnitState(uv, net, thr_no);
   LEABRA_UNIT_STATE* u = (LEABRA_UNIT_STATE*)uv;
   if(dar == D1R) {
-    u->SetExtFlag(LEABRA_UNIT_STATE::D1R);
-    u->ClearExtFlag(LEABRA_UNIT_STATE::D2R);
+    u->SetUnitFlag(LEABRA_UNIT_STATE::D1R);
+    u->ClearUnitFlag(LEABRA_UNIT_STATE::D2R);
   }
   else {
-    u->SetExtFlag(LEABRA_UNIT_STATE::D2R);
-    u->ClearExtFlag(LEABRA_UNIT_STATE::D1R);
+    u->SetUnitFlag(LEABRA_UNIT_STATE::D2R);
+    u->ClearUnitFlag(LEABRA_UNIT_STATE::D1R);
   }
   if(acq_ext == ACQ) {
-    u->SetExtFlag(LEABRA_UNIT_STATE::ACQUISITION);
-    u->ClearExtFlag(LEABRA_UNIT_STATE::EXTINCTION);
+    u->SetUnitFlag(LEABRA_UNIT_STATE::ACQUISITION);
+    u->ClearUnitFlag(LEABRA_UNIT_STATE::EXTINCTION);
   }
   else {
-    u->SetExtFlag(LEABRA_UNIT_STATE::EXTINCTION);
-    u->ClearExtFlag(LEABRA_UNIT_STATE::ACQUISITION);
+    u->SetUnitFlag(LEABRA_UNIT_STATE::EXTINCTION);
+    u->ClearUnitFlag(LEABRA_UNIT_STATE::ACQUISITION);
   }
   if(valence == APPETITIVE) {
-    u->SetExtFlag(LEABRA_UNIT_STATE::APPETITIVE);
-    u->ClearExtFlag(LEABRA_UNIT_STATE::AVERSIVE);
+    u->SetUnitFlag(LEABRA_UNIT_STATE::APPETITIVE);
+    u->ClearUnitFlag(LEABRA_UNIT_STATE::AVERSIVE);
   }
   else {
-    u->SetExtFlag(LEABRA_UNIT_STATE::AVERSIVE);
-    u->ClearExtFlag(LEABRA_UNIT_STATE::APPETITIVE);
+    u->SetUnitFlag(LEABRA_UNIT_STATE::AVERSIVE);
+    u->ClearUnitFlag(LEABRA_UNIT_STATE::APPETITIVE);
   }
 }
 

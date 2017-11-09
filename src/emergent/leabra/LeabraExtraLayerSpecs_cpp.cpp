@@ -25,4 +25,5 @@
 #include "ScalarValLayerSpec.cpp"
 #include "ExtRewLayerSpec.cpp"
 #include "TwoDValLayerSpec.cpp"
+#include "DecodeTwoDValLayerSpec.cpp"
 

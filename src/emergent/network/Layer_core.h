@@ -113,7 +113,7 @@
   }
   // #CAT_State set layer name to given name
   INLINE bool   LayerNameIs(const char* lay_name) const {
-    return (strncmp(layer_name, lay_name, LAYER_STATE::LAY_NAME_MAX_LEN) == 0);
+    return (strncmp(layer_name, lay_name, LAY_NAME_MAX_LEN) == 0);
   }
   // #CAT_State return true if that is the name of the layer
   INLINE bool   LayerNameContains(const char* lay_name) const {
@@ -141,7 +141,7 @@
   // #CAT_State does this layer have sub-unit groups
 
   INLINE UNGP_STATE* GetUnGpState(NETWORK_STATE* net, int ungp_no) const
-  { if(ungp_no < 0 || ungp_no >= n_ungps) return NULL;
+  { if(ungp_no < -1 || ungp_no >= n_ungps) return NULL;
     return net->GetUnGpState(ungp_idx + 1 + ungp_no); }
   // #CAT_State get the sub-unit group state for given unit group number for this layer
 
@@ -265,7 +265,7 @@
   // #CAT_State get the unit state at given group X,Y and unit X,Y coordinates
 
   INLINE void  GetUnXYFmIdx(int un_idx, int& un_x, int& un_y) const
-  {  un_y = un_idx / un_geom_x; un_x = un_idx % un_geom_x; }
+  {  un_idx = un_idx % un_geom_n;  un_y = un_idx / un_geom_x; un_x = un_idx % un_geom_x; }
   // #CAT_State get unit X,Y from unit index within a unit group
   INLINE void  GetUnFlatXYFmIdx(int un_idx, int& un_x, int& un_y) const
   {  un_y = un_idx / flat_geom_x; un_x = un_idx % flat_geom_x; }

@@ -160,6 +160,7 @@
     
     LEABRA_UNIT_STATE* u = (LEABRA_UNIT_STATE*)uv;
     u->ext_flag = UNIT_STATE::NO_EXTERNAL;
+    u->unit_flag = UNIT_STATE::NO_UNIT_FLAG;
     u->bias_wt = 0.0f;
     u->bias_dwt = 0.0f;
     u->bias_fwt = 0.0f;

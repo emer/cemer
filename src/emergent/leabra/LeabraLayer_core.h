@@ -52,7 +52,7 @@
   // #IGNORE
 
   INLINE LEABRA_UNGP_STATE* GetUnGpState(NETWORK_STATE* net, int ungp_no) const
-  { if(ungp_no < 0 || ungp_no >= n_ungps) return NULL;
+  { if(ungp_no < -1 || ungp_no >= n_ungps) return NULL;
     return (LEABRA_UNGP_STATE*)net->GetUnGpState(ungp_idx + 1 + ungp_no); }
   // #IGNORE
 

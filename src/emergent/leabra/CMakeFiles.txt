@@ -15,7 +15,7 @@ set(leabra_HEADS_MAKETA
 
   LeabraProject.h
 
-#   LeabraWizard.h
+  LeabraWizard.h
 
   MSNCon.h
 )
@@ -173,6 +173,7 @@ set(leabra_HEADS_NOMAKETA
   ExtRewLayerSpec.h
   TwoDValLayerSpec.h
   DecodeTwoDValLayerSpec.h
+  
 #  MotorForceLayerSpec.h
 #  LeabraV1LayerSpec.h
 #  GPiSoftMaxLayerSpec.h
@@ -218,7 +219,7 @@ set(leabra_SRCS
 
   LeabraProject.cpp
 
-#   LeabraWizard.cpp
+  LeabraWizard.cpp
 
   LeabraExtraConSpecs_cpp.cpp
   LeabraExtraConSpecs.cpp

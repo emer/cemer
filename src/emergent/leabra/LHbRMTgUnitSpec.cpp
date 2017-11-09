@@ -27,23 +27,24 @@ bool STATE_CLASS(LHbRMTgUnitSpec)::GetRecvLayers
     LEABRA_LAYER_STATE* fmlay = (LEABRA_LAYER_STATE*) recv_gp->GetSendLayer(net);
     LEABRA_UNIT_SPEC_CPP* us = (LEABRA_UNIT_SPEC_CPP*) fmlay->GetUnitSpec(net);
     if(us->GetStateSpecType() == LEABRA_NETWORK_STATE::T_MSNUnitSpec) {
-      if(u->HasExtFlag(LEABRA_UNIT_STATE::PATCH)) {
-        if(u->HasExtFlag(LEABRA_UNIT_STATE::D2R)) {
-          if(u->HasExtFlag(LEABRA_UNIT_STATE::APPETITIVE)) { vspatch_pos_D2_lay = fmlay; }
+      LEABRA_UNIT_STATE* su = (LEABRA_UNIT_STATE*)fmlay->GetUnitState(net, 0);
+      if(su->HasUnitFlag(LEABRA_UNIT_STATE::PATCH)) {
+        if(su->HasUnitFlag(LEABRA_UNIT_STATE::D2R)) {
+          if(su->HasUnitFlag(LEABRA_UNIT_STATE::APPETITIVE)) { vspatch_pos_D2_lay = fmlay; }
           else { vspatch_neg_D2_lay = fmlay; }
         }
         else { // D1R
-          if(u->HasExtFlag(LEABRA_UNIT_STATE::APPETITIVE)) { vspatch_pos_D1_lay = fmlay; }
+          if(su->HasUnitFlag(LEABRA_UNIT_STATE::APPETITIVE)) { vspatch_pos_D1_lay = fmlay; }
           else { vspatch_neg_D1_lay = fmlay; }
         }
       }
-      else if(u->HasExtFlag(LEABRA_UNIT_STATE::MATRIX)) {
-        if(u->HasExtFlag(LEABRA_UNIT_STATE::D2R)) {
-          if (u->HasExtFlag(LEABRA_UNIT_STATE::APPETITIVE)) { vsmatrix_pos_D2_lay = fmlay; }
+      else if(su->HasUnitFlag(LEABRA_UNIT_STATE::MATRIX)) {
+        if(su->HasUnitFlag(LEABRA_UNIT_STATE::D2R)) {
+          if (su->HasUnitFlag(LEABRA_UNIT_STATE::APPETITIVE)) { vsmatrix_pos_D2_lay = fmlay; }
           else { vsmatrix_neg_D2_lay = fmlay; }
         }
         else { // D1R
-          if (u->HasExtFlag(LEABRA_UNIT_STATE::APPETITIVE)) { vsmatrix_pos_D1_lay = fmlay; }
+          if (su->HasUnitFlag(LEABRA_UNIT_STATE::APPETITIVE)) { vsmatrix_pos_D1_lay = fmlay; }
           else { vsmatrix_neg_D1_lay = fmlay; }
         }
       }

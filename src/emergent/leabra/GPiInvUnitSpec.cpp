@@ -12,8 +12,8 @@ void STATE_CLASS(GPiInvUnitSpec)::Compute_NetinRaw(LEABRA_UNIT_STATE* u, LEABRA_
   for(int g=0; g<nrg; g++) {
     LEABRA_CON_STATE* recv_gp = (LEABRA_CON_STATE*)u->RecvConState(net, g);
     if(recv_gp->NotActive()) continue;
-    LEABRA_LAYER_STATE* from = (LEABRA_LAYER_STATE*) recv_gp->GetSendLayer(net);
-    LEABRA_UNIT_SPEC_CPP* us = (LEABRA_UNIT_SPEC_CPP*)from->GetUnitSpec(net);
+    LEABRA_LAYER_STATE* fmlay = (LEABRA_LAYER_STATE*) recv_gp->GetSendLayer(net);
+    LEABRA_UNIT_SPEC_CPP* us = (LEABRA_UNIT_SPEC_CPP*)fmlay->GetUnitSpec(net);
 
     float g_nw_nt = 0.0f;
     for(int j=0;j<nt;j++) {
@@ -24,8 +24,9 @@ void STATE_CLASS(GPiInvUnitSpec)::Compute_NetinRaw(LEABRA_UNIT_STATE* u, LEABRA_
     recv_gp->net_raw += g_nw_nt;
 
     if(us->GetStateSpecType() == LEABRA_NETWORK_STATE::T_MSNUnitSpec) {
-      if(u->HasExtFlag(LEABRA_UNIT_STATE::DORSAL)) {
-        if(u->HasExtFlag(LEABRA_UNIT_STATE::D1R)) {
+      LEABRA_UNIT_STATE* su = (LEABRA_UNIT_STATE*)fmlay->GetUnitState(net, 0);
+      if(su->HasUnitFlag(LEABRA_UNIT_STATE::DORSAL)) {
+        if(su->HasUnitFlag(LEABRA_UNIT_STATE::D1R)) {
           go_in += recv_gp->net_raw;
         }
         else { // D2R
@@ -33,8 +34,8 @@ void STATE_CLASS(GPiInvUnitSpec)::Compute_NetinRaw(LEABRA_UNIT_STATE* u, LEABRA_
         }
       }
       else { // ventral
-        if(u->HasExtFlag(LEABRA_UNIT_STATE::APPETITIVE)) {
-          if(u->HasExtFlag(LEABRA_UNIT_STATE::D1R)) {
+        if(su->HasUnitFlag(LEABRA_UNIT_STATE::APPETITIVE)) {
+          if(su->HasUnitFlag(LEABRA_UNIT_STATE::D1R)) {
             go_in += recv_gp->net_raw;
           }
           else { // D2R
@@ -42,7 +43,7 @@ void STATE_CLASS(GPiInvUnitSpec)::Compute_NetinRaw(LEABRA_UNIT_STATE* u, LEABRA_
           }
         }
         else {                  // aversive
-          if(u->HasExtFlag(LEABRA_UNIT_STATE::D2R)) { // FLIPPED!!!
+          if(su->HasUnitFlag(LEABRA_UNIT_STATE::D2R)) { // FLIPPED!!!
             go_in += recv_gp->net_raw;
           }
           else { // D1R
@@ -52,7 +53,7 @@ void STATE_CLASS(GPiInvUnitSpec)::Compute_NetinRaw(LEABRA_UNIT_STATE* u, LEABRA_
       }
     }
     else { // non-MSNUnitSpec inputs.. just go with the name..
-      if(from->LayerNameContains("NoGo") || from->LayerNameContains("D2")) {
+      if(fmlay->LayerNameContains("NoGo") || fmlay->LayerNameContains("D2")) {
         nogo_in += recv_gp->net_raw;
       }
       else {

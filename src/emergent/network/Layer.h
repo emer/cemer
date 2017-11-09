@@ -355,6 +355,25 @@ public:
   inline UnitSpec* GetMainUnitSpec() const { return unit_spec.SPtr(); }
   // #CAT_Structure get the unit spec for this unit -- this is controlled entirely by the layer and all units in the layer have the same unit spec
 
+  inline UnitState_cpp* GetUnitIdx(int un_idx) const
+  { NetworkState_cpp* net = GetValidNetState(); if(net) return GetUnitStateSafe(net, un_idx); return NULL; }
+  // #CAT_Access get unit state at given unit index (0..n_units) -- preferred Program interface as no NetworkState arg is required
+  inline UnitState_cpp* GetUnitFlatXY(int flat_x, int flat_y) const
+  { NetworkState_cpp* net = GetValidNetState(); if(net) return GetUnitStateFlatXY(net, flat_x, flat_y); return NULL; }
+  // #CAT_Access get unit state at given flat X,Y coordinates -- preferred Program interface as no NetworkState arg is required
+  inline UnitState_cpp* GetUnitGpUnIdx(int gp_idx, int un_idx) const
+  { NetworkState_cpp* net = GetValidNetState(); if(net) return GetUnitStateGpUnIdx(net, gp_idx, un_idx); return NULL; }
+  // #CAT_Access get unit state at given group and unit indexes -- preferred Program interface as no NetworkState arg is required
+  inline UnitState_cpp* GetUnitGpXYUnIdx(int gp_x, int gp_y, int un_idx) const
+  { NetworkState_cpp* net = GetValidNetState(); if(net) return GetUnitStateGpXYUnIdx(net, gp_x, gp_y, un_idx); return NULL; }
+  // #CAT_Access get the unit state at given group X,Y coordinate and unit indexes -- preferred Program interface as no NetworkState arg is required
+  inline UnitState_cpp* GetUnitGpIdxUnXY(int gp_idx, int un_x, int un_y) const
+  { NetworkState_cpp* net = GetValidNetState(); if(net) return GetUnitStateGpIdxUnXY(net, gp_idx, un_x, un_y); return NULL; }
+  // #CAT_Access get the unit state at given group index and unit X,Y coordinate -- preferred Program interface as no NetworkState arg is required
+  inline UnitState_cpp* GetUnitGpUnXY(int gp_x, int gp_y, int un_x, int un_y) const
+  { NetworkState_cpp* net = GetValidNetState(); if(net) return GetUnitStateGpUnXY(net, gp_x, gp_y, un_x, un_y); return NULL;  }
+  // #CAT_Access get the unit state at given group X,Y and unit X,Y coordinates -- preferred Program interface as no NetworkState arg is required
+
   virtual bool EditState();
   // #MENU_BUTTON #MENU_ON_Edit edit the layer state values that drive actual C++ computation
   virtual bool EditLayUnGpState();

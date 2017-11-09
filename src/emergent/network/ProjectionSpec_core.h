@@ -66,7 +66,7 @@
 
   INIMPL virtual void	Connect_UnitGroupRF
     (PRJN_STATE* prjn, NETWORK_STATE* net, LAYER_STATE* recv_lay, LAYER_STATE* send_lay,
-     int rgpidx, int sgpidx, bool make_cons, bool share_cons, bool reciprocal);
+     int rgpidx, int sgpidx, bool make_cons, bool share_cons = false, bool reciprocal = false);
   // #IGNORE receiptive-field version of connect one unit group to another -- rgpidx = recv unit group idx, sgpidx = send unit group idx -- either can be -1 for using entire layer instead -- has share cons and reciprocal connectivity options
 
   INLINE void Initialize_core_base() {

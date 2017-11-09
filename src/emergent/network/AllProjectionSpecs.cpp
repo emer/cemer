@@ -28,33 +28,32 @@
 #include <State_main>
 
 
-TA_BASEFUNS_CTORS_DEFN(FullPrjnSpec);
 #include "FullPrjnSpec.cpp"
+TA_BASEFUNS_CTORS_DEFN(FullPrjnSpec);
 
-TA_BASEFUNS_CTORS_DEFN(OneToOnePrjnSpec);
 #include "OneToOnePrjnSpec.cpp"
+TA_BASEFUNS_CTORS_DEFN(OneToOnePrjnSpec);
 
-TA_BASEFUNS_CTORS_DEFN(GpOneToOnePrjnSpec);
 #include "GpOneToOnePrjnSpec.cpp"
+TA_BASEFUNS_CTORS_DEFN(GpOneToOnePrjnSpec);
 
-TA_BASEFUNS_CTORS_DEFN(MarkerGpOneToOnePrjnSpec);
 #include "MarkerGpOneToOnePrjnSpec.cpp"
+TA_BASEFUNS_CTORS_DEFN(MarkerGpOneToOnePrjnSpec);
 
-TA_BASEFUNS_CTORS_DEFN(GpMapConvergePrjnSpec);
 #include "GpMapConvergePrjnSpec.cpp"
+TA_BASEFUNS_CTORS_DEFN(GpMapConvergePrjnSpec);
 
-TA_BASEFUNS_CTORS_DEFN(GpMapDivergePrjnSpec);
 #include "GpMapDivergePrjnSpec.cpp"
+TA_BASEFUNS_CTORS_DEFN(GpMapDivergePrjnSpec);
 
-
-TA_BASEFUNS_CTORS_DEFN(RandomPrjnSpec);
 #include "RandomPrjnSpec.cpp"
+TA_BASEFUNS_CTORS_DEFN(RandomPrjnSpec);
 
-TA_BASEFUNS_CTORS_DEFN(UniformRndPrjnSpec);
 #include "UniformRndPrjnSpec.cpp"
+TA_BASEFUNS_CTORS_DEFN(UniformRndPrjnSpec);
 
-TA_BASEFUNS_CTORS_DEFN(PolarRndPrjnSpec);
 #include "PolarRndPrjnSpec.cpp"
+TA_BASEFUNS_CTORS_DEFN(PolarRndPrjnSpec);
 
 void PolarRndPrjnSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
@@ -65,10 +64,11 @@ void PolarRndPrjnSpec::UpdateAfterEdit_impl() {
 ////////////////////////////////////////////////////////////////////////////////////
 //              TesselPrjnSpec
 
+
+#include "TesselPrjnSpec.cpp"
 TA_BASEFUNS_CTORS_DEFN(TesselPrjnSpec);
 TA_BASEFUNS_CTORS_DEFN(TessEl);
 TA_BASEFUNS_CTORS_LITE_DEFN(TessEl_List);
-#include "TesselPrjnSpec.cpp"
 
 void TesselPrjnSpec::UpdateAfterEdit_impl() {
   SyncSendOffs();
@@ -250,11 +250,10 @@ void TesselPrjnSpec::WeightsFromGausDist(float scale, float sigma) {
 ////////////////////////////////////////////////////////////////////////////////////
 //              GpTesselPrjnSpec
 
+#include "GpTesselPrjnSpec.cpp"
 TA_BASEFUNS_CTORS_DEFN(GpTesselPrjnSpec);
 TA_BASEFUNS_CTORS_DEFN(GpTessEl);
 TA_BASEFUNS_CTORS_LITE_DEFN(GpTessEl_List);
-
-#include "GpTesselPrjnSpec.cpp"
 
 void GpTesselPrjnSpec::UpdateAfterEdit_impl() {
   SyncSendOffs();
@@ -399,11 +398,10 @@ void GpTesselPrjnSpec::SetPCon(float p_con, int start, int end) {
 ////////////////////////////////////////////////////////////////////////////////////
 //              TiledGpRFPrjnSpec
 
+#include "TiledGpRFPrjnSpec.cpp"
 TA_BASEFUNS_CTORS_DEFN(GaussInitWtsSpec);
 TA_BASEFUNS_CTORS_DEFN(SigmoidInitWtsSpec);
 TA_BASEFUNS_CTORS_DEFN(TiledGpRFPrjnSpec);
-
-#include "TiledGpRFPrjnSpec.cpp"
 
 void TiledGpRFPrjnSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
@@ -467,19 +465,18 @@ bool TiledGpRFPrjnSpec::TrgSendFmRecv(int recv_x, int recv_y) {
 
 
 
-TA_BASEFUNS_CTORS_DEFN(TiledGpRFOneToOnePrjnSpec);
 #include "TiledGpRFOneToOnePrjnSpec.cpp"
+TA_BASEFUNS_CTORS_DEFN(TiledGpRFOneToOnePrjnSpec);
 
-TA_BASEFUNS_CTORS_DEFN(TiledGpRFOneToOneWtsPrjnSpec);
 #include "TiledGpRFOneToOneWtsPrjnSpec.cpp"
+TA_BASEFUNS_CTORS_DEFN(TiledGpRFOneToOneWtsPrjnSpec);
 
 
 ////////////////////////////////////////////////////////////////////////////////////
 //              TiledSubGpRFPrjnSpec
 
-TA_BASEFUNS_CTORS_DEFN(TiledSubGpRFPrjnSpec);
-
 #include "TiledSubGpRFPrjnSpec.cpp"
+TA_BASEFUNS_CTORS_DEFN(TiledSubGpRFPrjnSpec);
 
 void TiledSubGpRFPrjnSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
@@ -548,9 +545,8 @@ bool TiledSubGpRFPrjnSpec::TrgSendFmRecv(int recv_x, int recv_y) {
 ////////////////////////////////////////////////////////////////////////////////////
 //              TiledRFPrjnSpec
 
-TA_BASEFUNS_CTORS_DEFN(TiledRFPrjnSpec);
-
 #include "TiledRFPrjnSpec.cpp"
+TA_BASEFUNS_CTORS_DEFN(TiledRFPrjnSpec);
 
 void TiledRFPrjnSpec::SelectRF(Projection* prjn) {
   // if(!InitRFSizes(prjn, net)) return;
@@ -594,17 +590,15 @@ void TiledRFPrjnSpec::SelectRF(Projection* prjn) {
 }
 
 
-TA_BASEFUNS_CTORS_DEFN(TiledNovlpPrjnSpec);
-
 #include "TiledNovlpPrjnSpec.cpp"
+TA_BASEFUNS_CTORS_DEFN(TiledNovlpPrjnSpec);
 
 
 ////////////////////////////////////////////////////////////////////////////////////
 //              TiledGpMapConvergePrjnSpec
 
-TA_BASEFUNS_CTORS_DEFN(TiledGpMapConvergePrjnSpec);
-
 #include "TiledGpMapConvergePrjnSpec.cpp"
+TA_BASEFUNS_CTORS_DEFN(TiledGpMapConvergePrjnSpec);
 
 bool TiledGpMapConvergePrjnSpec::TrgRecvFmSend(int send_x, int send_y) {
   trg_send_geom.x = send_x;
@@ -648,9 +642,8 @@ bool TiledGpMapConvergePrjnSpec::TrgSendFmRecv(int recv_x, int recv_y) {
 ////////////////////////////////////////////////////////////////////////////////////
 //              GaussRFPrjnSpec
 
-TA_BASEFUNS_CTORS_DEFN(GaussRFPrjnSpec);
-
 #include "GaussRFPrjnSpec.cpp"
+TA_BASEFUNS_CTORS_DEFN(GaussRFPrjnSpec);
 
 bool GaussRFPrjnSpec::TrgRecvFmSend(int send_x, int send_y) {
   trg_send_geom.x = send_x;
@@ -691,9 +684,133 @@ bool GaussRFPrjnSpec::TrgSendFmRecv(int recv_x, int recv_y) {
 }
 
 
+#include "GradientWtsPrjnSpec.cpp"
 TA_BASEFUNS_CTORS_DEFN(GradientWtsPrjnSpec);
 
-#include "GradientWtsPrjnSpec.cpp"
+
+///////////////////////////////////////////////////////////
+//      PFC / BG
+
+#include "PFCPrjnSpec.cpp"
+TA_BASEFUNS_CTORS_DEFN(PFCPrjnSpec);
+
+void PFCPrjnSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  if(recv_layer == OTHER)
+    row_1to1 = false;
+}
 
 
+#include "BgPfcPrjnSpec.cpp"
+TA_BASEFUNS_CTORS_DEFN(BgPfcPrjnEl);
+TA_BASEFUNS_CTORS_DEFN(BgPfcPrjnSpec);
 
+void BgPfcPrjnSpec::Initialize() {
+  Initialize_core();
+  InitBgTable();
+}
+
+void BgPfcPrjnSpec::UpdateAfterEdit_impl() {
+  SyncPfcLayers();
+  inherited::UpdateAfterEdit_impl();
+  UpdtBgTable();
+}
+
+
+void BgPfcPrjnSpec::SyncPfcLayers() {
+  if(bg_table.rows > alloc_pfc_layers) {
+    AllocPfcLayers(bg_table.rows);
+  }
+  for(int i=0; i<bg_table.rows; i++) {
+    BgPfcPrjnEl* cp = pfc_layers_m + i;
+    cp->size.SetXY(GetBgTableVal(BGT_SIZE_X, i).toInt(), GetBgTableVal(BGT_SIZE_Y, i).toInt());
+    cp->start.SetXY(GetBgTableVal(BGT_START_X, i).toInt(), GetBgTableVal(BGT_START_Y, i).toInt());
+    cp->SetPfcName(GetBgTableVal(BGT_NAME, i).toString());
+  }
+  n_pfc_layers = bg_table.rows;
+  SetConnectAs(connect_as);
+}
+
+void BgPfcPrjnSpec::CopyToState(void* state_spec, const char* state_suffix) {
+  inherited::CopyToState(state_spec, state_suffix);
+  CopyToState_PfcLayers(state_spec, state_suffix);
+}
+
+void BgPfcPrjnSpec::UpdateStateSpecs() {
+  SyncPfcLayers();
+  inherited::UpdateStateSpecs();
+}
+
+void BgPfcPrjnSpec::CopyToState_PfcLayers(void* state_spec, const char* state_suffix) {
+  String ss = state_suffix;
+  if(ss == "_cpp") {
+    BgPfcPrjnSpec_cpp* tcc = (BgPfcPrjnSpec_cpp*)state_spec;
+    tcc->AllocPfcLayers(n_pfc_layers);
+    for(int i=0; i<n_pfc_layers; i++) {
+      BgPfcPrjnEl* so = pfc_layers_m + i;
+      BgPfcPrjnEl_cpp* cp = tcc->pfc_layers_m + i;
+      cp->size.SetXY(so->size.x, so->size.y);
+      cp->start.SetXY(so->start.x, so->start.y);
+      cp->SetPfcName(so->pfc_name);
+    }
+    tcc->n_pfc_layers = n_pfc_layers;
+  }
+}
+
+void BgPfcPrjnSpec::FormatBgTable() {
+  DataCol* dc;
+  
+  dc = bg_table.FindMakeCol("pfc_name", VT_STRING);
+  dc->desc = "name of the PFC layer -- layer must uniquely contain this name -- case sensitive maching is used";
+
+  dc = bg_table.FindMakeCol("size_x", VT_INT);
+  dc->desc = "x (horizontal) size of this pfc layer in terms of unit groups (stripes) -- only needed if the PFC layers are NOT all the same size -- a -1 indicates that all pfc layers are the same size";
+
+  dc = bg_table.FindMakeCol("size_y", VT_INT);
+  dc->desc = "y (vertical) size of this pfc layer in terms of unit groups (stripes) -- only needed if the PFC layers are NOT all the same size -- a -1 indicates that all pfc layers are the same size";
+
+  dc = bg_table.FindMakeCol("start_x", VT_INT);
+  dc->desc = "starting x (horizontal) coordinate of the unit group of stripes for this pfc within the bg layer -- a -1 indicates that PFC layers are organized horizontally across, and position computed automatically from sizes";
+
+  dc = bg_table.FindMakeCol("start_y", VT_INT);
+  dc->desc = "starting y (vertical) coordinate of the unit group of stripes for this pfc within the bg layer -- layers organized horizontally across by default";
+
+  bg_table.EnforceRows(n_pfcs);
+}
+
+void BgPfcPrjnSpec::InitBgTable() {
+  if(taBase::GetRefn(&bg_table) == 0) {     // own it -- can be formatted in init
+    taBase::Own(bg_table, this);
+  }
+
+  n_pfcs = 2;
+  FormatBgTable();
+
+  int cur = 0;
+  SetBgTableVal(Variant("PFCmnt"), BGT_NAME, cur);
+  SetBgTableVal(-1, BGT_SIZE_X, cur);
+  SetBgTableVal(-1, BGT_SIZE_Y, cur);
+  SetBgTableVal(-1, BGT_START_X, cur);
+  SetBgTableVal(0, BGT_START_Y, cur);
+
+  cur++;
+  SetBgTableVal(Variant("PFCout"), BGT_NAME, cur);
+  SetBgTableVal(-1, BGT_SIZE_X, cur);
+  SetBgTableVal(-1, BGT_SIZE_Y, cur);
+  SetBgTableVal(-1, BGT_START_X, cur);
+  SetBgTableVal(0, BGT_START_Y, cur);
+}
+
+void BgPfcPrjnSpec::UpdtBgTable() {
+  bg_table.StructUpdate(true);
+  FormatBgTable();
+  if(bg_table.rows == 0) {
+    InitBgTable();
+  }
+  else {
+    String nm = GetBgTableVal(BGT_NAME, 0).toString();
+    if(nm.empty())
+      InitBgTable();
+  }
+  bg_table.StructUpdate(false);
+}

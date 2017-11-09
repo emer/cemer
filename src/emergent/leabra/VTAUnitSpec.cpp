@@ -35,20 +35,21 @@ bool STATE_CLASS(VTAUnitSpec)::GetRecvLayers_P
       pospv_lay = fmlay;
     }
     else if(us->GetStateSpecType() == LEABRA_NETWORK_STATE::T_MSNUnitSpec) {
-      if(u->HasExtFlag(LEABRA_UNIT_STATE::APPETITIVE) &&
-         u->HasExtFlag(LEABRA_UNIT_STATE::D1R)) {
+      LEABRA_UNIT_STATE* su = (LEABRA_UNIT_STATE*)fmlay->GetUnitState(net, 0);
+      if(su->HasUnitFlag(LEABRA_UNIT_STATE::APPETITIVE) &&
+         su->HasUnitFlag(LEABRA_UNIT_STATE::D1R)) {
         vspatchposd1_lay = fmlay;
       }
-      else if(u->HasExtFlag(LEABRA_UNIT_STATE::APPETITIVE) &&
-              u->HasExtFlag(LEABRA_UNIT_STATE::D2R)) {
+      else if(su->HasUnitFlag(LEABRA_UNIT_STATE::APPETITIVE) &&
+              su->HasUnitFlag(LEABRA_UNIT_STATE::D2R)) {
         vspatchposd2_lay = fmlay;
       }
-      else if(u->HasExtFlag(LEABRA_UNIT_STATE::AVERSIVE) &&
-              u->HasExtFlag(LEABRA_UNIT_STATE::D1R)) {
+      else if(su->HasUnitFlag(LEABRA_UNIT_STATE::AVERSIVE) &&
+              su->HasUnitFlag(LEABRA_UNIT_STATE::D1R)) {
         vspatchnegd1_lay = fmlay;
       }
-      else if(u->HasExtFlag(LEABRA_UNIT_STATE::AVERSIVE) &&
-              u->HasExtFlag(LEABRA_UNIT_STATE::D2R)) {
+      else if(su->HasUnitFlag(LEABRA_UNIT_STATE::AVERSIVE) &&
+              su->HasUnitFlag(LEABRA_UNIT_STATE::D2R)) {
         vspatchnegd2_lay = fmlay;
       }
     }
@@ -83,12 +84,13 @@ bool STATE_CLASS(VTAUnitSpec)::GetRecvLayers_N
       negpv_lay = fmlay;
     }
     else if(us->GetStateSpecType() == LEABRA_NETWORK_STATE::T_MSNUnitSpec) {
-      if(u->HasExtFlag(LEABRA_UNIT_STATE::AVERSIVE) &&
-         u->HasExtFlag(LEABRA_UNIT_STATE::D2R)) {
+      LEABRA_UNIT_STATE* su = (LEABRA_UNIT_STATE*)fmlay->GetUnitState(net, 0);
+      if(su->HasUnitFlag(LEABRA_UNIT_STATE::AVERSIVE) &&
+         su->HasUnitFlag(LEABRA_UNIT_STATE::D2R)) {
         vspatchnegd2_lay_n = fmlay;
       }
-      else if(u->HasExtFlag(LEABRA_UNIT_STATE::AVERSIVE) &&
-              u->HasExtFlag(LEABRA_UNIT_STATE::D1R)) {
+      else if(su->HasUnitFlag(LEABRA_UNIT_STATE::AVERSIVE) &&
+              su->HasUnitFlag(LEABRA_UNIT_STATE::D1R)) {
         vspatchnegd1_lay = fmlay;
       }
     }

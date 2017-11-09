@@ -250,5 +250,31 @@ public:
 };
 
 
+///////////////////////////////////////////////////////////
+//      PFC / BG
+
+
+class PFCPrjnSpec_cpp : public ProjectionSpec_cpp {
+  // projections involving a PFC layer with unit groups organized by rows into alternating transient and maintaining units, with the first two rows described as INPUT, and the last two rows as OUTPUT
+INHERITED(ProjectionSpec)
+public:
+
+#include <PFCPrjnSpec>  
+  
+  PFCPrjnSpec_cpp() { Initialize_core(); }
+};
+
+
+class BgPfcPrjnSpec_cpp : public ProjectionSpec_cpp {
+  // for connecting BG and PFC layers, where there are separate PFC layers that interconnect with a single BG layer (Matrix, GPi, etc), allowing competition within the BG -- has a customizable data table of the different PFC layers that all map to the same BG layer -- also supports connections from a Patch layer with same name root as PFC
+INHERITED(ProjectionSpec)
+public:
+
+#include <BgPfcPrjnSpec>
+
+  BgPfcPrjnSpec_cpp() { Initialize_core(); }
+  ~BgPfcPrjnSpec_cpp() { FreePfcLayers(); }
+};
+
 
 #endif // AllProjectionSpecs_cpp_h

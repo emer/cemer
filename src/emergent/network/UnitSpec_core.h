@@ -25,6 +25,7 @@
 
   INLINE virtual void  Init_UnitState(UNIT_STATE* u, NETWORK_STATE* net, int thr_no) {
     u->ext_flag = UNIT_STATE::NO_EXTERNAL;
+    u->unit_flag = UNIT_STATE::NO_UNIT_FLAG;
     u->ext = 0.0f;
     u->targ = 0.0f;
     u->net = 0.0f;

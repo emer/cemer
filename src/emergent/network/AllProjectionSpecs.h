@@ -22,6 +22,7 @@
 #include <taVector2i>
 #include <taVector2f>
 #include <MinMaxRange>
+#include <DataTable>
 
 #include <State_main>
 
@@ -30,6 +31,7 @@ eTypeDef_Of(TessEl);
 eTypeDef_Of(GpTessEl);
 eTypeDef_Of(GaussInitWtsSpec);
 eTypeDef_Of(SigmoidInitWtsSpec);
+eTypeDef_Of(BgPfcPrjnEl);
 
 #include <AllProjectionSpecs_mbrs>
 
@@ -512,5 +514,84 @@ private:
 };
 
 
+///////////////////////////////////////////////////////////
+//      PFC / BG
+
+
+eTypeDef_Of(PFCPrjnSpec);
+
+class E_API PFCPrjnSpec : public ProjectionSpec {
+  // projections involving a PFC layer with unit groups organized by rows into alternating transient and maintaining units, with the first two rows described as INPUT, and the last two rows as OUTPUT
+INHERITED(ProjectionSpec)
+public:
+
+#include <PFCPrjnSpec>  
+  
+  TA_SIMPLE_BASEFUNS(PFCPrjnSpec);
+protected:
+  void UpdateAfterEdit_impl() override;
+  
+private:
+  void Initialize()  { Initialize_core(); }
+  void Destroy()     { };
+};
+
+
+eTypeDef_Of(BgPfcPrjnSpec);
+
+class E_API BgPfcPrjnSpec : public ProjectionSpec {
+  // for connecting BG and PFC layers, where there are separate PFC layers that interconnect with a single BG layer (Matrix, GPi, etc), allowing competition within the BG -- has a customizable data table of the different PFC layers that all map to the same BG layer -- also supports connections from a Patch layer with same name root as PFC
+INHERITED(ProjectionSpec)
+public:
+
+#include <BgPfcPrjnSpec>
+  
+  enum BgTableVals { // the different values stored in bg_table -- for rapid access
+    BGT_NAME,
+    BGT_SIZE_X,
+    BGT_SIZE_Y,
+    BGT_START_X,
+    BGT_START_Y,
+  };
+
+  DataTable     bg_table;      // #TREE_SHOW #EXPERT table of PFC layers that map into a common BG layer -- one row per PFC layer -- you specify the name of each PFC layer and its size in unit groups (x,y), and optionally a starting x,y unit group offset within the BG layer (-1 means use default horizontal layout of pfc's within bg) -- mouse over the column headers for important further details
+  String        connect_as;          // #CONDSHOW_ON_cross_connect PFC layer name to connect as -- see cross_connect option for details
+
+  inline int    FindBgTableRow(const String& name) {
+    return bg_table.FindVal(name, BGT_NAME, 0, true);
+  }
+  // find table row for given pfc name -- emits error if not found
+  inline Variant  GetBgTableVal(BgTableVals val, int row) {
+    return bg_table.GetVal(val, row);
+  }
+  // get specific dyn value for given row
+  inline void   SetBgTableVal(const Variant& vl, BgTableVals val, int row) {
+    bg_table.SetVal(vl, val, row);
+  }
+  // set specific dyn value for given row
+  
+  virtual void  FormatBgTable();
+  // #IGNORE format the bg table
+  virtual void  InitBgTable();
+  // default initial bg table
+  virtual void  UpdtBgTable();
+  // #BUTTON update the bg table to ensure consistency of everything
+
+  virtual void  SyncPfcLayers();
+  // #IGNORE sync our dynamic pfc_layers array with the compiled version used by actual State projection code
+  virtual void  CopyToState_PfcLayers(void* state_spec, const char* state_suffix);
+  // #IGNORE copy our compiled pfc_layers data to other state spec
+
+  void    CopyToState(void* state_spec, const char* state_suffix) override;
+  void    UpdateStateSpecs() override;
+
+  TA_SIMPLE_BASEFUNS(BgPfcPrjnSpec);
+protected:
+  void UpdateAfterEdit_impl() override;
+  
+private:
+  void Initialize();
+  void Destroy()     { CutLinks(); FreePfcLayers(); }
+};
 
 #endif // AllProjectionSpecs_h

@@ -1,34 +1,6 @@
-// Copyright 2017, Regents of the University of Colorado,
-// Carnegie Mellon University, Princeton University.
-//
-// This file is part of Emergent
-//
-//   Emergent is free software; you can redistribute it and/or modify
-//   it under the terms of the GNU General Public License as published by
-//   the Free Software Foundation; either version 2 of the License, or
-//   (at your option) any later version.
-//
-//   Emergent is distributed in the hope that it will be useful,
-//   but WITHOUT ANY WARRANTY; without even the implied warranty of
-//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//   GNU General Public License for more details.
+// this is included directly in AllProjectionSpecs_cpp / _cuda
+// {
 
-#ifndef PFCPrjnSpec_h
-#define PFCPrjnSpec_h 1
-
-// parent includes:
-#include <ProjectionSpec>
-
-// member includes:
-
-// declare all other types mentioned but not required to include:
-
-eTypeDef_Of(PFCPrjnSpec);
-
-class E_API PFCPrjnSpec : public ProjectionSpec {
-  // projections involving a PFC layer with unit groups organized by rows into alternating transient and maintaining units, with the first two rows described as INPUT, and the last two rows as OUTPUT
-INHERITED(ProjectionSpec)
-public:
   enum LayerType {
     PFC,        // a PFC layer
     GATING,     // a gating-type of layer, e.g., Matrix, GPi, Thal
@@ -60,26 +32,25 @@ public:
   bool          col_1to1;       // make the column-wise connections one-to-one -- otherwise it is all-to-all
   bool          unit_1to1;      // for non-learning PFC representations that just have 1-to-1 copies of input representations, this establishes the 1-to-1 unit-level connectivity
   
-  void	Connect_impl(Projection* prjn, bool make_cons) override;
+  INIMPL void  Connect_impl(PRJN_STATE* prjn, NETWORK_STATE* net, bool make_cons) override;
 
-  virtual void Connect_row1to1(Projection* prjn, bool make_cons,
+  INIMPL virtual void Connect_row1to1(PRJN_STATE* prjn, NETWORK_STATE* net, bool make_cons,
                                int rx, int ry, int recv_x, bool recv_gps);
-  virtual void Connect_rowall(Projection* prjn, bool make_cons,
+  INIMPL virtual void Connect_rowall(PRJN_STATE* prjn, NETWORK_STATE* net, bool make_cons,
                               int rx, int ry, int recv_x, bool recv_gps);
-  virtual void Connect_cols(Projection* prjn, bool make_cons,
+  INIMPL virtual void Connect_cols(PRJN_STATE* prjn, NETWORK_STATE* net, bool make_cons,
                             int rx, int ry, int recv_x, bool recv_gps,
                             int sy, int send_x, bool send_gps);
-  virtual void Connect_unit1to1(Projection* prjn, bool make_cons,
+  INIMPL virtual void Connect_unit1to1(PRJN_STATE* prjn, NETWORK_STATE* net, bool make_cons,
                                 int rx, int ry, int recv_x, bool recv_gps,
                                 int sy, int send_x, bool send_gps);
   
-  TA_SIMPLE_BASEFUNS(PFCPrjnSpec);
-protected:
-  void UpdateAfterEdit_impl() override;
-  
-private:
-  void Initialize();
-  void Destroy()     { };
-};
+  INLINE void Initialize_core() {
+    recv_layer = GATING;    recv_pfc_rows = ALL_PFC;    recv_gate_rows = ALL_GATING;
+    send_layer = PFC;    send_pfc_rows = ALL_PFC;    send_gate_rows = ALL_GATING;
+    row_1to1 = true;    col_1to1 = true;    unit_1to1 = false;
+  }
+  // #IGNORE
 
-#endif // PFCPrjnSpec_h
+  INLINE int  GetStateSpecType() const override
+  { return NETWORK_STATE::T_PFCPrjnSpec; }

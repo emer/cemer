@@ -61,6 +61,7 @@ private:
   void 	Initialize() {  on = true;  sigma = 0.6f;  wrap_wts = false;  ctr_mv = 0.8f; }
 };
 
+
 class STATE_CLASS(SigmoidInitWtsSpec) : public STATE_CLASS(taOBase) {
   // #STEM_BASE ##INLINE ##CAT_Projection parameters for initializing sigmoid projection weights
 INHERITED(taOBase)
@@ -74,4 +75,37 @@ public:
 private:
   void 	Initialize()  {  on = true;  gain = 0.02f;  ctr_mv = 0.5f; }
 };
+
+
+
+class STATE_CLASS(BgPfcPrjnEl) : public STATE_CLASS(taOBase) {
+  // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Spec one element of a BgPfcPrjnSpec projection spec
+INHERITED(taOBase)
+public:
+  static const int LAY_NAME_MAX_LEN=256; // #IGNORE max length of layer name -- update from Layer_core.h if ever need to change
+ 
+  char          pfc_name[LAY_NAME_MAX_LEN]; // name of the PFC layer -- layer must uniquely contain this name -- case sensitive maching is used
+  TAVECTOR2I	size; // size of this pfc layer in terms of unit groups (stripes) -- only needed if the PFC layers are NOT all the same size -- a -1 indicates that all pfc layers are the same size
+  TAVECTOR2I	start; // starting coordinates of the unit group of stripes for this pfc within the bg layer -- a -1 for x indicates that PFC layers are organized horizontally across, and position computed automatically from sizes
+
+  INLINE void   SetPfcName(const char* pfc_nm) {
+    strncpy(pfc_name, pfc_nm, LAY_NAME_MAX_LEN-1);
+    pfc_name[LAY_NAME_MAX_LEN-1] = '\0'; // C is so lame!
+  }
+  // #CAT_State set pfc name to given name
+  INLINE bool   PfcNameIs(const char* pfc_nm) const {
+    return (strncmp(pfc_name, pfc_nm, LAY_NAME_MAX_LEN) == 0);
+  }
+  // #CAT_State return true if that is the name of the pfc
+  INLINE bool   PfcNameContains(const char* pfc_nm) const {
+    return (strstr(pfc_name, pfc_nm) != NULL);
+  }
+  // #CAT_State return true if the pfc name contains the given string
+
+  STATE_DECO_KEY("ProjectionSpec");
+  STATE_TA_STD_CODE(BgPfcPrjnEl);
+private:
+  INLINE void	Initialize() { size = -1; start.x = -1; start.y = 0; }
+};
+
 

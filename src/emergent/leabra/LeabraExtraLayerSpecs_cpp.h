@@ -59,7 +59,16 @@ public:
   TwoDValLayerSpec_cpp() { Initialize_core(); }
 };
 
-// #include <DecodeTwoDValLayerSpec>
+
+class DecodeTwoDValLayerSpec_cpp : public TwoDValLayerSpec_cpp {
+  // represents one or more two-d value(s) using a coarse-coded distributed code over units.  one val readout is weighted-average; multiple vals = max bumps over 3x3 local grid
+INHERITED(TwoDValLayerSpec)
+public:
+
+#include <DecodeTwoDValLayerSpec>
+
+  DecodeTwoDValLayerSpec_cpp() { Initialize_core(); }
+};
 
 // not converting below:
 // #include <MotorForceLayerSpec>

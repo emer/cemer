@@ -512,3 +512,7 @@ void TwoDValLayerSpec::ReConfig(Network* main_net, int n_units) {
   UpdateAfterEdit();
 }
 
+
+#include "DecodeTwoDValLayerSpec.cpp"
+TA_BASEFUNS_CTORS_DEFN(DecodeTwoDValLayerSpec);
+

@@ -10,7 +10,7 @@
   Valence       valence;        // US valence coding -- appetitive vs. aversive
   DAReceptor    dar;            // #READ_ONLY #SHOW type of dopamine receptor: D1 vs. D2 -- computed automatically from acq_ext and valence
 
-  INIMPL void  Init_Weights(UNIT_STATE* uv, NETWORK_STATE* net, int thr_no) override;
+  INIMPL void  Init_UnitState(UNIT_STATE* uv, NETWORK_STATE* net, int thr_no) override;
 
   INIMPL float Compute_DaModNetin(LEABRA_UNIT_STATE* uv, LEABRA_NETWORK_STATE* net,
                                   int thr_no, float& net_syn) override;

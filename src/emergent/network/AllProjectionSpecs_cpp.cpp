@@ -48,3 +48,6 @@
 
 #include "GaussRFPrjnSpec.cpp"
 #include "GradientWtsPrjnSpec.cpp"
+
+#include "PFCPrjnSpec.cpp"
+#include "BgPfcPrjnSpec.cpp"

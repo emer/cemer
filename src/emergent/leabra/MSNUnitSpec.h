@@ -23,7 +23,7 @@
   STATE_CLASS(MatrixActSpec)         matrix;         // #CONDSHOW_ON_matrix_patch:MATRIX parameters for Matrix activation dynamics
   bool                  deep_mod_zero;  // #CONDSHOW_ON_matrix_patch:PATCH for modulation coming from the BLA via deep_mod_net -- when this modulation signal is below zero, does it have the ability to zero out the patch activations?  i.e., is the modulation required to enable patch firing?
   
-  INIMPL void  Init_Weights(UNIT_STATE* uv, NETWORK_STATE* net, int thr_no) override;
+  INIMPL void  Init_UnitState(UNIT_STATE* uv, NETWORK_STATE* net, int thr_no) override;
 
   INIMPL virtual GateType      MatrixGateType(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no);
   // get type of gating that given unit participates in
