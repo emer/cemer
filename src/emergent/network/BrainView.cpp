@@ -271,7 +271,7 @@ void BrainView::GetMembs() {
     }
     if(!unit_src && net()->layers.leaves > 0) {
       Layer* lay = net()->layers.Leaf(net()->layers.leaves-1);
-      if(lay->n_units > 0)
+      if(lay->n_units_built > 0)
         setUnitSrc(lay->GetUnitState(net_state, 0));
     }
   }
@@ -283,7 +283,7 @@ void BrainView::GetMembs() {
   // only get units that have been mapped to voxel coords...
   FOREACH_ELEM_IN_GROUP(Layer, lay, net()->layers) {
     if (lay->lesioned() || lay->Iconified() || lay->brain_area.empty()) continue;
-    // for(int ui = 0; ui < lay->n_units; ui++) {
+    // for(int ui = 0; ui < lay->n_units_built; ui++) {
     //   UNIT_STATE* u = lay->GetUnitState(net, ui);
     //   if (!u->voxels || u->voxels->size == 0) continue;
     //   // TODO: for now, assumes only one voxel per unit.  Update to handle multiple.

@@ -190,7 +190,7 @@ bool Projection::ChangeMyType(TypeDef* new_typ) {
 
 void Projection::ToggleOff() {
   off = !off;
-  SigEmitUpdated();
+  UpdateAfterEdit();
 }
 
 void Projection::SetFrom() {
@@ -400,12 +400,11 @@ void Projection::CheckThisConfig_impl(bool quiet, bool& rval) {
   
   CheckSpecs();                 // just check!
 
-  ConSpec_cpp* cs = GetConSpec(net_state);
-  // todo..
-  // if(cs) {
-  //   bool chk = cs->CheckConfig_RecvCons(this, quiet);
-  //   if(!chk) rval = false;
-  // }
+  ConSpec* cs = GetMainConSpec();
+  if(cs) {
+    bool chk = cs->CheckConfig_RecvCons(this, quiet);
+    if(!chk) rval = false;
+  }
 }
 
 

@@ -27,6 +27,10 @@ SMARTREF_OF_CPP(Layer_Group)
 
 bool Layer_Group::nw_itm_def_arg = false;
 
+void Layer_Group::Initialize() {
+  setUseStale(true);
+}  
+  
 void Layer_Group::InitLinks() {
   inherited::InitLinks();
   taBase::Own(pos,this);
@@ -77,15 +81,6 @@ void Layer_Group::AddRelPos2d(taVector2i& rel_pos) {
   if (lg) {
     rel_pos += lg->pos2d;
     lg->AddRelPos2d(rel_pos);
-  }
-}
-
-void Layer_Group::SigEmit(int sls, void* op1, void* op2) {
-  inherited::SigEmit(sls, op1, op2);
-  if (sls == SLS_LIST_ITEM_INSERT) {
-    Network* net = GET_MY_OWNER(Network);
-    if (net)
-      net->RebuildAllViews();
   }
 }
 

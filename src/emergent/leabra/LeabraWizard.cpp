@@ -2172,14 +2172,14 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, int n_pos_pv, int n_neg_pv, bool da_
   //////////////////////////////////////////////////////////////////////////////////
   // build and check
 
-  net->Build();
+  // net->Build();
 
 //   if(new_laygp) {
 //     laygp->pos.z = 0;           // move back!
 //     net->RebuildAllViews();     // trigger update
 //   }
 
-  bool ok = net->CheckConfig();
+  bool ok = true; // net->CheckConfig();
 
   if(!ok) {
     msg =
@@ -3598,10 +3598,7 @@ bool LeabraWizard::Hippo(LeabraNetwork* net, int n_ec_slots) {
   }
   taMisc::Confirm(msg);
 
-  for(int j=0;j<net->specs.leaves;j++) {
-    BaseSpec* sp = (BaseSpec*)net->specs.Leaf(j);
-    sp->UpdateAfterEdit();
-  }
+  net->specs.UpdateAllSpecs();
 
   LeabraProject* proj = GET_MY_OWNER(LeabraProject);
   if(proj) {

@@ -157,6 +157,7 @@ public:
   XYNGeom               flat_geom;      // #EXPERT #READ_ONLY #CAT_Structure geometry of the units flattening out over unit groups -- same as un_geom if !unit_groups; otherwise un_geom * gp_geom -- this is in logical, structural (not display) sizes -- the n here is the total number of  units that will be created
   XYNGeom               disp_geom;      // #AKA_act_geom #HIDDEN #READ_ONLY #CAT_Structure actual view geometry, includes spaces and groups and everything: the full extent of units within the layer
   XYNGeom               scaled_disp_geom; // #AKA_scaled_act_geom #HIDDEN #READ_ONLY #CAT_Structure scaled actual view geometry: disp_scale * disp_geom -- use for view computations
+  int                   n_units_built;   // #READ_ONLY #NO_SAVE number of units actually built in this layer -- use this for all iteration over units at the layer level!
 
   Projection_Group      projections;    // #CAT_Structure group of receiving projections
   Projection_Group      send_prjns;     // #CAT_Structure #HIDDEN #LINK_GROUP #NO_DIFF #NO_SEARCH group of sending projections

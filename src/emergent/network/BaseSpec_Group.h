@@ -66,6 +66,8 @@ public:
   
   virtual void  UpdateAllSpecs();
   // update all of the specs within this group
+  virtual void  ResetAllSpecIdxs();
+  // #IGNORE reset all the state spec_idx spec indexes to -1 -- called prior to building so only used specs have a valid spec_idx
 
   void RestorePanels();
   // if the panel was pinned when the program was saved redisplay it on project open

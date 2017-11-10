@@ -72,21 +72,14 @@ void ConSpec::Init_Weights_Net() {
 }
 
 bool ConSpec::CheckObjectType_impl(taBase* obj) {
-  return true;          // ConState is not a taBabse obj anymore!
-  // TypeDef* con_tp = &TA_Connection;
-  // if(obj->InheritsFromName("ConState_cpp")) {
-  //   // con_tp = ((ConState_cpp*)obj)->ConType();
-  //   return true;                // can't really check
-  // }
-  // else if(obj->InheritsFrom(&TA_Projection)) {
-  //   con_tp = ((Projection*)obj)->con_type;
-  // }
-  // else if(obj->InheritsFrom(&TA_UnitSpec)) {
-  //   return true;                // no way to check -- unitspec should check us!
-  // }
-  // if(!con_tp->InheritsFrom(min_obj_type))
-  //   return false;
-  // return true;
+  TypeDef* con_tp = &TA_Connection;
+  if(obj->InheritsFrom(&TA_Projection)) { // this SHOULD be the only case..
+    con_tp = ((Projection*)obj)->con_type;
+    if(!con_tp->InheritsFrom(min_obj_type))
+      return false;
+    return true;
+  }
+  return true; 
 }
 
 bool ConSpec::CheckType_impl(TypeDef* td) {
@@ -97,9 +90,14 @@ bool ConSpec::CheckType_impl(TypeDef* td) {
 
 void ConSpec::UpdateStateSpecs() {
   Network* net = GET_MY_OWNER(Network);
-  if(!net || !net->IsBuiltIntact()) return;
+  if(!net || !net->IsBuiltIntact() || spec_idx < 0) return;
   CopyToState(net->net_state->con_specs[spec_idx], net->net_state->GetStateSuffix());
 #ifdef CUDA_COMPILE
   CopyToState(net->cuda_state->con_specs[spec_idx], net->cuda_state->GetStateSuffix());
 #endif
+}
+
+void ConSpec::ResetAllSpecIdxs() {
+  spec_idx = -1;
+  inherited::ResetAllSpecIdxs(); // calls on children
 }

@@ -202,7 +202,7 @@ bool taiWidgetTokenChooser::ShowToken(taBase* obj, TypeDef* td, int i) const {
   // }
   taBase* owner = obj->GetOwner();
   if(!owner) return false;
-  if(!targ_typ->InheritsFrom(&TA_taList_impl)) {
+  if(!targ_typ->InheritsFrom(&TA_taList_impl) && !targ_typ->HasOption("CHOOSE_AS_MEMBER")) {
     // not for lists which DO mostly live as members of other objects, and are
     // selected for putting things somewhere..
     if(!owner->InheritsFrom(&TA_taList_impl)) {

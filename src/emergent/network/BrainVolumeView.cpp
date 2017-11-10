@@ -127,7 +127,7 @@ void BrainVolumeView::AllocUnitViewData()
   FOREACH_ELEM_IN_GROUP(Layer, lay, net->layers) {
     if (lay->lesioned() || lay->Iconified() || lay->brain_area.empty()) continue;
     // todo: put voxels in layer!
-    // for(int ui = 0; ui < lay->n_units; ui++) {
+    // for(int ui = 0; ui < lay->n_units_built; ui++) {
     //   UNIT_STATE* u = lay->GetUnitState(net, ui);
     //   if (!u->voxels || u->voxels->size == 0) continue;
     //   if (u->lesioned()) continue;
@@ -818,7 +818,7 @@ void BrainVolumeView::CreateFaceSets()
   FOREACH_ELEM_IN_GROUP_NESTED(Layer, lay, net->layers) {
     if (lay->lesioned() || lay->Iconified() || lay->brain_area.empty()) continue;
     // todo:
-    // for(int ui = 0; ui < lay->n_units; ui++) {
+    // for(int ui = 0; ui < lay->n_units_built; ui++) {
     //   UNIT_STATE* u = lay->GetUnitState(net, ui);
     //   if (u->lesioned()) continue;
     //   // if (!u->voxels || u->voxels->size == 0) continue;

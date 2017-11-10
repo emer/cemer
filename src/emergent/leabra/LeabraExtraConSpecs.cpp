@@ -330,6 +330,7 @@ TA_BASEFUNS_CTORS_DEFN(MSNTraceThalLrates);
 TA_BASEFUNS_CTORS_DEFN(MSNConSpec);
 
 void MSNConSpec::Initialize() {
+  min_obj_type = &TA_MSNCon;
   Defaults_init();
   Initialize_core();
 }

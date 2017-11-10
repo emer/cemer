@@ -88,9 +88,14 @@ void UnitSpec::UpdateAfterEdit_impl() {
 
 void UnitSpec::UpdateStateSpecs() {
   Network* net = GET_MY_OWNER(Network);
-  if(!net || !net->IsBuiltIntact()) return;
+  if(!net || !net->IsBuiltIntact() || spec_idx < 0) return;
   CopyToState(net->net_state->unit_specs[spec_idx], net->net_state->GetStateSuffix());
 #ifdef CUDA_COMPILE
   CopyToState(net->cuda_state->unit_specs[spec_idx], net->cuda_state->GetStateSuffix());
 #endif
+}
+
+void UnitSpec::ResetAllSpecIdxs() {
+  spec_idx = -1;
+  inherited::ResetAllSpecIdxs(); // calls on children
 }

@@ -58,6 +58,7 @@ public:
   String        GetToolbarName() const override { return "unit spec"; }
 
   void  UpdateStateSpecs() override;
+  void  ResetAllSpecIdxs() override;
   
   void  InitLinks() override;
   void  CutLinks() override;

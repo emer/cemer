@@ -109,7 +109,7 @@ void UnitGroupView::BuildAll() {
   if(nv->unit_disp_mode == NetView::UDM_BLOCK) return; // optimized
 
   Layer* lay = this->layer(); //cache
-  if(!lay) return;
+  if(!lay || lay->lesioned() || lay->n_units_built == 0) return;
 
   Network* net = lay->own_net;
   if(!net->IsBuiltIntact()) return;
@@ -132,7 +132,7 @@ void UnitGroupView::InitDisplay() {
 
 float UnitGroupView::GetUnitDisplayVal(const taVector2i& co, void*& base) {
   Layer* lay = this->layer(); //cache
-  if(!lay) return 0.0f;
+  if(!lay || lay->lesioned() || lay->n_units_built == 0) return 0.0f;
   Network* net = lay->own_net;
   if(!net->IsBuiltIntact()) return 0.0f; 
 
@@ -197,7 +197,7 @@ float UnitGroupView::GetUnitDisplayVal_Idx(const taVector2i& co, int midx, void*
 
 void UnitGroupView::UpdateUnitViewBases(UnitState_cpp* src_u) {
   Layer* lay = this->layer(); //cache
-  if(!lay) return;
+  if(!lay || lay->lesioned() || lay->n_units_built == 0) return;
   Network* net = lay->own_net;
 
   if(!net->IsBuiltIntact()) return; 
@@ -226,7 +226,6 @@ void UnitGroupView::UpdateUnitViewBase_Con_impl
   bool check_prjn = (prjn_starts_with.nonempty());
     
   Layer* lay = this->layer(); //cache
-  if(!lay) return;
   Network* net = lay->own_net;
 
   LAYER_STATE* src_u_lay = src_u->GetOwnLayer(net->net_state);
@@ -338,7 +337,7 @@ void UnitGroupView::UpdateAutoScale(bool& updated) {
   taVector2i co;
   void* base;
   Layer* lay = this->layer(); //cache
-  if(!lay) return;
+  if(!lay || lay->lesioned()) return;
   for (co.y = 0; co.y < lay->flat_geom.y; ++co.y) {
     for (co.x = 0; co.x < lay->flat_geom.x; ++co.x) {
       float val = GetUnitDisplayVal(co, base);
@@ -444,7 +443,8 @@ void UnitGroupView::Render_impl_children() {
   Network* net = lay->own_net;
   if(!net->IsBuiltIntact()) return;
 
-  if(lay->Iconified() || !lv() || (lv()->disp_mode == LayerView::DISP_FRAME)) {
+  if(lay->Iconified() || lay->lesioned() || lay->n_units_built == 0 || !lv() ||
+     (lv()->disp_mode == LayerView::DISP_FRAME)) {
     return;                     // don't render anything!
   }
 
@@ -1264,7 +1264,7 @@ void UnitGroupView::UpdateUnitValues_blocks() {
 void UnitGroupView::UpdateUnitValues() {
   NetView* nv = getNetView(); //cache
   Layer* lay = this->layer(); //cache
-  if(!lay) return;
+  if(!lay || lay->lesioned() || lay->n_units_built == 0) return;
   Network* net = lay->own_net;
   if(!net->IsBuiltIntact()) return;
   if(lay->Iconified() || !lv() || lv()->disp_mode == LayerView::DISP_FRAME) {

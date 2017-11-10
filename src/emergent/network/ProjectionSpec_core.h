@@ -70,7 +70,7 @@
   // #IGNORE receiptive-field version of connect one unit group to another -- rgpidx = recv unit group idx, sgpidx = send unit group idx -- either can be -1 for using entire layer instead -- has share cons and reciprocal connectivity options
 
   INLINE void Initialize_core_base() {
-    spec_idx = 0; self_con = false;  init_wts = false;  set_scale = false;  init_wt_val = 1.0f;
+    spec_idx = -1; self_con = false;  init_wts = false;  set_scale = false;  init_wt_val = 1.0f;
     add_rnd_var = false;
   }
   // #IGNORE

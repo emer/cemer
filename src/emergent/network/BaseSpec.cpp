@@ -535,3 +535,7 @@ void BaseSpec::CopyToState(void* state_spec, const char* state_suffix) {
   st_td->CopyFromDiffTypes(state_spec, td, (void*)this, 0, false); // no uae
 }
 
+void BaseSpec::ResetAllSpecIdxs() {
+  // note: each spec subtype must reset its spec idx by overloading
+  children.ResetAllSpecIdxs();
+}

@@ -116,7 +116,6 @@ public:
 
   String GetTypeDecoKey() const override { return "Layer"; }
 
-  void  SigEmit(int sls, void* op1 = NULL, void* op2 = NULL) override;
   void  InitLinks() override;
   void  CutLinks() override;
   TA_BASEFUNS(Layer_Group);
@@ -126,7 +125,7 @@ protected:
 
   void UpdateAfterEdit_impl() override;
 private:
-  void  Initialize()            { };
+  void  Initialize();
   void  Destroy()               { };
   void  Copy_(const Layer_Group& cp);
 };

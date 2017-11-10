@@ -38,9 +38,14 @@ void LayerSpec::CutLinks() {
 
 void LayerSpec::UpdateStateSpecs() {
   Network* net = GET_MY_OWNER(Network);
-  if(!net || !net->IsBuiltIntact()) return;
+  if(!net || !net->IsBuiltIntact() || spec_idx < 0) return;
   CopyToState(net->net_state->layer_specs[spec_idx], net->net_state->GetStateSuffix());
 #ifdef CUDA_COMPILE
   CopyToState(net->cuda_state->layer_specs[spec_idx], net->cuda_state->GetStateSuffix());
 #endif
+}
+
+void LayerSpec::ResetAllSpecIdxs() {
+  spec_idx = -1;
+  inherited::ResetAllSpecIdxs(); // calls on children
 }

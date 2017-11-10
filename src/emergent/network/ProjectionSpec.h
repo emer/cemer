@@ -52,6 +52,7 @@ public:
   String        GetToolbarName() const override { return "prjn spec"; }
 
   void  UpdateStateSpecs() override;
+  void  ResetAllSpecIdxs() override;
   
   void  InitLinks() override;
   SIMPLE_COPY(ProjectionSpec);

@@ -1037,6 +1037,8 @@ public:
   bool         ChangeMyType(TypeDef* new_type) override;
   taBase*      ChooseNew(taBase* origin, const String& choice_text) override;
   bool         HasChooseNew() override { return true; }
+  
+  void         setStale() override;
 
   void  InitLinks() override;
   void  CutLinks() override;

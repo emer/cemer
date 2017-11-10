@@ -25,6 +25,7 @@ bool BaseSpec_Group::nw_itm_def_arg = false;
 
 void BaseSpec_Group::Initialize() {
   SetBaseType(&TA_BaseSpec);
+  setUseStale(true);
 }
 
 String BaseSpec_Group::GetTypeDecoKey() const {
@@ -189,6 +190,12 @@ void BaseSpec_Group::UpdateAllSpecs() {
 
   FOREACH_ELEM_IN_GROUP(BaseSpec, bs, *this) {
     bs->children.UpdateAllSpecs();
+  }
+}
+
+void BaseSpec_Group::ResetAllSpecIdxs() {
+  FOREACH_ELEM_IN_GROUP(BaseSpec, bs, *this) {
+    bs->ResetAllSpecIdxs();
   }
 }
 

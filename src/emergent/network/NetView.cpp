@@ -794,7 +794,7 @@ void NetView::GetMembs() {
     }
     if(!unit_src && nt->layers.leaves > 0) {
       Layer* lay = nt->layers.Leaf(nt->layers.leaves-1);
-      if(lay->n_units > 0) {
+      if(lay->n_units_built > 0) {
         setUnitSrc(NULL, lay->GetUnitState(nt->net_state, 0));
       }
     }
@@ -1643,7 +1643,7 @@ void NetView::Render_wt_lines() {
 
   if((bool)wt_prjn_lay && (wt_line_width >= 0.0f)) {
     int n_con = 0;
-    for(int ui = 0; ui < wt_prjn_lay->n_units; ui++) {
+    for(int ui = 0; ui < wt_prjn_lay->n_units_built; ui++) {
       UNIT_STATE* su = wt_prjn_lay->GetUnitState(nt->net_state, ui);
       if(fabsf(su->wt_prjn) >= wt_line_thr) n_con++;
     }
@@ -1736,7 +1736,7 @@ void NetView::Render_wt_lines() {
     int ru_idx = v_idx;
     vertex_dat[v_idx++].setValue(src.x, src.y, src.z);
 
-    for(int ui = 0; ui < wt_prjn_lay->n_units; ui++) {
+    for(int ui = 0; ui < wt_prjn_lay->n_units_built; ui++) {
       UNIT_STATE* su = wt_prjn_lay->GetUnitState(nt->net_state, ui);
       float wt = su->wt_prjn;
       if(fabsf(wt) < wt_line_thr) continue;

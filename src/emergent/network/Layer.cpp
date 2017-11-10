@@ -179,6 +179,7 @@ void Layer::Initialize() {
   // gp_output_names = ??
   m_prv_unit_spec = NULL;
   m_prv_layer_flags = LF_NONE;
+  n_units_built = 0;
 
   // prerr = ??
   units_lesioned = false;
@@ -905,7 +906,7 @@ void Layer::SetLayUnitExtFlags(int flg) {
   if(!net) return;
   
   SetExtFlag(flg);
-  for(int ui=0; ui < n_units; ui++) {
+  for(int ui=0; ui < n_units_built; ui++) {
     UnitState_cpp* u = GetUnitState(net, ui);
     if(u->lesioned()) continue;
     u->SetExtFlag((UnitState_cpp::ExtFlags)flg);
@@ -953,7 +954,7 @@ void Layer::ApplyInputData(taMatrix* data, ExtFlags ext_flags,
 void Layer::ApplyInputData_1d(NETWORK_STATE* net, taMatrix* data, ExtFlags ext_flags,
                               Random* ran, bool na_by_range) {
   // todo: in the future, put random on unitspec and move this to State
-  int max_x = MIN(data->dim(0), n_units);
+  int max_x = MIN(data->dim(0), n_units_built);
   bool do_rand = (ran && (ran->type != Random::NONE));
   UNIT_SPEC_CPP* us = GetUnitSpec(net);
   for(int d_x = 0; d_x < max_x; d_x++) {
@@ -1247,7 +1248,7 @@ void Layer::GetLocalistName() {
   NetworkState_cpp* net = GetValidNetState();
   if(!net) return;
 
-  for(int ui=0; ui < n_units; ui++) {
+  for(int ui=0; ui < n_units_built; ui++) {
     UnitState_cpp* u = GetUnitState(net, ui);
     if(u->lesioned()) continue;
     // todo: do
@@ -1277,7 +1278,7 @@ void Layer::TransformWeights(const SimpleMathSpec& trans) {
   NetworkState_cpp* net = GetValidNetState();
   if(!net) return;
   
-  for(int ui=0; ui < n_units; ui++) {
+  for(int ui=0; ui < n_units_built; ui++) {
     UnitState_cpp* u = GetUnitState(net, ui);
     if(u->lesioned()) continue;
     u->TransformWeights(net, trans);
@@ -1288,7 +1289,7 @@ void Layer::AddNoiseToWeights(const Random& noise_spec) {
   NetworkState_cpp* net = GetValidNetState();
   if(!net) return;
   
-  for(int ui=0; ui < n_units; ui++) {
+  for(int ui=0; ui < n_units_built; ui++) {
     UnitState_cpp* u = GetUnitState(net, ui);
     if(u->lesioned()) continue;
     u->AddNoiseToWeights(net, noise_spec);
@@ -1300,7 +1301,7 @@ int Layer::PruneCons(const SimpleMathSpec& pre_proc, Relation::Relations rel, fl
   if(!net) return 0;
   
   int rval = 0;
-  for(int ui=0; ui < n_units; ui++) {
+  for(int ui=0; ui < n_units_built; ui++) {
     UnitState_cpp* u = GetUnitState(net, ui);
     if(u->lesioned()) continue;
     rval += u->PruneCons(net, pre_proc, rel, cmp_val);
@@ -1325,7 +1326,7 @@ int Layer::LesionCons(float p_lesion, bool permute) {
   if(!net) return 0;
   
   int rval = 0;
-  for(int ui=0; ui < n_units; ui++) {
+  for(int ui=0; ui < n_units_built; ui++) {
     UnitState_cpp* u = GetUnitState(net, ui);
     if(u->lesioned()) continue;
     rval += u->LesionCons(net, p_lesion, permute);
@@ -1341,11 +1342,11 @@ int Layer::LesionUnits(float p_lesion, bool permute) {
   StructUpdate(true);
   UnLesionUnits();              // always start unlesioned
   if(permute) {
-    rval = (int) (p_lesion * (float)n_units);
+    rval = (int) (p_lesion * (float)n_units_built);
     if(rval == 0) return 0;
     int_Array ary;
     int j;
-    for(j=0; j<n_units; j++)
+    for(j=0; j<n_units_built; j++)
       ary.Add(j);
     ary.Permute();
     ary.size = rval;
@@ -1357,7 +1358,7 @@ int Layer::LesionUnits(float p_lesion, bool permute) {
   }
   else {
     int j;
-    for(j=n_units-1; j>=0; j--) {
+    for(j=n_units_built-1; j>=0; j--) {
       if(Random::ZeroOne() <= p_lesion) {
         UnitState_cpp* u = GetUnitState(net, j);
         u->Lesion();
@@ -1376,7 +1377,7 @@ void Layer::UnLesionUnits() {
   if(!net) return;
 
   StructUpdate(true);
-  for(int ui=0; ui < n_units; ui++) {
+  for(int ui=0; ui < n_units_built; ui++) {
     UnitState_cpp* u = GetUnitState(net, ui);
     u->UnLesion();
   }
@@ -1503,7 +1504,7 @@ bool Layer::Snapshot(const String& variable, SimpleMathSpec& math_op, bool arg_i
   NetworkState_cpp* net = GetValidNetState();
   if(!net) return false;
   
-  for(int ui=0; ui < n_units; ui++) {
+  for(int ui=0; ui < n_units_built; ui++) {
     UnitState_cpp* u = GetUnitState(net, ui);
     if(u->lesioned()) continue;
     if(!u->Snapshot(net, variable, math_op, arg_is_snap)) return false;
@@ -1516,10 +1517,10 @@ UnitState_cpp* Layer::MostActiveUnit(int& idx) {
   if(!net) return NULL;
   
   idx = -1;
-  if(n_units == 0) return NULL;
+  if(n_units_built == 0) return NULL;
   UnitState_cpp* max_un = GetUnitState(net, 0);
   float max_act = max_un->act;
-  for(int i=1;i<n_units;i++) {
+  for(int i=1;i<n_units_built;i++) {
     UnitState_cpp* un = GetUnitState(net, i);
     if(un->act > max_act) {
       max_un = un;
@@ -1627,7 +1628,7 @@ DataTable* Layer::ConVarsToTable(DataTable* dt, const String& var1, const String
     new_table = true;
   }
   dt->StructUpdate(true);
-  for(int ui=0; ui < n_units; ui++) {
+  for(int ui=0; ui < n_units_built; ui++) {
     UnitState_cpp* u = GetUnitState(net, ui);
     if(u->lesioned()) continue;
     u->ConVarsToTable(net, dt, var1, var2, var3, var4, var5, var6, var7, var8,
@@ -1717,7 +1718,7 @@ bool Layer::VarToVarCopy(const String& dest_var, const String& src_var) {
                  unit_typ->name)) {
     return false;
   }
-  for(int ui=0; ui < n_units; ui++) {
+  for(int ui=0; ui < n_units_built; ui++) {
     UnitState_cpp* u = GetUnitState(net, ui);
     if(u->lesioned()) continue;
     *((float*)dest_md->GetOff((void*)u)) = *((float*)src_md->GetOff((void*)u));
@@ -1737,7 +1738,7 @@ bool Layer::VarToVal(const String& dest_var, float val) {
                  unit_typ->name)) {
     return false;
   }
-  for(int ui=0; ui < n_units; ui++) {
+  for(int ui=0; ui < n_units_built; ui++) {
     UnitState_cpp* u = GetUnitState(net, ui);
     if(u->lesioned()) continue;
     *((float*)dest_md->GetOff((void*)u)) = val;

@@ -53,7 +53,7 @@ void ActBasedRF::ConfigDataTable(DataTable* dt, Network* net) {
   excl.Split(exclude_lays, ":");
   dt->StructUpdate(true);
   dt->Reset();                  // nuke cols -- ensure matching
-  int rows = trg_layer->n_units;
+  int rows = trg_layer->n_units_built;
   int idx;
   FOREACH_ELEM_IN_GROUP(Layer, lay, net->layers) {
     if(lay->lesioned() || lay->Iconified()) continue; // iconified also excludes!
@@ -127,7 +127,7 @@ bool ActBasedRF::IncrementSums() {
                                         lay->un_geom.y);
     }
 
-    for(int ui = 0; ui < trg_layer->n_units; ui++) {
+    for(int ui = 0; ui < trg_layer->n_units_built; ui++) {
       UNIT_STATE* u = trg_layer->GetUnitState(net, ui);
       const float tact = fabsf(*((float*)var_md->GetOff(u)));
       if(tact < threshold) continue; // not this time!
@@ -136,7 +136,7 @@ bool ActBasedRF::IncrementSums() {
 
       float_Matrix* sum_mat = (float_Matrix*)sum_da->GetValAsMatrix(ui);
       taBase::Ref(sum_mat);
-      for(int sui = 0; sui < lay->n_units; sui++) {
+      for(int sui = 0; sui < lay->n_units_built; sui++) {
         UNIT_STATE* su = lay->GetUnitState(net, sui);
         const float sact = *((float*)var_md->GetOff(su));
         sum_mat->FastEl1d(sui) += tact * sact;
@@ -277,7 +277,7 @@ bool ActBasedRF::CopyRFtoNetWtPrjn(int trg_unit_no) {
                                         lay->un_geom.y);
     }
 
-    int mx = MAX(lay->n_units, rf_da->cell_size());
+    int mx = MAX(lay->n_units_built, rf_da->cell_size());
 
     for(int i=0;i<mx; i++) {
       UnitState_cpp* u = lay->GetUnitState(net, i);

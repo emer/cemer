@@ -363,6 +363,12 @@ void Network::UpdateAfterEdit_impl(){
   }
 }
 
+void Network::setStale() {
+  ClearIntact();
+  RebuildAllViews();
+  inherited::setStale();
+}
+
 void Network::UpdtAfterNetMod() {
   if(!HasNetFlag(BUILT)) return;
   if(!HasNetFlag(INTACT)) return; // already bad
@@ -714,8 +720,10 @@ void Network::Build() {
   ++taMisc::no_auto_expand; // c'mon...!!! ;)
   StructUpdate(true);
 
+
   net_state->FreeStateMem();     // free any and all existing memory!  must still have built params from before!
 
+  specs.ResetAllSpecIdxs();
   // todo: for all Build-level code, need to do cuda in parallel (at least for now)
   
   BuildNetState();
@@ -785,6 +793,7 @@ void Network::BuildIndexesSizes() {
   
   for(int i=0;i<layers.leaves; i++) {
     Layer* lay = (Layer*)layers.Leaf(i);
+    lay->n_units_built = 0;
     lay->un_geom.UpdateAfterEdit_NoGui(); // make sure n is accurate!
     lay->gp_geom.UpdateAfterEdit_NoGui();
     if(lay->lesioned()) {
@@ -1034,6 +1043,7 @@ void Network::BuildLayerState_FromNet() {
     LayerState_cpp* lst = GetLayerState(li);
     Layer* lay = StateLayer(li);
     lay->units_flat_idx = un_idx;
+    lay->n_units_built = lay->n_units;
     lst->Initialize_lay_core
       (li, lay->laygp_lay0_idx, lay->laygp_n, lay->units_flat_idx, lay->ungp_idx, lay->n_units,
        lay->n_ungps, lay->prjn_start_idx, lay->spec_idx, lay->unit_spec_idx,
@@ -1499,11 +1509,18 @@ bool Network::EditState() {
 
 void Network::RemoveUnits() {
   ClearNetFlag(BUILT);
+  specs.ResetAllSpecIdxs();
   ClearIntact();
   RemoveCons();
+  
   taMisc::Busy();
   StructUpdate(true);
 
+  for(int i=0;i<layers.leaves; i++) {
+    Layer* lay = (Layer*)layers.Leaf(i);
+    lay->n_units_built = 0;
+  }
+  
   net_state->FreeStateMem();
   n_units = 0;
 

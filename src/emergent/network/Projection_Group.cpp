@@ -21,21 +21,17 @@
 
 TA_BASEFUNS_CTORS_DEFN(Projection_Group);
 
+void Projection_Group::Initialize() {
+  SetBaseType(&TA_Projection);
+  send_prjns = false;
+  setUseStale(true);
+}
+
 Projection* Projection_Group::ConnectFrom(Layer* lay) {
   if(!lay) return NULL;
   Projection* prjn = (Projection*)NewEl(1);
   prjn->SetCustomFrom(lay);
   return prjn;
-}
-
-void Projection_Group::SigEmit(int sls, void* op1, void* op2) {
-  inherited::SigEmit(sls, op1, op2);
-  if(send_prjns) return;
-  if (sls == SLS_LIST_ITEM_INSERT) {
-    Network* net = GET_MY_OWNER(Network);
-    if (net)
-      net->RebuildAllViews();
-  }
 }
 
 Projection* Projection_Group::FindPrjnFrom(Layer* lay) {

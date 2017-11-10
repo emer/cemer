@@ -79,6 +79,7 @@ public:
   String          GetToolbarName() const override { return "con spec"; }
 
   void  UpdateStateSpecs() override;
+  void  ResetAllSpecIdxs() override;
   
   void  InitLinks() override;
   void  CutLinks() override;

@@ -28,7 +28,7 @@
 taTypeDef_Of(TimeUsed);
 
 class TA_API TimeUsed : public taNBase {
-  // #STEM_BASE #INLINE ##CAT_Program computes amount of time used for a given process: start the timer at the start, then do EndTimer and it computes the amount used
+  // #STEM_BASE #INLINE ##CAT_Program ##CHOOSE_AS_MEMBER computes amount of time used for a given process: start the timer at the start, then do EndTimer and it computes the amount used
 INHERITED(taNBase)
 public:
   taTime        start;          // #HIDDEN starting time

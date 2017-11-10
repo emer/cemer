@@ -41,7 +41,7 @@
   // #CAT_State copy weights from other projection
 
   INLINE void Initialize_core
-  (bool of=true, bool les=false, int prjn_dx=0, int recv_lay_dx=0, int send_lay_dx=0,
+  (bool of=false, bool les=false, int prjn_dx=0, int recv_lay_dx=0, int send_lay_dx=0,
    int send_prjn_dx=0, int recv_dx=0, int send_dx=0, int spec_dx=0, int cs_dx=0, int ncv=0) {
     off = of;  lesioned = les;
     prjn_idx = prjn_dx;    recv_lay_idx = recv_lay_dx;    send_lay_idx = send_lay_dx;

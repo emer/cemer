@@ -642,7 +642,7 @@ void NetMonItem::ScanObject_Layer(Layer* lay, String var) {
   String valname = GetColName(lay, val_specs.size);
   AddMatrixCol(valname, VT_FLOAT, &geom);
   String un_obj_nm = GetObjName(lay);
-  for (int i = 0; i < lay->n_units; ++i) {
+  for (int i = 0; i < lay->n_units_built; ++i) {
     UnitState_cpp* un = lay->GetUnitState(net_state, i);
     if(un) {
       ScanObject_Unit(un, var, un_obj_nm + "[" + String(i) + "]", net_state);
@@ -811,7 +811,7 @@ void NetMonItem::ScanObject_PrjnCons(Projection* prj, String var) {
   // find the geometry span of the cons
   taVector2i con_geom_max;
   taVector2i con_geom_min(INT_MAX, INT_MAX);
-  for(int ui = 0; ui < lay->n_units; ui++) {
+  for(int ui = 0; ui < lay->n_units_built; ui++) {
     UNIT_STATE* u = lay->GetUnitState(net, ui);
     if(recv) {
       ConState_cpp* cg = u->RecvConStatePrjn(net, prjn);
@@ -849,7 +849,7 @@ void NetMonItem::ScanObject_PrjnCons(Projection* prj, String var) {
   AddMatrixCol(valname, VT_FLOAT, &geom);
 
   // now get all the vals
-  for(int ui = 0; ui < lay->n_units; ui++) {
+  for(int ui = 0; ui < lay->n_units_built; ui++) {
     UNIT_STATE* u = lay->GetUnitState(net, ui);
     int st_idx = ptrs.size;
     for(int j=0;j<n_cons;j++) { // add blanks -- set them later

@@ -151,6 +151,8 @@ public:
   // #IGNORE use typedef info to copy all of our parameters to corresponding State version of this spec type
   virtual void    UpdateStateSpecs() { };
   // Update our corresponding state-side specs -- called in UAE, and call when specifically updating parameters -- each base class needs to define this, getting the proper specs etc
+  virtual void    ResetAllSpecIdxs();
+  // #IGNORE reset all the state spec_idx spec indexes to -1 -- called prior to building so only used specs have a valid spec_idx
   
   void	InitLinks() override;
   void	CutLinks() override;
