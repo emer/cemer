@@ -23,7 +23,7 @@
 
   INIMPL virtual void	LabelUnits(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net);
   // #CAT_TwoDVal label units in given layer with their underlying values
-  INIMPL virtual void LabelUnits_ugp(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net, int gpidx);
+  INIMPL virtual void   LabelUnits_ugp(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net, int gpidx);
   // #CAT_TwoDVal label units with their underlying values
   INIMPL virtual void	LabelUnitsNet(LEABRA_NETWORK_STATE* net);
   // #BUTTON #CAT_TwoDVal label all layers in given network using this spec
@@ -47,12 +47,12 @@
     INIMPL virtual void Quarter_Init_TargFlags_Layer_ugp
       (LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net, int gpidx);
     // #IGNORE
-  INIMPL void  Compute_HardClamp_Layer(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) override;
+  INLINE void  Quarter_Init_Layer_Post(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) override;
   
-  // INLINE void  Compute_OutputName(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) override {
-  //   inherited::Compute_OutputName(lay, net);
-  //   ReadValue((LEABRA_LAYER_STATE*)lay, net);             // always read out the value
-  // }
+  INLINE void  Compute_CycleStats_Pre(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) override {
+    inherited::Compute_CycleStats_Pre(lay, net);
+    ReadValue(lay, net);
+  }
 
   INLINE void  Quarter_Final_Layer(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) override {
     inherited::Quarter_Final_Layer(lay, net);

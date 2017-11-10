@@ -410,6 +410,26 @@ void LEABRA_NETWORK_STATE::Quarter_Init_Counters() {
     phase = PLUS_PHASE;
 }
 
+void LEABRA_NETWORK_STATE::Quarter_Init_Layer() {
+  for(int li=0; li < n_layers_built; li++) {
+    LEABRA_LAYER_STATE* lay = (LEABRA_LAYER_STATE*)GetLayerState(li);
+    if(lay->lesioned()) continue;
+    LEABRA_LAYER_SPEC_CPP* ls = (LEABRA_LAYER_SPEC_CPP*)lay->GetLayerSpec(this);
+    ls->Quarter_Init_Layer(lay, this);
+    ls->Compute_HardClamp_Layer(lay, this);
+  }
+}
+
+void LEABRA_NETWORK_STATE::Compute_HardClamp_Layer() {
+  // not called by default!
+  for(int li=0; li < n_layers_built; li++) {
+    LEABRA_LAYER_STATE* lay = (LEABRA_LAYER_STATE*)GetLayerState(li);
+    if(lay->lesioned()) continue;
+    LEABRA_LAYER_SPEC_CPP* ls = (LEABRA_LAYER_SPEC_CPP*)lay->GetLayerSpec(this);
+    ls->Compute_HardClamp_Layer(lay, this);
+  }
+}
+
 void LEABRA_NETWORK_STATE::Quarter_Init_Unit_Thr(int thr_no) {
   const int nu = ThrNUnits(thr_no);
   for(int i=0; i<nu; i++) {
@@ -417,15 +437,6 @@ void LEABRA_NETWORK_STATE::Quarter_Init_Unit_Thr(int thr_no) {
     if(uv->lesioned()) continue;
     LEABRA_UNIT_SPEC_CPP* us = (LEABRA_UNIT_SPEC_CPP*)uv->GetUnitSpec(this);
     us->Quarter_Init_Unit(uv, this, thr_no);
-  }
-}
-
-void LEABRA_NETWORK_STATE::Quarter_Init_Layer() {
-  for(int li=0; li < n_layers_built; li++) {
-    LEABRA_LAYER_STATE* lay = (LEABRA_LAYER_STATE*)GetLayerState(li);
-    if(lay->lesioned()) continue;
-    LEABRA_LAYER_SPEC_CPP* ls = (LEABRA_LAYER_SPEC_CPP*)lay->GetLayerSpec(this);
-    ls->Quarter_Init_Layer(lay, this);
   }
 }
 
@@ -440,6 +451,7 @@ void LEABRA_NETWORK_STATE::Quarter_Init_TargFlags_Thr(int thr_no) {
 }
 
 void LEABRA_NETWORK_STATE::Quarter_Init_TargFlags_Layer() {
+  // not called by default!
   for(int li=0; li < n_layers_built; li++) {
     LEABRA_LAYER_STATE* lay = (LEABRA_LAYER_STATE*)GetLayerState(li);
     if(lay->lesioned()) continue;
@@ -455,17 +467,6 @@ void LEABRA_NETWORK_STATE::Compute_NetinScale_Thr(int thr_no) {
     if(uv->lesioned()) continue;
     LEABRA_UNIT_SPEC_CPP* us = (LEABRA_UNIT_SPEC_CPP*)uv->GetUnitSpec(this);
     us->Compute_NetinScale(uv, this, thr_no);
-  }
-}
-
-void LEABRA_NETWORK_STATE::Compute_NetinScale_Senders_Thr(int thr_no) {
-  // NOTE: this IS called by default -- second phase of Quarter_Init_Unit
-  const int nscg = ThrNSendConGps(thr_no);
-  for(int i=0; i<nscg; i++) {
-    LEABRA_CON_STATE* scg = (LEABRA_CON_STATE*)ThrSendConState(thr_no, i);
-    if(scg->NotActive()) continue;
-    LEABRA_CON_STATE* rcg = (LEABRA_CON_STATE*)scg->UnCons(0, this);
-    scg->scale_eff = rcg->scale_eff;
   }
 }
 
@@ -519,6 +520,27 @@ void LEABRA_NETWORK_STATE::InitDeepRawNetinTmp_Thr(int thr_no) {
   memset(thrs_send_deeprawnet_tmp[thr_no], 0, n_units_built * sizeof(float));
 }
 
+void LEABRA_NETWORK_STATE::Compute_NetinScale_Senders_Thr(int thr_no) {
+  // NOTE: this IS called by default -- second phase of Quarter_Init_Unit
+  const int nscg = ThrNSendConGps(thr_no);
+  for(int i=0; i<nscg; i++) {
+    LEABRA_CON_STATE* scg = (LEABRA_CON_STATE*)ThrSendConState(thr_no, i);
+    if(scg->NotActive()) continue;
+    LEABRA_CON_STATE* rcg = (LEABRA_CON_STATE*)scg->UnCons(0, this);
+    scg->scale_eff = rcg->scale_eff;
+  }
+}
+
+void LEABRA_NETWORK_STATE::Compute_HardClamp_Thr(int thr_no) {
+  const int nu = ThrNUnits(thr_no);
+  for(int i=0; i<nu; i++) {
+    LEABRA_UNIT_STATE* uv = (LEABRA_UNIT_STATE*)ThrUnitState(thr_no, i);
+    if(uv->lesioned()) continue;
+    LEABRA_UNIT_SPEC_CPP* us = (LEABRA_UNIT_SPEC_CPP*)uv->GetUnitSpec(this);
+    us->Compute_HardClamp(uv, this, thr_no);
+  }
+}
+
 void LEABRA_NETWORK_STATE::Compute_DeepCtxtStats_Thr(int thr_no) {
   const int nugs = n_ungps_built;
   for(int li = 0; li < nugs; li++) {
@@ -557,22 +579,12 @@ void LEABRA_NETWORK_STATE::Compute_DeepCtxtStats_Post() {
   }
 }
 
-void LEABRA_NETWORK_STATE::Compute_HardClamp_Thr(int thr_no) {
-  const int nu = ThrNUnits(thr_no);
-  for(int i=0; i<nu; i++) {
-    LEABRA_UNIT_STATE* uv = (LEABRA_UNIT_STATE*)ThrUnitState(thr_no, i);
-    if(uv->lesioned()) continue;
-    LEABRA_UNIT_SPEC_CPP* us = (LEABRA_UNIT_SPEC_CPP*)uv->GetUnitSpec(this);
-    us->Compute_HardClamp(uv, this, thr_no);
-  }
-}
-
-void LEABRA_NETWORK_STATE::Compute_HardClamp_Layer() {
+void LEABRA_NETWORK_STATE::Quarter_Init_Layer_Post() {
   for(int li=0; li < n_layers_built; li++) {
     LEABRA_LAYER_STATE* lay = (LEABRA_LAYER_STATE*)GetLayerState(li);
     if(lay->lesioned()) continue;
     LEABRA_LAYER_SPEC_CPP* ls = (LEABRA_LAYER_SPEC_CPP*)lay->GetLayerSpec(this);
-    ls->Compute_HardClamp_Layer(lay, this);
+    ls->Quarter_Init_Layer_Post(lay, this);
   }
 }
 

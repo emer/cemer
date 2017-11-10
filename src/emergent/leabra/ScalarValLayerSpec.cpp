@@ -234,7 +234,6 @@ void STATE_CLASS(ScalarValLayerSpec)::HardClampExt_ugp
   for(int i=0;i<nunits;i++) {
     LEABRA_UNIT_STATE* u = (LEABRA_UNIT_STATE*)ug->GetUnitState(net, i);
     if(u->lesioned()) continue;
-    if(u->lesioned()) continue;
     us->Compute_HardClamp(u, net, u->thread_no);
   }
 }
@@ -287,24 +286,21 @@ void STATE_CLASS(ScalarValLayerSpec)::Quarter_Init_Layer(LEABRA_LAYER_STATE* lay
   }
 }
 
-void STATE_CLASS(ScalarValLayerSpec)::Compute_HardClamp_Layer(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
+void STATE_CLASS(ScalarValLayerSpec)::Quarter_Init_Layer_Post
+  (LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
   if(scalar.clamp_pat) {
-    inherited::Compute_HardClamp_Layer(lay, net);
     return;
   }
   if(!lay->HasExtFlag(UNIT_STATE::EXT)) {
-    lay->hard_clamped = false;
     return;
   }
   // allow for soft-clamping: translates pattern into exts first
   UNIT_GP_ITR(lay, ClampValue_ugp(lay, net, gpidx); );
   // now check for actual hard clamping
   if(!clamp.hard) {
-    lay->hard_clamped = false;
     return;
   }
   HardClampExt(lay, net);
-  lay->hard_clamped = true;
 }
 
 float STATE_CLASS(ScalarValLayerSpec)::Compute_SSE_ugp(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net,

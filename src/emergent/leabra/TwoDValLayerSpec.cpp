@@ -270,24 +270,22 @@ void STATE_CLASS(TwoDValLayerSpec)::HardClampExt(LEABRA_LAYER_STATE* lay, LEABRA
   UNIT_GP_ITR(lay, HardClampExt_ugp(lay, net, gpidx); );
 }
 
-void STATE_CLASS(TwoDValLayerSpec)::Compute_HardClamp_Layer(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
+void STATE_CLASS(TwoDValLayerSpec)::Quarter_Init_Layer_Post
+  (LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
+  
   if(twod.clamp_pat) {
-    inherited::Compute_HardClamp_Layer(lay, net);
     return;
   }
   if(!(lay->ext_flag & UNIT_STATE::EXT)) {
-    lay->hard_clamped = false;
     return;
   }
   // allow for soft-clamping: translates pattern into exts first
   UNIT_GP_ITR(lay, ClampValue_ugp(lay, net, gpidx); );
   // now check for actual hard clamping
   if(!clamp.hard) {
-    lay->hard_clamped = false;
     return;
   }
   HardClampExt(lay, net);
-  lay->hard_clamped = true;     // cache this flag
 }
 
 void STATE_CLASS(TwoDValLayerSpec)::Quarter_Final_ugp

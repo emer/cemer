@@ -97,12 +97,14 @@
   // #IGNORE initialize at start of settling phase -- sets target external input flags based on phase -- not called by default -- direct to unit level function
   INIMPL virtual void Quarter_Init_Counters();
   // #CAT_QuarterInit initialize counters for upcoming quarter -- network only
+  INIMPL virtual void Quarter_Init_Layer();
+  // #CAT_QuarterInit quarter layer-level initialization hook -- default calls TargFlags_Layer, and can be used for hook for other guys
+  INIMPL virtual void Compute_HardClamp_Layer();
+  // #IGNORE set hard clamp flags etc based on clamp settings and external input -- layer version called automatically by Quarter_Init_layer so this is not called directly
   INIMPL virtual void Quarter_Init_Unit();
   // #CAT_QuarterInit quarter unit-level initialization functions: Init_TargFlags, NetinScale
     INIMPL virtual void Quarter_Init_Unit_Thr(int thr_no);
     // #IGNORE quarter unit-level initialization functions: Init_TargFlags, NetinScale
-  INIMPL virtual void Quarter_Init_Layer();
-  // #CAT_QuarterInit quarter layer-level initialization hook -- default calls TargFlags_Layer, and can be used for hook for other guys
   INIMPL virtual void Quarter_Init_TargFlags_Layer();
   // #IGNORE initialize at start of settling phase -- sets target external input flags based on phase -- not called by default -- direct to unit level function
     INIMPL virtual void Quarter_Init_Deep_Thr(int thr_no);
@@ -111,17 +113,17 @@
   // #IGNORE compute netinput scaling values by projection -- not called by default -- direct to unit-level function
     INIMPL virtual void Compute_NetinScale_Senders_Thr(int thr_no);
     // #IGNORE compute net input scaling values for sending cons -- copies from values computed in the recv guys -- has to be done as a second phase of the
+  INIMPL virtual void Compute_HardClamp_Thr(int thr_no);
+  // #IGNORE compute hard clamping from external inputs
   INIMPL virtual void InitDeepRawNetinTmp_Thr(int thr_no);
   // #IGNORE initialize deep_raw netin temp buffer
   INIMPL virtual void Compute_DeepCtxtStats_Thr(int thr_no);
   // #IGNORE compute layer and unit-group level stats on deep_ctxt
   INIMPL virtual void Compute_DeepCtxtStats_Post();
   // #IGNORE compute layer and unit-group level stats on deep_ctxt
+  INIMPL virtual void Quarter_Init_Layer_Post();
+  // #CAT_QuarterInit quarter layer-level initialization hook -- post = last step in Quarter_Init
 
-  INIMPL virtual void Compute_HardClamp_Thr(int thr_no);
-  // #IGNORE compute hard clamping from external inputs
-  INIMPL virtual void Compute_HardClamp_Layer();
-  // #IGNORE compute hard clamping from external inputs
   INIMPL virtual void ExtToComp_Layer();
   // #IGNORE
   INIMPL virtual void ExtToComp_Thr(int thr_no);

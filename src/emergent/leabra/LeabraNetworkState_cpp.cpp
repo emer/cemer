@@ -72,7 +72,7 @@ void LeabraNetworkState_cpp::Quarter_Init() {
 
   Quarter_Init_Counters();
   Quarter_Init_Layer();
-  Compute_HardClamp_Layer();    // need layer hard clamp flag before Init_Unit
+  // Compute_HardClamp_Layer();    // need layer hard clamp flag before Init_Unit
   Quarter_Init_Unit();           // do chunk of following unit-level functions:
 //   Quarter_Init_TargFlags();
 //   Compute_NetinScale();       // compute net scaling
@@ -90,6 +90,8 @@ void LeabraNetworkState_cpp::Quarter_Init() {
      (quarter == 1 && net_misc.diff_scale_q1)) {
     Init_Netins();
   }
+
+  Quarter_Init_Layer_Post();
 }
 
 void LeabraNetworkState_cpp::Quarter_Init_Unit() {

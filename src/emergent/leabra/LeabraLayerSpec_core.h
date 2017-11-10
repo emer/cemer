@@ -34,7 +34,7 @@
   ///////////////////////////////////////////////////////////////////////
   //	General Init functions
 
-  INLINE virtual void	Init_Weights_Layer(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
+  INLINE virtual void  Init_Weights_Layer(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
     LEABRA_UNGP_STATE* lgpd = lay->GetLayUnGpState(net);
     lgpd->Init_UnGp_State(avg_act.targ_init, avg_act.targ_init, avg_act.AvgEffInit());
     for(int g=0; g < lay->n_ungps; g++) {
@@ -45,7 +45,7 @@
   }
   // #CAT_Learning layer-level initialization taking place after Init_Weights on units
   
-  INLINE virtual void Init_AdaptInhib(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
+  INLINE virtual void  Init_AdaptInhib(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
     LEABRA_UNGP_STATE* lgpd = lay->GetLayUnGpState(net);
     lay->adapt_gi = 1.0f;
     lay->lrate_mod = lay_lrate;
@@ -60,7 +60,7 @@
   }
   // #CAT_Activation called in Init_Weights_Layer initialize the adaptive inhibitory state values
   
-  INLINE virtual void Init_Stats(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
+  INLINE virtual void  Init_Stats(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
     lay->Init_Stats();
     for(int i=0;i<lay->n_recv_prjns;i++) {
       LEABRA_PRJN_STATE* prjn = lay->GetPrjnState(net, i);
@@ -69,7 +69,7 @@
   }
   // #CAT_Statistic called in Init_Weights_Layer intialize statistic variables
 
-  INLINE virtual void	Init_Acts_Layer(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
+  INLINE virtual void  Init_Acts_Layer(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
     lay->ext_flag = LAYER_STATE::NO_EXTERNAL;
     lay->hard_clamped = false;
     LEABRA_UNGP_STATE* lgpd = lay->GetLayUnGpState(net);
@@ -81,16 +81,16 @@
   }    
   // #CAT_Activation initialize unit-level dynamic state variables (activations, etc)
 
-  INIMPL virtual void DecayState(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net, float decay);
+  INIMPL virtual void  DecayState(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net, float decay);
   // #CAT_Activation decay the state of this layer -- not normally called but available for programs etc to control specific layers
 
   ///////////////////////////////////////////////////////////////////////
   //	Trial_Init -- at start of trial
 
-  INIMPL virtual void Trial_Init_Specs(LEABRA_NETWORK_STATE* net);
+  INIMPL virtual void  Trial_Init_Specs(LEABRA_NETWORK_STATE* net);
   // #CAT_Learning initialize specs and specs update network flags
   
-  INIMPL virtual void Trial_Init_Layer(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net);
+  INIMPL virtual void  Trial_Init_Layer(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net);
   // #CAT_Learning layer level trial init -- overload where needed
 
   ///////////////////////////////////////////////////////////////////////
@@ -99,7 +99,7 @@
   INIMPL virtual float Compute_AvgExt(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net);
   // #CAT_Activation compute average of unit ext or targ values, depending on ext flags
   
-  INLINE virtual void Quarter_Init_TargFlags_Layer(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net)  {
+  INLINE virtual void  Quarter_Init_TargFlags_Layer(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net)  {
     if(lay->HasExtFlag(LAYER_STATE::TARG)) {     // only process target layers..
       if(net->phase == LEABRA_NETWORK_STATE::PLUS_PHASE)
         lay->SetExtFlag(LAYER_STATE::EXT);
@@ -107,7 +107,7 @@
   }
   // #IGNORE layer-level initialize start of a setting phase, set input flags appropriately, etc
   
-  INLINE virtual void Quarter_Init_AvgAct_Layer(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net)  {
+  INLINE virtual void  Quarter_Init_AvgAct_Layer(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net)  {
     LEABRA_UNGP_STATE* lgpd = lay->GetLayUnGpState(net);
     if(avg_act.fixed) {
       lgpd->acts_p_avg_eff = avg_act.targ_init;
@@ -130,14 +130,14 @@
   }
   // #IGNORE layer-level init avg_act based on fixed, use_ext_act
 
-  INLINE virtual void	Quarter_Init_Layer(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net)  {
+  INLINE virtual void  Quarter_Init_Layer(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net)  {
     Quarter_Init_TargFlags_Layer(lay, net);
     Quarter_Init_AvgAct_Layer(lay, net);
   }
   // #CAT_Activation initialize start of a setting phase: all layer-level misc init takes place here (calls TargFlags_Layer) -- other stuff all done directly in Quarter_Init_Units call
 
 
-  INLINE virtual void	Compute_HardClamp_Layer(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
+  INLINE virtual void  Compute_HardClamp_Layer(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
     if(!(clamp.hard && lay->HasExtFlag(LAYER_STATE::EXT))) {
       lay->hard_clamped = false;
       return;
@@ -148,14 +148,17 @@
   }
   // #CAT_Activation prior to settling: hard-clamp inputs
 
-  INLINE virtual void	ExtToComp(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
+  INLINE virtual void  Quarter_Init_Layer_Post(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {  };
+  // #CAT_Activation extra layer-level step -- last thing in Quarter_Init sequence -- e.g., ScalarVal uses this for clamping actual activation pattern..
+
+  INLINE virtual void  ExtToComp(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
     if(!lay->HasExtFlag(LAYER_STATE::EXT))       // only process ext
       return;
     lay->ext_flag = LAYER_STATE::COMP;   // totally reset to comparison
   }
   // #CAT_Activation change external inputs to comparisons (remove input)
   
-  INLINE virtual void	TargExtToComp(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
+  INLINE virtual void  TargExtToComp(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
     if(!lay->HasExtFlag(LAYER_STATE::TARG_EXT))  // only process w/ external input
       return;
     lay->ext_flag = LAYER_STATE::COMP;   // totally reset to comparison
@@ -173,7 +176,7 @@
   ///////////////////////////////////////////////////////////////////////
   //	Cycle Step 2: Inhibition
 
-  INLINE virtual void Compute_Inhib_FfFb
+  INLINE virtual void  Compute_Inhib_FfFb
     (LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net, STATE_CLASS_CPP(LeabraInhibVals)& i_val, const float netin_avg,
      const float netin_max, const float acts_avg, STATE_CLASS(LeabraInhibSpec)& ispec) {
     if(!ispec.on) {
@@ -206,7 +209,7 @@
   }
   // #IGNORE implementation of feed-forward, feed-back inhibition computation
 
-  INLINE virtual void	Compute_Inhib(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
+  INLINE virtual void  Compute_Inhib(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
     if(lay->hard_clamped) return; // say no more..
 
     if(HasUnitGpInhib(lay)) {
@@ -230,7 +233,7 @@
   }
   // #CAT_Activation compute the inhibition for layer -- this is the main call point into this stage of processing
   
-  INLINE virtual void	Compute_LayInhibToGps(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
+  INLINE virtual void  Compute_LayInhibToGps(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
     LEABRA_UNGP_STATE* lgpd = lay->GetLayUnGpState(net);
     if(lay_gp_inhib.on) {
       lgpd->i_val.g_i = fmaxf(lgpd->i_val.g_i, lay->laygp_i_val.g_i);
@@ -264,13 +267,13 @@
   ///////////////////////////////////////////////////////////////////////
   //	Cycle Stats
 
-  INLINE virtual void	Compute_CycleStats_Pre(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) { };
+  INLINE virtual void  Compute_CycleStats_Pre(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) { };
   // #CAT_Statistic pre-cycle-stats -- done in single thread prior to cycle stats -- good place to intervene for whole-layer dynamics
 
   ///////////////////////////////////////////////////////////////////////
   //	Quarter_Final
 
-  INLINE virtual void	Quarter_Final_Pre(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) { };
+  INLINE virtual void  Quarter_Final_Pre(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) { };
   // #CAT_Activation perform computations in layers at end of settling -- this is a pre-stage that occurs prior to final Quarter_Final -- use this for anything that needs to happen prior to the standard Quarter_Final across layers (called by network Quarter_Final)
 
   INLINE virtual void Quarter_Final_GetMinus_UnGp(LEABRA_UNGP_STATE* gpd, LEABRA_NETWORK_STATE* net) {
@@ -325,7 +328,7 @@
   }
   // #CAT_Activation get plus phase act stats
 
-  INLINE virtual void	Quarter_Final_Layer(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
+  INLINE virtual void  Quarter_Final_Layer(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
     LEABRA_UNGP_STATE* lgpd = lay->GetLayUnGpState(net);
     lgpd->acts_prvq = lgpd->acts_eq;
     for(int g=0; g < lay->n_ungps; g++) {
@@ -344,14 +347,14 @@
   ///////////////////////////////////////////////////////////////////////
   //	Learning
 
-  INLINE virtual void	Compute_dWt_Layer_pre(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) { };
+  INLINE virtual void  Compute_dWt_Layer_pre(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) { };
   // #CAT_Learning do special computations at layer level prior to standard unit-level thread dwt computation -- not used in base class but is in various derived classes
 
   ///////////////////////////////////////////////////////////////////////
   //	Trial-level Stats
 
-  INLINE virtual float	Compute_SSE(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net,
-			    int& n_vals, bool unit_avg = false, bool sqrt = false) {
+  INLINE virtual float  Compute_SSE(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net,
+                                    int& n_vals, bool unit_avg = false, bool sqrt = false) {
     // use default, but allow subclasses to override in layerspec
     float rval = lay->LAYER_STATE::Compute_SSE(net, n_vals, unit_avg, sqrt);
     lay->bin_err = 0.0f;
@@ -362,7 +365,7 @@
   }
   // #CAT_Statistic compute sum squared error of activation vs target over the entire layer -- always returns the actual sse, but unit_avg and sqrt flags determine averaging and sqrt of layer's own sse value
 
-  INLINE virtual float	Compute_MaxErr(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
+  INLINE virtual float  Compute_MaxErr(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
     LEABRA_UNGP_STATE* lgpd = lay->GetLayUnGpState(net);
     lay->max_err = 0.0f;
     if(!lay->HasExtFlag(LAYER_STATE::COMP_TARG)) return 0.0f;
@@ -392,7 +395,7 @@
   }
   // #CAT_Statistic compute max_err, across unit groups (if present and used) and the entire layer
 
-  INLINE virtual float	Compute_NormErr(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
+  INLINE virtual float  Compute_NormErr(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
     lay->norm_err = -1.0f;        // assume not contributing
     if(!lay->HasExtFlag(LAYER_STATE::COMP_TARG)) return -1.0f; // indicates not applicable
     if(lay->layer_type == LAYER_STATE::HIDDEN) return -1.0f;
@@ -695,11 +698,11 @@
   }
   // #CAT_Statistic compute percentage of units in the layer that have a long-time-averaged activitation level that is above or below hog / dead thresholds, indicating that they are either 'hogging' the representational space, or 'dead' and not participating in any representations
 
-  INLINE virtual void	Compute_AvgNormErr(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
+  INLINE virtual void  Compute_AvgNormErr(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
     lay->avg_norm_err.GetAvg_Reset();
   }
   // #CAT_Statistic compute average norm_err (at an epoch-level timescale)
-  INLINE virtual void	Compute_AvgCosErr(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
+  INLINE virtual void  Compute_AvgCosErr(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
     lay->avg_cos_err.GetAvg_Reset();
 
     if(net->net_misc.deep) {
@@ -708,23 +711,23 @@
     }
   }
   // #CAT_Statistic compute average cos_err (at an epoch-level timescale)
-  INLINE virtual void	Compute_AvgCosDiff(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
+  INLINE virtual void  Compute_AvgCosDiff(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
     lay->avg_cos_diff.GetAvg_Reset();
   }
   // #CAT_Statistic compute average cos_diff (at an epoch-level timescale)
-  INLINE virtual void	Compute_AvgTrialCosDiff(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
+  INLINE virtual void  Compute_AvgTrialCosDiff(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
     lay->avg_trial_cos_diff.GetAvg_Reset();
   }
   // #CAT_Statistic compute average trial_cos_diff (at an epoch-level timescale)
-  INLINE virtual void	Compute_AvgAvgActDiff(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
+  INLINE virtual void  Compute_AvgAvgActDiff(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
     lay->avg_avg_act_diff.GetAvg_Reset();
   }
   // #CAT_Statistic compute average avg_act_diff (at an epoch-level timescale)
-  INLINE virtual void	Compute_AvgNetSd(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
+  INLINE virtual void  Compute_AvgNetSd(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
     lay->avg_net_sd.GetAvg_Reset();
   }
   // #CAT_Statistic compute average net_sd (at an epoch-level timescale)
-  INLINE virtual void	Compute_EpochStats(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
+  INLINE virtual void  Compute_EpochStats(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
     lay->LAYER_STATE::Compute_EpochStats(net);
     Compute_AvgNormErr(lay, net);
     Compute_AvgCosErr(lay, net);
@@ -746,7 +749,7 @@
   // #CAT_Deep clear the deep layer variables -- can be useful to do at discontinuities of experience
 
 
-  INLINE void 	Initialize_core() {
+  INLINE void   Initialize_core() {
     unit_gp_inhib.on = false;
     lay_gp_inhib.on = false;
     lay_lrate = 1.0f;

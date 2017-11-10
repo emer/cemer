@@ -57,7 +57,7 @@
   }
     
   INIMPL void  Quarter_Init_Layer(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) override;
-  INIMPL void  Compute_HardClamp_Layer(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) override;
+  INLINE void  Quarter_Init_Layer_Post(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) override;
   
   INLINE void  Quarter_Final_GetMinus(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) override {
     inherited::Quarter_Final_GetMinus(lay, net);
@@ -72,10 +72,10 @@
   }
   // #IGNORE
 
-  // INLINE void Compute_OutputName(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) override {
-  //   inherited::Compute_OutputName(lay, net);
-  //   ReadValue(lay, net);          // always read out the value
-  // }
+  INLINE void  Compute_CycleStats_Pre(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) override {
+    inherited::Compute_CycleStats_Pre(lay, net);
+    ReadValue(lay, net);
+  }
 
   INIMPL float Compute_SSE(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net, int& n_vals,
                            bool unit_avg = false, bool sqrt = false) override;

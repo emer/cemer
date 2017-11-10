@@ -94,14 +94,12 @@ void LeabraLayer::DMem_ComputeAggs(MPI_Comm comm) {
 bool LeabraLayer::TwoDValMode() {
   LeabraLayerSpec* ls = (LeabraLayerSpec*)GetMainLayerSpec();
   if(!ls) return false;
-  // return (ls->InheritsFrom(&TA_TwoDValLayerSpec));
-  return false;
+  return (ls->InheritsFrom(&TA_TwoDValLayerSpec));
 }
 
 void LeabraLayer::ApplyInputData_2d(NETWORK_STATE* net, taMatrix* data, ExtFlags ext_flags,
                                     Random* ran, const taVector2i& offs, bool na_by_range) {
   if(TwoDValMode()) {
-    // todo: needs lgpd
     // only no unit_group supported!
     if(TestError(unit_groups, "ApplyInputData_2d",
                  "input data must be 4d for layers with unit_groups: outer 2 are group dims, inner 2 are x,y vals and n_vals")) {
@@ -111,51 +109,23 @@ void LeabraLayer::ApplyInputData_2d(NETWORK_STATE* net, taMatrix* data, ExtFlags
                  "input data must have at inner dimension of at least 2 for x,y vals")) {
       return;
     }
-    // todo: this just overwrites if dim(1) > 1 - not really sure what the point is!?
-    for(int d_y = 0; d_y < data->dim(1); d_y++) {
-      // if(ext_flags & EXT) {
-      //   twod.ext_x = data->SafeElAsVar(0, d_y);
-      //   twod.ext_y = data->SafeElAsVar(1, d_y);
-      // }
-      // else {                    // targ
-      //   twod.targ_x = data->SafeElAsVar(0, d_y);
-      //   twod.targ_y = data->SafeElAsVar(1, d_y);
-      // }
-    }
-  }
-  else {
-    inherited::ApplyInputData_2d(net, data, ext_flags, ran, offs, na_by_range);
-  }
-}
-
-void LeabraLayer::ApplyInputData_Flat4d(NETWORK_STATE* net, taMatrix* data, ExtFlags ext_flags,
-                                        Random* ran, const taVector2i& offs, bool na_by_range) {
-  if(TwoDValMode()) {
-    // outer-loop is data-group (groups of x-y data items)
-    if(TestError(!unit_groups, "ApplyInputData_Flat4d",
-                 "input data must be 2d for layers without unit_groups: x,y vals and n_vals")) {
-      return;
-    }
-    for(int dg_y = 0; dg_y < data->dim(3); dg_y++) {
-      for(int dg_x = 0; dg_x < data->dim(2); dg_x++) {
-
-        for(int d_y = 0; d_y < data->dim(1); d_y++) {
-          int u_y = offs.y + dg_y * data->dim(1) + d_y; // multiply out data indicies
-          for(int d_x = 0; d_x < data->dim(0); d_x++) {
-            int u_x = offs.x + dg_x * data->dim(0) + d_x; // multiply out data indicies
-            // todo: I don't get what is going on here!?
-            // Unit* un = UnitAtCoord(u_x, u_y);
-            // if(un) {
-            //   float val = data->SafeElAsVar(d_x, d_y, dg_x, dg_y).toFloat();
-            //   un->ApplyInputData(val, (UnitState_cpp::ExtFlags)ext_flags, ran, na_by_range);
-            // }
-          }
-        }
+    LEABRA_UNGP_STATE* lgpd = (LEABRA_UNGP_STATE*)GetLayUnGpState(net);
+    
+    // todo: not supporting multiple bumps yet!
+    int mx = MIN(1, data->dim(1));
+    for(int d_y = 0; d_y < mx; d_y++) {
+      if(ext_flags & EXT) {
+        lgpd->twod.ext_x = data->SafeElAsFloat(0, d_y);
+        lgpd->twod.ext_y = data->SafeElAsFloat(1, d_y);
+      }
+      else {                    // targ
+        lgpd->twod.targ_x = data->SafeElAsFloat(0, d_y);
+        lgpd->twod.targ_y = data->SafeElAsFloat(1, d_y);
       }
     }
   }
   else {
-    inherited::ApplyInputData_Flat4d(net, data, ext_flags, ran, offs, na_by_range);
+    inherited::ApplyInputData_2d(net, data, ext_flags, ran, offs, na_by_range);
   }
 }
 
@@ -165,18 +135,19 @@ void LeabraLayer::ApplyInputData_Gp4d(NETWORK_STATE* net, taMatrix* data, ExtFla
     // outer-loop is data-group (groups of x-y data items)
     for(int dg_y = 0; dg_y < data->dim(3); dg_y++) {
       for(int dg_x = 0; dg_x < data->dim(2); dg_x++) {
-
-        for(int d_y = 0; d_y < data->dim(1); d_y++) {
-          int val_idx = d_y;
-          // todo: access unit group state, put this there.
-          // if(ext_flags & EXT) {
-          //   twod.ext_x = data->SafeElAsVar(0, d_y, dg_x, dg_y);
-          //   twod.ext_y = data->SafeElAsVar(1, d_y, dg_x, dg_y);
-          // }
-          // else {                    // targ
-          //   twod.targ_x = data->SafeElAsVar(0, d_y, dg_x, dg_y);
-          //   twod.targ_y = data->SafeElAsVar(1, d_y, dg_x, dg_y);
-          // }
+        // todo: not supporting multiple bumps yet!
+        int mx = MIN(1, data->dim(1));
+        for(int d_y = 0; d_y < mx; d_y++) {
+          LEABRA_UNGP_STATE* gpd = (LEABRA_UNGP_STATE*)GetUnGpStateXY(net, dg_x, dg_y);
+          if(!gpd) continue;
+          if(ext_flags & EXT) {
+            gpd->twod.ext_x = data->SafeElAsFloat(0, d_y, dg_x, dg_y);
+            gpd->twod.ext_y = data->SafeElAsFloat(1, d_y, dg_x, dg_y);
+          }
+          else {                    // targ
+            gpd->twod.targ_x = data->SafeElAsFloat(0, d_y, dg_x, dg_y);
+            gpd->twod.targ_y = data->SafeElAsFloat(1, d_y, dg_x, dg_y);
+          }
         }
       }
     }

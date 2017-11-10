@@ -34,6 +34,7 @@ void LEABRA_UNIT_SPEC::Compute_NetinScale(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_S
   // important: count all projections so it is uniform across all units
   // in the layer!  if a unit does not have a connection in a given projection,
   // then it counts as a zero, but it counts in overall normalization!
+  int n_recv_cons = 0;
   const int nrg = u->NRecvConGps(net); 
   for(int g=0; g< nrg; g++) {
     LEABRA_CON_STATE* recv_gp = (LEABRA_CON_STATE*)u->RecvConState(net, g);
@@ -48,6 +49,7 @@ void LEABRA_UNIT_SPEC::Compute_NetinScale(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_S
     float n_cons = (float)recv_gp->size;
     recv_gp->scale_eff = cs->wt_scale.FullScale(savg, from_sz, n_cons);
     float rel_scale = cs->wt_scale.rel;
+    n_recv_cons += n_cons;
     
     if(cs->inhib) {
       inhib_net_scale += rel_scale;
@@ -67,8 +69,8 @@ void LEABRA_UNIT_SPEC::Compute_NetinScale(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_S
   LEABRA_CON_SPEC_CPP* bs = (LEABRA_CON_SPEC_CPP*)GetBiasSpec(net);
   if(bs) {
     u->bias_scale = bs->wt_scale.abs;  // still have absolute scaling if wanted..
-    if(nrg > 0) {
-      u->bias_scale /= (float)nrg; // one over n scaling for bias!
+    if(n_recv_cons > 0) {
+      u->bias_scale /= (float)n_recv_cons; // one over n scaling for bias!
     }
   }
 

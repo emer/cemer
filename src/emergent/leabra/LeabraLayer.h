@@ -75,8 +75,6 @@ public:
   
   void	ApplyInputData_2d(NETWORK_STATE* net, taMatrix* data, ExtFlags ext_flags,
                           Random* ran, const taVector2i& offs, bool na_by_range=false) override;
-  void	ApplyInputData_Flat4d(NETWORK_STATE* net, taMatrix* data, ExtFlags ext_flags,
-                              Random* ran, const taVector2i& offs, bool na_by_range=false) override;
   void	ApplyInputData_Gp4d(NETWORK_STATE* net, taMatrix* data, ExtFlags ext_flags,
                             Random* ran, bool na_by_range=false) override;
   
