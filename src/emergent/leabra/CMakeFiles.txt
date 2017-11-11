@@ -200,6 +200,7 @@ set(leabra_SRCS
 
   LeabraUnGpState_cpp.cpp
   LeabraPrjnState_cpp.cpp
+  LeabraLayerState_cpp.cpp
   LeabraNetworkState_cpp.cpp
 
   LeabraConSpec_cpp.cpp

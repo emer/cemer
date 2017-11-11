@@ -302,8 +302,6 @@ void NetworkState_cpp::BuildConState() {
   AllocConStateMem();           // _core
   
   NET_THREAD_CALL(NetworkState_cpp::InitConState_Thr); // _core
-
-  BuildSendNetinTmp();
 }
 
 void NetworkState_cpp::BuildSendNetinTmp() {

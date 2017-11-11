@@ -17,5 +17,9 @@
 
 #include "LeabraLayerState_cpp.h"
 
-// #include "LeabraLayerState_core.cpp"   // include member impls if defined
+#include <LeabraLayerSpec_cpp>
 
+#include <State_cpp>
+
+#include "LeabraLayer_core.cpp"
+#include "LeabraLayerState_core.cpp"

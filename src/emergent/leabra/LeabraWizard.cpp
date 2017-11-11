@@ -3409,7 +3409,6 @@ bool LeabraWizard::Hippo(LeabraNetwork* net, int n_ec_slots) {
   FMSpec(UniformRndPrjnSpec, mossy_prjn, prjns, "UniformRndMossy");
 
   net->specs.UpdateAllSpecs();
-  hipspec->UpdateAllSpecs();
 
   //////////////////////////////////////////////////////////////////////////////////
   // apply specs to objects

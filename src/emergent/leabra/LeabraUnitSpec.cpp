@@ -89,10 +89,8 @@ void LeabraUnitSpec::Initialize() {
   min_obj_type = &TA_LeabraUnitState_cpp;
   bias_spec.SetBaseType(&TA_LeabraBiasSpec);
 
-  noise.type = Random::GAUSSIAN;
-  noise.var = .001f;
-
   Defaults_init();
+  Initialize_core();
 }
 
 void LeabraUnitSpec::Defaults_init() {

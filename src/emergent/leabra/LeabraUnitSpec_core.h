@@ -46,10 +46,7 @@
   float          thr_sub_e_rev_e;   // #CAT_Activation #READ_ONLY #NO_SAVE #HIDDEN g_bar.e * (act.thr - e_rev.e) used for compute_ethresh
 
   
-  INLINE int  GetStateSpecType() const override { return LEABRA_NETWORK_STATE::T_LeabraUnitSpec; }
-
-
-///////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////////////////
   //        General Init functions
 
   INLINE void  Init_InputData(UNIT_STATE* uv, NETWORK_STATE* net, int thr_no) override {
@@ -1255,4 +1252,10 @@
     //  thr_sub_e_rev_i = g_bar.i * (act.thr - e_rev.i);
     thr_sub_e_rev_i = (act.thr - e_rev.i);
     thr_sub_e_rev_e = (act.thr - e_rev.e);
+
+    noise.type = STATE_CLASS(Random)::GAUSSIAN;
+    noise.var = .001f;
   }
+
+  INLINE int  GetStateSpecType() const override
+  { return LEABRA_NETWORK_STATE::T_LeabraUnitSpec; }

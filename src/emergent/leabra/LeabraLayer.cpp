@@ -17,10 +17,16 @@
 #include <LeabraNetwork>
 #include <LeabraUnitSpec>
 
+#include <LeabraLayerSpec_cpp>
+
+#include <State_main>
+
 eTypeDef_Of(TwoDValLayerSpec);
 
 TA_BASEFUNS_CTORS_DEFN(LeabraLayer);
 SMARTREF_OF_CPP(LeabraLayer);
+
+#include "LeabraLayer_core.cpp"
 
 void LeabraLayer::Initialize() {
   spec.SetBaseType(&TA_LeabraLayerSpec);

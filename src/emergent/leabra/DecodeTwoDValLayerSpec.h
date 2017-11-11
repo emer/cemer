@@ -5,3 +5,9 @@
 
   INLINE void  Compute_Inhib(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) override { };
 
+  INLINE void Initialize_core() {
+  }
+  // #IGNORE
+
+  INLINE int  GetStateSpecType() const override
+  { return LEABRA_NETWORK_STATE::T_DecodeTwoDValLayerSpec; }

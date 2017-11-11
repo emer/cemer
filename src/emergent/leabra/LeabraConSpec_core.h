@@ -38,9 +38,6 @@
   STATE_CLASS(MarginLearnSpec)  margin;	// #CAT_Learning #CONDSHOW_ON_learn learning specs for modulation as a function of marginal activation status -- emphasize learning for units on the margin
 
 
-  INLINE int  GetStateSpecType() const override { return LEABRA_NETWORK_STATE::T_LeabraConSpec; }
-
-
   INLINE float	SigFmLinWt(float lw) { return wt_sig.SigFmLinWt(lw);  }
   // #CAT_Learning get contrast-enhanced weight from linear weight value
   INLINE float	LinFmSigWt(float sig_wt) { return wt_sig.LinFmSigWt(sig_wt); }
@@ -543,3 +540,6 @@
     lrate = .04f;    cur_lrate = .02f;  lrs_mult = 1.0f;
   }
     
+  INLINE int  GetStateSpecType() const override
+  { return LEABRA_NETWORK_STATE::T_LeabraConSpec; }
+

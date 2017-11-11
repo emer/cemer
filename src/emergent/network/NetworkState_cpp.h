@@ -201,7 +201,7 @@ public:
   // #IGNORE build connection-state objects and associated indexes -- also calls BuildSendNetinTmp
   
   virtual void  BuildSendNetinTmp();
-  // #IGNORE build sender-based netinput temporary memory  -- called by BuildConState but can be selectively overridden in subclasses
+  // #IGNORE build sender-based netinput temporary memory -- called after connect -- can be selectively overridden in subclasses
   
   virtual void  Connect();
   // #IGNORE Connect this network according to projections on Layers -- must be done as part of Build to ensure proper sync

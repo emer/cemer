@@ -366,6 +366,7 @@ void Network::UpdateAfterEdit_impl(){
 void Network::setStale() {
   ClearIntact();
   RebuildAllViews();
+  // taMisc::DebugInfo("net set stale");
   inherited::setStale();
 }
 
@@ -687,18 +688,24 @@ UnitState_cpp* Network::GetUnitStateFromPath(const String& path) {
   if(!IsBuiltIntact()) return NULL;
   String lay_path = path.before('[',-1);
   String un_path = path.after('[',-1);
+  un_path = un_path.before(']',-1);
   MemberDef* md;
   Layer* lay = (Layer*)FindFromPath(lay_path, md);
   if(!lay) {
     return NULL;
   }
   int un_idx = (int)un_path.between('[',']');
-  return lay->GetUnitStateSafe(net_state, un_idx);
+  if(un_idx > 0) {
+    return lay->GetUnitStateSafe(net_state, un_idx);
+  }
+  return NULL;
 }
 
 void Network::BuildNetState() {
-  if(net_state)
+  if(net_state) {
+    SyncNetState();
     return;
+  }
   net_state = NewNetworkState(); // network state has virtual pointers, needs new
 
 #ifdef CUDA_COMPILE
@@ -734,11 +741,17 @@ void Network::Build() {
   BuildSpecs();
   CheckSpecs();
   
+  SyncNetState();
+
   BuildLayerUnitState();
+  SyncNetState();
+  
   BuildConState();
-
   Connect();
-
+  
+  SyncNetState();
+  BuildSendNetinTmp();
+  
   if(taMisc::gui_active)	// only when gui is active..
     AssignVoxels();
 
@@ -1053,6 +1066,9 @@ void Network::BuildLayerState_FromNet() {
       (lay->un_geom_x, lay->un_geom_y, lay->un_geom_n, lay->gp_geom_x, lay->gp_geom_y, lay->gp_geom_n,
        lay->flat_geom_x, lay->flat_geom_y, lay->flat_geom_n, lay->gp_spc_x, lay->gp_spc_y);
 
+    lst->net_state = net_state;
+    lay->net_state = net_state;
+
     lst->SetLayerName(lay->name);
     
     LayerSpec* ls = lay->GetMainLayerSpec();
@@ -1138,6 +1154,10 @@ void Network::Connect() {
 
   StructUpdate(false);
   --taMisc::no_auto_expand;
+}
+
+void Network::BuildSendNetinTmp() {
+  net_state->BuildSendNetinTmp();
 }
 
 void Network::UnBuild() {

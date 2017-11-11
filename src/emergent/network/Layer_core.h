@@ -42,7 +42,8 @@
 
   static const int LAY_NAME_MAX_LEN=256; // #IGNORE max length of layer name
 
-  bool                  main_obj;       // #CAT_State #NO_SAVE #READ_ONLY #CAT_State true if this is a main-side object (emergent, TA-enabled) as opposed to a State-side object
+  NETWORK_STATE*        net_state;      // #CAT_State #NO_SAVE #READ_ONLY our own network state 
+  bool                  main_obj;       // #CAT_State #NO_SAVE #READ_ONLY true if this is a main-side object (emergent, TA-enabled) as opposed to a State-side object
   char                  layer_name[LAY_NAME_MAX_LEN]; // #CAT_State #NO_SAVE #READ_ONLY name of this layer -- needed for loading and saving weights
   int                   layer_idx;      // #CAT_State #NO_SAVE #READ_ONLY index of this layer in the network state_layers list and NetworkState layers array -- -1 if not active..
   int                   laygp_lay0_idx; // #CAT_State #NO_SAVE #READ_ONLY index of first layer in the layer group that this layer belongs in -- the first layer takes the lead for whole group -- -1 if not part of a layer group
@@ -369,7 +370,7 @@
   (int lay_dx=0, int laygp_lay0_dx=0, int laygpn=0, int units_dx=0, int ungp_dx=0, int n_un=0,
    int n_gp=0, int prjn_st_dx=0, int spec_dx=0, int uspec_dx=0, int n_recv=0, int n_send=0,
    int lf=LF_NONE, LayerType lt=HIDDEN) {
-    main_obj = false; layer_idx = lay_dx; laygp_lay0_idx=0; laygp_n=0;
+    net_state = NULL; main_obj = false; layer_idx = lay_dx; laygp_lay0_idx=0; laygp_n=0;
     units_flat_idx = units_dx;  ungp_idx = ungp_dx; n_units = n_un; n_ungps = n_gp;
     prjn_start_idx = prjn_st_dx;  spec_idx = spec_dx; unit_spec_idx = uspec_dx; 
     n_recv_prjns = n_recv;    n_send_prjns = n_send;  send_prjn_start_idx = -1;

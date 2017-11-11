@@ -25,5 +25,5 @@
   // #IGNORE
 
   INLINE int  GetStateSpecType() const override
-  { return LEABRA_NETWORK_STATE::T_UnitSpec; }
+  { return LEABRA_NETWORK_STATE::T_TDRewIntegUnitSpec; }
 

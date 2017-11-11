@@ -678,6 +678,8 @@ public:
     // #IGNORE initialize layer, projection, and unit group state from corresponding network objects
     virtual void  BuildConState();
     // #IGNORE allocate and build ConState objects to prepare for connecting
+    virtual void  BuildSendNetinTmp();
+    // #IGNORE build sender-based netinput temporary memory -- called after connect
   virtual void  Connect();
   // #IGNORE Connect this network according to projections on Layers -- must be done as part of Build to ensure proper sync
     

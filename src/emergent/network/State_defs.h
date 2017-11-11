@@ -50,6 +50,7 @@
 #ifdef LAYER_STATE
 #undef LAYER_STATE
 #undef LEABRA_LAYER_STATE
+#undef LEABRA_LAYER
 #endif
 #ifdef PRJN_STATE
 #undef PRJN_STATE
@@ -162,6 +163,7 @@
 
 #define LEABRA_NETWORK_STATE LeabraNetworkState_cpp
 #define LEABRA_LAYER_STATE LeabraLayerState_cpp
+#define LEABRA_LAYER LeabraLayer
 #define LEABRA_PRJN_STATE LeabraPrjnState_cpp
 #define LEABRA_UNGP_STATE LeabraUnGpState_cpp
 #define LEABRA_UNIT_STATE LeabraUnitState_cpp
@@ -219,6 +221,7 @@ private: \
 
 #define LEABRA_NETWORK_STATE STATE_CLASS(LeabraNetworkState)
 #define LEABRA_LAYER_STATE STATE_CLASS(LeabraLayerState)
+#define LEABRA_LAYER STATE_CLASS(LeabraLayerState)
 #define LEABRA_PRJN_STATE STATE_CLASS(LeabraPrjnState)
 #define LEABRA_UNGP_STATE STATE_CLASS(LeabraUnGpState)
 #define LEABRA_UNIT_STATE STATE_CLASS(LeabraUnitState)

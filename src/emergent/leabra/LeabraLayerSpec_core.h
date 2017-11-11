@@ -15,8 +15,6 @@
   STATE_CLASS(LeabraLayStats)  lstats;       // #CAT_Statistic layer-level statistics parameters
 
 
-  INLINE int  GetStateSpecType() const override { return LEABRA_NETWORK_STATE::T_LeabraLayerSpec; }
-
 // Two levels of UnGpState:
   // GetLayUnGpState -- the unit group state for whole layer -- layer level data
   // UnGpState for unit groups: per unit group, replacing LeabraUnGpData from before
@@ -754,4 +752,7 @@
     lay_gp_inhib.on = false;
     lay_lrate = 1.0f;
   }
+
+  INLINE int  GetStateSpecType() const override
+  { return LEABRA_NETWORK_STATE::T_LeabraLayerSpec; }
 

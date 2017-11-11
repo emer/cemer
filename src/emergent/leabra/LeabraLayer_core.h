@@ -41,25 +41,23 @@
 
   INLINE LEABRA_LAYER_SPEC_CPP* GetLayerSpec(NETWORK_STATE* net) const
   { return (LEABRA_LAYER_SPEC_CPP*)net->GetLayerSpec(spec_idx); }
-  // #IGNORE
 
   INLINE LEABRA_UNIT_SPEC_CPP* GetUnitSpec(NETWORK_STATE* net) const
   { return (LEABRA_UNIT_SPEC_CPP*)net->GetUnitSpec(unit_spec_idx); }
-  // #IGNORE
+
+  INLINE LEABRA_LAYER_STATE* GetLayerState(NETWORK_STATE* net) const
+  { return (LEABRA_LAYER_STATE*)net->GetLayerState(layer_idx); }
 
   INLINE LEABRA_UNGP_STATE* GetLayUnGpState(NETWORK_STATE* net) const
   { return (LEABRA_UNGP_STATE*)net->GetUnGpState(ungp_idx); }
-  // #IGNORE
 
   INLINE LEABRA_UNGP_STATE* GetUnGpState(NETWORK_STATE* net, int ungp_no) const
   { if(ungp_no < -1 || ungp_no >= n_ungps) return NULL;
     return (LEABRA_UNGP_STATE*)net->GetUnGpState(ungp_idx + 1 + ungp_no); }
-  // #IGNORE
 
   INLINE LEABRA_PRJN_STATE* GetPrjnState(NETWORK_STATE* net, int prjn_no) const
   { if(prjn_start_idx < 0) return NULL;
     return (LEABRA_PRJN_STATE*)net->GetPrjnState(prjn_start_idx + prjn_no); }
-  // #IGNORE
 
   INLINE float  GetTotalActEq(NETWORK_STATE* net)  {
     LEABRA_UNGP_STATE* lugp = GetLayUnGpState(net);
@@ -72,6 +70,12 @@
   } 
   // Get the total act_q0 activation in the layer based on average and number of units
 
+
+  /////////////////////////////////////////////////
+  //    Layer-level functions that need to be accessible
+
+  INIMPL void	DecayState(float decay);
+  // #CAT_Activation decay the state of this layer -- not normally called but available for programs etc to control specific layers
 
   INLINE void Init_Stats() {
     inherited::Init_Stats();

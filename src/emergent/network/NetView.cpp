@@ -642,7 +642,6 @@ void NetView::BuildAll() { // populates all T3 guys
   GetMembs();
 
   Network* nt = net();
-  if(!nt || !nt->IsBuiltIntact()) return;
 
   // cannot preserve LayerView objects, so recording disp_mode info separately
   // layers grab from us when made, instead of pushing on them.

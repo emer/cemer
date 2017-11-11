@@ -53,6 +53,7 @@ eTypeDef_Of(MarkerConSpec);
 void LeabraLayerSpec::Initialize() {
   min_obj_type = &TA_LeabraLayer;
   Defaults_init();
+  Initialize_core();
 }
 
 void LeabraLayerSpec::Defaults_init() {

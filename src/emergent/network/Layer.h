@@ -264,6 +264,8 @@ public:
   // #EXPERT #CAT_Structure synchronize sending projections with the recv projections so everyone's happy
   virtual void  UpdateSendPrjnNames();
   // #EXPERT #CAT_Structure update sending prjn names to reflect any name change that might have occured with this layer
+  virtual void  UpdateAllPrjns();
+  // #EXPERT #CAT_Structure update all the sending and recv prjns for this layer -- e.g., after lesions
   virtual void  DisConnect();
   // #MENU #CONFIRM #CAT_Structure disconnect layer from all others
     virtual void  DisConnect_impl();
@@ -423,7 +425,7 @@ public:
                PrjnState_cpp* prjn=NULL);
   // #MENU #NULL_OK_0 #NULL_TEXT_0_NewTable #CAT_Statistic record given connection-level variable to data table with column names the same as the variable names, and one row per *connection* (unlike monitor-based operations which create matrix columns) -- this is useful for performing analyses on learning rules as a function of sending and receiving unit variables -- uses receiver-based connection traversal -- connection variables are just specified directly by name -- corresponding receiver unit variables are "r.var" and sending unit variables are "s.var" -- prjn restricts to that prjn
   virtual DataTable*    PrjnsToTable(DataTable* dt = NULL, bool sending = false);
-  // #MENU #MENU_ON_Structure #MENU_SEP_BEFORE #NULL_OK_0 NULL_TEXT_0_NewTable #CAT_Statistic record the layer projections (receiving unless sending clicked) to given data table, with one row per projection, including the connection and projection specs used
+  // #MENU #MENU_ON_Structure #MENU_SEP_BEFORE #NULL_OK_0 #NULL_TEXT_0_NewTable #CAT_Statistic record the layer projections (receiving unless sending clicked) to given data table, with one row per projection, including the connection and projection specs used
 
   virtual bool  VarToVarCopy(const String& dest_var, const String& src_var);
   // #CAT_Structure copy one unit variable to another (un->dest_var = un->src_var) for all units within this layer (must be a float type variable)

@@ -417,6 +417,7 @@ void Layer::Lesion() {
   StructUpdate(true);
   SetLayerFlag(LESIONED);
   m_prv_layer_flags = flags;
+  UpdateAllPrjns();
   StructUpdate(false);
   if(own_net)
     own_net->UpdtAfterNetMod();
@@ -432,6 +433,7 @@ void Layer::UnLesion() {
   StructUpdate(true);
   ClearLayerFlag(LESIONED);
   UnLesionUnits();              // all our units were lesioned when parent was
+  UpdateAllPrjns();
   m_prv_layer_flags = flags;
   StructUpdate(false);
   if(own_net)
@@ -512,9 +514,11 @@ void Layer::SyncSendPrjns() {
   }
   // now make sure that we don't have any spurious ones
   for(int pi = send_prjns.size-1; pi >= 0; pi--) {
-    if (Projection* p = (Projection*)send_prjns.FastEl(pi))
+    Projection* p = (Projection*)send_prjns.FastEl(pi);
+    if(p) {
       if((!(bool)p->layer) || (p->from.ptr() != this))
         send_prjns.RemoveIdx(pi); // get rid of it!
+    }
   }
 }
 
@@ -522,6 +526,18 @@ void Layer::UpdateSendPrjnNames() {
   for(int pi=0; pi< send_prjns.size; pi++) {
     Projection* prj = send_prjns.FastEl(pi);
     prj->UpdateName();
+  }
+}
+
+void Layer::UpdateAllPrjns() {
+  // update all my projections
+  for(int pi = 0; pi < send_prjns.size; pi++) {
+    Projection* p = (Projection*)send_prjns.FastEl(pi);
+    p->UpdateAfterEdit();
+  }
+  for(int pi = 0; pi < projections.size; pi++) {
+    Projection* p = (Projection*)projections.FastEl(pi);
+    p->UpdateAfterEdit();
   }
 }
 
