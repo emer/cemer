@@ -69,6 +69,13 @@
   float         bias_dwt;
   // #VIEW_HOT #CAT_Bias change in bias weight value as computed by a learning mechanism
 
+
+  //////////////////////////////////////////////////////////////////////////////////
+  // IMPORTANT: cannot put any computation methods in State classes -- no virtual methods!
+
+  //////////////////////////////////////////////////////////////////////////////////
+  //            Access and basic functions
+
   INLINE void   SetExtFlag(int flg)   { ext_flag = (ExtFlags)(ext_flag | flg); }
   // set flag state on
   INLINE void   ClearExtFlag(int flg) { ext_flag = (ExtFlags)(ext_flag & ~flg); }
@@ -219,81 +226,13 @@
   }
   // #CAT_State remove connection from given unit (projection is optional)
   
-  INLINE void  DisConnectAll(NETWORK_STATE* nnet) {
-    CON_STATE* recv_gp;  CON_STATE* send_gp;
-    const int rsz = NRecvConGps(nnet);
-    for(int g=0; g<rsz; g++) {
-      recv_gp = RecvConState(nnet, g);
-      for(int i=recv_gp->size-1; i>=0; i--) {
-        UnitState_cpp* su = recv_gp->UnState(i,nnet);
-        if(recv_gp->other_idx >= 0)
-          send_gp = su->SendConState(nnet, recv_gp->other_idx);
-        else
-          send_gp = NULL;
-        if(send_gp)
-          send_gp->RemoveConUn(su->flat_idx, nnet);
-        recv_gp->RemoveConIdx(i, nnet);
-      }
-    }
-    const int ssz = NSendConGps(nnet);
-    for(int g=0; g<ssz; g++) { // the removes cause the leaf_gp to crash..
-      send_gp = SendConState(nnet, g);
-      for(int i=send_gp->size-1; i>=0; i--) {
-        UnitState_cpp* ru = send_gp->UnState(i, nnet);
-        if(send_gp->other_idx >= 0)
-          recv_gp = ru->RecvConState(nnet, send_gp->other_idx);
-        else
-          recv_gp = NULL;
-        if(recv_gp)
-          recv_gp->RemoveConUn(ru->flat_idx, nnet);
-        send_gp->RemoveConIdx(i, nnet);
-      }
-    }
-  }
+  INIMPL void  DisConnectAll(NETWORK_STATE* nnet);
   // #CAT_State disconnect unit from all other units
   
-  INLINE void   CountCons(NETWORK_STATE* nnet, int& n_recv, int& n_send) {
-    const int rsz = NRecvConGps(nnet);
-    for(int g = 0; g < rsz; g++) {
-      CON_STATE* cg = RecvConState(nnet, g);
-      if(cg->NotActive()) continue;
-      n_recv += cg->size;
-    }
-    const int ssz = NSendConGps(nnet);
-    for(int g = 0; g < ssz; g++) {
-      CON_STATE* cg = SendConState(nnet, g);
-      if(cg->NotActive()) continue;
-      n_send += cg->size;
-    }
-  }    
+  INIMPL void  CountCons(NETWORK_STATE* nnet, int& n_recv, int& n_send);
   // #CAT_State count total number recv, sending connections
   
-  INLINE void  UpdtActiveCons(NETWORK_STATE* nnet) {
-    if(lesioned()) {
-      const int rsz = NRecvConGps(nnet);
-      for(int g = 0; g < rsz; g++) {
-        CON_STATE* cg = RecvConState(nnet, g);
-        cg->SetInactive();
-      }
-      const int ssz = NSendConGps(nnet);
-      for(int g = 0; g < ssz; g++) {
-        CON_STATE* cg = SendConState(nnet, g);
-        cg->SetInactive();
-      }
-    }
-    else {
-      const int rsz = NRecvConGps(nnet);
-      for(int g = 0; g < rsz; g++) {
-        CON_STATE* cg = RecvConState(nnet, g);
-        cg->UpdtIsActive(nnet);
-      }
-      const int ssz = NSendConGps(nnet);
-      for(int g = 0; g < ssz; g++) {
-        CON_STATE* cg = SendConState(nnet, g);
-        cg->UpdtIsActive(nnet);
-      }
-    }
-  }
+  INIMPL void  UpdtActiveCons(NETWORK_STATE* nnet);
   // #CAT_State update the active state of all connection states
 
   INLINE bool  ShareRecvConsFrom(NETWORK_STATE* nnet, UNIT_STATE* shu, PRJN_STATE* prjn) {

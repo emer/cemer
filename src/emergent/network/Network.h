@@ -978,7 +978,7 @@ public:
   virtual void  DMem_SumDWts_FmTmp_Thr(int thr_no);
   // #IGNORE copy from temp recv buffer, per thread
   virtual void  DMem_ComputeAggs(MPI_Comm comm);
-  // #IGNORE aggregate network variables across procs for trial-level dmem
+  // #IGNORE aggregate network and layer variables across procs for trial-level dmem
 #endif
 
 #ifdef CUDA_COMPILE

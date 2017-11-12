@@ -445,13 +445,20 @@
   ////////////////////////////////////////////////////////////////
   //    Network algorithm code -- only the "within a thread" code here
   //    thread dispatch is on NetworkState_cpp, and Network calls into that
+  //    also, because LayerState can't have any virtual methods, put those here!
   
   INIMPL virtual void Init_InputData_Thr(int thr_no);
   // #IGNORE initialize input data fields (ext, targ, ext_flags)
-  INIMPL virtual void Init_InputData_Layer();
+  INIMPL virtual void Init_InputData_Layers();
   // #IGNORE initialize input data fields for layers
+  INIMPL virtual void Init_InputData_Layer(LAYER_STATE* lay);
+  // #IGNORE Initializes external and target inputs (layer level only)
+
   INIMPL virtual void Init_Acts_Thr(int thr_no);
   // #IGNORE initialize activations
+  INIMPL virtual void Init_Acts_Layer(LAYER_STATE* lay);
+  // #IGNORE Initialize the unit state variables (layer level only)
+
   INIMPL virtual void Init_dWt_Thr(int thr_no);
   // #IGNORE inlitialize delta weight change aggregates
 
@@ -465,14 +472,14 @@
   // #IGNORE symmetrize weights after first init pass, called when needed
   INIMPL virtual void Init_Weights_post_Thr(int thr_no);
   // #IGNORE
-  INIMPL virtual void Init_Weights_Layer();
+  INIMPL virtual void Init_Weights_Layers();
   // #IGNORE call layer-level init weights function -- after all unit-level inits
 
   INIMPL virtual void Init_Counters_State();
   // #IGNORE initialize counters controlled by the state-side
   INIMPL virtual void Init_Stats();
   // #IGNORE initialize statistics -- also calls Init_Stats_Layer
-  INIMPL virtual void Init_Stats_Layer();
+  INIMPL virtual void Init_Stats_Layers();
   // #IGNORE call layer-level Init stats function
   INIMPL virtual void Compute_Netin_Thr(int thr_no);
   // #IGNORE compute net input, receiver based
@@ -486,22 +493,48 @@
   // #IGNORE compute both recv-based netinput and activation in one step -- for purely feedforward nets
   INIMPL virtual void Compute_dWt_Thr(int thr_no);
   // #IGNORE compute weight changes (learning)
+  INIMPL virtual bool Compute_Weights_Test_impl(int trial_no);
+  // #IGNORE test if it is time to update weights
   INIMPL virtual void Compute_Weights_Thr(int thr_no);
   // #IGNORE update weights from weight changes
+#ifdef DMEM_COMPILE
+  INIMPL virtual void  DMem_SumDWts_ToTmp_Thr(int thr_no);
+  // #IGNORE copy to temp send buffer for sending, per thread
+  INIMPL virtual void  DMem_SumDWts_FmTmp_Thr(int thr_no);
+  // #IGNORE copy from temp recv buffer, per thread
+#endif
+
   INIMPL virtual void Compute_SSE_Thr(int thr_no);
   // #IGNORE compute sum-of-squared error on output layers and units with targ state and ext_flags -- into stats temp buffs by thread
   INIMPL virtual void Compute_SSE_Agg(bool unit_avg = false, bool sqrt = false);
   // #IGNORE aggregate SSE from thread-specific stats buffers
+  INIMPL virtual float Compute_SSE_Layer(LAYER_STATE* lay, int& n_vals, bool unit_avg = false, bool sqrt = false);
+  // #IGNORE compute sum squared error of activation vs target over the entire layer -- always returns the actual sse, but unit_avg and sqrt flags determine averaging and sqrt of layer's own sse value -- uses sse_tol so error is 0 if within tolerance on a per unit basis
+
+
   INIMPL virtual void Compute_PRerr_Thr(int thr_no);
   // #IGNORE compute compute precision and recall error statistics over entire network -- true positive, false positive, and false negative -- precision = tp / (tp + fp) recall = tp / (tp + fn) fmeasure = 2 * p * r / (p + r), specificity, fall-out, mcc. -- into thread-specific stats buffers
   INIMPL virtual void Compute_PRerr_Agg();
   // #IGNORE aggregate thread-specific data
+  INIMPL virtual int   Compute_PRerr_Layer(LAYER_STATE* lay);
+  // #IGNORE compute precision and recall error statistics over entire layer -- true positive, false positive, and false negative -- returns number of values entering into computation (depends on number of targets) -- precision = tp / (tp + fp) recall = tp / (tp + fn) fmeasure = 2 * p * r / (p + r) -- uses sse_tol so error is 0 if within tolerance on a per unit basis -- results are stored in prerr values on layer
+
+
   INIMPL virtual void Compute_EpochSSE();
   // #IGNORE compute epoch-level sum squared error and related statistics
+  INIMPL virtual void Compute_EpochSSE_Layer(LAYER_STATE* lay);
+  // #IGNORE compute epoch-level sum squared error and related statistics
+  
   INIMPL virtual void Compute_EpochPRerr();
   // #IGNORE compute epoch-level precision and recall statistics
-  INIMPL virtual void Compute_EpochStats_Layer();
+  INIMPL virtual void Compute_EpochPRerr_Layer(LAYER_STATE* lay);
+  // #IGNORE compute epoch-level precision and recall statistics
+
+
+  INIMPL virtual void Compute_EpochStats_Layers();
   // #IGNORE compute epoch-level statistics at the layer level: SSE, PRerr -- overload in derived classes
+  INIMPL virtual void Compute_EpochStats_Layer(LAYER_STATE* lay);
+  // #IGNORE compute epoch-level statistics; DMem_ComputeAggs must have been called already (if dmem)
 
   INIMPL CON_STATE* FindRecipRecvCon(int& con_idx, UNIT_STATE* su, UNIT_STATE* ru);
   // #IGNORE find the reciprocal recv con group and con index for sending unit su to this receiving unit ru

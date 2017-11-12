@@ -471,15 +471,16 @@ void TwoDValLayerSpec::ReConfig(Network* main_net, int n_units) {
   for(int i=0; i < net->n_layers_built; i++) {
     LEABRA_LAYER_STATE* lay = (LEABRA_LAYER_STATE*)net->GetLayerState(i);
     if(lay->lesioned()) continue;
-    LAYER_SPEC_CPP* ls = lay->GetLayerSpec(net);
+
+    LeabraLayer* llay = (LeabraLayer*)main_net->LayerFromState(lay);
+    LeabraLayerSpec* ls = (LeabraLayerSpec*)llay->GetMainLayerSpec();
     if(ls->spec_idx != this->spec_idx) continue;
 
-    // todo: need to access the actual main specs!
-    // if(n_units > 0) {
-    //   lay->SetNUnits(n_units);
-    // }
+    if(n_units > 0) {
+      llay->SetNUnits(n_units);
+    }
 
-    LEABRA_UNIT_SPEC_CPP* us = (LEABRA_UNIT_SPEC_CPP*)lay->GetUnitSpec(net);
+    LeabraUnitSpec* us = (LeabraUnitSpec*)llay->GetMainUnitSpec();
     LEABRA_UNIT_STATE* u = (LEABRA_UNIT_STATE*)lay->GetUnitState(net, 0);
 
     if(twod.rep == TwoDValSpec::LOCALIST) {
@@ -496,20 +497,20 @@ void TwoDValLayerSpec::ReConfig(Network* main_net, int n_units) {
       x_range.min = 0.0f; x_range.max = 1.0f;
       y_range.min = 0.0f; y_range.max = 1.0f;
 
-      // todo get main cs
-      // for(int g=0; g<u->NRecvConGps(); g++) {
-      //   ConState* recv_gp = (ConState*)u->RecvConState(g);
-      //   if(recv_gp->NotActive()) continue;
-      //   LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
-      //   if(recv_gp->prjn->spec.SPtr()->InheritsFrom(TA_ScalarValSelfPrjnSpec) ||
-      //      cs->IsMarkerCon()) {
-      //     continue;
-      //   }
-      //   // cs->lmix.err_sb = false; // false: this is critical for linear mapping of vals..
-      //   cs->rnd.mean = 0.1f;
-      //   cs->rnd.var = 0.0f;
-      //   cs->wt_sig.gain = 1.0; cs->wt_sig.off = 1.0;
-      // }
+      for(int pi=0; pi<llay->projections.size; pi++) {
+        Projection* pj = llay->projections.FastEl(pi);
+        LeabraConSpec* cs = (LeabraConSpec*)pj->GetMainConSpec();
+        ProjectionSpec* pspec = pj->GetMainPrjnSpec();
+        if(pspec->GetStateSpecType() == LEABRA_NETWORK_STATE::T_ScalarValSelfPrjnSpec ||
+           cs->IsMarkerCon()) {
+          continue;
+        }
+        // cs->lmix.err_sb = false; // false: this is critical for linear mapping of vals..
+        cs->rnd.mean = 0.1f;
+        cs->rnd.var = 0.0f;
+        cs->wt_sig.gain = 1.0; cs->wt_sig.off = 1.0;
+        cs->UpdateAfterEdit();
+      }
     }
     else if(twod.rep == TwoDValSpec::GAUSSIAN) {
       // inhib.type = LeabraInhibSpec::KWTA_INHIB;
@@ -523,26 +524,63 @@ void TwoDValLayerSpec::ReConfig(Network* main_net, int n_units) {
       x_range.min = -.5f; x_range.max = 1.5f;
       y_range.min = -.5f; y_range.max = 1.5f;
 
-      // todo get main cs
-      // for(int g=0; g<u->NRecvConGps(); g++) {
-      //   ConState* recv_gp = (ConState*)u->RecvConState(g);
-      //   if(recv_gp->NotActive()) continue;
-      //   LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
-      //   if(recv_gp->prjn->spec.SPtr()->InheritsFrom(TA_ScalarValSelfPrjnSpec) ||
-      //      cs->IsMarkerCon()) {
-      //     continue;
-      //   }
-      //   // cs->lmix.err_sb = true;
-      //   cs->rnd.mean = 0.1f;
-      //   cs->rnd.var = 0.0f;
-      //   cs->wt_sig.gain = 1.0; cs->wt_sig.off = 1.0;
-      // }
+      for(int pi=0; pi<llay->projections.size; pi++) {
+        Projection* pj = llay->projections.FastEl(pi);
+        LeabraConSpec* cs = (LeabraConSpec*)pj->GetMainConSpec();
+        ProjectionSpec* pspec = pj->GetMainPrjnSpec();
+        if(pspec->GetStateSpecType() == LEABRA_NETWORK_STATE::T_ScalarValSelfPrjnSpec ||
+           cs->IsMarkerCon()) {
+          continue;
+        }
+        // cs->lmix.err_sb = true;
+        cs->rnd.mean = 0.1f;
+        cs->rnd.var = 0.0f;
+        cs->wt_sig.gain = 1.0; cs->wt_sig.off = 1.0;
+        cs->UpdateAfterEdit();
+      }
     }
-    // us->UpdateAfterEdit();
+    us->UpdateAfterEdit();
   }
   UpdateAfterEdit();
 }
 
+
+void TwoDValLayerSpec::LabelUnits_ugp(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net, int gpidx) {
+  LeabraNetwork* lnet = (LeabraNetwork*)net->net_owner;
+  LeabraLayer* llay = (LeabraLayer*)lnet->LayerFromState(lay);
+  llay->SetUnitNames(true);     // use names
+  
+  LEABRA_UNGP_STATE* ug = (LEABRA_UNGP_STATE*)lay->GetUnGpState(net, gpidx);
+  const int nunits = ug->n_units;
+  if(nunits < 3) return;        // must be at least a few units..
+  twod.InitVal(0.0f, 0.0f, lay->un_geom_x, lay->un_geom_y, x_range.min, x_range.range, y_range.min,
+               y_range.range);
+  for(int i=0;i<nunits;i++) {
+    LEABRA_UNIT_STATE* u = (LEABRA_UNIT_STATE*)ug->GetUnitState(net, i);
+    if(u->lesioned()) continue;
+    float x_cur, y_cur; twod.GetUnitVal(i, x_cur, y_cur);
+    llay->SetUnitName(u, (String)x_cur + "," + String(y_cur));
+  }
+}
+
+void TwoDValLayerSpec::LabelUnits(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
+  UNIT_GP_ITR(lay, LabelUnits_ugp(lay, net, gpidx); );
+}
+
+void TwoDValLayerSpec::LabelUnitsNet() {
+  LeabraNetwork* lnet = GET_MY_OWNER(LeabraNetwork);
+  if(!lnet) return;
+  LEABRA_NETWORK_STATE* net = (LEABRA_NETWORK_STATE*)lnet->net_state;
+
+  for(int i=0; i < net->n_layers_built; i++) {
+    LEABRA_LAYER_STATE* lay = (LEABRA_LAYER_STATE*)net->GetLayerState(i);
+    if(lay->lesioned()) continue;
+    LAYER_SPEC_CPP* ls = lay->GetLayerSpec(net);
+    if(ls->spec_idx == this->spec_idx) { // same..
+      LabelUnits(lay, net);
+    }
+  }
+}
 
 #include "DecodeTwoDValLayerSpec.cpp"
 TA_BASEFUNS_CTORS_DEFN(DecodeTwoDValLayerSpec);

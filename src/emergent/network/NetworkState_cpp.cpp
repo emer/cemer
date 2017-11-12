@@ -120,7 +120,7 @@ void NetworkState_cpp::ThreadSyncSpin(int thr_no, int sync_no) {
 }
 
 void NetworkState_cpp::Init_InputData() {
-  Init_InputData_Layer();
+  Init_InputData_Layers();
   NET_THREAD_CALL(NetworkState_cpp::Init_InputData_Thr);
 }
 
@@ -151,7 +151,7 @@ void NetworkState_cpp::Init_Weights() {
   }
   
   Init_Weights_post();
-  Init_Weights_Layer();
+  Init_Weights_Layers();
 
   Init_Acts();                  // also re-init state at this point..
   Init_Metrics();
@@ -214,11 +214,21 @@ void NetworkState_cpp::Compute_dWt() {
 }
 
 void NetworkState_cpp::Compute_Weights() {
-// #ifdef DMEM_COMPILE
-//   DMem_SumDWts(dmem_trl_comm.comm);
-// #endif
   NET_THREAD_CALL(NetworkState_cpp::Compute_Weights_Thr);
 }
+
+
+#ifdef DMEM_COMPILE
+
+void NetworkState_cpp::DMem_SumDWts_ToTmp() {
+  NET_THREAD_CALL(NetworkState_cpp::DMem_SumDWts_ToTmp_Thr);
+}  
+ 
+void NetworkState_cpp::DMem_SumDWts_FmTmp() {
+  NET_THREAD_CALL(NetworkState_cpp::DMem_SumDWts_FmTmp_Thr);
+}  
+
+#endif
 
 void NetworkState_cpp::Compute_SSE(bool unit_avg, bool sqrt) {
   NET_THREAD_CALL(NetworkState_cpp::Compute_SSE_Thr);
@@ -240,7 +250,7 @@ void NetworkState_cpp::Compute_EpochStats() {
   Compute_EpochSSE();
   if(stats.prerr)
     Compute_EpochPRerr();
-  Compute_EpochStats_Layer();
+  Compute_EpochStats_Layers();
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -21,7 +21,7 @@
 
 // member includes:
 #include <LeabraLayerSpec>
-#include <DMemAggVars>
+
 
 eTypeDef_Of(LeabraAvgMax);
 eTypeDef_Of(LeabraInhibVals);
@@ -76,14 +76,6 @@ public:
   { return (LeabraUnit*)inherited::MostActiveUnit(idx); }
   // #CAT_Statistic Return the unit with the highest activation (act) value -- index of unit is returned in idx
 
-  
-#ifdef DMEM_COMPILE
-  DMemAggVars	dmem_agg_sum;		// #IGNORE aggregation of network variables using SUM op (currently only OP in use -- add others as needed)
-  virtual void 	DMem_InitAggs();
-  // #IGNORE initialize aggregation stuff
-  virtual void	DMem_ComputeAggs(MPI_Comm comm);
-  // #IGNORE aggregate network variables across procs for trial-level dmem 
-#endif
 
   void  CheckSpecs() override;
   void	CheckInhibCons(LeabraNetwork* net);

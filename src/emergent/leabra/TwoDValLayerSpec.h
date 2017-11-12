@@ -21,13 +21,6 @@
                                         int gpidx);
   // #IGNORE
 
-  INIMPL virtual void	LabelUnits(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net);
-  // #CAT_TwoDVal label units in given layer with their underlying values
-  INIMPL virtual void   LabelUnits_ugp(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net, int gpidx);
-  // #CAT_TwoDVal label units with their underlying values
-  INIMPL virtual void	LabelUnitsNet(LEABRA_NETWORK_STATE* net);
-  // #BUTTON #CAT_TwoDVal label all layers in given network using this spec
-
   INIMPL virtual void	Compute_BiasVal(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net);
   // #CAT_TwoDVal initialize the bias value 
     INIMPL virtual void Compute_WtBias_Val(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net, int gpidx,

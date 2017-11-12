@@ -619,7 +619,7 @@ bool Network::Compute_Weights_Test(int trial_no) {
                "Network is not built or is not intact -- must Build first")) {
     return false;
   }
-  return Compute_Weights_Test_impl(trial_no); // in Network_core.h
+  return net_state->Compute_Weights_Test_impl(trial_no); // in NetworkState_core
 }
 
 void Network::Compute_Weights() {
@@ -1888,7 +1888,7 @@ void Network::DMem_SumDWts(MPI_Comm comm) {
 
   // note: memory is not contiguous for all DWT vars, so we still need to do this..
 
-  NET_STATE_RUN(NetworkState, Network::DMem_SumDWts_ToTmp_Thr);
+  net_state->DMem_SumDWts_ToTmp();
 
   double timer2s = MPI_Wtime();
 
@@ -1908,14 +1908,14 @@ void Network::DMem_SumDWts(MPI_Comm comm) {
   // }
   // else {
   for(int i=0; i<n_thrs_built; i++) {
-    int64_t n_floats = thrs_own_cons_tot_size_nonshared[i] + thrs_n_units[i];
+    int64_t n_floats = net_state->thrs_own_cons_tot_size_nonshared[i] + net_state->thrs_n_units[i];
     if(taMisc::thread_defaults.alt_mpi) {
       dmem_trl_comm.my_reduce->allreduce
-        (thrs_dmem_sum_dwts_send[i], thrs_dmem_sum_dwts_recv[i], n_floats);
+        (net_state->thrs_dmem_sum_dwts_send[i], net_state->thrs_dmem_sum_dwts_recv[i], n_floats);
     }
     else {
       DMEM_MPICALL(MPI_Allreduce
-                   (thrs_dmem_sum_dwts_send[i], thrs_dmem_sum_dwts_recv[i],
+                   (net_state->thrs_dmem_sum_dwts_send[i], net_state->thrs_dmem_sum_dwts_recv[i],
                     n_floats, MPI_FLOAT, MPI_SUM, comm),
                    "Network::SumDWts", "Allreduce");
     }
@@ -1924,7 +1924,7 @@ void Network::DMem_SumDWts(MPI_Comm comm) {
 
   double timer2e = MPI_Wtime();
 
-  NET_STATE_RUN(NetworkState, Network::DMem_SumDWts_FmTmp_Thr);
+  net_state->DMem_SumDWts_FmTmp();
   
   double timer1e = MPI_Wtime();
 
@@ -1940,68 +1940,16 @@ void Network::DMem_SumDWts(MPI_Comm comm) {
   wt_sync_time.EndTimer();
 }
 
-void Network::DMem_SumDWts_ToTmp_Thr(int thr_no) {
-  float* dwt_tmp = thrs_dmem_sum_dwts_send[thr_no];
-  int64_t cidx = 0;
-  if(RecvOwnsCons()) {
-    const int nrcg = ThrNRecvConGps(thr_no);
-    for(int i=0; i<nrcg; i++) {
-      ConState_cpp* rcg = ThrRecvConState(thr_no, i); // guaranteed to be active..
-      if(rcg->Sharing()) continue;
-      float* dwts = rcg->OwnCnVar(ConState_cpp::DWT);
-      memcpy(dwt_tmp + cidx, (char*)dwts, rcg->size * sizeof(float));
-      cidx += rcg->size;
-    }
-  }
-  else {
-    const int nscg = ThrNSendConGps(thr_no);
-    for(int i=0; i<nscg; i++) {
-      ConState_cpp* scg = ThrSendConState(thr_no, i); // guaranteed to be active..
-      float* dwts = scg->OwnCnVar(ConState_cpp::DWT);
-      memcpy(dwt_tmp + cidx, (char*)dwts, scg->size * sizeof(float));
-      cidx += scg->size;
-    }
-  }
-  const int nu = ThrNUnits(thr_no);
-  for(int i=0; i<nu; i++) {
-    UnitState_cpp* uv = ThrUnitState(thr_no, i);
-    if(uv->lesioned()) continue;
-    memcpy(dwt_tmp + cidx++, (char*)&(uv->bias_dwt), sizeof(float));
-  }
-}
-
-void Network::DMem_SumDWts_FmTmp_Thr(int thr_no) {
-  float* dwt_tmp = thrs_dmem_sum_dwts_recv[thr_no];
-  int64_t cidx = 0;
-  if(RecvOwnsCons()) {
-    const int nrcg = ThrNRecvConGps(thr_no);
-    for(int i=0; i<nrcg; i++) {
-      ConState_cpp* rcg = ThrRecvConState(thr_no, i); // guaranteed to be active..
-      if(rcg->Sharing()) continue;
-      float* dwts = rcg->OwnCnVar(ConState_cpp::DWT);
-      memcpy(dwts, (char*)(dwt_tmp + cidx), rcg->size * sizeof(float));
-      cidx += rcg->size;
-    }
-  }
-  else {
-    const int nscg = ThrNSendConGps(thr_no);
-    for(int i=0; i<nscg; i++) {
-      ConState_cpp* scg = ThrSendConState(thr_no, i); // guaranteed to be active..
-      float* dwts = scg->OwnCnVar(ConState_cpp::DWT);
-      memcpy(dwts, (char*)(dwt_tmp + cidx), scg->size * sizeof(float));
-      cidx += scg->size;
-    }
-  }
-  const int nu = ThrNUnits(thr_no);
-  for(int i=0; i<nu; i++) {
-    UnitState_cpp* uv = ThrUnitState(thr_no, i);
-    if(uv->lesioned()) continue;
-    memcpy(&(uv->bias_dwt), (char*)(dwt_tmp + cidx++), sizeof(float));
-  }
-}
-
 void Network::DMem_ComputeAggs(MPI_Comm comm) {
   dmem_agg_sum.AggVar(comm, MPI_SUM);
+
+  // also need to do layers here 
+  for(int li=0; li < n_layers_built; li++) {
+    LayerState_cpp* lay = GetLayerState(li);
+    if(lay->lesioned()) continue;
+    Layer* mlay = LayerFromState(lay);
+    mlay->DMem_ComputeAggs(comm);
+  }
 }
 
 #endif  // DMEM

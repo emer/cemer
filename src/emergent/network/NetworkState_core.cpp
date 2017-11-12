@@ -17,12 +17,16 @@ void NETWORK_STATE::Init_InputData_Thr(int thr_no) {
   }
 }
 
-void NETWORK_STATE::Init_InputData_Layer() {
+void NETWORK_STATE::Init_InputData_Layers() {
   for(int i=0; i < n_layers_built; i++) {
     LAYER_STATE* lay = GetLayerState(i);
     if(lay->lesioned()) continue;
-    lay->Init_InputData(this);
+    Init_InputData_Layer(lay);
   }
+}
+
+void NETWORK_STATE::Init_InputData_Layer(LAYER_STATE* lay) {
+  lay->ext_flag = LAYER_STATE::NO_EXTERNAL;
 }
 
 void NETWORK_STATE::Init_Acts_Thr(int thr_no) {
@@ -33,6 +37,10 @@ void NETWORK_STATE::Init_Acts_Thr(int thr_no) {
     UNIT_SPEC_CPP* us = uv->GetUnitSpec(this);
     us->Init_Acts(uv, this, thr_no);
   }
+}
+
+void NETWORK_STATE::Init_Acts_Layer(LAYER_STATE* lay) {
+  lay->ext_flag = LAYER_STATE::NO_EXTERNAL;
 }
 
 void NETWORK_STATE::Init_dWt_Thr(int thr_no) {
@@ -223,12 +231,8 @@ void NETWORK_STATE::Init_Weights_post_Thr(int thr_no) {
   }
 }
 
-void NETWORK_STATE::Init_Weights_Layer() {
-  for(int i=0; i < n_layers_built; i++) {
-    LAYER_STATE* lay = GetLayerState(i);
-    if(lay->lesioned()) continue;
-    lay->Init_Weights_Layer(this);
-  }
+void NETWORK_STATE::Init_Weights_Layers() {
+  // nop here -- override in classes that need it
 }
 
 void NETWORK_STATE::Init_Counters() {
@@ -266,10 +270,11 @@ void NETWORK_STATE::Init_Stats() {
   // output_name = "";
 
   // also call at the layer level
-  Init_Stats_Layer();
+  Init_Stats_Layers();
 }
 
-void NETWORK_STATE::Init_Stats_Layer() {
+void NETWORK_STATE::Init_Stats_Layers() {
+  // IMPORTANT: must override this for derived classes with extra stats
   for(int i=0; i < n_layers_built; i++) {
     LAYER_STATE* lay = GetLayerState(i);
     if(lay->lesioned()) continue;
@@ -433,6 +438,88 @@ void NETWORK_STATE::Compute_dWt_Thr(int thr_no) {
   //   net_timing[thr_no]->dwt.EndIncrAvg();
 }
 
+bool NETWORK_STATE::Compute_Weights_Test_impl(int trial_no) {
+  if(train_mode == TEST) return false;
+  if(wt_update == ON_LINE) return true;
+  if(wt_update == BATCH) return false;
+  if(wt_update == SMALL_BATCH) {
+    int trial_no_eff = trial_no;
+#ifdef DMEM_COMPILE
+    if(dmem_nprocs > 1) {
+      trial_no_eff = ((trial_no_eff-1) / dmem_nprocs) + 1;
+      // subtract the 1 that was presumably added to trial_no, then add it back
+    }
+#endif
+    return (trial_no_eff % small_batch_n_eff == 0);
+  }
+  return false;
+}
+
+
+#ifdef DMEM_COMPILE
+
+void NETWORK_STATE::DMem_SumDWts_ToTmp_Thr(int thr_no) {
+  float* dwt_tmp = thrs_dmem_sum_dwts_send[thr_no];
+  int64_t cidx = 0;
+  if(RecvOwnsCons()) {
+    const int nrcg = ThrNRecvConGps(thr_no);
+    for(int i=0; i<nrcg; i++) {
+      CON_STATE* rcg = ThrRecvConState(thr_no, i); // guaranteed to be active..
+      if(rcg->Sharing()) continue;
+      float* dwts = rcg->OwnCnVar(CON_STATE::DWT);
+      memcpy(dwt_tmp + cidx, (char*)dwts, rcg->size * sizeof(float));
+      cidx += rcg->size;
+    }
+  }
+  else {
+    const int nscg = ThrNSendConGps(thr_no);
+    for(int i=0; i<nscg; i++) {
+      CON_STATE* scg = ThrSendConState(thr_no, i); // guaranteed to be active..
+      float* dwts = scg->OwnCnVar(CON_STATE::DWT);
+      memcpy(dwt_tmp + cidx, (char*)dwts, scg->size * sizeof(float));
+      cidx += scg->size;
+    }
+  }
+  const int nu = ThrNUnits(thr_no);
+  for(int i=0; i<nu; i++) {
+    UNIT_STATE* uv = ThrUnitState(thr_no, i);
+    if(uv->lesioned()) continue;
+    memcpy(dwt_tmp + cidx++, (char*)&(uv->bias_dwt), sizeof(float));
+  }
+}
+
+void NETWORK_STATE::DMem_SumDWts_FmTmp_Thr(int thr_no) {
+  float* dwt_tmp = thrs_dmem_sum_dwts_recv[thr_no];
+  int64_t cidx = 0;
+  if(RecvOwnsCons()) {
+    const int nrcg = ThrNRecvConGps(thr_no);
+    for(int i=0; i<nrcg; i++) {
+      CON_STATE* rcg = ThrRecvConState(thr_no, i); // guaranteed to be active..
+      if(rcg->Sharing()) continue;
+      float* dwts = rcg->OwnCnVar(CON_STATE::DWT);
+      memcpy(dwts, (char*)(dwt_tmp + cidx), rcg->size * sizeof(float));
+      cidx += rcg->size;
+    }
+  }
+  else {
+    const int nscg = ThrNSendConGps(thr_no);
+    for(int i=0; i<nscg; i++) {
+      CON_STATE* scg = ThrSendConState(thr_no, i); // guaranteed to be active..
+      float* dwts = scg->OwnCnVar(CON_STATE::DWT);
+      memcpy(dwts, (char*)(dwt_tmp + cidx), scg->size * sizeof(float));
+      cidx += scg->size;
+    }
+  }
+  const int nu = ThrNUnits(thr_no);
+  for(int i=0; i<nu; i++) {
+    UNIT_STATE* uv = ThrUnitState(thr_no, i);
+    if(uv->lesioned()) continue;
+    memcpy(&(uv->bias_dwt), (char*)(dwt_tmp + cidx++), sizeof(float));
+  }
+}
+
+#endif
+
 void NETWORK_STATE::Compute_Weights_Thr(int thr_no) {
   // if(threads.get_timing)
   //   net_timing[thr_no]->wt.StartTimer(true); // reset
@@ -504,7 +591,7 @@ void NETWORK_STATE::Compute_SSE_Agg(bool unit_avg, bool sqrt) {
   for(int li = 0; li < nlay; li++) {
     LAYER_STATE* lay = GetLayerState(li);
     if(lay->lesioned()) continue;
-    sse += lay->Compute_SSE(this, lay_vals, unit_avg, sqrt);
+    sse += Compute_SSE_Layer(lay, lay_vals, unit_avg, sqrt);
     n_vals += lay_vals;
   }
   if(unit_avg && n_vals > 0)
@@ -514,6 +601,42 @@ void NETWORK_STATE::Compute_SSE_Agg(bool unit_avg, bool sqrt) {
   avg_sse.Increment(sse);
   if(sse > stats.cnt_err_tol)
     cur_cnt_err += 1.0f;
+}
+
+float NETWORK_STATE::Compute_SSE_Layer(LAYER_STATE* lay, int& n_vals, bool unit_avg, bool sqrt) {
+  n_vals = 0;
+  lay->sse = 0.0f;
+  float sse_val = 0.0f;
+  if(!lay->HasExtFlag(LAYER_STATE::COMP_TARG)) return 0.0f;
+  if(lay->layer_type == LAYER_STATE::HIDDEN) return 0.0f;
+  
+  const int li = lay->layer_idx;
+  for(int thr_no=0; thr_no < n_thrs_built; thr_no++) {
+    // integrate over thread raw data
+    float& lay_sse = ThrLayStats(thr_no, li, 0, NETWORK_STATE::SSE);
+    float& lay_n = ThrLayStats(thr_no, li, 1, NETWORK_STATE::SSE);
+
+    sse_val += lay_sse;
+    n_vals += (int)lay_n;
+  }
+  
+  float rval = sse_val;
+  if(unit_avg && n_vals > 0) {
+    sse_val /= (float)n_vals;
+  }
+  if(sqrt) {
+    sse_val = sqrtf(sse_val);
+  }
+  avg_sse.Increment(sse_val);
+  if(sse_val > stats.cnt_err_tol)
+    cur_cnt_err += 1.0;
+  if(lay->HasLayerFlag(LAYER_STATE::NO_ADD_SSE) ||
+     (lay->HasExtFlag(LAYER_STATE::COMP) && lay->HasLayerFlag(LAYER_STATE::NO_ADD_COMP_SSE))) {
+    rval = 0.0f;
+    n_vals = 0;
+  }
+  lay->sse = sse_val;
+  return rval;
 }
 
 void NETWORK_STATE::Compute_PRerr_Thr(int thr_no) {
@@ -554,7 +677,7 @@ void NETWORK_STATE::Compute_PRerr_Agg() {
   for(int li = 0; li < nlay; li++) {
     LAYER_STATE* lay = GetLayerState(li);
     if(lay->lesioned()) continue;
-    int lay_vals = lay->Compute_PRerr(this);
+    int lay_vals = Compute_PRerr_Layer(lay);
     if(lay_vals > 0) {
       prerr.IncrVals(lay->prerr);
     }
@@ -567,11 +690,47 @@ void NETWORK_STATE::Compute_PRerr_Agg() {
   }
 }
 
-void NETWORK_STATE::Compute_EpochStats_Layer() {
+int NETWORK_STATE::Compute_PRerr_Layer(LAYER_STATE* lay) {
+  int n_vals = 0;
+  lay->prerr.InitVals();
+  if(!lay->HasExtFlag(LAYER_STATE::COMP_TARG)) return 0;
+  if(lay->layer_type == LAYER_STATE::HIDDEN) return 0;
+
+  const int li = lay->layer_idx;
+  for(int thr_no=0; thr_no < n_thrs_built; thr_no++) {
+    // integrate over thread raw data
+    float& true_pos = ThrLayStats(thr_no, li, 0, NETWORK_STATE::PRERR);
+    float& false_pos = ThrLayStats(thr_no, li, 1, NETWORK_STATE::PRERR);
+    float& false_neg = ThrLayStats(thr_no, li, 2, NETWORK_STATE::PRERR);
+    float& true_neg = ThrLayStats(thr_no, li, 3, NETWORK_STATE::PRERR);
+    float& lay_n = ThrLayStats(thr_no, li, 4, NETWORK_STATE::PRERR);
+
+    n_vals += (int)lay_n;
+    lay->prerr.true_pos += true_pos;
+    lay->prerr.false_pos += false_pos;
+    lay->prerr.false_neg += false_neg;
+    lay->prerr.true_neg += true_neg;
+  }
+  lay->prerr.ComputePR();
+  if(lay->HasLayerFlag(LAYER_STATE::NO_ADD_SSE) ||
+     (lay->HasExtFlag(LAYER_STATE::COMP) && lay->HasLayerFlag(LAYER_STATE::NO_ADD_COMP_SSE))) {
+    n_vals = 0;
+  }
+  return n_vals;
+}    
+
+void NETWORK_STATE::Compute_EpochStats_Layers() {
   for(int li=0; li < n_layers_built; li++) {
     LAYER_STATE* lay = GetLayerState(li);
     if(lay->lesioned()) continue;
-    lay->Compute_EpochStats(this);
+    Compute_EpochStats_Layer(lay);
+  }
+}
+
+void NETWORK_STATE::Compute_EpochStats_Layer(LAYER_STATE* lay) {
+  Compute_EpochSSE_Layer(lay);
+  if(stats.prerr) {
+    Compute_EpochPRerr_Layer(lay);
   }
 }
 
@@ -587,11 +746,29 @@ void NETWORK_STATE::Compute_EpochSSE() {
   cur_cnt_err = 0.0f;
 }
 
+void NETWORK_STATE::Compute_EpochSSE_Layer(LAYER_STATE* lay) {
+  lay->cnt_err = lay->cur_cnt_err;
+  if(lay->avg_sse.n > 0) {
+    lay->pct_err = lay->cnt_err / (float)lay->avg_sse.n;
+    lay->pct_cor = 1.0f - lay->pct_err;
+  }
+  lay->avg_sse.GetAvg_Reset();
+
+  lay->cur_cnt_err = 0.0f;
+}
+
 void NETWORK_STATE::Compute_EpochPRerr() {
   epc_prerr = sum_prerr;
   epc_prerr.ComputePR();        // make sure, in case of dmem summing
   sum_prerr.InitVals();         // reset!
 }
+
+void NETWORK_STATE::Compute_EpochPRerr_Layer(LAYER_STATE* lay) {
+  lay->epc_prerr = lay->sum_prerr;
+  lay->epc_prerr.ComputePR();        // make sure, in case of dmem summing
+  lay->sum_prerr.InitVals();         // reset!
+}
+
 
 CON_STATE* NETWORK_STATE::FindRecipRecvCon(int& con_idx, UNIT_STATE* su, UNIT_STATE* ru) {
   LAYER_STATE* ru_lay = ru->GetOwnLayer(this);
@@ -1191,7 +1368,7 @@ void NETWORK_STATE::AllocConnectionMem() {
 #endif
   }
 
-#ifdef DMEM_COMPILE
+#if defined(DMEM_COMPILE) && defined(STATE_CPP) // don't do for cuda
   NetStateMalloc((void**)&thrs_dmem_sum_dwts_send, n_thrs_built * sizeof(float*));
   NetStateMalloc((void**)&thrs_dmem_sum_dwts_recv, n_thrs_built * sizeof(float*));
 
@@ -1277,7 +1454,7 @@ void NETWORK_STATE::FreeConMem() {
     NetStateFree((void**)&thrs_recv_cons_mem[i]);
     NetStateFree((void**)&thrs_send_cons_mem[i]);
 
-#ifdef DMEM_COMPILE    
+#if defined(DMEM_COMPILE) && defined(STATE_CPP)
     NetStateFree((void**)&thrs_dmem_sum_dwts_send[i]);
     NetStateFree((void**)&thrs_dmem_sum_dwts_recv[i]);
 #endif
@@ -1306,9 +1483,11 @@ void NETWORK_STATE::FreeConMem() {
 
 #ifdef DMEM_COMPILE
   all_dmem_sum_dwts_size = 0;
-  
+
+#ifdef STATE_CPP  
   NetStateFree((void**)&thrs_dmem_sum_dwts_send);
   NetStateFree((void**)&thrs_dmem_sum_dwts_recv);
+#endif
 #endif
 }
 

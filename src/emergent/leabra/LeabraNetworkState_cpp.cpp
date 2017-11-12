@@ -35,7 +35,7 @@ using namespace std;
 void LeabraNetworkState_cpp::Init_Acts() {
   NET_THREAD_CALL(LeabraNetworkState_cpp::Init_Acts_Thr);
 
-  Init_Acts_Layer();
+  Init_Acts_Layers();
 }
 
 void LeabraNetworkState_cpp::Init_Netins() {
@@ -65,14 +65,14 @@ void LeabraNetworkState_cpp::Trial_Init() {
   //  Trial_DecayState();
   //  Trial_NoiseInit(); 
 
-  Trial_Init_Layer();
+  Trial_Init_Layers();
 }
 
 void LeabraNetworkState_cpp::Quarter_Init() {
 
   Quarter_Init_Counters();
-  Quarter_Init_Layer();
-  // Compute_HardClamp_Layer();    // need layer hard clamp flag before Init_Unit
+  Quarter_Init_Layers();
+  // Compute_HardClamp_Layers();    // need layer hard clamp flag before Init_Unit
   Quarter_Init_Unit();           // do chunk of following unit-level functions:
 //   Quarter_Init_TargFlags();
 //   Compute_NetinScale();       // compute net scaling
@@ -102,7 +102,7 @@ void LeabraNetworkState_cpp::Quarter_Init_TargFlags() {
   // NOTE: this is not called by default!  Unit and Layer take care of it
   NET_THREAD_CALL(LeabraNetworkState_cpp::Quarter_Init_TargFlags_Thr);
 
-  Quarter_Init_TargFlags_Layer();
+  Quarter_Init_TargFlags_Layers();
 }
 
 void LeabraNetworkState_cpp::Compute_NetinScale() {
@@ -124,23 +124,23 @@ void LeabraNetworkState_cpp::Compute_HardClamp() {
   // NOT called by default -- done in Quarter_Init_Unit
   NET_THREAD_CALL(LeabraNetworkState_cpp::Compute_HardClamp_Thr);
 
-  Compute_HardClamp_Layer();
+  Compute_HardClamp_Layers();
 }
 
 void LeabraNetworkState_cpp::ExtToComp() {
-  ExtToComp_Layer();
+  ExtToComp_Layers();
 
   NET_THREAD_CALL(LeabraNetworkState_cpp::ExtToComp_Thr);
 }
 
 void LeabraNetworkState_cpp::TargExtToComp() {
-  TargExtToComp_Layer();
+  TargExtToComp_Layers();
 
   NET_THREAD_CALL(LeabraNetworkState_cpp::TargExtToComp_Thr);
 }
 
 void LeabraNetworkState_cpp::NewInputData_Init() {
-  Quarter_Init_Layer();
+  Quarter_Init_Layers();
   Quarter_Init_TargFlags();
   Compute_HardClamp();
   Quarter_Init_Layer_Post();
@@ -161,7 +161,7 @@ void LeabraNetworkState_cpp::ClearMSNTrace() {
 void LeabraNetworkState_cpp::Quarter_Final() {
   Quarter_Final_Pre();
   NET_THREAD_CALL(LeabraNetworkState_cpp::Quarter_Final_Unit_Thr);
-  Quarter_Final_Layer();
+  Quarter_Final_Layers();
   Quarter_Compute_dWt();
   Quarter_Final_Counters();
 }

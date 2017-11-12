@@ -1657,7 +1657,11 @@ LeabraProject .projects[0] {
       };
       If @[8] { 
        ProgEl_List @.true_code = [4] {
-	MemberAssign @[0] { };
+	MethodCall @[0] { 
+	 ProgArg_List @.meth_args = [1] {
+	  ProgArg @[0] { };
+	 };
+	};
 	MemberAssign @[1] { };
 	ProgramCall @[2] { 
 	 ProgArg_List @.prog_args = [1] {
@@ -2148,7 +2152,7 @@ LeabraProject .projects[0] {
     ProgEl_List @.init_code = [0] {
     };
 
-    ProgEl_List @.prog_code = [10] {
+    ProgEl_List @.prog_code = [9] {
      ProgramCall @[0] { 
       ProgArg_List @.prog_args = [3] {
        ProgArg @[0] { };
@@ -2167,7 +2171,11 @@ LeabraProject .projects[0] {
       };
      };
      MemberAssign @[3] { };
-     MemberAssign @[4] { };
+     MethodCall @[4] { 
+      ProgArg_List @.meth_args = [1] {
+       ProgArg @[0] { };
+      };
+     };
      AssignExpr @[5] { };
      MethodCall @[6] { 
       ProgArg_List @.meth_args = [0] {
@@ -2186,7 +2194,6 @@ LeabraProject .projects[0] {
       };
      };
      NetUpdateView @[8] { };
-     MemberAssign @[9] { };
     };
    };
   };
@@ -87854,7 +87861,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       };
      };
     };
-    step_prog=$.programs.gp[3][3]$;
+    step_prog=$.programs.gp[2][2]$;
     step_n=1;
     doc {
      name="doc";
@@ -88010,7 +88017,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      };
     };
     step_prog=NULL;
-    step_n=5;
+    step_n=1;
     doc {
      name="doc";
      desc=;
@@ -90867,17 +90874,32 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="true_code";
 	el_typ=ProgCode;
 	el_def=0;
-	MemberAssign @[0] {
-	 name="MemberAssign_networkcycle0";
+	MethodCall @[0] {
+	 name="MethodCall_networkSetCycle0";
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
-	 code_string="network.cycle = 0";
+	 code_string="network->SetCycle(0)";
+	 result_var=NULL;
 	 obj=$.programs.gp[2].gp[1][3].args[0]$;
-	 path="cycle";
-	 expr {
-	  expr="0";
+	 method=LeabraNetwork::SetCycle;
+	 meth_args {
+	  name="meth_args";
+	  el_typ=ProgArg;
+	  el_def=0;
+	  ProgArg @[0] {
+	   arg_type=int;
+	   type="int";
+	   name="cyc";
+	   required=1;
+	   def_val=;
+	   prev_expr=;
+	   expr {
+	    expr="0";
+	   };
+	  };
 	 };
-	 update_after=0;
+	 meth_sig="void SetCycle(int cyc)";
+	 meth_desc=" set the cycle number -- this must be coordinated between State and the main object, and State normally updates this value, so both must be set together";
 	};
 	MemberAssign @[1] {
 	 name="MemberAssign_networktrialnetworktrial1";
@@ -93193,8 +93215,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      minor=0;
      step=0;
     };
-    author=;
-    email=;
+    author="Randall C. O'Reilly";
+    email="emergent-users@grey.colorado.edu";
     flags=0;
     stop_step_cond {
      expr=;
@@ -93621,17 +93643,32 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       };
       update_after=1;
      };
-     MemberAssign @[4] {
-      name="MemberAssign_networkquarter3";
+     MethodCall @[4] {
+      name="MethodCall_networkSetQuarter3";
       desc="set a quarter that enables learning in conspec";
       flags=CAN_REVERT_TO_CODE;
-      code_string="network.quarter = 3";
+      code_string="network->SetQuarter(3)";
+      result_var=NULL;
       obj=$.programs.gp[3][3].args[0]$;
-      path="quarter";
-      expr {
-       expr="3";
+      method=LeabraNetwork::SetQuarter;
+      meth_args {
+       name="meth_args";
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=int;
+	type="int";
+	name="qtr";
+	required=1;
+	def_val=;
+	prev_expr=;
+	expr {
+	 expr="3";
+	};
+       };
       };
-      update_after=0;
+      meth_sig="void SetQuarter(int qtr)";
+      meth_desc=" set the quarter number -- this must be coordinated between State and the main object, and State normally updates this value, so both must be set together";
      };
      AssignExpr @[5] {
       name="AssignExpr_trialnamenetworktrialname";
@@ -93712,18 +93749,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       code_string="Net Update View";
       network_var=$.programs.gp[3][3].args[0]$;
       update_var=.programs.gp[3][3].vars[0]$$;
-     };
-     MemberAssign @[9] {
-      name="MemberAssign_networkcyclenetworkcycle1";
-      desc=;
-      flags=OFF|CAN_REVERT_TO_CODE;
-      code_string="network.cycle = network.cycle + 1";
-      obj=$.programs.gp[3][3].args[0]$;
-      path="cycle";
-      expr {
-       expr="network.cycle + 1";
-      };
-      update_after=0;
      };
     };
     step_prog=NULL;
@@ -96427,10 +96452,10 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	   pos2=0;
 	   pos2_norm=0;
 	   vel2=0;
-	   cur_force1 {x=-3.583868: y=1441.027: z=-300.8127: };
-	   cur_torque1 {x=54.14627: y=-0.36961: z=-3.214278: };
-	   cur_force2 {x=3.583868: y=-1441.027: z=300.8127: };
-	   cur_torque2 {x=-157.5079: y=-0.08274809: z=2.278726: };
+	   cur_force1 {x=-0.3889821: y=0.8989115: z=-0.3409709: };
+	   cur_torque1 {x=-0.03440164: y=-0.0754206: z=0.006708113: };
+	   cur_force2 {x=0.3889821: y=-0.8989115: z=0.3409709: };
+	   cur_torque2 {x=-0.1413224: y=0.02298323: z=0.05551703: };
 	  };
 	  VEJoint @[2] {
 	   name="Wrist";
@@ -97842,7 +97867,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      ProgVar @[18] {
       name="time_avg_vel";
       var_type=T_Real;
-      real_val=1.891200554382522e-5;
+      real_val=0.0002617831923998892;
       object_scope=NULL;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -106744,7 +106769,7 @@ also save specs.";
 	 matrix_col_width=10;
 	 ar {
 	  name="ar";
-	 [1] 0.27724549;	 };
+	 [1] 0.069051266;	 };
 	};
 	float_Data @[1] {
 	 name="hand_vel_mag";
@@ -106762,7 +106787,7 @@ also save specs.";
 	 matrix_col_width=10;
 	 ar {
 	  name="ar";
-	 [1] 0;	 };
+	 [1] 0.0015999747;	 };
 	};
 	float_Data @[2] {
 	 name="hand_vra";
@@ -106780,7 +106805,7 @@ also save specs.";
 	 matrix_col_width=10;
 	 ar {
 	  name="ar";
-	 [1] 2.5942398e-05;	 };
+	 [1] 0.0015994383;	 };
 	};
 	float_Data @[3] {
 	 name="del_hand_err_mag";
@@ -106798,7 +106823,7 @@ also save specs.";
 	 matrix_col_width=10;
 	 ar {
 	  name="ar";
-	 [1] 0.31954762;	 };
+	 [1] 0.09109693;	 };
 	};
 	float_Data @[4] {
 	 name="del_hand_err_dt";
@@ -106816,7 +106841,7 @@ also save specs.";
 	 matrix_col_width=10;
 	 ar {
 	  name="ar";
-	 [1] 0;	 };
+	 [1] 0.22869408;	 };
 	};
 	float_Data @[5] {
 	 name="hand_io_err";
@@ -106834,7 +106859,7 @@ also save specs.";
 	 matrix_col_width=10;
 	 ar {
 	  name="ar";
-	 [1] 0;	 };
+	 [1] 0.08387097;	 };
 	};
 	float_Data @[6] {
 	 name="musc_io_err_mag";
@@ -106852,7 +106877,7 @@ also save specs.";
 	 matrix_col_width=10;
 	 ar {
 	  name="ar";
-	 [1] 0;	 };
+	 [1] 0.1448089;	 };
 	};
 	float_Data @[7] {
 	 name="err_dra_mag";
@@ -106870,7 +106895,7 @@ also save specs.";
 	 matrix_col_width=10;
 	 ar {
 	  name="ar";
-	 [1] 0;	 };
+	 [1] 0.089762151;	 };
 	};
 	float_Data @[8] {
 	 name="stims_mag";
@@ -106888,7 +106913,7 @@ also save specs.";
 	 matrix_col_width=10;
 	 ar {
 	  name="ar";
-	 [1] 2.7280142;	 };
+	 [1] 0.49937189;	 };
 	};
 	float_Data @[9] {
 	 name="stims_p_mag";
@@ -106906,7 +106931,7 @@ also save specs.";
 	 matrix_col_width=10;
 	 ar {
 	  name="ar";
-	 [1] 2.7263103;	 };
+	 [1] 0.51897919;	 };
 	};
 	float_Data @[10] {
 	 name="stims_i_mag";
@@ -106924,7 +106949,7 @@ also save specs.";
 	 matrix_col_width=10;
 	 ar {
 	  name="ar";
-	 [1] 0.0017039439;	 };
+	 [1] 0.073411256;	 };
 	};
 	float_Data @[11] {
 	 name="stims_d_mag";
@@ -106942,7 +106967,7 @@ also save specs.";
 	 matrix_col_width=10;
 	 ar {
 	  name="ar";
-	 [1] 0;	 };
+	 [1] 0.4488112;	 };
 	};
 	float_Data @[12] {
 	 name="gains_mag";
@@ -106960,7 +106985,7 @@ also save specs.";
 	 matrix_col_width=10;
 	 ar {
 	  name="ar";
-	 [1] 3.4641016;	 };
+	 [1] 5.2605972;	 };
 	};
        };
        data_flags=SAVE_ROWS|AUTO_CALC;
@@ -126236,7 +126261,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
    max_disp_size2d {x=90: y=174: };
    times {quarter=25: deep_cyc=5: time_inc=0.001: wt_bal_int=10: minus=75: plus=25: total_cycles=100: thal_gate_cycle=-2: };
    lstats {trg_max_act_crit=0.5: off_errs=1: on_errs=1: agg_unlearnable=0: wt_bal=0: };
-   net_misc {spike=0: deep=1: bias_learn=0: trial_decay=1: diff_scale_p=0: diff_scale_q1=0: wt_bal=0: lay_gp_inhib=0: inhib_cons=0: };
+   net_misc {spike=0: deep=0: bias_learn=0: trial_decay=1: diff_scale_p=0: diff_scale_q1=0: wt_bal=0: lay_gp_inhib=0: inhib_cons=0: };
    deep {on=0: ctxt=0: raw_net=0: mod_net=0: raw_qtr=0: };
    rel_netin {on=0: trl_skip=10: epc_skip=10: };
   };

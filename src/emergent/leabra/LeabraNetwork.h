@@ -96,6 +96,11 @@ public:
   ///////////////////////////////////////////////////////////////////////
   //	General Init functions
 
+  void  SetCycle(int cyc) { cycle = cyc; ((LeabraNetworkState_cpp*)net_state)->cycle = cyc;  }
+  // #CAT_Counter set the cycle number -- this must be coordinated between State and the main object, and State normally updates this value, so both must be set together
+  void  SetQuarter(int qtr) { quarter = qtr; ((LeabraNetworkState_cpp*)net_state)->quarter = qtr;  }
+  // #CAT_Counter set the quarter number -- this must be coordinated between State and the main object, and State normally updates this value, so both must be set together
+  
   void  SyncLayerState_Layer(Layer* lay) override;
   void	Init_Acts() override;
 

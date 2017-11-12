@@ -1089,13 +1089,7 @@ void Layer::Copy_Weights(Layer* src, bool recv_cons) {
   lay->Copy_Weights(net, src_lay, recv_cons);
 }
 
-// todo: dmem fix!
 
-// void Layer::Compute_EpochStats(Network* net) {
-// #ifdef DMEM_COMPILE
-//   DMem_ComputeAggs(net->dmem_trl_comm.comm);
-// #endif
-// }
 
 ////////////////////////////////////////////////////////////////////////////////
 //      The following are misc functionality not required for primary computing

@@ -295,6 +295,7 @@ float STATE_CLASS(ScalarValLayerSpec)::Compute_SSE
 (LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net, int& n_vals, bool unit_avg, bool sqrt) {
   n_vals = 0;
   lay->sse = 0.0f;
+  lay->bin_err = 0.0f;
   if(!(lay->HasExtFlag(UNIT_STATE::COMP_TARG))) return 0.0f;
   if(lay->layer_type == LAYER_STATE::HIDDEN) return 0.0f;
   UNIT_GP_ITR(lay, lay->sse += Compute_SSE_ugp(lay, net, gpidx, n_vals); );
@@ -306,6 +307,7 @@ float STATE_CLASS(ScalarValLayerSpec)::Compute_SSE
   lay->avg_sse.Increment(lay->sse);
   if(lay->sse > net->stats.cnt_err_tol)
     lay->cur_cnt_err += 1.0;
+  lay->bin_err = (lay->sse > net->stats.cnt_err_tol) ? 1.0f : 0.0f;
   if(lay->HasLayerFlag(LAYER_STATE::NO_ADD_SSE) ||
      (lay->HasExtFlag(UNIT_STATE::COMP) && lay->HasLayerFlag(LAYER_STATE::NO_ADD_COMP_SSE))) {
     rval = 0.0f;

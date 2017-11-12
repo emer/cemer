@@ -99,6 +99,13 @@ public:
 
 #include <TwoDValLayerSpec>
 
+  virtual void	LabelUnits(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net);
+  // #CAT_TwoDVal label units in given layer with their underlying values
+  virtual void   LabelUnits_ugp(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net, int gpidx);
+  // #CAT_TwoDVal label units with their underlying values
+  virtual void	LabelUnitsNet();
+  // #BUTTON #CAT_TwoDVal label all layers in given network using this spec
+
   virtual void	ReConfig(Network* net, int n_units = -1);
   // #BUTTON reconfigure layer and associated specs for current scalar.rep type; if n_units > 0, changes number of units in layer to specified value
 

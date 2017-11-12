@@ -173,35 +173,6 @@ void STATE_CLASS(TwoDValLayerSpec)::ReadValue_ugp
   // }
 }
 
-void STATE_CLASS(TwoDValLayerSpec)::LabelUnits_ugp(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net, int gpidx) {
-  LEABRA_UNGP_STATE* ug = (LEABRA_UNGP_STATE*)lay->GetUnGpState(net, gpidx);
-  const int nunits = ug->n_units;
-  if(nunits < 3) return;        // must be at least a few units..
-  twod.InitVal(0.0f, 0.0f, lay->un_geom_x, lay->un_geom_y, x_range.min, x_range.range, y_range.min,
-               y_range.range);
-  for(int i=0;i<nunits;i++) {
-    LEABRA_UNIT_STATE* u = (LEABRA_UNIT_STATE*)ug->GetUnitState(net, i);
-    if(u->lesioned()) continue;
-    float x_cur, y_cur; twod.GetUnitVal(i, x_cur, y_cur);
-    // u->name = (String)x_cur + "," + String(y_cur);
-  }
-}
-
-void STATE_CLASS(TwoDValLayerSpec)::LabelUnits(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
-  UNIT_GP_ITR(lay, LabelUnits_ugp(lay, net, gpidx); );
-}
-
-void STATE_CLASS(TwoDValLayerSpec)::LabelUnitsNet(LEABRA_NETWORK_STATE* net) {
-  for(int i=0; i < net->n_layers_built; i++) {
-    LEABRA_LAYER_STATE* lay = (LEABRA_LAYER_STATE*)net->GetLayerState(i);
-    if(lay->lesioned()) continue;
-    LAYER_SPEC_CPP* ls = lay->GetLayerSpec(net);
-    if(ls->spec_idx == this->spec_idx) { // same..
-      LabelUnits(lay, net);
-    }
-  }
-}
-
 // todo:
 // void STATE_CLASS(TwoDValLayerSpec)::HardClampExt(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
 //   inherited::Compute_HardClamp(lay, net);
@@ -352,6 +323,7 @@ float STATE_CLASS(TwoDValLayerSpec)::Compute_SSE(LEABRA_LAYER_STATE* lay, LEABRA
                                                  int& n_vals, bool unit_avg, bool sqrt) {
   n_vals = 0;
   lay->sse = 0.0f;
+  lay->bin_err = 0.0f;
   if(!(lay->ext_flag & (UNIT_STATE::COMP_TARG))) return 0.0f;
   if(lay->layer_type == LAYER_STATE::HIDDEN) return 0.0f;
   UNIT_GP_ITR(lay,
@@ -362,6 +334,10 @@ float STATE_CLASS(TwoDValLayerSpec)::Compute_SSE(LEABRA_LAYER_STATE* lay, LEABRA
     lay->sse /= (float)n_vals;
   if(sqrt)
     lay->sse = sqrtf(lay->sse);
+  lay->avg_sse.Increment(lay->sse);
+  if(lay->sse > net->stats.cnt_err_tol)
+    lay->cur_cnt_err += 1.0;
+  lay->bin_err = (lay->sse > net->stats.cnt_err_tol) ? 1.0f : 0.0f;
   if(lay->HasLayerFlag(LAYER_STATE::NO_ADD_SSE) ||
      ((lay->ext_flag & UNIT_STATE::COMP) && lay->HasLayerFlag(LAYER_STATE::NO_ADD_COMP_SSE))) {
     rval = 0.0f;

@@ -35,10 +35,6 @@ void LeabraLayer::Initialize() {
   unit_spec.SetBaseType(&TA_LeabraUnitSpec);
 
   Initialize_lay_core();
-  
-#ifdef DMEM_COMPILE
-  dmem_agg_sum.agg_op = MPI_SUM;
-#endif
 }
 
 void LeabraLayer::InitLinks() {
@@ -49,10 +45,6 @@ void LeabraLayer::InitLinks() {
   taBase::Own(avg_netin, this);
   taBase::Own(avg_netin_sum, this);
 
-#ifdef DMEM_COMPILE
-  taBase::Own(dmem_agg_sum, this);
-  DMem_InitAggs();
-#endif
   spec.SetDefaultSpec(this);
 
   AutoNameMyMembers();
@@ -79,23 +71,14 @@ void LeabraLayer::CheckThisConfig_impl(bool quiet, bool& rval) {
 
 bool LeabraLayer::SetLayerSpec(LayerSpec* sp) {
   if(sp == NULL)        return false;
-  if(sp->CheckObjectType(this))
+  if(sp->CheckObjectType(this)) {
     spec.SetSpec((LeabraLayerSpec*)sp);
-  else
+  }
+  else {
     return false;
+  }
   return true;
 }
-
-
-#ifdef DMEM_COMPILE
-void LeabraLayer::DMem_InitAggs() {
-  dmem_agg_sum.ScanMembers(GetTypeDef(), (void*)this);
-  dmem_agg_sum.CompileVars();
-}
-void LeabraLayer::DMem_ComputeAggs(MPI_Comm comm) {
-  dmem_agg_sum.AggVar(comm, MPI_SUM);
-}
-#endif
 
 bool LeabraLayer::TwoDValMode() {
   LeabraLayerSpec* ls = (LeabraLayerSpec*)GetMainLayerSpec();

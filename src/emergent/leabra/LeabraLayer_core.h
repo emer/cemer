@@ -71,7 +71,7 @@
   // Get the total act_q0 activation in the layer based on average and number of units
 
 
-  /////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////
   //    Layer-level functions that need to be accessible
 
   INIMPL void	DecayState(float decay);

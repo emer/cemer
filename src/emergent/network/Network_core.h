@@ -186,23 +186,6 @@
   }
   // #IGNORE init all counters -- todo: override and call inherited in subclasses
 
-  INLINE virtual bool Compute_Weights_Test_impl(int trial_no) {
-    if(train_mode == TEST) return false;
-    if(wt_update == ON_LINE) return true;
-    if(wt_update == BATCH) return false;
-    if(wt_update == SMALL_BATCH) {
-      int trial_no_eff = trial_no;
-#ifdef DMEM_COMPILE             // todo: how does this work?
-      if(dmem_trl_comm.nprocs > 1) {
-        trial_no_eff = ((trial_no_eff-1) / dmem_trl_comm.nprocs) + 1;
-        // subtract the 1 that was presumably added to trial_no, then add it back
-      }
-#endif
-      return (trial_no_eff % small_batch_n_eff == 0);
-    }
-    return false;
-  }
-
   INLINE void   Initialize_net_core() {
     main_obj = false;
     n_thrs_built = 0;     layer_state_size = 0;   prjn_state_size = 0;    ungp_state_size = 0;

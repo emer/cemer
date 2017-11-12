@@ -172,7 +172,13 @@ public:
   // #CAT_Learning compute weight changes -- the essence of learning
 
   virtual void  Compute_Weights();
-  // #CAT_Learning update weights for whole net: calls DMem_SumDWts before doing update if in dmem mode
+  // #CAT_Learning update weights for whole net -- DMem_SumDWts must have already been called if in dmem mode
+#ifdef DMEM_COMPILE
+  virtual void  DMem_SumDWts_ToTmp();
+  // #IGNORE copy to temp send buffer for sending, per thread
+  virtual void  DMem_SumDWts_FmTmp();
+  // #IGNORE copy from temp recv buffer, per thread
+#endif
 
   virtual void  Compute_SSE(bool unit_avg = false, bool sqrt = false);
   // #CAT_Statistic compute sum squared error of activations vs targets over the entire network -- optionally taking the average over units, and square root of the final results

@@ -55,15 +55,15 @@
   ///////////////////////////////////////////////////////////////////////
   //	General Init functions
 
-  INIMPL void Init_Weights_Layer() override;
+  INIMPL void Init_Weights_Layers() override;
   INIMPL void Init_Stats() override;
-  INIMPL void Init_Stats_Layer() override;
+  INIMPL void Init_Stats_Layers() override;
   INIMPL void Init_Counters_State() override;
 
   INIMPL virtual void Init_AdaptInhib();
   // #CAT_Activation Initialize adaptive inhibition gain value on all the layers -- undoes any adaptation that has taken place (including from loaded weights - the adaptive gain value is saved with the weights)
 
-  INIMPL virtual void Init_Acts_Layer();
+  INIMPL virtual void Init_Acts_Layers();
   // #CAT_TrialInit layer-level acts init 
 
   INIMPL virtual void Init_Netins_Thr(int thr_no);
@@ -86,7 +86,7 @@
   // #CAT_TrialInit initialize specs and specs update network flags
   INIMPL virtual void Trial_Init_Unit_Thr(int thr_no);
   // #IGNORE trial unit-level initialization functions: Trial_Init_SRAvg, DecayState, NoiseInit
-  INIMPL virtual void Trial_Init_Layer();
+  INIMPL virtual void Trial_Init_Layers();
   // #CAT_TrialInit layer-level trial init (used in base code to init layer-level sravg, can be overloaded)
 
 
@@ -97,15 +97,15 @@
   // #IGNORE initialize at start of settling phase -- sets target external input flags based on phase -- not called by default -- direct to unit level function
   INIMPL virtual void Quarter_Init_Counters();
   // #CAT_QuarterInit initialize counters for upcoming quarter -- network only
-  INIMPL virtual void Quarter_Init_Layer();
+  INIMPL virtual void Quarter_Init_Layers();
   // #CAT_QuarterInit quarter layer-level initialization hook -- default calls TargFlags_Layer, and can be used for hook for other guys
-  INIMPL virtual void Compute_HardClamp_Layer();
+  INIMPL virtual void Compute_HardClamp_Layers();
   // #IGNORE set hard clamp flags etc based on clamp settings and external input -- layer version called automatically by Quarter_Init_layer so this is not called directly
   INIMPL virtual void Quarter_Init_Unit();
   // #CAT_QuarterInit quarter unit-level initialization functions: Init_TargFlags, NetinScale
     INIMPL virtual void Quarter_Init_Unit_Thr(int thr_no);
     // #IGNORE quarter unit-level initialization functions: Init_TargFlags, NetinScale
-  INIMPL virtual void Quarter_Init_TargFlags_Layer();
+  INIMPL virtual void Quarter_Init_TargFlags_Layers();
   // #IGNORE initialize at start of settling phase -- sets target external input flags based on phase -- not called by default -- direct to unit level function
     INIMPL virtual void Quarter_Init_Deep_Thr(int thr_no);
     // #IGNORE quarter deep leabra init: deep_ctxt compute and deep state update
@@ -124,11 +124,11 @@
   INIMPL virtual void Quarter_Init_Layer_Post();
   // #CAT_QuarterInit quarter layer-level initialization hook -- post = last step in Quarter_Init
 
-  INIMPL virtual void ExtToComp_Layer();
+  INIMPL virtual void ExtToComp_Layers();
   // #IGNORE
   INIMPL virtual void ExtToComp_Thr(int thr_no);
   // #IGNORE
-  INIMPL virtual void TargExtToComp_Layer();
+  INIMPL virtual void TargExtToComp_Layers();
   // #IGNORE
   INIMPL virtual void TargExtToComp_Thr(int thr_no);
   // #IGNORE
@@ -229,7 +229,7 @@
   INIMPL virtual void Quarter_Final_Unit_Thr(int thr_no);
   // #IGNORE #CAT_QuarterFinal perform Quarter_Final computations in units at end of quarter (called by Quarter_Final) -- also does CosDiff_Thr
 
-  INIMPL virtual void Quarter_Final_Layer();
+  INIMPL virtual void Quarter_Final_Layers();
   // #CAT_QuarterFinal perform computations in layers at end of quarter (called by Quarter_Final)
   INIMPL virtual void Quarter_Final_Counters();
   // #CAT_QuarterFinal update counters at end of quarter
@@ -265,6 +265,8 @@
   // #CAT_Statistic set ext_rew_avail and ext_rew value -- for script access to these values
   INIMPL virtual void Compute_ExtRew();
   // #CAT_Statistic compute external reward information: called in plus phase stats
+
+  INIMPL float Compute_SSE_Layer(LAYER_STATE* lay, int& n_vals, bool unit_avg = false, bool sqrt = false) override;
 
   INIMPL virtual void Compute_NormErr_Thr(int thr_no);
   // #IGNORE
@@ -310,6 +312,8 @@
   // #CAT_Learning perform any epoch-level weight updates or adjustments..
   INIMPL virtual void Compute_EpochWeights_Thr(int thr_no);
   // #IGNORE
+
+  INIMPL void Compute_EpochStats_Layer(LAYER_STATE* lay) override;
 
   INIMPL virtual void	Compute_AvgCycles();
   // #CAT_Statistic compute average cycles (at an epoch-level timescale)

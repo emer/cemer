@@ -226,7 +226,7 @@ void LEABRA_NETWORK_STATE::Init_Counters_State() {
   tot_cycle = 0;
 }
 
-void LEABRA_NETWORK_STATE::Init_Weights_Layer() {
+void LEABRA_NETWORK_STATE::Init_Weights_Layers() {
   for(int li=0; li < n_layers_built; li++) {
     LEABRA_LAYER_STATE* lay = (LEABRA_LAYER_STATE*)GetLayerState(li);
     if(lay->lesioned()) continue;
@@ -278,7 +278,7 @@ void LEABRA_NETWORK_STATE::Init_Stats() {
   dead_pct = 0.0f;
 }
 
-void LEABRA_NETWORK_STATE::Init_Stats_Layer() {
+void LEABRA_NETWORK_STATE::Init_Stats_Layers() {
   for(int li=0; li < n_layers_built; li++) {
     LEABRA_LAYER_STATE* lay = (LEABRA_LAYER_STATE*)GetLayerState(li);
     if(lay->lesioned()) continue;
@@ -296,7 +296,7 @@ void LEABRA_NETWORK_STATE::Init_AdaptInhib() {
   }
 }
 
-void LEABRA_NETWORK_STATE::Init_Acts_Layer() {
+void LEABRA_NETWORK_STATE::Init_Acts_Layers() {
   for(int li=0; li < n_layers_built; li++) {
     LEABRA_LAYER_STATE* lay = (LEABRA_LAYER_STATE*)GetLayerState(li);
     if(lay->lesioned()) continue;
@@ -388,7 +388,7 @@ void LEABRA_NETWORK_STATE::Trial_Init_Unit_Thr(int thr_no) {
   }
 }
 
-void LEABRA_NETWORK_STATE::Trial_Init_Layer() {
+void LEABRA_NETWORK_STATE::Trial_Init_Layers() {
   for(int li=0; li < n_layers_built; li++) {
     LEABRA_LAYER_STATE* lay = (LEABRA_LAYER_STATE*)GetLayerState(li);
     if(lay->lesioned()) continue;
@@ -410,7 +410,7 @@ void LEABRA_NETWORK_STATE::Quarter_Init_Counters() {
     phase = PLUS_PHASE;
 }
 
-void LEABRA_NETWORK_STATE::Quarter_Init_Layer() {
+void LEABRA_NETWORK_STATE::Quarter_Init_Layers() {
   for(int li=0; li < n_layers_built; li++) {
     LEABRA_LAYER_STATE* lay = (LEABRA_LAYER_STATE*)GetLayerState(li);
     if(lay->lesioned()) continue;
@@ -420,7 +420,7 @@ void LEABRA_NETWORK_STATE::Quarter_Init_Layer() {
   }
 }
 
-void LEABRA_NETWORK_STATE::Compute_HardClamp_Layer() {
+void LEABRA_NETWORK_STATE::Compute_HardClamp_Layers() {
   // not called by default!
   for(int li=0; li < n_layers_built; li++) {
     LEABRA_LAYER_STATE* lay = (LEABRA_LAYER_STATE*)GetLayerState(li);
@@ -450,7 +450,7 @@ void LEABRA_NETWORK_STATE::Quarter_Init_TargFlags_Thr(int thr_no) {
   }
 }
 
-void LEABRA_NETWORK_STATE::Quarter_Init_TargFlags_Layer() {
+void LEABRA_NETWORK_STATE::Quarter_Init_TargFlags_Layers() {
   // not called by default!
   for(int li=0; li < n_layers_built; li++) {
     LEABRA_LAYER_STATE* lay = (LEABRA_LAYER_STATE*)GetLayerState(li);
@@ -588,7 +588,7 @@ void LEABRA_NETWORK_STATE::Quarter_Init_Layer_Post() {
   }
 }
 
-void LEABRA_NETWORK_STATE::ExtToComp_Layer() {
+void LEABRA_NETWORK_STATE::ExtToComp_Layers() {
   for(int li=0; li < n_layers_built; li++) {
     LEABRA_LAYER_STATE* lay = (LEABRA_LAYER_STATE*)GetLayerState(li);
     if(lay->lesioned()) continue;
@@ -607,7 +607,7 @@ void LEABRA_NETWORK_STATE::ExtToComp_Thr(int thr_no) {
   }
 }
 
-void LEABRA_NETWORK_STATE::TargExtToComp_Layer() {
+void LEABRA_NETWORK_STATE::TargExtToComp_Layers() {
   for(int li=0; li < n_layers_built; li++) {
     LEABRA_LAYER_STATE* lay = (LEABRA_LAYER_STATE*)GetLayerState(li);
     if(lay->lesioned()) continue;
@@ -1264,7 +1264,7 @@ void LEABRA_NETWORK_STATE::Quarter_Final_Unit_Thr(int thr_no) {
   }
 }
 
-void LEABRA_NETWORK_STATE::Quarter_Final_Layer() {
+void LEABRA_NETWORK_STATE::Quarter_Final_Layers() {
   if(quarter == 3) {
     Compute_CosDiff_Agg();      // aggregate from Unit_Thr
   }
@@ -1437,6 +1437,12 @@ void LEABRA_NETWORK_STATE::Compute_ExtRew() {
   if(ext_rew_avail) {
     avg_ext_rew.Increment(ext_rew);
   }
+}
+
+float LEABRA_NETWORK_STATE::Compute_SSE_Layer(LAYER_STATE* llay, int& n_vals, bool unit_avg, bool sqrt) {
+  LEABRA_LAYER_STATE* lay = (LEABRA_LAYER_STATE*)llay;
+  LEABRA_LAYER_SPEC_CPP* ls = (LEABRA_LAYER_SPEC_CPP*)lay->GetLayerSpec(this);
+  return ls->Compute_SSE(lay, this, n_vals, unit_avg, sqrt);
 }
 
 void LEABRA_NETWORK_STATE::Compute_NormErr_Thr(int thr_no) {
@@ -1973,5 +1979,11 @@ void LEABRA_NETWORK_STATE::Compute_EpochWeights_Thr(int thr_no) {
     LEABRA_CON_SPEC_CPP* cs = (LEABRA_CON_SPEC_CPP*)scg->GetConSpec(this);
     cs->Compute_EpochWeights(scg, this, thr_no);
   }
+}
+
+void LEABRA_NETWORK_STATE::Compute_EpochStats_Layer(LAYER_STATE* llay) {
+  LEABRA_LAYER_STATE* lay = (LEABRA_LAYER_STATE*)llay;
+  LEABRA_LAYER_SPEC_CPP* ls = (LEABRA_LAYER_SPEC_CPP*)lay->GetLayerSpec(this);
+  ls->Compute_EpochStats(lay, this);
 }
 

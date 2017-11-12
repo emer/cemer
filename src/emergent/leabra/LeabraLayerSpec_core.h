@@ -32,6 +32,9 @@
   ///////////////////////////////////////////////////////////////////////
   //	General Init functions
 
+  // IMPORTANT: because we cannot have virtual functions in LayerState, any override of layer
+  // compute methods MUST be accompanied by a rewrite of the parent NetworkState function
+
   INLINE virtual void  Init_Weights_Layer(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
     LEABRA_UNGP_STATE* lgpd = lay->GetLayUnGpState(net);
     lgpd->Init_UnGp_State(avg_act.targ_init, avg_act.targ_init, avg_act.AvgEffInit());
@@ -42,6 +45,7 @@
     Init_AdaptInhib(lay, net);         // initialize inhibition at start..
   }
   // #CAT_Learning layer-level initialization taking place after Init_Weights on units
+  // IMPORTANT: above requires special call by LeabraNetworkState -- not part of base Init_Weights
   
   INLINE virtual void  Init_AdaptInhib(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
     LEABRA_UNGP_STATE* lgpd = lay->GetLayUnGpState(net);
@@ -354,7 +358,7 @@
   INLINE virtual float  Compute_SSE(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net,
                                     int& n_vals, bool unit_avg = false, bool sqrt = false) {
     // use default, but allow subclasses to override in layerspec
-    float rval = lay->LAYER_STATE::Compute_SSE(net, n_vals, unit_avg, sqrt);
+    float rval = net->NETWORK_STATE::Compute_SSE_Layer(lay, n_vals, unit_avg, sqrt);
     lay->bin_err = 0.0f;
     if(!lay->HasExtFlag(LAYER_STATE::COMP_TARG)) return rval;
     if(lay->layer_type == LAYER_STATE::HIDDEN) return rval;
@@ -362,6 +366,7 @@
     return rval;
   }
   // #CAT_Statistic compute sum squared error of activation vs target over the entire layer -- always returns the actual sse, but unit_avg and sqrt flags determine averaging and sqrt of layer's own sse value
+  // IMPORTANT: above requires special call by LeabraNetworkState to override base Layer function!
 
   INLINE virtual float  Compute_MaxErr(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
     LEABRA_UNGP_STATE* lgpd = lay->GetLayUnGpState(net);
@@ -725,8 +730,9 @@
     lay->avg_net_sd.GetAvg_Reset();
   }
   // #CAT_Statistic compute average net_sd (at an epoch-level timescale)
+
   INLINE virtual void  Compute_EpochStats(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
-    lay->LAYER_STATE::Compute_EpochStats(net);
+    net->NETWORK_STATE::Compute_EpochStats_Layer(lay);
     Compute_AvgNormErr(lay, net);
     Compute_AvgCosErr(lay, net);
     Compute_AvgCosDiff(lay, net);
@@ -735,7 +741,7 @@
     Compute_AvgNetSd(lay, net);
   }
   // #CAT_Statistic compute epoch-level statistics (averages)
-
+  // IMPORTANT: above requires special call by LeabraNetworkState to override base Layer function!
 
   INIMPL virtual void Compute_AbsRelNetin(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net);
   // #CAT_Statistic compute the absolute layer-level and relative netinput from different projections into this layer
