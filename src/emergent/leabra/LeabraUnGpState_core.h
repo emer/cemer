@@ -35,7 +35,7 @@
     i_val.InitVals();    netin.InitVals();    netin_m.InitVals();    netin_raw.InitVals();
     acts.InitVals();    acts_eq.InitVals();    acts_raw.InitVals();    un_g_i.InitVals();
     am_deep_raw.InitVals();    am_deep_raw_net.InitVals();    am_deep_mod_net.InitVals();
-    am_deep_ctxt.InitVals();
+    am_deep_ctxt.InitVals();  twod.InitVals();
   }
   // init activations
   
@@ -50,6 +50,6 @@
     acts_m_avg = m_avg; acts_p_avg = p_avg; acts_p_avg_eff = p_avg_eff;
     UnGp_Init_Acts();
     acts_prvq.InitVals(); acts_m.InitVals(); acts_p.InitVals(); acts_q0.InitVals();
-    max_err = 0.0f;
+    max_err = 0.0f; twod.InitVals();
   }
   // called during Init_Weights -- init everything

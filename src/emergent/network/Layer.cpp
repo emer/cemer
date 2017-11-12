@@ -1171,7 +1171,7 @@ void Layer::Compute_PrjnDirections() {
   }
 }
 
-String Layer::GetUnitNameIdx(int flat_un_idx) {
+String Layer::GetUnitNameIdx(int flat_un_idx) const {
   if(!HasLayerFlag(SAVE_UNIT_NAMES)) return _nilString;
   if(unit_groups) {
     if(gp_unit_names_4d) {
@@ -1192,8 +1192,35 @@ String Layer::GetUnitNameIdx(int flat_un_idx) {
   }
 }
 
-String Layer::GetUnitName(UnitState_cpp* un) {
+String Layer::GetUnitName(UnitState_cpp* un) const {
   return GetUnitNameIdx(un->lay_un_idx);
+}
+
+void Layer::SetUnitNameIdx(int flat_un_idx, const String& nm) {
+  if(!HasLayerFlag(SAVE_UNIT_NAMES)) {
+    SetUnitNames(true);
+  }
+  if(unit_groups) {
+    if(gp_unit_names_4d) {
+      int gp_x, gp_y, un_x, un_y;
+      GetGpUnXYFmIdx(flat_un_idx, gp_x, gp_y, un_x, un_y);
+      unit_names.SetFmVar((Variant)nm, gp_x, gp_y, un_x, un_y);
+    }
+    else {
+      int un_x, un_y;
+      GetUnXYFmIdx(flat_un_idx, un_x, un_y);
+      unit_names.SetFmVar((Variant)nm, un_x, un_y);
+    }
+  }
+  else {
+    int un_x, un_y;
+    GetUnFlatXYFmIdx(flat_un_idx, un_x, un_y);
+    return unit_names.SetFmVar((Variant)nm, un_x, un_y);
+  }
+}
+
+void Layer::SetUnitName(UnitState_cpp* un, const String& nm) {
+  SetUnitNameIdx(un->lay_un_idx, nm);
 }
 
 bool Layer::SetUnitNames(bool force_use_unit_names) {
@@ -1272,14 +1299,14 @@ void Layer::GetLocalistName() {
   }
 }
 
-int Layer::FindUnitNamedIdx(const String& nm, bool err) {
+int Layer::FindUnitNamedIdx(const String& nm, bool err) const {
   int idx = unit_names.FindVal_Flat(nm);
   TestError(err && idx < 0, "FindUnitNamedIdx",
             "name:", nm, "not found in unit_names");
   return idx;
 }
 
-UnitState_cpp* Layer::FindUnitNamed(const String& nm, bool err) {
+UnitState_cpp* Layer::FindUnitNamed(const String& nm, bool err) const {
   NetworkState_cpp* net = GetValidNetState();
   if(!net) return NULL;
 
@@ -1528,7 +1555,7 @@ bool Layer::Snapshot(const String& variable, SimpleMathSpec& math_op, bool arg_i
   return true;
 }
 
-UnitState_cpp* Layer::MostActiveUnit(int& idx) {
+Unit* Layer::MostActiveUnit(int& idx) const {
   NetworkState_cpp* net = GetValidNetState();
   if(!net) return NULL;
   
@@ -1544,7 +1571,7 @@ UnitState_cpp* Layer::MostActiveUnit(int& idx) {
       max_act = max_un->act;
     }
   }
-  return max_un;
+  return (Unit*)max_un;
 }
 
 int Layer::ReplaceUnitSpec(UnitSpec* old_sp, UnitSpec* new_sp) {

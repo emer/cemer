@@ -1,6 +1,74 @@
 // contains core non-inline (INIMPL) functions from _core.h
 // if used, include directly in _cpp.cpp, _cuda.cpp
 
+int CON_STATE::FindConFromIdx(int trg_idx) const {
+  // important: for this to work, we need to be absoultely sure that these lo/hi values are
+  // accurate -- hence need for one full pass of caching them
+  if(size >= 8 && un_lo_idx > 0 && un_hi_idx > 0) {
+    if(trg_idx < un_lo_idx || trg_idx > un_hi_idx) return -1;
+    // starting point for search: proportional location of unit relative to our cons
+    int proploc = (int)(((float)(trg_idx - un_lo_idx) / (float)(un_hi_idx - un_lo_idx)) *
+                        (float)size);
+    int upi = proploc+1;
+    int dni = proploc;
+    bool upo = false;
+    while(true) {
+      if(!upo && upi < size) {
+        if(UnIdx(upi) == trg_idx) return upi;
+        ++upi;
+      }
+      else {
+        upo = true;
+      }
+      if(dni >= 0) {
+        if(UnIdx(dni) == trg_idx) return dni;
+        --dni;
+      }
+      else if(upo) {
+        break;
+      }
+    }        
+  }
+  else {
+    for(int i=0; i<size; i++) {
+      if(UnIdx(i) == trg_idx) return i;
+    }
+  }
+  return -1;
+}
+
+bool CON_STATE::RemoveConIdx(int i, NETWORK_STATE* net) {
+    if(!InRange(i)) return false;
+    if(OwnCons()) {
+      for(int j=i; j<size-1; j++) {
+        // first, have to ensure that other side's indexes are updated for our connections
+        ConState_cpp* othcn = UnCons(j+1, net); 
+        int myidx = othcn->FindConFromIdx(own_flat_idx);
+        if(myidx >= 0) {
+          othcn->PtrCnIdx(myidx)--; // our index is decreased by 1
+        }
+        int ncv = NConVars();
+        for(int k=0; k<ncv; k++) {
+          OwnCn(j,k) = OwnCn(j+1,k);
+        }
+      }
+    }
+    else {
+      for(int j=i; j<size-1; j++) {
+        PtrCnIdx(j) = PtrCnIdx(j+1);
+      }
+    }
+
+    for(int j=i; j<size-1; j++) {
+      UnIdx(j) = UnIdx(j+1);
+    }
+    size--;
+    UpdtIsActive(net);
+    return true;
+  }
+  // remove connection at given index, also updating other unit's information about this connection
+
+
 int CON_STATE::ConnectUnOwnCn(NETWORK_STATE* net, UNIT_STATE* un, bool ignore_alloc_errs,
                               bool allow_null_unit) {
   static bool warned_already = false;
@@ -79,6 +147,40 @@ bool CON_STATE::SetShareFrom(NETWORK_STATE* net, UNIT_STATE* shu) {
   return true;
 }
 
+void CON_STATE::FixConPtrs_SendOwns(NETWORK_STATE* net, int st_idx) {
+  if(!IsSend() || !OwnCons()) return; // must be these two things for this to work
+
+  UNIT_STATE* su = OwnUnState(net);
+  PRJN_STATE* prjn = GetPrjnState(net);
+
+  for(int i=st_idx; i < size; i++) {
+    UNIT_STATE* ru = UnState(i, net);
+    CON_STATE* recv_gp = ru->RecvConStatePrjn(net, prjn);
+    if(!recv_gp) continue;      // shouldn't happen
+    int ru_ci = recv_gp->FindConFromIdx(su->flat_idx);
+    if(ru_ci >= 0) {
+      recv_gp->PtrCnIdx(ru_ci) = i; // point to us..
+    }
+  }
+}
+
+void CON_STATE::FixConPtrs_RecvOwns(NETWORK_STATE* net, int st_idx) {
+  if(!IsRecv() || !OwnCons()) return; // must be these two things for this to work
+
+  UNIT_STATE* ru = OwnUnState(net);
+  PRJN_STATE* prjn = GetPrjnState(net);
+
+  for(int i=st_idx; i < size; i++) {
+    UNIT_STATE* su = UnState(i, net);
+    CON_STATE* send_gp = su->SendConStatePrjn(net, prjn);
+    if(!send_gp) continue;      // shouldn't happen
+    int su_ci = send_gp->FindConFromIdx(ru->flat_idx);
+    if(su_ci >= 0) {
+      send_gp->PtrCnIdx(su_ci) = i; // point to us..
+    }
+  }
+}
+
 void CON_STATE::VecChunk_SendOwns(NETWORK_STATE* net, 
                                  int* tmp_chunks, int* tmp_not_chunks,
                                  float* tmp_con_mem) {
@@ -92,11 +194,10 @@ void CON_STATE::VecChunk_SendOwns(NETWORK_STATE* net,
 
   int first_change = VecChunk_impl(tmp_chunks, tmp_not_chunks, tmp_con_mem);
 
-  // todo!
   // fix all the other guy con pointers
-  // if(first_change >= 0 && first_change < size) {
-  //   FixConPtrs_SendOwns(net, first_change);
-  // }
+  if(first_change >= 0 && first_change < size) {
+    FixConPtrs_SendOwns(net, first_change);
+  }
 }
 
 void CON_STATE::VecChunk_RecvOwns(NETWORK_STATE* net, 
@@ -112,11 +213,10 @@ void CON_STATE::VecChunk_RecvOwns(NETWORK_STATE* net,
 
   int first_change = VecChunk_impl(tmp_chunks, tmp_not_chunks, tmp_con_mem);
 
-  // todo!
   // fix all the other guy con pointers
-  // if(first_change >= 0 && first_change < size) {
-  //   FixConPtrs_RecvOwns(net, first_change);
-  // }
+  if(first_change >= 0 && first_change < size) {
+    FixConPtrs_RecvOwns(net, first_change);
+  }
 }
 
 

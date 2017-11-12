@@ -1,5 +1,6 @@
 // this is included in Layer and LayerState -- common state between two
 //{
+
   enum LayerType {      // type of layer, used to determine various default settings
     HIDDEN,             // layer does not receive external input of any form
     INPUT,              // layer receives external input (EXT) that drives activation states directly

@@ -41,19 +41,11 @@
                                   int gpidx);
     // #IGNORE
 
-  INIMPL virtual void	LabelUnits(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net);
-  // #CAT_ScalarVal label units in given layer with their underlying values
-    INIMPL virtual void LabelUnits_ugp(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net,
-                                int gpidx);
-    // #CAT_ScalarVal label units with their underlying values
-  INIMPL virtual void	LabelUnitsNet(LEABRA_NETWORK_STATE* net);
-  // #BUTTON #CAT_ScalarVal label all layers in given network using this spec
-
   INLINE void  Init_Weights_Layer(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) override {
     inherited::Init_Weights_Layer(lay, net);
     Compute_BiasVal(lay, net);
-    if(scalar.init_nms)
-      LabelUnits(lay, net);
+    // if(scalar.init_nms)
+    //   LabelUnits(lay, net);
   }
     
   INIMPL void  Quarter_Init_Layer(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) override;

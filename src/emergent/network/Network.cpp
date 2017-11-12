@@ -694,8 +694,8 @@ UnitState_cpp* Network::GetUnitStateFromPath(const String& path) {
   if(!lay) {
     return NULL;
   }
-  int un_idx = (int)un_path.between('[',']');
-  if(un_idx > 0) {
+  int un_idx = un_path.toInt();
+  if(un_idx >= 0) {
     return lay->GetUnitStateSafe(net_state, un_idx);
   }
   return NULL;
@@ -748,6 +748,10 @@ void Network::Build() {
   
   BuildConState();
   Connect();
+
+  n_units = net_state->n_units;
+  n_cons = net_state->n_cons;
+  max_prjns = net_state->max_prjns;
   
   SyncNetState();
   BuildSendNetinTmp();
@@ -1204,7 +1208,7 @@ String Network::MemoryReport(bool print) {
   }
   
   String constr;
-  constr.convert((float)n_cons);
+  constr.convert((float)net_state->n_cons);
 
   int64_t recv_cons_tot = 0;
   int64_t send_cons_tot = 0;

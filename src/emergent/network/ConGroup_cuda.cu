@@ -15,3 +15,8 @@
 
 #include "ConState_cuda.h"
 
+// these are the essential includes for _core.cpp
+#include <UnitState_cuda>
+#include <ConSpec_cuda>
+
+#include "ConState_core.cpp"

@@ -21,6 +21,7 @@
 
   INLINE UNIT_STATE*  GetUnitState(NETWORK_STATE* net, int un_idx) {
     LAYER_STATE* lay = GetLayerState(net);
+    if(layer_gp_idx < 0) return lay->GetUnitState(net, un_idx); // layer gp
     return lay->GetUnitStateGpUnIdx(net, layer_gp_idx, un_idx);
   }
   // get unit within this unit group at given unit index
@@ -28,6 +29,7 @@
   INLINE UNIT_STATE*  GetUnitStateSafe(NETWORK_STATE* net, int un_idx) {
     if(!UnIdxInRange(un_idx)) return NULL;
     LAYER_STATE* lay = GetLayerState(net);
+    if(layer_gp_idx < 0) return lay->GetUnitStateSafe(net, un_idx); // layer gp
     return lay->GetUnitStateGpUnIdx(net, layer_gp_idx, un_idx);
   }
   // get unit within this unit group at given unit index, safe range checking
@@ -46,6 +48,7 @@
     ungp_idx = ugp_dx;
     layer_idx = lay_dx;
     layer_gp_idx = lay_gp_dx;
+    units_flat_idx = un_fl_dx;
     n_units = n_un;
     pos_x = 0; pos_y = 0;
     disp_pos_x = 0; disp_pos_y = 0;

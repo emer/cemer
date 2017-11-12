@@ -38,5 +38,10 @@ public:
   BpUnitState_cpp() { Initialize_core(); }
 };
 
+class BpUnit : public BpUnitState_cpp {
+  // BpUnit is an alias for BpUnitState_cpp for backward compatibility and simplicity in Programs
+public:
+};
+  
 
 #endif // BpUnitState_cpp_h

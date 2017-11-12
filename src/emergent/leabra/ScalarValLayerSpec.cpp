@@ -242,36 +242,6 @@ void STATE_CLASS(ScalarValLayerSpec)::HardClampExt(LEABRA_LAYER_STATE* lay, LEAB
   UNIT_GP_ITR(lay, HardClampExt_ugp(lay, net, gpidx); );
 }
 
-void STATE_CLASS(ScalarValLayerSpec)::LabelUnits_ugp
-(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net, int gpidx) {
-  LEABRA_UNGP_STATE* ug = (LEABRA_UNGP_STATE*)lay->GetUnGpState(net, gpidx);
-  LEABRA_UNIT_SPEC_CPP* us = (LEABRA_UNIT_SPEC_CPP*)lay->GetUnitSpec(net);
-  const int nunits = ug->n_units;
-  scalar.InitVal(0.0f, nunits, unit_range.min, unit_range.range);
-  if(nunits < 1) return;        // must be at least a few units..
-  for(int i=0;i<nunits;i++) {
-    LEABRA_UNIT_STATE* u = (LEABRA_UNIT_STATE*)ug->GetUnitState(net, i);
-    if(u->lesioned()) continue;
-    float cur = scalar.GetUnitVal(i);
-    // u->name = (String)cur;
-  }
-}
-
-void STATE_CLASS(ScalarValLayerSpec)::LabelUnits(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
-  UNIT_GP_ITR(lay, LabelUnits_ugp(lay, net, gpidx); );
-}
-
-void STATE_CLASS(ScalarValLayerSpec)::LabelUnitsNet(LEABRA_NETWORK_STATE* net) {
-  for(int i=0; i < net->n_layers_built; i++) {
-    LEABRA_LAYER_STATE* lay = (LEABRA_LAYER_STATE*)net->GetLayerState(i);
-    if(lay->lesioned()) continue;
-    LAYER_SPEC_CPP* ls = lay->GetLayerSpec(net);
-    if(ls->spec_idx == this->spec_idx) { // same..
-      LabelUnits(lay, net);
-    }
-  }
-}
-
 void STATE_CLASS(ScalarValLayerSpec)::Quarter_Init_Layer(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
   inherited::Quarter_Init_Layer(lay, net);
   if(bias_val.un == STATE_CLASS(ScalarValBias)::BWT) {

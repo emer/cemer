@@ -642,7 +642,7 @@ void NetView::BuildAll() { // populates all T3 guys
   GetMembs();
 
   Network* nt = net();
-
+  
   // cannot preserve LayerView objects, so recording disp_mode info separately
   // layers grab from us when made, instead of pushing on them.
   // first pass is to fix things up based on layer names only
@@ -781,7 +781,12 @@ void NetView::GetMembs() {
   if(!net()) return;
 
   Network* nt = net();
-  if(!nt || !nt->IsBuiltIntact()) return;
+  if(!nt || !nt->IsBuiltIntact()) {
+    membs.Reset();
+    unit_src = NULL;
+    setUnitDispMd(NULL);
+    return;
+  }
 
   // try as hard as possible to find a unit to view if nothing selected -- this
   // minimizes issues with history etc
@@ -1194,6 +1199,13 @@ void NetView::Render_pre() {
 
 void NetView::Render_impl() {
   // font properties percolate down to all other elements, unless set there
+
+  Network* nt = net();
+  if(!nt->IsBuiltIntact()) {
+    unit_src = NULL;
+    setUnitDispMd(NULL);
+  }
+  
   taTransform* ft = transform(true);
   *ft = main_xform;
 
@@ -1782,6 +1794,7 @@ void NetView::SaveImageSVG(const String& svg_fname) {
 }
 
 void NetView::Reset_impl() {
+  unit_src = NULL;
   hist_idx = 0;
   ctr_hist_idx.Reset();
   prjns.Reset();
@@ -1987,6 +2000,12 @@ void NetView::UpdateDisplay(bool update_panel) { // redoes everything
 
 void NetView::UpdateUnitValues() { // *actually* only does unit value updating
   if(children.size == 0) return;
+  Network* nt = net();
+  if(!nt->IsBuiltIntact()) {
+    unit_src = NULL;
+    setUnitDispMd(NULL);
+    return;
+  }
   if(hist_save)
     SaveCtrHist();
   if (scale.auto_scale) {
@@ -2020,6 +2039,12 @@ void NetView::SaveCtrHist() {
 
 void NetView::SigRecvUpdateView_impl() {
   if (!display) return;
+  Network* nt = net();
+  if(!nt->IsBuiltIntact()) {
+    unit_src = NULL;
+    setUnitDispMd(NULL);
+    return;
+  }
   HistFwdAll();			// update to current point in history when updated externally
   UpdateUnitValues();
   if(net_text) {

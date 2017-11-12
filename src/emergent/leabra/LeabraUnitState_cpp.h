@@ -40,4 +40,9 @@ public:
   LeabraUnitState_cpp() { Initialize_core(); }
 };
 
+class LeabraUnit : public LeabraUnitState_cpp {
+  // LeabraUnit is an alias for LeabraUnitState_cpp for backward compatibility and simplicity in Programs
+public:
+};
+  
 #endif // LeabraUnitState_cpp_h

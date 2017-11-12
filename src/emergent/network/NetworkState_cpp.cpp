@@ -316,9 +316,10 @@ void NetworkState_cpp::Connect() {
 
   Connect_Sizes();
   Connect_Alloc();
-  NET_THREAD_CALL(NetworkState_cpp::CacheMemStart_Thr);
+  NET_THREAD_CALL(NetworkState_cpp::Connect_CacheMemStart_Thr);
   Connect_Cons();
 
+  NET_THREAD_CALL(NetworkState_cpp::Connect_CacheUnitLoHiIdxs_Thr);
   NET_THREAD_CALL(NetworkState_cpp::Connect_VecChunk_Thr);
   NET_THREAD_CALL(NetworkState_cpp::Connect_UpdtActives_Thr);
 

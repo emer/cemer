@@ -1084,7 +1084,7 @@ void NETWORK_STATE::Connect_Alloc_Thr(int thr_no) {
   }
 }
 
-void NETWORK_STATE::CacheMemStart_Thr(int thr_no) {
+void NETWORK_STATE::Connect_CacheMemStart_Thr(int thr_no) {
   const int nrcg = ThrNRecvConGps(thr_no);
   for(int i=0; i<nrcg; i++) {
     CON_STATE* rcg = ThrRecvConState(thr_no, i);
@@ -1103,6 +1103,19 @@ void NETWORK_STATE::Connect_Cons() {
   for(int li=n_layers_built-1; li >= 0; li--) {
     LAYER_STATE* lay = GetLayerState(li);
     lay->Connect_Cons(this);
+  }
+}
+
+void NETWORK_STATE::Connect_CacheUnitLoHiIdxs_Thr(int thr_no) {
+  const int nrcg = ThrNRecvConGps(thr_no);
+  for(int i=0; i<nrcg; i++) {
+    CON_STATE* rcg = ThrRecvConState(thr_no, i);
+    rcg->CacheUnitLoHiIdxs(this, thr_no);
+  }
+  const int nscg = ThrNSendConGps(thr_no);
+  for(int i=0; i<nscg; i++) {
+    CON_STATE* scg = ThrSendConState(thr_no, i);
+    scg->CacheUnitLoHiIdxs(this, thr_no);
   }
 }
 

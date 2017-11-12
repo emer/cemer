@@ -25,6 +25,11 @@
 #include <LeabraLayerSpec_cpp>
 #include <ProjectionSpec_cpp>
 
+#include <State_main>
+
+#include <LeabraUnitSpec>
+#include <LeabraConSpec>
+
 //#include <LeabraExtraUnitSpecs_cpp> // cpp versions too
 
 #include <State_main>
@@ -144,17 +149,17 @@ bool ScalarValLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
     }
   }
 
-  // LeabraUnitSpec* us = (LeabraUnitSpec*)lay->GetUnitSpec();
-  // if(us->act_misc.rec_nd) {
-  //   taMisc::Warning("Scalar val must have UnitSpec.act_misc.rec_nd = false, to record value in act_eq of first unit.  I changed this for you in spec:", us->name, "make sure this is appropriate for all layers that use this spec");
-  //   us->SetUnique("act_misc", true);
-  //   us->act_misc.rec_nd = false;
-  // }
-  // if(!us->act_misc.avg_nd) {
-  //   taMisc::Warning("Scalar val must have UnitSpec.act_misc.avg_nd = true, so learning is based on act_nd and NOT act_eq, which is used to record value in first unit.  I changed this for you in spec:", us->name, "make sure this is appropriate for all layers that use this spec");
-  //   us->SetUnique("act_misc", true);
-  //   us->act_misc.avg_nd = true;
-  // }
+  LeabraUnitSpec* us = (LeabraUnitSpec*)lay->GetMainUnitSpec();
+  if(us->act_misc.rec_nd) {
+    taMisc::Warning("Scalar val must have UnitSpec.act_misc.rec_nd = false, to record value in act_eq of first unit.  I changed this for you in spec:", us->name, "make sure this is appropriate for all layers that use this spec");
+    us->SetUnique("act_misc", true);
+    us->act_misc.rec_nd = false;
+  }
+  if(!us->act_misc.avg_nd) {
+    taMisc::Warning("Scalar val must have UnitSpec.act_misc.avg_nd = true, so learning is based on act_nd and NOT act_eq, which is used to record value in first unit.  I changed this for you in spec:", us->name, "make sure this is appropriate for all layers that use this spec");
+    us->SetUnique("act_misc", true);
+    us->act_misc.avg_nd = true;
+  }
   
   // check for conspecs with correct params
   LEABRA_UNIT_STATE* u = (LEABRA_UNIT_STATE*)lay->GetUnitStateSafe(net, 0);
@@ -163,28 +168,62 @@ bool ScalarValLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
     return false;               // fatal
   }
 
-  // todo: cannot actually change spec params here -- source is main spec.. not cpp one..
-  // const int nrg = u->NRecvConGps(net);
-  // for(int g=0; g<nrg; g++) {
-  //   LEABRA_CON_STATE* recv_gp = (LEABRA_CON_STATE*)u->RecvConState(net, g);
-  //   if(recv_gp->NotActive()) continue;
-  //   LEABRA_CON_SPEC_CPP* cs = (LEABRA_CON_SPEC_CPP*)recv_gp->GetConSpec();
-  //   PRJN_STATE* prjn = recv_gp->GetPrjnState(net);
-  //   PRJN_SPEC_CPP* pspec = prjn->GetPrjnSpec(net);
-  //   if(pspec->GetStateSpecType() == LEABRA_NETWORK_STATE::T_ScalarValSelfPrjnSpec) {
-  //     if(lay->CheckError(cs->wt_scale.rel > 0.5f, quiet, rval,
-  //                   "scalar val self connections should have wt_scale < .5, I just set it to .1 for you (make sure this is appropriate for all connections that use this spec!)")) {
-  //       cs->SetUnique("wt_scale", true);
-  //       cs->wt_scale.rel = 0.1f;
-  //     }
-  //     if(lay->CheckError(cs->lrate > 0.0f, quiet, rval,
-  //                   "scalar val self connections should have lrate = 0, I just set it for you in spec:", cs->name, "(make sure this is appropriate for all layers that use this spec!)")) {
-  //       cs->SetUnique("lrate", true);
-  //       cs->lrate = 0.0f;
-  //     }
-  //   }
-  // }
+  for(int i=0; i<lay->projections.size; i++) {
+    Projection* pj = lay->projections.FastEl(i);
+    LeabraConSpec* cs = (LeabraConSpec*)pj->GetMainConSpec();
+    ProjectionSpec* pspec = pj->GetMainPrjnSpec();
+    if(pspec->GetStateSpecType() == LEABRA_NETWORK_STATE::T_ScalarValSelfPrjnSpec) {
+      if(lay->CheckError(cs->wt_scale.rel > 0.5f, quiet, rval,
+                    "scalar val self connections should have wt_scale < .5, I just set it to .1 for you (make sure this is appropriate for all connections that use this spec!)")) {
+        cs->SetUnique("wt_scale", true);
+        cs->wt_scale.rel = 0.1f;
+      }
+      if(lay->CheckError(cs->lrate > 0.0f, quiet, rval,
+                    "scalar val self connections should have lrate = 0, I just set it for you in spec:", cs->name, "(make sure this is appropriate for all layers that use this spec!)")) {
+        cs->SetUnique("lrate", true);
+        cs->lrate = 0.0f;
+      }
+    }
+  }
   return rval;
+}
+
+void ScalarValLayerSpec::LabelUnits_ugp
+(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net, int gpidx) {
+
+  LeabraNetwork* lnet = (LeabraNetwork*)net->net_owner;
+  LeabraLayer* llay = (LeabraLayer*)lnet->LayerFromState(lay);
+  llay->SetUnitNames(true);     // use names
+  
+  LEABRA_UNGP_STATE* ug = (LEABRA_UNGP_STATE*)lay->GetUnGpState(net, gpidx);
+  LEABRA_UNIT_SPEC_CPP* us = (LEABRA_UNIT_SPEC_CPP*)lay->GetUnitSpec(net);
+  const int nunits = ug->n_units;
+  scalar.InitVal(0.0f, nunits, unit_range.min, unit_range.range);
+  if(nunits < 1) return;        // must be at least a few units..
+  for(int i=0;i<nunits;i++) {
+    LEABRA_UNIT_STATE* u = (LEABRA_UNIT_STATE*)ug->GetUnitState(net, i);
+    if(u->lesioned()) continue;
+    float cur = scalar.GetUnitVal(i);
+    llay->SetUnitName(u, (String)cur);
+  }
+}
+
+void ScalarValLayerSpec::LabelUnits(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
+  UNIT_GP_ITR(lay, LabelUnits_ugp(lay, net, gpidx); );
+}
+
+void ScalarValLayerSpec::LabelUnitsNet() {
+  LeabraNetwork* lnet = GET_MY_OWNER(LeabraNetwork);
+  if(!lnet) return;
+  LEABRA_NETWORK_STATE* net = (LEABRA_NETWORK_STATE*)lnet->net_state;
+  for(int i=0; i < net->n_layers_built; i++) {
+    LEABRA_LAYER_STATE* lay = (LEABRA_LAYER_STATE*)net->GetLayerState(i);
+    if(lay->lesioned()) continue;
+    LAYER_SPEC_CPP* ls = lay->GetLayerSpec(net);
+    if(ls->spec_idx == this->spec_idx) { // same..
+      LabelUnits(lay, net);
+    }
+  }
 }
 
 
@@ -394,10 +433,6 @@ bool TwoDValLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
     }
   }
 
-  // if(lay->InheritsFrom(&TA_LeabraLayer)) { // inh will be flagged above
-  //   ((LeabraLayer*)lay)->UpdateTwoDValsGeom();
-  // }
-
   if(twod.rep == TwoDValSpec::LOCALIST) {
     // kwta.k = 1;         // localist means 1 unit active!!
     // gp_kwta.k = 1;
@@ -410,27 +445,23 @@ bool TwoDValLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
     return false;               // fatal
   }
 
-  // todo: cannot actually change spec params here -- source is main spec.. not cpp one..
-  // const int nrg = u->NRecvConGps(net);
-  //   LEABRA_CON_STATE* recv_gp = (LEABRA_CON_STATE*)u->RecvConState(net, g);
-  //   if(recv_gp->NotActive()) continue;
-  //   LEABRA_CON_SPEC_CPP* cs = (LEABRA_CON_SPEC_CPP*)recv_gp->GetConSpec();
-  //   PRJN_STATE* prjn = recv_gp->GetPrjnState(net);
-  //   PRJN_SPEC_CPP* pspec = prjn->GetPrjnSpec(net);
-  //   if(pspec->GetStateSpecType() == LEABRA_NETWORK_STATE::T_ScalarValSelfPrjnSpec) {
-  //     if(lay->CheckError(cs->wt_scale.rel > 0.5f, quiet, rval,
-  //                   "twod val self connections should have wt_scale < .5, I just set it to .1 for you (make sure this is appropriate for all connections that use this spec!)")) {
-  //       cs->SetUnique("wt_scale", true);
-  //       cs->wt_scale.rel = 0.1f;
-  //     }
-  //     if(lay->CheckError(cs->lrate > 0.0f, quiet, rval,
-  //                   "twod val self connections should have lrate = 0, I just set it for you in spec:", cs->name, "(make sure this is appropriate for all layers that use this spec!)")) {
-  //       cs->SetUnique("lrate", true);
-  //       cs->lrate = 0.0f;
-  //     }
-  //   }
-  //   else if(cs->IsMarkerCon()) continue;
-  // }
+  for(int i=0; i<lay->projections.size; i++) {
+    Projection* pj = lay->projections.FastEl(i);
+    LeabraConSpec* cs = (LeabraConSpec*)pj->GetMainConSpec();
+    ProjectionSpec* pspec = pj->GetMainPrjnSpec();
+    if(pspec->GetStateSpecType() == LEABRA_NETWORK_STATE::T_ScalarValSelfPrjnSpec) {
+      if(lay->CheckError(cs->wt_scale.rel > 0.5f, quiet, rval,
+                    "scalar val self connections should have wt_scale < .5, I just set it to .1 for you (make sure this is appropriate for all connections that use this spec!)")) {
+        cs->SetUnique("wt_scale", true);
+        cs->wt_scale.rel = 0.1f;
+      }
+      if(lay->CheckError(cs->lrate > 0.0f, quiet, rval,
+                    "scalar val self connections should have lrate = 0, I just set it for you in spec:", cs->name, "(make sure this is appropriate for all layers that use this spec!)")) {
+        cs->SetUnique("lrate", true);
+        cs->lrate = 0.0f;
+      }
+    }
+  }
   return rval;
 }
 

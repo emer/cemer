@@ -18,6 +18,8 @@
 #include <taProject>
 #include <DataTable>
 #include <NetMonitor>
+#include <Network>
+#include <MemberDef>
 
 #include <taMisc>
 #include <tabMisc>
@@ -34,6 +36,111 @@
 
 // todo: ifdef all of these -- ok for emergent but not for standalone
   
+bool UnitState_cpp::SetUnValName(NetworkState_cpp* nnet, float val, const String& var_nm) {
+  Network* nt = (Network*)nnet->net_owner;
+  TypeDef* td = nt->UnitStateType();
+  MemberDef* md = td->members.FindName(var_nm);
+  if(!md) {
+    taMisc::Error("SetUnValName", "variable named:", var_nm,
+                  "not found in unit variables, of type:", td->name);
+    return false;
+  }
+  if(!md->type->IsFloat()) {
+    taMisc::Error("SetUnValName", "variable named:", var_nm,
+                  "is not of float type -- must be -- is:", md->name);
+    return false;
+  }
+  *((float*)md->GetOff(this)) = val;
+  return true;
+}
+
+float UnitState_cpp::GetUnValName(NetworkState_cpp* nnet, const String& var_nm) const {
+  Network* nt = (Network*)nnet->net_owner;
+  TypeDef* td = nt->UnitStateType();
+  MemberDef* md = td->members.FindName(var_nm);
+  if(!md) {
+    taMisc::Error("GetUnValName", "variable named:", var_nm,
+                  "not found in unit variables, of type:", td->name);
+    return 0.0f;
+  }
+  if(!md->type->IsFloat()) {
+    taMisc::Error("GetUnValName", "variable named:", var_nm,
+                  "is not of float type -- must be -- is:", md->name);
+    return 0.0f;
+  }
+  return *((float*)md->GetOff(this));
+}
+
+bool UnitState_cpp::SetCnValName(NetworkState_cpp* nnet, float val, const Variant& prjn, int dx, const String& var_nm, bool recv) {
+  ConState_cpp* cg = NULL;
+  if(prjn.isStringType()) {
+    if(recv) {
+      cg = FindRecvConStateFromName(nnet, prjn.toString());
+    }
+    else {
+      cg = FindSendConStateToName(nnet, prjn.toString());
+    }
+  }
+  else {
+    int ridx =prjn.toInt();
+    if(recv) {
+      if(ridx < NRecvConGps(nnet)) {
+        cg = RecvConState(nnet, ridx);
+      }
+    }
+    else {
+      if(ridx < NSendConGps(nnet)) {
+        cg = SendConState(nnet, ridx);
+      }
+    }
+  }
+  if(!cg) {
+    if(recv) {
+      taMisc::Error("SetCnValName", "recv projection not found from:", prjn.toString());
+    }
+    else {
+      taMisc::Error("SetCnValName", "send projection not found to:", prjn.toString());
+    }
+    return false;
+  }
+  return cg->SetCnValName(nnet, val, dx, var_nm);
+}
+  
+float UnitState_cpp::GetCnValName(NetworkState_cpp* nnet, const Variant& prjn, int dx, const String& var_nm, bool recv) const {
+  ConState_cpp* cg = NULL;
+  if(prjn.isStringType()) {
+    if(recv) {
+      cg = FindRecvConStateFromName(nnet, prjn.toString());
+    }
+    else {
+      cg = FindSendConStateToName(nnet, prjn.toString());
+    }
+  }
+  else {
+    int ridx =prjn.toInt();
+    if(recv) {
+      if(ridx < NRecvConGps(nnet)) {
+        cg = RecvConState(nnet, ridx);
+      }
+    }
+    else {
+      if(ridx < NSendConGps(nnet)) {
+        cg = SendConState(nnet, ridx);
+      }
+    }
+  }
+  if(!cg) {
+    if(recv) {
+      taMisc::Error("SetCnValName", "recv projection not found from:", prjn.toString());
+    }
+    else {
+      taMisc::Error("SetCnValName", "send projection not found to:", prjn.toString());
+    }
+    return false;
+  }
+  return cg->SafeCnName(nnet, dx, var_nm);
+}
+
 void UnitState_cpp::TransformWeights(NetworkState_cpp* nnet, const SimpleMathSpec& trans, PrjnState_cpp* prjn) {
   const int rsz = NRecvConGps(nnet);
   for(int g = 0; g < rsz; g++) {

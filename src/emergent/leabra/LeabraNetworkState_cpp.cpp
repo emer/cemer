@@ -143,6 +143,7 @@ void LeabraNetworkState_cpp::NewInputData_Init() {
   Quarter_Init_Layer();
   Quarter_Init_TargFlags();
   Compute_HardClamp();
+  Quarter_Init_Layer_Post();
 }
 
 void LeabraNetworkState_cpp::Cycle_Run() {

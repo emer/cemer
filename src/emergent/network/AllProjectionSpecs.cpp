@@ -194,6 +194,7 @@ void TesselPrjnSpec::MakeRectangle(int width, int height, int left, int bottom) 
     }
   }
 }
+
 /*TODO
 void TesselPrjnSpec::MakeFromNetView(NetView* view) {
   if((view == NULL) || (view->editor == NULL) || (view->editor->netg == NULL))

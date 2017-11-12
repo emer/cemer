@@ -77,6 +77,9 @@
   INIMPL void	DecayState(float decay);
   // #CAT_Activation decay the state of this layer -- not normally called but available for programs etc to control specific layers
 
+  INIMPL void	ClearDeepActs();
+  // #CAT_DeepLeabra clear the deep lamina variables -- can be useful to do at discontinuities of experience
+
   INLINE void Init_Stats() {
     inherited::Init_Stats();
     // todo: initvals probably wrong

@@ -7,3 +7,10 @@ void LEABRA_LAYER::DecayState(float decay) {
   LEABRA_LAYER_STATE* st = GetLayerState(net_state);
   if(ls) ls->DecayState(st, (LEABRA_NETWORK_STATE*)net_state, decay);
 }
+
+void LEABRA_LAYER::ClearDeepActs() {
+  if(!net_state || !net_state->IsBuiltIntact()) return;
+  LEABRA_LAYER_SPEC_CPP* ls = GetLayerSpec(net_state);
+  LEABRA_LAYER_STATE* st = GetLayerState(net_state);
+  if(ls) ls->ClearDeepActs(st, (LEABRA_NETWORK_STATE*)net_state);
+}

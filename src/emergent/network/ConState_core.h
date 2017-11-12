@@ -28,6 +28,8 @@
   int           other_idx;      // #CAT_State #READ_ONLY #SHOW index into other direction's list of cons objects (i.e., send_idx for RecvCons and recv_idx for SendCons)
   int           share_idx;      // #CAT_State #READ_ONLY #SHOW index of other unit that this congroup shares connection objects with -- unit must be in same layer with same number of connections, and in the same thread (i.e., the number of units in a unit group must be an even multiple of the number of threads), and must be *earlier* in the layer (typically the first unit group) -- projection must set this during the initial pre-allocation phase of connecting -- if -1 then this congroup has its own unique connection objects
   int           vec_chunked_size; // #CAT_State #READ_ONLY #SHOW number of connections at start of list that are chunked according to vec_chunk_targ -- for sender-based, this means that the recv unit_idx's are sequential for each of the chunks (individually) -- between chunks can be non-sequential
+  int           un_lo_idx;        // #CAT_State #READ_ONLY lowest flat_idx of units that we are connected to -- cached after connections are made -- optimizes finding connections
+  int           un_hi_idx;        // #CAT_State #READ_ONLY highest flat_idx of units that we are connected to -- cached after connections are made -- optimizes finding connections
 
   int           n_con_vars;     // #CAT_State #READ_ONLY number of connection variables
   con_mem_idx   mem_idx;        // #IGNORE #CAT_State #READ_ONLY index into NetworkState allocated thread-specific connection memory -- for owned, non-shared cons, it is (con_type->members.size + 1) * sizeof(float) * alloc_size, for shared cons it is just sizeof(float) * alloc_size (first slice is index of other unit), for ptr cons, it is 2 * sizeof(float) * alloc_size (first slice is index of other unit, second is connection number there to find con data)
@@ -40,9 +42,11 @@
   INLINE CON_SPEC_CPP* GetConSpec(NETWORK_STATE* net) const {
     return net->GetConSpec(spec_idx);
   }
+  // #CAT_State get connection spec that manages these connections
   INLINE PRJN_STATE* GetPrjnState(NETWORK_STATE* net) const {
     return net->GetPrjnState(prjn_idx);
   }
+  // #CAT_State get projection state that manages these connections
   INLINE LAYER_STATE* GetRecvLayer(NETWORK_STATE* net) const {
     PRJN_STATE* prjn = GetPrjnState(net);
     if(prjn) {
@@ -50,6 +54,7 @@
     }
     return NULL;
   }
+  // #CAT_State get recv layer for this projection
   INLINE LAYER_STATE* GetSendLayer(NETWORK_STATE* net) const {
     PRJN_STATE* prjn = GetPrjnState(net);
     if(prjn) {
@@ -57,6 +62,7 @@
     }
     return NULL;
   }
+  // #CAT_State get send layer for this projection
   
   INLINE bool           HasConStateFlag(int flag) const 
   { return (flags & flag); }
@@ -97,14 +103,14 @@
   { PRJN_STATE* prjn = GetPrjnState(net);
     if(!prjn) return false;
     return prjn->IsActive(net); }
-  // #IGNORE is the projection active for this connection group?
+  // #CAT_State is the projection active for this connection group?
 
   INLINE void           UpdtIsActive(NETWORK_STATE* net)
   { if(alloc_size > 0 && size > 0 && PrjnIsActive(net))
       SetConStateFlag(IS_ACTIVE);
     else ClearConStateFlag(IS_ACTIVE);
   }
-  // #IGNORE update active status: is this an active connection group, with connections and an active projection?
+  // #CAT_State update active status: is this an active connection group, with connections and an active projection?
 
   INLINE void           SetInactive()
   { ClearConStateFlag(IS_ACTIVE); }
@@ -121,6 +127,17 @@
     }
   }
   // #IGNORE cache mem_start and cnmem_start pointers -- must be called on-device after all the ConState has been allocated
+  
+  INLINE void           CacheUnitLoHiIdxs(NETWORK_STATE* net, int thr_no)
+  { if(size == 0) return;
+    un_lo_idx = UnIdx(0);  un_hi_idx = UnIdx(size-1);
+    for(int i=1; i < size-1; i++) {
+      int dx = UnIdx(i);
+      if(dx < un_lo_idx) un_lo_idx = dx;
+      if(dx > un_hi_idx) un_hi_idx = dx;
+    }
+  }
+  // #IGNORE optimize searching for unit connections by caching the low and high unit indexes for connections
   
   INLINE float*         MemBlock(int mem_block) const
   { return mem_start + alloc_size * mem_block; }
@@ -271,81 +288,18 @@
   INLINE void    Reset()         { FreeCons(); }
   // #CAT_Modify remove all conections -- frees all associated memory
 
-  INLINE int FindConFromIdx(int trg_idx) const {
-    if(size > 10) {
-      // starting point for search: proportional location of unit in its own layer, 
-      // mapped on to size of connections -- then search in both directions out from there
-      // int proploc = (int)(((float)un->idx / (float)un->own_lay()->units.leaves) *
-      //                     (float)size);
-      // todo: add this function to network state to compute this for us..
-      int proploc = size / 2;   // just search from middle -- we don't have access to unit state!
-      int upi = proploc+1;
-      int dni = proploc;
-      while(true) {
-        bool upo = false;
-        if(upi < size) {
-          if(UnIdx(upi) == trg_idx) return upi;
-          ++upi;
-        }
-        else {
-          upo = true;
-        }
-        if(dni >= 0) {
-          if(UnIdx(dni) == trg_idx) return dni;
-          --dni;
-        }
-        else if(upo) {
-          break;
-        }
-      }        
-    }
-    else {
-      for(int i=0; i<size; i++) {
-        if(UnIdx(i) == trg_idx) return i;
-      }
-    }
-    return -1;
-  }
-  // find connection from given unit flat index
+  INIMPL int FindConFromIdx(int trg_idx) const;
+  // #CAT_Acccess find connection from given unit flat index -- optimized search uses index relative to un_lo_idx, un_hi_idx as starting point for bidirectional search from there -- should be realtively quick to find connection in general
 
-  INLINE bool RemoveConIdx(int i, NETWORK_STATE* net) {
-    if(!InRange(i)) return false;
-    if(OwnCons()) {
-      for(int j=i; j<size-1; j++) {
-        // first, have to ensure that other side's indexes are updated for our connections
-        ConState_cpp* othcn = UnCons(j+1, net); 
-        int myidx = othcn->FindConFromIdx(own_flat_idx);
-        if(myidx >= 0) {
-          othcn->PtrCnIdx(myidx)--; // our index is decreased by 1
-        }
-        int ncv = NConVars();
-        for(int k=0; k<ncv; k++) {
-          OwnCn(j,k) = OwnCn(j+1,k);
-        }
-      }
-    }
-    else {
-      for(int j=i; j<size-1; j++) {
-        PtrCnIdx(j) = PtrCnIdx(j+1);
-      }
-    }
-
-    for(int j=i; j<size-1; j++) {
-      UnIdx(j) = UnIdx(j+1);
-    }
-    size--;
-    UpdtIsActive(net);
-    return true;
-  }
-  // remove connection at given index, also updating other unit's information about this connection
+  INIMPL bool RemoveConIdx(int i, NETWORK_STATE* net);
+  // #CAT_Modify remove connection at given index, also updating other unit's information about this connection
 
   INLINE bool RemoveConUn(int trg_idx, NETWORK_STATE* net) {
     int idx = FindConFromIdx(trg_idx);
     if(idx < 0) return false;
     return RemoveConIdx(idx, net);
   }
-  // remove connection from given unit with trg_idx flat index number (if found)
-
+  // #CAT_Modify remove connection from given unit with trg_idx flat index number (if found)
 
   INLINE void Copy_Weights(const CON_STATE* src, NETWORK_STATE* net) {
     int mx = MIN(size, src->size);
@@ -353,7 +307,7 @@
       Cn(i, WT, net) = src->Cn(i, WT, net);
     }
   }
-  // #CAT_ObjectMgmt copies weights from other con_state
+  // #CAT_Modify copies weights from other con_state
 
   INLINE void AllocCons(NETWORK_STATE* net, int sz) {
     if(mem_start != 0) {
@@ -375,39 +329,43 @@
   INLINE void AllocConsFmSize(NETWORK_STATE* net) {
     AllocCons(net, size);              // this sets size back to zero and does full alloc
   }
+  // #CAT_Connect allocate connections from accumulated size during first pass of connection algo
 
   INLINE void    ConnectAllocInc(int inc_n = 1) { size += inc_n; }
-  // #CAT_Modify use this for dynamically figuring out how many connections to allocate, if it is not possible to compute directly -- increments size by given number -- later call AllocConsFmSize to allocate connections based on the size value
+  // #CAT_Connect use this for dynamically figuring out how many connections to allocate, if it is not possible to compute directly -- increments size by given number -- later call AllocConsFmSize to allocate connections based on the size value
 
   INIMPL int     ConnectUnOwnCn(NETWORK_STATE* net, UNIT_STATE* un, bool ignore_alloc_errs = false,
                                 bool allow_null_unit = false);
-  // #CAT_Modify add a new connection from given unit for OwnCons case -- returns -1 if no more room relative to alloc_size (flag will turn off err msg) -- default is to not allow connections from a unit with flat_idx = 0 (null_unit) but this can be overridden -- returns index of new connection (-1 if failed)
+  // #CAT_Connect add a new connection from given unit for OwnCons case -- returns -1 if no more room relative to alloc_size (flag will turn off err msg) -- default is to not allow connections from a unit with flat_idx = 0 (null_unit) but this can be overridden -- returns index of new connection (-1 if failed)
 
   INIMPL bool    ConnectUnPtrCn(NETWORK_STATE* net, UNIT_STATE* un, int con_idx, bool ignore_alloc_errs = false);
-  // #CAT_Modify add a new connection from given unit and connection index for PtrCons case -- returns false if no more room, else true
+  // #CAT_Connect add a new connection from given unit and connection index for PtrCons case -- returns false if no more room, else true
 
   INIMPL int     ConnectUnits
   (NETWORK_STATE* net, UNIT_STATE* our_un, UNIT_STATE* oth_un, CON_STATE* oth_cons,
    bool ignore_alloc_errs = false,  bool set_init_wt = false, float init_wt = 0.0f);
-  // #CAT_Modify add a new connection betwee our unit and an other unit and its appropriate cons -- does appropriate things depending on who owns the connects, etc.  enough room must already be allocated on both sides  (flag will turn off err msg) -- returns index of new connection (-1 if failed) -- can also optionally set initial weight value
+  // #CAT_Connect add a new connection betwee our unit and an other unit and its appropriate cons -- does appropriate things depending on who owns the connects, etc.  enough room must already be allocated on both sides  (flag will turn off err msg) -- returns index of new connection (-1 if failed) -- can also optionally set initial weight value
 
   INIMPL bool   SetShareFrom(NETWORK_STATE* net, UNIT_STATE* shu);
   // #CAT_Access set this connection group to share from given other unit -- checks to make sure this works -- returns false if not (will have already emitted warning message)
 
+  INIMPL void   FixConPtrs_SendOwns(NETWORK_STATE* net, int st_idx);
+  // #IGNORE only for sending cons that own the connections: fix all the pointer connections to our connections to be correct -- called after reorganizing the order of connections within this group
+  INIMPL void   FixConPtrs_RecvOwns(NETWORK_STATE* net, int st_idx);
+  // #IGNORE only for sending cons that own the connections: fix all the pointer connections to our connections to be correct -- called after reorganizing the order of connections within this group
 
   INLINE float  VecChunkPct()
   {  if(size > 0) return (float)vec_chunked_size / (float)size; return 0.0f; }
-  // #CAT_Structure return percent of our cons that are vec chunked
+  // #CAT_State return percent of our cons that are vec chunked
 
-  INIMPL void  VecChunk_SendOwns(NETWORK_STATE* net, int* tmp_chunks, int* tmp_not_chunks,
+  INIMPL void   VecChunk_SendOwns(NETWORK_STATE* net, int* tmp_chunks, int* tmp_not_chunks,
                                  float* tmp_con_mem);
-  // #CAT_Structure chunks the connections in vectorizable units, for sender own case -- pass in our sending own unit, and temp scratch memory guaranteed to be >= alloc_size for doing the reorganization
-  INIMPL void  VecChunk_RecvOwns(NETWORK_STATE* net, int* tmp_chunks, int* tmp_not_chunks,
+  // #IGNORE chunks the connections in vectorizable units, for sender own case -- pass in our sending own unit, and temp scratch memory guaranteed to be >= alloc_size for doing the reorganization
+  INIMPL void   VecChunk_RecvOwns(NETWORK_STATE* net, int* tmp_chunks, int* tmp_not_chunks,
                                  float* tmp_con_mem);
-  // #CAT_Structure chunks the connections in vectorizable units, for recv own case -- pass in our recv own unit, and temp scratch memory guaranteed to be >= alloc_size for doing the reorganization
+  // #IGNORE chunks the connections in vectorizable units, for recv own case -- pass in our recv own unit, and temp scratch memory guaranteed to be >= alloc_size for doing the reorganization
 
-  INIMPL int   VecChunk_impl(int* tmp_chunks, int* tmp_not_chunks,
-                              float* tmp_con_mem);
+  INIMPL int    VecChunk_impl(int* tmp_chunks, int* tmp_not_chunks, float* tmp_con_mem);
   // #IGNORE impl -- returns first_change index for fixing con ptrs, and sets vec_chunked_size -- chunks the connections in vectorizable units, for sender own case -- gets our sending own unit, and temp scratch memory guaranteed to be >= alloc_size for doing the reorganization
 
   INIMPL float& SafeCn(NETWORK_STATE* net, int idx, int var_no) const;
@@ -426,6 +384,7 @@
    int n_con_vr = 0, int oth_idx=0) {
     own_flat_idx = own_flt_idx;    own_thr_idx = own_th_idx;    spec_idx = spec_dx;
     flags = (ConStateFlags)flgs;    prjn_idx = prj_dx;    alloc_size = 0;
-    size = 0;    vec_chunked_size = 0;    other_idx = oth_idx;    n_con_vars = n_con_vr;
-    share_idx = -1;  mem_idx = 0;    cnmem_idx = 0;    mem_start = 0;  cnmem_start = 0; temp1 = 0.0f;
+    size = 0;    vec_chunked_size = 0;  other_idx = oth_idx;   n_con_vars = n_con_vr;
+    un_lo_idx = -1; un_hi_idx = -1; share_idx = -1;
+    mem_idx = 0;    cnmem_idx = 0;    mem_start = 0;  cnmem_start = 0; temp1 = 0.0f;
   }

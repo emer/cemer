@@ -551,10 +551,12 @@
   // #IGNORE second pass of connecting -- allocate all the memory for all the connections -- get the total sizes needed
   INIMPL virtual void Connect_Alloc_Thr(int thr_no);
   // #IGNORE second pass of connecting -- dole out the allocated memory to con groups
-  INIMPL virtual void CacheMemStart_Thr(int thr_no);
+  INIMPL virtual void Connect_CacheMemStart_Thr(int thr_no);
   // #IGNORE cache connection memory start pointers -- after allocating but before connecting
   INIMPL virtual void Connect_Cons();
   // #IGNORE third pass of connecting -- actually make the connections -- done by projection specs
+  INIMPL virtual void Connect_CacheUnitLoHiIdxs_Thr(int thr_no);
+  // #IGNORE optimize searching for unit connections by caching the low and high unit indexes for connections
   INIMPL virtual void Connect_VecChunk_Thr(int thr_no);
   // #IGNORE fourth pass of connecting -- organize connections into optimal vectorizable chunks
   INIMPL virtual void AllocConnectionMem();

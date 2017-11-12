@@ -305,15 +305,19 @@ public:
   // #MENU #CAT_Structure set unit names from unit names table column (string matrix with one row) -- max_unit_chars is max length of name to apply to unit (-1 = all)
   virtual void  GetLocalistName();
   // #EXPERT #CAT_Structure look for a receiving projection from a single unit, which has a name: if found, set our unit name to that name (also sets unit_names)
-  virtual int   FindUnitNamedIdx(const String& nm, bool err = true);
+  virtual int   FindUnitNamedIdx(const String& nm, bool err = true) const;
   // #CAT_Structure look in unit_names for given name -- returns flat index of the corresponding unit in the layer if err = true, issues an error if not found
-  virtual UnitState_cpp* FindUnitNamed(const String& nm, bool err = true);
+  virtual UnitState_cpp* FindUnitNamed(const String& nm, bool err = true) const;
   // #CAT_Structure look in unit_names for given name -- returns flat index of the corresponding unit in the layer if err = true, issues an error if not found
 
-  virtual String GetUnitNameIdx(int un_idx);
+  virtual String GetUnitNameIdx(int un_idx) const;
   // #CAT_Structure get name for given unit index within layer
-  virtual String GetUnitName(UnitState_cpp* un);
+  virtual String GetUnitName(UnitState_cpp* un) const;
   // #CAT_Structure get name for given unit
+  virtual void   SetUnitNameIdx(int un_idx, const String& nm);
+  // #CAT_Structure set name for given unit index within layer -- turns on unit name saving if not otherwise engaged yet
+  virtual void   SetUnitName(UnitState_cpp* un, const String& nm);
+  // #CAT_Structure set name for given unit
 
   virtual void  TransformWeights(const SimpleMathSpec& trans);
   // #MENU #MENU_ON_State #CAT_Learning apply given transformation to weights -- must call Init_Weights_post at network level after running this!
@@ -358,23 +362,23 @@ public:
   inline UnitSpec* GetMainUnitSpec() const { return unit_spec.SPtr(); }
   // #CAT_Structure get the unit spec for this unit -- this is controlled entirely by the layer and all units in the layer have the same unit spec
 
-  inline UnitState_cpp* GetUnitIdx(int un_idx) const
-  { NetworkState_cpp* net = GetValidNetState(); if(net) return GetUnitStateSafe(net, un_idx); return NULL; }
+  inline Unit* GetUnitIdx(int un_idx) const
+  { NetworkState_cpp* net = GetValidNetState(); if(net) return (Unit*)GetUnitStateSafe(net, un_idx); return NULL; }
   // #CAT_Access get unit state at given unit index (0..n_units) -- preferred Program interface as no NetworkState arg is required
-  inline UnitState_cpp* GetUnitFlatXY(int flat_x, int flat_y) const
-  { NetworkState_cpp* net = GetValidNetState(); if(net) return GetUnitStateFlatXY(net, flat_x, flat_y); return NULL; }
+  inline Unit* GetUnitFlatXY(int flat_x, int flat_y) const
+  { NetworkState_cpp* net = GetValidNetState(); if(net) return (Unit*)GetUnitStateFlatXY(net, flat_x, flat_y); return NULL; }
   // #CAT_Access get unit state at given flat X,Y coordinates -- preferred Program interface as no NetworkState arg is required
-  inline UnitState_cpp* GetUnitGpUnIdx(int gp_idx, int un_idx) const
-  { NetworkState_cpp* net = GetValidNetState(); if(net) return GetUnitStateGpUnIdx(net, gp_idx, un_idx); return NULL; }
+  inline Unit* GetUnitGpUnIdx(int gp_idx, int un_idx) const
+  { NetworkState_cpp* net = GetValidNetState(); if(net) return (Unit*)GetUnitStateGpUnIdx(net, gp_idx, un_idx); return NULL; }
   // #CAT_Access get unit state at given group and unit indexes -- preferred Program interface as no NetworkState arg is required
-  inline UnitState_cpp* GetUnitGpXYUnIdx(int gp_x, int gp_y, int un_idx) const
-  { NetworkState_cpp* net = GetValidNetState(); if(net) return GetUnitStateGpXYUnIdx(net, gp_x, gp_y, un_idx); return NULL; }
+  inline Unit* GetUnitGpXYUnIdx(int gp_x, int gp_y, int un_idx) const
+  { NetworkState_cpp* net = GetValidNetState(); if(net) return (Unit*)GetUnitStateGpXYUnIdx(net, gp_x, gp_y, un_idx); return NULL; }
   // #CAT_Access get the unit state at given group X,Y coordinate and unit indexes -- preferred Program interface as no NetworkState arg is required
-  inline UnitState_cpp* GetUnitGpIdxUnXY(int gp_idx, int un_x, int un_y) const
-  { NetworkState_cpp* net = GetValidNetState(); if(net) return GetUnitStateGpIdxUnXY(net, gp_idx, un_x, un_y); return NULL; }
+  inline Unit* GetUnitGpIdxUnXY(int gp_idx, int un_x, int un_y) const
+  { NetworkState_cpp* net = GetValidNetState(); if(net) return (Unit*)GetUnitStateGpIdxUnXY(net, gp_idx, un_x, un_y); return NULL; }
   // #CAT_Access get the unit state at given group index and unit X,Y coordinate -- preferred Program interface as no NetworkState arg is required
-  inline UnitState_cpp* GetUnitGpUnXY(int gp_x, int gp_y, int un_x, int un_y) const
-  { NetworkState_cpp* net = GetValidNetState(); if(net) return GetUnitStateGpUnXY(net, gp_x, gp_y, un_x, un_y); return NULL;  }
+  inline Unit* GetUnitGpUnXY(int gp_x, int gp_y, int un_x, int un_y) const
+  { NetworkState_cpp* net = GetValidNetState(); if(net) return (Unit*)GetUnitStateGpUnXY(net, gp_x, gp_y, un_x, un_y); return NULL;  }
   // #CAT_Access get the unit state at given group X,Y and unit X,Y coordinates -- preferred Program interface as no NetworkState arg is required
 
   virtual bool EditState();
@@ -392,7 +396,7 @@ public:
   // #BUTTON #DYN1 #CAT_Statistic monitor (record in a datatable) the given variable on this layer (can be a variable on the units or connections -- in which case a matrix with a value for each will be created -- e.g., 'act' will monitor activations of all units within the layer)
   virtual bool  Snapshot(const String& variable, SimpleMathSpec& math_op, bool arg_is_snap=true);
   // #BUTTON #CAT_Statistic take a snapshot of given variable: assign snap value on unit to given variable value, optionally using simple math operation on that value.  if arg_is_snap is true, then the 'arg' argument to the math operation is the current value of the snap variable.  for example, to compute intersection of variable with snap value, use MIN and arg_is_snap.
-  virtual UnitState_cpp* MostActiveUnit(int& idx);
+  Unit*         MostActiveUnit(int& idx) const;
   // #CAT_Statistic Return the unit with the highest activation (act) value -- index of unit is returned in idx
 
   virtual void  Lesion();

@@ -54,7 +54,29 @@ public:
  
   String        minus_output_name;    // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW name for the output produced by the network in the minus phase -- for recording in logs as network's response (output_name in plus phase is clamped target value)
 
+  inline LeabraUnit* GetUnitIdx(int un_idx) const
+  { return (LeabraUnit*)inherited::GetUnitIdx(un_idx); }
+  // #CAT_Access get unit state at given unit index (0..n_units) -- preferred Program interface as no NetworkState arg is required
+  inline LeabraUnit* GetUnitFlatXY(int flat_x, int flat_y) const
+  { return (LeabraUnit*)inherited::GetUnitFlatXY(flat_x, flat_y);  }
+  // #CAT_Access get unit state at given flat X,Y coordinates -- preferred Program interface as no NetworkState arg is required
+  inline LeabraUnit* GetUnitGpUnIdx(int gp_idx, int un_idx) const
+  { return (LeabraUnit*)inherited::GetUnitGpUnIdx(gp_idx, un_idx); }
+  // #CAT_Access get unit state at given group and unit indexes -- preferred Program interface as no NetworkState arg is required
+  inline LeabraUnit* GetUnitGpXYUnIdx(int gp_x, int gp_y, int un_idx) const
+  { return (LeabraUnit*)inherited::GetUnitGpXYUnIdx(gp_x, gp_y, un_idx); }
+  // #CAT_Access get the unit state at given group X,Y coordinate and unit indexes -- preferred Program interface as no NetworkState arg is required
+  inline LeabraUnit* GetUnitGpIdxUnXY(int gp_idx, int un_x, int un_y) const
+  { return (LeabraUnit*)inherited::GetUnitGpIdxUnXY(gp_idx, un_x, un_y); }
+  // #CAT_Access get the unit state at given group index and unit X,Y coordinate -- preferred Program interface as no NetworkState arg is required
+  inline LeabraUnit* GetUnitGpUnXY(int gp_x, int gp_y, int un_x, int un_y) const
+  { return (LeabraUnit*)inherited::GetUnitGpUnXY(gp_x, gp_y, un_x, un_y);  }
+  // #CAT_Access get the unit state at given group X,Y and unit X,Y coordinates -- preferred Program interface as no NetworkState arg is required
+  inline LeabraUnit*  MostActiveUnit(int& idx) const
+  { return (LeabraUnit*)inherited::MostActiveUnit(idx); }
+  // #CAT_Statistic Return the unit with the highest activation (act) value -- index of unit is returned in idx
 
+  
 #ifdef DMEM_COMPILE
   DMemAggVars	dmem_agg_sum;		// #IGNORE aggregation of network variables using SUM op (currently only OP in use -- add others as needed)
   virtual void 	DMem_InitAggs();

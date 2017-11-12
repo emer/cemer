@@ -43,13 +43,13 @@ public:
 
 #include <ScalarValLayerSpec>
   
-  // virtual void	LabelUnits(LeabraLayer* lay, LeabraNetwork* net);
-  // // #CAT_ScalarVal label units in given layer with their underlying values
-  //   virtual void LabelUnits_ugp(LeabraLayer* lay, LeabraNetwork* net,
-  //                               Layer::AccessMode acc_md, int gpidx);
-  //   // #CAT_ScalarVal label units with their underlying values
-  // virtual void	LabelUnitsNet(LeabraNetwork* net);
-  // // #BUTTON #CAT_ScalarVal label all layers in given network using this spec
+  virtual void	LabelUnits(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net);
+  // #CAT_ScalarVal label units in given layer with their underlying values
+    virtual void LabelUnits_ugp(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net,
+                                int gpidx);
+    // #CAT_ScalarVal label units with their underlying values
+  virtual void	LabelUnitsNet();
+  // #BUTTON #CAT_ScalarVal label all layers in given network using this spec
 
   // void Compute_OutputName(LeabraLayer* lay, LeabraNetwork* net) override;
   

@@ -13,6 +13,8 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
+#include "ConState_cpp.h"
+
 #include <Network>
 #include <Projection>
 #include <NetMonitor>
@@ -30,7 +32,9 @@
 
 #include "ta_vector_ops.h"
 
-#include "ConState_cpp.h"
+// these are the essential includes for _core.cpp
+#include <UnitState_cpp>
+#include <ConSpec_cpp>
 
 #include "ConState_core.cpp"
 
