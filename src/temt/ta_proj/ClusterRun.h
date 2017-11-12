@@ -221,6 +221,8 @@ public:
   void SortClusterInfoTable();
   // #IGNORE sort the cluster_info table putting user's jobs and summary info at the top
 
+  virtual void  Run_impl(bool prompt_user, bool autoupdate);
+  // Run this model on a cluster using the parameters as specified here -- commits project file to repository -- if cur_search_algo is selected then this will launch a parameter search process -- otherwise it will just run with current parameters. Specifies if the user should be prompted for changing the cluster run parameters and if there should be an update afterwards.
   // statics -- should move to a more central location 
 
   static void AddParamsToTable(DataTable* dat, 

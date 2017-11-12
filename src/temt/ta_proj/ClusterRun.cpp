@@ -186,12 +186,16 @@ ParamSearchAlgo* ClusterRun::NewSearchAlgo(TypeDef *type) {
 }
 
 void ClusterRun::Run() {
+  bool prompt_user = true;      // always prompt the user on a new run.
+  Run_impl(prompt_user, true);
+}
+
+void ClusterRun::Run_impl(bool prompt_user, bool autoupdate) {
   if(!InitClusterManager())
     return;
   Update(); //Update the SVN repository in the background
   FormatTables();               // ensure tables are formatted properly
   jobs_submit.ResetData();      // clear the submission table
-  bool prompt_user = true;      // always prompt the user on a new run.
   if (m_cm->BeginSearch(prompt_user)) {
     // Get revisions of the committed project and jobs_submit.dat files.
     String wc_proj = m_cm->GetWcProjFilename();
@@ -208,7 +212,9 @@ void ClusterRun::Run() {
       cur_svn_rev = submit_rev;
       // move them over to submitted now!
       taDataProc::AppendRows(&jobs_submitted, &jobs_submit);
-      AutoUpdateMe();
+      if (autoupdate) {
+        AutoUpdateMe();
+      }
     }
   }
 }
