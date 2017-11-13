@@ -234,6 +234,7 @@ void Layer::InitLinks() {
 
 #ifdef DMEM_COMPILE
   taBase::Own(dmem_agg_sum, this);
+  dmem_agg_sum.agg_op = MPI_SUM;
 #endif
 }
 
@@ -1855,6 +1856,7 @@ void Layer::DMem_InitAggs() {
   if(!net) return;
   LayerState_cpp* lst = GetLayerState(net);
   if(!lst) return;
+  dmem_agg_sum.agg_op = MPI_SUM;
   dmem_agg_sum.ScanMembers(own_net->LayerStateType(), (void*)lst);
   dmem_agg_sum.CompileVars();
 }

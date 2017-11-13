@@ -184,6 +184,10 @@ void Network::Initialize() {
   proj = NULL;
 
   spec_tables.save_tables = false;     // don't save -- prevents project bloat
+  
+#ifdef DMEM_COMPILE
+  dmem_agg_sum.agg_op = MPI_SUM;
+#endif
 }
 
 void Network::Destroy() {
@@ -231,6 +235,7 @@ void Network::InitLinks() {
   taBase::Own(dmem_trl_comm, this);
   taBase::Own(dmem_agg_sum, this);
   dmem_trl_comm.CommAll();
+  dmem_agg_sum.agg_op = MPI_SUM;
 #endif
 
   n_threads = taMisc::thread_defaults.n_threads;
@@ -1907,6 +1912,7 @@ void Network::DMem_UpdtWtUpdt() {
 }
 
 void Network::DMem_InitAggs() {
+  dmem_agg_sum.agg_op = MPI_SUM;
   dmem_agg_sum.ScanMembers(NetworkStateType(), (void*)net_state);
   dmem_agg_sum.CompileVars();
 }

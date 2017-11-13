@@ -84,6 +84,8 @@ void Projection::InitLinks() {
   taBase::Own(spec, this);
   taBase::Own(con_spec, this);
   taBase::Own(prjn_clr, this);
+  taBase::Own(prjn_clr, this);
+  
   Network* mynet = GET_MY_OWNER(Network);
   if(mynet) {
     mynet->ClearIntact();
@@ -100,6 +102,11 @@ void Projection::InitLinks() {
   }
   spec.SetDefaultSpec(this);
   con_spec.SetDefaultSpec(this);
+  
+#ifdef DMEM_COMPILE
+  taBase::Own(dmem_agg_sum, this);
+  dmem_agg_sum.agg_op = MPI_SUM;
+#endif
 }
 
 void Projection::Copy_(const Projection& cp) {
@@ -201,6 +208,7 @@ void Projection::DMem_InitAggs() {
   if(!mynet) return;
   PrjnState_cpp* pst = GetPrjnState(net);
   if(!pst) return;
+  dmem_agg_sum.agg_op = MPI_SUM;
   dmem_agg_sum.ScanMembers(mynet->PrjnStateType(), (void*)pst);
   dmem_agg_sum.CompileVars();
 }
