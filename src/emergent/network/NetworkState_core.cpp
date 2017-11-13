@@ -627,9 +627,9 @@ float NETWORK_STATE::Compute_SSE_Layer(LAYER_STATE* lay, int& n_vals, bool unit_
   if(sqrt) {
     sse_val = sqrtf(sse_val);
   }
-  avg_sse.Increment(sse_val);
+  lay->avg_sse.Increment(sse_val);
   if(sse_val > stats.cnt_err_tol)
-    cur_cnt_err += 1.0;
+    lay->cur_cnt_err += 1.0;
   if(lay->HasLayerFlag(LAYER_STATE::NO_ADD_SSE) ||
      (lay->HasExtFlag(LAYER_STATE::COMP) && lay->HasLayerFlag(LAYER_STATE::NO_ADD_COMP_SSE))) {
     rval = 0.0f;

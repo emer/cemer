@@ -1950,6 +1950,8 @@ void Network::DMem_ComputeAggs(MPI_Comm comm) {
     Layer* mlay = LayerFromState(lay);
     mlay->DMem_ComputeAggs(comm);
   }
+
+  // todo: and need to do projections for leabra!
 }
 
 #endif  // DMEM
