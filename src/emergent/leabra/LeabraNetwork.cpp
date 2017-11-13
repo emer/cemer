@@ -448,6 +448,10 @@ void LeabraNetwork::Compute_PlusStats() {
 
 void LeabraNetwork::Compute_EpochStats() {
   SyncAllState();
+#ifdef DMEM_COMPILE
+  DMem_ComputeAggs(dmem_trl_comm.comm);
+#endif
+
   NET_STATE_RUN(LeabraNetworkState, Compute_EpochStats());
   SyncAllState();
   SyncPrjnState();
@@ -469,8 +473,8 @@ void LeabraNetwork::DMem_ComputeAggs(MPI_Comm comm) {
     mlay->DMem_ComputeAggs(comm);
 
     for(int pi=0; pi < mlay->projections.size; pi++) {
-      LeabraPrjn* prjn = (LeabraPrjn*)lay->projections[pi];
-      if(prjn->NotActive()) continue;
+      LeabraPrjn* prjn = (LeabraPrjn*)mlay->projections[pi];
+      if(prjn->NotActive(net_state)) continue;
       prjn->DMem_ComputeAggs(comm);
     }
   }

@@ -263,6 +263,9 @@ public:
   virtual void  Compute_EpochWeights();
   // #CAT_Learning perform any epoch-level weight updates or adjustments..
 
+#ifdef DMEM_COMPILE
+  void  DMem_ComputeAggs(MPI_Comm comm) override;
+#endif
   
   NetworkState_cpp* NewNetworkState() const override;
   TypeDef* NetworkStateType() const override;

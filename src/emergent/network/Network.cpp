@@ -676,6 +676,7 @@ void  Network::Compute_EpochPRerr() {
 }
 
 void Network::Compute_EpochStats() {
+  SyncAllState();
 #ifdef DMEM_COMPILE
   DMem_ComputeAggs(dmem_trl_comm.comm);
 #endif
