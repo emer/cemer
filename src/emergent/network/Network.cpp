@@ -231,7 +231,6 @@ void Network::InitLinks() {
   taBase::Own(dmem_trl_comm, this);
   taBase::Own(dmem_agg_sum, this);
   dmem_trl_comm.CommAll();
-  DMem_InitAggs();
 #endif
 
   n_threads = taMisc::thread_defaults.n_threads;
@@ -676,15 +675,15 @@ void  Network::Compute_EpochPRerr() {
 }
 
 void Network::Compute_EpochStats() {
-  SyncAllState();
 #ifdef DMEM_COMPILE
   DMem_ComputeAggs(dmem_trl_comm.comm);
 #endif
 
   NET_STATE_RUN(NetworkState, Compute_EpochStats());
+  SyncAllState();
+  SyncPrjnState();
 
   SaveWeights_ClusterRunCmd();  // check for cluster commands!
-  SyncAllState();
 }
 
 
@@ -742,6 +741,10 @@ void Network::BuildNetState() {
   net_state_sync.ParseTypes(GetTypeDef(), NetworkStateType());
   layer_state_sync.ParseTypes(layers.el_typ, LayerStateType());
 
+#ifdef DMEM_COMPILE
+  DMem_InitAggs();              // this references the network state, so do it here..
+#endif
+  
   SyncNetState();
 }
 
@@ -1099,6 +1102,10 @@ void Network::BuildLayerState_FromNet() {
 
     lst->SetLayerName(lay->name);
     
+#ifdef DMEM_COMPILE
+    lay->DMem_InitAggs(); // this references the network state, so do it here..
+#endif
+    
     LayerSpec* ls = lay->GetMainLayerSpec();
     if(ls) {
       ls->Init_LayerState(lst, net_state);
@@ -1161,6 +1168,10 @@ void Network::BuildLayerState_FromNet() {
       (prjn->off, prjn->MainNotActive(), i, recv_lay->layer_idx, send_lay->layer_idx, prjn->send_prjn_idx,
        prjn->recv_idx, prjn->send_idx, prjn->spec_idx, cs->spec_idx, prjn->con_type->members.size);
     ps->Init_PrjnState(pst, net_state);
+
+#ifdef DMEM_COMPILE
+    prjn->DMem_InitAggs(); // this references the network state, so do it here..
+#endif
   }
 }
 
@@ -1896,7 +1907,7 @@ void Network::DMem_UpdtWtUpdt() {
 }
 
 void Network::DMem_InitAggs() {
-  dmem_agg_sum.ScanMembers(GetTypeDef(), (void*)this);
+  dmem_agg_sum.ScanMembers(NetworkStateType(), (void*)net_state);
   dmem_agg_sum.CompileVars();
 }
 
@@ -1967,12 +1978,18 @@ void Network::DMem_SumDWts(MPI_Comm comm) {
 void Network::DMem_ComputeAggs(MPI_Comm comm) {
   dmem_agg_sum.AggVar(comm, MPI_SUM);
 
-  // also need to do layers here 
+  // also need to do layers and projections
   for(int li=0; li < n_layers_built; li++) {
     LayerState_cpp* lay = GetLayerState(li);
     if(lay->lesioned()) continue;
     Layer* mlay = LayerFromState(lay);
     mlay->DMem_ComputeAggs(comm);
+    
+    for(int pi=0; pi < mlay->projections.size; pi++) {
+      Projection* prjn = mlay->projections[pi];
+      if(prjn->NotActive(net_state)) continue;
+      prjn->DMem_ComputeAggs(comm);
+    }
   }
 }
 

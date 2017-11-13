@@ -257,16 +257,10 @@ public:
   virtual void  Compute_PlusStats();
   // #CAT_Statistic compute the stats that should be computed at the end of the plus phase: all the error stats: SSE, PRerr, NormErr, CosErr, ExtRew -- typically call this using Compute_PhaseStats which does the appropriate call given the current network phase
 
-  void	Compute_EpochStats() override;
-  // #CAT_Statistic compute epoch-level statistics, including SSE, AvgExtRew and AvgCycles
-
   virtual void  Compute_EpochWeights();
   // #CAT_Learning perform any epoch-level weight updates or adjustments..
 
-#ifdef DMEM_COMPILE
-  void  DMem_ComputeAggs(MPI_Comm comm) override;
-#endif
-  
+
   NetworkState_cpp* NewNetworkState() const override;
   TypeDef* NetworkStateType() const override;
   TypeDef* LayerStateType() const override;

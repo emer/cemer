@@ -21,11 +21,6 @@ TA_BASEFUNS_CTORS_DEFN(LeabraPrjn);
 
 void LeabraPrjn::Initialize() {
   Initialize_core();
-  
-#ifdef DMEM_COMPILE
-  dmem_agg_sum.agg_op = MPI_SUM;
-  DMem_InitAggs();
-#endif
 }
 
 void LeabraPrjn::Destroy() {
@@ -40,12 +35,3 @@ void LeabraPrjn::CheckInhibCons(LeabraNetwork* net) {
   }
 }
 
-#ifdef DMEM_COMPILE
-void LeabraPrjn::DMem_InitAggs() {
-  dmem_agg_sum.ScanMembers(GetTypeDef(), (void*)this);
-  dmem_agg_sum.CompileVars();
-}
-void LeabraPrjn::DMem_ComputeAggs(MPI_Comm comm) {
-  dmem_agg_sum.AggVar(comm, MPI_SUM);
-}
-#endif

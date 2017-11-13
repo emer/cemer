@@ -45,6 +45,9 @@ void Projection::Initialize() {
   direction = DIR_UNKNOWN;
   m_prv_con_spec = NULL;
   prjn_clr.Set(1.0f, .9f, .5f); // very light orange
+#ifdef DMEM_COMPILE
+  dmem_agg_sum.agg_op = MPI_SUM;
+#endif
 }
 
 void Projection::Destroy(){
@@ -188,6 +191,26 @@ bool Projection::ChangeMyType(TypeDef* new_typ) {
   }
   return inherited::ChangeMyType(new_typ);
 }
+
+#ifdef DMEM_COMPILE
+
+void Projection::DMem_InitAggs() {
+  NetworkState_cpp* net = GetValidNetState();
+  if(!net) return;
+  Network* mynet = layer->own_net;
+  if(!mynet) return;
+  PrjnState_cpp* pst = GetPrjnState(net);
+  if(!pst) return;
+  dmem_agg_sum.ScanMembers(mynet->PrjnStateType(), (void*)pst);
+  dmem_agg_sum.CompileVars();
+}
+
+void Projection::DMem_ComputeAggs(MPI_Comm comm) {
+  dmem_agg_sum.AggVar(comm, MPI_SUM);
+}
+
+#endif
+
 
 void Projection::ToggleOff() {
   off = !off;

@@ -21,7 +21,6 @@
 #include <Projection>
 
 // member includes:
-#include <DMemAggVars>
 
 // declare all other types mentioned but not required to include:
 class LeabraNetwork; //
@@ -40,14 +39,6 @@ public:
   
   virtual void	CheckInhibCons(LeabraNetwork* net);
   // #CAT_Structure check for inhibitory connections -- sets flag on network
-
-#ifdef DMEM_COMPILE
-  DMemAggVars	dmem_agg_sum;		// #IGNORE aggregation of network variables using SUM op (currently only OP in use -- add others as needed)
-  virtual void 	DMem_InitAggs();
-  // #IGNORE initialize aggregation stuff
-  virtual void	DMem_ComputeAggs(MPI_Comm comm);
-  // #IGNORE aggregate network variables across procs for trial-level dmem 
-#endif
 
   TA_BASEFUNS(LeabraPrjn);
   SIMPLE_COPY(LeabraPrjn);

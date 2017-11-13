@@ -162,7 +162,9 @@ void DMemAggVars::AggVar(MPI_Comm cm, MPI_Op op) {
     taMisc::Error("ERROR: DMemAggVars::AggVar -- no default agg op!");
     return;
   }
-
+  
+  if(types.size == 0) return;
+  
   for(int i=0; i< types.size; i++)  {
     MPI_Datatype mpi_type = types[i];
     if (mpi_type == MPI_FLOAT) {

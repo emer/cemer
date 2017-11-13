@@ -234,7 +234,6 @@ void Layer::InitLinks() {
 
 #ifdef DMEM_COMPILE
   taBase::Own(dmem_agg_sum, this);
-  DMem_InitAggs();
 #endif
 }
 
@@ -1852,7 +1851,11 @@ bool Layer::LoadWeights(const String& fname, bool quiet) {
 #ifdef DMEM_COMPILE
 
 void Layer::DMem_InitAggs() {
-  dmem_agg_sum.ScanMembers(GetTypeDef(), (void*)this);
+  NetworkState_cpp* net = GetValidNetState();
+  if(!net) return;
+  LayerState_cpp* lst = GetLayerState(net);
+  if(!lst) return;
+  dmem_agg_sum.ScanMembers(own_net->LayerStateType(), (void*)lst);
   dmem_agg_sum.CompileVars();
 }
 

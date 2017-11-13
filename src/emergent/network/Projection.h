@@ -28,6 +28,7 @@
 #include <Random>
 #include <SimpleMathSpec>
 #include <Relation>
+#include <DMemAggVars>
 
 // declare all other types mentioned but not required to include:
 class DataTable; //
@@ -71,6 +72,14 @@ public:
   bool                  dir_fixed;      // fix the direction setting to specific value shown below (cannot fix DIR_UNKNOWN) -- otherwise it is automatically computed based on the layer_type settings
   PrjnDirection         direction;      // #CAT_Structure #NO_DIFF #CONDEDIT_ON_dir_fixed which direction does this projection go (in terms of distance from input and output layers) -- auto computed by Compute_PrjnDirection when network is built, or you can manually set, but be sure to set dir_fixed to keep that setting; optionally used by only some algorithms
   taColor               prjn_clr;       // #CAT_Structure Default color for the projection line and arrow (subservient to the Type-defined color, if applicable)
+#ifdef DMEM_COMPILE
+  DMemAggVars	dmem_agg_sum;		// #IGNORE aggregation of network variables using SUM op (currently only OP in use -- add others as needed)
+  virtual void 	DMem_InitAggs();
+  // #IGNORE initialize aggregation stuff
+  virtual void	DMem_ComputeAggs(MPI_Comm comm);
+  // #IGNORE aggregate network variables across procs for trial-level dmem 
+#endif
+
 
   inline bool           MainIsActive()      { return ((bool)layer && !off && !lesioned && (bool)from); }
   // #CAT_Structure active test that works for main code -- before net state is built..

@@ -446,40 +446,9 @@ void LeabraNetwork::Compute_PlusStats() {
   SyncAllState();
 }
 
-void LeabraNetwork::Compute_EpochStats() {
-  SyncAllState();
-#ifdef DMEM_COMPILE
-  DMem_ComputeAggs(dmem_trl_comm.comm);
-#endif
-
-  NET_STATE_RUN(LeabraNetworkState, Compute_EpochStats());
-  SyncAllState();
-  SyncPrjnState();
-}
-
 void LeabraNetwork::Compute_EpochWeights() {
   NET_STATE_RUN(LeabraNetworkState, Compute_EpochWeights());
 }
-
-#ifdef DMEM_COMPILE
-void LeabraNetwork::DMem_ComputeAggs(MPI_Comm comm) {
-  dmem_agg_sum.AggVar(comm, MPI_SUM);
-
-  // also need to do layers and projections for leabra
-  for(int li=0; li < n_layers_built; li++) {
-    LeabraLayerState_cpp* lay = (LeabraLayerState_cpp*)GetLayerState(li);
-    if(lay->lesioned()) continue;
-    LeabraLayer* mlay = (LeabraLayer*)LayerFromState(lay);
-    mlay->DMem_ComputeAggs(comm);
-
-    for(int pi=0; pi < mlay->projections.size; pi++) {
-      LeabraPrjn* prjn = (LeabraPrjn*)mlay->projections[pi];
-      if(prjn->NotActive(net_state)) continue;
-      prjn->DMem_ComputeAggs(comm);
-    }
-  }
-}
-#endif
 
 
 /////////////////////////////////////////////////////////////////////////////////////
