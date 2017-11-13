@@ -973,10 +973,6 @@ public:
   // #IGNORE initialize aggregation stuff
   virtual void  DMem_SumDWts(MPI_Comm comm);
   // #IGNORE sync weights across trial-level dmem by summing delta-weights across processors (prior to computing weight updates)
-  virtual void  DMem_SumDWts_ToTmp_Thr(int thr_no);
-  // #IGNORE copy to temp send buffer for sending, per thread
-  virtual void  DMem_SumDWts_FmTmp_Thr(int thr_no);
-  // #IGNORE copy from temp recv buffer, per thread
   virtual void  DMem_ComputeAggs(MPI_Comm comm);
   // #IGNORE aggregate network and layer variables across procs for trial-level dmem
 #endif

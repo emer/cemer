@@ -183,10 +183,6 @@ void LeabraNetworkState_cpp::Compute_dWt() {
 }
 
 void LeabraNetworkState_cpp::Compute_Weights() {
-#ifdef DMEM_COMPILE
-  DMem_SumDWts(dmem_trl_comm.comm);
-#endif
-
   NET_THREAD_CALL(LeabraNetworkState_cpp::Compute_Weights_Thr);
   
   if(net_misc.wt_bal && (total_trials % times.wt_bal_int == 0)) {

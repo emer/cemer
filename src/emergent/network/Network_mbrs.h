@@ -702,16 +702,16 @@ public:
   }
   // initialize the seed based on given initializer
 
-  virtual void  DMem_Sync(MPI_Comm comm) {
-#ifdef DMEM_COMPILE
-    if(taMisc::dmem_nprocs <= 1)
-      return;
-    // just blast the first guy to all members of the same communicator
-    DMEM_MPICALL(MPI_Bcast(&rnd_seed, 1, MPI_INT, 0, comm),
-                 "Process::SyncAllSeeds", "Bcast");
-    OldSeed();            // then get my seed!
-#endif
-  }
+//   virtual void  DMem_Sync(MPI_Comm comm) {
+// #ifdef DMEM_COMPILE
+//     if(taMisc::dmem_nprocs <= 1)
+//       return;
+//     // just blast the first guy to all members of the same communicator
+//     DMEM_MPICALL(MPI_Bcast(&rnd_seed, 1, MPI_INT, 0, comm),
+//                  "Process::SyncAllSeeds", "Bcast");
+//     OldSeed();            // then get my seed!
+// #endif
+//   }
   // #IGNORE synchronize seeds across all procs -- uses the first proc's seed
 
   STATE_CLASS(RndSeed)() { Initialize(); }

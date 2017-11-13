@@ -1589,7 +1589,6 @@ void NETWORK_STATE::Initialize_core()  {
   all_dmem_sum_dwts_size = 0;
   thrs_dmem_sum_dwts_send = NULL;
   thrs_dmem_sum_dwts_recv = NULL;
-  dmem_agg_sum.agg_op = MPI_SUM;
 #endif
 }
 

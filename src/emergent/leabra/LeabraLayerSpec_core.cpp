@@ -139,9 +139,6 @@ void LEABRA_LAYER_SPEC::Compute_AbsRelNetin(LEABRA_LAYER_STATE* lay, LEABRA_NETW
 }
 
 void LEABRA_LAYER_SPEC::Compute_AvgAbsRelNetin(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
-#ifdef DMEM_COMPILE
-  lay->DMem_ComputeAggs(net->dmem_trl_comm.comm);
-#endif
   if(lay->avg_netin_n > 0) {
     lay->avg_netin.avg = lay->avg_netin_sum.avg / (float)lay->avg_netin_n;
     lay->avg_netin.max = lay->avg_netin_sum.max / (float)lay->avg_netin_n;
@@ -152,9 +149,6 @@ void LEABRA_LAYER_SPEC::Compute_AvgAbsRelNetin(LEABRA_LAYER_STATE* lay, LEABRA_N
   for(int i = 0; i < lay->n_recv_prjns; i++) {
     LEABRA_PRJN_STATE* prjn = (LEABRA_PRJN_STATE*)lay->GetRecvPrjnState(net, i);
     if(prjn->NotActive(net)) continue;
-#ifdef DMEM_COMPILE
-    prjn->DMem_ComputeAggs(net->dmem_trl_comm.comm);
-#endif
     if(prjn->avg_netin_n > 0) {
       prjn->avg_netin_avg = prjn->avg_netin_avg_sum / (float)prjn->avg_netin_n;
       prjn->avg_netin_rel = prjn->avg_netin_rel_sum / (float)prjn->avg_netin_n;

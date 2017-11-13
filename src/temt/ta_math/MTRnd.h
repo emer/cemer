@@ -51,6 +51,10 @@
 // random number generators.   we've converted the original c code
 // into C++
 
+#ifdef DMEM_COMPILE
+#include <mpi.h>
+#endif
+
 #ifdef TA_OS_WIN
 # define _USE_MATH_DEFINES
 #else
