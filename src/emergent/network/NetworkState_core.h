@@ -58,7 +58,7 @@
   int*          thrs_own_cons_avg_size; // #IGNORE average size of any owning connection group, by thread -- for optimizing computation
   int*          thrs_own_cons_max_vars; // #IGNORE maximum NConVars of any owning connection group, by thread -- for allocating temp structures..
   float*        thrs_pct_cons_vec_chunked; // #IGNORE average percent of connections that are vector chunked (across owned projections and units), by thread
-  float         pct_cons_vec_chunked; // #NO_SAVE #READ_ONLY #EXPERT average percent of connections that are vector chunked (across owned projections and units)
+  float         pct_cons_vec_chunked; // #NO_SAVE #GUI_READ_ONLY #EXPERT average percent of connections that are vector chunked (across owned projections and units)
 
   int**         thrs_tmp_chunks;      // #IGNORE tmp con vec chunking memory
   int**         thrs_tmp_not_chunks;  // #IGNORE tmp con vec chunking memory
