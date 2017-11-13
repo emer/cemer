@@ -20,6 +20,7 @@
 #include <NetMonitor>
 #include <taFiler>
 #include <DataTable>
+#include <taiEdit>
 
 #include <ProjectionSpec_cpp>
 
@@ -323,6 +324,21 @@ bool Projection::SetConType(TypeDef* td) {
     layer->own_net->ClearIntact();
   }
   con_type = td;
+  return true;
+}
+
+bool Projection::EditState() {
+  if(!taMisc::gui_active) return false;
+  Network* own_net = GET_MY_OWNER(Network);
+  if(!own_net) return false;
+  NetworkState_cpp* net = GetValidNetState();
+  if(!net) return false;
+  
+  if (taiEdit *ie = own_net->PrjnStateType()->ie) {
+    PrjnState_cpp* pj = GetPrjnState(net);
+    if(!pj) return false;
+    return ie->Edit((void*)pj, false);
+  }
   return true;
 }
 

@@ -21,6 +21,9 @@
 // parent includes:
 #include <PrjnState_cpp>
 
+class LeabraLayerState_cpp; //
+class LeabraConSpec_cpp; //
+
 #include <State_cpp>
 
 // member includes:

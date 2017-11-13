@@ -24,10 +24,12 @@
 #include <DMemAggVars>
 
 // declare all other types mentioned but not required to include:
-class LeabraNetwork; // 
+class LeabraNetwork; //
+class LeabraPrjnState_cpp; //
+class LeabraLayerState_cpp; //
+class LeabraConSpec_cpp; //
 
 eTypeDef_Of(LeabraPrjn);
-
 
 class E_API LeabraPrjn: public Projection {
   // #STEM_BASE ##CAT_Leabra leabra specific projection -- has special variables at the projection-level

@@ -143,6 +143,9 @@ public:
   virtual bool  SetConType(TypeDef* td);
   // #BUTTON #DYN1 #CAT_Structure #TYPE_Connection #INIT_ARGVAL_ON_con_type set the connection type for all connections in this prjn
 
+  virtual bool EditState();
+  // #BUTTON edit the projection state object for this projection
+
   virtual bool EditConState(int unit_no, bool recv=true);
   // #BUTTON edit the connection state object containing connections for given unit, for this projection, for either recv or sending direction
 

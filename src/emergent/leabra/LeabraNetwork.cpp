@@ -322,6 +322,7 @@ void LeabraNetwork::Quarter_Compute_dWt() {
 void LeabraNetwork::Trial_Final() {
   Compute_AbsRelNetin();
   SyncAllState();
+  SyncPrjnState();
 }
 
 void LeabraNetwork::Compute_AbsRelNetin() {
@@ -353,15 +354,17 @@ void LeabraNetwork::LayerAvgAct(DataTable* report_table, LeabraLayerSpec* lay_sp
   DataCol* actp = report_table->FindMakeColName("acts_p_avg", idx, VT_FLOAT);
   DataCol* init = report_table->FindMakeColName("avg_act_init", idx, VT_FLOAT);
 
-  FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
+  for(int li=0; li < n_layers_built; li++) {
+    LeabraLayerState_cpp* lay = (LeabraLayerState_cpp*)GetLayerState(li);
     if(lay->lesioned()) continue;
-    LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->GetMainLayerSpec();
+    LeabraLayer* mlay = (LeabraLayer*)LayerFromState(lay);
+    LeabraLayerSpec* ls = (LeabraLayerSpec*)mlay->GetMainLayerSpec();
     if(lay_spec != NULL) {
       if(ls != lay_spec) continue;
     }
     LEABRA_UNGP_STATE* lgpd = (LEABRA_UNGP_STATE*)lay->GetLayUnGpState(net_state);
     report_table->AddBlankRow();
-    ln->SetValAsString(lay->name, -1);
+    ln->SetValAsString(mlay->name, -1);
     lsn->SetValAsString(ls->name, -1);
     actm->SetValAsFloat(lgpd->acts_m_avg, -1);
     actp->SetValAsFloat(lgpd->acts_p_avg, -1);
@@ -428,9 +431,11 @@ void LeabraNetwork::Compute_MinusStats() {
 
   NET_STATE_RUN(LeabraNetworkState, Compute_MinusStats());
 
-  FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
-    if(!lay->lesioned())
-      lay->minus_output_name = lay->output_name;
+  for(int li=0; li < n_layers_built; li++) {
+    LeabraLayerState_cpp* lay = (LeabraLayerState_cpp*)GetLayerState(li);
+    if(lay->lesioned()) continue;
+    LeabraLayer* mlay = (LeabraLayer*)LayerFromState(lay);
+    mlay->minus_output_name = mlay->output_name;
   }
   SyncAllState();
 }
@@ -445,12 +450,32 @@ void LeabraNetwork::Compute_EpochStats() {
   SyncAllState();
   NET_STATE_RUN(LeabraNetworkState, Compute_EpochStats());
   SyncAllState();
+  SyncPrjnState();
 }
 
 void LeabraNetwork::Compute_EpochWeights() {
   NET_STATE_RUN(LeabraNetworkState, Compute_EpochWeights());
 }
 
+#ifdef DMEM_COMPILE
+void LeabraNetwork::DMem_ComputeAggs(MPI_Comm comm) {
+  dmem_agg_sum.AggVar(comm, MPI_SUM);
+
+  // also need to do layers and projections for leabra
+  for(int li=0; li < n_layers_built; li++) {
+    LeabraLayerState_cpp* lay = (LeabraLayerState_cpp*)GetLayerState(li);
+    if(lay->lesioned()) continue;
+    LeabraLayer* mlay = (LeabraLayer*)LayerFromState(lay);
+    mlay->DMem_ComputeAggs(comm);
+
+    for(int pi=0; pi < mlay->projections.size; pi++) {
+      LeabraPrjn* prjn = (LeabraPrjn*)lay->projections[pi];
+      if(prjn->NotActive()) continue;
+      prjn->DMem_ComputeAggs(comm);
+    }
+  }
+}
+#endif
 
 
 /////////////////////////////////////////////////////////////////////////////////////

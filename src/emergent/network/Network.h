@@ -341,6 +341,8 @@ public:
   // #NO_SAVE #HIDDEN #CAT_State handles optimized state sync for network object
   NetStateSync_List layer_state_sync;
   // #NO_SAVE #HIDDEN #CAT_State handles optimized state sync for layer object
+  NetStateSync_List prjn_state_sync;
+  // #NO_SAVE #HIDDEN #CAT_State handles optimized state sync for projection object
 
   taBase_RefList state_layer_specs;
   // #NO_SAVE #HIDDEN #CAT_State layer_specs that have been built for running network
@@ -581,6 +583,10 @@ public:
   // #CAT_State synchronize all layer main state with LayerState computational state objects -- each variable is either on one side or the other, and sync copies in proper direction
   virtual void  SyncLayerState_Layer(Layer* lay);
   // #CAT_State synchronize one layer main state with LayerState computational state object -- each variable is either on one side or the other, and sync copies in proper direction
+  virtual void  SyncPrjnState();
+  // #CAT_State synchronize all prjn main state with PrjnState computational state objects -- each variable is either on one side or the other, and sync copies in proper direction
+  virtual void  SyncPrjnState_Prjn(Projection* lay);
+  // #CAT_State synchronize one projection main state with PrjnState computational state object -- each variable is either on one side or the other, and sync copies in proper direction
 
   virtual void  Init_Epoch();
   // #CAT_Activation Initializes network state at the start of a new epoch -- updates parameters according to param_seq for example

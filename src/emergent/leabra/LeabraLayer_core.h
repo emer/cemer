@@ -82,8 +82,8 @@
 
   INLINE void Init_Stats() {
     inherited::Init_Stats();
-    // todo: initvals probably wrong
     avg_netin.InitVals();  avg_netin_sum.InitVals();  avg_netin_n = 0;
+    avg_netin.max = 0.0f;  avg_netin_sum.max = 0.0f; // using max in averaging
     hog_pct = 0.0f;    dead_pct = 0.0f;
     bin_err = 0.0f;    max_err = 0.0f;
     norm_err = 0.0f;   avg_norm_err.ResetAvg();

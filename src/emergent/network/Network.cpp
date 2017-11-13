@@ -491,6 +491,23 @@ void Network::SyncLayerState_Layer(Layer* lay) {
   layer_state_sync.DoSync((void*)lay, (void*)GetLayerState(lay->layer_idx));
 }
 
+void Network::SyncPrjnState() {
+  if(!IsBuiltIntact()) return;
+  for(int li=0; li< n_layers_built; li++) {
+    Layer* lay = StateLayer(li);
+    // note: don't check lesioned here b/c could be sending lesion flag!
+    for(int pi=0; pi < lay->projections.size; pi++) {
+      Projection* prjn = lay->projections[pi];
+      SyncPrjnState_Prjn(prjn);
+    }
+  }
+}
+
+void Network::SyncPrjnState_Prjn(Projection* prjn) {
+  PrjnState_cpp* pst = prjn->GetPrjnState(net_state);
+  prjn_state_sync.DoSync((void*)prjn, (void*)pst);
+}
+
 
 ////////////////////////////////////////
 //              Init
@@ -702,6 +719,12 @@ UnitState_cpp* Network::GetUnitStateFromPath(const String& path) {
 }
 
 void Network::BuildNetState() {
+  if(prjn_state_sync.size == 0 && layers.leaves > 0) {
+    Layer* lay = layers.Leaf(0);
+    if(lay) {
+      prjn_state_sync.ParseTypes(lay->projections.el_typ, PrjnStateType());
+    }
+  }
   if(net_state) {
     SyncNetState();
     return;
@@ -717,7 +740,7 @@ void Network::BuildNetState() {
   net_state->threads.InitState(n_threads, net_state);
   net_state_sync.ParseTypes(GetTypeDef(), NetworkStateType());
   layer_state_sync.ParseTypes(layers.el_typ, LayerStateType());
-  
+
   SyncNetState();
 }
 
@@ -1950,8 +1973,6 @@ void Network::DMem_ComputeAggs(MPI_Comm comm) {
     Layer* mlay = LayerFromState(lay);
     mlay->DMem_ComputeAggs(comm);
   }
-
-  // todo: and need to do projections for leabra!
 }
 
 #endif  // DMEM

@@ -17,5 +17,5 @@
 
 #include "LeabraPrjnState_cpp.h"
 
-// #include "LeabraPrjnState_core.cpp"   // include member impls if defined
+#include "LeabraPrjnState_core.cpp"   // include member impls if defined
 
