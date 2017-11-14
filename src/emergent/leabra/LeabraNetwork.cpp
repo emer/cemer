@@ -238,42 +238,6 @@ void LeabraNetwork::Cycle_Run() {
 
 
 
-void LeabraNetwork::Compute_Inhib_LayGp() {
-  if(!net_misc.lay_gp_inhib || layers.gp.size == 0) return;
-  for(int lgi = 0; lgi < layers.gp.size; lgi++) {
-    Layer_Group* lg = (Layer_Group*)layers.gp[lgi];
-    if(lg->size <= 1) continue;
-
-    // use first layer as initial data for layer group
-    LeabraLayer* lay0 = (LeabraLayer*)lg->FastEl(0);
-    LeabraLayerSpec* laysp0 = (LeabraLayerSpec*)lay0->spec.SPtr();
-    if(!laysp0->lay_gp_inhib.on) continue;
-    
-    // lay0->laygp_data.netin.InitVals();
-    // lay0->laygp_data.acts.InitVals();
-    for(int li = 0; li < lg->size; li++) {
-      LeabraLayer* lay = (LeabraLayer*)lg->FastEl(li);
-      LeabraLayerSpec* laysp = (LeabraLayerSpec*)lay->spec.SPtr();
-      if(lay->lesioned() || !laysp->lay_gp_inhib.on) continue;
-
-      // lay0->laygp_data.netin.UpdtFmAvgMax(lay->netin);
-      // lay0->laygp_data.acts.UpdtFmAvgMax(lay->acts);
-    }
-
-    // lay0->laygp_data.netin.CalcAvg();
-    // lay0->laygp_data.acts.CalcAvg();
-    // laysp0->Compute_Inhib_impl(lay0, &lay0->laygp_data, this, laysp0->lay_gp_inhib);
-    
-    for(int li = 1; li < lg->size; li++) {
-      LeabraLayer* lay = (LeabraLayer*)lg->FastEl(li);
-      LeabraLayerSpec* laysp = (LeabraLayerSpec*)lay->spec.SPtr();
-      if(lay->lesioned() || !laysp->lay_gp_inhib.on) continue;
-      
-      // lay->laygp_data = lay0->laygp_data;
-    }
-  }
-}
-
 ///////////////////////////////////////////////////////////////////////
 //      Cycle Step 3: Activation
 

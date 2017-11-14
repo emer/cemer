@@ -169,8 +169,6 @@ public:
 
   inline void	Compute_Inhib()  { LeabraNetState()->Compute_Inhib(); }
   // #IGNORE compute inhibitory conductances via inhib functions (FFFB) -- calls Compute_NetinStats and LayInhibToGps to coordinate group-level inhibition sharing
-    virtual void Compute_Inhib_LayGp();
-    // #IGNORE compute inhibition across layer groups -- if layer spec lay_gp_inhib flag is on anywhere
 
   ///////////////////////////////////////////////////////////////////////
   //	Cycle Step 3: Activation

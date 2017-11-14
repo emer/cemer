@@ -200,6 +200,8 @@
 
   INIMPL virtual void	Compute_Inhib();
   // #IGNORE compute inhibitory conductances via inhib functions (FFFB) -- calls Compute_NetinStats and LayInhibToGps to coordinate group-level inhibition sharing
+    INIMPL virtual void Compute_Inhib_LayGp();
+    // #IGNORE compute inhibition across layer groups -- if layer spec lay_gp_inhib flag is on anywhere
 
   
   ///////////////////////////////////////////////////////////////////////

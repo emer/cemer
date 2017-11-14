@@ -874,7 +874,7 @@ void LEABRA_NETWORK_STATE::Compute_Inhib() {
   // note: only running on thr_no == 0 right now -- may be best overall to avoid
   // messy cache stuff, to just keep it on 0
   if(net_misc.lay_gp_inhib){
-    // Compute_Inhib_LayGp();
+    Compute_Inhib_LayGp();
   }
   
   for(int li=0; li < n_layers_built; li++) {
@@ -888,6 +888,48 @@ void LEABRA_NETWORK_STATE::Compute_Inhib() {
   //   ((LeabraNetTiming*)net_timing[thr_no])->inhib.EndIncrAvg();
 }
 
+void LEABRA_NETWORK_STATE::Compute_Inhib_LayGp() {
+  if(!net_misc.lay_gp_inhib) return;
+  for(int li=0; li < n_layers_built; li++) {
+    LEABRA_LAYER_STATE* lay0 = GetLayerState(li);
+    if(lay0->lesioned()) continue;
+    LEABRA_LAYER_SPEC_CPP* laysp0 = lay0->GetLayerSpec(this);
+    if(!laysp0->lay_gp_inhib.on) continue;
+    if(lay0->laygp_lay0_idx != lay0->layer_idx || lay0->laygp_n <= 1)
+      continue; // no actual groups..
+
+    const int mx = lay0->laygp_n;
+    const int l0 = lay0->laygp_lay0_idx;
+    
+    lay0->laygp_netin.InitVals();
+    lay0->laygp_acts_eq.InitVals();
+    for(int gi = 0; gi < mx; gi++) {
+      LEABRA_LAYER_STATE* lay = GetLayerState(l0 + gi);
+      LEABRA_LAYER_SPEC_CPP* laysp = lay->GetLayerSpec(this);
+      if(lay->lesioned() || !laysp->lay_gp_inhib.on) continue;
+      LEABRA_UNGP_STATE* lgpd = lay->GetLayUnGpState(this);
+
+      lay0->laygp_netin.UpdtFmAvgMax(lgpd->netin);
+      lay0->laygp_acts_eq.UpdtFmAvgMax(lgpd->acts);
+    }
+
+    lay0->laygp_netin.CalcAvg();
+    lay0->laygp_acts_eq.CalcAvg();
+    laysp0->Compute_Inhib_FfFb
+      (lay0, this, lay0->laygp_i_val, lay0->laygp_netin.avg, lay0->laygp_netin.max,
+       lay0->laygp_acts_eq.avg, laysp0->lay_gp_inhib);
+    
+    for(int gi = 0; gi < mx; gi++) {
+      LEABRA_LAYER_STATE* lay = GetLayerState(l0 + gi);
+      LEABRA_LAYER_SPEC_CPP* laysp = lay->GetLayerSpec(this);
+      if(lay->lesioned() || !laysp->lay_gp_inhib.on) continue;
+      
+      lay->laygp_i_val = lay0->laygp_i_val;
+      lay->laygp_netin = lay0->laygp_netin;
+      lay->laygp_acts_eq = lay0->laygp_acts_eq;
+    }
+  }
+}
 
 ///////////////////////////////////////////////////////////////////////
 //      Cycle Step 3: Activation
