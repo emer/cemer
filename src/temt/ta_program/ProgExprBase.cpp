@@ -1280,7 +1280,9 @@ Completions* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_po
         taBase* mb_tab = base_base->FindFromPath(path_rest_mod, md);
         if (md && md->type->IsPointer()) {
           taBase** base_ptr_ptr = (taBase**)mb_tab;
-          mb_tab = *base_ptr_ptr;
+          if (base_ptr_ptr) {
+            mb_tab = *base_ptr_ptr;
+          }
         }
         if(mb_tab) {
           lookup_td = mb_tab->GetTypeDef();
