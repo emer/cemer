@@ -59,8 +59,8 @@ float STATE_CLASS(PFCUnitSpec)::Compute_NetinExtras
     return net_ex;
   }
   
-  LEABRA_LAYER_STATE* lay = (LEABRA_LAYER_STATE*)u->GetOwnLayer(net);
-  LEABRA_UNGP_STATE* ugd = (LEABRA_UNGP_STATE*)u->GetOwnUnGp(net);
+  LEABRA_LAYER_STATE* lay = u->GetOwnLayer(net);
+  LEABRA_UNGP_STATE* ugd = u->GetOwnUnGp(net);
   if(u->thal_cnt == 0.0f) {     // just gated -- only maint if nothing else
     if(ugd->netin_raw.max < 0.05f) { //
       net_ex += maint.s_mnt_max * u->deep_mod_net;
@@ -119,7 +119,7 @@ void STATE_CLASS(PFCUnitSpec)::Compute_DeepRaw(LEABRA_UNIT_STATE* u, LEABRA_NETW
   // NOTE: only super does anything here -- this is where the gating is detected and updated
   if(!deep.IsSuper()) return;
   
-  LEABRA_LAYER_STATE* lay = (LEABRA_LAYER_STATE*)u->GetOwnLayer(net);
+  LEABRA_LAYER_STATE* lay = u->GetOwnLayer(net);
   LEABRA_UNGP_STATE* lgpd = lay->GetLayUnGpState(net);
 
   float thr_cmp = lgpd->acts_raw.avg +
@@ -144,15 +144,15 @@ void STATE_CLASS(PFCUnitSpec)::GetThalCntFromSuper
   // look for layer we recv a deep context con from, that is also a PFCUnitSpec SUPER
   const int nrg = u->NRecvConGps(net); 
   for(int g=0; g<nrg; g++) {
-    LEABRA_CON_STATE* recv_gp = (LEABRA_CON_STATE*)u->RecvConState(net, g);
+    LEABRA_CON_STATE* recv_gp = u->RecvConState(net, g);
     if(recv_gp->NotActive()) continue;
-    LEABRA_CON_SPEC_CPP* cs = (LEABRA_CON_SPEC_CPP*)recv_gp->GetConSpec(net);
+    LEABRA_CON_SPEC_CPP* cs = recv_gp->GetConSpec(net);
     if(!cs->IsDeepCtxtCon()) continue;
-    LEABRA_LAYER_STATE* fmlay = (LEABRA_LAYER_STATE*)recv_gp->GetSendLayer(net);
-    LEABRA_UNIT_SPEC_CPP* fmus = (LEABRA_UNIT_SPEC_CPP*)fmlay->GetUnitSpec(net);
+    LEABRA_LAYER_STATE* fmlay = recv_gp->GetSendLayer(net);
+    LEABRA_UNIT_SPEC_CPP* fmus = fmlay->GetUnitSpec(net);
     if(fmus->GetStateSpecType() != LEABRA_NETWORK_STATE::T_PFCUnitSpec) continue;
     if(!fmus->deep.IsSuper() || recv_gp->size == 0) continue;
-    LEABRA_UNIT_STATE* suv = (LEABRA_UNIT_STATE*)recv_gp->UnState(0,net); // get first connection
+    LEABRA_UNIT_STATE* suv = recv_gp->UnState(0,net); // get first connection
     u->thal_cnt = suv->thal_cnt; // all super guys in same stripe should have same thal_cnt
   }
 }  
@@ -186,7 +186,7 @@ void STATE_CLASS(PFCUnitSpec)::Compute_DeepStateUpdt
   if(!deep.on || !Quarter_DeepRawPrevQtr(net->quarter)) return;
 
   if(maint.use_dyn && deep.IsDeep() && u->thal_cnt >= 0) { // update dynamics!
-    LEABRA_LAYER_STATE* lay = (LEABRA_LAYER_STATE*)u->GetOwnLayer(net);
+    LEABRA_LAYER_STATE* lay = u->GetOwnLayer(net);
     int unidx = u->ungp_un_idx;
     int dyn_row = unidx % n_dyns;
     if(u->thal_cnt <= 1.0f) { // first gating -- should only ever be 1.0 here..
@@ -204,19 +204,19 @@ void STATE_CLASS(PFCUnitSpec)::Compute_DeepStateUpdt
 void STATE_CLASS(PFCUnitSpec)::ClearOtherMaint
   (LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) {
   
-  LEABRA_LAYER_STATE* lay = (LEABRA_LAYER_STATE*)u->GetOwnLayer(net);
-  LEABRA_UNGP_STATE* ugd = (LEABRA_UNGP_STATE*)u->GetOwnUnGp(net);
+  LEABRA_LAYER_STATE* lay = u->GetOwnLayer(net);
+  LEABRA_UNGP_STATE* ugd = u->GetOwnUnGp(net);
   if(ugd->acts_eq.max < 0.1f)   // we can't clear anyone if nobody in our group is active!
     return;
   
   const int nsg = u->NSendConGps(net); 
   for(int g=0; g<nsg; g++) {
-    LEABRA_CON_STATE* send_gp = (LEABRA_CON_STATE*)u->SendConState(net, g);
+    LEABRA_CON_STATE* send_gp = u->SendConState(net, g);
     if(send_gp->NotActive()) continue;
-    LEABRA_CON_SPEC_CPP* cs = (LEABRA_CON_SPEC_CPP*)send_gp->GetConSpec(net);
+    LEABRA_CON_SPEC_CPP* cs = send_gp->GetConSpec(net);
     if(!cs->IsMarkerCon()) continue;
     for(int j=0;j<send_gp->size; j++) {
-      LEABRA_UNIT_STATE* su = (LEABRA_UNIT_STATE*)send_gp->UnState(j,net);
+      LEABRA_UNIT_STATE* su = send_gp->UnState(j,net);
       if(su->thal_cnt >= 1.0f) { // important!  only for established maint, not just gated!
         STATE_CLASS(PFCUnitSpec)* mus = (STATE_CLASS(PFCUnitSpec)*)su->GetUnitSpec(net);
         su->thal_cnt = -1.0f; // terminate!

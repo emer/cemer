@@ -35,7 +35,7 @@ void STATE_CLASS(BasAmygUnitSpec)::Init_UnitState
 void STATE_CLASS(BasAmygUnitSpec)::Compute_DeepMod
   (LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) {
 
-  LEABRA_LAYER_STATE* lay = (LEABRA_LAYER_STATE*)u->GetOwnLayer(net);
+  LEABRA_LAYER_STATE* lay = u->GetOwnLayer(net);
   LEABRA_UNGP_STATE* lgpd = lay->GetLayUnGpState(net);
   if(deep.SendDeepMod()) {
     u->deep_lrn = u->deep_mod = u->act;      // record what we send!

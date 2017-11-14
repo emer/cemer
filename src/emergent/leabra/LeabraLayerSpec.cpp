@@ -41,6 +41,7 @@ eTypeDef_Of(MarkerConSpec);
 
 #include <LeabraUnitSpec_cpp>
 #include <LeabraConSpec_cpp>
+#include <LeabraLayerSpec_cpp>
 
 #include <State_main>
 
@@ -154,8 +155,9 @@ void LeabraLayer::CheckInhibCons(LeabraNetwork* net) {
 ///////////////////////////////////////////////////////////////////////
 //      Cycle Stats
 
-void LeabraLayerSpec::Compute_OutputName_ugp
-(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx, LeabraUnGpState_cpp* gpd, LeabraNetwork* net) {
+void LeabraLayerSpec::Compute_OutputName_ugp(LeabraLayer* lay, LeabraNetwork* net, int gpidx) {
+  LEABRA_UNGP_STATE* gpd = lay->GetUnGpState(net->net_state, gpidx);
+  
   String* onm;
   if(lay->unit_groups)
     onm = &(lay->gp_output_names.FastEl_Flat(gpidx));
@@ -166,7 +168,7 @@ void LeabraLayerSpec::Compute_OutputName_ugp
     *onm = "n/a";
     return;
   }
-  LeabraUnitState_cpp* u = (LeabraUnitState_cpp*)net->GetUnitState(gpd->acts_eq.max_i); // max_i = flat now
+  UnitState_cpp* u = net->GetUnitState(gpd->acts_eq.max_i); // max_i = full flat idx
   if(!u || u->lesioned()) {
     *onm = "n/a";
     return;
@@ -193,14 +195,12 @@ void LeabraLayerSpec::Compute_OutputName(LeabraLayer* lay, LeabraNetwork* net) {
   LeabraLayerState_cpp* lst = (LeabraLayerState_cpp*)net_state->GetLayerState(lay->layer_idx);
   if(lay->unit_groups) {
     lay->output_name = "";
-    for(int g=0; g < lay->n_ungps; g++) {
-      LeabraUnGpState_cpp* gpd = (LeabraUnGpState_cpp*)lst->GetUnGpState(net_state, g);
-      Compute_OutputName_ugp(lay, Layer::ACC_GP, g, gpd, net);
+    for(int gpidx=0; gpidx < lay->n_ungps; gpidx++) {
+      Compute_OutputName_ugp(lay, net, gpidx);
     }
   }
   else {
-    LeabraUnGpState_cpp* lgpd = (LeabraUnGpState_cpp*)lst->GetLayUnGpState(net_state);
-    Compute_OutputName_ugp(lay, Layer::ACC_LAY, 0, lgpd, net);
+    Compute_OutputName_ugp(lay, net, -1);
   }
 }
 

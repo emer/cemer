@@ -35,7 +35,7 @@ void STATE_CLASS(CElAmygUnitSpec)::Init_UnitState
 void STATE_CLASS(CElAmygUnitSpec)::Compute_DeepMod
   (LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) {
   
-  LEABRA_LAYER_STATE* lay = (LEABRA_LAYER_STATE*)u->GetOwnLayer(net);
+  LEABRA_LAYER_STATE* lay = u->GetOwnLayer(net);
   LEABRA_UNGP_STATE* lgpd = lay->GetLayUnGpState(net);
   if(deep.SendDeepMod()) {
     u->deep_lrn = u->deep_mod = u->act;      // record what we send!
@@ -108,11 +108,11 @@ float STATE_CLASS(CElAmygUnitSpec)::Compute_DaModNetin
 float STATE_CLASS(CElAmygUnitSpec)::Compute_NetinExtras
   (LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no, float& net_syn) {
   
-  LEABRA_LAYER_STATE* lay = (LEABRA_LAYER_STATE*)u->GetOwnLayer(net);
+  LEABRA_LAYER_STATE* lay = u->GetOwnLayer(net);
   LEABRA_LAYER_SPEC_CPP* ls = (LEABRA_LAYER_SPEC_CPP*)lay->GetLayerSpec(net);
 
   float net_ex = init.netin;
-  LEABRA_CON_SPEC_CPP* bs = (LEABRA_CON_SPEC_CPP*)GetBiasSpec(net);
+  LEABRA_CON_SPEC_CPP* bs = GetBiasSpec(net);
   if(bs) {
     net_ex += u->bias_scale * u->bias_wt;
   }

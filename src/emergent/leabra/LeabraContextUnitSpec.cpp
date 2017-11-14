@@ -4,7 +4,7 @@
 bool STATE_CLASS(LeabraContextUnitSpec)::ShouldUpdateNow
   (LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) {
 
-  LEABRA_LAYER_STATE* lay = (LEABRA_LAYER_STATE*)u->GetOwnLayer(net);
+  LEABRA_LAYER_STATE* lay = u->GetOwnLayer(net);
   bool do_update = lay->HasLayerFlag(LAYER_STATE::LAY_FLAG_4);
   if(!do_update) {              // check other criteria
     switch (update_criteria) {
@@ -25,9 +25,9 @@ bool STATE_CLASS(LeabraContextUnitSpec)::ShouldUpdateNow
 void STATE_CLASS(LeabraContextUnitSpec)::Compute_Context
   (LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) {
   
-  LEABRA_CON_STATE* cg = (LEABRA_CON_STATE*)u->RecvConState(net, 0);
-  LEABRA_UNIT_STATE* su = (LEABRA_UNIT_STATE*)cg->UnState(0, net);
-  LEABRA_LAYER_STATE* fmlay = (LEABRA_LAYER_STATE*)cg->GetSendLayer(net);
+  LEABRA_CON_STATE* cg = u->RecvConState(net, 0);
+  LEABRA_UNIT_STATE* su = cg->UnState(0, net);
+  LEABRA_LAYER_STATE* fmlay = cg->GetSendLayer(net);
   if(fmlay->lesioned()) {
     u->act = 0.0f;
   }

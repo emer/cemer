@@ -12,19 +12,16 @@
   float         wt_avg_avg;            // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic average of weight averages across recv con group of units with this projection -- only computed if weight balance mechanism is on and network.lstats.wt_bal is on
 
   INLINE LEABRA_PRJN_STATE*  GetPrjnState(NETWORK_STATE* net) const {
-    return (LEABRA_PRJN_STATE*)net->GetPrjnState(prjn_idx);
+    return (LEABRA_PRJN_STATE*)inherited::GetPrjnState(net);
   }
   INLINE LEABRA_LAYER_STATE* GetRecvLayerState(NETWORK_STATE* net) const {
-    return (LEABRA_LAYER_STATE*)net->GetLayerState(recv_lay_idx);
+    return (LEABRA_LAYER_STATE*)inherited::GetRecvLayerState(net);
   }
   INLINE LEABRA_LAYER_STATE* GetSendLayerState(NETWORK_STATE* net) const {
-    return (LEABRA_LAYER_STATE*) net->GetLayerState(send_lay_idx);
+    return (LEABRA_LAYER_STATE*)inherited::GetSendLayerState(net);
   }
-  INLINE PRJN_SPEC_CPP* GetPrjnSpec(NETWORK_STATE* net) const {
-    return net->GetPrjnSpec(spec_idx);
-  }
-  INLINE LEABRA_CON_SPEC_CPP*  GetConSpec(NETWORK_STATE* net) const {
-    return (LEABRA_CON_SPEC_CPP*)net->GetConSpec(con_spec_idx);
+  INLINE LEABRA_CON_SPEC_CPP* GetConSpec(NETWORK_STATE* net) const {
+    return (LEABRA_CON_SPEC_CPP*)inherited::GetConSpec(net);
   }
 
   INLINE void	Init_Stats() {

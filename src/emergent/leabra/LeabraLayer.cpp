@@ -98,7 +98,7 @@ void LeabraLayer::ApplyInputData_2d(NETWORK_STATE* net, taMatrix* data, ExtFlags
                  "input data must have at inner dimension of at least 2 for x,y vals")) {
       return;
     }
-    LEABRA_UNGP_STATE* lgpd = (LEABRA_UNGP_STATE*)GetLayUnGpState(net);
+    LEABRA_UNGP_STATE* lgpd = GetLayUnGpState(net);
     
     // todo: not supporting multiple bumps yet!
     int mx = MIN(1, data->dim(1));

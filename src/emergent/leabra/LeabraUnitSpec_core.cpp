@@ -1,8 +1,217 @@
 // contains core non-inline (INIMPL) functions from _core.h
 // if used, include directly in LeabraUnitSpec.cpp, _cpp.cpp, _cuda.cpp
 
+void LEABRA_UNIT_SPEC::Init_Acts(UNIT_STATE* uv, NETWORK_STATE* net, int thr_no) {
+  inherited::Init_Acts(uv, net, thr_no);
+  LEABRA_UNIT_STATE* u = (LEABRA_UNIT_STATE*)uv;
+  Init_Netins(u, (LEABRA_NETWORK_STATE*)net, thr_no);
+
+  u->ClearExtFlag(UNIT_STATE::COMP_TARG_EXT);
+  u->ext = 0.0f;
+  u->targ = 0.0f;
+
+  u->act = init.act;
+  u->net = init.netin;
+
+  u->act_eq = u->act;
+  u->act_nd = u->act_eq;
+  u->spike = 0.0f;
+  u->act_q0 = 0.0f;
+  u->act_q1 = 0.0f;
+  u->act_q2 = 0.0f;
+  u->act_q3 = 0.0f;
+  u->act_q4 = 0.0f;
+  u->act_g = 0.0f;
+  u->act_m = 0.0f;
+  u->act_p = 0.0f;
+  u->act_dif = 0.0f;
+  u->net_prv_q = 0.0f;        // note: init acts clears this kind of history..
+  u->net_prv_trl = 0.0f;
+
+  u->da = 0.0f;
+  u->avg_ss = act_misc.avg_init;
+  u->avg_s = act_misc.avg_init;
+  u->avg_s_eff = u->avg_s;
+  u->avg_m = act_misc.avg_init;
+  u->avg_l_lrn = avg_l.GetLrn(u->avg_l);
+  // not avg_l
+  // not act_avg
+  u->margin = 0.0f;
+  u->act_raw = 0.0f;
+  u->deep_raw = 0.0f;
+  u->deep_raw_prv = 0.0f;
+  u->deep_mod = 1.0f;
+  u->deep_lrn = 1.0f;
+  u->deep_ctxt = 0.0f;
+
+  u->thal = 0.0f;
+  u->thal_gate = 0.0f;
+  u->thal_cnt = -1.0f;
+  u->gc_i = 0.0f;
+  u->I_net = 0.0f;
+  u->v_m = init.v_m;
+  u->v_m_eq = u->v_m;
+  u->adapt = 0.0f;
+  u->gi_syn = 0.0f;
+  u->gi_self = 0.0f;
+  u->gi_ex = 0.0f;
+  u->E_i = e_rev.i;
+  u->syn_tr = 1.0f;
+  u->syn_nr = 1.0f;
+  u->syn_pr = stp.p0;
+  u->syn_kre = 0.0f;
+  u->noise = 0.0f;
+  u->da_p = 0.0f;
+  u->da_n = 0.0f;
+  u->ach = 0.0f;
+  u->shunt = 0.0f;
+  // u->sev = 0.0f; // longer time-course
+
+  // not the scales
+  // init netin gets act_sent, net_raw, etc
+  u->spk_t = -1;
+
+  STATE_CLASS(CircBufferIndex)::Reset(u->spike_e_st, u->spike_e_len);
+  STATE_CLASS(CircBufferIndex)::Reset(u->spike_i_st, u->spike_i_len);
+
+  // if(syn_delay.on) {
+  //   u->act_buf->Reset();
+  // }
+}
+  
+void LEABRA_UNIT_SPEC::Init_UnitState(UNIT_STATE* uv, NETWORK_STATE* net, int thr_no) {
+  inherited::Init_UnitState(uv, net, thr_no);
+    
+  LEABRA_UNIT_STATE* u = (LEABRA_UNIT_STATE*)uv;
+  u->ext_flag = UNIT_STATE::NO_EXTERNAL;
+  u->unit_flag = UNIT_STATE::NO_UNIT_FLAG;
+  u->bias_wt = 0.0f;
+  u->bias_dwt = 0.0f;
+  u->bias_fwt = 0.0f;
+  u->bias_swt = 0.0f;
+  u->ext_orig = 0.0f;
+  u->avg_l = avg_l.init;
+  u->act_avg = 0.15f;
+  u->deep_mod_net = 0.0f;
+  u->deep_raw_net = 0.0f;
+  u->sev = 0.0f;
+  u->ach = 0.0f;
+  u->misc_1 = 0.0f;
+  u->misc_2 = 0.0f;
+  u->bias_scale = 0.0f;
+  u->act_sent = 0.0f;
+  u->net_raw = 0.0f;
+  u->gi_raw = 0.0f;
+  u->deep_raw_sent = 0.0f;
+
+  // note: also spike_e_st, spike_e_len, etc
+    
+  u->act = init.act;
+  u->net = init.netin;
+
+  u->act_eq = u->act;
+  u->act_nd = u->act_eq;
+  u->spike = 0.0f;
+  u->act_q0 = 0.0f;
+  u->act_q1 = 0.0f;
+  u->act_q2 = 0.0f;
+  u->act_q3 = 0.0f;
+  u->act_q4 = 0.0f;
+  u->act_g = 0.0f;
+  u->act_m = 0.0f;
+  u->act_p = 0.0f;
+  u->act_dif = 0.0f;
+  u->net_prv_q = 0.0f;        // note: init acts clears this kind of history..
+  u->net_prv_trl = 0.0f;
+
+  u->da = 0.0f;
+  u->avg_ss = act_misc.avg_init;
+  u->avg_s = act_misc.avg_init;
+  u->avg_s_eff = u->avg_s;
+  u->avg_m = act_misc.avg_init;
+  u->avg_l_lrn = avg_l.GetLrn(u->avg_l);
+  // not avg_l
+  // not act_avg
+  u->margin = 0.0f;
+  u->act_raw = 0.0f;
+  u->deep_raw = 0.0f;
+  u->deep_raw_prv = 0.0f;
+  u->deep_mod = 1.0f;
+  u->deep_lrn = 1.0f;
+  u->deep_ctxt = 0.0f;
+
+  u->thal = 0.0f;
+  u->thal_gate = 0.0f;
+  u->thal_cnt = -1.0f;
+  u->gc_i = 0.0f;
+  u->I_net = 0.0f;
+  u->v_m = init.v_m;
+  u->v_m_eq = u->v_m;
+  u->adapt = 0.0f;
+  u->gi_syn = 0.0f;
+  u->gi_self = 0.0f;
+  u->gi_ex = 0.0f;
+  u->E_i = e_rev.i;
+  u->syn_tr = 1.0f;
+  u->syn_nr = 1.0f;
+  u->syn_pr = stp.p0;
+  u->syn_kre = 0.0f;
+  u->noise = 0.0f;
+  u->da_p = 0.0f;
+  u->da_n = 0.0f;
+  u->ach = 0.0f;
+  u->shunt = 0.0f;
+  // u->sev = 0.0f; // longer time-course
+
+  // not the scales
+  // init netin gets act_sent, net_raw, etc
+  u->spk_t = -1;
+}
+
+
+void LEABRA_UNIT_SPEC::DecayState(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no, float decay) {
+  if(decay > 0.0f) {            // no need to reset netin if not decaying at all
+    u->act -= decay * (u->act - init.act);
+    u->net -= decay * (u->net - init.netin);
+    u->act_eq -= decay * (u->act_eq - init.act);
+    u->act_nd -= decay * (u->act_nd - init.act);
+    u->act_raw -= decay * (u->act_raw - init.act);
+    u->gc_i -= decay * u->gc_i;
+    u->v_m -= decay * (u->v_m - init.v_m);
+    u->v_m_eq -= decay * (u->v_m_eq - init.v_m);
+    if(adapt.on) {
+      u->adapt -= decay * u->adapt;
+    }
+
+    u->gi_syn -= decay * u->gi_syn;
+    u->gi_self -= decay * u->gi_self;
+    u->gi_ex -= decay * u->gi_ex;
+    u->E_i -= decay * (u->E_i - e_rev.i);
+
+    if(stp.on && (stp.algorithm == STATE_CLASS(ShortPlastSpec)::CYCLES)) {
+      u->syn_tr -= decay * (u->syn_tr - 1.0f);
+      u->syn_nr -= decay * (u->syn_nr - 1.0f);
+      u->syn_pr -= decay * (u->syn_tr - stp.p0);
+      u->syn_kre -= decay * u->syn_kre;
+    }
+  }
+  u->da = 0.0f;
+  u->I_net = 0.0f;
+  // note: for decay = 1, spike buffers are reset
+  
+  if(decay == 1.0f) {
+    if(act_fun == SPIKE) {
+      STATE_CLASS(CircBufferIndex)::Reset(u->spike_e_st, u->spike_e_len);
+      STATE_CLASS(CircBufferIndex)::Reset(u->spike_i_st, u->spike_i_len);
+    }
+    // if(syn_delay.on) {
+    //   u->act_buf->Reset();
+    // }
+  }
+}
+
 void LEABRA_UNIT_SPEC::Trial_DecayState(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) {
-  LEABRA_LAYER_STATE* lay = (LEABRA_LAYER_STATE*)u->GetOwnLayer(net);
+  LEABRA_LAYER_STATE* lay = u->GetOwnLayer(net);
   LEABRA_LAYER_SPEC_CPP* ls = (LEABRA_LAYER_SPEC_CPP*)lay->GetLayerSpec(net);
 
   DecayState(u, net, thr_no, ls->decay.trial);
@@ -37,12 +246,12 @@ void LEABRA_UNIT_SPEC::Compute_NetinScale(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_S
   int n_recv_cons = 0;
   const int nrg = u->NRecvConGps(net); 
   for(int g=0; g< nrg; g++) {
-    LEABRA_CON_STATE* recv_gp = (LEABRA_CON_STATE*)u->RecvConState(net, g);
+    LEABRA_CON_STATE* recv_gp = u->RecvConState(net, g);
     // todo: why!!!???
     if(!recv_gp->PrjnIsActive(net)) continue; // key!! just check for prjn, not con group!
-    LEABRA_CON_SPEC_CPP* cs = (LEABRA_CON_SPEC_CPP*)recv_gp->GetConSpec(net);
-    LEABRA_LAYER_STATE* from = (LEABRA_LAYER_STATE*)recv_gp->GetSendLayer(net);
-    LEABRA_UNGP_STATE* fmugps = (LEABRA_UNGP_STATE*)from->GetLayUnGpState(net);
+    LEABRA_CON_SPEC_CPP* cs = recv_gp->GetConSpec(net);
+    LEABRA_LAYER_STATE* from = recv_gp->GetSendLayer(net);
+    LEABRA_UNGP_STATE* fmugps = from->GetLayUnGpState(net);
 
     float savg = fmugps->acts_p_avg_eff;
     float from_sz = (float)from->n_units;
@@ -66,7 +275,7 @@ void LEABRA_UNIT_SPEC::Compute_NetinScale(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_S
   }
   
   // add the bias weight into the netinput, scaled by 1/n
-  LEABRA_CON_SPEC_CPP* bs = (LEABRA_CON_SPEC_CPP*)GetBiasSpec(net);
+  LEABRA_CON_SPEC_CPP* bs = GetBiasSpec(net);
   if(bs) {
     u->bias_scale = bs->wt_scale.abs;  // still have absolute scaling if wanted..
     if(n_recv_cons > 0) {
@@ -76,9 +285,9 @@ void LEABRA_UNIT_SPEC::Compute_NetinScale(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_S
 
   // now renormalize, each one separately..
   for(int g=0; g< nrg; g++) {
-    LEABRA_CON_STATE* recv_gp = (LEABRA_CON_STATE*)u->RecvConState(net, g);
+    LEABRA_CON_STATE* recv_gp = u->RecvConState(net, g);
     if(!recv_gp->PrjnIsActive(net)) continue; // key!! just check for prjn, not con group!
-    LEABRA_CON_SPEC_CPP* cs = (LEABRA_CON_SPEC_CPP*)recv_gp->GetConSpec(net);
+    LEABRA_CON_SPEC_CPP* cs = recv_gp->GetConSpec(net);
     if(cs->inhib) {
       if(inhib_net_scale > 0.0f)
         recv_gp->scale_eff /= inhib_net_scale;
@@ -105,11 +314,11 @@ void LEABRA_UNIT_SPEC::Send_DeepCtxtNetin(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_S
   if(act_ts > opt_thresh.send) {
     const int nsg = u->NSendConGps(net); 
     for(int g=0; g< nsg; g++) {
-      LEABRA_CON_STATE* send_gp = (LEABRA_CON_STATE*)u->SendConState(net, g);
+      LEABRA_CON_STATE* send_gp = u->SendConState(net, g);
       if(send_gp->NotActive()) continue;
-      // LEABRA_LAYER_STATE* tol = (LEABRA_LAYER_STATE*) send_gp->prjn->layer;
+      // LEABRA_LAYER_STATE* tol =  send_gp->GetRecvLayer(net);
       // if(tol->hard_clamped)      continue;
-      LEABRA_CON_SPEC_CPP* cs = (LEABRA_CON_SPEC_CPP*)send_gp->GetConSpec(net);
+      LEABRA_CON_SPEC_CPP* cs = send_gp->GetConSpec(net);
       if(cs->IsDeepCtxtCon()) {
         STATE_CLASS(DeepCtxtConSpec)* sp = (STATE_CLASS(DeepCtxtConSpec)*)cs;
         sp->Send_DeepCtxtNetin(send_gp, net, thr_no, act_ts);
@@ -137,15 +346,15 @@ void LEABRA_UNIT_SPEC::Send_NetinDelta(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STAT
       }
       const int nsg = u->NSendConGps(net); 
       for(int g=0; g< nsg; g++) {
-        LEABRA_CON_STATE* send_gp = (LEABRA_CON_STATE*)u->SendConState(net, g);
+        LEABRA_CON_STATE* send_gp = u->SendConState(net, g);
         if(send_gp->NotActive()) continue;
-        LEABRA_CON_SPEC_CPP* cs = (LEABRA_CON_SPEC_CPP*)send_gp->GetConSpec(net);
+        LEABRA_CON_SPEC_CPP* cs = send_gp->GetConSpec(net);
         if(cs->IsDeepModCon()) {
           STATE_CLASS(SendDeepModConSpec)* sp = (STATE_CLASS(SendDeepModConSpec)*)cs;
           sp->Send_DeepModNetDelta(send_gp, net, thr_no, act_delta);
         }
         if(!cs->DoesStdNetin()) continue;
-        LEABRA_LAYER_STATE* tol = (LEABRA_LAYER_STATE*) send_gp->GetRecvLayer(net);
+        LEABRA_LAYER_STATE* tol =  send_gp->GetRecvLayer(net);
         if(tol->hard_clamped)      continue;
         if(cs->wt_scale.no_plus_net && net->quarter == 3) {
           // netin typically reset at start of plus phase, so we need to send minus phase
@@ -171,15 +380,15 @@ void LEABRA_UNIT_SPEC::Send_NetinDelta(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STAT
     float act_delta = - u->act_sent; // un-send the last above-threshold activation to get back to 0
     const int nsg = u->NSendConGps(net); 
     for(int g=0; g< nsg; g++) {
-      LEABRA_CON_STATE* send_gp = (LEABRA_CON_STATE*)u->SendConState(net, g);
+      LEABRA_CON_STATE* send_gp = u->SendConState(net, g);
       if(send_gp->NotActive()) continue;
-      LEABRA_CON_SPEC_CPP* cs = (LEABRA_CON_SPEC_CPP*)send_gp->GetConSpec(net);
+      LEABRA_CON_SPEC_CPP* cs = send_gp->GetConSpec(net);
       if(cs->IsDeepModCon()) {
         STATE_CLASS(SendDeepModConSpec)* sp = (STATE_CLASS(SendDeepModConSpec)*)cs;
         sp->Send_DeepModNetDelta(send_gp, net, thr_no, act_delta);
       }
       if(!cs->DoesStdNetin()) continue;
-      LEABRA_LAYER_STATE* tol = (LEABRA_LAYER_STATE*) send_gp->GetRecvLayer(net);
+      LEABRA_LAYER_STATE* tol =  send_gp->GetRecvLayer(net);
       if(tol->hard_clamped)        continue;
       if(cs->wt_scale.no_plus_net && net->quarter == 3) {
         // netin typically reset at start of plus phase, so we need to send minus phase
@@ -206,14 +415,14 @@ void LEABRA_UNIT_SPEC::Compute_NetinRaw(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STA
   if(net->NetinPerPrjn()) {
     const int nrg = u->NRecvConGps(net); 
     for(int g=0; g< nrg; g++) {
-      LEABRA_CON_STATE* recv_gp = (LEABRA_CON_STATE*)u->RecvConState(net, g);
+      LEABRA_CON_STATE* recv_gp = u->RecvConState(net, g);
       if(recv_gp->NotActive()) continue;
       float g_net_delta = 0.0f;
       for(int j=0;j<nt;j++) {
         float& ndval = net->ThrSendNetinTmpPerPrjn(j, g)[flat_idx]; 
 	g_net_delta += ndval;
       }
-      LEABRA_CON_SPEC_CPP* cs = (LEABRA_CON_SPEC_CPP*)recv_gp->GetConSpec(net);
+      LEABRA_CON_SPEC_CPP* cs = recv_gp->GetConSpec(net);
       recv_gp->net_raw += g_net_delta; // note: direct assignment to raw, no time integ
       if(cs->inhib) {
         gi_delta += g_net_delta;
@@ -256,7 +465,7 @@ void LEABRA_UNIT_SPEC::Compute_NetinInteg(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_S
     DeepModNetin_Integ(u, net, thr_no);
   }
   
-  LEABRA_LAYER_STATE* lay = (LEABRA_LAYER_STATE*)u->GetOwnLayer(net);
+  LEABRA_LAYER_STATE* lay = u->GetOwnLayer(net);
   if(lay->hard_clamped) {
     return;
   }
@@ -270,7 +479,7 @@ void LEABRA_UNIT_SPEC::Compute_NetinInteg(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_S
   if(deep.IsTRC() && Quarter_DeepRawNow(net->quarter)) {
     if(lgpd->am_deep_raw_net.max > 0.1f) { // have to get some input to clamp
       if(trc.p_only_m) {
-        LEABRA_UNGP_STATE* gpd = (LEABRA_UNGP_STATE*)u->GetOwnUnGp(net);
+        LEABRA_UNGP_STATE* gpd = u->GetOwnUnGp(net);
         if(gpd->acts_prvq.max > 0.1f) {
           // only activate if we got prior and current activation
           net_syn = trc.TRCClampNet(u->deep_raw_net, net_syn); // u->net_prv_q); 
@@ -323,11 +532,11 @@ void LEABRA_UNIT_SPEC::Compute_NetinInteg(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_S
 float LEABRA_UNIT_SPEC::Compute_NetinExtras
   (LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no, float& net_syn) {
   
-  LEABRA_LAYER_STATE* lay = (LEABRA_LAYER_STATE*)u->GetOwnLayer(net);
-  LEABRA_LAYER_SPEC_CPP* ls = (LEABRA_LAYER_SPEC_CPP*)lay->GetLayerSpec(net);
+  LEABRA_LAYER_STATE* lay = u->GetOwnLayer(net);
+  LEABRA_LAYER_SPEC_CPP* ls = lay->GetLayerSpec(net);
 
   float net_ex = init.netin;
-  LEABRA_CON_SPEC_CPP* bs = (LEABRA_CON_SPEC_CPP*)GetBiasSpec(net);
+  LEABRA_CON_SPEC_CPP* bs = GetBiasSpec(net);
   if(bs) {
     net_ex += u->bias_scale * u->bias_wt;
   }
@@ -351,23 +560,22 @@ float LEABRA_UNIT_SPEC::Compute_NetinExtras
 void LEABRA_UNIT_SPEC::Compute_NetinInteg_Spike_e(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net,
                                                 int thr_no) {
   // netin gets added at the end of the spike_buf -- 0 time is the end
-  // STATE_CLASS(CircBufferIndex)::CircAddShift_float
-  //   (u->net, u->spike_e_buf, u->spike_e_st, u->spike_e_len, spike.window);
+  STATE_CLASS(CircBufferIndex)::CircAddShift_float
+    (u->net, u->spike_e_buf, u->spike_e_st, u->spike_e_len, spike.window);
   int mx = u->spike_e_len;
   float sum = 0.0f;
   if(spike.rise == 0.0f && spike.decay > 0.0f) {
     // optimized fast recursive exp decay: note: does NOT use dt.net_dt
     for(int t=0;t<mx;t++) {
-      // sum += STATE_CLASS(CircBufferIndex)::CircEl_float(t, u->spike_e_buf, u->spike_e_st, spike.window);
+      sum += STATE_CLASS(CircBufferIndex)::CircEl_float(t, u->spike_e_buf, u->spike_e_st, spike.window);
     }
     sum /= (float)spike.window; // normalize over window -- todo: what if it is smaller!?
     u->net += dt.integ * (spike.gg_decay * sum - (u->net * spike.oneo_decay));
   }
   else {
     for(int t=0;t<mx;t++) {
-      float spkin = 0.0f;
-      // float spkin = STATE_CLASS(CircBufferIndex)::CircEl_float(t, u->spike_e_buf, u->spike_e_st,
-      //                                             spike.window);
+      float spkin = STATE_CLASS(CircBufferIndex)::CircEl_float(t, u->spike_e_buf, u->spike_e_st,
+                                                               spike.window);
       if(spkin > 0.0f) {
         sum += spkin * spike.ComputeAlpha(mx-t-1);
       }
@@ -381,23 +589,22 @@ void LEABRA_UNIT_SPEC::Compute_NetinInteg_Spike_e(LEABRA_UNIT_STATE* u, LEABRA_N
 void LEABRA_UNIT_SPEC::Compute_NetinInteg_Spike_i(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net,
                                                 int thr_no) {
   // netin gets added at the end of the spike_i_buf -- 0 time is the end
-  // STATE_CLASS(CircBufferIndex)::CircAddShift_float
-  //   (u->gi_raw, u->spike_i_buf, u->spike_i_st, u->spike_i_len, spike.window);
+  STATE_CLASS(CircBufferIndex)::CircAddShift_float
+    (u->gi_raw, u->spike_i_buf, u->spike_i_st, u->spike_i_len, spike.window);
   int mx = u->spike_i_len;
   float sum = 0.0f;
   if(spike.rise == 0.0f && spike.decay > 0.0f) {
     // optimized fast recursive exp decay: note: does NOT use dt.net_dt
     for(int t=0;t<mx;t++) {
-      // sum += STATE_CLASS(CircBufferIndex)::CircEl_float(t, u->spike_i_buf, u->spike_i_st, spike.window);
+      sum += STATE_CLASS(CircBufferIndex)::CircEl_float(t, u->spike_i_buf, u->spike_i_st, spike.window);
     }
     sum /= (float)spike.window; // normalize over window
     u->gi_syn += dt.integ * (spike.gg_decay * sum - (u->gi_syn * spike.oneo_decay));
   }
   else {
     for(int t=0;t<mx;t++) {
-      float spkin = 0.0f;
-      // float spkin = STATE_CLASS(CircBufferIndex)::CircEl_float(t, u->spike_i_buf, u->spike_i_st,
-      //                                             spike.window);
+      float spkin = STATE_CLASS(CircBufferIndex)::CircEl_float(t, u->spike_i_buf, u->spike_i_st,
+                                                               spike.window);
       if(spkin > 0.0f) {
         sum += spkin * spike.ComputeAlpha(mx-t-1);
       }
@@ -410,7 +617,7 @@ void LEABRA_UNIT_SPEC::Compute_NetinInteg_Spike_i(LEABRA_UNIT_STATE* u, LEABRA_N
 
 void LEABRA_UNIT_SPEC::Compute_ApplyInhib
   (LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no, LEABRA_LAYER_STATE* lay, float ival) {
-  LEABRA_LAYER_SPEC_CPP* ls = (LEABRA_LAYER_SPEC_CPP*)lay->GetLayerSpec(net);
+  LEABRA_LAYER_SPEC_CPP* ls = lay->GetLayerSpec(net);
   Compute_SelfInhib_impl(u, ls->inhib_misc.self_fb, ls->inhib_misc.self_dt);
   float gi_ex = 0.0f;
   if(ls->del_inhib.on) {
@@ -500,11 +707,11 @@ void LEABRA_UNIT_SPEC::Send_DeepRawNetin(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_ST
     if(fabsf(act_delta) > opt_thresh.delta) {
       const int nsg = u->NSendConGps(net); 
       for(int g=0; g< nsg; g++) {
-        LEABRA_CON_STATE* send_gp = (LEABRA_CON_STATE*)u->SendConState(net, g);
+        LEABRA_CON_STATE* send_gp = u->SendConState(net, g);
         if(send_gp->NotActive()) continue;
-        // LEABRA_LAYER_STATE* tol = (LEABRA_LAYER_STATE*) send_gp->GetRecvLayer(net);
+        // LEABRA_LAYER_STATE* tol =  send_gp->GetRecvLayer(net);
         // if(tol->hard_clamped)      continue;
-        LEABRA_CON_SPEC_CPP* cs = (LEABRA_CON_SPEC_CPP*)send_gp->GetConSpec(net);
+        LEABRA_CON_SPEC_CPP* cs = send_gp->GetConSpec(net);
         if(cs->IsDeepRawCon()) {
           STATE_CLASS(SendDeepRawConSpec)* sp = (STATE_CLASS(SendDeepRawConSpec)*)cs;
           sp->Send_DeepRawNetDelta(send_gp, net, thr_no, act_delta);
@@ -517,11 +724,11 @@ void LEABRA_UNIT_SPEC::Send_DeepRawNetin(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_ST
     float act_delta = - u->deep_raw_sent; // un-send the last above-threshold activation to get back to 0
     const int nsg = u->NSendConGps(net); 
     for(int g=0; g< nsg; g++) {
-      LEABRA_CON_STATE* send_gp = (LEABRA_CON_STATE*)u->SendConState(net, g);
+      LEABRA_CON_STATE* send_gp = u->SendConState(net, g);
       if(send_gp->NotActive()) continue;
-      // LEABRA_LAYER_STATE* tol = (LEABRA_LAYER_STATE*) send_gp->GetRecvLayer(net);
+      // LEABRA_LAYER_STATE* tol =  send_gp->GetRecvLayer(net);
       // if(tol->hard_clamped)        continue;
-      LEABRA_CON_SPEC_CPP* cs = (LEABRA_CON_SPEC_CPP*)send_gp->GetConSpec(net);
+      LEABRA_CON_SPEC_CPP* cs = send_gp->GetConSpec(net);
       if(cs->IsDeepRawCon()) {
         STATE_CLASS(SendDeepRawConSpec)* sp = (STATE_CLASS(SendDeepRawConSpec)*)cs;
         sp->Send_DeepRawNetDelta(send_gp, net, thr_no, act_delta);

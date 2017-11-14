@@ -92,4 +92,26 @@
   int        spike_i_st;      // #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation starting index in buffer for integrating spike current over time, for inhibitory inputs
   int        spike_i_len;      // #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation length of  buffer for integrating spike current over time, for inhibitory inputs
 
-  void  Initialize_core() { }
+  INLINE LEABRA_UNIT_SPEC_CPP* GetUnitSpec(NETWORK_STATE* nnet) const {
+    return (LEABRA_UNIT_SPEC_CPP*)inherited::GetUnitSpec(nnet);
+  }
+  INLINE LEABRA_LAYER_STATE* GetOwnLayer(NETWORK_STATE* nnet) const {
+    return (LEABRA_LAYER_STATE*)inherited::GetOwnLayer(nnet);
+  }
+  INLINE LEABRA_UNGP_STATE* GetOwnUnGp(NETWORK_STATE* nnet) const {
+    return (LEABRA_UNGP_STATE*)inherited::GetOwnUnGp(nnet);
+  }
+
+  INLINE LEABRA_CON_STATE*  RecvConState(NETWORK_STATE* nnet, int rcg_idx) const
+  { return (LEABRA_CON_STATE*)inherited::RecvConState(nnet, rcg_idx); }
+
+  INLINE LEABRA_CON_STATE*  RecvConStateSafe(NETWORK_STATE* nnet, int rcg_idx) const
+  { return (LEABRA_CON_STATE*)inherited::RecvConStateSafe(nnet, rcg_idx); }
+
+  INLINE LEABRA_CON_STATE*  SendConState(NETWORK_STATE* nnet, int scg_idx) const
+  { return (LEABRA_CON_STATE*)inherited::SendConState(nnet, scg_idx); }
+
+  INLINE LEABRA_CON_STATE*  SendConStateSafe(NETWORK_STATE* nnet, int scg_idx) const
+  { return (LEABRA_CON_STATE*)inherited::SendConStateSafe(nnet, scg_idx); }
+
+  INLINE void  Initialize_core() { }

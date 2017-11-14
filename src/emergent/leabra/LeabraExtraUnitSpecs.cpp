@@ -52,12 +52,12 @@ bool DeepCopyUnitSpec::CheckConfig_Unit(Layer* lay, bool quiet) {
   if(lay->n_units == 0) return rval;
   LEABRA_UNIT_STATE* un = (LEABRA_UNIT_STATE*)lay->GetUnitState(net, 0);
   
-  LEABRA_CON_STATE* cg = (LEABRA_CON_STATE*)un->RecvConStateSafe(net, 0);
+  LEABRA_CON_STATE* cg = un->RecvConStateSafe(net, 0);
   if(lay->CheckError(!cg, quiet, rval,
                      "Requires one recv projection!")) {
     return false;
   }
-  LEABRA_UNIT_STATE* su = (LEABRA_UNIT_STATE*)cg->SafeUnState(0, net);
+  LEABRA_UNIT_STATE* su = cg->UnStateSafe(0, net);
   if(lay->CheckError(!su, quiet, rval, 
                      "Requires one unit in recv projection!")) {
     return false;
@@ -99,12 +99,12 @@ bool PoolInputsUnitSpec::CheckConfig_Unit(Layer* lay, bool quiet) {
   if(lay->n_units == 0) return rval;
   LEABRA_UNIT_STATE* un = (LEABRA_UNIT_STATE*)lay->GetUnitState(net, 0);
   
-  LEABRA_CON_STATE* cg = (LEABRA_CON_STATE*)un->RecvConStateSafe(net, 0);
+  LEABRA_CON_STATE* cg = un->RecvConStateSafe(net, 0);
   if(lay->CheckError(!cg, quiet, rval,
                    "Requires one recv projection!")) {
     return false;
   }
-  LEABRA_LAYER_STATE* fmlay = (LEABRA_LAYER_STATE*)cg->GetSendLayer(net);
+  LEABRA_LAYER_STATE* fmlay = cg->GetSendLayer(net);
   if(lay->CheckError(fmlay->lesioned(), quiet, rval,
                    "Sending layer is lesioned -- we should be lesioned too!")) {
     return false;
@@ -155,13 +155,13 @@ bool TDRewPredUnitSpec::CheckConfig_Unit(Layer* ly, bool quiet) {
   LeabraNetwork* main_net = (LeabraNetwork*)lay->own_net;
   LEABRA_NETWORK_STATE* net = (LEABRA_NETWORK_STATE*)main_net->net_state;
   if(lay->n_units == 0) return rval;
-  LEABRA_UNIT_STATE* un = (LEABRA_UNIT_STATE*)lay->GetUnitState(net, 0);
+  LEABRA_UNIT_STATE* un = lay->GetUnitState(net, 0);
   
   const int nrg = un->NRecvConGps(net); 
   for(int g=0; g< nrg; g++) {
-    LEABRA_CON_STATE* recv_gp = (LEABRA_CON_STATE*)un->RecvConState(net, g);
+    LEABRA_CON_STATE* recv_gp = un->RecvConState(net, g);
     if(!recv_gp->PrjnIsActive(net)) continue; // key!! just check for prjn, not con group!
-    LEABRA_CON_SPEC_CPP* cs = (LEABRA_CON_SPEC_CPP*)recv_gp->GetConSpec(net);
+    LEABRA_CON_SPEC_CPP* cs = recv_gp->GetConSpec(net);
     if(cs->IsMarkerCon()) continue;
     if(lay->CheckError
        (cs->GetStateSpecType() != LEABRA_NETWORK_STATE::T_TDRewPredConSpec, quiet, rval,
@@ -223,17 +223,17 @@ bool TDRewIntegUnitSpec::CheckConfig_Unit(Layer* ly, bool quiet) {
   LeabraNetwork* main_net = (LeabraNetwork*)lay->own_net;
   LEABRA_NETWORK_STATE* net = (LEABRA_NETWORK_STATE*)main_net->net_state;
   if(lay->n_units == 0) return rval;
-  LEABRA_UNIT_STATE* un = (LEABRA_UNIT_STATE*)lay->GetUnitState(net, 0);
+  LEABRA_UNIT_STATE* un = lay->GetUnitState(net, 0);
   
   const int nrg = un->NRecvConGps(net); 
   for(int g=0; g< nrg; g++) {
-    LEABRA_CON_STATE* recv_gp = (LEABRA_CON_STATE*)un->RecvConState(net, g);
+    LEABRA_CON_STATE* recv_gp = un->RecvConState(net, g);
     if(!recv_gp->PrjnIsActive(net)) continue; // key!! just check for prjn, not con group!
-    LEABRA_CON_SPEC_CPP* cs = (LEABRA_CON_SPEC_CPP*)recv_gp->GetConSpec(net);
+    LEABRA_CON_SPEC_CPP* cs = recv_gp->GetConSpec(net);
     if(!cs->IsMarkerCon()) continue;
-    LEABRA_LAYER_STATE* fmlay = (LEABRA_LAYER_STATE*)recv_gp->GetSendLayer(net);
-    LEABRA_LAYER_SPEC_CPP* fls = (LEABRA_LAYER_SPEC_CPP*)fmlay->GetLayerSpec(net);
-    LEABRA_UNIT_SPEC_CPP* us = (LEABRA_UNIT_SPEC_CPP*)fmlay->GetUnitSpec(net);
+    LEABRA_LAYER_STATE* fmlay = recv_gp->GetSendLayer(net);
+    LEABRA_LAYER_SPEC_CPP* fls = fmlay->GetLayerSpec(net);
+    LEABRA_UNIT_SPEC_CPP* us = fmlay->GetUnitSpec(net);
     if(us->GetStateSpecType() == LEABRA_NETWORK_STATE::T_TDRewPredUnitSpec) {
       rew_pred_lay = fmlay;
     }
@@ -306,18 +306,18 @@ bool TDDeltaUnitSpec::CheckConfig_Unit(Layer* ly, bool quiet) {
   LeabraNetwork* main_net = (LeabraNetwork*)lay->own_net;
   LEABRA_NETWORK_STATE* net = (LEABRA_NETWORK_STATE*)main_net->net_state;
   if(lay->n_units == 0) return rval;
-  LEABRA_UNIT_STATE* un = (LEABRA_UNIT_STATE*)lay->GetUnitState(net, 0);
+  LEABRA_UNIT_STATE* un = lay->GetUnitState(net, 0);
 
   LEABRA_LAYER_STATE* rewinteg_lay = NULL;
   
   const int nrg = un->NRecvConGps(net); 
   for(int g=0; g< nrg; g++) {
-    LEABRA_CON_STATE* recv_gp = (LEABRA_CON_STATE*)un->RecvConState(net, g);
+    LEABRA_CON_STATE* recv_gp = un->RecvConState(net, g);
     if(!recv_gp->PrjnIsActive(net)) continue; // key!! just check for prjn, not con group!
-    LEABRA_CON_SPEC_CPP* cs = (LEABRA_CON_SPEC_CPP*)recv_gp->GetConSpec(net);
+    LEABRA_CON_SPEC_CPP* cs = recv_gp->GetConSpec(net);
     if(!cs->IsMarkerCon()) continue;
-    LEABRA_LAYER_STATE* fmlay = (LEABRA_LAYER_STATE*)recv_gp->GetSendLayer(net);
-    LEABRA_UNIT_SPEC_CPP* us = (LEABRA_UNIT_SPEC_CPP*)fmlay->GetUnitSpec(net);
+    LEABRA_LAYER_STATE* fmlay = recv_gp->GetSendLayer(net);
+    LEABRA_UNIT_SPEC_CPP* us = fmlay->GetUnitSpec(net);
     if(us->GetStateSpecType() == LEABRA_NETWORK_STATE::T_TDRewIntegUnitSpec) {
       rewinteg_lay = fmlay;
     }
@@ -785,7 +785,7 @@ bool BFCSUnitSpec::CheckConfig_Unit(Layer* lay, bool quiet) {
   LeabraNetwork* main_net = (LeabraNetwork*)lay->own_net;
   LEABRA_NETWORK_STATE* net = (LEABRA_NETWORK_STATE*)main_net->net_state;
   if(lay->n_units == 0) return rval;
-  // LEABRA_UNIT_STATE* un = (LEABRA_UNIT_STATE*)lay->GetUnitState(net, 0);
+  // LEABRA_UNIT_STATE* un = lay->GetUnitState(net, 0);
   
   // if(lay->CheckError((act_range.max != 2.0f) || (act_range.min != -2.0f), quiet, rval,
   //               "requires UnitSpec act_range.max = 2, min = -2, I just set it for you in spec:",
@@ -929,12 +929,12 @@ bool InvertUnitSpec::CheckConfig_Unit(Layer* lay, bool quiet) {
   if(lay->n_units == 0) return rval;
   LEABRA_UNIT_STATE* un = (LEABRA_UNIT_STATE*)lay->GetUnitState(net, 0);
 
-  LEABRA_CON_STATE* cg = (LEABRA_CON_STATE*)un->RecvConStateSafe(net, 0);
+  LEABRA_CON_STATE* cg = un->RecvConStateSafe(net, 0);
   if(lay->CheckError(!cg, quiet, rval,
                    "Requires one recv projection!")) {
     return false;
   }
-  LEABRA_UNIT_STATE* su = (LEABRA_UNIT_STATE*)cg->SafeUnState(0, net);
+  LEABRA_UNIT_STATE* su = cg->UnStateSafe(0, net);
   if(lay->CheckError(!su, quiet, rval, 
                    "Requires one unit in recv projection!")) {
     return false;
@@ -1160,9 +1160,9 @@ bool ECoutUnitSpec::CheckConfig_Unit(Layer* lay, bool quiet) {
   bool got_ec_in = false;
   const int nrg = un->NRecvConGps(net); 
   for(int g=0; g< nrg; g++) {
-    LEABRA_CON_STATE* recv_gp = (LEABRA_CON_STATE*)un->RecvConState(net, g);
+    LEABRA_CON_STATE* recv_gp = un->RecvConState(net, g);
     if(!recv_gp->PrjnIsActive(net)) continue; // key!! just check for prjn, not con group!
-    LEABRA_CON_SPEC_CPP* cs = (LEABRA_CON_SPEC_CPP*)recv_gp->GetConSpec(net);
+    LEABRA_CON_SPEC_CPP* cs = recv_gp->GetConSpec(net);
     if(cs->IsMarkerCon() && recv_gp->size >= 1) {
       got_ec_in = true;
     }
@@ -1200,10 +1200,10 @@ bool CA1UnitSpec::CheckConfig_Unit(Layer* lay, bool quiet) {
   bool got_ca3 = false;
   const int nrg = un->NRecvConGps(net); 
   for(int g=0; g< nrg; g++) {
-    LEABRA_CON_STATE* recv_gp = (LEABRA_CON_STATE*)un->RecvConState(net, g);
+    LEABRA_CON_STATE* recv_gp = un->RecvConState(net, g);
     if(!recv_gp->PrjnIsActive(net)) continue; // key!! just check for prjn, not con group!
-    LEABRA_LAYER_STATE* from = (LEABRA_LAYER_STATE*) recv_gp->GetSendLayer(net);
-    LEABRA_CON_SPEC_CPP* cs = (LEABRA_CON_SPEC_CPP*)recv_gp->GetConSpec(net);
+    LEABRA_LAYER_STATE* from = recv_gp->GetSendLayer(net);
+    LEABRA_CON_SPEC_CPP* cs = recv_gp->GetConSpec(net);
     // cs->SetUnique("wt_scale", true); // be sure!
     if(from->LayerNameContains("EC")) {
       if(from->LayerNameContains("out")) {
@@ -1286,12 +1286,12 @@ bool LeabraMultCopyUnitSpec::CheckConfig_Unit(Layer* lay, bool quiet) {
     return false;               // fatal
   }
 
-  LEABRA_CON_STATE* copy_gp = (LEABRA_CON_STATE*)un->RecvConState(net, 0);
+  LEABRA_CON_STATE* copy_gp = un->RecvConState(net, 0);
   if(lay->CheckError(copy_gp->size != 1, quiet, rval,
                 "leabra mult copy first prjn (copy act source) must have exactly 1 connection to copy from")) {
     return false;               // fatal
   }
-  LEABRA_CON_STATE* mult_gp = (LEABRA_CON_STATE*)un->RecvConState(net, 1);
+  LEABRA_CON_STATE* mult_gp = un->RecvConState(net, 1);
   if(lay->CheckError(mult_gp->size != 1, quiet, rval,
                 "leabra mult copy second prjn (mult act source) must have exactly 1 connection to get mult act from")) {
     return false;               // fatal
@@ -1325,12 +1325,12 @@ bool LeabraContextUnitSpec::CheckConfig_Unit(Layer* lay, bool quiet) {
   if(lay->n_units == 0) return rval;
   LEABRA_UNIT_STATE* un = (LEABRA_UNIT_STATE*)lay->GetUnitState(net, 0);
   
-  LEABRA_CON_STATE* cg = (LEABRA_CON_STATE*)un->RecvConStateSafe(net, 0);
+  LEABRA_CON_STATE* cg = un->RecvConStateSafe(net, 0);
   if(lay->CheckError(!cg, quiet, rval,
                      "Requires one recv projection!")) {
     return false;
   }
-  LEABRA_UNIT_STATE* su = (LEABRA_UNIT_STATE*)cg->SafeUnState(0, net);
+  LEABRA_UNIT_STATE* su = cg->UnStateSafe(0, net);
   if(lay->CheckError(!su, quiet, rval, 
                      "Requires one unit in recv projection!")) {
     return false;

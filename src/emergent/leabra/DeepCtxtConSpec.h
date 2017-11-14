@@ -43,7 +43,7 @@
     LEABRA_NETWORK_STATE* net = (LEABRA_NETWORK_STATE*)snet;
     if(!learn || (use_unlearnable && net->unlearnable_trial)) return;
     LEABRA_CON_STATE* cg = (LEABRA_CON_STATE*)scg;
-    LEABRA_UNIT_STATE* su = (LEABRA_UNIT_STATE*)cg->ThrOwnUnState(net, thr_no);
+    LEABRA_UNIT_STATE* su = cg->ThrOwnUnState(net, thr_no);
 
     float clrate, bg_lrate, fg_lrate;
     bool deep_on;
@@ -60,7 +60,7 @@
       float* dwavgs = cg->OwnCnVar(DWAVG);
       float* moments = cg->OwnCnVar(MOMENT);
       for(int i=0; i<sz; i++) {
-        LEABRA_UNIT_STATE* ru = (LEABRA_UNIT_STATE*)cg->UnState(i, net);
+        LEABRA_UNIT_STATE* ru = cg->UnState(i, net);
         // note: applying opt_thresh.xcal_lrn here does NOT work well for dwt_zone..
         float lrate_eff = clrate;
         if(deep_on) {
@@ -84,7 +84,7 @@
     }
     else {
       for(int i=0; i<sz; i++) {
-        LEABRA_UNIT_STATE* ru = (LEABRA_UNIT_STATE*)cg->UnState(i, net);
+        LEABRA_UNIT_STATE* ru = cg->UnState(i, net);
         float lrate_eff = clrate;
         if(deep_on) {
           lrate_eff *= (bg_lrate + fg_lrate * ru->deep_lrn);

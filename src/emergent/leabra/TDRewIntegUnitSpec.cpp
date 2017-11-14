@@ -8,18 +8,18 @@ void STATE_CLASS(TDRewIntegUnitSpec)::Compute_TDRewInteg
 
   const int nrg = u->NRecvConGps(net); 
   for(int g=0; g< nrg; g++) {
-    LEABRA_CON_STATE* recv_gp = (LEABRA_CON_STATE*)u->RecvConState(net, g);
+    LEABRA_CON_STATE* recv_gp = u->RecvConState(net, g);
     if(recv_gp->NotActive()) continue;
-    LEABRA_CON_SPEC_CPP* cs = (LEABRA_CON_SPEC_CPP*)recv_gp->GetConSpec(net);
+    LEABRA_CON_SPEC_CPP* cs = recv_gp->GetConSpec(net);
     if(!cs->IsMarkerCon()) continue;
-    LEABRA_LAYER_STATE* slay = (LEABRA_LAYER_STATE*)recv_gp->GetSendLayer(net);
-    LEABRA_LAYER_SPEC_CPP* sls = (LEABRA_LAYER_SPEC_CPP*)slay->GetLayerSpec(net);
-    LEABRA_UNIT_SPEC_CPP* us = (LEABRA_UNIT_SPEC_CPP*)slay->GetUnitSpec(net);
+    LEABRA_LAYER_STATE* slay = recv_gp->GetSendLayer(net);
+    LEABRA_LAYER_SPEC_CPP* sls = slay->GetLayerSpec(net);
+    LEABRA_UNIT_SPEC_CPP* us = slay->GetUnitSpec(net);
     if(us->GetStateSpecType() == LEABRA_NETWORK_STATE::T_TDRewPredUnitSpec) {
       rew_pred_val = slay->GetTotalActEq(net);
     }
     else if(sls->GetStateSpecType() == LEABRA_NETWORK_STATE::T_ExtRewLayerSpec) {
-      LEABRA_UNIT_STATE* eru = (LEABRA_UNIT_STATE*)slay->GetUnitState(net, 0);
+      LEABRA_UNIT_STATE* eru = slay->GetUnitState(net, 0);
       ext_rew_val = eru->misc_1; // readout is in misc_1
     }
   }

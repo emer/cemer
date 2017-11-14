@@ -3,16 +3,16 @@
 
 bool STATE_CLASS(ExtRewLayerSpec)::OutErrRewAvail(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
   bool got_some = false;
-  LEABRA_UNIT_STATE* u = (LEABRA_UNIT_STATE*)lay->GetUnitState(net, 1); // taking 2nd unit as representative
+  LEABRA_UNIT_STATE* u = lay->GetUnitState(net, 1); // taking 2nd unit as representative
   const int nrg = u->NRecvConGps(net);
   for(int g=0; g<nrg; g++) {
-    LEABRA_CON_STATE* recv_gp = (LEABRA_CON_STATE*)u->RecvConState(net, g);
+    LEABRA_CON_STATE* recv_gp = u->RecvConState(net, g);
     if(recv_gp->NotActive()) continue;
-    LEABRA_CON_SPEC_CPP* cs = (LEABRA_CON_SPEC_CPP*)recv_gp->GetConSpec(net);
+    LEABRA_CON_SPEC_CPP* cs = recv_gp->GetConSpec(net);
     if(!cs->IsMarkerCon()) continue;
-    LEABRA_LAYER_STATE* rew_lay = (LEABRA_LAYER_STATE*)recv_gp->GetSendLayer(net);
+    LEABRA_LAYER_STATE* rew_lay = recv_gp->GetSendLayer(net);
     if(!rew_lay->LayerNameIs("RewTarg")) continue;
-    LEABRA_UNIT_STATE* rtu = (LEABRA_UNIT_STATE*)rew_lay->GetUnitState(net, 0);
+    LEABRA_UNIT_STATE* rtu = rew_lay->GetUnitState(net, 0);
     if(rtu->act_eq > 0.5f) {
       got_some = true;
       break;
@@ -22,18 +22,18 @@ bool STATE_CLASS(ExtRewLayerSpec)::OutErrRewAvail(LEABRA_LAYER_STATE* lay, LEABR
 }
 
 float STATE_CLASS(ExtRewLayerSpec)::GetOutErrRew(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
-  LEABRA_UNIT_STATE* u = (LEABRA_UNIT_STATE*)lay->GetUnitState(net, 1);
+  LEABRA_UNIT_STATE* u = lay->GetUnitState(net, 1);
 
   // first pass: find the layers: use COMP if no TARG is found
   int   n_targs = 0;            // number of target layers
   int   n_comps = 0;            // number of comp layers
   const int nrg = u->NRecvConGps(net);
   for(int g=0; g<nrg; g++) {
-    LEABRA_CON_STATE* recv_gp = (LEABRA_CON_STATE*)u->RecvConState(net, g);
+    LEABRA_CON_STATE* recv_gp = u->RecvConState(net, g);
     if(recv_gp->NotActive()) continue;
-    LEABRA_CON_SPEC_CPP* cs = (LEABRA_CON_SPEC_CPP*)recv_gp->GetConSpec(net);
+    LEABRA_CON_SPEC_CPP* cs = recv_gp->GetConSpec(net);
     if(!cs->IsMarkerCon()) continue;
-    LEABRA_LAYER_STATE* rew_lay = (LEABRA_LAYER_STATE*)recv_gp->GetSendLayer(net);
+    LEABRA_LAYER_STATE* rew_lay = recv_gp->GetSendLayer(net);
     if(rew_lay->LayerNameIs("RewTarg")) continue;
 
     if(rew_lay->HasExtFlag(UNIT_STATE::TARG)) n_targs++;
@@ -46,22 +46,22 @@ float STATE_CLASS(ExtRewLayerSpec)::GetOutErrRew(LEABRA_LAYER_STATE* lay, LEABRA
   float totposs = 0.0f;         // total possible error (unitwise)
   float toterr = 0.0f;          // total error
   for(int g=0; g<nrg; g++) {
-    LEABRA_CON_STATE* recv_gp = (LEABRA_CON_STATE*)u->RecvConState(net, g);
+    LEABRA_CON_STATE* recv_gp = u->RecvConState(net, g);
     if(recv_gp->NotActive()) continue;
-    LEABRA_CON_SPEC_CPP* cs = (LEABRA_CON_SPEC_CPP*)recv_gp->GetConSpec(net);
+    LEABRA_CON_SPEC_CPP* cs = recv_gp->GetConSpec(net);
     if(!cs->IsMarkerCon()) continue;
-    LEABRA_LAYER_STATE* rew_lay = (LEABRA_LAYER_STATE*)recv_gp->GetSendLayer(net);
+    LEABRA_LAYER_STATE* rew_lay = recv_gp->GetSendLayer(net);
     if(rew_lay->LayerNameIs("RewTarg")) continue;
 
     if(!rew_lay->HasExtFlag(rew_chk_flag)) continue; // only proceed if valid
     //  toterr += rew_lay->norm_err;        // now using norm err
     // this is now no longer computed at the point where we need it!  must compute ourselves!
 
-    LEABRA_UNIT_SPEC_CPP* us = (LEABRA_UNIT_SPEC_CPP*)rew_lay->GetUnitSpec(net);
+    LEABRA_UNIT_SPEC_CPP* us = rew_lay->GetUnitSpec(net);
     
     float this_err = 0.0f;
     for(int ui = 0; ui < rew_lay->n_units; ui++) {
-      LEABRA_UNIT_STATE* un = (LEABRA_UNIT_STATE*)rew_lay->GetUnitState(net, ui);
+      LEABRA_UNIT_STATE* un = rew_lay->GetUnitState(net, ui);
       if(un->lesioned()) continue;
       bool targ_active = false;
       float unerr = us->Compute_NormErr(un, net, 0, targ_active);
@@ -96,8 +96,8 @@ void STATE_CLASS(ExtRewLayerSpec)::Compute_OutErrRew(LEABRA_LAYER_STATE* lay, LE
 
   UNIT_GP_ITR
     (lay,
-     LEABRA_UNGP_STATE* ug = (LEABRA_UNGP_STATE*)lay->GetUnGpState(net, gpidx);
-     LEABRA_UNIT_STATE* u = (LEABRA_UNIT_STATE*)ug->GetUnitState(net, 0);
+     LEABRA_UNGP_STATE* ug = lay->GetUnGpState(net, gpidx);
+     LEABRA_UNIT_STATE* u = ug->GetUnitState(net, 0);
      Compute_UnitDa(lay, net, gpidx, er, u);
      );
 
@@ -116,8 +116,8 @@ void STATE_CLASS(ExtRewLayerSpec)::Compute_ExtRew(LEABRA_LAYER_STATE* lay, LEABR
 
   UNIT_GP_ITR
     (lay,
-     LEABRA_UNGP_STATE* ug = (LEABRA_UNGP_STATE*)lay->GetUnGpState(net, gpidx);
-     LEABRA_UNIT_STATE* u = (LEABRA_UNIT_STATE*)ug->GetUnitState(net, 0);
+     LEABRA_UNGP_STATE* ug = lay->GetUnGpState(net, gpidx);
+     LEABRA_UNIT_STATE* u = ug->GetUnitState(net, 0);
      float er = u->ext;
      if(er == rew.norew_val) {
        u->ext = u->ext_orig = rew.norew_val;  // this is appropriate to set here..
@@ -146,8 +146,8 @@ void STATE_CLASS(ExtRewLayerSpec)::Compute_DaRew(LEABRA_LAYER_STATE* lay, LEABRA
 
   UNIT_GP_ITR
     (lay,
-     LEABRA_UNGP_STATE* ug = (LEABRA_UNGP_STATE*)lay->GetUnGpState(net, gpidx);
-     LEABRA_UNIT_STATE* u = (LEABRA_UNIT_STATE*)ug->GetUnitState(net, 0);
+     LEABRA_UNGP_STATE* ug = lay->GetUnGpState(net, gpidx);
+     LEABRA_UNIT_STATE* u = ug->GetUnitState(net, 0);
      float er = u->da_p;
      if(er == rew.norew_val) {
        u->ext = u->ext_orig = rew.norew_val;  // this is appropriate to set here..
@@ -183,8 +183,8 @@ void STATE_CLASS(ExtRewLayerSpec)::Compute_NoRewAct(LEABRA_LAYER_STATE* lay, LEA
 
   UNIT_GP_ITR
     (lay,
-     LEABRA_UNGP_STATE* ug = (LEABRA_UNGP_STATE*)lay->GetUnGpState(net, gpidx);
-     LEABRA_UNIT_STATE* u = (LEABRA_UNIT_STATE*)ug->GetUnitState(net, 0);
+     LEABRA_UNGP_STATE* ug = lay->GetUnGpState(net, gpidx);
+     LEABRA_UNIT_STATE* u = ug->GetUnitState(net, 0);
      u->ext = u->ext_orig = rew.norew_val;
      ClampValue_ugp(lay, net, gpidx);
      );

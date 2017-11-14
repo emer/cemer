@@ -5,20 +5,20 @@
 void STATE_CLASS(TwoDValLayerSpec)::Compute_WtBias_Val
 (LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net, int gpidx, float x_val, float y_val) {
 
-  LEABRA_UNGP_STATE* ug = (LEABRA_UNGP_STATE*)lay->GetUnGpState(net, gpidx);
+  LEABRA_UNGP_STATE* ug = lay->GetUnGpState(net, gpidx);
   const int nunits = ug->n_units;
   if(nunits < 3) return;        // must be at least a few units..
   twod.InitVal(x_val, y_val, lay->un_geom_x, lay->un_geom_y, x_range.min, x_range.range, y_range.min,
                y_range.range);
   for(int i=0;i<nunits;i++) {
-    LEABRA_UNIT_STATE* u = (LEABRA_UNIT_STATE*)ug->GetUnitState(net, i);
+    LEABRA_UNIT_STATE* u = ug->GetUnitState(net, i);
     if(u->lesioned()) continue;
     float act = .03f * bias_val.wt_gain * twod.GetUnitAct(i);
     int rsz = u->NRecvConGps(net);
     for(int g=0; g < rsz; g++) {
-      LEABRA_CON_STATE* recv_gp = (LEABRA_CON_STATE*)u->RecvConState(net, g);
+      LEABRA_CON_STATE* recv_gp = u->RecvConState(net, g);
       if(recv_gp->NotActive()) continue;
-      LEABRA_CON_SPEC_CPP* cs = (LEABRA_CON_SPEC_CPP*)recv_gp->GetConSpec(net);
+      LEABRA_CON_SPEC_CPP* cs = recv_gp->GetConSpec(net);
       if(cs->IsMarkerCon()) continue;
       for(int ci=0;ci<recv_gp->size;ci++) {
         float& wt = recv_gp->PtrCn(ci, CON_STATE::WT, net);
@@ -33,13 +33,13 @@ void STATE_CLASS(TwoDValLayerSpec)::Compute_WtBias_Val
 void STATE_CLASS(TwoDValLayerSpec)::Compute_UnBias_Val
 (LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net, int gpidx, float x_val, float y_val) {
   
-  LEABRA_UNGP_STATE* ug = (LEABRA_UNGP_STATE*)lay->GetUnGpState(net, gpidx);
+  LEABRA_UNGP_STATE* ug = lay->GetUnGpState(net, gpidx);
   const int nunits = ug->n_units;
   if(nunits < 3) return;        // must be at least a few units..
   twod.InitVal(x_val, y_val, lay->un_geom_x, lay->un_geom_y, x_range.min, x_range.range, y_range.min,
                y_range.range);
   for(int i=0;i<nunits;i++) {
-    LEABRA_UNIT_STATE* u = (LEABRA_UNIT_STATE*)ug->GetUnitState(net, i);
+    LEABRA_UNIT_STATE* u = ug->GetUnitState(net, i);
     if(u->lesioned()) continue;
     float act = bias_val.un_gain * twod.GetUnitAct(i);
     u->bias_wt = act;
@@ -57,12 +57,12 @@ void STATE_CLASS(TwoDValLayerSpec)::Compute_BiasVal(LEABRA_LAYER_STATE* lay, LEA
 
 void STATE_CLASS(TwoDValLayerSpec)::ClampValue_ugp
 (LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net, int gpidx, float rescale) {
-  LEABRA_UNGP_STATE* ug = (LEABRA_UNGP_STATE*)lay->GetUnGpState(net, gpidx);
-  LEABRA_UNIT_SPEC_CPP* us = (LEABRA_UNIT_SPEC_CPP*)lay->GetUnitSpec(net);
+  LEABRA_UNGP_STATE* ug = lay->GetUnGpState(net, gpidx);
+  LEABRA_UNIT_SPEC_CPP* us = lay->GetUnitSpec(net);
   const int nunits = ug->n_units;
   if(nunits < 3) return;        // must be at least a few units..
   for(int i=0;i<nunits;i++) {
-    LEABRA_UNIT_STATE* u = (LEABRA_UNIT_STATE*)ug->GetUnitState(net, i);
+    LEABRA_UNIT_STATE* u = ug->GetUnitState(net, i);
     if(u->lesioned()) continue;
     u->SetExtFlag(UNIT_STATE::EXT);
     u->ext = 0.0;
@@ -78,7 +78,7 @@ void STATE_CLASS(TwoDValLayerSpec)::ClampValue_ugp
   twod.InitVal(x_val, y_val, lay->un_geom_x, lay->un_geom_y, x_range.min, x_range.range, y_range.min,
                y_range.range);
   for(int i=0;i<nunits;i++) {
-    LEABRA_UNIT_STATE* u = (LEABRA_UNIT_STATE*)ug->GetUnitState(net, i);
+    LEABRA_UNIT_STATE* u = ug->GetUnitState(net, i);
     if(u->lesioned()) continue;
     float act = rescale * twod.GetUnitAct(i);
     if(act < us->opt_thresh.send)
@@ -95,8 +95,8 @@ void STATE_CLASS(TwoDValLayerSpec)::ReadValue(LEABRA_LAYER_STATE* lay, LEABRA_NE
 void STATE_CLASS(TwoDValLayerSpec)::ReadValue_ugp
   (LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net, int gpidx) {
   
-  LEABRA_UNGP_STATE* ug = (LEABRA_UNGP_STATE*)lay->GetUnGpState(net, gpidx);
-  LEABRA_UNIT_SPEC_CPP* us = (LEABRA_UNIT_SPEC_CPP*)lay->GetUnitSpec(net);
+  LEABRA_UNGP_STATE* ug = lay->GetUnGpState(net, gpidx);
+  LEABRA_UNIT_SPEC_CPP* us = lay->GetUnitSpec(net);
   const int nunits = ug->n_units;
   if(nunits < 3) return;        // must be at least a few units..
   twod.InitVal(0.0f, 0.0f, lay->un_geom_x, lay->un_geom_y, x_range.min, x_range.range, y_range.min,
@@ -105,7 +105,7 @@ void STATE_CLASS(TwoDValLayerSpec)::ReadValue_ugp
     float x_avg = 0.0f; float y_avg = 0.0f;
     float sum_act = 0.0f;
     for(int i=0;i<nunits;i++) {
-      LEABRA_UNIT_STATE* u = (LEABRA_UNIT_STATE*)ug->GetUnitState(net, i);
+      LEABRA_UNIT_STATE* u = ug->GetUnitState(net, i);
       if(u->lesioned()) continue;
       float x_cur, y_cur;  twod.GetUnitVal(i, x_cur, y_cur);
       float act_val = us->clamp_range.Clip(u->act_eq) / us->clamp_range.max; // clipped & normalized!
@@ -181,7 +181,7 @@ void STATE_CLASS(TwoDValLayerSpec)::ReadValue_ugp
 void STATE_CLASS(TwoDValLayerSpec)::Quarter_Init_TargFlags_Layer_ugp
 (LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net, int gpidx) {
   
-  LEABRA_UNGP_STATE* ug = (LEABRA_UNGP_STATE*)lay->GetUnGpState(net, gpidx);
+  LEABRA_UNGP_STATE* ug = lay->GetUnGpState(net, gpidx);
 
   // todo:
   // for(int k=0;k<twod.n_vals;k++) {
@@ -207,16 +207,13 @@ void STATE_CLASS(TwoDValLayerSpec)::Quarter_Init_TargFlags_Layer(LEABRA_LAYER_ST
 void STATE_CLASS(TwoDValLayerSpec)::Quarter_Init_Layer(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
   inherited::Quarter_Init_Layer(lay, net);
 
-  // LEABRA_LAYER_STATE* tdlay = (LEABRA_LAYER_STATE*)lay;
-  // tdlay->UpdateTwoDValsGeom();  // quick, make sure no mismatch
-
   if(bias_val.un == STATE_CLASS(TwoDValBias)::BWT) {
     // if using bias-weight bias, keep a constant scaling (independent of layer size)
-    LEABRA_UNIT_SPEC_CPP* us = (LEABRA_UNIT_SPEC_CPP*)lay->GetUnitSpec(net);
-    LEABRA_CON_SPEC_CPP* bspec = (LEABRA_CON_SPEC_CPP*)us->GetBiasSpec(net);
+    LEABRA_UNIT_SPEC_CPP* us = lay->GetUnitSpec(net);
+    LEABRA_CON_SPEC_CPP* bspec = us->GetBiasSpec(net);
     if(!bspec) return;
     for(int ui = 0; ui < lay->n_units; ui++) {
-      LEABRA_UNIT_STATE* u = (LEABRA_UNIT_STATE*)lay->GetUnitState(net, ui);
+      LEABRA_UNIT_STATE* u = lay->GetUnitState(net, ui);
       u->bias_scale = bspec->wt_scale.abs;  // still have absolute scaling if wanted..
       u->bias_scale /= 100.0f;
     }
@@ -226,12 +223,12 @@ void STATE_CLASS(TwoDValLayerSpec)::Quarter_Init_Layer(LEABRA_LAYER_STATE* lay, 
 void STATE_CLASS(TwoDValLayerSpec)::HardClampExt_ugp
 (LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net, int gpidx) {
   
-  LEABRA_UNGP_STATE* ug = (LEABRA_UNGP_STATE*)lay->GetUnGpState(net, gpidx);
-  LEABRA_UNIT_SPEC_CPP* us = (LEABRA_UNIT_SPEC_CPP*)lay->GetUnitSpec(net);
+  LEABRA_UNGP_STATE* ug = lay->GetUnGpState(net, gpidx);
+  LEABRA_UNIT_SPEC_CPP* us = lay->GetUnitSpec(net);
   const int nunits = ug->n_units;
   if(nunits < 1) return;        // must be at least a few units..
   for(int i=0;i<nunits;i++) {
-    LEABRA_UNIT_STATE* u = (LEABRA_UNIT_STATE*)ug->GetUnitState(net, i);
+    LEABRA_UNIT_STATE* u = ug->GetUnitState(net, i);
     if(u->lesioned()) continue;
     us->Compute_HardClamp(u, net, u->thread_no);
   }
@@ -262,7 +259,7 @@ void STATE_CLASS(TwoDValLayerSpec)::Quarter_Init_Layer_Post
 void STATE_CLASS(TwoDValLayerSpec)::Quarter_Final_ugp
   (LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net, int gpidx) {
 
-  LEABRA_UNGP_STATE* ug = (LEABRA_UNGP_STATE*)lay->GetUnGpState(net, gpidx);
+  LEABRA_UNGP_STATE* ug = lay->GetUnGpState(net, gpidx);
   
   // todo:
   // for(int k=0;k<twod.n_vals;k++) {
@@ -287,8 +284,8 @@ void STATE_CLASS(TwoDValLayerSpec)::Quarter_Final_ugp
 float STATE_CLASS(TwoDValLayerSpec)::Compute_SSE_ugp
   (LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net, int gpidx, int& n_vals) {
 
-  LEABRA_UNGP_STATE* ug = (LEABRA_UNGP_STATE*)lay->GetUnGpState(net, gpidx);
-  LEABRA_UNIT_SPEC_CPP* us = (LEABRA_UNIT_SPEC_CPP*)lay->GetUnitSpec(net);
+  LEABRA_UNGP_STATE* ug = lay->GetUnGpState(net, gpidx);
+  LEABRA_UNIT_SPEC_CPP* us = lay->GetUnitSpec(net);
   const int nunits = ug->n_units;
   if(nunits < 1) return 0.0f;        // must be at least a few units..
   float rval = 0.0f;
@@ -349,8 +346,8 @@ float STATE_CLASS(TwoDValLayerSpec)::Compute_SSE(LEABRA_LAYER_STATE* lay, LEABRA
 float STATE_CLASS(TwoDValLayerSpec)::Compute_NormErr_ugp
   (LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net, int gpidx) {
 
-  LEABRA_UNGP_STATE* ug = (LEABRA_UNGP_STATE*)lay->GetUnGpState(net, gpidx);
-  LEABRA_UNIT_SPEC_CPP* us = (LEABRA_UNIT_SPEC_CPP*)lay->GetUnitSpec(net);
+  LEABRA_UNGP_STATE* ug = lay->GetUnGpState(net, gpidx);
+  LEABRA_UNIT_SPEC_CPP* us = lay->GetUnitSpec(net);
   const int nunits = ug->n_units;
   if(nunits < 1) return 0.0f;        // must be at least a few units..
   float rval = 0.0f;

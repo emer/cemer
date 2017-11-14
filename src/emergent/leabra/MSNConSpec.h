@@ -21,7 +21,6 @@
     TRACE_THAL,                 // send * recv activation establishes a trace (long-lasting synaptic tag), with thalamic activation determining sign of the trace (if thal active (gated) then sign is positive, else sign is negative) -- when dopamine later arrives, the trace is applied * dopamine, and the amount of dopamine and/or any above-threshold ach from TAN units resets the trace
     TRACE_NO_THAL,              // send * recv activation establishes a trace (long-lasting synaptic tag), with no influence of thalamic gating signal -- when dopamine later arrives, the trace is applied * dopamine, and any above-threshold ach from TAN units resets the trace
     TRACE_NO_THAL_VS,           // ventral striatum version of TRACE_NO_THAL, which uses MAX(MIN(deep_mod_net, max_vs_deep_mod), ru_act) for recv term to set trace
-    WM_DEPENDENT,               // learning depends on a working memory trace.. 
   };
     
   LearnActVal        su_act_var;     // what variable to use for sending unit activation
@@ -181,7 +180,7 @@
     LEABRA_NETWORK_STATE* net = (LEABRA_NETWORK_STATE*)snet;
     if(!learn || (use_unlearnable && net->unlearnable_trial)) return;
     LEABRA_CON_STATE* cg = (LEABRA_CON_STATE*)scg;
-    LEABRA_UNIT_STATE* su = (LEABRA_UNIT_STATE*)cg->ThrOwnUnState(net, thr_no);
+    LEABRA_UNIT_STATE* su = cg->ThrOwnUnState(net, thr_no);
 
     const float su_act = GetActVal(su, su_act_var);
     const bool q4 = (net->quarter == 3);
@@ -198,7 +197,7 @@
     switch(learn_rule) {
     case DA_HEBB: {
       for(int i=0; i<sz; i++) {
-        LEABRA_UNIT_STATE* ru = (LEABRA_UNIT_STATE*)cg->UnState(i,net);
+        LEABRA_UNIT_STATE* ru = cg->UnState(i,net);
         bool d2r = (ru->HasUnitFlag(LEABRA_UNIT_STATE::D2R));
         float lrate_eff = clrate;
         if(deep_on) {
@@ -211,7 +210,7 @@
     }
     case DA_HEBB_VS: {
       for(int i=0; i<sz; i++) {
-        LEABRA_UNIT_STATE* ru = (LEABRA_UNIT_STATE*)cg->UnState(i,net);
+        LEABRA_UNIT_STATE* ru = cg->UnState(i,net);
         bool d2r = (ru->HasUnitFlag(LEABRA_UNIT_STATE::D2R));
         float lrate_eff = clrate;
         if(deep_on) {
@@ -225,7 +224,7 @@
     }
     case TRACE_THAL: {
       for(int i=0; i<sz; i++) {
-        LEABRA_UNIT_STATE* ru = (LEABRA_UNIT_STATE*)cg->UnState(i,net);
+        LEABRA_UNIT_STATE* ru = cg->UnState(i,net);
         bool d2r = (ru->HasUnitFlag(LEABRA_UNIT_STATE::D2R));
         float lrate_eff = clrate;
         if(deep_on) {
@@ -241,7 +240,7 @@
     }
     case TRACE_NO_THAL: {
       for(int i=0; i<sz; i++) {
-        LEABRA_UNIT_STATE* ru = (LEABRA_UNIT_STATE*)cg->UnState(i,net);
+        LEABRA_UNIT_STATE* ru = cg->UnState(i,net);
         bool d2r = (ru->HasUnitFlag(LEABRA_UNIT_STATE::D2R));
         float lrate_eff = clrate;
         if(deep_on) {
@@ -256,7 +255,7 @@
     }
     case TRACE_NO_THAL_VS: {
       for(int i=0; i<sz; i++) {
-        LEABRA_UNIT_STATE* ru = (LEABRA_UNIT_STATE*)cg->UnState(i,net);
+        LEABRA_UNIT_STATE* ru = cg->UnState(i,net);
         bool d2r = (ru->HasUnitFlag(LEABRA_UNIT_STATE::D2R));
         float lrate_eff = clrate;
         if(deep_on) {
@@ -268,10 +267,6 @@
         C_Compute_dWt_Trace_NoThalVS(dwts[i], ntrs[i], trs[i], ru->da_p, ach, d2r,
                                      ru_act, ru->deep_mod_net, su_act, lrate_eff);
       }
-      break;
-    }
-    case WM_DEPENDENT: {
-      // todo!
       break;
     }
     }

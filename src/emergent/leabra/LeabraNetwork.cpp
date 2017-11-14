@@ -109,8 +109,8 @@ void LeabraNetwork::BuildLeabraThreadMem() {
 void LeabraNetwork::SyncLayerState_Layer(Layer* ly) {
   inherited::SyncLayerState_Layer(ly);
   LeabraLayer* lay = (LeabraLayer*)ly;
-  LEABRA_LAYER_STATE* lst = (LEABRA_LAYER_STATE*)lay->GetLayerState(net_state);
-  LEABRA_UNGP_STATE* lgpd = (LEABRA_UNGP_STATE*)lay->GetLayUnGpState(net_state);
+  LEABRA_LAYER_STATE* lst = lay->GetLayerState(net_state);
+  LEABRA_UNGP_STATE* lgpd = lay->GetLayUnGpState(net_state);
   // these are important for saving in weights files -- keep them updated
   lst->acts_m_avg = lgpd->acts_m_avg;
   lst->acts_p_avg = lgpd->acts_p_avg;
@@ -145,6 +145,7 @@ void LeabraNetwork::Trial_Init() {
                "Network is not built or is not intact -- must Build first")) {
     return;
   }
+  unlearnable_trial = false;    //  this is main-side!
   NET_STATE_RUN(LeabraNetworkState, Trial_Init());
   SyncAllState();
   SetCurLrate();
@@ -228,6 +229,7 @@ void LeabraNetwork::Cycle_Run() {
   SyncAllState();
   NET_STATE_RUN(LeabraNetworkState, Cycle_Run());
   SyncAllState();
+  Compute_OutputName();         // this used to be computed every cycle.. now just at end of cycle run
 }
 
 
@@ -285,7 +287,8 @@ void LeabraNetwork::Compute_OutputName() {
   output_name = "";             // this will be updated by layer
   FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
     if(lay->lesioned()) continue;
-    // lay->Compute_OutputName(this);
+    LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->GetMainLayerSpec();
+    ls->Compute_OutputName(lay, this);
   }
 }
 
@@ -355,14 +358,14 @@ void LeabraNetwork::LayerAvgAct(DataTable* report_table, LeabraLayerSpec* lay_sp
   DataCol* init = report_table->FindMakeColName("avg_act_init", idx, VT_FLOAT);
 
   for(int li=0; li < n_layers_built; li++) {
-    LeabraLayerState_cpp* lay = (LeabraLayerState_cpp*)GetLayerState(li);
+    LeabraLayerState_cpp* lay = (LeabraLayerState_cpp*)net_state->GetLayerState(li);
     if(lay->lesioned()) continue;
     LeabraLayer* mlay = (LeabraLayer*)LayerFromState(lay);
     LeabraLayerSpec* ls = (LeabraLayerSpec*)mlay->GetMainLayerSpec();
     if(lay_spec != NULL) {
       if(ls != lay_spec) continue;
     }
-    LEABRA_UNGP_STATE* lgpd = (LEABRA_UNGP_STATE*)lay->GetLayUnGpState(net_state);
+    LEABRA_UNGP_STATE* lgpd = lay->GetLayUnGpState(net_state);
     report_table->AddBlankRow();
     ln->SetValAsString(mlay->name, -1);
     lsn->SetValAsString(ls->name, -1);
@@ -432,7 +435,7 @@ void LeabraNetwork::Compute_MinusStats() {
   NET_STATE_RUN(LeabraNetworkState, Compute_MinusStats());
 
   for(int li=0; li < n_layers_built; li++) {
-    LeabraLayerState_cpp* lay = (LeabraLayerState_cpp*)GetLayerState(li);
+    LeabraLayerState_cpp* lay = (LeabraLayerState_cpp*)net_state->GetLayerState(li);
     if(lay->lesioned()) continue;
     LeabraLayer* mlay = (LeabraLayer*)LayerFromState(lay);
     mlay->minus_output_name = mlay->output_name;

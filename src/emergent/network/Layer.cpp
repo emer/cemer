@@ -1288,8 +1288,21 @@ void Layer::GetLocalistName() {
   for(int ui=0; ui < n_units_built; ui++) {
     UnitState_cpp* u = GetUnitState(net, ui);
     if(u->lesioned()) continue;
-    // todo: do
-    // u->GetLocalistName();
+    
+    const int rsz = u->NRecvConGps(net);
+    for(int g = 0; g < rsz; g++) {
+      ConState_cpp* cg = u->RecvConState(net, g);
+      if(cg->NotActive()) continue;
+      if(cg->size != 1) continue; // only 1-to-1
+      UnitState_cpp* su = cg->UnState(0,net);
+      LayerState_cpp* sls = cg->GetSendLayer(net);
+      Layer* slay = own_net->LayerFromState(sls);
+      String nm = slay->GetUnitName(su);
+      if(nm.nonempty()) {
+        SetUnitName(u, nm);
+        break;                    // done!
+      }
+    }
   }
 }
 

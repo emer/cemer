@@ -18,11 +18,11 @@ bool STATE_CLASS(VTAUnitSpec)::GetRecvLayers_P
   
   const int nrg = u->NRecvConGps(net);
   for(int g=0; g<nrg; g++) {
-    LEABRA_CON_STATE* recv_gp = (LEABRA_CON_STATE*)u->RecvConState(net, g);
+    LEABRA_CON_STATE* recv_gp = u->RecvConState(net, g);
     if(recv_gp->NotActive()) continue;
-    LEABRA_CON_SPEC_CPP* cs = (LEABRA_CON_SPEC_CPP*)recv_gp->GetConSpec(net);
-    LEABRA_LAYER_STATE* fmlay = (LEABRA_LAYER_STATE*)recv_gp->GetSendLayer(net);
-    LEABRA_UNIT_SPEC_CPP* us = (LEABRA_UNIT_SPEC_CPP*) fmlay->GetUnitSpec(net);
+    LEABRA_CON_SPEC_CPP* cs = recv_gp->GetConSpec(net);
+    LEABRA_LAYER_STATE* fmlay = recv_gp->GetSendLayer(net);
+    LEABRA_UNIT_SPEC_CPP* us =  fmlay->GetUnitSpec(net);
     if(!cs->IsMarkerCon()) continue;
 
     if(us->GetStateSpecType() == LEABRA_NETWORK_STATE::T_PPTgUnitSpec) {
@@ -35,7 +35,7 @@ bool STATE_CLASS(VTAUnitSpec)::GetRecvLayers_P
       pospv_lay = fmlay;
     }
     else if(us->GetStateSpecType() == LEABRA_NETWORK_STATE::T_MSNUnitSpec) {
-      LEABRA_UNIT_STATE* su = (LEABRA_UNIT_STATE*)fmlay->GetUnitState(net, 0);
+      LEABRA_UNIT_STATE* su = fmlay->GetUnitState(net, 0);
       if(su->HasUnitFlag(LEABRA_UNIT_STATE::APPETITIVE) &&
          su->HasUnitFlag(LEABRA_UNIT_STATE::D1R)) {
         vspatchposd1_lay = fmlay;
@@ -68,11 +68,11 @@ bool STATE_CLASS(VTAUnitSpec)::GetRecvLayers_N
   
   const int nrg = u->NRecvConGps(net);
   for(int g=0; g<nrg; g++) {
-    LEABRA_CON_STATE* recv_gp = (LEABRA_CON_STATE*)u->RecvConState(net, g);
+    LEABRA_CON_STATE* recv_gp = u->RecvConState(net, g);
     if(recv_gp->NotActive()) continue;
-    LEABRA_CON_SPEC_CPP* cs = (LEABRA_CON_SPEC_CPP*)recv_gp->GetConSpec(net);
-    LEABRA_LAYER_STATE* fmlay = (LEABRA_LAYER_STATE*)recv_gp->GetSendLayer(net);
-    LEABRA_UNIT_SPEC_CPP* us = (LEABRA_UNIT_SPEC_CPP*) fmlay->GetUnitSpec(net);
+    LEABRA_CON_SPEC_CPP* cs = recv_gp->GetConSpec(net);
+    LEABRA_LAYER_STATE* fmlay = recv_gp->GetSendLayer(net);
+    LEABRA_UNIT_SPEC_CPP* us =  fmlay->GetUnitSpec(net);
     if(!cs->IsMarkerCon()) continue;
     if(us->GetStateSpecType() == LEABRA_NETWORK_STATE::T_PPTgUnitSpec) {
       pptg_lay_n = fmlay;
@@ -84,7 +84,7 @@ bool STATE_CLASS(VTAUnitSpec)::GetRecvLayers_N
       negpv_lay = fmlay;
     }
     else if(us->GetStateSpecType() == LEABRA_NETWORK_STATE::T_MSNUnitSpec) {
-      LEABRA_UNIT_STATE* su = (LEABRA_UNIT_STATE*)fmlay->GetUnitState(net, 0);
+      LEABRA_UNIT_STATE* su = fmlay->GetUnitState(net, 0);
       if(su->HasUnitFlag(LEABRA_UNIT_STATE::AVERSIVE) &&
          su->HasUnitFlag(LEABRA_UNIT_STATE::D2R)) {
         vspatchnegd2_lay_n = fmlay;
@@ -109,7 +109,7 @@ void STATE_CLASS(VTAUnitSpec)::Compute_DaP
   LEABRA_LAYER_STATE* vspatchnegd1_lay = NULL;
   LEABRA_LAYER_STATE* vspatchnegd2_lay = NULL;
 
-  LEABRA_LAYER_STATE* lay = (LEABRA_LAYER_STATE*)u->GetOwnLayer(net);
+  LEABRA_LAYER_STATE* lay = u->GetOwnLayer(net);
   
   GetRecvLayers_P(u, net, pospv_lay, pptg_lay_p, lhb_lay, vspatchposd1_lay, vspatchposd2_lay,
                   vspatchnegd1_lay, vspatchnegd2_lay);
@@ -222,7 +222,7 @@ void STATE_CLASS(VTAUnitSpec)::Compute_DaN
   LEABRA_LAYER_STATE* vspatchnegd1_lay = NULL;
   LEABRA_LAYER_STATE* vspatchnegd2_lay = NULL;
   
-  LEABRA_LAYER_STATE* lay = (LEABRA_LAYER_STATE*)u->GetOwnLayer(net);
+  LEABRA_LAYER_STATE* lay = u->GetOwnLayer(net);
   
   GetRecvLayers_N(u, net, negpv_lay, pptg_lay_n, lhb_lay_n, vspatchnegd1_lay,
                   vspatchnegd2_lay);
@@ -296,14 +296,14 @@ void STATE_CLASS(VTAUnitSpec)::Send_Da
   const float snd_val = u->act_eq;
   const int nsg = u->NSendConGps(net); 
   for(int g=0; g<nsg; g++) {
-    LEABRA_CON_STATE* send_gp = (LEABRA_CON_STATE*)u->SendConState(net, g);
+    LEABRA_CON_STATE* send_gp = u->SendConState(net, g);
     if(send_gp->NotActive()) continue;
     for(int j=0;j<send_gp->size; j++) {
       if(da_val == DA_P) {
-        ((LEABRA_UNIT_STATE*)send_gp->UnState(j,net))->da_p = snd_val;
+        send_gp->UnState(j,net)->da_p = snd_val;
       }
       else {
-        ((LEABRA_UNIT_STATE*)send_gp->UnState(j,net))->da_n = snd_val;
+        send_gp->UnState(j,net)->da_n = snd_val;
       }
     }
   }

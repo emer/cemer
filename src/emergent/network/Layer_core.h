@@ -36,11 +36,6 @@
     COMP_TARG_EXT       = 0x0007, // #NO_BIT as a comparison, target, and external input layer
   };
 
-  enum AccessMode {     // how to access the units in the layer -- only relevant for layers with unit groups (otherwise modes are the same)
-    ACC_LAY,            // access as a single layer-wide set of units
-    ACC_GP,             // access via their subgroup structure, with group and unit index values
-  };
-
   static const int LAY_NAME_MAX_LEN=256; // #IGNORE max length of layer name
 
   NETWORK_STATE*        net_state;      // #CAT_State #NO_SAVE #READ_ONLY our own network state 

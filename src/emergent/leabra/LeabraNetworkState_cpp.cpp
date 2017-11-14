@@ -334,7 +334,7 @@ int LeabraNetworkState_cpp::LayerLoadWeights_LayerVars
   }
 
   // these vars actually live on the unit group
-  LEABRA_UNGP_STATE* lgpd = (LEABRA_UNGP_STATE*)lay->GetLayUnGpState(this);
+  LEABRA_UNGP_STATE* lgpd = lay->GetLayUnGpState(this);
   lgpd->acts_m_avg = lay->acts_m_avg;
   lgpd->acts_p_avg = lay->acts_p_avg;
   lgpd->acts_p_avg_eff = lay->acts_p_avg_eff;
@@ -347,7 +347,7 @@ void LeabraNetworkState_cpp::LayerSaveWeights_LayerVars
 
   LEABRA_LAYER_STATE* lay = (LEABRA_LAYER_STATE*)play;
   // these vars actually live on the unit group
-  LEABRA_UNGP_STATE* lgpd = (LEABRA_UNGP_STATE*)lay->GetLayUnGpState(this);
+  LEABRA_UNGP_STATE* lgpd = lay->GetLayUnGpState(this);
   lay->acts_m_avg     = lgpd->acts_m_avg;
   lay->acts_p_avg     = lgpd->acts_p_avg;
   lay->acts_p_avg_eff = lgpd->acts_p_avg_eff;

@@ -64,9 +64,7 @@ public:
 
   virtual void Compute_OutputName(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Statistic compute the output_name field from the layer acts.max_i (only for OUTPUT or TARGET layers)
-  virtual void Compute_OutputName_ugp(LeabraLayer* lay, 
-                                      Layer::AccessMode acc_md, int gpidx,
-                                      LEABRA_UNGP_STATE* thr, LeabraNetwork* net);
+  virtual void Compute_OutputName_ugp(LeabraLayer* lay, LeabraNetwork* net, int gpidx);
   // #IGNORE compute the output_name field from the layer acts.max_i (only for OUTPUT or TARGET layers)
 
   virtual void  LayerAvgAct(DataTable* report_table = NULL);

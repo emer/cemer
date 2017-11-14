@@ -58,8 +58,8 @@
 
   INLINE virtual void Quarter_Final_GetMinus_ugp(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net,
                                                  int gpidx) {
-    LEABRA_UNGP_STATE* ug = (LEABRA_UNGP_STATE*)lay->GetUnGpState(net, gpidx);
-    LEABRA_UNIT_STATE* u = (LEABRA_UNIT_STATE*)ug->GetUnitState(net, 0);
+    LEABRA_UNGP_STATE* ug = lay->GetUnGpState(net, gpidx);
+    LEABRA_UNIT_STATE* u = ug->GetUnitState(net, 0);
     u->misc_2 = u->misc_1;      // save minus phase in misc_2
   }
   // #IGNORE

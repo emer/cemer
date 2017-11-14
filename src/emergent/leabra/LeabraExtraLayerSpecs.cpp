@@ -195,13 +195,13 @@ void ScalarValLayerSpec::LabelUnits_ugp
   LeabraLayer* llay = (LeabraLayer*)lnet->LayerFromState(lay);
   llay->SetUnitNames(true);     // use names
   
-  LEABRA_UNGP_STATE* ug = (LEABRA_UNGP_STATE*)lay->GetUnGpState(net, gpidx);
-  LEABRA_UNIT_SPEC_CPP* us = (LEABRA_UNIT_SPEC_CPP*)lay->GetUnitSpec(net);
+  LEABRA_UNGP_STATE* ug = lay->GetUnGpState(net, gpidx);
+  LEABRA_UNIT_SPEC_CPP* us = lay->GetUnitSpec(net);
   const int nunits = ug->n_units;
   scalar.InitVal(0.0f, nunits, unit_range.min, unit_range.range);
   if(nunits < 1) return;        // must be at least a few units..
   for(int i=0;i<nunits;i++) {
-    LEABRA_UNIT_STATE* u = (LEABRA_UNIT_STATE*)ug->GetUnitState(net, i);
+    LEABRA_UNIT_STATE* u = ug->GetUnitState(net, i);
     if(u->lesioned()) continue;
     float cur = scalar.GetUnitVal(i);
     llay->SetUnitName(u, (String)cur);
@@ -217,7 +217,7 @@ void ScalarValLayerSpec::LabelUnitsNet() {
   if(!lnet) return;
   LEABRA_NETWORK_STATE* net = (LEABRA_NETWORK_STATE*)lnet->net_state;
   for(int i=0; i < net->n_layers_built; i++) {
-    LEABRA_LAYER_STATE* lay = (LEABRA_LAYER_STATE*)net->GetLayerState(i);
+    LEABRA_LAYER_STATE* lay = net->GetLayerState(i);
     if(lay->lesioned()) continue;
     LAYER_SPEC_CPP* ls = lay->GetLayerSpec(net);
     if(ls->spec_idx == this->spec_idx) { // same..
@@ -298,14 +298,14 @@ bool ExtRewLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   bool got_marker = false;
   LEABRA_LAYER_STATE* rew_targ_lay = NULL;
   if(lay->n_units < 2) return false;
-  LEABRA_UNIT_STATE* u = (LEABRA_UNIT_STATE*)lay->GetUnitState(net, 1);
+  LEABRA_UNIT_STATE* u = lay->GetUnitState(net, 1);
   const int nrg = u->NRecvConGps(net);
   for(int g=0; g<nrg; g++) {
-    LEABRA_CON_STATE* recv_gp = (LEABRA_CON_STATE*)u->RecvConState(net, g);
+    LEABRA_CON_STATE* recv_gp = u->RecvConState(net, g);
     if(recv_gp->NotActive()) continue;
-    LEABRA_CON_SPEC_CPP* cs = (LEABRA_CON_SPEC_CPP*)recv_gp->GetConSpec(net);
+    LEABRA_CON_SPEC_CPP* cs = recv_gp->GetConSpec(net);
     if(!cs->IsMarkerCon()) continue;
-    LEABRA_LAYER_STATE* rew_lay = (LEABRA_LAYER_STATE*)recv_gp->GetSendLayer(net);
+    LEABRA_LAYER_STATE* rew_lay = recv_gp->GetSendLayer(net);
     if(rew_lay->LayerNameIs("RewTarg")) {
       rew_targ_lay = rew_lay;
     }
@@ -469,7 +469,7 @@ void TwoDValLayerSpec::ReConfig(Network* main_net, int n_units) {
   LEABRA_NETWORK_STATE* net = (LEABRA_NETWORK_STATE*)main_net->net_state;
   
   for(int i=0; i < net->n_layers_built; i++) {
-    LEABRA_LAYER_STATE* lay = (LEABRA_LAYER_STATE*)net->GetLayerState(i);
+    LEABRA_LAYER_STATE* lay = net->GetLayerState(i);
     if(lay->lesioned()) continue;
 
     LeabraLayer* llay = (LeabraLayer*)main_net->LayerFromState(lay);
@@ -481,7 +481,7 @@ void TwoDValLayerSpec::ReConfig(Network* main_net, int n_units) {
     }
 
     LeabraUnitSpec* us = (LeabraUnitSpec*)llay->GetMainUnitSpec();
-    LEABRA_UNIT_STATE* u = (LEABRA_UNIT_STATE*)lay->GetUnitState(net, 0);
+    LEABRA_UNIT_STATE* u = lay->GetUnitState(net, 0);
 
     if(twod.rep == TwoDValSpec::LOCALIST) {
       twod.min_sum_act = .2f;
@@ -550,13 +550,13 @@ void TwoDValLayerSpec::LabelUnits_ugp(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_ST
   LeabraLayer* llay = (LeabraLayer*)lnet->LayerFromState(lay);
   llay->SetUnitNames(true);     // use names
   
-  LEABRA_UNGP_STATE* ug = (LEABRA_UNGP_STATE*)lay->GetUnGpState(net, gpidx);
+  LEABRA_UNGP_STATE* ug = lay->GetUnGpState(net, gpidx);
   const int nunits = ug->n_units;
   if(nunits < 3) return;        // must be at least a few units..
   twod.InitVal(0.0f, 0.0f, lay->un_geom_x, lay->un_geom_y, x_range.min, x_range.range, y_range.min,
                y_range.range);
   for(int i=0;i<nunits;i++) {
-    LEABRA_UNIT_STATE* u = (LEABRA_UNIT_STATE*)ug->GetUnitState(net, i);
+    LEABRA_UNIT_STATE* u = ug->GetUnitState(net, i);
     if(u->lesioned()) continue;
     float x_cur, y_cur; twod.GetUnitVal(i, x_cur, y_cur);
     llay->SetUnitName(u, (String)x_cur + "," + String(y_cur));
@@ -573,7 +573,7 @@ void TwoDValLayerSpec::LabelUnitsNet() {
   LEABRA_NETWORK_STATE* net = (LEABRA_NETWORK_STATE*)lnet->net_state;
 
   for(int i=0; i < net->n_layers_built; i++) {
-    LEABRA_LAYER_STATE* lay = (LEABRA_LAYER_STATE*)net->GetLayerState(i);
+    LEABRA_LAYER_STATE* lay = net->GetLayerState(i);
     if(lay->lesioned()) continue;
     LAYER_SPEC_CPP* ls = lay->GetLayerSpec(net);
     if(ls->spec_idx == this->spec_idx) { // same..

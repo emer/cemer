@@ -13,13 +13,10 @@
   INLINE virtual int  GetStateSpecType() const { return NETWORK_STATE::T_UnitSpec; }
   // #CAT_State derived classes MUST override this and pass correct global type id
 
-  INLINE CON_SPEC* GetBiasSpec(NETWORK_STATE* net) {
-#ifdef STATE_MAIN
-    return bias_spec;
-#else    
+  // #CAT_Structure get the bias con spec 
+  INLINE CON_SPEC_CPP* GetBiasSpec(NETWORK_STATE* net) {
     if(bias_spec_idx < 0) return NULL;
     return net->GetConSpec(bias_spec_idx);
-#endif    
   }
   // #CAT_Structure get the bias con spec 
 
@@ -52,7 +49,7 @@
   // #CAT_Activation initialize unit activation state variables
 
   INLINE virtual void  Init_dWt(UNIT_STATE* u, NETWORK_STATE* net, int thr_no) {
-    CON_SPEC* bs = GetBiasSpec(net);
+    CON_SPEC_CPP* bs = GetBiasSpec(net);
     if(bs) {
       bs->B_Init_dWt(u, net, thr_no);
     }
@@ -60,14 +57,14 @@
   // #CAT_Learning initialize the weight change variables
 
   INLINE virtual void  Init_Weights(UNIT_STATE* u, NETWORK_STATE* net, int thr_no) {
-    CON_SPEC* bs = GetBiasSpec(net);
+    CON_SPEC_CPP* bs = GetBiasSpec(net);
     if(bs) {
       bs->B_Init_Weights(u, net, thr_no);
     }
   }
   // #CAT_Learning init weight state variables
   INLINE virtual void  Init_Weights_post(UNIT_STATE* u, NETWORK_STATE* net, int thr_no) {
-    CON_SPEC* bs = GetBiasSpec(net);
+    CON_SPEC_CPP* bs = GetBiasSpec(net);
     if(bs) {
       bs->B_Init_Weights_post(u, net, thr_no);
     }
@@ -110,7 +107,7 @@
       if(rgp->NotActive()) continue;
       new_net += rgp->GetConSpec(net)->Compute_Netin(rgp, net, thr_no);
     }
-    CON_SPEC* bs = GetBiasSpec(net);
+    CON_SPEC_CPP* bs = GetBiasSpec(net);
     if(bs) {
       new_net += u->bias_wt;
     }
@@ -122,7 +119,7 @@
     // called by network-level Send_Netin function to integrate sent netin value
     // with current net input value -- default is just to set to net val + bias wt if avail
     u->net = sent_netin;
-    CON_SPEC* bs = GetBiasSpec(net);
+    CON_SPEC_CPP* bs = GetBiasSpec(net);
     if(bs) {
       u->net += u->bias_wt;
     }
@@ -144,7 +141,7 @@
   // #CAT_Activation compute the netinput (receiver-based) and then activation value of the unit: what it sends to other units
 
   INLINE virtual void  Compute_dWt(UNIT_STATE* u, NETWORK_STATE* net, int thr_no) {
-    CON_SPEC* bs = GetBiasSpec(net);
+    CON_SPEC_CPP* bs = GetBiasSpec(net);
     if(bs) {
       bs->B_Compute_dWt(u, net, thr_no);
     }
@@ -152,7 +149,7 @@
   // #CAT_Learning compute change in weights: the mechanism of learning
 
   INLINE virtual void  Compute_Weights(UNIT_STATE* u, NETWORK_STATE* net, int thr_no) {
-    CON_SPEC* bs = GetBiasSpec(net);
+    CON_SPEC_CPP* bs = GetBiasSpec(net);
     if(bs) {
       bs->B_Compute_Weights(u, net, thr_no);
     }

@@ -14,7 +14,7 @@
 //   GNU General Public License for more details.
 
 
-// todo: remove this depedency:
+// todo: ifdef this depedency for non-emergent build
 #include <taMisc>
 
 #include "NetworkState_cpp.h"

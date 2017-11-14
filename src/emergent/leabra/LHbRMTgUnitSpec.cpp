@@ -22,12 +22,12 @@ bool STATE_CLASS(LHbRMTgUnitSpec)::GetRecvLayers
   
   const int nrg = u->NRecvConGps(net);
   for(int g=0; g<nrg; g++) {
-    LEABRA_CON_STATE* recv_gp = (LEABRA_CON_STATE*)u->RecvConState(net, g);
+    LEABRA_CON_STATE* recv_gp = u->RecvConState(net, g);
     if(recv_gp->NotActive()) continue;
-    LEABRA_LAYER_STATE* fmlay = (LEABRA_LAYER_STATE*) recv_gp->GetSendLayer(net);
-    LEABRA_UNIT_SPEC_CPP* us = (LEABRA_UNIT_SPEC_CPP*) fmlay->GetUnitSpec(net);
+    LEABRA_LAYER_STATE* fmlay = recv_gp->GetSendLayer(net);
+    LEABRA_UNIT_SPEC_CPP* us = fmlay->GetUnitSpec(net);
     if(us->GetStateSpecType() == LEABRA_NETWORK_STATE::T_MSNUnitSpec) {
-      LEABRA_UNIT_STATE* su = (LEABRA_UNIT_STATE*)fmlay->GetUnitState(net, 0);
+      LEABRA_UNIT_STATE* su = fmlay->GetUnitState(net, 0);
       if(su->HasUnitFlag(LEABRA_UNIT_STATE::PATCH)) {
         if(su->HasUnitFlag(LEABRA_UNIT_STATE::D2R)) {
           if(su->HasUnitFlag(LEABRA_UNIT_STATE::APPETITIVE)) { vspatch_pos_D2_lay = fmlay; }
@@ -71,7 +71,7 @@ void STATE_CLASS(LHbRMTgUnitSpec)::Compute_Lhb(LEABRA_UNIT_STATE* u, LEABRA_NETW
   LEABRA_LAYER_STATE* vsmatrix_neg_D1_lay = NULL;
   LEABRA_LAYER_STATE* vsmatrix_neg_D2_lay = NULL;
   
-  LEABRA_LAYER_STATE* lay = (LEABRA_LAYER_STATE*)u->GetOwnLayer(net);
+  LEABRA_LAYER_STATE* lay = u->GetOwnLayer(net);
   
   GetRecvLayers(u, net, pv_pos_lay, vspatch_pos_D1_lay, vspatch_pos_D2_lay,
                 vsmatrix_pos_D1_lay, vsmatrix_pos_D2_lay, pv_neg_lay,

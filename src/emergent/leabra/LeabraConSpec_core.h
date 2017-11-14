@@ -130,8 +130,8 @@
       swts[i] = fwts[i];
       wts[i] *= scales[i];
 
-      LEABRA_UNIT_STATE* ru = (LEABRA_UNIT_STATE*)cg->UnState(i, net);
-      LEABRA_CON_STATE* rcg = (LEABRA_CON_STATE*)ru->RecvConState(net, cg->other_idx);
+      LEABRA_UNIT_STATE* ru = cg->UnState(i, net);
+      LEABRA_CON_STATE* rcg = ru->RecvConState(net, cg->other_idx);
       rcg->Init_ConState();    // recv based otherwise doesn't get initialized!
     }
   }
@@ -263,7 +263,7 @@
     float rval=0.0f;
     CON_STATE_LOOP(cg, rval += C_Compute_Netin(cg->PtrCn(i,WT,net),
                                                cg->UnState(i,net)->act));
-    return ((LEABRA_CON_STATE*)cg)->scale_eff * rval;
+    return cg->scale_eff * rval;
   }
   // #IGNORE
 
@@ -275,7 +275,7 @@
 
   INLINE void   GetLrates(LEABRA_CON_STATE* cg, LEABRA_NETWORK_STATE* net, int thr_no,
                           float& clrate, bool& deep_on, float& bg_lrate, float& fg_lrate)  {
-    LEABRA_LAYER_STATE* rlay = (LEABRA_LAYER_STATE*)cg->GetRecvLayer(net);
+    LEABRA_LAYER_STATE* rlay = cg->GetRecvLayer(net);
     clrate = cur_lrate * rlay->lrate_mod;
     deep_on = deep.on;
     if(deep_on) {
@@ -316,7 +316,7 @@
     LEABRA_NETWORK_STATE* net = (LEABRA_NETWORK_STATE*)rnet;
     if(!learn || (use_unlearnable && net->unlearnable_trial)) return;
     LEABRA_CON_STATE* cg = (LEABRA_CON_STATE*)scg;
-    LEABRA_UNIT_STATE* su = (LEABRA_UNIT_STATE*)cg->ThrOwnUnState(net, thr_no);
+    LEABRA_UNIT_STATE* su = cg->ThrOwnUnState(net, thr_no);
     if(su->avg_s < xcal.lrn_thr && su->avg_m < xcal.lrn_thr) return;
     // no need to learn!
 
@@ -335,7 +335,7 @@
       float* dwavgs = cg->OwnCnVar(DWAVG);
       float* moments = cg->OwnCnVar(MOMENT);
       for(int i=0; i<sz; i++) {
-        LEABRA_UNIT_STATE* ru = (LEABRA_UNIT_STATE*)cg->UnState(i, net);
+        LEABRA_UNIT_STATE* ru = cg->UnState(i, net);
         float lrate_eff = clrate;
         if(deep_on) {
           lrate_eff *= (bg_lrate + fg_lrate * ru->deep_lrn);
@@ -352,7 +352,7 @@
     }
     else {
       for(int i=0; i<sz; i++) {
-        LEABRA_UNIT_STATE* ru = (LEABRA_UNIT_STATE*)cg->UnState(i, net);
+        LEABRA_UNIT_STATE* ru = cg->UnState(i, net);
         float lrate_eff = clrate;
         if(deep_on) {
           lrate_eff *= (bg_lrate + fg_lrate * ru->deep_lrn);
@@ -425,8 +425,8 @@
       if(slow_wts.on) {
         for(int i=0; i<sz; i++) {
           // note: MUST get these from ru -- diff for each con -- can't copy to sender!
-          LEABRA_UNIT_STATE* ru = (LEABRA_UNIT_STATE*)cg->UnState(i, net);
-          LEABRA_CON_STATE* rcg = (LEABRA_CON_STATE*)ru->RecvConState(net, cg->other_idx);
+          LEABRA_UNIT_STATE* ru = cg->UnState(i, net);
+          LEABRA_CON_STATE* rcg = ru->RecvConState(net, cg->other_idx);
           C_Compute_Weights_CtLeabraXCAL_slow
             (wts[i], dwts[i], fwts[i], swts[i], scales[i], rcg->wb_inc, rcg->wb_dec);
         }
@@ -434,8 +434,8 @@
       else {
         for(int i=0; i<sz; i++) {
           // note: MUST get these from ru -- diff for each con -- can't copy to sender!
-          LEABRA_UNIT_STATE* ru = (LEABRA_UNIT_STATE*)cg->UnState(i, net);
-          LEABRA_CON_STATE* rcg = (LEABRA_CON_STATE*)ru->RecvConState(net, cg->other_idx);
+          LEABRA_UNIT_STATE* ru = cg->UnState(i, net);
+          LEABRA_CON_STATE* rcg = ru->RecvConState(net, cg->other_idx);
           C_Compute_Weights_CtLeabraXCAL
             (wts[i], dwts[i], fwts[i], swts[i], scales[i], rcg->wb_inc, rcg->wb_dec);
         }

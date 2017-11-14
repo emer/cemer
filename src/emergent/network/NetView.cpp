@@ -191,7 +191,7 @@ void UnitGroupView_MouseCB(void* userData, SoEventCallback* ecb) {
                   int con = tcong->FindConFromIdx(nv->unit_src->flat_idx);
                   if (con < 0) continue;
                   // have to use safe b/c could be PtrCon and other side might be gone..
-                  nv->last_sel_unit_val = (String)tcong->SafeFastCn(con, act_md->idx, net->net_state);
+                  nv->last_sel_unit_val = (String)tcong->CnSafeFast(con, act_md->idx, net->net_state);
                   break;                // once you've got one, done!
                 }
               }
@@ -208,7 +208,7 @@ void UnitGroupView_MouseCB(void* userData, SoEventCallback* ecb) {
                   int con = tcong->FindConFromIdx(nv->unit_src->flat_idx);
                   if (con < 0) continue;
                   // have to use safe b/c could be PtrCon and other side might be gone..
-                  nv->last_sel_unit_val = (String)tcong->SafeFastCn(con, act_md->idx, net->net_state);
+                  nv->last_sel_unit_val = (String)tcong->CnSafeFast(con, act_md->idx, net->net_state);
                   break;                // once you've got one, done!
                 }
               }

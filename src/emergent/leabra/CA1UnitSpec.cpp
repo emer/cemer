@@ -6,10 +6,9 @@ void STATE_CLASS(CA1UnitSpec)::Compute_NetinScale(LEABRA_UNIT_STATE* u, LEABRA_N
   const int nrg = u->NRecvConGps(net); 
   for(int g=0; g< nrg; g++) {
     LEABRA_CON_STATE* recv_gp = (LEABRA_CON_STATE*)u->RecvConState(net, g);
-    // todo: why!!!???
     if(!recv_gp->PrjnIsActive(net)) continue; // key!! just check for prjn, not con group!
-    LEABRA_LAYER_STATE* from = (LEABRA_LAYER_STATE*) recv_gp->GetSendLayer(net);
-    LEABRA_CON_SPEC_CPP* cs = (LEABRA_CON_SPEC_CPP*)recv_gp->GetConSpec(net);
+    LEABRA_LAYER_STATE* from =  recv_gp->GetSendLayer(net);
+    LEABRA_CON_SPEC_CPP* cs = recv_gp->GetConSpec(net);
     if(!cs->DoesStdNetin()) continue; // skip any special guys
 
     if(from->LayerNameContains("EC")) {

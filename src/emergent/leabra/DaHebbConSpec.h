@@ -41,7 +41,7 @@
     LEABRA_NETWORK_STATE* net = (LEABRA_NETWORK_STATE*)snet;
     if(!learn || (use_unlearnable && net->unlearnable_trial)) return;
     LEABRA_CON_STATE* cg = (LEABRA_CON_STATE*)scg;
-    LEABRA_UNIT_STATE* su = (LEABRA_UNIT_STATE*)cg->ThrOwnUnState(net, thr_no);
+    LEABRA_UNIT_STATE* su = cg->ThrOwnUnState(net, thr_no);
     float* dwts = cg->OwnCnVar(DWT);
 
     float su_act = GetActVal(su, su_act_var);
@@ -52,7 +52,7 @@
     
     const int sz = cg->size;
     for(int i=0; i<sz; i++) {
-      LEABRA_UNIT_STATE* ru = (LEABRA_UNIT_STATE*)cg->UnState(i, net);
+      LEABRA_UNIT_STATE* ru = cg->UnState(i, net);
       float lrate_eff = clrate;
       if(deep_on) {
         lrate_eff *= (bg_lrate + fg_lrate * ru->deep_lrn);

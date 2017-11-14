@@ -12,14 +12,14 @@
     LEABRA_NETWORK_STATE* net = (LEABRA_NETWORK_STATE*)snet;
     if(!learn || (use_unlearnable && net->unlearnable_trial)) return;
     LEABRA_CON_STATE* cg = (LEABRA_CON_STATE*)scg;
-    LEABRA_UNIT_STATE* su = (LEABRA_UNIT_STATE*)cg->ThrOwnUnState(net, thr_no);
+    LEABRA_UNIT_STATE* su = cg->ThrOwnUnState(net, thr_no);
     const float su_act_p = su->act_p;
     const float su_act_m = su->act_q1;
     float* dwts = cg->OwnCnVar(DWT);
 
     const int sz = cg->size;
     for(int i=0; i<sz; i++) {
-      LEABRA_UNIT_STATE* ru = (LEABRA_UNIT_STATE*)cg->UnState(i, net);
+      LEABRA_UNIT_STATE* ru = cg->UnState(i, net);
       C_Compute_dWt_CHL(dwts[i], ru->act_p, ru->act_q1, su_act_p, su_act_m);
     }
   }

@@ -1,5 +1,6 @@
 // this contains core shared code, and is included directly in LeabraConSpec.h, _cpp.h, _cuda.h
 //{
+
   enum ActFun {
     NOISY_XX1,                        // x over x plus 1 convolved with Gaussian noise (noise is nvar)
     SPIKE,                        // discrete spiking activations (spike when > thr) -- default params produce adaptive exponential (AdEx) model
@@ -46,6 +47,10 @@
   float          thr_sub_e_rev_e;   // #CAT_Activation #READ_ONLY #NO_SAVE #HIDDEN g_bar.e * (act.thr - e_rev.e) used for compute_ethresh
 
   
+  INLINE LEABRA_CON_SPEC_CPP* GetBiasSpec(NETWORK_STATE* net) {
+    return (LEABRA_CON_SPEC_CPP*)inherited::GetBiasSpec(net); 
+  }
+
   ///////////////////////////////////////////////////////////////////////
   //        General Init functions
 
@@ -66,181 +71,16 @@
     u->deep_raw_sent = 0.0f;
     const int nrg = u->NRecvConGps(net); 
     for(int g=0; g< nrg; g++) {
-      LEABRA_CON_STATE* recv_gp = (LEABRA_CON_STATE*)u->RecvConState(net, g);
+      LEABRA_CON_STATE* recv_gp = u->RecvConState(net, g);
       recv_gp->net = 0.0f;
       recv_gp->net_raw = 0.0f;
     }
   }
   // #CAT_Activation initialize netinput computation variables (delta-based requires several intermediate variables)
     
-  INLINE void Init_Acts(UNIT_STATE* uv, NETWORK_STATE* net, int thr_no) override {
-    inherited::Init_Acts(uv, net, thr_no);
-    LEABRA_UNIT_STATE* u = (LEABRA_UNIT_STATE*)uv;
-    Init_Netins(u, (LEABRA_NETWORK_STATE*)net, thr_no);
-
-    u->ClearExtFlag(UNIT_STATE::COMP_TARG_EXT);
-    u->ext = 0.0f;
-    u->targ = 0.0f;
-
-    u->act = init.act;
-    u->net = init.netin;
-
-    u->act_eq = u->act;
-    u->act_nd = u->act_eq;
-    u->spike = 0.0f;
-    u->act_q0 = 0.0f;
-    u->act_q1 = 0.0f;
-    u->act_q2 = 0.0f;
-    u->act_q3 = 0.0f;
-    u->act_q4 = 0.0f;
-    u->act_g = 0.0f;
-    u->act_m = 0.0f;
-    u->act_p = 0.0f;
-    u->act_dif = 0.0f;
-    u->net_prv_q = 0.0f;        // note: init acts clears this kind of history..
-    u->net_prv_trl = 0.0f;
-
-    u->da = 0.0f;
-    u->avg_ss = act_misc.avg_init;
-    u->avg_s = act_misc.avg_init;
-    u->avg_s_eff = u->avg_s;
-    u->avg_m = act_misc.avg_init;
-    u->avg_l_lrn = avg_l.GetLrn(u->avg_l);
-    // not avg_l
-    // not act_avg
-    u->margin = 0.0f;
-    u->act_raw = 0.0f;
-    u->deep_raw = 0.0f;
-    u->deep_raw_prv = 0.0f;
-    u->deep_mod = 1.0f;
-    u->deep_lrn = 1.0f;
-    u->deep_ctxt = 0.0f;
-
-    u->thal = 0.0f;
-    u->thal_gate = 0.0f;
-    u->thal_cnt = -1.0f;
-    u->gc_i = 0.0f;
-    u->I_net = 0.0f;
-    u->v_m = init.v_m;
-    u->v_m_eq = u->v_m;
-    u->adapt = 0.0f;
-    u->gi_syn = 0.0f;
-    u->gi_self = 0.0f;
-    u->gi_ex = 0.0f;
-    u->E_i = e_rev.i;
-    u->syn_tr = 1.0f;
-    u->syn_nr = 1.0f;
-    u->syn_pr = stp.p0;
-    u->syn_kre = 0.0f;
-    u->noise = 0.0f;
-    u->da_p = 0.0f;
-    u->da_n = 0.0f;
-    u->ach = 0.0f;
-    u->shunt = 0.0f;
-    // u->sev = 0.0f; // longer time-course
-
-    // not the scales
-    // init netin gets act_sent, net_raw, etc
-    u->spk_t = -1;
-
-    // todo: need this in base space
-    // CircBufferIndex::Reset(u->spike_e_st, u->spike_e_len);
-    // CircBufferIndex::Reset(u->spike_i_st, u->spike_i_len);
-
-    // if(syn_delay.on) {
-    //   u->act_buf->Reset();
-    // }
-  }
+  INIMPL void  Init_Acts(UNIT_STATE* uv, NETWORK_STATE* net, int thr_no) override;
   
-  INLINE void  Init_UnitState(UNIT_STATE* uv, NETWORK_STATE* net, int thr_no) override {
-    inherited::Init_UnitState(uv, net, thr_no);
-    
-    LEABRA_UNIT_STATE* u = (LEABRA_UNIT_STATE*)uv;
-    u->ext_flag = UNIT_STATE::NO_EXTERNAL;
-    u->unit_flag = UNIT_STATE::NO_UNIT_FLAG;
-    u->bias_wt = 0.0f;
-    u->bias_dwt = 0.0f;
-    u->bias_fwt = 0.0f;
-    u->bias_swt = 0.0f;
-    u->ext_orig = 0.0f;
-    u->avg_l = avg_l.init;
-    u->act_avg = 0.15f;
-    u->deep_mod_net = 0.0f;
-    u->deep_raw_net = 0.0f;
-    u->sev = 0.0f;
-    u->ach = 0.0f;
-    u->misc_1 = 0.0f;
-    u->misc_2 = 0.0f;
-    u->bias_scale = 0.0f;
-    u->act_sent = 0.0f;
-    u->net_raw = 0.0f;
-    u->gi_raw = 0.0f;
-    u->deep_raw_sent = 0.0f;
-
-    // note: also spike_e_st, spike_e_len, etc
-    
-    u->act = init.act;
-    u->net = init.netin;
-
-    u->act_eq = u->act;
-    u->act_nd = u->act_eq;
-    u->spike = 0.0f;
-    u->act_q0 = 0.0f;
-    u->act_q1 = 0.0f;
-    u->act_q2 = 0.0f;
-    u->act_q3 = 0.0f;
-    u->act_q4 = 0.0f;
-    u->act_g = 0.0f;
-    u->act_m = 0.0f;
-    u->act_p = 0.0f;
-    u->act_dif = 0.0f;
-    u->net_prv_q = 0.0f;        // note: init acts clears this kind of history..
-    u->net_prv_trl = 0.0f;
-
-    u->da = 0.0f;
-    u->avg_ss = act_misc.avg_init;
-    u->avg_s = act_misc.avg_init;
-    u->avg_s_eff = u->avg_s;
-    u->avg_m = act_misc.avg_init;
-    u->avg_l_lrn = avg_l.GetLrn(u->avg_l);
-    // not avg_l
-    // not act_avg
-    u->margin = 0.0f;
-    u->act_raw = 0.0f;
-    u->deep_raw = 0.0f;
-    u->deep_raw_prv = 0.0f;
-    u->deep_mod = 1.0f;
-    u->deep_lrn = 1.0f;
-    u->deep_ctxt = 0.0f;
-
-    u->thal = 0.0f;
-    u->thal_gate = 0.0f;
-    u->thal_cnt = -1.0f;
-    u->gc_i = 0.0f;
-    u->I_net = 0.0f;
-    u->v_m = init.v_m;
-    u->v_m_eq = u->v_m;
-    u->adapt = 0.0f;
-    u->gi_syn = 0.0f;
-    u->gi_self = 0.0f;
-    u->gi_ex = 0.0f;
-    u->E_i = e_rev.i;
-    u->syn_tr = 1.0f;
-    u->syn_nr = 1.0f;
-    u->syn_pr = stp.p0;
-    u->syn_kre = 0.0f;
-    u->noise = 0.0f;
-    u->da_p = 0.0f;
-    u->da_n = 0.0f;
-    u->ach = 0.0f;
-    u->shunt = 0.0f;
-    // u->sev = 0.0f; // longer time-course
-
-    // not the scales
-    // init netin gets act_sent, net_raw, etc
-    u->spk_t = -1;
-  }
-  // #IGNORE
+  INIMPL void  Init_UnitState(UNIT_STATE* uv, NETWORK_STATE* net, int thr_no) override;
 
   INLINE virtual void Init_ActAvg(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) {
     if(act_misc.avg_trace) {
@@ -274,46 +114,7 @@
   }
 
   
-  INLINE virtual void DecayState(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no, float decay) {
-    if(decay > 0.0f) {            // no need to reset netin if not decaying at all
-      u->act -= decay * (u->act - init.act);
-      u->net -= decay * (u->net - init.netin);
-      u->act_eq -= decay * (u->act_eq - init.act);
-      u->act_nd -= decay * (u->act_nd - init.act);
-      u->act_raw -= decay * (u->act_raw - init.act);
-      u->gc_i -= decay * u->gc_i;
-      u->v_m -= decay * (u->v_m - init.v_m);
-      u->v_m_eq -= decay * (u->v_m_eq - init.v_m);
-      if(adapt.on) {
-        u->adapt -= decay * u->adapt;
-      }
-
-      u->gi_syn -= decay * u->gi_syn;
-      u->gi_self -= decay * u->gi_self;
-      u->gi_ex -= decay * u->gi_ex;
-      u->E_i -= decay * (u->E_i - e_rev.i);
-
-      if(stp.on && (stp.algorithm == STATE_CLASS(ShortPlastSpec)::CYCLES)) {
-        u->syn_tr -= decay * (u->syn_tr - 1.0f);
-        u->syn_nr -= decay * (u->syn_nr - 1.0f);
-        u->syn_pr -= decay * (u->syn_tr - stp.p0);
-        u->syn_kre -= decay * u->syn_kre;
-      }
-    }
-    u->da = 0.0f;
-    u->I_net = 0.0f;
-    // note: for decay = 1, spike buffers are reset
-  
-    if(decay == 1.0f) {
-      if(act_fun == SPIKE) {
-        // STATE_CLASS(CircBufferIndex)::Reset(u->spike_e_st, u->spike_e_len);
-        // STATE_CLASS(CircBufferIndex)::Reset(u->spike_i_st, u->spike_i_len);
-      }
-      // if(syn_delay.on) {
-      //   u->act_buf->Reset();
-      // }
-    }
-  }
+  INIMPL virtual void DecayState(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no, float decay);
   // #CAT_Activation decay activation states towards initial values by given amount (0 = no decay, 1 = full decay)
   
   INLINE virtual void ResetSynTR(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) {
@@ -358,7 +159,7 @@
   // #CAT_Learning save previous trial values at start of new trial -- allow values at end of trial to be valid for visualization..
   
   INLINE virtual void Trial_Init_SRAvg(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) {
-    LEABRA_LAYER_STATE* lay = (LEABRA_LAYER_STATE*)u->GetOwnLayer(net);
+    LEABRA_LAYER_STATE* lay = u->GetOwnLayer(net);
     LEABRA_UNGP_STATE* lgpd = lay->GetLayUnGpState(net);
     if(lgpd->acts_p_avg >= avg_l_2.lay_act_thr) {
       avg_l.UpdtAvgL(u->avg_l, u->avg_m);
@@ -534,7 +335,7 @@
   INLINE virtual void Compute_HardClamp(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) {
     if(!u->HasExtFlag(UNIT_STATE::EXT))
       return;
-    LEABRA_LAYER_STATE* lay = (LEABRA_LAYER_STATE*)u->GetOwnLayer(net);
+    LEABRA_LAYER_STATE* lay = u->GetOwnLayer(net);
     if(!(lay->hard_clamped && lay->HasExtFlag(LAYER_STATE::EXT))) {
       // note: must always use layer state -- if this doesn't work, fix hard_clamped flag!
       // if(!(ls->clamp.hard && lay->HasExtFlag(UNIT_STATE::EXT))) {
@@ -549,7 +350,7 @@
   INLINE virtual void Compute_HardClampNoClip(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) {
     if(!u->HasExtFlag(UNIT_STATE::EXT))
       return;
-    LEABRA_LAYER_STATE* lay = (LEABRA_LAYER_STATE*)u->GetOwnLayer(net);
+    LEABRA_LAYER_STATE* lay = u->GetOwnLayer(net);
     if(!(lay->hard_clamped && lay->HasExtFlag((LAYER_STATE::ExtFlags)UNIT_STATE::EXT))) {
       // note: must always use layer state -- if this doesn't work, fix hard_clamped flag!
       // if(!(ls->clamp.hard && lay->HasExtFlag(UNIT_STATE::EXT))) {
@@ -704,7 +505,7 @@
   // #CAT_Activation save act_eq to act_g based on network.times.thal_gate_cycle
 
   INLINE virtual void Compute_DeepMod(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) {
-    LEABRA_LAYER_STATE* lay = (LEABRA_LAYER_STATE*)u->GetOwnLayer(net);
+    LEABRA_LAYER_STATE* lay = u->GetOwnLayer(net);
     LEABRA_UNGP_STATE* lgpd = lay->GetLayUnGpState(net);
     if(deep.SendDeepMod()) {
       u->deep_lrn = u->deep_mod = u->act;      // record what we send!
@@ -797,7 +598,7 @@
   // #CAT_Activation compute the activation from g_e vs. threshold -- rate code functions
 
   INLINE virtual void Compute_Act_Rate(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) {
-    LEABRA_LAYER_STATE* lay = (LEABRA_LAYER_STATE*)u->GetOwnLayer(net);
+    LEABRA_LAYER_STATE* lay = u->GetOwnLayer(net);
 
     SaveGatingAct(u, net, thr_no);
   
@@ -925,7 +726,7 @@
 
 
   INLINE virtual void Compute_Act_Spike(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) {
-    LEABRA_LAYER_STATE* lay = (LEABRA_LAYER_STATE*)u->GetOwnLayer(net);
+    LEABRA_LAYER_STATE* lay = u->GetOwnLayer(net);
 
     SaveGatingAct(u, net, thr_no);
     // if(syn_delay.on && !u->act_buf) Init_ActBuff(u);
@@ -1033,7 +834,7 @@
   // #CAT_Learning compute sending-receiving running activation averages (avg_ss, avg_s, avg_m) -- only for this unit (SR name is a hold-over from connection-level averaging that is no longer used) -- unit level only, used for XCAL -- called by Compute_Act_Post
   
   INLINE virtual void Compute_Margin(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) {
-    LEABRA_LAYER_STATE* lay = (LEABRA_LAYER_STATE*)u->GetOwnLayer(net);
+    LEABRA_LAYER_STATE* lay = u->GetOwnLayer(net);
     const float v_m_eq = u->v_m_eq;
     if(v_m_eq >= lay->margin.low_thr) {
       if(v_m_eq > lay->margin.hi_thr) {
@@ -1068,7 +869,7 @@
 
   INLINE virtual void Compute_DeepRaw(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) {
     if(!deep.on || !Quarter_DeepRawNow(net->quarter)) return;
-    LEABRA_LAYER_STATE* lay = (LEABRA_LAYER_STATE*)u->GetOwnLayer(net);
+    LEABRA_LAYER_STATE* lay = u->GetOwnLayer(net);
     LEABRA_UNGP_STATE* lgpd = lay->GetLayUnGpState(net);
 
     // must use act_raw to compute deep_raw because deep_raw is then the input to deep_norm

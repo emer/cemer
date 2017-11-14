@@ -65,7 +65,7 @@
   INLINE virtual void  Init_Stats(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
     lay->Init_Stats();
     for(int i=0;i<lay->n_recv_prjns;i++) {
-      LEABRA_PRJN_STATE* prjn = lay->GetPrjnState(net, i);
+      LEABRA_PRJN_STATE* prjn = lay->GetRecvPrjnState(net, i);
       prjn->Init_Stats();
     }
   }
@@ -115,19 +115,18 @@
       lgpd->acts_p_avg_eff = avg_act.targ_init;
     }
     else if(lay->layer_type != LAYER_STATE::HIDDEN && avg_act.use_ext_act) {
-      // todo: this case is not yet supported!
-      // if(!(lay->HasExtFlag(LAYER_STATE::EXT) || lay->HasExtFlag(LAYER_STATE::TARG))) {
-      //   lgpd->acts_p_avg_eff = avg_act.targ_init;
-      // }
-      // else {
-      //   float avg_ext = Compute_AvgExt(lay, net);
-      //   if(avg_ext == 0.0f) {
-      //     lgpd->acts_p_avg_eff = avg_act.targ_init;
-      //   }
-      //   else {
-      //     lgpd->acts_p_avg_eff = avg_ext;
-      //   }
-      // }
+      if(!(lay->HasExtFlag(LAYER_STATE::EXT) || lay->HasExtFlag(LAYER_STATE::TARG))) {
+        lgpd->acts_p_avg_eff = avg_act.targ_init;
+      }
+      else {
+        float avg_ext = Compute_AvgExt(lay, net);
+        if(avg_ext == 0.0f) {
+          lgpd->acts_p_avg_eff = avg_act.targ_init;
+        }
+        else {
+          lgpd->acts_p_avg_eff = avg_ext;
+        }
+      }
     }
   }
   // #IGNORE layer-level init avg_act based on fixed, use_ext_act
@@ -310,6 +309,9 @@
     if(avg_act.fixed) {
       gpd->acts_p_avg_eff = avg_act.targ_init;
     }
+    else if(avg_act.use_ext_act) {
+      // nop -- already set during Quarter_Init
+    }
     else {
       gpd->acts_p_avg_eff = avg_act.adjust * gpd->acts_p_avg;
     }
@@ -319,10 +321,6 @@
   INLINE virtual void Quarter_Final_GetPlus(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net)  {
     LEABRA_UNGP_STATE* lgpd = lay->GetLayUnGpState(net);
     Quarter_Final_GetPlus_UnGp(lgpd, net);
-    // todo!
-    // else if(avg_act.use_ext_act) {
-    //   // nop -- already set during Quarter_Init
-    // }
     for(int g=0; g < lay->n_ungps; g++) {
       LEABRA_UNGP_STATE* gpd = lay->GetUnGpState(net, g);
       Quarter_Final_GetPlus_UnGp(gpd, net);
@@ -378,7 +376,7 @@
         LEABRA_UNGP_STATE* gpd = lay->GetUnGpState(net, g);
         bool max_err = true;
         if(gpd->acts_m.max_i >= 0) {
-          LEABRA_UNIT_STATE* un = (LEABRA_UNIT_STATE*)net->GetUnitState(gpd->acts_m.max_i);
+          LEABRA_UNIT_STATE* un = net->GetUnitState(gpd->acts_m.max_i);
           max_err = (un->targ < 0.1f);
         }
         gpd->max_err = (float)max_err;
@@ -389,7 +387,7 @@
     else {
       bool max_err = true;
       if(lgpd->acts_m.max_i >= 0) {
-        LEABRA_UNIT_STATE* un = (LEABRA_UNIT_STATE*)net->GetUnitState(lgpd->acts_m.max_i);
+        LEABRA_UNIT_STATE* un = net->GetUnitState(lgpd->acts_m.max_i);
         max_err = (un->targ < 0.1f);
       }
       lay->max_err = (float)max_err;
@@ -539,21 +537,7 @@
   }
   // #CAT_Statistic compute cosine (normalized dot product) of phase activation difference in this layer: act_p compared to act_m -- must be called after Quarter_Final for plus phase to get the act_p values
   
-  INLINE virtual void   Compute_CosDiff_post(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
-    // todo: redo this!
-    // if(cos_diff.lrate_mod && cos_diff.lrmod_fm_trc) {
-    //   for(int i=0;i<lay->projections.size;i++) {
-    //     LeabraPrjn* prjn = (LeabraPrjn*)lay->projections[i];
-    //     if(prjn->NotActive()) continue;
-    //     LEABRA_LAYER_STATE* from = (LEABRA_LAYER_STATE*)prjn->from.ptr();
-    //     LeabraUnitSpec* frus = (LeabraUnitSpec*)from->GetUnitSpec();
-    //     if(frus->deep.IsTRC()) {
-    //       LEABRA_LAYER_STATESpec* frls = (LEABRA_LAYER_STATESpec*)from->GetLayerSpec();
-    //       lay->lrate_mod *= (from->lrate_mod / frls->lay_lrate); // deconfound sender lrate
-    //     }
-    //   }
-    // }
-  }
+  INIMPL virtual void   Compute_CosDiff_post(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net);
   // #CAT_Statistic post step of cos_diff -- needed for sharing cos_diff based lrate mod
   
   INLINE virtual float  Compute_AvgActDiff(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
@@ -629,7 +613,6 @@
       hi_avg += hiv;
     }
 
-    // todo: could agg n too but..
     low_avg /= (float)lay->n_units;
     med_avg /= (float)lay->n_units;
     hi_avg /= (float)lay->n_units;

@@ -23,6 +23,17 @@
   STATE_CLASS(LeabraTwoDVals)   twod; // #NO_SAVE #CAT_Activation holds two-dimensional decoding / encoding values for spatial representational layers (TwoDValLayerSpec)
 // todo: could potentially decode multiple locations per unit group -- replicate twod_2, twod_3?
 
+
+  INLINE LEABRA_LAYER_STATE* GetLayerState(NETWORK_STATE* net) {
+    return (LEABRA_LAYER_STATE*)inherited::GetLayerState(net);
+  }
+  INLINE LEABRA_UNIT_STATE*  GetUnitState(NETWORK_STATE* net, int un_idx) {
+    return (LEABRA_UNIT_STATE*)inherited::GetUnitState(net, un_idx);
+  }
+  INLINE LEABRA_UNIT_STATE*  GetUnitStateSafe(NETWORK_STATE* net, int un_idx) {
+    return (LEABRA_UNIT_STATE*)inherited::GetUnitStateSafe(net, un_idx);
+  }
+
   INLINE float  GetTotalActEq(int n_un)  { return acts_eq.avg * (float)n_un; }
   // Get the total act_eq activation in the layer based on average and number of units
   INLINE float  GetTotalActQ0(int n_un)  { return acts_q0.avg * (float)n_un; }

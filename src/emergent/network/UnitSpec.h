@@ -51,6 +51,9 @@ public:
   ////////////////////////////////////////////////////////////////////////////////
   //    The following are misc functionality not required for primary computing
 
+  inline ConSpec* GetMainBiasSpec() {  return bias_spec;  }
+  // #CAT_State get the main bias spec (not cpp)
+  
   virtual bool  CheckConfig_Unit(Layer* lay, bool quiet=false);
   // #CAT_ObjectMgmt check for for misc configuration settings required by different algorithms
 

@@ -31,19 +31,19 @@ void STATE_CLASS(ScalarValLayerSpec)::Compute_BiasVal(LEABRA_LAYER_STATE* lay, L
 
 void STATE_CLASS(ScalarValLayerSpec)::Compute_WtBias_Val
 (LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net, int gpidx, float val) {
-  LEABRA_UNGP_STATE* ug = (LEABRA_UNGP_STATE*)lay->GetUnGpState(net, gpidx);
+  LEABRA_UNGP_STATE* ug = lay->GetUnGpState(net, gpidx);
   const int nunits = ug->n_units;
   if(nunits < 2) return;        // must be at least a few units..
   scalar.InitVal(val, nunits, unit_range.min, unit_range.range);
   for(int i=0;i<nunits;i++) {
-    LEABRA_UNIT_STATE* u = (LEABRA_UNIT_STATE*)ug->GetUnitState(net, i);
+    LEABRA_UNIT_STATE* u = ug->GetUnitState(net, i);
     if(u->lesioned()) continue;
     float act = .03f * bias_val.wt_gain * scalar.GetUnitAct(i);
     const int nrg = u->NRecvConGps(net);
     for(int g=0; g<nrg; g++) {
-      LEABRA_CON_STATE* recv_gp = (LEABRA_CON_STATE*)u->RecvConState(net, g);
+      LEABRA_CON_STATE* recv_gp = u->RecvConState(net, g);
       if(recv_gp->NotActive()) continue;
-      LEABRA_CON_SPEC_CPP* cs = (LEABRA_CON_SPEC_CPP*)recv_gp->GetConSpec(net);
+      LEABRA_CON_SPEC_CPP* cs = recv_gp->GetConSpec(net);
       if(cs->IsMarkerCon()) continue;
       PRJN_STATE* prjn = recv_gp->GetPrjnState(net);
       PRJN_SPEC_CPP* pspec = prjn->GetPrjnSpec(net);
@@ -60,12 +60,12 @@ void STATE_CLASS(ScalarValLayerSpec)::Compute_WtBias_Val
 
 void STATE_CLASS(ScalarValLayerSpec)::Compute_UnBias_Val
 (LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net, int gpidx, float val) {
-  LEABRA_UNGP_STATE* ug = (LEABRA_UNGP_STATE*)lay->GetUnGpState(net, gpidx);
+  LEABRA_UNGP_STATE* ug = lay->GetUnGpState(net, gpidx);
   const int nunits = ug->n_units;
   if(nunits < 2) return;        // must be at least a few units..
   scalar.InitVal(val, nunits, unit_range.min, unit_range.range);
   for(int i=0;i<nunits;i++) {
-    LEABRA_UNIT_STATE* u = (LEABRA_UNIT_STATE*)ug->GetUnitState(net, i);
+    LEABRA_UNIT_STATE* u = ug->GetUnitState(net, i);
     if(u->lesioned()) continue;
     float act = bias_val.un_gain * scalar.GetUnitAct(i);
     u->bias_wt = act;
@@ -74,13 +74,13 @@ void STATE_CLASS(ScalarValLayerSpec)::Compute_UnBias_Val
 
 void STATE_CLASS(ScalarValLayerSpec)::Compute_UnBias_NegSlp
 (LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net, int gpidx) {
-  LEABRA_UNGP_STATE* ug = (LEABRA_UNGP_STATE*)lay->GetUnGpState(net, gpidx);
+  LEABRA_UNGP_STATE* ug = lay->GetUnGpState(net, gpidx);
   const int nunits = ug->n_units;
   if(nunits < 2) return;        // must be at least a few units..
   float incr = bias_val.un_gain / (float)(nunits - 1);
   float val = 0.0f;
   for(int i=0;i<nunits;i++) {
-    LEABRA_UNIT_STATE* u = (LEABRA_UNIT_STATE*)ug->GetUnitState(net, i);
+    LEABRA_UNIT_STATE* u = ug->GetUnitState(net, i);
     if(u->lesioned()) continue;
     u->bias_wt = -val;
     val += incr;
@@ -89,13 +89,13 @@ void STATE_CLASS(ScalarValLayerSpec)::Compute_UnBias_NegSlp
 
 void STATE_CLASS(ScalarValLayerSpec)::Compute_UnBias_PosSlp
 (LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net, int gpidx) {
-  LEABRA_UNGP_STATE* ug = (LEABRA_UNGP_STATE*)lay->GetUnGpState(net, gpidx);
+  LEABRA_UNGP_STATE* ug = lay->GetUnGpState(net, gpidx);
   const int nunits = ug->n_units;
   if(nunits < 2) return;        // must be at least a few units..
   float val = bias_val.un_gain;
   float incr = bias_val.un_gain / (float)(nunits - 1);
   for(int i=0;i<nunits;i++) {
-    LEABRA_UNIT_STATE* u = (LEABRA_UNIT_STATE*)ug->GetUnitState(net, i);
+    LEABRA_UNIT_STATE* u = ug->GetUnitState(net, i);
     if(u->lesioned()) continue;
     u->bias_wt = val;
     val += incr;
@@ -104,11 +104,11 @@ void STATE_CLASS(ScalarValLayerSpec)::Compute_UnBias_PosSlp
 
 void STATE_CLASS(ScalarValLayerSpec)::ClampValue_ugp
 (LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net, int gpidx, float rescale) {
-  LEABRA_UNGP_STATE* ug = (LEABRA_UNGP_STATE*)lay->GetUnGpState(net, gpidx);
-  LEABRA_UNIT_SPEC_CPP* us = (LEABRA_UNIT_SPEC_CPP*)lay->GetUnitSpec(net);
+  LEABRA_UNGP_STATE* ug = lay->GetUnGpState(net, gpidx);
+  LEABRA_UNIT_SPEC_CPP* us = lay->GetUnitSpec(net);
   const int nunits = ug->n_units;
   if(nunits < 1) return;        // must be at least a few units..
-  LEABRA_UNIT_STATE* u = (LEABRA_UNIT_STATE*)ug->GetUnitState(net, 0);
+  LEABRA_UNIT_STATE* u = ug->GetUnitState(net, 0);
   if(!clamp.hard)
     u->ClearExtFlag(UNIT_STATE::EXT);
   else
@@ -125,7 +125,7 @@ void STATE_CLASS(ScalarValLayerSpec)::ClampValue_ugp
   }
 
   for(int i=0;i<nunits;i++) {
-    u = (LEABRA_UNIT_STATE*)ug->GetUnitState(net, i);
+    u = ug->GetUnitState(net, i);
     if(u->lesioned()) continue;
     float act;
     if(scalar.rep == STATE_CLASS(ScalarValSpec)::AVG_ACT) {
@@ -156,15 +156,15 @@ float STATE_CLASS(ScalarValLayerSpec)::ClampAvgAct(int ugp_size) {
 
 float STATE_CLASS(ScalarValLayerSpec)::ReadValue_ugp
 (LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net, int gpidx) {
-  LEABRA_UNGP_STATE* ug = (LEABRA_UNGP_STATE*)lay->GetUnGpState(net, gpidx);
-  LEABRA_UNIT_SPEC_CPP* us = (LEABRA_UNIT_SPEC_CPP*)lay->GetUnitSpec(net);
+  LEABRA_UNGP_STATE* ug = lay->GetUnGpState(net, gpidx);
+  LEABRA_UNIT_SPEC_CPP* us = lay->GetUnitSpec(net);
   const int nunits = ug->n_units;
   if(nunits < 1) return 0.0f;        // must be at least a few units..
   scalar.InitVal(0.0f, nunits, unit_range.min, unit_range.range);
   float avg = 0.0f;
   float sum_act = 0.0f;
   for(int i=0;i<nunits;i++) {
-    LEABRA_UNIT_STATE* u = (LEABRA_UNIT_STATE*)ug->GetUnitState(net, i);
+    LEABRA_UNIT_STATE* u = ug->GetUnitState(net, i);
     if(u->lesioned()) continue;
     float cur = scalar.GetUnitVal(i);
     float act_val = 0.0f;
@@ -184,7 +184,7 @@ float STATE_CLASS(ScalarValLayerSpec)::ReadValue_ugp
       avg /= sum_act;
   }
   // set the first unit in the group to represent the value
-  LEABRA_UNIT_STATE* u = (LEABRA_UNIT_STATE*)ug->GetUnitState(net, 0);
+  LEABRA_UNIT_STATE* u = ug->GetUnitState(net, 0);
   u->misc_1 = avg;
   return avg;
 }
@@ -195,12 +195,12 @@ void STATE_CLASS(ScalarValLayerSpec)::ReadValue(LEABRA_LAYER_STATE* lay, LEABRA_
 
 void STATE_CLASS(ScalarValLayerSpec)::Compute_ExtToPlus_ugp
 (LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net, int gpidx) {
-  LEABRA_UNGP_STATE* ug = (LEABRA_UNGP_STATE*)lay->GetUnGpState(net, gpidx);
-  LEABRA_UNIT_SPEC_CPP* us = (LEABRA_UNIT_SPEC_CPP*)lay->GetUnitSpec(net);
+  LEABRA_UNGP_STATE* ug = lay->GetUnGpState(net, gpidx);
+  LEABRA_UNIT_SPEC_CPP* us = lay->GetUnitSpec(net);
   const int nunits = ug->n_units;
   if(nunits < 1) return;        // must be at least a few units..
   for(int i=0;i<nunits;i++) {
-    LEABRA_UNIT_STATE* u = (LEABRA_UNIT_STATE*)ug->GetUnitState(net, i);
+    LEABRA_UNIT_STATE* u = ug->GetUnitState(net, i);
     if(u->lesioned()) continue;
     u->act_p = us->clamp_range.Clip(u->ext);
     u->act_dif = u->act_p - u->act_m;
@@ -212,12 +212,12 @@ void STATE_CLASS(ScalarValLayerSpec)::Compute_ExtToPlus_ugp
 
 void STATE_CLASS(ScalarValLayerSpec)::Compute_ExtToAct_ugp
 (LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net, int gpidx) {
-  LEABRA_UNGP_STATE* ug = (LEABRA_UNGP_STATE*)lay->GetUnGpState(net, gpidx);
-  LEABRA_UNIT_SPEC_CPP* us = (LEABRA_UNIT_SPEC_CPP*)lay->GetUnitSpec(net);
+  LEABRA_UNGP_STATE* ug = lay->GetUnGpState(net, gpidx);
+  LEABRA_UNIT_SPEC_CPP* us = lay->GetUnitSpec(net);
   const int nunits = ug->n_units;
   if(nunits < 1) return;        // must be at least a few units..
   for(int i=0;i<nunits;i++) {
-    LEABRA_UNIT_STATE* u = (LEABRA_UNIT_STATE*)ug->GetUnitState(net, i);
+    LEABRA_UNIT_STATE* u = ug->GetUnitState(net, i);
     if(u->lesioned()) continue;
     u->act_eq = u->act = us->clamp_range.Clip(u->ext);
     u->ext = 0.0f;
@@ -227,12 +227,12 @@ void STATE_CLASS(ScalarValLayerSpec)::Compute_ExtToAct_ugp
 
 void STATE_CLASS(ScalarValLayerSpec)::HardClampExt_ugp
 (LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net, int gpidx) {
-  LEABRA_UNGP_STATE* ug = (LEABRA_UNGP_STATE*)lay->GetUnGpState(net, gpidx);
-  LEABRA_UNIT_SPEC_CPP* us = (LEABRA_UNIT_SPEC_CPP*)lay->GetUnitSpec(net);
+  LEABRA_UNGP_STATE* ug = lay->GetUnGpState(net, gpidx);
+  LEABRA_UNIT_SPEC_CPP* us = lay->GetUnitSpec(net);
   const int nunits = ug->n_units;
   if(nunits < 1) return;        // must be at least a few units..
   for(int i=0;i<nunits;i++) {
-    LEABRA_UNIT_STATE* u = (LEABRA_UNIT_STATE*)ug->GetUnitState(net, i);
+    LEABRA_UNIT_STATE* u = ug->GetUnitState(net, i);
     if(u->lesioned()) continue;
     us->Compute_HardClamp(u, net, u->thread_no);
   }
@@ -245,11 +245,11 @@ void STATE_CLASS(ScalarValLayerSpec)::HardClampExt(LEABRA_LAYER_STATE* lay, LEAB
 void STATE_CLASS(ScalarValLayerSpec)::Quarter_Init_Layer(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
   inherited::Quarter_Init_Layer(lay, net);
   if(bias_val.un == STATE_CLASS(ScalarValBias)::BWT) {
-    LEABRA_UNIT_SPEC_CPP* us = (LEABRA_UNIT_SPEC_CPP*)lay->GetUnitSpec(net);
-    LEABRA_CON_SPEC_CPP* bspec = (LEABRA_CON_SPEC_CPP*)us->GetBiasSpec(net);
+    LEABRA_UNIT_SPEC_CPP* us = lay->GetUnitSpec(net);
+    LEABRA_CON_SPEC_CPP* bspec = us->GetBiasSpec(net);
     if(!bspec) return;
     for(int ui = 0; ui < lay->n_units; ui++) {
-      LEABRA_UNIT_STATE* u = (LEABRA_UNIT_STATE*)lay->GetUnitState(net, ui);
+      LEABRA_UNIT_STATE* u = lay->GetUnitState(net, ui);
       u->bias_scale = bspec->wt_scale.abs;  // still have absolute scaling if wanted..
       u->bias_scale /= 100.0f;
     }
@@ -275,11 +275,11 @@ void STATE_CLASS(ScalarValLayerSpec)::Quarter_Init_Layer_Post
 
 float STATE_CLASS(ScalarValLayerSpec)::Compute_SSE_ugp(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net,
                                           int gpidx, int& n_vals) {
-  LEABRA_UNGP_STATE* ug = (LEABRA_UNGP_STATE*)lay->GetUnGpState(net, gpidx);
-  LEABRA_UNIT_SPEC_CPP* us = (LEABRA_UNIT_SPEC_CPP*)lay->GetUnitSpec(net);
+  LEABRA_UNGP_STATE* ug = lay->GetUnGpState(net, gpidx);
+  LEABRA_UNIT_SPEC_CPP* us = lay->GetUnitSpec(net);
   const int nunits = ug->n_units;
   if(nunits < 1) return 0.0f;        // must be at least a few units..
-  LEABRA_UNIT_STATE* u = (LEABRA_UNIT_STATE*)ug->GetUnitState(net, 0);
+  LEABRA_UNIT_STATE* u = ug->GetUnitState(net, 0);
   // only count if target value is within range -- otherwise considered a non-target
   if(u->HasExtFlag(UNIT_STATE::COMP_TARG) && val_range.RangeTestEq(u->targ)) {
     n_vals++;
@@ -318,11 +318,11 @@ float STATE_CLASS(ScalarValLayerSpec)::Compute_SSE
 
 float STATE_CLASS(ScalarValLayerSpec)::Compute_NormErr_ugp
 (LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net, int gpidx) {
-  LEABRA_UNGP_STATE* ug = (LEABRA_UNGP_STATE*)lay->GetUnGpState(net, gpidx);
-  LEABRA_UNIT_SPEC_CPP* us = (LEABRA_UNIT_SPEC_CPP*)lay->GetUnitSpec(net);
+  LEABRA_UNGP_STATE* ug = lay->GetUnGpState(net, gpidx);
+  LEABRA_UNIT_SPEC_CPP* us = lay->GetUnitSpec(net);
   const int nunits = ug->n_units;
   if(nunits < 1) return 0.0f;        // must be at least a few units..
-  LEABRA_UNIT_STATE* u = (LEABRA_UNIT_STATE*)ug->GetUnitState(net, 0);
+  LEABRA_UNIT_STATE* u = ug->GetUnitState(net, 0);
   // only count if target value is within range -- otherwise considered a non-target
   if(u->HasExtFlag(UNIT_STATE::COMP_TARG) && val_range.RangeTestEq(u->targ)) {
     float uerr = u->targ - u->misc_2;

@@ -72,7 +72,7 @@
     LEABRA_NETWORK_STATE* net = (LEABRA_NETWORK_STATE*)snet;
     if(!learn || (use_unlearnable && net->unlearnable_trial)) return;
     LEABRA_CON_STATE* cg = (LEABRA_CON_STATE*)scg;
-    LEABRA_UNIT_STATE* su = (LEABRA_UNIT_STATE*)cg->ThrOwnUnState(net, thr_no);
+    LEABRA_UNIT_STATE* su = cg->ThrOwnUnState(net, thr_no);
     
     float su_act = su->act_q0;  // previous trial
     float* dwts = cg->OwnCnVar(DWT);
@@ -85,7 +85,7 @@
     
     if(ba_learn.learn_rule == STATE_CLASS(BasAmygLearnSpec)::DELTA) {
       for(int i=0; i<sz; i++) {
-        LEABRA_UNIT_STATE* ru = (LEABRA_UNIT_STATE*)cg->UnState(i, net);
+        LEABRA_UNIT_STATE* ru = cg->UnState(i, net);
         bool d2r = (ru->HasUnitFlag(LEABRA_UNIT_STATE::D2R));
         bool acq = (ru->HasUnitFlag(LEABRA_UNIT_STATE::ACQUISITION));
         if(acq) {
@@ -99,7 +99,7 @@
     }
     else {
       for(int i=0; i<sz; i++) {
-        LEABRA_UNIT_STATE* ru = (LEABRA_UNIT_STATE*)cg->UnState(i, net);
+        LEABRA_UNIT_STATE* ru = cg->UnState(i, net);
         bool d2r = (ru->HasUnitFlag(LEABRA_UNIT_STATE::D2R));
         bool acq = (ru->HasUnitFlag(LEABRA_UNIT_STATE::ACQUISITION));
         if(acq) {

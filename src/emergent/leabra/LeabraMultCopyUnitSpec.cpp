@@ -2,11 +2,11 @@
 // {
 
 void STATE_CLASS(LeabraMultCopyUnitSpec)::Compute_MultCopy(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) {
-  LEABRA_CON_STATE* copy_gp = (LEABRA_CON_STATE*)u->RecvConState(net, 0);
-  LEABRA_CON_STATE* mult_gp = (LEABRA_CON_STATE*)u->RecvConState(net, 1);
+  LEABRA_CON_STATE* copy_gp = u->RecvConState(net, 0);
+  LEABRA_CON_STATE* mult_gp = u->RecvConState(net, 1);
   
-  LEABRA_UNIT_STATE* copy_un = (LEABRA_UNIT_STATE*)copy_gp->UnState(0,net);
-  LEABRA_UNIT_STATE* mult_un = (LEABRA_UNIT_STATE*)mult_gp->UnState(0,net);
+  LEABRA_UNIT_STATE* copy_un = copy_gp->UnState(0,net);
+  LEABRA_UNIT_STATE* mult_un = mult_gp->UnState(0,net);
 
   float mult_eff = mult_gain * mult_un->act_eq;;
   if(mult_eff > 1.0f) mult_eff = 1.0f;

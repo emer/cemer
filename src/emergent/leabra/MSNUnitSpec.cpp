@@ -43,7 +43,7 @@ void STATE_CLASS(MSNUnitSpec)::Init_UnitState
 STATE_CLASS(MSNUnitSpec)::GateType STATE_CLASS(MSNUnitSpec)::MatrixGateType
   (LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) {
   
-  LEABRA_LAYER_STATE* lay = (LEABRA_LAYER_STATE*)u->GetOwnLayer(net);
+  LEABRA_LAYER_STATE* lay = u->GetOwnLayer(net);
   int ugidx = u->gp_idx;
   int x_pos = ugidx % lay->gp_geom_x;
   if(matrix.n_mnt_x < 0) {
@@ -66,7 +66,7 @@ void STATE_CLASS(MSNUnitSpec)::Compute_DeepMod(LEABRA_UNIT_STATE* u, LEABRA_NETW
     inherited::Compute_DeepMod(u, net, thr_no);
     return;
   }
-  LEABRA_LAYER_STATE* lay = (LEABRA_LAYER_STATE*)u->GetOwnLayer(net);
+  LEABRA_LAYER_STATE* lay = u->GetOwnLayer(net);
   LEABRA_UNGP_STATE* lgpd = lay->GetLayUnGpState(net);
   // must be SUPER units at this point
   if(dorsal_ventral == DORSAL && matrix_patch == MATRIX) {

@@ -7,11 +7,11 @@ void STATE_CLASS(ECoutUnitSpec)::ClampFromECin(LEABRA_UNIT_STATE* u, LEABRA_NETW
   }
   const int nrg = u->NRecvConGps(net);
   for(int g=0; g<nrg; g++) {
-    LEABRA_CON_STATE* recv_gp = (LEABRA_CON_STATE*)u->RecvConState(net, g);
+    LEABRA_CON_STATE* recv_gp = u->RecvConState(net, g);
     if(recv_gp->NotActive()) continue;
-    LEABRA_CON_SPEC_CPP* cs = (LEABRA_CON_SPEC_CPP*)recv_gp->GetConSpec(net);
+    LEABRA_CON_SPEC_CPP* cs = recv_gp->GetConSpec(net);
     if(!cs->IsMarkerCon()) continue;
-    LEABRA_UNIT_STATE* su = (LEABRA_UNIT_STATE*)recv_gp->UnState(0, net);
+    LEABRA_UNIT_STATE* su = recv_gp->UnState(0, net);
     float inval = su->act_eq;
     u->act = clamp_range.Clip(inval);
     if(deep.on) {

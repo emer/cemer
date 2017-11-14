@@ -116,7 +116,7 @@ int CON_STATE::ConnectUnits
       }
     }
     if(con >= 0 && set_init_wt) {
-      SafeFastCn(con, WT, net) = init_wt;
+      CnSafeFast(con, WT, net) = init_wt;
     }
   }
   else {
@@ -128,7 +128,7 @@ int CON_STATE::ConnectUnits
       }
     }
     if(con >= 0 && set_init_wt) {
-      SafeFastCn(size-1, WT, net) = init_wt; // our connection is last one: size-1
+      CnSafeFast(size-1, WT, net) = init_wt; // our connection is last one: size-1
     }
   }
   return con;

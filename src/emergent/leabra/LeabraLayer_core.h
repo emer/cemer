@@ -40,24 +40,48 @@
   float 	acts_p_avg_eff;	// #GUI_READ_ONLY #SHOW #CAT_Activation #SAVE_WTS COPIED FROM UNGP STATE: acts_p_avg * avg_act.adjust factor -- this is the effective value actually used for netinput scaling based on layer activation levels -- saved with weights
 
   INLINE LEABRA_LAYER_SPEC_CPP* GetLayerSpec(NETWORK_STATE* net) const
-  { return (LEABRA_LAYER_SPEC_CPP*)net->GetLayerSpec(spec_idx); }
+  { return (LEABRA_LAYER_SPEC_CPP*)inherited::GetLayerSpec(net); }
 
   INLINE LEABRA_UNIT_SPEC_CPP* GetUnitSpec(NETWORK_STATE* net) const
-  { return (LEABRA_UNIT_SPEC_CPP*)net->GetUnitSpec(unit_spec_idx); }
+  { return (LEABRA_UNIT_SPEC_CPP*)inherited::GetUnitSpec(net); }
 
   INLINE LEABRA_LAYER_STATE* GetLayerState(NETWORK_STATE* net) const
-  { return (LEABRA_LAYER_STATE*)net->GetLayerState(layer_idx); }
+  { return (LEABRA_LAYER_STATE*)inherited::GetLayerState(net); }
 
   INLINE LEABRA_UNGP_STATE* GetLayUnGpState(NETWORK_STATE* net) const
-  { return (LEABRA_UNGP_STATE*)net->GetUnGpState(ungp_idx); }
+  { return (LEABRA_UNGP_STATE*)inherited::GetLayUnGpState(net); }
 
   INLINE LEABRA_UNGP_STATE* GetUnGpState(NETWORK_STATE* net, int ungp_no) const
-  { if(ungp_no < -1 || ungp_no >= n_ungps) return NULL;
-    return (LEABRA_UNGP_STATE*)net->GetUnGpState(ungp_idx + 1 + ungp_no); }
+  { return (LEABRA_UNGP_STATE*)inherited::GetUnGpState(net, ungp_no); }
 
-  INLINE LEABRA_PRJN_STATE* GetPrjnState(NETWORK_STATE* net, int prjn_no) const
-  { if(prjn_start_idx < 0) return NULL;
-    return (LEABRA_PRJN_STATE*)net->GetPrjnState(prjn_start_idx + prjn_no); }
+  INLINE LEABRA_PRJN_STATE* GetRecvPrjnState(NETWORK_STATE* net, int prjn_no) const
+  { return (LEABRA_PRJN_STATE*)inherited::GetRecvPrjnState(net, prjn_no); }
+
+  INLINE LEABRA_PRJN_STATE* GetSendPrjnState(NETWORK_STATE* net, int prjn_no) const
+  { return (LEABRA_PRJN_STATE*)inherited::GetSendPrjnState(net, prjn_no); }
+
+
+  INLINE LEABRA_UNIT_STATE* GetUnitState(NETWORK_STATE* net, int un_no) const
+  { return (LEABRA_UNIT_STATE*)inherited::GetUnitState(net, un_no); }
+
+  INLINE LEABRA_UNIT_STATE* GetUnitStateSafe(NETWORK_STATE* net, int un_no) const
+  { return (LEABRA_UNIT_STATE*)inherited::GetUnitStateSafe(net, un_no); }
+
+  INLINE LEABRA_UNIT_STATE* GetUnitStateFlatXY(NETWORK_STATE* net, int fl_x, int fl_y) const
+  { return (LEABRA_UNIT_STATE*)inherited::GetUnitStateFlatXY(net, fl_x, fl_y); }
+
+  INLINE LEABRA_UNIT_STATE* GetUnitStateGpUnIdx(NETWORK_STATE* net, int gp_dx, int un_dx) const
+  { return (LEABRA_UNIT_STATE*)inherited::GetUnitStateGpUnIdx(net, gp_dx, un_dx); }
+    
+  INLINE LEABRA_UNIT_STATE* GetUnitStateGpXYUnIdx(NETWORK_STATE* net, int gp_x, int gp_y, int un_dx) const
+  { return (LEABRA_UNIT_STATE*)inherited::GetUnitStateGpXYUnIdx(net, gp_x, gp_y, un_dx); }
+    
+  INLINE LEABRA_UNIT_STATE* GetUnitStateGpIdxUnXY(NETWORK_STATE* net, int gp_dx, int un_x, int un_y) const
+  { return (LEABRA_UNIT_STATE*)inherited::GetUnitStateGpIdxUnXY(net, gp_dx, un_x, un_y); }
+    
+  INLINE LEABRA_UNIT_STATE* GetUnitStateGpUnXY(NETWORK_STATE* net, int gp_x, int gp_y, int un_x, int un_y) const
+  { return (LEABRA_UNIT_STATE*)inherited::GetUnitStateGpUnXY(net, gp_x, gp_y, un_x, un_y); }
+
 
   INLINE float  GetTotalActEq(NETWORK_STATE* net)  {
     LEABRA_UNGP_STATE* lugp = GetLayUnGpState(net);

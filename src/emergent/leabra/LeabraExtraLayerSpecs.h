@@ -51,8 +51,6 @@ public:
   virtual void	LabelUnitsNet();
   // #BUTTON #CAT_ScalarVal label all layers in given network using this spec
 
-  // void Compute_OutputName(LeabraLayer* lay, LeabraNetwork* net) override;
-  
   void	HelpConfig() override;	// #BUTTON get help message for configuring this spec
   bool  CheckConfig_Layer(Layer* lay, bool quiet=false) override;
 

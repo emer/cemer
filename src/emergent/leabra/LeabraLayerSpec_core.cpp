@@ -5,7 +5,7 @@
 void LEABRA_LAYER_SPEC::DecayState(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net, float decay_val) {
   LEABRA_UNIT_SPEC_CPP* us = (LEABRA_UNIT_SPEC_CPP*)lay->GetUnitSpec(net);
   for(int ui = 0; ui < lay->n_units; ui++) {
-    LEABRA_UNIT_STATE* u = (LEABRA_UNIT_STATE*)lay->GetUnitState(net, ui);
+    LEABRA_UNIT_STATE* u = lay->GetUnitState(net, ui);
     if(u->lesioned()) continue;
     us->DecayState(u, net, u->thread_no, decay_val);
   }
@@ -28,7 +28,7 @@ float LEABRA_LAYER_SPEC::Compute_AvgExt(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_
   float avg_ext = 0.0f;
   int avg_n = 0;
   for(int ui = 0; ui < lay->n_units; ui++) {
-    LEABRA_UNIT_STATE* u = (LEABRA_UNIT_STATE*)lay->GetUnitState(net, ui);
+    LEABRA_UNIT_STATE* u = lay->GetUnitState(net, ui);
     if(u->lesioned()) continue;
     if(lay->HasExtFlag(UnitState_cpp::TARG)) { // targ comes first b/c not copied to ext at this point yet!
       avg_ext += u->targ;
@@ -45,7 +45,7 @@ float LEABRA_LAYER_SPEC::Compute_AvgExt(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_
 }
 
 void LEABRA_LAYER_SPEC::Trial_Init_Layer(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
-  LEABRA_UNIT_SPEC_CPP* us = (LEABRA_UNIT_SPEC_CPP*)lay->GetUnitSpec(net);
+  LEABRA_UNIT_SPEC_CPP* us = lay->GetUnitSpec(net);
   LEABRA_UNGP_STATE* lgpd = lay->GetLayUnGpState(net);
   lay->deep_lrate_mod = us->deep.ApplyDeepMod();
   lgpd->acts_q0 = lgpd->acts_p;
@@ -81,9 +81,24 @@ void LEABRA_LAYER_SPEC::Trial_Init_Layer(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK
 }
 
 
+void LEABRA_LAYER_SPEC::Compute_CosDiff_post(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
+  if(cos_diff.lrate_mod && cos_diff.lrmod_fm_trc) {
+    for(int i=0;i<lay->n_recv_prjns;i++) {
+      LEABRA_PRJN_STATE* prjn = lay->GetRecvPrjnState(net, i);
+      if(prjn->NotActive(net)) continue;
+      LEABRA_LAYER_STATE* from = prjn->GetSendLayerState(net);
+      LEABRA_UNIT_SPEC_CPP* frus = from->GetUnitSpec(net);
+      if(frus->deep.IsTRC()) {
+        LEABRA_LAYER_SPEC_CPP* frls = from->GetLayerSpec(net);
+        lay->lrate_mod *= (from->lrate_mod / frls->lay_lrate); // deconfound sender lrate
+      }
+    }
+  }
+}
+
 void LEABRA_LAYER_SPEC::Compute_AbsRelNetin(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
-  LEABRA_UNGP_STATE* lgpd = (LEABRA_UNGP_STATE*)lay->GetLayUnGpState(net);
-  LEABRA_UNIT_SPEC_CPP* us = (LEABRA_UNIT_SPEC_CPP*)lay->GetUnitSpec(net);
+  LEABRA_UNGP_STATE* lgpd = lay->GetLayUnGpState(net);
+  LEABRA_UNIT_SPEC_CPP* us = lay->GetUnitSpec(net);
 
   if(lgpd->netin.max < 0.01f) return; // not getting enough activation to count!
 
@@ -98,13 +113,13 @@ void LEABRA_LAYER_SPEC::Compute_AbsRelNetin(LEABRA_LAYER_STATE* lay, LEABRA_NETW
   if(net->NetinPerPrjn() || net->rel_netin.ComputeNow(net->epoch, net->trial)) {
     float sum_net = 0.0f;
     for(int i = 0; i < lay->n_recv_prjns; i++) {
-      LEABRA_PRJN_STATE* prjn = (LEABRA_PRJN_STATE*)lay->GetRecvPrjnState(net, i);
+      LEABRA_PRJN_STATE* prjn = lay->GetRecvPrjnState(net, i);
       if(prjn->NotActive(net)) continue;
-      LEABRA_CON_SPEC_CPP* cs = (LEABRA_CON_SPEC_CPP*)prjn->GetConSpec(net);
+      LEABRA_CON_SPEC_CPP* cs = prjn->GetConSpec(net);
       prjn->netin_avg = 0.0f;
       int netin_avg_n = 0;
       for(int ui = 0; ui < lay->n_units; ui++) {
-        LEABRA_UNIT_STATE* u = (LEABRA_UNIT_STATE*)lay->GetUnitState(net, ui);
+        LEABRA_UNIT_STATE* u = lay->GetUnitState(net, ui);
         if(u->lesioned()) continue;
         if(u->act_eq < us->opt_thresh.send) continue; // ignore if not above sending thr
         LEABRA_CON_STATE* cg = (LEABRA_CON_STATE*)u->RecvConStatePrjn(net, prjn);
@@ -126,7 +141,7 @@ void LEABRA_LAYER_SPEC::Compute_AbsRelNetin(LEABRA_LAYER_STATE* lay, LEABRA_NETW
     }
 
     for(int i = 0; i < lay->n_recv_prjns; i++) {
-      LEABRA_PRJN_STATE* prjn = (LEABRA_PRJN_STATE*)lay->GetRecvPrjnState(net, i);
+      LEABRA_PRJN_STATE* prjn = lay->GetRecvPrjnState(net, i);
       if(prjn->NotActive(net)) continue;
       if(sum_net > 0.0f)
         prjn->netin_rel = prjn->netin_avg / sum_net;
@@ -147,7 +162,7 @@ void LEABRA_LAYER_SPEC::Compute_AvgAbsRelNetin(LEABRA_LAYER_STATE* lay, LEABRA_N
   lay->avg_netin_sum.max = 0.0f;
   lay->avg_netin_n = 0;
   for(int i = 0; i < lay->n_recv_prjns; i++) {
-    LEABRA_PRJN_STATE* prjn = (LEABRA_PRJN_STATE*)lay->GetRecvPrjnState(net, i);
+    LEABRA_PRJN_STATE* prjn = lay->GetRecvPrjnState(net, i);
     if(prjn->NotActive(net)) continue;
     if(prjn->avg_netin_n > 0) {
       prjn->avg_netin_avg = prjn->avg_netin_avg_sum / (float)prjn->avg_netin_n;
@@ -160,9 +175,9 @@ void LEABRA_LAYER_SPEC::Compute_AvgAbsRelNetin(LEABRA_LAYER_STATE* lay, LEABRA_N
 }
 
 void LEABRA_LAYER_SPEC::ClearDeepActs(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
-  LEABRA_UNIT_SPEC_CPP* us = (LEABRA_UNIT_SPEC_CPP*)lay->GetUnitSpec(net);
+  LEABRA_UNIT_SPEC_CPP* us = lay->GetUnitSpec(net);
   for(int ui = 0; ui < lay->n_units; ui++) {
-    LEABRA_UNIT_STATE* u = (LEABRA_UNIT_STATE*)lay->GetUnitState(net, ui);
+    LEABRA_UNIT_STATE* u = lay->GetUnitState(net, ui);
     if(u->lesioned()) continue;
     us->ClearDeepActs(u, net, u->thread_no);
   }

@@ -53,6 +53,40 @@
 
 
   ///////////////////////////////////////////////////////////////////////
+  //	Overloaded accessors for Leabra type, only most popular
+
+  INLINE LEABRA_LAYER_STATE* GetLayerState(int lay_idx) const {
+    return (LEABRA_LAYER_STATE*)inherited::GetLayerState(lay_idx); 
+  }
+  INLINE LEABRA_PRJN_STATE* GetPrjnState(int prjn_idx) const {
+    return (LEABRA_PRJN_STATE*)inherited::GetPrjnState(prjn_idx);
+  }
+  INLINE LEABRA_PRJN_STATE* GetSendPrjnState(int prjn_idx) const {
+    return (LEABRA_PRJN_STATE*)inherited::GetSendPrjnState(prjn_idx);
+  }
+  INLINE LEABRA_UNGP_STATE* GetUnGpState(int ungp_idx) const {
+    return (LEABRA_UNGP_STATE*)inherited::GetUnGpState(ungp_idx);
+  }
+  INLINE LEABRA_UNIT_STATE*  ThrUnitState(int thr_no, int thr_un_idx) const {
+    return (LEABRA_UNIT_STATE*)inherited::ThrUnitState(thr_no, thr_un_idx);
+  }
+  INLINE LEABRA_UNIT_STATE*  GetUnitState(int flat_idx) const {
+    return (LEABRA_UNIT_STATE*)inherited::GetUnitState(flat_idx);
+  }
+  INLINE LEABRA_CON_STATE* ThrRecvConState(int thr_no, int thr_cgp_idx) const {
+    return (LEABRA_CON_STATE*)inherited::ThrRecvConState(thr_no, thr_cgp_idx);
+  }
+  INLINE LEABRA_CON_STATE* ThrSendConState(int thr_no, int thr_cgp_idx) const {
+    return (LEABRA_CON_STATE*)inherited::ThrSendConState(thr_no, thr_cgp_idx);
+  }
+  INLINE LEABRA_CON_STATE* ThrUnRecvConState(int thr_no, int thr_un_idx, int recv_idx) const {
+    return (LEABRA_CON_STATE*)inherited::ThrUnRecvConState(thr_no, thr_un_idx, recv_idx);
+  }
+  INLINE LEABRA_CON_STATE* ThrUnSendConState(int thr_no, int thr_un_idx, int recv_idx) const {
+    return (LEABRA_CON_STATE*)inherited::ThrUnSendConState(thr_no, thr_un_idx, recv_idx);
+  }
+
+  ///////////////////////////////////////////////////////////////////////
   //	General Init functions
 
   INIMPL void Init_Weights_Layers() override;

@@ -10,10 +10,10 @@ void STATE_CLASS(GPiInvUnitSpec)::Compute_NetinRaw(LEABRA_UNIT_STATE* u, LEABRA_
   float nogo_in = 0.0f;
   const int nrg = u->NRecvConGps(net);
   for(int g=0; g<nrg; g++) {
-    LEABRA_CON_STATE* recv_gp = (LEABRA_CON_STATE*)u->RecvConState(net, g);
+    LEABRA_CON_STATE* recv_gp = u->RecvConState(net, g);
     if(recv_gp->NotActive()) continue;
-    LEABRA_LAYER_STATE* fmlay = (LEABRA_LAYER_STATE*) recv_gp->GetSendLayer(net);
-    LEABRA_UNIT_SPEC_CPP* us = (LEABRA_UNIT_SPEC_CPP*)fmlay->GetUnitSpec(net);
+    LEABRA_LAYER_STATE* fmlay =  recv_gp->GetSendLayer(net);
+    LEABRA_UNIT_SPEC_CPP* us = fmlay->GetUnitSpec(net);
 
     float g_nw_nt = 0.0f;
     for(int j=0;j<nt;j++) {
@@ -24,7 +24,7 @@ void STATE_CLASS(GPiInvUnitSpec)::Compute_NetinRaw(LEABRA_UNIT_STATE* u, LEABRA_
     recv_gp->net_raw += g_nw_nt;
 
     if(us->GetStateSpecType() == LEABRA_NETWORK_STATE::T_MSNUnitSpec) {
-      LEABRA_UNIT_STATE* su = (LEABRA_UNIT_STATE*)fmlay->GetUnitState(net, 0);
+      LEABRA_UNIT_STATE* su = fmlay->GetUnitState(net, 0);
       if(su->HasUnitFlag(LEABRA_UNIT_STATE::DORSAL)) {
         if(su->HasUnitFlag(LEABRA_UNIT_STATE::D1R)) {
           go_in += recv_gp->net_raw;
@@ -110,13 +110,13 @@ void STATE_CLASS(GPiInvUnitSpec)::Send_Thal(LEABRA_UNIT_STATE* u, LEABRA_NETWORK
   u->thal = snd_val;            // record what we send, always
   const int nsg = u->NSendConGps(net); 
   for(int g=0; g<nsg; g++) {
-    LEABRA_CON_STATE* send_gp = (LEABRA_CON_STATE*)u->SendConState(net, g);
+    LEABRA_CON_STATE* send_gp = u->SendConState(net, g);
     if(send_gp->NotActive()) continue;
-    LEABRA_CON_SPEC_CPP* cs = (LEABRA_CON_SPEC_CPP*)send_gp->GetConSpec(net);
+    LEABRA_CON_SPEC_CPP* cs = send_gp->GetConSpec(net);
     if(!cs->IsMarkerCon()) continue;
     for(int j=0;j<send_gp->size; j++) {
-      ((LEABRA_UNIT_STATE*)send_gp->UnState(j,net))->thal = snd_val;
-      ((LEABRA_UNIT_STATE*)send_gp->UnState(j,net))->thal_gate = gate_val;
+      send_gp->UnState(j,net)->thal = snd_val;
+      send_gp->UnState(j,net)->thal_gate = gate_val;
     }
   }
 }

@@ -192,10 +192,10 @@
   { return ((int)(sz / vec_chunk_targ) + 1) * vec_chunk_targ; }
   // #IGNORE return value that is modulus of vec_chunk_targ -- for computing allocation sizes, etc
 
-  INLINE UNIT_STATE*    OwnUnState(NETWORK_STATE* net)
+  INLINE UNIT_STATE*    OwnUnState(NETWORK_STATE* net) const
   { return net->GetUnitState(own_flat_idx); }
   // #IGNORE #CAT_Access our own unit variables -- for the unit that owns these connections (could be sending or recv unit depending on type of connection group)
-  INLINE UNIT_STATE*    ThrOwnUnState(NETWORK_STATE* net, int thr_no)
+  INLINE UNIT_STATE*    ThrOwnUnState(NETWORK_STATE* net, int thr_no) const
   { return net->ThrUnitState(thr_no, own_thr_idx); }
   // #IGNORE #CAT_Access thread-optimized version (faster!): our own unit variables -- for the unit that owns these connections (could be sending or recv unit depending on type of connection group)
 
@@ -231,7 +231,7 @@
     return net->GetUnitState(UnIdx(idx));
   }
   // #IGNORE #CAT_Access fast access (no range checking) to unit pointer at given connection index (goes through flat index at network level) -- this is the unit on the other end of this connection 
-  INLINE UNIT_STATE*    SafeUnState(int idx, NETWORK_STATE* net) const {
+  INLINE UNIT_STATE*    UnStateSafe(int idx, NETWORK_STATE* net) const {
     if(!InRange(idx)) return NULL;
     return net->GetUnitState(UnIdx(idx));
   }
@@ -242,7 +242,7 @@
     else         return net->RecvConState(UnIdx(idx), other_idx);
   }
   // #IGNORE get ConState for this projection in unit at given index at other end of this connection
-  INLINE CON_STATE*      SafeUnCons(int idx, NETWORK_STATE* net) const {
+  INLINE CON_STATE*      UnConsSafe(int idx, NETWORK_STATE* net) const {
     if(!InRange(idx)) return NULL;
     if(IsRecv()) return net->SendConState(UnIdx(idx), other_idx);
     else         return net->RecvConState(UnIdx(idx), other_idx);
@@ -272,10 +272,10 @@
   INLINE float&  Cn(int idx, int var_no, NETWORK_STATE* net) const
   { if(OwnCons()) return OwnCn(idx, var_no); return PtrCn(idx, var_no, net); }
   // #IGNORE #CAT_Access generic access of connection variable value at given index, regardless of whether it is owned or a pointer -- no range checking -- var_no is defined in ConSpec (e.g., ConSpec::WT, DWT or algorithm-specific types (e.g., LeabraConSpec::PDW) -- do not use in compute algorithm code that knows the ownership status of the connections (use OwnCn* or PtrCn*)
-  INLINE float&  SafeFastCn(int idx, int var_no, NETWORK_STATE* net) const
+  INLINE float&  CnSafeFast(int idx, int var_no, NETWORK_STATE* net) const
   { if(OwnCons()) { if(InRange(idx)) return OwnCn(idx, var_no); return const_cast<float&>(temp1); }
-    CON_STATE* bc = SafeUnCons(idx, net);
-    if(bc) return bc->SafeFastCn(PtrCnIdx(idx), var_no, net); return const_cast<float&>(temp1); }
+    CON_STATE* bc = UnConsSafe(idx, net);
+    if(bc) return bc->CnSafeFast(PtrCnIdx(idx), var_no, net); return const_cast<float&>(temp1); }
   // #IGNORE #CAT_Access generic access of connection variable value at given index, regardless of whether it is owned or a pointer -- does range checking but doesn't issue messages, and is otherwise as fast as possible -- var_no is defined in ConSpec (e.g., ConSpec::WT, DWT or algorithm-specific types (e.g., LeabraConSpec::PDW) -- do not use in compute algorithm code that knows the ownership status of the connections (use OwnCn* or PtrCn*)
 
   INLINE void    FreeCons() {

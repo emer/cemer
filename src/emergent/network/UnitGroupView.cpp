@@ -253,7 +253,7 @@ void UnitGroupView::UpdateUnitViewBase_Con_impl
           int con = tcong->FindConFromIdx(src_u->flat_idx);
           if (con < 0) continue;
           // have to use safe b/c could be PtrCon and other side might be gone..
-          uvd_bases.Set(&tcong->SafeFastCn(con, act_md->idx, net->net_state), coord.x, coord.y, midx);
+          uvd_bases.Set(&tcong->CnSafeFast(con, act_md->idx, net->net_state), coord.x, coord.y, midx);
           break;                // once you've got one, done!
         }
       }
@@ -274,7 +274,7 @@ void UnitGroupView::UpdateUnitViewBase_Con_impl
             int con = tcong->FindConFromIdx(src_u->flat_idx);
             if (con < 0) continue;
             // have to use safe b/c could be PtrCon and other side might be gone..
-            uvd_bases.Set(&tcong->SafeFastCn(con, act_md->idx, net->net_state), coord.x, coord.y,
+            uvd_bases.Set(&tcong->CnSafeFast(con, act_md->idx, net->net_state), coord.x, coord.y,
                           midx);
             break;                // once you've got one, done!
           }
@@ -284,7 +284,7 @@ void UnitGroupView::UpdateUnitViewBase_Con_impl
             int con = tcong->FindConFromIdx(src_u->flat_idx);
             if (con < 0) continue;
             // have to use safe b/c could be PtrCon and other side might be gone..
-            uvd_bases.Set(&tcong->SafeFastCn(con, act_md->idx, net->net_state), coord.x, coord.y,
+            uvd_bases.Set(&tcong->CnSafeFast(con, act_md->idx, net->net_state), coord.x, coord.y,
                           midx);
             break;                // once you've got one, done!
           }

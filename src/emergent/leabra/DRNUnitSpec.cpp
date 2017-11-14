@@ -14,10 +14,10 @@ void STATE_CLASS(DRNUnitSpec)::Compute_Se(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_S
 
   const int nrg = u->NRecvConGps(net);
   for(int g=0; g<nrg; g++) {
-    LEABRA_CON_STATE* recv_gp = (LEABRA_CON_STATE*)u->RecvConState(net, g);
+    LEABRA_CON_STATE* recv_gp = u->RecvConState(net, g);
     if(recv_gp->NotActive()) continue;
-    LEABRA_LAYER_STATE* from = (LEABRA_LAYER_STATE*)recv_gp->GetSendLayer(net);
-    LEABRA_UNIT_SPEC_CPP* us = (LEABRA_UNIT_SPEC_CPP*)from->GetUnitSpec(net);
+    LEABRA_LAYER_STATE* from = recv_gp->GetSendLayer(net);
+    LEABRA_UNIT_SPEC_CPP* us = from->GetUnitSpec(net);
     LEABRA_UNGP_STATE* lgpd = from->GetLayUnGpState(net);
 
     const float act_avg = lgpd->acts_eq.avg;
@@ -84,10 +84,10 @@ void STATE_CLASS(DRNUnitSpec)::Send_Se(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STAT
   const float snd_val = se.se_out_gain * u->sev;
   const int nsg = u->NSendConGps(net); 
   for(int g=0; g<nsg; g++) {
-    LEABRA_CON_STATE* send_gp = (LEABRA_CON_STATE*)u->SendConState(net, g);
+    LEABRA_CON_STATE* send_gp = u->SendConState(net, g);
     if(send_gp->NotActive()) continue;
     for(int j=0;j<send_gp->size; j++) {
-      ((LEABRA_UNIT_STATE*)send_gp->UnState(j,net))->sev = snd_val;
+      send_gp->UnState(j,net)->sev = snd_val;
     }
   }
 }
