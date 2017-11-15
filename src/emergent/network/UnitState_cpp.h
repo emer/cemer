@@ -64,9 +64,7 @@ public:
   int   LesionCons(NetworkState_cpp* nnet, float p_lesion, bool permute=true, PrjnState_cpp* prjn = NULL);
   // #USE_RVAL #CAT_State remove connections with prob p_lesion (permute = fixed no. lesioned)
 
-  void  MonitorVar(NetMonitor* net_mon, const String& variable);
-  // #CAT_Statistic monitor (record in a datatable) the given variable on this unit
-  bool  Snapshot(NetworkState_cpp* nnet, const String& variable, SimpleMathSpec& math_op, bool arg_is_snap=true);
+  bool  Snapshot(Network* nnet, const String& variable, SimpleMathSpec& math_op, bool arg_is_snap=true);
   // #CAT_Statistic take a snapshot of given variable: assign snap value on unit to given variable value, optionally using simple math operation on that value.  if arg_is_snap is true, then the 'arg' argument to the math operation is the current value of the snap variable.  for example, to compute intersection of variable with snap value, use MIN and arg_is_snap.
 
   DataTable*    VarToTable(NetworkState_cpp* nnet, DataTable* dt, const String& variable);

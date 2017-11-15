@@ -430,6 +430,13 @@ void Layer::LesionIconify() {
 
 void Layer::UnLesion() {
   if (!lesioned()) return;
+  NetworkState_cpp* net = GetValidNetState();
+  if(net) {                     // if network is built then can only unlesion if was originally built
+    if(layer_idx < 0) {
+      taMisc::Error("UnLesion: can only unlesion layers that were originally unlesioned when network was built (only those layers were built into LayerState etc) -- UnBuild the network and then unlesion then re-Build if you want to be able to dynamically turn layers on and off");
+      return;
+    }
+  }
   StructUpdate(true);
   ClearLayerFlag(LESIONED);
   UnLesionUnits();              // all our units were lesioned when parent was
@@ -1557,7 +1564,7 @@ bool Layer::Snapshot(const String& variable, SimpleMathSpec& math_op, bool arg_i
   for(int ui=0; ui < n_units_built; ui++) {
     UnitState_cpp* u = GetUnitState(net, ui);
     if(u->lesioned()) continue;
-    if(!u->Snapshot(net, variable, math_op, arg_is_snap)) return false;
+    if(!u->Snapshot(own_net, variable, math_op, arg_is_snap)) return false;
   }
   return true;
 }

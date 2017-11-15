@@ -258,10 +258,47 @@ DataTable* UnitState_cpp::ConVarsToTable(NetworkState_cpp* nnet, DataTable* dt, 
   return dt;
 }
 
-void  UnitState_cpp::MonitorVar(NetMonitor* net_mon, const String& variable) {
-  // todo: impl
-}
-
-bool UnitState_cpp::Snapshot(NetworkState_cpp* nnet, const String& variable, SimpleMathSpec& math_op, bool arg_is_snap) {
-  return false;
+bool UnitState_cpp::Snapshot(Network* nnet, const String& var, SimpleMathSpec& math_op, bool arg_is_snap) {
+  NetworkState_cpp* snet = nnet->net_state;
+  float val = 0.0f;
+  if(var.startsWith("r.") || var.startsWith("s.")) {
+    UnitState_cpp* src_u = nnet->GetViewSrcU();
+    if(!src_u) return false;
+    String cvar = var.after(".");
+    bool is_send = var.startsWith("s.");
+    if(is_send) {
+      const int rsz = NRecvConGps(snet);
+      for(int g=0;g<rsz;g++) {
+        ConState_cpp* tcong = RecvConState(snet, g);
+        if(tcong->NotActive()) continue;
+        int con = tcong->FindConFromIdx(src_u->flat_idx);
+        if(con < 0) continue;
+        val = tcong->SafeCnName(snet, con, cvar);
+        break;
+      }
+    }
+    else {
+      const int ssz = NSendConGps(snet);
+      for(int g=0;g<ssz;g++) {
+        ConState_cpp* tcong = SendConState(snet, g);
+        if(tcong->NotActive()) continue;
+        int con = tcong->FindConFromIdx(src_u->flat_idx);
+        if(con < 0) continue;
+        val = tcong->SafeCnName(snet, con, cvar);
+        break;
+      }
+    }
+  }
+  else {
+    val = GetUnValName(snet, var);
+  }
+  if(math_op.opr == SimpleMathSpec::NONE) {
+    snap = val;
+  }
+  else {
+    if(arg_is_snap)
+      math_op.arg = snap;
+    snap = (float)math_op.Evaluate((double)val);
+  }
+  return true;
 }
