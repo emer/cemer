@@ -366,7 +366,7 @@
   (int lay_dx=0, int laygp_lay0_dx=0, int laygpn=0, int units_dx=0, int ungp_dx=0, int n_un=0,
    int n_gp=0, int prjn_st_dx=0, int spec_dx=0, int uspec_dx=0, int n_recv=0, int n_send=0,
    int lf=LF_NONE, LayerType lt=HIDDEN) {
-    net_state = NULL; main_obj = false; layer_idx = lay_dx; laygp_lay0_idx=0; laygp_n=0;
+    net_state = NULL; main_obj = false; layer_idx = lay_dx; laygp_lay0_idx=laygp_lay0_dx; laygp_n=laygpn;
     units_flat_idx = units_dx;  ungp_idx = ungp_dx; n_units = n_un; n_ungps = n_gp;
     prjn_start_idx = prjn_st_dx;  spec_idx = spec_dx; unit_spec_idx = uspec_dx; 
     n_recv_prjns = n_recv;    n_send_prjns = n_send;  send_prjn_start_idx = -1;

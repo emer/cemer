@@ -872,7 +872,8 @@ void Network::BuildIndexesSizes() {
         }
         last_laygp = lg;
         last_laygp_lay0_idx = lay->layer_idx;
-        last_laygp_n = 0;
+        last_laygp_n = 1;
+        lay->laygp_lay0_idx = lay->layer_idx;
       }
     }
     else {
