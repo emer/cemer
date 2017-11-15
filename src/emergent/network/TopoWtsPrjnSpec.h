@@ -103,7 +103,7 @@ class E_API TopoWtsPrjnSpec: public FullPrjnSpec {
   // calls one of the four InitWeights fns below according to use of unit groups
   bool  HasRandomScale() override { return false; }
   
-  void Connect_impl(Projection* prjn, bool make_cons) override;
+  void Connect_impl(Projection* prjn, int make_cons) override;
   // enables flexibility whether to use unit group indexing (default) or not
   virtual void InitWeights_SendFlatRecvFlat(Projection* prjn, ConState* cg,
                                             Unit* ru, Network* net, int thr_no);

@@ -76,6 +76,7 @@ public:
     L_R_F,                      // all in front: sender is at left of layer, receiver is right
     L_R_B,                      // all in back: sender is at left of layer, receiver is right
     B_F,                        // sender is at back of layer, receiver is front
+    NONE,                       // don't display projection lines at all
   };
 
   bool          xy_square;      // keep the x and y dimensions of the network square (same) -- makes the units square

@@ -16,7 +16,7 @@
   INIMPL void  FreeSendOffs();
   // #IGNORE free any allocated send_offs_m
   
-  INIMPL void Connect_impl(PRJN_STATE* prjn, NETWORK_STATE* net, bool make_cons) override;
+  INIMPL void Connect_impl(PRJN_STATE* prjn, NETWORK_STATE* net, int make_cons) override;
 
   INIMPL void Init_Weights_Prjn(PRJN_STATE* prjn, NETWORK_STATE* net, int thr_no,
                                 CON_STATE* cg) override;
@@ -26,8 +26,7 @@
   INIMPL virtual void	GetCtrFmRecv(TAVECTOR2I& sctr, TAVECTOR2I ruc);
   // #IGNORE get center of sender coords from receiving coords
   INIMPL virtual void	Connect_RecvUnit
-  (PRJN_STATE* prjn, NETWORK_STATE* net, UNIT_STATE* ru_u, const TAVECTOR2I& ruc,
-   bool send_alloc);
+  (PRJN_STATE* prjn, NETWORK_STATE* net, UNIT_STATE* ru_u, const TAVECTOR2I& ruc, int make_cons);
   // #IGNORE connects one recv unit to all senders
 
   INIMPL void	Initialize_core();

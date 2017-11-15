@@ -38,7 +38,7 @@ void STATE_CLASS(GpTesselPrjnSpec)::FreeSendOffs() {
 }
 
 void STATE_CLASS(GpTesselPrjnSpec)::Connect_impl
-  (PRJN_STATE* prjn, NETWORK_STATE* net, bool make_cons) {
+  (PRJN_STATE* prjn, NETWORK_STATE* net, int make_cons) {
 
   if(same_seed)
     rndm_seed.OldSeed();
@@ -96,7 +96,7 @@ void STATE_CLASS(GpTesselPrjnSpec)::GetCtrFmRecv(TAVECTOR2I& sctr, TAVECTOR2I ru
 }
 
 void STATE_CLASS(GpTesselPrjnSpec)::Connect_RecvGp
-  (PRJN_STATE* prjn, NETWORK_STATE* net, int rgpidx, const TAVECTOR2I& ruc, bool make_cons) {
+  (PRJN_STATE* prjn, NETWORK_STATE* net, int rgpidx, const TAVECTOR2I& ruc, int make_cons) {
 
   LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
   LAYER_STATE* send_lay = prjn->GetSendLayerState(net);

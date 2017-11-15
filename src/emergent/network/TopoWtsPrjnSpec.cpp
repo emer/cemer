@@ -72,7 +72,7 @@ bool TopoWtsPrjnSpec::TestWarning_impl(bool test, const String& fun_name,
   return taMisc::TestWarning_impl(this, test, fun_name, a, b, c, d, e, f, g, h);
 }
 
-void TopoWtsPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
+void TopoWtsPrjnSpec::Connect_impl(Projection* prjn, int make_cons) {
   if(!(bool)prjn->from) return;
 
   already_warned = 0;		// reset

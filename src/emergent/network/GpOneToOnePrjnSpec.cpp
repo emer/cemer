@@ -8,7 +8,7 @@ void STATE_CLASS(GpOneToOnePrjnSpec)::Initialize_core()	{
   same_seed = false;
 }
 
-void STATE_CLASS(GpOneToOnePrjnSpec)::Connect_impl(PRJN_STATE* prjn, NETWORK_STATE* net, bool make_cons) {
+void STATE_CLASS(GpOneToOnePrjnSpec)::Connect_impl(PRJN_STATE* prjn, NETWORK_STATE* net, int make_cons) {
   if(same_seed)
     rndm_seed.OldSeed();
   
@@ -66,7 +66,7 @@ void STATE_CLASS(GpOneToOnePrjnSpec)::Connect_impl(PRJN_STATE* prjn, NETWORK_STA
   }
 }
 
-void STATE_CLASS(GpOneToOnePrjnSpec)::Connect_RecvUnitsSendGps(PRJN_STATE* prjn, NETWORK_STATE* net, bool make_cons) {
+void STATE_CLASS(GpOneToOnePrjnSpec)::Connect_RecvUnitsSendGps(PRJN_STATE* prjn, NETWORK_STATE* net, int make_cons) {
   LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
   LAYER_STATE* send_lay = prjn->GetSendLayerState(net);
 
@@ -108,7 +108,7 @@ void STATE_CLASS(GpOneToOnePrjnSpec)::Connect_RecvUnitsSendGps(PRJN_STATE* prjn,
   }
 }
 
-void STATE_CLASS(GpOneToOnePrjnSpec)::Connect_SendUnitsRecvGps(PRJN_STATE* prjn, NETWORK_STATE* net, bool make_cons) {
+void STATE_CLASS(GpOneToOnePrjnSpec)::Connect_SendUnitsRecvGps(PRJN_STATE* prjn, NETWORK_STATE* net, int make_cons) {
   LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
   LAYER_STATE* send_lay = prjn->GetSendLayerState(net);
 

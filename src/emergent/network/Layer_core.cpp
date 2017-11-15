@@ -11,13 +11,13 @@ void LAYER_STATE::Connect_Sizes(NETWORK_STATE* net) {
   }
 }
 
-void LAYER_STATE::Connect_Cons(NETWORK_STATE* net) {
+void LAYER_STATE::Connect_Cons(NETWORK_STATE* net, int pass) {
   if(prjn_start_idx < 0 || n_recv_prjns == 0) return;
   for(int i = 0; i < n_recv_prjns; i++) {
     PRJN_STATE* prjn = GetRecvPrjnState(net, i);
     if(prjn->NotActive(net)) continue;
     PRJN_SPEC_CPP* pspec = prjn->GetPrjnSpec(net);
-    pspec->Connect_Cons(prjn, net);
+    pspec->Connect_Cons(prjn, net, pass);
   }
 }
 

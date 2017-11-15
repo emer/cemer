@@ -2,7 +2,7 @@
 // {
 
 
-void STATE_CLASS(PFCPrjnSpec)::Connect_impl(PRJN_STATE* prjn, NETWORK_STATE* net, bool make_cons) {
+void STATE_CLASS(PFCPrjnSpec)::Connect_impl(PRJN_STATE* prjn, NETWORK_STATE* net, int make_cons) {
   
   LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
   LAYER_STATE* send_lay = prjn->GetSendLayerState(net);
@@ -57,7 +57,7 @@ void STATE_CLASS(PFCPrjnSpec)::Connect_impl(PRJN_STATE* prjn, NETWORK_STATE* net
 }
 
 void STATE_CLASS(PFCPrjnSpec)::Connect_row1to1
-  (PRJN_STATE* prjn, NETWORK_STATE* net, bool make_cons, int rx, int ry, int recv_x, bool recv_gps) {
+  (PRJN_STATE* prjn, NETWORK_STATE* net, int make_cons, int rx, int ry, int recv_x, bool recv_gps) {
   
   LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
   LAYER_STATE* send_lay = prjn->GetSendLayerState(net);
@@ -98,7 +98,7 @@ void STATE_CLASS(PFCPrjnSpec)::Connect_row1to1
 }
 
 void STATE_CLASS(PFCPrjnSpec)::Connect_rowall
-  (PRJN_STATE* prjn, NETWORK_STATE* net, bool make_cons, int rx, int ry, int recv_x, bool recv_gps) {
+  (PRJN_STATE* prjn, NETWORK_STATE* net, int make_cons, int rx, int ry, int recv_x, bool recv_gps) {
 
   LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
   LAYER_STATE* send_lay = prjn->GetSendLayerState(net);
@@ -128,7 +128,7 @@ void STATE_CLASS(PFCPrjnSpec)::Connect_rowall
 }
 
 void STATE_CLASS(PFCPrjnSpec)::Connect_cols
-  (PRJN_STATE* prjn, NETWORK_STATE* net, bool make_cons, int rx, int ry, int recv_x, bool recv_gps,
+  (PRJN_STATE* prjn, NETWORK_STATE* net, int make_cons, int rx, int ry, int recv_x, bool recv_gps,
    int sy, int send_x, bool send_gps) {
   
   LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
@@ -243,7 +243,7 @@ void STATE_CLASS(PFCPrjnSpec)::Connect_cols
 }
 
 void STATE_CLASS(PFCPrjnSpec)::Connect_unit1to1
-  (PRJN_STATE* prjn, NETWORK_STATE* net, bool make_cons, int rx, int ry, int recv_x, bool recv_gps,
+  (PRJN_STATE* prjn, NETWORK_STATE* net, int make_cons, int rx, int ry, int recv_x, bool recv_gps,
    int sy, int send_x, bool send_gps) {
   
   LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);

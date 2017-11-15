@@ -1,7 +1,7 @@
 // this is included directly in AllProjectionSpecs_cpp / _cuda
 // {
 
-void STATE_CLASS(UniformRndPrjnSpec)::Connect_impl(PRJN_STATE* prjn, NETWORK_STATE* net, bool make_cons) { 
+void STATE_CLASS(UniformRndPrjnSpec)::Connect_impl(PRJN_STATE* prjn, NETWORK_STATE* net, int make_cons) { 
   if(same_seed)
     rndm_seed.OldSeed();
 

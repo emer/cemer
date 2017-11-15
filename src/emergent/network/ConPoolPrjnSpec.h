@@ -33,7 +33,7 @@ public:
   PosVector2i   pool_size;              // how many units to interconnect together in a pool in each dimension
   PosVector2i   stride;                 // how many units to skip over for every pool connection step -- if stride == pool_size then pools are isolated from each other, whereas stride < pool_size causes the edges of each pool to overlap with others
 
-  void Connect_impl(Projection* prjn, bool make_cons) override;
+  void Connect_impl(Projection* prjn, int make_cons) override;
   
   TA_SIMPLE_BASEFUNS(ConPoolPrjnSpec);
 private:

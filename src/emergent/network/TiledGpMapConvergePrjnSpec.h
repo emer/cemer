@@ -6,15 +6,15 @@
   bool		wrap;			// if true, then connectivity has a wrap-around structure so it starts at -tile_skip (wrapped to right/top) and goes +tile_skip past the right/top edge (wrapped to left/bottom) -- this produces more uniform overlapping coverage of the space
   bool		reciprocal;		// if true, make the appropriate reciprocal connections for a backwards projection from recv to send
 
-  INIMPL void Connect_impl(PRJN_STATE* prjn, NETWORK_STATE* net, bool make_cons) override;
+  INIMPL void Connect_impl(PRJN_STATE* prjn, NETWORK_STATE* net, int make_cons) override;
 
-  INIMPL virtual void 	Connect_Reciprocal(PRJN_STATE* prjn, NETWORK_STATE* net, bool make_cons);
+  INIMPL virtual void 	Connect_Reciprocal(PRJN_STATE* prjn, NETWORK_STATE* net, int make_cons);
 
   // INIMPL int 	ProbAddCons_impl(Projection* prjn, float p_add_con, float init_wt = 0.0f) override;
 
   INIMPL virtual void	Connect_UnitGroup
   (PRJN_STATE* prjn, NETWORK_STATE* net, LAYER_STATE* recv_lay, LAYER_STATE* send_lay,
-   int rgpidx, int suidx, bool make_cons);
+   int rgpidx, int suidx, int make_cons);
   // #IGNORE connect one recv unit group to all sending unit groups -- rgpidx = recv unit group idx, suidx = send unit idx within subgroups
 
   INIMPL void	Initialize_core();

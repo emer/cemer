@@ -24,7 +24,7 @@ void SmallWorldPrjnSpec::Initialize() {
   lambda = 3.0f;
 }
 
-void SmallWorldPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
+void SmallWorldPrjnSpec::Connect_impl(Projection* prjn, int make_cons) {
   if(!(bool)prjn->from) return;
 
   Unit_Group* recv_units;

@@ -127,6 +127,7 @@
   STATE_CLASS(PRerrVals)     epc_prerr;      // #NO_SAVE #GUI_READ_ONLY #CONDSHOW_ON_stats.prerr #CAT_Statistic precision and recall error values for the entire network, over an epoch or similar larger set of external input patterns
 
   bool          needs_wt_sym;   // #HIDDEN #NO_SAVE tmp flag managed by Init_Weights to determine if any connections have the wt_limits.sym flag checked and thus need weight symmetrizing to happen
+  bool          needs_prjn_pass2;   // #HIDDEN #NO_SAVE tmp flag managed by ProjectionSpec Connect_Cons to determine if any projections need a second pass (i.e., if any respond false for pass = 1)
 
   int           n_units;        // #READ_ONLY #SHOW #CAT_Structure total number of units in the network
   int64_t       n_cons;         // #READ_ONLY #SHOW #CAT_Structure total number of connections in the network
@@ -199,7 +200,7 @@
     time = 0.0f;    total_trials = 0;
     
     sse = 0.0f;    sum_sse = 0.0f;    cnt_err = 0.0f;    pct_err = 0.0f;    pct_cor = 0.0f;
-    cur_cnt_err = 0.0f;    needs_wt_sym = false;
+    cur_cnt_err = 0.0f;    needs_wt_sym = false;  needs_prjn_pass2 = false;
 
     n_units = 0;    n_cons = 0;    max_prjns = 1;
   }

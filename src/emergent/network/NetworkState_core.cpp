@@ -1274,12 +1274,15 @@ void NETWORK_STATE::Connect_CacheMemStart_Thr(int thr_no) {
   }
 }
 
-void NETWORK_STATE::Connect_Cons() {
+void NETWORK_STATE::Connect_Cons(int pass) {
+  if(pass == 1) {
+    needs_prjn_pass2 = false;
+  }
   // go in reverse order so that symmetric prjns can be made in
-  // response to receiver-based projections
+  // response to receiver-based projections -- actually better to use pass=2 case!
   for(int li=n_layers_built-1; li >= 0; li--) {
     LAYER_STATE* lay = GetLayerState(li);
-    lay->Connect_Cons(this);
+    lay->Connect_Cons(this, pass);
   }
 }
 

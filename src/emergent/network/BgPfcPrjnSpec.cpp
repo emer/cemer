@@ -22,7 +22,7 @@ void STATE_CLASS(BgPfcPrjnSpec)::FreePfcLayers() {
   n_pfc_layers = 0;
 }
 
-void STATE_CLASS(BgPfcPrjnSpec)::Connect_impl(PRJN_STATE* prjn, NETWORK_STATE* net, bool make_cons) {
+void STATE_CLASS(BgPfcPrjnSpec)::Connect_impl(PRJN_STATE* prjn, NETWORK_STATE* net, int make_cons) {
 
   LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
   LAYER_STATE* send_lay = prjn->GetSendLayerState(net);
@@ -161,10 +161,10 @@ void STATE_CLASS(BgPfcPrjnSpec)::Connect_impl(PRJN_STATE* prjn, NETWORK_STATE* n
       for(int bgx = 0; bgx < trg_sz_x; bgx++) {
         int bggp = bgy * bg_lay->gp_geom_x + bgx;
         if(bg_lay == recv_lay) {
-          Connect_UnitGroupRF(prjn, net, recv_lay, send_lay, bggp, -1, make_cons);
+          Connect_Gps(prjn, net, bggp, -1, 1.0f, true, make_cons);
         }
         else {
-          Connect_UnitGroupRF(prjn, net, recv_lay, send_lay, -1, bggp, make_cons);
+          Connect_Gps(prjn, net, -1, bggp, 1.0f, true, make_cons);
         }
       }
     }
@@ -193,10 +193,10 @@ void STATE_CLASS(BgPfcPrjnSpec)::Connect_impl(PRJN_STATE* prjn, NETWORK_STATE* n
         int bgy = st_y + pfcy;
         int bggp = bgy * bg_lay->gp_geom_x + bgx;
         if(pfc_lay == recv_lay) {
-          Connect_UnitGroupRF(prjn, net, recv_lay, send_lay, pfcgp, bggp, make_cons);
+          Connect_Gps(prjn, net, pfcgp, bggp, 1.0f, true, make_cons);
         }
         else {
-          Connect_UnitGroupRF(prjn, net, recv_lay, send_lay, bggp, pfcgp, make_cons);
+          Connect_Gps(prjn, net, bggp, pfcgp, 1.0f, true, make_cons);
         }
       }
     }

@@ -327,7 +327,12 @@ void NetworkState_cpp::Connect() {
   Connect_Sizes();
   Connect_Alloc();
   NET_THREAD_CALL(NetworkState_cpp::Connect_CacheMemStart_Thr);
-  Connect_Cons();
+  Connect_Cons(1);              // first pass
+
+  if(needs_prjn_pass2) {
+    NET_THREAD_CALL(NetworkState_cpp::Connect_CacheUnitLoHiIdxs_Thr);
+    Connect_Cons(2);              // second pass (symmetry)
+  }
 
   NET_THREAD_CALL(NetworkState_cpp::Connect_CacheUnitLoHiIdxs_Thr);
   NET_THREAD_CALL(NetworkState_cpp::Connect_VecChunk_Thr);

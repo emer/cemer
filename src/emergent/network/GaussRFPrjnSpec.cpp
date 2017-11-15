@@ -10,7 +10,7 @@ void STATE_CLASS(GaussRFPrjnSpec)::Initialize_core() {
 }
 
 void STATE_CLASS(GaussRFPrjnSpec)::Connect_impl
-(PRJN_STATE* prjn, NETWORK_STATE* net, bool make_cons) {
+(PRJN_STATE* prjn, NETWORK_STATE* net, int make_cons) {
 
   LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
   LAYER_STATE* send_lay = prjn->GetSendLayerState(net);

@@ -677,14 +677,16 @@ void NetView::BuildAll() { // populates all T3 guys
     lv->BuildAll();
   }
 
-  FOREACH_ELEM_IN_GROUP(Layer, lay, net()->layers) {
-    if(lay->lesioned() || lay->Iconified()) continue;
-    FOREACH_ELEM_IN_GROUP_NESTED(Projection, prjn, lay->projections) {
-      if(prjn->MainNotActive() || prjn->from->Iconified() || !prjn->disp) continue;
-      PrjnView* pv = new PrjnView();
-      pv->SetData(prjn);
-      //nn prjns.Add(pv); // this is automatic from the childadding thing
-      children.Add(pv);
+  if(view_params.prjn_disp != NetViewParams::NONE) {
+    FOREACH_ELEM_IN_GROUP(Layer, lay, net()->layers) {
+      if(lay->lesioned() || lay->Iconified()) continue;
+      FOREACH_ELEM_IN_GROUP_NESTED(Projection, prjn, lay->projections) {
+        if(prjn->MainNotActive() || prjn->from->Iconified() || !prjn->disp) continue;
+        PrjnView* pv = new PrjnView();
+        pv->SetData(prjn);
+        //nn prjns.Add(pv); // this is automatic from the childadding thing
+        children.Add(pv);
+      }
     }
   }
 

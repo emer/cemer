@@ -587,6 +587,9 @@ void iViewPanelOfNetwork::GetValue_impl() {
 
   int pd;
   cmbPrjnDisp->GetEnumValue(pd);
+  if(nv->view_params.prjn_disp != (NetViewParams::PrjnDisp)pd) {
+    req_full_build = true;
+  }
   nv->view_params.prjn_disp = (NetViewParams::PrjnDisp)pd;
 
   nv->view_params.prjn_width = (float)fldPrjnWdth->GetValue();

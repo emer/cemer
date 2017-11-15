@@ -20,7 +20,7 @@ void STATE_CLASS(PolarRndPrjnSpec)::Initialize_core() {
   same_seed = false;
 }
 
-void STATE_CLASS(PolarRndPrjnSpec)::Connect_impl(PRJN_STATE* prjn, NETWORK_STATE* net, bool make_cons) { 
+void STATE_CLASS(PolarRndPrjnSpec)::Connect_impl(PRJN_STATE* prjn, NETWORK_STATE* net, int make_cons) { 
   if(same_seed)
     rndm_seed.OldSeed();
 

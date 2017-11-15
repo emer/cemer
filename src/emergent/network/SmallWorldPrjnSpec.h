@@ -34,7 +34,7 @@ public:
   DataTable     prjns;          // #HIDDEN #NO_SAVE 
   DataTable     coords;         // #HIDDEN #NO_SAVE 
 
-  void	Connect_impl(Projection* prjn, bool make_cons) override;
+  void	Connect_impl(Projection* prjn, int make_cons) override;
 
   TA_SIMPLE_BASEFUNS(SmallWorldPrjnSpec);
 private:

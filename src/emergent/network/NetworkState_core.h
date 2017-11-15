@@ -586,8 +586,8 @@
   // #IGNORE second pass of connecting -- dole out the allocated memory to con groups
   INIMPL virtual void Connect_CacheMemStart_Thr(int thr_no);
   // #IGNORE cache connection memory start pointers -- after allocating but before connecting
-  INIMPL virtual void Connect_Cons();
-  // #IGNORE third pass of connecting -- actually make the connections -- done by projection specs
+  INIMPL virtual void Connect_Cons(int pass);
+  // #IGNORE third pass of connecting -- actually make the connections -- done by projection specs -- called in two passes 1 for most cons, 2 for symmetric cons (or other special cases) that might depend on others
   INIMPL virtual void Connect_CacheUnitLoHiIdxs_Thr(int thr_no);
   // #IGNORE optimize searching for unit connections by caching the low and high unit indexes for connections
   INIMPL virtual void Connect_VecChunk_Thr(int thr_no);

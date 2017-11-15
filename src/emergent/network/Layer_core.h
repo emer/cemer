@@ -243,7 +243,7 @@
 
   INLINE UNIT_STATE* GetUnitStateGpUnIdx(NETWORK_STATE* net, int gp_dx, int un_dx) const
   { if(!UnIdxInRange(un_dx)) return NULL;
-    if(HasUnitGroups())  return GetUnitStateSafe(net, gp_dx * un_geom_n + un_dx);
+    if(HasUnitGroups() && gp_dx >= 0)  return GetUnitStateSafe(net, gp_dx * un_geom_n + un_dx);
     else                 return GetUnitStateSafe(net, un_dx);
   }
   // #CAT_State get the unit state at given group and unit indexes -- also works for gp_dx = 0 if there are no sub unit groups
@@ -286,8 +286,8 @@
 
   INIMPL void  Connect_Sizes(NETWORK_STATE* net);
   // #IGNORE first pass connect -- get sizes
-  INIMPL void  Connect_Cons(NETWORK_STATE* net);
-  // #IGNORE second pass connect -- actually make connections
+  INIMPL void  Connect_Cons(NETWORK_STATE* net, int pass);
+  // #IGNORE second pass connect -- actually make connections -- in two separate passes
   INIMPL void  RecvConsPreAlloc(NETWORK_STATE* net, PRJN_STATE* prjn, int alloc_no);
   // #IGNORE allocate given number of recv connections for all units in layer, for given projection
   INIMPL void  SendConsPreAlloc(NETWORK_STATE* net, PRJN_STATE* prjn, int alloc_no);

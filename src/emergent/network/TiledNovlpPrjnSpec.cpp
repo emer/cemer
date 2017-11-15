@@ -30,7 +30,7 @@ bool STATE_CLASS(TiledNovlpPrjnSpec)::InitRFSizes(PRJN_STATE* prjn, NETWORK_STAT
 }
 
 void STATE_CLASS(TiledNovlpPrjnSpec)::Connect_impl
-  (PRJN_STATE* prjn, NETWORK_STATE* net, bool make_cons) {
+  (PRJN_STATE* prjn, NETWORK_STATE* net, int make_cons) {
 
   if(!InitRFSizes(prjn, net)) return;
 
@@ -79,7 +79,7 @@ void STATE_CLASS(TiledNovlpPrjnSpec)::Connect_impl
 }
 
 void STATE_CLASS(TiledNovlpPrjnSpec)::Connect_Reciprocal
-  (PRJN_STATE* prjn, NETWORK_STATE* net, bool make_cons) {
+  (PRJN_STATE* prjn, NETWORK_STATE* net, int make_cons) {
 
   LAYER_STATE* recv_lay = prjn->GetSendLayerState(net); // recip
   LAYER_STATE* send_lay = prjn->GetRecvLayerState(net); // recip

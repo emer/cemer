@@ -9,13 +9,19 @@ void STATE_CLASS(TiledGpRFPrjnSpec)::Initialize_core() {
   wts_type = GAUSSIAN;
   share_cons = false;
   reciprocal = false;
+  p_con = 1.0f;
   full_send = BY_UNIT;
   full_recv = BY_UNIT;
   wt_range.min = 0.4f;
   wt_range.max = 0.6f;
 }
 
-void STATE_CLASS(TiledGpRFPrjnSpec)::Connect_impl(PRJN_STATE* prjn, NETWORK_STATE* net, bool make_cons) {
+bool STATE_CLASS(TiledGpRFPrjnSpec)::ConnectPassCheck(PRJN_STATE* prjn, NETWORK_STATE* net, int pass) const {
+  if((p_con < 1.0f && reciprocal) || p_con < 0.0f) return (pass == 2);
+  return (pass == 1);
+}
+
+void STATE_CLASS(TiledGpRFPrjnSpec)::Connect_impl(PRJN_STATE* prjn, NETWORK_STATE* net, int make_cons) {
   LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
   LAYER_STATE* send_lay = prjn->GetSendLayerState(net);
   if(reciprocal) {
@@ -71,8 +77,7 @@ void STATE_CLASS(TiledGpRFPrjnSpec)::Connect_impl(PRJN_STATE* prjn, NETWORK_STAT
             if(!send_lay->GpIdxInRange(sgpidx)) continue;
           }
           // in base prjnspec
-          Connect_UnitGroupRF(prjn, net, recv_lay, send_lay, rgpidx, sgpidx, make_cons,
-                            share_cons, reciprocal);
+          Connect_Gps(prjn, net, rgpidx, sgpidx, p_con, true, make_cons, share_cons, reciprocal);
         }
       }
     }
@@ -86,6 +91,7 @@ void STATE_CLASS(TiledGpRFPrjnSpec)::Connect_impl(PRJN_STATE* prjn, NETWORK_STAT
 
 void STATE_CLASS(TiledGpRFPrjnSpec)::Init_Weights_Prjn
   (PRJN_STATE* prjn, NETWORK_STATE* net, int thr_no, CON_STATE* cg) {
+  if(cg->size == 0) return;
   if(wts_type == GAUSSIAN) {
     Init_Weights_Gaussian(prjn, net, thr_no, cg);
   }
@@ -161,10 +167,12 @@ void STATE_CLASS(TiledGpRFPrjnSpec)::Init_Weights_Gaussian
   TAVECTOR2F sucw;
   TAVECTOR2F suncw;
   
+  UNIT_STATE* su0 = cg->UnState(0, net);
+  int st_gp_idx = su0->gp_idx;
   for(int i=0; i<cg->size; i++) {
-    // note: these are organized within unit group first, then by groups
-    int ug_idx = i / send_lay->un_geom_n; // which unit group, ordinally
-    int un_idx = i % send_lay->un_geom_n; // index in unit group
+    UNIT_STATE* su = cg->UnState(i, net); // using the unit coord allows it to work with random cons
+    int ug_idx = su->gp_idx - st_gp_idx;
+    int un_idx = su->ungp_un_idx;
 
     unc.x = un_idx % send_lay->un_geom_x;
     unc.y = un_idx / send_lay->un_geom_x;
@@ -225,6 +233,7 @@ void STATE_CLASS(TiledGpRFPrjnSpec)::Init_Weights_Gaussian
 
 void STATE_CLASS(TiledGpRFPrjnSpec)::Init_Weights_Sigmoid
   (PRJN_STATE* prjn, NETWORK_STATE* net, int thr_no, CON_STATE* cg) {
+
   LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
   LAYER_STATE* send_lay = prjn->GetSendLayerState(net);
 
@@ -287,10 +296,12 @@ void STATE_CLASS(TiledGpRFPrjnSpec)::Init_Weights_Sigmoid
   TAVECTOR2F sucw;
   TAVECTOR2F suncw;
   
+  UNIT_STATE* su0 = cg->UnState(0, net);
+  int st_gp_idx = su0->gp_idx;
   for(int i=0; i<cg->size; i++) {
-    // note: these are organized within unit group first, then by groups
-    int ug_idx = i / send_lay->un_geom_n; // which unit group, ordinally
-    int un_idx = i % send_lay->un_geom_n; // index in unit group
+    UNIT_STATE* su = cg->UnState(i, net); // using the unit coord allows it to work with random cons
+    int ug_idx = su->gp_idx - st_gp_idx;
+    int un_idx = su->ungp_un_idx;
 
     unc.x = un_idx % send_lay->un_geom_x;
     unc.y = un_idx / send_lay->un_geom_x;

@@ -9,7 +9,7 @@ void STATE_CLASS(TiledGpMapConvergePrjnSpec)::Initialize_core() {
 }
 
 void STATE_CLASS(TiledGpMapConvergePrjnSpec)::Connect_impl
-  (PRJN_STATE* prjn, NETWORK_STATE* net, bool make_cons) {
+  (PRJN_STATE* prjn, NETWORK_STATE* net, int make_cons) {
 
   LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
   LAYER_STATE* send_lay = prjn->GetSendLayerState(net);
@@ -76,7 +76,7 @@ void STATE_CLASS(TiledGpMapConvergePrjnSpec)::Connect_impl
 }
 
 void STATE_CLASS(TiledGpMapConvergePrjnSpec)::Connect_Reciprocal
-  (PRJN_STATE* prjn, NETWORK_STATE* net, bool make_cons) {
+  (PRJN_STATE* prjn, NETWORK_STATE* net, int make_cons) {
 
   LAYER_STATE* recv_lay = prjn->GetSendLayerState(net); // recip
   LAYER_STATE* send_lay = prjn->GetRecvLayerState(net); // recip
@@ -160,7 +160,7 @@ void STATE_CLASS(TiledGpMapConvergePrjnSpec)::Connect_Reciprocal
 
 void STATE_CLASS(TiledGpMapConvergePrjnSpec)::Connect_UnitGroup
 (PRJN_STATE* prjn, NETWORK_STATE* net, LAYER_STATE* recv_lay, LAYER_STATE* send_lay,
- int rgpidx, int suidx, bool make_cons) {
+ int rgpidx, int suidx, int make_cons) {
   int ru_nunits = recv_lay->un_geom_n;
   int su_ngps = send_lay->gp_geom_n;
 

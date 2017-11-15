@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.2.2.0 rev11155
+// ta_Dump File v3.0 -- code v8.2.2.0 rev11176
 LeabraProject .projects[0] { 
  Doc_Group @.docs = [2] {
   taDoc @[0] { 
@@ -670,7 +670,11 @@ LeabraProject .projects[0] {
      };
     };
     TiledGpRFPrjnSpec @[9] { 
-     BaseSpec_Group @.children = [0] {
+     BaseSpec_Group @.children = [1] {
+      TiledGpRFPrjnSpec @[0] { 
+       BaseSpec_Group @.children = [0] {
+       };
+      };
      };
     };
     TiledSubGpRFPrjnSpec @[10] { 
@@ -688,9 +692,10 @@ LeabraProject .projects[0] {
      };
     };
     LeabraLayer @[1] { 
-     Projection_Group @.projections = [2] {
+     Projection_Group @.projections = [3] {
       LeabraPrjn @[0] { };
       LeabraPrjn @[1] { };
+      LeabraPrjn @[2] { };
      };
     };
     LeabraLayer @[2] { 
@@ -1608,7 +1613,7 @@ Published on wiki: emergent page: demos/projection_sampler with description: dem
     UserDataItem @[0] {name="view_win_lft": value=0: val_type_fixed=0: };
     UserDataItem @[1] {name="view_win_top": value=0.06612054: val_type_fixed=0: };
     UserDataItem @[2] {name="view_win_wd": value=1: val_type_fixed=0: };
-    UserDataItem @[3] {name="view_win_ht": value=0.7981275: val_type_fixed=0: };
+    UserDataItem @[3] {name="view_win_ht": value=0.7975424: val_type_fixed=0: };
     UserDataItem @[4] {name="view_win_iconified": value=0: val_type_fixed=0: };
     UserDataItem @[5] {name="view_splitter_state": value=AAAA/wAAAAEAAAADAAABAAAAAfwAAAKMAQAAAAcBAAAAAQA=: val_type_fixed=0: };
    };
@@ -2069,9 +2074,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	  show_iconified=0;
 	  net_text_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=-0.5: z=0: }: };
 	  net_text_rot=0;
-	  cur_unit_vals{ r.wt;	  };
+	  cur_unit_vals{ s.wt;	  };
 	  hot_vars{ targ;ext;act;net;bias_wt;bias_dwt;act_eq;act_m;act_p;act_dif;act_avg;r.wt;r.wt*act;s.wt;r.dwt;s.dwt;	  };
-	  unit_src_path=".layers[2][22]";
+	  unit_src_path=".layers[5][20]";
 	  con_type=ANY_CON;
 	  hist_idx=0;
 	  hist_save=1;
@@ -2943,7 +2948,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
       UserDataItem @[0] {name="view_win_lft": value=0: val_type_fixed=0: };
       UserDataItem @[1] {name="view_win_top": value=0.008191925: val_type_fixed=0: };
       UserDataItem @[2] {name="view_win_wd": value=0.02706271: val_type_fixed=0: };
-      UserDataItem @[3] {name="view_win_ht": value=0.7513165: val_type_fixed=0: };
+      UserDataItem @[3] {name="view_win_ht": value=0.7507314: val_type_fixed=0: };
       UserDataItem @[4] {name="view_win_iconified": value=0: val_type_fixed=0: };
       UserDataItem @[5] {name="view_visible": value=0: val_type_fixed=0: };
      };
@@ -2962,7 +2967,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
  save_as_only=0;
  auto_name=1;
  last_change_desc="Project updated on wiki: emergent changes: doc link";
- tree_state{ .;.docs;.wizards;.ctrl_panels;.data;.data.gp[0];.data.gp[1];.data.gp[2];.programs;.networks;.networks[0];.networks[0].specs;.networks[0].layers;.networks[1];.networks[1].specs;.networks[1].layers;.networks[2];.networks[2].specs;.networks[2].specs[10];.networks[2].layers;.networks[2].layers[5];.networks[2].layers[5].projections;.networks[3];.networks[3].spec_tables;.networks[3].specs;.networks[3].param_seqs;.networks[3].layers;.networks[3].layers[0];.networks[3].layers[0].projections;.networks[3].layers[1];.networks[3].layers[1].projections;.networks[3].weights;.networks[4];.networks[4].specs;.networks[4].layers;.networks[5];.networks[5].specs;.networks[5].layers;.networks[6];.networks[6].specs;.networks[6].layers;.networks[6].layers[3];.networks[6].layers[3].projections; };
+ tree_state{ .;.docs;.wizards;.ctrl_panels;.data;.data.gp[0];.data.gp[1];.data.gp[2];.programs;.viewers[0];.viewers[0].frames[2];.networks;.networks[0];.networks[0].specs;.networks[0].layers;.networks[1];.networks[1].specs;.networks[1].layers;.networks[2];.networks[2].specs;.networks[2].specs[9];.networks[2].specs[9].children[0];.networks[2].specs[10];.networks[2].layers;.networks[2].layers[1];.networks[2].layers[1].projections;.networks[2].layers[1].projections[2];.networks[2].layers[5];.networks[2].layers[5].projections;.networks[3];.networks[3].spec_tables;.networks[3].specs;.networks[3].param_seqs;.networks[3].layers;.networks[3].layers[0];.networks[3].layers[0].projections;.networks[3].layers[1];.networks[3].layers[1].projections;.networks[3].weights;.networks[4];.networks[4].specs;.networks[4].layers;.networks[5];.networks[5].specs;.networks[5].layers;.networks[6];.networks[6].specs;.networks[6].layers;.networks[6].layers[3];.networks[6].layers[3].projections;.networks[6].weights; };
  networks {
   name="networks";
   el_typ=LeabraNetwork;
@@ -4806,6 +4811,42 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
       name="children";
       el_typ=TiledGpRFPrjnSpec;
       el_def=0;
+      TiledGpRFPrjnSpec @[0] {
+       name="TiledGpRFrecip";
+       is_used=1;
+       used_status=USED;
+       desc=;
+       unique{ reciprocal;       };
+       saved{        };
+       children {
+	name="BaseSpec_Group_1";
+	el_typ=TiledGpRFPrjnSpec;
+	el_def=0;
+       };
+       self_con=0;
+       init_wts=1;
+       set_scale=0;
+       init_wt_val=1;
+       add_rnd_var=0;
+       renorm_wts {on=0: mult_norm=1: avg_wt=0.5: };
+       send_gp_size {x=4: y=4: };
+       send_gp_skip {x=2: y=2: };
+       send_gp_start {x=-1: y=-1: };
+       wrap=1;
+       reciprocal=1;
+       p_con=0.5;
+       share_cons=0;
+       wts_type=GAUSSIAN;
+       full_gauss {on=0: sigma=0.6: wrap_wts=1: ctr_mv=1: };
+       gp_gauss {on=1: sigma=0.6: wrap_wts=0: ctr_mv=1: };
+       full_send=BY_UNIT;
+       full_recv=BY_UNIT;
+       full_sig {on=1: gain=0.02: ctr_mv=0.5: };
+       gp_sig {on=1: gain=0.02: ctr_mv=0.5: };
+       wt_range {min=0.1: max=0.9: range=0.8: scale=1.25: };
+       trg_recv_geom {x=0: y=0: };
+       trg_send_geom {x=0: y=0: };
+      };
      };
      self_con=0;
      init_wts=1;
@@ -4818,6 +4859,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      send_gp_start {x=-1: y=-1: };
      wrap=1;
      reciprocal=0;
+     p_con=0.5;
      share_cons=0;
      wts_type=GAUSSIAN;
      full_gauss {on=0: sigma=0.6: wrap_wts=1: ctr_mv=1: };
@@ -4994,6 +5036,20 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
        con_spec {type=LeabraConSpec: spec=$.networks[2].specs[3]$: };
        dir_fixed=0;
        direction=LATERAL;
+       prjn_clr {r=1: g=0.9: b=0.5: a=1: };
+      };
+      LeabraPrjn @[2] {
+       name="Fm_TiledGpRF";
+       off=0;
+       disp=1;
+       notes=;
+       from_type=CUSTOM;
+       from=.networks[2].layers[5]$$;
+       spec {type=TiledGpRFPrjnSpec: spec=.networks[2].specs[9].children[0]$$: };
+       con_type=LeabraCon;
+       con_spec {type=LeabraConSpec: spec=$.networks[2].specs[3]$: };
+       dir_fixed=0;
+       direction=DIR_UNKNOWN;
        prjn_clr {r=1: g=0.9: b=0.5: a=1: };
       };
      };

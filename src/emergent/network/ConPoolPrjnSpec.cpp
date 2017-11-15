@@ -23,7 +23,7 @@ void ConPoolPrjnSpec::Initialize() {
   stride = 2;
 }
 
-void ConPoolPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
+void ConPoolPrjnSpec::Connect_impl(Projection* prjn, int make_cons) {
   if(!(bool)prjn->from) return;
 
   if(TestError(prjn->from.ptr() != prjn->layer, "Connect_impl",

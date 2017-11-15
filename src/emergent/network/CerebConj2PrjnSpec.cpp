@@ -27,7 +27,7 @@ void CerebConj2PrjnSpec::Initialize() {
   gauss_sigma = 1.0f;
 }
 
-void CerebConj2PrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
+void CerebConj2PrjnSpec::Connect_impl(Projection* prjn, int make_cons) {
   if(!(bool)prjn->from) return;
   if(prjn->layer->units.leaves == 0) // an empty layer!
     return;
@@ -41,7 +41,7 @@ void CerebConj2PrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
     Connect_Inner(prjn, make_cons);
 }
 
-void CerebConj2PrjnSpec::Connect_Outer(Projection* prjn, bool make_cons) {
+void CerebConj2PrjnSpec::Connect_Outer(Projection* prjn, int make_cons) {
   int n_cons = rf_width.Product();
   Layer* recv_lay = prjn->layer;
   Layer* send_lay = prjn->from;
@@ -108,7 +108,7 @@ void CerebConj2PrjnSpec::Connect_Outer(Projection* prjn, bool make_cons) {
   }
 }
 
-void CerebConj2PrjnSpec::Connect_Inner(Projection* prjn, bool make_cons) {
+void CerebConj2PrjnSpec::Connect_Inner(Projection* prjn, int make_cons) {
   Layer* recv_lay = prjn->layer;
   Layer* send_lay = prjn->from;
 

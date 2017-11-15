@@ -17,7 +17,7 @@
   bool		same_seed;	// use the same random seed each time (same connect pattern)
   STATE_CLASS(RndSeed)	rndm_seed;	// #HIDDEN random seed
 
-  INIMPL void Connect_impl(PRJN_STATE* prjn, NETWORK_STATE* net, bool make_cons) override;
+  INIMPL void Connect_impl(PRJN_STATE* prjn, NETWORK_STATE* net, int make_cons) override;
 
   INIMPL void Init_Weights_Prjn(PRJN_STATE* prjn, NETWORK_STATE* net, int thr_no,
                                 CON_STATE* cg) override;

@@ -11,12 +11,16 @@
   INLINE virtual int  GetStateSpecType() const { return NETWORK_STATE::T_ProjectionSpec; }
   // #CAT_State derived classes MUST override this and pass correct global type id
 
+  INLINE virtual bool ConnectPassCheck(PRJN_STATE* prjn, NETWORK_STATE* net, int pass) const
+  { return (pass == 1); }
+  // #CAT_State check if this projection should Connect_impl for given pass number (1 or 2), which sets value of make_cons -- default is to run on pass 1 and not 2 -- typically pass 2 is used for making symmetric connections -- spec must handle make_cons = 2 properly if this is true!
+
   INIMPL virtual void Connect_Sizes(PRJN_STATE* prjn, NETWORK_STATE* net);
   // #CAT_State first-pass connects the network, doing Connect_impl(false), ending up with target allocation sizes
-  INIMPL virtual void Connect_impl(PRJN_STATE* prjn, NETWORK_STATE* net, bool make_cons) { };
-  // #CAT_State actually implements specific connection code -- called in two passes -- first with make_cons = false does allocation, and second with make_cons = true
-  INIMPL virtual void Connect_Cons(PRJN_STATE* prjn, NETWORK_STATE* net);
-  // #CAT_State second pass connection -- actually makes the connections via Connect_impl(true), and then calls Init_Weights
+  INIMPL virtual void Connect_impl(PRJN_STATE* prjn, NETWORK_STATE* net, int make_cons) { };
+  // #CAT_State actually implements specific connection code -- called in *three* passes -- first with make_cons = 0 / false does allocation, and second with make_cons = 1 -- third pass with make_cons = 2 is only called if ConnectPass2() is true -- typically for symmetric connections
+  INIMPL virtual void Connect_Cons(PRJN_STATE* prjn, NETWORK_STATE* net, int pass);
+  // #CAT_State second pass connection -- actually makes the connections via Connect_impl(true), and then calls Init_Weights -- called in two passes 1 for most cons, 2 for symmetric cons (or other special cases) that might depend on others -- see ConnectPassCheck
 
   INIMPL virtual int  ProbAddCons(PRJN_STATE* prjn, NETWORK_STATE* net, float p_add_con, float init_wt = 0.0);
   // #CAT_State probabilistically add a proportion of new connections to replace those pruned previously, init_wt = initial weight value of new connection
@@ -46,13 +50,13 @@
   
   INIMPL virtual void  Connect_Gps
   (PRJN_STATE* prjn, NETWORK_STATE* net, int rgpidx, int sgpidx, float p_con,
-   bool sym_same_lay, bool make_cons);
+   bool sym_same_lay, int make_cons, bool share_cons = false, bool reciprocal = false);
   // #IGNORE connects units in given recv and sending group index, with given probability: p_con = 1 = full connectivity, -1 = symmetric with existing connections from other projection, and (0..1) probabilistic, optionally with symmetry enforced for within same layer/group -- this call handles alloc vs. make cons step and uses *incremental* connectivity alloc so you need to call Recv/Send/ConsPostAlloc on layers after !make_cons pass -- must go through this call and not call sub-guys directly as they do not handle the alloc (or you can handle the alloc yourself separately)
     INIMPL virtual void  Connect_Gps_Full
-    (PRJN_STATE* prjn, NETWORK_STATE* net, int rgpidx, int sgpidx);
+    (PRJN_STATE* prjn, NETWORK_STATE* net, int rgpidx, int sgpidx, bool share_cons, bool reciprocal);
     // #IGNORE connect groups, full connectivity
     INIMPL virtual void  Connect_Gps_Prob
-    (PRJN_STATE* prjn, NETWORK_STATE* net, int rgpidx, int sgpidx, float p_con);
+    (PRJN_STATE* prjn, NETWORK_STATE* net, int rgpidx, int sgpidx, float p_con, bool share_cons, bool reciprocal);
     // #IGNORE connect groups standard, not symmetric/same layer but with given probability
     INIMPL virtual void  Connect_Gps_ProbSymSameGp
     (PRJN_STATE* prjn, NETWORK_STATE* net, int rgpidx, int sgpidx, float p_con);
@@ -61,13 +65,9 @@
     (PRJN_STATE* prjn, NETWORK_STATE* net, int rgpidx, int sgpidx, float p_con);
     // #IGNORE connect groups symmetric, same layer (diff unit group)
     INIMPL virtual void  Connect_Gps_Sym
-    (PRJN_STATE* prjn, NETWORK_STATE* net, int rgpidx, int sgpidx, float p_con);
+    (PRJN_STATE* prjn, NETWORK_STATE* net, int rgpidx, int sgpidx, bool recip);
     // #IGNORE connect groups with connections that are symmetric with existing (p_con < 0)
 
-  INIMPL virtual void	Connect_UnitGroupRF
-    (PRJN_STATE* prjn, NETWORK_STATE* net, LAYER_STATE* recv_lay, LAYER_STATE* send_lay,
-     int rgpidx, int sgpidx, bool make_cons, bool share_cons = false, bool reciprocal = false);
-  // #IGNORE receiptive-field version of connect one unit group to another -- rgpidx = recv unit group idx, sgpidx = send unit group idx -- either can be -1 for using entire layer instead -- has share cons and reciprocal connectivity options
 
   INLINE void Initialize_core_base() {
     spec_idx = -1; self_con = false;  init_wts = false;  set_scale = false;  init_wt_val = 1.0f;

@@ -20,7 +20,7 @@
   TAVECTOR2F rf_move;	// #READ_ONLY how much to move sending rf per recv group
   TAVECTOR2I rf_width;		// #READ_ONLY width of the sending rf 
 
-  INIMPL void Connect_impl(PRJN_STATE* prjn, NETWORK_STATE* net, bool make_cons) override;
+  INIMPL void Connect_impl(PRJN_STATE* prjn, NETWORK_STATE* net, int make_cons) override;
 
   INIMPL virtual bool InitRFSizes(PRJN_STATE* prjn, NETWORK_STATE* net);
   // #IGNORE initialize sending receptive field sizes

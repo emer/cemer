@@ -52,7 +52,7 @@ void TiledDivGpRFPrjnSpec::UpdateAfterEdit_impl() {
   }
 }
 
-void TiledDivGpRFPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
+void TiledDivGpRFPrjnSpec::Connect_impl(Projection* prjn, int make_cons) {
   if(!(bool)prjn->from) return;
   if(prjn->layer->units.leaves == 0) // an empty layer!
     return;
@@ -118,7 +118,7 @@ void TiledDivGpRFPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
   }
 }
 
-void TiledDivGpRFPrjnSpec::Connect_Reciprocal(Projection* prjn, bool make_cons) {
+void TiledDivGpRFPrjnSpec::Connect_Reciprocal(Projection* prjn, int make_cons) {
   Layer* recv_lay = prjn->from; // from perspective of non-recip!
   Layer* send_lay = prjn->layer;
   taVector2i ru_geo = recv_lay->gp_geom;

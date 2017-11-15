@@ -57,7 +57,7 @@ bool STATE_CLASS(TiledRFPrjnSpec)::InitRFSizes(PRJN_STATE* prjn, NETWORK_STATE* 
 }
 
 void STATE_CLASS(TiledRFPrjnSpec)::Connect_impl
-  (PRJN_STATE* prjn, NETWORK_STATE* net, bool make_cons) {
+  (PRJN_STATE* prjn, NETWORK_STATE* net, int make_cons) {
 
   if(!InitRFSizes(prjn, net)) return;
 

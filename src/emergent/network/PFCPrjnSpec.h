@@ -32,16 +32,16 @@
   bool          col_1to1;       // make the column-wise connections one-to-one -- otherwise it is all-to-all
   bool          unit_1to1;      // for non-learning PFC representations that just have 1-to-1 copies of input representations, this establishes the 1-to-1 unit-level connectivity
   
-  INIMPL void  Connect_impl(PRJN_STATE* prjn, NETWORK_STATE* net, bool make_cons) override;
+  INIMPL void  Connect_impl(PRJN_STATE* prjn, NETWORK_STATE* net, int make_cons) override;
 
-  INIMPL virtual void Connect_row1to1(PRJN_STATE* prjn, NETWORK_STATE* net, bool make_cons,
+  INIMPL virtual void Connect_row1to1(PRJN_STATE* prjn, NETWORK_STATE* net, int make_cons,
                                int rx, int ry, int recv_x, bool recv_gps);
-  INIMPL virtual void Connect_rowall(PRJN_STATE* prjn, NETWORK_STATE* net, bool make_cons,
+  INIMPL virtual void Connect_rowall(PRJN_STATE* prjn, NETWORK_STATE* net, int make_cons,
                               int rx, int ry, int recv_x, bool recv_gps);
-  INIMPL virtual void Connect_cols(PRJN_STATE* prjn, NETWORK_STATE* net, bool make_cons,
+  INIMPL virtual void Connect_cols(PRJN_STATE* prjn, NETWORK_STATE* net, int make_cons,
                             int rx, int ry, int recv_x, bool recv_gps,
                             int sy, int send_x, bool send_gps);
-  INIMPL virtual void Connect_unit1to1(PRJN_STATE* prjn, NETWORK_STATE* net, bool make_cons,
+  INIMPL virtual void Connect_unit1to1(PRJN_STATE* prjn, NETWORK_STATE* net, int make_cons,
                                 int rx, int ry, int recv_x, bool recv_gps,
                                 int sy, int send_x, bool send_gps);
   

@@ -33,7 +33,7 @@ void STATE_CLASS(TesselPrjnSpec)::FreeSendOffs() {
   n_send_offs = 0;
 }
 
-void STATE_CLASS(TesselPrjnSpec)::Connect_impl(PRJN_STATE* prjn, NETWORK_STATE* net, bool make_cons) {
+void STATE_CLASS(TesselPrjnSpec)::Connect_impl(PRJN_STATE* prjn, NETWORK_STATE* net, int make_cons) {
   LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
   LAYER_STATE* send_lay = prjn->GetSendLayerState(net);
 
@@ -76,7 +76,7 @@ void STATE_CLASS(TesselPrjnSpec)::GetCtrFmRecv(TAVECTOR2I& sctr, TAVECTOR2I ruc)
 }
 
 void STATE_CLASS(TesselPrjnSpec)::Connect_RecvUnit(PRJN_STATE* prjn, NETWORK_STATE* net, UNIT_STATE* ru_u,
-                                                   const TAVECTOR2I& ruc, bool make_cons) {
+                                                   const TAVECTOR2I& ruc, int make_cons) {
   LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
   LAYER_STATE* send_lay = prjn->GetSendLayerState(net);
   if(recv_lay->n_units == 0) // an empty layer!

@@ -27,7 +27,7 @@ void ScalarValSelfPrjnSpec::Initialize() {
 
 void ScalarValSelfPrjnSpec::Connect_UnitGroup(Layer* lay,
                                               Layer::AccessMode acc_md, int gpidx,
-                                              Projection* prjn, bool make_cons) {
+                                              Projection* prjn, int make_cons) {
 //   float neigh1 = 1.0f / wt_width;
 //   float val1 = expf(-(neigh1 * neigh1));
 //  float scale_val = wt_max / val1;
@@ -55,7 +55,7 @@ void ScalarValSelfPrjnSpec::Connect_UnitGroup(Layer* lay,
   }
 }
 
-void ScalarValSelfPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
+void ScalarValSelfPrjnSpec::Connect_impl(Projection* prjn, int make_cons) {
   if(!prjn->from)       return;
   if(TestError(prjn->from.ptr() != prjn->layer, "Connect_impl", "must be used as a self-projection!")) {
     return;

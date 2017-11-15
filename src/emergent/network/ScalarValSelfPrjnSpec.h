@@ -36,8 +36,8 @@ public:
   float	wt_max;			// #CONDEDIT_ON_init_wts maximum weight value (of 1st neighbor -- not of self unit!)
 
   virtual void	Connect_UnitGroup(Layer* lay, Layer::AccessMode acc_md, int gpidx,
-				  Projection* prjn, bool make_cons);
-  void	Connect_impl(Projection* prjn, bool make_cons) override;
+				  Projection* prjn, int make_cons);
+  void	Connect_impl(Projection* prjn, int make_cons) override;
   void	Init_Weights_Prjn(Projection* prjn, ConState_cpp* cg, Network* net, int thr_no)
     override;
   bool  HasRandomScale() override { return false; }

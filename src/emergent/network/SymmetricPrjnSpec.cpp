@@ -18,7 +18,7 @@
 
 TA_BASEFUNS_CTORS_DEFN(SymmetricPrjnSpec);
 
-void SymmetricPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
+void SymmetricPrjnSpec::Connect_impl(Projection* prjn, int make_cons) {
   TestError(true, "Connect_impl",
             "Sorry, this is obsolete and does not work with the new way that connections are made, due to optimizations.  Please replace with a projection that does the connectivity directly.  See TiledGpRFPrjnSpec for an example of a 'reciprocal' option that creates the symmetric version of a projection using the same params.");
 }

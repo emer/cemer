@@ -8,10 +8,15 @@ void STATE_CLASS(TiledGpRFOneToOnePrjnSpec)::Initialize_core() {
   gp_n_cons = -1;
 }
 
-void STATE_CLASS(TiledGpRFOneToOnePrjnSpec)::Connect_UnitGroupRF
-  (PRJN_STATE* prjn, NETWORK_STATE* net, LAYER_STATE* recv_lay, LAYER_STATE* send_lay,
-   int rgpidx, int sgpidx, bool make_cons, bool share_con, bool recip) {
-
+void STATE_CLASS(TiledGpRFOneToOnePrjnSpec)::Connect_Gps
+  (PRJN_STATE* prjn, NETWORK_STATE* net, int rgpidx, int sgpidx, float p_con, bool sym_same_lay,
+   int make_cons, bool share_con, bool recip) {
+  LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
+  LAYER_STATE* send_lay = prjn->GetSendLayerState(net);
+  if(recip) {
+    recv_lay = send_lay;
+    send_lay = prjn->GetRecvLayerState(net);
+  }
   int ru_nunits = recv_lay->un_geom_n - ru_idx_st;
   int su_nunits = send_lay->un_geom_n - su_idx_st;
   int maxn = MIN(ru_nunits, su_nunits);
@@ -34,14 +39,10 @@ void STATE_CLASS(TiledGpRFOneToOnePrjnSpec)::Connect_UnitGroupRF
   }
   else {
     for(int ui=0; ui < maxn; ui++) {
-      UNIT_STATE* ru;
-      if(rgpidx >= 0) {
-        ru = recv_lay->GetUnitStateGpUnIdx(net, rgpidx, ru_idx_st + ui);
-        if(share_cons && net->RecvOwnsCons() && rgpidx > 0) {
-          UNIT_STATE* shru = recv_lay->GetUnitStateGpUnIdx(net, 0, ru_idx_st + ui);
-          // group 0
-          ru->ShareRecvConsFrom(net, shru, prjn);
-        }
+      UNIT_STATE* ru = recv_lay->GetUnitStateGpUnIdx(net, rgpidx, ru_idx_st + ui);
+      if(share_con && net->RecvOwnsCons() && rgpidx > 0) {
+        UNIT_STATE* shru = recv_lay->GetUnitStateGpUnIdx(net, 0, ru_idx_st + ui);
+        ru->ShareRecvConsFrom(net, shru, prjn);
       }
       else {
         ru = recv_lay->GetUnitState(net, ru_idx_st + ui);

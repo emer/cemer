@@ -6,9 +6,9 @@
   int		ru_idx_st;		// starting receiving unit index within each unit group to start connecting from -- allows for layers to have diff unit group structure
   int		gp_n_cons;		// [-1 = all] number of units to connect within each group -- allows for layers to have diff unit group structure
 
-  INIMPL void	Connect_UnitGroupRF
-    (PRJN_STATE* prjn, NETWORK_STATE* net, LAYER_STATE* recv_lay, LAYER_STATE* send_lay,
-     int rgpidx, int sgpidx, bool make_cons, bool share_cons, bool reciprocal)  override;
+  INIMPL void	Connect_Gps
+  (PRJN_STATE* prjn, NETWORK_STATE* net, int rgpidx, int sgpidx, float p_con, bool sym_same_lay,
+   int make_cons, bool share_cons = false, bool reciprocal = false)  override;
 
   INIMPL void Init_Weights_Prjn
     (PRJN_STATE* prjn, NETWORK_STATE* net, int thr_no, CON_STATE* cg) override;

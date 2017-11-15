@@ -21,7 +21,7 @@
   float         p_high;
   // #CONDSHOW_ON_init_wts&&wts_type:BIMODAL_PERMUTED probability of generating high values for bimodal permuted case
 
-  INIMPL void Connect_impl(PRJN_STATE* prjn, NETWORK_STATE* net, bool make_cons) override;
+  INIMPL void Connect_impl(PRJN_STATE* prjn, NETWORK_STATE* net, int make_cons) override;
 
   INIMPL void Init_Weights_Prjn
     (PRJN_STATE* prjn, NETWORK_STATE* net, int thr_no, CON_STATE* cg) override;

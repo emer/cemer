@@ -10,9 +10,9 @@
   INIMPL virtual bool	InitRFSizes(PRJN_STATE* prjn, NETWORK_STATE* net);
   // #IGNORE initialize sending receptive field sizes
 
-  INIMPL void Connect_impl(PRJN_STATE* prjn, NETWORK_STATE* net, bool make_cons) override;
+  INIMPL void Connect_impl(PRJN_STATE* prjn, NETWORK_STATE* net, int make_cons) override;
 
-  INIMPL virtual void  Connect_Reciprocal(PRJN_STATE* prjn, NETWORK_STATE* net, bool make_cons);
+  INIMPL virtual void  Connect_Reciprocal(PRJN_STATE* prjn, NETWORK_STATE* net, int make_cons);
   // #IGNORE 
 
   //   int 	ProbAddCons_impl(PRJN_STATE* prjn, NETWORK_STATE* net, float p_add_con, float init_wt = 0.0f);

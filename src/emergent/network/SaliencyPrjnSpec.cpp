@@ -43,7 +43,7 @@ void SaliencyPrjnSpec::UpdateAfterEdit_impl() {
 }
 
 
-void SaliencyPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
+void SaliencyPrjnSpec::Connect_impl(Projection* prjn, int make_cons) {
   if(!(bool)prjn->from) return;
   if(prjn->layer->units.leaves == 0) // an empty layer!
     return;
@@ -61,7 +61,7 @@ void SaliencyPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
     Connect_full_dog(prjn, make_cons);
 }
 
-void SaliencyPrjnSpec::Connect_feat_only(Projection* prjn, bool make_cons) {
+void SaliencyPrjnSpec::Connect_feat_only(Projection* prjn, int make_cons) {
   Layer* recv_lay = prjn->layer;
   Layer* send_lay = prjn->from;
 
@@ -127,7 +127,7 @@ void SaliencyPrjnSpec::Connect_feat_only(Projection* prjn, bool make_cons) {
   }
 }
 
-void SaliencyPrjnSpec::Connect_full_dog(Projection* prjn, bool make_cons) {
+void SaliencyPrjnSpec::Connect_full_dog(Projection* prjn, int make_cons) {
   dog_wts.UpdateFilter();
   taMath_float::vec_norm_abs_max(&(dog_wts.net_filter)); // renorm to abs max = 1
 

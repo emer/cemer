@@ -27,7 +27,7 @@
   }
 
 
-  INIMPL void  Connect_impl(PRJN_STATE* prjn, NETWORK_STATE* net, bool make_cons) override;
+  INIMPL void  Connect_impl(PRJN_STATE* prjn, NETWORK_STATE* net, int make_cons) override;
 
   INLINE void Initialize_core() {
     n_pfcs = 2;    cross_connect = false;    n_pfc_layers = 0;
