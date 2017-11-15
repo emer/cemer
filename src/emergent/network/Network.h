@@ -355,6 +355,9 @@ public:
 
   ProjectBase*  proj;           // #IGNORE ProjectBase this network is in
   
+  virtual void    ClearIntact();
+  // call this when any element in the network is updated such that the current built status is no longer valid 
+
   inline Layer* StateLayer(int idx) const { return (Layer*)state_layers[idx]; }
   // #CAT_State layer at given index in list of state objects built in network state for running
   inline Projection* StatePrjn(int idx) const { return (Projection*)state_prjns[idx]; }

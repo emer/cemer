@@ -367,6 +367,12 @@ void Network::UpdateAfterEdit_impl(){
   }
 }
 
+void Network::ClearIntact() {
+  ClearNetFlag(INTACT);
+  SyncNetState();
+}
+
+
 void Network::setStale() {
   ClearIntact();
   RebuildAllViews();
@@ -1577,6 +1583,7 @@ void Network::RemoveUnits() {
   specs.ResetAllSpecIdxs();
   ClearIntact();
   RemoveCons();
+  SyncNetState();
   
   taMisc::Busy();
   StructUpdate(true);

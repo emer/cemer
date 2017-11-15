@@ -143,8 +143,6 @@
   { if(on) SetNetFlag(flg); else ClearNetFlag(flg); }
   // set flag state according to on bool (if true, set flag, if false, clear it)
 
-  INLINE void    ClearIntact()  { ClearNetFlag(INTACT); }
-  // call this when any element in the network is updated such that the current built status is no longer valid 
   INLINE bool    IsIntact() const { return HasNetFlag(INTACT); }
   // is this network currently intact?
   INLINE bool    IsBuiltIntact() const { return HasNetFlag(BUILT) && HasNetFlag(INTACT); }
