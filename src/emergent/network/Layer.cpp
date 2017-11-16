@@ -598,6 +598,9 @@ void Layer::UpdateGeometry() {
   scaled_disp_geom.y = (int)ceil((float)disp_geom.y * disp_scale);
 
   // update state versions of key geometry
+  if(own_net && n_units != flat_geom.n) { // invalidated if size changed
+    own_net->ClearIntact();
+  }
   n_units = flat_geom.n;
   un_geom_x = un_geom.x; un_geom_y = un_geom.y; un_geom_n = un_geom.n;
   gp_geom_x = gp_geom.x; gp_geom_y = gp_geom.y; gp_geom_n = gp_geom.n;

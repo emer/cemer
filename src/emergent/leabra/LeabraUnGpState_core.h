@@ -1,24 +1,24 @@
 // this contains core shared code, and is included directly in LeabraUnGpState _cpp.h, _cuda.h
 //{
-  float 	acts_m_avg;	// #READ_ONLY #SHOW #CAT_Activation #SAVE_WTS time-averaged minus-phase activation stats for the layer -- this is used for adaptive inhibition tuning (inhib_adapt in LeabraLayerSpec) -- time constant in layer spec avg_act.tau and initialized to avg_act.init -- saved with weights
-  float 	acts_p_avg;	// #READ_ONLY #SHOW #CAT_Activation #SAVE_WTS time-averaged plus-phase activation stats for the layer -- time constant in layer spec avg_act.tau and initialized to avg_act.init -- this is used for netinput scaling (via _eff version) and should match reasonably well with act_avg.init value -- saved with weights
-  float 	acts_p_avg_eff;	// #READ_ONLY #SHOW #CAT_Activation #SAVE_WTS acts_p_avg * avg_act.adjust factor -- this is the effective value actually used for netinput scaling based on layer activation levels -- saved with weights
-  STATE_CLASS(LeabraInhibVals)  i_val;        // #NO_SAVE #READ_ONLY #SHOW #CAT_Activation computed inhibitory values
-  STATE_CLASS(LeabraAvgMax)	netin;		// #NO_SAVE #READ_ONLY #SHOW #CAT_Activation average, maximum net input values for the layer
-  STATE_CLASS(LeabraAvgMax)	netin_m;	// #NO_SAVE #READ_ONLY #SHOW #CAT_Activation average, maximum net input values for the layer, minus phase
-  STATE_CLASS(LeabraAvgMax)	netin_raw;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation average, maximum raw net input values for the layer (synaptic netinput only -- no extras)
-  STATE_CLASS(LeabraAvgMax)	acts;		// #NO_SAVE #READ_ONLY #SHOW #CAT_Activation average, maximum activation values for the layer
-  STATE_CLASS(LeabraAvgMax)	acts_eq;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation average, maximum act_eq values for the layer
-  STATE_CLASS(LeabraAvgMax)	acts_raw;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation average, maximum act_raw values for the layer
-  STATE_CLASS(LeabraAvgMax)	acts_prvq;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation average, maximum act_eq values for the layer, for the previous quarter (updated every quarter)
-  STATE_CLASS(LeabraAvgMax)	acts_m;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation average, maximum minus-phase activation stats for the layer (from acts_eq at end of minus phase)
-  STATE_CLASS(LeabraAvgMax)	acts_p;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation average, maximum plus-phase activation stats for the layer (from acts_eq at end of plus phase)
-  STATE_CLASS(LeabraAvgMax)	acts_q0;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation average, maximum previous-trial activation stats for the layer (from acts_p at start of new trial)
-  STATE_CLASS(LeabraAvgMax)	un_g_i;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation average, maximum unit total inhibitory conductance values (optionally updated -- use for unit inhibition case)
-  STATE_CLASS(LeabraAvgMax)     am_deep_raw;    // #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation average, maximum deep_raw values for the layer
-  STATE_CLASS(LeabraAvgMax)     am_deep_raw_net;  // #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation average, maximum deep_raw_net values for the layer
-  STATE_CLASS(LeabraAvgMax)     am_deep_mod_net; // #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation average, maximum deep_mod_net values for the layer
-  STATE_CLASS(LeabraAvgMax)     am_deep_ctxt;    // #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation average, maximum deep_ctxt values for the layer
+  float 	acts_m_avg;	// #GUI_READ_ONLY #SHOW #CAT_Activation #SAVE_WTS time-averaged minus-phase activation stats for the layer -- this is used for adaptive inhibition tuning (inhib_adapt in LeabraLayerSpec) -- time constant in layer spec avg_act.tau and initialized to avg_act.init -- saved with weights
+  float 	acts_p_avg;	// #GUI_READ_ONLY #SHOW #CAT_Activation #SAVE_WTS time-averaged plus-phase activation stats for the layer -- time constant in layer spec avg_act.tau and initialized to avg_act.init -- this is used for netinput scaling (via _eff version) and should match reasonably well with act_avg.init value -- saved with weights
+  float 	acts_p_avg_eff;	// #GUI_READ_ONLY #SHOW #CAT_Activation #SAVE_WTS acts_p_avg * avg_act.adjust factor -- this is the effective value actually used for netinput scaling based on layer activation levels -- saved with weights
+  STATE_CLASS(LeabraInhibVals)  i_val;        // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Activation computed inhibitory values
+  STATE_CLASS(LeabraAvgMax)	netin;		// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Activation average, maximum net input values for the layer
+  STATE_CLASS(LeabraAvgMax)	netin_m;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Activation average, maximum net input values for the layer, minus phase
+  STATE_CLASS(LeabraAvgMax)	netin_raw;	// #NO_SAVE #GUI_READ_ONLY #CAT_Activation average, maximum raw net input values for the layer (synaptic netinput only -- no extras)
+  STATE_CLASS(LeabraAvgMax)	acts;		// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Activation average, maximum activation values for the layer
+  STATE_CLASS(LeabraAvgMax)	acts_eq;	// #NO_SAVE #GUI_READ_ONLY #CAT_Activation average, maximum act_eq values for the layer
+  STATE_CLASS(LeabraAvgMax)	acts_raw;	// #NO_SAVE #GUI_READ_ONLY #CAT_Activation average, maximum act_raw values for the layer
+  STATE_CLASS(LeabraAvgMax)	acts_prvq;	// #NO_SAVE #GUI_READ_ONLY #CAT_Activation average, maximum act_eq values for the layer, for the previous quarter (updated every quarter)
+  STATE_CLASS(LeabraAvgMax)	acts_m;		// #NO_SAVE #GUI_READ_ONLY #CAT_Activation average, maximum minus-phase activation stats for the layer (from acts_eq at end of minus phase)
+  STATE_CLASS(LeabraAvgMax)	acts_p;		// #NO_SAVE #GUI_READ_ONLY #CAT_Activation average, maximum plus-phase activation stats for the layer (from acts_eq at end of plus phase)
+  STATE_CLASS(LeabraAvgMax)	acts_q0;	// #NO_SAVE #GUI_READ_ONLY #CAT_Activation average, maximum previous-trial activation stats for the layer (from acts_p at start of new trial)
+  STATE_CLASS(LeabraAvgMax)	un_g_i;		// #NO_SAVE #GUI_READ_ONLY #CAT_Activation average, maximum unit total inhibitory conductance values (optionally updated -- use for unit inhibition case)
+  STATE_CLASS(LeabraAvgMax)     am_deep_raw;    // #NO_SAVE #GUI_READ_ONLY #CAT_Activation average, maximum deep_raw values for the layer
+  STATE_CLASS(LeabraAvgMax)     am_deep_raw_net;  // #NO_SAVE #GUI_READ_ONLY #CAT_Activation average, maximum deep_raw_net values for the layer
+  STATE_CLASS(LeabraAvgMax)     am_deep_mod_net; // #NO_SAVE #GUI_READ_ONLY #CAT_Activation average, maximum deep_mod_net values for the layer
+  STATE_CLASS(LeabraAvgMax)     am_deep_ctxt;    // #NO_SAVE #GUI_READ_ONLY #CAT_Activation average, maximum deep_ctxt values for the layer
   float		max_err;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic max activity error value for this unit group -- is 0 if the most active unit in the unit group has a non-zero target value -- otherwise 1 -- in other words, is the most active unit a target unit?  this only really makes sense for localist single-unit activity layers (although multiple units can be set to targets to allow for multiple options).  it is a highly sensitive measure, allowing for any other kinds of activity in the layer
   STATE_CLASS(LeabraTwoDVals)   twod; // #NO_SAVE #CAT_Activation holds two-dimensional decoding / encoding values for spatial representational layers (TwoDValLayerSpec)
 // todo: could potentially decode multiple locations per unit group -- replicate twod_2, twod_3?

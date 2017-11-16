@@ -26,12 +26,12 @@ class STATE_CLASS(LeabraMarginVals) : public STATE_CLASS(taOBase) {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra holds values for margin activation levels
 INHERITED(taOBase)
 public:
-  float         low_thr;   // #READ_ONLY #SHOW #CAT_Activation #SAVE_WTS low threshold for marginal activation, in terms of v_m_eq -- adapts so that roughly acts_p_avg units on average are above this low threshold
-  float         med_thr;   // #READ_ONLY #SHOW #CAT_Activation #SAVE_WTS medium threshold for marginal activation, in terms of v_m_eq -- adapts so that marginal units are roughly split in half by this threshold
-  float         hi_thr;   // #READ_ONLY #SHOW #CAT_Activation #SAVE_WTS high threshold for marginal activation, in terms of v_m_eq -- adapts so that roughly margin.pct_marg * acts_p_avg units on average are between low and high threshold
-  float         low_avg; // #READ_ONLY #SHOW #CAT_Activation #SAVE_WTS running-average computed proportion of units above the low_thr
-  float         med_avg; // #READ_ONLY #SHOW #CAT_Activation #SAVE_WTS running-average computed proportion of units between the low and medium thresholds
-  float         hi_avg; // #READ_ONLY #SHOW #CAT_Activation #SAVE_WTS running-average computed proportion of units above the hi_thr
+  float         low_thr;   // #CAT_Activation #SAVE_WTS low threshold for marginal activation, in terms of v_m_eq -- adapts so that roughly acts_p_avg units on average are above this low threshold
+  float         med_thr;   // #CAT_Activation #SAVE_WTS medium threshold for marginal activation, in terms of v_m_eq -- adapts so that marginal units are roughly split in half by this threshold
+  float         hi_thr;   // #CAT_Activation #SAVE_WTS high threshold for marginal activation, in terms of v_m_eq -- adapts so that roughly margin.pct_marg * acts_p_avg units on average are between low and high threshold
+  float         low_avg; // #CAT_Activation #SAVE_WTS running-average computed proportion of units above the low_thr
+  float         med_avg; // #CAT_Activation #SAVE_WTS running-average computed proportion of units between the low and medium thresholds
+  float         hi_avg; // #CAT_Activation #SAVE_WTS running-average computed proportion of units above the hi_thr
 
   INLINE void   InitVals() {
     low_thr = 0.495f;    med_thr = 0.503f;    hi_thr = 0.508f;    low_avg = .15f;
