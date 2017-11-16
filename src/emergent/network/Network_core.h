@@ -111,8 +111,8 @@
   int           trial;          // #MAIN #CONDEDIT_ON_main_obj #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW trial counter: number of external input patterns that have been presented in the current epoch (updated by program)
   int           tick;           // #MAIN #CONDEDIT_ON_main_obj #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW tick ..counter: optional extra counter to record a level of organization below the trial level (for cases where trials have multiple component elements)
   int           cycle;          // #MAIN #CONDEDIT_ON_main_obj #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW cycle counter: number of iterations of activation updating (settling) on the current external input pattern (updated by program)
-  float         time;           // #MAIN #CONDEDIT_ON_main_obj #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW the current time, relative to some established starting point, in algorithm-specific units (often miliseconds)
-  int           total_trials;   // #MAIN #CONDEDIT_ON_main_obj #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW total number of trials counter: number of external input patterns that have been presented since the weights were initialized
+  float         time;           // #CONDEDIT_ON_main_obj #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW the current time, relative to some established starting point, in algorithm-specific units (often miliseconds) -- updated internally by network
+  int           total_trials;   // #CONDEDIT_ON_main_obj #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW total number of trials counter: number of external input patterns that have been presented since the weights were initialized -- updated internally by network
 
   float         sse;            // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW sum squared error over the network, for the current external input pattern
   float         sum_sse;        // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic total sum squared error over an epoch or similar larger set of external input patterns
