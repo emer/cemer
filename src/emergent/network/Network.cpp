@@ -364,6 +364,9 @@ void Network::UpdateAfterEdit_impl(){
   else {
     if(brain_atlas)
       brain_atlas_name = brain_atlas->name; // for later saving..
+    if(n_threads != n_thrs_built) {
+      ClearIntact();
+    }
   }
 }
 
@@ -737,6 +740,7 @@ void Network::BuildNetState() {
     }
   }
   if(net_state) {
+    net_state->threads.InitState(n_threads, net_state);
     SyncNetState();
     return;
   }
@@ -1580,7 +1584,6 @@ bool Network::EditState() {
 
 void Network::RemoveUnits() {
   ClearNetFlag(BUILT);
-  specs.ResetAllSpecIdxs();
   ClearIntact();
   RemoveCons();
   SyncNetState();
@@ -1592,10 +1595,10 @@ void Network::RemoveUnits() {
     Layer* lay = (Layer*)layers.Leaf(i);
     lay->n_units_built = 0;
   }
-  
-  net_state->FreeStateMem();
-  n_units = 0;
 
+  net_state->UnBuildState();
+  n_units = 0;
+  specs.ResetAllSpecIdxs();
   StructUpdate(false);
   taMisc::DoneBusy();
 }

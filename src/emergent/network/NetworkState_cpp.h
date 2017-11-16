@@ -214,6 +214,8 @@ public:
   virtual void  Connect_Alloc();
   // #IGNORE second pass of connecting -- allocate all the memory for all the connections -- managed by the Network and done by thread
 
+  virtual void  UnBuildState();
+  // #IGNORE main unbuild call for state-side -- frees threads, mem
   
   //////////////////////////////////////////////////////////////////////////
   //            Weight Save / Load -- Network Manages Everything 

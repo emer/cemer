@@ -351,6 +351,11 @@ void NetworkState_cpp::Connect_Alloc() {
   NET_THREAD_CALL(NetworkState_cpp::Connect_Alloc_Thr); // allocate to con groups
 }
 
+void NetworkState_cpp::UnBuildState() {
+  threads.RemoveAll();
+  FreeStateMem();
+  n_units = 0;
+}
 
 
 //////////////////////////////////////////////////////////////////////////

@@ -1012,7 +1012,7 @@ void NETWORK_STATE::InitUnitState_Thr(int thr_no) {
     if(th != thr_no) continue;
 
     int lay_idx = units_lays[ui];
-    int ungp_idx = units_ungps[ui];
+    int ungp_idx = units_ungps[ui]; // this is always the correct sub-unit-group!
     LAYER_STATE* lay = GetLayerState(lay_idx);
     UNGP_STATE* ugst = GetUnGpState(ungp_idx);
     
@@ -1028,19 +1028,17 @@ void NETWORK_STATE::InitUnitState_Thr(int thr_no) {
         thrs_ungp_unit_idxs[thr_no][prv_sub_ungp_idx * 2 + 1] = thr_un_idx; // end of prev
       }
       prv_lay_idx = lay_idx;
-      ungp_idx = lay->ungp_idx;                               // new layer ungp idx
-      prv_lay_ungp_idx = ungp_idx;
-      thrs_ungp_unit_idxs[thr_no][ungp_idx * 2] = thr_un_idx; // start
-      prv_sub_ungp_idx = -1;
+      prv_lay_ungp_idx = lay->ungp_idx;
+      thrs_ungp_unit_idxs[thr_no][prv_lay_ungp_idx * 2] = thr_un_idx; // start
     }
 
     if(lay->n_ungps > 0) {      // sub unit groups
       if(ungp_idx != prv_sub_ungp_idx) {
-        thrs_ungp_unit_idxs[thr_no][ungp_idx * 2] = thr_un_idx; // start
         if(prv_sub_ungp_idx >= 0) {
           thrs_ungp_unit_idxs[thr_no][prv_sub_ungp_idx * 2 + 1] = thr_un_idx; // end of prev
         }
-        prv_sub_ungp_idx = ungp_idx;
+        prv_sub_ungp_idx = ungp_idx;                            // always subgroup
+        thrs_ungp_unit_idxs[thr_no][prv_sub_ungp_idx * 2] = thr_un_idx; // start
       }
     }
 
