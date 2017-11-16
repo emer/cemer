@@ -30,6 +30,8 @@
 // #include <float.h>
 // #endif
 
+class LeabraAvgMax_cpp; // 
+
 class STATE_CLASS(LeabraAvgMax) : public STATE_CLASS(taOBase) {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra holds average and max statistics
 INHERITED(taOBase)
@@ -58,6 +60,11 @@ public:
   INLINE void	CopyFmAvgMax(const STATE_CLASS(LeabraAvgMax)& oth)
   { avg = oth.avg;  max = oth.max; max_i = oth.max_i; sum = oth.sum; n = oth.n; }
   // copy from other
+
+#ifdef STATE_MAIN
+  LeabraAvgMax& operator =(const LeabraAvgMax_cpp& oth)
+  { avg = oth.avg;  max = oth.max; max_i = oth.max_i; sum = oth.sum; n = oth.n; return *this; }
+#endif  
 
   STATE_DECO_KEY("Layer");
   STATE_TA_STD_CODE(LeabraAvgMax);

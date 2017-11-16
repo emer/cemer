@@ -70,7 +70,9 @@ public:
   NetMonitor*         monitor;
   // #HIDDEN #NO_SAVE #NO_COPY this is my net monitor -- owner's owner
   
-  bool                off; // #NO_SAVE_EMPTY set this to not use this netmon item
+  bool                off;              // #NO_SAVE_EMPTY set this to not use this netmon item
+  bool                error;            // #NO_SAVE #READ_ONLY an error was detected on this item, preventing this item from generating data -- the error message will be shown at check config time
+  String              error_msg;        // #NO_SAVE #CONDSHOW_ON_error #READ_ONLY #SHOW if you are seeing this message then there was an error with this monitor and this tells you what the problem is -- you can turn the item off to ignore the error temporarily
   bool                computed;	// if true, this value is computed separately in a program, and this is here just to make a place for it in the output data (note: computation sold separately -- must be performed elsewhere)
   TypeDef*            object_type;	// #CONDSHOW_OFF_computed #TYPE_taOBase type of object to monitor (narrows down the choices when choosing the object)
   taSmartRef          object;		// #CONDSHOW_OFF_computed #TYPE_ON_object_type #PROJ_SCOPE the network object being monitored
@@ -135,6 +137,12 @@ public:
   void          ToggleOffFlag();
   // #MENU #MENU_ON_Object #DYN1 toggle the off flag to opposite of current state: flag indicates whether monitor should be recorded now or not
 
+  bool   MonError(bool test, const String& fun_name,
+                  const String& a, const String& b=NULLStr, const String& c=NULLStr,
+                  const String& d=NULLStr, const String& e=NULLStr, const String& f=NULLStr,
+                  const String& g=NULLStr, const String& h=NULLStr);
+  // set a monitor error if test is true
+  
   static const KeyString key_obj_name; // #IGNORE
   static const KeyString key_obj_type; // #IGNORE
   static const KeyString key_obj_var; // #IGNORE
@@ -198,6 +206,8 @@ protected:
   void	ScanObject_ProjectionGroup(Projection_Group* p, String var); // #IGNORE
   void	ScanObject_Unit(UnitState_cpp* u, String var, String obj_nm, NetworkState_cpp* net);
   // #IGNORE this is only when the object itself is a unit
+  bool	CheckVarOnUnit(String var, Network* net);
+  // #IGNORE check if the variable is a valid variable on units (including r. / s. con vars)
 
   // these are only for r. and s. con variables
   void	ScanObject_LayerCons(Layer* lay, String var); // #IGNORE

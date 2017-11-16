@@ -37,6 +37,7 @@ taTypeDef_Of(UserDataItem);
 
 void NetMonItem::Initialize() {
   off = false;
+  error = false;
   computed = false;
   object_type = NULL;
   monitor = NULL;
@@ -120,6 +121,10 @@ void NetMonItem::Copy_(const NetMonItem& cp) {
 void NetMonItem::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   if(off) return;
+
+  CheckError(error, quiet, rval, "NetMonItem named:", name, "has an error:",
+             error_msg);
+
   if(!computed) {
     CheckError(!owner, quiet, rval, "NetMonItem named:", name, "has no owner");
     CheckError(!object, quiet, rval, "object is NULL");
@@ -378,8 +383,18 @@ void NetMonItem::ResetMonVals() {
   members.RemoveAll();
 }
 
+bool NetMonItem::MonError(bool test, const String& fun_name,
+                          const String& a, const String& b, const String& c, const String& d,
+                          const String& e, const String& f, const String& g, const String& h) {
+  if(!test) return false;
+  error = true;
+  error_msg = taMisc::SuperCat(fun_name, a, b, c, d, e, f, g, h);
+  return true;
+}
+
 void NetMonItem::ScanObject() {
-  // TODO: what about orphaned columns in the sink?????
+  error = false;
+  error_msg = "";
   ResetMonVals();
   if(computed) {
     if(matrix)
@@ -424,18 +439,18 @@ bool NetMonItem::ScanObject_InUserData(taBase* obj, String var,
     var = _nilString;
   }
   UserDataItemBase* udi = obj->GetUserDataItem(key);
-  if(TestError(!udi,"ScanObject_InUserData",
+  if(MonError(!udi,"ScanObject_InUserData",
                 "UserDataItem: ", key, " not found"))
     return true; //no mon, but we did handle it
 
   // note: we test for UserDataItem type, not isSimple because
   // we need to link to the value member
   if (udi->InheritsFrom(&TA_UserDataItem)) {
-    if(TestError(var.nonempty(),"ScanObject_InUserData",
+    if(MonError(var.nonempty(),"ScanObject_InUserData",
       "UserDataItem: ", key, " expected to be simple; can't resolve remaining var: ", var))
       return true; //no mon, but we did handle it
     MemberDef* md = udi->FindMemberName("value"); // should exist!
-    if(TestError(!md,"ScanObject_InUserData",
+    if(MonError(!md,"ScanObject_InUserData",
       "unexpected: member 'value' supposed to exist"))
       return true; //no mon, but we did handle it
     if (name_obj) {
@@ -465,7 +480,7 @@ bool NetMonItem::ScanObject_InUserData(taBase* obj, String var,
     return true;
   }
   else {
-    if(TestError(var.empty(),"ScanObject_InUserData",
+    if(MonError(var.empty(),"ScanObject_InUserData",
       "UserDataItem: ", key, " expected to be non-simple; additional .xxx member resolution required after item key"))
       return true; //no mon, but we did handle it
     // descend...
@@ -489,7 +504,7 @@ bool NetMonItem::ScanObject_InObject(taBase* obj, String var, taBase* name_obj, 
     String path = var.before('.',-1);
     taBase* mbr = obj->FindFromPath(path, md);
     if(!mbr) {
-      if(TestError(err_not_found, "ScanObject_InObject",
+      if(MonError(err_not_found, "ScanObject_InObject",
                    "path to variable not found in parent object, path:",
                    path, "var: ", var, "parent:", obj->DisplayPath())) {
         return true; //no mon, but we did handle it
@@ -542,7 +557,6 @@ bool NetMonItem::ScanObject_InNonTAObject(void* obj, TypeDef* typ, String var, t
   int net_base_off = 0;
   ta_memb_ptr net_mbr_off;
   MemberDef* md = TypeDef::FindMemberPathStatic(own_td, net_base_off, net_mbr_off, var, err_not_found);
-  // special case for Average objects -- they automatically get their avg member
   if(!md) return false;
   if(md && name_obj) {
     String valname = GetColName(name_obj, val_specs.size);
@@ -621,8 +635,14 @@ void NetMonItem::ScanObject_Layer(Layer* lay, String var) {
   }
 
   if (ScanObject_InObject(lay, var, lay, false)) return; // false = just test, no error
+  if(!lay->own_net) return;
 
-  // we now know it must be a regular unit variable (or invalid); do that
+  bool on_unit = CheckVarOnUnit(var, lay->own_net);
+  if(MonError(!on_unit, "ScanObject_Layer", "variable not found on layer or unit, and is not r.* or s.* connection variable:", var)) {
+    return;
+  }
+
+  // go get unit vars
   NetworkState_cpp* net_state = lay->GetValidNetState();
   if(!net_state) return;
   
@@ -663,6 +683,11 @@ void NetMonItem::ScanObject_LayerUnits(Layer* lay, String var) {
   }
   if(rmdr.startsWith('.')) rmdr = rmdr.after('.');
 
+  bool on_unit = CheckVarOnUnit(rmdr, lay->own_net);
+  if(MonError(!on_unit, "ScanObject_Layer", "variable not found on layer or unit, and is not r.* or s.* connection variable:", rmdr)) {
+    return;
+  }
+  
   String valname = GetColName(lay, val_specs.size);
   MatrixGeom geom;
 
@@ -905,6 +930,28 @@ void NetMonItem::ScanObject_Projection(Projection* prjn, String var) {
   else {
     ScanObject_InObject(prjn, var, prjn);
   }
+}
+
+
+bool NetMonItem::CheckVarOnUnit(String var, Network* net) {
+  if(!net)
+    return false;
+
+  TypeDef* unit_typ = net->UnitStateType();
+
+  if(var.startsWith('.'))
+    var = var.after('.');
+
+  if(var.startsWith("r.") || var.startsWith("s.")) {
+    return true;                // can't really check for sure so just assume..
+  }
+  
+  TypeDef* own_td = unit_typ;
+  int net_base_off = 0;
+  ta_memb_ptr net_mbr_off;
+  MemberDef* md = TypeDef::FindMemberPathStatic(own_td, net_base_off, net_mbr_off, var, false);
+  if(!md) return false;
+  return true;
 }
 
 void NetMonItem::ScanObject_Unit(UnitState_cpp* u, String var, String obj_nm, NetworkState_cpp* net) {

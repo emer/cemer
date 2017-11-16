@@ -122,12 +122,8 @@ void LeabraNetwork::SyncLayerState_Layer(Layer* ly) {
   LEABRA_LAYER_STATE* lst = lay->GetLayerState(net_state);
   LEABRA_UNGP_STATE* lgpd = lay->GetLayUnGpState(net_state);
   // these are important for saving in weights files -- keep them updated
-  lst->acts_m_avg = lgpd->acts_m_avg;
-  lst->acts_p_avg = lgpd->acts_p_avg;
-  lst->acts_p_avg_eff = lgpd->acts_p_avg_eff;
-  lay->acts_m_avg = lgpd->acts_m_avg;
-  lay->acts_p_avg = lgpd->acts_p_avg;
-  lay->acts_p_avg_eff = lgpd->acts_p_avg_eff;
+  lst->CopyFromUnGpState(lgpd);
+  lay->CopyFromUnGpState(lgpd);
 }
 
 void LeabraNetwork::Init_Acts() {
