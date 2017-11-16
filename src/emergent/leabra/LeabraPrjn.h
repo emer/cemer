@@ -37,9 +37,6 @@ public:
 
 #include <LeabraPrjnState_core>
   
-  virtual void	CheckInhibCons(LeabraNetwork* net);
-  // #CAT_Structure check for inhibitory connections -- sets flag on network
-
   TA_BASEFUNS(LeabraPrjn);
   SIMPLE_COPY(LeabraPrjn);
 private:

@@ -88,8 +88,10 @@ public:
   ///////////////////////////////////////////////////////////////////////
   //    Build functionality
 
-  virtual void	CheckInhibCons();
   void	Build() override;
+  void  CheckSpecs() override;
+  virtual void CheckInhibCons();
+  // #IGNORE
   virtual void BuildLeabraThreadMem();
   // #IGNORE
 

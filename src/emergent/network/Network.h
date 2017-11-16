@@ -661,14 +661,14 @@ public:
 
   virtual void  Build();
   // #BUTTON #CAT_Structure Build the network units and Connect them (calls CheckSpecs/BuildLayers/Units/Prjns and Connect)
-    virtual void  CheckSpecs();
-    // #CAT_Structure check to make sure that specs are not null and set to the right type, and update with new specs etc to fix any errors (with notify), so that at least network operations will not crash -- called in Build and CheckConfig
     virtual void  BuildNetState();
     // #IGNORE build network state object
     virtual void  BuildIndexesSizes();
     // #IGNORE compute the indexes and sizes of all network objects
     virtual void  BuildSpecs();
     // #IGNORE Build the specs on the State
+    virtual void  CheckSpecs();
+    // #CAT_Structure check to make sure that specs are not null and set to the right type, and update with new specs etc to fix any errors (with notify), so that at least network operations will not crash -- called in Build and CheckConfig
     virtual void  UpdateAllStateSpecs();
     // #CAT_State update all the State-side specs based on current settings in main specs
     virtual void  UpdateAllStateLayerSpecs();

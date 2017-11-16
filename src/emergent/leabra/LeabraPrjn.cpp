@@ -26,12 +26,3 @@ void LeabraPrjn::Initialize() {
 void LeabraPrjn::Destroy() {
 }
 
-void LeabraPrjn::CheckInhibCons(LeabraNetwork* net) {
-  LeabraLayer* fmlay = (LeabraLayer*)from.ptr();
-  if(!fmlay || fmlay->lesioned()) return;
-  if(con_spec.SPtr()) {
-    if(((LeabraConSpec*)con_spec.SPtr())->inhib)
-      net->net_misc.inhib_cons = true;
-  }
-}
-

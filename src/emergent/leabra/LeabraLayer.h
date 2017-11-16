@@ -78,8 +78,6 @@ public:
 
 
   void  CheckSpecs() override;
-  void	CheckInhibCons(LeabraNetwork* net);
-  // #CAT_Structure check for inhibitory connections -- sets flag on network
 
   ////////////////////////////////////////////
   //	TwoD Misc structural routines

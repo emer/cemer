@@ -22,6 +22,10 @@
 #include <LeabraExtraUnitSpecs>
 #include <LeabraExtraLayerSpecs>
 
+#include <LeabraConSpec_cpp>
+
+#include <State_main>
+
 #include <taProject>
 #include <DataTable>
 #include <Program>
@@ -77,25 +81,31 @@ void LeabraNetwork::UpdateAfterEdit_impl() {
   }
 }
 
-void LeabraNetwork::CheckInhibCons() {
-  net_misc.inhib_cons = false;
-  FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
-    if(!lay->lesioned())
-      lay->CheckInhibCons(this);
-  }
+void LeabraNetwork::Build() {
+  inherited::Build();
+  BuildLeabraThreadMem();
 }
 
-void LeabraNetwork::Build() {
+void LeabraNetwork::CheckSpecs() {
+  inherited::CheckSpecs();
   CheckInhibCons();
-  if(net_misc.inhib_cons) {
+}
+
+void LeabraNetwork::CheckInhibCons() {
+  bool inhib_cons = false;
+  for(int i=0; i < n_con_specs_built; i++) {
+    LEABRA_CON_SPEC_CPP* ls = (LEABRA_CON_SPEC_CPP*)net_state->GetConSpec(i);
+    if(ls->inhib) {
+      inhib_cons = true;
+      break;
+    }
+  }
+  // manually set in both places just to be sure!
+  ((LeabraNetworkState_cpp*)net_state)->net_misc.inhib_cons = inhib_cons;
+  net_misc.inhib_cons = inhib_cons;
+  if(inhib_cons) {
     SetNetFlag(NETIN_PER_PRJN);	// inhib cons use per-prjn inhibition
   }
-  inherited::Build();
-
-  BuildLeabraThreadMem();
-
-  // taMisc::Info("sizeof:", String(sizeof(LeabraUnitState_cpp)), ".size:",
-  //              String(unit_vars_size));
 }
 
 void LeabraNetwork::BuildLeabraThreadMem() {

@@ -142,12 +142,6 @@ LeabraLayer* LeabraLayerSpec::FindLayerFmSpecNet(Network* net, TypeDef* layer_sp
 //      General Init functions
 
 
-void LeabraLayer::CheckInhibCons(LeabraNetwork* net) {
-  FOREACH_ELEM_IN_GROUP(LeabraPrjn, p, projections) {
-    p->CheckInhibCons(net);
-  }
-}
-
 ///////////////////////////////////////////////////////////////////////
 //      TrialInit -- at start of trial
 

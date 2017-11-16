@@ -121,7 +121,7 @@
       ntr = -new_ntr;           // opposite sign for non-gated
     }
 
-    float decay_factor = fabs(ntr); // decay is function of new trace
+    float decay_factor = fabsf(ntr); // decay is function of new trace
     if(decay_factor > 1.0f) decay_factor = 1.0f;
     tr += ntr - decay_factor * tr;
   }
@@ -140,7 +140,7 @@
     
     ntr = trace.MsnActLrnFactor(ru_act) * su_act;
     
-    float decay_factor = fabs(ntr); // decay is function of new trace
+    float decay_factor = fabsf(ntr); // decay is function of new trace
     if(decay_factor > 1.0f) decay_factor = 1.0f;
     tr += ntr - decay_factor * tr;
   }
@@ -161,7 +161,7 @@
     
     ntr = trace.MsnActLrnFactor(eff_ru_act) * su_act;
     
-    float decay_factor = fabs(ntr); // decay is function of new trace
+    float decay_factor = fabsf(ntr); // decay is function of new trace
     if(decay_factor > 1.0f) decay_factor = 1.0f;
     tr += ntr - decay_factor * tr;
   }

@@ -1275,9 +1275,9 @@ void LEABRA_NETWORK_STATE::ClearMSNTrace_Thr(int thr_no) {
     LEABRA_CON_STATE* scg = ThrSendConState(thr_no, i);
     if(scg->NotActive()) continue;
     LEABRA_CON_SPEC_CPP* cs = scg->GetConSpec(this);
-    // if(!cs->InheritsFrom(&TA_MSNConSpec)) continue;
-    // MSNConSpec* mscs = (MSNConSpec*)cs;
-    // mscs->ClearMSNTrace(scg, this, thr_no);
+    if(cs->GetStateSpecType() != LEABRA_NETWORK_STATE::T_MSNConSpec) continue;
+    STATE_CLASS(MSNConSpec)* mscs = (STATE_CLASS(MSNConSpec)*)cs;
+    mscs->ClearMSNTrace(scg, this, thr_no);
   }
 }
 
