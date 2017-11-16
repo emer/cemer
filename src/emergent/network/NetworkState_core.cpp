@@ -1041,6 +1041,9 @@ void NETWORK_STATE::InitUnitState_Thr(int thr_no) {
         thrs_ungp_unit_idxs[thr_no][prv_sub_ungp_idx * 2] = thr_un_idx; // start
       }
     }
+    else {
+      prv_sub_ungp_idx = -1;
+    }
 
     thrs_unit_idxs[thr_no][thr_un_idx] = ui;
     thrs_units_n_recv_cgps[thr_no][thr_un_idx] = lay->n_recv_prjns;
