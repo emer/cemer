@@ -1018,8 +1018,8 @@ void LEABRA_NETWORK_STATE::Compute_CycleStats_Thr(int thr_no) {
     LEABRA_UNGP_STATE* gpd = GetUnGpState(li);
     LEABRA_LAYER_STATE* lay = gpd->GetLayerState(this);
     if(lay->lesioned()) continue;
-    // if(lay->hard_clamped && !updt_clamped)
-    //   continue;
+    if(lay->hard_clamped && !updt_clamped)
+      continue;
     LEABRA_AVG_MAX* am_act = ThrUnGpAvgMax(thr_no, li, AM_ACT);
     am_act->InitVals();
     LEABRA_AVG_MAX* am_act_raw = ThrUnGpAvgMax(thr_no, li, AM_ACT_RAW);
@@ -1050,8 +1050,8 @@ void LEABRA_NETWORK_STATE::Compute_ActEqStats_Thr(int thr_no) {
     LEABRA_UNGP_STATE* gpd = GetUnGpState(li);
     LEABRA_LAYER_STATE* lay = gpd->GetLayerState(this);
     if(lay->lesioned()) continue;
-    // if(lay->hard_clamped && !updt_clamped)
-    //   continue;
+    if(lay->hard_clamped && !updt_clamped)
+      continue;
     LEABRA_AVG_MAX* am_act_eq = ThrUnGpAvgMax(thr_no, li, AM_ACT_EQ);
     am_act_eq->InitVals();
     
@@ -1076,8 +1076,8 @@ void LEABRA_NETWORK_STATE::Compute_CycleStats_Post() {
     LEABRA_UNGP_STATE* gpd = GetUnGpState(li);
     LEABRA_LAYER_STATE* lay = gpd->GetLayerState(this);
     if(lay->lesioned()) continue;
-    // if(lay->hard_clamped && !updt_clamped)
-    //   continue;
+    if(lay->hard_clamped && !updt_clamped)
+      continue;
     LEABRA_AVG_MAX& acts = gpd->acts;
     LEABRA_AVG_MAX& acts_eq = gpd->acts_eq;
     LEABRA_AVG_MAX& acts_raw = gpd->acts_raw;
@@ -1130,8 +1130,8 @@ void LEABRA_NETWORK_STATE::Compute_GcIStats_Thr(int thr_no) {
     LEABRA_UNGP_STATE* gpd = GetUnGpState(li);
     LEABRA_LAYER_STATE* lay = gpd->GetLayerState(this);
     if(lay->lesioned()) continue;
-    // if(lay->hard_clamped && !updt_clamped)
-    //   continue;
+    if(lay->hard_clamped && !updt_clamped)
+      continue;
     LEABRA_AVG_MAX* am_un_g_i = ThrUnGpAvgMax(thr_no, li, AM_UN_G_I);
     am_un_g_i->InitVals();
     
@@ -1155,8 +1155,8 @@ void LEABRA_NETWORK_STATE::Compute_GcIStats_Post() {
     LEABRA_UNGP_STATE* gpd = GetUnGpState(li);
     LEABRA_LAYER_STATE* lay = gpd->GetLayerState(this);
     if(lay->lesioned()) continue;
-    // if(lay->hard_clamped && !updt_clamped)
-    //   continue;
+    if(lay->hard_clamped && !updt_clamped)
+      continue;
     LEABRA_AVG_MAX& un_g_i = gpd->un_g_i;
     un_g_i.InitVals();
 

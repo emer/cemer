@@ -352,7 +352,7 @@ void NetworkState_cpp::Connect_Alloc() {
 }
 
 void NetworkState_cpp::UnBuildState() {
-  threads.RemoveAll();
+  // threads.RemoveAll();
   FreeStateMem();
   n_units = 0;
 }

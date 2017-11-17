@@ -76,7 +76,7 @@ public:
   bool                computed;	// if true, this value is computed separately in a program, and this is here just to make a place for it in the output data (note: computation sold separately -- must be performed elsewhere)
   TypeDef*            object_type;	// #CONDSHOW_OFF_computed #TYPE_taOBase type of object to monitor (narrows down the choices when choosing the object)
   taSmartRef          object;		// #CONDSHOW_OFF_computed #TYPE_ON_object_type #PROJ_SCOPE the network object being monitored
-  String              variable;	//  #ADD_COMPLETER_SIMPLE #CONDSHOW_OFF_computed Variable on object to monitor.  Can also be a variable on sub-objects (e.g., act on Layer or Network will get all unit activations); r. and s. indicate recv and send connection vals (e.g., r.wt), projections.varname or prjns.varname gets projection-level variables, and layers.varname specifically targets layer-level variables (important for same-name variables on network and layer); can specify vars on particular unit(s) within a layer as 'units[index<-endidx>].varname' or 'units[gpno][index<-endidx>].varname' where the index value is a leaf in the first case and within a given unit group in the second -- in both cases a range of units can be optionally specified -- use user_data.data_name to access user data variables by name
+  String              variable;	//  #ADD_COMPLETER_SIMPLE #CONDSHOW_OFF_computed Variable on object to monitor.  Can also be a variable on sub-objects (e.g., act on Layer or Network will get all unit activations); r. and s. indicate recv and send connection vals (e.g., r.wt), projections.varname or prjns.varname gets projection-level variables, and layers.varname specifically targets layer-level variables (important for same-name variables on network and layer); can specify vars on particular unit(s) within a layer as 'units[index<-endidx>].varname' or 'units[gpno][index<-endidx>].varname' where the index value is a leaf in the first case and within a given unit group in the second -- in both cases a range of units can be optionally specified -- also 'ungp[gpno]' accesses UnGpState variables, with gpno=-1 for layer-level group, 0..n-1 for specific unit groups (range avail too) -- use user_data.data_name to access user data variables by name
   String              var_label;	// #CONDSHOW_OFF_computed label to use in place of variable in naming the columns/columns generated from this data (if empty, variable is used)
   NameStyle           name_style;	 // #CONDSHOW_OFF_computed how to name the columns/columns generated from this data?
   int                 max_name_len;	 // #DEF_6 maximum length for any name segment
@@ -202,6 +202,8 @@ protected:
   void	ScanObject_Layer(Layer* lay, String var); // #IGNORE
   void	ScanObject_LayerUnits(Layer* lay, String var);
   // #IGNORE specific subrange of units within a layer
+  void	ScanObject_LayerUnGp(Layer* lay, String var);
+  // #IGNORE unit group variables -- ungp[x].y
   void	ScanObject_Projection(Projection* p, String var); // #IGNORE
   void	ScanObject_ProjectionGroup(Projection_Group* p, String var); // #IGNORE
   void	ScanObject_Unit(UnitState_cpp* u, String var, String obj_nm, NetworkState_cpp* net);

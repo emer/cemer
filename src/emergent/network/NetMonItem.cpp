@@ -214,6 +214,11 @@ void NetMonItem::UpdateAfterEdit_impl() {
   //  object_type = object->GetTypeDef(); // not a good idea -- prevents changing !!
   if(variable.empty()) return;
 
+  if(variable.contains("ungp_data")) {
+    variable.gsub("ungp_data", "ungp"); // todo: double-check and look into brackets etc
+    taMisc::Info("updated variable containing 'ungp_data' to 'ungp' to access new UnGpState variables");
+  }
+  
   if (!taMisc::is_loading) {
     if(name_style == MY_NAME) {
       if(!computed) {
@@ -622,6 +627,10 @@ void NetMonItem::ScanObject_Layer(Layer* lay, String var) {
       ScanObject_LayerUnits(lay, var);
       return;
     }
+    if(var.startsWith("ungp[")) {
+      ScanObject_LayerUnGp(lay, var);
+      return;
+    }
 
     String subvar = var.before('.');
     if(subvar.endsWith("projections") || subvar.endsWith("prjns")) {
@@ -671,6 +680,113 @@ void NetMonItem::ScanObject_Layer(Layer* lay, String var) {
 }
 
 void NetMonItem::ScanObject_LayerUnits(Layer* lay, String var) {
+  NetworkState_cpp* net_state = lay->GetValidNetState();
+  if(!net_state) return;
+  
+  String range2;
+  String range1 = var.between('[', ']');
+  String rmdr = var.after(']');
+  if(rmdr.contains('[')) {
+    range2 = rmdr.between('[', ']');
+    rmdr = rmdr.after(']');
+  }
+  if(rmdr.startsWith('.')) rmdr = rmdr.after('.');
+
+  bool on_unit = CheckVarOnUnit(rmdr, lay->own_net);
+  if(MonError(!on_unit, "ScanObject_Layer", "variable not found on layer or unit, and is not r.* or s.* connection variable:", rmdr)) {
+    return;
+  }
+  
+  String valname = GetColName(lay, val_specs.size);
+  MatrixGeom geom;
+
+  String un_obj_nm = GetObjName(lay);
+
+  String un_range;
+  String gp_range;
+  if(range2.nonempty()) {
+    un_range = range2;
+    gp_range = range1;
+  }
+  else {
+    un_range = range1;
+  }
+  
+  int unidx1 = 0; 
+  int unidx2 = 0; 
+  if(un_range.contains('-')) {
+    unidx1 = (int)un_range.before('-');
+    unidx2 = (int)un_range.after('-');
+    if(unidx2 < 0)
+      unidx2 = lay->un_geom_n-1;
+  }
+  else {
+    unidx1 = (int)un_range;
+    unidx2 = unidx1;
+  }
+
+  int gpidx1 = 0; 
+  int gpidx2 = 0; 
+  if(gp_range.contains('-')) {
+    gpidx1 = (int)gp_range.before('-');
+    gpidx2 = (int)gp_range.after('-');
+    if(gpidx2 < 0)
+      gpidx2 = lay->n_ungps-1;
+  }
+  else {
+    gpidx1 = (int)gp_range;
+    gpidx2 = gpidx1;
+  }
+  
+  gpidx1 = MIN(gpidx1, lay->n_ungps-1);
+  gpidx2 = MIN(gpidx2, lay->n_ungps-1);
+  int ngp = 1+gpidx2-gpidx1;
+  unidx1 = MIN(unidx1, lay->un_geom_n-1);
+  unidx2 = MIN(unidx2, lay->un_geom_n-1);
+  int nun = 1+unidx2-unidx1;
+  
+  
+  if(gp_range.nonempty()) { // group case
+    if(ngp > 1 && nun > 1) {
+      geom.SetGeom(2, nun, ngp);
+      AddMatrixCol(valname, VT_FLOAT, &geom);
+    }
+    else if(ngp > 1) {
+      geom.SetGeom(1, ngp);
+      AddMatrixCol(valname, VT_FLOAT, &geom);
+    }
+    else if(nun > 1) {
+      geom.SetGeom(1, nun);
+      AddMatrixCol(valname, VT_FLOAT, &geom);
+    }
+    else {
+      AddScalarCol(valname, VT_FLOAT);
+    }
+    for (int gi = gpidx1; gi <= gpidx2; ++gi) {
+      for (int i = unidx1; i <= unidx2; ++i) {
+        UnitState_cpp* unit = lay->GetUnitStateGpUnIdx(net_state, gi, i);
+        String un_nm = un_obj_nm + "[" + String(gi) + "][" + String(i) + "]";
+        ScanObject_Unit(unit, rmdr, un_nm, net_state);
+      }
+    }
+  }
+  else {                        // just unit idxs
+    if(nun > 1) {
+      geom.SetGeom(1, nun);
+      AddMatrixCol(valname, VT_FLOAT, &geom);
+    }
+    else {
+      AddScalarCol(valname, VT_FLOAT);
+    }
+    for (int i = unidx1; i <= unidx2; ++i) {
+      UnitState_cpp* unit = lay->GetUnitState(net_state, i);
+      String un_nm = un_obj_nm + "[" + String(i) + "]";
+      ScanObject_Unit(unit, rmdr, un_nm, net_state);
+    }
+  }
+}
+
+void NetMonItem::ScanObject_LayerUnGp(Layer* lay, String var) {
   NetworkState_cpp* net_state = lay->GetValidNetState();
   if(!net_state) return;
   
