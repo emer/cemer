@@ -48,6 +48,8 @@ void Projection::Initialize() {
 #ifdef DMEM_COMPILE
   dmem_agg_sum.agg_op = MPI_SUM;
 #endif
+
+  prjn_idx = -1;
 }
 
 void Projection::Destroy(){

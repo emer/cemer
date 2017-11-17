@@ -215,8 +215,20 @@ void NetMonItem::UpdateAfterEdit_impl() {
   if(variable.empty()) return;
 
   if(variable.contains("ungp_data")) {
-    variable.gsub("ungp_data", "ungp"); // todo: double-check and look into brackets etc
+    variable.gsub("ungp_data", "ungp");
     taMisc::Info("updated variable containing 'ungp_data' to 'ungp' to access new UnGpState variables");
+  }
+  if(variable.contains("ct_cycle")) {
+    variable.gsub("ct_cycle", "cycle");
+    taMisc::Info("updated variable containing 'ct_cycle' to new name: 'cycle'");
+  }
+  if(variable.contains("minus_cycles")) {
+    variable.gsub("minus_cycles", "rt_cycles");
+    taMisc::Info("updated variable containing 'minus_cycles' to new name: 'rt_cycles'");
+  }
+  if(variable.contains("phase_no")) {
+    variable.gsub("phase_no", "quarter");
+    taMisc::Info("updated variable containing 'phase_no' to new name: 'quarter'");
   }
   
   if (!taMisc::is_loading) {
@@ -561,8 +573,12 @@ bool NetMonItem::ScanObject_InNonTAObject(void* obj, TypeDef* typ, String var, t
   TypeDef* own_td = typ;
   int net_base_off = 0;
   ta_memb_ptr net_mbr_off;
-  MemberDef* md = TypeDef::FindMemberPathStatic(own_td, net_base_off, net_mbr_off, var, err_not_found);
-  if(!md) return false;
+  MemberDef* md = TypeDef::FindMemberPathStatic(own_td, net_base_off, net_mbr_off, var, false);
+  if(!md) {
+    MonError(err_not_found, "ScanObject_InNonTAObject", 
+             "Variable not found:", var, "in object of type:", typ->name);
+    return false;
+  }
   if(md && name_obj) {
     String valname = GetColName(name_obj, val_specs.size);
     ValType vt = ValTypeForType(md->type);
@@ -790,106 +806,42 @@ void NetMonItem::ScanObject_LayerUnGp(Layer* lay, String var) {
   NetworkState_cpp* net_state = lay->GetValidNetState();
   if(!net_state) return;
   
-  String range2;
-  String range1 = var.between('[', ']');
+  TypeDef* ungp_typ = lay->own_net->UnGpStateType();
+  
+  String range = var.between('[', ']');
   String rmdr = var.after(']');
-  if(rmdr.contains('[')) {
-    range2 = rmdr.between('[', ']');
-    rmdr = rmdr.after(']');
-  }
   if(rmdr.startsWith('.')) rmdr = rmdr.after('.');
 
-  bool on_unit = CheckVarOnUnit(rmdr, lay->own_net);
-  if(MonError(!on_unit, "ScanObject_Layer", "variable not found on layer or unit, and is not r.* or s.* connection variable:", rmdr)) {
-    return;
-  }
-  
   String valname = GetColName(lay, val_specs.size);
   MatrixGeom geom;
 
-  String un_obj_nm = GetObjName(lay);
-
-  String un_range;
-  String gp_range;
-  if(range2.nonempty()) {
-    un_range = range2;
-    gp_range = range1;
-  }
-  else {
-    un_range = range1;
-  }
-  
-  int unidx1 = 0; 
-  int unidx2 = 0; 
-  if(un_range.contains('-')) {
-    unidx1 = (int)un_range.before('-');
-    unidx2 = (int)un_range.after('-');
-    if(unidx2 < 0)
-      unidx2 = lay->un_geom_n-1;
-  }
-  else {
-    unidx1 = (int)un_range;
-    unidx2 = unidx1;
-  }
-
   int gpidx1 = 0; 
   int gpidx2 = 0; 
-  if(gp_range.contains('-')) {
-    gpidx1 = (int)gp_range.before('-');
-    gpidx2 = (int)gp_range.after('-');
-    if(gpidx2 < 0)
-      gpidx2 = lay->n_ungps-1;
+  if(range.contains('-')) {
+    gpidx1 = (int)range.before('-');
+    gpidx2 = (int)range.after('-');
+    if(gpidx2 < 0)              // -1 is layer un gp but not in a range
+      gpidx2 = lay->n_ungps-1; 
   }
   else {
-    gpidx1 = (int)gp_range;
+    gpidx1 = (int)range;
     gpidx2 = gpidx1;
   }
-  
+
   gpidx1 = MIN(gpidx1, lay->n_ungps-1);
   gpidx2 = MIN(gpidx2, lay->n_ungps-1);
   int ngp = 1+gpidx2-gpidx1;
-  unidx1 = MIN(unidx1, lay->un_geom_n-1);
-  unidx2 = MIN(unidx2, lay->un_geom_n-1);
-  int nun = 1+unidx2-unidx1;
-  
-  
-  if(gp_range.nonempty()) { // group case
-    if(ngp > 1 && nun > 1) {
-      geom.SetGeom(2, nun, ngp);
-      AddMatrixCol(valname, VT_FLOAT, &geom);
-    }
-    else if(ngp > 1) {
-      geom.SetGeom(1, ngp);
-      AddMatrixCol(valname, VT_FLOAT, &geom);
-    }
-    else if(nun > 1) {
-      geom.SetGeom(1, nun);
-      AddMatrixCol(valname, VT_FLOAT, &geom);
-    }
-    else {
-      AddScalarCol(valname, VT_FLOAT);
-    }
-    for (int gi = gpidx1; gi <= gpidx2; ++gi) {
-      for (int i = unidx1; i <= unidx2; ++i) {
-        UnitState_cpp* unit = lay->GetUnitStateGpUnIdx(net_state, gi, i);
-        String un_nm = un_obj_nm + "[" + String(gi) + "][" + String(i) + "]";
-        ScanObject_Unit(unit, rmdr, un_nm, net_state);
-      }
-    }
+
+  if(ngp > 1) {
+    geom.SetGeom(1, ngp);
+    AddMatrixCol(valname, VT_FLOAT, &geom);
   }
-  else {                        // just unit idxs
-    if(nun > 1) {
-      geom.SetGeom(1, nun);
-      AddMatrixCol(valname, VT_FLOAT, &geom);
-    }
-    else {
-      AddScalarCol(valname, VT_FLOAT);
-    }
-    for (int i = unidx1; i <= unidx2; ++i) {
-      UnitState_cpp* unit = lay->GetUnitState(net_state, i);
-      String un_nm = un_obj_nm + "[" + String(i) + "]";
-      ScanObject_Unit(unit, rmdr, un_nm, net_state);
-    }
+  else {
+    AddScalarCol(valname, VT_FLOAT);
+  }
+  for (int i = gpidx1; i <= gpidx2; ++i) {
+    UnGpState_cpp* ungp = lay->GetUnGpState(net_state, i);
+    ScanObject_InNonTAObject(ungp, ungp_typ, rmdr, NULL, true); // true = err not found
   }
 }
 

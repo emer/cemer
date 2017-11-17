@@ -1181,7 +1181,7 @@ String Layer::GetUnitNameIdx(int flat_un_idx) const {
     if(gp_unit_names_4d) {
       int gp_x, gp_y, un_x, un_y;
       GetGpUnXYFmIdx(flat_un_idx, gp_x, gp_y, un_x, un_y);
-      return unit_names.SafeEl(gp_x, gp_y, un_x, un_y);
+      return unit_names.SafeEl(un_x, un_y, gp_x, gp_y);
     }
     else {
       int un_x, un_y;

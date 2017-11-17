@@ -29,7 +29,7 @@
 eTypeDef_Of(NetMonitor);
 
 class E_API NetMonitor: public taNBase {
-  // #STEM_BASE ##TOKENS #NO_UPDATE_AFTER ##CAT_Network  ##DEF_CHILD_items monitors values from network (or other) objects and sends them to a data table/sink
+  // #STEM_BASE ##TOKENS ##CAT_Network ##DEF_CHILD_items monitors values from network (or other) objects and sends them to a data table/sink
 INHERITED(taNBase)
 public:
   NetMonItem_List	items;
@@ -81,14 +81,14 @@ public:
   // #IGNORE called by the network to remove the objs from lists
   void		UpdateNetworkPtrs();
   // #IGNORE update pointers to objects within current network
-  void    UpdateNetworkPtrs_NewPar(taBase* old_net, taBase* new_net);
+  void          UpdateNetworkPtrs_NewPar(taBase* old_net, taBase* new_net);
   // #IGNORE update pointers to objects in new network
 
   taList_impl*	children_() override {return &items;}
   String	GetDisplayName() const override;
   
-  String_Array      var_completer_list;
-  // #IGNORE  // the list of members that are shown by the completer for the NetMonItem variable field - only need one so shared by all NetMonItems
+  String_Array  var_completer_list;
+  // #IGNORE the list of members that are shown by the completer for the NetMonItem variable field - only need one so shared by all NetMonItems
   
   void	InitLinks() override;
   void	CutLinks() override;

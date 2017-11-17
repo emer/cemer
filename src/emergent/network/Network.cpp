@@ -501,6 +501,7 @@ void Network::SyncLayerState() {
 }
 
 void Network::SyncLayerState_Layer(Layer* lay) {
+  if(lay->layer_idx < 0) return;
   layer_state_sync.DoSync((void*)lay, (void*)GetLayerState(lay->layer_idx));
 }
 
@@ -517,6 +518,7 @@ void Network::SyncPrjnState() {
 }
 
 void Network::SyncPrjnState_Prjn(Projection* prjn) {
+  if(prjn->prjn_idx < 0) return;
   PrjnState_cpp* pst = prjn->GetPrjnState(net_state);
   prjn_state_sync.DoSync((void*)prjn, (void*)pst);
 }
