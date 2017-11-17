@@ -325,4 +325,54 @@ INLINE void IntArraySeqPermute(int* array, int size, int thr_no=-1) {
   IntArrayPermute(array, size, thr_no);
 }
 
+INLINE void IntArraySort(int* array, int size, bool descending=false) {
+  if(size <= 1) return;
+  int lt_compval = -1;          // comparison return value for less-than
+  if(descending)
+    lt_compval = 1;
+  // lets do a heap sort since it requires no secondary storage
+  int n = size;
+  int l,j,ir,i;
+  int tmp;
+
+  l = (n >> 1)+1;
+  ir = n;
+  for(;;){
+    if(l>1) {
+      tmp = array[--l -1]; // tmp = ra[--l]
+    }
+    else {
+      tmp = array[ir-1]; // tmp = ra[ir]
+      array[ir-1] = array[0]; // ra[ir] = ra[1]
+      if(--ir == 1) {
+        array[0] = tmp; // ra[1]=tmp
+        return;
+      }
+    }
+    i=l;
+    j=l << 1;
+    if(descending) {
+      while(j<= ir) {
+        if(j<ir && (array[j-1] > array[j])) j++;
+        if(tmp > array[j-1]) { // tmp > ra[j]
+          array[i-1] = array[j-1]; // ra[i]=ra[j];
+          j += (i=j);
+        }
+        else j = ir+1;
+      }
+    }
+    else {
+      while(j<= ir) {
+        if(j<ir && (array[j-1] < array[j])) j++;
+        if(tmp < array[j-1]) { // tmp < ra[j]
+          array[i-1] = array[j-1]; // ra[i]=ra[j];
+          j += (i=j);
+        }
+        else j = ir+1;
+      }
+    }
+    array[i-1] = tmp; // ra[i] = tmp;
+  }
+}
+
 #endif // StateIntArrayFuns_h

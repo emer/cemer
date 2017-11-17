@@ -49,6 +49,7 @@ int STATE_CLASS(FullPrjnSpec)::ProbAddCons_impl(PRJN_STATE* prjn, NETWORK_STATE*
   for(int rui = 0; rui < recv_lay->n_units; rui++) {
     UNIT_STATE* ru = recv_lay->GetUnitState(net, rui);
     IntArrayPermute(new_idxs, no);
+    IntArraySort(new_idxs, n_new_cons, false); // keep selected subset sorted for optimizing con search etc
     for(int sui=0; sui < n_new_cons; sui++) {
       UNIT_STATE* su = send_lay->GetUnitState(net, new_idxs[sui]);
       int cn = ru->ConnectFromCk(net, su, prjn, false, true, init_wt); // set init_wt

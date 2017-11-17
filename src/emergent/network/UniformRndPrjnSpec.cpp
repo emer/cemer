@@ -63,6 +63,7 @@ void STATE_CLASS(UniformRndPrjnSpec)::Connect_impl(PRJN_STATE* prjn, NETWORK_STA
       }
       IntArrayPermute(perm_list, n_send);
       int mxno = MIN(first, n_send);
+      IntArraySort(perm_list, mxno, false); // keep selected subset sorted for optimizing con search etc
       for(int j=0; j < mxno; j++) {       // only connect 1/2 of the units
         UNIT_STATE* su = recv_lay->GetUnitState(net, perm_list[j]);
         ru->ConnectFrom(net, su, prjn, false, true); // true = ignore errs -- to be expected
@@ -95,6 +96,7 @@ void STATE_CLASS(UniformRndPrjnSpec)::Connect_impl(PRJN_STATE* prjn, NETWORK_STA
       }
       IntArrayPermute(perm_list, n_send);
       int mxno = MIN(n_send, recv_no);
+      IntArraySort(perm_list, mxno, false); // keep selected subset sorted for optimizing con search etc
       for(int j=0; j < mxno; j++) {
         UNIT_STATE* su = send_lay->GetUnitState(net, perm_list[j]);
         ru->ConnectFrom(net, su, prjn, false, true); // true = ignore errs -- to be expected

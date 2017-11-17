@@ -252,8 +252,9 @@ void taArray_impl::Sort(bool descending) {
   l = (n >> 1)+1;
   ir = n;
   for(;;){
-    if(l>1)
+    if(l>1) {
       El_Copy_(tmp,FastEl_(--l -1)); // tmp = ra[--l]
+    }
     else {
       El_Copy_(tmp,FastEl_(ir-1)); // tmp = ra[ir]
       El_Copy_(FastEl_(ir-1),FastEl_(0)); // ra[ir] = ra[1]

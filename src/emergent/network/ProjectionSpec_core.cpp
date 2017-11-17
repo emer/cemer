@@ -244,6 +244,7 @@ void STATE_CLASS(ProjectionSpec)::Connect_Gps_Prob
       perm_list[n_send++] = sui;
     }
     IntArrayPermute(perm_list, n_send);
+    IntArraySort(perm_list, recv_no, false); // keep selected subset sorted for optimizing con search etc
     for(int j=0; j<recv_no; j++) {
       UNIT_STATE* su = send_lay->GetUnitStateGpUnIdx(net, sgpidx, perm_list[j]);
       if(recip) {
