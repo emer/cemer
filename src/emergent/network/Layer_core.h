@@ -350,9 +350,9 @@
   // #CAT_State copy weights from other layer, going projection-by-projection in order by index (only sensible if the layers have matching projection structure) -- either recv or send
 
   INLINE void  Init_Stats() {
-    sse = 0.0f;    avg_sse.ResetAvg();    cnt_err = 0.0f;
-    cur_cnt_err = 0.0f;    pct_err = 0.0f;    pct_cor = 0.0f;
-    sum_prerr.InitVals();    epc_prerr.InitVals(); icon_value = 0.0f;
+    sse = 0.0f;            avg_sse.ResetAvg();    cnt_err = 0.0f;
+    cur_cnt_err = 0.0f;    pct_err = 0.0f;        pct_cor = 0.0f;
+    prerr.InitVals();      sum_prerr.InitVals();  epc_prerr.InitVals(); icon_value = 0.0f;
   }
   // #EXPERT #CAT_Statistic initialize statistic variables on layer -- called by Network Init_Stats
 

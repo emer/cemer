@@ -815,8 +815,12 @@ void NetMonItem::ScanObject_LayerUnGp(Layer* lay, String var) {
   MatrixGeom geom;
 
   int gpidx1 = 0; 
-  int gpidx2 = 0; 
-  if(range.contains('-')) {
+  int gpidx2 = 0;
+  if(range.startsWith('-')) {   // -1 is allowed
+    gpidx1 = -1;
+    gpidx2 = -1;
+  }
+  else if(range.contains('-')) {
     gpidx1 = (int)range.before('-');
     gpidx2 = (int)range.after('-');
     if(gpidx2 < 0)              // -1 is layer un gp but not in a range
