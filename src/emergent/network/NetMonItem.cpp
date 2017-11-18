@@ -588,7 +588,7 @@ bool NetMonItem::ScanObject_InNonTAObject(void* obj, TypeDef* typ, String var, t
     }
   }
   // if not adding a column, it is part of a pre-allocated matrix; just add vars
-  ptrs.Add(obj);
+  ptrs.Add((char*)obj + net_base_off);
   members.Link(md);
   return true;
 }

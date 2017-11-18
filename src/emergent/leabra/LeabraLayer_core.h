@@ -6,10 +6,10 @@
   bool          deep_lrate_mod;  // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Learning apply deep learning rate modulation to this layer -- set from the unit spec, used by conspec in setting learning rates
   float         adapt_gi;   // #GUI_READ_ONLY #SHOW #CAT_Activation #SAVE_WTS adaptive inhibitory gain value -- this is an *extra* multiplier on top of existing gi value in the layer, unit inhib specs, starts out at 1 and moves from there -- adjusted by adaptive inhibition function -- saved with weight files
   STATE_CLASS(LeabraMarginVals) margin; // #SAVE_WTS #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Learning marginal v_m_eq levels -- used for modulating learning rate for those on the margin or even changing sign of learning
-  float         da_p;           // #NO_SAVE #GUI_READ_ONLY #CAT_Learning positive valence oriented dopamine-like modulatory value (where applicable)
-  float         da_n;           // #NO_SAVE #GUI_READ_ONLY #CAT_Learning positive valence oriented dopamine-like modulatory value (where applicable)
-  float         sev;            // #NO_SAVE #GUI_READ_ONLY #CAT_Learning serotonin-like modulatory value (where applicable)
-  STATE_CLASS(LeabraAvgMax)        avg_netin;        // #NO_SAVE #GUI_READ_ONLY #CAT_Activation minus-phase net input values for the layer, averaged over an epoch-level timescale
+  float         da_p;           // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Learning positive valence oriented dopamine-like modulatory value (where applicable)
+  float         da_n;           // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Learning positive valence oriented dopamine-like modulatory value (where applicable)
+  float         sev;            // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Learning serotonin-like modulatory value (where applicable)
+  STATE_CLASS(LeabraAvgMax)        avg_netin;        // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Activation minus-phase net input values for the layer, averaged over an epoch-level timescale
   STATE_CLASS(LeabraAvgMax)        avg_netin_sum;        // #NO_SAVE #GUI_READ_ONLY #HIDDEN #CAT_Activation #DMEM_AGG_SUM sum of net input values for the layer, for computing average over an epoch-level timescale
   int           avg_netin_n;        // #NO_SAVE #GUI_READ_ONLY #HIDDEN #CAT_Activation #DMEM_AGG_SUM number of times sum is updated for computing average
   float         hog_pct;           // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic the percentage of units in the layer that have a long-time-averaged activitation level that is above the layerspec hog_thr threshold, indicating that they are 'hogging' the representational space (because this is computed on a time average, there is no epoch average of this statistic)
@@ -45,9 +45,9 @@
   STATE_CLASS(LeabraAvgMax)    netin;      // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Activation average, maximum net input values for the layer
   STATE_CLASS(LeabraAvgMax)    netin_m;    // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Activation average, maximum net input values for the layer, minus phase
   STATE_CLASS(LeabraAvgMax)    acts;       // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Activation average, maximum activation values for the layer
-  STATE_CLASS(LeabraAvgMax)    acts_eq;    // #NO_SAVE #GUI_READ_ONLY #CAT_Activation average, maximum act_eq values for the layer
-  STATE_CLASS(LeabraAvgMax)    acts_m;        // #NO_SAVE #GUI_READ_ONLY #CAT_Activation average, maximum minus-phase activation stats for the layer (from acts_eq at end of minus phase)
-  STATE_CLASS(LeabraAvgMax)    acts_p;        // #NO_SAVE #GUI_READ_ONLY #CAT_Activation average, maximum plus-phase activation stats for the layer (from acts_eq at end of plus phase)
+  STATE_CLASS(LeabraAvgMax)    acts_eq;    // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Activation average, maximum act_eq values for the layer
+  STATE_CLASS(LeabraAvgMax)    acts_m;        // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Activation average, maximum minus-phase activation stats for the layer (from acts_eq at end of minus phase)
+  STATE_CLASS(LeabraAvgMax)    acts_p;        // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Activation average, maximum plus-phase activation stats for the layer (from acts_eq at end of plus phase)
 
 
   INLINE LEABRA_LAYER_SPEC_CPP* GetLayerSpec(NETWORK_STATE* net) const

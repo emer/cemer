@@ -652,7 +652,7 @@
       float& lvar = net->ThrLayStats(thr_no, li, 0, LEABRA_NETWORK_STATE::NETSD);
       var += lvar;
     }
-    lay->net_sd = sqrt(var);
+    lay->net_sd = sqrtf(var);
     lay->avg_net_sd.Increment(lay->net_sd);
     return var;
   }

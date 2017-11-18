@@ -1883,7 +1883,7 @@ float LEABRA_NETWORK_STATE::Compute_NetSd_Agg() {
       var += lvar;
     }
   }
-  net_sd = sqrt(var);
+  net_sd = sqrtf(var);
   avg_net_sd.Increment(net_sd);
   return net_sd;
 }
