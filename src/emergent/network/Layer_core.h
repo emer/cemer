@@ -281,6 +281,9 @@
   { int idx = gp_y * gp_geom_x + gp_x; return idx; }
   // #CAT_State get group-level index for group X,Y coordinates -- valid for unit groups
 
+  INLINE bool InLayerSubGroup() const { return (laygp_n > 0); }
+  // #CAT_Structure is this layer in a layer subgroup or directly in network.layers main layer group?
+
   /////////////////////////////////////////////////////////////////
   //            Build / Connect / Infrastructure
 
@@ -363,7 +366,7 @@
   // #IGNORE init layer geometry
   
   INLINE void Initialize_lay_core
-  (int lay_dx=0, int laygp_lay0_dx=0, int laygpn=0, int units_dx=0, int ungp_dx=0, int n_un=0,
+  (int lay_dx=0, int laygp_lay0_dx=-1, int laygpn=0, int units_dx=0, int ungp_dx=0, int n_un=0,
    int n_gp=0, int prjn_st_dx=0, int spec_dx=0, int uspec_dx=0, int n_recv=0, int n_send=0,
    int lf=LF_NONE, LayerType lt=HIDDEN) {
     net_state = NULL; main_obj = false; layer_idx = lay_dx; laygp_lay0_idx=laygp_lay0_dx; laygp_n=laygpn;

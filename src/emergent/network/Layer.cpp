@@ -1826,12 +1826,6 @@ UnitState_cpp* Layer::UnitAtDispCoord(int x, int y) const {
   }
 }
 
-bool Layer::InLayerSubGroup() {
-  NetworkState_cpp* net = GetValidNetState();
-  if(!net) return false;
-  return true;
-}
-
 bool Layer::ChangeMyType(TypeDef* new_typ) {
   if(own_net) {
     own_net->ClearIntact();
@@ -1875,8 +1869,10 @@ bool Layer::LoadWeights(const String& fname, bool quiet) {
 #ifdef DMEM_COMPILE
 
 void Layer::DMem_InitAggs() {
-  NetworkState_cpp* net = GetValidNetState();
-  if(!net) return;
+  // important: cannot check for valid as this is called during building!
+  // NetworkState_cpp* net = GetValidNetState();
+  if(!own_net || !own_net->net_state) return;
+  NetworkState_cpp* net = own_net->net_state;
   LayerState_cpp* lst = GetLayerState(net);
   if(!lst) return;
   dmem_agg_sum.agg_op = MPI_SUM;

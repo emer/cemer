@@ -184,8 +184,6 @@ public:
 
   ////////////  layer display position computation
 
-  bool          InLayerSubGroup();
-  // #CAT_Structure is this layer in a layer subgroup or directly in network.layers main layer group?
   void          AddRelPos(taVector3i& rel_pos);
   // #IGNORE add relative pos, which factors in offsets from above
   void          AddRelPos2d(taVector2i& rel_pos);

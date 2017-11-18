@@ -898,6 +898,8 @@ void Network::BuildIndexesSizes() {
       }
       last_laygp = NULL;
       last_laygp_lay0_idx = -1;
+      lay->laygp_n = 0;
+      lay->laygp_lay0_idx = -1;
     }
     
     // LayerSpec and UnitSpec

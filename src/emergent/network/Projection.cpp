@@ -204,10 +204,11 @@ bool Projection::ChangeMyType(TypeDef* new_typ) {
 #ifdef DMEM_COMPILE
 
 void Projection::DMem_InitAggs() {
-  NetworkState_cpp* net = GetValidNetState();
-  if(!net) return;
+  // important: cannot check for valid as this is called during building!
+  // NetworkState_cpp* net = GetValidNetState();
+  if(!layer || !layer->own_net || !layer->own_net->net_state) return;
   Network* mynet = layer->own_net;
-  if(!mynet) return;
+  NetworkState_cpp* net = mynet->net_state;
   PrjnState_cpp* pst = GetPrjnState(net);
   if(!pst) return;
   dmem_agg_sum.agg_op = MPI_SUM;
