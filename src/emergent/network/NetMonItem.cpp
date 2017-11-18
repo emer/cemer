@@ -572,8 +572,7 @@ bool NetMonItem::ScanObject_InNonTAObject(void* obj, TypeDef* typ, String var, t
 
   TypeDef* own_td = typ;
   int net_base_off = 0;
-  ta_memb_ptr net_mbr_off;
-  MemberDef* md = TypeDef::FindMemberPathStatic(own_td, net_base_off, net_mbr_off, var, false);
+  MemberDef* md = TypeDef::FindMemberPathStatic(own_td, net_base_off, var, false);
   if(!md) {
     MonError(err_not_found, "ScanObject_InNonTAObject", 
              "Variable not found:", var, "in object of type:", typ->name);
@@ -1016,8 +1015,7 @@ bool NetMonItem::CheckVarOnUnit(String var, Network* net) {
   
   TypeDef* own_td = unit_typ;
   int net_base_off = 0;
-  ta_memb_ptr net_mbr_off;
-  MemberDef* md = TypeDef::FindMemberPathStatic(own_td, net_base_off, net_mbr_off, var, false);
+  MemberDef* md = TypeDef::FindMemberPathStatic(own_td, net_base_off, var, false);
   if(!md) return false;
   return true;
 }

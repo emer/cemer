@@ -31,11 +31,10 @@ taiWidget* taiTypeOfVariant::GetWidgetRep_impl(IWidgetHost* host_, taiWidget* pa
 //     String fixtyp = md->OptionAfter("FIXTYPE_ON_");
 //     if(fixtyp.nonempty()) {
 //       TypeDef* own_td = typ;
-//       ta_memb_ptr net_mbr_off = 0;      int net_base_off = 0;
-//       MemberDef* tdmd = TypeDef::FindMemberPathStatic(own_td, net_base_off, net_mbr_off,
-//                                                    fixtyp, false); // no warn
+//       int net_base_off = 0;
+//       MemberDef* tdmd = TypeDef::FindMemberPathStatic(own_td, net_base_off, fixtyp, false); // no warn
 //       if (tdmd && (tdmd->type == &TA_bool)) {
-//      if(*((bool*)(MemberDef::GetOff_static(base, net_base_off, net_mbr_off)))) {
+//      if(*((bool*)(MemberDef::GetOff_static(base, net_base_off, tdmd->off)))) {
 //        flags_ |= taiWidgetVariantBase::flgFixedType;
 //      }
 //       }

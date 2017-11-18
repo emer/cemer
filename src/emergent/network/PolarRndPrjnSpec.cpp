@@ -55,7 +55,7 @@ void STATE_CLASS(PolarRndPrjnSpec)::Connect_impl(PRJN_STATE* prjn, NETWORK_STATE
   }
 
   int* ruorder = new int[rlay_no];
-  IntArraySeqPermute(ruorder, rlay_no);
+  IntArraySeqPermute(ruorder, rlay_no, 0); // CRITICAL: do NOT use -1 for thr_no so dmem has same rnd!
   
   TAVECTOR2I ru_geom;
   TAVECTOR2I ru_pos;             // do this according to act_geom..
@@ -63,13 +63,12 @@ void STATE_CLASS(PolarRndPrjnSpec)::Connect_impl(PRJN_STATE* prjn, NETWORK_STATE
   for(int rui=0; rui < rlay_no; rui++) {
     UNIT_STATE* ru = recv_lay->GetUnitState(net, ruorder[rui]);
     ru_pos.SetXY(ru->pos_x, ru->pos_y);
-    ConState_cpp* recv_gp = NULL;
     TAVECTOR2F suc;
     int n_con = 0;
     int n_retry = 0;
     while((n_con < recv_no) && (n_retry < max_retries)) { // limit number of retries
-      float dist = rnd_dist.Gen();              // just get random deviate from distribution
-      float angle = 2.0f * 3.14159265f * rnd_angle.Gen(); // same for angle
+      float dist = rnd_dist.Gen(0); // CRITICAL: do NOT use -1 for thr_no so dmem has same rnd!
+      float angle = 2.0f * 3.14159265f * rnd_angle.Gen(0); // CRITICAL: do NOT use -1 for thr_no so dmem has same rnd!
       suc.x = dist * cosf(angle);
       suc.y = dist * sinf(angle);
       UNIT_STATE* su = GetUnitFmOff(prjn, net, ru_pos, suc);

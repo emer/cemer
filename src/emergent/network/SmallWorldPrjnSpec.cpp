@@ -92,7 +92,7 @@ void SmallWorldPrjnSpec::Connect_impl(Projection* prjn, int make_cons) {
             ratio = taMath_float::div(distance, lambda);
             power = taMath_float::pow(ratio, 2.0);
             probability = taMath_float::exp_fast(-power);
-            project = Random::BoolProb(probability);
+            project = Random::BoolProb(probability, 0); // CRITICAL: do NOT use -1 for thr_no so dmem has same rnd!
 
             if(project) {
               prjns.SetMatrixVal(project, 0, 0, this_recv_flat, this_sx, this_sy);

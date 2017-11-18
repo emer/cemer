@@ -186,9 +186,8 @@ bool PatchRec::ApplyPatch_Assign(taProject* proj) {
   if(!obj) return false;
   if(mbr_path.nonempty()) {
     TypeDef* own_td = obj->GetTypeDef();
-    ta_memb_ptr net_mbr_off = 0;      int net_base_off = 0;
-    MemberDef* md = TypeDef::FindMemberPathStatic
-      (own_td, net_base_off, net_mbr_off, mbr_path, false); // no warn
+    int net_base_off = 0;
+    MemberDef* md = TypeDef::FindMemberPathStatic(own_td, net_base_off, mbr_path, false); // no warn
     if(!md) {
       ApplyInfo("ASSIGN could not find member:",mbr_path,"in object",
                    obj->DisplayPath());
@@ -196,7 +195,7 @@ bool PatchRec::ApplyPatch_Assign(taProject* proj) {
     }
     ApplyInfo("ASSIGN target:", obj_path_names, "Mbr:\n",
               obj->DisplayPath() + "." + mbr_path, "= " + value);
-    void* addr = MemberDef::GetOff_static(obj, net_base_off, net_mbr_off);
+    void* addr = MemberDef::GetOff_static(obj, net_base_off, md->off);
     md->type->SetValStr(value, addr);
     String act_val = md->type->GetValStr(addr, NULL, md, TypeDef::SC_VALUE, false);
     if(act_val != value) {

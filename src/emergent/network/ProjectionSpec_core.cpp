@@ -243,7 +243,7 @@ void STATE_CLASS(ProjectionSpec)::Connect_Gps_Prob
       if(!self_con && (ru == su)) continue;
       perm_list[n_send++] = sui;
     }
-    IntArrayPermute(perm_list, n_send);
+    IntArrayPermute(perm_list, n_send, 0); // CRITICAL: do NOT use -1 for thr_no so dmem has same rnd!
     IntArraySort(perm_list, recv_no, false); // keep selected subset sorted for optimizing con search etc
     for(int j=0; j<recv_no; j++) {
       UNIT_STATE* su = send_lay->GetUnitStateGpUnIdx(net, sgpidx, perm_list[j]);
@@ -280,7 +280,7 @@ void STATE_CLASS(ProjectionSpec)::Connect_Gps_ProbSymSameGp
   if(first <= 0) first = 1;
 
   int* ru_list = new int[ru_nunits]; // receiver permution list
-  IntArraySeqPermute(ru_list, ru_nunits);
+  IntArraySeqPermute(ru_list, ru_nunits, 0); // CRITICAL: do NOT use -1 for thr_no so dmem has same rnd!
 
   int* perm_list = new int[su_nunits]; // sender permution list
   for(int rui=0; rui < ru_nunits; rui++) {
@@ -296,7 +296,7 @@ void STATE_CLASS(ProjectionSpec)::Connect_Gps_ProbSymSameGp
       if(scg->FindConFromIdx(ru->flat_idx) >= 0) continue;
       perm_list[n_send++] = sui;
     }
-    IntArrayPermute(perm_list, n_send);
+    IntArrayPermute(perm_list, n_send, 0); // CRITICAL: do NOT use -1 for thr_no so dmem has same rnd!
     int mxno = MIN(first, n_send);
     for(int j=0; j < mxno; j++) {    // only connect 1/2 of the units
       UNIT_STATE* su = send_lay->GetUnitStateGpUnIdx(net, sgpidx, perm_list[j]);

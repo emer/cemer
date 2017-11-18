@@ -291,7 +291,8 @@ int TiledDivGpRFPrjnSpec::ProbAddCons_impl(Projection* prjn, float p_add_con, fl
               if(!self_con && (su_u == ru_u)) continue;
               
               // just do a basic probabilistic version: too hard to permute..
-              if(Random::ZeroOne() > p_add_con) continue; // no-go
+              if(Random::ZeroOne(0) > p_add_con) continue; // no-go
+              // CRITICAL: do NOT use -1 for thr_no so dmem has same rnd!
               
               int con = -1;
               if(!reciprocal)   // gotta check
@@ -427,7 +428,7 @@ void TiledDivGpRFPrjnSpec::Init_Weights_BimodalPermuted(Projection* prjn, ConSta
     }
   }
   
-  high_low_wts.Permute();
+  high_low_wts.Permute(thr_no); // critical to use thr_no -- not -1!
   
   for(int i=0; i<cg->size; i++) {
     int hilo = high_low_wts[i];

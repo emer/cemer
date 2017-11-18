@@ -444,10 +444,9 @@ public:
   /////////////////////////////////////////////////////////////
   //		Finding stuff within type
 
-  static MemberDef* FindMemberPathStatic(TypeDef*& own_td, int& net_base_off,
-                                         ta_memb_ptr& net_mbr_off,
-                                         const String& path, bool warn = true);
-  // you must supply the initial own_td as starting type -- looks for a member or sequence of members based on static type information for members (i.e., does not walk the structural tree and cannot go into lists or other containers, but can find any static paths for object members and their members, etc) -- if warn, emits warning message for bad paths -- net offsets provide overall offset from original own_td obj
+  static MemberDef* FindMemberPathStatic
+    (TypeDef*& own_td, int& net_base_off, const String& path, bool warn = true);
+  // you must supply the initial own_td as starting type -- looks for a member or sequence of members based on static type information for members (i.e., does not walk the structural tree and cannot go into lists or other containers, but can find any static paths for object members and their members, etc) -- if warn, emits warning message for bad paths -- net_base_off is the char* byte offset needed to add to original own_td obj to get a void* that points to the base of own_td where the returned MemberDef applies (i.e., use md->GetOff((char*)base + net_base_off) to get a pointer to the returned member)
   TypeDef*      FindTypeWithMember(const String& nm, MemberDef** md);
   // returns the type or child type with memberdef md
 

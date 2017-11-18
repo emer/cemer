@@ -1297,9 +1297,7 @@ Completions* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_po
       }
       if(!lookup_td && own_td) {
         int net_base_off=0;
-        ta_memb_ptr net_mbr_off=0;
-        MemberDef* md = TypeDef::FindMemberPathStatic(own_td, net_base_off,
-                                                      net_mbr_off, path_rest, false);
+        MemberDef* md = TypeDef::FindMemberPathStatic(own_td, net_base_off, path_rest, false);
         // no warn
         if(md)
           lookup_td = md->type;

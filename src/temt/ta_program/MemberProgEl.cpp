@@ -80,8 +80,7 @@ TypeDef* MemberProgEl::GetObjTypeFromPath
 
   // didn't get it yet, try with static
   int net_base_off = 0;
-  ta_memb_ptr net_mbr_off = 0;
-  md = TypeDef::FindMemberPathStatic(base_type, net_base_off, net_mbr_off, path, false);
+  md = TypeDef::FindMemberPathStatic(base_type, net_base_off, path, false);
   // gets static path based just on member types..
   if(md && md->type->IsActualTaBase()) {
     return md->type;
@@ -124,8 +123,7 @@ bool MemberProgEl::UAEInProgram(const String& path, TypeDef* base_type, taBase* 
   }
 
   int net_base_off = 0;
-  ta_memb_ptr net_mbr_off = 0;
-  md = TypeDef::FindMemberPathStatic(base_type, net_base_off, net_mbr_off, path, false);
+  md = TypeDef::FindMemberPathStatic(base_type, net_base_off, path, false);
   // gets static path based just on member types..
   if(md && md->type->HasOption(uae_in_prog)) {
     return true;

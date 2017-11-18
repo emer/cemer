@@ -1248,11 +1248,10 @@ void TypeDef::SetTemplType(TypeDef* templ_par, const TypeSpace& inst_pars) {
   UpdateMDTypes(templ_par->templ_pars, templ_pars);
 }
 
-MemberDef* TypeDef::FindMemberPathStatic(TypeDef*& own_td, int& net_base_off,
-                                         ta_memb_ptr& net_mbr_off,
-                                         const String& path, bool warn) {
+MemberDef* TypeDef::FindMemberPathStatic
+(TypeDef*& own_td, int& net_base_off, const String& path, bool warn) {
   void* cur_base_off = NULL;
-  net_mbr_off = 0;
+  net_base_off = 0;
   if(!own_td || path.empty()) {
     return NULL;                // no warning..
   }
@@ -1271,7 +1270,6 @@ MemberDef* TypeDef::FindMemberPathStatic(TypeDef*& own_td, int& net_base_off,
     else {
       own_td = md->type;
       cur_base_off = md->GetOff(cur_base_off);
-      net_mbr_off = *((ta_memb_ptr*)&cur_base_off);
     }
   }
   MemberDef* md = NULL;
@@ -1290,8 +1288,7 @@ MemberDef* TypeDef::FindMemberPathStatic(TypeDef*& own_td, int& net_base_off,
     }
     return NULL;
   }
-  cur_base_off = md->GetOff(cur_base_off);
-  net_mbr_off = *((ta_memb_ptr*)&cur_base_off);
+  net_base_off = (char*)cur_base_off - (char*)0;
   return md;
 }
 

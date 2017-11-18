@@ -177,12 +177,11 @@ bool TypeItem::GetCondOpt(const String condkey, const TypeDef* base_td, const vo
     }
 
     void* mbr_base = NULL;      // base for conditionalizing member itself
-    ta_memb_ptr net_mbr_off = 0;      int net_base_off = 0;
+    int net_base_off = 0;
     TypeDef* eff_td = (TypeDef*)base_td;
-    MemberDef* md = TypeDef::FindMemberPathStatic(eff_td, net_base_off, net_mbr_off,
-                                                  mbr, false); // no warn..
+    MemberDef* md = TypeDef::FindMemberPathStatic(eff_td, net_base_off, mbr, false); // no warn..
     if (md) {
-      mbr_base = MemberDef::GetOff_static(base, net_base_off, net_mbr_off);
+      mbr_base = MemberDef::GetOff_static(base, net_base_off, md->off);
     }
 
     if (!md || !mbr_base) {

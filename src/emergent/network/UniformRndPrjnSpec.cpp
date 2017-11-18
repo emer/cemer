@@ -2,8 +2,9 @@
 // {
 
 void STATE_CLASS(UniformRndPrjnSpec)::Connect_impl(PRJN_STATE* prjn, NETWORK_STATE* net, int make_cons) { 
-  if(same_seed)
+  if(same_seed) {
     rndm_seed.OldSeed();
+  }
 
   LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
   LAYER_STATE* send_lay = prjn->GetSendLayerState(net);
@@ -46,7 +47,7 @@ void STATE_CLASS(UniformRndPrjnSpec)::Connect_impl(PRJN_STATE* prjn, NETWORK_STA
     int* ru_list = new int[rlay_no]; // receiver permution list
     int* perm_list = new int[rlay_no]; // sender permution list
 
-    IntArraySeqPermute(ru_list, rlay_no);
+    IntArraySeqPermute(ru_list, rlay_no, 0); // CRITICAL: do NOT use -1 for thr_no so dmem has same rnd!
 
     for(int rui=0; rui < rlay_no; rui++) {
       UNIT_STATE* ru = recv_lay->GetUnitState(net, ru_list[rui]);
@@ -61,7 +62,7 @@ void STATE_CLASS(UniformRndPrjnSpec)::Connect_impl(PRJN_STATE* prjn, NETWORK_STA
         if(scg->FindConFromIdx(ru->flat_idx) >= 0) continue;
         perm_list[n_send++] = sui;
       }
-      IntArrayPermute(perm_list, n_send);
+      IntArrayPermute(perm_list, n_send, 0); // CRITICAL: do NOT use -1 for thr_no so dmem has same rnd!
       int mxno = MIN(first, n_send);
       IntArraySort(perm_list, mxno, false); // keep selected subset sorted for optimizing con search etc
       for(int j=0; j < mxno; j++) {       // only connect 1/2 of the units
@@ -94,7 +95,7 @@ void STATE_CLASS(UniformRndPrjnSpec)::Connect_impl(PRJN_STATE* prjn, NETWORK_STA
         if(!self_con && (ru == su)) continue;
         perm_list[n_send++] = sui;
       }
-      IntArrayPermute(perm_list, n_send);
+      IntArrayPermute(perm_list, n_send, 0); // CRITICAL: do NOT use -1 for thr_no so dmem has same rnd!
       int mxno = MIN(n_send, recv_no);
       IntArraySort(perm_list, mxno, false); // keep selected subset sorted for optimizing con search etc
       for(int j=0; j < mxno; j++) {

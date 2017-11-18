@@ -315,10 +315,8 @@ void UnitGroupView::UpdateUnitViewBase_Sub_impl(int midx, MemberDef* disp_md) {
   if(!lay) return;
   Network* net = lay->own_net;
   TypeDef* own_td = net->UnitStateType();
-  ta_memb_ptr net_mbr_off = 0;
   int net_base_off = 0;
-  MemberDef* smd = TypeDef::FindMemberPathStatic(own_td, net_base_off, net_mbr_off,
-                                                 disp_md->name, false); // no warn
+  MemberDef* smd = TypeDef::FindMemberPathStatic(own_td, net_base_off, disp_md->name, false); // no warn
   taVector2i coord;
   for(coord.y = 0; coord.y < lay->flat_geom.y; coord.y++) {
     for(coord.x = 0; coord.x < lay->flat_geom.x; coord.x++) {
@@ -326,7 +324,7 @@ void UnitGroupView::UpdateUnitViewBase_Sub_impl(int midx, MemberDef* disp_md) {
       uvd_bases.Set(NULL, coord.x, coord.y, midx);
       if(!unit || !smd) continue;  // rest will be null too, but we loop to null disp_base
       if(unit->lesioned()) continue;
-      void* sbaddr = MemberDef::GetOff_static(unit, net_base_off, net_mbr_off);
+      void* sbaddr = MemberDef::GetOff_static(unit, net_base_off, smd->off);
       uvd_bases.Set(sbaddr, coord.x, coord.y, midx);
     }
   }

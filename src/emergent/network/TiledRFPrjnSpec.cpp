@@ -143,7 +143,7 @@ void STATE_CLASS(TiledRFPrjnSpec)::Connect_impl
 //       for(int rui=0; rui < ru_nunits; rui++) {
 //         Unit* ru = recv_lay->UnitAtUnGpIdx(rui, rgpidx);
 
-//         new_idxs.Permute();
+//         new_idxs.Permute(0); // CRITICAL: do NOT use -1 for thr_no so dmem has same rnd!
 
 //         for(int i=0;i<n_new_cons;i++) {
 //           int su_idx = new_idxs[i];

@@ -110,12 +110,10 @@ TypeDef* taiMemberOfTokenPtr::GetMinType(const void* base) {
   if (tmp.nonempty()) {
     if (base) {
       TypeDef* own_td = typ;
-      ta_memb_ptr net_mbr_off = 0;
       int net_base_off = 0;
-      MemberDef* md = TypeDef::FindMemberPathStatic(own_td, net_base_off, net_mbr_off,
-                                                    tmp, false); // no warn
+      MemberDef* md = TypeDef::FindMemberPathStatic(own_td, net_base_off, tmp, false); // no warn
       if (md && (md->type->name == "TypeDef_ptr")) {
-        dir_type = *(TypeDef**)(MemberDef::GetOff_static(base, net_base_off, net_mbr_off));
+        dir_type = *(TypeDef**)(MemberDef::GetOff_static(base, net_base_off, md->off));
       }
     }
   }
@@ -158,18 +156,14 @@ void taiMemberOfTokenPtr::GetImage_impl(taiWidget* dat, const void* base) {
   String scope_on_str = mbr->OptionAfter("SCOPEOBJ_ON_");
   if(base && scope_on_str.nonempty()) {
     TypeDef* own_td = typ;
-    ta_memb_ptr net_mbr_off = 0;
     int net_base_off = 0;
-    MemberDef* md = TypeDef::FindMemberPathStatic(own_td, net_base_off, net_mbr_off,
-                                                  scope_on_str, false); // no warn
+    MemberDef* md = TypeDef::FindMemberPathStatic(own_td, net_base_off, scope_on_str, false); // no warn
     if (md && md->type->IsBasePointerType()) {
       if (md->type->IsTaBase() || md->type->DerivesFrom(TA_taSmartPtr)) {
-        scope_on_obj = *((taBase**)(MemberDef::GetOff_static(base, net_base_off,
-                                                             net_mbr_off)));
+        scope_on_obj = *((taBase**)(MemberDef::GetOff_static(base, net_base_off, md->off)));
       }
       else if(md->type->DerivesFrom(TA_taSmartRef)) {
-        taSmartRef& ref = *((taSmartRef*)(MemberDef::GetOff_static(base, net_base_off,
-                                                                   net_mbr_off)));
+        taSmartRef& ref = *((taSmartRef*)(MemberDef::GetOff_static(base, net_base_off, md->off)));
         scope_on_obj = ref.ptr();
       }
     }
@@ -178,13 +172,10 @@ void taiMemberOfTokenPtr::GetImage_impl(taiWidget* dat, const void* base) {
   scope_on_str = mbr->OptionAfter("SCOPETYPE_ON_");
   if(base && scope_on_str.nonempty()) {
     TypeDef* own_td = typ;
-    ta_memb_ptr net_mbr_off = 0;
     int net_base_off = 0;
-    MemberDef* md = TypeDef::FindMemberPathStatic(own_td, net_base_off, net_mbr_off,
-                                                  scope_on_str, false); // no warn
+    MemberDef* md = TypeDef::FindMemberPathStatic(own_td, net_base_off, scope_on_str, false); // no warn
     if(md && md->type->name == "TypeDef_ptr") {
-      scope_type = *((TypeDef**)(MemberDef::GetOff_static(base, net_base_off,
-                                                          net_mbr_off)));
+      scope_type = *((TypeDef**)(MemberDef::GetOff_static(base, net_base_off, md->off)));
     }
   }
   

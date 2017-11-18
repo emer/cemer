@@ -118,10 +118,9 @@ void ActrCondition::CheckThisConfig_impl(bool quiet, bool& rval) {
                "object path obj_path is empty -- specify path to comparison value");
     taBase* obj = src.ptr();
     void* mbr_base = NULL;      // base for conditionalizing member itself
-    ta_memb_ptr net_mbr_off = 0;      int net_base_off = 0;
+    int net_base_off = 0;
     TypeDef* eff_td = (TypeDef*)obj->GetTypeDef();
-    MemberDef* md = TypeDef::FindMemberPathStatic(eff_td, net_base_off, net_mbr_off,
-                                                  obj_path, true); // yes warn..
+    MemberDef* md = TypeDef::FindMemberPathStatic(eff_td, net_base_off, obj_path, true); // yes warn..
     CheckError(!md, quiet, rval,
 	       "object path is not valid -- could not find path:",obj_path,
 	       "on object:", obj->DisplayPath());
@@ -347,12 +346,11 @@ bool ActrCondition::Matches(ActrProduction& prod, bool why_not) {
   case OBJ_MEMBER: {
     taBase* obj = src.ptr();
     void* mbr_base = NULL;      // base for conditionalizing member itself
-    ta_memb_ptr net_mbr_off = 0;      int net_base_off = 0;
+    int net_base_off = 0;
     TypeDef* eff_td = (TypeDef*)obj->GetTypeDef();
-    MemberDef* md = TypeDef::FindMemberPathStatic(eff_td, net_base_off, net_mbr_off,
-                                                  obj_path, true); // yes warn..
+    MemberDef* md = TypeDef::FindMemberPathStatic(eff_td, net_base_off, obj_path, true); // yes warn..
     if (md) {
-      mbr_base = MemberDef::GetOff_static(obj, net_base_off, net_mbr_off);
+      mbr_base = MemberDef::GetOff_static(obj, net_base_off, md->off);
       Variant tval = md->type->GetValVar(mbr_base, md);
       match = MatchVarVal(tval, why_not);
     }

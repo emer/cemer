@@ -159,10 +159,9 @@ void ActrAction::CheckThisConfig_impl(bool quiet, bool& rval) {
     if(dest) {
       taBase* obj = dest.ptr();
       void* mbr_base = NULL;      // base for conditionalizing member itself
-      ta_memb_ptr net_mbr_off = 0;      int net_base_off = 0;
+      int net_base_off = 0;
       TypeDef* eff_td = (TypeDef*)obj->GetTypeDef();
-      MemberDef* md = TypeDef::FindMemberPathStatic(eff_td, net_base_off, net_mbr_off,
-                                                    obj_path, true); // yes warn..
+      MemberDef* md = TypeDef::FindMemberPathStatic(eff_td, net_base_off, obj_path, true); // yes warn..
       CheckError(!md, quiet, rval,
                  "object path is not valid -- could not find path:",obj_path,
                  "on object:", obj->DisplayPath());
@@ -456,12 +455,11 @@ bool ActrAction::DoAction(ActrProduction& prod,
     SetVarsString(prod, sval);
     taBase* obj = dest.ptr();
     void* mbr_base = NULL;      // base for conditionalizing member itself
-    ta_memb_ptr net_mbr_off = 0;      int net_base_off = 0;
+    int net_base_off = 0;
     TypeDef* eff_td = (TypeDef*)obj->GetTypeDef();
-    MemberDef* md = TypeDef::FindMemberPathStatic(eff_td, net_base_off, net_mbr_off,
-                                                  obj_path, true); // yes warn..
+    MemberDef* md = TypeDef::FindMemberPathStatic(eff_td, net_base_off, obj_path, true); // yes warn..
     if(md) {
-      mbr_base = MemberDef::GetOff_static(obj, net_base_off, net_mbr_off);
+      mbr_base = MemberDef::GetOff_static(obj, net_base_off, md->off);
       md->type->SetValStr(sval, mbr_base, NULL, md);
     }
     break;

@@ -24,7 +24,7 @@ void STATE_CLASS(RandomPrjnSpec)::Connect_impl(PRJN_STATE* prjn, NETWORK_STATE* 
 
   for (int i = 0; i < n_recv_units; i++) {
     for (int j= 0; j < n_send_units; j++) {
-      if (Random::BoolProb(p_con)) {
+      if (Random::BoolProb(p_con, 0)) { // CRITICAL: do NOT use -1 for thr_no so dmem has same rnd!
         if(make_cons) {
           cons[ j * n_recv_units + i] = true;
         }

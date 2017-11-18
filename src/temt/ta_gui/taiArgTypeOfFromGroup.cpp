@@ -151,13 +151,10 @@ taList_impl* taiArgTypeOfFromGroup::GetList(const void* base) {
   }
   if(submb_nm.nonempty()) {
     TypeDef* td = mb_base->GetTypeDef();
-
-    ta_memb_ptr mbr_off = 0;
     int base_off = 0;
-    MemberDef* mbr_def = TypeDef::FindMemberPathStatic(td, base_off, mbr_off,
-                                                       submb_nm, true); // warn
+    MemberDef* mbr_def = TypeDef::FindMemberPathStatic(td, base_off, submb_nm, true); // warn
     if(mbr_def) {
-      void* address = MemberDef::GetOff_static(mb_base, base_off, mbr_off);
+      void* address = MemberDef::GetOff_static(mb_base, base_off, mbr_def->off);
       mb_base = (taBase*)address;
     }
   }
