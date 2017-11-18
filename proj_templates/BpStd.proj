@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.2.0.0 rev11062
+// ta_Dump File v3.0 -- code v8.2.2.0 rev11187
 BpProject .projects[0] { 
  Doc_Group @.docs = [0] {
  };
@@ -1590,24 +1590,15 @@ BpProject .projects[0] {
     BpLayer @[0] { 
      Projection_Group @.projections = [0] {
      };
-
-     Unit_Group @.units = [25] {
-     };
     };
     BpLayer @[1] { 
      Projection_Group @.projections = [1] {
       Projection @[0] { };
      };
-
-     Unit_Group @.units = [25] {
-     };
     };
     BpLayer @[2] { 
      Projection_Group @.projections = [1] {
       Projection @[0] { };
-     };
-
-     Unit_Group @.units = [25] {
      };
     };
    };
@@ -5119,14 +5110,14 @@ BpProject .projects[0] {
       code_string="network->Compute_EpochStats()";
       result_var=NULL;
       obj=$.programs.gp[0][2].args[0]$;
-      method=LeabraNetwork::Compute_EpochStats;
+      method=Network::Compute_EpochStats;
       meth_args {
        name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
       meth_sig="void Compute_EpochStats()";
-      meth_desc=" compute epoch-level statistics; calls DMem_ComputeAggs (if dmem) and EpochSSE -- specific algos may add more compute epoch-level statistics, including SSE, AvgExtRew and AvgCycles";
+      meth_desc=" compute epoch-level statistics; calls DMem_ComputeAggs (if dmem) and EpochSSE -- specific algos may add more";
      };
      MethodCall @[8] {
       name="MethodCall_epochtimerEndTimer";
@@ -5484,6 +5475,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        el_typ=LayerWriterEl;
        el_def=0;
        LayerWriterEl @[0] {
+	off=0;
 	col_name="Input";
 	net_target=LAYER;
 	layer_name="Input";
@@ -5495,6 +5487,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	noise {name="RandomSpec_4": type=NONE: mean=0: var=0.5: par=1: };
        };
        LayerWriterEl @[1] {
+	off=0;
 	col_name="Output";
 	net_target=LAYER;
 	layer_name="Output";
@@ -5506,6 +5499,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	noise {name="RandomSpec_5": type=NONE: mean=0: var=0.5: par=1: };
        };
        LayerWriterEl @[2] {
+	off=0;
 	col_name="Name";
 	net_target=TRIAL_NAME;
 	layer_name="Name";
@@ -7595,14 +7589,14 @@ this program can be extended to do arbitrary things to generate data and apply i
       code_string="network->Compute_EpochStats()";
       result_var=NULL;
       obj=$.programs.gp[1][0].args[0]$;
-      method=LeabraNetwork::Compute_EpochStats;
+      method=Network::Compute_EpochStats;
       meth_args {
        name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
       meth_sig="void Compute_EpochStats()";
-      meth_desc=" compute epoch-level statistics; calls DMem_ComputeAggs (if dmem) and EpochSSE -- specific algos may add more compute epoch-level statistics, including SSE, AvgExtRew and AvgCycles";
+      meth_desc=" compute epoch-level statistics; calls DMem_ComputeAggs (if dmem) and EpochSSE -- specific algos may add more";
      };
      ProgramCall @[8] {
       name="ProgramCall_BpEpochMonitorTestnetwork";
@@ -7932,6 +7926,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        el_typ=LayerWriterEl;
        el_def=0;
        LayerWriterEl @[0] {
+	off=0;
 	col_name="Input";
 	net_target=LAYER;
 	layer_name="Input";
@@ -7943,6 +7938,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	noise {name="RandomSpec_4": type=NONE: mean=0: var=0.5: par=1: };
        };
        LayerWriterEl @[1] {
+	off=0;
 	col_name="Output";
 	net_target=LAYER;
 	layer_name="Output";
@@ -7954,6 +7950,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	noise {name="RandomSpec_5": type=NONE: mean=0: var=0.5: par=1: };
        };
        LayerWriterEl @[2] {
+	off=0;
 	col_name="Name";
 	net_target=TRIAL_NAME;
 	layer_name="Name";
@@ -9334,9 +9331,9 @@ this program can be extended to do arbitrary things to generate data and apply i
     el_typ=UserDataItem;
     el_def=0;
     UserDataItem @[0] {name="view_win_lft": value=0: val_type_fixed=0: };
-    UserDataItem @[1] {name="view_win_top": value=0.01954121: val_type_fixed=0: };
+    UserDataItem @[1] {name="view_win_top": value=0.01930954: val_type_fixed=0: };
     UserDataItem @[2] {name="view_win_wd": value=1: val_type_fixed=0: };
-    UserDataItem @[3] {name="view_win_ht": value=0.7994902: val_type_fixed=0: };
+    UserDataItem @[3] {name="view_win_ht": value=0.7992978: val_type_fixed=0: };
     UserDataItem @[4] {name="view_win_iconified": value=0: val_type_fixed=0: };
     UserDataItem @[5] {name="view_splitter_state": value=AAAA/wAAAAEAAAADAAABFwAAAfwAAAKMAf////8BAAAAAQA=: val_type_fixed=0: };
    };
@@ -9443,7 +9440,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	  net_text_rot=-90;
 	  cur_unit_vals{ act;	  };
 	  hot_vars{ targ;ext;act;net;bias_wt;bias_dwt;bias_pdw;err;dEdA;dEdNet;r.wt;r.wt*act;s.wt;r.dwt;s.dwt;	  };
-	  unit_src_path=".layers[2].units[7]";
+	  unit_src_path=".layers[2][0]";
 	  con_type=ANY_CON;
 	  hist_idx=0;
 	  hist_save=1;
@@ -9456,7 +9453,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	  max_size2d {x=5: y=18: z=1: };
 	  eff_max_size {x=5: y=5: z=2.333333: };
 	  font_sizes {net_name=0.05: net_vals=0.05: layer=0.04: layer_min=0.01: layer_vals=0.03: prjn=0.01: unit=0.02: un_nm_len=3: };
-	  view_params {xy_square=0: unit_spacing=0.05: prjn_disp=L_R_B: prjn_name=0: prjn_width=0.002: prjn_trans=0.5: lay_trans=0.4: unit_trans=0.4: laygp_width=1: show_laygp=1: };
+	  view_params {xy_square=0: unit_spacing=0.05: prjn_disp=L_R_B: prjn_name=0: prjn_width=0.002: prjn_trans=0.5: lay_trans=0.5: unit_trans=0.6: laygp_width=1: show_laygp=1: };
 	  wt_line_disp=0;
 	  wt_line_width=4;
 	  wt_line_thr=0.8;
@@ -10810,9 +10807,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       el_typ=UserDataItem;
       el_def=0;
       UserDataItem @[0] {name="view_win_lft": value=0: val_type_fixed=0: };
-      UserDataItem @[1] {name="view_win_top": value=0.01019541: val_type_fixed=0: };
-      UserDataItem @[2] {name="view_win_wd": value=0.04354753: val_type_fixed=0: };
-      UserDataItem @[3] {name="view_win_ht": value=0.7340696: val_type_fixed=0: };
+      UserDataItem @[1] {name="view_win_top": value=0.008191925: val_type_fixed=0: };
+      UserDataItem @[2] {name="view_win_wd": value=0.02706271: val_type_fixed=0: };
+      UserDataItem @[3] {name="view_win_ht": value=0.7524868: val_type_fixed=0: };
       UserDataItem @[4] {name="view_win_iconified": value=0: val_type_fixed=0: };
       UserDataItem @[5] {name="view_visible": value=1: val_type_fixed=0: };
      };
@@ -10856,6 +10853,14 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
    };
    name="Network_0";
    desc=;
+   flags=BUILD_INIT_WTS;
+   train_mode=TRAIN;
+   wt_update=ON_LINE;
+   small_batch_n=10;
+   stats {sse_unit_avg=0: sse_sqrt=0: cnt_err_tol=0: prerr=0: };
+   n_units=76;
+   n_cons=1250;
+   max_prjns=1;
    specs {
     name="specs";
     el_typ=BpUnitSpec;
@@ -10872,8 +10877,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       el_typ=BpUnitSpec;
       el_def=0;
      };
-     act_range {min=0: max=1: range=1: scale=1: };
      bias_spec {type=BpConSpec: spec=.networks[0].specs[1].children[0]$$: };
+     act_range {min=0: max=1: range=1: scale=1: };
      sse_tol=0.5;
      act_fun=SIGMOID;
      error_fun=CROSS_ENTROPY;
@@ -10911,6 +10916,10 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        wt_limits {type=NONE: min=-1: max=1: sym=0: sym_fm_top=0: };
        lrate=0.1;
        cur_lrate=0.1;
+       momentum=0;
+       decay_type=SIMPLE_DECAY;
+       decay=0;
+       wt_updt=WU_SIMPLE_DECAY;
        lrate_sched {
 	name="lrate_sched";
 	el_typ=SchedItem;
@@ -10918,16 +10927,16 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	default_val=1;
 	interpolate=0;
        };
-       momentum=0;
-       decay_type=SIMPLE_DECAY;
-       decay=0;
-       wt_updt=WU_SIMPLE_DECAY;
       };
      };
      rnd {name="rnd": type=UNIFORM: mean=0: var=0.5: par=1: };
      wt_limits {type=NONE: min=-1: max=1: sym=0: sym_fm_top=0: };
      lrate=0.1;
      cur_lrate=0.1;
+     momentum=0;
+     decay_type=SIMPLE_DECAY;
+     decay=0;
+     wt_updt=WU_SIMPLE_DECAY;
      lrate_sched {
       name="lrate_sched";
       el_typ=SchedItem;
@@ -10935,10 +10944,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       default_val=1;
       interpolate=0;
      };
-     momentum=0;
-     decay_type=SIMPLE_DECAY;
-     decay=0;
-     wt_updt=WU_SIMPLE_DECAY;
     };
     FullPrjnSpec @[2] {
      name="FullPrjnSpec_0";
@@ -10975,9 +10980,22 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     max_disp_size2d {x=5: y=18: };
     BpLayer @[0] {
      name="Input";
-     desc=;
+     n_recv_prjns=0;
+     n_send_prjns=1;
+     un_geom_x=5;
+     un_geom_y=5;
+     un_geom_n=25;
+     gp_geom_x=1;
+     gp_geom_y=1;
+     gp_geom_n=1;
+     flat_geom_x=5;
+     flat_geom_y=5;
+     flat_geom_n=25;
+     gp_spc_x=1;
+     gp_spc_y=1;
      flags=0;
      layer_type=INPUT;
+     desc=;
      pos_rel {rel=ABS_POS: other=NULL: x_align=LEFT: x_off=0: y_align=FRONT: y_off=0: space=2: };
      pos {x=0: y=0: z=0: };
      pos_abs {x=0: y=0: z=0: };
@@ -10986,14 +11004,11 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      disp_scale=1;
      un_geom {x=5: y=5: n_not_xy=0: n=25: };
      unit_groups=0;
-     virt_groups=1;
      gp_geom {x=1: y=1: n_not_xy=0: n=1: };
      gp_spc {x=1: y=1: };
      flat_geom {x=5: y=5: n_not_xy=0: n=25: };
      disp_geom {x=5: y=5: n_not_xy=0: n=25: };
      scaled_disp_geom {x=5: y=5: n_not_xy=0: n=25: };
-     n_recv_prjns=0;
-     n_send_prjns=1;
      projections {
       name="projections";
       el_typ=Projection;
@@ -11005,13 +11020,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       el_def=0;
       Projection_Group @. = [0] = Projection .networks[0].layers[1].projections[0];
      };
-     units {
-      name="units";
-      el_typ=BpUnit;
-      el_def=0;
-      pos {x=0: y=0: z=0: };
-      output_name=;
-     };
      unit_spec {type=BpUnitSpec: spec=$.networks[0].specs[0]$: };
      dist {fm_input=0: fm_output=2: };
      units_lesioned=0;
@@ -11021,9 +11029,22 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     };
     BpLayer @[1] {
      name="Hidden";
-     desc=;
+     n_recv_prjns=1;
+     n_send_prjns=1;
+     un_geom_x=5;
+     un_geom_y=5;
+     un_geom_n=25;
+     gp_geom_x=1;
+     gp_geom_y=1;
+     gp_geom_n=1;
+     flat_geom_x=5;
+     flat_geom_y=5;
+     flat_geom_n=25;
+     gp_spc_x=1;
+     gp_spc_y=1;
      flags=0;
      layer_type=HIDDEN;
+     desc=;
      pos_rel {rel=ABS_POS: other=NULL: x_align=LEFT: x_off=0: y_align=FRONT: y_off=0: space=2: };
      pos {x=0: y=0: z=1: };
      pos_abs {x=0: y=0: z=1: };
@@ -11032,14 +11053,11 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      disp_scale=1;
      un_geom {x=5: y=5: n_not_xy=0: n=25: };
      unit_groups=0;
-     virt_groups=1;
      gp_geom {x=1: y=1: n_not_xy=0: n=1: };
      gp_spc {x=1: y=1: };
      flat_geom {x=5: y=5: n_not_xy=0: n=25: };
      disp_geom {x=5: y=5: n_not_xy=0: n=25: };
      scaled_disp_geom {x=5: y=5: n_not_xy=0: n=25: };
-     n_recv_prjns=1;
-     n_send_prjns=1;
      projections {
       name="projections";
       el_typ=Projection;
@@ -11054,11 +11072,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        spec {type=FullPrjnSpec: spec=.networks[0].specs[2]$$: };
        con_type=BpCon;
        con_spec {type=BpConSpec: spec=$.networks[0].specs[1]$: };
-       recv_idx=0;
-       send_idx=0;
-       recv_n=1;
-       send_n=1;
-       projected=1;
        dir_fixed=0;
        direction=FM_INPUT;
        prjn_clr {r=1: g=0.9: b=0.5: a=1: };
@@ -11070,13 +11083,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       el_def=0;
       Projection_Group @. = [0] = Projection .networks[0].layers[2].projections[0];
      };
-     units {
-      name="units";
-      el_typ=BpUnit;
-      el_def=0;
-      pos {x=0: y=0: z=0: };
-      output_name=;
-     };
      unit_spec {type=BpUnitSpec: spec=$.networks[0].specs[0]$: };
      dist {fm_input=1: fm_output=1: };
      units_lesioned=0;
@@ -11086,9 +11092,22 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     };
     BpLayer @[2] {
      name="Output";
-     desc=;
+     n_recv_prjns=1;
+     n_send_prjns=0;
+     un_geom_x=5;
+     un_geom_y=5;
+     un_geom_n=25;
+     gp_geom_x=1;
+     gp_geom_y=1;
+     gp_geom_n=1;
+     flat_geom_x=5;
+     flat_geom_y=5;
+     flat_geom_n=25;
+     gp_spc_x=1;
+     gp_spc_y=1;
      flags=0;
      layer_type=TARGET;
+     desc=;
      pos_rel {rel=ABS_POS: other=NULL: x_align=LEFT: x_off=0: y_align=FRONT: y_off=0: space=2: };
      pos {x=0: y=0: z=2: };
      pos_abs {x=0: y=0: z=2: };
@@ -11097,14 +11116,11 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      disp_scale=1;
      un_geom {x=5: y=5: n_not_xy=0: n=25: };
      unit_groups=0;
-     virt_groups=1;
      gp_geom {x=1: y=1: n_not_xy=0: n=1: };
      gp_spc {x=1: y=1: };
      flat_geom {x=5: y=5: n_not_xy=0: n=25: };
      disp_geom {x=5: y=5: n_not_xy=0: n=25: };
      scaled_disp_geom {x=5: y=5: n_not_xy=0: n=25: };
-     n_recv_prjns=1;
-     n_send_prjns=0;
      projections {
       name="projections";
       el_typ=Projection;
@@ -11119,11 +11135,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        spec {type=FullPrjnSpec: spec=$.networks[0].specs[2]$: };
        con_type=BpCon;
        con_spec {type=BpConSpec: spec=$.networks[0].specs[1]$: };
-       recv_idx=0;
-       send_idx=0;
-       recv_n=1;
-       send_n=1;
-       projected=1;
        dir_fixed=0;
        direction=FM_INPUT;
        prjn_clr {r=1: g=0.9: b=0.5: a=1: };
@@ -11133,13 +11144,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       name="send_prjns";
       el_typ=Projection;
       el_def=0;
-     };
-     units {
-      name="units";
-      el_typ=BpUnit;
-      el_def=0;
-      pos {x=0: y=0: z=0: };
-      output_name=;
      };
      unit_spec {type=BpUnitSpec: spec=$.networks[0].specs[0]$: };
      dist {fm_input=2: fm_output=0: };
@@ -11154,24 +11158,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     el_typ=Weights;
     el_def=0;
    };
-   flags=BUILD_INIT_WTS;
-   unit_vars_type=BpUnitVars;
-   con_group_type=ConGroup;
    auto_build=AUTO_BUILD;
    auto_load_wts=NO_AUTO_LOAD;
    auto_load_file=;
    brain_atlas_name=;
-   train_mode=TRAIN;
-   wt_update=ON_LINE;
-   small_batch_n=10;
-   stats {sse_unit_avg=0: sse_sqrt=0: cnt_err_tol=0: prerr=0: };
-   threads {run_time={name="TimeUsedHR_3": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: }: sync_time={name="TimeUsedHR_4": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: }: total_time={name="TimeUsedHR_5": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: }: n_wake_in_sync=0: run_time_pct=0: sync_time_pct=0: wake_in_sync_pct=1.343325861150661e-23: };
    cuda {sync_units=0: sync_cons=0: min_threads=32: max_threads=1024: cons_per_thread=2: timers_on=0: n_threads=32: };
-   usr1_save_fmt=FULL_NET;
    wt_save_fmt=TEXT;
-   n_units=76;
-   n_cons=1250;
-   max_prjns=1;
    max_disp_size {x=5: y=5: z=3: };
    max_disp_size2d {x=5: y=18: };
    bp_to_inputs=0;
