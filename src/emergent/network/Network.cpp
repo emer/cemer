@@ -35,7 +35,7 @@
 #include <SpecMemberBase>
 #include <taiEdit>
 
-#include <QCryptographicHash>
+#include "sha3.h"
 
 #include <tabMisc>
 #include <taMisc>
@@ -1586,11 +1586,8 @@ bool Network::ComputeHash(bool incl_weights) {
     return false;
   }
 
-#if (QT_VERSION >= 0x050100)
-  QCryptographicHash hash(QCryptographicHash::Sha256);
-#else
-  QCryptographicHash hash(QCryptographicHash::Sha1);
-#endif  
+  sha3_context c;
+  sha3_Init256(&c);
 
   TypeDef* lay_typ = LayerStateType();
   TypeDef* ungp_typ = UnGpStateType();
@@ -1611,35 +1608,35 @@ bool Network::ComputeHash(bool incl_weights) {
   for(int li=0; li < n_layers_built; li++) {
     LayerState_cpp* lay = GetLayerState(li);
     if(lay->lesioned()) continue;
-    hash.addData((char*)lay + lay_st, lay_n);
+    sha3_Update(&c, lay + lay_st, lay_n);
 
     for(int gi=0; gi < lay->n_ungps; gi++) {
       UnGpState_cpp* ugp = lay->GetUnGpState(net_state, gi);
-      hash.addData((char*)ugp, ugp_ed);
+      sha3_Update(&c, ugp, ugp_ed);
     }
     for(int pi=0; pi < lay->n_recv_prjns; pi++) {
       PrjnState_cpp* prjn = lay->GetRecvPrjnState(net_state, pi);
       if(prjn->NotActive(net_state)) continue;
-      hash.addData((char*)prjn, prjn_ed);
+      sha3_Update(&c, prjn, prjn_ed);
     }
     for(int pi=0; pi < lay->n_send_prjns; pi++) {
       PrjnState_cpp* prjn = lay->GetSendPrjnState(net_state, pi);
       if(prjn->NotActive(net_state)) continue;
-      hash.addData((char*)prjn, prjn_ed);
+      sha3_Update(&c, prjn, prjn_ed);
     }
 
     for(int ui=0; ui < lay->n_units; ui++) {
       UnitState_cpp* u = lay->GetUnitState(net_state, ui);
-      hash.addData((char*)u, un_ed);
+      sha3_Update(&c, u, un_ed);
 
       const int rsz = u->NRecvConGps(net_state);
       for(int ri = 0; ri < rsz; ri++) {
         ConState_cpp* cg = u->RecvConState(net_state, ri);
-        hash.addData((char*)cg, cn_ed);
+        sha3_Update(&c, cg, cn_ed);
         if(cg->size > 0) {
-          hash.addData((char*)cg->mem_start, cg->size * sizeof(int32_t));
+          sha3_Update(&c, cg->mem_start, cg->size * sizeof(int32_t));
           if(cg->OwnCons() && incl_weights) {
-            hash.addData((char*)cg->cnmem_start, cg->size * sizeof(float));
+            sha3_Update(&c, cg->cnmem_start, cg->size * sizeof(float));
           }
         }
       }
@@ -1647,21 +1644,22 @@ bool Network::ComputeHash(bool incl_weights) {
       const int ssz = u->NRecvConGps(net_state);
       for(int si = 0; si < ssz; si++) {
         ConState_cpp* cg = u->SendConState(net_state, si);
-        hash.addData((char*)cg, cn_ed);
+        sha3_Update(&c, cg, cn_ed);
         if(cg->size > 0) {
-          hash.addData((char*)cg->mem_start, cg->size * sizeof(int32_t));
+          sha3_Update(&c, cg->mem_start, cg->size * sizeof(int32_t));
           if(cg->OwnCons() && incl_weights) {
-            hash.addData((char*)cg->cnmem_start, cg->size * sizeof(float));
+            sha3_Update(&c, cg->cnmem_start, cg->size * sizeof(float));
           }
         }
       }
     }
   }
 
-  QByteArray hav = hash.result();
-  hash_value.SetSize(hav.count());
-  for(int i=0; i < hav.count(); i++) {
-    hash_value[i] = hav[i];
+  const uint8_t* hash = sha3_Finalize(&c);
+  int bytes = 32;               // 256 bits
+  hash_value.SetSize(bytes);
+  for(int i=0; i < bytes; i++) {
+    hash_value[i] = hash[i];
   }
   return true;
 }
@@ -1673,16 +1671,18 @@ bool Network::DMem_ConfirmHash(bool incl_weights) {
     return true;
   if(!ComputeHash(incl_weights)) return false;
 
-  int n_recv = hash_value.size * dmem_trl_comm.nprocs;
+  int hash_size = hash_value.size;
+  
+  int n_recv = hash_size * dmem_trl_comm.nprocs;
   if(dmem_trl_comm.this_proc == 0) {
     byte_Array gather;
     gather.SetSize(n_recv);
-    DMEM_MPICALL(MPI_Gather(hash_value.el, hash_value.size, MPI_BYTE, gather.el, hash_value.size,
+    DMEM_MPICALL(MPI_Gather(hash_value.el, hash_size, MPI_BYTE, gather.el, hash_size,
                             MPI_BYTE, 0, dmem_trl_comm.comm), "DMem_ConfirmHash", "Gather");
-    for(int j=0; j < hash_value.size; j++) {
+    for(int j=0; j < hash_size; j++) {
       byte hvb = hash_value[j];
       for(int i=1; i<dmem_trl_comm.nprocs; i++) {
-        byte cmb = gather[i * hash_value.size + j];
+        byte cmb = gather[i * hash_size + j];
         if(hvb != cmb) {
           taMisc::Error("DMem_ConfirmHash: hash value differs for proc:", String(i));
           return false;
@@ -1691,7 +1691,7 @@ bool Network::DMem_ConfirmHash(bool incl_weights) {
     }
   }
   else {
-    DMEM_MPICALL(MPI_Gather(hash_value.el, hash_value.size, MPI_BYTE, NULL, n_recv,
+    DMEM_MPICALL(MPI_Gather(hash_value.el, hash_size, MPI_BYTE, NULL, n_recv,
                             MPI_BYTE, 0, dmem_trl_comm.comm), "DMem_ConfirmHash", "Gather");
   }
   return true;

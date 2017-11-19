@@ -221,6 +221,7 @@ set(network_HEADS_NOMAKETA
   nifti1.h
   nifti1_io.h
   NiftiReader.h
+  sha3.h
 
   # CUDA headers go here -- could separate out -- just for including elsewhere
   NetworkState_cuda.h
@@ -420,6 +421,7 @@ set(network_SRCS
   iBrainViewEditDialog.cpp
   znzlib.c
   nifti1_io.c
+  sha3.c
   NetworkVoxelMapper.cpp
   NiftiReader.cpp
 )
