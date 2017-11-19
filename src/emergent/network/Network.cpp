@@ -1641,7 +1641,7 @@ bool Network::ComputeHash(bool incl_weights) {
         }
       }
       
-      const int ssz = u->NRecvConGps(net_state);
+      const int ssz = u->NSendConGps(net_state);
       for(int si = 0; si < ssz; si++) {
         ConState_cpp* cg = u->SendConState(net_state, si);
         sha3_Update(&c, cg, cn_ed);
