@@ -2288,7 +2288,7 @@ void taMisc::Init_DMem(int& argc, const char* argv[]) {
   MPI_Init(&argc, (char***)&argv); // note mpi's extra level of indirection
   MPI_Comm_size(MPI_COMM_WORLD, &dmem_nprocs);
   MPI_Comm_rank(MPI_COMM_WORLD, &dmem_proc);
-  MPI_Errhandler_set(MPI_COMM_WORLD, MPI_ERRORS_RETURN);
+  MPI_Comm_set_errhandler(MPI_COMM_WORLD, MPI_ERRORS_RETURN);
   if(dmem_proc == 0) {
     cerr << "DMEM Running on " << dmem_nprocs << " processors." << endl;
   }

@@ -1601,7 +1601,7 @@ bool Network::ComputeHash(bool incl_weights) {
   int lay_n = lay_ed - lay_st;
 
   int ugp_ed = ungp_typ->members.FindName("disp_pos_y")->GetRelOff() + sizeof(int); // inclusive
-  int prjn_ed = ungp_typ->members.FindName("recv_con_stats")->GetRelOff();
+  int prjn_ed = prjn_typ->members.FindName("recv_con_stats")->GetRelOff();
   int un_ed = un_typ->members.FindName("tmp_calc1")->GetRelOff();
   int cn_ed = con_typ->members.FindName("n_con_vars")->GetRelOff() + sizeof(int); // inclusive
 
@@ -1689,6 +1689,7 @@ bool Network::DMem_ConfirmHash(bool incl_weights) {
         }
       }
     }
+    taMisc::Info("DMem_ConfirmHash: Network hash values are CONSISTENT across all nodes");
   }
   else {
     DMEM_MPICALL(MPI_Gather(hash_value.el, hash_size, MPI_BYTE, NULL, n_recv,
