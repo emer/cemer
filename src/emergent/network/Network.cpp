@@ -1673,16 +1673,16 @@ bool Network::DMem_ConfirmHash(bool incl_weights) {
     return true;
   if(!ComputeHash(incl_weights)) return false;
 
-  int n_recv = hash_val.size * dmem_trl_com.nprocs;
+  int n_recv = hash_value.size * dmem_trl_comm.nprocs;
   if(dmem_trl_comm.this_proc == 0) {
     byte_Array gather;
     gather.SetSize(n_recv);
-    DMEM_MPICALL(MPI_Gather(hash_val.el, hash_val.size, MPI_BYTE, gather.el, n_recv,
+    DMEM_MPICALL(MPI_Gather(hash_value.el, hash_value.size, MPI_BYTE, gather.el, hash_value.size,
                             MPI_BYTE, 0, dmem_trl_comm.comm), "DMem_ConfirmHash", "Gather");
-    for(int j=0; j < hash_val.size; j++) {
-      byte hvb = hash_val[j];
-      for(int i=1; i<dmem_trl_com.nprocs; i++) {
-        byte cmb = gather[i * hash_val.size + j];
+    for(int j=0; j < hash_value.size; j++) {
+      byte hvb = hash_value[j];
+      for(int i=1; i<dmem_trl_comm.nprocs; i++) {
+        byte cmb = gather[i * hash_value.size + j];
         if(hvb != cmb) {
           taMisc::Error("DMem_ConfirmHash: hash value differs for proc:", String(i));
           return false;
@@ -1691,7 +1691,7 @@ bool Network::DMem_ConfirmHash(bool incl_weights) {
     }
   }
   else {
-    DMEM_MPICALL(MPI_Gather(hash_val.el, hash_val.size, MPI_BYTE, NULL, n_recv,
+    DMEM_MPICALL(MPI_Gather(hash_value.el, hash_value.size, MPI_BYTE, NULL, n_recv,
                             MPI_BYTE, 0, dmem_trl_comm.comm), "DMem_ConfirmHash", "Gather");
   }
   return true;
