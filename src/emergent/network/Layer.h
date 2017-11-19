@@ -406,14 +406,14 @@ public:
   virtual void  UnLesionDeIconify();
   // #MENU #DYN1 #CAT_Structure un-set the lesion flag on layer -- restores it to engage in normal processing -- also de-iconifies the layer
 
-  virtual int   ReplaceUnitSpec(UnitSpec* old_sp, UnitSpec* new_sp);
-  // #CAT_Structure switch any units/layers using old_sp to using new_sp
-  virtual int   ReplaceConSpec(ConSpec* old_sp, ConSpec* new_sp);
-  // #CAT_Structure switch any connections/projections using old_sp to using new_sp
-  virtual int   ReplacePrjnSpec(ProjectionSpec* old_sp, ProjectionSpec* new_sp);
-  // #CAT_Structure switch any projections using old_sp to using new_sp
-  virtual int   ReplaceLayerSpec(LayerSpec* old_sp, LayerSpec* new_sp);
-  // #CAT_Structure switch any layers using old_sp to using new_sp
+  virtual int   ReplaceUnitSpec(UnitSpec* old_sp, UnitSpec* new_sp, bool prompt = false);
+  // #CAT_Structure #DYN1 switch any units/layers using old_sp to using new_sp
+  virtual int   ReplaceConSpec(ConSpec* old_sp, ConSpec* new_sp, bool prompt = true);
+  // #CAT_Structure #DYN1 switch any connections/projections using old_sp to using new_sp
+  virtual int   ReplacePrjnSpec(ProjectionSpec* old_sp, ProjectionSpec* new_sp, bool prompt = true);
+  // #CAT_Structure #DYN1 switch any projections using old_sp to using new_sp
+  virtual int   ReplaceLayerSpec(LayerSpec* old_sp, LayerSpec* new_sp, bool prompt = false);
+  // #CAT_Structure #DYN1 switch any layers using old_sp to using new_sp
 
   virtual DataTable*    WeightsToTable(DataTable* dt, Layer* send_lay);
   // #MENU #MENU_ON_State #MENU_SEP_BEFORE #NULL_OK_0 #NULL_TEXT_0_NewTable #CAT_Statistic send entire set of weights from sending layer to given table (e.g., for analysis), with one row per receiving unit, and the pattern in the event reflects the weights into that unit

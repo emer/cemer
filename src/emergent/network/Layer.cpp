@@ -1591,33 +1591,48 @@ Unit* Layer::MostActiveUnit(int& idx) const {
   return (Unit*)max_un;
 }
 
-int Layer::ReplaceUnitSpec(UnitSpec* old_sp, UnitSpec* new_sp) {
+int Layer::ReplaceUnitSpec(UnitSpec* old_sp, UnitSpec* new_sp, bool prompt) {
   int nchg = 0;
-  if(unit_spec.SPtr() == old_sp) {
-    unit_spec.SetSpec(new_sp);
-    nchg++;
+  if(GetMainUnitSpec() != old_sp) return 0;
+  String act_nm = "UnitSpec: " + old_sp->name + " with: " + new_sp->name
+    + " in layer: " + name;
+  if(prompt) {
+    int ok = taMisc::Choice("Replace " + act_nm + "?", "Ok", "Skip");
+    if(ok != 0) return 0;
   }
+  unit_spec.SetSpec(new_sp);
+  nchg++;
   UnitSpecUpdated();
+  taMisc::Info("Replaced", act_nm);
   return nchg;
 }
 
-int Layer::ReplaceConSpec(ConSpec* old_sp, ConSpec* new_sp) {
+int Layer::ReplaceConSpec(ConSpec* old_sp, ConSpec* new_sp, bool prompt) {
   int nchg = 0;
-  FOREACH_ELEM_IN_GROUP(Projection, p, projections)
-    nchg += p->ReplaceConSpec(old_sp, new_sp);
+  FOREACH_ELEM_IN_GROUP(Projection, p, projections) {
+    nchg += p->ReplaceConSpec(old_sp, new_sp, prompt);
+  }
   return nchg;
 }
 
-int Layer::ReplacePrjnSpec(ProjectionSpec* old_sp, ProjectionSpec* new_sp) {
+int Layer::ReplacePrjnSpec(ProjectionSpec* old_sp, ProjectionSpec* new_sp, bool prompt) {
   int nchg = 0;
-  FOREACH_ELEM_IN_GROUP(Projection, p, projections)
-    nchg += p->ReplacePrjnSpec(old_sp, new_sp);
+  FOREACH_ELEM_IN_GROUP(Projection, p, projections) {
+    nchg += p->ReplacePrjnSpec(old_sp, new_sp, prompt);
+  }
   return nchg;
 }
 
-int Layer::ReplaceLayerSpec(LayerSpec* old_sp, LayerSpec* new_sp) {
+int Layer::ReplaceLayerSpec(LayerSpec* old_sp, LayerSpec* new_sp, bool prompt) {
   if(GetMainLayerSpec() != old_sp) return 0;
+  String act_nm = "LayerSpec: " + old_sp->name + " with: " + new_sp->name
+    + " in layer: " + name;
+  if(prompt) {
+    int ok = taMisc::Choice("Replace " + act_nm + "?", "Ok", "Skip");
+    if(ok != 0) return 0;
+  }
   SetLayerSpec(new_sp);
+  taMisc::Info("Replaced", act_nm);
   return 1;
 }
 

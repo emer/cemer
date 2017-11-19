@@ -427,16 +427,32 @@ bool Projection::LoadWeights(const String& fname, bool quiet) {
   return rval;
 }
 
-int Projection::ReplaceConSpec(ConSpec* old_sp, ConSpec* new_sp) {
-  if(con_spec.SPtr() != old_sp) return 0;
+int Projection::ReplaceConSpec(ConSpec* old_sp, ConSpec* new_sp, bool prompt) {
+  if(GetMainConSpec() != old_sp) return 0;
+  String act_nm = "ConSpec: " + old_sp->name + " with: " + new_sp->name
+    + " in layer: " + layer->name + " prjn: " + name;
+  if(prompt) {
+    int ok = taMisc::Choice("Replace " + act_nm + "?",
+                            "Ok", "Skip");
+    if(ok != 0) return 0;
+  }
   con_spec.SetSpec(new_sp);
   ConSpecUpdated();
+  taMisc::Info("Replaced", act_nm);
   return 1;
 }
 
-int Projection::ReplacePrjnSpec(ProjectionSpec* old_sp, ProjectionSpec* new_sp) {
-  if(spec.SPtr() != old_sp) return 0;
+int Projection::ReplacePrjnSpec(ProjectionSpec* old_sp, ProjectionSpec* new_sp, bool prompt) {
+  if(GetMainPrjnSpec() != old_sp) return 0;
+  String act_nm = "PrjnSpec: " + old_sp->name + " with: " + new_sp->name
+    + " in layer: " + layer->name + " prjn: " + name;
+  if(prompt) {
+    int ok = taMisc::Choice("Replace " + act_nm + "?",
+                            "Ok", "Skip");
+    if(ok != 0) return 0;
+  }
   spec.SetSpec(new_sp);
+  taMisc::Info("Replaced", act_nm);
   return 1;
 }
 

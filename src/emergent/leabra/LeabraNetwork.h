@@ -225,7 +225,7 @@ public:
 
   virtual void  LayerAvgAct(DataTable* report_table = NULL,
                             LeabraLayerSpec* lay_spec = NULL);
-  // #BUTTON #ARGC_1 #NULL_OK #NULL_TEXT_NewReportData create a data table with the current layer average activations (acts_m_avg) and the values specified in the layerspec avg_act.init -- this is useful for setting the .init values accurately based on actual levels 
+  // #MENU #MENU_ON_State #ARGC_1 #NULL_OK #NULL_TEXT_NewReportData create a data table with the current layer average activations (acts_m_avg) and the values specified in the layerspec avg_act.init -- this is useful for setting the .init values accurately based on actual levels 
 
   virtual void	Set_ExtRew(bool avail, float ext_rew_val);
   // #CAT_Statistic set ext_rew_avail and ext_rew value -- for script access to these values

@@ -99,6 +99,7 @@ set(ta_core_HEADS_MAKETA_NOMOC
   double_Array.h
   bool_Array.h
   char_Array.h
+  byte_Array.h
   String_Array.h
   SArg_Array.h
   Variant_Array.h
@@ -362,6 +363,7 @@ set(ta_core_SRCS_MAKETA
   double_Array.cpp
   bool_Array.cpp
   char_Array.cpp
+  byte_Array.cpp
   String_Array.cpp
   SArg_Array.cpp
   Variant_Array.cpp

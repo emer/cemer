@@ -37,6 +37,7 @@
 #include <ParamSeq_Group>
 #include <taMarkUp>
 #include <taBase_RefList>
+#include <byte_Array>
 
 // declare all other types mentioned but not required to include:
 class ProjectBase; //
@@ -352,6 +353,8 @@ public:
   // #NO_SAVE #HIDDEN #CAT_State unit_specs that have been built for running network
   taBase_RefList state_con_specs;
   // #NO_SAVE #HIDDEN #CAT_State con_specs that have been built for running network
+  byte_Array     hash_value;
+  // #NO_SAVE #HIDDEN #CAT_State unique hash code value of network including the indexes, sizes, connectivity, and optionally weights -- used to guarantee identical state of networks across dmem / mpi for example
 
   ProjectBase*  proj;           // #IGNORE ProjectBase this network is in
   
@@ -728,11 +731,11 @@ public:
   // #CAT_Structure synchronize sending projections with the recv projections so everyone's happy
 
   virtual void  RemoveCons();
-  // #MENU #MENU_ON_Structure #CONFIRM #MENU_SEP_BEFORE #CAT_Structure Remove all connections in network
+  // #CAT_Structure Remove all connections in network -- generally should not be called separately -- use UnBuild() to cleanly remove everything
     virtual void  RemoveCons_impl();
     // #IGNORE implementation, with no gui updates etc
   virtual void  RemoveUnits();
-  // #MENU #CONFIRM #CAT_Structure Remove all units in network -- also calls RemoveCons()
+  // #CAT_Structure synonym for UnBuild -- remove all units in network -- also calls RemoveCons()
 
   virtual void  UpdatePrjnIdxs();
   // #CAT_Structure fix the projection indexes of the connection groups (recv_idx, send_idx)
@@ -761,13 +764,37 @@ public:
   // #CAT_File check if user has sent a specific command to save weights through jobs_running_cmd.dat file -- called at end of epoch in Compute_EpochStats
   virtual bool  SaveWeights_ClusterRunTerm();
   // #CAT_File update cluster run job info and check if it is time to save weights before job terminates -- called in Compute_Weights
+
+  virtual bool  ComputeHash(bool incl_weights = true);
+  // #CAT_Structure create a unique hash code of the entire state of the network, including all indexes, sizes, connectivity, and optionally the weight values -- used for testing identicality of different networks, e.g., across DMem / mpi nodes
+
+#ifdef DMEM_COMPILE
+  virtual bool  DMem_ConfirmHash(bool incl_weights = true);
+  // #CAT_DMem create a unique hash code of the entire state of the network, and confirm that it is the same across all nodes in current DMem group -- triggers an error and returns false if they do not match
+#else
+  virtual bool  DMem_ConfirmHash(bool incl_weights = true) { return true; }
+  // #CAT_DMem create a unique hash code of the entire state of the network, and confirm that it is the same across all nodes in current DMem group -- triggers an error and returns false if they do not match (null function if not dmem)
+#endif  
   
   virtual Layer* NewLayer();
-  // #BUTTON create a new layer in the network, using default layer type
+  // #CAT_Structure #MENU #MENU_ON_Structure create a new layer in the network, using default layer type
 
   virtual bool EditState();
   // #BUTTON edit the network state values that drive actual C++ computation
-  
+
+  virtual void  ReplaceSpecs_Gp(const BaseSpec_Group& old_spg, BaseSpec_Group& new_spg, bool prompt = true);
+  // #CAT_Structure replace a specs on two matching spec groups, including iterating through any children of each spec
+  virtual int   ReplaceUnitSpec(UnitSpec* old_sp, UnitSpec* new_sp, bool prompt = true);
+  // #CAT_Structure #MENU_BUTTON #MENU_ON_Specs switch any units/layers using old_sp to using new_sp
+  virtual int   ReplaceConSpec(ConSpec* old_sp, ConSpec* new_sp, bool prompt = true);
+  // #CAT_Structure #MENU_BUTTON #MENU_ON_Specs switch any connections/projections using old_sp to using new_sp
+  virtual int   ReplacePrjnSpec(ProjectionSpec* old_sp, ProjectionSpec* new_sp, bool prompt = true);
+  // #CAT_Structure #MENU_BUTTON #MENU_ON_Specs switch any projections using old_sp to using new_sp
+  virtual int   ReplaceLayerSpec(LayerSpec* old_sp, LayerSpec* new_sp, bool prompt = true);
+  // #CAT_Structure #MENU_BUTTON #MENU_ON_Specs switch any layers using old_sp to using new_spec -- optionally prompt for each replacement
+  virtual void  ReplaceSpecs(BaseSpec* old_sp, BaseSpec* new_sp, bool prompt = true);
+  // #CAT_Structure #MENU_BUTTON #MENU_ON_Specs replace a spec of any kind, including iterating through any children of that spec and replacing all those with corresponding child in new spec
+
   virtual void  MonitorVar(NetMonitor* net_mon, const String& variable);
   // #BUTTON #CAT_Statistic monitor (record in a datatable) the given variable on this network
   virtual void  RemoveMonitors();
@@ -897,19 +924,6 @@ public:
                                    bool zero_sub_hiddens=false);
   // #CAT_Statistic project given unit's weights (receiving unless swt = true) through all layers (without any loops) -- results stored in wt_prjn on each unit (tmp_calc1 is used as a sum variable).  top_k_un (< 1 = all) is number of strongest units to allow to pass information further down the chain -- lower numbers generally make the info more interpretable.  top_k_gp is number of unit groups to process for filtering through, if layer has sub groups (< 1 = ignore subgroups). values are always normalized at each layer to prevent exponential decrease/increase effects, so results are only relative indications of influence -- if zero_sub_hiddens then intermediate hidden units (indicated by layer_type == HIDDEN) that have sub-threshold values zeroed
 
-  virtual void  ReplaceSpecs(BaseSpec* old_sp, BaseSpec* new_sp);
-  // #CAT_Structure replace a spec of any kind, including iterating through any children of that spec
-  virtual void  ReplaceSpecs_Gp(const BaseSpec_Group& old_spg, BaseSpec_Group& new_spg);
-  // #CAT_Structure replace a specs on two matching spec groups, including iterating through any children of each spec
-  virtual int   ReplaceUnitSpec(UnitSpec* old_sp, UnitSpec* new_sp);
-  // #CAT_Structure switch any units/layers using old_sp to using new_sp
-  virtual int   ReplaceConSpec(ConSpec* old_sp, ConSpec* new_sp);
-  // #CAT_Structure switch any connections/projections using old_sp to using new_sp
-  virtual int   ReplacePrjnSpec(ProjectionSpec* old_sp, ProjectionSpec* new_sp);
-  // #CAT_Structure switch any projections using old_sp to using new_sp
-  virtual int   ReplaceLayerSpec(LayerSpec* old_sp, LayerSpec* new_sp);
-  // #CAT_Structure switch any layers using old_sp to using new_sp
-
   // wizard construction functions:
   virtual BaseSpec_Group* FindMakeSpecGp(const String& nm, bool& nw_itm = nw_itm_def_arg);
   // #CAT_Structure find a given spec group and if not found, make it
@@ -962,7 +976,7 @@ public:
   // #CAT_Structure remove layer with given name, if it exists
 
   virtual String  MemoryReport(bool print = true);
-  // #CAT_Statistic #MENU #MENU_ON_Structure #USE_RVAL report about memory allocation for the network
+  // #CAT_Statistic #MENU #MENU_ON_Structure #MENU_SEP_BEFORE #USE_RVAL report about memory allocation for the network
 
   virtual void  UpdateLayerGroupGeom();
   // #IGNORE update layer group geometries (max_disp_size, positions) and max_disp_size of of network based on current layer layout

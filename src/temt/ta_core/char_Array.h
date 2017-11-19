@@ -27,7 +27,7 @@
 taTypeDef_Of(char_Array);
 
 class TA_API char_Array : public taArray<char> {
-  // #NO_UPDATE_AFTER #NO_TOKENS array of chars (bytes)
+  // #NO_UPDATE_AFTER #NO_TOKENS array of chars (signed)
 INHERITED(taArray<char>)
 public:
   static const char blank; // #HIDDEN #READ_ONLY

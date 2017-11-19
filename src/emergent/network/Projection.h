@@ -154,10 +154,10 @@ public:
   virtual bool  CheckConnect(bool quiet=false) { return spec->CheckConnect(this, quiet); }
   // #CAT_Structure check if projection is connected
 
-  virtual int   ReplaceConSpec(ConSpec* old_sp, ConSpec* new_sp);
-  // #CAT_Structure switch any connections/projections using old_sp to using new_sp
-  virtual int   ReplacePrjnSpec(ProjectionSpec* old_sp, ProjectionSpec* new_sp);
-  // #CAT_Structure switch any projections using old_sp to using new_sp
+  virtual int   ReplaceConSpec(ConSpec* old_sp, ConSpec* new_sp, bool prompt = false);
+  // #CAT_Structure #DYN1 switch any connections/projections using old_sp to using new_sp
+  virtual int   ReplacePrjnSpec(ProjectionSpec* old_sp, ProjectionSpec* new_sp, bool prompt = false);
+  // #CAT_Structure #DYN1 switch any projections using old_sp to using new_sp
 
   virtual bool  SetConType(TypeDef* td);
   // #BUTTON #DYN1 #CAT_Structure #TYPE_Connection #INIT_ARGVAL_ON_con_type set the connection type for all connections in this prjn

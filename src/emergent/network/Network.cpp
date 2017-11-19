@@ -35,6 +35,8 @@
 #include <SpecMemberBase>
 #include <taiEdit>
 
+#include <QCryptographicHash>
+
 #include <tabMisc>
 #include <taMisc>
 
@@ -1579,6 +1581,124 @@ void Network::NetTextUserData() {
   }
 }
 
+bool Network::ComputeHash(bool incl_weights) {
+  if(TestError(!IsBuiltIntact(), "ComputeHash", "network is not built an intact!")) {
+    return false;
+  }
+
+#if (QT_VERSION >= 0x050100)
+  QCryptographicHash hash(QCryptographicHash::Sha3_256);
+#else
+  QCryptographicHash hash(QCryptographicHash::Sha1);
+#endif  
+
+  TypeDef* lay_typ = LayerStateType();
+  TypeDef* ungp_typ = UnGpStateType();
+  TypeDef* prjn_typ = PrjnStateType();
+  TypeDef* un_typ = UnitStateType();
+  TypeDef* con_typ = ConStateType();
+
+  // range of 
+  int lay_st = lay_typ->members.FindName("layer_idx")->GetRelOff();
+  int lay_ed = lay_typ->members.FindName("ext_flag")->GetRelOff();
+  int lay_n = lay_ed - lay_st;
+
+  int ugp_ed = ungp_typ->members.FindName("disp_pos_y")->GetRelOff() + sizeof(int); // inclusive
+  int prjn_ed = ungp_typ->members.FindName("recv_con_stats")->GetRelOff();
+  int un_ed = un_typ->members.FindName("tmp_calc1")->GetRelOff();
+  int cn_ed = con_typ->members.FindName("n_con_vars")->GetRelOff() + sizeof(int); // inclusive
+
+  for(int li=0; li < n_layers_built; li++) {
+    LayerState_cpp* lay = GetLayerState(li);
+    if(lay->lesioned()) continue;
+    hash.addData((char*)lay + lay_st, lay_n);
+
+    for(int gi=0; gi < lay->n_ungps; gi++) {
+      UnGpState_cpp* ugp = lay->GetUnGpState(net_state, gi);
+      hash.addData((char*)ugp, ugp_ed);
+    }
+    for(int pi=0; pi < lay->n_recv_prjns; pi++) {
+      PrjnState_cpp* prjn = lay->GetRecvPrjnState(net_state, pi);
+      if(prjn->NotActive(net_state)) continue;
+      hash.addData((char*)prjn, prjn_ed);
+    }
+    for(int pi=0; pi < lay->n_send_prjns; pi++) {
+      PrjnState_cpp* prjn = lay->GetSendPrjnState(net_state, pi);
+      if(prjn->NotActive(net_state)) continue;
+      hash.addData((char*)prjn, prjn_ed);
+    }
+
+    for(int ui=0; ui < lay->n_units; ui++) {
+      UnitState_cpp* u = lay->GetUnitState(net_state, ui);
+      hash.addData((char*)u, un_ed);
+
+      const int rsz = u->NRecvConGps(net_state);
+      for(int ri = 0; ri < rsz; ri++) {
+        ConState_cpp* cg = u->RecvConState(net_state, ri);
+        hash.addData((char*)cg, cn_ed);
+        if(cg->size > 0) {
+          hash.addData((char*)cg->mem_start, cg->size * sizeof(int32_t));
+          if(cg->OwnCons() && incl_weights) {
+            hash.addData((char*)cg->cnmem_start, cg->size * sizeof(float));
+          }
+        }
+      }
+      
+      const int ssz = u->NRecvConGps(net_state);
+      for(int si = 0; si < ssz; si++) {
+        ConState_cpp* cg = u->SendConState(net_state, si);
+        hash.addData((char*)cg, cn_ed);
+        if(cg->size > 0) {
+          hash.addData((char*)cg->mem_start, cg->size * sizeof(int32_t));
+          if(cg->OwnCons() && incl_weights) {
+            hash.addData((char*)cg->cnmem_start, cg->size * sizeof(float));
+          }
+        }
+      }
+    }
+  }
+
+  QByteArray hav = hash.result();
+  hash_value.SetSize(hav.count());
+  for(int i=0; i < hav.count(); i++) {
+    hash_value[i] = hav[i];
+  }
+  return true;
+}
+
+#ifdef DMEM_COMPILE
+
+bool Network::DMem_ConfirmHash(bool incl_weights) {
+  if(taMisc::dmem_nprocs <= 1 || dmem_trl_comm.nprocs <= 1)
+    return true;
+  if(!ComputeHash(incl_weights)) return false;
+
+  int n_recv = hash_val.size * dmem_trl_com.nprocs;
+  if(dmem_trl_comm.this_proc == 0) {
+    byte_Array gather;
+    gather.SetSize(n_recv);
+    DMEM_MPICALL(MPI_Gather(hash_val.el, hash_val.size, MPI_BYTE, gather.el, n_recv,
+                            MPI_BYTE, 0, dmem_trl_comm.comm), "DMem_ConfirmHash", "Gather");
+    for(int j=0; j < hash_val.size; j++) {
+      byte hvb = hash_val[j];
+      for(int i=1; i<dmem_trl_com.nprocs; i++) {
+        byte cmb = gather[i * hash_val.size + j];
+        if(hvb != cmb) {
+          taMisc::Error("DMem_ConfirmHash: hash value differs for proc:", String(i));
+          return false;
+        }
+      }
+    }
+  }
+  else {
+    DMEM_MPICALL(MPI_Gather(hash_val.el, hash_val.size, MPI_BYTE, NULL, n_recv,
+                            MPI_BYTE, 0, dmem_trl_comm.comm), "DMem_ConfirmHash", "Gather");
+  }
+  return true;
+}
+
+#endif
+
 Layer* Network::NewLayer() {
   return layers.NewEl(1);
 }
@@ -2571,61 +2691,61 @@ void Network::UpdateLayerGroupGeom() {
   }  
 }
 
-void Network::ReplaceSpecs(BaseSpec* old_sp, BaseSpec* new_sp) {
+void Network::ReplaceSpecs(BaseSpec* old_sp, BaseSpec* new_sp, bool prompt) {
   if(old_sp->InheritsFrom(&TA_UnitSpec))
-    ReplaceUnitSpec((UnitSpec*)old_sp, (UnitSpec*)new_sp);
+    ReplaceUnitSpec((UnitSpec*)old_sp, (UnitSpec*)new_sp, prompt);
   else if(old_sp->InheritsFrom(&TA_ConSpec))
-    ReplaceConSpec((ConSpec*)old_sp, (ConSpec*)new_sp);
+    ReplaceConSpec((ConSpec*)old_sp, (ConSpec*)new_sp, prompt);
   else if(old_sp->InheritsFrom(&TA_ProjectionSpec))
-    ReplacePrjnSpec((ProjectionSpec*)old_sp, (ProjectionSpec*)new_sp);
+    ReplacePrjnSpec((ProjectionSpec*)old_sp, (ProjectionSpec*)new_sp, prompt);
   else if(old_sp->InheritsFrom(&TA_LayerSpec))
-    ReplaceLayerSpec((LayerSpec*)old_sp, (LayerSpec*)new_sp);
+    ReplaceLayerSpec((LayerSpec*)old_sp, (LayerSpec*)new_sp, prompt);
 
-  ReplaceSpecs_Gp(old_sp->children, new_sp->children);
+  ReplaceSpecs_Gp(old_sp->children, new_sp->children, prompt);
 }
 
-void Network::ReplaceSpecs_Gp(const BaseSpec_Group& old_spg, BaseSpec_Group& new_spg) {
+void Network::ReplaceSpecs_Gp(const BaseSpec_Group& old_spg, BaseSpec_Group& new_spg, bool prompt) {
   taLeafItr spo, spn;
   BaseSpec* old_sp, *new_sp;
   for(old_sp = (BaseSpec*)old_spg.FirstEl(spo), new_sp = (BaseSpec*)new_spg.FirstEl(spn);
       old_sp && new_sp;
       old_sp = (BaseSpec*)old_spg.NextEl(spo), new_sp = (BaseSpec*)new_spg.NextEl(spn)) {
-    ReplaceSpecs(old_sp, new_sp);
+    ReplaceSpecs(old_sp, new_sp, prompt);
   }
 }
 
-int Network::ReplaceUnitSpec(UnitSpec* old_sp, UnitSpec* new_sp) {
+int Network::ReplaceUnitSpec(UnitSpec* old_sp, UnitSpec* new_sp, bool prompt) {
   int nchg = 0;
   FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
     if(!l->lesioned())
-      nchg += l->ReplaceUnitSpec(old_sp, new_sp);
-  }
-  return nchg;
-}
-
-int Network::ReplaceConSpec(ConSpec* old_sp, ConSpec* new_sp) {
-  int nchg = 0;
-  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
-    if(!l->lesioned())
-      nchg += l->ReplaceConSpec(old_sp, new_sp);
+      nchg += l->ReplaceUnitSpec(old_sp, new_sp, prompt);
   }
   return nchg;
 }
 
-int Network::ReplacePrjnSpec(ProjectionSpec* old_sp, ProjectionSpec* new_sp) {
+int Network::ReplaceConSpec(ConSpec* old_sp, ConSpec* new_sp, bool prompt) {
   int nchg = 0;
   FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
     if(!l->lesioned())
-      nchg += l->ReplacePrjnSpec(old_sp, new_sp);
+      nchg += l->ReplaceConSpec(old_sp, new_sp, prompt);
   }
   return nchg;
 }
 
-int Network::ReplaceLayerSpec(LayerSpec* old_sp, LayerSpec* new_sp) {
+int Network::ReplacePrjnSpec(ProjectionSpec* old_sp, ProjectionSpec* new_sp, bool prompt) {
   int nchg = 0;
   FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
     if(!l->lesioned())
-      nchg += l->ReplaceLayerSpec(old_sp, new_sp);
+      nchg += l->ReplacePrjnSpec(old_sp, new_sp, prompt);
+  }
+  return nchg;
+}
+
+int Network::ReplaceLayerSpec(LayerSpec* old_sp, LayerSpec* new_sp, bool prompt) {
+  int nchg = 0;
+  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
+    if(!l->lesioned())
+      nchg += l->ReplaceLayerSpec(old_sp, new_sp, prompt);
   }
   return nchg;
 }
