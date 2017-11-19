@@ -167,7 +167,7 @@
     if(prjn_start_idx < 0 || n_recv_prjns == 0) return NULL;
     for(int i = 0; i < n_recv_prjns; i++) {
       PRJN_STATE* prjn = net->GetPrjnState(prjn_start_idx + i);
-      LAYER_STATE* fm = prjn->GetSendLayerState(net);
+      LAYER_STATE* fm = prjn->GetSendLayer(net);
       if(fm->LayerNameIs(fm_layer_nm)) return prjn;
     }
     return NULL;
@@ -195,7 +195,7 @@
     if(send_prjn_start_idx < 0 || n_send_prjns == 0) return NULL;
     for(int i = 0; i < n_send_prjns; i++) {
       PRJN_STATE* prjn = net->GetPrjnState(send_prjn_start_idx + i);
-      LAYER_STATE* tol = prjn->GetRecvLayerState(net);
+      LAYER_STATE* tol = prjn->GetRecvLayer(net);
       if(tol->LayerNameIs(to_layer_nm)) return prjn;
     }
     return NULL;

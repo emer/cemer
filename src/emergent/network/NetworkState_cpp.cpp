@@ -690,7 +690,7 @@ void NetworkState_cpp::UnitSaveWeights_strm(ostream& strm, UnitState_cpp* u, WtS
     ConState_cpp* cg = u->RecvConState(this, g);
     PrjnState_cpp* cg_prjn = cg->GetPrjnState(this);
     if(cg->NotActive() || (prjn && (cg_prjn != prjn)) || cg->Sharing()) continue;
-    LayerState_cpp* fm = cg_prjn->GetSendLayerState(this);
+    LayerState_cpp* fm = cg_prjn->GetSendLayer(this);
     if(fm->lesioned()) continue; // shouldn't happen!
     strm << "<Cg " << g << " Fm:" << fm->layer_name << ">\n";
     ConsSaveWeights_strm(strm, cg, u, fmt);
@@ -739,7 +739,7 @@ int NetworkState_cpp::UnitLoadWeights_strm(istream& strm, UnitState_cpp* u, WtSa
     if(gi < rsz) {
       cg = u->RecvConState(this, gi);
       cg_prjn = cg->GetPrjnState(this);
-      LayerState_cpp* fm = cg_prjn->GetSendLayerState(this);
+      LayerState_cpp* fm = cg_prjn->GetSendLayer(this);
       if(!fm->LayerNameIs(fm_nm)) {
         cg = u->FindRecvConStateFromName(this, fm_nm);
       }
@@ -817,7 +817,7 @@ int NetworkState_cpp::ConsLoadWeights_strm(istream& strm, ConState_cpp* cg, Unit
 
   ConSpec_cpp* cs = cg->GetConSpec(this);
   PrjnState_cpp* prjn = cg->GetPrjnState(this);
-  LayerState_cpp* fm_lay = prjn->GetSendLayerState(this);
+  LayerState_cpp* fm_lay = prjn->GetSendLayer(this);
   
   String tag, val;
   int stat = LoadWeights_StartTag(strm, "Cn", val, quiet);

@@ -4,8 +4,8 @@
 void STATE_CLASS(RandomPrjnSpec)::Connect_impl(PRJN_STATE* prjn, NETWORK_STATE* net, int make_cons) { 
   rndm_seed.OldSeed();
 
-  LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
-  LAYER_STATE* send_lay = prjn->GetSendLayerState(net);
+  LAYER_STATE* recv_lay = prjn->GetRecvLayer(net);
+  LAYER_STATE* send_lay = prjn->GetSendLayer(net);
   
   int n_recv_units = recv_lay->n_units;
   int n_send_units = send_lay->n_units;

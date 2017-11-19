@@ -39,6 +39,9 @@ public:
 };
 
 
+///////////////////////////////////////////////////////////
+//      OneToOne
+
 class OneToOnePrjnSpec_cpp : public ProjectionSpec_cpp {
   // one-to-one connectivity (1st unit to 1st unit, etc)
 INHERITED(ProjectionSpec)
@@ -94,6 +97,9 @@ public:
 };
 
 
+///////////////////////////////////////////////////////////
+//      Random
+
 class RandomPrjnSpec_cpp : public ProjectionSpec_cpp {
   // Connects all units with probability p_con -- note it ALWAYS uses the same seed, because of the two-pass nature of the connection process -- you can update rndm_seed prior to connecting to get different patterns of connectivity
 INHERITED(ProjectionSpec)
@@ -127,6 +133,20 @@ public:
 };
 
 
+class SymmetricPrjnSpec_cpp : public ProjectionSpec_cpp {
+  // connect with the same symmetric pattern that exists in a projection going the other direction -- especially useful for random projections but works for any type of projection -- runs in a second pass so no constraints on layer ordering etc -- somewhat slow but not too bad
+INHERITED(ProjectionSpec)
+public:
+  
+#include <SymmetricPrjnSpec>
+  
+  SymmetricPrjnSpec_cpp() { Initialize_core(); }
+};
+
+
+///////////////////////////////////////////////////////////
+//      Tessel 
+
 class TesselPrjnSpec_cpp : public ProjectionSpec_cpp {
   // arbitrary tesselations (repeating patterns) of connectivity -- sweeps over receiving units and connects with sending units based on projection of recv unit position into sending layer, plus sending offsets that specify the connectivity pattern
 INHERITED(ProjectionSpec)
@@ -150,6 +170,9 @@ public:
   ~GpTesselPrjnSpec_cpp() { FreeSendOffs(); }
 };
 
+
+///////////////////////////////////////////////////////////
+//      Tiled..
 
 class TiledGpRFPrjnSpec_cpp : public ProjectionSpec_cpp {
   // Tiled receptive field projection spec for entirely group-to-group connections: connects entire receiving layer unit groups with overlapping tiled regions of sending layer groups -- if init_wts is on, gaussian or sigmoid topographic weights are initialized
@@ -227,6 +250,9 @@ public:
   TiledGpMapConvergePrjnSpec_cpp()  { Initialize_core(); }
 };
 
+
+///////////////////////////////////////////////////////////
+//      Gaussian, Gradient..
 
 class GaussRFPrjnSpec_cpp : public ProjectionSpec_cpp {
   // a simple receptive-field (RF) projection spec with gaussian weight values over a receptive-field window onto the sending layer that moves as a function of the receiving unit's position (like TesselPrjnSpec and other RF prjn specs, but does NOT use unit groups) -- useful for reducing larger layers to smaller ones for example

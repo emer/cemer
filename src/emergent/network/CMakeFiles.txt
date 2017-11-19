@@ -119,7 +119,7 @@ set(network_HEADS_MAKETA_MI_DEPS
 "Network_core.h;Network_mbrs.h;State_defs.h"
 "Network_core.h;NetworkState_core.h;Network_mbrs.h"
 "Layer_core.h;LayerState_core.h;State_defs.h"
-"PrjnState_core.h;State_defs.h;State_cpp.h"
+"PrjnState_core.h;PrjnState_mbrs.h;State_defs.h"
 "UnGpState_core.h;State_defs.h;State_cpp.h"
 "UnitState_core.h;State_defs.h;State_cpp.h"
 "ConState_core.h;State_defs.h;State_cpp.h"
@@ -147,6 +147,7 @@ set(network_HEADS_NOMAKETA
   NetworkState_core.h
   Layer_core.h
   LayerState_core.h
+  PrjnState_mbrs.h
   PrjnState_core.h
   UnGpState_core.h
   UnitState_core.h
@@ -170,12 +171,11 @@ set(network_HEADS_NOMAKETA
   RandomPrjnSpec.h
   UniformRndPrjnSpec.h
   PolarRndPrjnSpec.h
+  SymmetricPrjnSpec.h
 
   TesselPrjnSpec.h
   GpTesselPrjnSpec.h
 
-  # SymmetricPrjnSpec.h
-  
   TiledGpRFPrjnSpec.h
   TiledGpRFOneToOnePrjnSpec.h
   TiledGpRFOneToOneWtsPrjnSpec.h

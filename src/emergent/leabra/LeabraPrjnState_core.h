@@ -3,9 +3,9 @@
   float		netin_avg;		// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic average netinput values for the recv projections into this layer
   float		netin_rel;		// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic relative netinput values for the recv projections into this layer
 
-  float		avg_netin_avg;		// #NO_SAVE #GUI_READ_ONLY #EXPERT #CAT_Statistic average netinput values for the recv projections into this layer, averaged over an epoch
+  float		avg_netin_avg;		// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic average netinput values for the recv projections into this layer, averaged over an epoch
   float		avg_netin_avg_sum;	// #NO_SAVE #GUI_READ_ONLY #HIDDEN #DMEM_AGG_SUM #CAT_Statistic average netinput values for the recv projections into this layer, sum over an epoch
-  float		avg_netin_rel;		// #NO_SAVE #GUI_READ_ONLY #EXPERT #CAT_Statistic relative netinput values for the recv projections into this layer, averaged over an epoch
+  float		avg_netin_rel;		// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic relative netinput values for the recv projections into this layer, averaged over an epoch
   float		avg_netin_rel_sum;	// #NO_SAVE #GUI_READ_ONLY #HIDDEN #DMEM_AGG_SUM #CAT_Statistic relative netinput values for the recv projections into this layer, sum over an epoch (for computing average)
   int		avg_netin_n;		// #NO_SAVE #GUI_READ_ONLY #HIDDEN #DMEM_AGG_SUM #CAT_Statistic count for computing epoch-level averages
   float         wt_avg_max;            // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic maximum average weight across recv con groups of units with this projection -- only computed if weight balance mechanism is on and network.lstats.wt_bal is on
@@ -14,11 +14,11 @@
   INLINE LEABRA_PRJN_STATE*  GetPrjnState(NETWORK_STATE* net) const {
     return (LEABRA_PRJN_STATE*)inherited::GetPrjnState(net);
   }
-  INLINE LEABRA_LAYER_STATE* GetRecvLayerState(NETWORK_STATE* net) const {
-    return (LEABRA_LAYER_STATE*)inherited::GetRecvLayerState(net);
+  INLINE LEABRA_LAYER_STATE* GetRecvLayer(NETWORK_STATE* net) const {
+    return (LEABRA_LAYER_STATE*)inherited::GetRecvLayer(net);
   }
-  INLINE LEABRA_LAYER_STATE* GetSendLayerState(NETWORK_STATE* net) const {
-    return (LEABRA_LAYER_STATE*)inherited::GetSendLayerState(net);
+  INLINE LEABRA_LAYER_STATE* GetSendLayer(NETWORK_STATE* net) const {
+    return (LEABRA_LAYER_STATE*)inherited::GetSendLayer(net);
   }
   INLINE LEABRA_CON_SPEC_CPP* GetConSpec(NETWORK_STATE* net) const {
     return (LEABRA_CON_SPEC_CPP*)inherited::GetConSpec(net);

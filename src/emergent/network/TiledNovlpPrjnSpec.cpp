@@ -6,12 +6,12 @@ void STATE_CLASS(TiledNovlpPrjnSpec)::Initialize_core() {
 }
 
 bool STATE_CLASS(TiledNovlpPrjnSpec)::InitRFSizes(PRJN_STATE* prjn, NETWORK_STATE* net) {
-  LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
-  LAYER_STATE* send_lay = prjn->GetSendLayerState(net);
+  LAYER_STATE* recv_lay = prjn->GetRecvLayer(net);
+  LAYER_STATE* send_lay = prjn->GetSendLayer(net);
 
   if(reciprocal) {
     recv_lay = send_lay;
-    send_lay = prjn->GetRecvLayerState(net);
+    send_lay = prjn->GetRecvLayer(net);
   }
   
   if(!recv_lay->HasUnitGroups()) {
@@ -39,8 +39,8 @@ void STATE_CLASS(TiledNovlpPrjnSpec)::Connect_impl
     return;
   }
 
-  LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
-  LAYER_STATE* send_lay = prjn->GetSendLayerState(net);
+  LAYER_STATE* recv_lay = prjn->GetRecvLayer(net);
+  LAYER_STATE* send_lay = prjn->GetSendLayer(net);
 
   int ru_nunits = recv_lay->un_geom_n;
   int su_nunits = send_lay->un_geom_n;
@@ -81,8 +81,8 @@ void STATE_CLASS(TiledNovlpPrjnSpec)::Connect_impl
 void STATE_CLASS(TiledNovlpPrjnSpec)::Connect_Reciprocal
   (PRJN_STATE* prjn, NETWORK_STATE* net, int make_cons) {
 
-  LAYER_STATE* recv_lay = prjn->GetSendLayerState(net); // recip
-  LAYER_STATE* send_lay = prjn->GetRecvLayerState(net); // recip
+  LAYER_STATE* recv_lay = prjn->GetSendLayer(net); // recip
+  LAYER_STATE* send_lay = prjn->GetRecvLayer(net); // recip
 
   int ru_nunits = recv_lay->un_geom_n;
   int su_nunits = send_lay->un_geom_n;

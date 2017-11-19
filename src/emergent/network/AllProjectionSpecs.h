@@ -209,6 +209,22 @@ private:
 };
 
 
+eTypeDef_Of(SymmetricPrjnSpec);
+
+class E_API SymmetricPrjnSpec : public ProjectionSpec {
+  // connect with the same symmetric pattern that exists in a projection going the other irection -- especially useful for random projections but works for any type of projection -- runs in a second pass so no constraints on layer ordering etc -- somewhat slow but not too bad
+INHERITED(ProjectionSpec)
+public:
+  
+#include <SymmetricPrjnSpec>
+  
+  TA_SIMPLE_BASEFUNS(SymmetricPrjnSpec);
+private:
+  void	Initialize()	{ Initialize_core(); }
+  void	Destroy()	{ };
+};
+
+
 ///////////////////////////////////////////////////////////
 //      Tessel 
 
@@ -470,9 +486,9 @@ private:
   void 	Destroy()	{ };
 };
 
+
 ///////////////////////////////////////////////////////////
 //      Gaussian, Gradient..
-
 
 eTypeDef_Of(GaussRFPrjnSpec);
 

@@ -4,8 +4,8 @@
 void STATE_CLASS(GpMapDivergePrjnSpec)::Connect_impl
   (PRJN_STATE* prjn, NETWORK_STATE* net, int make_cons) {
 
-  LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
-  LAYER_STATE* send_lay = prjn->GetSendLayerState(net);
+  LAYER_STATE* recv_lay = prjn->GetRecvLayer(net);
+  LAYER_STATE* send_lay = prjn->GetSendLayer(net);
 
   if(!recv_lay->HasUnitGroups()) {
     net->StateError("GpMapDivergePrjnSpec::Connect_impl requires recv layer to have unit groups!");

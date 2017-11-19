@@ -50,7 +50,7 @@
   INLINE LAYER_STATE* GetRecvLayer(NETWORK_STATE* net) const {
     PRJN_STATE* prjn = GetPrjnState(net);
     if(prjn) {
-      return prjn->GetRecvLayerState(net);
+      return prjn->GetRecvLayer(net);
     }
     return NULL;
   }
@@ -58,7 +58,7 @@
   INLINE LAYER_STATE* GetSendLayer(NETWORK_STATE* net) const {
     PRJN_STATE* prjn = GetPrjnState(net);
     if(prjn) {
-      return prjn->GetSendLayerState(net);
+      return prjn->GetSendLayer(net);
     }
     return NULL;
   }

@@ -23,6 +23,9 @@
 #include <State_cpp>
 
 // member includes:
+#include <PrjnState_mbrs>
+
+#include <State_cpp>
 
 // declare all other types mentioned but not required to include:
 

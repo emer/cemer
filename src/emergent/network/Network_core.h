@@ -40,10 +40,10 @@
     T_RandomPrjnSpec,
     T_UniformRndPrjnSpec,
     T_PolarRndPrjnSpec,
+    T_SymmetricPrjnSpec,
 
     T_TesselPrjnSpec,
     T_GpTesselPrjnSpec,
-    T_SymmetricPrjnSpec,
 
     T_TiledGpRFPrjnSpec,
     T_TiledGpRFOneToOnePrjnSpec,

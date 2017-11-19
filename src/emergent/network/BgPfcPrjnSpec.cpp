@@ -24,8 +24,8 @@ void STATE_CLASS(BgPfcPrjnSpec)::FreePfcLayers() {
 
 void STATE_CLASS(BgPfcPrjnSpec)::Connect_impl(PRJN_STATE* prjn, NETWORK_STATE* net, int make_cons) {
 
-  LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
-  LAYER_STATE* send_lay = prjn->GetSendLayerState(net);
+  LAYER_STATE* recv_lay = prjn->GetRecvLayer(net);
+  LAYER_STATE* send_lay = prjn->GetSendLayer(net);
 
   LAYER_STATE* pfc_lay = NULL;
   LAYER_STATE* bg_lay = NULL;

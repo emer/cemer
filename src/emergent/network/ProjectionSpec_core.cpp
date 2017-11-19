@@ -2,9 +2,10 @@
 // if used, must be included directly in ProjectionSpec*.cpp
 
 void STATE_CLASS(ProjectionSpec)::Connect_Sizes(PRJN_STATE* prjn, NETWORK_STATE* net) {
+  prjn->ResetConStats();
   if(!prjn->IsActive(net)) return;
-  LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
-  LAYER_STATE* send_lay = prjn->GetSendLayerState(net);
+  LAYER_STATE* recv_lay = prjn->GetRecvLayer(net);
+  LAYER_STATE* send_lay = prjn->GetSendLayer(net);
   if(!recv_lay || !send_lay) return; // unnec but..
   if(recv_lay->n_units == 0 || send_lay->n_units == 0) return;
   Connect_impl(prjn, net, 0); // 0 = allocate = make_cons false
@@ -12,14 +13,16 @@ void STATE_CLASS(ProjectionSpec)::Connect_Sizes(PRJN_STATE* prjn, NETWORK_STATE*
 
 void STATE_CLASS(ProjectionSpec)::Connect_Cons(PRJN_STATE* prjn, NETWORK_STATE* net, int pass) {
   if(!prjn->IsActive(net)) return;
-  if(!ConnectPassCheck(prjn, net, pass)) {
-    if(pass == 1) {             // if we're skipping on pass1, then need pass2!
-      net->needs_prjn_pass2 = true;
+  if(pass == 1) {
+    if(ConnectPassCheck(prjn, net, 2)) { 
+      net->needs_prjn_pass2 = true; // tell net if we need another pass
     }
+  }
+  if(!ConnectPassCheck(prjn, net, pass)) {
     return; // nope
   }
-  LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
-  LAYER_STATE* send_lay = prjn->GetSendLayerState(net);
+  LAYER_STATE* recv_lay = prjn->GetRecvLayer(net);
+  LAYER_STATE* send_lay = prjn->GetSendLayer(net);
   if(!recv_lay || !send_lay) return; // unnec but..
   if(recv_lay->n_units == 0 || send_lay->n_units == 0) return;
   Connect_impl(prjn, net, pass); // 1 = make connections, first/main pass, 2 = optional
@@ -100,12 +103,12 @@ void STATE_CLASS(ProjectionSpec)::Init_Weights_renorm(PRJN_STATE* prjn, NETWORK_
 
 void STATE_CLASS(ProjectionSpec)::Connect_Gps
   (PRJN_STATE* prjn, NETWORK_STATE* net, int rgpidx, int sgpidx, float p_con,
-   bool sym_same_lay, int make_cons, bool share_con, bool recip) {
-  LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
-  LAYER_STATE* send_lay = prjn->GetSendLayerState(net);
+   bool symmetric, int make_cons, bool share_con, bool recip) {
+  LAYER_STATE* recv_lay = prjn->GetRecvLayer(net);
+  LAYER_STATE* send_lay = prjn->GetSendLayer(net);
   if(recip) {
     recv_lay = send_lay;
-    send_lay = prjn->GetRecvLayerState(net);
+    send_lay = prjn->GetRecvLayer(net);
   }
   int ru_nunits = recv_lay->un_geom_n;
   int su_nunits = send_lay->un_geom_n;
@@ -159,17 +162,17 @@ void STATE_CLASS(ProjectionSpec)::Connect_Gps
     return;
   }
 
-  if(p_con < 0 || (p_con < 1.0f && recip)) {               // this means: make symmetric connections!
+  if(p_con < 0 || (symmetric && p_con < 1.0f && recip)) { // this means: make symmetric connections!
     Connect_Gps_Sym(prjn, net, rgpidx, sgpidx, recip);
   }
   else if(p_con == 1.0f) {
     Connect_Gps_Full(prjn, net, rgpidx, sgpidx, share_con, recip);
   }
-  else if(same_gp && sym_same_lay) {
+  else if(same_gp && symmetric) {
     Connect_Gps_ProbSymSameGp(prjn, net, rgpidx, sgpidx, p_con);
   }
   else {
-    if(recv_lay == send_lay && sym_same_lay) {
+    if(recv_lay == send_lay && symmetric) {
       Connect_Gps_ProbSymSameLay(prjn, net, rgpidx, sgpidx, p_con);
     }
     else {
@@ -180,11 +183,11 @@ void STATE_CLASS(ProjectionSpec)::Connect_Gps
 
 void STATE_CLASS(ProjectionSpec)::Connect_Gps_Full
   (PRJN_STATE* prjn, NETWORK_STATE* net, int rgpidx, int sgpidx, bool share_con, bool recip) {
-  LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
-  LAYER_STATE* send_lay = prjn->GetSendLayerState(net);
+  LAYER_STATE* recv_lay = prjn->GetRecvLayer(net);
+  LAYER_STATE* send_lay = prjn->GetSendLayer(net);
   if(recip) {
     recv_lay = send_lay;
-    send_lay = prjn->GetRecvLayerState(net);
+    send_lay = prjn->GetRecvLayer(net);
   }
   int ru_nunits = recv_lay->un_geom_n;
   int su_nunits = send_lay->un_geom_n;
@@ -210,11 +213,11 @@ void STATE_CLASS(ProjectionSpec)::Connect_Gps_Full
 
 void STATE_CLASS(ProjectionSpec)::Connect_Gps_Prob
   (PRJN_STATE* prjn, NETWORK_STATE* net, int rgpidx, int sgpidx, float p_con, bool share_con, bool recip) {
-  LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
-  LAYER_STATE* send_lay = prjn->GetSendLayerState(net);
+  LAYER_STATE* recv_lay = prjn->GetRecvLayer(net);
+  LAYER_STATE* send_lay = prjn->GetSendLayer(net);
   if(recip) {
     recv_lay = send_lay;
-    send_lay = prjn->GetRecvLayerState(net);
+    send_lay = prjn->GetRecvLayer(net);
   }
   int ru_nunits = recv_lay->un_geom_n;
   int su_nunits = send_lay->un_geom_n;
@@ -261,8 +264,8 @@ void STATE_CLASS(ProjectionSpec)::Connect_Gps_Prob
 
 void STATE_CLASS(ProjectionSpec)::Connect_Gps_ProbSymSameGp
   (PRJN_STATE* prjn, NETWORK_STATE* net, int rgpidx, int sgpidx, float p_con) {
-  LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
-  LAYER_STATE* send_lay = prjn->GetSendLayerState(net);
+  LAYER_STATE* recv_lay = prjn->GetRecvLayer(net);
+  LAYER_STATE* send_lay = prjn->GetSendLayer(net);
   int ru_nunits = recv_lay->un_geom_n;
   int su_nunits = send_lay->un_geom_n;
 
@@ -317,8 +320,8 @@ void STATE_CLASS(ProjectionSpec)::Connect_Gps_ProbSymSameGp
 
 void STATE_CLASS(ProjectionSpec)::Connect_Gps_ProbSymSameLay
   (PRJN_STATE* prjn, NETWORK_STATE* net, int rgpidx, int sgpidx, float p_con) {
-  LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
-  LAYER_STATE* send_lay = prjn->GetSendLayerState(net);
+  LAYER_STATE* recv_lay = prjn->GetRecvLayer(net);
+  LAYER_STATE* send_lay = prjn->GetSendLayer(net);
   int ru_nunits = recv_lay->un_geom_n;
   int su_nunits = send_lay->un_geom_n;
 
@@ -355,8 +358,8 @@ void STATE_CLASS(ProjectionSpec)::Connect_Gps_ProbSymSameLay
 void STATE_CLASS(ProjectionSpec)::Connect_Gps_Sym
   (PRJN_STATE* prjn, NETWORK_STATE* net, int rgpidx, int sgpidx, bool recip) {
   
-  LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
-  LAYER_STATE* send_lay = prjn->GetSendLayerState(net);
+  LAYER_STATE* recv_lay = prjn->GetRecvLayer(net);
+  LAYER_STATE* send_lay = prjn->GetSendLayer(net);
   int ru_nunits = recv_lay->un_geom_n;
   int su_nunits = send_lay->un_geom_n;
 

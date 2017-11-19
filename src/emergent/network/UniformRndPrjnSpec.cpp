@@ -6,8 +6,8 @@ void STATE_CLASS(UniformRndPrjnSpec)::Connect_impl(PRJN_STATE* prjn, NETWORK_STA
     rndm_seed.OldSeed();
   }
 
-  LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
-  LAYER_STATE* send_lay = prjn->GetSendLayerState(net);
+  LAYER_STATE* recv_lay = prjn->GetRecvLayer(net);
+  LAYER_STATE* send_lay = prjn->GetSendLayer(net);
 
   const int rlay_no = recv_lay->n_units;
   const int slay_no = send_lay->n_units;

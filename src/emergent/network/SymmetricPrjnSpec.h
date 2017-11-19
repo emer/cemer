@@ -1,40 +1,15 @@
-// Copyright 2017, Regents of the University of Colorado,
-// Carnegie Mellon University, Princeton University.
-//
-// This file is part of Emergent
-//
-//   Emergent is free software; you can redistribute it and/or modify
-//   it under the terms of the GNU General Public License as published by
-//   the Free Software Foundation; either version 2 of the License, or
-//   (at your option) any later version.
-//
-//   Emergent is distributed in the hope that it will be useful,
-//   but WITHOUT ANY WARRANTY; without even the implied warranty of
-//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//   GNU General Public License for more details.
+// this is included directly in AllProjectionSpecs_cpp / _cuda
+// {
 
-#ifndef SymmetricPrjnSpec_h
-#define SymmetricPrjnSpec_h 1
+  float		recv_p_con;     // #MIN_0 #MAX_1 for receiving units, what is probability for receiving sending connections from sending layer -- determines how many connections to allocate here -- look at the recv_cons stats in the projection object to tune this value (also error messages during build if too low)
+  float		send_p_con;     // #MIN_0 #MAX_1 for sending units, what is probability for sending connections to receiving layer -- determines how many connections to allocate here -- look at the send_cons stats in the projection object to tune this value (also error messages during build if too low)
 
-// parent includes:
-#include <ProjectionSpec>
+  INIMPL bool ConnectPassCheck(PRJN_STATE* prjn, NETWORK_STATE* net, int pass) const override
+  { return (pass == 2); }
+  
+  INIMPL void Connect_impl(PRJN_STATE* prjn, NETWORK_STATE* net, int make_cons) override;
 
-// member includes:
+  INLINE void Initialize_core() { recv_p_con = 1.0f; send_p_con = 1.0f; }
 
-// declare all other types mentioned but not required to include:
-
-eTypeDef_Of(SymmetricPrjnSpec);
-
-class E_API SymmetricPrjnSpec : public ProjectionSpec {
-  // #OBSOLETE WARNING: this is obsolete and does not work anymore!  used to connect units with receiving connection where sending one already exists
-INHERITED(ProjectionSpec)
-public:
-  void Connect_impl(Projection* prjn, int make_cons) override;
-
-  TA_BASEFUNS_NOCOPY(SymmetricPrjnSpec);
-private:
-  void	Initialize()	{ };
-  void	Destroy()	{ };
-};
-
-#endif // SymmetricPrjnSpec_h
+  INLINE int  GetStateSpecType() const override
+  { return NETWORK_STATE::T_SymmetricPrjnSpec; }

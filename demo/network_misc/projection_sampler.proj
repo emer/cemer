@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.2.2.0 rev11176
+// ta_Dump File v3.0 -- code v8.2.2.0 rev11187
 LeabraProject .projects[0] { 
  Doc_Group @.docs = [2] {
   taDoc @[0] { 
@@ -206,9 +206,10 @@ LeabraProject .projects[0] {
 	 T3DataView_List @.annote_children = [0] {
 	 };
 
-	 ScaleRange_List @.scale_ranges = [2] {
+	 ScaleRange_List @.scale_ranges = [3] {
 	  ScaleRange @[0] { };
 	  ScaleRange @[1] { };
+	  ScaleRange @[2] { };
 	 };
 	};
        };
@@ -264,9 +265,10 @@ LeabraProject .projects[0] {
 	 T3DataView_List @.annote_children = [0] {
 	 };
 
-	 ScaleRange_List @.scale_ranges = [2] {
+	 ScaleRange_List @.scale_ranges = [3] {
 	  ScaleRange @[0] { };
 	  ScaleRange @[1] { };
+	  ScaleRange @[2] { };
 	 };
 	};
        };
@@ -836,7 +838,7 @@ LeabraProject .projects[0] {
     UserDataItem @[26] { };
    };
 
-   BaseSpec_Group @.specs = [8] {
+   BaseSpec_Group @.specs = [9] {
     LeabraUnitSpec @[0] { 
      BaseSpec_Group @.children = [0] {
      };
@@ -875,6 +877,10 @@ LeabraProject .projects[0] {
      BaseSpec_Group @.children = [0] {
      };
     };
+    SymmetricPrjnSpec @[8] { 
+     BaseSpec_Group @.children = [0] {
+     };
+    };
    };
 
    ParamSeq_Group @.param_seqs = [0] {
@@ -882,7 +888,8 @@ LeabraProject .projects[0] {
 
    Layer_Group @.layers = [4] {
     LeabraLayer @[0] { 
-     Projection_Group @.projections = [0] {
+     Projection_Group @.projections = [1] {
+      LeabraPrjn @[0] { };
      };
     };
     LeabraLayer @[1] { 
@@ -2436,9 +2443,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	  show_iconified=0;
 	  net_text_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=-0.5: z=0: }: };
 	  net_text_rot=0;
-	  cur_unit_vals{ r.wt;	  };
+	  cur_unit_vals{ s.wt;	  };
 	  hot_vars{ targ;ext;act;net;bias_wt;bias_dwt;act_eq;act_m;act_p;act_dif;act_avg;r.wt;r.wt*act;s.wt;r.dwt;s.dwt;	  };
-	  unit_src_path=".layers[3][29]";
+	  unit_src_path=".layers[1][22]";
 	  con_type=ANY_CON;
 	  hist_idx=0;
 	  hist_save=1;
@@ -2485,6 +2492,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	   };
 	   ScaleRange @[1] {
 	    var_name="r.wt";
+	    auto_scale=0;
+	    min=-1;
+	    max=1;
+	   };
+	   ScaleRange @[2] {
+	    var_name="s.wt";
 	    auto_scale=0;
 	    min=-1;
 	    max=1;
@@ -2792,9 +2805,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	  show_iconified=0;
 	  net_text_xform {scale={x=0.7: y=0.7: z=0.7: }: rotate={x=1: y=0: z=0: rot=1.570796: }: translate={x=0: y=1: z=-1: }: };
 	  net_text_rot=-90;
-	  cur_unit_vals{ r.wt;	  };
+	  cur_unit_vals{ s.wt;	  };
 	  hot_vars{ targ;ext;act;net;bias_wt;bias_dwt;act_eq;act_m;act_p;act_dif;act_avg;r.wt;r.wt*act;s.wt;r.dwt;s.dwt;	  };
-	  unit_src_path=".layers[2][0]";
+	  unit_src_path=".layers[0][31]";
 	  con_type=ANY_CON;
 	  hist_idx=0;
 	  hist_save=1;
@@ -2841,6 +2854,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	   };
 	   ScaleRange @[1] {
 	    var_name="r.wt";
+	    auto_scale=0;
+	    min=-1;
+	    max=1;
+	   };
+	   ScaleRange @[2] {
+	    var_name="s.wt";
 	    auto_scale=0;
 	    min=-1;
 	    max=1;
@@ -2967,7 +2986,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
  save_as_only=0;
  auto_name=1;
  last_change_desc="Project updated on wiki: emergent changes: doc link";
- tree_state{ .;.docs;.wizards;.ctrl_panels;.data;.data.gp[0];.data.gp[1];.data.gp[2];.programs;.viewers[0];.viewers[0].frames[2];.networks;.networks[0];.networks[0].specs;.networks[0].layers;.networks[1];.networks[1].specs;.networks[1].layers;.networks[2];.networks[2].specs;.networks[2].specs[9];.networks[2].specs[9].children[0];.networks[2].specs[10];.networks[2].layers;.networks[2].layers[1];.networks[2].layers[1].projections;.networks[2].layers[1].projections[2];.networks[2].layers[5];.networks[2].layers[5].projections;.networks[3];.networks[3].spec_tables;.networks[3].specs;.networks[3].param_seqs;.networks[3].layers;.networks[3].layers[0];.networks[3].layers[0].projections;.networks[3].layers[1];.networks[3].layers[1].projections;.networks[3].weights;.networks[4];.networks[4].specs;.networks[4].layers;.networks[5];.networks[5].specs;.networks[5].layers;.networks[6];.networks[6].specs;.networks[6].layers;.networks[6].layers[3];.networks[6].layers[3].projections;.networks[6].weights; };
+ tree_state{ .;.docs;.wizards;.ctrl_panels;.data;.data.gp[0];.data.gp[1];.data.gp[2];.programs;.networks;.networks[0];.networks[0].specs;.networks[0].layers;.networks[1];.networks[1].specs;.networks[1].layers;.networks[2];.networks[2].specs;.networks[2].specs[9];.networks[2].specs[9].children[0];.networks[2].specs[10];.networks[2].layers;.networks[2].layers[1];.networks[2].layers[1].projections;.networks[2].layers[1].projections[2];.networks[2].layers[5];.networks[2].layers[5].projections;.networks[3];.networks[3].spec_tables;.networks[3].specs;.networks[3].param_seqs;.networks[3].layers;.networks[3].layers[0];.networks[3].layers[0].projections;.networks[3].layers[1];.networks[3].layers[1].projections;.networks[3].weights;.networks[4];.networks[4].specs;.networks[4].specs[8];.networks[4].layers;.networks[4].layers[0];.networks[4].layers[0].projections;.networks[4].layers[1];.networks[4].layers[1].projections;.networks[4].layers[2];.networks[4].layers[2].projections;.networks[4].layers[3];.networks[4].layers[3].projections;.networks[5];.networks[5].specs;.networks[5].layers;.networks[6];.networks[6].specs;.networks[6].layers;.networks[6].layers[1];.networks[6].layers[1].projections;.networks[6].layers[2];.networks[6].layers[2].projections;.networks[6].layers[3];.networks[6].layers[3].projections;.networks[6].weights; };
  networks {
   name="networks";
   el_typ=LeabraNetwork;
@@ -4503,8 +4522,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
    small_batch_n=10;
    stats {sse_unit_avg=0: sse_sqrt=0: cnt_err_tol=0: prerr=0: };
    n_units=1405;
-   n_cons=214020;
-   max_prjns=2;
+   n_cons=255492;
+   max_prjns=3;
    specs {
     name="specs";
     el_typ=LeabraUnitSpec;
@@ -4819,7 +4838,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
        unique{ reciprocal;       };
        saved{        };
        children {
-	name="BaseSpec_Group_1";
+	name="children";
 	el_typ=TiledGpRFPrjnSpec;
 	el_def=0;
        };
@@ -4835,6 +4854,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
        wrap=1;
        reciprocal=1;
        p_con=0.5;
+       symmetric=1;
        share_cons=0;
        wts_type=GAUSSIAN;
        full_gauss {on=0: sigma=0.6: wrap_wts=1: ctr_mv=1: };
@@ -4860,6 +4880,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      wrap=1;
      reciprocal=0;
      p_con=0.5;
+     symmetric=1;
      share_cons=0;
      wts_type=GAUSSIAN;
      full_gauss {on=0: sigma=0.6: wrap_wts=1: ctr_mv=1: };
@@ -4977,7 +4998,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     };
     LeabraLayer @[1] {
      name="Tiled_4x4HalfOvlp";
-     n_recv_prjns=2;
+     n_recv_prjns=3;
      n_send_prjns=3;
      un_geom_x=6;
      un_geom_y=6;
@@ -5049,7 +5070,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
        con_type=LeabraCon;
        con_spec {type=LeabraConSpec: spec=$.networks[2].specs[3]$: };
        dir_fixed=0;
-       direction=DIR_UNKNOWN;
+       direction=LATERAL;
        prjn_clr {r=1: g=0.9: b=0.5: a=1: };
       };
      };
@@ -5278,7 +5299,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     LeabraLayer @[5] {
      name="TiledGpRF";
      n_recv_prjns=1;
-     n_send_prjns=0;
+     n_send_prjns=1;
      un_geom_x=4;
      un_geom_y=4;
      un_geom_n=16;
@@ -5329,6 +5350,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
       name="send_prjns";
       el_typ=LeabraPrjn;
       el_def=0;
+      Projection_Group @. = [0] = LeabraPrjn .networks[2].layers[1].projections[2];
      };
      unit_spec {type=LeabraUnitSpec: spec=$.networks[2].specs[0]$: };
      dist {fm_input=-1: fm_output=-1: };
@@ -5803,7 +5825,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
    small_batch_n=10;
    stats {sse_unit_avg=0: sse_sqrt=0: cnt_err_tol=0: prerr=0: };
    n_units=253;
-   n_cons=5760;
+   n_cons=7056;
    max_prjns=1;
    specs {
     name="specs";
@@ -6055,6 +6077,27 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
       rnd_seed=1017380772;
      };
     };
+    SymmetricPrjnSpec @[8] {
+     name="Symmetric_p25";
+     is_used=1;
+     used_status=USED;
+     desc=;
+     unique{      };
+     saved{      };
+     children {
+      name="children";
+      el_typ=SymmetricPrjnSpec;
+      el_def=0;
+     };
+     self_con=0;
+     init_wts=0;
+     set_scale=0;
+     init_wt_val=1;
+     add_rnd_var=0;
+     renorm_wts {on=0: mult_norm=1: avg_wt=0.5: };
+     recv_p_con=0.5;
+     send_p_con=0.25;
+    };
    };
    param_seqs {
     name="param_seqs";
@@ -6071,7 +6114,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     max_disp_size2d {x=22: y=20: };
     LeabraLayer @[0] {
      name="Sender";
-     n_recv_prjns=0;
+     n_recv_prjns=1;
      n_send_prjns=3;
      un_geom_x=12;
      un_geom_y=12;
@@ -6104,6 +6147,20 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
       name="projections";
       el_typ=LeabraPrjn;
       el_def=0;
+      LeabraPrjn @[0] {
+       name="Fm_UniformRandom_p25";
+       off=0;
+       disp=1;
+       notes=;
+       from_type=CUSTOM;
+       from=.networks[4].layers[1]$$;
+       spec {type=SymmetricPrjnSpec: spec=.networks[4].specs[8]$$: };
+       con_type=LeabraCon;
+       con_spec {type=LeabraConSpec: spec=.networks[4].specs[3]$$: };
+       dir_fixed=0;
+       direction=LATERAL;
+       prjn_clr {r=1: g=0.9: b=0.5: a=1: };
+      };
      };
      send_prjns {
       name="send_prjns";
@@ -6128,7 +6185,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     LeabraLayer @[1] {
      name="UniformRandom_p25";
      n_recv_prjns=1;
-     n_send_prjns=0;
+     n_send_prjns=1;
      un_geom_x=6;
      un_geom_y=6;
      un_geom_n=36;
@@ -6169,7 +6226,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
        from=.networks[4].layers[0]$$;
        spec {type=UniformRndPrjnSpec: spec=.networks[4].specs[5]$$: };
        con_type=LeabraCon;
-       con_spec {type=LeabraConSpec: spec=.networks[4].specs[3]$$: };
+       con_spec {type=LeabraConSpec: spec=$.networks[4].specs[3]$: };
        dir_fixed=0;
        direction=LATERAL;
        prjn_clr {r=1: g=0.9: b=0.5: a=1: };
@@ -6179,6 +6236,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
       name="send_prjns";
       el_typ=LeabraPrjn;
       el_def=0;
+      Projection_Group @. = [0] = LeabraPrjn .networks[4].layers[0].projections[0];
      };
      unit_spec {type=LeabraUnitSpec: spec=$.networks[4].specs[0]$: };
      dist {fm_input=-1: fm_output=-1: };

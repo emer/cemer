@@ -2,8 +2,8 @@
 // {
 
 void STATE_CLASS(FullPrjnSpec)::Connect_impl(PRJN_STATE* prjn, NETWORK_STATE* net, int make_cons) {
-  LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
-  LAYER_STATE* send_lay = prjn->GetSendLayerState(net);
+  LAYER_STATE* recv_lay = prjn->GetRecvLayer(net);
+  LAYER_STATE* send_lay = prjn->GetSendLayer(net);
   
   int recv_no = send_lay->n_units; // recv from number of senders
   if(!self_con && (send_lay == recv_lay))
@@ -32,8 +32,8 @@ void STATE_CLASS(FullPrjnSpec)::Connect_impl(PRJN_STATE* prjn, NETWORK_STATE* ne
 
 int STATE_CLASS(FullPrjnSpec)::ProbAddCons_impl(PRJN_STATE* prjn, NETWORK_STATE* net, float p_add_con,
                                                 float init_wt) {
-  LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
-  LAYER_STATE* send_lay = prjn->GetSendLayerState(net);
+  LAYER_STATE* recv_lay = prjn->GetRecvLayer(net);
+  LAYER_STATE* send_lay = prjn->GetSendLayer(net);
   
   int rval = 0;
 

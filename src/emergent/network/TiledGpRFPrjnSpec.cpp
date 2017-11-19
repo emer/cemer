@@ -6,10 +6,11 @@ void STATE_CLASS(TiledGpRFPrjnSpec)::Initialize_core() {
   send_gp_skip = 2;
   send_gp_start = -1;
   wrap = true;
-  wts_type = GAUSSIAN;
-  share_cons = false;
   reciprocal = false;
   p_con = 1.0f;
+  symmetric = true;
+  wts_type = GAUSSIAN;
+  share_cons = false;
   full_send = BY_UNIT;
   full_recv = BY_UNIT;
   wt_range.min = 0.4f;
@@ -17,16 +18,16 @@ void STATE_CLASS(TiledGpRFPrjnSpec)::Initialize_core() {
 }
 
 bool STATE_CLASS(TiledGpRFPrjnSpec)::ConnectPassCheck(PRJN_STATE* prjn, NETWORK_STATE* net, int pass) const {
-  if((p_con < 1.0f && reciprocal) || p_con < 0.0f) return (pass == 2);
+  if(p_con < 1.0f && reciprocal && symmetric) return (pass == 2);
   return (pass == 1);
 }
 
 void STATE_CLASS(TiledGpRFPrjnSpec)::Connect_impl(PRJN_STATE* prjn, NETWORK_STATE* net, int make_cons) {
-  LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
-  LAYER_STATE* send_lay = prjn->GetSendLayerState(net);
+  LAYER_STATE* recv_lay = prjn->GetRecvLayer(net);
+  LAYER_STATE* send_lay = prjn->GetSendLayer(net);
   if(reciprocal) {
     recv_lay = send_lay;
-    send_lay = prjn->GetRecvLayerState(net);
+    send_lay = prjn->GetRecvLayer(net);
   }
 
   TAVECTOR2I ru_geo;
@@ -77,14 +78,15 @@ void STATE_CLASS(TiledGpRFPrjnSpec)::Connect_impl(PRJN_STATE* prjn, NETWORK_STAT
             if(!send_lay->GpIdxInRange(sgpidx)) continue;
           }
           // in base prjnspec
-          Connect_Gps(prjn, net, rgpidx, sgpidx, p_con, true, make_cons, share_cons, reciprocal);
+          Connect_Gps(prjn, net, rgpidx, sgpidx, p_con, symmetric, make_cons, share_cons,
+                      reciprocal);
         }
       }
     }
   }
-  if(!make_cons) { // on first pass through alloc loop, do sending allocations
-    prjn->GetRecvLayerState(net)->RecvConsPostAlloc(net, prjn);
-    prjn->GetSendLayerState(net)->SendConsPostAlloc(net, prjn);
+  if(!make_cons) { // on first pass through alloc loop, alloc
+    prjn->GetRecvLayer(net)->RecvConsPostAlloc(net, prjn); // using these b/c reciprocal..
+    prjn->GetSendLayer(net)->SendConsPostAlloc(net, prjn);
   }
 }
 
@@ -102,8 +104,8 @@ void STATE_CLASS(TiledGpRFPrjnSpec)::Init_Weights_Prjn
 
 void STATE_CLASS(TiledGpRFPrjnSpec)::Init_Weights_Gaussian
   (PRJN_STATE* prjn, NETWORK_STATE* net, int thr_no, CON_STATE* cg) {
-  LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
-  LAYER_STATE* send_lay = prjn->GetSendLayerState(net);
+  LAYER_STATE* recv_lay = prjn->GetRecvLayer(net);
+  LAYER_STATE* send_lay = prjn->GetSendLayer(net);
 
   // if(reciprocal) {
   //   recv_lay = prjn->from; // from perspective of non-recip!
@@ -234,8 +236,8 @@ void STATE_CLASS(TiledGpRFPrjnSpec)::Init_Weights_Gaussian
 void STATE_CLASS(TiledGpRFPrjnSpec)::Init_Weights_Sigmoid
   (PRJN_STATE* prjn, NETWORK_STATE* net, int thr_no, CON_STATE* cg) {
 
-  LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
-  LAYER_STATE* send_lay = prjn->GetSendLayerState(net);
+  LAYER_STATE* recv_lay = prjn->GetRecvLayer(net);
+  LAYER_STATE* send_lay = prjn->GetSendLayer(net);
 
   TAVECTOR2I send_un_geo;
   send_un_geo.SetXY(send_lay->un_geom_x, send_lay->un_geom_y);

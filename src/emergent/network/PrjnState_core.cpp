@@ -2,7 +2,7 @@
 // if used, include directly in _cpp.cpp, _cuda.cpp
 
 void PRJN_STATE::Init_Weights(NETWORK_STATE* net) {
-  LAYER_STATE* recv_lay = GetRecvLayerState(net);
+  LAYER_STATE* recv_lay = GetRecvLayer(net);
   PRJN_SPEC_CPP* pspec = GetPrjnSpec(net);
   CON_SPEC_CPP* cs = GetConSpec(net);
   if(net->RecvOwnsCons() || pspec->init_wts) {
@@ -22,7 +22,7 @@ void PRJN_STATE::Init_Weights(NETWORK_STATE* net) {
     }
   }
   else { // send owns cons, not prjn init
-    LAYER_STATE* send_lay = GetSendLayerState(net);
+    LAYER_STATE* send_lay = GetSendLayer(net);
     for(int sui = 0; sui < send_lay->n_units; sui++) {
       UNIT_STATE* su = send_lay->GetUnitState(net, sui);
       if(su->lesioned()) continue;
@@ -36,8 +36,8 @@ void PRJN_STATE::Init_Weights(NETWORK_STATE* net) {
 }
 
 void PRJN_STATE::Copy_Weights(NETWORK_STATE* net, PRJN_STATE* src) {
-  LAYER_STATE* recv_lay = GetRecvLayerState(net);
-  LAYER_STATE* src_recv_lay = src->GetRecvLayerState(net);
+  LAYER_STATE* recv_lay = GetRecvLayer(net);
+  LAYER_STATE* src_recv_lay = src->GetRecvLayer(net);
   PRJN_STATE* src_prjn = src->GetPrjnState(net);
 
   int maxn = MIN(recv_lay->n_units, src_recv_lay->n_units);

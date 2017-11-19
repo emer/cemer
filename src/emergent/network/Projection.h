@@ -30,6 +30,16 @@
 #include <Relation>
 #include <DMemAggVars>
 
+#include <State_main>
+
+eTypeDef_Of(PrjnConStats);
+
+#include <PrjnState_mbrs>
+
+#include <State_main>
+
+
+
 // declare all other types mentioned but not required to include:
 class DataTable; //
 class NetMonitor; //

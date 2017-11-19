@@ -4,8 +4,8 @@
 void STATE_CLASS(MarkerGpOneToOnePrjnSpec)::Connect_impl
   (PRJN_STATE* prjn, NETWORK_STATE* net, int make_cons) { 
 
-  LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
-  LAYER_STATE* send_lay = prjn->GetSendLayerState(net);
+  LAYER_STATE* recv_lay = prjn->GetRecvLayer(net);
+  LAYER_STATE* send_lay = prjn->GetSendLayer(net);
   
   TAVECTOR2I ru_geo;
   ru_geo.SetXY(recv_lay->gp_geom_x, recv_lay->gp_geom_y);

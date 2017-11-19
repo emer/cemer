@@ -11,8 +11,8 @@ void STATE_CLASS(TiledGpMapConvergePrjnSpec)::Initialize_core() {
 void STATE_CLASS(TiledGpMapConvergePrjnSpec)::Connect_impl
   (PRJN_STATE* prjn, NETWORK_STATE* net, int make_cons) {
 
-  LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
-  LAYER_STATE* send_lay = prjn->GetSendLayerState(net);
+  LAYER_STATE* recv_lay = prjn->GetRecvLayer(net);
+  LAYER_STATE* send_lay = prjn->GetSendLayer(net);
 
   if(!recv_lay->HasUnitGroups()) {
     net->StateError("TiledSubGpRFPrjnSpec::Connect_impl requires recv layer to have unit groups!");
@@ -78,8 +78,8 @@ void STATE_CLASS(TiledGpMapConvergePrjnSpec)::Connect_impl
 void STATE_CLASS(TiledGpMapConvergePrjnSpec)::Connect_Reciprocal
   (PRJN_STATE* prjn, NETWORK_STATE* net, int make_cons) {
 
-  LAYER_STATE* recv_lay = prjn->GetSendLayerState(net); // recip
-  LAYER_STATE* send_lay = prjn->GetRecvLayerState(net); // recip
+  LAYER_STATE* recv_lay = prjn->GetSendLayer(net); // recip
+  LAYER_STATE* send_lay = prjn->GetRecvLayer(net); // recip
 
   TAVECTOR2I ru_geo;
   ru_geo.SetXY(recv_lay->gp_geom_x, recv_lay->gp_geom_y);
@@ -154,7 +154,7 @@ void STATE_CLASS(TiledGpMapConvergePrjnSpec)::Connect_Reciprocal
     }
   }
   if(!make_cons) { // on first pass through alloc loop, do sending allocations
-    prjn->GetSendLayerState(net)->SendConsPostAlloc(net, prjn); // recip
+    prjn->GetSendLayer(net)->SendConsPostAlloc(net, prjn); // recip
   }
 }
 

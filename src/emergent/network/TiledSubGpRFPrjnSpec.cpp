@@ -20,11 +20,11 @@ void STATE_CLASS(TiledSubGpRFPrjnSpec)::Initialize_core() {
 
 void STATE_CLASS(TiledSubGpRFPrjnSpec)::Connect_impl(PRJN_STATE* prjn, NETWORK_STATE* net, int make_cons) {
 
-  LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
-  LAYER_STATE* send_lay = prjn->GetSendLayerState(net);
+  LAYER_STATE* recv_lay = prjn->GetRecvLayer(net);
+  LAYER_STATE* send_lay = prjn->GetSendLayer(net);
   if(reciprocal) {
     recv_lay = send_lay;
-    send_lay = prjn->GetRecvLayerState(net);
+    send_lay = prjn->GetRecvLayer(net);
   }
 
   if(!recv_lay->HasUnitGroups()) {
@@ -95,8 +95,8 @@ void STATE_CLASS(TiledSubGpRFPrjnSpec)::Connect_impl(PRJN_STATE* prjn, NETWORK_S
     }
   }
   if(!make_cons) { // on first pass through alloc loop, do sending allocations
-    prjn->GetRecvLayerState(net)->RecvConsPostAlloc(net, prjn);
-    prjn->GetSendLayerState(net)->SendConsPostAlloc(net, prjn);
+    prjn->GetRecvLayer(net)->RecvConsPostAlloc(net, prjn);
+    prjn->GetSendLayer(net)->SendConsPostAlloc(net, prjn);
   }
 }
 
@@ -109,8 +109,8 @@ void STATE_CLASS(TiledSubGpRFPrjnSpec)::Init_Weights_Prjn
 
 void STATE_CLASS(TiledSubGpRFPrjnSpec)::Init_Weights_Gaussian
   (PRJN_STATE* prjn, NETWORK_STATE* net, int thr_no, CON_STATE* cg) {
-  LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
-  LAYER_STATE* send_lay = prjn->GetSendLayerState(net);
+  LAYER_STATE* recv_lay = prjn->GetRecvLayer(net);
+  LAYER_STATE* send_lay = prjn->GetSendLayer(net);
 
   // todo: need to fix for reciprocal?
   

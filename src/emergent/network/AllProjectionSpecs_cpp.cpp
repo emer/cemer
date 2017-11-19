@@ -33,6 +33,7 @@
 #include "RandomPrjnSpec.cpp"
 #include "UniformRndPrjnSpec.cpp"
 #include "PolarRndPrjnSpec.cpp"
+#include "SymmetricPrjnSpec.cpp"
 
 #include "TesselPrjnSpec.cpp"
 #include "GpTesselPrjnSpec.cpp"

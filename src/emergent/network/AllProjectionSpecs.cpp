@@ -61,6 +61,10 @@ void PolarRndPrjnSpec::UpdateAfterEdit_impl() {
   if(p_con < 0.0f) p_con = 0.0f;
 }
 
+#include "SymmetricPrjnSpec.cpp"
+TA_BASEFUNS_CTORS_DEFN(SymmetricPrjnSpec);
+
+
 ////////////////////////////////////////////////////////////////////////////////////
 //              TesselPrjnSpec
 

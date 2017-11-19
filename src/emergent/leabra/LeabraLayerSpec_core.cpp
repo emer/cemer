@@ -86,7 +86,7 @@ void LEABRA_LAYER_SPEC::Compute_CosDiff_post(LEABRA_LAYER_STATE* lay, LEABRA_NET
     for(int i=0;i<lay->n_recv_prjns;i++) {
       LEABRA_PRJN_STATE* prjn = lay->GetRecvPrjnState(net, i);
       if(prjn->NotActive(net)) continue;
-      LEABRA_LAYER_STATE* from = prjn->GetSendLayerState(net);
+      LEABRA_LAYER_STATE* from = prjn->GetSendLayer(net);
       LEABRA_UNIT_SPEC_CPP* frus = from->GetUnitSpec(net);
       if(frus->deep.IsTRC()) {
         LEABRA_LAYER_SPEC_CPP* frls = from->GetLayerSpec(net);

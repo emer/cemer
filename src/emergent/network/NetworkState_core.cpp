@@ -849,13 +849,13 @@ PRJN_SPEC_CPP* NETWORK_STATE::NewPrjnSpec(int spec_type) const {
     return new STATE_CLASS_CPP(UniformRndPrjnSpec)();
   case T_PolarRndPrjnSpec:
     return new STATE_CLASS_CPP(PolarRndPrjnSpec)();
+  case T_SymmetricPrjnSpec:
+    return new STATE_CLASS_CPP(SymmetricPrjnSpec)();
 
   case T_TesselPrjnSpec:
     return new STATE_CLASS_CPP(TesselPrjnSpec)();
   case T_GpTesselPrjnSpec:
     return new STATE_CLASS_CPP(GpTesselPrjnSpec)();
-  // case T_SymmetricPrjnSpec:
-  //   return new STATE_CLASS_CPP(SymmetricPrjnSpec)();
 
   case T_TiledGpRFPrjnSpec:
     return new STATE_CLASS_CPP(TiledGpRFPrjnSpec)();
@@ -1423,6 +1423,44 @@ void NETWORK_STATE::CountCons() {
     max_prjns = MAX(lay->n_recv_prjns, max_prjns);
   }
 
+  for(int li=0; li < n_layers_built; li++) {
+    LAYER_STATE* lay = GetLayerState(li);
+    if(lay->lesioned()) continue;
+    const int nun = lay->n_units;
+    for(int ui=0; ui < nun; ui++) {
+      UNIT_STATE* u = lay->GetUnitState(this, ui);
+      for(int j=0; j < lay->n_recv_prjns; j++) {
+        PRJN_STATE* prjn = lay->GetRecvPrjnState(this, j);
+        if(!prjn->IsActive(this)) continue;
+        CON_STATE* rcg = u->RecvConState(this, j);
+        prjn->recv_con_stats.UpdtStatsFmCons(rcg->size, rcg->alloc_size);
+      }
+      for(int j=0; j < lay->n_send_prjns; j++) {
+        PRJN_STATE* prjn = lay->GetSendPrjnState(this, j);
+        if(!prjn->IsActive(this)) continue;
+        CON_STATE* scg = u->SendConState(this, j);
+        prjn->send_con_stats.UpdtStatsFmCons(scg->size, scg->alloc_size);
+      }
+    }
+  }
+
+  for(int li=0; li < n_layers_built; li++) {
+    LAYER_STATE* lay = GetLayerState(li);
+    if(lay->lesioned()) continue;
+    for(int j=0; j < lay->n_recv_prjns; j++) {
+      PRJN_STATE* prjn = lay->GetRecvPrjnState(this, j);
+      if(!prjn->IsActive(this)) continue;
+      LAYER_STATE* send = prjn->GetSendLayer(this);
+      prjn->recv_con_stats.FinalStats(send->n_units);
+    }
+    for(int j=0; j < lay->n_send_prjns; j++) {
+      PRJN_STATE* prjn = lay->GetSendPrjnState(this, j);
+      if(!prjn->IsActive(this)) continue;
+      LAYER_STATE* recv = prjn->GetRecvLayer(this);
+      prjn->send_con_stats.FinalStats(recv->n_units);
+    }
+  }
+  
   if(RecvOwnsCons()) {
     for(int i=0; i < n_thrs_built; i++) {
       CountNonSharedRecvCons_Thr(i);

@@ -800,12 +800,15 @@ void Network::Build() {
   SyncNetState();
   BuildSendNetinTmp();
   
+  SetNetFlag(BUILT);
+  SetNetFlag(INTACT);
+
+  SyncLayerState();
+  SyncPrjnState();
+  
   if(taMisc::gui_active)	// only when gui is active..
     AssignVoxels();
 
-  SetNetFlag(BUILT);
-  SetNetFlag(INTACT);
-  
   if (taMisc::is_post_loading) {
     specs.RestorePanels();
     layers.RestorePanels();
@@ -820,6 +823,8 @@ void Network::Build() {
   }
 
   SyncNetState();
+  SyncLayerState();
+  SyncPrjnState();
   
   StructUpdate(false);
   --taMisc::no_auto_expand;
@@ -2699,8 +2704,8 @@ static bool net_project_wts_propagate(NetworkState_cpp* net, UnitState_cpp* u, b
     ConState_cpp* cg = (swt ? u->SendConState(net, g) : u->RecvConState(net, g));
     PrjnState_cpp* prjn = cg->GetPrjnState(net);
     if(!prjn || prjn->NotActive(net)) continue;
-    LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
-    LAYER_STATE* send_lay = prjn->GetSendLayerState(net);
+    LAYER_STATE* recv_lay = prjn->GetRecvLayer(net);
+    LAYER_STATE* send_lay = prjn->GetSendLayer(net);
     LAYER_STATE* slay = (swt ? recv_lay : send_lay);
 
     if(slay->lesioned() || (send_lay == recv_lay) ||
@@ -2748,8 +2753,8 @@ void Network::ProjectUnitWeights(UnitState_cpp* src_u, int top_k_un, int top_k_g
     ConState_cpp* cg = (swt ? src_u->SendConState(net, g) : src_u->RecvConState(net, g));
     PrjnState_cpp* prjn = cg->GetPrjnState(net);
     if(!prjn || prjn->NotActive(net)) continue;
-    LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
-    LAYER_STATE* send_lay = prjn->GetSendLayerState(net);
+    LAYER_STATE* recv_lay = prjn->GetRecvLayer(net);
+    LAYER_STATE* send_lay = prjn->GetSendLayer(net);
     LAYER_STATE* slay = (swt ? recv_lay : send_lay);
 
     if(slay->lesioned() || (send_lay == recv_lay)) continue; // no self prjns!!

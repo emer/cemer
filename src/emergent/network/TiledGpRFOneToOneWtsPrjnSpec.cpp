@@ -10,8 +10,8 @@ void STATE_CLASS(TiledGpRFOneToOneWtsPrjnSpec)::Initialize_core() {
 void STATE_CLASS(TiledGpRFOneToOneWtsPrjnSpec)::Init_Weights_Prjn
   (PRJN_STATE* prjn, NETWORK_STATE* net, int thr_no, CON_STATE* cg) {
 
-  LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
-  LAYER_STATE* send_lay = prjn->GetSendLayerState(net);
+  LAYER_STATE* recv_lay = prjn->GetRecvLayer(net);
+  LAYER_STATE* send_lay = prjn->GetSendLayer(net);
   UNIT_STATE* ru = cg->OwnUnState(net);
 
   int rgpidx = ru->gp_idx;

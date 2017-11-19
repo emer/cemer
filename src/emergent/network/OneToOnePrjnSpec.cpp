@@ -2,8 +2,8 @@
 // {
 
 void STATE_CLASS(OneToOnePrjnSpec)::Connect_impl(PRJN_STATE* prjn, NETWORK_STATE* net, int make_cons) { 
-  LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
-  LAYER_STATE* send_lay = prjn->GetSendLayerState(net);
+  LAYER_STATE* recv_lay = prjn->GetRecvLayer(net);
+  LAYER_STATE* send_lay = prjn->GetSendLayer(net);
   
   int n_recv = recv_lay->n_units - recv_start;
   int n_send = send_lay->n_units - send_start;
@@ -42,8 +42,8 @@ void STATE_CLASS(OneToOnePrjnSpec)::Connect_impl(PRJN_STATE* prjn, NETWORK_STATE
 }
 
 void STATE_CLASS(OneToOnePrjnSpec)::ConnectRecvGp_impl(PRJN_STATE* prjn, NETWORK_STATE* net, int make_cons) {
-  LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
-  LAYER_STATE* send_lay = prjn->GetSendLayerState(net);
+  LAYER_STATE* recv_lay = prjn->GetRecvLayer(net);
+  LAYER_STATE* send_lay = prjn->GetSendLayer(net);
 
   int n_send = send_lay->n_units - send_start;
   int n_recv = recv_lay->un_geom_n - recv_start;
@@ -74,8 +74,8 @@ void STATE_CLASS(OneToOnePrjnSpec)::ConnectRecvGp_impl(PRJN_STATE* prjn, NETWORK
 }
 
 void STATE_CLASS(OneToOnePrjnSpec)::ConnectSendGp_impl(PRJN_STATE* prjn, NETWORK_STATE* net, int make_cons) {
-  LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
-  LAYER_STATE* send_lay = prjn->GetSendLayerState(net);
+  LAYER_STATE* recv_lay = prjn->GetRecvLayer(net);
+  LAYER_STATE* send_lay = prjn->GetSendLayer(net);
 
   int n_recv = recv_lay->n_units - recv_start;
   int n_send = send_lay->un_geom_n - send_start;

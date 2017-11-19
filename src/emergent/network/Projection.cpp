@@ -29,6 +29,7 @@
 #include <tabMisc>
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(PrjnConStats);
 TA_BASEFUNS_CTORS_DEFN(Projection);
 
 using namespace std;
@@ -86,7 +87,8 @@ void Projection::InitLinks() {
   taBase::Own(spec, this);
   taBase::Own(con_spec, this);
   taBase::Own(prjn_clr, this);
-  taBase::Own(prjn_clr, this);
+  taBase::Own(recv_con_stats, this);
+  taBase::Own(send_con_stats, this);
   
   Network* mynet = GET_MY_OWNER(Network);
   if(mynet) {
@@ -409,7 +411,7 @@ bool Projection::LoadWeights(const String& fname, bool quiet) {
   if(!(layer && layer->own_net && layer->own_net->net_state)) return false;
   NetworkState_cpp* net = layer->own_net->net_state;
   if(!net->IsBuiltIntact()) return false;
-  LayerState_cpp* lay = GetRecvLayerState(net);
+  LayerState_cpp* lay = GetRecvLayer(net);
   PrjnState_cpp* prjn = GetPrjnState(net);
   taFiler* flr = GetLoadFiler(fname, ".wts", true);
   bool rval = false;
@@ -488,7 +490,7 @@ void Projection::TransformWeights(const SimpleMathSpec& trans) {
   if(!net) return;
   
   PRJN_STATE* prjn = GetPrjnState(net);
-  LAYER_STATE* recv_lay = GetRecvLayerState(net);
+  LAYER_STATE* recv_lay = GetRecvLayer(net);
   for(int rui = 0; rui < recv_lay->n_units; rui++) {
     UNIT_STATE* ru = recv_lay->GetUnitState(net, rui);
     if(ru->lesioned()) continue;
@@ -501,7 +503,7 @@ void Projection::RenormWeights(bool mult_norm, float avg_wt) {
   if(!net) return;
 
   PRJN_STATE* prjn = GetPrjnState(net);
-  LAYER_STATE* recv_lay = GetRecvLayerState(net);
+  LAYER_STATE* recv_lay = GetRecvLayer(net);
   for(int rui = 0; rui < recv_lay->n_units; rui++) {
     UNIT_STATE* ru = recv_lay->GetUnitState(net, rui);
     if(ru->lesioned()) continue;
@@ -514,7 +516,7 @@ void Projection::RescaleWeights(const float rescale_factor) {
   if(!net) return;
 
   PRJN_STATE* prjn = GetPrjnState(net);
-  LAYER_STATE* recv_lay = GetRecvLayerState(net);
+  LAYER_STATE* recv_lay = GetRecvLayer(net);
   for(int rui = 0; rui < recv_lay->n_units; rui++) {
     UNIT_STATE* ru = recv_lay->GetUnitState(net, rui);
     if(ru->lesioned()) continue;
@@ -527,7 +529,7 @@ void Projection::AddNoiseToWeights(const Random& noise_spec) {
   if(!net) return;
 
   PRJN_STATE* prjn = GetPrjnState(net);
-  LAYER_STATE* recv_lay = GetRecvLayerState(net);
+  LAYER_STATE* recv_lay = GetRecvLayer(net);
   for(int rui = 0; rui < recv_lay->n_units; rui++) {
     UNIT_STATE* ru = recv_lay->GetUnitState(net, rui);
     if(ru->lesioned()) continue;
@@ -543,7 +545,7 @@ int Projection::PruneCons(const SimpleMathSpec& pre_proc,
   if(!net) return 0;
 
   PRJN_STATE* prjn = GetPrjnState(net);
-  LAYER_STATE* recv_lay = GetRecvLayerState(net);
+  LAYER_STATE* recv_lay = GetRecvLayer(net);
   for(int rui = 0; rui < recv_lay->n_units; rui++) {
     UNIT_STATE* ru = recv_lay->GetUnitState(net, rui);
     if(ru->lesioned()) continue;
@@ -567,7 +569,7 @@ int Projection::LesionCons(float p_lesion, bool permute) {
   NetworkState_cpp* net = GetValidNetState();
 
   PRJN_STATE* prjn = GetPrjnState(net);
-  LAYER_STATE* recv_lay = GetRecvLayerState(net);
+  LAYER_STATE* recv_lay = GetRecvLayer(net);
   for(int rui = 0; rui < recv_lay->n_units; rui++) {
     UNIT_STATE* ru = recv_lay->GetUnitState(net, rui);
     if(ru->lesioned()) continue;
@@ -599,7 +601,7 @@ DataTable* Projection::WeightsToTable(DataTable* dt, const String& col_nm_,
   if(recv_wts) {
     DataCol* scol = dt->FindMakeColName(col_nm, idx, VT_FLOAT, 2,
                                         from->flat_geom.x, from->flat_geom.y);
-    LAYER_STATE* recv_lay = GetRecvLayerState(net);
+    LAYER_STATE* recv_lay = GetRecvLayer(net);
     for(int rui = 0; rui < recv_lay->n_units; rui++) {
       UNIT_STATE* ru = recv_lay->GetUnitState(net, rui);
       if(ru->lesioned()) continue;
@@ -617,7 +619,7 @@ DataTable* Projection::WeightsToTable(DataTable* dt, const String& col_nm_,
     DataCol* scol = dt->FindMakeColName(col_nm, idx, VT_FLOAT, 2,
                                       layer->flat_geom.x, layer->flat_geom.y);
 
-    LAYER_STATE* send_lay = prjn->GetSendLayerState(net);
+    LAYER_STATE* send_lay = prjn->GetSendLayer(net);
     for(int sui = 0; sui < send_lay->n_units; sui++) {
       UNIT_STATE* su = send_lay->GetUnitState(net, sui);
       if(su->lesioned()) continue;

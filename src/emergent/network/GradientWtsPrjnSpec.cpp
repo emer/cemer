@@ -20,8 +20,8 @@ void STATE_CLASS(GradientWtsPrjnSpec)::Init_Weights_Prjn
 (PRJN_STATE* prjn, NETWORK_STATE* net, int thr_no, CON_STATE* cg) {
 
   UNIT_STATE* ru = cg->OwnUnState(net);
-  LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
-  LAYER_STATE* send_lay = prjn->GetSendLayerState(net);
+  LAYER_STATE* recv_lay = prjn->GetRecvLayer(net);
+  LAYER_STATE* send_lay = prjn->GetSendLayer(net);
 
   if(use_gps && recv_lay->HasUnitGroups()) {
     InitWeights_RecvGps(prjn, net, thr_no, cg, ru);
@@ -67,8 +67,8 @@ void STATE_CLASS(GradientWtsPrjnSpec)::SetWtFmDist
 void STATE_CLASS(GradientWtsPrjnSpec)::InitWeights_RecvGps
 (PRJN_STATE* prjn, NETWORK_STATE* net, int thr_no, CON_STATE* cg, UNIT_STATE* ru) {
 
-  LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
-  LAYER_STATE* send_lay = prjn->GetSendLayerState(net);
+  LAYER_STATE* recv_lay = prjn->GetRecvLayer(net);
+  LAYER_STATE* send_lay = prjn->GetSendLayer(net);
 
   int rgpidx = ru->gp_idx;
   TAVECTOR2I rgp_pos;
@@ -140,8 +140,8 @@ void STATE_CLASS(GradientWtsPrjnSpec)::InitWeights_RecvGps
 void STATE_CLASS(GradientWtsPrjnSpec)::InitWeights_RecvFlat
   (PRJN_STATE* prjn, NETWORK_STATE* net, int thr_no, CON_STATE* cg, UNIT_STATE* ru) {
 
-  LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
-  LAYER_STATE* send_lay = prjn->GetSendLayerState(net);
+  LAYER_STATE* recv_lay = prjn->GetRecvLayer(net);
+  LAYER_STATE* send_lay = prjn->GetSendLayer(net);
   TAVECTOR2I ru_pos;
   ru_pos.SetXY(ru->pos_x, ru->pos_y);
   float ru_x = (float)ru_pos.x / (float)MAX(recv_lay->flat_geom_x-1, 1);

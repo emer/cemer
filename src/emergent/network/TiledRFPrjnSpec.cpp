@@ -13,8 +13,8 @@ void STATE_CLASS(TiledRFPrjnSpec)::Initialize_core() {
 
 bool STATE_CLASS(TiledRFPrjnSpec)::InitRFSizes(PRJN_STATE* prjn, NETWORK_STATE* net) {
 
-  LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
-  LAYER_STATE* send_lay = prjn->GetSendLayerState(net);
+  LAYER_STATE* recv_lay = prjn->GetRecvLayer(net);
+  LAYER_STATE* send_lay = prjn->GetSendLayer(net);
 
   if(!recv_lay->HasUnitGroups()) {
     net->StateError("TiledRFPrjnSpec::InitRFSizes requires recv layer to have unit groups!");
@@ -63,8 +63,8 @@ void STATE_CLASS(TiledRFPrjnSpec)::Connect_impl
 
   int n_cons = rf_width.Product();
 
-  LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
-  LAYER_STATE* send_lay = prjn->GetSendLayerState(net);
+  LAYER_STATE* recv_lay = prjn->GetRecvLayer(net);
+  LAYER_STATE* send_lay = prjn->GetSendLayer(net);
 
   int ru_nunits = recv_lay->un_geom_n;
   int su_nunits = send_lay->un_geom_n;
@@ -115,8 +115,8 @@ void STATE_CLASS(TiledRFPrjnSpec)::Connect_impl
 //   if(!InitRFSizes(prjn)) return 0;
 //   int rval = 0;
 
-  // LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
-  // LAYER_STATE* send_lay = prjn->GetSendLayerState(net);
+  // LAYER_STATE* recv_lay = prjn->GetRecvLayer(net);
+  // LAYER_STATE* send_lay = prjn->GetSendLayer(net);
 //   int ru_nunits = recv_lay->un_geom_n;
 //   int su_nunits = send_lay->un_geom_n;
 

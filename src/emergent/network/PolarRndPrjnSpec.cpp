@@ -24,8 +24,8 @@ void STATE_CLASS(PolarRndPrjnSpec)::Connect_impl(PRJN_STATE* prjn, NETWORK_STATE
   if(same_seed)
     rndm_seed.OldSeed();
 
-  LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
-  LAYER_STATE* send_lay = prjn->GetSendLayerState(net);
+  LAYER_STATE* recv_lay = prjn->GetRecvLayer(net);
+  LAYER_STATE* send_lay = prjn->GetSendLayer(net);
 
   const int rlay_no = recv_lay->n_units;
   const int slay_no = send_lay->n_units;
@@ -99,8 +99,8 @@ float STATE_CLASS(PolarRndPrjnSpec)::UnitDist
   (PRJN_STATE* prjn, NETWORK_STATE* net, UnitDistType typ, 
    const TAVECTOR2I& ru, const TAVECTOR2I& su)
 {
-  LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
-  LAYER_STATE* send_lay = prjn->GetSendLayerState(net);
+  LAYER_STATE* recv_lay = prjn->GetRecvLayer(net);
+  LAYER_STATE* send_lay = prjn->GetSendLayer(net);
 
   TAVECTOR2F half(.5f);
   TAVECTOR2I ru_geom;
@@ -136,8 +136,8 @@ float STATE_CLASS(PolarRndPrjnSpec)::UnitDist
 UNIT_STATE* STATE_CLASS(PolarRndPrjnSpec)::GetUnitFmOff
 (PRJN_STATE* prjn, NETWORK_STATE* net, const TAVECTOR2I& ru, const TAVECTOR2F& su_off)
 {
-  LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
-  LAYER_STATE* send_lay = prjn->GetSendLayerState(net);
+  LAYER_STATE* recv_lay = prjn->GetRecvLayer(net);
+  LAYER_STATE* send_lay = prjn->GetSendLayer(net);
 
   TAVECTOR2F half(.5f);
   TAVECTOR2I ru_geom;
@@ -190,8 +190,8 @@ float STATE_CLASS(PolarRndPrjnSpec)::GetDistProb
   if(rnd_dist.type == STATE_CLASS(Random)::UNIFORM)
     return p_con;
   
-  LAYER_STATE* recv_lay = prjn->GetRecvLayerState(net);
-  LAYER_STATE* send_lay = prjn->GetSendLayerState(net);
+  LAYER_STATE* recv_lay = prjn->GetRecvLayer(net);
+  LAYER_STATE* send_lay = prjn->GetSendLayer(net);
 
   TAVECTOR2I ruc;
   ruc.SetXY(ru->pos_x, ru->pos_y);

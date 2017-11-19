@@ -50,8 +50,8 @@
   
   INIMPL virtual void  Connect_Gps
   (PRJN_STATE* prjn, NETWORK_STATE* net, int rgpidx, int sgpidx, float p_con,
-   bool sym_same_lay, int make_cons, bool share_cons = false, bool reciprocal = false);
-  // #IGNORE connects units in given recv and sending group index, with given probability: p_con = 1 = full connectivity, -1 = symmetric with existing connections from other projection, and (0..1) probabilistic, optionally with symmetry enforced for within same layer/group -- this call handles alloc vs. make cons step and uses *incremental* connectivity alloc so you need to call Recv/Send/ConsPostAlloc on layers after !make_cons pass -- must go through this call and not call sub-guys directly as they do not handle the alloc (or you can handle the alloc yourself separately)
+   bool symmetric, int make_cons, bool share_cons = false, bool reciprocal = false);
+  // #IGNORE connects units in given recv and sending group index, with given probability: p_con = 1 = full connectivity, -1 = symmetric with existing connections from other projection, and (0..1) probabilistic, optionally with symmetry enforced either for within same layer/group or for reciprocal case -- this call handles alloc vs. make cons step and uses *incremental* connectivity alloc so you need to call Recv/Send/ConsPostAlloc on layers after !make_cons pass -- must go through this call and not call sub-guys directly as they do not handle the alloc (or you can handle the alloc yourself separately)
     INIMPL virtual void  Connect_Gps_Full
     (PRJN_STATE* prjn, NETWORK_STATE* net, int rgpidx, int sgpidx, bool share_cons, bool reciprocal);
     // #IGNORE connect groups, full connectivity

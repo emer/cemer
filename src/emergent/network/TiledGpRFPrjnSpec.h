@@ -17,7 +17,8 @@
   TAVECTOR2I	send_gp_start;		// starting offset for sending groups -- for wrapping this was previously automatically set to -send_gp_skip (else 0), but you can now set this to anything you want
   bool		wrap;			// if true, then connectivity has a wrap-around structure so it starts at -gp_skip (wrapped to right/top) and goes +gp_skip past the right/top edge (wrapped to left/bottom)
   bool		reciprocal;		// if true, make the appropriate reciprocal connections for a backwards projection from recv to send
-  float		p_con;                  // proportion connectivity within each group -- uses permuted uniform random -- negative value means make symmetric cons -- also optimized for full connectivity when = 1
+  float		p_con;                  // proportion connectivity within each group -- uses permuted uniform random -- also optimized for full connectivity when = 1
+  bool          symmetric;              // #CONDSHOW_OFF_p_con:1 for partial connectivity in either reciprocal or same-layer (self) projections, make the pattern of connections symmetric with connectivity going the other direction
   bool          share_cons;             // units in unit groups after the first unit group share connection values (weights etc) with those in the first unit group -- generally only works if wrap is true so that all units have same scope and order of connectivity -- also the number of units in the unit groups MUST be an even multiple of the number of threads, so that the source and user units are both in the same thread
   InitWtsType   wts_type;               // #CONDSHOW_ON_init_wts type of initial weights to create for init_wts
   STATE_CLASS(GaussInitWtsSpec) full_gauss;          // #CONDSHOW_ON_init_wts&&wts_type:GAUSSIAN parameters for gaussian initial weight distribution for the full width of the projection across all sending unit groups and units within those sending units -- see also gauss_opts
