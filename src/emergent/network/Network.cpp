@@ -1587,7 +1587,7 @@ bool Network::ComputeHash(bool incl_weights) {
   }
 
 #if (QT_VERSION >= 0x050100)
-  QCryptographicHash hash(QCryptographicHash::Sha3_256);
+  QCryptographicHash hash(QCryptographicHash::Sha256);
 #else
   QCryptographicHash hash(QCryptographicHash::Sha1);
 #endif  
