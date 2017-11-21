@@ -174,38 +174,6 @@ private:
 };
 
 
-eTypeDef_Of(NetTiming);
-
-class E_API NetTiming : public taOBase {
-  // ##EDIT_INLINE ##NO_TOKENS ##CAT_Network timers for different network functions
-INHERITED(taOBase)
-public:
-  TimeUsedHR   netin;  // Compute_Netin net input
-  TimeUsedHR   act;    // Compute_Act activation
-  TimeUsedHR   dwt;    // Compute_dWt weight changes (learning)
-  TimeUsedHR   wt;     // Compute_Weights update weights
-
-  String       GetTypeDecoKey() const override { return "Network"; }
-
-  TA_SIMPLE_BASEFUNS(NetTiming);
-private:
-  void	Initialize()    { };
-  void 	Destroy()	{ };
-};
-
-eTypeDef_Of(NetTiming_List);
-
-class E_API NetTiming_List : public taList<NetTiming> {
-  // #NO_TOKENS #NO_UPDATE_AFTER #NO_EXPAND List of NetTiming objects
-INHERITED(taList<NetTiming>)
-public:
-
-  TA_BASEFUNS_NOCOPY(NetTiming_List);
-private:
-  void Initialize()  { SetBaseType(&TA_NetTiming); };
-  void Destroy()     { };
-};
-
 eTypeDef_Of(NetStateSync);
 
 class E_API NetStateSync : public taOBase {
@@ -311,7 +279,6 @@ public:
 
   int           n_threads;      // #NO_SAVE #CAT_State number of CPU threads to use -- defaults to value in preferences, but can be overridden.  is copied to net_state->threads.n_threads which is actual thread impl
   NetworkCudaSpec  cuda;        // #CAT_CUDA parameters for NVIDA CUDA GPU implementation -- only applicable for CUDA_COMPILE binaries
-  NetTiming_List net_timing;    // #CAT_Statistic #EXPERT #NO_SAVE timing for different network-level functions -- per thread, plus one summary item at the end
 
   String        group_name;     // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW name associated with the current group of trials, if such a grouping is applicable (typically set by a LayerWriter)
   String        trial_name;     // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW name associated with the current trial (e.g., name of input pattern, typically set by a LayerWriter)
@@ -353,8 +320,11 @@ public:
   // #NO_SAVE #HIDDEN #CAT_State unit_specs that have been built for running network
   taBase_RefList state_con_specs;
   // #NO_SAVE #HIDDEN #CAT_State con_specs that have been built for running network
+
   byte_Array     hash_value;
   // #NO_SAVE #HIDDEN #CAT_State unique hash code value of network including the indexes, sizes, connectivity, and optionally weights -- used to guarantee identical state of networks across dmem / mpi for example
+  String_Array  net_timer_names;
+  // #NO_SAVE #HIDDEN #CAT_State names of the timers -- for generating report -- overloaded must add as appropriate
 
   ProjectBase*  proj;           // #IGNORE ProjectBase this network is in
   
@@ -977,6 +947,15 @@ public:
 
   virtual String  MemoryReport(bool print = true);
   // #CAT_Statistic #MENU #MENU_ON_Structure #MENU_SEP_BEFORE #USE_RVAL report about memory allocation for the network
+
+  virtual void    StartTiming();
+  // #CAT_Statistic #MENU #MENU_ON_Structure start recording timing information -- turns on the TIMING flag and starts recording timing from parallel threading mechanisms
+  virtual void    StopTiming();
+  // #CAT_Statistic #MENU #MENU_ON_Structure stop recording timing information -- turns off the TIMING flag and stops recording timing from parallel threading mechanisms
+  virtual String  TimingReport(DataTable* table, bool print = true);
+  // #CAT_Statistic #MENU #MENU_ON_Structure #USE_RVAL #NULL_OK_0 #NULL_TEXT_0_NewTable report about timing of various steps of computation -- used for optimizing code etc -- table has detailed info per thread -- calls StopTiming to finalize data
+  virtual void    TimingReportInitNames();
+  // #IGNORE initialize net_timing_names string array for report -- derived classes need to add
 
   virtual void  UpdateLayerGroupGeom();
   // #IGNORE update layer group geometries (max_disp_size, positions) and max_disp_size of of network based on current layer layout

@@ -13,6 +13,14 @@
     N_LeabraThrLayStats,
   };
 
+  enum LeabraNetTimers {        // timers for different stages of computation
+    NT_NETIN_STATS = N_NetTimers, // Compute_NetinStats net input stats
+    NT_INHIB,                   // Compute_Inhib inhibiton
+    NT_ACT_POST,                // Compute_Act_Post post..
+    NT_CYCLE_STATS,             // Compute_CycleStats cycle stats
+    N_LeabraNetTimers,          // extend from here..
+  };
+
   float**       thrs_send_deeprawnet_tmp;
   // #IGNORE #CAT_State temporary storage for threaded sender-based deep netinput computation -- float*[threads] array of float[n_units]
   float**       thrs_send_deepmodnet_tmp;
@@ -45,6 +53,8 @@
   INIMPL void FreeStateMem() override;
   // #IGNORE free all state memory
   
+  INLINE int  NNetTimers() const override { return N_LeabraNetTimers; }
+
   inline bool AggPerfStats() {
     if(!unlearnable_trial) return true;
     return lstats.agg_unlearnable;

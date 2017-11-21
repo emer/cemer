@@ -295,6 +295,8 @@ bool NetworkState_cpp::NetStateFree(void** ptr) const {
 void NetworkState_cpp::BuildUnitState() {
   // AllocLayerUnitMem has been called, and all the layer, prjn, ungp state initialized by this point
 
+  AllocNetTimers();
+  
   // this assigns units to threads, also counts up number of con states
   InitUnitIdxs();               // in _core
   

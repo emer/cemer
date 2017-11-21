@@ -244,5 +244,104 @@ double STATE_CLASS(taMath_double)::gamma_dev(const double a, const double b, int
   }
 }
 
+
+#if (defined(TA_OS_WIN))
+# include <time.h>
+# include <windows.h>
+#else
+# include <sys/time.h>
+# include <sys/times.h>
+# include <unistd.h>
+#endif
+
+
+#if defined(TA_OS_WIN)
+
+class STATE_CLASS(TimeUsedHRd) {
+public:
+  static LARGE_INTEGER freq;
+  LARGE_INTEGER start;
+  LARGE_INTEGER end;
+  LARGE_INTEGER used;
+  void		GetStartTime() { QueryPerformanceCounter(&start);}
+  void		GetEndTime() { if(start.QuadPart == 0) return;
+    QueryPerformanceCounter(&end);
+    used.QuadPart = end.QuadPart - start.QuadPart;
+    }
+  double	GetTotSecs() {
+    if (freq.QuadPart == 0) {
+      QueryPerformanceFrequency(&freq);
+    } 
+    double rval = used.QuadPart / (double)(freq.QuadPart);
+    return rval;
+  }
+  STATE_CLASS(TimeUsedHRd)() { start.QuadPart = 0; end.QuadPart = 0; used.QuadPart = 0; }
+};
+
+LARGE_INTEGER TimeUsedHRd::freq;
+
+#else
+
+// computes a-b
+#define ONE_MILLION 1000000
+timeval timeval_diff(timeval a, timeval b) {
+  a.tv_sec -= b.tv_sec;
+  a.tv_usec -= b.tv_usec;
+  if (a.tv_usec < 0) {
+    a.tv_sec-- ;
+    a.tv_usec += ONE_MILLION;
+  }
+  return a;
+}
+
+void timeval_init(timeval& a) { a.tv_sec = 0; a.tv_usec = 0; }
+
+class STATE_CLASS(TimeUsedHRd) {
+public:
+  timeval	start;
+  timeval	end;
+  timeval	used;
+  void		GetStartTime() { gettimeofday(&start, NULL);}
+  void		GetEndTime() { if(start.tv_usec == 0 && start.tv_sec == 0) return;
+    gettimeofday(&end, NULL);
+    used = timeval_diff(end, start);}
+  double	GetTotSecs() { 
+    double rval = used.tv_usec / 1000000.0;
+    if (used.tv_sec) rval += used.tv_sec;
+    return rval;
+    }
+  STATE_CLASS(TimeUsedHRd)() { timeval_init(start); timeval_init(end); timeval_init(used); }
+};
+
+#endif
+
+void STATE_CLASS(TimeUsedHR)::Initialize() {
+  s_used = 0.0;
+  n_used = 0;
+  d = new STATE_CLASS(TimeUsedHRd);
+}
+
+void STATE_CLASS(TimeUsedHR)::Destroy() {
+  delete d;
+  d = NULL;
+}
+
+void STATE_CLASS(TimeUsedHR)::StartTimer(bool reset_used) {
+  if (reset_used) ResetUsed();
+  d->GetStartTime();
+}
+
+void STATE_CLASS(TimeUsedHR)::EndTimer() {
+  d->GetEndTime();
+  s_used += d->GetTotSecs();
+  n_used++;
+}
+
+void STATE_CLASS(TimeUsedHR)::ResetUsed() {
+  s_used = 0.0;
+  n_used = 0;
+}
+
+
 #endif  // ndef STATE_MAIN
 

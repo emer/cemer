@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.2.2.0 rev11187
+// ta_Dump File v3.0 -- code v8.2.2.0 rev11197
 LeabraProject .projects[0] { 
  Doc_Group @.docs = [2] {
   taDoc @[0] { 
@@ -1837,7 +1837,7 @@ LeabraProject .projects[0] {
     ProgEl_List @.init_code = [0] {
     };
 
-    ProgEl_List @.prog_code = [9] {
+    ProgEl_List @.prog_code = [10] {
      LocalVars @[0] { 
       ProgVar_List @.local_vars = [0] {
       };
@@ -1879,7 +1879,12 @@ LeabraProject .projects[0] {
       ProgArg_List @.meth_args = [0] {
       };
      };
-     PrintExpr @[8] { };
+     MethodCall @[8] { 
+      ProgArg_List @.meth_args = [1] {
+       ProgArg @[0] { };
+      };
+     };
+     PrintExpr @[9] { };
     };
    };
    Program @[2] { 
@@ -14044,7 +14049,34 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       meth_sig="void Build()";
       meth_desc=" Build the network units and Connect them (calls CheckSpecs/BuildLayers/Units/Prjns and Connect)";
      };
-     PrintExpr @[8] {
+     MethodCall @[8] {
+      name="MethodCall_networkDMemConfirmHashtrue";
+      desc="confirm that all nodes are using same exact network";
+      flags=NEW_EL|CAN_REVERT_TO_CODE;
+      code_string="network.DMem_ConfirmHash()";
+      result_var=NULL;
+      obj=$.programs.gp[4][1].args[0]$;
+      method=Network::DMem_ConfirmHash;
+      meth_args {
+       name="meth_args";
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=bool;
+	type="bool";
+	name="incl_weights";
+	required=0;
+	def_val="true";
+	prev_expr=;
+	expr {
+	 expr="true";
+	};
+       };
+      };
+      meth_sig="bool DMem_ConfirmHash(bool incl_weights = true)";
+      meth_desc=" create a unique hash code of the entire state of the network, and confirm that it is the same across all nodes in current DMem group -- triggers an error and returns false if they do not match (null function if not dmem)";
+     };
+     PrintExpr @[9] {
       name="PrintExpr_PrintConsnetwork_tsnetworknunits";
       desc=;
       flags=CAN_REVERT_TO_CODE;
@@ -23203,8 +23235,8 @@ and the testing data is updated.  The first epoch monitor should have all the it
     name="UserDataItem_List_130";
     el_typ=UserDataItem;
     el_def=0;
-    UserDataItem @[0] {name="view_win_lft": value=0.004620462: val_type_fixed=0: };
-    UserDataItem @[1] {name="view_win_top": value=0.03627853: val_type_fixed=0: };
+    UserDataItem @[0] {name="view_win_lft": value=0: val_type_fixed=0: };
+    UserDataItem @[1] {name="view_win_top": value=0.0514921: val_type_fixed=0: };
     UserDataItem @[2] {name="view_win_wd": value=0.9933993: val_type_fixed=0: };
     UserDataItem @[3] {name="view_win_ht": value=0.7975424: val_type_fixed=0: };
     UserDataItem @[4] {name="view_win_iconified": value=0: val_type_fixed=0: };

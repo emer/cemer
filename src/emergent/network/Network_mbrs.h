@@ -960,4 +960,48 @@ public:
 };
 
 
+class STATE_CLASS(TimeUsedHRd); // #IGNORE
+
+class STATE_CLASS(TimeUsedHR) : public STATE_CLASS(taNBase) {
+  // #STEM_BASE #INLINE ##CAT_Program ##CHOOSE_AS_MEMBER computes amount of time used (in high resolution) for a given process: start the timer at the start, then do EndTimer and it computes the amount used
+public:
+  double        s_used;         // #SHOW #GUI_READ_ONLY total number of seconds used
+  int           n_used;         // #SHOW #GUI_READ_ONLY number of individual times the timer has been used without resetting accumulation
+  STATE_CLASS(Average)       avg_used;       // #SHOW #GUI_READ_ONLY running average of s_used, updated whenever UpdtAvg is called -- useful for keeping track of averages over time
+
+  INIMPL void  StartTimer(bool reset_used = true);
+  // #CAT_TimeUsed record the current time as the starting time, and optionally reset the time used information
+  INIMPL void  EndTimer();
+  // #CAT_TimeUsed record the current time as the ending time, and compute difference as the time used
+  INIMPL void  ResetUsed();
+  // #CAT_TimeUsed reset time used information -- does NOT reset the avg_used accumulator
+
+  INLINE float IncrAvg()
+  { return avg_used.IncrementAvg(s_used); }
+  // #CAT_TimeUsed increment the avg_used running average with the current s_used data -- note this is the total accumulated s_used, not the average of s_used / n_used -- see IncrAvgFmAvg
+  INLINE float IncrAvgFmAvg()
+  { if(n_used > 0) return avg_used.IncrementAvg(s_used / (float)n_used); return 0.0f; }
+  // #CAT_TimeUsed increment the avg_used running average with the current s_used / n_used average -- see also IncrAvg
+  INLINE void  ResetAvg()
+  { avg_used.ResetAvg(); }
+  // #CAT_TimeUsed reset the avg_used running average accumulator
+
+  INLINE void  EndIncrAvg() { EndTimer(); IncrAvg(); }
+  // #CAT_TimeUsed end timing recording, and then increment this run into the ongoing average
+
+  STATE_CLASS(TimeUsedHR)()  { Initialize(); }
+  ~STATE_CLASS(TimeUsedHR)() { Destroy(); }
+protected:
+  STATE_CLASS(TimeUsedHRd)*   d; // private impl data (depends on platform)
+private:
+  INIMPL void  Initialize();
+  INIMPL void  Destroy();
+};
+
+
+#ifdef TIME_USED
+#undef TIME_USED
+#endif
+#define TIME_USED      STATE_CLASS(TimeUsedHR)
+
 #endif // STATE_MAIN

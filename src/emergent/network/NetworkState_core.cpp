@@ -283,8 +283,7 @@ void NETWORK_STATE::Init_Stats_Layers() {
 }
 
 void NETWORK_STATE::Compute_Netin_Thr(int thr_no) {
-  // if(threads.get_timing)
-  //   net_timing[thr_no]->netin.StartTimer(true); // reset
+  StartTimer(NT_NETIN, thr_no);
 
   // unit-level, as separate pass -- this initializes net
   const int nu = ThrNUnits(thr_no);
@@ -303,8 +302,7 @@ void NETWORK_STATE::Compute_Netin_Thr(int thr_no) {
     cs->Compute_Netin(rcg, this, thr_no);
   }
 
-  // if(threads.get_timing)
-  //   net_timing[thr_no]->netin.EndIncrAvg();
+  EndTimer(NT_NETIN, thr_no);
 }
 
 void NETWORK_STATE::Send_Netin_Thr(int thr_no) {
@@ -312,8 +310,7 @@ void NETWORK_STATE::Send_Netin_Thr(int thr_no) {
   // want to check here if the sending unit's activation is above some threshold
   // so you don't send if it isn't above that threshold..
   // this isn't implemented here though.
-  // if(threads.get_timing)
-  //   net_timing[thr_no]->netin.StartTimer(true); // reset
+  StartTimer(NT_NETIN, thr_no);
 
   if(NetinPerPrjn()) {
     const int nscg = ThrNSendConGps(thr_no);
@@ -334,12 +331,13 @@ void NETWORK_STATE::Send_Netin_Thr(int thr_no) {
     }
   }
 
-  // if(threads.get_timing)
-  //   net_timing[thr_no]->netin.EndIncrAvg();
+  EndTimer(NT_NETIN, thr_no);
 }
 
 void NETWORK_STATE::Send_Netin_Integ() {
   // now need to roll up the netinput into unit vals
+  StartTimer(NT_NETIN_INTEG, 0);
+  
   const int nu = n_units_built;
   const int nt = n_thrs_built;
   if(NetinPerPrjn()) {
@@ -368,11 +366,12 @@ void NETWORK_STATE::Send_Netin_Integ() {
       uv->GetUnitSpec(this)->Compute_SentNetin(uv, this, nw_nt);
     }
   }
+  
+  EndTimer(NT_NETIN_INTEG, 0);
 }
 
 void NETWORK_STATE::Compute_Act_Thr(int thr_no) {
-  // if(threads.get_timing)
-  //   net_timing[thr_no]->act.StartTimer(true); // reset
+  StartTimer(NT_ACT, thr_no);
 
   const int nu = ThrNUnits(thr_no);
   for(int i=0; i<nu; i++) {
@@ -382,11 +381,12 @@ void NETWORK_STATE::Compute_Act_Thr(int thr_no) {
     us->Compute_Act(uv, this, thr_no);
   }
 
-  // if(threads.get_timing)
-  //   net_timing[thr_no]->act.EndIncrAvg();
+  EndTimer(NT_ACT, thr_no);
 }
 
 void NETWORK_STATE::Compute_NetinAct_Thr(int thr_no) {
+  StartTimer(NT_ACT, thr_no);
+  
   const int nlay = n_layers_built;
   for(int li = 0; li < nlay; li++) {
     LAYER_STATE* lay = GetLayerState(li);
@@ -401,11 +401,11 @@ void NETWORK_STATE::Compute_NetinAct_Thr(int thr_no) {
     }
     ThreadSyncSpin(thr_no, li % 3);   // need to sync for each layer!
   }
+  EndTimer(NT_ACT, thr_no);
 }
 
 void NETWORK_STATE::Compute_dWt_Thr(int thr_no) {
-  // if(threads.get_timing)
-  //   net_timing[thr_no]->dwt.StartTimer(true); // reset
+  StartTimer(NT_DWT, thr_no);
 
   if(RecvOwnsCons()) {
     const int nrcg = ThrNRecvConGps(thr_no);
@@ -434,8 +434,7 @@ void NETWORK_STATE::Compute_dWt_Thr(int thr_no) {
     us->Compute_dWt(uv, this, thr_no);
   }
 
-  // if(threads.get_timing)
-  //   net_timing[thr_no]->dwt.EndIncrAvg();
+  EndTimer(NT_DWT, thr_no);
 }
 
 bool NETWORK_STATE::Compute_Weights_Test_impl(int trial_no) {
@@ -459,6 +458,8 @@ bool NETWORK_STATE::Compute_Weights_Test_impl(int trial_no) {
 #ifdef DMEM_COMPILE
 
 void NETWORK_STATE::DMem_SumDWts_ToTmp_Thr(int thr_no) {
+  StartTimer(NT_DMEM_WT_SYNC, thr_no);
+  
   float* dwt_tmp = thrs_dmem_sum_dwts_send[thr_no];
   int64_t cidx = 0;
   if(RecvOwnsCons()) {
@@ -486,6 +487,8 @@ void NETWORK_STATE::DMem_SumDWts_ToTmp_Thr(int thr_no) {
     if(uv->lesioned()) continue;
     memcpy(dwt_tmp + cidx++, (char*)&(uv->bias_dwt), sizeof(float));
   }
+  
+  // don't end here -- do it at end of next call!
 }
 
 void NETWORK_STATE::DMem_SumDWts_FmTmp_Thr(int thr_no) {
@@ -516,13 +519,14 @@ void NETWORK_STATE::DMem_SumDWts_FmTmp_Thr(int thr_no) {
     if(uv->lesioned()) continue;
     memcpy(&(uv->bias_dwt), (char*)(dwt_tmp + cidx++), sizeof(float));
   }
+  
+  EndTimer(NT_DMEM_WT_SYNC, thr_no);
 }
 
 #endif
 
 void NETWORK_STATE::Compute_Weights_Thr(int thr_no) {
-  // if(threads.get_timing)
-  //   net_timing[thr_no]->wt.StartTimer(true); // reset
+  StartTimer(NT_WT, thr_no);
 
   if(RecvOwnsCons()) {
     const int nrcg = ThrNRecvConGps(thr_no);
@@ -551,8 +555,7 @@ void NETWORK_STATE::Compute_Weights_Thr(int thr_no) {
     us->Compute_Weights(uv, this, thr_no);
   }
 
-  // if(threads.get_timing)
-  //   net_timing[thr_no]->wt.EndIncrAvg();
+  EndTimer(NT_WT, thr_no);
 }
 
 void NETWORK_STATE::Compute_SSE_Thr(int thr_no) {
@@ -1591,14 +1594,35 @@ void NETWORK_STATE::FreeStateMem() {
   NetStateFree((void**)&layers_mem);
   NetStateFree((void**)&prjns_mem);
   NetStateFree((void**)&ungps_mem);
+
+  FreeNetTimers();
 }
 
+void NETWORK_STATE::AllocNetTimers() {
+  n_net_timers_built = NNetTimers();
+  int tot = n_net_timers_built * (n_thrs_built+1);
+  if(net_timers && n_net_timers_total == tot) return; // unlikely but..
+  FreeNetTimers();
+  n_net_timers_total = tot;
+  net_timers = new TIME_USED[n_net_timers_total];
+}
+
+void NETWORK_STATE::FreeNetTimers() {
+  if(!net_timers) return;
+
+  delete [] net_timers;
+  net_timers = NULL;
+  n_net_timers_total = 0;
+}
+  
 
 void NETWORK_STATE::Initialize_core()  {
   max_thr_n_units = 0; net_owner = NULL;
   layers_mem = NULL;    prjns_mem = NULL;    ungps_mem = NULL;  ungp_lay_idxs = NULL;
   lay_send_prjns = NULL;
-    
+
+  net_timers = NULL; n_net_timers_built = 0; n_net_timers_total = 0;
+  
   units_lays = NULL;  units_ungps = NULL; units_thrs = NULL; units_thr_un_idxs = NULL;
   thrs_n_units = NULL;
   thrs_unit_idxs = NULL;    thrs_units_mem = NULL;    thrs_lay_unit_idxs = NULL;

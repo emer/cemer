@@ -49,6 +49,7 @@ void taThreadMgr::InitLinks() {
   taBase::Own(run_time, this);
   taBase::Own(sync_time, this);
   taBase::Own(total_time, this);
+  taBase::Own(spin_wait_time, this);
   all_thread_mgrs.Add(this);	// we're real -- add to global list
 }
 
@@ -389,6 +390,7 @@ void taThreadMgr::StartTimers() {
 void taThreadMgr::EndTimers(bool print_report) {
   if(!get_timing) return;
   get_timing = false;
+  spin_wait_time.ResetSum();
   if(total_time.s_used > 0.0) {
     run_time_pct = run_time.s_used / total_time.s_used;
     sync_time_pct = sync_time.s_used / total_time.s_used;
@@ -396,6 +398,10 @@ void taThreadMgr::EndTimers(bool print_report) {
       wake_in_sync_pct = (double)n_wake_in_sync / (double)(run_time.n_used * threads.size);
     else
       wake_in_sync_pct = (double)n_wake_in_sync / (double)(run_time.n_used);
+    for(int i=0; i < tasks.size; i++) {
+      taTask* task = tasks[i];
+      spin_wait_time.IncrementAvg(task->wait_time.avg_used.sum);
+    }
   }
   else {
     run_time_pct = 0.0;
@@ -404,14 +410,20 @@ void taThreadMgr::EndTimers(bool print_report) {
   }
 
   if(print_report) {
-    String rpt;
-    rpt << GetTypeDef()->name << " thread report for n_threads: " << n_threads << "\n";
-    rpt << "total time:   " << total_time.s_used << " avg: " << total_time.avg_used.avg << "\n";  
-    rpt << "run time:     " << run_time.s_used << " avg: " << run_time.avg_used.avg << " \t%: " << run_time_pct << "\n";  
-    rpt << "sync time:    " << sync_time.s_used << " avg: " << sync_time.avg_used.avg << " \t%: " << sync_time_pct << "\n";  
-    rpt << "wake in sync: " << n_wake_in_sync << " \t%: " << wake_in_sync_pct << "\n";
+    String rpt = TimersReport();
     taMisc::Info(rpt);
   }
+}
+
+String taThreadMgr::TimersReport() {
+  String rpt;
+  rpt << GetTypeDef()->name << " thread report for n_threads: " << n_threads << "\n";
+  rpt << "total time:     " << total_time.s_used << "\tavg: " << total_time.avg_used.avg << "\n";  
+  rpt << "run time:       " << run_time.s_used << "\tavg: " << run_time.avg_used.avg << " \t%: " << run_time_pct << "\n";  
+  rpt << "sync time:      " << sync_time.s_used << "\tavg: " << sync_time.avg_used.avg << " \t%: " << sync_time_pct << "\n";  
+  rpt << "wake in sync:   " << n_wake_in_sync << " \t%: " << wake_in_sync_pct << "\n";
+  rpt << "spin_wait, sum: " << spin_wait_time.sum << " \tavg: " << spin_wait_time.avg << "\n";
+  return rpt;
 }
 
 void taThreadMgr::SyncSpin(int thread_no, int sync_no, int usec_wait) {

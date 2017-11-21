@@ -6,6 +6,7 @@
     BUILD_INIT_WTS      = 0x0002, // initialize the weights after building the network -- for very large networks, may want to turn this off to save some redundant time
     INIT_WTS_1_THREAD   = 0x0004, // use only one (main) thread to initialize weights -- this ensures that runs with different numbers of threads have the same initial weights, but is slower
     SAVE_KILLED_WTS     = 0x0008, // if the project is killed while running in a non-interactive mode (e.g., on cluster), save this network's weights (only if network is built and epoch > 0)
+    TIMING              = 0x0010, // #READ_ONLY #NO_SAVE collect timing data -- incurs a tiny amount of overhead -- set by StartTiming, StopTiming -- see TimingReport for results
     BUILT               = 0x1000, // #READ_ONLY #NO_SAVE is the network built -- all memory allocated, etc
     INTACT              = 0x2000, // #READ_ONLY #NO_SAVE if the network is built, is it also still intact, with all the current params set as they were when it was built?
     BUILT_INTACT        = BUILT | INTACT // #NO_BIT built and intact

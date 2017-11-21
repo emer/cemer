@@ -52,8 +52,6 @@ eTypeDef_Of(CustomPrjnSpec);
 TA_BASEFUNS_CTORS_DEFN(NetStatsSpecs);
 TA_BASEFUNS_CTORS_DEFN(NetworkCudaSpec);
 
-TA_BASEFUNS_CTORS_DEFN(NetTiming);
-TA_BASEFUNS_CTORS_DEFN(NetTiming_List);
 TA_BASEFUNS_CTORS_DEFN(NetStateSync);
 TA_BASEFUNS_CTORS_DEFN(NetStateSync_List);
 
@@ -212,7 +210,7 @@ void Network::InitLinks() {
 
   taBase::Own(stats, this);
   taBase::Own(cuda, this);
-  taBase::Own(net_timing, this);
+  taBase::Own(net_timer_names, this);
 
   taBase::Own(avg_sse, this);
   taBase::Own(prerr, this);
@@ -816,8 +814,6 @@ void Network::Build() {
     layers.RestorePanels();
   }
   
-  net_timing.SetSize(n_thrs_built + 1);
-
   Compute_PrjnDirections();
   
   if(HasNetFlag(BUILD_INIT_WTS)) {
@@ -1334,6 +1330,114 @@ String Network::MemoryReport(bool print) {
     (cuda_net->con_spec_mem_tot) << "\n";
 #endif    
   
+  if(print)
+    taMisc::Info(report);
+  return report;
+}
+
+void Network::TimingReportInitNames() {
+  net_timer_names.SetSize(net_state->n_net_timers_built);
+  net_timer_names[NetworkState_cpp::NT_NETIN] = "Net_Input ";
+  net_timer_names[NetworkState_cpp::NT_NETIN_INTEG] = "Net_Input_Integ";
+  net_timer_names[NetworkState_cpp::NT_ACT] = "Activation";
+  net_timer_names[NetworkState_cpp::NT_DWT] = "Weight_Change";
+  net_timer_names[NetworkState_cpp::NT_WT] = "Weight_Updt";
+  net_timer_names[NetworkState_cpp::NT_DMEM_WT_SYNC] = "DMem_Wt_Sync";
+  net_timer_names[NetworkState_cpp::NT_BUILD] = "Build_Net ";
+  net_timer_names[NetworkState_cpp::NT_CONNECT] = "Connect_Net";
+}
+
+void Network::StartTiming() {
+  if(TestError(!IsBuiltIntact(), "StartTiming",
+               "can only record timing data after network is built")) {
+    return;
+  }
+  SetNetFlag(TIMING);
+  net_state->threads.StartTimers();
+  SigEmitUpdated();
+}
+
+void Network::StopTiming() {
+  if(!HasNetFlag(TIMING)) return;
+  if(TestError(!IsBuiltIntact(), "StopTiming",
+               "can only turn on / off timing data after network is built")) {
+    return;
+  }
+  ClearNetFlag(TIMING);
+  net_state->threads.EndTimers(false);
+  SigEmitUpdated();
+}
+
+static String pct_val_out(float val, float sum) {
+  String rval;
+  rval = taMisc::FormatValue(val, 7, 3) + " " 
+    + taMisc::FormatValue(100.0f * (val / sum), 7, 3);
+  return rval;
+}
+
+String Network::TimingReport(DataTable* dt, bool print) {
+  if(!HasNetFlag(BUILT)) {
+    String rval = "Network not built yet!";
+    if(print)
+      taMisc::Info(rval);
+    return rval;
+  }
+
+  StopTiming();
+
+  if(!dt) {
+    dt = proj->GetNewAnalysisDataTable("TimingReport_" + name, true);
+  }
+  
+  TimingReportInitNames();
+  String report = name + " timing report:\n";
+  report << "function  \ttime     percent \n";
+
+  dt->StructUpdate(true);
+  int idx;
+  DataCol* thc = dt->FindMakeColName("thread", idx, VT_INT);
+  DataCol* stat = dt->FindMakeColName("stat", idx, VT_STRING);
+  DataCol* rca = dt->FindMakeColName("run_avg", idx, VT_FLOAT);
+  DataCol* rcs = dt->FindMakeColName("run_sum", idx, VT_FLOAT);
+
+  float rescale_val = 1.0e6;        // how many microseconds
+  
+  float tot_time = 0.0f;
+  
+  for(int tt = 0; tt < net_state->n_net_timers_built; tt++) {
+    TimeUsedHR_cpp* sum_tu = net_state->GetNetTimer(tt, n_thrs_built); // net sum
+    sum_tu->avg_used.ResetSum();
+    for(int thr_no = 0; thr_no < n_thrs_built; thr_no++) {
+      TimeUsedHR_cpp* tu = net_state->GetNetTimer(tt, thr_no);
+      sum_tu->avg_used.IncrementAvg(tu->avg_used.sum);
+
+      dt->AddBlankRow();
+      thc->SetValAsInt(thr_no, -1);
+      stat->SetValAsString(net_timer_names[tt], -1);
+      rca->SetValAsFloat(tu->avg_used.avg * rescale_val, -1);
+      rcs->SetValAsFloat(tu->avg_used.sum, -1);
+    }
+    tot_time += sum_tu->avg_used.avg;
+
+    dt->AddBlankRow();
+    thc->SetValAsInt(-1, -1);
+    stat->SetValAsString(net_timer_names[tt], -1);
+    rca->SetValAsFloat(sum_tu->avg_used.avg, -1);
+    rcs->SetValAsFloat(sum_tu->avg_used.sum, -1);
+  }
+  
+  for(int tt = 0; tt < net_state->n_net_timers_built; tt++) {
+    TimeUsedHR_cpp* sum_tu = net_state->GetNetTimer(tt, n_thrs_built); // net sum
+    report << net_timer_names[tt] << "\t"
+           << pct_val_out(sum_tu->avg_used.avg, tot_time) << "\n";
+  }
+
+  report << "    total:\t" << taMisc::FormatValue(tot_time, 7, 3) << "\n\n"
+         <<  net_state->threads.TimersReport();
+    ;
+    
+  dt->StructUpdate(false);
+
   if(print)
     taMisc::Info(report);
   return report;

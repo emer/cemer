@@ -34,25 +34,6 @@ eTypeDef_Of(LeabraMarginVals);
 // declare all other types mentioned but not required to include:
 class DataTable; // 
 
-eTypeDef_Of(LeabraNetTiming);
-
-class E_API LeabraNetTiming : public NetTiming {
-  // timers for Leabra network functions
-INHERITED(NetTiming)
-public:
-  TimeUsedHR   netin_integ;     // Compute_NetinInteg integrate net inputs
-  TimeUsedHR   netin_stats;     // Compute_NetinStats netin stats
-  TimeUsedHR   inhib;           // Compute_Inhib inhibition
-  TimeUsedHR   act_post;        // Compute_Act_Post post integration
-  TimeUsedHR   cycstats;        // Compute_CycleStats cycle statistics
-
-  TA_SIMPLE_BASEFUNS(LeabraNetTiming);
-private:
-  void	Initialize()    { };
-  void 	Destroy()	{ };
-};
-
-
 eTypeDef_Of(LeabraNetworkState_cpp);
 eTypeDef_Of(LeabraLayerState_cpp);
 eTypeDef_Of(LeabraPrjnState_cpp);
@@ -269,11 +250,9 @@ public:
   TypeDef* UnitStateType() const override;
   TypeDef* ConStateType() const override;
 
+  void TimingReportInitNames() override;
 
   void	SetProjectionDefaultTypes(Projection* prjn) override;
-
-  virtual String   TimingReport(DataTable& dt, bool print = true);
-  // #CAT_Statistic report detailed timing data to data table, and print a summary -- only collected if thread.get_timing engaged (e.g., call threads.get_timing)
 
   String       GetToolbarName() const override { return "network"; }
 

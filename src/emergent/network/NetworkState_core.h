@@ -9,6 +9,18 @@
     N_NetThrLayStats,
   };
 
+  enum NetTimers {              // timers for different stages of computation
+    NT_NETIN,                   // Compute_Netin net input               
+    NT_NETIN_INTEG,             // Compute_Netin_Integ -- integrate net input (sender-based)
+    NT_ACT,                     // Compute_Act activation                
+    NT_DWT,                     // Compute_dWt weight changes (learning) 
+    NT_WT,                      // Compute_Weights update weights
+    NT_DMEM_WT_SYNC,            // DMem_SumDWts_ToTmp and FmTmp part of weight sync
+    NT_BUILD,                   // Building the network state (including ConState)
+    NT_CONNECT,                 // Connecting -- all phases of it
+    N_NetTimers,                // extend from here..
+  };
+
   int           max_thr_n_units; // #NO_SAVE #READ_ONLY #CAT_State maximum number of units assigned to any one thread
 
   void*         net_owner;      // #IGNORE for emergent code, this is Network* that owns net_state -- for some rare cases that need it..
@@ -82,8 +94,15 @@
   UNIT_SPEC**   unit_specs; // #NO_SAVE #READ_ONLY #CAT_Specs array of pointers to specs
   CON_SPEC**    con_specs; // #NO_SAVE #READ_ONLY #CAT_Specs array of pointers to specs
 
-
   /////////////////////////////////////////////////////////
+  //            Timers
+
+  TIME_USED*    net_timers; // #IGNORE timing for different network-level functions -- per thread, plus one summary item at the end per each type (n_thrs_built + 1)
+  int           n_net_timers_built;     // #IGNORE number of timers built per thread 
+  int           n_net_timers_total;     // #IGNORE n_net_timers_built * (n_thrs_built+1) -- number actually allocated
+
+
+/////////////////////////////////////////////////////////
   //            Access
 
   INIMPL virtual void  StateError
@@ -605,6 +624,36 @@
   // #IGNORE free connection memory -- called by FreeStateMem
   INIMPL virtual void FreeStateMem();
   // #IGNORE free all state memory
+
+
+  /////////////////////////////////////////////////////
+  //    Timers
+
+  INLINE virtual int  NNetTimers() const { return N_NetTimers; }
+  // #IGNORE number of different net timers to make (per thread / summary) -- overrload in subclasses
+  INIMPL virtual void AllocNetTimers();
+  // #IGNORE allocate net timers
+  INIMPL virtual void FreeNetTimers();
+  // #IGNORE free net timers
+
+  INLINE TIME_USED*   GetNetTimer(int time_typ, int thr_no) {
+    return net_timers + thr_no * n_net_timers_built + time_typ;
+  }
+  // #IGNORE get network timer of given type for given thread (+1 for summary)
+
+  INLINE void         StartTimer(int time_typ, int thr_no) {
+    if(!HasNetFlag(TIMING)) return;
+    TIME_USED* tu = GetNetTimer(time_typ, thr_no);
+    tu->StartTimer(true);
+  }
+  // #IGNORE start given timer if timing being collected -- must call EndTimer -- average accumulates over calls
+
+  INLINE void         EndTimer(int time_typ, int thr_no) {
+    if(!HasNetFlag(TIMING)) return;
+    TIME_USED* tu = GetNetTimer(time_typ, thr_no);
+    tu->EndIncrAvg();
+  }
+  // #IGNORE end given timer if timing being collected -- must have already called StartTimer -- average accumulates over calls
 
 
   INIMPL void Initialize_core();

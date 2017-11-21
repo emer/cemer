@@ -36,7 +36,6 @@ TA_BASEFUNS_CTORS_DEFN(LeabraAvgMax);
 TA_BASEFUNS_CTORS_DEFN(LeabraMarginVals);
 TA_BASEFUNS_CTORS_DEFN(LeabraInhibVals);
 
-TA_BASEFUNS_CTORS_DEFN(LeabraNetTiming);
 TA_BASEFUNS_CTORS_DEFN(LeabraTimes);
 TA_BASEFUNS_CTORS_DEFN(LeabraNetStats);
 TA_BASEFUNS_CTORS_DEFN(LeabraNetMisc);
@@ -48,8 +47,6 @@ using namespace std;
 
 void LeabraNetwork::Initialize() {
   layers.SetBaseType(&TA_LeabraLayer);
-  net_timing.SetBaseType(&TA_LeabraNetTiming);
-
   Initialize_net_core();
 }
 
@@ -427,161 +424,11 @@ void LeabraNetwork::Compute_EpochWeights() {
 /////////////////////////////////////////////////////////////////////////////////////
 
 
-static String pct_val_out(float val, float sum) {
-  String rval;
-  rval = taMisc::FormatValue(val, 7, 3) + " " 
-    + taMisc::FormatValue(100.0f * (val / sum), 7, 3);
-  return rval;
-}
-
-String LeabraNetwork::TimingReport(DataTable& dt, bool print) {
-  if(!HasNetFlag(BUILT)) {
-    String rval = "Network not built yet!";
-    if(print)
-      taMisc::Info(rval);
-    return rval;
-  }
-
-  int idx;
-  DataCol* thc = dt.FindMakeColName("thread", idx, VT_INT);
-  DataCol* stat = dt.FindMakeColName("stat", idx, VT_STRING);
-  DataCol* rca = dt.FindMakeColName("run_avg", idx, VT_FLOAT);
-  DataCol* rcs = dt.FindMakeColName("run_sum", idx, VT_FLOAT);
-  float rescale_val = 1.0e6;        // how many microseconds
-  float rescale = rescale_val;      // effective
-
-  LeabraNetTiming* net_tm = (LeabraNetTiming*)net_timing.Peek();
-  net_tm->netin.avg_used.ResetSum();
-  net_tm->act.avg_used.ResetSum();
-  net_tm->dwt.avg_used.ResetSum();
-  net_tm->wt.avg_used.ResetSum();
-  net_tm->netin_integ.avg_used.ResetSum();
-  net_tm->netin_stats.avg_used.ResetSum();
-  net_tm->inhib.avg_used.ResetSum();
-  net_tm->act_post.avg_used.ResetSum();
-  net_tm->cycstats.avg_used.ResetSum();
-
-  float tot_time = 0.0f;
-  float wait_time_avg = 0.0f;
-  float wait_time_sum = 0.0f;
-  for(int i=0; i<net_timing.size; i++) {
-    LeabraNetTiming* tm = (LeabraNetTiming*)net_timing[i];
-    if(i < n_thrs_built) {
-      net_tm->netin.avg_used.IncrementAvg(tm->netin.avg_used.sum);
-      net_tm->act.avg_used.IncrementAvg(tm->act.avg_used.sum);
-      net_tm->dwt.avg_used.IncrementAvg(tm->dwt.avg_used.sum);
-      net_tm->wt.avg_used.IncrementAvg(tm->wt.avg_used.sum);
-      net_tm->netin_integ.avg_used.IncrementAvg(tm->netin_integ.avg_used.sum);
-      net_tm->netin_stats.avg_used.IncrementAvg(tm->netin_stats.avg_used.sum);
-      net_tm->inhib.avg_used.IncrementAvg(tm->inhib.avg_used.sum);
-      net_tm->act_post.avg_used.IncrementAvg(tm->act_post.avg_used.sum);
-      net_tm->cycstats.avg_used.IncrementAvg(tm->cycstats.avg_used.sum);
-    }
-    else {
-      rescale = 1.0f;
-      tot_time += tm->netin.avg_used.avg;
-      tot_time += tm->act.avg_used.avg;
-      tot_time += tm->dwt.avg_used.avg;
-      tot_time += tm->wt.avg_used.avg;
-      tot_time += tm->netin_integ.avg_used.avg;
-      tot_time += tm->netin_stats.avg_used.avg;
-      tot_time += tm->inhib.avg_used.avg;
-      tot_time += tm->act_post.avg_used.avg;
-      tot_time += tm->cycstats.avg_used.avg;
-    }
-
-    dt.AddBlankRow();
-    thc->SetValAsInt(i, -1);
-    stat->SetValAsString("netin_time", -1);
-    rca->SetValAsFloat(tm->netin.avg_used.avg * rescale, -1);
-    rcs->SetValAsFloat(tm->netin.avg_used.sum, -1);
-
-    dt.AddBlankRow();
-    thc->SetValAsInt(i, -1);
-    stat->SetValAsString("netin_integ_time", -1);
-    rca->SetValAsFloat(tm->netin_integ.avg_used.avg * rescale, -1);
-    rcs->SetValAsFloat(tm->netin_integ.avg_used.sum, -1);
-
-    dt.AddBlankRow();
-    thc->SetValAsInt(i, -1);
-    stat->SetValAsString("netin_stats_time", -1);
-    rca->SetValAsFloat(tm->netin_stats.avg_used.avg * rescale, -1);
-    rcs->SetValAsFloat(tm->netin_stats.avg_used.sum, -1);
-
-    dt.AddBlankRow();
-    thc->SetValAsInt(i, -1);
-    stat->SetValAsString("inhib_time", -1);
-    rca->SetValAsFloat(tm->inhib.avg_used.avg * rescale, -1);
-    rcs->SetValAsFloat(tm->inhib.avg_used.sum, -1);
-
-    dt.AddBlankRow();
-    thc->SetValAsInt(i, -1);
-    stat->SetValAsString("act_time", -1);
-    rca->SetValAsFloat(tm->act.avg_used.avg * rescale, -1);
-    rcs->SetValAsFloat(tm->act.avg_used.sum, -1);
-
-    dt.AddBlankRow();
-    thc->SetValAsInt(i, -1);
-    stat->SetValAsString("act_post_time", -1);
-    rca->SetValAsFloat(tm->act_post.avg_used.avg * rescale, -1);
-    rcs->SetValAsFloat(tm->act_post.avg_used.sum, -1);
-
-    dt.AddBlankRow();
-    thc->SetValAsInt(i, -1);
-    stat->SetValAsString("cycstats_time", -1);
-    rca->SetValAsFloat(tm->cycstats.avg_used.avg * rescale, -1);
-    rcs->SetValAsFloat(tm->cycstats.avg_used.sum, -1);
-
-    dt.AddBlankRow();
-    thc->SetValAsInt(i, -1);
-    stat->SetValAsString("dwt_time", -1);
-    rca->SetValAsFloat(tm->dwt.avg_used.avg * rescale, -1);
-    rcs->SetValAsFloat(tm->dwt.avg_used.sum, -1);
-
-    dt.AddBlankRow();
-    thc->SetValAsInt(i, -1);
-    stat->SetValAsString("wt_time", -1);
-    rca->SetValAsFloat(tm->wt.avg_used.avg * rescale, -1);
-    rcs->SetValAsFloat(tm->wt.avg_used.sum, -1);
-
-    dt.AddBlankRow();
-    thc->SetValAsInt(i, -1);
-    stat->SetValAsString("sync_time", -1);
-
-    // if(i < n_thrs_built) {
-    //   TimeUsedHR& wt = ((NetworkThreadTask*)threads.tasks[i])->wait_time;
-    //   rca->SetValAsFloat(wt.avg_used.avg * rescale, -1);
-    //   rcs->SetValAsFloat(wt.avg_used.sum, -1);
-    //   wait_time_avg += wt.avg_used.avg;
-    //   wait_time_sum += wt.avg_used.sum;
-    // }
-    // else {
-      wait_time_avg /= (float)n_thrs_built;
-      wait_time_sum /= (float)n_thrs_built;
-
-      rca->SetValAsFloat(wait_time_avg * rescale_val, -1);
-      rcs->SetValAsFloat(wait_time_sum, -1);
-    // }
-  }
-
-  String report = name + " timing report:\n";
-  report << "function       time     percent \n"
-         << "netin:         " << pct_val_out(net_tm->netin.avg_used.avg, tot_time) << "\n"
-         << "netin_integ:   " << pct_val_out(net_tm->netin_integ.avg_used.avg, tot_time) << "\n"
-         << "netin_stats:   " << pct_val_out(net_tm->netin_stats.avg_used.avg, tot_time) << "\n"
-         << "inhib:         " << pct_val_out(net_tm->inhib.avg_used.avg, tot_time) << "\n"
-         << "act:           " << pct_val_out(net_tm->act.avg_used.avg, tot_time) << "\n"
-         << "act_post:      " << pct_val_out(net_tm->act_post.avg_used.avg, tot_time) << "\n"
-         << "cycstats:      " << pct_val_out(net_tm->cycstats.avg_used.avg, tot_time) << "\n"
-         << "dwt:           " << pct_val_out(net_tm->dwt.avg_used.avg, tot_time) << "\n"
-         << "wt:            " << pct_val_out(net_tm->wt.avg_used.avg, tot_time) << "\n"
-         << "    total:     " << taMisc::FormatValue(tot_time, 7, 3) << "\n"
-         << "sync wait:     " << taMisc::FormatValue(wait_time_sum, 7, 3) << "\n"
-    ;
-
-  if(print)
-    taMisc::Info(report);
-  return report;
-}
-
+void LeabraNetwork::TimingReportInitNames() {
+  inherited::TimingReportInitNames(); // allocs
+  net_timer_names[LeabraNetworkState_cpp::NT_NETIN_STATS] = "Net_Input_Stats";
+  net_timer_names[LeabraNetworkState_cpp::NT_INHIB] = "Inhibition";
+  net_timer_names[LeabraNetworkState_cpp::NT_ACT_POST] = "Act_post  ";
+  net_timer_names[LeabraNetworkState_cpp::NT_CYCLE_STATS] = "Cycle_Stats";
+}  
 

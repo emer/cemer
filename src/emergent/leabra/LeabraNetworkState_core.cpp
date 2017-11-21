@@ -642,8 +642,7 @@ void LEABRA_NETWORK_STATE::Cycle_Run_Thr(int thr_no) {
     Compute_NetinInteg_Thr(thr_no);
     ThreadSyncSpin(thr_no, 1);
 
-    // if(threads.get_timing)
-    //   ((LeabraNetTiming*)net_timing[thr_no])->netin_stats.StartTimer(true); // reset
+    StartTimer(NT_NETIN_STATS, thr_no);
 
     Compute_NetinStats_Thr(thr_no);
     if(deep.mod_net) {
@@ -660,8 +659,7 @@ void LEABRA_NETWORK_STATE::Cycle_Run_Thr(int thr_no) {
 
     InitCycleNetinTmp_Thr(thr_no);
 
-    // if(threads.get_timing)
-    //   ((LeabraNetTiming*)net_timing[thr_no])->netin_stats.EndIncrAvg();
+    EndTimer(NT_NETIN_STATS, thr_no);
 
     if(thr_no == 0) {
       Compute_Inhib();
@@ -679,8 +677,7 @@ void LEABRA_NETWORK_STATE::Cycle_Run_Thr(int thr_no) {
     Compute_Act_Post_Thr(thr_no);
     ThreadSyncSpin(thr_no, 1);
 
-    // if(threads.get_timing)
-    //   ((LeabraNetTiming*)net_timing[thr_no])->cycstats.StartTimer(true); // reset
+    StartTimer(NT_CYCLE_STATS, thr_no);
 
     Compute_CycleStats_Thr(thr_no);
     ThreadSyncSpin(thr_no, 2);
@@ -698,8 +695,7 @@ void LEABRA_NETWORK_STATE::Cycle_Run_Thr(int thr_no) {
     }
     ThreadSyncSpin(thr_no, 1);
 
-    // if(threads.get_timing)
-    //   ((LeabraNetTiming*)net_timing[thr_no])->cycstats.EndIncrAvg();
+    EndTimer(NT_CYCLE_STATS, thr_no);
 
     if(thr_no == 0) {
       Cycle_IncrCounters();
@@ -721,8 +717,7 @@ void LEABRA_NETWORK_STATE::Cycle_IncrCounters() {
 //      Cycle Stage 1: netinput
 
 void LEABRA_NETWORK_STATE::Send_Netin_Thr(int thr_no) {
-  // if(threads.get_timing)
-  //   ((LeabraNetTiming*)net_timing[thr_no])->netin.StartTimer(true); // reset
+  StartTimer(NT_NETIN, thr_no);
 
   const int nu = ThrNUnits(thr_no);
   for(int i=0; i<nu; i++) {
@@ -736,13 +731,11 @@ void LEABRA_NETWORK_STATE::Send_Netin_Thr(int thr_no) {
     avg_send_pct.Increment(send_pct);
   }
 
-  // if(threads.get_timing)
-  //   ((LeabraNetTiming*)net_timing[thr_no])->netin.EndIncrAvg();
+  EndTimer(NT_NETIN, thr_no);
 }
 
 void LEABRA_NETWORK_STATE::Compute_NetinInteg_Thr(int thr_no) {
-  // if(threads.get_timing)
-  //   ((LeabraNetTiming*)net_timing[thr_no])->netin_integ.StartTimer(true); // reset
+  StartTimer(NT_NETIN_INTEG, thr_no);
 
   const int nu = ThrNUnits(thr_no);
   for(int i=0; i<nu; i++) {
@@ -752,8 +745,7 @@ void LEABRA_NETWORK_STATE::Compute_NetinInteg_Thr(int thr_no) {
     us->Compute_NetinInteg(uv, this, thr_no);
   }
 
-  // if(threads.get_timing)
-  //   ((LeabraNetTiming*)net_timing[thr_no])->netin_integ.EndIncrAvg();
+  EndTimer(NT_NETIN_INTEG, thr_no);
 }
 
 void LEABRA_NETWORK_STATE::Compute_NetinStats_Thr(int thr_no) {
@@ -868,8 +860,7 @@ void LEABRA_NETWORK_STATE::InitCycleNetinTmp_Thr(int thr_no) {
 //      Cycle Step 2: Inhibition
 
 void LEABRA_NETWORK_STATE::Compute_Inhib() {
-  // if(threads.get_timing)
-  //   ((LeabraNetTiming*)net_timing[thr_no])->inhib.StartTimer(true); // reset
+  StartTimer(NT_INHIB, 0);
 
   // note: only running on thr_no == 0 right now -- may be best overall to avoid
   // messy cache stuff, to just keep it on 0
@@ -884,8 +875,7 @@ void LEABRA_NETWORK_STATE::Compute_Inhib() {
     ls->Compute_Inhib(lay, this);
   }
   
-  // if(threads.get_timing)
-  //   ((LeabraNetTiming*)net_timing[thr_no])->inhib.EndIncrAvg();
+  EndTimer(NT_INHIB, 0);
 }
 
 void LEABRA_NETWORK_STATE::Compute_Inhib_LayGp() {
@@ -935,18 +925,19 @@ void LEABRA_NETWORK_STATE::Compute_Inhib_LayGp() {
 //      Cycle Step 3: Activation
 
 void LEABRA_NETWORK_STATE::Compute_Act_Thr(int thr_no) {
+  StartTimer(NT_ACT, thr_no);
+  
   if(net_misc.spike) {
     Compute_Act_Spike_Thr(thr_no);
   }
   else {
     Compute_Act_Rate_Thr(thr_no);
   }
+  
+  EndTimer(NT_ACT, thr_no);
 }
 
 void LEABRA_NETWORK_STATE::Compute_Act_Rate_Thr(int thr_no) {
-  // if(threads.get_timing)
-  //   ((LeabraNetTiming*)net_timing[thr_no])->act.StartTimer(true); // reset
-
   const int nu = ThrNUnits(thr_no);
   for(int i=0; i<nu; i++) {
     LEABRA_UNIT_STATE* uv = ThrUnitState(thr_no, i);
@@ -954,15 +945,9 @@ void LEABRA_NETWORK_STATE::Compute_Act_Rate_Thr(int thr_no) {
     LEABRA_UNIT_SPEC_CPP* us = uv->GetUnitSpec(this);
     us->Compute_Act_Rate(uv, this, thr_no);
   }
-
-  // if(threads.get_timing)
-  //   ((LeabraNetTiming*)net_timing[thr_no])->act.EndIncrAvg();
 }
 
 void LEABRA_NETWORK_STATE::Compute_Act_Spike_Thr(int thr_no) {
-  // if(threads.get_timing)
-  //   ((LeabraNetTiming*)net_timing[thr_no])->act.StartTimer(true); // reset
-
   const int nu = ThrNUnits(thr_no);
   for(int i=0; i<nu; i++) {
     LEABRA_UNIT_STATE* uv = ThrUnitState(thr_no, i);
@@ -970,14 +955,10 @@ void LEABRA_NETWORK_STATE::Compute_Act_Spike_Thr(int thr_no) {
     LEABRA_UNIT_SPEC_CPP* us = uv->GetUnitSpec(this);
     us->Compute_Act_Spike(uv, this, thr_no);
   }
-
-  // if(threads.get_timing)
-  //   ((LeabraNetTiming*)net_timing[thr_no])->act.EndIncrAvg();
 }
 
 void LEABRA_NETWORK_STATE::Compute_Act_Post_Thr(int thr_no) {
-  // if(threads.get_timing)
-  //   ((LeabraNetTiming*)net_timing[thr_no])->act_post.StartTimer(true); // reset
+  StartTimer(NT_ACT_POST, thr_no);
 
   const int nu = ThrNUnits(thr_no);
   for(int i=0; i<nu; i++) {
@@ -987,8 +968,7 @@ void LEABRA_NETWORK_STATE::Compute_Act_Post_Thr(int thr_no) {
     us->Compute_Act_Post(uv, this, thr_no);
   }
 
-  // if(threads.get_timing)
-  //   ((LeabraNetTiming*)net_timing[thr_no])->act_post.EndIncrAvg();
+  EndTimer(NT_ACT_POST, thr_no);
 }
 
 void LEABRA_NETWORK_STATE::ThalGatedNow() {
@@ -1361,8 +1341,7 @@ void LEABRA_NETWORK_STATE::Compute_dWt_Layer_pre() {
 }
 
 void LEABRA_NETWORK_STATE::Compute_dWt_Thr(int thr_no) {
-  // if(threads.get_timing)
-  //   ((LeabraNetTiming*)net_timing[thr_no])->dwt.StartTimer(true); // reset
+  StartTimer(NT_DWT, thr_no);
 
   // note: not currently using
   // Compute_dWt_VecVars_Thr(thr_no);
@@ -1387,13 +1366,11 @@ void LEABRA_NETWORK_STATE::Compute_dWt_Thr(int thr_no) {
     }
   }
   
-  // if(threads.get_timing)
-  //   ((LeabraNetTiming*)net_timing[thr_no])->dwt.EndIncrAvg();
+  EndTimer(NT_DWT, thr_no);
 }
 
 void LEABRA_NETWORK_STATE::Compute_Weights_Thr(int thr_no) {
-  // if(threads.get_timing)
-  //   ((LeabraNetTiming*)net_timing[thr_no])->wt.StartTimer(true); // reset
+  StartTimer(NT_WT, thr_no);
 
   const int nscg = ThrNSendConGps(thr_no);
   for(int i=0; i<nscg; i++) {
@@ -1413,8 +1390,7 @@ void LEABRA_NETWORK_STATE::Compute_Weights_Thr(int thr_no) {
     }
   }
   
-  // if(threads.get_timing)
-  //   ((LeabraNetTiming*)net_timing[thr_no])->wt.EndIncrAvg();
+  EndTimer(NT_WT, thr_no);
 }
 
 void LEABRA_NETWORK_STATE::Compute_WtBal_Thr(int thr_no) {

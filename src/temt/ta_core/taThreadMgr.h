@@ -58,14 +58,15 @@ public:
 
   bool			get_timing;	// #NO_SAVE #READ_ONLY collect timing information as the system runs -- this is set by StartTimers and turned off by EndTimers
   bool                  spin_wait;      // #NO_SAVE use spin-wait instead of mutex-based wait() that goes to the OS -- experimental..
-  TimeUsedHR		run_time; 	// #EXPERT total time (in secs and fractions thereof) from end of RunThreads() call (after telling threads to wake up) to start of SyncThreads() call
-  TimeUsedHR		sync_time;	// #EXPERT total time (in secs and fractions thereof) in SyncThreads() waiting to sync up the threads
-  TimeUsedHR		total_time;	// #EXPERT total time (in secs and fractions thereof) from start of RunThreads() to end of SyncThreads()
-  int			n_wake_in_sync; // #EXPERT number of threads that had to be woken in the sync process -- i.e., they hadn't even started running by the time the main thread finished!
+  TimeUsedHR		run_time; 	// #EXPERT #NO_SAVE total time (in secs and fractions thereof) from end of RunThreads() call (after telling threads to wake up) to start of SyncThreads() call
+  TimeUsedHR		sync_time;	// #EXPERT #NO_SAVE total time (in secs and fractions thereof) in SyncThreads() waiting to sync up the threads
+  TimeUsedHR		total_time;	// #EXPERT #NO_SAVE total time (in secs and fractions thereof) from start of RunThreads() to end of SyncThreads()
+  int			n_wake_in_sync; // #EXPERT #NO_SAVE number of threads that had to be woken in the sync process -- i.e., they hadn't even started running by the time the main thread finished!
 
-  double		run_time_pct; 	// #EXPERT percent of total time spent running -- computed in EndTimers()
-  double		sync_time_pct;	// #EXPERT percent of total time spent syncing -- computed in EndTimers()
-  double		wake_in_sync_pct; // #EXPERT percent of total threads run that had to be woken during the sync process
+  double		run_time_pct; 	// #EXPERT #NO_SAVE percent of total time spent running -- computed in EndTimers()
+  double		sync_time_pct;	// #EXPERT #NO_SAVE percent of total time spent syncing -- computed in EndTimers()
+  double		wake_in_sync_pct; // #EXPERT #NO_SAVE percent of total threads run that had to be woken during the sync process
+  Average		spin_wait_time; // #EXPERT #NO_SAVE average data across threads for time spent in spin wait
 
   //////////////////////////////////////////////////////
   //		These are used by the managed threads
@@ -114,6 +115,8 @@ public:
   // Start accumulating timing information on all threads -- must be called *after* everything is initialized and ready to run
   virtual void	EndTimers(bool print_report = true);
   // Finish accumulating timing information on all threads, compute summary information, and optionally report that to cout
+  virtual String TimersReport();
+  // return a string with a summary report on thread timing data -- only valid after EndTimers
 
   static void	TerminateAllThreads();
   // static function for terminating all the threads, e.g., in the err signal handler or quit routine
