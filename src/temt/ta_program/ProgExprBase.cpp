@@ -1096,12 +1096,28 @@ Completions* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_po
       ProgVar::VarType var_type = ProgVar::T_UnDef;
       if (lhs_var) {
         var_type = lhs_var->var_type;
+        if (var_type == ProgVar::T_Object) {
+          include_null = true;
+        }
+        if (var_type == ProgVar::T_Bool) {
+          include_bools = true;
+        }
       }
-      if (var_type == ProgVar::T_Object) {
-        include_null = true;
-      }
-      if (var_type == ProgVar::T_Bool) {
-        include_bools = true;
+      else {
+        if (lhs.contains("::")) {  // static class ?
+          String class_name = lhs.before("::");
+          TypeDef* own_td = taMisc::FindTypeName(class_name);
+          if (own_td) {
+            int net_base_off = 0;
+            String member_name = lhs.after("::");
+            MemberDef* md = own_td->static_members.FindName(member_name);
+            if (md) {
+              if (md->type->type == TypeDef::BOOL) {
+                include_bools = true;
+              }
+            }
+          }
+        }
       }
       include_statics = true;
       if (own_fun) {
