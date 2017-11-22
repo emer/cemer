@@ -488,10 +488,13 @@ void NETWORK_STATE::DMem_SumDWts_ToTmp_Thr(int thr_no) {
     memcpy(dwt_tmp + cidx++, (char*)&(uv->bias_dwt), sizeof(float));
   }
   
-  // don't end here -- do it at end of next call!
+  EndTimer(NT_DMEM_WT_SYNC, thr_no); // start/stop at each -- otherwise each node includes
+  // the full transport time!
 }
 
 void NETWORK_STATE::DMem_SumDWts_FmTmp_Thr(int thr_no) {
+  StartTimer(NT_DMEM_WT_SYNC, thr_no);
+  
   float* dwt_tmp = thrs_dmem_sum_dwts_recv[thr_no];
   int64_t cidx = 0;
   if(RecvOwnsCons()) {

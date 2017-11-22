@@ -34,8 +34,10 @@ public:
   float         moment;         // #NO_SAVE #AUTO_SCALE momentum -- time-integrated dwt changes, to accumulate a consistent direction of weight change and cancel out dithering contradictory changes
   float         fwt;            // #NO_SAVE fast learning linear (underlying) weight value -- learns according to the lrate specified in the connection spec -- this is converted into the effective weight value, wt, via sigmoidal contrast enhancement (wt_sig)
   float         swt;            // #NO_SAVE slow learning linear (underlying) weight value -- slowly tracks changes in fwt value, and contributes in some proportion to net effective weight value, wt
+  float         wb_inc;         // #NO_SAVE rate of weight increase from adaptive weight balance -- computed receiver based and so needs to be stored in the connection to optimize speed
+  float         wb_dec;         // #NO_SAVE rate of weight increase from adaptive weight balance -- computed receiver based and so needs to be stored in the connection to optimize speed
   
-  LeabraCon() { moment = dwavg = fwt = swt = 0.0f; scale = 1.0f; }
+  LeabraCon() { moment = dwavg = fwt = swt = 0.0f; scale = wb_inc = wb_dec = 1.0f; }
 
 };
 

@@ -171,11 +171,18 @@ public:
   }
   // static version of function for implementing inverse of weight sigmoid -- for default gain = 6, offset = 1 params
 
-  INLINE float	SigFmLinWt(float lw)
-  { if(gain == 1.0f && off == 1.0f) return lw; return SigFun(lw, gain, off); }
+  INLINE float	SigFmLinWt(float lw) {
+    if(gain == 1.0f && off == 1.0f) return lw;
+    if(gain == 6.0f && off == 1.0f) return SigFun61(lw);
+    return SigFun(lw, gain, off);
+  }
   // get sigmoidal contrast-enhanced weight from linear weight
   
-  INLINE float	LinFmSigWt(const float sw) { return InvFun(sw, gain, off); }
+  INLINE float	LinFmSigWt(const float sw) {
+    if(gain == 1.0f && off == 1.0f) return sw;
+    if(gain == 6.0f && off == 1.0f) return InvFun61(sw);
+    return InvFun(sw, gain, off);
+  }
   // get linear weight from sigmoidal contrast-enhanced weight
 
   STATE_DECO_KEY("ConSpec");

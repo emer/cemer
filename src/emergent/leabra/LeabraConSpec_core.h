@@ -6,6 +6,8 @@
     MOMENT,                    // momentum -- time-integrated dwt changes, to accumulate a consistent direction of weight change and cancel out dithering contradictory changes
     FWT,                       // fast learning linear (underlying) weight value -- learns according to the lrate specified in the connection spec -- this is converted into the effective weight value, "wt", via sigmoidal contrast enhancement (wt_sig)
     SWT,                       // slow learning linear (underlying) weight value -- learns more slowly from weight changes than fast weights, and fwt decays down to swt over time
+    WB_INC,                    // rate of weight increase from adaptive weight balance -- computed receiver based and so needs to be stored in the connection to optimize speed
+    WB_DEC,                    // rate of weight increase from adaptive weight balance -- computed receiver based and so needs to be stored in the connection to optimize speed
     N_LEABRA_CON_VARS,         // #IGNORE number of leabra con vars
   };
 
@@ -123,15 +125,17 @@
     float* scales = cg->OwnCnVar(SCALE);
     float* dwavgs = cg->OwnCnVar(DWAVG);
     float* moments = cg->OwnCnVar(MOMENT);
+    float* wbincs = cg->OwnCnVar(WB_INC);
+    float* wbdecs = cg->OwnCnVar(WB_DEC);
     for(int i=0; i<cg->size; i++) {
       fwts[i] = LinFmSigWt(wts[i]); // swt, fwt are linear underlying weight values
       dwavgs[i] = 0.0f;
       moments[i] = 0.0f;
       swts[i] = fwts[i];
       wts[i] *= scales[i];
-
-      LEABRA_UNIT_STATE* ru = cg->UnState(i, net);
-      LEABRA_CON_STATE* rcg = ru->RecvConState(net, cg->other_idx);
+      wbincs[i] = wbdecs[i] = 1.0f;
+      
+      LEABRA_CON_STATE* rcg = cg->UnCons(i, net);
       rcg->Init_ConState();    // recv based otherwise doesn't get initialized!
     }
   }
@@ -417,27 +421,33 @@
   INLINE void	Compute_Weights(CON_STATE* scg, NETWORK_STATE* net, int thr_no) override {
     if(!learn) return;
     LEABRA_CON_STATE* cg = (LEABRA_CON_STATE*)scg;
-    float* wts = cg->OwnCnVar(WT);      float* dwts = cg->OwnCnVar(DWT);    float* fwts = cg->OwnCnVar(FWT);
-    float* swts = cg->OwnCnVar(SWT);    float* scales = cg->OwnCnVar(SCALE);
+    float* wts = cg->OwnCnVar(WT);      float* dwts = cg->OwnCnVar(DWT);
+    float* fwts = cg->OwnCnVar(FWT);    float* swts = cg->OwnCnVar(SWT);
+    float* scales = cg->OwnCnVar(SCALE);
     const int sz = cg->size;
 
     if(wt_bal.on) {
+      float* wbincs = cg->OwnCnVar(WB_INC);
+      float* wbdecs = cg->OwnCnVar(WB_DEC);
+
       if(slow_wts.on) {
         for(int i=0; i<sz; i++) {
           // note: MUST get these from ru -- diff for each con -- can't copy to sender!
-          LEABRA_UNIT_STATE* ru = cg->UnState(i, net);
-          LEABRA_CON_STATE* rcg = ru->RecvConState(net, cg->other_idx);
+          // storing in synapses is about 2x faster and essentially no overhead vs. no wtbal
+          // LEABRA_CON_STATE* rcg = cg->UnCons(i, net);
           C_Compute_Weights_CtLeabraXCAL_slow
-            (wts[i], dwts[i], fwts[i], swts[i], scales[i], rcg->wb_inc, rcg->wb_dec);
+            (wts[i], dwts[i], fwts[i], swts[i], scales[i], wbincs[i], wbdecs[i]);
+            // (wts[i], dwts[i], fwts[i], swts[i], scales[i], rcg->wb_inc, rcg->wb_dec);
         }
       }
       else {
         for(int i=0; i<sz; i++) {
           // note: MUST get these from ru -- diff for each con -- can't copy to sender!
-          LEABRA_UNIT_STATE* ru = cg->UnState(i, net);
-          LEABRA_CON_STATE* rcg = ru->RecvConState(net, cg->other_idx);
+          // storing in synapses is about 2x faster and essentially no overhead vs. no wtbal
+          // LEABRA_CON_STATE* rcg = cg->UnCons(i, net);
           C_Compute_Weights_CtLeabraXCAL
-            (wts[i], dwts[i], fwts[i], swts[i], scales[i], rcg->wb_inc, rcg->wb_dec);
+            (wts[i], dwts[i], fwts[i], swts[i], scales[i], wbincs[i], wbdecs[i]);
+            // (wts[i], dwts[i], fwts[i], swts[i], scales[i], rcg->wb_inc, rcg->wb_dec);
         }
       }
     }
@@ -468,6 +478,11 @@
     cg->wt_avg = sum_wt;
     wt_bal.WtBal(sum_wt, cg->wb_inc, cg->wb_dec);
     // note: these are specific to recv unit and cannot be copied to sender!
+    // BUT can copy to synapses:
+    for(int i=0; i<cg->size; i++) {
+      cg->PtrCn(i,WB_INC,net) = cg->wb_inc;
+      cg->PtrCn(i,WB_DEC,net) = cg->wb_dec;
+    }
   }
   // #IGNORE compute weight balance factors
 
