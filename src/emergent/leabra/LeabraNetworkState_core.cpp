@@ -555,7 +555,7 @@ void LEABRA_NETWORK_STATE::Compute_DeepCtxtStats_Thr(int thr_no) {
     for(int ui = ust; ui < ued; ui++) {
       LEABRA_UNIT_STATE* uv = ThrUnitState(thr_no, ui);
       if(uv->lesioned()) continue;
-      const int flat_idx = ThrUnitIdx(thr_no, ui); // note: max_i is now in flat_idx units
+      const int flat_idx = uv->flat_idx;
       am_ctxt->UpdtVals(uv->deep_ctxt, flat_idx); 
     }
   }
@@ -771,7 +771,7 @@ void LEABRA_NETWORK_STATE::Compute_NetinStats_Thr(int thr_no) {
     for(int ui = ust; ui < ued; ui++) {
       LEABRA_UNIT_STATE* uv = ThrUnitState(thr_no, ui);
       if(uv->lesioned() || uv->net < net_thr) continue;
-      const int flat_idx = ThrUnitIdx(thr_no, ui); // note: max_i is now in flat_idx units
+      const int flat_idx = uv->flat_idx;
       am_net->UpdtVals(uv->net, flat_idx); 
       am_net_raw->UpdtVals(uv->net_raw, flat_idx); 
     }
@@ -819,7 +819,7 @@ void LEABRA_NETWORK_STATE::Compute_DeepModStats_Thr(int thr_no) {
     for(int ui = ust; ui < ued; ui++) {
       LEABRA_UNIT_STATE* uv = ThrUnitState(thr_no, ui);
       if(uv->lesioned()) continue;
-      const int flat_idx = ThrUnitIdx(thr_no, ui); // note: max_i is now in flat_idx units
+      const int flat_idx = uv->flat_idx;
       am_net->UpdtVals(uv->deep_mod_net, flat_idx); 
     }
   }
@@ -1010,7 +1010,7 @@ void LEABRA_NETWORK_STATE::Compute_CycleStats_Thr(int thr_no) {
     for(int ui = ust; ui < ued; ui++) {
       LEABRA_UNIT_STATE* uv = ThrUnitState(thr_no, ui);
       if(uv->lesioned()) continue;
-      const int flat_idx = ThrUnitIdx(thr_no, ui); // note: max_i is now in flat_idx units
+      const int flat_idx = uv->flat_idx;
       am_act->UpdtVals(uv->act, flat_idx); 
       am_act_raw->UpdtVals(uv->act_raw, flat_idx); 
     }
@@ -1040,7 +1040,7 @@ void LEABRA_NETWORK_STATE::Compute_ActEqStats_Thr(int thr_no) {
     for(int ui = ust; ui < ued; ui++) {
       LEABRA_UNIT_STATE* uv = ThrUnitState(thr_no, ui);
       if(uv->lesioned()) continue;
-      const int flat_idx = ThrUnitIdx(thr_no, ui); // note: max_i is now in flat_idx units
+      const int flat_idx = uv->flat_idx;
       am_act_eq->UpdtVals(uv->act_eq, flat_idx);
     }
   }
@@ -1120,7 +1120,7 @@ void LEABRA_NETWORK_STATE::Compute_GcIStats_Thr(int thr_no) {
     for(int ui = ust; ui < ued; ui++) {
       LEABRA_UNIT_STATE* uv = ThrUnitState(thr_no, ui);
       if(uv->lesioned()) continue;
-      const int flat_idx = ThrUnitIdx(thr_no, ui); // note: max_i is now in flat_idx units
+      const int flat_idx = uv->flat_idx;
       am_un_g_i->UpdtVals(uv->gc_i, flat_idx);
     }
   }
@@ -1208,7 +1208,7 @@ void LEABRA_NETWORK_STATE::Compute_DeepRawStats_Thr(int thr_no) {
     for(int ui = ust; ui < ued; ui++) {
       LEABRA_UNIT_STATE* uv = ThrUnitState(thr_no, ui);
       if(uv->lesioned()) continue;
-      const int flat_idx = ThrUnitIdx(thr_no, ui); // note: max_i is now in flat_idx units
+      const int flat_idx = uv->flat_idx;
       am_raw->UpdtVals(uv->deep_raw, flat_idx); 
       am_net->UpdtVals(uv->deep_raw_net, flat_idx); 
     }
