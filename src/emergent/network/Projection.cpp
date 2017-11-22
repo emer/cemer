@@ -432,6 +432,7 @@ int Projection::ReplaceConSpec(ConSpec* old_sp, ConSpec* new_sp, bool prompt) {
   String act_nm = "ConSpec: " + old_sp->name + " with: " + new_sp->name
     + " in layer: " + layer->name + " prjn: " + name;
   if(prompt) {
+    BrowserSelectMe();
     int ok = taMisc::Choice("Replace " + act_nm + "?",
                             "Ok", "Skip");
     if(ok != 0) return 0;
@@ -447,6 +448,7 @@ int Projection::ReplacePrjnSpec(ProjectionSpec* old_sp, ProjectionSpec* new_sp, 
   String act_nm = "PrjnSpec: " + old_sp->name + " with: " + new_sp->name
     + " in layer: " + layer->name + " prjn: " + name;
   if(prompt) {
+    BrowserSelectMe();
     int ok = taMisc::Choice("Replace " + act_nm + "?",
                             "Ok", "Skip");
     if(ok != 0) return 0;

@@ -1597,6 +1597,7 @@ int Layer::ReplaceUnitSpec(UnitSpec* old_sp, UnitSpec* new_sp, bool prompt) {
   String act_nm = "UnitSpec: " + old_sp->name + " with: " + new_sp->name
     + " in layer: " + name;
   if(prompt) {
+    BrowserSelectMe();
     int ok = taMisc::Choice("Replace " + act_nm + "?", "Ok", "Skip");
     if(ok != 0) return 0;
   }
@@ -1628,6 +1629,7 @@ int Layer::ReplaceLayerSpec(LayerSpec* old_sp, LayerSpec* new_sp, bool prompt) {
   String act_nm = "LayerSpec: " + old_sp->name + " with: " + new_sp->name
     + " in layer: " + name;
   if(prompt) {
+    BrowserSelectMe();
     int ok = taMisc::Choice("Replace " + act_nm + "?", "Ok", "Skip");
     if(ok != 0) return 0;
   }
