@@ -408,7 +408,7 @@ void LEABRA_UNIT_SPEC::Send_NetinDelta(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STAT
 
 void LEABRA_UNIT_SPEC::Compute_NetinRaw(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) {
   // this integrates from SendDelta into net_raw and gi_syn
-  int nt = net->n_thrs_built;
+  const int nt = net->n_thrs_built;
   const int flat_idx = u->flat_idx;
   float net_delta = 0.0f;
   float gi_delta = 0.0f;
