@@ -328,6 +328,7 @@ void Network::Copy_(const Network& cp) {
 
 void Network::UpdatePointersAfterCopy_impl(const taBase& cp) {
   inherited::UpdatePointersAfterCopy_impl(cp);
+  ClearIntact();
   SyncSendPrjns();
   UpdatePrjnIdxs();             // fix the recv_idx and send_idx (not copied!)
 }
@@ -371,12 +372,15 @@ void Network::UpdateAfterEdit_impl(){
 }
 
 void Network::ClearIntact() {
+  if(taMisc::is_loading) return;
+  if(!IsBuiltIntact()) return;
   ClearNetFlag(INTACT);
   SyncNetState();
 }
 
 
 void Network::setStale() {
+  if(taMisc::is_loading) return;
   ClearIntact();
   RebuildAllViews();
   // taMisc::DebugInfo("net set stale");
@@ -980,6 +984,10 @@ void Network::BuildIndexesSizes() {
     }
     else {
       lay->prjn_start_idx = -1;
+      for(int j=0; j < lay->projections.size; j++) {
+        Projection* prjn = lay->projections[j];
+        prjn->prjn_idx = -1;
+      }
     }
   }
   // could have ended on a layer group..

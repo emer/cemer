@@ -857,19 +857,23 @@ void Layer::UpdatePrjnIdxs() {
   n_recv_prjns = 0;
   n_send_prjns = 0;
   FOREACH_ELEM_IN_GROUP(Projection, prj, projections) {
+    prj->UpdateLesioned();
     if(prj->MainIsActive()) {
       prj->recv_idx = n_recv_prjns++;
     }
     else {
       prj->recv_idx = -1;
+      prj->prjn_idx = -1; // safe
     }
   }
   FOREACH_ELEM_IN_GROUP(Projection, prj, send_prjns) {
+    prj->UpdateLesioned();
     if(prj->MainIsActive()) {
       prj->send_idx = n_send_prjns++;
     }
     else {
       prj->send_idx = -1;
+      prj->prjn_idx = -1; // safe
     }
   }
 }
@@ -1451,12 +1455,12 @@ void Layer::UpdtAfterNetModIfNecc() {
 }
 
 bool Layer::UnitSpecUpdated() {
-  if(unit_spec.SPtr() == m_prv_unit_spec) return false;
   UnitSpec* sp = unit_spec.SPtr();
   if(!sp) return false;
+  if(sp == m_prv_unit_spec) return false;
+  m_prv_unit_spec = sp;         // don't redo it
   if(own_net)
     own_net->ClearIntact();
-  m_prv_unit_spec = sp;         // don't redo it
   return true;
 }
 

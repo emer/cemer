@@ -162,18 +162,7 @@ void Projection::UpdateAfterEdit_impl() {
     UpdateName();
   }
 
-  if(!(bool)from || !layer) {
-    lesioned = true;
-  }
-  else {
-    if(layer->lesioned() || from->lesioned()) {
-      lesioned = true;
-    }
-    else {
-      lesioned = false;
-    }
-  }
-  
+  UpdateLesioned();
   ConSpecUpdated();
 
   // somehow the colors get out-of-whack on these guys
@@ -192,6 +181,20 @@ void Projection::UpdateName() {
        name.endsWith("_copy")) {
       SetName(nwnm);            // setname ensures uniqueness
       SigEmitUpdated();
+    }
+  }
+}
+
+void Projection::UpdateLesioned() {
+  if(!(bool)from || !layer) {
+    lesioned = true;
+  }
+  else {
+    if(layer->lesioned() || from->lesioned()) {
+      lesioned = true;
+    }
+    else {
+      lesioned = false;
     }
   }
 }
@@ -305,6 +308,7 @@ bool Projection::ConSpecUpdated() {
   ConSpec* sp = con_spec.SPtr();
   if(!sp) return false;
   if(sp == m_prv_con_spec) return false;
+  m_prv_con_spec = sp;          // don't redo it
   if((!(bool)layer) || (!(bool)from)) return false;
   Network* mynet = GET_MY_OWNER(Network);
   if(!mynet || !mynet->IsBuiltIntact()) return false;
@@ -317,7 +321,6 @@ bool Projection::ConSpecUpdated() {
     }
   }
   mynet->ClearIntact();         // spec updated -- need to rebuild network
-  m_prv_con_spec = sp;          // don't redo it
   
   return true;
 }
