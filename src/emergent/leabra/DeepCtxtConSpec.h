@@ -14,7 +14,8 @@
 
   INLINE void Send_DeepCtxtNetin(LEABRA_CON_STATE* cg, LEABRA_NETWORK_STATE* net,
                                  int thr_no, const float su_act) {
-    const float su_act_eff = cg->scale_eff * su_act;
+    LEABRA_PRJN_STATE* prjn = cg->GetPrjnState(net);
+    const float su_act_eff = prjn->scale_eff * su_act;
     float* wts = cg->OwnCnVar(WT);
     float* send_deepnet_vec = net->ThrSendDeepRawNetTmp(thr_no);
 #ifdef TA_VEC_USE

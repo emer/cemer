@@ -27,6 +27,7 @@
 #include <LeabraConState_cpp>
 #include <LeabraUnitState_cpp>
 #include <LeabraLayerState_cpp>
+#include <LeabraPrjnState_cpp>
 
 #include <State_cpp>
 

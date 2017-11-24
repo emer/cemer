@@ -1,14 +1,17 @@
 // this is included directly in LeabraExtraUnitSpecs_cpp / _cuda
 // {
 
-void STATE_CLASS(CA1UnitSpec)::Compute_NetinScale(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) {
+void STATE_CLASS(CA1UnitSpec)::Compute_NetinScale
+  (LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
+  
   bool test_mode = (theta.use_test_mode && net->train_mode == NETWORK_STATE::TEST);
-  const int nrg = u->NRecvConGps(net); 
+
+  const int nrg = lay->n_recv_prjns;
   for(int g=0; g< nrg; g++) {
-    LEABRA_CON_STATE* recv_gp = (LEABRA_CON_STATE*)u->RecvConState(net, g);
-    if(!recv_gp->PrjnIsActive(net)) continue; // key!! just check for prjn, not con group!
-    LEABRA_LAYER_STATE* from =  recv_gp->GetSendLayer(net);
-    LEABRA_CON_SPEC_CPP* cs = recv_gp->GetConSpec(net);
+    LEABRA_PRJN_STATE* prjn = lay->GetRecvPrjnState(net, g);
+    if(!prjn->IsActive(net)) continue;
+    LEABRA_LAYER_STATE* from =  prjn->GetSendLayer(net);
+    LEABRA_CON_SPEC_CPP* cs = prjn->GetConSpec(net);
     if(!cs->DoesStdNetin()) continue; // skip any special guys
 
     if(from->LayerNameContains("EC")) {
@@ -43,13 +46,15 @@ void STATE_CLASS(CA1UnitSpec)::Compute_NetinScale(LEABRA_UNIT_STATE* u, LEABRA_N
     }
   }
 
+  LEABRA_LAYER_SPEC_CPP* ls = lay->GetLayerSpec(net);
+  
   if(net->quarter == 1 && !test_mode) {
-    DecayState(u, net, thr_no, theta.recall_decay);
+    ls->DecayState(lay, net, theta.recall_decay);
   }
   if(net->quarter == 3 && !test_mode) {
-    DecayState(u, net, thr_no, theta.plus_decay);
+    ls->DecayState(lay, net, theta.plus_decay);
   }
   
-  inherited::Compute_NetinScale(u, net, thr_no);
+  inherited::Compute_NetinScale(lay, net);
 }  
 

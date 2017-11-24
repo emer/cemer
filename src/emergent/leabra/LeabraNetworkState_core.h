@@ -153,10 +153,8 @@
   // #IGNORE initialize at start of settling phase -- sets target external input flags based on phase -- not called by default -- direct to unit level function
     INIMPL virtual void Quarter_Init_Deep_Thr(int thr_no);
     // #IGNORE quarter deep leabra init: deep_ctxt compute and deep state update
-  INIMPL virtual void Compute_NetinScale_Thr(int thr_no);
-  // #IGNORE compute netinput scaling values by projection -- not called by default -- direct to unit-level function
-    INIMPL virtual void Compute_NetinScale_Senders_Thr(int thr_no);
-    // #IGNORE compute net input scaling values for sending cons -- copies from values computed in the recv guys -- has to be done as a second phase of the
+  INIMPL virtual void Compute_NetinScale();
+  // #IGNORE compute netinput scaling values by projection -- operates on layers and projections, not units
   INIMPL virtual void Compute_HardClamp_Thr(int thr_no);
   // #IGNORE compute hard clamping from external inputs
   INIMPL virtual void InitDeepRawNetinTmp_Thr(int thr_no);

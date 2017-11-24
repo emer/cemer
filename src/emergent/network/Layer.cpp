@@ -418,6 +418,10 @@ void Layer::Lesion() {
   SetLayerFlag(LESIONED);
   m_prv_layer_flags = flags;
   UpdateAllPrjns();
+  NetworkState_cpp* net = GetValidNetState();
+  if(net) {
+    LesionUnits(1.0f);          // lesion all units b/c that is what is checked in code!
+  }
   StructUpdate(false);
   if(own_net)
     own_net->UpdtAfterNetMod();
@@ -436,6 +440,7 @@ void Layer::UnLesion() {
       taMisc::Error("UnLesion: can only unlesion layers that were originally unlesioned when network was built (only those layers were built into LayerState etc) -- UnBuild the network and then unlesion then re-Build if you want to be able to dynamically turn layers on and off");
       return;
     }
+    UnLesionUnits();          // unlesion all units
   }
   StructUpdate(true);
   ClearLayerFlag(LESIONED);
@@ -1401,6 +1406,14 @@ int Layer::LesionCons(float p_lesion, bool permute) {
 int Layer::LesionUnits(float p_lesion, bool permute) {
   NetworkState_cpp* net = GetValidNetState();
   if(!net) return 0;
+
+  if(p_lesion >= 1.0f) {
+    for(int j=0; j < n_units_built; j++) {
+      UnitState_cpp* u = GetUnitState(net, j);
+      u->Lesion(net);
+    }
+    return n_units_built;
+  }
   
   int rval = 0;
   StructUpdate(true);
@@ -1417,7 +1430,7 @@ int Layer::LesionUnits(float p_lesion, bool permute) {
     ary.Sort();
     for(j=ary.size-1; j>=0; j--) {
       UnitState_cpp* u = GetUnitState(net, ary.FastEl(j));
-      u->Lesion();             // just sets a flag
+      u->Lesion(net);             // just sets a flag
     }
   }
   else {
@@ -1425,12 +1438,11 @@ int Layer::LesionUnits(float p_lesion, bool permute) {
     for(j=n_units_built-1; j>=0; j--) {
       if(Random::ZeroOne() <= p_lesion) {
         UnitState_cpp* u = GetUnitState(net, j);
-        u->Lesion();
+        u->Lesion(net);
         rval++;
       }
     }
   }
-//   own_lay->units_lesioned = true;       // record that units were lesioned
   StructUpdate(false);
   UpdtAfterNetModIfNecc();
   return rval;
@@ -1443,7 +1455,7 @@ void Layer::UnLesionUnits() {
   StructUpdate(true);
   for(int ui=0; ui < n_units_built; ui++) {
     UnitState_cpp* u = GetUnitState(net, ui);
-    u->UnLesion();
+    u->UnLesion(net);
   }
   StructUpdate(false);
   UpdtAfterNetModIfNecc();

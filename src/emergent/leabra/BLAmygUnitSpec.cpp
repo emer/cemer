@@ -86,7 +86,7 @@ float STATE_CLASS(BLAmygUnitSpec)::Compute_NetinExtras
   float net_ex = init.netin;
   LEABRA_CON_SPEC_CPP* bs = GetBiasSpec(net);
   if(bs) {
-    net_ex += u->bias_scale * u->bias_wt;
+    net_ex += lay->bias_scale * u->bias_wt;
   }
   if(u->HasExtFlag(UNIT_STATE::EXT)) {
     if(ls->clamp.avg)

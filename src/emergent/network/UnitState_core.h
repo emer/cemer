@@ -98,9 +98,9 @@
 
   INLINE bool   lesioned() const { return HasUnitFlag(LESIONED); }
   // #CAT_State check if this unit is lesioned -- must check for all processing functions (threaded calls automatically exclude lesioned units)
-  INLINE void   Lesion() { SetUnitFlag(LESIONED); }
+  INIMPL void   Lesion(NETWORK_STATE* nnet);
   // #CAT_State lesion this unit
-  INLINE void   UnLesion() { ClearUnitFlag(LESIONED); }
+  INIMPL void   UnLesion(NETWORK_STATE* nnet);
   // #CAT_State un-lesion this unit
 
   INLINE UNIT_SPEC* GetUnitSpec(NETWORK_STATE* nnet) const {

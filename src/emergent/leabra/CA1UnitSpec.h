@@ -41,7 +41,7 @@
     inherited::Trial_Init_Specs(net);
   }
   
-  INIMPL void Compute_NetinScale(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) override;
+  INIMPL void Compute_NetinScale(LEABRA_LAYER_STATE* u, LEABRA_NETWORK_STATE* net) override;
 
   INLINE void Initialize_core() {
   }

@@ -75,7 +75,6 @@
   float      misc_2;         // #NO_SAVE #CAT_Activation miscellaneous variable for special algorithms / subtypes that need it
   int        spk_t;          // #NO_SAVE #CAT_Activation time in tot_cycle units when spiking last occurred (-1 for not yet)
 
-  float      bias_scale;     // #NO_SAVE #EXPERT #CAT_Activation bias weight scaling factor
   float      act_sent;       // #NO_SAVE #EXPERT #CAT_Activation last activation value sent (only send when diff is over threshold)
   float      net_raw;        // #NO_SAVE #EXPERT #CAT_Activation raw net input received from sending units (send delta's are added to this value)
   float      gi_raw;         // #NO_SAVE #EXPERT #CAT_Activation raw inhib net input received from sending units (increments the deltas in send_delta)

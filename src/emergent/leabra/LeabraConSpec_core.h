@@ -228,7 +228,8 @@
 #endif
   INLINE void 	Send_NetinDelta_impl(LEABRA_CON_STATE* cg, LEABRA_NETWORK_STATE* net,
                                      int thr_no, const float su_act_delta, const float* wts)  {
-    const float su_act_delta_eff = cg->scale_eff * su_act_delta;
+    LEABRA_PRJN_STATE* prjn = cg->GetPrjnState(net);
+    const float su_act_delta_eff = prjn->scale_eff * su_act_delta;
     if(net->NetinPerPrjn()) {
       float* send_netin_vec = net->ThrSendNetinTmpPerPrjn(thr_no, cg->other_idx);
 #ifdef TA_VEC_USE
@@ -263,11 +264,12 @@
   // #IGNORE NOTE: doesn't work with spiking -- need a separate function to use act_eq for that case -- using act_eq does NOT work with scalarval etc
   INLINE float 	Compute_Netin(CON_STATE* rcg, NETWORK_STATE* net, int thr_no) override  {
     LEABRA_CON_STATE* cg = (LEABRA_CON_STATE*)rcg;
+    LEABRA_PRJN_STATE* prjn = cg->GetPrjnState(net);
     // this is slow b/c going through the PtrCn
     float rval=0.0f;
     CON_STATE_LOOP(cg, rval += C_Compute_Netin(cg->PtrCn(i,WT,net),
                                                cg->UnState(i,net)->act));
-    return cg->scale_eff * rval;
+    return prjn->scale_eff * rval;
   }
   // #IGNORE
 

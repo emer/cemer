@@ -248,11 +248,8 @@ void STATE_CLASS(ScalarValLayerSpec)::Quarter_Init_Layer(LEABRA_LAYER_STATE* lay
     LEABRA_UNIT_SPEC_CPP* us = lay->GetUnitSpec(net);
     LEABRA_CON_SPEC_CPP* bspec = us->GetBiasSpec(net);
     if(!bspec) return;
-    for(int ui = 0; ui < lay->n_units; ui++) {
-      LEABRA_UNIT_STATE* u = lay->GetUnitState(net, ui);
-      u->bias_scale = bspec->wt_scale.abs;  // still have absolute scaling if wanted..
-      u->bias_scale /= 100.0f;
-    }
+    lay->bias_scale = bspec->wt_scale.abs;  // still have absolute scaling if wanted..
+    lay->bias_scale /= 100.0f;
   }
 }
 

@@ -62,10 +62,6 @@ public:
   // #CAT_QuarterInit initialize network for quarter-level processing (hard clamp, netscale)
     virtual void Quarter_Init_TargFlags();
     // #CAT_QuarterInit initialize at start of settling phase -- sets target external input flags based on phase -- not called by default -- direct to unit level function
-  virtual void Compute_NetinScale();
-  // #CAT_QuarterInit compute netinput scaling values by projection -- not called by default -- direct to unit-level function
-    virtual void Compute_NetinScale_Senders();
-    // #CAT_QuarterInit compute net input scaling values for sending cons -- copies from values computed in the recv guys -- has to be done as a second phase of the Quarter_Init_Unit stage after all the recv ones are computed
     virtual void Quarter_Init_Deep();
     // #CAT_QuarterInit quarter deep leabra init: deep_ctxt compute and deep state update
   virtual void Compute_HardClamp();

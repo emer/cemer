@@ -36,11 +36,16 @@
   // compute methods MUST be accompanied by a rewrite of the parent NetworkState function
 
   INLINE virtual void  Init_Weights_Layer(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
+    lay->bias_scale = 1.0f;
     LEABRA_UNGP_STATE* lgpd = lay->GetLayUnGpState(net);
     lgpd->Init_UnGp_State(avg_act.targ_init, avg_act.targ_init, avg_act.AvgEffInit());
     for(int g=0; g < lay->n_ungps; g++) {
       LEABRA_UNGP_STATE* gpd = lay->GetUnGpState(net, g);
       gpd->Init_UnGp_State(avg_act.targ_init, avg_act.targ_init, avg_act.AvgEffInit());
+    }
+    for(int i=0;i<lay->n_recv_prjns;i++) {
+      LEABRA_PRJN_STATE* prjn = lay->GetRecvPrjnState(net, i);
+      prjn->Init_Weights_State();
     }
     Init_AdaptInhib(lay, net);         // initialize inhibition at start..
   }

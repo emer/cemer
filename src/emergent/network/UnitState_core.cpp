@@ -21,6 +21,36 @@ void UNIT_STATE::GetGpUnXY(NETWORK_STATE* nnet, int& gp_x, int& gp_y, int& un_x,
   lay->GetGpUnXYFmIdx(lay_un_idx, gp_x, gp_y, un_x, un_y);
 }
 
+void UNIT_STATE::Lesion(NETWORK_STATE* nnet) {
+  SetUnitFlag(LESIONED);
+  // some code goes directly into cg level -- must register lesion
+  const int rsz = NRecvConGps(nnet);
+  for(int g = 0; g < rsz; g++) {
+    CON_STATE* cg = RecvConState(nnet, g);
+    cg->SetInactive();
+  }
+  const int ssz = NSendConGps(nnet);
+  for(int g = 0; g < ssz; g++) {
+    CON_STATE* cg = SendConState(nnet, g);
+    cg->SetInactive();
+  }
+}
+
+void UNIT_STATE::UnLesion(NETWORK_STATE* nnet) {
+  ClearUnitFlag(LESIONED);
+  // some code goes directly into cg level -- must unregister lesion
+  const int rsz = NRecvConGps(nnet);
+  for(int g = 0; g < rsz; g++) {
+    CON_STATE* cg = RecvConState(nnet, g);
+    cg->UpdtIsActive(nnet);
+  }
+  const int ssz = NSendConGps(nnet);
+  for(int g = 0; g < ssz; g++) {
+    CON_STATE* cg = SendConState(nnet, g);
+    cg->UpdtIsActive(nnet);
+  }
+}
+
 CON_STATE* UNIT_STATE::FindRecvConStateFrom(NETWORK_STATE* nnet, LAYER_STATE* fm_lay) const {
   const int rsz = NRecvConGps(nnet);
   for(int g = 0; g < rsz; g++) {

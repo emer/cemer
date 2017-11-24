@@ -262,7 +262,6 @@
   INLINE virtual void Quarter_Init_Unit(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) {
     Quarter_Init_TargFlags(u, net, thr_no);
     Quarter_Init_PrvVals(u, net, thr_no);
-    Compute_NetinScale(u, net, thr_no);
     Compute_HardClamp(u, net, thr_no);
   }
   // #CAT_Activation quarter unit-level initialization functions: Init_TargFlags, Init_PrvNet, NetinScale
@@ -307,8 +306,8 @@
   }
   // #CAT_Activation update the previous values: e.g., netinput variables (prv_net_q) based on current counters
 
-  INIMPL virtual void Compute_NetinScale(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no);
-  // #CAT_Activation compute net input scaling values -- call at start of quarter just to be sure
+  INIMPL virtual void Compute_NetinScale(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net);
+  // #CAT_Activation compute net input scaling values -- call at start of quarter just to be sure -- computed on projections in layer -- single value for all units
 
   INLINE void Compute_HardClamp_impl(LEABRA_UNIT_STATE* u, int cycle, bool clip) {
     float ext_in = u->ext;

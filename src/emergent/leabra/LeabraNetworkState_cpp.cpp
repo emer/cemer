@@ -75,13 +75,10 @@ void LeabraNetworkState_cpp::Quarter_Init() {
   // Compute_HardClamp_Layers();    // need layer hard clamp flag before Init_Unit
   Quarter_Init_Unit();           // do chunk of following unit-level functions:
 //   Quarter_Init_TargFlags();
-//   Compute_NetinScale();       // compute net scaling
 //   Compute_HardClamp();        // clamp all hard-clamped input acts
 
+  Compute_NetinScale();       // compute net scaling
   Quarter_Init_Deep();
-
-  Compute_NetinScale_Senders(); // second phase after recv-based NetinScale
-  // put it after Quarter_Init_Layer to allow for mods to netin scale in that guy..
 
   // also, super important to do this AFTER the Quarter_Init_Unit call so net is still
   // around for functions that use the previous value of it
@@ -103,14 +100,6 @@ void LeabraNetworkState_cpp::Quarter_Init_TargFlags() {
   NET_THREAD_CALL(LeabraNetworkState_cpp::Quarter_Init_TargFlags_Thr);
 
   Quarter_Init_TargFlags_Layers();
-}
-
-void LeabraNetworkState_cpp::Compute_NetinScale() {
-  NET_THREAD_CALL(LeabraNetworkState_cpp::Compute_NetinScale_Thr);
-}
-
-void LeabraNetworkState_cpp::Compute_NetinScale_Senders() {
-  NET_THREAD_CALL(LeabraNetworkState_cpp::Compute_NetinScale_Senders_Thr);
 }
 
 void LeabraNetworkState_cpp::Quarter_Init_Deep() {

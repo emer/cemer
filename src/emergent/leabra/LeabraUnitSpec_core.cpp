@@ -98,7 +98,6 @@ void LEABRA_UNIT_SPEC::Init_UnitState(UNIT_STATE* uv, NETWORK_STATE* net, int th
   u->ach = 0.0f;
   u->misc_1 = 0.0f;
   u->misc_2 = 0.0f;
-  u->bias_scale = 0.0f;
   u->act_sent = 0.0f;
   u->net_raw = 0.0f;
   u->gi_raw = 0.0f;
@@ -232,7 +231,7 @@ void LEABRA_UNIT_SPEC::Trial_DecayState(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STA
 }
 
 
-void LEABRA_UNIT_SPEC::Compute_NetinScale(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) {
+void LEABRA_UNIT_SPEC::Compute_NetinScale(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
   // this is all receiver-based and done only at beginning of each quarter
   bool plus_phase = (net->phase == LEABRA_NETWORK_STATE::PLUS_PHASE);
   float net_scale = 0.0f;
@@ -240,23 +239,19 @@ void LEABRA_UNIT_SPEC::Compute_NetinScale(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_S
   float deep_raw_scale = 0.0f;
   float deep_mod_scale = 0.0f;
   
-  // important: count all projections so it is uniform across all units
-  // in the layer!  if a unit does not have a connection in a given projection,
-  // then it counts as a zero, but it counts in overall normalization!
   int n_recv_cons = 0;
-  const int nrg = u->NRecvConGps(net); 
+  const int nrg = lay->n_recv_prjns;
   for(int g=0; g< nrg; g++) {
-    LEABRA_CON_STATE* recv_gp = u->RecvConState(net, g);
-    // todo: why!!!???
-    if(!recv_gp->PrjnIsActive(net)) continue; // key!! just check for prjn, not con group!
-    LEABRA_CON_SPEC_CPP* cs = recv_gp->GetConSpec(net);
-    LEABRA_LAYER_STATE* from = recv_gp->GetSendLayer(net);
+    LEABRA_PRJN_STATE* prjn = lay->GetRecvPrjnState(net, g);
+    if(!prjn->IsActive(net)) continue;
+    LEABRA_CON_SPEC_CPP* cs = prjn->GetConSpec(net);
+    LEABRA_LAYER_STATE* from = prjn->GetSendLayer(net);
     LEABRA_UNGP_STATE* fmugps = from->GetLayUnGpState(net);
 
     float savg = fmugps->acts_p_avg_eff;
     float from_sz = (float)from->n_units;
-    float n_cons = (float)recv_gp->size;
-    recv_gp->scale_eff = cs->wt_scale.FullScale(savg, from_sz, n_cons);
+    float n_cons = (float)prjn->recv_con_stats.max_size;
+    prjn->scale_eff = cs->wt_scale.FullScale(savg, from_sz, n_cons);
     float rel_scale = cs->wt_scale.rel;
     n_recv_cons += n_cons;
     
@@ -277,32 +272,32 @@ void LEABRA_UNIT_SPEC::Compute_NetinScale(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_S
   // add the bias weight into the netinput, scaled by 1/n
   LEABRA_CON_SPEC_CPP* bs = GetBiasSpec(net);
   if(bs) {
-    u->bias_scale = bs->wt_scale.abs;  // still have absolute scaling if wanted..
+    lay->bias_scale = bs->wt_scale.abs;  // still have absolute scaling if wanted..
     if(n_recv_cons > 0) {
-      u->bias_scale /= (float)n_recv_cons; // one over n scaling for bias!
+      lay->bias_scale /= (float)n_recv_cons; // one over n scaling for bias!
     }
   }
 
   // now renormalize, each one separately..
   for(int g=0; g< nrg; g++) {
-    LEABRA_CON_STATE* recv_gp = u->RecvConState(net, g);
-    if(!recv_gp->PrjnIsActive(net)) continue; // key!! just check for prjn, not con group!
-    LEABRA_CON_SPEC_CPP* cs = recv_gp->GetConSpec(net);
+    LEABRA_PRJN_STATE* prjn = lay->GetRecvPrjnState(net, g);
+    if(!prjn->IsActive(net)) continue;
+    LEABRA_CON_SPEC_CPP* cs = prjn->GetConSpec(net);
     if(cs->inhib) {
       if(inhib_net_scale > 0.0f)
-        recv_gp->scale_eff /= inhib_net_scale;
+        prjn->scale_eff /= inhib_net_scale;
     }
     else if(cs->IsDeepRawCon()) {
       if(deep_raw_scale > 0.0f)
-        recv_gp->scale_eff /= deep_raw_scale;
+        prjn->scale_eff /= deep_raw_scale;
     }
     else if(cs->IsDeepModCon()) {
       if(deep_mod_scale > 0.0f)
-        recv_gp->scale_eff /= deep_mod_scale;
+        prjn->scale_eff /= deep_mod_scale;
     }
     else {
       if(net_scale > 0.0f)
-        recv_gp->scale_eff /= net_scale;
+        prjn->scale_eff /= net_scale;
     }
   }
 }
@@ -538,7 +533,7 @@ float LEABRA_UNIT_SPEC::Compute_NetinExtras
   float net_ex = init.netin;
   LEABRA_CON_SPEC_CPP* bs = GetBiasSpec(net);
   if(bs) {
-    net_ex += u->bias_scale * u->bias_wt;
+    net_ex += lay->bias_scale * u->bias_wt;
   }
   if(u->HasExtFlag(UNIT_STATE::EXT)) {
     if(ls->clamp.avg) {
