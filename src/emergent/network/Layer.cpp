@@ -519,37 +519,47 @@ taBase::DumpQueryResult Layer::Dump_QuerySaveMember(MemberDef* md) {
 }
 
 void Layer::SyncSendPrjns() {
-  FOREACH_ELEM_IN_GROUP(Projection, p, projections) {
-    Layer* snd = p->from;
+  for(int pi=0; pi < projections.size; pi++) {
+    Projection* prjn = projections[pi];
+    Layer* snd = prjn->from;
     if(snd == NULL) continue;
-    snd->send_prjns.LinkUnique(p); // make sure senders are all represented
+    snd->send_prjns.LinkUnique(prjn); // make sure senders are all represented
   }
-  // now make sure that we don't have any spurious ones
+  // make sure that we don't have any spurious ones, or any duplicates!
   for(int pi = send_prjns.size-1; pi >= 0; pi--) {
-    Projection* p = (Projection*)send_prjns.FastEl(pi);
-    if(p) {
-      if((!(bool)p->layer) || (p->from.ptr() != this))
+    Projection* prjn = send_prjns[pi];
+    if(prjn) {
+      if((!(bool)prjn->layer) || (prjn->from.ptr() != this)) {
         send_prjns.RemoveIdx(pi); // get rid of it!
+      }
+      else {
+        for(int ji = pi-1; ji >= 0; ji--) {
+          Projection* prjn2 = send_prjns[ji];
+          if(prjn2 == prjn) {
+            send_prjns.RemoveIdx(pi);
+          }
+        }
+      }
     }
   }
 }
 
 void Layer::UpdateSendPrjnNames() {
-  for(int pi=0; pi< send_prjns.size; pi++) {
-    Projection* prj = send_prjns.FastEl(pi);
-    prj->UpdateName();
+  for(int pi=0; pi < send_prjns.size; pi++) {
+    Projection* prjn = send_prjns[pi];
+    prjn->UpdateName();
   }
 }
 
 void Layer::UpdateAllPrjns() {
   // update all my projections
   for(int pi = 0; pi < send_prjns.size; pi++) {
-    Projection* p = (Projection*)send_prjns.FastEl(pi);
-    p->UpdateAfterEdit();
+    Projection* prjn = send_prjns[pi];
+    prjn->UpdateAfterEdit();
   }
   for(int pi = 0; pi < projections.size; pi++) {
-    Projection* p = (Projection*)projections.FastEl(pi);
-    p->UpdateAfterEdit();
+    Projection* prjn = projections[pi];
+    prjn->UpdateAfterEdit();
   }
 }
 
@@ -852,7 +862,8 @@ void Layer::CheckSpecs() {
   
   unit_spec.CheckSpec(own_net->UnitStateType());
 
-  FOREACH_ELEM_IN_GROUP(Projection, prjn, projections) {
+  for(int pi=0; pi < projections.size; pi++) {
+    Projection* prjn = projections[pi];
     prjn->CheckSpecs();
   }
 }
@@ -861,24 +872,26 @@ void Layer::UpdatePrjnIdxs() {
   // make sure we always have up-to-date count of active prjns..
   n_recv_prjns = 0;
   n_send_prjns = 0;
-  FOREACH_ELEM_IN_GROUP(Projection, prj, projections) {
-    prj->UpdateLesioned();
-    if(prj->MainIsActive()) {
-      prj->recv_idx = n_recv_prjns++;
+  for(int pi=0; pi < projections.size; pi++) {
+    Projection* prjn = projections[pi];
+    prjn->UpdateLesioned();
+    if(prjn->MainIsActive()) {
+      prjn->recv_idx = n_recv_prjns++;
     }
     else {
-      prj->recv_idx = -1;
-      prj->prjn_idx = -1; // safe
+      prjn->recv_idx = -1;
+      prjn->prjn_idx = -1; // safe
     }
   }
-  FOREACH_ELEM_IN_GROUP(Projection, prj, send_prjns) {
-    prj->UpdateLesioned();
-    if(prj->MainIsActive()) {
-      prj->send_idx = n_send_prjns++;
+  for(int pi=0; pi < send_prjns.size; pi++) {
+    Projection* prjn = send_prjns[pi];
+    prjn->UpdateLesioned();
+    if(prjn->MainIsActive()) {
+      prjn->send_idx = n_send_prjns++;
     }
     else {
-      prj->send_idx = -1;
-      prj->prjn_idx = -1; // safe
+      prjn->send_idx = -1;
+      prjn->prjn_idx = -1; // safe
     }
   }
 }
@@ -915,15 +928,14 @@ void Layer::DisConnect() {
 }
 
 void Layer::DisConnect_impl() {
-  int pi;
-  for(pi=send_prjns.size-1; pi>=0; pi--) {
-    Projection* p = (Projection*)send_prjns.FastEl(pi);
-    if(p == NULL) continue;
-    if(!(bool)p->layer) {
+  for(int pi=send_prjns.size-1; pi >= 0; pi--) {
+    Projection* prjn = send_prjns[pi];
+    if(prjn == NULL) continue;
+    if(!(bool)prjn->layer) {
       send_prjns.RemoveIdx(pi);
       continue;
     }
-    p->layer->projections.RemoveLeafEl(p);
+    prjn->layer->projections.RemoveEl(prjn);
   }
   send_prjns.Reset();
   projections.Reset();
@@ -1116,69 +1128,72 @@ void Layer::Copy_Weights(Layer* src, bool recv_cons) {
 
 void Layer::PropagateInputDistance() {
   int new_dist = dist.fm_input + 1;
-  FOREACH_ELEM_IN_GROUP(Projection, p, send_prjns) {
-    if(p->MainNotActive()) continue;
-    if(p->layer->dist.fm_input >= 0) { // already set
-      if(new_dist < p->layer->dist.fm_input) { // but we're closer
-        p->layer->dist.fm_input = new_dist;
-        p->layer->PropagateInputDistance(); // note: this could lead back to us, but big deal.
+  for(int pi=0; pi < send_prjns.size; pi++) {
+    Projection* prjn = send_prjns[pi];
+    if(prjn->MainNotActive()) continue;
+    if(prjn->layer->dist.fm_input >= 0) { // already set
+      if(new_dist < prjn->layer->dist.fm_input) { // but we're closer
+        prjn->layer->dist.fm_input = new_dist;
+        prjn->layer->PropagateInputDistance(); // note: this could lead back to us, but big deal.
         // the < sign prevents loops from continuing indefinitely.
       }
     }
     else { // not set yet
-      p->layer->dist.fm_input = new_dist;
-      p->layer->PropagateInputDistance();
+      prjn->layer->dist.fm_input = new_dist;
+      prjn->layer->PropagateInputDistance();
     }
   }
 }
 
 void Layer::PropagateOutputDistance() {
   int new_dist = dist.fm_output + 1;
-  FOREACH_ELEM_IN_GROUP(Projection, p, projections) {
-    if(p->MainNotActive()) continue;
-    if(p->from->dist.fm_output >= 0) { // already set
-      if(new_dist < p->from->dist.fm_output) { // but we're closer
-        p->from->dist.fm_output = new_dist;
-        p->from->PropagateOutputDistance(); // note: this could lead back to us, but big deal.
+  for(int pi=0; pi < projections.size; pi++) {
+    Projection* prjn = projections[pi];
+    if(prjn->MainNotActive()) continue;
+    if(prjn->from->dist.fm_output >= 0) { // already set
+      if(new_dist < prjn->from->dist.fm_output) { // but we're closer
+        prjn->from->dist.fm_output = new_dist;
+        prjn->from->PropagateOutputDistance(); // note: this could lead back to us, but big deal.
         // the < sign prevents loops from continuing indefinitely.
       }
     }
     else { // not set yet
-      p->from->dist.fm_output = new_dist;
-      p->from->PropagateOutputDistance();
+      prjn->from->dist.fm_output = new_dist;
+      prjn->from->PropagateOutputDistance();
     }
   }
 }
 
 void Layer::Compute_PrjnDirections() {
-  FOREACH_ELEM_IN_GROUP(Projection, p, projections) {
-    if(p->dir_fixed && p->direction != Projection::DIR_UNKNOWN)
+  for(int pi=0; pi < projections.size; pi++) {
+    Projection* prjn = projections[pi];
+    if(prjn->dir_fixed && prjn->direction != Projection::DIR_UNKNOWN)
       continue;
-    if(p->MainNotActive()) {
-      p->direction = Projection::DIR_UNKNOWN;
+    if(prjn->MainNotActive()) {
+      prjn->direction = Projection::DIR_UNKNOWN;
       continue;
     }
     // use the smallest value first..
-    if(p->from->dist.fm_input <= p->from->dist.fm_output) {
-      if(p->from->dist.fm_input < dist.fm_input) {
-        p->direction = Projection::FM_INPUT;
+    if(prjn->from->dist.fm_input <= prjn->from->dist.fm_output) {
+      if(prjn->from->dist.fm_input < dist.fm_input) {
+        prjn->direction = Projection::FM_INPUT;
       }
-      else if(p->from->dist.fm_output < dist.fm_output) {
-        p->direction = Projection::FM_OUTPUT;
+      else if(prjn->from->dist.fm_output < dist.fm_output) {
+        prjn->direction = Projection::FM_OUTPUT;
       }
       else {
-        p->direction = Projection::LATERAL;
+        prjn->direction = Projection::LATERAL;
       }
     }
     else {
-      if(p->from->dist.fm_output < dist.fm_output) {
-        p->direction = Projection::FM_OUTPUT;
+      if(prjn->from->dist.fm_output < dist.fm_output) {
+        prjn->direction = Projection::FM_OUTPUT;
       }
-      else if(p->from->dist.fm_input < dist.fm_input) {
-        p->direction = Projection::FM_INPUT;
+      else if(prjn->from->dist.fm_input < dist.fm_input) {
+        prjn->direction = Projection::FM_INPUT;
       }
       else {
-        p->direction = Projection::LATERAL;
+        prjn->direction = Projection::LATERAL;
       }
     }
   }
@@ -1383,9 +1398,10 @@ int Layer::ProbAddCons(float p_add_con, float init_wt) {
   if(!net) return 0;
   
   int rval = 0;
-  FOREACH_ELEM_IN_GROUP(Projection, p, projections) {
-    if(p->MainNotActive()) continue;
-    rval += p->ProbAddCons(p_add_con, init_wt);
+  for(int pi=0; pi < projections.size; pi++) {
+    Projection* prjn = projections[pi];
+    if(prjn->MainNotActive()) continue;
+    rval += prjn->ProbAddCons(p_add_con, init_wt);
   }
   return rval;
 }
@@ -1626,16 +1642,18 @@ int Layer::ReplaceUnitSpec(UnitSpec* old_sp, UnitSpec* new_sp, bool prompt) {
 
 int Layer::ReplaceConSpec(ConSpec* old_sp, ConSpec* new_sp, bool prompt) {
   int nchg = 0;
-  FOREACH_ELEM_IN_GROUP(Projection, p, projections) {
-    nchg += p->ReplaceConSpec(old_sp, new_sp, prompt);
+  for(int pi=0; pi < projections.size; pi++) {
+    Projection* prjn = projections[pi];
+    nchg += prjn->ReplaceConSpec(old_sp, new_sp, prompt);
   }
   return nchg;
 }
 
 int Layer::ReplacePrjnSpec(ProjectionSpec* old_sp, ProjectionSpec* new_sp, bool prompt) {
   int nchg = 0;
-  FOREACH_ELEM_IN_GROUP(Projection, p, projections) {
-    nchg += p->ReplacePrjnSpec(old_sp, new_sp, prompt);
+  for(int pi=0; pi < projections.size; pi++) {
+    Projection* prjn = projections[pi];
+    nchg += prjn->ReplacePrjnSpec(old_sp, new_sp, prompt);
   }
   return nchg;
 }
@@ -1666,10 +1684,11 @@ DataTable* Layer::WeightsToTable(DataTable* dt, Layer* send_lay) {
   }
   if(send_lay == NULL) return NULL;
   bool gotone = false;
-  FOREACH_ELEM_IN_GROUP(Projection, p, projections) {
-    if(p->MainNotActive()) continue;
-    if(p->from.ptr() != send_lay) continue;
-    p->WeightsToTable(dt);
+  for(int pi=0; pi < projections.size; pi++) {
+    Projection* prjn = projections[pi];
+    if(prjn->MainNotActive()) continue;
+    if(prjn->from.ptr() != send_lay) continue;
+    prjn->WeightsToTable(dt);
     gotone = true;
   }
   TestError(!gotone, "WeightsToTable", "No sending projection from:", send_lay->name);
@@ -1754,16 +1773,16 @@ DataTable* Layer::PrjnsToTable(DataTable* dt, bool sending) {
   col->desc = "name of connection spec for this projection";
 
   if(sending) {
-    for(int i=0; i<send_prjns.size; i++) {
-      Projection* pj = send_prjns.FastEl(i);
+    for(int pi=0; pi < send_prjns.size; pi++) {
+      Projection* prjn = send_prjns[pi];
       dt->AddBlankRow();
-      dt->SetVal(pj->layer->name, colnm, -1);
-      ProjectionSpec* ps = pj->GetMainPrjnSpec();
+      dt->SetVal(prjn->layer->name, colnm, -1);
+      ProjectionSpec* ps = prjn->GetMainPrjnSpec();
       if(ps)
         dt->SetVal(ps->name, "PrjnSpec", -1);
       else
         dt->SetVal("NULL", "PrjnSpec", -1);
-      ConSpec* cs = pj->GetMainConSpec();
+      ConSpec* cs = prjn->GetMainConSpec();
       if(cs)
         dt->SetVal(cs->name, "ConSpec", -1);
       else
@@ -1771,16 +1790,16 @@ DataTable* Layer::PrjnsToTable(DataTable* dt, bool sending) {
     }
   }
   else {
-    for(int i=0; i<projections.size; i++) {
-      Projection* pj = projections.FastEl(i);
+    for(int pi=0; pi < projections.size; pi++) {
+      Projection* prjn = projections[pi];
       dt->AddBlankRow();
-      dt->SetVal(pj->from->name, colnm, -1);
-      ProjectionSpec* ps = pj->GetMainPrjnSpec();
+      dt->SetVal(prjn->from->name, colnm, -1);
+      ProjectionSpec* ps = prjn->GetMainPrjnSpec();
       if(ps)
         dt->SetVal(ps->name, "PrjnSpec", -1);
       else
         dt->SetVal("NULL", "PrjnSpec", -1);
-      ConSpec* cs = pj->GetMainConSpec();
+      ConSpec* cs = prjn->GetMainConSpec();
       if(cs)
         dt->SetVal(cs->name, "ConSpec", -1);
       else

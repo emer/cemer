@@ -41,7 +41,7 @@ static void so_converter_init() {
   cvt->repl_strs.Add(NameVar("Project", "V3SoProject"));
   cvt->repl_strs.Add(NameVar("V3SoProject_Group", "Project_Group")); // fix prev
   cvt->repl_strs.Add(NameVar("V3SoProjection", "Projection"));
-  cvt->repl_strs.Add(NameVar("SoPrjn_Group", "Projection_Group"));
+  cvt->repl_strs.Add(NameVar("SoPrjn_Group", "Projection_List"));
   cvt->repl_strs.Add(NameVar("Network", "SoNetwork"));
   cvt->repl_strs.Add(NameVar("SoNetwork_Group", "Network_Group")); // fix prev
   cvt->repl_strs.Add(NameVar("SoWiz", "SoWizard"));

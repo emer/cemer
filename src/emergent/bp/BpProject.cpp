@@ -28,7 +28,7 @@ static void bp_converter_init() {
   cvt->repl_strs.Add(NameVar("Project", "V3BpProject"));
   cvt->repl_strs.Add(NameVar("V3BpProject_Group", "Project_Group")); // fix prev
   cvt->repl_strs.Add(NameVar("V3BpProjection", "Projection"));
-  cvt->repl_strs.Add(NameVar("BpPrjn_Group", "Projection_Group"));
+  cvt->repl_strs.Add(NameVar("BpPrjn_Group", "Projection_List"));
   cvt->repl_strs.Add(NameVar("Network", "BpNetwork"));
   cvt->repl_strs.Add(NameVar("BpNetwork_Group", "Network_Group")); // fix prev
   cvt->repl_strs.Add(NameVar("BpWiz", "BpWizard"));

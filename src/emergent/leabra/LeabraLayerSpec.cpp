@@ -103,10 +103,11 @@ with an appropriate activity level for layers that have different activity level
 LeabraLayer* LeabraLayerSpec::FindLayerFmSpec(LeabraLayer* lay, int& prjn_idx, TypeDef* layer_spec) {
   LeabraLayer* rval = NULL;
   prjn_idx = -1;
-  FOREACH_ELEM_IN_GROUP(Projection, p, lay->projections) {
-    LeabraLayer* fmlay = (LeabraLayer*)p->from.ptr();
+  for(int pi=0; pi < lay->projections.size; pi++) {
+    Projection* prjn = lay->projections[pi];
+    LeabraLayer* fmlay = (LeabraLayer*)prjn->from.ptr();
     if(fmlay->spec.SPtr()->InheritsFrom(layer_spec)) {  // inherits - not excact match!
-      prjn_idx = p->recv_idx;
+      prjn_idx = prjn->recv_idx;
       rval = fmlay;
       break;
     }
@@ -117,10 +118,11 @@ LeabraLayer* LeabraLayerSpec::FindLayerFmSpec(LeabraLayer* lay, int& prjn_idx, T
 LeabraLayer* LeabraLayerSpec::FindLayerFmSpecExact(LeabraLayer* lay, int& prjn_idx, TypeDef* layer_spec) {
   LeabraLayer* rval = NULL;
   prjn_idx = -1;
-  FOREACH_ELEM_IN_GROUP(Projection, p, lay->projections) {
-    LeabraLayer* fmlay = (LeabraLayer*)p->from.ptr();
+  for(int pi=0; pi < lay->projections.size; pi++) {
+    Projection* prjn = lay->projections[pi];
+    LeabraLayer* fmlay = (LeabraLayer*)prjn->from.ptr();
     if(fmlay->spec.SPtr()->GetTypeDef() == layer_spec) {        // not inherits - excact match!
-      prjn_idx = p->recv_idx;
+      prjn_idx = prjn->recv_idx;
       rval = fmlay;
       break;
     }

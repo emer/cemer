@@ -32,7 +32,7 @@ static void leabra_converter_init() {
   cvt->repl_strs.Add(NameVar("Project", "V3LeabraProject"));
   cvt->repl_strs.Add(NameVar("V3LeabraProject_Group", "Project_Group")); // fix prev
   cvt->repl_strs.Add(NameVar("V3LeabraProjection", "LeabraPrjn"));       // new prjn type!
-  cvt->repl_strs.Add(NameVar("LeabraPrjn_Group", "Projection_Group"));
+  cvt->repl_strs.Add(NameVar("LeabraPrjn_Group", "Projection_List"));
   cvt->repl_strs.Add(NameVar("Network", "LeabraNetwork"));
   cvt->repl_strs.Add(NameVar("LeabraNetwork_Group", "Network_Group")); // fix prev
   cvt->repl_strs.Add(NameVar("LeabraWiz", "LeabraWizard"));

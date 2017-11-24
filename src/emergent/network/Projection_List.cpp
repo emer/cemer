@@ -13,37 +13,39 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-#include "Projection_Group.h"
+#include "Projection_List.h"
 #include <Network>
 
 
 #include <SigLinkSignal>
 
-TA_BASEFUNS_CTORS_DEFN(Projection_Group);
+TA_BASEFUNS_CTORS_DEFN(Projection_List);
 
-void Projection_Group::Initialize() {
+void Projection_List::Initialize() {
   SetBaseType(&TA_Projection);
   send_prjns = false;
   setUseStale(true);
 }
 
-Projection* Projection_Group::ConnectFrom(Layer* lay) {
+Projection* Projection_List::ConnectFrom(Layer* lay) {
   if(!lay) return NULL;
-  Projection* prjn = (Projection*)NewEl(1);
+  Projection* prjn = (Projection*)New(1);
   prjn->SetCustomFrom(lay);
   return prjn;
 }
 
-Projection* Projection_Group::FindPrjnFrom(Layer* lay) {
-  FOREACH_ELEM_IN_GROUP(Projection, prjn, *this) {
+Projection* Projection_List::FindPrjnFrom(Layer* lay) {
+  for(int pi=0; pi < size; pi++) {
+    Projection* prjn = FastEl(pi);
     if(prjn->MainIsActive() && prjn->from.ptr() == lay)
       return prjn;
   }
   return NULL;
 }
 
-Projection* Projection_Group::FindPrjnTo(Layer* lay) {
-  FOREACH_ELEM_IN_GROUP(Projection, prjn, *this) {
+Projection* Projection_List::FindPrjnTo(Layer* lay) {
+  for(int pi=0; pi < size; pi++) {
+    Projection* prjn = FastEl(pi);
     if(prjn->MainIsActive() && prjn->layer == lay)
       return prjn;
   }

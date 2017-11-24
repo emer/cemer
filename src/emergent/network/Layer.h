@@ -24,7 +24,7 @@
 #include <PosVector3i>
 #include <PosVector2i>
 #include <XYNGeom>
-#include <Projection_Group>
+#include <Projection_List>
 #include <PRerrVals>
 #include <String_Matrix>
 #include <LayerSpec>
@@ -159,8 +159,8 @@ public:
   XYNGeom               scaled_disp_geom; // #AKA_scaled_act_geom #HIDDEN #READ_ONLY #CAT_Structure scaled actual view geometry: disp_scale * disp_geom -- use for view computations
   int                   n_units_built;   // #READ_ONLY #NO_SAVE number of units actually built in this layer -- use this for all iteration over units at the layer level!
 
-  Projection_Group      projections;    // #CAT_Structure group of receiving projections
-  Projection_Group      send_prjns;     // #CAT_Structure #HIDDEN #LINK_GROUP #NO_DIFF #NO_SEARCH group of sending projections
+  Projection_List      projections;    // #CAT_Structure group of receiving projections
+  Projection_List      send_prjns;     // #CAT_Structure #HIDDEN #LINK_GROUP #NO_DIFF #NO_SEARCH group of sending projections
   UnitSpec_SPtr         unit_spec;      // #CAT_Structure default unit specification for units in this layer
 
   LayerDistances        dist;           // #CAT_Structure #READ_ONLY #SHOW distances from closest input/output layers to this layer

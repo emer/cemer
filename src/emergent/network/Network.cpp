@@ -962,6 +962,7 @@ void Network::BuildIndexesSizes() {
         }
         prjn->prjn_idx = state_prjns.size;
         state_prjns.Add(prjn);
+        // taMisc::Info("added recv prjn:", lay->name, prjn->name);
 
         ProjectionSpec* ps = prjn->GetMainPrjnSpec();
         if(ps) {
@@ -1176,6 +1177,7 @@ void Network::BuildLayerState_FromNet() {
       for(int j=0; j < lay->send_prjns.size; j++) {
         Projection* prjn = lay->send_prjns[j];
         if(!prjn->MainIsActive()) continue;
+        // taMisc::Info("adding send prjn:", prjn->layer->name, prjn->name);
         if(send_prjn_idx >= n_prjns_built) { // this should not happen.. just checking..
           taMisc::Error("programmer error: sending prjn idx > number of projections built!");
         }
@@ -1483,14 +1485,18 @@ void Network::CheckChildConfig_impl(bool quiet, bool& rval) {
 }
 
 void Network::SyncSendPrjns() {
-  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
-    l->SyncSendPrjns();
+  FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
+    lay->SyncSendPrjns();
+  }
+  // two iterations are sometimes needed!
+  FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
+    lay->SyncSendPrjns();
   }
 }
 
 void Network::UpdatePrjnIdxs() {
-  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
-    l->UpdatePrjnIdxs();
+  FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
+    lay->UpdatePrjnIdxs();
   }
 }
 
@@ -1897,46 +1903,46 @@ DataTable* Network::NetStructToTable(DataTable* dt, bool list_specs) {
     col->desc = "name of layer spec to use for this layer";
   }
 
-  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
+  FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
 //     if(l->lesioned()) continue;   // for this, get everything
     Layer_Group* lg = NULL;
-    if(l->owner != &layers)
-      lg = (Layer_Group*)l->owner;
+    if(lay->owner != &layers)
+      lg = (Layer_Group*)lay->owner;
     dt->AddBlankRow();
-    dt->SetVal(l->name, "Name", -1);
+    dt->SetVal(lay->name, "Name", -1);
     if(lg)
       dt->SetVal(lg->name, "Group", -1);
-    String ltype = l->GetEnumString("LayerType", l->layer_type);
+    String ltype = lay->GetEnumString("LayerType", lay->layer_type);
     dt->SetVal(ltype, "Type", -1);
-    dt->SetVal(l->un_geom.x, "Size_X", -1);
-    dt->SetVal(l->un_geom.y, "Size_Y", -1);
-    if(l->unit_groups) {
-      dt->SetVal(l->gp_geom.x, "UnitGps_X", -1);
-      dt->SetVal(l->gp_geom.y, "UnitGps_Y", -1);
+    dt->SetVal(lay->un_geom.x, "Size_X", -1);
+    dt->SetVal(lay->un_geom.y, "Size_Y", -1);
+    if(lay->unit_groups) {
+      dt->SetVal(lay->gp_geom.x, "UnitGps_X", -1);
+      dt->SetVal(lay->gp_geom.y, "UnitGps_Y", -1);
     }
     String fmp;
-    for(int i=0; i<l->projections.size; i++) {
-      Projection* pj = l->projections.FastEl(i);
+    for(int i=0; i<lay->projections.size; i++) {
+      Projection* pj = lay->projections.FastEl(i);
       if(pj->off) continue;
       fmp += pj->from->name + " ";
     }
     dt->SetVal(fmp, "RecvPrjns", -1);
 
     String snp;
-    for(int i=0; i<l->send_prjns.size; i++) {
-      Projection* pj = l->send_prjns.FastEl(i);
+    for(int i=0; i<lay->send_prjns.size; i++) {
+      Projection* pj = lay->send_prjns.FastEl(i);
       if(pj->off) continue;
       snp += pj->layer->name + " ";
     }
     dt->SetVal(snp, "SendPrjns", -1);
 
     if(list_specs) {
-      UnitSpec* us = l->GetMainUnitSpec();
+      UnitSpec* us = lay->GetMainUnitSpec();
       if(us)
         dt->SetVal(us->name, "UnitSpec", -1);
       else
         dt->SetVal("NULL", "UnitSpec", -1);
-      LayerSpec* ls = l->GetMainLayerSpec();
+      LayerSpec* ls = lay->GetMainLayerSpec();
       if(ls)
         dt->SetVal(ls->name, "LayerSpec", -1);
       else
@@ -1957,7 +1963,7 @@ void Network::NetStructFmTable(DataTable* dt) {
     lay->SetBaseFlag(BF_MISC1);
   }
 
-  Layer *l = 0;
+  Layer* lay = 0;
   // first pass build all the layers
   for(int i=0;i<dt->rows; i++) {
     String gpnm = trim(dt->GetVal("Group", i).toString());
@@ -1970,32 +1976,32 @@ void Network::NetStructFmTable(DataTable* dt) {
     String recvs = trim(dt->GetVal("RecvPrjns", i).toString());
 
     if(gpnm.empty()) {
-      l = FindMakeLayer(lnm);
-      if(l->InLayerSubGroup()) {
-        layers.Transfer(l);     // transfer into main list
+      lay = FindMakeLayer(lnm);
+      if(lay->InLayerSubGroup()) {
+        layers.Transfer(lay);     // transfer into main list
       }
     }
     else {
       Layer_Group* lgp = FindMakeLayerGroup(gpnm);
-      l = FindLayer(lnm);
-      if(l && l->owner != lgp) {
-        lgp->Transfer(l);       // make it ours
+      lay = FindLayer(lnm);
+      if(lay && lay->owner != lgp) {
+        lgp->Transfer(lay);       // make it ours
       }
       else {
-        l = lgp->FindMakeLayer(lnm); // make new one
+        lay = lgp->FindMakeLayer(lnm); // make new one
       }
     }
-    l->ClearBaseFlag(BF_MISC1); // mark it
+    lay->ClearBaseFlag(BF_MISC1); // mark it
     String etyp;
-    l->layer_type = (Layer::LayerType)l->GetEnumVal(ltyp, etyp);
-    l->un_geom.x = szx;
-    l->un_geom.y = szy;
-    l->un_geom.UpdateAfterEdit();
+    lay->layer_type = (Layer::LayerType)lay->GetEnumVal(ltyp, etyp);
+    lay->un_geom.x = szx;
+    lay->un_geom.y = szy;
+    lay->un_geom.UpdateAfterEdit();
     if(gszx > 0 && gszy > 0) {
-      l->unit_groups = true;
-      l->gp_geom.x = gszx;
-      l->gp_geom.y = gszy;
-      l->gp_geom.UpdateAfterEdit();
+      lay->unit_groups = true;
+      lay->gp_geom.x = gszx;
+      lay->gp_geom.y = gszy;
+      lay->gp_geom.UpdateAfterEdit();
     }
   }
   // second pass make projections
@@ -2003,37 +2009,37 @@ void Network::NetStructFmTable(DataTable* dt) {
     String lnm = trim(dt->GetVal("Name", i).toString());
     String recvs = trim(dt->GetVal("RecvPrjns", i).toString());
 
-    l = FindLayer(lnm);
-    for(int p=0;p<l->projections.size;p++) {
-      Projection* prjn = l->projections.FastEl(p);
+    lay = FindLayer(lnm);
+    for(int pi=0; pi < lay->projections.size; pi++) {
+      Projection* prjn = lay->projections[pi];
       prjn->SetBaseFlag(BF_MISC1);
     }
 
     String_Array rps;
     rps.FmDelimString(recvs, " "); // fill with items
-    for(int p=0;p<rps.size; p++) {
-      String fmnm = rps.FastEl(p);
+    for(int pi=0; pi < rps.size; pi++) {
+      String fmnm = rps[pi];
       Layer* fm = FindLayer(fmnm);
       if(fm) {
-        Projection* prjn = FindMakePrjn(l, fm);
+        Projection* prjn = FindMakePrjn(lay, fm);
         prjn->ClearBaseFlag(BF_MISC1);
       }
     }
 
     // cull any non-wanted projections
-    for(int p=l->projections.size-1; p>=0; p--) {
-      Projection* prjn = l->projections.FastEl(p);
+    for(int pi=lay->projections.size-1; pi >= 0; pi--) {
+      Projection* prjn = lay->projections[pi];
       if(prjn->HasBaseFlag(BF_MISC1)) {
-        l->projections.RemoveIdx(p);
+        lay->projections.RemoveIdx(pi);
       }
     }
   }
 
   // cull any non-wanted layers
-  for(int i=layers.leaves-1; i>=0; i--) {
-    l = layers.Leaf(i);
-    if(l->HasBaseFlag(BF_MISC1))
-      layers.RemoveLeafIdx(i);
+  for(int li= layers.leaves-1; li>=0; li--) {
+    lay = layers.Leaf(li);
+    if(lay->HasBaseFlag(BF_MISC1))
+      layers.RemoveLeafIdx(li);
   }
 }
 
@@ -2058,24 +2064,24 @@ DataTable* Network::NetPrjnsToTable(DataTable* dt, bool include_off) {
   col = dt->FindMakeColName("Notes", idx, VT_STRING);
   col->desc = "user-entered notes for each projection";
 
-  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
+  FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
 //     if(l->lesioned()) continue;   // for this, get everything
-    for(int i=0; i<l->projections.size; i++) {
-      Projection* pj = l->projections.FastEl(i);
+    for(int pi=0; pi < lay->projections.size; pi++) {
+      Projection* prjn = lay->projections[pi];
       dt->AddBlankRow();
-      dt->SetVal(l->name, "LayerName", -1);
-      dt->SetVal(pj->name, "PrjnFrom", -1);
-      ProjectionSpec* ps = pj->GetMainPrjnSpec();
+      dt->SetVal(lay->name, "LayerName", -1);
+      dt->SetVal(prjn->name, "PrjnFrom", -1);
+      ProjectionSpec* ps = prjn->GetMainPrjnSpec();
       if(ps)
         dt->SetVal(ps->name, "PrjnSpec", -1);
       else
         dt->SetVal("NULL", "PrjnSpec", -1);
-      ConSpec* cs = pj->GetMainConSpec();
+      ConSpec* cs = prjn->GetMainConSpec();
       if(cs)
         dt->SetVal(cs->name, "ConSpec", -1);
       else
         dt->SetVal("NULL", "ConSpec", -1);
-      dt->SetVal(pj->notes, "Notes", -1);
+      dt->SetVal(prjn->notes, "Notes", -1);
     }
   }
   dt->StructUpdate(false);
@@ -2102,28 +2108,28 @@ void Network::NetPrjnsToList_gp(Layer_Group* gp, String& rval, taMarkUp::Format 
   if(gp->size > 0) {
     rval << taMarkUp::ListStart(fmt, indent, false);
     for(int li=0; li<gp->size; li++) {
-      Layer* l = gp->FastEl(li);
-      if(!include_off && l->lesioned())
+      Layer* lay = gp->FastEl(li);
+      if(!include_off && lay->lesioned())
         continue;
-      if(l->projections.size == 0)
+      if(lay->projections.size == 0)
         continue;
-      rval << taMarkUp::ListItem(fmt, indent, false) << taMarkUp::Escape(fmt, l->name) << "\n";
+      rval << taMarkUp::ListItem(fmt, indent, false) << taMarkUp::Escape(fmt, lay->name) << "\n";
       rval << taMarkUp::ListStart(fmt, indent, false);
-      for(int i=0; i<l->projections.size; i++) {
-        Projection* pj = l->projections.FastEl(i);
-        if(!include_off && pj->off)
+      for(int pi=0; pi < lay->projections.size; pi++) {
+        Projection* prjn = lay->projections[pi];
+        if(!include_off && prjn->off)
           continue;
         rval << taMarkUp::ListItem(fmt, indent, false);
-        if(pj->off)
-          rval << taMarkUp::Strike(fmt, pj->name);
+        if(prjn->off)
+          rval << taMarkUp::Strike(fmt, prjn->name);
         else
-          rval << taMarkUp::Bold(fmt, pj->name);
+          rval << taMarkUp::Bold(fmt, prjn->name);
         rval << ": ";
-        rval << taMarkUp::Escape(fmt, pj->notes) << " ";
-        ProjectionSpec* ps = pj->GetMainPrjnSpec();
+        rval << taMarkUp::Escape(fmt, prjn->notes) << " ";
+        ProjectionSpec* ps = prjn->GetMainPrjnSpec();
         if(ps)
           rval << "(" << taMarkUp::Escape(fmt, ps->name) << ") ";
-        ConSpec* cs = pj->GetMainConSpec();
+        ConSpec* cs = prjn->GetMainConSpec();
         if(cs)
           rval << "(" << taMarkUp::Escape(fmt, cs->name) << ") ";
         rval << "\n";
@@ -2257,14 +2263,14 @@ void Network::DMem_ComputeAggs(MPI_Comm comm) {
 void Network::Copy_Weights(const Network* src) {
   taMisc::Busy();
   Cuda_ConStateToHost();
-  Layer* l, *sl;
-  taLeafItr i,si;
-  for(l = (Layer*)layers.FirstEl(i), sl = (Layer*)src->layers.FirstEl(si);
-      (l) && (sl);
-      l = (Layer*)layers.NextEl(i), sl = (Layer*)src->layers.NextEl(si))
+  Layer* lay, *slay;
+  taLeafItr li,si;
+  for(lay = layers.FirstEl(li), slay = src->layers.FirstEl(si);
+      (lay) && (slay);
+      lay = layers.NextEl(li), slay = src->layers.NextEl(si))
   {
-    if(!l->lesioned() && !sl->lesioned())
-      l->Copy_Weights(sl, true);
+    if(!lay->lesioned() && !slay->lesioned())
+      lay->Copy_Weights(slay, true);
   }
   Cuda_ConStateToDevice();
   UpdateAllViews();
@@ -2423,13 +2429,13 @@ bool Network::SaveWeights_ClusterRunCmd() {
 
 void Network::LayerPos_RelPos() {
   taBase_List loop_check;
-  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
-    if(!l->pos_rel.IsRel()) {
+  FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
+    if(!lay->pos_rel.IsRel()) {
       continue;
     }
     bool has_loop = false;
     loop_check.Reset();
-    Layer* cur = l;
+    Layer* cur = lay;
     while(cur) {
       if(!cur->pos_rel.IsRel())
         break;
@@ -2443,18 +2449,18 @@ void Network::LayerPos_RelPos() {
       loop_check.Link(cur);
       cur = cur->pos_rel.other;
     }
-    l->UpdateGeometry();
+    lay->UpdateGeometry();
   }
   bool lay_moved = false;
   int n_iters = 0;
   do {
     lay_moved = false;
     n_iters++;
-    FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
-      bool updt_pos = l->UpdatePosition();
+    FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
+      bool updt_pos = lay->UpdatePosition();
       if(updt_pos) {
         lay_moved = true;
-        l->SigEmitUpdated();
+        lay->SigEmitUpdated();
       }
     }
   }
@@ -2467,14 +2473,14 @@ void Network::LayerPos_RelPos() {
 void Network::LayerZPos_Unitize() {
   int_Array zvals;
   taVector3i lpos;
-  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
-    l->GetAbsPos(lpos);
+  FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
+    lay->GetAbsPos(lpos);
     zvals.AddUnique(lpos.z);
   }
   zvals.Sort();
-  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
-    int nw_z = zvals.FindEl(l->pos.z); // replace with its index on sorted list..
-    l->pos.z += nw_z - l->pos.z;
+  FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
+    int nw_z = zvals.FindEl(lay->pos.z); // replace with its index on sorted list..
+    lay->pos.z += nw_z - lay->pos.z;
   }
   LayerPos_RelPos();
 }
@@ -2494,39 +2500,39 @@ void Network::LayerPos_GridLayout_3d(int x_space, int y_space,
 
 void Network::Compute_LayerDistances() {
   // first reset all
-  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
-    if(l->lesioned()) continue;
-    l->dist.fm_input = -1; l->dist.fm_output = -1;
+  FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
+    if(lay->lesioned()) continue;
+    lay->dist.fm_input = -1; lay->dist.fm_output = -1;
   }
 
   // next go through and find inputs
-  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
-    if(l->lesioned()) continue;
-    if(l->layer_type != Layer::INPUT) continue;
-    l->dist.fm_input = 0;
-    l->PropagateInputDistance();
+  FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
+    if(lay->lesioned()) continue;
+    if(lay->layer_type != Layer::INPUT) continue;
+    lay->dist.fm_input = 0;
+    lay->PropagateInputDistance();
   }
   // then outputs
-  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
-    if(l->lesioned()) continue;
-    if(!((l->layer_type == Layer::OUTPUT) || (l->layer_type == Layer::TARGET))) continue;
-    l->dist.fm_output = 0;
-    l->PropagateOutputDistance();
+  FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
+    if(lay->lesioned()) continue;
+    if(!((lay->layer_type == Layer::OUTPUT) || (lay->layer_type == Layer::TARGET))) continue;
+    lay->dist.fm_output = 0;
+    lay->PropagateOutputDistance();
   }
 }
 
 void Network::Compute_PrjnDirections() {
   Compute_LayerDistances();     // required data
-  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
-    if(l->lesioned()) continue;
-    l->Compute_PrjnDirections();
+  FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
+    if(lay->lesioned()) continue;
+    lay->Compute_PrjnDirections();
   }
 }
 
 void Network::SetUnitNames(bool force_use_unit_names) {
-  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
-    if(!l->lesioned())
-      l->SetUnitNames(force_use_unit_names);
+  FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
+    if(!lay->lesioned())
+      lay->SetUnitNames(force_use_unit_names);
   }
   UpdateAllViews();
 }
@@ -2549,9 +2555,9 @@ void Network::SetUnitNamesFromDataTable(DataTable* undt, int max_unit_chars,
 }
 
 void Network::GetLocalistName() {
-  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
-    if(!l->lesioned())
-      l->GetLocalistName();
+  FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
+    if(!lay->lesioned())
+      lay->GetLocalistName();
   }
   UpdateAllViews();
 }
@@ -2598,9 +2604,9 @@ bool Network::Snapshot(const String& variable, SimpleMathSpec& math_op, bool arg
       return false;
   }
 
-  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
-    if(l->lesioned()) continue;
-    if(!l->Snapshot(var, math_op, arg_is_snap)) return false;
+  FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
+    if(lay->lesioned()) continue;
+    if(!lay->Snapshot(var, math_op, arg_is_snap)) return false;
   }
   UpdateAllViews();
   return true;
@@ -2648,9 +2654,9 @@ void Network::NetControlPanel(ControlPanel* ctrl_panel, const String& extra_labe
 void Network::TransformWeights(const SimpleMathSpec& trans) {
   taMisc::Busy();
   Cuda_ConStateToHost();
-  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
-    if(!l->lesioned())
-      l->TransformWeights(trans);
+  FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
+    if(!lay->lesioned())
+      lay->TransformWeights(trans);
   }
   Init_Weights_post();
   Cuda_ConStateToDevice();
@@ -2661,9 +2667,9 @@ void Network::TransformWeights(const SimpleMathSpec& trans) {
 void Network::AddNoiseToWeights(const Random& noise_spec) {
   taMisc::Busy();
   Cuda_ConStateToHost();
-  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
-    if(!l->lesioned())
-      l->AddNoiseToWeights(noise_spec);
+  FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
+    if(!lay->lesioned())
+      lay->AddNoiseToWeights(noise_spec);
   }
   Init_Weights_post();
   Cuda_ConStateToDevice();
@@ -2677,9 +2683,9 @@ int Network::PruneCons(const SimpleMathSpec& pre_proc,
   taMisc::Busy();
   StructUpdate(true);
   int rval = 0;
-  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
-    if(!l->lesioned())
-      rval += l->PruneCons(pre_proc, rel, cmp_val);
+  FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
+    if(!lay->lesioned())
+      rval += lay->PruneCons(pre_proc, rel, cmp_val);
   }
   StructUpdate(false);
   taMisc::DoneBusy();
@@ -2691,9 +2697,9 @@ int Network::ProbAddCons(float p_add_con, float init_wt) {
   taMisc::Busy();
   StructUpdate(true);
   int rval = 0;
-  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
-    if(!l->lesioned())
-      rval += l->ProbAddCons(p_add_con, init_wt);
+  FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
+    if(!lay->lesioned())
+      rval += lay->ProbAddCons(p_add_con, init_wt);
   }
   StructUpdate(false);
   taMisc::DoneBusy();
@@ -2705,9 +2711,9 @@ int Network::LesionCons(float p_lesion, bool permute) {
   taMisc::Busy();
   StructUpdate(true);
   int rval = 0;
-  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
-    if(!l->lesioned())
-      rval += l->LesionCons(p_lesion, permute);
+  FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
+    if(!lay->lesioned())
+      rval += lay->LesionCons(p_lesion, permute);
   }
   StructUpdate(false);
   taMisc::DoneBusy();
@@ -2719,9 +2725,9 @@ int Network::LesionUnits(float p_lesion, bool permute) {
   taMisc::Busy();
   StructUpdate(true);
   int rval = 0;
-  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
-    if(!l->lesioned())
-      rval += l->LesionUnits(p_lesion, permute);
+  FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
+    if(!lay->lesioned())
+      rval += lay->LesionUnits(p_lesion, permute);
   }
   StructUpdate(false);
   taMisc::DoneBusy();
@@ -2733,9 +2739,9 @@ void Network::UnLesionUnits() {
   taMisc::Busy();
   StructUpdate(true);
   int rval = 0;
-  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
-    if(!l->lesioned())
-      l->UnLesionUnits();
+  FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
+    if(!lay->lesioned())
+      lay->UnLesionUnits();
   }
   StructUpdate(false);
   taMisc::DoneBusy();
@@ -2745,8 +2751,8 @@ void Network::UnLesionUnits() {
 void Network::LesionAllLayers() {
   taMisc::Busy();
   StructUpdate(true);
-  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
-    l->Lesion();
+  FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
+    lay->Lesion();
   }
   StructUpdate(false);
   taMisc::DoneBusy();
@@ -2756,8 +2762,8 @@ void Network::LesionAllLayers() {
 void Network::IconifyAllLayers() {
   taMisc::Busy();
   StructUpdate(true);
-  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
-    l->Iconify();
+  FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
+    lay->Iconify();
   }
   StructUpdate(false);
   taMisc::DoneBusy();
@@ -2767,8 +2773,8 @@ void Network::IconifyAllLayers() {
 void Network::UnLesionAllLayers() {
   taMisc::Busy();
   StructUpdate(true);
-  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
-    l->UnLesion();
+  FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
+    lay->UnLesion();
   }
   StructUpdate(false);
   taMisc::DoneBusy();
@@ -2778,8 +2784,8 @@ void Network::UnLesionAllLayers() {
 void Network::DeIconifyAllLayers() {
   taMisc::Busy();
   StructUpdate(true);
-  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
-    l->DeIconify();
+  FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
+    lay->DeIconify();
   }
   StructUpdate(false);
   taMisc::DoneBusy();
@@ -2829,36 +2835,36 @@ void Network::ReplaceSpecs_Gp(const BaseSpec_Group& old_spg, BaseSpec_Group& new
 
 int Network::ReplaceUnitSpec(UnitSpec* old_sp, UnitSpec* new_sp, bool prompt) {
   int nchg = 0;
-  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
-    if(!l->lesioned())
-      nchg += l->ReplaceUnitSpec(old_sp, new_sp, prompt);
+  FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
+    if(!lay->lesioned())
+      nchg += lay->ReplaceUnitSpec(old_sp, new_sp, prompt);
   }
   return nchg;
 }
 
 int Network::ReplaceConSpec(ConSpec* old_sp, ConSpec* new_sp, bool prompt) {
   int nchg = 0;
-  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
-    if(!l->lesioned())
-      nchg += l->ReplaceConSpec(old_sp, new_sp, prompt);
+  FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
+    if(!lay->lesioned())
+      nchg += lay->ReplaceConSpec(old_sp, new_sp, prompt);
   }
   return nchg;
 }
 
 int Network::ReplacePrjnSpec(ProjectionSpec* old_sp, ProjectionSpec* new_sp, bool prompt) {
   int nchg = 0;
-  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
-    if(!l->lesioned())
-      nchg += l->ReplacePrjnSpec(old_sp, new_sp, prompt);
+  FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
+    if(!lay->lesioned())
+      nchg += lay->ReplacePrjnSpec(old_sp, new_sp, prompt);
   }
   return nchg;
 }
 
 int Network::ReplaceLayerSpec(LayerSpec* old_sp, LayerSpec* new_sp, bool prompt) {
   int nchg = 0;
-  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
-    if(!l->lesioned())
-      nchg += l->ReplaceLayerSpec(old_sp, new_sp, prompt);
+  FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
+    if(!lay->lesioned())
+      nchg += lay->ReplaceLayerSpec(old_sp, new_sp, prompt);
   }
   return nchg;
 }
@@ -2903,9 +2909,9 @@ DataTable* Network::ConVarsToTable(DataTable* dt, const String& var1, const Stri
     new_table = true;
   }
   dt->StructUpdate(true);
-  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
-    if(!l->lesioned())
-      l->ConVarsToTable(dt, var1, var2, var3, var4, var5, var6, var7, var8,
+  FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
+    if(!lay->lesioned())
+      lay->ConVarsToTable(dt, var1, var2, var3, var4, var5, var6, var7, var8,
                         var9, var10, var11, var12, var13, var14);
   }
   dt->StructUpdate(false);
@@ -2915,17 +2921,17 @@ DataTable* Network::ConVarsToTable(DataTable* dt, const String& var1, const Stri
 }
 
 bool Network::VarToVarCopy(const String& dest_var, const String& src_var) {
-  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
-    if(!l->lesioned())
-      l->VarToVarCopy(dest_var, src_var);
+  FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
+    if(!lay->lesioned())
+      lay->VarToVarCopy(dest_var, src_var);
   }
   return true;
 }
 
 bool Network::VarToVal(const String& dest_var, float val) {
-  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
-    if(!l->lesioned())
-      l->VarToVal(dest_var, val);
+  FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
+    if(!lay->lesioned())
+      lay->VarToVal(dest_var, val);
   }
   return true;
 }
@@ -3374,134 +3380,133 @@ Layer_Group* Network::FindLayerGroup(const String& nm) {
 Projection* Network::FindMakePrjn(Layer* recv, Layer* send, ProjectionSpec* ps, ConSpec* cs, bool& nw_itm)
 {
   nw_itm = false; // default, esp for early return
-  Projection* use_prj = NULL;
-  int i;
-  for(i=0;i<recv->projections.size;i++) {
-    Projection* prj = (Projection*)recv->projections[i];
-    if(prj->from.ptr() == send) {
+  Projection* use_prjn = NULL;
+  for(int pi=0; pi < recv->projections.size; pi++) {
+    Projection* prjn = recv->projections[pi];
+    if(prjn->from.ptr() == send) {
       if((ps == NULL) && (cs == NULL)) {
-        return prj;
+        return prjn;
       }
-      if((ps) && (prj->spec.spec.ptr() != ps)) {
-        use_prj = prj;
+      if((ps) && (prjn->spec.spec.ptr() != ps)) {
+        use_prjn = prjn;
         break;
       }
-      if((cs) && (prj->con_spec.spec.ptr() != cs)) {
-        use_prj = prj;
+      if((cs) && (prjn->con_spec.spec.ptr() != cs)) {
+        use_prjn = prjn;
         break;
       }
-      return prj;
+      return prjn;
     }
   }
-  if (use_prj == NULL) {
+  if (use_prjn == NULL) {
     nw_itm = true;
-    use_prj = (Projection*)recv->projections.NewEl(1);
+    use_prjn = (Projection*)recv->projections.New(1);
   }
-  use_prj->SetCustomFrom(send);
+  use_prjn->SetCustomFrom(send);
   if(ps) {
-    use_prj->spec.SetSpec(ps);
+    use_prjn->spec.SetSpec(ps);
   }
   if(cs) {
-    use_prj->SetConType(cs->min_obj_type);
-    use_prj->con_spec.SetSpec(cs);
+    use_prjn->SetConType(cs->min_obj_type);
+    use_prjn->con_spec.SetSpec(cs);
   }
-  return use_prj;
+  return use_prjn;
 }
 
 Projection* Network::FindMakePrjnAdd(Layer* recv, Layer* send, ProjectionSpec* ps, ConSpec* cs, bool& nw_itm) {
-  int i;
-  for(i=0;i<recv->projections.size;i++) {
-    Projection* prj = (Projection*)recv->projections[i];
-    if((prj->from.ptr() == send)
-       && ((ps == NULL) || (prj->spec.spec.ptr() == ps) ||
-           (prj->spec.spec->InheritsFrom(TA_FullPrjnSpec) &&
+ 
+  for(int pi=0; pi < recv->projections.size; pi++) {
+    Projection* prjn = recv->projections[pi];
+    if((prjn->from.ptr() == send)
+       && ((ps == NULL) || (prjn->spec.spec.ptr() == ps) ||
+           (prjn->spec.spec->InheritsFrom(TA_FullPrjnSpec) &&
             ps->InheritsFrom(TA_FullPrjnSpec)))
-       && ((cs == NULL) || (prj->con_spec.spec.ptr() == cs))) {
+       && ((cs == NULL) || (prjn->con_spec.spec.ptr() == cs))) {
       nw_itm = false;
-      return prj;
+      return prjn;
     }
   }
   nw_itm = true;
-  Projection* prj = (Projection*)recv->projections.NewEl(1);
-  prj->SetCustomFrom(send);
+  Projection* prjn = (Projection*)recv->projections.New(1);
+  prjn->SetCustomFrom(send);
   if(ps) {
-    prj->spec.SetSpec(ps);
+    prjn->spec.SetSpec(ps);
   }
   if(cs) {
-    prj->SetConType(cs->min_obj_type);
-    prj->con_spec.SetSpec(cs);
+    prjn->SetConType(cs->min_obj_type);
+    prjn->con_spec.SetSpec(cs);
   }
-  return prj;
+  return prjn;
 }
 
 Projection* Network::FindMakeSelfPrjn(Layer* recv, ProjectionSpec* ps, ConSpec* cs, bool& nw_itm) {
-  Projection* use_prj = NULL;
-  int i;
-  for(i=0;i<recv->projections.size;i++) {
-    Projection* prj = (Projection*)recv->projections[i];
-    if(prj->from.ptr() == recv) {
+  
+  Projection* use_prjn = NULL;
+  for(int pi=0; pi < recv->projections.size; pi++) {
+    Projection* prjn = recv->projections[pi];
+    if(prjn->from.ptr() == recv) {
       if((ps == NULL) && (cs == NULL)) {
         nw_itm = false;
-        return prj;
+        return prjn;
       }
-      if((ps) && (prj->spec.spec.ptr() != ps)) {
-        use_prj = prj;
+      if((ps) && (prjn->spec.spec.ptr() != ps)) {
+        use_prjn = prjn;
         break;
       }
-      if((cs) && (prj->con_spec.spec.ptr() != cs)) {
-        use_prj = prj;
+      if((cs) && (prjn->con_spec.spec.ptr() != cs)) {
+        use_prjn = prjn;
         break;
       }
       nw_itm = false;
-      return prj;
+      return prjn;
     }
   }
   nw_itm = true;
-  if(use_prj == NULL)
-    use_prj = (Projection*)recv->projections.NewEl(1);
-  use_prj->from_type = Projection::SELF;
-  use_prj->from = recv;
+  if(use_prjn == NULL)
+    use_prjn = (Projection*)recv->projections.New(1);
+  use_prjn->from_type = Projection::SELF;
+  use_prjn->from = recv;
   if(ps)
-    use_prj->spec.SetSpec(ps);
+    use_prjn->spec.SetSpec(ps);
   if(cs)
-    use_prj->con_spec.SetSpec(cs);
-  use_prj->SigEmitUpdated();
-  return use_prj;
+    use_prjn->con_spec.SetSpec(cs);
+  use_prjn->SigEmitUpdated();
+  return use_prjn;
 }
 
 Projection* Network::FindMakeSelfPrjnAdd(Layer* recv, ProjectionSpec* ps, ConSpec* cs, bool& nw_itm) {
-  int i;
-  for(i=0;i<recv->projections.size;i++) {
-    Projection* prj = (Projection*)recv->projections[i];
-    if((prj->from.ptr() == recv)
-       && ((ps == NULL) || (prj->spec.spec.ptr() == ps))
-       && ((cs == NULL) || (prj->con_spec.spec.ptr() == cs))) {
+
+  for(int pi=0; pi < recv->projections.size; pi++) {
+    Projection* prjn = recv->projections[pi];
+    if((prjn->from.ptr() == recv)
+       && ((ps == NULL) || (prjn->spec.spec.ptr() == ps))
+       && ((cs == NULL) || (prjn->con_spec.spec.ptr() == cs))) {
       nw_itm = false;
-      return prj;
+      return prjn;
     }
   }
   nw_itm = true;
-  Projection* prj = (Projection*)recv->projections.NewEl(1);
-  prj->from_type = Projection::SELF;
-  prj->from = recv;
+  Projection* prjn = (Projection*)recv->projections.New(1);
+  prjn->from_type = Projection::SELF;
+  prjn->from = recv;
   if(ps)
-    prj->spec.SetSpec(ps);
+    prjn->spec.SetSpec(ps);
   if(cs)
-    prj->con_spec.SetSpec(cs);
-  prj->SigEmitUpdated();
-  return prj;
+    prjn->con_spec.SetSpec(cs);
+  prjn->SigEmitUpdated();
+  return prjn;
 }
 
 bool Network::RemovePrjn(Layer* recv, Layer* send, ProjectionSpec* ps, ConSpec* cs) {
-  int i;
-  for(i=recv->projections.size-1;i>=0;i--) {
-    Projection* prj = (Projection*)recv->projections[i];
-    if((prj->from.ptr() == send)
-       && ((ps == NULL) || (prj->spec.spec.ptr() == ps) ||
-           (prj->spec.spec->InheritsFrom(TA_FullPrjnSpec) &&
+  
+  for(int pi=recv->projections.size-1; pi >= 0; pi--) {
+    Projection* prjn = recv->projections[pi];
+    if((prjn->from.ptr() == send)
+       && ((ps == NULL) || (prjn->spec.spec.ptr() == ps) ||
+           (prjn->spec.spec->InheritsFrom(TA_FullPrjnSpec) &&
             ps->InheritsFrom(TA_FullPrjnSpec)))
-       && ((cs == NULL) || (prj->con_spec.spec.ptr() == cs))) {
-      recv->projections.RemoveEl(prj);
+       && ((cs == NULL) || (prjn->con_spec.spec.ptr() == cs))) {
+      recv->projections.RemoveEl(prjn);
       return true;
     }
   }
@@ -3510,9 +3515,9 @@ bool Network::RemovePrjn(Layer* recv, Layer* send, ProjectionSpec* ps, ConSpec* 
 
 taBase* Network::ChooseNew(taBase* origin, const String& choice_text) {
   Network* ntwrk = NULL;
-  ProjectBase* prj = GET_OWNER(origin, ProjectBase);  // who initiated the choice/new datatable call?
-  if(prj) {
-    ntwrk = (Network*)prj->networks.New(1);
+  ProjectBase* prjn = GET_OWNER(origin, ProjectBase);  // who initiated the choice/new datatable call?
+  if(prjn) {
+    ntwrk = (Network*)prjn->networks.New(1);
   }
   return ntwrk;
 }

@@ -429,8 +429,8 @@ void NetMonItem::ScanObject() {
   else if (object->InheritsFrom(&TA_Projection)) {
     ScanObject_Projection((Projection*)object.ptr(), variable);
   }
-  else if (object->InheritsFrom(&TA_Projection_Group)) {
-    ScanObject_ProjectionGroup((Projection_Group*)object.ptr(), variable);
+  else if (object->InheritsFrom(&TA_Projection_List)) {
+    ScanObject_ProjectionGroup((Projection_List*)object.ptr(), variable);
   }
   else if (object->InheritsFrom(&TA_Network)) {
     ScanObject_Network((Network*)object.ptr(), variable);
@@ -980,7 +980,7 @@ void NetMonItem::ScanObject_PrjnCons(Projection* prj, String var) {
   }
 }
 
-void NetMonItem::ScanObject_ProjectionGroup(Projection_Group* pg, String var) {
+void NetMonItem::ScanObject_ProjectionGroup(Projection_List* pg, String var) {
   if (ScanObject_InObject(pg, var, pg, false)) return; // false = test
 
   for (int i = 0; i < pg->size; i++) {

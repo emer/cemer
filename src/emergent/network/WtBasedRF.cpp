@@ -40,7 +40,7 @@ void WtBasedRF::CheckThisConfig_impl(bool quiet, bool& rval) {
   CheckError(!snd_layer, quiet, rval,"snd_layer is NULL");
   if (trg_layer && snd_layer) {
     String prjn_name = "Fm_" + snd_layer->name;
-    Projection* prjn = trg_layer->projections.FindLeafName(prjn_name);
+    Projection* prjn = trg_layer->projections.FindName(prjn_name);
     CheckError(!prjn, quiet, rval, "projection " + prjn_name + " not found. The projection name should be in the form Fm_NameOfLayer");
   }
 }

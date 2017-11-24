@@ -13,11 +13,11 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-#ifndef Projection_Group_h
-#define Projection_Group_h 1
+#ifndef Projection_List_h
+#define Projection_List_h 1
 
 // parent includes:
-#include <taGroup>
+#include <taList>
 #ifdef __TA_COMPILE__
 #include "network_def.h"
 class Projection;
@@ -31,11 +31,11 @@ eTypeDef_Of(Projection);
 // declare all other types mentioned but not required to include:
 class Layer; //
 
-eTypeDef_Of(Projection_Group);
+eTypeDef_Of(Projection_List);
 
-class E_API Projection_Group: public taGroup<Projection> {
-  // ##CAT_Network group of projections
-INHERITED(taGroup<Projection>)
+class E_API Projection_List: public taList<Projection> {
+  // ##CAT_Network #AKA_Projection_Group group of projections
+INHERITED(taList<Projection>)
 public:
   bool  send_prjns;     // #NO_SAVE #HIDDEN if true, this is a sending projection group which is just links
 
@@ -49,7 +49,7 @@ public:
 
   String       GetTypeDecoKey() const override { return "Projection"; }
 
-  TA_SIMPLE_BASEFUNS(Projection_Group);
+  TA_SIMPLE_BASEFUNS(Projection_List);
 private:
   void  Initialize();
   void  Destroy()               { };
@@ -61,4 +61,4 @@ private:
 #include <Layer>
 #endif
 
-#endif // Projection_Group_h
+#endif // Projection_List_h

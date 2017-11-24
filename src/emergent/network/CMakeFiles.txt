@@ -27,7 +27,7 @@ set(network_HEADS_MAKETA_base
   Connection.h
 
   Projection.h
-  Projection_Group.h
+  Projection_List.h
 
   LayerSpec.h
   Layer_Group.h
@@ -317,7 +317,7 @@ set(network_SRCS
   ProjectionSpec_cpp.cpp
   ProjectionSpec.cpp
   Projection.cpp
-  Projection_Group.cpp
+  Projection_List.cpp
 
   LayerSpec_cpp.cpp
   LayerSpec.cpp

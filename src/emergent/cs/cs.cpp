@@ -40,7 +40,7 @@ static void cs_converter_init() {
   cvt->repl_strs.Add(NameVar("Project", "V3CsProject"));
   cvt->repl_strs.Add(NameVar("V3CsProject_Group", "Project_Group")); // fix prev
   cvt->repl_strs.Add(NameVar("V3CsProjection", "Projection"));
-  cvt->repl_strs.Add(NameVar("CsPrjn_Group", "Projection_Group"));
+  cvt->repl_strs.Add(NameVar("CsPrjn_Group", "Projection_List"));
   cvt->repl_strs.Add(NameVar("Network", "CsNetwork"));
   cvt->repl_strs.Add(NameVar("CsNetwork_Group", "Network_Group")); // fix prev
   cvt->repl_strs.Add(NameVar("CsWiz", "CsWizard"));
