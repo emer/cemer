@@ -416,6 +416,8 @@ void Network::UpdtAfterNetMod() {
 #ifdef DMEM_COMPILE
   DMem_UpdtWtUpdt();
 #endif
+  SyncAllState();
+  SyncPrjnState();
 }
 
 

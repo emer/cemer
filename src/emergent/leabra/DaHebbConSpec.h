@@ -53,6 +53,7 @@
     const int sz = cg->size;
     for(int i=0; i<sz; i++) {
       LEABRA_UNIT_STATE* ru = cg->UnState(i, net);
+      if(ru->lesioned()) continue;
       float lrate_eff = clrate;
       if(deep_on) {
         lrate_eff *= (bg_lrate + fg_lrate * ru->deep_lrn);

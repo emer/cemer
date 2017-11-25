@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.2.2.0 rev11211
+// ta_Dump File v3.0 -- code v8.2.2.0 rev11216
 LeabraProject .projects[0] { 
  Doc_Group @.docs = [2] {
   taDoc @[0] { 
@@ -178,7 +178,7 @@ LeabraProject .projects[0] {
   };
   DataTable_Group @.gp[1] = [4] { 
    DataTable @[0] { 
-    DataTableCols @.data = [34] {
+    DataTableCols @.data = [32] {
      int_Data @[0] { };
      int_Data @[1] { };
      String_Data @[2] { };
@@ -211,15 +211,13 @@ LeabraProject .projects[0] {
      float_Data @[29] { };
      float_Data @[30] { };
      float_Data @[31] { };
-     float_Data @[32] { };
-     float_Data @[33] { };
     };
 
     DataOpList @.last_sort_spec.ops = [0] {
     };
    };
    DataTable @[1] { 
-    DataTableCols @.data = [52] {
+    DataTableCols @.data = [41] {
      int_Data @[0] { };
      int_Data @[1] { };
      float_Data @[2] { };
@@ -261,24 +259,13 @@ LeabraProject .projects[0] {
      float_Data @[38] { };
      float_Data @[39] { };
      float_Data @[40] { };
-     float_Data @[41] { };
-     float_Data @[42] { };
-     float_Data @[43] { };
-     float_Data @[44] { };
-     float_Data @[45] { };
-     float_Data @[46] { };
-     float_Data @[47] { };
-     float_Data @[48] { };
-     float_Data @[49] { };
-     float_Data @[50] { };
-     float_Data @[51] { };
     };
 
     DataOpList @.last_sort_spec.ops = [0] {
     };
    };
    DataTable @[2] { 
-    DataTableCols @.data = [34] {
+    DataTableCols @.data = [30] {
      int_Data @[0] { };
      int_Data @[1] { };
      String_Data @[2] { };
@@ -309,17 +296,13 @@ LeabraProject .projects[0] {
      float_Data @[27] { };
      float_Data @[28] { };
      float_Data @[29] { };
-     float_Data @[30] { };
-     float_Data @[31] { };
-     float_Data @[32] { };
-     float_Data @[33] { };
     };
 
     DataOpList @.last_sort_spec.ops = [0] {
     };
    };
    DataTable @[3] { 
-    DataTableCols @.data = [38] {
+    DataTableCols @.data = [32] {
      int_Data @[0] { };
      int_Data @[1] { };
      float_Data @[2] { };
@@ -352,12 +335,6 @@ LeabraProject .projects[0] {
      float_Data @[29] { };
      float_Data @[30] { };
      float_Data @[31] { };
-     float_Data @[32] { };
-     float_Data @[33] { };
-     float_Data @[34] { };
-     float_Data @[35] { };
-     float_Data @[36] { };
-     float_Data @[37] { };
     };
 
     DataOpList @.last_sort_spec.ops = [0] {
@@ -2072,7 +2049,7 @@ LeabraProject .projects[0] {
     ProgEl_List @.init_code = [0] {
     };
 
-    ProgEl_List @.prog_code = [10] {
+    ProgEl_List @.prog_code = [12] {
      FunctionCall @[0] { 
       ProgArg_List @.fun_args = [0] {
       };
@@ -2104,7 +2081,17 @@ LeabraProject .projects[0] {
       };
      };
      PrintExpr @[5] { };
-     If @[6] { 
+     MethodCall @[6] { 
+      ProgArg_List @.meth_args = [2] {
+       ProgArg @[0] { };
+       ProgArg @[1] { };
+      };
+     };
+     MemberMethodCall @[7] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+     };
+     If @[8] { 
       ProgEl_List @.true_code = [3] {
        MethodCall @[0] { 
 	ProgArg_List @.meth_args = [2] {
@@ -2120,14 +2107,14 @@ LeabraProject .projects[0] {
        };
       };
      };
-     MethodCall @[7] { 
+     MethodCall @[9] { 
       ProgArg_List @.meth_args = [3] {
        ProgArg @[0] { };
        ProgArg @[1] { };
        ProgArg @[2] { };
       };
      };
-     If @[8] { 
+     If @[10] { 
       ProgEl_List @.true_code = [1] {
        MethodCall @[0] { 
 	ProgArg_List @.meth_args = [0] {
@@ -2135,7 +2122,7 @@ LeabraProject .projects[0] {
        };
       };
      };
-     ProgramCall @[9] { 
+     ProgramCall @[11] { 
       ProgArg_List @.prog_args = [1] {
        ProgArg @[0] { };
       };
@@ -2171,7 +2158,7 @@ LeabraProject .projects[0] {
     ProgEl_List @.init_code = [0] {
     };
 
-    ProgEl_List @.prog_code = [2] {
+    ProgEl_List @.prog_code = [4] {
      If @[0] { 
       ProgEl_List @.true_code = [1] {
        ProgramCall @[0] { 
@@ -2181,7 +2168,17 @@ LeabraProject .projects[0] {
        };
       };
      };
-     MethodCall @[1] { 
+     MemberMethodCall @[1] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+     };
+     MethodCall @[2] { 
+      ProgArg_List @.meth_args = [2] {
+       ProgArg @[0] { };
+       ProgArg @[1] { };
+      };
+     };
+     MethodCall @[3] { 
       ProgArg_List @.meth_args = [2] {
        ProgArg @[0] { };
        ProgArg @[1] { };
@@ -2998,7 +2995,7 @@ LeabraProject .projects[0] {
 
      ProgObjList @.objs = [1] {
       NetMonitor @[0] { 
-       NetMonItem_List @.items = [26] {
+       NetMonItem_List @.items = [28] {
 	NetMonItem @[0] { };
 	NetMonItem @[1] { };
 	NetMonItem @[2] { };
@@ -3025,6 +3022,8 @@ LeabraProject .projects[0] {
 	NetMonItem @[23] { };
 	NetMonItem @[24] { };
 	NetMonItem @[25] { };
+	NetMonItem @[26] { };
+	NetMonItem @[27] { };
        };
       };
      };
@@ -3522,7 +3521,7 @@ LeabraProject .projects[0] {
       T3Panel @[1] { 
        T3DataView_List @.root_view.children = [1] {
 	GraphTableView @[0] { 
-	 T3DataView_List @.children = [52] {
+	 T3DataView_List @.children = [41] {
 	  GraphColView @[0] { };
 	  GraphColView @[1] { };
 	  GraphColView @[2] { };
@@ -3564,17 +3563,6 @@ LeabraProject .projects[0] {
 	  GraphColView @[38] { };
 	  GraphColView @[39] { };
 	  GraphColView @[40] { };
-	  GraphColView @[41] { };
-	  GraphColView @[42] { };
-	  GraphColView @[43] { };
-	  GraphColView @[44] { };
-	  GraphColView @[45] { };
-	  GraphColView @[46] { };
-	  GraphColView @[47] { };
-	  GraphColView @[48] { };
-	  GraphColView @[49] { };
-	  GraphColView @[50] { };
-	  GraphColView @[51] { };
 	 };
 
 	 T3Annotation_List @.annotations = [0] {
@@ -3753,23 +3741,23 @@ LeabraProject .projects[0] {
 
    Layer_Group @.layers = [4] {
     LeabraLayer @[0] { 
-     Projection_Group @.projections = [0] {
+     Projection_List @.projections = [0] {
      };
     };
     LeabraLayer @[1] { 
-     Projection_Group @.projections = [2] {
+     Projection_List @.projections = [2] {
       LeabraPrjn @[0] { };
       LeabraPrjn @[1] { };
      };
     };
     LeabraLayer @[2] { 
-     Projection_Group @.projections = [2] {
+     Projection_List @.projections = [2] {
       LeabraPrjn @[0] { };
       LeabraPrjn @[1] { };
      };
     };
     LeabraLayer @[3] { 
-     Projection_Group @.projections = [2] {
+     Projection_List @.projections = [2] {
       LeabraPrjn @[0] { };
       LeabraPrjn @[1] { };
      };
@@ -4414,7 +4402,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       cust_desc=0;
       base=.programs.gp[4][3].vars[9]$$;
       mbr=ProgVar::int_val;
-      data {ctrl_type=PARAM_SET: is_numeric=1: is_single=1: state=STABLE: saved_value="50": range="": notes="": };
+      data {ctrl_type=PARAM_SET: is_numeric=1: is_single=1: state=STABLE: saved_value="5": range="": notes="": };
      };
      ControlPanelMember @[4] {
       label="trials_per_epoch";
@@ -4434,7 +4422,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       cust_desc=0;
       base=.programs.gp[4][4].vars[0]$$;
       mbr=ProgVar::bool_val;
-      data {ctrl_type=PARAM_SET: is_numeric=0: is_single=1: state=STABLE: saved_value="true": range="": notes="": };
+      data {ctrl_type=PARAM_SET: is_numeric=0: is_single=1: state=STABLE: saved_value="false": range="": notes="": };
      };
      ControlPanelMember @[6] {
       label="save_wts_interval";
@@ -4563,7 +4551,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
      el_def=0;
      group_type=GT_BUTTONS;
     };
-    date="2017_11_24_12_06_53";
+    date="2017_11_25_03_04_04";
    };
    ParamSet @[1] {
     name="RunParams1";
@@ -4825,7 +4813,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
      el_def=0;
      group_type=GT_BUTTONS;
     };
-    date="2017_11_24_12_06_53";
+    date="2017_11_25_03_04_04";
    };
    ParamSet @[1] {
     name="NetConfig1";
@@ -4917,7 +4905,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
      el_def=0;
      group_type=GT_BUTTONS;
     };
-    date="2017_11_24_12_06_53";
+    date="2017_11_25_03_04_04";
    };
    ParamSet @[1] {
     name="LearnParams1";
@@ -5367,20 +5355,6 @@ mw.config.set({\"wgBackendResponseTime\":192});
       matrix_col_width=10;
      };
      float_Data @[20] {
-      name="Hidden__lay_net_sd";
-      col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name="dim_names";
-      [0]       };
-      width=0;
-      matrix_col_width=10;
-     };
-     float_Data @[21] {
       name="Output_lay_net_sd";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -5394,7 +5368,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       width=17;
       matrix_col_width=10;
      };
-     float_Data @[22] {
+     float_Data @[21] {
       name="net_cos_diff";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -5408,7 +5382,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       width=12;
       matrix_col_width=10;
      };
-     float_Data @[23] {
+     float_Data @[22] {
       name="net_trial_cos_diff";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -5422,7 +5396,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       width=18;
       matrix_col_width=10;
      };
-     float_Data @[24] {
+     float_Data @[23] {
       name="net_avg_act_diff";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -5436,7 +5410,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       width=16;
       matrix_col_width=10;
      };
-     float_Data @[25] {
+     float_Data @[24] {
       name="Hidden_cos_diff";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -5450,21 +5424,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       width=15;
       matrix_col_width=10;
      };
-     float_Data @[26] {
-      name="Hidden_c_cos_diff";
-      col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name="dim_names";
-      [0]       };
-      width=0;
-      matrix_col_width=10;
-     };
-     float_Data @[27] {
+     float_Data @[25] {
       name="Output_cos_diff";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -5478,7 +5438,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       width=15;
       matrix_col_width=10;
      };
-     float_Data @[28] {
+     float_Data @[26] {
       name="Hidden_trial_cos_diff";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -5492,21 +5452,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       width=21;
       matrix_col_width=10;
      };
-     float_Data @[29] {
-      name="Hidden_c_trial_cos_diff";
-      col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name="dim_names";
-      [0]       };
-      width=0;
-      matrix_col_width=10;
-     };
-     float_Data @[30] {
+     float_Data @[27] {
       name="Output_trial_cos_diff";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -5520,7 +5466,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       width=21;
       matrix_col_width=10;
      };
-     float_Data @[31] {
+     float_Data @[28] {
       name="Hidden_avg_act_diff";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -5534,21 +5480,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       width=19;
       matrix_col_width=10;
      };
-     float_Data @[32] {
-      name="Hidden_c_avg_act_diff";
-      col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name="dim_names";
-      [0]       };
-      width=0;
-      matrix_col_width=10;
-     };
-     float_Data @[33] {
+     float_Data @[29] {
       name="Output_avg_act_diff";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -5560,6 +5492,34 @@ mw.config.set({\"wgBackendResponseTime\":192});
        name="dim_names";
       [0]       };
       width=19;
+      matrix_col_width=10;
+     };
+     float_Data @[30] {
+      name="sum_Hidden_Fm_Input_r_wt";
+      col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=24;
+      matrix_col_width=10;
+     };
+     float_Data @[31] {
+      name="sum_Hidden_Fm_Input_r_dwt";
+      col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=25;
       matrix_col_width=10;
      };
     };
@@ -5895,20 +5855,6 @@ mw.config.set({\"wgBackendResponseTime\":192});
       matrix_col_width=10;
      };
      float_Data @[22] {
-      name="Hidden_c_avg_cos_diff";
-      col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name="dim_names";
-      [0]       };
-      width=0;
-      matrix_col_width=10;
-     };
-     float_Data @[23] {
       name="Output_avg_cos_diff";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -5922,7 +5868,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       width=19;
       matrix_col_width=10;
      };
-     float_Data @[24] {
+     float_Data @[23] {
       name="Hidden_avg_trial_cos_diff";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -5936,21 +5882,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       width=25;
       matrix_col_width=10;
      };
-     float_Data @[25] {
-      name="Hidden_c_avg_trial_cos_diff";
-      col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name="dim_names";
-      [0]       };
-      width=0;
-      matrix_col_width=10;
-     };
-     float_Data @[26] {
+     float_Data @[24] {
       name="Output_avg_trial_cos_diff";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -5964,7 +5896,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       width=25;
       matrix_col_width=10;
      };
-     float_Data @[27] {
+     float_Data @[25] {
       name="Hidden_avg_avg_act_diff";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -5978,21 +5910,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       width=23;
       matrix_col_width=10;
      };
-     float_Data @[28] {
-      name="Hidden_c_avg_avg_act_diff";
-      col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name="dim_names";
-      [0]       };
-      width=0;
-      matrix_col_width=10;
-     };
-     float_Data @[29] {
+     float_Data @[26] {
       name="Output_avg_avg_act_diff";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -6006,7 +5924,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       width=23;
       matrix_col_width=10;
      };
-     float_Data @[30] {
+     float_Data @[27] {
       name="Hidden_avg_net_sd";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -6020,21 +5938,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       width=17;
       matrix_col_width=10;
      };
-     float_Data @[31] {
-      name="Hidden_c_avg_net_sd";
-      col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name="dim_names";
-      [0]       };
-      width=0;
-      matrix_col_width=10;
-     };
-     float_Data @[32] {
+     float_Data @[28] {
       name="Output_avg_net_sd";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -6048,7 +5952,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       width=17;
       matrix_col_width=10;
      };
-     float_Data @[33] {
+     float_Data @[29] {
       name="Hidden_hog_pct";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -6062,21 +5966,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       width=14;
       matrix_col_width=10;
      };
-     float_Data @[34] {
-      name="Hidden_c_hog_pct";
-      col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name="dim_names";
-      [0]       };
-      width=0;
-      matrix_col_width=10;
-     };
-     float_Data @[35] {
+     float_Data @[30] {
       name="Output_hog_pct";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -6090,7 +5980,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       width=14;
       matrix_col_width=10;
      };
-     float_Data @[36] {
+     float_Data @[31] {
       name="Hidden_dead_pct";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -6104,21 +5994,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       width=15;
       matrix_col_width=10;
      };
-     float_Data @[37] {
-      name="Hidden_c_dead_pct";
-      col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name="dim_names";
-      [0]       };
-      width=0;
-      matrix_col_width=10;
-     };
-     float_Data @[38] {
+     float_Data @[32] {
       name="Output_dead_pct";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -6132,7 +6008,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       width=15;
       matrix_col_width=10;
      };
-     float_Data @[39] {
+     float_Data @[33] {
       name="Hidden_netmax";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -6146,21 +6022,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       width=13;
       matrix_col_width=10;
      };
-     float_Data @[40] {
-      name="Hidden__netmax";
-      col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name="dim_names";
-      [0]       };
-      width=0;
-      matrix_col_width=10;
-     };
-     float_Data @[41] {
+     float_Data @[34] {
       name="Output_netmax";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -6174,7 +6036,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       width=13;
       matrix_col_width=10;
      };
-     float_Data @[42] {
+     float_Data @[35] {
       name="Input_avg_act";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -6188,7 +6050,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       width=13;
       matrix_col_width=10;
      };
-     float_Data @[43] {
+     float_Data @[36] {
       name="Hidden_avg_act";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -6202,21 +6064,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       width=14;
       matrix_col_width=10;
      };
-     float_Data @[44] {
-      name="Hidden__avg_act";
-      col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name="dim_names";
-      [0]       };
-      width=0;
-      matrix_col_width=10;
-     };
-     float_Data @[45] {
+     float_Data @[37] {
       name="Output_avg_act";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -6230,7 +6078,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       width=14;
       matrix_col_width=10;
      };
-     float_Data @[46] {
+     float_Data @[38] {
       name="Hidden_Fm_Input_netrel";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -6244,7 +6092,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       width=22;
       matrix_col_width=10;
      };
-     float_Data @[47] {
+     float_Data @[39] {
       name="Hidden_Fm_Output_netrel";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -6258,35 +6106,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       width=23;
       matrix_col_width=10;
      };
-     float_Data @[48] {
-      name="Hidden__Fm_Input_netrel";
-      col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name="dim_names";
-      [0]       };
-      width=0;
-      matrix_col_width=10;
-     };
-     float_Data @[49] {
-      name="Hidden__Fm_Output_netrel";
-      col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name="dim_names";
-      [0]       };
-      width=0;
-      matrix_col_width=10;
-     };
-     float_Data @[50] {
+     float_Data @[40] {
       name="Output_Fm_Hidden_netrel";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -6298,20 +6118,6 @@ mw.config.set({\"wgBackendResponseTime\":192});
        name="dim_names";
       [0]       };
       width=23;
-      matrix_col_width=10;
-     };
-     float_Data @[51] {
-      name="Output_Fm_Hidden_copy_netrel";
-      col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name="dim_names";
-      [0]       };
-      width=0;
       matrix_col_width=10;
      };
     };
@@ -6619,20 +6425,6 @@ mw.config.set({\"wgBackendResponseTime\":192});
       matrix_col_width=10;
      };
      float_Data @[20] {
-      name="Hidden__lay_net_sd";
-      col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name="dim_names";
-      [0]       };
-      width=0;
-      matrix_col_width=10;
-     };
-     float_Data @[21] {
       name="Output_lay_net_sd";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -6646,7 +6438,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       width=17;
       matrix_col_width=10;
      };
-     float_Data @[22] {
+     float_Data @[21] {
       name="net_cos_diff";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -6660,7 +6452,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       width=12;
       matrix_col_width=10;
      };
-     float_Data @[23] {
+     float_Data @[22] {
       name="net_trial_cos_diff";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -6674,7 +6466,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       width=18;
       matrix_col_width=10;
      };
-     float_Data @[24] {
+     float_Data @[23] {
       name="net_avg_act_diff";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -6688,7 +6480,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       width=16;
       matrix_col_width=10;
      };
-     float_Data @[25] {
+     float_Data @[24] {
       name="Hidden_cos_diff";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -6702,21 +6494,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       width=15;
       matrix_col_width=10;
      };
-     float_Data @[26] {
-      name="Hidden_c_cos_diff";
-      col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name="dim_names";
-      [0]       };
-      width=0;
-      matrix_col_width=10;
-     };
-     float_Data @[27] {
+     float_Data @[25] {
       name="Output_cos_diff";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -6730,7 +6508,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       width=15;
       matrix_col_width=10;
      };
-     float_Data @[28] {
+     float_Data @[26] {
       name="Hidden_trial_cos_diff";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -6744,21 +6522,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       width=21;
       matrix_col_width=10;
      };
-     float_Data @[29] {
-      name="Hidden_c_trial_cos_diff";
-      col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name="dim_names";
-      [0]       };
-      width=0;
-      matrix_col_width=10;
-     };
-     float_Data @[30] {
+     float_Data @[27] {
       name="Output_trial_cos_diff";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -6772,7 +6536,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       width=21;
       matrix_col_width=10;
      };
-     float_Data @[31] {
+     float_Data @[28] {
       name="Hidden_avg_act_diff";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -6786,21 +6550,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       width=19;
       matrix_col_width=10;
      };
-     float_Data @[32] {
-      name="Hidden_c_avg_act_diff";
-      col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name="dim_names";
-      [0]       };
-      width=0;
-      matrix_col_width=10;
-     };
-     float_Data @[33] {
+     float_Data @[29] {
       name="Output_avg_act_diff";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -7119,20 +6869,6 @@ mw.config.set({\"wgBackendResponseTime\":192});
       matrix_col_width=10;
      };
      float_Data @[20] {
-      name="Hidden_c_avg_cos_diff";
-      col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name="dim_names";
-      [0]       };
-      width=0;
-      matrix_col_width=10;
-     };
-     float_Data @[21] {
       name="Output_avg_cos_diff";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -7146,7 +6882,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       width=19;
       matrix_col_width=10;
      };
-     float_Data @[22] {
+     float_Data @[21] {
       name="Hidden_avg_trial_cos_diff";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -7160,21 +6896,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       width=25;
       matrix_col_width=10;
      };
-     float_Data @[23] {
-      name="Hidden_c_avg_trial_cos_diff";
-      col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name="dim_names";
-      [0]       };
-      width=0;
-      matrix_col_width=10;
-     };
-     float_Data @[24] {
+     float_Data @[22] {
       name="Output_avg_trial_cos_diff";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -7188,7 +6910,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       width=25;
       matrix_col_width=10;
      };
-     float_Data @[25] {
+     float_Data @[23] {
       name="Hidden_avg_avg_act_diff";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -7202,21 +6924,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       width=23;
       matrix_col_width=10;
      };
-     float_Data @[26] {
-      name="Hidden_c_avg_avg_act_diff";
-      col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name="dim_names";
-      [0]       };
-      width=0;
-      matrix_col_width=10;
-     };
-     float_Data @[27] {
+     float_Data @[24] {
       name="Output_avg_avg_act_diff";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -7230,7 +6938,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       width=23;
       matrix_col_width=10;
      };
-     float_Data @[28] {
+     float_Data @[25] {
       name="Hidden_avg_net_sd";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -7244,21 +6952,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       width=17;
       matrix_col_width=10;
      };
-     float_Data @[29] {
-      name="Hidden_c_avg_net_sd";
-      col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name="dim_names";
-      [0]       };
-      width=0;
-      matrix_col_width=10;
-     };
-     float_Data @[30] {
+     float_Data @[26] {
       name="Output_avg_net_sd";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -7272,7 +6966,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       width=17;
       matrix_col_width=10;
      };
-     float_Data @[31] {
+     float_Data @[27] {
       name="Hidden_netmax";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -7286,21 +6980,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       width=13;
       matrix_col_width=10;
      };
-     float_Data @[32] {
-      name="Hidden__netmax";
-      col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name="dim_names";
-      [0]       };
-      width=0;
-      matrix_col_width=10;
-     };
-     float_Data @[33] {
+     float_Data @[28] {
       name="Output_netmax";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -7314,7 +6994,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       width=13;
       matrix_col_width=10;
      };
-     float_Data @[34] {
+     float_Data @[29] {
       name="Input_avg_act";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -7328,7 +7008,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       width=13;
       matrix_col_width=10;
      };
-     float_Data @[35] {
+     float_Data @[30] {
       name="Hidden_avg_act";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -7342,21 +7022,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       width=14;
       matrix_col_width=10;
      };
-     float_Data @[36] {
-      name="Hidden__avg_act";
-      col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name="dim_names";
-      [0]       };
-      width=0;
-      matrix_col_width=10;
-     };
-     float_Data @[37] {
+     float_Data @[31] {
       name="Output_avg_act";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -8876,7 +8542,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       };
      };
     };
-    step_prog=.programs.gp[2][1]$$;
+    step_prog=$.programs.gp[1][2]$;
     step_n=1;
     doc {
      name="doc";
@@ -9551,7 +9217,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       ProgVar @[0] {
        name="train_epochs";
        var_type=T_Int;
-       int_val=50;
+       int_val=5;
        object_scope=NULL;
        flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
        reference=0;
@@ -9885,7 +9551,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="objs";
      el_typ=taNBase;
      el_def=0;
-     TimeUsed @[0] {name="BasicTrainTime": start={usr=32930: sys=6625: tot=151155043949: }: end={usr=32931: sys=6625: tot=151155043949: }: used={usr=37: sys=2: tot=24: }: s_used=0.24: n_used=50: };
+     TimeUsed @[0] {name="BasicTrainTime": start={usr=8918: sys=841: tot=151160425316: }: end={usr=8920: sys=841: tot=151160425317: }: used={usr=95: sys=3: tot=51: }: s_used=0.51: n_used=50: };
     };
     objs_vars {
      name="objs_vars";
@@ -10368,7 +10034,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="objs";
      el_typ=taNBase;
      el_def=0;
-     TimeUsed @[0] {name="BasicTrainTime": start={usr=32935: sys=6625: tot=151155043953: }: end={usr=32936: sys=6625: tot=151155043953: }: used={usr=301: sys=20: tot=238: }: s_used=2.38: n_used=300: };
+     TimeUsed @[0] {name="BasicTrainTime": start={usr=8931: sys=842: tot=151160425324: }: end={usr=8933: sys=842: tot=151160425325: }: used={usr=88: sys=4: tot=78: }: s_used=0.78: n_used=30: };
     };
     objs_vars {
      name="objs_vars";
@@ -11069,7 +10735,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  };
 	 };
 	};
-	target=$.programs.gp[2][1]$;
+	target=.programs.gp[2][1]$$;
 	targ_ld_init="*BasicTest*";
        };
        If @[1] {
@@ -11328,7 +10994,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      ProgVar @[1] {
       name="input_idx";
       var_type=T_Int;
-      int_val=5;
+      int_val=3;
       object_scope=NULL;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -15363,7 +15029,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      ProgVar @[9] {
       name="train_epochs";
       var_type=T_Int;
-      int_val=50;
+      int_val=5;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
       reference=0;
@@ -15643,7 +15309,62 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       };
       debug=0;
      };
-     If @[6] {
+     MethodCall @[6] {
+      name="MethodCall_networkSaveWeigh_Layerinitwtswts";
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="network->SaveWeights(\"TestLesionLayer_initwts.wts\", )";
+      result_var=NULL;
+      obj=$.programs.gp[4][3].args[0]$;
+      method=Network::SaveWeights;
+      meth_args {
+       name="meth_args";
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=const_taString_ref;
+	type="taString&";
+	name="fname";
+	required=0;
+	def_val="\"\"";
+	prev_expr=;
+	expr {
+	 expr="\"TestLesionLayer_initwts.wts\"";
+	};
+       };
+       ProgArg @[1] {
+	arg_type=Network::WtSaveFormat;
+	type="Network::WtSaveFormat";
+	name="fmt";
+	required=0;
+	def_val="Network::NET_FMT";
+	prev_expr=;
+	expr {
+	 expr=;
+	};
+       };
+      };
+      meth_sig="void SaveWeights(taString& fname, Network::WtSaveFormat fmt = NET_FMT)";
+      meth_desc=" write weight values out in a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)";
+     };
+     MemberMethodCall @[7] {
+      name="MemberMethodCall_networklayersHiddencopyLesion";
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="network.layers.Hidden_copy.Lesion()";
+      obj=$.programs.gp[4][3].args[0]$;
+      path="layers.Hidden_copy";
+      result_var=NULL;
+      method=Layer::Lesion;
+      meth_args {
+       name="meth_args";
+       el_typ=ProgArg;
+       el_def=0;
+      };
+      meth_sig="void Lesion()";
+      meth_desc=" set the lesion flag on layer -- removes it from all processing operations";
+     };
+     If @[8] {
       name="If_ifloadweightsweightsfilenonempty";
       desc="Load  weights if file is specified";
       flags=CAN_REVERT_TO_CODE;
@@ -15735,7 +15456,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        };
       };
      };
-     MethodCall @[7] {
+     MethodCall @[9] {
       name="MethodCall_LRSConSpecLogLra_tepslrsbumpstep";
       desc=;
       flags=CAN_REVERT_TO_CODE;
@@ -15784,7 +15505,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       meth_sig="void LogLrateSched(int epcs_per_step = 50, int n_steps = 5, int bump_step = -1)";
       meth_desc=" establish a logarithmic learning rate schedule with given total number of steps (including first step at lrate) and epochs per step: numbers go down in sequence: 1, .5, .2, .1, .05, .02, .01, etc.. this is a particularly good lrate schedule for large nets on hard tasks -- if bump_step > 0 (3 is a good default), the lrate bumps back up to 1 and back down to that step level, and then proceeds from there -- this can pop a model out of a local minimum and result in better final performance";
      };
-     If @[8] {
+     If @[10] {
       name="If_ifdmemnewseedtaMiscdmemnprocs1";
       desc="if dmem, then from here on out, processors diverge so that lists of objs per processor are different!";
       flags=CAN_REVERT_TO_CODE;
@@ -15814,7 +15535,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        };
       };
      };
-     ProgramCall @[9] {
+     ProgramCall @[11] {
       name="ProgramCall_EpochStartnetwork";
       desc=;
       flags=CAN_REVERT_TO_CODE;
@@ -15869,8 +15590,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      minor=0;
      step=0;
     };
-    author=;
-    email=;
+    author="Randall C. O'Reilly";
+    email="randy.oreilly@colorado.edu";
     flags=NO_STOP_STEP|OBJS_UPDT_GUI;
     stop_step_cond {
      expr=;
@@ -15914,7 +15635,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      ProgVar @[0] {
       name="save_final_wts";
       var_type=T_Bool;
-      bool_val=1;
+      bool_val=0;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -15951,7 +15672,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      If @[0] {
       name="If_ifsavefinalwts";
       desc=;
-      flags=CAN_REVERT_TO_CODE;
+      flags=OFF|CAN_REVERT_TO_CODE;
       code_string="if (save_final_wts)";
       cond {
        expr="save_final_wts";
@@ -15986,7 +15707,62 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        };
       };
      };
-     MethodCall @[1] {
+     MemberMethodCall @[1] {
+      name="MemberMethodCall_networklayersHiddencopyUnLesion";
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="network.layers.Hidden_copy.UnLesion()";
+      obj=.programs.gp[4][4].args[0]$$;
+      path="layers.Hidden_copy";
+      result_var=NULL;
+      method=Layer::UnLesion;
+      meth_args {
+       name="meth_args";
+       el_typ=ProgArg;
+       el_def=0;
+      };
+      meth_sig="void UnLesion()";
+      meth_desc=" un-set the lesion flag on layer -- restores it to engage in normal processing";
+     };
+     MethodCall @[2] {
+      name="MethodCall_networkSaveWeigh_ayerfinalwtswts";
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="network->SaveWeights(\"TestLesionLayer_finalwts.wts\", )";
+      result_var=NULL;
+      obj=$.programs.gp[4][4].args[0]$;
+      method=Network::SaveWeights;
+      meth_args {
+       name="meth_args";
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=const_taString_ref;
+	type="taString&";
+	name="fname";
+	required=0;
+	def_val="\"\"";
+	prev_expr=;
+	expr {
+	 expr="\"TestLesionLayer_finalwts.wts\"";
+	};
+       };
+       ProgArg @[1] {
+	arg_type=Network::WtSaveFormat;
+	type="Network::WtSaveFormat";
+	name="fmt";
+	required=0;
+	def_val="Network::NET_FMT";
+	prev_expr=;
+	expr {
+	 expr=;
+	};
+       };
+      };
+      meth_sig="void SaveWeights(taString& fname, Network::WtSaveFormat fmt = NET_FMT)";
+      meth_desc=" write weight values out in a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)";
+     };
+     MethodCall @[3] {
       name="MethodCall_TrainSetVarstoptraintrue";
       desc="stop training!";
       flags=CAN_REVERT_TO_CODE;
@@ -20192,6 +19968,74 @@ also save specs.";
 	  rel=EQUAL;
 	  use_var=0;
 	  cmp 0 1;
+	  var=NULL;
+	  enable_var=NULL;
+	 };
+	 pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	 pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	 pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
+	};
+	NetMonItem @[26] {
+	 name="sum_Hidden_Fm_Input_r_wt";
+	 computed=0;
+	 object_type=LeabraPrjn;
+	 object=$.networks[0].layers[2].projections[0]$;
+	 variable="r.wt";
+	 var_label=;
+	 name_style=AUTO_NAME;
+	 max_name_len=6;
+	 options=HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
+	 val_type=VT_FLOAT;
+	 matrix=0;
+	 matrix_geom{ 	 };
+	 data_agg=0;
+	 data_src=NULL;
+	 agg_col {
+	  col_name=;
+	 };
+	 agg {name="agg": op=SUM: rel={name="rel": rel=LESSTHANOREQUAL: val=0: val_string="": use_var=0: var=NULL: }: };
+	 select_rows=0;
+	 select_spec {
+	  col_name=;
+	  name="_EQUAL_";
+	  on=1;
+	  rel=EQUAL;
+	  use_var=0;
+	  cmp 2 0=0;
+	  var=NULL;
+	  enable_var=NULL;
+	 };
+	 pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	 pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	 pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
+	};
+	NetMonItem @[27] {
+	 name="sum_Hidden_Fm_Input_r_dwt";
+	 computed=0;
+	 object_type=LeabraPrjn;
+	 object=$.networks[0].layers[2].projections[0]$;
+	 variable="r.dwt";
+	 var_label=;
+	 name_style=AUTO_NAME;
+	 max_name_len=6;
+	 options=HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
+	 val_type=VT_FLOAT;
+	 matrix=0;
+	 matrix_geom{ 	 };
+	 data_agg=0;
+	 data_src=NULL;
+	 agg_col {
+	  col_name=;
+	 };
+	 agg {name="agg": op=SUM: rel={name="rel": rel=LESSTHANOREQUAL: val=0: val_string="": use_var=0: var=NULL: }: };
+	 select_rows=0;
+	 select_spec {
+	  col_name=;
+	  name="_EQUAL_";
+	  on=1;
+	  rel=EQUAL;
+	  use_var=0;
+	  cmp 2 0=0;
 	  var=NULL;
 	  enable_var=NULL;
 	 };
@@ -24706,11 +24550,11 @@ and the testing data is updated.  The first epoch monitor should have all the it
     el_typ=UserDataItem;
     el_def=0;
     UserDataItem @[0] {name="view_win_lft": value=0: val_type_fixed=0: };
-    UserDataItem @[1] {name="view_win_top": value=0.05131129: val_type_fixed=0: };
-    UserDataItem @[2] {name="view_win_wd": value=0.9930362: val_type_fixed=0: };
-    UserDataItem @[3] {name="view_win_ht": value=0.8985177: val_type_fixed=0: };
+    UserDataItem @[1] {name="view_win_top": value=0.04973669: val_type_fixed=0: };
+    UserDataItem @[2] {name="view_win_wd": value=0.9927393: val_type_fixed=0: };
+    UserDataItem @[3] {name="view_win_ht": value=0.8981861: val_type_fixed=0: };
     UserDataItem @[4] {name="view_win_iconified": value=0: val_type_fixed=0: };
-    UserDataItem @[5] {name="view_splitter_state": value=AAAA/wAAAAEAAAADAAABFAAAAmsAAAGyAf////8BAAAAAQA=: val_type_fixed=0: };
+    UserDataItem @[5] {name="view_splitter_state": value=AAAA/wAAAAEAAAADAAACXQAAA98AAAUjAf////8BAAAAAQA=: val_type_fixed=0: };
    };
    name="Browser3";
    m_data=.$$;
@@ -25170,7 +25014,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[22] {
-	    name="Hidden_c_avg_cos_diff";
+	    name="Output_avg_cos_diff";
 	    m_data=.data.gp[1][1].data[22]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
@@ -25179,7 +25023,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[23] {
-	    name="Output_avg_cos_diff";
+	    name="Hidden_avg_trial_cos_diff";
 	    m_data=.data.gp[1][1].data[23]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
@@ -25188,7 +25032,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[24] {
-	    name="Hidden_avg_trial_cos_diff";
+	    name="Output_avg_trial_cos_diff";
 	    m_data=.data.gp[1][1].data[24]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
@@ -25197,7 +25041,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[25] {
-	    name="Hidden_c_avg_trial_cos_diff";
+	    name="Hidden_avg_avg_act_diff";
 	    m_data=.data.gp[1][1].data[25]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
@@ -25206,7 +25050,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[26] {
-	    name="Output_avg_trial_cos_diff";
+	    name="Output_avg_avg_act_diff";
 	    m_data=.data.gp[1][1].data[26]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
@@ -25215,16 +25059,16 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[27] {
-	    name="Hidden_avg_avg_act_diff";
+	    name="Hidden_avg_net_sd";
 	    m_data=.data.gp[1][1].data[27]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    fixed_range {fix_min=0: min=0.281181: fix_max=0: max=0.466438: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[28] {
-	    name="Hidden_c_avg_avg_act_diff";
+	    name="Output_avg_net_sd";
 	    m_data=.data.gp[1][1].data[28]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
@@ -25233,7 +25077,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[29] {
-	    name="Output_avg_avg_act_diff";
+	    name="Hidden_hog_pct";
 	    m_data=.data.gp[1][1].data[29]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
@@ -25242,16 +25086,16 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[30] {
-	    name="Hidden_avg_net_sd";
+	    name="Output_hog_pct";
 	    m_data=.data.gp[1][1].data[30]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
-	    fixed_range {fix_min=0: min=0.281181: fix_max=0: max=0.466438: };
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[31] {
-	    name="Hidden_c_avg_net_sd";
+	    name="Hidden_dead_pct";
 	    m_data=.data.gp[1][1].data[31]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
@@ -25260,7 +25104,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[32] {
-	    name="Output_avg_net_sd";
+	    name="Output_dead_pct";
 	    m_data=.data.gp[1][1].data[32]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
@@ -25269,7 +25113,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[33] {
-	    name="Hidden_hog_pct";
+	    name="Hidden_netmax";
 	    m_data=.data.gp[1][1].data[33]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
@@ -25278,7 +25122,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[34] {
-	    name="Hidden_c_hog_pct";
+	    name="Output_netmax";
 	    m_data=.data.gp[1][1].data[34]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
@@ -25287,16 +25131,16 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[35] {
-	    name="Output_hog_pct";
+	    name="Input_avg_act";
 	    m_data=.data.gp[1][1].data[35]$$;
-	    cur_font_size=12;
+	    cur_font_size=14;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[36] {
-	    name="Hidden_dead_pct";
+	    name="Hidden_avg_act";
 	    m_data=.data.gp[1][1].data[36]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
@@ -25305,7 +25149,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[37] {
-	    name="Hidden_c_dead_pct";
+	    name="Output_avg_act";
 	    m_data=.data.gp[1][1].data[37]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
@@ -25314,7 +25158,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[38] {
-	    name="Output_dead_pct";
+	    name="Hidden_Fm_Input_netrel";
 	    m_data=.data.gp[1][1].data[38]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
@@ -25323,7 +25167,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[39] {
-	    name="Hidden_netmax";
+	    name="Hidden_Fm_Output_netrel";
 	    m_data=.data.gp[1][1].data[39]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
@@ -25332,107 +25176,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[40] {
-	    name="Hidden__netmax";
-	    m_data=.data.gp[1][1].data[40]$$;
-	    cur_font_size=12;
-	    m_transform=NULL;
-	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	    data_range {min=0: max=0: };
-	   };
-	   GraphColView @[41] {
-	    name="Output_netmax";
-	    m_data=.data.gp[1][1].data[41]$$;
-	    cur_font_size=12;
-	    m_transform=NULL;
-	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	    data_range {min=0: max=0: };
-	   };
-	   GraphColView @[42] {
-	    name="Input_avg_act";
-	    m_data=.data.gp[1][1].data[42]$$;
-	    cur_font_size=14;
-	    m_transform=NULL;
-	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	    data_range {min=0: max=0: };
-	   };
-	   GraphColView @[43] {
-	    name="Hidden_avg_act";
-	    m_data=.data.gp[1][1].data[43]$$;
-	    cur_font_size=12;
-	    m_transform=NULL;
-	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	    data_range {min=0: max=0: };
-	   };
-	   GraphColView @[44] {
-	    name="Hidden__avg_act";
-	    m_data=.data.gp[1][1].data[44]$$;
-	    cur_font_size=12;
-	    m_transform=NULL;
-	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	    data_range {min=0: max=0: };
-	   };
-	   GraphColView @[45] {
-	    name="Output_avg_act";
-	    m_data=.data.gp[1][1].data[45]$$;
-	    cur_font_size=12;
-	    m_transform=NULL;
-	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	    data_range {min=0: max=0: };
-	   };
-	   GraphColView @[46] {
-	    name="Hidden_Fm_Input_netrel";
-	    m_data=.data.gp[1][1].data[46]$$;
-	    cur_font_size=12;
-	    m_transform=NULL;
-	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	    data_range {min=0: max=0: };
-	   };
-	   GraphColView @[47] {
-	    name="Hidden_Fm_Output_netrel";
-	    m_data=.data.gp[1][1].data[47]$$;
-	    cur_font_size=12;
-	    m_transform=NULL;
-	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	    data_range {min=0: max=0: };
-	   };
-	   GraphColView @[48] {
-	    name="Hidden__Fm_Input_netrel";
-	    m_data=.data.gp[1][1].data[48]$$;
-	    cur_font_size=12;
-	    m_transform=NULL;
-	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	    data_range {min=0: max=0: };
-	   };
-	   GraphColView @[49] {
-	    name="Hidden__Fm_Output_netrel";
-	    m_data=.data.gp[1][1].data[49]$$;
-	    cur_font_size=12;
-	    m_transform=NULL;
-	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	    data_range {min=0: max=0: };
-	   };
-	   GraphColView @[50] {
 	    name="Output_Fm_Hidden_netrel";
-	    m_data=.data.gp[1][1].data[50]$$;
-	    cur_font_size=12;
-	    m_transform=NULL;
-	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	    data_range {min=0: max=0: };
-	   };
-	   GraphColView @[51] {
-	    name="Output_Fm_Hidden_copy_netrel";
-	    m_data=.data.gp[1][1].data[51]$$;
+	    m_data=.data.gp[1][1].data[40]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -25452,7 +25197,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   el_def=0;
 	  };
 	  view_rows=10000;
-	  view_range {min=0: max=49: };
+	  view_range {min=0: max=4: };
 	  page_rows=-8017975;
 	  display_on=1;
 	  manip_ctrl_on=1;
@@ -25486,7 +25231,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   is_matrix=0;
 	   n_cells=1;
 	   matrix_cell=0;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=49: };
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=4: };
 	   show_axis_label=1;
 	   show_alt_axis_label=1;
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
@@ -25541,7 +25286,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    is_matrix=0;
 	    n_cells=1;
 	    matrix_cell=0;
-	    fixed_range {fix_min=1: min=0: fix_max=0: max=3.743446: };
+	    fixed_range {fix_min=1: min=0: fix_max=0: max=4.455906: };
 	    show_axis_label=1;
 	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
@@ -25567,7 +25312,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    is_matrix=0;
 	    n_cells=1;
 	    matrix_cell=0;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=0.4680001: };
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0.542: };
 	    show_axis_label=1;
 	    show_alt_axis_label=1;
 	    color {name="red": r=1: g=0: b=0: a=1: desc="": };
@@ -26541,10 +26286,10 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       name="UserDataItem_List_133";
       el_typ=UserDataItem;
       el_def=0;
-      UserDataItem @[0] {name="view_win_lft": value=-0.002785515: val_type_fixed=0: };
-      UserDataItem @[1] {name="view_win_top": value=0.002280502: val_type_fixed=0: };
-      UserDataItem @[2] {name="view_win_wd": value=0.05710306: val_type_fixed=0: };
-      UserDataItem @[3] {name="view_win_ht": value=0.8221208: val_type_fixed=0: };
+      UserDataItem @[0] {name="view_win_lft": value=0: val_type_fixed=0: };
+      UserDataItem @[1] {name="view_win_top": value=0.008191925: val_type_fixed=0: };
+      UserDataItem @[2] {name="view_win_wd": value=0.02706271: val_type_fixed=0: };
+      UserDataItem @[3] {name="view_win_ht": value=0.851375: val_type_fixed=0: };
       UserDataItem @[4] {name="view_win_iconified": value=0: val_type_fixed=0: };
       UserDataItem @[5] {name="view_visible": value=1: val_type_fixed=0: };
      };
@@ -26563,7 +26308,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
  save_as_only=0;
  auto_name=1;
  last_change_desc="svn rev: 10514 update startup program";
- tree_state{ .;.patches;.docs;.wizards;.ctrl_panels;.active_params.gp[0];.active_params.gp[1];.active_params.gp[2];.data;.data.gp[0];.data.gp[1];.data.gp[2];.data.gp[3];.programs;.programs.break_points;.programs.gp[0];.programs.gp[1];.programs.gp[2];.programs.gp[3];.programs.gp[4];.programs.gp[4].gp[0];.networks;.networks[0];.networks[0].spec_tables;.networks[0].specs;.networks[0].specs[0];.networks[0].specs[2];.networks[0].param_seqs;.networks[0].layers;.networks[0].layers[1];.networks[0].layers[1].projections;.networks[0].layers[2];.networks[0].layers[2].projections;.networks[0].layers[3];.networks[0].layers[3].projections;.networks[0].weights; };
+ tree_state{ .;.patches;.docs;.wizards;.ctrl_panels;.active_params;.active_params.gp[0];.active_params.gp[1];.active_params.gp[2];.data;.data.gp[0];.data.gp[1];.data.gp[2];.data.gp[3];.programs;.programs.break_points;.programs.gp[0];.programs.gp[1];.programs.gp[1].gp[0];.programs.gp[2];.programs.gp[3];.programs.gp[4];.programs.gp[4].gp[0];.networks;.networks[0];.networks[0].spec_tables;.networks[0].specs;.networks[0].specs[0];.networks[0].specs[2];.networks[0].param_seqs;.networks[0].layers;.networks[0].layers[1];.networks[0].layers[1].projections;.networks[0].layers[2];.networks[0].layers[2].projections;.networks[0].layers[3];.networks[0].layers[3].projections;.networks[0].weights; };
  networks {
   name="networks";
   el_typ=LeabraNetwork;
@@ -27024,8 +26769,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       name="send_prjns";
       el_typ=LeabraPrjn;
       el_def=0;
-      Projection_Group @. = [0] = LeabraPrjn .networks[0].layers[1].projections[0];
-      Projection_Group @. = [1] = LeabraPrjn .networks[0].layers[2].projections[0];
+      Projection_List @. = [0] = LeabraPrjn .networks[0].layers[1].projections[0];
+      Projection_List @. = [1] = LeabraPrjn .networks[0].layers[2].projections[0];
      };
      unit_spec {type=LeabraUnitSpec: spec=.networks[0].specs[1]$$: };
      dist {fm_input=0: fm_output=2: };
@@ -27035,9 +26780,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      voxel_fill_pct=1;
      spec {type=LeabraLayerSpec: spec=.networks[0].specs[0].children[0]$$: };
      adapt_gi=1;
-     acts_m_avg=0.1899993;
-     acts_p_avg=0.1899993;
-     acts_p_avg_eff=0.1899993;
+     acts_m_avg=0.1887887;
+     acts_p_avg=0.1887887;
+     acts_p_avg_eff=0.1887887;
     };
     LeabraLayer @[1] {
      name="Hidden";
@@ -27107,7 +26852,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       name="send_prjns";
       el_typ=LeabraPrjn;
       el_def=0;
-      Projection_Group @. = [0] = LeabraPrjn .networks[0].layers[3].projections[0];
+      Projection_List @. = [0] = LeabraPrjn .networks[0].layers[3].projections[0];
      };
      unit_spec {type=LeabraUnitSpec: spec=$.networks[0].specs[1]$: };
      dist {fm_input=1: fm_output=1: };
@@ -27117,9 +26862,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      voxel_fill_pct=1;
      spec {type=LeabraLayerSpec: spec=.networks[0].specs[0]$$: };
      adapt_gi=1;
-     acts_m_avg=0.1593847;
-     acts_p_avg=0.1594512;
-     acts_p_avg_eff=0.1594512;
+     acts_m_avg=0.1341426;
+     acts_p_avg=0.1359512;
+     acts_p_avg_eff=0.1359512;
     };
     LeabraLayer @[2] {
      name="Hidden_copy";
@@ -27189,7 +26934,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       name="send_prjns";
       el_typ=LeabraPrjn;
       el_def=0;
-      Projection_Group @. = [0] = LeabraPrjn .networks[0].layers[3].projections[1];
+      Projection_List @. = [0] = LeabraPrjn .networks[0].layers[3].projections[1];
      };
      unit_spec {type=LeabraUnitSpec: spec=$.networks[0].specs[1]$: };
      dist {fm_input=1: fm_output=1: };
@@ -27199,9 +26944,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      voxel_fill_pct=1;
      spec {type=LeabraLayerSpec: spec=$.networks[0].specs[0]$: };
      adapt_gi=1;
-     acts_m_avg=0.145911;
-     acts_p_avg=0.1460572;
-     acts_p_avg_eff=0.1460572;
+     acts_m_avg=0.15;
+     acts_p_avg=0.15;
+     acts_p_avg_eff=0.15;
     };
     LeabraLayer @[3] {
      name="Output";
@@ -27271,8 +27016,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       name="send_prjns";
       el_typ=LeabraPrjn;
       el_def=0;
-      Projection_Group @. = [0] = LeabraPrjn .networks[0].layers[1].projections[1];
-      Projection_Group @. = [1] = LeabraPrjn .networks[0].layers[2].projections[1];
+      Projection_List @. = [0] = LeabraPrjn .networks[0].layers[1].projections[1];
+      Projection_List @. = [1] = LeabraPrjn .networks[0].layers[2].projections[1];
      };
      unit_spec {type=LeabraUnitSpec: spec=$.networks[0].specs[1]$: };
      dist {fm_input=2: fm_output=0: };
@@ -27282,9 +27027,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      voxel_fill_pct=1;
      spec {type=LeabraLayerSpec: spec=$.networks[0].specs[0].children[0]$: };
      adapt_gi=1;
-     acts_m_avg=0.188637;
-     acts_p_avg=0.1899993;
-     acts_p_avg_eff=0.1899993;
+     acts_m_avg=0.1712377;
+     acts_p_avg=0.1887887;
+     acts_p_avg_eff=0.1887887;
     };
    };
    weights {
@@ -27302,7 +27047,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
    max_disp_size2d {x=11: y=9: };
    times {quarter=25: deep_cyc=5: time_inc=0.001: wt_bal_int=10: minus=75: plus=25: total_cycles=100: thal_gate_cycle=-2: };
    lstats {trg_max_act_crit=0.5: off_errs=1: on_errs=1: agg_unlearnable=0: wt_bal=0: };
-   net_misc {spike=0: deep=1: bias_learn=0: trial_decay=1: diff_scale_p=0: diff_scale_q1=0: wt_bal=1: lay_gp_inhib=0: inhib_cons=0: };
+   net_misc {spike=0: deep=0: bias_learn=0: trial_decay=1: diff_scale_p=0: diff_scale_q1=0: wt_bal=1: lay_gp_inhib=0: inhib_cons=0: };
    deep {on=0: ctxt=0: raw_net=0: mod_net=0: raw_qtr=0: };
    rel_netin {on=1: trl_skip=10: epc_skip=10: };
   };

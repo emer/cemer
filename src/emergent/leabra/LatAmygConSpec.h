@@ -39,6 +39,7 @@
     const int sz = cg->size;
     for(int i=0; i<sz; i++) {
       LEABRA_UNIT_STATE* ru = cg->UnState(i, net);
+      if(ru->lesioned()) continue;
       C_Compute_dWt_LatAmyg(dwts[i], su_act, ru->da_p, fwts[i]);
     }
   }

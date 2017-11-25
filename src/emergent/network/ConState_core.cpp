@@ -1,6 +1,16 @@
 // contains core non-inline (INIMPL) functions from _core.h
 // if used, include directly in _cpp.cpp, _cuda.cpp
 
+void CON_STATE::UpdtIsActive(NETWORK_STATE* net) {
+  UNIT_STATE* un = OwnUnState(net);
+  if(alloc_size > 0 && size > 0 && PrjnIsActive(net) && !un->lesioned()) {
+    SetConStateFlag(IS_ACTIVE);
+  }
+  else {
+    ClearConStateFlag(IS_ACTIVE);
+  }
+}
+
 int CON_STATE::FindConFromIdx(int trg_idx) const {
   // important: for this to work, we need to be absoultely sure that these lo/hi values are
   // accurate -- hence need for one full pass of caching them

@@ -430,7 +430,7 @@ void NetMonItem::ScanObject() {
     ScanObject_Projection((Projection*)object.ptr(), variable);
   }
   else if (object->InheritsFrom(&TA_Projection_List)) {
-    ScanObject_ProjectionGroup((Projection_List*)object.ptr(), variable);
+    ScanObject_ProjectionList((Projection_List*)object.ptr(), variable);
   }
   else if (object->InheritsFrom(&TA_Network)) {
     ScanObject_Network((Network*)object.ptr(), variable);
@@ -649,7 +649,7 @@ void NetMonItem::ScanObject_Layer(Layer* lay, String var) {
 
     String subvar = var.before('.');
     if(subvar.endsWith("projections") || subvar.endsWith("prjns")) {
-      ScanObject_ProjectionGroup(&lay->projections, var.after('.'));
+      ScanObject_ProjectionList(&lay->projections, var.after('.'));
       return;
     }
     if((subvar == "r") || (subvar == "s")) {
@@ -980,7 +980,7 @@ void NetMonItem::ScanObject_PrjnCons(Projection* prj, String var) {
   }
 }
 
-void NetMonItem::ScanObject_ProjectionGroup(Projection_List* pg, String var) {
+void NetMonItem::ScanObject_ProjectionList(Projection_List* pg, String var) {
   if (ScanObject_InObject(pg, var, pg, false)) return; // false = test
 
   for (int i = 0; i < pg->size; i++) {

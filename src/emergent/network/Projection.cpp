@@ -37,7 +37,6 @@ using namespace std;
 
 void Projection::Initialize() {
   Initialize_core();
-  
   disp = true;
   layer = NULL;
   from_type = INIT; //was: PREV;
@@ -45,6 +44,7 @@ void Projection::Initialize() {
   dir_fixed = false;
   direction = DIR_UNKNOWN;
   m_prv_con_spec = NULL;
+  m_prv_off = false;
   prjn_clr.Set(1.0f, .9f, .5f); // very light orange
 #ifdef DMEM_COMPILE
   dmem_agg_sum.agg_op = MPI_SUM;
@@ -127,6 +127,7 @@ void Projection::Copy_(const Projection& cp) {
   direction = cp.direction;
 
   m_prv_con_spec = cp.m_prv_con_spec;
+  m_prv_off = off;
 }
 
 void Projection::UpdateAfterMove_impl(taBase* old_owner) {
@@ -144,8 +145,30 @@ void Projection::UpdateAfterEdit_impl() {
   if(!(taMisc::is_loading || (from_type == INIT)))
     SetFrom();
 
+  Network* mynet = GET_MY_OWNER(Network);
+  
+  if(taMisc::is_loading) {
+    m_prv_off = off;
+  }
+  else {
+    if(off != m_prv_off) {
+      if(taMisc::gui_active && mynet && mynet->IsBuiltIntact()) {
+        int chs = taMisc::Choice("Can only change the off status of a projection when the network is *not* Built -- this determines if a projection is built -- do you want to UnBuild the network and proceed?", "UnBuild and Proceed", "Cancel");
+        if(chs == 0) {
+          mynet->UnBuild();
+          m_prv_off = off;
+        }
+        else {
+          off = m_prv_off;
+        }
+      }
+      else {
+        m_prv_off = off;
+      }
+    }
+  }
+
   if((bool)from) {
-    Network* mynet = GET_MY_OWNER(Network);
     Network* fmnet = GET_OWNER(from, Network);
     if(fmnet != mynet) {
       Layer* ly = mynet->FindLayer(from->name);
@@ -229,10 +252,60 @@ void Projection::DMem_ComputeAggs(MPI_Comm comm) {
 
 
 void Projection::ToggleOff() {
+  NetworkState_cpp* net = GetValidNetState();
+  if(net) {
+    int chs = taMisc::Choice("Can only change the off status of a projection when the network is *not* Built -- this determines if a projection is built -- do you want to UnBuild the network and proceed?", "UnBuild and Proceed", "Cancel");
+    if(chs == 0) {
+      Network* mynet = layer->own_net;
+      mynet->UnBuild();
+    }
+    else {
+      return;
+    }
+  }
   off = !off;
+  m_prv_off = off;
   UpdateAfterEdit();
 }
 
+void Projection::Lesion() {
+  if(lesioned) return;
+  NetworkState_cpp* net = GetValidNetState();
+  if(TestError(!net, "Lesion", "Can only Lesion a projection when network is built -- otherwise has no effect")) {
+    return;
+  }
+  if(TestError(prjn_idx < 0, "Lesion",
+               "can only lesion projections that have been built")) {
+    return;
+  }
+  lesioned = true;
+  PrjnState_cpp* pj = GetPrjnState(net);
+  pj->LesionState(net);
+  Network* mynet = layer->own_net;
+  mynet->UpdtAfterNetMod();
+  SigEmitUpdated();
+}
+
+void Projection::UnLesion() {
+  if(!lesioned) return;
+  NetworkState_cpp* net = GetValidNetState();
+  if(TestError(!net, "UnLesion", "Can only UnLesion a projection when network is built -- otherwise has no effect")) {
+    return;
+  }
+  if(TestError(prjn_idx < 0, "UnLesion",
+               "can only unlesion projections that have been built")) {
+    return;
+  }
+  UpdateLesioned();
+  PrjnState_cpp* pj = GetPrjnState(net);
+  pj->UnLesionState(net);
+  Network* mynet = layer->own_net;
+  mynet->UpdtAfterNetMod();
+  SigEmitUpdated();
+}
+
+    
+    
 void Projection::SetFrom() {
   if(!(bool)layer) {
     from = NULL;
@@ -485,7 +558,7 @@ NetworkState_cpp* Projection::GetValidNetState() const {
   if(!layer) return NULL;
   NetworkState_cpp* net = layer->GetValidNetState();
   if(!net) return NULL;
-  if(!IsActive(net)) return NULL;
+  if(prjn_idx < 0) return NULL;
   return net;
 }
 

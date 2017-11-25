@@ -7,7 +7,7 @@ Library          OperatingSystem
 
 Resource         Server_lib.txt
 
-Suite Setup      Initialize Emergent    ./test-projects/TestLeasionLayer.proj
+Suite Setup      Initialize Emergent    ./test-projects/TestLesionLayer.proj
 Suite Teardown   Shutdown Emergent
 
 *** Variables ***
@@ -49,19 +49,19 @@ General RunState
 # Std Network
 # Run Emergent Program    TestStdNetwork
 
-#LeasionedWeightsUnchanged
+#LesionedWeightsUnchanged
 #    Run Emergent Program    Build
-#    Set Emergent Var	    SaveLeasionedWeights		fileNameSupliment	"before"
-#    Run Emergent Program    SaveLeasionedWeights
-#    Run Emergent Program    Leasion
+#    Set Emergent Var	    SaveLesionedWeights		fileNameSupliment	"before"
+#    Run Emergent Program    SaveLesionedWeights
+#    Run Emergent Program    Lesion
 #    Run Emergent Program    MasterTrain
-#    Run Emergent Program    UnLeasion
-#    Set Emergent Var	    SaveLeasionedWeights		fileNameSupliment	"after"
-#    Run Emergent Program    SaveLeasionedWeights
-#    ${diff}=	Run Process		/usr/bin/diff	./test-projects/LeasionWeightsFmOutputbefore.wts		./test-projects/LeasionWeightsFmOutputafter.wts
+#    Run Emergent Program    UnLesion
+#    Set Emergent Var	    SaveLesionedWeights		fileNameSupliment	"after"
+#    Run Emergent Program    SaveLesionedWeights
+#    ${diff}=	Run Process		/usr/bin/diff	./test-projects/TestLesionlayer_initwts.wts		./test-projects/TestLesionlayer_finalwts.wts
 #    Should Match	"${diff.stdout}"		""
-#    ${diff}=	Run Process		/usr/bin/diff	./test-projects/LeasionWeightsFmInputbefore.wts		./test-projects/LeasionWeightsFmInputafter.wts
+#    ${diff}=	Run Process		/usr/bin/diff	./test-projects/LesionWeightsFmInputbefore.wts		./test-projects/LesionWeightsFmInputafter.wts
 #    Should Match	"${diff.stdout}"		""
-#    ${diff}=	Run Process		/usr/bin/diff	./test-projects/LeasionWeightsFmHiddencopybefore.wts		./test-projects/LeasionWeightsFmHiddencopytafter.wts
+#    ${diff}=	Run Process		/usr/bin/diff	./test-projects/LesionWeightsFmHiddencopybefore.wts		./test-projects/LesionWeightsFmHiddencopytafter.wts
 #    Should Match	"${diff.stdout}"		""
     

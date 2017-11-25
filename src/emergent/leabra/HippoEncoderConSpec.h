@@ -20,6 +20,7 @@
     const int sz = cg->size;
     for(int i=0; i<sz; i++) {
       LEABRA_UNIT_STATE* ru = cg->UnState(i, net);
+      if(ru->lesioned()) continue;
       C_Compute_dWt_CHL(dwts[i], ru->act_p, ru->act_q1, su_act_p, su_act_m);
     }
   }

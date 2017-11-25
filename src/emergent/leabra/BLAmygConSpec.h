@@ -38,6 +38,7 @@
     
     for(int i=0; i<sz; i++) {
       LEABRA_UNIT_STATE* ru = cg->UnState(i, net);
+      if(ru->lesioned()) continue;
       float lrate_eff = clrate; // start fresh each time thru for_loop
       
       // learning dependent on non-zero deep_lrn

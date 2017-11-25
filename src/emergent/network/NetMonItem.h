@@ -205,7 +205,7 @@ protected:
   void	ScanObject_LayerUnGp(Layer* lay, String var);
   // #IGNORE unit group variables -- ungp[x].y
   void	ScanObject_Projection(Projection* p, String var); // #IGNORE
-  void	ScanObject_ProjectionGroup(Projection_List* p, String var); // #IGNORE
+  void	ScanObject_ProjectionList(Projection_List* p, String var); // #IGNORE
   void	ScanObject_Unit(UnitState_cpp* u, String var, String obj_nm, NetworkState_cpp* net);
   // #IGNORE this is only when the object itself is a unit
   bool	CheckVarOnUnit(String var, Network* net);

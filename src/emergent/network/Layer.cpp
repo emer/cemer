@@ -375,11 +375,12 @@ void Layer::UpdateAfterEdit_impl() {
     }
     UpdateSendPrjnNames();
 
-    if(lesioned() && !(m_prv_layer_flags & LESIONED)) {
-      // clear activity if we're lesioned
-      // if(own_net)
-      //   Init_Acts(own_net);
-    }
+    // this flag is read only so we don't really need this -- everything should be in
+    // methods!
+    // if(lesioned() && !(m_prv_layer_flags & LESIONED)) {
+    // }
+    // else if(!lesioned() && (m_prv_layer_flags & LESIONED)) {
+    // }
 
     if(HasLayerFlag(SAVE_UNIT_NAMES)) {
       if(unit_groups) {
@@ -420,7 +421,8 @@ void Layer::Lesion() {
   UpdateAllPrjns();
   NetworkState_cpp* net = GetValidNetState();
   if(net) {
-    LesionUnits(1.0f);          // lesion all units b/c that is what is checked in code!
+    LayerState_cpp* lst = GetLayerState(net);
+    lst->LesionState(net);
   }
   StructUpdate(false);
   if(own_net)
@@ -435,16 +437,29 @@ void Layer::LesionIconify() {
 void Layer::UnLesion() {
   if (!lesioned()) return;
   NetworkState_cpp* net = GetValidNetState();
-  if(net) {                     // if network is built then can only unlesion if was originally built
-    if(layer_idx < 0) {
-      taMisc::Error("UnLesion: can only unlesion layers that were originally unlesioned when network was built (only those layers were built into LayerState etc) -- UnBuild the network and then unlesion then re-Build if you want to be able to dynamically turn layers on and off");
+  if(net && layer_idx < 0) {
+    if(taMisc::gui_active) {
+      int chs = taMisc::Choice("Can only unlesion layers that were originally unlesioned when network was built (only those layers were built into LayerState etc) -- do you want to UnBuild the network and then unlesion this layer?", "UnBuild and Proceed", "Cancel");
+      if(chs == 0) {
+        own_net->UnBuild();
+        net = NULL;
+      }
+      else {
+        return;
+      }
+    }
+    else {
+      TestError(true, "UnLesion", "Can only unlesion layers that were originally unlesioned when network was built (only those layers were built into LayerState etc) -- do you want to UnBuild the network and then unlesion this layer?");
       return;
     }
-    UnLesionUnits();          // unlesion all units
   }
-  StructUpdate(true);
+  else if(net) {
+    ClearLayerFlag(LESIONED);
+    LayerState_cpp* lst = GetLayerState(net);
+    lst->UnLesionState(net);
+  }
   ClearLayerFlag(LESIONED);
-  UnLesionUnits();              // all our units were lesioned when parent was
+  StructUpdate(true);
   UpdateAllPrjns();
   m_prv_layer_flags = flags;
   StructUpdate(false);

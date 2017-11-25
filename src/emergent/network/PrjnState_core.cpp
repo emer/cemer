@@ -51,3 +51,48 @@ void PRJN_STATE::Copy_Weights(NETWORK_STATE* net, PRJN_STATE* src) {
   }
 }
 
+void PRJN_STATE::LesionState(NETWORK_STATE* net) {
+  lesioned = true;
+  LAYER_STATE* recv_lay = GetRecvLayer(net);
+  for(int rui = 0; rui < recv_lay->n_units; rui++) {
+    UNIT_STATE* ru = recv_lay->GetUnitState(net, rui);
+    CON_STATE* cg = ru->RecvConState(net, recv_idx);
+    if(!cg) continue;
+    cg->SetInactive();
+  }
+
+  LAYER_STATE* send_lay = GetSendLayer(net);
+  for(int sui = 0; sui < send_lay->n_units; sui++) {
+    UNIT_STATE* su = send_lay->GetUnitState(net, sui);
+    CON_STATE* cg = su->SendConState(net, send_idx);
+    if(!cg) continue;
+    cg->SetInactive();
+  }
+}
+
+void PRJN_STATE::UnLesionState(NETWORK_STATE* net) {
+  lesioned = false;
+  LAYER_STATE* recv_lay = GetRecvLayer(net);
+  LAYER_STATE* send_lay = GetSendLayer(net);
+  if(send_lay->lesioned() || recv_lay->lesioned())
+    lesioned = true;
+  for(int rui = 0; rui < recv_lay->n_units; rui++) {
+    UNIT_STATE* ru = recv_lay->GetUnitState(net, rui);
+    CON_STATE* cg = ru->RecvConState(net, recv_idx);
+    if(!cg) continue;
+    if(lesioned || ru->lesioned())
+      cg->SetInactive();
+    else
+      cg->UpdtIsActive(net);
+  }
+
+  for(int sui = 0; sui < send_lay->n_units; sui++) {
+    UNIT_STATE* su = send_lay->GetUnitState(net, sui);
+    CON_STATE* cg = su->SendConState(net, send_idx);
+    if(!cg) continue;
+    if(lesioned || su->lesioned())
+      cg->SetInactive();
+    else
+      cg->UpdtIsActive(net);
+  }
+}

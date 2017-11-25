@@ -86,6 +86,7 @@
     if(ba_learn.learn_rule == STATE_CLASS(BasAmygLearnSpec)::DELTA) {
       for(int i=0; i<sz; i++) {
         LEABRA_UNIT_STATE* ru = cg->UnState(i, net);
+        if(ru->lesioned()) continue;
         bool d2r = (ru->HasUnitFlag(LEABRA_UNIT_STATE::D2R));
         bool acq = (ru->HasUnitFlag(LEABRA_UNIT_STATE::ACQUISITION));
         if(acq) {
@@ -100,6 +101,7 @@
     else {
       for(int i=0; i<sz; i++) {
         LEABRA_UNIT_STATE* ru = cg->UnState(i, net);
+        if(ru->lesioned()) continue;
         bool d2r = (ru->HasUnitFlag(LEABRA_UNIT_STATE::D2R));
         bool acq = (ru->HasUnitFlag(LEABRA_UNIT_STATE::ACQUISITION));
         if(acq) {

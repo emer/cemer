@@ -21,6 +21,7 @@
     const int sz = cg->size;
     for(int i=0; i<sz; i++) {
       LEABRA_UNIT_STATE* ru = cg->UnState(i,net);
+      if(ru->lesioned()) continue;
       C_Compute_dWt_PfPc(dwts[i], gran_act, ru->act_eq, ru->targ);
       // target activation trains relative to act_eq
     }

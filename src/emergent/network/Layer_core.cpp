@@ -3,8 +3,8 @@
 
 void LAYER_STATE::Connect_Sizes(NETWORK_STATE* net) {
   if(prjn_start_idx < 0 || n_recv_prjns == 0) return;
-  for(int i = 0; i < n_recv_prjns; i++) {
-    PRJN_STATE* prjn = GetRecvPrjnState(net, i);
+  for(int pi = 0; pi < n_recv_prjns; pi++) {
+    PRJN_STATE* prjn = GetRecvPrjnState(net, pi);
     if(prjn->NotActive(net)) continue;
     PRJN_SPEC_CPP* pspec = prjn->GetPrjnSpec(net);
     pspec->Connect_Sizes(prjn, net);
@@ -13,8 +13,8 @@ void LAYER_STATE::Connect_Sizes(NETWORK_STATE* net) {
 
 void LAYER_STATE::Connect_Cons(NETWORK_STATE* net, int pass) {
   if(prjn_start_idx < 0 || n_recv_prjns == 0) return;
-  for(int i = 0; i < n_recv_prjns; i++) {
-    PRJN_STATE* prjn = GetRecvPrjnState(net, i);
+  for(int pi = 0; pi < n_recv_prjns; pi++) {
+    PRJN_STATE* prjn = GetRecvPrjnState(net, pi);
     if(prjn->NotActive(net)) continue;
     PRJN_SPEC_CPP* pspec = prjn->GetPrjnSpec(net);
     pspec->Connect_Cons(prjn, net, pass);
@@ -104,6 +104,39 @@ void LAYER_STATE::LayoutUnits(NETWORK_STATE* net) {
         un->disp_pos_y = un_y;
       }
     }
+  }
+}
+
+
+void LAYER_STATE::LesionState(NETWORK_STATE* net) {
+  SetLayerFlag(LESIONED);
+  for(int j=0; j < n_units; j++) {
+    UNIT_STATE* u = GetUnitState(net, j);
+    u->Lesion(net);
+  }
+  for(int pi = 0; pi < n_send_prjns; pi++) {
+    PRJN_STATE* prjn = GetSendPrjnState(net, pi);
+    prjn->LesionState(net);
+  }
+  for(int pi = 0; pi < n_recv_prjns; pi++) {
+    PRJN_STATE* prjn = GetRecvPrjnState(net, pi);
+    prjn->LesionState(net);
+  }
+}
+
+void LAYER_STATE::UnLesionState(NETWORK_STATE* net) {
+  ClearLayerFlag(LESIONED);
+  for(int j=0; j < n_units; j++) {
+    UNIT_STATE* u = GetUnitState(net, j);
+    u->UnLesion(net);
+  }
+  for(int pi = 0; pi < n_send_prjns; pi++) {
+    PRJN_STATE* prjn = GetSendPrjnState(net, pi);
+    prjn->UnLesionState(net);
+  }
+  for(int pi = 0; pi < n_recv_prjns; pi++) {
+    PRJN_STATE* prjn = GetRecvPrjnState(net, pi);
+    prjn->UnLesionState(net);
   }
 }
 

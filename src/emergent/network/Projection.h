@@ -91,14 +91,14 @@ public:
 #endif
 
 
-  inline bool           MainIsActive()      { return ((bool)layer && !off && !lesioned && (bool)from); }
+  inline bool           MainIsActive() const { return ((bool)layer && !off && !lesioned && (bool)from); }
   // #CAT_Structure active test that works for main code -- before net state is built..
-  inline bool           MainNotActive()     { return !MainIsActive(); }
+  inline bool           MainNotActive() const { return !MainIsActive(); }
   // #CAT_Structure active test that works for main code -- before net state is built..
   
-  inline ConSpec*       GetMainConSpec()    { return con_spec.spec.ptr(); }
+  inline ConSpec*       GetMainConSpec() const { return con_spec.spec.ptr(); }
   // #CAT_Structure get the connection spec for this projection
-  inline ProjectionSpec* GetMainPrjnSpec()  { return spec.spec.ptr(); }
+  inline ProjectionSpec* GetMainPrjnSpec() const { return spec.spec.ptr(); }
   // #CAT_Structure get the projection spec for this projection
 
   NetworkState_cpp* GetValidNetState() const;
@@ -112,8 +112,8 @@ public:
   // #CAT_Structure update the name of projection to reflect any changes in where it receives from
 
   virtual void  ToggleOff();
-  // #MENU #MENU_ON_Object #DYN1 #CAT_Structure toggle the off status of this projection -- if on, turn off, if off, turn on
-  
+  // #MENU #MENU_ON_Object #DYN1 #CAT_Structure toggle the off status of this projection -- whether to use this projection in built network -- if on, turn off, if off, turn on -- can only be done when the network is not built -- see Lesion() / UnLesion() for dynamic lesioning of a built network
+
   virtual void  SetFrom();
   // #CAT_Structure set where to receive from based on selections
   virtual void  SetCustomFrom(Layer* from_lay);
@@ -176,6 +176,11 @@ public:
   virtual bool  LoadWeights(const String& fname="", bool quiet = false);
   // #BUTTON #MENU #EXT_wts #COMPRESS #CAT_File #FILETYPE_Weights #FILE_DIALOG_LOAD read weight values in from a simple ordered list of weights (fmt is read from file) (leave fname empty to pull up file chooser)
 
+  virtual void  Lesion();
+  // #BUTTON #MENU #DYN1 #CAT_Structure flag this layer as lesioned and disable all computation for connections associated -- this can be reversed with UnLesion -- can only be called on projections that have already been built (i.e., !off) and when network is built and intact
+  virtual void  UnLesion();
+  // #BUTTON #MENU #DYN1 #CAT_Structure un-lesion this projection -- re-enable its computation -- only for projections that were originally built and when network is built and intact
+  
   virtual DataTable*    WeightsToTable(DataTable* dt, const String& col_nm = "",
                                        bool recv_wts = true);
   // #MENU #NULL_OK  #NULL_TEXT_0_NewTable #CAT_Structure copy entire set of projection weights to given table (e.g., for analysis), with one row per receiving unit, and one column (name is layer name if not otherwise specified) that has a float matrix cell of the geometry of the sending layer -- recv prjn if recv_wts is true, else sending weights
@@ -189,10 +194,12 @@ public:
   // #MENU #NULL_OK_0 #NULL_TEXT_0_NewTable #CAT_Statistics record given connection-level variable to data table with column names the same as the variable names, and one row per *connection* (unlike monitor-based operations which create matrix columns) -- this is useful for performing analyses on learning rules as a function of sending and receiving unit variables -- uses receiver-based connection traversal -- connection variables are just specified directly by name -- corresponding receiver unit variables are "r.var" and sending unit variables are "s.var"
 
 
-  virtual void  UpdateLesioned(); // update the cached lesioned flag
+  virtual void  UpdateLesioned();
+  // #CAT_State update the cached lesioned flag
+  
   String       GetTypeDecoKey() const override { return "Projection"; }
-  int    GetEnabled() const    override { return !off; }
-  void   SetEnabled(bool value) override { off = !value; }
+  int    GetEnabled() const    override { return MainIsActive(); }
+  // void   SetEnabled(bool value) override { off = !value; }
 
   bool ChangeMyType(TypeDef* new_type) override;
 
@@ -202,6 +209,7 @@ public:
   TA_BASEFUNS(Projection);
 protected:
   ConSpec*      m_prv_con_spec; // previous con spec set for cons
+  bool          m_prv_off;      // previous off flag status
 
   void UpdateAfterEdit_impl() override;
   void UpdateAfterMove_impl(taBase* old_owner) override;

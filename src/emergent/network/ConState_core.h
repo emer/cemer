@@ -105,11 +105,7 @@
     return prjn->IsActive(net); }
   // #CAT_State is the projection active for this connection group?
 
-  INLINE void           UpdtIsActive(NETWORK_STATE* net)
-  { if(alloc_size > 0 && size > 0 && PrjnIsActive(net))
-      SetConStateFlag(IS_ACTIVE);
-    else ClearConStateFlag(IS_ACTIVE);
-  }
+  INIMPL void           UpdtIsActive(NETWORK_STATE* net);
   // #CAT_State update active status: is this an active connection group, with connections and an active projection?
 
   INLINE void           SetInactive()

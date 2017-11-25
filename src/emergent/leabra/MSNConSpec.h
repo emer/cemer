@@ -198,6 +198,7 @@
     case DA_HEBB: {
       for(int i=0; i<sz; i++) {
         LEABRA_UNIT_STATE* ru = cg->UnState(i,net);
+        if(ru->lesioned()) continue;
         bool d2r = (ru->HasUnitFlag(LEABRA_UNIT_STATE::D2R));
         float lrate_eff = clrate;
         if(deep_on) {
@@ -211,6 +212,7 @@
     case DA_HEBB_VS: {
       for(int i=0; i<sz; i++) {
         LEABRA_UNIT_STATE* ru = cg->UnState(i,net);
+        if(ru->lesioned()) continue;
         bool d2r = (ru->HasUnitFlag(LEABRA_UNIT_STATE::D2R));
         float lrate_eff = clrate;
         if(deep_on) {
@@ -225,6 +227,7 @@
     case TRACE_THAL: {
       for(int i=0; i<sz; i++) {
         LEABRA_UNIT_STATE* ru = cg->UnState(i,net);
+        if(ru->lesioned()) continue;
         bool d2r = (ru->HasUnitFlag(LEABRA_UNIT_STATE::D2R));
         float lrate_eff = clrate;
         if(deep_on) {
@@ -241,6 +244,7 @@
     case TRACE_NO_THAL: {
       for(int i=0; i<sz; i++) {
         LEABRA_UNIT_STATE* ru = cg->UnState(i,net);
+        if(ru->lesioned()) continue;
         bool d2r = (ru->HasUnitFlag(LEABRA_UNIT_STATE::D2R));
         float lrate_eff = clrate;
         if(deep_on) {
@@ -256,6 +260,7 @@
     case TRACE_NO_THAL_VS: {
       for(int i=0; i<sz; i++) {
         LEABRA_UNIT_STATE* ru = cg->UnState(i,net);
+        if(ru->lesioned()) continue;
         bool d2r = (ru->HasUnitFlag(LEABRA_UNIT_STATE::D2R));
         float lrate_eff = clrate;
         if(deep_on) {

@@ -349,6 +349,12 @@
   }
   // #CAT_State copy weights from other layer, going projection-by-projection in order by index (only sensible if the layers have matching projection structure) -- either recv or send
 
+
+  INIMPL void  LesionState(NETWORK_STATE* net);
+  // #IGNORE perform all the state-side aspects of lesioning -- lesions units, associated projections
+  INIMPL void  UnLesionState(NETWORK_STATE* net);
+  // #IGNORE perform all the state-side aspects of un-lesioning -- lesions units, associated projections
+
   INLINE void  Init_Stats() {
     sse = 0.0f;            avg_sse.ResetAvg();    cnt_err = 0.0f;
     cur_cnt_err = 0.0f;    pct_err = 0.0f;        pct_cor = 0.0f;

@@ -34,18 +34,21 @@
     if(da_mod == NO_DA_MOD) {
       for(int i=0; i<sz; i++) {
         LEABRA_UNIT_STATE* ru = cg->UnState(i, net);
+        if(ru->lesioned()) continue;
         C_Compute_dWt_Delta_NoDa(dwts[i], ru->act_p, ru->act_m, su_act);
       }
     }
     else if(da_mod == DA_MOD) {
       for(int i=0; i<sz; i++) {
         LEABRA_UNIT_STATE* ru = cg->UnState(i, net);
+        if(ru->lesioned()) continue;
         C_Compute_dWt_Delta_Da(dwts[i], ru->act_p, ru->act_m, su_act, ru->da_p);
       }
     }
     else {                      // DA_MOD_ABS
       for(int i=0; i<sz; i++) {
         LEABRA_UNIT_STATE* ru = cg->UnState(i, net);
+        if(ru->lesioned()) continue;
         C_Compute_dWt_Delta_Da(dwts[i], ru->act_p, ru->act_m, su_act, fabsf(ru->da_p));
       }
     }

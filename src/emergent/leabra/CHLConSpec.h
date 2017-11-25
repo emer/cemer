@@ -53,6 +53,7 @@
     const int sz = cg->size;
     for(int i=0; i<sz; i++) {
       LEABRA_UNIT_STATE* ru = cg->UnState(i,net);
+      if(ru->lesioned()) continue;
       const float lin_wt = fwts[i];
       C_Compute_dWt_LeabraCHL
         (dwts[i],

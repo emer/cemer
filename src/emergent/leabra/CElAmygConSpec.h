@@ -33,6 +33,7 @@
     
     for(int i=0; i<sz; i++) {
       LEABRA_UNIT_STATE* ru = cg->UnState(i, net);
+        if(ru->lesioned()) continue;
       // screen out spurious da signals due to tiny VSPatch-to-LHb signals
       float ru_da_p = ru->da_p;
       if(fabsf(ru_da_p) < cel_learn.da_lrn_thr) { ru_da_p = 0.0f; }
