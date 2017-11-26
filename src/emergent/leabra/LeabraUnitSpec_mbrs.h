@@ -411,8 +411,8 @@ public:
   STATE_TA_STD_CODE_SPEC(LeabraChannels);
   
 private:
-  void        Initialize()      { Defaults_init(); }
-  void        Defaults_init()   {  e = l = i = 0.0f;  }
+  void        Initialize()      { e = l = i = 0.0f;  }
+  void        Defaults_init()   { }
 };
 
 

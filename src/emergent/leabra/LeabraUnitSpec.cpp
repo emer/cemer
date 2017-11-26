@@ -249,7 +249,7 @@ void LeabraUnitSpec::BioParams(float norm_sec, float norm_volt, float volt_off, 
   adapt.vm_gain = (adapt_vm_gain_nS * 1.0e-9f) / norm_siemens;
   adapt.spike_gain = (adapt_spk_gain_nA * 1.0e-9f) / norm_amp;
 
-  init.v_m = e_rev.l;
+  init.v_m = 0.4f;
   vm_range.min = 0.0f;
   vm_range.max = 2.0f;
 
