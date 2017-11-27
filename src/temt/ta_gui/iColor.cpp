@@ -338,6 +338,12 @@ const iColor	iColor::black_;
 
 bool iColor::find (const char* name, float& r, float& g, float& b) {
   int rgb;
+  bool qthas = QColor::isValidColor(name);
+  if(qthas) {
+    QColor qc(name);
+    r = qc.redF(); g = qc.greenF(); b = qc.blueF();
+    return true;
+  }
   bool rval = name2rgb(name, rgb);
   if (rval) {
     iColor c(rgb);

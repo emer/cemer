@@ -248,8 +248,10 @@ void iDialogObjDiffBrowser::AddItems() {
     String lbl_b;
     bool chk_b = rec->GetCurAction(1, lbl_b);
     
-    bool a_off = !rec->IsAValid() || (rec->AMemberNoShow() || rec->AMemberNoEdit());
-    bool b_off = !rec->IsBValid() || (rec->BMemberNoShow() || rec->BMemberNoEdit());
+    bool a_off = !rec->IsAValid() || rec->IsADisabled() ||
+      (rec->AMemberNoShow() || rec->AMemberNoEdit());
+    bool b_off = !rec->IsBValid() || rec->IsBDisabled() ||
+      (rec->BMemberNoShow() || rec->BMemberNoEdit());
 
     QTreeWidgetItem* parw = NULL;
     if(rec->par_rec) {

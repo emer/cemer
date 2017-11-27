@@ -82,24 +82,26 @@ void iDialogList::SetList(taBase_PtrList& base_list, String title,
     src += "</th>";
   }
   for (int i=0; i<item_list.size; i++) {
-    src += "<tr><td>";
     taBase* base = item_list.SafeEl(i);
-    if (base) {
-      // item
-      String item = base->GetColText(taBase::key_disp_name);
-      String href = "ta:" + base->GetPath();
-      src += "<a href=\"" + href + "\">" + item + "</a>";
+    if (!base) continue;
+    src += "<tr";
+    if(base->GetEnabled() == 0)
+      src += " bgcolor=\"#D0D0D0\"";
+    src += "><td>";
+    // item
+    String item = base->GetColText(taBase::key_disp_name);
+    String href = "ta:" + base->GetPath();
+    src += "<a href=\"" + href + "\">" + item + "</a>";
+    src += "</td><td>";
+    // path
+    src += base->GetPathNames();
+    src += "</td>";
+    if (info_strings && info_strings->size > 0) {
       src += "</td><td>";
-      // path
-      src += base->GetPathNames();
+      src += info_strings->SafeEl(i);
       src += "</td>";
-      if (info_strings && info_strings->size > 0) {
-        src += "</td><td>";
-        src += info_strings->SafeEl(i);
-        src += "</td>";
-      }
-     src += "</tr>";
     }
+    src += "</tr>";
   }
   src += "</table>";
   results->setHtml(src);

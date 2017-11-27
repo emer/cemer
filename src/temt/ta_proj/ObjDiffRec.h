@@ -101,6 +101,11 @@ public:
   // is the B record still valid (i.e., has the object not yet been deleted?)
   inline bool   IsValid()  const { return IsAValid() && IsBValid(); }
   // is the record still vailid -- both A and B components still valid
+
+  inline bool   IsADisabled() const
+  { return ((a_indep_obj.ptr() == NULL) || a_indep_obj->GetEnabled() == 0); }
+  inline bool   IsBDisabled() const
+  { return ((b_indep_obj.ptr() == NULL) || b_indep_obj->GetEnabled() == 0); }
   
   inline bool   IsIndepObj() const
   { return IsValid() && (IsObjects() || IsParents()) && mdef == NULL; }
