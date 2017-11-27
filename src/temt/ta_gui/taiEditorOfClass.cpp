@@ -203,7 +203,8 @@ void taiEditorOfClass::Constr_Members_impl(MemberSpace& ms) {
     if (md->im == NULL) continue; // this puppy won't show nohow!set_grp
     if (!md->IsEditorHidden() && !md->HasExpert()) {
       if (Base() && Base()->GetMemberOwner() && md->name == "name") {
-        md->SetOptFlagsState(MemberDefBase::READ_ONLY, true);
+        continue;               // don't add names of members..
+        // note: was previously changing type info
       }
       if (md->IsGuiReadOnly()) {
         memb_el(MS_NORM_RO).Add(md);

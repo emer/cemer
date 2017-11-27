@@ -619,7 +619,8 @@ INHERITED(SpecMemberBase)
 public:
   bool       p_only_m;          // TRC plus-phase (clamping) for TRC units only occurs if the minus phase max activation for given unit group is above .1
   bool       thal_gate;         // apply thalamic gating to TRC activations -- multiply netin by current thal parameter
-  bool       avg_clamp;         // TRC plus-phase netinput is weighted average (see deep_gain) of current plus-phase deep netin and standard netin -- produces a better clamping dynamic
+  bool       clamp_net;         // #CONDSHOW_OFF_avg_clamp directly clamp the deep netin instead of settling -- appropriate for one-to-one projections to exactly reproduce the activation state
+  bool       avg_clamp;         // #CONDSHOW_OFF_clamp_net TRC plus-phase netinput is weighted average (see deep_gain) of current plus-phase deep netin and standard netin -- produces a better clamping dynamic
   float      deep_gain;         // #CONDSHOW_ON_avg_clamp how much to weight the deep netin relative to standard netin  (1.0-deep_gain) for avg_clamp
   bool       clip;              // clip the deep netin to clip_max value -- produces more of an OR-like behavior for TRC reps
   float      clip_max;          // #CONDSHOW_ON_clip maximum netin value to clip deep raw netin in trc plus-phase clamping -- prevents strong from dominating weak too much..
@@ -636,11 +637,11 @@ public:
   STATE_DECO_KEY("UnitSpec");
   STATE_TA_STD_CODE_SPEC(TRCSpec);
   
-  STATE_UAE(std_gain = 1.0f - deep_gain;);
+  STATE_UAE(std_gain = 1.0f - deep_gain;  if(clamp_net) avg_clamp = false; if(avg_clamp) clamp_net = false; );
 
 private:
   void        Initialize()
-  { avg_clamp = false; clip = false; clip_max = 0.4f;  Defaults_init(); }
+  { clamp_net = false; avg_clamp = false; clip = false; clip_max = 0.4f;  Defaults_init(); }
 
   void        Defaults_init() {
     p_only_m = false;

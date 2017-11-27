@@ -561,6 +561,9 @@
     if(net->cycle >= dt.fast_cyc) {
       new_act = u->act_nd + dt.integ * dt.vm_dt * (new_act - u->act_nd); // time integral with dt.vm_dt  -- use nd to avoid synd problems
     }
+    if(deep.IsTRC() && Quarter_DeepRawNow(net->quarter) && trc.clamp_net) {
+      new_act = u->net;
+    }
 
     u->da = new_act - u->act_nd;
     if((noise_type.type == STATE_CLASS(LeabraNoiseSpec)::ACT_NOISE) &&
