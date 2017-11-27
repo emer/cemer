@@ -49,19 +49,25 @@ General RunState
 # Std Network
 # Run Emergent Program    TestStdNetwork
 
-#LesionedWeightsUnchanged
-#    Run Emergent Program    Build
-#    Set Emergent Var	    SaveLesionedWeights		fileNameSupliment	"before"
-#    Run Emergent Program    SaveLesionedWeights
-#    Run Emergent Program    Lesion
-#    Run Emergent Program    MasterTrain
-#    Run Emergent Program    UnLesion
-#    Set Emergent Var	    SaveLesionedWeights		fileNameSupliment	"after"
-#    Run Emergent Program    SaveLesionedWeights
+LesionedWeightsUnchanged
+    Run Keyword And Ignore Error	Run Process	 	    rm ./test-projects/TestLesionLayer_initwts.wts
+    Run Keyword And Ignore Error	Run Process	 	    rm ./test-projects/TestLesionLayer_finalwts.wts
+    Run Keyword And Ignore Error	Run Process	 	    rm ./test-projects/LesionWeightsFmInputbefore.wts
+    Run Keyword And Ignore Error	Run Process	 	    rm ./test-projects/LesionWeightsFmInputafter.wts
+    Run Keyword And Ignore Error	Run Process	 	    rm ./test-projects/LesionWeightsFmHiddencopybefore.wts
+    Run Keyword And Ignore Error	Run Process	 	    rm ./test-projects/LesionWeightsFmHiddencopyafter.wts
+    Run Keyword And Ignore Error	Run Process	 	    rm ./test-projects/LesionWeightsFmOutputbefore.wts
+    Run Keyword And Ignore Error	Run Process	 	    rm ./test-projects/LesionWeightsFmOutputafter.wts
+
+
+    Run Emergent Program    MasterTrain
+
 #    ${diff}=	Run Process		/usr/bin/diff	./test-projects/TestLesionlayer_initwts.wts		./test-projects/TestLesionlayer_finalwts.wts
 #    Should Match	"${diff.stdout}"		""
-#    ${diff}=	Run Process		/usr/bin/diff	./test-projects/LesionWeightsFmInputbefore.wts		./test-projects/LesionWeightsFmInputafter.wts
-#    Should Match	"${diff.stdout}"		""
-#    ${diff}=	Run Process		/usr/bin/diff	./test-projects/LesionWeightsFmHiddencopybefore.wts		./test-projects/LesionWeightsFmHiddencopytafter.wts
-#    Should Match	"${diff.stdout}"		""
+    ${diff}=	Run Process		/usr/bin/diff	./test-projects/LesionWeightsFmInputbefore.wts		./test-projects/LesionWeightsFmInputafter.wts
+    Should Match	"${diff.stdout}"		""
+    ${diff}=	Run Process		/usr/bin/diff	./test-projects/LesionWeightsFmHiddencopybefore.wts		./test-projects/LesionWeightsFmHiddencopytafter.wts
+    Should Match	"${diff.stdout}"		""
+    ${diff}=	Run Process		/usr/bin/diff	./test-projects/LesionWeightsFmOutputbefore.wts		./test-projects/LesionWeightsFmOutputafter.wts
+    Should Match	"${diff.stdout}"		""
     
