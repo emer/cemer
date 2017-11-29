@@ -107,6 +107,7 @@ eTypeDef_Of(LayerSpec_cpp);
 #include <State_main>
 
 eTypeDef_Of(NetStatsSpecs);
+eTypeDef_Of(NetworkCudaSpec);
 
 // this defines shared member state variables with NetworkState, in main context
 #include <Network_mbrs>
@@ -129,8 +130,6 @@ eTypeDef_Of(NetStatsSpecs);
 #define NET_STATE_RUN(typ, meth) ((CLASS_SUFFIXED(typ,_cpp)*)net_state)->meth
 #endif
 
-
-eTypeDef_Of(NetworkCudaSpec);
 
 eTypeDef_Of(NetStateSync);
 
