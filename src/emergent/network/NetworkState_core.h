@@ -102,7 +102,7 @@
   int           n_net_timers_total;     // #IGNORE n_net_timers_built * (n_thrs_built+1) -- number actually allocated
 
 
-/////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   //            Access
 
   INIMPL virtual void  StateError

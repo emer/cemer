@@ -20,6 +20,10 @@
 // State classes so it cannot depend on any of them -- every other class uses
 // NetworkState to access their State variables which are allocated here
 
+#include "ta_cuda.h"
+
+class NetworkState_cpp; // 
+
 // parent includes:
 #include <State_cuda>
 
@@ -33,13 +37,26 @@
 eTypeDef_Of(NetworkState_cuda);
 
 class NetworkState_cuda  {
-  // ##NO_TOKENS ##NO_UPDATE_AFTER #STEM_BASE ##CAT_Network plain C++ implementation of NetworkState 
+  // ##NO_TOKENS ##NO_UPDATE_AFTER #STEM_BASE ##CAT_Network CUDA GPU implementation of NetworkState 
 public:
 
 // this directly defines a bunch of shared vars with Network
 #include <Network_core>
 // and common state between C++ and _cuda
 #include <NetworkState_core>
+
+  STATE_CLASS(NetworkCudaSpec) cuda; // #CAT_CUDA cuda parameters
+  
+  bool          strms_created;     // status flag for streams
+  cudaStream_t  strm_build;        // for building network
+  cudaStream_t  strm_memcpy_cons;  // for copying cons
+  cudaStream_t  strm_memcpy_units;  // for copying units
+  cudaStream_t  strm_compute_netin; // for Compute_Netin
+  cudaStream_t  strm_compute_act;  // for Compute_Act
+  cudaStream_t  strm_compute_dwt; // for Compute_dWt
+  cudaStream_t  strm_compute_dwt_bias; // for B_Compute_dWt
+  cudaStream_t  strm_compute_weights;  // for Compute_Weights
+  cudaStream_t  strm_compute_weights_bias;  // for B_Compute_Weights
 
   //////////////////////////////////////////////////////////////////////
   //    CUDA versions of all major code -- Network.cpp just does switch
@@ -106,8 +123,13 @@ public:
   virtual bool  NetStateFree(void** ptr) const; 
   // #IGNORE free previously malloc'd memory, and set *ptr = NULL
 
-  virtual void  BuildUnitState();
-  // #IGNORE build unit state objects and associated indexes, after memory has been allocated and higher-level (layer, prjn, ungp) state has been initialized
+  virtual bool  CreateCudaStreams();
+  // #IGNORE create the streams -- subclasses need to override and add their own
+  
+  virtual void  UnitState_CppToDevice(NetworkState_cpp* netc, bool sync);
+  // #IGNORE copy unit state from cpp network to device -- we rely on cpp for all init..
+  virtual void  UnitState_DeviceToCpp(NetworkState_cpp* netc, bool sync);
+  // #IGNORE copy unit state from device to cpp network
 
   virtual void  BuildConState();
   // #IGNORE build connection-state objects and associated indexes -- also calls BuildSendNetinTmp
@@ -119,8 +141,11 @@ public:
   // #IGNORE Connect this network according to projections on Layers -- must be done as part of Build to ensure proper sync
   virtual void  Connect_Alloc();
   // #IGNORE second pass of connecting -- allocate all the memory for all the connections -- managed by the Network and done by thread
+
+  virtual void  UnBuildState();
+  // #IGNORE main unbuild call for state-side -- frees threads, mem
   
-  NetworkState_cuda() { Initialize_net_core(); Initialize_core(); }
+  NetworkState_cuda() { streams_created = false; Initialize_net_core(); Initialize_core(); }
 };
 
 #endif // NetworkState_cuda_h
