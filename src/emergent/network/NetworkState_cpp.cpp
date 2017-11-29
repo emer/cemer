@@ -172,23 +172,7 @@ void NetworkState_cpp::Init_Weights_post() {
 void NetworkState_cpp::Init_Metrics() {
   Init_Counters();
   Init_Stats();                 // in NetworkState_core.cpp -- calls layer stats too
-  // Init_Timers();
-}
-
-// void NetworkState_cpp::Init_Counters() {
-//   Init_Counters_impl();         // does all the work
-//   Init_Counters_State();
-// }
-  
-void NetworkState_cpp::Init_Timers() {
-  // todo: figure out timers at some point
-  // train_time.ResetUsed();
-  // epoch_time.ResetUsed();
-  // trial_time.ResetUsed();
-  // settle_time.ResetUsed();
-  // cycle_time.ResetUsed();
-  // wt_sync_time.ResetUsed();
-  // misc_time.ResetUsed();
+  Init_Timers();
 }
 
 void NetworkState_cpp::Compute_Netin() {

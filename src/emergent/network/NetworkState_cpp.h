@@ -153,8 +153,6 @@ public:
 
   virtual void  Init_Counters();
   // #EXPERT #CAT_Counter initialize all counter variables on network (called in Init_Weights; except batch because that loops over inits!)
-  virtual void  Init_Timers();
-  // #EXPERT #CAT_Statistic initialize statistic variables on network
 
   virtual void  Init_Sequence() { };
   // #CAT_Activation called by NetGroupedDataLoop at the start of a sequence (group) of input data events -- some algorithms may want to have a flag to optionally initialize activations at this point

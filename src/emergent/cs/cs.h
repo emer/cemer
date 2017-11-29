@@ -205,6 +205,8 @@ public:
   virtual void	GraphActFun(DataTable* graph_data, float min = -5.0, float max = 5.0, int ncycles=50);
   // #BUTTON #NULL_OK graph the activation function, settling for 50 cycles for each net input (NULL = new graph data)
 
+  TypeDef*      MinBiasSpecType() const override { return &TA_CsConSpec; }
+  
   void	InitLinks() override;
   SIMPLE_COPY(CsUnitSpec);
   TA_BASEFUNS(CsUnitSpec);

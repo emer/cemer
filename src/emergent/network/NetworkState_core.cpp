@@ -273,6 +273,15 @@ void NETWORK_STATE::Init_Stats() {
   Init_Stats_Layers();
 }
 
+void NetworkState_cpp::Init_Timers() {
+  for(int thr_no = 0; thr_no <= n_thrs_built; thr_no++) {
+    for(int tt = 0; tt < n_net_timers_built; tt++) {
+      TIME_USED* tu = GetNetTimer(tt, thr_no);
+      tu->ResetUsed();
+    }
+  }
+}
+
 void NETWORK_STATE::Init_Stats_Layers() {
   // IMPORTANT: must override this for derived classes with extra stats
   for(int i=0; i < n_layers_built; i++) {
@@ -927,6 +936,7 @@ void NETWORK_STATE::AllocLayerUnitMem() {
   NetStateMalloc((void**)&layers_mem, n_layers_built * layer_state_size);
   NetStateMalloc((void**)&prjns_mem, n_prjns_built * prjn_state_size);
   NetStateMalloc((void**)&ungps_mem, n_ungps_built * ungp_state_size);
+  
   NetStateMalloc((void**)&ungp_lay_idxs, n_ungps_built * sizeof(int));
   NetStateMalloc((void**)&lay_send_prjns, n_prjns_built * sizeof(int));
     
@@ -935,26 +945,27 @@ void NETWORK_STATE::AllocLayerUnitMem() {
   NetStateMalloc((void**)&units_thrs, n_units_built * sizeof(int));
   NetStateMalloc((void**)&units_thr_un_idxs, n_units_built * sizeof(int));
   NetStateMalloc((void**)&thrs_n_units, n_thrs_built * sizeof(int));
+  
+  NetStateMalloc((void**)&units_n_recv_cgps, n_units_built * sizeof(int));
+  NetStateMalloc((void**)&units_n_send_cgps, n_units_built * sizeof(int));
+
+  NetStateMalloc((void**)&thrs_n_recv_cgps, n_thrs_built * sizeof(int));
+  NetStateMalloc((void**)&thrs_n_send_cgps, n_thrs_built * sizeof(int));
+
   NetStateMalloc((void**)&thrs_unit_idxs, n_thrs_built * sizeof(int*));
   NetStateMalloc((void**)&thrs_lay_unit_idxs, n_thrs_built * sizeof(int*));
   NetStateMalloc((void**)&thrs_ungp_unit_idxs, n_thrs_built * sizeof(int*));
   NetStateMalloc((void**)&thrs_lay_stats, n_thrs_built * sizeof(float*));
   NetStateMalloc((void**)&thrs_units_mem, n_thrs_built * sizeof(char*));
 
-  NetStateMalloc((void**)&units_n_recv_cgps, n_units_built * sizeof(int));
-  NetStateMalloc((void**)&units_n_send_cgps, n_units_built * sizeof(int));
-
   NetStateMalloc((void**)&thrs_units_n_recv_cgps, n_thrs_built * sizeof(int*));
   NetStateMalloc((void**)&thrs_units_n_send_cgps, n_thrs_built * sizeof(int*));
 
-  NetStateMalloc((void**)&thrs_n_recv_cgps, n_thrs_built * sizeof(int));
-  NetStateMalloc((void**)&thrs_n_send_cgps, n_thrs_built * sizeof(int));
+  NetStateMalloc((void**)&thrs_recv_cgp_start, n_thrs_built * sizeof(int*));
+  NetStateMalloc((void**)&thrs_send_cgp_start, n_thrs_built * sizeof(int*));
 
   NetStateMalloc((void**)&thrs_recv_cgp_mem, n_thrs_built * sizeof(char*));
   NetStateMalloc((void**)&thrs_send_cgp_mem, n_thrs_built * sizeof(char*));
-
-  NetStateMalloc((void**)&thrs_recv_cgp_start, n_thrs_built * sizeof(int*));
-  NetStateMalloc((void**)&thrs_send_cgp_start, n_thrs_built * sizeof(int*));
 
   max_thr_n_units = (n_units_built / n_thrs_built) + 2;
 
@@ -1178,15 +1189,15 @@ void NETWORK_STATE::AllocConsCountStateMem() {
   NetStateMalloc((void**)&thrs_recv_cons_cnt, n_thrs_built * sizeof(int64_t));
   NetStateMalloc((void**)&thrs_send_cons_cnt, n_thrs_built * sizeof(int64_t));
 
-  NetStateMalloc((void**)&thrs_recv_cons_mem, n_thrs_built * sizeof(float*));
-  NetStateMalloc((void**)&thrs_send_cons_mem, n_thrs_built * sizeof(float*));
-
   NetStateMalloc((void**)&thrs_own_cons_max_size, n_thrs_built * sizeof(int));
   NetStateMalloc((void**)&thrs_own_cons_tot_size, n_thrs_built * sizeof(int64_t));
   NetStateMalloc((void**)&thrs_own_cons_tot_size_nonshared, n_thrs_built * sizeof(int64_t));
   NetStateMalloc((void**)&thrs_own_cons_avg_size, n_thrs_built * sizeof(int));
   NetStateMalloc((void**)&thrs_own_cons_max_vars, n_thrs_built * sizeof(int));
   NetStateMalloc((void**)&thrs_pct_cons_vec_chunked, n_thrs_built * sizeof(float));
+
+  NetStateMalloc((void**)&thrs_recv_cons_mem, n_thrs_built * sizeof(float*));
+  NetStateMalloc((void**)&thrs_send_cons_mem, n_thrs_built * sizeof(float*));
 
   NetStateMalloc((void**)&thrs_tmp_chunks, n_thrs_built * sizeof(int*));
   NetStateMalloc((void**)&thrs_tmp_not_chunks, n_thrs_built * sizeof(int*));

@@ -46,7 +46,7 @@ eTypeDef_Of(CustomPrjnSpec);
 #include <sstream>
 
 #ifdef CUDA_COMPILE
-#include "Network_cuda.h"
+#include "NetworkState_cuda.h"
 #endif
 
 TA_BASEFUNS_CTORS_DEFN(NetStatsSpecs);
@@ -755,8 +755,9 @@ void Network::BuildNetState() {
   net_state = NewNetworkState(); // network state has virtual pointers, needs new
 
 #ifdef CUDA_COMPILE
-  cuda_state = ;                // todo: cuda network state must be created on device but in an appropriately
-  // virtual way!
+  cuda_state = NewCudaState();
+  cuda_state->net_owner = this;
+  cuda_state->CudaInit();
 #endif
 
   net_state->net_owner = this;
@@ -781,15 +782,14 @@ void Network::Build() {
   net_state->FreeStateMem();     // free any and all existing memory!  must still have built params from before!
 
   specs.ResetAllSpecIdxs();
-  // todo: for all Build-level code, need to do cuda in parallel (at least for now)
   
   BuildNetState();
+  CheckSpecs();
   SyncSendPrjns();
   UpdatePrjnIdxs();
 
   BuildIndexesSizes();
   BuildSpecs();
-  CheckSpecs();
   
   SyncNetState();
 
@@ -829,6 +829,11 @@ void Network::Build() {
   SyncNetState();
   SyncLayerState();
   SyncPrjnState();
+
+#ifdef CUDA_COMPILE
+  // one-stop call does everything..
+  cuda_state->BuildCudaFmCpp(net_state);
+#endif  
   
   StructUpdate(false);
   --taMisc::no_auto_expand;
@@ -914,6 +919,9 @@ void Network::BuildIndexesSizes() {
     // LayerSpec and UnitSpec
     LayerSpec* ls = lay->GetMainLayerSpec();
     if(ls) {
+      TestError(!ls->InheritsFrom(&TA_LayerSpec), "Build",
+                "layer spec on layer:", lay->name, "is not a layer spec:", ls->name,
+                "type:", ls->GetTypeDef()->name);
       if(state_layer_specs.AddUnique(ls)) {
         ls->spec_idx = state_layer_specs.size-1;
       }
@@ -925,12 +933,18 @@ void Network::BuildIndexesSizes() {
           
     UnitSpec* us = lay->GetMainUnitSpec();
     if(us) {
+      TestError(!us->InheritsFrom(&TA_UnitSpec), "Build",
+                "unit spec on layer:", lay->name, "is not a unit spec:", us->name,
+                "type:", us->GetTypeDef()->name);
       if(state_unit_specs.AddUnique(us)) {
         us->spec_idx = state_unit_specs.size-1;
       }
       lay->unit_spec_idx = us->spec_idx;
       if(us->bias_spec.SPtr()) {
         ConSpec* bs = us->bias_spec.SPtr();
+        TestError(!bs->InheritsFrom(&TA_ConSpec), "Build",
+                  "bias spec on unit spec:", us->name, "is not a con spec:", bs->name,
+                  "type:", bs->GetTypeDef()->name);
         if(state_con_specs.AddUnique(bs)) {
           bs->spec_idx = state_con_specs.size-1;
         }
@@ -968,6 +982,9 @@ void Network::BuildIndexesSizes() {
 
         ProjectionSpec* ps = prjn->GetMainPrjnSpec();
         if(ps) {
+          TestError(!ps->InheritsFrom(&TA_ProjectionSpec), "Build",
+                    "prjn spec on prjn:", prjn->name, "is not a prjn spec:", ps->name,
+                    "type:", ps->GetTypeDef()->name);
           if(state_prjn_specs.AddUnique(ps)) {
             ps->spec_idx = state_prjn_specs.size-1;
           }
@@ -979,6 +996,9 @@ void Network::BuildIndexesSizes() {
 
         ConSpec* cs = prjn->GetMainConSpec();
         if(cs) {
+          TestError(!cs->InheritsFrom(&TA_ConSpec), "Build",
+                    "con spec on prjn:", prjn->name, "is not a con spec:", cs->name,
+                    "type:", cs->GetTypeDef()->name);
           if(state_con_specs.AddUnique(cs)) {
             cs->spec_idx = state_con_specs.size-1;
           }

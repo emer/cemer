@@ -46,6 +46,11 @@ class BrainView; //
 class T3Panel; //
 class ProjectionSpec; //
 
+#ifdef CUDA_COMPILE
+class NetworkState_cuda; //
+#endif  
+
+
 ////////////////////////////////////////////////////////
 //      Memory structure for version 8.0.0 
 //
@@ -212,7 +217,7 @@ public:
 
   NetworkState_cpp*  net_state; // #HIDDEN #NO_SAVE our C++ network state -- handles full implementation
 #ifdef CUDA_COMPILE
-  NetworkState_cuda* cuda_state; // #HIDDEN #NO_SAVE our NVIDIA CUDA network state -- handles full implementation
+  NetworkState_cuda* cuda_state; // #HIDDEN #NO_SAVE our NVIDIA CUDA network state -- this obj lives in c++ but its state pointers point into allocated device memory  -- it also has a copy of itself that is entirely within device memory
 #endif
   
 
@@ -318,6 +323,11 @@ public:
 
   virtual NetworkState_cpp* NewNetworkState() const;
   // #IGNORE each type of Network MUST override this to create a new State of correct type 
+
+#ifdef CUDA_COMPILE
+  virtual NetworkState_cuda* NewCudaState() const;
+  // #IGNORE each type of Network MUST override this to create a new State of correct type
+#endif  
 
   virtual String  GetUnitStatePath(UnitState_cpp* unit);
   // #CAT_State get a path to unit state (owning layer plus index) -- can be decoded by GetUnitStateFromPath

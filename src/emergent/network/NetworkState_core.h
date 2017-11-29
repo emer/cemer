@@ -500,6 +500,8 @@
   // #IGNORE initialize statistics -- also calls Init_Stats_Layer
   INIMPL virtual void Init_Stats_Layers();
   // #IGNORE call layer-level Init stats function
+  INIMPL virtual void Init_Timers();
+  // #IGNORE initialize timers -- called by Init_Metrics
   INIMPL virtual void Compute_Netin_Thr(int thr_no);
   // #IGNORE compute net input, receiver based
   INIMPL virtual void Send_Netin_Thr(int thr_no);

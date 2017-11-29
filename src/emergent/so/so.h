@@ -121,6 +121,8 @@ public:
   virtual void	GraphActFun(DataTable* graph_data, float min = -5.0, float max = 5.0);
   // #BUTTON #NULL_OK graph the activation function (NULL = new graph data)
 
+  TypeDef*      MinBiasSpecType() const override { return &TA_SoConSpec; }
+  
   void	InitLinks() override;
   TA_BASEFUNS_NOCOPY(SoUnitSpec);
 private:

@@ -46,11 +46,17 @@ public:
 #include <NetworkState_core>
 
   STATE_CLASS(NetworkCudaSpec) cuda; // #CAT_CUDA cuda parameters
+
+  NetworkState_cuda*    dev_state; // copy of us that lives entirely within device memory -- this is the one we pass as an arg to kernel functions..
+  void**                dev_state_ptr; // device-allocated memory that holds the dev state ptr
   
   bool          strms_created;     // status flag for streams
-  cudaStream_t  strm_build;        // for building network
+  cudaStream_t  strm_memcpy_idxs;  // for network idxs
   cudaStream_t  strm_memcpy_cons;  // for copying cons
   cudaStream_t  strm_memcpy_units;  // for copying units
+  cudaStream_t  strm_memcpy_layers;  // for copying layers
+  cudaStream_t  strm_memcpy_prjns;  // for copying prjns
+  cudaStream_t  strm_memcpy_net;  // for copying network state
   cudaStream_t  strm_compute_netin; // for Compute_Netin
   cudaStream_t  strm_compute_act;  // for Compute_Act
   cudaStream_t  strm_compute_dwt; // for Compute_dWt
@@ -58,6 +64,15 @@ public:
   cudaStream_t  strm_compute_weights;  // for Compute_Weights
   cudaStream_t  strm_compute_weights_bias;  // for B_Compute_Weights
 
+  INIMPL virtual NetworkState_cuda* NewCudaState();
+  // this function is called IN A DEVICE KERNEL to allocate a new state into dev_state_ptr (which has already been allocated)
+
+  virtual void  CudaInit();
+  // overall init code that is called right after making our net state object -- net_owner is set already -- make our device state and streams
+  virtual bool  CreateCudaStreams();
+  // #IGNORE create the streams -- subclasses need to override and add their own
+  
+  
   //////////////////////////////////////////////////////////////////////
   //    CUDA versions of all major code -- Network.cpp just does switch
   //    on cuda vs cpp -- cuda must define its own versions
@@ -123,16 +138,39 @@ public:
   virtual bool  NetStateFree(void** ptr) const; 
   // #IGNORE free previously malloc'd memory, and set *ptr = NULL
 
-  virtual bool  CreateCudaStreams();
-  // #IGNORE create the streams -- subclasses need to override and add their own
+  virtual bool  NetIndexs_CppToDevice(NetworkState_cpp* netc);
+  // #IGNORE copy all the network indexes from cpp to cuda -- we rely on cpp for all init..
   
+  virtual void  LayerState_CppToDevice(NetworkState_cpp* netc, bool sync);
+  // #IGNORE copy layer state from cpp network to device
+  virtual void  LayerState_DeviceToCpp(NetworkState_cpp* netc, bool sync);
+  // #IGNORE copy layer state from device to cpp network
+
+  virtual void  PrjnState_CppToDevice(NetworkState_cpp* netc, bool sync);
+  // #IGNORE copy prjn state from cpp network to device
+  virtual void  PrjnState_DeviceToCpp(NetworkState_cpp* netc, bool sync);
+  // #IGNORE copy prjn state from device to cpp network
+
+  virtual void  UnGpState_CppToDevice(NetworkState_cpp* netc, bool sync);
+  // #IGNORE copy ungp state from cpp network to device
+  virtual void  UnGpState_DeviceToCpp(NetworkState_cpp* netc, bool sync);
+  // #IGNORE copy ungp state from device to cpp network
+
   virtual void  UnitState_CppToDevice(NetworkState_cpp* netc, bool sync);
-  // #IGNORE copy unit state from cpp network to device -- we rely on cpp for all init..
+  // #IGNORE copy unit state from cpp network to device
   virtual void  UnitState_DeviceToCpp(NetworkState_cpp* netc, bool sync);
   // #IGNORE copy unit state from device to cpp network
 
-  virtual void  BuildConState();
-  // #IGNORE build connection-state objects and associated indexes -- also calls BuildSendNetinTmp
+  virtual void  ConState_CppToDevice(NetworkState_cpp* netc, bool sync);
+  // #IGNORE copy ConState objs from cpp network to device -- we rely on cpp for all init..
+
+  virtual void  ConMem_CppToDevice(NetworkState_cpp* netc, bool sync);
+  // #IGNORE copy actual connection memory from cpp network to device
+  virtual void  ConMem_DeviceToCpp(NetworkState_cpp* netc, bool sync);
+  // #IGNORE copy actual connection memory from device to cpp network
+
+  virtual void  BuildCudaFmCpp(NetworkState_cpp* netc);
+  // #IGNORE build all of cuda from cpp
   
   virtual void  BuildSendNetinTmp();
   // #IGNORE build sender-based netinput temporary memory  -- called by BuildConState but can be selectively overridden in subclasses

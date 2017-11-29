@@ -66,6 +66,8 @@ eTypeDef_Of(DeepSpec);
 eTypeDef_Of(TRCSpec);
 eTypeDef_Of(DaModSpec);
 eTypeDef_Of(LeabraNoiseSpec);
+eTypeDef_Of(LeabraConSpec);
+
 
 eTypeDef_Of(LeabraUnitSpec);
 
@@ -111,6 +113,7 @@ public:
   // #EXPERT time how long it takes to compute various forms of exp() function: mode=0 = double sum ctrl (baseline), mode=1 = std double exp(), mode=2 = taMath_double::exp_fast, mode=3 = float sum ctrl (float baseline), mode=4 = expf, mode=5 = taMath_float::exp_fast -- this is the dominant cost in spike alpha function computation, so we're interested in optimizing it..
 
   bool          CheckConfig_Unit(Layer* lay, bool quiet=false) override;
+  TypeDef*      MinBiasSpecType() const override { return &TA_LeabraConSpec; }
 
   String        GetToolbarName() const override { return "unit spec"; }
 

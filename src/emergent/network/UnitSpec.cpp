@@ -57,6 +57,15 @@ void UnitSpec::Copy_(const UnitSpec& cp) {
   sse_tol = cp.sse_tol;
 }
 
+void UnitSpec::CheckBiasSpec() {
+  ConSpec* bs = GetMainBiasSpec();
+  if(!bs) return;
+  TypeDef* min_bs = MinBiasSpecType();
+  TestError(!bs->InheritsFrom(min_bs), "CheckBiasSpec",
+            "Unit spec does not have a bias_spec of the appropriate minimum type:",
+            min_bs->name, "bias_spec name:", bs->name, "type:", bs->GetTypeDef()->name);
+}
+
 bool UnitSpec::CheckConfig_Unit(Layer* lay, bool quiet) {
   return true;
 }

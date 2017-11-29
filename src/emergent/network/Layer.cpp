@@ -876,6 +876,10 @@ void Layer::CheckSpecs() {
   if(!own_net) return;
   
   unit_spec.CheckSpec(own_net->UnitStateType());
+  UnitSpec* us = GetMainUnitSpec();
+  if(us) {
+    us->CheckBiasSpec();
+  }
 
   for(int pi=0; pi < projections.size; pi++) {
     Projection* prjn = projections[pi];

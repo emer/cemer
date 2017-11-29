@@ -33,6 +33,8 @@
 eTypeDef_Of(BpUnitState_cpp);
 eTypeDef_Of(NLXX1ActSpec);
 eTypeDef_Of(GaussActSpec);
+eTypeDef_Of(BpConSpec);
+
 
 #include <BpUnitSpec_mbrs>
 
@@ -50,6 +52,8 @@ public:
 
   void 	(*err_fun)(BpUnitSpec* spec, BpUnitState_cpp* u);
   // #LIST_BpUnit_Error #OBSOLETE #HIDDEN #READ_ONLY #NO_SAVE replaced by enum -- this points to the error fun, set appropriately
+  
+  TypeDef*      MinBiasSpecType() const override { return &TA_BpConSpec; }
   
   TA_BASEFUNS(BpUnitSpec);
   SIMPLE_COPY(BpUnitSpec);

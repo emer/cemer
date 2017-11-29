@@ -51,8 +51,12 @@ public:
   ////////////////////////////////////////////////////////////////////////////////
   //    The following are misc functionality not required for primary computing
 
-  inline ConSpec* GetMainBiasSpec() {  return bias_spec;  }
+  inline ConSpec* GetMainBiasSpec() const {  return bias_spec;  }
   // #CAT_State get the main bias spec (not cpp)
+  virtual TypeDef* MinBiasSpecType() const { return &TA_ConSpec; }
+  // #IGNORE overload in subclasses to ensure that bias spec is at least of a given type
+  virtual void  CheckBiasSpec();
+  // #IGNORE check that our bias spec is of appropriate type, emit error if not
   
   virtual bool  CheckConfig_Unit(Layer* lay, bool quiet=false);
   // #CAT_ObjectMgmt check for for misc configuration settings required by different algorithms
