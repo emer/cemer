@@ -258,7 +258,7 @@ void STATE_CLASS(ScalarValLayerSpec)::Quarter_Init_Layer_Post
   if(scalar.clamp_pat) {
     return;
   }
-  if(!lay->HasExtFlag(UNIT_STATE::EXT)) {
+  if((lay->layer_type == LAYER_STATE::HIDDEN || lay->layer_type == LAYER_STATE::OUTPUT) || !lay->HasExtFlag(UNIT_STATE::EXT)) {
     return;
   }
   // allow for soft-clamping: translates pattern into exts first
