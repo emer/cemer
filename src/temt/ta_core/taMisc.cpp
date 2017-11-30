@@ -126,6 +126,7 @@ taLicense::StdLicense taMisc::license_def = taLicense::NO_LIC;
 #endif
 String          taMisc::license_owner;
 String          taMisc::license_org;
+String          taMisc::net_state_text;
 
 String  taMisc::org_name = "ccnlab";
 

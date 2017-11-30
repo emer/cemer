@@ -22,6 +22,7 @@
 
 #include <iThumbWheel>
 #include <iMenuButton>
+#include <iFlowLayout>
 #include <taImage>
 
 #include <QVBoxLayout>
@@ -156,6 +157,7 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
   quarter = NULL;               // for startup events
 #endif
   viewer_mode = VIEW;
+  net_state_labels_inited = false;
   
   // all the main layout code
   //  main_vbox: main_hbox: lhs_vbox quarter rhs_vbox
@@ -166,6 +168,9 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
   main_vbox = new QVBoxLayout(this);
   main_vbox->setMargin(0); main_vbox->setSpacing(0);
   
+  net_state_layout = new iFlowLayout(); // margin, space, align
+  main_vbox->addLayout(net_state_layout);
+
   main_hbox = new QHBoxLayout;
   main_hbox->setMargin(0); main_hbox->setSpacing(0);
   main_vbox->addLayout(main_hbox);
@@ -177,7 +182,6 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
   lhs_vbox = new QVBoxLayout;
   lhs_vbox->setMargin(0); lhs_vbox->setSpacing(0);
   main_hbox->addLayout(lhs_vbox);
-
 
 #ifdef TA_QT3D
   T3Panel* panl = GetPanel();
@@ -1567,3 +1571,52 @@ void T3ExaminerViewer::showEvent(QShowEvent* ev) {
 }
 #endif
  
+void T3ExaminerViewer::UpdateNetStateValues() {
+  String net_state_string = taMisc::net_state_text;
+  String_Array strs;
+  String str;
+  strs.FmDelimString(net_state_string, '$');
+  
+  if (!net_state_labels_inited) {
+    net_state_labels.clear();
+    for (int i=0; i<strs.size; i++) {
+      str = strs[i];
+      
+      QLabel* label = new QLabel(this);
+      net_state_labels.append(label);
+      net_state_labels[i]->setStyleSheet("background-color: white; color: black; border: 1px solid #AAAAAA;");
+      QFontMetrics fm(label->fontMetrics());
+      String label_part = str.before(':');
+      int label_part_in_pixels = fm.width(label_part);
+      int value_part_in_pixels = 80;      // don't calculate - we want the full label width to be constant for each label
+      if (label_part.contains_ci("phase")) {  // total hack!!
+        value_part_in_pixels = 120;
+      }
+      int fixed_width_total = label_part_in_pixels + value_part_in_pixels;
+      net_state_labels[i]->setFixedSize(fixed_width_total, 16);
+      net_state_layout->addWidget(net_state_labels.at(i));
+      
+//      QFont font = net_state_labels[i]->font();
+//      font.setPointSize(font_size);
+//      net_state_labels[i]->setFont(font);
+    }
+    if (net_state_labels.size() > 0) {
+      net_state_labels_inited = true;
+    }
+  }
+  for (int i=0; i<strs.size; i++) {
+    net_state_labels.at(i)->setText(strs[i]);
+  }
+}
+
+void T3ExaminerViewer::ClearNetStateValues() {
+  for (int i=net_state_labels.size()-1; i>=0; i--) {
+    QLabel* label = net_state_labels[i];
+    if (label) {
+      net_state_labels.removeAt(i);
+      net_state_layout->removeWidget(label);
+      delete label;
+    }
+  }
+  net_state_labels_inited = false;
+}

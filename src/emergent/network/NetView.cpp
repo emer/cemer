@@ -385,7 +385,8 @@ void NetView::Initialize() {
   prev_lay_layout = lay_layout;
   unit_src = NULL;
   lay_mv = true;
-  net_text = true;
+  net_text = false;
+  new_net_text = true;
   show_iconified = false;
   main_xform.rotate.SetXYZR(1.0f, 0.0f, 0.0f, .35f);
   net_text_xform.translate.SetXYZ(1.0f, 0.0f, -0.5f); // right mid
@@ -1286,6 +1287,7 @@ void NetView::Render_impl() {
 #endif // TA_QT3D
 
     Render_net_text();
+    Render_new_net_text();
   }
 
   if((bool)wt_prjn_lay) {
@@ -1300,7 +1302,34 @@ void NetView::Render_impl() {
   inherited::Render_impl();
 }
 
-void NetView::Render_net_text() {
+void NetView::Render_new_net_text() {
+  String simple_text_state = "";
+  TypeDef* td = net()->GetTypeDef();
+  
+  bool build_text = true;
+  for(int i=td->members.size-1; i>=0; i--) {
+    MemberDef* md = td->members[i];
+    if(!md->HasOption("VIEW")) continue;
+    if(net()->HasUserData(md->name) && !net()->GetUserDataAsBool(md->name)) continue;
+    if(build_text) {
+      bool cur_str = false;
+      if((md->type->InheritsFrom(&TA_taString) || md->type->IsEnum())) {
+        cur_str = true;
+      }
+    }
+    String el = md->name + ": ";
+    simple_text_state = simple_text_state + el;
+    String val = md->GetValStr((void*)net());
+    simple_text_state = simple_text_state + val + "$";
+  }
+  taMisc::net_state_text = simple_text_state;
+  T3ExaminerViewer* vw = GetViewer();
+  if (vw) {
+      vw->UpdateNetStateValues();
+  }
+}
+
+  void NetView::Render_net_text() {
   T3NetNode* node_so = this->node_so(); //cache
 #ifdef TA_QT3D
   T3Entity* net_txt = node_so->net_text;
@@ -1308,10 +1337,10 @@ void NetView::Render_net_text() {
   SoSeparator* net_txt = node_so->netText();
   if(!net_txt) return;          // screwup
 #endif // TA_QT3D
-
+  
   TypeDef* td = net()->GetTypeDef();
   int per_row = 2;
-
+  
   int chld_idx = 0;
   int cur_row = 0;
   int cur_col = 0;
@@ -1337,8 +1366,8 @@ void NetView::Render_net_text() {
     }
   }
   int n_rows = cur_row;
-//  int n_texts = chld_idx;
-
+  //  int n_texts = chld_idx;
+  
 #ifdef TA_QT3D
   int txt_st_off = 0;
 #else // TA_QT3D
@@ -1346,9 +1375,9 @@ void NetView::Render_net_text() {
   if(node_so->netTextDrag())
     txt_st_off+=2;              // dragger + extra xform
 #endif // TA_QT3D
-
+  
   bool build_text = false;
-
+  
   T3Panel* fr = GetFrame();
   iColor txtcolr = fr->GetTextColor();
 #ifdef TA_QT3D
@@ -1380,9 +1409,9 @@ void NetView::Render_net_text() {
     build_text = true;
   }
 #endif // TA_QT3D
-
+  
   float rot_rad = net_text_rot * taMath_float::rad_per_deg;
-
+  
   chld_idx = 0;
   cur_row = 0;
   cur_col = 0;
@@ -1443,6 +1472,7 @@ void NetView::Render_net_text() {
 #endif // TA_QT3D
     String el = md->name + ": ";
     String val = md->GetValStr((void*)net());
+
     if(hist_idx > 0) {
       int cidx = (ctr_hist_idx.length - hist_idx);
       int midx = ctr_hist_idx.CircIdx(cidx);
@@ -2054,6 +2084,17 @@ void NetView::SigRecvUpdateView_impl() {
   if(net_text) {
     Render_net_text();
   }
+  
+  T3ExaminerViewer* vw = GetViewer();
+  if (vw) {
+    if(new_net_text) {
+      Render_new_net_text();
+    }
+    else {
+      vw->ClearNetStateValues();
+    }
+  }
+
   Render_wt_lines();
 }
 

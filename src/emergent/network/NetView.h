@@ -153,6 +153,7 @@ public:
   LayerLayout           lay_layout;     // how to display layers -- 2d or 3d
   bool                  lay_mv;         // whether to display layer move controls when the arrow button is pressed (can get in the way of viewing weights)
   bool                  net_text;       // whether to display text box below network with counters etc
+  bool                  new_net_text;       // whether to display NEW text
   bool                  show_iconified; // show iconified layers -- otherwise they are removed entirely
   taTransform           net_text_xform;  // transform of coordinate system for the net text display element
   float                 net_text_rot;    // rotation of the text in the Z plane (in degrees) - default is upright, but if text area is rotated, then a different angle might work better
@@ -333,6 +334,7 @@ protected:
   void         Render_pre() override; // #IGNORE
   void         Render_impl() override; // #IGNORE
   void         Render_net_text();
+  void         Render_new_net_text();
   void         Render_wt_lines();
   void         Reset_impl() override; // #IGNORE
   void         UpdateAutoScale(); // #IGNORE prepass updates scale from values

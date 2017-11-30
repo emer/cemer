@@ -94,6 +94,12 @@ iViewPanelOfNetwork::iViewPanelOfNetwork(NetView* dv_)
   layDispCheck->addWidget(chkNetText);
   layDispCheck->addSpacing(taiM->hsep_c);
 
+  chkNewNetText = new QCheckBox("NEW Net\nTxt", widg);
+  chkNewNetText->setToolTip(taiMisc::ToolTipPreProcess("Display continuously updating network variable values"));
+  connect(chkNewNetText, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
+  layDispCheck->addWidget(chkNewNetText);
+  layDispCheck->addSpacing(taiM->hsep_c);
+
   lblUnitText = taiM->NewLabel("Unit:\nText", widg, font_spec);
   lblUnitText->setToolTip(taiMisc::ToolTipPreProcess("What text to display for each unit (values, names)"));
   layDispCheck->addWidget(lblUnitText);
@@ -500,6 +506,7 @@ void iViewPanelOfNetwork::UpdatePanel_impl() {
   chkDisplay->setChecked(nv->display);
   chkLayMove->setChecked(nv->lay_mv);
   chkNetText->setChecked(nv->net_text);
+  chkNewNetText->setChecked(nv->new_net_text);
   // fldTextRot->GetImage((String)nv->net_text_rot);
   cmbLayLayout->GetEnumImage(nv->lay_layout);
   cmbConType->GetEnumImage(nv->con_type);
@@ -569,6 +576,7 @@ void iViewPanelOfNetwork::GetValue_impl() {
   nv->display = chkDisplay->isChecked();
   nv->lay_mv = chkLayMove->isChecked();
   nv->net_text = chkNetText->isChecked();
+  nv->new_net_text = chkNewNetText->isChecked();
   // nv->net_text_rot = (float)fldTextRot->GetValue();
 
   int ll;

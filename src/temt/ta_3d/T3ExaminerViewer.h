@@ -35,6 +35,7 @@ class QVBoxLayout; //
 class QHBoxLayout; // 
 class QLabel; //
 class iMenuButton; //
+class iFlowLayout; //
 
 #ifdef TA_QT3D
 #else
@@ -128,6 +129,8 @@ public:
   QVBoxLayout*    rhs_button_vbox; // buttons on the top-right hand side
   QHBoxLayout*    bot_hbox;        // overall box for all decoration on the bottom of widget -- contains (optional -- none in default impl) buttons at right and hrot_wheel at left
   QHBoxLayout*    bot_button_hbox; // buttons on the bottom right side
+  QHBoxLayout*    top_hbox;        // box for the net_state values
+  iFlowLayout*    net_state_layout;    // net state labels and values
 
 #ifdef TA_QT3D
 #ifndef __MAKETA__
@@ -172,14 +175,17 @@ public:
   QToolButton*    snapshot_button; // (camera) -- save an image of the current view to a file
   QToolButton*    print_button;    // (printer) -- print current view to a file
   iMenuButton*    annote_button;   // (+) -- add annotations to the view
+  
+  bool                net_state_labels_inited; // have the labels been created? we do that once and then just changed the label text
+  QList<QLabel*>      net_state_labels; // each network state variable and value is displayed as a label in the net_state_layout
 
-  static const int   n_views;      // number of saved view parameters to save (length of saved_views)
-  T3SavedView_List saved_views; // saved view information
-  int              cur_view_no; // current view number -- last one to have gotoView called -- -1 if not done yet
-  NameVar_PArray     dyn_buttons; // dynamic button names
-  iAction_List     dyn_actions; // dynamic button actions -- has all the relevant properties
+  static const int    n_views;      // number of saved view parameters to save (length of saved_views)
+  T3SavedView_List    saved_views; // saved view information
+  int                 cur_view_no; // current view number -- last one to have gotoView called -- -1 if not done yet
+  NameVar_PArray      dyn_buttons; // dynamic button names
+  iAction_List        dyn_actions; // dynamic button actions -- has all the relevant properties
 
-  static bool     so_scrollbar_is_dragging;
+  static bool         so_scrollbar_is_dragging;
   // SoScrollbar sets this when it is being dragged -- keeps everything inside a tight event loop until dragging completes
 
   //////////////////////////////////////////////
@@ -280,7 +286,11 @@ public:
   // print the current viewer image to a printer
   virtual float         devicePixelRatio();
   // ratio of physical to logical pixels
-                                          
+  virtual void          UpdateNetStateValues();
+  // update the values of the net state labels in the net state layout portion of the frame
+  virtual void          ClearNetStateValues();
+  // update the values of the net state labels in the net state layout portion of the frame
+
 public slots:
   void hrotwheelChanged(int value);
   void vrotwheelChanged(int value);
