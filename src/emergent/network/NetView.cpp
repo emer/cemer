@@ -1303,7 +1303,7 @@ void NetView::Render_impl() {
 }
 
 void NetView::Render_new_net_text() {
-  String simple_text_state = "";
+  String net_state_text = "";
   TypeDef* td = net()->GetTypeDef();
   
   bool build_text = true;
@@ -1318,14 +1318,13 @@ void NetView::Render_new_net_text() {
       }
     }
     String el = md->name + ": ";
-    simple_text_state = simple_text_state + el;
+    net_state_text = net_state_text + el;
     String val = md->GetValStr((void*)net());
-    simple_text_state = simple_text_state + val + "$";
+    net_state_text = net_state_text + val + "$";
   }
-  taMisc::net_state_text = simple_text_state;
   T3ExaminerViewer* vw = GetViewer();
   if (vw) {
-      vw->UpdateNetStateValues();
+      vw->UpdateNetStateValues(net_state_text);
   }
 }
 

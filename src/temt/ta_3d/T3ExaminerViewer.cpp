@@ -1571,11 +1571,10 @@ void T3ExaminerViewer::showEvent(QShowEvent* ev) {
 }
 #endif
  
-void T3ExaminerViewer::UpdateNetStateValues() {
-  String net_state_string = taMisc::net_state_text;
+void T3ExaminerViewer::UpdateNetStateValues(String net_state_text) {
   String_Array strs;
   String str;
-  strs.FmDelimString(net_state_string, '$');
+  strs.FmDelimString(net_state_text, '$');
   
   if (!net_state_labels_inited) {
     net_state_labels.clear();

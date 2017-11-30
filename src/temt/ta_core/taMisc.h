@@ -308,7 +308,6 @@ public:
 #endif
   static String         license_owner;     // #SAVE #CAT_File default legal owner of new projects that are created by this user (e.g., Regents of University of xyz) -- used for copyright and licensing information -- see project license field for where to change or update on existing projects
   static String         license_org;       // #SAVE #CAT_File default organization that actually created the project for new projects that are created by this user (e.g., MyLab at University of xyz) -- used for copyright and licensing information -- see project license field for where to change or update on existing projects -- defaults to license_owner if left blank
-  static String         net_state_text;   // current state of some network state variables
   
   ////////////////////////////////////////////////////////
   //    User-tunable compute params
