@@ -16,6 +16,7 @@ void LEABRA_UNIT_SPEC::Init_Acts(UNIT_STATE* uv, NETWORK_STATE* net, int thr_no)
   u->act_eq = u->act;
   u->act_nd = u->act_eq;
   u->spike = 0.0f;
+  u->spike_int = 0.0f;
   u->act_q0 = 0.0f;
   u->act_q1 = 0.0f;
   u->act_q2 = 0.0f;
@@ -112,6 +113,7 @@ void LEABRA_UNIT_SPEC::Init_UnitState(UNIT_STATE* uv, NETWORK_STATE* net, int th
   u->act_eq = u->act;
   u->act_nd = u->act_eq;
   u->spike = 0.0f;
+  u->spike_int = 0.0f;
   u->act_q0 = 0.0f;
   u->act_q1 = 0.0f;
   u->act_q2 = 0.0f;
@@ -642,33 +644,25 @@ void LEABRA_UNIT_SPEC::Compute_Vm(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* ne
     u->I_net = I_net;
   }
   else {
-    float net_eff = u->net * g_bar.e;
-    float E_i = e_rev.i;
-    float gc_l = g_bar.l + u->gc_kna_f + u->gc_kna_m + u->gc_kna_s;
-    float gc_i = u->gc_i * g_bar.i;
-
-    if(updt_spk_vm) {
-      // first compute v_m, using midpoint method:
+    const float net_eff = u->net * g_bar.e;
+    const float gc_i = u->gc_i * g_bar.i;
+    const float gc_k = g_bar.k * (u->gc_kna_f + u->gc_kna_m + u->gc_kna_s);
+    if(updt_spk_vm) { // first compute v_m, using midpoint method:
       float v_m_eff = u->v_m;
       // midpoint method: take a half-step:
-      float I_net_1 =
-        (net_eff * (e_rev.e - v_m_eff)) + (gc_l * (e_rev.l - v_m_eff)) +
-        (gc_i * (E_i - v_m_eff));
+      float I_net_1 = Compute_INet_impl(u, v_m_eff, net_eff, gc_i, gc_k);
       v_m_eff += .5f * dt.integ * dt.vm_dt * I_net_1; // go half way
-      float I_net = (net_eff * (e_rev.e - v_m_eff)) + (gc_l * (e_rev.l - v_m_eff))
-        + (gc_i * (E_i - v_m_eff));
+      float I_net = Compute_INet_impl(u, v_m_eff, net_eff, gc_i, gc_k);
       // add spike current if relevant
-      if(spike_misc.ex) {
-        I_net += gc_l * spike_misc.exp_slope *
+      if((act_fun == SPIKE) && spike_misc.ex) {
+        I_net += g_bar.l * spike_misc.exp_slope *
           expf((v_m_eff - act.thr) / spike_misc.exp_slope); // todo: exp_fast
       }
       u->v_m += dt.integ * dt.vm_dt * I_net;
       u->I_net = I_net;
     }
-
     // always compute v_m_eq with simple integration -- used for rate code subthreshold
-    float I_net_r = (net_eff * (e_rev.e - u->v_m_eq)) 
-      + (gc_l * (e_rev.l - u->v_m_eq)) +  (gc_i * (E_i - u->v_m_eq));
+    float I_net_r = Compute_INet_impl(u, u->v_m_eq, net_eff, gc_i, gc_k);
     u->v_m_eq += dt.integ * dt.vm_dt * I_net_r;
   }
 

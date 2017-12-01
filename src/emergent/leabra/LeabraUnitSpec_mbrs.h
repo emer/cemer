@@ -29,6 +29,7 @@ public:
   float         thr;                // #DEF_0.5 threshold value Theta (Q) for firing output activation (.5 is more accurate value based on AdEx biological parameters and normalization -- see BioParams button)
   float         gain;                // #DEF_80;100;40 #MIN_0 gain (gamma) of the rate-coded activation functions -- 100 is default, 80 works better for larger models, and 40 is closer to the actual spiking behavior of the AdEx model -- use lower values for more graded signals, generally in lower input/sensory layers of the network
   float         nvar;                // #DEF_0.005;0.01 #MIN_0 variance of the Gaussian noise kernel for convolving with XX1 in NOISY_XX1 and NOISY_LINEAR -- determines the level of curvature of the activation function near the threshold -- increase for more graded responding there -- note that this is not actual stochastic noise, just constant convolved gaussian smoothness to the activation function
+  float         vm_act_thr;          // threshold on activation below which the direct vm - act.thr is used -- this should be low -- once it gets active should use net - g_e_thr ge-linear dynamics (gelin)
   float         sig_mult;            // #DEF_0.33 #EXPERT multiplier on sigmoid used for computing values for net < thr
   float         sig_mult_pow;        // #DEF_0.8 #EXPERT power for computing sig_mult_eff as function of gain * nvar
   float         sig_gain;            // #DEF_3 #EXPERT gain multipler on (net - thr) for sigmoid used for computing values for net < thr
@@ -84,7 +85,7 @@ private:
 
   void        Initialize()      { Defaults_init(); }
   void        Defaults_init() {
-    thr = 0.5f;  gain = 100.0f;  nvar = 0.005f;
+    thr = 0.5f;  gain = 100.0f;  nvar = 0.005f;  vm_act_thr = 0.01f;
     sig_mult = 0.33f; sig_mult_pow = 0.8f; sig_gain = 3.0f;
     interp_range = 0.01f; gain_cor_range = 10.0f; gain_cor = 0.1f;
     UpdateParams();
@@ -101,16 +102,11 @@ public:
   bool          dif_avg;        // compute act_dif as avg_s_eff - avg_m (difference of average values that actually drive learning) -- otherwise it is act_p - act_m (difference of final activation states in plus phase minus minus phase -- the typical error signal)
   float         net_gain;       // #DEF_1 #MIN_0 multiplier on total synaptic net input -- this multiplies the net_raw, but AFTER the net_raw variable is saved (upon which the netin_raw statistics are computed)
 
-  float         act_max_hz;     // #DEF_100 #MIN_1 for translating rate-code activations into discrete spiking (only used for clamped layers), what is the maximum firing rate associated with a maximum activation value (max act is typically 1.0 -- depends on act_range)
   bool          avg_trace;      // #DEF_false set act_avg unit variable to the exponentially decaying trace of activation -- used for TD (temporal differences) reinforcement learning for example -- lambda parameter determines how much of the prior trace carries over into the new trace 
   float         lambda;         // #CONDSHOW_ON_avg_trace determines how much of the prior trace carries over into the new trace (act_avg = lambda * act_avg + new_act)
   float         avg_tau;        // #CONDSHOW_OFF_avg_trace #DEF_200 #MIN_1 for integrating activation average (act_avg), time constant in trials (roughly, how long it takes for value to change significantly) -- used mostly for visualization and tracking "hog" units
   float         avg_init;        // #DEF_0.15 #MIN_0 initial activation average value -- used for act_avg, avg_s, avg_m, avg_l
   float         avg_dt;          // #READ_ONLY #EXPERT rate = 1 / tau
-
-  INLINE int    ActToInterval(const float time_inc, const float integ, const float act)
-  { return (int) (1.0f / (time_inc * integ * act * act_max_hz)); }
-  // #CAT_ActMisc compute spiking interval based on network time_inc, dt.integ, and unit act -- note that network time_inc is usually .001 = 1 msec per cycle -- this depends on that being accurately set
 
   STATE_DECO_KEY("UnitSpec");
   STATE_TA_STD_CODE_SPEC(LeabraActMiscSpec);
@@ -121,7 +117,7 @@ private:
   void        Initialize()      { Defaults_init(); }
   void        Defaults_init()   {
     rec_nd = true; avg_nd = true; dif_avg = false; net_gain = 1.0f;
-    act_max_hz = 100.0f; avg_trace = false; lambda = 0.0f; avg_tau = 200.0f;
+    avg_trace = false; lambda = 0.0f; avg_tau = 200.0f;
     avg_init = 0.15f;
 
     avg_dt = 1.0f / avg_tau;
@@ -133,19 +129,19 @@ class STATE_CLASS(SpikeFunSpec) : public STATE_CLASS(SpecMemberBase) {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra spiking activation function specs -- conductance is computed postsynaptically using an alpha function based on spike pulses sent presynaptically -- for clamped layers, spiking probability is proportional to external input controlled by the clamp_type and clamp_max_p values -- soft clamping may still be a better option though
 INHERITED(SpecMemberBase)
 public:
-  float         rise;                // #DEF_0 #MIN_0 exponential rise time (in cycles) of the synaptic conductance according to the alpha function 1/(decay - rise) [e^(-t/decay) - e^(-t/rise)] -- set to 0 to only include decay time (1/decay e^(-t/decay)), which is highly optimized (doesn't use window -- just uses recursive exp decay) and thus the default!
-  float         decay;                // #DEF_5 #MIN_0 exponential decay time (in cycles) of the synaptic conductance according to the alpha function 1/(decay - rise) [e^(-t/decay) - e^(-t/rise)] -- set to 0 to implement a delta function (not very useful)
-  float         g_gain;                // #DEF_9 #MIN_0 multiplier for the spike-generated conductances when using alpha function which is normalized by area under the curve -- needed to recalibrate the alpha-function currents relative to rate code net input which is overall larger -- in general making this the same as the decay constant works well, effectively neutralizing the area normalization (results in consistent peak current, but differential integrated current over time as a function of rise and decay)
-  int           window;                // #DEF_3 #MIN_0 #MAX_10 spike integration window -- when rise==0, this window is used to smooth out the spike impulses similar to a rise time -- each net contributes over the window in proportion to 1/window -- for rise > 0, this is used for computing the alpha function -- should be long enough to incorporate the bulk of the alpha function, but the longer the window, the greater the computational cost (max of 10 imposed by fixed buffer required in LeabraUnitState_cpp structure)
-  float         eq_gain;        // #DEF_8 #MIN_0 gain for computing act_eq relative to actual average: act_eq = eq_gain * (spikes/cycles)
-  float         eq_tau;                // #DEF_50 #MIN_0 if non-zero, compute act_eq as a continuous running average instead of explicit spikes / cycles -- this is the time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly -- 1.4x the half-life)
+  float         rise;            // #DEF_0 #MIN_0 exponential rise time (in cycles) of the synaptic conductance according to the alpha function 1/(decay - rise) [e^(-t/decay) - e^(-t/rise)] -- set to 0 to only include decay time (1/decay e^(-t/decay)), which is highly optimized (doesn't use window -- just uses recursive exp decay) and thus the default!
+  float         decay;           // #DEF_5 #MIN_0 exponential decay time (in cycles) of the synaptic conductance according to the alpha function 1/(decay - rise) [e^(-t/decay) - e^(-t/rise)] -- set to 0 to implement a delta function (not very useful)
+  float         g_gain;          // #DEF_9 #MIN_0 multiplier for the spike-generated conductances when using alpha function which is normalized by area under the curve -- needed to recalibrate the alpha-function currents relative to rate code net input which is overall larger -- in general making this the same as the decay constant works well, effectively neutralizing the area normalization (results in consistent peak current, but differential integrated current over time as a function of rise and decay)
+  int           window;          // #DEF_3 #MIN_0 #MAX_10 spike integration window -- when rise==0, this window is used to smooth out the spike impulses similar to a rise time -- each net contributes over the window in proportion to 1/window -- for rise > 0, this is used for computing the alpha function -- should be long enough to incorporate the bulk of the alpha function, but the longer the window, the greater the computational cost (max of 10 imposed by fixed buffer required in LeabraUnitState_cpp structure)
+  float         act_max_hz;      // #DEF_200 #MIN_1 for translating spiking interval (rate) into rate-code activation equivalent (and vice-versa, for clamped layers), what is the maximum firing rate associated with a maximum activation value (max act is typically 1.0 -- depends on act_range)
+  float         int_tau;         // #DEF_5 #MIN_1 time constant for integrating the spiking interval in estimating spiking rate
 
   float         gg_decay;        // #READ_ONLY #NO_SAVE g_gain/decay
   float         gg_decay_sq;     // #READ_ONLY #NO_SAVE g_gain/decay^2
   float         gg_decay_rise;   // #READ_ONLY #NO_SAVE g_gain/(decay-rise)
   float         oneo_decay;      // #READ_ONLY #NO_SAVE 1.0/decay
   float         oneo_rise;       // #READ_ONLY #NO_SAVE 1.0/rise
-  float         eq_dt;           // #READ_ONLY #EXPERT rate = 1 / tau
+  float         int_dt;          // #READ_ONLY #EXPERT rate = 1 / tau
 
   INLINE float  ComputeAlpha(float t) {
     if(decay == 0.0f) return (t == 0.0f) ? g_gain : 0.0f; // delta function
@@ -158,48 +154,62 @@ public:
     return gg_decay_rise * (STATE_CLASS(taMath_float)::exp_fast(-t * oneo_decay) - STATE_CLASS(taMath_float)::exp_fast(-t * oneo_rise)); // full alpha
   }
 
+  INLINE int    ActToInterval(const float time_inc, const float integ, const float act)
+  { return (int) (1.0f / (time_inc * integ * act * act_max_hz)); }
+  // #CAT_Activation compute spiking interval based on network time_inc, dt.integ, and unit act -- note that network time_inc is usually .001 = 1 msec per cycle -- this depends on that being accurately set
+
+  INLINE float  ActFromInterval(float spike_int, const float time_inc, const float integ) {
+    if(spike_int == 0.0f) {
+      return 0.0f;              // rate is 0
+    }
+    float max_hz_int = 1.0f / (time_inc * integ * act_max_hz); // interval at max hz..
+    return max_hz_int / spike_int; // normalized
+  }
+  // #CAT_Activation compute rate-code activation from estimated spiking interval
+
+  INLINE void   UpdateSpikeInterval(float& spike_int, float cur_int) {
+    if(spike_int == 0.0f) {
+      spike_int = cur_int;      // use it
+    }
+    else if(cur_int < spike_int) {
+      spike_int = cur_int;      // if less than we take that
+    }
+    else {                                         // integrate on slower
+      spike_int += int_dt * (cur_int - spike_int); // running avg updt
+    }
+  }
+  // #CAT_Activation update running-average spike interval estimate
+
+  INLINE void   UpdateRates() {
+    if(window <= 0) window = 1;
+    if(decay > 0.0f) {
+      gg_decay = g_gain / decay;
+      gg_decay_sq = g_gain / (decay * decay);
+      if(decay != rise)
+        gg_decay_rise = g_gain / (decay - rise);
+
+      oneo_decay = 1.0f / decay;
+      if(rise > 0.0f)
+        oneo_rise = 1.0f / rise;
+      else
+        oneo_rise = 1.0f;
+    }
+    int_dt = 1.0f / int_tau;
+  }
+  // #IGNORE update derive rates
+  
+  
   STATE_DECO_KEY("UnitSpec");
   STATE_TA_STD_CODE_SPEC(SpikeFunSpec);
 
-  STATE_UAE
-    (if(window <= 0) window = 1;
-     if(decay > 0.0f) {
-       gg_decay = g_gain / decay;
-       gg_decay_sq = g_gain / (decay * decay);
-       if(decay != rise)
-         gg_decay_rise = g_gain / (decay - rise);
-
-       oneo_decay = 1.0f / decay;
-       if(rise > 0.0f)
-         oneo_rise = 1.0f / rise;
-       else
-         oneo_rise = 1.0f;
-     }
-     if(eq_tau > 0.0f)
-       eq_dt = 1.0f / eq_tau;
-     else
-       eq_dt = 0.0f;
-     );
+  STATE_UAE( UpdateRates(); );
   
 private:
   void        Initialize()    { Defaults_init(); }
   void        Defaults_init() {
-    g_gain = 9.0f; rise = 0.0f; decay = 5.0f; window = 3; eq_gain = 8.0f; eq_tau = 50.0f;
-
-    gg_decay = g_gain / decay;
-    gg_decay_sq = g_gain / (decay * decay);
-    gg_decay_rise = g_gain / (decay - rise);
-
-    oneo_decay = 1.0f / decay;
-    if(rise > 0.0f)
-      oneo_rise = 1.0f / rise;
-    else
-      oneo_rise = 1.0f;
-
-    if(eq_tau > 0.0f)
-      eq_dt = 1.0f / eq_tau;
-    else
-      eq_dt = 0.0f;
+    g_gain = 9.0f; rise = 0.0f; decay = 5.0f; window = 3;
+    act_max_hz = 200.0f;  int_tau = 5.0f;
+    UpdateRates();
   }
 };
 
@@ -403,15 +413,16 @@ class STATE_CLASS(LeabraChannels) : public STATE_CLASS(SpecMemberBase) {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra channels used in Leabra
 INHERITED(SpecMemberBase)
 public:
-  float         e;                // excitatory (sodium (Na) channel), synaptic glutamate AMPA activated
-  float         l;                // constant leak (potassium, K+) channel 
-  float         i;                // inhibitory (chloride, Cl-) channel, synaptic GABA activated
+  float         e;                // excitatory sodium (Na) AMPA channels activated by synaptic glutamate
+  float         l;                // constant leak (potassium, K+) channels -- determines resting potential (typically higher than resting potential of K)
+  float         i;                // inhibitory chloride (Cl-) channels activated by synaptic GABA
+  float         k;                // gated / active potassium channels -- typicaly hyperpolarizing relative to leak / rest
 
   STATE_DECO_KEY("UnitSpec");
   STATE_TA_STD_CODE_SPEC(LeabraChannels);
   
 private:
-  void        Initialize()      { e = l = i = 0.0f;  }
+  void        Initialize()      { e = l = i = k = 0.0f;  }
   void        Defaults_init()   { }
 };
 
@@ -421,37 +432,56 @@ class STATE_CLASS(KNaAdaptSpec) : public STATE_CLASS(SpecMemberBase) {
 INHERITED(SpecMemberBase)
 public:
   bool          on;             // apply K-Na adaptation overall?
+  float         rate_rise;      // #CONDSHOW_ON_on #DEF_0.8 extra multiplier for rate-coded activations on rise factors -- adjust to match discrete spiking
   bool          f_on;           // #CONDSHOW_ON_on use fast time-scale adaptation
-  float         f_tau;          // #CONDSHOW_ON_on&&f_on time constant in cycles for fast time-scale adaptation, which should be milliseconds typically (roughly, how long it takes for value to change significantly -- 1.4x the half-life)
-  float         f_spike;        // #CONDSHOW_ON_on&&f_on amount to increase fast K channel current per spike -- divide nA biological value by 10 for the normalized units here
-  float         f_max;          // #CONDSHOW_ON_on&&f_on maximum potential conductance of fast K channels -- divide nA biological value by 10 for the normalized units here
+  float         f_rise;         // #CONDSHOW_ON_on&&f_on #DEF_0.05 rise rate of fast time-scale adaptation as function of Na concentration -- directly multiplies -- 1/rise = tau for rise rate
+  float         f_max;          // #CONDSHOW_ON_on&&f_on #DEF_0.1 maximum potential conductance of fast K channels -- divide nA biological value by 10 for the normalized units here
+  float         f_tau;          // #CONDSHOW_ON_on&&f_on #DEF_50 time constant in cycles for decay of fast time-scale adaptation, which should be milliseconds typically (roughly, how long it takes for value to change significantly -- 1.4x the half-life)
   bool          m_on;           // #CONDSHOW_ON_on use medium time-scale adaptation
-  float         m_tau;          // #CONDSHOW_ON_on&&m_on time constant in cycles for medium time-scale adaptation, which should be milliseconds typically (roughly, how long it takes for value to change significantly -- 1.4x the half-life)
-  float         m_spike;        // #CONDSHOW_ON_on&&m_on amount to increase medium K channel current per spike -- divide nA biological value by 10 for the normalized units here
-  float         m_max;          // #CONDSHOW_ON_on&&m_on maximum potential conductance of medium K channels -- divide nA biological value by 10 for the normalized units here
+  float         m_rise;         // #CONDSHOW_ON_on&&m_on #DEF_0.02 rise rate of medium time-scale adaptation as function of Na concentration -- directly multiplies -- 1/rise = tau for rise rate
+  float         m_max;          // #CONDSHOW_ON_on&&m_on #DEF_0.1 maximum potential conductance of medium K channels -- divide nA biological value by 10 for the normalized units here
+  float         m_tau;          // #CONDSHOW_ON_on&&m_on #DEF_200 time constant in cycles for medium time-scale adaptation, which should be milliseconds typically (roughly, how long it takes for value to change significantly -- 1.4x the half-life)
   bool          s_on;           // #CONDSHOW_ON_on use slow time-scale adaptation
-  float         s_tau;          // #CONDSHOW_ON_on&&s_on time constant in cycles for slow time-scale adaptation, which should be milliseconds typically (roughly, how long it takes for value to change significantly -- 1.4x the half-life)
-  float         s_spike;        // #CONDSHOW_ON_on&&s_on amount to increase slow K channel current per spike -- divide nA biological value by 10 for the normalized units here
-  float         s_max;          // #CONDSHOW_ON_on&&s_on maximum potential conductance of slow K channels -- divide nA biological value by 10 for the normalized units here
+  float         s_rise;         // #CONDSHOW_ON_on&&s_on #DEF_0.005 rise rate of slow time-scale adaptation as function of Na concentration -- directly multiplies -- 1/rise = tau for rise rate
+  float         s_max;          // #CONDSHOW_ON_on&&s_on #DEF_0.2 maximum potential conductance of slow K channels -- divide nA biological value by 10 for the normalized units here
+  float         s_tau;          // #CONDSHOW_ON_on&&s_on #DEF_1000 time constant in cycles for slow time-scale adaptation, which should be milliseconds typically (roughly, how long it takes for value to change significantly -- 1.4x the half-life)
 
   float         f_dt;           // #READ_ONLY #EXPERT rate = 1 / tau
   float         m_dt;           // #READ_ONLY #EXPERT rate = 1 / tau
   float         s_dt;           // #READ_ONLY #EXPERT rate = 1 / tau
 
-  INLINE void  Compute_dKNa_impl(bool con, bool spike, float& gc_kna, float dt, float gspike, float gmax)
+  INLINE void  Compute_dKNa_spike_impl
+    (bool con, bool spike, float& gc_kna, float rise, float gmax, float decay_dt)
   { if(!con )           gc_kna = 0.0f;
-    else if(spike)      gc_kna += gspike * (gmax - gc_kna);
-    else                gc_kna -= dt * gc_kna; }
-  // compute the change in K channel conductance gc_kna for given spiking and channel params
+    else if(spike)      gc_kna += rise * (gmax - gc_kna);
+    else                gc_kna -= decay_dt * gc_kna; }
+  // compute the change in K channel conductance gc_kna for spiking and channel params
 
-  INLINE void  Compute_dKNa(bool spike, float& gc_kna_f, float& gc_kna_m, float& gc_kna_s) {
-    Compute_dKNa_impl(on && f_on, spike, gc_kna_f, f_dt, f_spike, f_max);
-    Compute_dKNa_impl(on && m_on, spike, gc_kna_m, m_dt, m_spike, m_max);
-    Compute_dKNa_impl(on && s_on, spike, gc_kna_s, s_dt, s_spike, s_max);
+  INLINE void  Compute_dKNa_spike
+    (bool spike, float& gc_kna_f, float& gc_kna_m, float& gc_kna_s)
+  {
+    Compute_dKNa_spike_impl(on && f_on, spike, gc_kna_f, f_rise, f_max, f_dt);
+    Compute_dKNa_spike_impl(on && m_on, spike, gc_kna_m, m_rise, m_max, m_dt);
+    Compute_dKNa_spike_impl(on && s_on, spike, gc_kna_s, s_rise, s_max, s_dt);
   }
-  // update K channel conductances per params
+  // update K channel conductances per params for discrete spiking
 
-  INLINE void   UpdtDts() { f_dt = 1.0f / f_tau; m_dt = 1.0f / m_tau; s_dt = 1.0f / s_tau; }
+  INLINE void  Compute_dKNa_rate_impl
+    (bool con, float act, float& gc_kna, float rise, float gmax, float decay_dt)
+  { if(!con )   gc_kna = 0.0f;
+    else        gc_kna += act * rate_rise * rise * (gmax - gc_kna) - decay_dt * gc_kna; }
+  // compute the change in K channel conductance gc_kna for given activation and channel params
+
+  INLINE void  Compute_dKNa_rate
+    (float act, float& gc_kna_f, float& gc_kna_m, float& gc_kna_s) {
+    Compute_dKNa_rate_impl(on && f_on, act, gc_kna_f, f_rise, f_max, f_dt);
+    Compute_dKNa_rate_impl(on && m_on, act, gc_kna_m, m_rise, m_max, m_dt);
+    Compute_dKNa_rate_impl(on && s_on, act, gc_kna_s, s_rise, s_max, s_dt);
+  }
+  // update K channel conductances per params for rate-code activation
+
+  INLINE void   UpdtDts()
+  { f_dt = 1.0f / f_tau; m_dt = 1.0f / m_tau; s_dt = 1.0f / s_tau; }
   
   STATE_DECO_KEY("UnitSpec");
   STATE_TA_STD_CODE_SPEC(KNaAdaptSpec);
@@ -461,9 +491,10 @@ public:
 private:
   void        Initialize()      { on = false; Defaults_init(); }
   void        Defaults_init() {
-    f_on = true; f_tau = 100.0f; f_spike = .005f; f_max = .01f;
-    m_on = true; m_tau = 200.0f; m_spike = .005f; m_max = .01f;
-    s_on = true; s_tau = 10000.0f; s_spike = .005f; s_max = .01f;
+    rate_rise = 0.8f;
+    f_on = true; f_tau = 50.0f;   f_rise = .05f;  f_max = .1f;
+    m_on = true; m_tau = 200.0f;  m_rise = .02f;  m_max = .1f;
+    s_on = true; s_tau = 1000.0f; s_rise = .005f; s_max = .2f;
     UpdtDts();
   }
 };

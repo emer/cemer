@@ -94,6 +94,16 @@ void LeabraUnitSpec::Initialize() {
 }
 
 void LeabraUnitSpec::Defaults_init() {
+  g_bar.e = 1.0f;
+  g_bar.l = 0.2f;
+  g_bar.i = 1.0f;
+  g_bar.k = 1.0f;
+    
+  e_rev.e = 1.0f;
+  e_rev.l = 0.3f;
+  e_rev.i = 0.25f;
+  e_rev.k = 0.10f;
+  UpdateChannels();
 }
 
 void LeabraUnitSpec::InitLinks() {
@@ -128,11 +138,7 @@ void LeabraUnitSpec::UpdateAfterEdit_impl() {
   stp.UpdateAfterEdit_NoGui();
   deep.UpdateAfterEdit_NoGui();
 
-  e_rev_sub_thr.e = e_rev.e - act.thr;
-  e_rev_sub_thr.l = e_rev.l - act.thr;
-  e_rev_sub_thr.i = e_rev.i - act.thr;
-  thr_sub_e_rev_i = (act.thr - e_rev.i);
-  thr_sub_e_rev_e = (act.thr - e_rev.e);
+  UpdateChannels();
 
     // if(deep.on && deep_raw_qtr == QNULL) { // doesn't make sense to not have any deep raw..
   //   deep_raw_qtr = Q4;

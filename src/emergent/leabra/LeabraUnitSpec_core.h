@@ -20,8 +20,8 @@
   ActFun            act_fun;        // #CAT_Activation activation function to use -- typically NOISY_XX1 or SPIKE -- others are for special purposes or testing
   STATE_CLASS(LeabraActFunSpec)  act;            // #CAT_Activation activation function parameters -- very important for determining the shape of the selected act_fun
   STATE_CLASS(LeabraActMiscSpec) act_misc;       // #CAT_Activation miscellaneous activation parameters
-  STATE_CLASS(SpikeFunSpec)      spike;          // #CONDSHOW_ON_act_fun:SPIKE #CAT_Activation spiking function specs (only for act_fun = SPIKE)
-  STATE_CLASS(SpikeMiscSpec)    spike_misc;      // #CAT_Activation misc extra spiking function specs (only for act_fun = SPIKE)
+  STATE_CLASS(SpikeFunSpec)     spike;           // #CONDSHOW_ON_act_fun:SPIKE #CAT_Activation spiking function specs (only for act_fun = SPIKE)
+  STATE_CLASS(SpikeMiscSpec)    spike_misc;      // #CONDSHOW_ON_act_fun:SPIKE #CAT_Activation misc extra spiking function specs (only for act_fun = SPIKE)
   STATE_CLASS(OptThreshSpec)    opt_thresh;      // #CAT_Learning optimization thresholds for speeding up processing when units are basically inactive
   STATE_CLASS(MinMaxRange)      clamp_range;     // #CAT_Activation range of clamped activation values (min, max, 0, .95 std), don't clamp to 1 because acts can't reach, so .95 instead
   STATE_CLASS(MinMaxRange)      vm_range;        // #CAT_Activation membrane potential range (min, max, 0-2 for normalized)
@@ -43,7 +43,7 @@
   STATE_CLASS(Random)           noise;           // #CONDSHOW_OFF_noise_type.type:NO_NOISE #CAT_Activation distribution parameters for random added noise
   
   STATE_CLASS(LeabraChannels) e_rev_sub_thr;     // #CAT_Activation #READ_ONLY #NO_SAVE #HIDDEN e_rev - act.thr for each item -- used for compute_ithresh
-  float          thr_sub_e_rev_i;   // #CAT_Activation #READ_ONLY #NO_SAVE #HIDDEN g_bar.i * (act.thr - e_rev.i) used for compute_ithresh
+  float          thr_sub_e_rev_i;   // #CAT_Activation #READ_ONLY #NO_SAVE #HIDDEN (act.thr - e_rev.i) used for compute_ithresh -- does NOT include g_bar.i
   float          thr_sub_e_rev_e;   // #CAT_Activation #READ_ONLY #NO_SAVE #HIDDEN g_bar.e * (act.thr - e_rev.e) used for compute_ethresh
 
   
@@ -450,9 +450,10 @@
   
   
   INLINE float Compute_EThresh(LEABRA_UNIT_STATE* u) {
-    float gc_l = g_bar.l + u->gc_kna_f + u->gc_kna_m + u->gc_kna_s;
-    return ((g_bar.i * u->gc_i * e_rev_sub_thr.i
-             + gc_l * e_rev_sub_thr.l) / thr_sub_e_rev_e);
+    const float gc_l = g_bar.l;
+    const float gc_k = g_bar.k * (u->gc_kna_f + u->gc_kna_m + u->gc_kna_s);
+    return ((g_bar.i * u->gc_i * e_rev_sub_thr.i + gc_l * e_rev_sub_thr.l +
+             gc_k * e_rev_sub_thr.k) / thr_sub_e_rev_e);
   }
   // #IGNORE compute excitatory value that would place unit directly at threshold
 
@@ -488,10 +489,12 @@
   // IMPORTANT: the following function is NOT called -- NETWORK_STATE calls _Rate or _Spike
   // directly!!
   inline void  Compute_Act(UNIT_STATE* uv, NETWORK_STATE* net, int thr_no) override {
-    if(act_fun == SPIKE)
+    if(act_fun == SPIKE) {
       Compute_Act_Spike((LEABRA_UNIT_STATE*)uv, (LEABRA_NETWORK_STATE*)net, thr_no);
-    else
+    }
+    else {
       Compute_Act_Rate((LEABRA_UNIT_STATE*)uv, (LEABRA_NETWORK_STATE*)net, thr_no);
+    }
   }
 
   
@@ -547,7 +550,7 @@
 
   INLINE virtual void Compute_ActFun_Rate(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) {
     float new_act;
-    if(u->v_m_eq <= act.thr) {
+    if(u->act_raw < act.vm_act_thr && u->v_m_eq <= act.thr) {
       // note: this is quite important -- if you directly use the gelin
       // the whole time, then units are active right away -- need v_m_eq dynamics to
       // drive subthreshold activation behavior
@@ -646,7 +649,7 @@
       u->spk_t = net->tot_cycle;
       return;
     }
-    int interval = act_misc.ActToInterval(net->times.time_inc, dt.integ, u->act_nd);
+    int interval = spike.ActToInterval(net->times.time_inc, dt.integ, u->act_nd);
     if((net->tot_cycle - u->spk_t) >= interval) {
       u->spike = 1.0f;
       u->v_m = spike_misc.vm_r;   // reset vm when we spike -- now we can use it just like spiking!
@@ -662,27 +665,29 @@
       u->act = 1.0f;
       u->spike = 1.0f;
       u->v_m = spike_misc.vm_r;
-      u->spk_t = net->tot_cycle;
       u->I_net = 0.0f;
+      if(u->spk_t > 0) {
+        float cur_int = net->tot_cycle - u->spk_t;
+        spike.UpdateSpikeInterval(u->spike_int, cur_int);
+      }
+      u->spk_t = net->tot_cycle;
     }
     else {
       u->act = 0.0f;
       u->spike = 0.0f;
-    }
 
-    float act_nd = u->act_nd / spike.eq_gain;
-    if(spike.eq_dt > 0.0f) {
-      act_nd += dt.integ * spike.eq_dt * (u->act - act_nd);
+      if(u->spk_t > 0) {
+        float cur_int = net->tot_cycle - u->spk_t;
+        if(cur_int > 1.2f * u->spike_int) { // some kind of estimate of when it exceeds est
+          spike.UpdateSpikeInterval(u->spike_int, cur_int);
+        }
+      }
     }
-    else {                        // increment by phase
-      if(net->cycle > 0)
-        act_nd *= (float)net->cycle;
-      act_nd = (act_nd + u->act) / (float)(net->cycle+1);
-    }
-    act_nd = act_range.Clip(spike.eq_gain * act_nd);
+    float act_nd = spike.ActFromInterval(u->spike_int, net->times.time_inc, dt.integ);
+    act_nd = act_range.Clip(act_nd);
+    act_nd = u->act_nd + dt.vm_dt * (act_nd - u->act_nd); // time integral
     u->da = act_nd - u->act_nd;   // da is on equilibrium activation
     u->act_nd = act_nd;
-
     if(stp.on) {
       u->act *= u->syn_tr;
       u->act_eq = u->syn_tr * u->act_nd; // act_eq is depressed rate code
@@ -756,13 +761,29 @@
 
   
   INLINE float Compute_EqVm(LEABRA_UNIT_STATE* u) {
-    float gc_l = g_bar.l + u->gc_kna_f + u->gc_kna_m + u->gc_kna_s;
-    float new_v_m = (((u->net * e_rev.e) + (gc_l * e_rev.l)
+    const float gc_l = g_bar.l;
+    const float gc_k = g_bar.k * (u->gc_kna_f + u->gc_kna_m + u->gc_kna_s);
+    float new_v_m = (((u->net * e_rev.e) + (gc_l * e_rev.l) + (gc_k * e_rev.k)
                       + (g_bar.i * u->gc_i * e_rev.i)) /
                      (u->net + gc_l + g_bar.i * u->gc_i));
     return new_v_m;
   }
   // #IGNORE compute the equilibrium (asymptotic) membrante potential from input conductances (assuming they remain fixed as they are)
+
+  INLINE float Compute_INet_impl(LEABRA_UNIT_STATE* u, const float v_m_eff, const float net_eff,
+                                 const float gc_i, const float gc_k) {
+    return net_eff * (e_rev.e - v_m_eff) + g_bar.l * (e_rev.l - v_m_eff) +
+      gc_k * (e_rev.k - v_m_eff) + gc_i * (e_rev.i - v_m_eff);
+  }
+  // #IGNORE compute the net current given effective v_m -- impl with precomputed vals
+
+  INLINE float Compute_INet(LEABRA_UNIT_STATE* u, const float v_m_eff) {
+    const float net_eff = u->net * g_bar.e;
+    const float gc_i = u->gc_i * g_bar.i;
+    const float gc_k = g_bar.k * (u->gc_kna_f + u->gc_kna_m + u->gc_kna_s);
+    return Compute_INet_impl(u, v_m_eff, net_eff, gc_i, gc_k);
+  }
+  // #IGNORE compute the net current given effective v_m
 
   INIMPL void Compute_Vm(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no);
   // #CAT_Activation Act Step 2: compute the membrane potential from input conductances
@@ -772,7 +793,12 @@
   //              Self reg / adapt / depress
 
   INLINE virtual void Compute_ActAdapt_Cycle(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) {
-    kna_adapt.Compute_dKNa(u->spike > 0.1f, u->gc_kna_f, u->gc_kna_m, u->gc_kna_s);
+    if(act_fun == SPIKE) {
+      kna_adapt.Compute_dKNa_spike(u->spike > 0.1f, u->gc_kna_f, u->gc_kna_m, u->gc_kna_s);
+    }
+    else {
+      kna_adapt.Compute_dKNa_rate(u->act_raw, u->gc_kna_f, u->gc_kna_m, u->gc_kna_s);
+    }
   }
   // #CAT_Activation compute the activation-based adaptation value based on spiking and membrane potential
   
@@ -1022,6 +1048,15 @@
   // #CAT_Statistic compute normalized binary error (0-1 as function of bits off of act_m vs target) according to settings on the network (returns a 1 or 0) -- if (net->lstats.on_errs && act_m > .5 && targ < .5) return 1; if (net->lstats.off_errs && act_m < .5 && targ > .5) return 1; else return 0
   
 
+  INLINE void   UpdateChannels() {
+    e_rev_sub_thr.e = e_rev.e - act.thr;
+    e_rev_sub_thr.l = e_rev.l - act.thr;
+    e_rev_sub_thr.i = e_rev.i - act.thr;
+    e_rev_sub_thr.k = e_rev.i - act.thr;
+    thr_sub_e_rev_i = (act.thr - e_rev.i); // not multiplied by g_bar.i here..
+    thr_sub_e_rev_e = (act.thr - e_rev.e);
+  }
+
   INLINE void   Initialize_core() {
     act_fun = NOISY_XX1;
     deep_raw_qtr = Q4;
@@ -1037,16 +1072,14 @@
     g_bar.e = 1.0f;
     g_bar.l = 0.2f;
     g_bar.i = 1.0f;
+    g_bar.k = 1.0f;
+    
     e_rev.e = 1.0f;
     e_rev.l = 0.3f;
     e_rev.i = 0.25f;
+    e_rev.k = 0.10f;
 
-    e_rev_sub_thr.e = e_rev.e - act.thr;
-    e_rev_sub_thr.l = e_rev.l - act.thr;
-    e_rev_sub_thr.i = e_rev.i - act.thr;
-    //  thr_sub_e_rev_i = g_bar.i * (act.thr - e_rev.i);
-    thr_sub_e_rev_i = (act.thr - e_rev.i);
-    thr_sub_e_rev_e = (act.thr - e_rev.e);
+    UpdateChannels();
 
     noise.type = STATE_CLASS(Random)::GAUSSIAN;
     noise.var = .001f;
