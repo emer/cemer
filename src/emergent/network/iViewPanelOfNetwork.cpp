@@ -29,6 +29,7 @@
 #include <iLineEdit>
 #include <iFlowLayout>
 
+#include <taMisc>
 #include <taiMisc>
 
 #include <QVBoxLayout>
@@ -400,13 +401,19 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   ////////////////////////////////////////////////////////////////////////////
   lvDisplayValues = new QTreeWidget();
   tw->addTab(lvDisplayValues, "Unit Display Values");
-  lvDisplayValues->setRootIsDecorated(false); // makes it look like a list
-  QStringList hdr;
-  hdr << "Value" << "Description";
-  lvDisplayValues->setHeaderLabels(hdr);
+  lvDisplayValues->setRootIsDecorated(true); // makes it look like a list
+  QStringList unit_var_hdr;
+  unit_var_hdr << "Value" << "Description";
+  lvDisplayValues->setHeaderLabels(unit_var_hdr);
   lvDisplayValues->setSortingEnabled(false);
   lvDisplayValues->setSelectionMode(QAbstractItemView::SingleSelection);
   //layDisplayValues->addWidget(lvDisplayValues, 1);
+  
+//  lvDisplayValues->setDragEnabled(true);
+//  lvDisplayValues->setAcceptDrops(true);
+//  lvDisplayValues->setDropIndicatorShown(true);
+//  lvDisplayValues->setDragDropMode(QAbstractItemView::InternalMove);
+
   connect(lvDisplayValues, SIGNAL(itemSelectionChanged()), this,
           SLOT(lvDisplayValues_selectionChanged()) );
   connect(lvDisplayValues, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this,
@@ -449,16 +456,28 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
 //   connect(tvSpecs, SIGNAL(ItemSelected(iTreeViewItem*)),
 //     this, SLOT(tvSpecs_ItemSelected(iTreeViewItem*)) );
 
-//   layOuter->setStretchFactor(scr, 0); // so it only uses exact spacing
-  // so doesn't have tiny scrollable annoying area:
-  // (the tradeoff is that if you squish the whole thing, eventually you can't
-  // get at all the properties)
-//   scr->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+  ////////////////////////////////////////////////////////////////////////////
+  net_state_values = new QTreeWidget();
+  tw->addTab(net_state_values, "Net State Values");
+  
+  net_state_values->setRootIsDecorated(true); // makes it look like a list
+
+  QStringList state_var_hrd;
+  state_var_hrd << "          Variable";
+  net_state_values->setHeaderLabels(state_var_hrd);
+  net_state_values->setSortingEnabled(false);
+  net_state_values->setSelectionMode(QAbstractItemView::SingleSelection);
+  net_state_values->setDragEnabled(true);
+//  net_state_values->setAcceptDrops(true);
+  net_state_values->setDropIndicatorShown(true);
+  net_state_values->setDragDropMode(QAbstractItemView::InternalMove);
+
+  connect(net_state_values, SIGNAL(itemSelectionChanged()), this,
+          SLOT(NetStateValues_selectionChanged()) );
+  connect(net_state_values, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this,
+          SLOT(NetStateValues_itemClicked(QTreeWidgetItem*, int)) );
 
   layTopCtrls->addWidget(tw);
-
-//   layOuter->addWidget(tw, 2);
-//   splt->addWidget(tw);
 
   ////////////////////////////////////////////////////////////////////////////
   // Command Buttons
@@ -735,7 +754,7 @@ void iViewPanelOfNetwork::ColorScaleFromData() {
   }
 }
 
-void iViewPanelOfNetwork::GetVars() {
+void iViewPanelOfNetwork::GetUnitVars() {
   NetView *nv = getNetView();
   if (!nv) return;
 
@@ -759,11 +778,34 @@ void iViewPanelOfNetwork::GetVars() {
   lvDisplayValues->resizeColumnToContents(0);
 }
 
+void iViewPanelOfNetwork::GetNetVars() {
+  NetView *nv = getNetView();
+  if (!nv) return;
+  
+  net_state_values->clear();
+  if (nv->net_membs.size == 0) return;
+
+  MemberDef* md;
+  for (int i=0; i < nv->net_membs.size; i++) {
+    md = nv->net_membs[i];
+    if (md->HasOption("NO_VIEW")) continue;
+    QStringList itm;
+    itm << md->name << md->desc;
+    QTreeWidgetItem* titm = new QTreeWidgetItem(net_state_values, itm);
+    if(nv->cur_net_state_vals.FindEl(md->name) < 0)
+      titm->setCheckState(0, Qt::Unchecked);
+    else
+      titm->setCheckState(0, Qt::Checked);
+  }
+  net_state_values->resizeColumnToContents(0);
+}
+
 void iViewPanelOfNetwork::InitPanel() {
   if (NetView *nv = getNetView()) {
     ++updating;
     // fill monitor values
-    GetVars();
+    GetUnitVars();
+    GetNetVars();
     --updating;
   }
 }
@@ -809,6 +851,49 @@ void iViewPanelOfNetwork::lvDisplayValues_itemClicked(QTreeWidgetItem* item, int
   nv->UpdateDisplay(false);
 }
 
+void iViewPanelOfNetwork::NetStateValues_selectionChanged() {
+  if (updating) return;
+  
+  NetView *nv = getNetView();
+  if (!nv) return;
+  
+  QTreeWidgetItemIterator it(net_state_values);
+  QTreeWidgetItem* item_;
+  while ( (item_ = *it) ) {
+    ++it;
+  }
+}
+
+void iViewPanelOfNetwork::NetStateValues_itemClicked(QTreeWidgetItem* changed_item, int col) {
+  if (updating) return;
+  
+  NetView *nv = getNetView();
+  if (!nv) return;
+  
+//  Qt::CheckState chk = item->checkState(col);
+//  String nm = item->text(0);
+//  if(chk == Qt::Checked) {
+//    nv->cur_net_state_vals.AddUnique(nm);
+//  }
+//  else {
+//    nv->cur_net_state_vals.RemoveEl(nm);
+//  }
+  
+  // build the list again to ensure they display in same order as they are in this list view
+  nv->cur_net_state_vals.Reset();
+  QTreeWidgetItemIterator it(net_state_values);
+  QTreeWidgetItem* item;
+  while ( (item = *it) ) {
+    //    taMisc::DebugInfo(item_->text(0));>
+    Qt::CheckState chkd = item->checkState(col);
+    if (chkd) {
+      nv->cur_net_state_vals.AddUnique(item->text(0));
+    }
+    ++it;
+  }
+
+  nv->UpdateDisplay(false);
+}
 
 void iViewPanelOfNetwork::setHighlightSpec(BaseSpec* spec, bool force) {
   if ((spec == m_cur_spec) && !force) return;

@@ -1576,32 +1576,25 @@ void T3ExaminerViewer::UpdateNetStateValues(String net_state_text) {
   String str;
   strs.FmDelimString(net_state_text, '$');
   
-  if (!net_state_labels_inited) {
-    net_state_labels.clear();
-    for (int i=0; i<strs.size; i++) {
-      str = strs[i];
-      
-      QLabel* label = new QLabel(this);
-      net_state_labels.append(label);
-      net_state_labels[i]->setStyleSheet("background-color: white; color: black; border: 1px solid #AAAAAA;");
-      QFontMetrics fm(label->fontMetrics());
-      String label_part = str.before(':');
-      int label_part_in_pixels = fm.width(label_part);
-      int value_part_in_pixels = 80;      // don't calculate - we want the full label width to be constant for each label
-      if (label_part.contains_ci("phase")) {  // total hack!!
-        value_part_in_pixels = 120;
-      }
-      int fixed_width_total = label_part_in_pixels + value_part_in_pixels;
-      net_state_labels[i]->setFixedSize(fixed_width_total, 16);
-      net_state_layout->addWidget(net_state_labels.at(i));
-      
-//      QFont font = net_state_labels[i]->font();
-//      font.setPointSize(font_size);
-//      net_state_labels[i]->setFont(font);
+  // rebuild every time
+  ClearNetStateValues();
+  
+  for (int i=0; i<strs.size; i++) {
+    str = strs[i];
+    
+    QLabel* label = new QLabel(this);
+    net_state_labels.append(label);
+    net_state_labels[i]->setStyleSheet("background-color: white; color: black; border: 1px solid #AAAAAA;");
+    QFontMetrics fm(label->fontMetrics());
+    String label_part = str.before(':');
+    int label_part_in_pixels = fm.width(label_part);
+    int value_part_in_pixels = 80;      // don't calculate - we want the full label width to be constant for each label
+    if (label_part.contains_ci("phase")) {  // total hack!!
+      value_part_in_pixels = 120;
     }
-    if (net_state_labels.size() > 0) {
-      net_state_labels_inited = true;
-    }
+    int fixed_width_total = label_part_in_pixels + value_part_in_pixels;
+    net_state_labels[i]->setFixedSize(fixed_width_total, 16);
+    net_state_layout->addWidget(net_state_labels.at(i));
   }
   for (int i=0; i<strs.size; i++) {
     net_state_labels.at(i)->setText(strs[i]);
@@ -1617,5 +1610,4 @@ void T3ExaminerViewer::ClearNetStateValues() {
       delete label;
     }
   }
-  net_state_labels_inited = false;
 }

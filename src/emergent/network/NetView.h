@@ -158,7 +158,9 @@ public:
   taTransform           net_text_xform;  // transform of coordinate system for the net text display element
   float                 net_text_rot;    // rotation of the text in the Z plane (in degrees) - default is upright, but if text area is rotated, then a different angle might work better
   MemberSpace           membs;          // #NO_SAVE #NO_COPY #READ_ONLY list of all the members possible in units; note: all items are new clones
+  MemberSpace           net_membs;      // #NO_SAVE #NO_COPY #READ_ONLY list of all the network members that can appear in "Net Text"; note: all items are new clones
   String_Array          cur_unit_vals;  // #NO_COPY #READ_ONLY currently selected unit values to display -- theoretically can display multiple values, but this is not currently supported, so it always just has one entry at most
+  String_Array          cur_net_state_vals;  // #NO_COPY #READ_ONLY currently selected net state values to display
   String_Array          hot_vars;       // current "hot" variables shown directly in explorer view
   UnitState_cpp*        unit_src;       // #NO_SAVE #NO_COPY #READ_ONLY unit last picked (if any) for display
   String                unit_src_path;  // ##READ_ONLY path of unit_src unit relative to the network -- used for saving and reloading
@@ -233,6 +235,7 @@ public:
   ////////////////////////////////////////////////////////////////
   // misc util functions etc
   virtual void          GetMembs();
+  virtual void          GetNetMembs(); // these are the Network vars marked #VIEW (e.g. cycle, trial_name, ...)
   virtual void          GetMaxSize(); // get max size from network
 
   void                  GetUnitColor(float val, iColor& col, float& sc_val);

@@ -132,6 +132,7 @@ public:
   QTabWidget*           tw;
   QTreeWidget*            lvDisplayValues;
   iTreeView*              tvSpecs;
+  QTreeWidget*            net_state_values;  // list of network variables that can be displayed and continuously updated in network view
 
   iMethodButtonMgr*     meth_but_mgr;
   QWidget*              widCmdButtons;
@@ -139,25 +140,26 @@ public:
   NetView*              getNetView();
 
   void                  ColorScaleFromData();
-  virtual void          GetVars();
+  virtual void          GetUnitVars();
+  virtual void          GetNetVars();
   virtual void          InitPanel() override;
 
   iViewPanelOfNetwork(NetView* dv_);
   ~iViewPanelOfNetwork();
 
 public: // ISigLinkClient interface
-  void*        This() override {return (void*)this;} //
+  void*                 This() override {return (void*)this;} //
 //  void               SigLinkDestroying(taSigLink* dl) override;
 //  void               SigLinkClientRemoving(taSigLink* dl, ISigLinkClient* dlc) override;
-  TypeDef*     GetTypeDef() const override {return &TA_iViewPanelOfNetwork;}
+  TypeDef*              GetTypeDef() const override {return &TA_iViewPanelOfNetwork;}
 
 protected:
   BaseSpec*             m_cur_spec; // cur spec chosen -- only compared, so ok if stale
   bool                  req_full_render; // when updating, call Render on netview
   bool                  req_full_build;  // when updating, call Build on netview
-  void         UpdatePanel_impl() override;
-  void         GetValue_impl() override;
-  void         CopyFrom_impl() override;
+  void                  UpdatePanel_impl() override;
+  void                  GetValue_impl() override;
+  void                  CopyFrom_impl() override;
   void                  setHighlightSpec(BaseSpec* spec, bool force = false);
 
 public slots:
@@ -179,6 +181,8 @@ protected slots:
   void                  hist_movie();
   void                  lvDisplayValues_selectionChanged();
   void                  lvDisplayValues_itemClicked(QTreeWidgetItem* item, int col);
+  void                  NetStateValues_selectionChanged();
+  void                  NetStateValues_itemClicked(QTreeWidgetItem* item, int col);
   void                  tvSpecs_ItemSelected(iTreeViewItem* item);
   // note: this one seems a bit defunct for the iTreeView -- replaced with Notify below
   void                  tvSpecs_Notify(ISelectableHost* src, int op);

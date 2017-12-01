@@ -438,6 +438,7 @@ void NetView::InitLinks() {
   taBase::Own(scale, this);
   taBase::Own(scale_ranges, this);
   taBase::Own(cur_unit_vals, this);
+  taBase::Own(cur_net_state_vals, this);
   taBase::Own(hot_vars, this);
   taBase::Own(ctr_hist, this);
   taBase::Own(ctr_hist_idx, this);
@@ -477,6 +478,7 @@ void NetView::CutLinks() {
   ctr_hist_idx.CutLinks();
   ctr_hist.CutLinks();
   cur_unit_vals.CutLinks();
+  cur_net_state_vals.CutLinks();
   scale_ranges.CutLinks();
   scale.CutLinks();
   lay_disp_modes.CutLinks();
@@ -641,6 +643,7 @@ void NetView::BuildAll() { // populates all T3 guys
   }
   GetMaxSize();
   GetMembs();
+  GetNetMembs();
 
   Network* nt = net();
   
@@ -778,6 +781,27 @@ UnitView* NetView::FindUnitView(UnitState_cpp* unit) {
   //     return uv;
   // }
   return NULL;
+}
+
+void NetView::GetNetMembs() {
+  if(!net()) return;
+  
+  Network* nt = net();
+  if(!nt || !nt->IsBuiltIntact()) {
+    net_membs.Reset();
+    return;
+  }
+
+  net_membs.Reset();
+
+  TypeDef* td = net()->GetTypeDef();
+  for(int i=td->members.size-1; i>=0; i--) {
+    MemberDef* md = td->members[i];
+    if(!md->HasOption("VIEW")) continue;
+    if(net()->HasUserData(md->name) && !net()->GetUserDataAsBool(md->name)) continue;
+    MemberDef* new_md = md->Clone();
+    net_membs.Add(new_md);       // index now reflects position in list...
+  }
 }
 
 // this fills a member group with the valid memberdefs from the units and connections
@@ -1306,29 +1330,49 @@ void NetView::Render_new_net_text() {
   String net_state_text = "";
   TypeDef* td = net()->GetTypeDef();
   
-  bool build_text = true;
-  for(int i=td->members.size-1; i>=0; i--) {
-    MemberDef* md = td->members[i];
-    if(!md->HasOption("VIEW")) continue;
-    if(net()->HasUserData(md->name) && !net()->GetUserDataAsBool(md->name)) continue;
-    if(build_text) {
-      bool cur_str = false;
-      if((md->type->InheritsFrom(&TA_taString) || md->type->IsEnum())) {
-        cur_str = true;
-      }
+  for(int i=0; i<cur_net_state_vals.size; i++) {
+    String var = cur_net_state_vals[i];
+    MemberDef* md = td->members.FindName(var);
+    if (md) {
+      String el = md->name + ": ";
+      net_state_text = net_state_text + el;
+      String val = md->GetValStr((void*)net());
+      net_state_text = net_state_text + val + "$";
     }
-    String el = md->name + ": ";
-    net_state_text = net_state_text + el;
-    String val = md->GetValStr((void*)net());
-    net_state_text = net_state_text + val + "$";
   }
   T3ExaminerViewer* vw = GetViewer();
   if (vw) {
-      vw->UpdateNetStateValues(net_state_text);
+    vw->UpdateNetStateValues(net_state_text);
   }
 }
 
-  void NetView::Render_net_text() {
+//void NetView::Render_new_net_text() {
+//  String net_state_text = "";.
+//  TypeDef* td = net()->GetTypeDef();
+//
+//  bool build_text = true;
+//  for(int i=td->members.size-1; i>=0; i--) {
+//    MemberDef* md = td->members[i];
+//    if(!md->HasOption("VIEW")) continue;
+//    if(net()->HasUserData(md->name) && !net()->GetUserDataAsBool(md->name)) continue;
+////    if(build_text) {
+////      bool cur_str = false;
+////      if((md->type->InheritsFrom(&TA_taString) || md->type->IsEnum())) {
+////        cur_str = true;
+////      }
+////    }
+//    String el = md->name + ": ";
+//    net_state_text = net_state_text + el;
+//    String val = md->GetValStr((void*)net());
+//    net_state_text = net_state_text + val + "$";
+//  }
+//  T3ExaminerViewer* vw = GetViewer();
+//  if (vw) {
+//      vw->UpdateNetStateValues(net_state_text);
+//  }
+//}
+
+void NetView::Render_net_text() {
   T3NetNode* node_so = this->node_so(); //cache
 #ifdef TA_QT3D
   T3Entity* net_txt = node_so->net_text;
