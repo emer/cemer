@@ -37,7 +37,7 @@ TA_BASEFUNS_CTORS_DEFN(LeabraActAvgSpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraAvgLSpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraAvgL2Spec);
 TA_BASEFUNS_CTORS_DEFN(LeabraChannels);
-TA_BASEFUNS_CTORS_DEFN(ActAdaptSpec);
+TA_BASEFUNS_CTORS_DEFN(KNaAdaptSpec);
 TA_BASEFUNS_CTORS_DEFN(ShortPlastSpec);
 TA_BASEFUNS_CTORS_DEFN(SynDelaySpec);
 TA_BASEFUNS_CTORS_DEFN(DeepSpec);
@@ -124,7 +124,7 @@ void LeabraUnitSpec::UpdateAfterEdit_impl() {
   vm_range.UpdateAfterEdit_NoGui();
   dt.UpdateAfterEdit_NoGui();
   act_avg.UpdateAfterEdit_NoGui();
-  adapt.UpdateAfterEdit_NoGui();
+  kna_adapt.UpdateAfterEdit_NoGui();
   stp.UpdateAfterEdit_NoGui();
   deep.UpdateAfterEdit_NoGui();
 
@@ -223,8 +223,7 @@ void LeabraUnitSpec::CreateNXX1Fun(LeabraActFunSpec& act_spec, FunLookup& nxx1_f
 void LeabraUnitSpec::BioParams(float norm_sec, float norm_volt, float volt_off, float norm_amp,
           float C_pF, float gbar_l_nS, float gbar_e_nS, float gbar_i_nS,
           float erev_l_mV, float erev_e_mV, float erev_i_mV,
-          float act_thr_mV, float spk_thr_mV, float exp_slope_mV,
-       float adapt_tau_ms, float adapt_vm_gain_nS, float adapt_spk_gain_nA)
+          float act_thr_mV, float spk_thr_mV, float exp_slope_mV)
 {
   // derived units
   float norm_siemens = norm_amp / norm_volt;
@@ -245,9 +244,9 @@ void LeabraUnitSpec::BioParams(float norm_sec, float norm_volt, float volt_off, 
   spike_misc.exp_slope = ((exp_slope_mV * 1.0e-3f)) / norm_volt; // no off!
   spike_misc.vm_r = e_rev.l;                                     // go back to leak
 
-  adapt.tau = (adapt_tau_ms * 1.0e-3f) / norm_sec;
-  adapt.vm_gain = (adapt_vm_gain_nS * 1.0e-9f) / norm_siemens;
-  adapt.spike_gain = (adapt_spk_gain_nA * 1.0e-9f) / norm_amp;
+  // adapt.tau = (adapt_tau_ms * 1.0e-3f) / norm_sec;
+  // adapt.vm_gain = (adapt_vm_gain_nS * 1.0e-9f) / norm_siemens;
+  // adapt.spike_gain = (adapt_spk_gain_nA * 1.0e-9f) / norm_amp;
 
   init.v_m = 0.4f;
   vm_range.min = 0.0f;

@@ -48,14 +48,15 @@ void LEABRA_UNIT_SPEC::Init_Acts(UNIT_STATE* uv, NETWORK_STATE* net, int thr_no)
   u->thal_gate = 0.0f;
   u->thal_cnt = -1.0f;
   u->gc_i = 0.0f;
+  u->gc_kna_f = 0.0f;
+  u->gc_kna_m = 0.0f;
+  u->gc_kna_s = 0.0f;
   u->I_net = 0.0f;
   u->v_m = init.v_m;
   u->v_m_eq = u->v_m;
-  u->adapt = 0.0f;
   u->gi_syn = 0.0f;
   u->gi_self = 0.0f;
   u->gi_ex = 0.0f;
-  u->E_i = e_rev.i;
   u->syn_tr = 1.0f;
   u->syn_nr = 1.0f;
   u->syn_pr = stp.p0;
@@ -143,14 +144,15 @@ void LEABRA_UNIT_SPEC::Init_UnitState(UNIT_STATE* uv, NETWORK_STATE* net, int th
   u->thal_gate = 0.0f;
   u->thal_cnt = -1.0f;
   u->gc_i = 0.0f;
+  u->gc_kna_f = 0.0f;
+  u->gc_kna_m = 0.0f;
+  u->gc_kna_s = 0.0f;
   u->I_net = 0.0f;
   u->v_m = init.v_m;
   u->v_m_eq = u->v_m;
-  u->adapt = 0.0f;
   u->gi_syn = 0.0f;
   u->gi_self = 0.0f;
   u->gi_ex = 0.0f;
-  u->E_i = e_rev.i;
   u->syn_tr = 1.0f;
   u->syn_nr = 1.0f;
   u->syn_pr = stp.p0;
@@ -178,14 +180,15 @@ void LEABRA_UNIT_SPEC::DecayState(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* ne
     u->gc_i -= decay * u->gc_i;
     u->v_m -= decay * (u->v_m - init.v_m);
     u->v_m_eq -= decay * (u->v_m_eq - init.v_m);
-    if(adapt.on) {
-      u->adapt -= decay * u->adapt;
+    if(kna_adapt.on) {
+      if(kna_adapt.f_on) u->gc_kna_f -= decay * u->gc_kna_f;
+      if(kna_adapt.m_on) u->gc_kna_m -= decay * u->gc_kna_m;
+      if(kna_adapt.s_on) u->gc_kna_s -= decay * u->gc_kna_s;
     }
 
     u->gi_syn -= decay * u->gi_syn;
     u->gi_self -= decay * u->gi_self;
     u->gi_ex -= decay * u->gi_ex;
-    u->E_i -= decay * (u->E_i - e_rev.i);
 
     if(stp.on && (stp.algorithm == STATE_CLASS(ShortPlastSpec)::CYCLES)) {
       u->syn_tr -= decay * (u->syn_tr - 1.0f);
@@ -640,18 +643,8 @@ void LEABRA_UNIT_SPEC::Compute_Vm(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* ne
   }
   else {
     float net_eff = u->net * g_bar.e;
-    float E_i;
-    if(adapt.on && adapt.Ei_dyn) {
-      // update the E_i reversal potential as function of inhibitory current
-      // key to assume that this is driven by backpropagating AP's
-      E_i = u->E_i;
-      u->E_i += adapt.Ei_gain * u->act_eq + adapt.Ei_dt * (e_rev.i - u->E_i);
-    }
-    else {
-      E_i = e_rev.i;
-    }
-
-    float gc_l = g_bar.l;
+    float E_i = e_rev.i;
+    float gc_l = g_bar.l + u->gc_kna_f + u->gc_kna_m + u->gc_kna_s;
     float gc_i = u->gc_i * g_bar.i;
 
     if(updt_spk_vm) {
@@ -660,10 +653,10 @@ void LEABRA_UNIT_SPEC::Compute_Vm(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* ne
       // midpoint method: take a half-step:
       float I_net_1 =
         (net_eff * (e_rev.e - v_m_eff)) + (gc_l * (e_rev.l - v_m_eff)) +
-        (gc_i * (E_i - v_m_eff)) - u->adapt;
+        (gc_i * (E_i - v_m_eff));
       v_m_eff += .5f * dt.integ * dt.vm_dt * I_net_1; // go half way
       float I_net = (net_eff * (e_rev.e - v_m_eff)) + (gc_l * (e_rev.l - v_m_eff))
-        + (gc_i * (E_i - v_m_eff)) - u->adapt;
+        + (gc_i * (E_i - v_m_eff));
       // add spike current if relevant
       if(spike_misc.ex) {
         I_net += gc_l * spike_misc.exp_slope *
@@ -676,7 +669,7 @@ void LEABRA_UNIT_SPEC::Compute_Vm(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* ne
     // always compute v_m_eq with simple integration -- used for rate code subthreshold
     float I_net_r = (net_eff * (e_rev.e - u->v_m_eq)) 
       + (gc_l * (e_rev.l - u->v_m_eq)) +  (gc_i * (E_i - u->v_m_eq));
-    u->v_m_eq += dt.integ * dt.vm_dt * (I_net_r - u->adapt);
+    u->v_m_eq += dt.integ * dt.vm_dt * I_net_r;
   }
 
   if((noise_type.type == STATE_CLASS(LeabraNoiseSpec)::VM_NOISE) &&

@@ -416,37 +416,55 @@ private:
 };
 
 
-class STATE_CLASS(ActAdaptSpec) : public STATE_CLASS(SpecMemberBase) {
-  // ##INLINE ##NO_TOKENS ##CAT_Leabra activation-driven adaptation dynamics -- negative feedback on v_m based on sub- and super-threshold activation -- relatively rapid time-scale and especially relevant for spike-based models -- drives the adapt variable on the unit
+class STATE_CLASS(KNaAdaptSpec) : public STATE_CLASS(SpecMemberBase) {
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra sodium-gated potassium channel adaptation mechanism -- evidence supports at least 3 different time constants: M-type (fast), Slick (medium), and Slack (slow)
 INHERITED(SpecMemberBase)
 public:
-  bool          on;                // apply adaptation?
-  float         tau;                // #CONDSHOW_ON_on #DEF_144 adaptation dynamics time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly -- 1.4x the half-life)
-  float         vm_gain;        // #CONDSHOW_ON_on #MIN_0 #DEF_0.04 gain on the membrane potential v_m driving the adapt adaptation variable -- default of 0.04 reflects 4nS biological value converted into normalized units
-  float         spike_gain;        // #CONDSHOW_ON_on #DEF_0.00805;0.004;0.002 value to add to the adapt adaptation variable after spiking -- default of 0.00805 is normalized version of .0805 nA in biological values -- weaker levels often work better (e.g., 0.004)
-  bool          Ei_dyn;         // #CONDSHOW_ON_on does the inhibitory reversal potential (E_i) update dynamically over time in response to activation of the receiving neuron (backpropagating action potentials), or is it static -- dynamics are important when using adaptation, as this compensates for adaptation and allows active neurons to remain active -- only enabeled when activation is on, because it is bad when adaptation is not on
-  float         Ei_gain;        // #CONDSHOW_ON_Ei_dyn&&on #MIN_0 #DEF_0.001 multiplier on postsynaptic cell activation (act_eq), driving increases in E_i reversal potential for Cl- -- this factor determines how strong the e_rev change effect is
-  float         Ei_tau;         // #CONDSHOW_ON_Ei_dyn&&on #MIN_1 #DEF_50 decay time constant for decay of inhibitory reversal potential -- active neurons raise their inhibitory reversal potential, giving them an advantage over inactive neurons
-  float         dt;                // #READ_ONLY #EXPERT rate = 1 / tau
-  float         Ei_dt;          // #READ_ONLY #EXPERT rate = 1 / tau
+  bool          on;             // apply K-Na adaptation overall?
+  bool          f_on;           // #CONDSHOW_ON_on use fast time-scale adaptation
+  float         f_tau;          // #CONDSHOW_ON_on&&f_on time constant in cycles for fast time-scale adaptation, which should be milliseconds typically (roughly, how long it takes for value to change significantly -- 1.4x the half-life)
+  float         f_spike;        // #CONDSHOW_ON_on&&f_on amount to increase fast K channel current per spike -- divide nA biological value by 10 for the normalized units here
+  float         f_max;          // #CONDSHOW_ON_on&&f_on maximum potential conductance of fast K channels -- divide nA biological value by 10 for the normalized units here
+  bool          m_on;           // #CONDSHOW_ON_on use medium time-scale adaptation
+  float         m_tau;          // #CONDSHOW_ON_on&&m_on time constant in cycles for medium time-scale adaptation, which should be milliseconds typically (roughly, how long it takes for value to change significantly -- 1.4x the half-life)
+  float         m_spike;        // #CONDSHOW_ON_on&&m_on amount to increase medium K channel current per spike -- divide nA biological value by 10 for the normalized units here
+  float         m_max;          // #CONDSHOW_ON_on&&m_on maximum potential conductance of medium K channels -- divide nA biological value by 10 for the normalized units here
+  bool          s_on;           // #CONDSHOW_ON_on use slow time-scale adaptation
+  float         s_tau;          // #CONDSHOW_ON_on&&s_on time constant in cycles for slow time-scale adaptation, which should be milliseconds typically (roughly, how long it takes for value to change significantly -- 1.4x the half-life)
+  float         s_spike;        // #CONDSHOW_ON_on&&s_on amount to increase slow K channel current per spike -- divide nA biological value by 10 for the normalized units here
+  float         s_max;          // #CONDSHOW_ON_on&&s_on maximum potential conductance of slow K channels -- divide nA biological value by 10 for the normalized units here
 
-  INLINE float  Compute_dAdapt(float vm, float e_rev_l, float adapt)
-  { return dt * (vm_gain * (vm - e_rev_l) - adapt); }
-  // compute the change in adapt given vm, resting reversal potential (leak reversal), and adapt inputs
+  float         f_dt;           // #READ_ONLY #EXPERT rate = 1 / tau
+  float         m_dt;           // #READ_ONLY #EXPERT rate = 1 / tau
+  float         s_dt;           // #READ_ONLY #EXPERT rate = 1 / tau
 
-  STATE_DECO_KEY("UnitSpec");
-  STATE_TA_STD_CODE_SPEC(ActAdaptSpec);
+  INLINE void  Compute_dKNa_impl(bool con, bool spike, float& gc_kna, float dt, float gspike, float gmax)
+  { if(!con )           gc_kna = 0.0f;
+    else if(spike)      gc_kna += gspike * (gmax - gc_kna);
+    else                gc_kna -= dt * gc_kna; }
+  // compute the change in K channel conductance gc_kna for given spiking and channel params
+
+  INLINE void  Compute_dKNa(bool spike, float& gc_kna_f, float& gc_kna_m, float& gc_kna_s) {
+    Compute_dKNa_impl(on && f_on, spike, gc_kna_f, f_dt, f_spike, f_max);
+    Compute_dKNa_impl(on && m_on, spike, gc_kna_m, m_dt, m_spike, m_max);
+    Compute_dKNa_impl(on && s_on, spike, gc_kna_s, s_dt, s_spike, s_max);
+  }
+  // update K channel conductances per params
+
+  INLINE void   UpdtDts() { f_dt = 1.0f / f_tau; m_dt = 1.0f / m_tau; s_dt = 1.0f / s_tau; }
   
-  STATE_UAE(dt = 1.0f / tau;  Ei_dt = 1.0f / Ei_tau; );
+  STATE_DECO_KEY("UnitSpec");
+  STATE_TA_STD_CODE_SPEC(KNaAdaptSpec);
+  
+  STATE_UAE( UpdtDts(); );
   
 private:
   void        Initialize()      { on = false; Defaults_init(); }
   void        Defaults_init() {
-    tau = 144;  vm_gain = 0.04f;  spike_gain = 0.00805f;  Ei_dyn = true;
-    Ei_gain = 0.001f;  Ei_tau = 50.0f;
-
-    dt = 1.0f / tau;
-    Ei_dt = 1.0f / Ei_tau;
+    f_on = true; f_tau = 100.0f; f_spike = .005f; f_max = .01f;
+    m_on = true; m_tau = 200.0f; m_spike = .005f; m_max = .01f;
+    s_on = true; s_tau = 10000.0f; s_spike = .005f; s_max = .01f;
+    UpdtDts();
   }
 };
 

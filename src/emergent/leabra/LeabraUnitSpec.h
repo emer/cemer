@@ -59,7 +59,7 @@ eTypeDef_Of(LeabraActAvgSpec);
 eTypeDef_Of(LeabraAvgLSpec);
 eTypeDef_Of(LeabraAvgL2Spec);
 eTypeDef_Of(LeabraChannels);
-eTypeDef_Of(ActAdaptSpec);
+eTypeDef_Of(KNaAdaptSpec);
 eTypeDef_Of(ShortPlastSpec);
 eTypeDef_Of(SynDelaySpec);
 eTypeDef_Of(DeepSpec);
@@ -93,9 +93,7 @@ public:
      float norm_amp=1.0e-8f, float C_pF=281.0f, float gbar_l_nS=10.0f,
      float gbar_e_nS=100.0f, float gbar_i_nS=100.0f,
      float erev_l_mV=-70.0f, float erev_e_mV=0.0f, float erev_i_mV=-75.0f,
-     float act_thr_mV=-50.0f, float spk_thr_mV=20.0f, float exp_slope_mV=2.0f,
-     float adapt_tau_ms=144.0f, float adapt_vm_gain_nS=4.0f,
-     float adapt_spk_gain_nA=0.0805);
+     float act_thr_mV=-50.0f, float spk_thr_mV=20.0f, float exp_slope_mV=2.0f);
   // #BUTTON set parameters based on biologically-based values, using normalization scaling to convert into typical Leabra standard parameters.  norm_x are normalization values to convert from SI units to normalized values (defaults are 1ms = .001 s, 100mV with -100 mV offset to bring into 0-1 range between -100..0 mV, 1e-8 amps (makes g_bar, C, etc params nice).  other defaults are based on the AdEx model of Brette & Gurstner (2005), which the SPIKE mode implements exactly with these default parameters -- last bit of name indicates the units in which this value must be provided (mV = millivolts, ms = milliseconds, pF = picofarads, nS = nanosiemens, nA = nanoamps)
 
   virtual void        GraphVmFun(DataTable* graph_data, float g_i = .5, float min = 0.0,

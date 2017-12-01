@@ -32,7 +32,7 @@
   STATE_CLASS(LeabraAvgL2Spec)  avg_l_2;         // #CAT_Learning additional parameters for computing the avg_l long-term floating average that drives BCM-style hebbian learning
   STATE_CLASS(LeabraChannels)   g_bar;           // #CAT_Activation [Defaults: 1, .1, 1] maximal conductances for channels
   STATE_CLASS(LeabraChannels)   e_rev;           // #CAT_Activation [Defaults: 1, .3, .25] reversal potentials for each channel
-  STATE_CLASS(ActAdaptSpec)     adapt;           // #CAT_Activation activation-driven adaptation factor that drives spike rate adaptation dynamics based on both sub- and supra-threshold membrane potentials
+  STATE_CLASS(KNaAdaptSpec)     kna_adapt;       // #CAT_Activation sodium-gated potassium channel adaptation mechanism -- evidence supports at least 3 different time constants: M-type (fast), Slick (medium), and Slack (slow)
   STATE_CLASS(ShortPlastSpec)   stp;             // #CAT_Activation short term presynaptic plasticity specs -- can implement full range between facilitating vs. depresssion
   STATE_CLASS(SynDelaySpec)     syn_delay;       // #CAT_Activation synaptic delay -- if active, activation sent to other units is delayed by a given amount
   Quarters         deep_raw_qtr;    // #CAT_Learning #AKA_deep_qtr quarter(s) during which deep_raw layer 5 intrinsic bursting activations should be updated -- deep_raw is updated and sent to deep_raw_net during this quarter, and deep_ctxt is updated right after this quarter (wrapping around to the first quarter for the 4th quarter)
@@ -450,10 +450,9 @@
   
   
   INLINE float Compute_EThresh(LEABRA_UNIT_STATE* u) {
-    float gc_l = g_bar.l;
-    return ((g_bar.i * u->gc_i * (u->E_i - act.thr)
-             + gc_l * e_rev_sub_thr.l - u->adapt) /
-            thr_sub_e_rev_e);
+    float gc_l = g_bar.l + u->gc_kna_f + u->gc_kna_m + u->gc_kna_s;
+    return ((g_bar.i * u->gc_i * e_rev_sub_thr.i
+             + gc_l * e_rev_sub_thr.l) / thr_sub_e_rev_e);
   }
   // #IGNORE compute excitatory value that would place unit directly at threshold
 
@@ -757,9 +756,9 @@
 
   
   INLINE float Compute_EqVm(LEABRA_UNIT_STATE* u) {
-    float gc_l = g_bar.l;
+    float gc_l = g_bar.l + u->gc_kna_f + u->gc_kna_m + u->gc_kna_s;
     float new_v_m = (((u->net * e_rev.e) + (gc_l * e_rev.l)
-                      + (g_bar.i * u->gc_i * u->E_i) - u->adapt) /
+                      + (g_bar.i * u->gc_i * e_rev.i)) /
                      (u->net + gc_l + g_bar.i * u->gc_i));
     return new_v_m;
   }
@@ -773,14 +772,7 @@
   //              Self reg / adapt / depress
 
   INLINE virtual void Compute_ActAdapt_Cycle(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) {
-    if(!adapt.on) {
-      u->adapt = 0.0f;
-    }
-    else {
-      float dad = dt.integ * (adapt.Compute_dAdapt(u->v_m, e_rev.l, u->adapt) +
-                              u->spike * adapt.spike_gain);
-      u->adapt += dad;
-    }
+    kna_adapt.Compute_dKNa(u->spike > 0.1f, u->gc_kna_f, u->gc_kna_m, u->gc_kna_s);
   }
   // #CAT_Activation compute the activation-based adaptation value based on spiking and membrane potential
   

@@ -21,9 +21,6 @@ void LEABRA_LAYER_SPEC::Trial_Init_Specs(LEABRA_NETWORK_STATE* net) {
 }
 
 
-///////////////////////////////////////////////////////////////////////
-//      QuarterInit -- at start of settling
-
 float LEABRA_LAYER_SPEC::Compute_AvgExt(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
   float avg_ext = 0.0f;
   int avg_n = 0;

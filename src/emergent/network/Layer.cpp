@@ -985,6 +985,8 @@ void Layer::ApplyInputData(taMatrix* data, ExtFlags ext_flags,
   // note: when use LayerWriters, we typically always just get a single frame of
   // the exact dimensions, and so ignore 'frame'
   if (!data || lesioned() || n_units_built == 0) return;
+  if(layer_type == HIDDEN) return;
+  
   // check correct geom of data
   if(TestError((data->dims() != 2) && (data->dims() != 4), "ApplyInputData",
                "data->dims must be 2 (2-d) or 4 (4-d)")) {

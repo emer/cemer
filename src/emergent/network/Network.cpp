@@ -547,6 +547,12 @@ void Network::Init_Epoch() {
 
 void Network::Init_InputData() {
   NET_STATE_RUN(NetworkState, Init_InputData());
+  // also need to initialize our ext flags -- ext_flags have #MAIN source as apply input is main
+  for(int li=0; li< n_layers_built; li++) {
+    Layer* lay = StateLayer(li);
+    if(lay->lesioned()) continue;
+    lay->ext_flag = Layer::NO_EXTERNAL;
+  }
   SyncLayerState();
 }
 
