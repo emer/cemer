@@ -296,6 +296,7 @@ set(ta_gui_HEADS_NOMAKETA_MOC
   iTextBrowser.h
   iTextEdit.h
   iTreeWidget.h
+  iTreeListWidget.h
   iNumberBar.h
   iNumberedTextView.h
   iDiffTextView.h
@@ -791,6 +792,7 @@ set(ta_gui_SRCS_NOMAKETA
   iTextBrowser.cpp
   iTextEdit.cpp
   iTreeWidget.cpp
+  iTreeListWidget.cpp
   iNumberBar.cpp
   iNumberedTextView.cpp
   iDiffTextView.cpp

@@ -28,6 +28,7 @@
 #include <iMethodButtonMgr>
 #include <iLineEdit>
 #include <iFlowLayout>
+#include <iTreeListWidget>
 
 #include <taMisc>
 #include <taiMisc>
@@ -57,7 +58,7 @@ iViewPanelOfNetwork::iViewPanelOfNetwork(NetView* dv_)
     connect(vw, SIGNAL(dynbuttonActivated(int)), this, SLOT(dynbuttonActivated(int)) );
     connect(vw, SIGNAL(unTrappedKeyPressEvent(QKeyEvent*)), this, SLOT(unTrappedKeyPressEvent(QKeyEvent*)) );
   }
-
+  
   widg = new QWidget();
   layTopCtrls = new QVBoxLayout(widg); //layWidg->addLayout(layTopCtrls);
   layTopCtrls->setSpacing(2);
@@ -457,13 +458,14 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
 //     this, SLOT(tvSpecs_ItemSelected(iTreeViewItem*)) );
 
   ////////////////////////////////////////////////////////////////////////////
-  net_state_values = new QTreeWidget();
+  net_state_values = new iTreeListWidget();
+
   tw->addTab(net_state_values, "Net State Values");
   
   net_state_values->setRootIsDecorated(true); // makes it look like a list
 
   QStringList state_var_hrd;
-  state_var_hrd << "          Variable";
+  state_var_hrd << "          Variable" << "        Description";
   net_state_values->setHeaderLabels(state_var_hrd);
   net_state_values->setSortingEnabled(false);
   net_state_values->setSelectionMode(QAbstractItemView::SingleSelection);
@@ -789,9 +791,9 @@ void iViewPanelOfNetwork::GetNetVars() {
   for (int i=0; i < nv->net_membs.size; i++) {
     md = nv->net_membs[i];
     if (md->HasOption("NO_VIEW")) continue;
-    QStringList itm;
-    itm << md->name << md->desc;
-    QTreeWidgetItem* titm = new QTreeWidgetItem(net_state_values, itm);
+    QTreeWidgetItem* titm = new QTreeWidgetItem(net_state_values);
+    titm->setText(0, md->name);
+    titm->setText(1, md->desc);
     if(nv->cur_net_state_vals.FindEl(md->name) < 0)
       titm->setCheckState(0, Qt::Unchecked);
     else
@@ -851,34 +853,12 @@ void iViewPanelOfNetwork::lvDisplayValues_itemClicked(QTreeWidgetItem* item, int
   nv->UpdateDisplay(false);
 }
 
-void iViewPanelOfNetwork::NetStateValues_selectionChanged() {
-  if (updating) return;
-  
-  NetView *nv = getNetView();
-  if (!nv) return;
-  
-  QTreeWidgetItemIterator it(net_state_values);
-  QTreeWidgetItem* item_;
-  while ( (item_ = *it) ) {
-    ++it;
-  }
-}
-
 void iViewPanelOfNetwork::NetStateValues_itemClicked(QTreeWidgetItem* changed_item, int col) {
   if (updating) return;
   
   NetView *nv = getNetView();
   if (!nv) return;
-  
-//  Qt::CheckState chk = item->checkState(col);
-//  String nm = item->text(0);
-//  if(chk == Qt::Checked) {
-//    nv->cur_net_state_vals.AddUnique(nm);
-//  }
-//  else {
-//    nv->cur_net_state_vals.RemoveEl(nm);
-//  }
-  
+    
   // build the list again to ensure they display in same order as they are in this list view
   nv->cur_net_state_vals.Reset();
   QTreeWidgetItemIterator it(net_state_values);
@@ -984,3 +964,4 @@ void iViewPanelOfNetwork::unTrappedKeyPressEvent(QKeyEvent* e) {
     nv->unTrappedKeyPressEvent(e);
   }
 }
+

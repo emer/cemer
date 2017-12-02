@@ -30,7 +30,6 @@ class taiWidgetComboBox; //
 class taiWidgetGroupElChooser; //
 class iTreeView; //
 class iTreeViewItem; //
-class QTreeWidgetItem; //
 class iMethodButtonMgr; //
 class taiWidgetFieldRegexp; //
 class BaseSpec; //
@@ -42,6 +41,9 @@ class QPushButton; //
 class QAction; //
 class QTabWidget; //
 class QTreeWidget; //
+class QTreeWidgetItem; //
+class iTreeListWidget; //
+class iTreeListWidgetItem; //
 class ISelectableHost; //
 
 
@@ -132,7 +134,7 @@ public:
   QTabWidget*           tw;
   QTreeWidget*            lvDisplayValues;
   iTreeView*              tvSpecs;
-  QTreeWidget*            net_state_values;  // list of network variables that can be displayed and continuously updated in network view
+  iTreeListWidget*        net_state_values;  // list of network variables that can be displayed and continuously updated in network view
 
   iMethodButtonMgr*     meth_but_mgr;
   QWidget*              widCmdButtons;
@@ -181,7 +183,6 @@ protected slots:
   void                  hist_movie();
   void                  lvDisplayValues_selectionChanged();
   void                  lvDisplayValues_itemClicked(QTreeWidgetItem* item, int col);
-  void                  NetStateValues_selectionChanged();
   void                  NetStateValues_itemClicked(QTreeWidgetItem* item, int col);
   void                  tvSpecs_ItemSelected(iTreeViewItem* item);
   // note: this one seems a bit defunct for the iTreeView -- replaced with Notify below
