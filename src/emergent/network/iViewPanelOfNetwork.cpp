@@ -30,7 +30,6 @@
 #include <iFlowLayout>
 #include <iTreeListWidget>
 
-#include <taMisc>
 #include <taiMisc>
 
 #include <QVBoxLayout>
@@ -404,7 +403,7 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   tw->addTab(lvDisplayValues, "Unit Display Values");
   lvDisplayValues->setRootIsDecorated(true); // makes it look like a list
   QStringList unit_var_hdr;
-  unit_var_hdr << "Value" << "Description";
+  unit_var_hdr << "      Variable" << "        Description";
   lvDisplayValues->setHeaderLabels(unit_var_hdr);
   lvDisplayValues->setSortingEnabled(false);
   lvDisplayValues->setSelectionMode(QAbstractItemView::SingleSelection);
@@ -853,26 +852,43 @@ void iViewPanelOfNetwork::lvDisplayValues_itemClicked(QTreeWidgetItem* item, int
   nv->UpdateDisplay(false);
 }
 
+void iViewPanelOfNetwork::NetStateValues_selectionChanged() {
+  if (updating) return;
+  
+  NetView *nv = getNetView();
+  if (!nv) return;
+
+  // build the list again to ensure they display in same order as they are in this list view
+  RebuildNetStateCurList();
+  nv->UpdateDisplay(false);
+}
+
 void iViewPanelOfNetwork::NetStateValues_itemClicked(QTreeWidgetItem* changed_item, int col) {
   if (updating) return;
   
   NetView *nv = getNetView();
   if (!nv) return;
-    
+
   // build the list again to ensure they display in same order as they are in this list view
+  RebuildNetStateCurList();
+  nv->UpdateDisplay(false);
+}
+
+void iViewPanelOfNetwork::RebuildNetStateCurList() {
+  NetView *nv = getNetView();
+  if (!nv) return;
+
   nv->cur_net_state_vals.Reset();
   QTreeWidgetItemIterator it(net_state_values);
   QTreeWidgetItem* item;
+  int col = 0;
   while ( (item = *it) ) {
-    //    taMisc::DebugInfo(item_->text(0));>
     Qt::CheckState chkd = item->checkState(col);
     if (chkd) {
-      nv->cur_net_state_vals.AddUnique(item->text(0));
+      nv->cur_net_state_vals.AddUnique(item->text(col));
     }
     ++it;
   }
-
-  nv->UpdateDisplay(false);
 }
 
 void iViewPanelOfNetwork::setHighlightSpec(BaseSpec* spec, bool force) {

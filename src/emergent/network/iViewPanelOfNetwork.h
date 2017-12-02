@@ -163,6 +163,7 @@ protected:
   void                  GetValue_impl() override;
   void                  CopyFrom_impl() override;
   void                  setHighlightSpec(BaseSpec* spec, bool force = false);
+  void                  RebuildNetStateCurList();
 
 public slots:
   void                  viewWin_NotifySignal(ISelectableHost* src, int op); // forwarded to netview
@@ -183,11 +184,11 @@ protected slots:
   void                  hist_movie();
   void                  lvDisplayValues_selectionChanged();
   void                  lvDisplayValues_itemClicked(QTreeWidgetItem* item, int col);
+  void                  NetStateValues_selectionChanged();
   void                  NetStateValues_itemClicked(QTreeWidgetItem* item, int col);
   void                  tvSpecs_ItemSelected(iTreeViewItem* item);
   // note: this one seems a bit defunct for the iTreeView -- replaced with Notify below
   void                  tvSpecs_Notify(ISelectableHost* src, int op);
-
 };
 
 #endif // iViewPanelOfNetwork_h

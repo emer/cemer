@@ -21,7 +21,7 @@
 #include <QEvent>
 #include <QTreeWidget>
 
-class iTreeListWidgetItem; //
+class iTreeListWidgetItem; // This class makes the tree look like a list because it forces drops on top level items to be top level items
 
 class TA_API iTreeListWidget: public QTreeWidget {
   INHERITED(QTreeWidget)
