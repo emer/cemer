@@ -306,7 +306,7 @@
   INLINE float 	C_Compute_dWt_CtLeabraXCAL
     (const float ru_avg_s, const float ru_avg_m, const float su_avg_s, const float su_avg_m,
      const float ru_avg_l, const float ru_avg_l_lrn, const float ru_margin) 
-  { float srs = ru_avg_s * su_avg_s;
+  { float srs = xcal.s_mult * ru_avg_s * su_avg_s;
     float srm = ru_avg_m * su_avg_m;
     float new_dwt = (ru_avg_l_lrn * xcal.dWtFun(srs, ru_avg_l) +
                     xcal.m_lrn * xcal.dWtFun(srs, srm));

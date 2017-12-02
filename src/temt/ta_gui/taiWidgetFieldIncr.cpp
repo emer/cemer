@@ -28,9 +28,9 @@ taiWidgetFieldIncr::taiWidgetFieldIncr(TypeDef* typ_, IWidgetHost* host_, taiWid
 {
   SetRep( new iSpinBox(gui_parent_) );
   iSpinBox* rep = this->rep();
-  int ht = taiM->text_height(defSize());
-  rep->setMaximumSize(5 * ht, ht);
-  rep->setMinimumSize(2*ht, ht);
+  // int ht = taiM->text_height(defSize());
+  //  rep->setMaximumSize(5 * ht, ht);
+  //  rep->setMinimumSize(2*ht, ht);
 //   rep->setFixedHeight(ht);
 
   //note: the taiType will set the max/min
@@ -64,6 +64,15 @@ void taiWidgetFieldIncr::setMinimum(const Variant& min) {
 void taiWidgetFieldIncr::setMaximum(const Variant& max) {
   rep()->setMaximum(max.toInt());
 }
+
+void taiWidgetFieldIncr::setMinCharWidth(int num) {
+  rep()->setMinCharWidth(num);
+}
+
+void taiWidgetFieldIncr::setCharWidth(int num) {
+  rep()->setCharWidth(num);
+}
+
 
 void taiWidgetFieldIncr::this_GetEditActionsEnabled(int& ea) {
   if(!rep()) return;

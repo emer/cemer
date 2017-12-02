@@ -19,7 +19,10 @@
 #include <MemberDef>
 #include <BuiltinTypeDefs>
 
+#include <taMisc>
+
 #include <QDoubleValidator>
+
 
 
 int taiTypeOfReal::BidForType(TypeDef* td){
@@ -30,6 +33,7 @@ int taiTypeOfReal::BidForType(TypeDef* td){
 
 taiWidget* taiTypeOfReal::GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef* mbr) {
   taiWidgetField* rval = new taiWidgetField(typ, host_, par, gui_parent_, flags_);
+  rval->setCharWidth(taMisc::edit_width_float);
   // now, decorate with a validator, and init
   QDoubleValidator* dv = new QDoubleValidator(rval->rep());
   // set std notation, otherwise default is scientific
@@ -49,6 +53,10 @@ taiWidget* taiTypeOfReal::GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par, 
     if (val.nonempty()) {
       double fval = val.toDouble();
       dv->setTop(fval);
+    }
+    val = mbr->OptionAfter("WIDTH_");
+    if (val.nonempty()) {
+      rval->setCharWidth(val.toInt());
     }
   }
   rval->rep()->setValidator(dv);

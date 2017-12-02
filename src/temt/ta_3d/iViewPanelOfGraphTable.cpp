@@ -130,6 +130,7 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
   lblRows->setToolTip(taiMisc::ToolTipPreProcess("Maximum number of rows to display (row height is scaled to fit)."));
   layVals->addWidget(lblRows);
   fldRows = dl.Add(new taiWidgetFieldIncr(&TA_int, this, NULL, widg));
+  fldRows->setCharWidth(7);
   layVals->addWidget(fldRows->GetRep());
   layVals->addSpacing(taiM->hsep_c);
   

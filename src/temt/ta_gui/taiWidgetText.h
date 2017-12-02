@@ -43,6 +43,7 @@ public:
   iLineEdit*            rep() const;
   bool                  fillHor() override { return true; }
   void                  setMinCharWidth(int num); // hint for min chars, 0=no min
+  void                  setCharWidth(int num); // set a fixed width, 0 = no fixed
 
   void                  GetImage(const String& val);
   String                GetValue() const;

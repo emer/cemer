@@ -145,6 +145,10 @@ void taiWidgetText::setMinCharWidth(int num) {
   rep()->setMinCharWidth(num);
 }
 
+void taiWidgetText::setCharWidth(int num) {
+  rep()->setCharWidth(num);
+}
+
 void taiWidgetText::this_GetEditActionsEnabled(int& ea) {
   if(!rep()) return;
   if (!readOnly())

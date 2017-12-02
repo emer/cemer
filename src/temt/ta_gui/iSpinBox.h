@@ -32,6 +32,8 @@ public:
   void		copy();
   void		paste();
   void		del();
+  void          setMinCharWidth(int num); // hint for min chars, 0=no min
+  void          setCharWidth(int num); // set a fixed width, 0 = no fixed
 
 #ifndef __MAKETA__
 signals:

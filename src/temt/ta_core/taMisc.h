@@ -331,6 +331,8 @@ public:
   static int            display_width;  // #SAVE #HIDDEN #CAT_GUI width of console display (in chars) -- set automatically by gui console -- affects all Print routines, which generate strings that also show up in tool tips, dialogs, and other places
   static int            max_display_width;  // #SAVE #EXPERT #MIN_10 #CAT_GUI maximum width of console display (in chars) -- affects all Print routines, which generate strings that also show up in tool tips, dialogs, and other places -- may not want this to get too big
   static int            indent_spc;     // #SAVE #EXPERT #MIN_1 #MAX_8 #DEF_2 #CAT_GUI how many spaces to use per indent level
+  static int            edit_width_float; // #SAVE #EXPERT #MIN_1 #DEF_9 #CAT_GUI max width of an edit field for floating-point numbers
+  static int            edit_width_int;   // #SAVE #EXPERT #MIN_1 #DEF_6 #CAT_GUI max width of an edit field for integer numbers
   static int            display_height;  // #SAVE #HIDDEN #CAT_GUI height of console display (in rows) -- set automatically by gui console -- used for paging
   static taUndoPrefs    undo;           // #SAVE #CAT_GUI undo options 
   static int            auto_save_data_max_cells; // #SAVE #CAT_GUI if column of data table has more than this number of cells, it won't be saved during auto_save (column structure will be retained)

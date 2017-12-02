@@ -43,6 +43,14 @@ taiWidget* taiTypeOfInt::GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par, Q
 //TODO: the taiWidgetFieldIncr control can only handle int values, so can't handle uint range
 // should either replace with a DoubleSpin, or longlongspin
   taiWidgetFieldIncr* rval = new taiWidgetFieldIncr(typ, host_, par, gui_parent_, flags_);
+
+  if(mbr) {
+    String val = mbr->OptionAfter("WIDTH_");
+    if (val.nonempty()) {
+      rval->setCharWidth(val.toInt());
+    }
+  }
+  
   // put limits on values -- start w/ explicit ones, them limit them by datatype
   int min = INT_MIN;
   if (mbr && mbr->HasOption("POS_ONLY")) // do this one first, then max of min

@@ -35,6 +35,8 @@ public:
 
   virtual void          setMinimum(const Variant& min); //NOTE: for iSpinBox, this must be an int
   virtual void          setMaximum(const Variant& max); //NOTE: for iSpinBox, this must be an int
+  void                  setMinCharWidth(int num); // hint for min chars, 0=no min
+  void                  setCharWidth(int num); // set a fixed width, 0 = no fixed
 
   void                  GetImage(int val);
   int                   GetValue() const;

@@ -123,7 +123,8 @@ void iLineEdit::setCharWidth(int num) {
   mchar_width = num;
   if (num == 0) {
     setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-  } else {
+  }
+  else {
     QFontMetrics fm(font());
     QString s; s.reserve(num);
     // just use numbers, which are probably of about average width
@@ -132,7 +133,7 @@ void iLineEdit::setCharWidth(int num) {
     }
     setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
     int w = fm.size(Qt::TextSingleLine, s).width();
-    setMinimumWidth(w);
+    setMinimumWidth(w / 2);
     setMaximumWidth(w);
   }
 }

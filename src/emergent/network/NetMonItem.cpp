@@ -638,11 +638,11 @@ void NetMonItem::ScanObject_Layer(Layer* lay, String var) {
   if(var.startsWith('.'))
     var = var.after('.');
   if(var.contains('.')) {
-    if(var.startsWith("units[")) {
+    if(var.startsWith("units")) {
       ScanObject_LayerUnits(lay, var);
       return;
     }
-    if(var.startsWith("ungp[")) {
+    if(var.startsWith("ungp")) {
       ScanObject_LayerUnGp(lay, var);
       return;
     }
@@ -697,13 +697,26 @@ void NetMonItem::ScanObject_Layer(Layer* lay, String var) {
 void NetMonItem::ScanObject_LayerUnits(Layer* lay, String var) {
   NetworkState_cpp* net_state = lay->GetValidNetState();
   if(!net_state) return;
+
+  if(var.startsWith('.')) var = var.after('.');
   
   String range2;
-  String range1 = var.between('[', ']');
-  String rmdr = var.after(']');
-  if(rmdr.contains('[')) {
-    range2 = rmdr.between('[', ']');
-    rmdr = rmdr.after(']');
+  String range1;
+  String rmdr;
+  if(var.contains('[')) {
+    range1 = var.between('[', ']');
+    rmdr = var.after(']');
+    if(rmdr.contains('[')) {
+      range2 = rmdr.between('[', ']');
+      rmdr = rmdr.after(']');
+    }
+  }
+  else {
+    range1 = "0--1";            // this means all units
+    if(var.startsWith("units."))
+      rmdr = var.after("units.");
+    else
+      rmdr = var;
   }
   if(rmdr.startsWith('.')) rmdr = rmdr.after('.');
 

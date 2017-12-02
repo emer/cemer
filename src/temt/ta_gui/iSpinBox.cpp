@@ -20,6 +20,9 @@
 
 #include <limits.h>
 
+#include <taMisc>
+
+
 using namespace Qt;
 
 iSpinBox::iSpinBox(QWidget* parent)
@@ -48,6 +51,7 @@ void iSpinBox::init() {
   setMaximum(INT_MAX); // 99 is a whacked-out maximum
   setLineEdit(new iLineEdit); // takes ownership
   connect(lineEdit(), SIGNAL(selectionChanged()), this, SIGNAL(selectionChanged()) );
+  setCharWidth(taMisc::edit_width_int);
 }
 
 bool iSpinBox::hasSelectedText() {
@@ -79,4 +83,20 @@ void iSpinBox::setReadOnly(bool value) {
     le->setReadOnly(value);
   }
   inherited::setReadOnly(value);
+}
+
+void iSpinBox::setMinCharWidth(int num) {
+  ((iLineEdit*)lineEdit())->setMinCharWidth(num);
+  int wid = lineEdit()->minimumWidth();
+  setMinimumWidth(wid + 20);     // spin box..
+  wid = lineEdit()->maximumWidth();
+  setMaximumWidth(wid + 20);     // spin box..
+}
+
+void iSpinBox::setCharWidth(int num) {
+  ((iLineEdit*)lineEdit())->setCharWidth(num);
+  int wid = lineEdit()->minimumWidth();
+  setMinimumWidth(wid + 20);     // spin box..
+  wid = lineEdit()->maximumWidth();
+  setMaximumWidth(wid + 20);     // spin box..
 }

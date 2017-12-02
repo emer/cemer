@@ -1521,14 +1521,21 @@ void GraphTableView::RenderLegend() {
       GraphPlotView* pl = plots[main_y_plots[i]];
       max_label_len = MAX(pl->col_name.length(), max_label_len);
     }
+    for(int i=0;i<alt_y_plots.size;i++) {
+      GraphPlotView* pl = plots[alt_y_plots[i]];
+      max_label_len = MAX(pl->col_name.length(), max_label_len);
+    }
   }
   if(n_plots_eff == 0)
     return;    // nothing..
 
   float tot_char_wd = (width * 2.0f) / label_font_size; // rough heuristic total
-  int n_across = (int)(tot_char_wd / (float)(max_label_len + 5)); // add 5 for the line
+  int n_across = (int)((tot_char_wd / (float)(max_label_len + 3))); // add 3 for the line
   if(n_across < 1) n_across = 1;
-  
+
+  // taMisc::Info("char_wd:", String(tot_char_wd), "max_label:", String(max_label_len),
+  //              "across:", String(n_across));
+
   int n_down = (int)(((float)n_plots_eff / (float)n_across) + 0.5f);
   if(n_down < 1) n_down = 1;
   while(n_down * n_across < n_plots_eff)
@@ -1568,7 +1575,7 @@ void GraphTableView::RenderLegend() {
     for (int group=0; group<color_axis.group_by_values.size; group++) {
       GraphPlotView* pl = plots[main_y_plots[0]];
 #ifdef TA_QT3D
-      T3GraphLine* ln = NULL;
+      T3GraphLine* ln = NULL;plots
       if(leg_n < leg_ol.count()) {
         ln = dynamic_cast<T3GraphLine*>(leg_ol.at(leg_n++));
       }

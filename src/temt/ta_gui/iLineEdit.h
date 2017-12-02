@@ -38,11 +38,11 @@ public:
   iLineEdit(const char* text, QWidget* parent, bool add_completer = false);
 
   inline int	  charWidth() {return mchar_width;}
-  void		      setCharWidth(int num);      // sets width to accommodate num chars of
+  void		  setCharWidth(int num);      // sets width to accommodate num chars of
   inline int	  minCharWidth() {return mmin_char_width;}
-  void		      setMinCharWidth(int num);   // sets aprox min width to accommodate num chars of average text in current font; 0=no restriction; limited to 128
-  virtual void	clearExtSelection();        // clear extended selection mode and also clear any existing selection
-  virtual void	emitReturnPressed();        // emit this signal
+  void		  setMinCharWidth(int num);   // sets aprox min width to accommodate num chars of average text in current font; 0=no restriction; limited to 128
+  virtual void	  clearExtSelection();        // clear extended selection mode and also clear any existing selection
+  virtual void	  emitReturnPressed();        // emit this signal
   iCodeCompleter* GetCompleter() { return completer; }
     
 #ifndef __MAKETA__

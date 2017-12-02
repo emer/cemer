@@ -225,7 +225,6 @@ void ControlPanelMember::UpdateAfterEdit_impl() {
 
   if(taMisc::is_loading) {
     data.SetCtrlType();
-
     taVersion v806(8, 0, 6);
     if (taMisc::loading_version < v806) {
       if(obs_param_srch.search) {

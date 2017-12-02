@@ -760,6 +760,7 @@ bool ControlPanel::AddMember_impl
       negp->Transfer(item);     // grab it
     }
   }
+  item->data.SetCtrlType();
   if(InheritsFromName("ClusterRun")) {
     item->SetToExplore();
   }

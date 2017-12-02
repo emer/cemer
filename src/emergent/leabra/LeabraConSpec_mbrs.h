@@ -77,6 +77,8 @@ public:
   float		d_rev;		// #DEF_0.1 #MIN_0 proportional point within LTD range where magnitude reverses to go back down to zero at zero -- err-driven svm component does better with smaller values, and BCM-like mvl component does better with larger values -- 0.1 is a compromise
   float		d_thr;		// #DEF_0.0001;0.01 #MIN_0 minimum LTD threshold value below which no weight change occurs -- small default value is mainly to optimize computation for the many values close to zero associated with inactive synapses
   float         lrn_thr;        // #DEF_0.01 xcal learning threshold -- don't learn when sending unit activation is below this value in both phases -- due to the nature of the learning function being 0 when the sr coproduct is 0, it should not affect learning in any substantial way -- nonstandard learning algorithms that have different properties should ignore it
+  float         s_mult;        // multiplicative factor on short-time-scale average activations -- to compensate for overall average differences in activation level at end of settling vs. earlier -- needed especially for adaptation mechanism
+
   float		d_rev_ratio;	// #HIDDEN #READ_ONLY -(1-d_rev)/d_rev -- multiplication factor in learning rule -- builds in the minus sign!
 
   INLINE float  dWtFun(const float srval, const float thr_p) {
@@ -129,7 +131,7 @@ private:
   void	Initialize() {   Defaults_init(); }
   void	Defaults_init() {
     m_lrn = 1.0f;  set_l_lrn = false;  l_lrn = 1.0f;  d_rev = 0.10f;  d_thr = 0.0001f;
-    lrn_thr = 0.01f; d_rev_ratio = -(1.0f - d_rev) / d_rev;
+    lrn_thr = 0.01f; s_mult = 1.0f; d_rev_ratio = -(1.0f - d_rev) / d_rev;
   }
 };
 
