@@ -770,14 +770,10 @@ public:
   // #CAT_Display set the picked source unit (for viewing weights) in netview
 #endif
 
-  virtual void  PlaceNetText(NetTextLoc net_text_loc, float scale = 1.0f);
-  // #MENU_BUTTON #MENU_ON_NetView #CAT_Display locate the network text data display (counters, statistics -- typically shown at bottom of network) in a new standard location (it can also be dragged anywhere in the net view, turn on lay_mv button and click on red arrow) -- can also change the scaling
-  virtual BrainView* NewBrainView(T3Panel* fr = NULL);
+  virtual BrainView*    NewBrainView(T3Panel* fr = NULL);
   // #NULL_OK_0 #NULL_TEXT_0_NewFrame #MENU_BUTTON #MENU_ON_NetView #CAT_Display Create an fMRI-style brain visualization to show activations in defined brain areas.
-  virtual void  AssignVoxels();
+  virtual void          AssignVoxels();
   // #MENU_BUTTON #MENU_ON_NetView #CAT_Display assign voxel coordinates to units in the network according to current atlas_name on the Network and brain_area specifications on the Layers
-  virtual void  NetTextUserData();
-  // #IGNORE auto-called in InitLinks -- enable the filtering of what information is shown in the network text data display (typically shown at bottom of network, though see PlaceNetText for options on where to locate) -- this function creates entries for each of the viewable items in the UserData for this network -- just click on the UserData button to edit which items to display.
   virtual void          HistMovie(int x_size=640, int y_size=480,
                                   const String& fname_stub = "movie_img_");
   // #MENU_BUTTON #MENU_ON_NetView #CAT_Display record individual frames of the netview display from current position through to the end of the history buffer, as movie frames -- use mjpeg tools http://mjpeg.sourceforge.net/ (pipe png2yuv into mpeg2enc) to compile the individual PNG frames into an MPEG movie, which can then be transcoded (e.g., using VLC) into any number of other formats
@@ -789,7 +785,7 @@ public:
   // #MENU_BUTTON #MENU_ON_NetView #NULL_OK_0 #NULL_TEXT_0_NewTable #CAT_Structure record the network projection structure to given data table, with one row per projection per layer, including the connection and projection specs used and notes -- optional whether to include lesioned layers and projections that have the off flag marked
   virtual String        NetPrjnsToList(taMarkUp::Format fmt, bool include_off = false);
   // #MENU_BUTTON #MENU_ON_NetView #USE_RVAL #CAT_Structure record the network projection structure to a mark-up formatted list, indented by layer group (if present), layer, then projections including the connection and projection specs used -- optional whether to include lesioned layers and projections that have the off flag marked
-  virtual void         NetPrjnsToList_gp
+  virtual void          NetPrjnsToList_gp
     (Layer_Group* gp, String& rval, taMarkUp::Format fmt, bool include_off, int& indent);
   // #IGNORE impl list of projections for all layers in layer group
 

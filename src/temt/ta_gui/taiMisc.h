@@ -544,6 +544,7 @@ public:
 
   int           hspc_c;         // space values (in pixels) are for "large spaces" between items
   int           vspc_c;
+  int           hschk_c;        // use after checkbox because they have text on right side of control
   int           dlgm_c;         // dialog margin (in pixels) -- empty space around dialog contents
   iSize         scrn_s;         // screen size, excluding task bars, etc. (use for maximum dialog size)
   iSize         frame_s;        // normal window frame size -- we can only determine this from a shown window (esp on X) -- the startup routine sets it from the main window

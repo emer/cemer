@@ -55,6 +55,7 @@ void iTreeListWidget::dropEvent(QDropEvent* e) {
         this->takeTopLevelItem(item_index);
         this->insertTopLevelItem(drop_index.row(), item);
         this->itemSelectionChanged();  // if we had a model we would get "rowsInserted" - but this is a way to notify of something changing!
+        this->clearSelection();
       }
         break;
       case QAbstractItemView::OnViewport:

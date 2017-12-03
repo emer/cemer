@@ -87,19 +87,13 @@ iViewPanelOfNetwork::iViewPanelOfNetwork(NetView* dv_)
   chkLayMove->setToolTip(taiMisc::ToolTipPreProcess("Turn on the layer moving controls when in the manipulation mode (red arrow) of viewer -- these can sometimes interfere with viewing weights, so you can turn them off here (but then you won't be able to move layers around in the GUI)"));
   connect(chkLayMove, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layDispCheck->addWidget(chkLayMove);
-  layDispCheck->addSpacing(taiM->hsep_c);
+  layDispCheck->addSpacing(taiM->hschk_c);
 
-  chkNetText = new QCheckBox("Net\nTxt", widg);
-  chkNetText->setToolTip(taiMisc::ToolTipPreProcess("Turn on the network text display at the base of the network, showing the current state of various counters and stats"));
+  chkNetText = new QCheckBox("Net\nText", widg);
+  chkNetText->setToolTip(taiMisc::ToolTipPreProcess("Display the current state of various counters and stats"));
   connect(chkNetText, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layDispCheck->addWidget(chkNetText);
-  layDispCheck->addSpacing(taiM->hsep_c);
-
-  chkNewNetText = new QCheckBox("NEW Net\nTxt", widg);
-  chkNewNetText->setToolTip(taiMisc::ToolTipPreProcess("Display continuously updating network variable values"));
-  connect(chkNewNetText, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
-  layDispCheck->addWidget(chkNewNetText);
-  layDispCheck->addSpacing(taiM->hsep_c);
+  layDispCheck->addSpacing(taiM->hschk_c);
 
   lblUnitText = taiM->NewLabel("Unit:\nText", widg, font_spec);
   lblUnitText->setToolTip(taiMisc::ToolTipPreProcess("What text to display for each unit (values, names)"));
@@ -107,7 +101,7 @@ iViewPanelOfNetwork::iViewPanelOfNetwork(NetView* dv_)
   cmbUnitText = dl.Add(new taiWidgetComboBox(true, TA_NetView.sub_types.FindName("UnitTextDisplay"),
                                 this, NULL, widg, taiWidget::flgAutoApply));
   layDispCheck->addWidget(cmbUnitText->GetRep());
-  layDispCheck->addSpacing(taiM->hsep_c);
+  layDispCheck->addSpacing(taiM->hschk_c);
 
   lblDispMode = taiM->NewLabel("Style", widg, font_spec);
   lblDispMode->setToolTip(taiMisc::ToolTipPreProcess("How to display unit values.  3d Block (default) is optimized for maximum speed."));
@@ -188,12 +182,13 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   chkXYSquare->setToolTip(taiMisc::ToolTipPreProcess("Make the X and Y size of network the same, so that unit cubes are always square (but can waste a certain amount of display space)."));
   connect(chkXYSquare, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layFontsEtc->addWidget(chkXYSquare);
-
+  layFontsEtc->addSpacing(taiM->hschk_c);
+  
   chkLayGp = new QCheckBox("Lay\nGp", widg);
   chkLayGp->setToolTip(taiMisc::ToolTipPreProcess("Display boxes around layer groups."));
   connect(chkLayGp, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layFontsEtc->addWidget(chkLayGp);
-
+  layFontsEtc->addSpacing(taiM->hschk_c);
   layFontsEtc->addStretch(10);
 
   ////////////////////////////////////////////////////////////////////////////
@@ -229,13 +224,13 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   chkWtLines->setToolTip(taiMisc::ToolTipPreProcess("Whether to display connection weight values as colored lines, with color and transparency varying as a function of magnitude"));
   connect(chkWtLines, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layColorScaleCtrls->addWidget(chkWtLines);
-  layColorScaleCtrls->addSpacing(taiM->hsep_c);
+  layColorScaleCtrls->addSpacing(taiM->hschk_c);
 
   chkWtLineSwt = new QCheckBox("s.wt", widg);
   chkWtLineSwt->setToolTip(taiMisc::ToolTipPreProcess("Display the sending weights out of the unit instead of the receiving weights into it"));
   connect(chkWtLineSwt, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layColorScaleCtrls->addWidget(chkWtLineSwt);
-  layColorScaleCtrls->addSpacing(taiM->hsep_c);
+  layColorScaleCtrls->addSpacing(taiM->hschk_c);
 
   lblWtLineWdth = taiM->NewLabel("Wdth", widg, font_spec);
   lblWtLineWdth->setToolTip(taiMisc::ToolTipPreProcess("Width of weight lines -- 0 = thinnest lines (-1 = no lines, redundant with turning wt_lines off)"));
@@ -526,8 +521,6 @@ void iViewPanelOfNetwork::UpdatePanel_impl() {
   chkDisplay->setChecked(nv->display);
   chkLayMove->setChecked(nv->lay_mv);
   chkNetText->setChecked(nv->net_text);
-  chkNewNetText->setChecked(nv->new_net_text);
-  // fldTextRot->GetImage((String)nv->net_text_rot);
   cmbLayLayout->GetEnumImage(nv->lay_layout);
   cmbConType->GetEnumImage(nv->con_type);
   cmbUnitText->GetEnumImage(nv->unit_text_disp);
@@ -596,8 +589,6 @@ void iViewPanelOfNetwork::GetValue_impl() {
   nv->display = chkDisplay->isChecked();
   nv->lay_mv = chkLayMove->isChecked();
   nv->net_text = chkNetText->isChecked();
-  nv->new_net_text = chkNewNetText->isChecked();
-  // nv->net_text_rot = (float)fldTextRot->GetValue();
 
   int ll;
   cmbLayLayout->GetEnumValue(ll);

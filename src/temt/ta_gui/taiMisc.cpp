@@ -312,6 +312,8 @@ void taiMisc::InitMetrics(bool reinit) {
   vspc_c = 6;
   hspc_c = 6;
   dlgm_c = 8;
+  hschk_c = 7;  // use for checkbox because the label is on right of widget so needs more space before next item
+  
 // default dialog sizes
   QDesktopWidget *d = QApplication::desktop();
   int primaryScreen = d->primaryScreen();
