@@ -30,7 +30,7 @@ public:
   float         gi;             // #CONDSHOW_ON_on #MIN_0 #AKA_lay_gi #DEF_1.8 [1.5-2.3 typical, can go lower or higher as needed] overall inhibition gain -- this is main paramter to adjust to change overall activation levels -- it scales both the the ff and fb factors uniformly -- also see inhib_adapt which will adapt an additional multiplier on this overall inhibition to keep layer near target activation value specified in avg_act.targ_init
   float		ff;		// #CONDSHOW_ON_on #MIN_0 #DEF_1 overall inhibitory contribution from feedforward inhibition -- multiplies average netinput (i.e., synaptic drive into layer) -- this anticipates upcoming changes in excitation, but if set too high, it can make activity slow to emerge -- see also ff0 for a zero-point for this value
   float		fb;		// #CONDSHOW_ON_on #MIN_0 #DEF_1 overall inhibitory contribution from feedback inhibition -- multiplies average activation -- this reacts to layer activation levels and works more like a thermostat (turning up when the 'heat' in the layer is too high)
-  float         fb_tau;         // #CONDSHOW_ON_on #MIN_0 #DEF_1.4 time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly -- 1.4x the half-life) for integrating feedback inhibitory values -- prevents oscillations that otherwise occur -- relatively rapid 1.4 typically works, but may need to go longer if oscillations are a problem
+  float         fb_tau;         // #CONDSHOW_ON_on #MIN_0 #DEF_1.4;3;5 time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly -- 1.4x the half-life) for integrating feedback inhibitory values -- prevents oscillations that otherwise occur -- typcially has not much effect on learning, and longer values (3 or higher) are more robust, but previous defaults were relatively rapid 1.4
   float         max_vs_avg;     // #CONDSHOW_ON_on #DEF_0;0.5;1 #AKA_ff_max_vs_avg what proportion of the maximum vs. average netinput to use in the feedforward inhibition computation -- 0 = all average, 1 = all max, and values in between = proportional mix between average and max (ff_netin = avg + ff_max_vs_avg * (max - avg)) -- including more max can be beneficial especially in situations where the average can vary significantly but the activity should not -- max is more robust in many situations but less flexible and sensitive to the overall distribution -- max is better for cases more closely approximating single or strictly fixed winner-take-all behavior -- 0.5 is a good compromize in many cases and generally requires a reduction of .1 or slightly more (up to .3-.5) from the gi value for 0
   float         ff0;            // #CONDSHOW_ON_on #DEF_0.1 feedforward zero point for average netinput -- below this level, no FF inhibition is computed based on avg netinput, and this value is subtraced from the ff inhib contribution above this value -- the 0.1 default should be good for most cases (and helps FF_FB produce k-winner-take-all dynamics), but if average netinputs are lower than typical, you may need to lower it
 
@@ -68,13 +68,8 @@ private:
   }
     
   void	Defaults_init() {
-    gi = 1.8f;
-    ff = 1.0f;
-    fb = 1.0f;
-    fb_tau = 1.4f;
-    max_vs_avg = 0.0f;
-    ff0 = 0.1f;
-  
+    gi = 1.8f;    ff = 1.0f;    fb = 1.0f;    fb_tau = 3.0f;
+    max_vs_avg = 0.0f;    ff0 = 0.1f;
     fb_dt = 1.0f / fb_tau;
   }
     
