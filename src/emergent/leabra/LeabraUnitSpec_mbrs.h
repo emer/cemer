@@ -29,7 +29,9 @@ public:
   float         thr;                // #DEF_0.5 threshold value Theta (Q) for firing output activation (.5 is more accurate value based on AdEx biological parameters and normalization -- see BioParams button)
   float         gain;                // #DEF_80;100;40 #MIN_0 gain (gamma) of the rate-coded activation functions -- 100 is default, 80 works better for larger models, and 40 is closer to the actual spiking behavior of the AdEx model -- use lower values for more graded signals, generally in lower input/sensory layers of the network
   float         nvar;                // #DEF_0.005;0.01 #MIN_0 variance of the Gaussian noise kernel for convolving with XX1 in NOISY_XX1 and NOISY_LINEAR -- determines the level of curvature of the activation function near the threshold -- increase for more graded responding there -- note that this is not actual stochastic noise, just constant convolved gaussian smoothness to the activation function
-  float         vm_act_thr;          // threshold on activation below which the direct vm - act.thr is used -- this should be low -- once it gets active should use net - g_e_thr ge-linear dynamics (gelin)
+  float         avg_correct;         // correction factor (multiplier) for average activation level in this layer -- e.g., if using adaptation or stp, may be lower than usual -- taken into account in netinput scaling out of this layer
+  float         vm_act_thr;          // #DEF_0.01 threshold on activation below which the direct vm - act.thr is used -- this should be low -- once it gets active should use net - g_e_thr ge-linear dynamics (gelin)
+  
   float         sig_mult;            // #DEF_0.33 #EXPERT multiplier on sigmoid used for computing values for net < thr
   float         sig_mult_pow;        // #DEF_0.8 #EXPERT power for computing sig_mult_eff as function of gain * nvar
   float         sig_gain;            // #DEF_3 #EXPERT gain multipler on (net - thr) for sigmoid used for computing values for net < thr
@@ -85,7 +87,7 @@ private:
 
   void        Initialize()      { Defaults_init(); }
   void        Defaults_init() {
-    thr = 0.5f;  gain = 100.0f;  nvar = 0.005f;  vm_act_thr = 0.01f;
+    thr = 0.5f;  gain = 100.0f;  nvar = 0.005f;  vm_act_thr = 0.01f; avg_correct = 1.0f;
     sig_mult = 0.33f; sig_mult_pow = 0.8f; sig_gain = 3.0f;
     interp_range = 0.01f; gain_cor_range = 10.0f; gain_cor = 0.1f;
     UpdateParams();
@@ -292,23 +294,27 @@ public:
   float         integ;           // #DEF_1;0.5 #MIN_0 overall rate constant for numerical integration, for all equations at the unit level -- all time constants are specified in millisecond units, with one cycle = 1 msec -- if you instead want to make one cycle = 2 msec, you can do this globaly by setting this integ value to 2 (etc).  However, stability issues will likely arise if you go too high.  For improved numerical stability, you may even need to reduce this value to 0.5 or possibly even lower (typically however this is not necessary).  MUST also coordinate this with network.time_inc variable to ensure that global network.time reflects simulated time accurately
   float         vm_tau;          // #AKA_vm_time #DEF_2.81:10 [3.3 std for rate code, 2.81 for spiking] #MIN_1 membrane potential and rate-code activation time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly -- 1.4x the half-life) -- reflects the capacitance of the neuron in principle -- biological default for AeEx spiking model C = 281 pF = 2.81 normalized -- for rate-code activation, this also determines how fast to integrate computed activation values over time
   float         net_tau;         // #AKA_net_time #DEF_1.4 #MIN_1 net input time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly -- 1.4x the half-life) -- this is important for damping oscillations -- generally reflects time constants associated with synaptic channels which are not modeled in the most abstract rate code models (set to 1 for detailed spiking models with more realistic synaptic currents)
+  int           vm_cyc;          // #MIN_1 number of steps to integrate membrane potential vm -- each cycle is a midpoint method integration step
   int           fast_cyc;        // #AKA_vm_eq_cyc #DEF_0 number of cycles at start of a trial to run units in a fast integration mode -- the rate-code activations have no effective time constant and change immediately to the new computed value (vm_time is ignored) and vm is computed as an equilibirium potential given current inputs: set to 1 to quickly activate soft-clamped input layers (primary use); set to 100 to always use this computation
 
-  float         vm_dt;           // #READ_ONLY #EXPERT rate = 1 / tau
+  float         vm_dt;           // #READ_ONLY #EXPERT nominal rate = 1 / tau
+  float         vm_dt_cyc;       // #READ_ONLY #EXPERT dt / vm_dt_cyc -- actual effective dt
   float         net_dt;          // #READ_ONLY #EXPERT rate = 1 / tau
 
+  INLINE void   UpdtDts()
+  { vm_dt = 1.0f / vm_tau;  vm_dt_cyc = vm_dt / (float)vm_cyc;  net_dt = 1.0f / net_tau; }
+
+  
   STATE_DECO_KEY("UnitSpec");
   STATE_TA_STD_CODE_SPEC(LeabraDtSpec);
   
-  STATE_UAE(vm_dt = 1.0f / vm_tau;  net_dt = 1.0f / net_tau; );
+  STATE_UAE( UpdtDts(); );
   
 private:
   void        Initialize()      { fast_cyc = 0; Defaults_init(); }
   void        Defaults_init() {
-    integ = 1.0f;  vm_tau = 3.3f;  net_tau = 1.4f;
-
-    vm_dt = 1.0f / vm_tau;
-    net_dt = 1.0f / net_tau;
+    integ = 1.0f;  vm_tau = 3.3f;  vm_cyc = 1; net_tau = 1.4f;
+    UpdtDts();
   }
 };
 

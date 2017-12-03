@@ -29,6 +29,8 @@ taTypeDef_Of(taiTypeOfReal);
 class TA_API taiTypeOfReal : public taiType { // handles real types, provides validators
   TAI_TYPEBASE_SUBCLASS(taiTypeOfReal, taiType);
 public:
+  bool handlesReadOnly() const override { return true; }
+  
   int           BidForType(TypeDef* td) override;
 protected:
   taiWidget*      GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par,

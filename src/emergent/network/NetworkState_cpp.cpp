@@ -42,6 +42,11 @@ TA_BASEFUNS_CTORS_DEFN(NetStateThreadTask);
 
 #include "Network_mbrs.cpp"
 
+
+// todo: ifdef based on ta / qt etc
+#include <Network>
+
+
 using namespace std;
 
 ////////////////////////////////////////////////////////////
@@ -522,8 +527,9 @@ int NetworkState_cpp::SkipWeights_strm(istream& strm, NetworkState_cpp::WtSaveFo
 //      Network-level  Save/Load Weights
 
 void NetworkState_cpp::NetworkSaveWeights_strm(ostream& strm, WtSaveFormat fmt) {
+  Network* ownet = (Network*)net_owner;
   strm << "<Fmt " << ((fmt == TEXT) ? "TEXT" : "BINARY") << ">\n"
-       << "<Name " << "network_name" << ">\n" // todo: network name!
+       << "<Name " << ownet->name << ">\n" 
        << "<Epoch " << epoch << ">\n";
   for(int li=0; li < n_layers_built; li++) {
     LayerState_cpp* lay = GetLayerState(li);

@@ -50,7 +50,7 @@ TA_BASEFUNS_CTORS_DEFN(LeabraUnitSpec);
 SMARTREF_OF_CPP(LeabraUnitSpec);
 
 #include <LeabraLayerSpec_cpp>
-//#include <LeabraConSpec_cpp>
+#include <LeabraUnitSpec_cpp>
 #include <LeabraExtraConSpecs_cpp> // includes base
 
 #include <State_main>

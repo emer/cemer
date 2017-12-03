@@ -1561,8 +1561,9 @@ void GraphTableView::RenderLegend() {
   if(render_svg) {
     svg_str << taSvg::GroupTranslate(0.0f, -(ylen + 2.5f * label_font_size));
   }
-  
-  float over_amt = (width / (float)n_across) * .9f * x_axis.axis_length;
+
+  // graph line apparently already takes into account width!?
+  float over_amt = (1.0 / (float)n_across) * .9f * x_axis.axis_length;
   float dn_amt = -1.1f * label_font_size;
   int xpos = 0;
   int ypos = 0;

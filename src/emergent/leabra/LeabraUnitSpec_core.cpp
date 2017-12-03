@@ -252,8 +252,9 @@ void LEABRA_UNIT_SPEC::Compute_NetinScale(LEABRA_LAYER_STATE* lay, LEABRA_NETWOR
     LEABRA_CON_SPEC_CPP* cs = prjn->GetConSpec(net);
     LEABRA_LAYER_STATE* from = prjn->GetSendLayer(net);
     LEABRA_UNGP_STATE* fmugps = from->GetLayUnGpState(net);
+    LEABRA_UNIT_SPEC_CPP* fmus = from->GetUnitSpec(net);
 
-    float savg = fmugps->acts_p_avg_eff;
+    float savg = fmugps->acts_p_avg_eff * fmus->act.avg_correct;
     float from_sz = (float)from->n_units;
     float n_cons = (float)prjn->recv_con_stats.max_size;
     prjn->scale_eff = cs->wt_scale.FullScale(savg, from_sz, n_cons);
@@ -648,17 +649,23 @@ void LEABRA_UNIT_SPEC::Compute_Vm(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* ne
     const float gc_i = u->gc_i * g_bar.i;
     const float gc_k = g_bar.k * (u->gc_kna_f + u->gc_kna_m + u->gc_kna_s);
     if(updt_spk_vm) { // first compute v_m, using midpoint method:
-      float v_m_eff = u->v_m;
-      // midpoint method: take a half-step:
-      float I_net_1 = Compute_INet_impl(u, v_m_eff, net_eff, gc_i, gc_k);
-      v_m_eff += .5f * dt.integ * dt.vm_dt * I_net_1; // go half way
-      float I_net = Compute_INet_impl(u, v_m_eff, net_eff, gc_i, gc_k);
-      // add spike current if relevant
-      if((act_fun == SPIKE) && spike_misc.ex) {
-        I_net += g_bar.l * spike_misc.exp_slope *
-          expf((v_m_eff - act.thr) / spike_misc.exp_slope); // todo: exp_fast
+      float v_m = u->v_m;
+      float I_net = 0.0f;
+      for(int ti=0; ti < dt.vm_cyc; ti++) {
+        float v_m_eff = v_m;
+        // midpoint method: take a half-step:
+        float I_net_1 = Compute_INet_impl(u, v_m_eff, net_eff, gc_i, gc_k);
+        v_m_eff += .5f * dt.integ * dt.vm_dt_cyc * I_net_1; // go half way
+        float I_net_2 = Compute_INet_impl(u, v_m_eff, net_eff, gc_i, gc_k);
+        // add spike current if relevant
+        if((act_fun == SPIKE) && spike_misc.ex) {
+          I_net_2 += g_bar.l * spike_misc.exp_slope *
+            expf((v_m_eff - act.thr) / spike_misc.exp_slope); // todo: exp_fast
+        }
+        v_m += dt.integ * dt.vm_dt_cyc * I_net_2;
+        I_net += I_net_2;
       }
-      u->v_m += dt.integ * dt.vm_dt * I_net;
+      u->v_m = v_m;
       u->I_net = I_net;
     }
     // always compute v_m_eq with simple integration -- used for rate code subthreshold
