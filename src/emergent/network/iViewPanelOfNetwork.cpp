@@ -775,16 +775,23 @@ void iViewPanelOfNetwork::GetNetVars() {
   if (!nv) return;
   
   net_state_values->clear();
-  if (nv->net_membs.size == 0) return;
 
+  Network* net = nv->net();
+  if (!net) return;
+  TypeDef* td = net->GetTypeDef();
+  if (!td) return;
+  
   MemberDef* md;
-  for (int i=0; i < nv->net_membs.size; i++) {
-    md = nv->net_membs[i];
-    if (md->HasOption("NO_VIEW")) continue;
+  for (int i=0; i < nv->full_net_state_vals.size; i++) {
+    String name = nv->full_net_state_vals[i];
     QTreeWidgetItem* titm = new QTreeWidgetItem(net_state_values);
-    titm->setText(0, md->name);
+    md = td->members.FindName(name);
+    if (!md) {
+      continue;
+    }
+    titm->setText(0, name);
     titm->setText(1, md->desc);
-    if(nv->cur_net_state_vals.FindEl(md->name) < 0)
+    if(nv->cur_net_state_vals.FindEl(name) < 0)
       titm->setCheckState(0, Qt::Unchecked);
     else
       titm->setCheckState(0, Qt::Checked);
@@ -850,6 +857,7 @@ void iViewPanelOfNetwork::NetStateValues_selectionChanged() {
   if (!nv) return;
 
   // build the list again to ensure they display in same order as they are in this list view
+  RebuildNetStateFullList();
   RebuildNetStateCurList();
   nv->UpdateDisplay(false);
 }
@@ -878,6 +886,20 @@ void iViewPanelOfNetwork::RebuildNetStateCurList() {
     if (chkd) {
       nv->cur_net_state_vals.AddUnique(item->text(col));
     }
+    ++it;
+  }
+}
+
+void iViewPanelOfNetwork::RebuildNetStateFullList() {
+  NetView *nv = getNetView();
+  if (!nv) return;
+  
+  nv->full_net_state_vals.Reset();
+  QTreeWidgetItemIterator it(net_state_values);
+  QTreeWidgetItem* item;
+  int col = 0;
+  while ( (item = *it) ) {
+    nv->full_net_state_vals.AddUnique(item->text(0));
     ++it;
   }
 }

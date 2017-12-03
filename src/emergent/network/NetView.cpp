@@ -746,20 +746,21 @@ void NetView::GetNetMembs() {
   
   Network* nt = net();
   if(!nt || !nt->IsBuiltIntact()) {
-    net_membs.Reset();
     return;
   }
-
-  net_membs.Reset();
-
+  
   TypeDef* td = net()->GetTypeDef();
   for(int i=td->members.size-1; i>=0; i--) {
     MemberDef* md = td->members[i];
     if(!md->HasOption("VIEW")) continue;
-    if(net()->HasUserData(md->name) && !net()->GetUserDataAsBool(md->name)) continue;
-    MemberDef* new_md = md->Clone();
-    net_membs.Add(new_md);       // index now reflects position in list...
+    //    if(net()->HasUserData(md->name) && !net()->GetUserDataAsBool(md->name)) continue;
+    //    MemberDef* new_md = md->Clone();
+    //    net_membs.Add(new_md);       // index now reflects position in list...
+    String name = md->name;
+    full_net_state_vals.AddUnique(name);
   }
+  
+  // WHAT ABOUT members that don't exist anymore
 }
 
 // this fills a member group with the valid memberdefs from the units and connections
@@ -1261,12 +1262,12 @@ void NetView::Render_impl() {
   }
   
   if(net_text) {
-#ifdef TA_QT3D
-    net_text_xform.CopyTo(node_so->net_text);
-#else // TA_QT3D
-    SoTransform* tx = node_so->netTextXform();
-    net_text_xform.CopyTo(tx);
-#endif // TA_QT3D
+//#ifdef TA_QT3D
+//    net_text_xform.CopyTo(node_so->net_text);
+//#else // TA_QT3D
+//    SoTransform* tx = node_so->netTextXform();
+//    net_text_xform.CopyTo(tx);
+//#endif // TA_QT3D
     
     Render_new_net_text();
   }
@@ -1287,6 +1288,8 @@ void NetView::Render_impl() {
 }
 
 void NetView::Render_new_net_text() {
+  if (!net_text) return;
+  
   String net_state_text = "";
   TypeDef* td = net()->GetTypeDef();
   

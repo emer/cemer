@@ -163,6 +163,7 @@ protected:
   void                  CopyFrom_impl() override;
   void                  setHighlightSpec(BaseSpec* spec, bool force = false);
   void                  RebuildNetStateCurList();
+  void                  RebuildNetStateFullList();
 
 public slots:
   void                  viewWin_NotifySignal(ISelectableHost* src, int op); // forwarded to netview
