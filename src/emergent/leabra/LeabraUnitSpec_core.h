@@ -315,6 +315,9 @@
     if(cycle > 0 && deep.ApplyDeepMod()) {
       ext_in *= u->deep_mod;
     }
+    if(kna_adapt.on && kna_adapt.clamp) {
+      ext_in = kna_adapt.Compute_Clamped(ext_in, u->gc_kna_f, u->gc_kna_m, u->gc_kna_s);
+    }
     u->net = u->thal = ext_in;
     if(clip) {
       ext_in = clamp_range.Clip(ext_in);
@@ -614,9 +617,19 @@
 
     if((net->cycle >= 0) && lay->hard_clamped) {
       // Compute_HardClamp happens before deep_mod is available due to timing of updates
-      if(deep.ApplyDeepMod() && net->cycle == 0) {
-        // sync this with Compute_HardClamp:
-        Compute_DeepModClampAct_impl(u);
+      if(kna_adapt.on && kna_adapt.clamp) {
+        float ext_in = u->ext;
+        if(deep.ApplyDeepMod())
+          ext_in *= u->deep_mod;
+        Compute_ActAdapt_Cycle(u, net, thr_no);
+        u->act = kna_adapt.Compute_Clamped(ext_in, u->gc_kna_f, u->gc_kna_m, u->gc_kna_s);
+        u->act_raw = u->act_eq = u->act_nd = u->act;
+      }
+      else {
+        if(deep.ApplyDeepMod() && net->cycle == 0) {
+          // sync this with Compute_HardClamp:
+          Compute_DeepModClampAct_impl(u);
+        }
       }
       return; // don't re-compute
     }

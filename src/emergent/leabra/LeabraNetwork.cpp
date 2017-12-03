@@ -124,6 +124,10 @@ void LeabraNetwork::SyncLayerState_Layer(Layer* ly) {
 }
 
 void LeabraNetwork::Init_Acts() {
+  if(TestError(!IsBuiltIntact(), "Init_Acts",
+               "Network is not built or is not intact -- must Build first")) {
+    return;
+  }
   NET_STATE_RUN(LeabraNetworkState, Init_Acts());
 }
 

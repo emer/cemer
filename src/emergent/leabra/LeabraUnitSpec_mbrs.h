@@ -438,6 +438,9 @@ class STATE_CLASS(KNaAdaptSpec) : public STATE_CLASS(SpecMemberBase) {
 INHERITED(SpecMemberBase)
 public:
   bool          on;             // apply K-Na adaptation overall?
+  bool          clamp;          // apply adaptation even to clamped layers
+  float         max_gc;         // #CONDSHOW_ON_on&&clamp for clamped layers, maximum k_na conductance that we expect to get -- apply a proportional reduction in clamped activation based on current k_na conductance
+  float         max_adapt;      // #CONDSHOW_ON_on&&clamp #DEF_0.5 for clamped layers, maximum amount of adaptation to apply to clamped activations when conductance is at max_gc
   float         rate_rise;      // #CONDSHOW_ON_on #DEF_0.8 extra multiplier for rate-coded activations on rise factors -- adjust to match discrete spiking
   bool          f_on;           // #CONDSHOW_ON_on use fast time-scale adaptation
   float         f_rise;         // #CONDSHOW_ON_on&&f_on #DEF_0.05 rise rate of fast time-scale adaptation as function of Na concentration -- directly multiplies -- 1/rise = tau for rise rate
@@ -486,6 +489,13 @@ public:
   }
   // update K channel conductances per params for rate-code activation
 
+  INLINE float Compute_Clamped(float clamp_act, float gc_kna_f, float gc_kna_m, float gc_kna_s) {
+    float gc_kna = gc_kna_f + gc_kna_m + gc_kna_s;
+    float pct_gc = fminf(gc_kna / max_gc, 1.0f);
+    return clamp_act * (1.0f - pct_gc * max_adapt);
+  }
+  // apply adaptation directly to a clamped activation value, reducing in proportion to amount of k_na current
+
   INLINE void   UpdtDts()
   { f_dt = 1.0f / f_tau; m_dt = 1.0f / m_tau; s_dt = 1.0f / s_tau; }
   
@@ -497,7 +507,7 @@ public:
 private:
   void        Initialize()      { on = false; Defaults_init(); }
   void        Defaults_init() {
-    rate_rise = 0.8f;
+    rate_rise = 0.8f; clamp = false; max_gc = .2f; max_adapt = 0.5f;
     f_on = true; f_tau = 50.0f;   f_rise = .05f;  f_max = .1f;
     m_on = true; m_tau = 200.0f;  m_rise = .02f;  m_max = .1f;
     s_on = true; s_tau = 1000.0f; s_rise = .005f; s_max = .2f;
