@@ -158,8 +158,8 @@ public:
   float                 net_text_rot;    // rotation of the text in the Z plane (in degrees) - default is upright, but if text area is rotated, then a different angle might work better
   MemberSpace           membs;          // #NO_SAVE #NO_COPY #READ_ONLY list of all the members possible in units; note: all items are new clones
   String_Array          cur_unit_vals;  // #NO_COPY #READ_ONLY currently selected unit values to display -- theoretically can display multiple values, but this is not currently supported, so it always just has one entry at most
-  String_Array          full_net_state_vals;  // #NO_COPY #READ_ONLY possible net state values to display
-  String_Array          cur_net_state_vals;  // #NO_COPY #READ_ONLY currently selected net state values to display
+  String_Array          full_state_vals;  // #NO_COPY #READ_ONLY possible net state values to display
+  String_Array          cur_state_vals;  // #NO_COPY #READ_ONLY currently selected net state values to display
   String_Array          hot_vars;       // current "hot" variables shown directly in explorer view
   UnitState_cpp*        unit_src;       // #NO_SAVE #NO_COPY #READ_ONLY unit last picked (if any) for display
   String                unit_src_path;  // ##READ_ONLY path of unit_src unit relative to the network -- used for saving and reloading

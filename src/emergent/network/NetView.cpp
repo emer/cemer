@@ -396,7 +396,8 @@ void NetView::InitLinks() {
   taBase::Own(scale, this);
   taBase::Own(scale_ranges, this);
   taBase::Own(cur_unit_vals, this);
-  taBase::Own(cur_net_state_vals, this);
+  taBase::Own(cur_state_vals, this);
+  taBase::Own(full_state_vals, this);
   taBase::Own(hot_vars, this);
   taBase::Own(ctr_hist, this);
   taBase::Own(ctr_hist_idx, this);
@@ -436,7 +437,8 @@ void NetView::CutLinks() {
   ctr_hist_idx.CutLinks();
   ctr_hist.CutLinks();
   cur_unit_vals.CutLinks();
-  cur_net_state_vals.CutLinks();
+  cur_state_vals.CutLinks();
+  full_state_vals.CutLinks();
   scale_ranges.CutLinks();
   scale.CutLinks();
   lay_disp_modes.CutLinks();
@@ -750,14 +752,11 @@ void NetView::GetNetMembs() {
   }
   
   TypeDef* td = net()->GetTypeDef();
-  for(int i=td->members.size-1; i>=0; i--) {
+  for(int i=0; i < td->members.size ; i++) {
     MemberDef* md = td->members[i];
     if(!md->HasOption("VIEW")) continue;
-    //    if(net()->HasUserData(md->name) && !net()->GetUserDataAsBool(md->name)) continue;
-    //    MemberDef* new_md = md->Clone();
-    //    net_membs.Add(new_md);       // index now reflects position in list...
     String name = md->name;
-    full_net_state_vals.AddUnique(name);
+    full_state_vals.AddUnique(name);
   }
   
   // WHAT ABOUT members that don't exist anymore
@@ -1262,13 +1261,6 @@ void NetView::Render_impl() {
   }
   
   if(net_text) {
-//#ifdef TA_QT3D
-//    net_text_xform.CopyTo(node_so->net_text);
-//#else // TA_QT3D
-//    SoTransform* tx = node_so->netTextXform();
-//    net_text_xform.CopyTo(tx);
-//#endif // TA_QT3D
-    
     Render_new_net_text();
   }
   else {
@@ -1293,8 +1285,8 @@ void NetView::Render_new_net_text() {
   String net_state_text = "";
   TypeDef* td = net()->GetTypeDef();
   
-  for(int i=0; i<cur_net_state_vals.size; i++) {
-    String var = cur_net_state_vals[i];
+  for(int i=0; i<cur_state_vals.size; i++) {
+    String var = cur_state_vals[i];
     MemberDef* md = td->members.FindName(var);
     if (md) {
       String el = md->name + ": ";

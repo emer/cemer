@@ -452,25 +452,25 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
 //     this, SLOT(tvSpecs_ItemSelected(iTreeViewItem*)) );
 
   ////////////////////////////////////////////////////////////////////////////
-  net_state_values = new iTreeListWidget();
+  state_values = new iTreeListWidget();
 
-  tw->addTab(net_state_values, "Net State Values");
+  tw->addTab(state_values, "State Values");
   
-  net_state_values->setRootIsDecorated(true); // makes it look like a list
+  state_values->setRootIsDecorated(true); // makes it look like a list
 
   QStringList state_var_hrd;
   state_var_hrd << "          Variable" << "        Description";
-  net_state_values->setHeaderLabels(state_var_hrd);
-  net_state_values->setSortingEnabled(false);
-  net_state_values->setSelectionMode(QAbstractItemView::SingleSelection);
-  net_state_values->setDragEnabled(true);
-//  net_state_values->setAcceptDrops(true);
-  net_state_values->setDropIndicatorShown(true);
-  net_state_values->setDragDropMode(QAbstractItemView::InternalMove);
+  state_values->setHeaderLabels(state_var_hrd);
+  state_values->setSortingEnabled(false);
+  state_values->setSelectionMode(QAbstractItemView::SingleSelection);
+  state_values->setDragEnabled(true);
+//  state_values->setAcceptDrops(true);
+  state_values->setDropIndicatorShown(true);
+  state_values->setDragDropMode(QAbstractItemView::InternalMove);
 
-  connect(net_state_values, SIGNAL(itemSelectionChanged()), this,
+  connect(state_values, SIGNAL(itemSelectionChanged()), this,
           SLOT(NetStateValues_selectionChanged()) );
-  connect(net_state_values, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this,
+  connect(state_values, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this,
           SLOT(NetStateValues_itemClicked(QTreeWidgetItem*, int)) );
 
   layTopCtrls->addWidget(tw);
@@ -774,7 +774,7 @@ void iViewPanelOfNetwork::GetNetVars() {
   NetView *nv = getNetView();
   if (!nv) return;
   
-  net_state_values->clear();
+  state_values->clear();
 
   Network* net = nv->net();
   if (!net) return;
@@ -782,21 +782,21 @@ void iViewPanelOfNetwork::GetNetVars() {
   if (!td) return;
   
   MemberDef* md;
-  for (int i=0; i < nv->full_net_state_vals.size; i++) {
-    String name = nv->full_net_state_vals[i];
-    QTreeWidgetItem* titm = new QTreeWidgetItem(net_state_values);
+  for (int i=0; i < nv->full_state_vals.size; i++) {
+    String name = nv->full_state_vals[i];
+    QTreeWidgetItem* titm = new QTreeWidgetItem(state_values);
     md = td->members.FindName(name);
     if (!md) {
       continue;
     }
     titm->setText(0, name);
     titm->setText(1, md->desc);
-    if(nv->cur_net_state_vals.FindEl(name) < 0)
+    if(nv->cur_state_vals.FindEl(name) < 0)
       titm->setCheckState(0, Qt::Unchecked);
     else
       titm->setCheckState(0, Qt::Checked);
   }
-  net_state_values->resizeColumnToContents(0);
+  state_values->resizeColumnToContents(0);
 }
 
 void iViewPanelOfNetwork::InitPanel() {
@@ -877,14 +877,14 @@ void iViewPanelOfNetwork::RebuildNetStateCurList() {
   NetView *nv = getNetView();
   if (!nv) return;
 
-  nv->cur_net_state_vals.Reset();
-  QTreeWidgetItemIterator it(net_state_values);
+  nv->cur_state_vals.Reset();
+  QTreeWidgetItemIterator it(state_values);
   QTreeWidgetItem* item;
   int col = 0;
   while ( (item = *it) ) {
     Qt::CheckState chkd = item->checkState(col);
     if (chkd) {
-      nv->cur_net_state_vals.AddUnique(item->text(col));
+      nv->cur_state_vals.AddUnique(item->text(col));
     }
     ++it;
   }
@@ -894,12 +894,12 @@ void iViewPanelOfNetwork::RebuildNetStateFullList() {
   NetView *nv = getNetView();
   if (!nv) return;
   
-  nv->full_net_state_vals.Reset();
-  QTreeWidgetItemIterator it(net_state_values);
+  nv->full_state_vals.Reset();
+  QTreeWidgetItemIterator it(state_values);
   QTreeWidgetItem* item;
   int col = 0;
   while ( (item = *it) ) {
-    nv->full_net_state_vals.AddUnique(item->text(0));
+    nv->full_state_vals.AddUnique(item->text(0));
     ++it;
   }
 }

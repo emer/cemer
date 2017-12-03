@@ -133,7 +133,7 @@ public:
   QTabWidget*           tw;
   QTreeWidget*            lvDisplayValues;
   iTreeView*              tvSpecs;
-  iTreeListWidget*        net_state_values;  // list of network variables that can be displayed and continuously updated in network view
+  iTreeListWidget*        state_values;  // list of network variables that can be displayed and continuously updated in network view
 
   iMethodButtonMgr*     meth_but_mgr;
   QWidget*              widCmdButtons;
