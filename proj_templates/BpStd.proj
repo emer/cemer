@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.2.2.0 rev11187
+// ta_Dump File v3.0 -- code v8.3.0.0 rev11239
 BpProject .projects[0] { 
  Doc_Group @.docs = [0] {
  };
@@ -1543,21 +1543,6 @@ BpProject .projects[0] {
 
  Network_Group @.networks = [1] {
   BpNetwork @[0] { 
-   UserDataItem_List @*(.user_data_) {
-    UserDataItem @[0] { };
-    UserDataItem @[1] { };
-    UserDataItem @[2] { };
-    UserDataItem @[3] { };
-    UserDataItem @[4] { };
-    UserDataItem @[5] { };
-    UserDataItem @[6] { };
-    UserDataItem @[7] { };
-    UserDataItem @[8] { };
-    UserDataItem @[9] { };
-    UserDataItem @[10] { };
-    UserDataItem @[11] { };
-   };
-
    BaseSpec_Group @.specs = [3] {
     BpUnitSpec @[0] { 
      BaseSpec_Group @.children = [0] {
@@ -1588,16 +1573,16 @@ BpProject .projects[0] {
 
    Layer_Group @.layers = [3] {
     BpLayer @[0] { 
-     Projection_Group @.projections = [0] {
+     Projection_List @.projections = [0] {
      };
     };
     BpLayer @[1] { 
-     Projection_Group @.projections = [1] {
+     Projection_List @.projections = [1] {
       Projection @[0] { };
      };
     };
     BpLayer @[2] { 
-     Projection_Group @.projections = [1] {
+     Projection_List @.projections = [1] {
       Projection @[0] { };
      };
     };
@@ -9331,9 +9316,9 @@ this program can be extended to do arbitrary things to generate data and apply i
     el_typ=UserDataItem;
     el_def=0;
     UserDataItem @[0] {name="view_win_lft": value=0: val_type_fixed=0: };
-    UserDataItem @[1] {name="view_win_top": value=0.01930954: val_type_fixed=0: };
+    UserDataItem @[1] {name="view_win_top": value=0.01905434: val_type_fixed=0: };
     UserDataItem @[2] {name="view_win_wd": value=1: val_type_fixed=0: };
-    UserDataItem @[3] {name="view_win_ht": value=0.7992978: val_type_fixed=0: };
+    UserDataItem @[3] {name="view_win_ht": value=0.7988709: val_type_fixed=0: };
     UserDataItem @[4] {name="view_win_iconified": value=0: val_type_fixed=0: };
     UserDataItem @[5] {name="view_splitter_state": value=AAAA/wAAAAEAAAADAAABFwAAAfwAAAKMAf////8BAAAAAQA=: val_type_fixed=0: };
    };
@@ -9439,6 +9424,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	  net_text_xform {scale={x=0.7: y=0.7: z=0.7: }: rotate={x=1: y=0: z=0: rot=1.570796: }: translate={x=0: y=1: z=-1: }: };
 	  net_text_rot=-90;
 	  cur_unit_vals{ act;	  };
+	  full_state_vals{ batch;epoch;group;trial;tick;cycle;time;total_trials;sse;group_name;trial_name;output_name;	  };
+	  cur_state_vals{ batch;epoch;trial;cycle;sse;trial_name;output_name;	  };
 	  hot_vars{ targ;ext;act;net;bias_wt;bias_dwt;bias_pdw;err;dEdA;dEdNet;r.wt;r.wt*act;s.wt;r.dwt;s.dwt;	  };
 	  unit_src_path=".layers[2][0]";
 	  con_type=ANY_CON;
@@ -10807,9 +10794,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       el_typ=UserDataItem;
       el_def=0;
       UserDataItem @[0] {name="view_win_lft": value=0: val_type_fixed=0: };
-      UserDataItem @[1] {name="view_win_top": value=0.008191925: val_type_fixed=0: };
-      UserDataItem @[2] {name="view_win_wd": value=0.02706271: val_type_fixed=0: };
-      UserDataItem @[3] {name="view_win_ht": value=0.7524868: val_type_fixed=0: };
+      UserDataItem @[1] {name="view_win_top": value=0.007057163: val_type_fixed=0: };
+      UserDataItem @[2] {name="view_win_wd": value=0.03203125: val_type_fixed=0: };
+      UserDataItem @[3] {name="view_win_ht": value=0.7459421: val_type_fixed=0: };
       UserDataItem @[4] {name="view_win_iconified": value=0: val_type_fixed=0: };
       UserDataItem @[5] {name="view_visible": value=1: val_type_fixed=0: };
      };
@@ -10828,29 +10815,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
  save_as_only=0;
  auto_name=1;
  last_change_desc=;
- tree_state{ .;.docs;.wizards;.wizards[0];.ctrl_panels;.data;.data.gp[0];.data.gp[1];.data.gp[2];.programs;.programs.gp[0];.programs.gp[1];.networks;.networks[0];.networks[0].specs;.networks[0].specs[1];.networks[0].specs[1].children[0];.networks[0].layers;.networks[0].weights; };
+ tree_state{ .;.docs;.wizards;.wizards[0];.ctrl_panels;.data;.data.gp[0];.data.gp[1];.data.gp[2];.programs;.programs.gp[0];.programs.gp[1];.viewers[0];.viewers[0].frames[2];.networks;.networks[0];.networks[0].specs;.networks[0].specs[1];.networks[0].specs[1].children[0];.networks[0].layers;.networks[0].weights; };
  networks {
   name="networks";
   el_typ=BpNetwork;
   el_def=0;
   BpNetwork @[0] {
-   UserDataItem_List @*(.user_data_) {
-    name="UserDataItem_List_7";
-    el_typ=UserDataItem;
-    el_def=0;
-    UserDataItem @[0] {name="sse": value=1: val_type_fixed=1: };
-    UserDataItem @[1] {name="output_name": value=1: val_type_fixed=1: };
-    UserDataItem @[2] {name="trial_name": value=1: val_type_fixed=1: };
-    UserDataItem @[3] {name="group_name": value=1: val_type_fixed=1: };
-    UserDataItem @[4] {name="total_trials": value=1: val_type_fixed=1: };
-    UserDataItem @[5] {name="time": value=1: val_type_fixed=1: };
-    UserDataItem @[6] {name="cycle": value=1: val_type_fixed=1: };
-    UserDataItem @[7] {name="tick": value=1: val_type_fixed=1: };
-    UserDataItem @[8] {name="trial": value=1: val_type_fixed=1: };
-    UserDataItem @[9] {name="group": value=1: val_type_fixed=1: };
-    UserDataItem @[10] {name="epoch": value=1: val_type_fixed=1: };
-    UserDataItem @[11] {name="batch": value=1: val_type_fixed=1: };
-   };
    name="Network_0";
    desc=;
    flags=BUILD_INIT_WTS;
@@ -11018,7 +10988,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       name="send_prjns";
       el_typ=Projection;
       el_def=0;
-      Projection_Group @. = [0] = Projection .networks[0].layers[1].projections[0];
+      Projection_List @. = [0] = Projection .networks[0].layers[1].projections[0];
      };
      unit_spec {type=BpUnitSpec: spec=$.networks[0].specs[0]$: };
      dist {fm_input=0: fm_output=2: };
@@ -11081,7 +11051,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       name="send_prjns";
       el_typ=Projection;
       el_def=0;
-      Projection_Group @. = [0] = Projection .networks[0].layers[2].projections[0];
+      Projection_List @. = [0] = Projection .networks[0].layers[2].projections[0];
      };
      unit_spec {type=BpUnitSpec: spec=$.networks[0].specs[0]$: };
      dist {fm_input=1: fm_output=1: };
