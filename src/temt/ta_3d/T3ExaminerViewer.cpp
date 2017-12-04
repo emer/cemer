@@ -1571,16 +1571,14 @@ void T3ExaminerViewer::showEvent(QShowEvent* ev) {
 }
 #endif
  
-void T3ExaminerViewer::UpdateNetStateValues(String net_state_text) {
-  String_Array strs;
+void T3ExaminerViewer::UpdateNetStateValues(const String_Array& net_state_strs) {
   String str;
-  strs.FmDelimString(net_state_text, '$');
   
   // rebuild every time
   ClearNetStateValues();
   
-  for (int i=0; i<strs.size; i++) {
-    str = strs[i];
+  for (int i=0; i<net_state_strs.size; i++) {
+    str = net_state_strs[i];
     
     QLabel* label = new QLabel(this);
     state_labels.append(label);
@@ -1596,8 +1594,8 @@ void T3ExaminerViewer::UpdateNetStateValues(String net_state_text) {
     state_labels[i]->setFixedSize(fixed_width_total, 16);
     net_state_layout->addWidget(state_labels.at(i));
   }
-  for (int i=0; i<strs.size; i++) {
-    state_labels.at(i)->setText(strs[i]);
+  for (int i=0; i<net_state_strs.size; i++) {
+    state_labels.at(i)->setText(net_state_strs[i]);
   }
 }
 

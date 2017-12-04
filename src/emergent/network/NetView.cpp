@@ -1300,22 +1300,22 @@ void NetView::Render_impl() {
 void NetView::Render_new_net_text() {
   if (!net_text) return;
   
-  String net_state_text = "";
+  String_Array net_state_strs;
   TypeDef* td = net()->GetTypeDef();
   
   for(int i=0; i<cur_state_vals.size; i++) {
     String var = cur_state_vals[i];
     MemberDef* md = td->members.FindName(var);
     if (md) {
-      String el = md->name + ": ";
-      net_state_text = net_state_text + el;
+      String net_state_text = md->name + ": ";
       String val = md->GetValStr((void*)net());
-      net_state_text = net_state_text + val + "$";
+      net_state_text = net_state_text + val;
+      net_state_strs.Add(net_state_text);
     }
   }
   T3ExaminerViewer* vw = GetViewer();
   if (vw) {
-    vw->UpdateNetStateValues(net_state_text);
+    vw->UpdateNetStateValues(net_state_strs);
   }
 }
 
