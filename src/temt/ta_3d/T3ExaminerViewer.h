@@ -286,9 +286,9 @@ public:
   // print the current viewer image to a printer
   virtual float         devicePixelRatio();
   // ratio of physical to logical pixels
-  virtual void          UpdateNetStateValues(const String_Array& net_state_strs);
+  virtual void          UpdateStateValues(const String_Array& net_state_strs);
   // update the values of the net state labels in the net state layout portion of the frame
-  virtual void          ClearNetStateValues();
+  virtual void          ClearStateValues();
   // update the values of the net state labels in the net state layout portion of the frame
 
 public slots:

@@ -1282,7 +1282,7 @@ void NetView::Render_impl() {
     Render_new_net_text();
   }
   else {
-    vw->ClearNetStateValues();
+    vw->ClearStateValues();
   }
   
   if((bool)wt_prjn_lay) {
@@ -1315,7 +1315,7 @@ void NetView::Render_new_net_text() {
   }
   T3ExaminerViewer* vw = GetViewer();
   if (vw) {
-    vw->UpdateNetStateValues(net_state_strs);
+    vw->UpdateStateValues(net_state_strs);
   }
 }
 
@@ -1666,6 +1666,13 @@ void NetView::ClearCaption() {
   last_sel_unit_val = "";
 }
 
+void NetView::ResetStateInfo() {
+  T3ExaminerViewer* vw = GetViewer();
+  if (vw) {
+    vw->ClearStateValues();
+  }
+}
+
 void NetView::SelectVar(const char* var_name, bool add, bool update) {
   if (!add)
     cur_unit_vals.Reset();
@@ -1915,7 +1922,7 @@ void NetView::SigRecvUpdateView_impl() {
       Render_new_net_text();
     }
     else {
-      vw->ClearNetStateValues();
+      vw->ClearStateValues();
     }
   }
 

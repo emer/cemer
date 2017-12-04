@@ -870,6 +870,7 @@ void iViewPanelOfNetwork::NetStateValues_itemClicked(QTreeWidgetItem* changed_it
 
   // build the list again to ensure they display in same order as they are in this list view
   RebuildNetStateCurList();
+  nv->ResetStateInfo();  // display will need to get rebuilt rather than just updated
   nv->UpdateDisplay(false);
 }
 
