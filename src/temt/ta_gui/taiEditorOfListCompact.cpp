@@ -93,6 +93,7 @@ void taiEditorOfListCompact::Constr_ListWidget() {
 }
 
 void taiEditorOfListCompact::GetValue_Membs() {
+  cur_lst->UpdateAfterEdit();	// call here too!
   if(!show_els) return;
   bool rebuild = false;
   if (lst_widget_el.size != cur_lst->size) rebuild = true;
@@ -119,7 +120,6 @@ void taiEditorOfListCompact::GetValue_Membs() {
     lf_el->typ->it->GetValue(lf_el->widget_el, lf_el->cur_base);
     ((taBase*)lf_el->cur_base)->UpdateAfterEdit();
   }
-  cur_lst->UpdateAfterEdit();	// call here too!
   taiMisc::Update((taBase*)cur_lst);
 }
 

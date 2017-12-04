@@ -116,6 +116,7 @@ void taiEditorOfList::Constr_ListLabels() {
 void taiEditorOfList::GetValue_Membs() {
   // first for the List-structure members
   GetValue_Membs_def();
+  cur_lst->UpdateAfterEdit();	// call here too!
 
   if(!show_els) return;
   bool rebuild = false;
@@ -141,7 +142,6 @@ void taiEditorOfList::GetValue_Membs() {
     GetValue_impl(&lf_el->memb_el, lf_el->widget_el, lf_el->cur_base);
     ((taBase*)lf_el->cur_base)->UpdateAfterEdit();
   }
-  cur_lst->UpdateAfterEdit();	// call here too!
   taiMisc::Update((taBase*)cur_lst);
 }
 
