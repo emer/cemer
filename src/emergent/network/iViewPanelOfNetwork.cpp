@@ -454,7 +454,7 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   ////////////////////////////////////////////////////////////////////////////
   state_values = new iTreeListWidget();
 
-  tw->addTab(state_values, "State Values");
+  tw->addTab(state_values, "Net State Values");
   
   state_values->setRootIsDecorated(true); // makes it look like a list
 

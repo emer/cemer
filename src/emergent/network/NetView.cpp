@@ -36,6 +36,7 @@
 #include <QKeyEvent>
 #include <QApplication>
 #include <taSvg>
+#include <UserDataItem_List>
 
 #include <T3Misc>
 #include <taMisc>
@@ -422,6 +423,25 @@ void NetView::UpdateAfterEdit_impl() {
       if(view_params.lay_trans == 0.4f)
         view_params.lay_trans = 0.5f;
     }
+    taVersion v831(8, 3, 1);
+    if(taMisc::loading_version < v831) { // one-time update
+      if (net()) {
+        UserDataItem_List* ud_list = net()->user_data_;
+        if (ud_list) {
+          ud_list->Reset();
+        }
+        
+        // default to display of these state variables
+        cur_state_vals.AddUnique("batch");
+        cur_state_vals.AddUnique("epoch");
+        cur_state_vals.AddUnique("trial");
+        cur_state_vals.AddUnique("quarter");
+        cur_state_vals.AddUnique("cycle");
+        cur_state_vals.AddUnique("sse");
+        cur_state_vals.AddUnique("trial_name");
+        cur_state_vals.AddUnique("output_name");
+      }
+    }
   }
 }
 
@@ -747,9 +767,7 @@ void NetView::GetNetMembs() {
   if(!net()) return;
   
   Network* nt = net();
-  if(!nt || !nt->IsBuiltIntact()) {
-    return;
-  }
+  if(!nt) return;
   
   TypeDef* td = net()->GetTypeDef();
   for(int i=0; i < td->members.size ; i++) {

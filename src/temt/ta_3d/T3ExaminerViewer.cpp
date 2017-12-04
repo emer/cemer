@@ -157,7 +157,7 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
   quarter = NULL;               // for startup events
 #endif
   viewer_mode = VIEW;
-  net_state_labels_inited = false;
+  state_labels_inited = false;
   
   // all the main layout code
   //  main_vbox: main_hbox: lhs_vbox quarter rhs_vbox
@@ -1583,8 +1583,8 @@ void T3ExaminerViewer::UpdateNetStateValues(String net_state_text) {
     str = strs[i];
     
     QLabel* label = new QLabel(this);
-    net_state_labels.append(label);
-    net_state_labels[i]->setStyleSheet("background-color: white; color: black; border: 1px solid #AAAAAA;");
+    state_labels.append(label);
+    state_labels[i]->setStyleSheet("background-color: white; color: black; border: 1px solid #AAAAAA;");
     QFontMetrics fm(label->fontMetrics());
     String label_part = str.before(':');
     int label_part_in_pixels = fm.width(label_part);
@@ -1593,19 +1593,19 @@ void T3ExaminerViewer::UpdateNetStateValues(String net_state_text) {
       value_part_in_pixels = 120;
     }
     int fixed_width_total = label_part_in_pixels + value_part_in_pixels;
-    net_state_labels[i]->setFixedSize(fixed_width_total, 16);
-    net_state_layout->addWidget(net_state_labels.at(i));
+    state_labels[i]->setFixedSize(fixed_width_total, 16);
+    net_state_layout->addWidget(state_labels.at(i));
   }
   for (int i=0; i<strs.size; i++) {
-    net_state_labels.at(i)->setText(strs[i]);
+    state_labels.at(i)->setText(strs[i]);
   }
 }
 
 void T3ExaminerViewer::ClearNetStateValues() {
-  for (int i=net_state_labels.size()-1; i>=0; i--) {
-    QLabel* label = net_state_labels[i];
+  for (int i=state_labels.size()-1; i>=0; i--) {
+    QLabel* label = state_labels[i];
     if (label) {
-      net_state_labels.removeAt(i);
+      state_labels.removeAt(i);
       net_state_layout->removeWidget(label);
       delete label;
     }

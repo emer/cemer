@@ -176,8 +176,8 @@ public:
   QToolButton*    print_button;    // (printer) -- print current view to a file
   iMenuButton*    annote_button;   // (+) -- add annotations to the view
   
-  bool                net_state_labels_inited; // have the labels been created? we do that once and then just changed the label text
-  QList<QLabel*>      net_state_labels; // each network state variable and value is displayed as a label in the net_state_layout
+  bool                state_labels_inited; // have the labels been created? we do that once and then just changed the label text
+  QList<QLabel*>      state_labels; // each network state variable and value is displayed as a label in the net_state_layout
 
   static const int    n_views;      // number of saved view parameters to save (length of saved_views)
   T3SavedView_List    saved_views; // saved view information
