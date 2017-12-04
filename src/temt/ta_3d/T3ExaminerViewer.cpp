@@ -1577,6 +1577,7 @@ void T3ExaminerViewer::UpdateStateValues(const String_Array& state_strs) {
     for (int i=0; i<state_strs.size; i++) {
       String str = state_strs[i];
       QLabel* label = new QLabel(this);
+      label->setToolTip(taiMisc::ToolTipPreProcess("To add or remove state values select the \"Net State Values\" tab in the Net View control panel"));
       state_labels.append(label);
       state_labels[i]->setStyleSheet("background-color: white; color: black; border: 1px solid #AAAAAA;");
       QFontMetrics fm(label->fontMetrics());
