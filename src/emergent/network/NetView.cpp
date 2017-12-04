@@ -1666,13 +1666,6 @@ void NetView::ClearCaption() {
   last_sel_unit_val = "";
 }
 
-void NetView::ResetStateInfo() {
-  T3ExaminerViewer* vw = GetViewer();
-  if (vw) {
-    vw->ClearStateValues();
-  }
-}
-
 void NetView::SelectVar(const char* var_name, bool add, bool update) {
   if (!add)
     cur_unit_vals.Reset();

@@ -157,7 +157,7 @@ iDialogPublishDocs::iDialogPublishDocs(const QString& repo_name, const QString& 
     if(publish_type == "Project") {
       create_doc = new QCheckBox;
       create_doc->setChecked(true); // start off true by default -- no harm done if not needed
-      create_doc->setToolTip("Create a new Doc in docs called ProjectDocs that points to the new wiki page for this project?");
+      create_doc->setToolTip(taiMisc::ToolTipPreProcess("Create a new Doc in docs called ProjectDocs that points to the new wiki page for this project?"));
       addLabeledWidget(vbox, "&Create ProjectDocs:", create_doc);
     }
   }

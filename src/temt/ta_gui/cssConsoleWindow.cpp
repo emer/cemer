@@ -173,7 +173,7 @@ cssConsoleWindow::cssConsoleWindow(QWidget* parent) : inherited(parent) {
   connect(clear_search_button, SIGNAL(clicked()), this, SLOT(ClearSearch()));
 
   QPushButton* hide_search_button = new QPushButton("Done", this);
-  hide_search_button->setToolTip("Hide the search bar");
+  hide_search_button->setToolTip(taiMisc::ToolTipPreProcess("Hide the search bar"));
   search_layout.addWidget(hide_search_button);
   connect(hide_search_button, SIGNAL(clicked()), this, SLOT(HideSearchBar()));
   

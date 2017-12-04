@@ -152,7 +152,7 @@ void iDialogKeyBindings::Constr() {
             help_str = "   (" + help_str  + ")";
           }
         }
-        action->setToolTip("Default: " + key_seq_str + help_str);
+        action->setToolTip(taiMisc::ToolTipPreProcess("Default: " + key_seq_str + help_str));
         bindings_layout[ctxt]->addRow(action, edit);
       }
     }

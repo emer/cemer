@@ -230,7 +230,6 @@ public:
   virtual void          SaveCtrHist();
   // save counter history -- called in UpdateUnitValues()
   virtual void          UpdatePanel(); // updates nvp, esp. after UAE etc.
-  virtual void          ResetStateInfo(); // state variable added or deleted - update display info
 
   ////////////////////////////////////////////////////////////////
   // misc util functions etc
