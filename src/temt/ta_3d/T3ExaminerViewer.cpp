@@ -1572,7 +1572,7 @@ void T3ExaminerViewer::showEvent(QShowEvent* ev) {
 #endif
 
 void T3ExaminerViewer::UpdateStateValues(const String_Array& state_strs) {
-  if (!state_labels_inited) {
+  if (!state_labels_inited || state_labels.count() != state_strs.size) {
     ClearStateValues();
     for (int i=0; i<state_strs.size; i++) {
       String str = state_strs[i];

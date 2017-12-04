@@ -438,7 +438,7 @@ class STATE_CLASS(KNaAdaptSpec) : public STATE_CLASS(SpecMemberBase) {
 INHERITED(SpecMemberBase)
 public:
   bool          on;             // apply K-Na adaptation overall?
-  bool          clamp;          // apply adaptation even to clamped layers
+  bool          clamp;          // #CONDSHOW_ON_on apply adaptation even to clamped layers
   float         max_gc;         // #CONDSHOW_ON_on&&clamp for clamped layers, maximum k_na conductance that we expect to get -- apply a proportional reduction in clamped activation based on current k_na conductance
   float         max_adapt;      // #CONDSHOW_ON_on&&clamp #DEF_0.5 for clamped layers, maximum amount of adaptation to apply to clamped activations when conductance is at max_gc
   float         rate_rise;      // #CONDSHOW_ON_on #DEF_0.8 extra multiplier for rate-coded activations on rise factors -- adjust to match discrete spiking
