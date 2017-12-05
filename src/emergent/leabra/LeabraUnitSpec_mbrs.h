@@ -448,8 +448,8 @@ public:
   float         m_max;          // #CONDSHOW_ON_on&&m_on #DEF_0.1 maximum potential conductance of medium K channels -- divide nA biological value by 10 for the normalized units here
   float         m_tau;          // #CONDSHOW_ON_on&&m_on #DEF_200 time constant in cycles for medium time-scale adaptation, which should be milliseconds typically (roughly, how long it takes for value to change significantly -- 1.4x the half-life)
   bool          s_on;           // #CONDSHOW_ON_on use slow time-scale adaptation
-  float         s_rise;         // #CONDSHOW_ON_on&&s_on #DEF_0.005 rise rate of slow time-scale adaptation as function of Na concentration -- directly multiplies -- 1/rise = tau for rise rate
-  float         s_max;          // #CONDSHOW_ON_on&&s_on #DEF_0.2 maximum potential conductance of slow K channels -- divide nA biological value by 10 for the normalized units here
+  float         s_rise;         // #CONDSHOW_ON_on&&s_on #DEF_0.001 rise rate of slow time-scale adaptation as function of Na concentration -- directly multiplies -- 1/rise = tau for rise rate
+  float         s_max;          // #CONDSHOW_ON_on&&s_on #DEF_1 maximum potential conductance of slow K channels -- divide nA biological value by 10 for the normalized units here
   float         s_tau;          // #CONDSHOW_ON_on&&s_on #DEF_1000 time constant in cycles for slow time-scale adaptation, which should be milliseconds typically (roughly, how long it takes for value to change significantly -- 1.4x the half-life)
 
   float         f_dt;           // #READ_ONLY #EXPERT rate = 1 / tau
@@ -500,7 +500,7 @@ private:
     rate_rise = 0.8f; 
     f_on = true; f_tau = 50.0f;   f_rise = .05f;  f_max = .1f;
     m_on = true; m_tau = 200.0f;  m_rise = .02f;  m_max = .1f;
-    s_on = true; s_tau = 1000.0f; s_rise = .005f; s_max = .2f;
+    s_on = true; s_tau = 1000.0f; s_rise = .001f; s_max = 1.0f;
     UpdtDts();
   }
 };
