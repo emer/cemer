@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.2.2.0 rev11137
+// ta_Dump File v3.0 -- code v8.3.1.0 rev11249
 LeabraProject .projects[0] { 
  Doc_Group @.docs = [3] {
   taDoc @[0] { 
@@ -23,7 +23,7 @@ LeabraProject .projects[0] {
     UserDataItem @[0] { };
    };
 
-   ControlPanelMember_Group @.mbrs = [10] {
+   ControlPanelMember_Group @.mbrs = [9] {
     ControlPanelMember @[0] { };
     ControlPanelMember @[1] { };
     ControlPanelMember @[2] { };
@@ -33,7 +33,6 @@ LeabraProject .projects[0] {
     ControlPanelMember @[6] { };
     ControlPanelMember @[7] { };
     ControlPanelMember @[8] { };
-    ControlPanelMember @[9] { };
     ControlPanelMember_Group @.gp[0] = [3] { 
      ControlPanelMember @[0] { };
      ControlPanelMember @[1] { };
@@ -625,7 +624,8 @@ LeabraProject .projects[0] {
      };
     };
 
-    ProgVar_List @.objs_vars = [0] {
+    ProgVar_List @.objs_vars = [1] {
+     ProgVar @[0] { };
     };
 
     ProgType_List @.types = [0] {
@@ -636,7 +636,7 @@ LeabraProject .projects[0] {
      ProgVar @[1] { };
     };
 
-    ProgVar_List @.vars = [10] {
+    ProgVar_List @.vars = [9] {
      ProgVar @[0] { };
      ProgVar @[1] { };
      ProgVar @[2] { };
@@ -646,7 +646,6 @@ LeabraProject .projects[0] {
      ProgVar @[6] { };
      ProgVar @[7] { };
      ProgVar @[8] { };
-     ProgVar @[9] { };
     };
 
     Function_List @.functions = [0] {
@@ -759,7 +758,8 @@ LeabraProject .projects[0] {
      };
     };
 
-    ProgVar_List @.objs_vars = [0] {
+    ProgVar_List @.objs_vars = [1] {
+     ProgVar @[0] { };
     };
 
     ProgType_List @.types = [0] {
@@ -769,11 +769,10 @@ LeabraProject .projects[0] {
      ProgVar @[0] { };
     };
 
-    ProgVar_List @.vars = [4] {
+    ProgVar_List @.vars = [3] {
      ProgVar @[0] { };
      ProgVar @[1] { };
      ProgVar @[2] { };
-     ProgVar @[3] { };
     };
 
     Function_List @.functions = [0] {
@@ -1328,40 +1327,6 @@ LeabraProject .projects[0] {
 
  Network_Group @.networks = [1] {
   LeabraNetwork @[0] { 
-   UserDataItem_List @*(.user_data_) {
-    UserDataItem @[0] { };
-    UserDataItem @[1] { };
-    UserDataItem @[2] { };
-    UserDataItem @[3] { };
-    UserDataItem @[4] { };
-    UserDataItem @[5] { };
-    UserDataItem @[6] { };
-    UserDataItem @[7] { };
-    UserDataItem @[8] { };
-    UserDataItem @[9] { };
-    UserDataItem @[10] { };
-    UserDataItem @[11] { };
-    UserDataItem @[12] { };
-    UserDataItem @[13] { };
-    UserDataItem @[14] { };
-    UserDataItem @[15] { };
-    UserDataItem @[16] { };
-    UserDataItem @[17] { };
-    UserDataItem @[18] { };
-    UserDataItem @[19] { };
-    UserDataItem @[20] { };
-    UserDataItem @[21] { };
-    UserDataItem @[22] { };
-    UserDataItem @[23] { };
-    UserDataItem @[24] { };
-    UserDataItem @[25] { };
-    UserDataItem @[26] { };
-    UserDataItem @[27] { };
-    UserDataItem @[28] { };
-    UserDataItem @[29] { };
-    UserDataItem @[30] { };
-   };
-
    BaseSpec_Group @.specs = [4] {
     LeabraUnitSpec @[0] { 
      BaseSpec_Group @.children = [0] {
@@ -1396,11 +1361,11 @@ LeabraProject .projects[0] {
 
    Layer_Group @.layers = [2] {
     LeabraLayer @[0] { 
-     Projection_Group @.projections = [0] {
+     Projection_List @.projections = [0] {
      };
     };
     LeabraLayer @[1] { 
-     Projection_Group @.projections = [1] {
+     Projection_List @.projections = [1] {
       LeabraPrjn @[0] { };
      };
     };
@@ -2101,16 +2066,6 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
      data {ctrl_type=CONTROL: is_numeric=1: is_single=1: state=EXPLORE: saved_value="": range="0:1:0.1": notes="0 default": };
     };
     ControlPanelMember @[4] {
-     label="adapt";
-     short_label=1;
-     cust_label=0;
-     desc=" activation-driven adaptation factor that drives spike rate adaptation dynamics based on both sub- and supra-threshold membrane potentials";
-     cust_desc=0;
-     base=$.networks[0].specs[0]$;
-     mbr=LeabraUnitSpec::adapt;
-     data {ctrl_type=CONTROL: is_numeric=0: is_single=0: state=EXPLORE: saved_value="": range="0:1:0.1": notes="144, 0.04, 0.00805 defaults": };
-    };
-    ControlPanelMember @[5] {
      label="stp";
      short_label=1;
      cust_label=0;
@@ -2120,7 +2075,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
      mbr=LeabraUnitSpec::stp;
      data {ctrl_type=CONTROL: is_numeric=0: is_single=0: state=EXPLORE: saved_value="": range="0:1:0.1": notes="off by default": };
     };
-    ControlPanelMember @[6] {
+    ControlPanelMember @[5] {
      label="act";
      short_label=1;
      cust_label=0;
@@ -2130,7 +2085,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
      mbr=LeabraUnitSpec::act;
      data {ctrl_type=CONTROL: is_numeric=0: is_single=0: state=EXPLORE: saved_value="": range="0:1:0.1": notes="0.5, 40, 0.01 defaults": };
     };
-    ControlPanelMember @[7] {
+    ControlPanelMember @[6] {
      label="spike_misc";
      short_label=1;
      cust_label=0;
@@ -2140,7 +2095,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
      mbr=LeabraUnitSpec::spike_misc;
      data {ctrl_type=CONTROL: is_numeric=0: is_single=0: state=EXPLORE: saved_value="": range="0:1:0.1": notes="ex, .02, 1.2, 0.3, 0, 0.12, regular defaults": };
     };
-    ControlPanelMember @[8] {
+    ControlPanelMember @[7] {
      label="dt";
      short_label=1;
      cust_label=0;
@@ -2150,7 +2105,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
      mbr=LeabraUnitSpec::dt;
      data {ctrl_type=CONTROL: is_numeric=0: is_single=0: state=EXPLORE: saved_value="": range="0:1:0.1": notes="1, 3.3, 1.4, 0 defaults": };
     };
-    ControlPanelMember @[9] {
+    ControlPanelMember @[8] {
      label="cycle_update_net_view";
      short_label=0;
      cust_label=1;
@@ -2507,26 +2462,26 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
       matrix_col_width=10;
       ar {
        name="ar";
-      [200] -0.028604155;-0.026132887;-0.023871865;-0.021804603;-0.019915268;-0.018188972;-0.016611889;-0.015171289;-0.013855444;-0.012653615;
-0.11917768;0.1359044;0.12344361;0.10689898;0.095095687;0.097719036;0.15227878;0.80970621;0;0.19090976;
-0.15937214;0.13317774;0.11204118;0.097359277;0.095043316;0.12976193;0.45191637;0;0.19091043;0.15937218;
-0.13317768;0.11204109;0.09735921;0.095043369;0.12976228;0.45192003;0;0.19091043;0.15937218;0.13317768;
-0.11204109;0.09735921;0.095043369;0.12976228;0.45192003;0;0.19091043;0.15937218;0.13317768;0.11204109;
-0.09735921;0.095043369;0.12976228;0.45192003;0;0.19091043;0.15937218;0.13317768;0.11204109;0.09735921;
-0.095043369;0.12976228;0.45192003;0;0.19091043;0.15937218;0.13317768;0.11204109;0.09735921;0.095043369;
-0.12976228;0.45192003;0;0.19091043;0.15937218;0.13317768;0.11204109;0.09735921;0.095043369;0.12976228;
-0.45192003;0;0.19091043;0.15937218;0.13317768;0.11204109;0.09735921;0.095043369;0.12976228;0.45192003;
-0;0.19091043;0.15937218;0.13317768;0.11204109;0.09735921;0.095043369;0.12976228;0.45192003;0;
-0.19091043;0.15937218;0.13317768;0.11204109;0.09735921;0.095043369;0.12976228;0.45192003;0;0.19091043;
-0.15937218;0.13317768;0.11204109;0.09735921;0.095043369;0.12976228;0.45192003;0;0.19091043;0.15937218;
-0.13317768;0.11204109;0.09735921;0.095043369;0.12976228;0.45192003;0;0.19091043;0.15937218;0.13317768;
-0.11204109;0.09735921;0.095043369;0.12976228;0.45192003;0;0.19091043;0.15937218;0.13317768;0.11204109;
-0.09735921;0.095043369;0.12976228;0.45192003;0;0.19091043;0.15937218;0.13317768;0.11204109;0.09735921;
-0.095043369;0.12976228;0.45192003;0;0.19091043;0.15937218;0.13317768;0.11204109;0.09735921;0.095043369;
-0.002456639;-0.030264091;-0.046145685;-0.052640703;-0.053219173;-0.050887756;-0.04746706;-0.043792818;-0.040200971;-0.036815356;
--0.033674162;-0.030781269;-0.028126877;-0.025696067;-0.023472387;-0.021439457;-0.019581597;-0.017884132;-0.01633342;-0.014916934;
--0.013623126;-0.012441424;-0.011362147;-0.010376459;-0.0094762379;-0.0086540859;-0.0079032481;-0.0072175437;-0.0065913196;-0.006019413;
--0.0054971324;-0.0050201626;-0.0045845713;-0.0041867741;-0.0038234924;-0.0034917309;-0.0031887547;-0.0029120699;-0.0026593881;-0.0024286271;
+      [200] -0.028636364;-0.026151387;-0.02388205;-0.021809641;-0.019917065;-0.018188722;-0.016610367;-0.015168974;-0.013852653;-0.012650568;
+0.11918053;0.13587467;0.12318495;0.10542928;0.088700429;0.074227065;0.062009029;0.051773533;0.043219745;0.03607703;
+0.030114204;0.025136717;0.020981893;0.017513841;0.014618985;0.012202635;0.010185689;0.008502081;0.0070967823;0.0059237629;
+0.0049446523;0.0041273311;0.0034451559;0.0028757006;0.0024003834;0.0020035952;0.0016724616;0.0013959855;0.0011652783;0.0009726584;
+0.00081190467;0.00067768991;0.00056567788;0.00047219545;0.00039412081;0.00032896549;0.00027460605;0.00022922456;0.00019134581;0.00015969574;
+0.00013330579;0.00011127442;9.2856586e-05;7.7515841e-05;6.4715743e-05;5.4016709e-05;4.5076013e-05;3.7640333e-05;3.1419098e-05;2.6233494e-05;
+2.1904707e-05;1.8291175e-05;1.5251338e-05;1.271069e-05;1.0602176e-05;8.8512897e-06;7.3835254e-06;6.1690807e-06;5.1707029e-06;4.3064356e-06;
+3.5911798e-06;3.0249357e-06;2.5182962e-06;2.0936131e-06;1.7359853e-06;1.4454126e-06;1.2367964e-06;1.0207295e-06;8.7916851e-07;7.301569e-07;
+5.8859587e-07;5.2154064e-07;4.0978193e-07;3.4272671e-07;2.682209e-07;2.30968e-07;1.937151e-07;1.937151e-07;1.6391277e-07;1.2665987e-07;
+8.9406967e-08;8.9406967e-08;8.9406967e-08;8.9406967e-08;8.9406967e-08;8.9406967e-08;8.9406967e-08;8.9406967e-08;8.9406967e-08;8.9406967e-08;
+8.9406967e-08;8.9406967e-08;8.9406967e-08;8.9406967e-08;8.9406967e-08;8.9406967e-08;8.9406967e-08;8.9406967e-08;8.9406967e-08;8.9406967e-08;
+8.9406967e-08;8.9406967e-08;8.9406967e-08;8.9406967e-08;8.9406967e-08;8.9406967e-08;8.9406967e-08;8.9406967e-08;8.9406967e-08;8.9406967e-08;
+8.9406967e-08;8.9406967e-08;8.9406967e-08;8.9406967e-08;8.9406967e-08;8.9406967e-08;8.9406967e-08;8.9406967e-08;8.9406967e-08;8.9406967e-08;
+8.9406967e-08;8.9406967e-08;8.9406967e-08;8.9406967e-08;8.9406967e-08;8.9406967e-08;8.9406967e-08;8.9406967e-08;8.9406967e-08;8.9406967e-08;
+8.9406967e-08;8.9406967e-08;8.9406967e-08;8.9406967e-08;8.9406967e-08;8.9406967e-08;8.9406967e-08;8.9406967e-08;8.9406967e-08;8.9406967e-08;
+8.9406967e-08;8.9406967e-08;8.9406967e-08;8.9406967e-08;8.9406967e-08;8.9406967e-08;8.9406967e-08;8.9406967e-08;8.9406967e-08;8.9406967e-08;
+-0.070616834;-0.085085243;-0.083969742;-0.078597814;-0.072358795;-0.06625504;-0.060558118;-0.055318702;-0.050522957;-0.046140093;
+-0.042136598;-0.038480233;-0.035141081;-0.032091662;-0.029306851;-0.0267637;-0.024441229;-0.022320289;-0.020383403;-0.018614594;
+-0.016999278;-0.015524135;-0.014176995;-0.012946756;-0.011823276;-0.010797296;-0.0098603368;-0.009004686;-0.0082232868;-0.0075097028;
+-0.0068580243;-0.0062629138;-0.0057194442;-0.0052231285;-0.0047698799;-0.0043559703;-0.0039779665;-0.0036327662;-0.0033175261;-0.0030296447;
       };
      };
      float_Data @[3] {
@@ -2544,26 +2499,26 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
       matrix_col_width=10;
       ar {
        name="ar";
-      [200] 0.39133209;0.38341305;0.37617916;0.36957172;0.36353678;0.35802495;0.35299104;0.34839368;0.34419507;0.34036064;
-0.3764751;0.41765824;0.4550654;0.48745903;0.51627588;0.54588771;0.59203279;0.83739829;0.30000001;0.35785145;
-0.40614605;0.44650295;0.48045483;0.50995767;0.5387587;0.57808048;0.71502483;0.30000001;0.35785165;0.40614626;
-0.44650313;0.48045498;0.50995779;0.53875881;0.57808071;0.7150262;0.30000001;0.35785165;0.40614626;0.44650313;
-0.48045498;0.50995779;0.53875881;0.57808071;0.7150262;0.30000001;0.35785165;0.40614626;0.44650313;0.48045498;
-0.50995779;0.53875881;0.57808071;0.7150262;0.30000001;0.35785165;0.40614626;0.44650313;0.48045498;0.50995779;
-0.53875881;0.57808071;0.7150262;0.30000001;0.35785165;0.40614626;0.44650313;0.48045498;0.50995779;0.53875881;
-0.57808071;0.7150262;0.30000001;0.35785165;0.40614626;0.44650313;0.48045498;0.50995779;0.53875881;0.57808071;
-0.7150262;0.30000001;0.35785165;0.40614626;0.44650313;0.48045498;0.50995779;0.53875881;0.57808071;0.7150262;
-0.30000001;0.35785165;0.40614626;0.44650313;0.48045498;0.50995779;0.53875881;0.57808071;0.7150262;0.30000001;
-0.35785165;0.40614626;0.44650313;0.48045498;0.50995779;0.53875881;0.57808071;0.7150262;0.30000001;0.35785165;
-0.40614626;0.44650313;0.48045498;0.50995779;0.53875881;0.57808071;0.7150262;0.30000001;0.35785165;0.40614626;
-0.44650313;0.48045498;0.50995779;0.53875881;0.57808071;0.7150262;0.30000001;0.35785165;0.40614626;0.44650313;
-0.48045498;0.50995779;0.53875881;0.57808071;0.7150262;0.30000001;0.35785165;0.40614626;0.44650313;0.48045498;
-0.50995779;0.53875881;0.57808071;0.7150262;0.30000001;0.35785165;0.40614626;0.44650313;0.48045498;0.50995779;
-0.53875881;0.57808071;0.7150262;0.30000001;0.35785165;0.40614626;0.44650313;0.48045498;0.50995779;0.53875881;
-0.53950328;0.53033233;0.51634878;0.50039703;0.48427001;0.46884948;0.45446551;0.44119495;0.42901284;0.41785666;
-0.40765238;0.39832473;0.38980144;0.38201475;0.37490192;0.3684051;0.36247128;0.35705185;0.35210234;0.34758204;
-0.34345382;0.33968368;0.33624062;0.33309624;0.33022466;0.32760221;0.32520729;0.32302016;0.32102278;0.31919873;
-0.31753293;0.31601167;0.3146224;0.31335369;0.31219506;0.31113696;0.31017068;0.30928823;0.30848235;0.30774641;
+      [200] 0.39132231;0.38339764;0.37616065;0.36955166;0.36351618;0.35800445;0.35297102;0.34837437;0.34417659;0.34034309;
+0.37645841;0.41763255;0.45496133;0.4869096;0.51378852;0.53628159;0.55507219;0.57076114;0.58385801;0.59479046;
+0.60391599;0.61153316;0.61789131;0.62319851;0.62762851;0.63132626;0.63441283;0.63698924;0.63913977;0.64093482;
+0.64243323;0.64368391;0.64472789;0.64559931;0.64632672;0.64693385;0.64744067;0.64786369;0.64821678;0.64851153;
+0.64875758;0.64896291;0.64913434;0.64927745;0.6493969;0.64949656;0.64957976;0.6496492;0.6497072;0.6497556;
+0.64979601;0.64982975;0.64985788;0.64988136;0.64990097;0.64991736;0.64993101;0.6499424;0.64995193;0.64995986;
+0.64996648;0.64997202;0.64997667;0.64998055;0.64998376;0.64998645;0.64998871;0.64999056;0.64999211;0.64999342;
+0.64999449;0.64999539;0.64999616;0.64999682;0.64999735;0.64999777;0.64999813;0.64999843;0.64999866;0.6499989;
+0.64999908;0.64999926;0.64999938;0.6499995;0.64999956;0.64999962;0.64999968;0.64999974;0.6499998;0.64999986;
+0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;
+0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;
+0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;
+0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;
+0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;
+0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;
+0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;0.64999986;
+0.62860084;0.60281742;0.57737201;0.55355448;0.5316276;0.51155031;0.49319935;0.47643611;0.46112612;0.44714427;
+0.43437561;0.42271495;0.41206613;0.4023414;0.39346054;0.38535032;0.37794387;0.37118015;0.36500335;0.35936257;
+0.35421127;0.34950697;0.34521091;0.34128764;0.33770484;0.33443293;0.33144495;0.32871625;0.32622436;0.32394868;
+0.32187051;0.31997266;0.31823951;0.31665674;0.31521133;0.31389132;0.31268588;0.31158504;0.31057972;0.30966166;
       };
      };
      float_Data @[4] {
@@ -2597,10 +2552,10 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
 0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;
 0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;
 0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;
-0.61197495;0.42652798;0.29727709;0.20719312;0.14440733;0.10064753;0.071195439;0.049627535;0.034588948;0.024107449;
-0.016802162;0.011710597;0.0081619313;0.0056886189;0.0039647948;0.0027633416;0.0019259653;0.0013423394;0.00093556987;0.00065206387;
-0.00045446877;0.00031675096;0.00022076583;0.00015386709;0.0001072407;7.4743519e-05;5.2093965e-05;3.6307916e-05;2.5305517e-05;1.7637178e-05;
-1.2292578e-05;8.5675538e-06;5.9713252e-06;4.1618327e-06;2.9006712e-06;2.0216798e-06;1.4090496e-06;9.8206488e-07;6.8446946e-07;4.7705447e-07;
+0.61197495;0.42652798;0.29727709;0.20719312;0.14440733;0.10064753;0.070148274;0.04889122;0.0340757;0.02374973;
+0.016552841;0.011536829;0.0080408202;0.005604208;0.0039059632;0.0027223378;0.001897387;0.0013224212;0.00092168752;0.00064238824;
+0.00044772512;0.00031205083;0.00021748997;0.00015158392;0.0001056494;7.363443e-05;5.1320967e-05;3.5769161e-05;2.4930021e-05;1.7375469e-05;
+1.2110175e-05;8.4404246e-06;5.88272e-06;4.1000776e-06;2.8576299e-06;1.9916813e-06;1.3881415e-06;9.674925e-07;6.7431296e-07;4.699757e-07;
       };
      };
      float_Data @[5] {
@@ -2634,10 +2589,10 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
 0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;
 0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;
 0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;0.87804866;
-0.61197495;0.42652798;0.29727709;0.20719312;0.14440733;0.10064753;0.071195439;0.049627535;0.034588948;0.024107449;
-0.016802162;0.011710597;0.0081619313;0.0056886189;0.0039647948;0.0027633416;0.0019259653;0.0013423394;0.00093556987;0.00065206387;
-0.00045446877;0.00031675096;0.00022076583;0.00015386709;0.0001072407;7.4743519e-05;5.2093965e-05;3.6307916e-05;2.5305517e-05;1.7637178e-05;
-1.2292578e-05;8.5675538e-06;5.9713252e-06;4.1618327e-06;2.9006712e-06;2.0216798e-06;1.4090496e-06;9.8206488e-07;6.8446946e-07;4.7705447e-07;
+0.61197495;0.42652798;0.29727709;0.20719312;0.14440733;0.10064753;0.070148274;0.04889122;0.0340757;0.02374973;
+0.016552841;0.011536829;0.0080408202;0.005604208;0.0039059632;0.0027223378;0.001897387;0.0013224212;0.00092168752;0.00064238824;
+0.00044772512;0.00031205083;0.00021748997;0.00015158392;0.0001056494;7.363443e-05;5.1320967e-05;3.5769161e-05;2.4930021e-05;1.7375469e-05;
+1.2110175e-05;8.4404246e-06;5.88272e-06;4.1000776e-06;2.8576299e-06;1.9916813e-06;1.3881415e-06;9.674925e-07;6.7431296e-07;4.699757e-07;
       };
      };
      float_Data @[6] {
@@ -2656,21 +2611,21 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
       ar {
        name="ar";
       [200] 0;0;0;0;0;0;0;0;0;0;
-0;0;0;0;0;0;0;0;1;0;
-0;0;0;0;0;0;0;1;0;0;
-0;0;0;0;0;0;1;0;0;0;
-0;0;0;0;0;1;0;0;0;0;
-0;0;0;0;1;0;0;0;0;0;
-0;0;0;1;0;0;0;0;0;0;
-0;0;1;0;0;0;0;0;0;0;
-0;1;0;0;0;0;0;0;0;0;
-1;0;0;0;0;0;0;0;0;1;
-0;0;0;0;0;0;0;0;1;0;
-0;0;0;0;0;0;0;1;0;0;
-0;0;0;0;0;0;1;0;0;0;
-0;0;0;0;0;1;0;0;0;0;
-0;0;0;0;1;0;0;0;0;0;
-0;0;0;1;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
 0;0;0;0;0;0;0;0;0;0;
 0;0;0;0;0;0;0;0;0;0;
 0;0;0;0;0;0;0;0;0;0;
@@ -2679,7 +2634,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
      };
      float_Data @[7] {
       name="adapt";
-      col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
+      col_flags=PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -2688,7 +2643,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
       dim_names {
        name="dim_names";
       [0]       };
-      width=8;
+      width=0;
       matrix_col_width=10;
       ar {
        name="ar";
@@ -5723,7 +5678,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
 	computed=0;
 	object_type=LeabraLayer;
 	object=$.networks[0].layers[1]$;
-	variable="units[0].adapt";
+	variable="units[0].gc_kna_f";
 	var_label=;
 	name_style=MY_NAME;
 	max_name_len=6;
@@ -6979,7 +6934,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
 	computed=0;
 	object_type=LeabraLayer;
 	object=$.networks[0].layers[1]$;
-	variable="units[0].adapt";
+	variable="units[0].gc_kna_f";
 	var_label=;
 	name_style=MY_NAME;
 	max_name_len=6;
@@ -7188,6 +7143,18 @@ sets the minimum number of cycles to settle for, regardless of network state cha
      name="objs_vars";
      el_typ=ProgVar;
      el_def=0;
+     ProgVar @[0] {
+      name="trial_netmon";
+      var_type=T_Object;
+      object_type=NetMonitor;
+      object_val=.programs.gp[0][1].objs[0]$$;
+      object_scope=NULL;
+      objs_ptr=1;
+      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
     };
     types {
      name="types";
@@ -7314,18 +7281,6 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
-      reference=0;
-      desc=;
-      init_from=NULL;
-     };
-     ProgVar @[9] {
-      name="trial_netmon";
-      var_type=T_Object;
-      object_type=NetMonitor;
-      object_val=.programs.gp[0][1].objs[0]$$;
-      object_scope=NULL;
-      objs_ptr=1;
-      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc=;
       init_from=NULL;
@@ -7961,7 +7916,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
 	computed=0;
 	object_type=LeabraLayer;
 	object=$.networks[0].layers[1]$;
-	variable="units[0].adapt";
+	variable="units[0].gc_kna_f";
 	var_label=;
 	name_style=MY_NAME;
 	max_name_len=6;
@@ -8170,6 +8125,18 @@ sets the minimum number of cycles to settle for, regardless of network state cha
      name="objs_vars";
      el_typ=ProgVar;
      el_def=0;
+     ProgVar @[0] {
+      name="trial_netmon";
+      var_type=T_Object;
+      object_type=NetMonitor;
+      object_val=.programs.gp[0][3].objs[0]$$;
+      object_scope=NULL;
+      objs_ptr=1;
+      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="pointer to the NetMonitor object in objs secton of this program that contains configuration for what to record and where to get it";
+      init_from=NULL;
+     };
     };
     types {
      name="types";
@@ -8210,18 +8177,6 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       init_from=NULL;
      };
      ProgVar @[1] {
-      name="trial_netmon";
-      var_type=T_Object;
-      object_type=NetMonitor;
-      object_val=.programs.gp[0][3].objs[0]$$;
-      object_scope=NULL;
-      objs_ptr=1;
-      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-      reference=0;
-      desc="pointer to the NetMonitor object in objs secton of this program that contains configuration for what to record and where to get it";
-      init_from=NULL;
-     };
-     ProgVar @[2] {
       name="unit_spec_0";
       var_type=T_Object;
       object_type=LeabraUnitSpec;
@@ -8233,10 +8188,10 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       desc=;
       init_from=NULL;
      };
-     ProgVar @[3] {
+     ProgVar @[2] {
       name="net";
       var_type=T_Real;
-      real_val=0.240000013113022;
+      real_val=0;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -8259,7 +8214,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       flags=CAN_REVERT_TO_CODE;
       code_string="trial_netmon->SetDataNetwork(trial_mon_data, network)";
       result_var=NULL;
-      obj=.programs.gp[0][3].vars[1]$$;
+      obj=.programs.gp[0][3].objs_vars[0]$$;
       method=NetMonitor::SetDataNetwork;
       meth_args {
        name="meth_args";
@@ -8297,7 +8252,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       flags=CAN_REVERT_TO_CODE;
       code_string="trial_netmon->CheckConfig(false)";
       result_var=NULL;
-      obj=$.programs.gp[0][3].vars[1]$;
+      obj=$.programs.gp[0][3].objs_vars[0]$;
       method=taBase::CheckConfig;
       meth_args {
        name="meth_args";
@@ -8324,7 +8279,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       flags=CAN_REVERT_TO_CODE;
       code_string="trial_netmon->UpdateMonitors(true)";
       result_var=NULL;
-      obj=$.programs.gp[0][3].vars[1]$;
+      obj=$.programs.gp[0][3].objs_vars[0]$;
       method=NetMonitor::UpdateMonitors;
       meth_args {
        name="meth_args";
@@ -8399,7 +8354,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       flags=CAN_REVERT_TO_CODE;
       code_string="trial_netmon->GetMonVals()";
       result_var=NULL;
-      obj=$.programs.gp[0][3].vars[1]$;
+      obj=$.programs.gp[0][3].objs_vars[0]$;
       method=NetMonitor::GetMonVals;
       meth_args {
        name="meth_args";
@@ -8420,7 +8375,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       set_data=0;
       all_matches=0;
       quiet=0;
-      var_1=.programs.gp[0][3].vars[3]$$;
+      var_1=.programs.gp[0][3].vars[2]$$;
       var_2=NULL;
       var_3=NULL;
       var_4=NULL;
@@ -8430,7 +8385,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       desc="net does not contain g_bar.e anymore";
       flags=CAN_REVERT_TO_CODE;
       code_string="net = net * unit_spec_0.g_bar.e";
-      result_var=$.programs.gp[0][3].vars[3]$;
+      result_var=$.programs.gp[0][3].vars[2]$;
       expr {
        expr="net * unit_spec_0.g_bar.e";
       };
@@ -8446,7 +8401,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       set_data=1;
       all_matches=0;
       quiet=0;
-      var_1=$.programs.gp[0][3].vars[3]$;
+      var_1=$.programs.gp[0][3].vars[2]$;
       var_2=NULL;
       var_3=NULL;
       var_4=NULL;
@@ -9202,11 +9157,11 @@ sets the minimum number of cycles to settle for, regardless of network state cha
     el_typ=UserDataItem;
     el_def=0;
     UserDataItem @[0] {name="view_win_lft": value=0: val_type_fixed=0: };
-    UserDataItem @[1] {name="view_win_top": value=0.01752678: val_type_fixed=0: };
-    UserDataItem @[2] {name="view_win_wd": value=0.9987879: val_type_fixed=0: };
-    UserDataItem @[3] {name="view_win_ht": value=0.7935735: val_type_fixed=0: };
+    UserDataItem @[1] {name="view_win_top": value=0.01702933: val_type_fixed=0: };
+    UserDataItem @[2] {name="view_win_wd": value=0.9984102: val_type_fixed=0: };
+    UserDataItem @[3] {name="view_win_ht": value=0.8902555: val_type_fixed=0: };
     UserDataItem @[4] {name="view_win_iconified": value=0: val_type_fixed=0: };
-    UserDataItem @[5] {name="view_splitter_state": value=AAAA/wAAAAEAAAADAAABGQAAAqYAAAHQAQAAAAYBAAAAAQE=: val_type_fixed=0: };
+    UserDataItem @[5] {name="view_splitter_state": value=AAAA/wAAAAEAAAADAAABcgAAAo8AAANPAQAAAAYBAAAAAQE=: val_type_fixed=0: };
    };
    name="Browser";
    m_data=.$$;
@@ -9311,7 +9266,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	  net_text_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=-0.5: z=0: }: };
 	  net_text_rot=0;
 	  cur_unit_vals{ act;	  };
-	  hot_vars{ act;net;act_eq;act_nd;r.wt;gc_i;I_net;v_m;adapt;E_i;syn_tr;syn_nr;syn_pr;syn_kre;	  };
+	  full_state_vals{ batch;epoch;group;trial;tick;cycle;time;total_trials;sse;group_name;trial_name;output_name;quarter;phase;tot_cycle;rt_cycles;ext_rew;norm_err;cos_err;minus_output_name;	  };
+	  cur_state_vals{ batch;epoch;trial;quarter;cycle;sse;trial_name;output_name;	  };
+	  hot_vars{ act;net;act_eq;act_nd;r.wt;gc_i;I_net;v_m;syn_tr;syn_nr;syn_pr;syn_kre;	  };
 	  unit_src_path=".layers[1][0]";
 	  con_type=ANY_CON;
 	  hist_idx=0;
@@ -9624,10 +9581,10 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphColView @[7] {
 	    name="adapt";
 	    m_data=.data.gp[1][0].data[7]$$;
-	    cur_font_size=12;
+	    cur_font_size=18;
 	    m_transform=NULL;
 	    visible=1;
-	    fixed_range {fix_min=0: min=2.53701e-5: fix_max=0: max=0.0642223: };
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[8] {
@@ -9803,7 +9760,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    is_matrix=0;
 	    n_cells=1;
 	    matrix_cell=0;
-	    fixed_range {fix_min=0: min=-0.05321917: fix_max=0: max=0.8097062: };
+	    fixed_range {fix_min=0: min=-0.08508524: fix_max=0: max=0.1358747: };
 	    show_axis_label=1;
 	    show_alt_axis_label=1;
 	    color {name="red": r=1: g=0: b=0: a=1: desc="": };
@@ -9829,7 +9786,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    is_matrix=0;
 	    n_cells=1;
 	    matrix_cell=0;
-	    fixed_range {fix_min=0: min=0.3: fix_max=0: max=0.8373983: };
+	    fixed_range {fix_min=0: min=0.3096617: fix_max=0: max=0.6499999: };
 	    show_axis_label=1;
 	    show_alt_axis_label=1;
 	    color {name="blue": r=0: g=0: b=1: a=1: desc="": };
@@ -9925,7 +9882,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    m_data=NULL;
 	    cur_font_size=12;
 	    m_transform=NULL;
-	    on=1;
+	    on=0;
 	    axis=Y;
 	    col_name="adapt";
 	    col_name_good=;
@@ -14189,9 +14146,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       el_typ=UserDataItem;
       el_def=0;
       UserDataItem @[0] {name="view_win_lft": value=0: val_type_fixed=0: };
-      UserDataItem @[1] {name="view_win_top": value=0.01168452: val_type_fixed=0: };
-      UserDataItem @[2] {name="view_win_wd": value=0.04969697: val_type_fixed=0: };
-      UserDataItem @[3] {name="view_win_ht": value=0.7185978: val_type_fixed=0: };
+      UserDataItem @[1] {name="view_win_top": value=0.01986755: val_type_fixed=0: };
+      UserDataItem @[2] {name="view_win_wd": value=0.0482247: val_type_fixed=0: };
+      UserDataItem @[3] {name="view_win_ht": value=0.8041627: val_type_fixed=0: };
       UserDataItem @[4] {name="view_win_iconified": value=0: val_type_fixed=0: };
       UserDataItem @[5] {name="view_visible": value=0: val_type_fixed=0: };
      };
@@ -14216,42 +14173,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
   el_typ=LeabraNetwork;
   el_def=0;
   LeabraNetwork @[0] {
-   UserDataItem_List @*(.user_data_) {
-    name=;
-    el_typ=UserDataItem;
-    el_def=0;
-    UserDataItem @[0] {name="cos_err": value=1: val_type_fixed=1: };
-    UserDataItem @[1] {name="norm_err": value=1: val_type_fixed=1: };
-    UserDataItem @[2] {name="ext_rew": value=1: val_type_fixed=1: };
-    UserDataItem @[3] {name="minus_output_name": value=1: val_type_fixed=1: };
-    UserDataItem @[4] {name="rt_cycles": value=1: val_type_fixed=1: };
-    UserDataItem @[5] {name="tot_cycle": value=1: val_type_fixed=1: };
-    UserDataItem @[6] {name="phase": value=1: val_type_fixed=1: };
-    UserDataItem @[7] {name="quarter": value=1: val_type_fixed=1: };
-    UserDataItem @[8] {name="sse": value=1: val_type_fixed=1: };
-    UserDataItem @[9] {name="output_name": value=1: val_type_fixed=1: };
-    UserDataItem @[10] {name="trial_name": value=1: val_type_fixed=1: };
-    UserDataItem @[11] {name="group_name": value=1: val_type_fixed=1: };
-    UserDataItem @[12] {name="total_trials": value=1: val_type_fixed=1: };
-    UserDataItem @[13] {name="time": value=1: val_type_fixed=1: };
-    UserDataItem @[14] {name="cycle": value=1: val_type_fixed=1: };
-    UserDataItem @[15] {name="tick": value=1: val_type_fixed=1: };
-    UserDataItem @[16] {name="trial": value=1: val_type_fixed=0: };
-    UserDataItem @[17] {name="group": value=1: val_type_fixed=0: };
-    UserDataItem @[18] {name="epoch": value=1: val_type_fixed=0: };
-    UserDataItem @[19] {name="batch": value=1: val_type_fixed=0: };
-    UserDataItem @[20] {name="trial_cos_diff": value=1: val_type_fixed=1: };
-    UserDataItem @[21] {name="avg_act_diff": value=1: val_type_fixed=1: };
-    UserDataItem @[22] {name="cos_diff": value=1: val_type_fixed=1: };
-    UserDataItem @[23] {name="minus_cycles": value=1: val_type_fixed=1: };
-    UserDataItem @[24] {name="ct_cycle": value=1: val_type_fixed=1: };
-    UserDataItem @[25] {name="phase_no": value=1: val_type_fixed=1: };
-    UserDataItem @[26] {name="maxda": value=1: val_type_fixed=1: };
-    UserDataItem @[27] {name="lt_avg_norm_err": value=1: val_type_fixed=1: };
-    UserDataItem @[28] {name="st_avg_norm_err": value=1: val_type_fixed=1: };
-    UserDataItem @[29] {name="lt_avg_ext_rew": value=1: val_type_fixed=1: };
-    UserDataItem @[30] {name="st_avg_ext_rew": value=1: val_type_fixed=1: };
-   };
    name="UnitNet";
    desc=;
    flags=BUILD_INIT_WTS;
@@ -14259,8 +14180,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
    wt_update=ON_LINE;
    small_batch_n=10;
    stats {sse_unit_avg=0: sse_sqrt=0: cnt_err_tol=0: prerr=0: };
-   n_units=0;
-   n_cons=0;
+   n_units=3;
+   n_cons=1;
    max_prjns=1;
    specs {
     name="specs";
@@ -14282,26 +14203,26 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      act_range {min=0: max=1: range=1: scale=1: };
      sse_tol=0.5;
      act_fun=NOISY_XX1;
-     act {thr=0.5: gain=40: nvar=0.01: sig_mult=0.33: sig_mult_pow=0.8: sig_gain=3: interp_range=0.01: gain_cor_range=10: gain_cor=0.1: sig_gain_nvar=300: sig_mult_eff=0.1585484: sig_val_at_0=0.07927421: interp_val=0.187588: };
-     act_misc {rec_nd=1: avg_nd=1: dif_avg=0: net_gain=1: act_max_hz=100: avg_trace=0: lambda=0: avg_tau=200: avg_init=0.15: avg_dt=0.005: };
-     spike {rise=0: decay=5: g_gain=1: window=3: eq_gain=10: eq_tau=50: eq_dt=0.02: };
+     act {thr=0.5: gain=40: nvar=0.01: avg_correct=1: vm_act_thr=0.01: sig_mult=0.33: sig_mult_pow=0.8: sig_gain=3: interp_range=0.01: gain_cor_range=10: gain_cor=0.1: sig_gain_nvar=300: sig_mult_eff=0.1585484: sig_val_at_0=0.07927421: interp_val=0.187588: };
+     act_misc {rec_nd=1: avg_nd=1: dif_avg=0: net_gain=1: avg_trace=0: lambda=0: avg_tau=200: avg_init=0.15: avg_dt=0.005: };
+     spike {rise=0: decay=5: g_gain=1: window=3: act_max_hz=200: int_tau=5: int_dt=0.2: };
      spike_misc {ex=1: exp_slope=0.02: spk_thr=1.2: vm_r=0.3: t_r=0: clamp_max_p=0.12: clamp_type=REGULAR: eff_spk_thr=1.2: };
      opt_thresh {send=0.1: delta=0.005: };
      clamp_range {min=0: max=0.95: range=0.95: scale=1.052632: };
      vm_range {min=0: max=2: range=2: scale=0.5: };
      init {v_m=0.4: act=0: netin=0: };
-     dt {integ=1: vm_tau=3.3: net_tau=1.4: fast_cyc=0: vm_dt=0.3030303: net_dt=0.7142857: };
+     dt {integ=1: vm_tau=3.3: net_tau=1.4: vm_cyc=1: fast_cyc=0: vm_dt=0.3030303: vm_dt_cyc=0.3030303: net_dt=0.7142857: };
      act_avg {ss_tau=2: s_tau=2: m_tau=10: m_in_s=0.1: ss_dt=0.5: s_dt=0.5: m_dt=0.1: s_in_s=0.9: };
      avg_l {init=0.4: gain=2.5: min=0.2: tau=10: lrn_max=0.5: lrn_min=0.0001: dt=0.1: lrn_fact=0.2173478: };
      avg_l_2 {err_mod=1: err_min=0.01: lay_act_thr=0.01: };
-     g_bar {e=0.3: l=0.3: i=1: };
-     e_rev {e=1: l=0.3: i=0.25: };
-     adapt {on=0: tau=144: vm_gain=0.04: spike_gain=0.00805: Ei_dyn=0: Ei_gain=0.001: Ei_tau=50: dt=0.006944444: Ei_dt=0.02: };
+     g_bar {e=0.3: l=0.3: i=1: k=1: };
+     e_rev {e=1: l=0.3: i=0.25: k=0.1: };
+     kna_adapt {on=0: clamp=0: max_gc=0.2: max_adapt=0.5: rate_rise=0.8: f_on=1: f_rise=0.05: f_max=0.1: f_tau=50: m_on=1: m_rise=0.02: m_max=0.1: m_tau=200: s_on=1: s_rise=0.005: s_max=0.2: s_tau=1000: f_dt=0.02: m_dt=0.005: s_dt=0.001: };
      stp {on=0: algorithm=CYCLES: f_r_ratio=0.02: rec_tau=200: p0=0.2: p0_norm=0.2: kre_tau=100: kre=0.002: fac_tau=4: fac=0.3: thresh=0.5: n_trials=1: rec_prob=0.1: rec_dt=0.005: fac_dt=0.25: kre_dt=0.01: oneo_p0_norm=5: };
      syn_delay {on=0: delay=4: };
      deep_raw_qtr=Q4;
      deep {on=0: role=SUPER: raw_thr_rel=0.1: raw_thr_abs=0.1: mod_min=0.8: mod_thr=0.1: ctxt_prv=0: tick_updt=-1: else_prv=0.9: mod_range=0.2: ctxt_new=1: else_new=0.1: };
-     trc {p_only_m=0: thal_gate=0: avg_clamp=0: deep_gain=0.2: clip=0: clip_max=0.4: std_gain=0.8: };
+     trc {p_only_m=0: thal_gate=0: clamp_net=0: avg_clamp=0: deep_gain=0.2: clip=0: clip_max=0.4: std_gain=0.8: };
      da_mod {on=0: minus=0: plus=0.1: };
      noise_type {type=NO_NOISE: trial_fixed=1: };
      noise {name="noise": type=GAUSSIAN: mean=0: var=0: par=1: };
@@ -14339,7 +14260,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        cur_lrate=0;
        lrs_mult=1;
        use_unlearnable=1;
-       xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: lrn_thr=0.01: d_rev_ratio=-9: };
+       xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: lrn_thr=0.01: s_mult=1: d_rev_ratio=-9: };
        wt_sig {gain=6: off=1.25: soft_bound=1: };
        momentum {on=0: dwavg_tau=1000: norm_min=0.001: m_tau=20: lrate_comp=0.01: dwavg_dt=0.001: dwavg_dt_c=0.999: m_dt=0.05: m_dt_c=0.95: };
        wt_bal {on=0: hi_thr=0.4: hi_gain=4: lo_thr=0.2: lo_gain=4: };
@@ -14368,7 +14289,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      cur_lrate=0;
      lrs_mult=1;
      use_unlearnable=1;
-     xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: lrn_thr=0.01: d_rev_ratio=-9: };
+     xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: lrn_thr=0.01: s_mult=1: d_rev_ratio=-9: };
      wt_sig {gain=6: off=1.25: soft_bound=1: };
      momentum {on=0: dwavg_tau=1000: norm_min=0.001: m_tau=20: lrate_comp=0.01: dwavg_dt=0.001: dwavg_dt_c=0.999: m_dt=0.05: m_dt_c=0.95: };
      wt_bal {on=0: hi_thr=0.4: hi_gain=4: lo_thr=0.2: lo_gain=4: };
@@ -14484,7 +14405,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       name="send_prjns";
       el_typ=LeabraPrjn;
       el_def=0;
-      Projection_Group @. = [0] = LeabraPrjn .networks[0].layers[1].projections[0];
+      Projection_List @. = [0] = LeabraPrjn .networks[0].layers[1].projections[0];
      };
      unit_spec {type=LeabraUnitSpec: spec=$.networks[0].specs[0]$: };
      dist {fm_input=0: fm_output=-1: };
@@ -14581,7 +14502,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
    max_disp_size2d {x=1: y=4: };
    times {quarter=1: deep_cyc=5: time_inc=0.001: wt_bal_int=10: minus=3: plus=1: total_cycles=4: thal_gate_cycle=-2: };
    lstats {trg_max_act_crit=0.5: off_errs=1: on_errs=1: agg_unlearnable=0: wt_bal=0: };
-   net_misc {spike=0: deep=0: bias_learn=0: trial_decay=1: diff_scale_p=0: diff_scale_q1=0: wt_bal=0: lay_gp_inhib=0: inhib_cons=0: };
+   net_misc {spike=0: deep=0: bias_learn=0: trial_decay=0: diff_scale_p=0: diff_scale_q1=0: wt_bal=0: lay_gp_inhib=0: inhib_cons=0: };
    deep {on=0: ctxt=0: raw_net=0: mod_net=0: raw_qtr=0: };
    rel_netin {on=1: trl_skip=10: epc_skip=10: };
   };

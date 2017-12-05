@@ -96,7 +96,7 @@ Setup Non Spiking Network
     Set Emergent Member		.projects[\\\"TestLeabraUnit\\\"].networks[\\\"UnitNet\\\"].specs[\\\"UnitSpec_0\\\"].e_rev	l  0.30
     Set Emergent Member		.projects[\\\"TestLeabraUnit\\\"].networks[\\\"UnitNet\\\"].specs[\\\"UnitSpec_0\\\"].e_rev	i  0.25
     Set Emergent Member		.projects[\\\"TestLeabraUnit\\\"].networks[\\\"UnitNet\\\"].specs[\\\"UnitSpec_0\\\"].act	thr  0.50
-    Set Emergent Member		.projects[\\\"TestLeabraUnit\\\"].networks[\\\"UnitNet\\\"].specs[\\\"UnitSpec_0\\\"].adapt	on  false
+    # Set Emergent Member		.projects[\\\"TestLeabraUnit\\\"].networks[\\\"UnitNet\\\"].specs[\\\"UnitSpec_0\\\"].adapt	on  false
     Set Emergent Member		.projects[\\\"TestLeabraUnit\\\"].networks[\\\"UnitNet\\\"].specs[\\\"UnitSpec_0\\\"].act	gain  40.00
 
     Run Emergent Program	LeabraInit
