@@ -160,24 +160,24 @@ public:
   { return (int) (1.0f / (time_inc * integ * act * act_max_hz)); }
   // #CAT_Activation compute spiking interval based on network time_inc, dt.integ, and unit act -- note that network time_inc is usually .001 = 1 msec per cycle -- this depends on that being accurately set
 
-  INLINE float  ActFromInterval(float spike_int, const float time_inc, const float integ) {
-    if(spike_int == 0.0f) {
+  INLINE float  ActFromInterval(float spike_isi, const float time_inc, const float integ) {
+    if(spike_isi == 0.0f) {
       return 0.0f;              // rate is 0
     }
     float max_hz_int = 1.0f / (time_inc * integ * act_max_hz); // interval at max hz..
-    return max_hz_int / spike_int; // normalized
+    return max_hz_int / spike_isi; // normalized
   }
   // #CAT_Activation compute rate-code activation from estimated spiking interval
 
-  INLINE void   UpdateSpikeInterval(float& spike_int, float cur_int) {
-    if(spike_int == 0.0f) {
-      spike_int = cur_int;      // use it
+  INLINE void   UpdateSpikeInterval(float& spike_isi, float cur_int) {
+    if(spike_isi == 0.0f) {
+      spike_isi = cur_int;      // use it
     }
-    else if(cur_int < spike_int) {
-      spike_int = cur_int;      // if less than we take that
+    else if(cur_int < 0.8f * spike_isi) {
+      spike_isi = cur_int;      // if significantly less than we take that
     }
     else {                                         // integrate on slower
-      spike_int += int_dt * (cur_int - spike_int); // running avg updt
+      spike_isi += int_dt * (cur_int - spike_isi); // running avg updt
     }
   }
   // #CAT_Activation update running-average spike interval estimate
@@ -438,9 +438,6 @@ class STATE_CLASS(KNaAdaptSpec) : public STATE_CLASS(SpecMemberBase) {
 INHERITED(SpecMemberBase)
 public:
   bool          on;             // apply K-Na adaptation overall?
-  bool          clamp;          // #CONDSHOW_ON_on apply adaptation even to clamped layers
-  float         max_gc;         // #CONDSHOW_ON_on&&clamp for clamped layers, maximum k_na conductance that we expect to get -- apply a proportional reduction in clamped activation based on current k_na conductance
-  float         max_adapt;      // #CONDSHOW_ON_on&&clamp #DEF_0.5 for clamped layers, maximum amount of adaptation to apply to clamped activations when conductance is at max_gc
   float         rate_rise;      // #CONDSHOW_ON_on #DEF_0.8 extra multiplier for rate-coded activations on rise factors -- adjust to match discrete spiking
   bool          f_on;           // #CONDSHOW_ON_on use fast time-scale adaptation
   float         f_rise;         // #CONDSHOW_ON_on&&f_on #DEF_0.05 rise rate of fast time-scale adaptation as function of Na concentration -- directly multiplies -- 1/rise = tau for rise rate
@@ -489,13 +486,6 @@ public:
   }
   // update K channel conductances per params for rate-code activation
 
-  INLINE float Compute_Clamped(float clamp_act, float gc_kna_f, float gc_kna_m, float gc_kna_s) {
-    float gc_kna = gc_kna_f + gc_kna_m + gc_kna_s;
-    float pct_gc = fminf(gc_kna / max_gc, 1.0f);
-    return clamp_act * (1.0f - pct_gc * max_adapt);
-  }
-  // apply adaptation directly to a clamped activation value, reducing in proportion to amount of k_na current
-
   INLINE void   UpdtDts()
   { f_dt = 1.0f / f_tau; m_dt = 1.0f / m_tau; s_dt = 1.0f / s_tau; }
   
@@ -507,11 +497,47 @@ public:
 private:
   void        Initialize()      { on = false; Defaults_init(); }
   void        Defaults_init() {
-    rate_rise = 0.8f; clamp = false; max_gc = .2f; max_adapt = 0.5f;
+    rate_rise = 0.8f; 
     f_on = true; f_tau = 50.0f;   f_rise = .05f;  f_max = .1f;
     m_on = true; m_tau = 200.0f;  m_rise = .02f;  m_max = .1f;
     s_on = true; s_tau = 1000.0f; s_rise = .005f; s_max = .2f;
     UpdtDts();
+  }
+};
+
+
+class STATE_CLASS(KNaAdaptMiscSpec) : public STATE_CLASS(SpecMemberBase) {
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra extra params associated with sodium-gated potassium channel adaptation mechanism
+INHERITED(SpecMemberBase)
+public:
+  bool          clamp;          // apply adaptation even to clamped layers
+  bool          invert_nd;      // invert the adaptation effect for the act_nd (non-depressed) value that is typically used for learning-drivng averages (avg_ss, _s, _m) 
+  float         max_gc;         // #CONDSHOW_ON_clamp||invert_nd for clamp or invert_nd, maximum k_na conductance that we expect to get -- apply a proportional reduction in clamped activation and/or enhancement of act_nd based on current k_na conductance
+  float         max_adapt;      // #CONDSHOW_ON_clamp||invert_nd #DEF_0.5 for clamp or invert_nd, maximum amount of adaptation to apply to clamped activations / act_nd when conductance is at max_gc
+
+  INLINE float Compute_Clamped(float clamp_act, float gc_kna_f, float gc_kna_m, float gc_kna_s) {
+    float gc_kna = gc_kna_f + gc_kna_m + gc_kna_s;
+    float pct_gc = fminf(gc_kna / max_gc, 1.0f);
+    return clamp_act * (1.0f - pct_gc * max_adapt);
+  }
+  // apply adaptation directly to a clamped activation value, reducing in proportion to amount of k_na current
+
+  INLINE float Compute_ActNd(float act, float gc_kna_f, float gc_kna_m, float gc_kna_s) {
+    float gc_kna = gc_kna_f + gc_kna_m + gc_kna_s;
+    float pct_gc = fminf(gc_kna / max_gc, 1.0f);
+    return act * (1.0f + pct_gc * max_adapt);
+  }
+  // apply inverse of adaptation to activation value, increasing in proportion to amount of k_na current
+
+  STATE_DECO_KEY("UnitSpec");
+  STATE_TA_STD_CODE_SPEC(KNaAdaptMiscSpec);
+  
+  // STATE_UAE( UpdtDts(); );
+  
+private:
+  void        Initialize()      { Defaults_init(); }
+  void        Defaults_init() {
+    clamp = false;  invert_nd = false;  max_gc = .2f;  max_adapt = 0.5f;
   }
 };
 

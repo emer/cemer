@@ -60,6 +60,7 @@ eTypeDef_Of(LeabraAvgLSpec);
 eTypeDef_Of(LeabraAvgL2Spec);
 eTypeDef_Of(LeabraChannels);
 eTypeDef_Of(KNaAdaptSpec);
+eTypeDef_Of(KNaAdaptMiscSpec);
 eTypeDef_Of(ShortPlastSpec);
 eTypeDef_Of(SynDelaySpec);
 eTypeDef_Of(DeepSpec);

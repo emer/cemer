@@ -16,7 +16,7 @@ void LEABRA_UNIT_SPEC::Init_Acts(UNIT_STATE* uv, NETWORK_STATE* net, int thr_no)
   u->act_eq = u->act;
   u->act_nd = u->act_eq;
   u->spike = 0.0f;
-  u->spike_int = 0.0f;
+  u->spike_isi = 0.0f;
   u->act_q0 = 0.0f;
   u->act_q1 = 0.0f;
   u->act_q2 = 0.0f;
@@ -113,7 +113,7 @@ void LEABRA_UNIT_SPEC::Init_UnitState(UNIT_STATE* uv, NETWORK_STATE* net, int th
   u->act_eq = u->act;
   u->act_nd = u->act_eq;
   u->spike = 0.0f;
-  u->spike_int = 0.0f;
+  u->spike_isi = 0.0f;
   u->act_q0 = 0.0f;
   u->act_q1 = 0.0f;
   u->act_q2 = 0.0f;
@@ -728,3 +728,66 @@ void LEABRA_UNIT_SPEC::Send_DeepRawNetin(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_ST
 }
 
 
+void LEABRA_UNIT_SPEC::Compute_ActFun_Rate(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) {
+  float new_act;
+  if(u->act_raw < act.vm_act_thr && u->v_m_eq <= act.thr) {
+    // note: this is quite important -- if you directly use the gelin
+    // the whole time, then units are active right away -- need v_m_eq dynamics to
+    // drive subthreshold activation behavior
+    new_act = Compute_ActFun_Rate_fun(u->v_m_eq - act.thr);
+  }
+  else {
+    float g_e_thr = Compute_EThresh(u);
+    new_act = Compute_ActFun_Rate_fun((u->net * g_bar.e) - g_e_thr);
+  }
+  float cur_act;
+  if(kna_misc.invert_nd) {
+    cur_act = u->act_eq;
+  }
+  else {
+    cur_act = u->act_nd;
+  }
+    
+  if(net->cycle >= dt.fast_cyc) {
+    new_act = cur_act + dt.integ * dt.vm_dt * (new_act - cur_act); // time integral with dt.vm_dt  -- use nd to avoid synd problems
+  }
+  if(deep.IsTRC() && Quarter_DeepRawNow(net->quarter) && trc.clamp_net) {
+    new_act = u->net;
+  }
+
+  u->da = new_act - cur_act;
+  if((noise_type.type == STATE_CLASS(LeabraNoiseSpec)::ACT_NOISE) &&
+     (noise.type != STATE_CLASS(Random)::NONE) && (net->cycle >= 0)) {
+    new_act += u->noise;
+  }
+
+  u->act_raw = new_act;
+  if(deep.ApplyDeepMod()) { // apply attention directly to act
+    new_act *= u->deep_mod;
+  }
+
+  if(kna_misc.invert_nd) {
+    u->act_eq = act_range.Clip(new_act);
+    u->act = u->act_eq;
+    u->act_nd = kna_misc.Compute_ActNd(u->act_eq, u->gc_kna_f, u->gc_kna_m, u->gc_kna_s);
+  }
+  else {
+    u->act_nd = act_range.Clip(new_act);
+    if(stp.on) {                   // short term plasticity, depression
+      u->act = u->act_nd * u->syn_tr; // overall probability of transmission
+    }
+    else {
+      u->act = u->act_nd;
+    }
+    u->act_eq = u->act;           // for rate code, eq == act
+  }
+
+  // we now use the exact same vm-based dynamics as in SPIKE model, for full consistency!
+  // note that v_m_eq is NOT reset here:
+  if(u->v_m > spike_misc.eff_spk_thr) {
+    Compute_ActFun_Spiked(u, net, thr_no);
+  }
+  else {
+    Compute_ActFun_NotSpiked(u, net, thr_no);
+  }
+}

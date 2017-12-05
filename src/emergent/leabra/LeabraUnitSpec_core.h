@@ -33,6 +33,7 @@
   STATE_CLASS(LeabraChannels)   g_bar;           // #CAT_Activation [Defaults: 1, .1, 1] maximal conductances for channels
   STATE_CLASS(LeabraChannels)   e_rev;           // #CAT_Activation [Defaults: 1, .3, .25] reversal potentials for each channel
   STATE_CLASS(KNaAdaptSpec)     kna_adapt;       // #CAT_Activation sodium-gated potassium channel adaptation mechanism -- evidence supports at least 3 different time constants: M-type (fast), Slick (medium), and Slack (slow)
+  STATE_CLASS(KNaAdaptMiscSpec) kna_misc;         // #CAT_Activation misc extra params for sodium-gated potassium channel adaptation mechanismp
   STATE_CLASS(ShortPlastSpec)   stp;             // #CAT_Activation short term presynaptic plasticity specs -- can implement full range between facilitating vs. depresssion
   STATE_CLASS(SynDelaySpec)     syn_delay;       // #CAT_Activation synaptic delay -- if active, activation sent to other units is delayed by a given amount
   Quarters         deep_raw_qtr;    // #CAT_Learning #AKA_deep_qtr quarter(s) during which deep_raw layer 5 intrinsic bursting activations should be updated -- deep_raw is updated and sent to deep_raw_net during this quarter, and deep_ctxt is updated right after this quarter (wrapping around to the first quarter for the 4th quarter)
@@ -315,14 +316,29 @@
     if(cycle > 0 && deep.ApplyDeepMod()) {
       ext_in *= u->deep_mod;
     }
-    if(kna_adapt.on && kna_adapt.clamp) {
-      ext_in = kna_adapt.Compute_Clamped(ext_in, u->gc_kna_f, u->gc_kna_m, u->gc_kna_s);
+    if(kna_misc.clamp) {
+      u->net = kna_misc.Compute_Clamped(ext_in, u->gc_kna_f, u->gc_kna_m, u->gc_kna_s);
     }
-    u->net = u->thal = ext_in;
+    else {
+      u->net = ext_in;
+    }
+    u->thal = u->net;
+    float new_act = u->net;
     if(clip) {
-      ext_in = clamp_range.Clip(ext_in);
+      new_act = clamp_range.Clip(new_act);
     }
-    u->act_eq = u->act_nd = u->act = ext_in;
+    u->act_eq = u->act = new_act;
+    if(kna_misc.clamp && kna_misc.invert_nd) {
+      if(clip) {
+        u->act_nd = clamp_range.Clip(ext_in); // original non-adapted ext val
+      }
+      else {
+        u->act_nd = ext_in;
+      }
+    }
+    else {
+      u->act_nd = new_act;
+    }
     if(u->act_eq == 0.0f) {
       u->v_m = e_rev.l;
     }
@@ -551,57 +567,7 @@
   }
   // #IGNORE raw activation function: computes an activation value from given value subtracted from its relevant threshold value
 
-  INLINE virtual void Compute_ActFun_Rate(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) {
-    float new_act;
-    if(u->act_raw < act.vm_act_thr && u->v_m_eq <= act.thr) {
-      // note: this is quite important -- if you directly use the gelin
-      // the whole time, then units are active right away -- need v_m_eq dynamics to
-      // drive subthreshold activation behavior
-      new_act = Compute_ActFun_Rate_fun(u->v_m_eq - act.thr);
-    }
-    else {
-      float g_e_thr = Compute_EThresh(u);
-      new_act = Compute_ActFun_Rate_fun((u->net * g_bar.e) - g_e_thr);
-    }
-    if(net->cycle >= dt.fast_cyc) {
-      new_act = u->act_nd + dt.integ * dt.vm_dt * (new_act - u->act_nd); // time integral with dt.vm_dt  -- use nd to avoid synd problems
-    }
-    if(deep.IsTRC() && Quarter_DeepRawNow(net->quarter) && trc.clamp_net) {
-      new_act = u->net;
-    }
-
-    u->da = new_act - u->act_nd;
-    if((noise_type.type == STATE_CLASS(LeabraNoiseSpec)::ACT_NOISE) &&
-       (noise.type != STATE_CLASS(Random)::NONE) && (net->cycle >= 0)) {
-      new_act += u->noise;
-    }
-
-    u->act_raw = new_act;
-    if(deep.ApplyDeepMod()) { // apply attention directly to act
-      new_act *= u->deep_mod;
-    }
-    u->act_nd = act_range.Clip(new_act);
-
-    if(stp.on) {                   // short term plasticity, depression
-      u->act = u->act_nd * u->syn_tr; // overall probability of transmission
-    }
-    else {
-      u->act = u->act_nd;
-    }
-    u->act_eq = u->act;           // for rate code, eq == act
-
-    // we now use the exact same vm-based dynamics as in SPIKE model, for full consistency!
-    // note that v_m_eq is NOT reset here:
-    if(u->v_m > spike_misc.eff_spk_thr) {
-      u->spike = 1.0f;
-      u->v_m = spike_misc.vm_r;
-      u->spk_t = net->tot_cycle;
-      u->I_net = 0.0f;
-    }
-    else {
-      u->spike = 0.0f;
-    }
-  }
+  INIMPL virtual void Compute_ActFun_Rate(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no);
   // #CAT_Activation compute the activation from g_e vs. threshold -- rate code functions
 
   INLINE virtual void Compute_Act_Rate(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) {
@@ -617,13 +583,19 @@
 
     if((net->cycle >= 0) && lay->hard_clamped) {
       // Compute_HardClamp happens before deep_mod is available due to timing of updates
-      if(kna_adapt.on && kna_adapt.clamp) {
+      if(kna_misc.clamp) {
         float ext_in = u->ext;
         if(deep.ApplyDeepMod())
           ext_in *= u->deep_mod;
         Compute_ActAdapt_Cycle(u, net, thr_no);
-        u->act = kna_adapt.Compute_Clamped(ext_in, u->gc_kna_f, u->gc_kna_m, u->gc_kna_s);
-        u->act_raw = u->act_eq = u->act_nd = u->act;
+        u->act = kna_misc.Compute_Clamped(ext_in, u->gc_kna_f, u->gc_kna_m, u->gc_kna_s);
+        u->act_raw = u->act_eq = u->act;
+        if(kna_misc.invert_nd) {
+          u->act_nd = ext_in;
+        }
+        else {
+          u->act_nd = u->act;
+        }
       }
       else {
         if(deep.ApplyDeepMod() && net->cycle == 0) {
@@ -672,31 +644,39 @@
   }    
   // #CAT_Activation compute spiking activation (u->spike) based off of rate-code activation value
 
+  INLINE void Compute_ActFun_Spiked(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) {
+    u->spike = 1.0f;
+    u->v_m = spike_misc.vm_r;
+    u->I_net = 0.0f;
+    if(u->spk_t > 0) {
+      float cur_int = net->tot_cycle - u->spk_t;
+      spike.UpdateSpikeInterval(u->spike_isi, cur_int);
+    }
+    u->spk_t = net->tot_cycle;
+  }
+  // #IGNORE what to do when a spike has been triggered -- common between rate and spike
+
+  INLINE void Compute_ActFun_NotSpiked(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) {
+    u->spike = 0.0f;
+    if(u->spk_t > 0) {
+      float cur_int = net->tot_cycle - u->spk_t;
+      if(cur_int > 1.2f * u->spike_isi) { // some kind of estimate of when it exceeds est
+        spike.UpdateSpikeInterval(u->spike_isi, cur_int);
+      }
+    }
+  }
+  // #IGNORE what to do when a spike has NOT been triggered
 
   INLINE virtual void Compute_ActFun_Spike(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) {
     if(u->v_m > spike_misc.eff_spk_thr) {
       u->act = 1.0f;
-      u->spike = 1.0f;
-      u->v_m = spike_misc.vm_r;
-      u->I_net = 0.0f;
-      if(u->spk_t > 0) {
-        float cur_int = net->tot_cycle - u->spk_t;
-        spike.UpdateSpikeInterval(u->spike_int, cur_int);
-      }
-      u->spk_t = net->tot_cycle;
+      Compute_ActFun_Spiked(u, net, thr_no);
     }
     else {
       u->act = 0.0f;
-      u->spike = 0.0f;
-
-      if(u->spk_t > 0) {
-        float cur_int = net->tot_cycle - u->spk_t;
-        if(cur_int > 1.2f * u->spike_int) { // some kind of estimate of when it exceeds est
-          spike.UpdateSpikeInterval(u->spike_int, cur_int);
-        }
-      }
+      Compute_ActFun_NotSpiked(u, net, thr_no);
     }
-    float act_nd = spike.ActFromInterval(u->spike_int, net->times.time_inc, dt.integ);
+    float act_nd = spike.ActFromInterval(u->spike_isi, net->times.time_inc, dt.integ);
     act_nd = act_range.Clip(act_nd);
     act_nd = u->act_nd + dt.vm_dt * (act_nd - u->act_nd); // time integral
     u->da = act_nd - u->act_nd;   // da is on equilibrium activation
