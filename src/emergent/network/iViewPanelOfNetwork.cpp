@@ -47,7 +47,8 @@ NetView* iViewPanelOfNetwork::getNetView() {
 iViewPanelOfNetwork::iViewPanelOfNetwork(NetView* dv_)
 :inherited(dv_)
 {
-  int font_spec = taiMisc::fonMedium;
+//  int font_spec = taiMisc::fonMedium;
+  int font_spec = taiMisc::fonBig;
   m_cur_spec = NULL;
   req_full_render = false;
   req_full_build = false;
@@ -138,6 +139,7 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   chkShowIconified->setToolTip(taiMisc::ToolTipPreProcess("Show iconified layers -- if this is off, then iconified layers are not displayed at all -- otherwise they are displayed with their name and optional iconified value, but projections are not displayed in any case"));
   connect(chkShowIconified, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layFontsEtc->addWidget(chkShowIconified);
+  layFontsEtc->addSpacing(taiM->hschk_c);
 
   lblPrjnWdth = taiM->NewLabel("Prjn\nWdth", widg, font_spec);
   lblPrjnWdth->setToolTip(taiMisc::ToolTipPreProcess("Width of projection lines -- .002 is default (very thin!) -- increase if editing projections so they are easier to select."));
@@ -153,6 +155,7 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   fldUnitTrans = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
   layFontsEtc->addWidget(fldUnitTrans->GetRep());
   ((iLineEdit*)fldUnitTrans->GetRep())->setCharWidth(6);  layFontsEtc->addSpacing(taiM->hsep_c);
+  layFontsEtc->addSpacing(taiM->hsep_c);
 
   lblUnitFont = taiM->NewLabel("Font\nSize", widg, font_spec);
   lblUnitFont->setToolTip(taiMisc::ToolTipPreProcess("Unit text font size (as a proportion of entire network display). .02 is default."));
