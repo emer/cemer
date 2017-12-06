@@ -482,7 +482,8 @@
     }
     sum_wt /= (float)cg->size;
     cg->hi_wt_avg = sum_wt;
-    wt_bal.WtBal(sum_wt, cg->wb_inc, cg->wb_dec);
+    LEABRA_UNIT_STATE* ru = cg->ThrOwnUnState(net, thr_no);
+    wt_bal.WtBal(sum_wt, ru->act_avg, cg->wb_inc, cg->wb_dec);
     // note: these are specific to recv unit and cannot be copied to sender!
     // BUT can copy to synapses:
     for(int i=0; i<cg->size; i++) {
