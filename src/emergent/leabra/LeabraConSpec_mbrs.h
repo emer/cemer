@@ -239,30 +239,19 @@ private:
 
 
 class STATE_CLASS(WtBalanceSpec) : public STATE_CLASS(SpecMemberBase) {
-  // ##INLINE ##NO_TOKENS ##CAT_Leabra weight balance soft renormalization spec: maintains overall weight balance by progressively penalizing weight increases as a function of extent to which weight average exceeds high threshold value (and vice-versa for low threshold) -- plugs into soft bounding function -- see network times.bal_int for interval in trials of updating
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra weight balance soft renormalization spec: maintains overall weight balance by progressively penalizing weight increases as a function of extent to which proportion of weights above a hi threshold -- plugs into soft bounding function -- see network times.bal_int for interval in trials of updating
 INHERITED(SpecMemberBase)
 public:
-  bool          on;             // perform weight balance soft normalization?  if so, maintains overall weight balance across units by progressively penalizing weight increases as a function of extent to which sum of weights exceed high threshold value -- this is generally very beneficial for larger models where hog units are a problem, but not as much for smaller models where the additional cosntraints are not beneficial -- use renorm option to deal with overall weight decreases
-  float         hi_thr;         // #CONDSHOW_ON_on #DEF_0.4 high threshold -- when average recv weights are above this threshold, weight increases are penalized in proportion to sigmoidal 1/(1+hi_gain*(avg-hi_thr)) function that saturates at maximum of 1 which means that there are no weight increases and all weight decreases -- weight decreases increase proportionally
+  bool          on;             // perform weight balance soft normalization?  if so, maintains overall weight balance across units by progressively penalizing weight increases as a function of amount of weight above a high threshold (hi_thr) -- this is generally very beneficial for larger models where hog units are a problem, but not as much for smaller models where the additional constraints are not beneficial
+  float         hi_thr;         // #CONDSHOW_ON_on #DEF_0.75 high threshold -- cutoff for including weights in average that drives decrease in size of weight increases, which are penalized in proportion to sigmoidal function (1/(1+hi_gain*(avg_above_hi_thr))) that saturates at maximum of 1 which means that there are no weight increases and all weight decreases -- weight decreases increase proportionally
   float         hi_gain;        // #CONDSHOW_ON_on #DEF_4 gain multiplier applied to above-threshold weight averages -- higher values turn weight increases down more rapidly as the weights become more imbalanced -- see hi_thr for equation
-  float         lo_thr;         // #CONDSHOW_ON_on #DEF_0.2 low threshold -- when average recv weights are below this threshold, weight decreases are penalized in proportion to sigmoidal 1/(1+lo_gain*(lo-thr-avg)) function that saturates at maximum of 1 which means that there are no weight decreases and all weight increases -- weight increases increase proportionally
-  float         lo_gain;        // #CONDSHOW_ON_on #DEF_4 gain multiplier applied to below-threshold weight averages -- higher values turn weight decreases down more rapidly as the weights become more imbalanced -- see hi_thr for equation
+  // float         lo_thr;         // #CONDSHOW_ON_on #DEF_0.2 low threshold -- when average recv weights are below this threshold, weight decreases are penalized in proportion to sigmoidal 1/(1+lo_gain*(lo-thr-avg)) function that saturates at maximum of 1 which means that there are no weight decreases and all weight increases -- weight increases increase proportionally
+  // float         lo_gain;        // #CONDSHOW_ON_on #DEF_4 gain multiplier applied to below-threshold weight averages -- higher values turn weight decreases down more rapidly as the weights become more imbalanced -- see hi_thr for equation
   
-  INLINE void   WtBal(const float wt_avg, float& wb_inc, float& wb_dec) {
-    if(wt_avg > hi_thr) {
-      float wbi = hi_gain * (wt_avg - hi_thr);
-      wb_inc = 1.0f / (1.0f + wbi); // gets sigmoidally small toward 0 as wbi gets smaller -- is quick acting but saturates -- apply pressure earlier..
-      wb_dec = 2.0f - wb_inc; // as wb_inc goes down, wb_dec goes up..  sum to 2
-    }
-    else if(wt_avg < lo_thr) {
-      float wbd = lo_gain * (lo_thr - wt_avg);
-      wb_dec = 1.0f / (1.0f + wbd);
-      wb_inc = 2.0f - wb_dec;
-    }
-    else {
-      wb_inc = 1.0f;
-      wb_dec = 1.0f;
-    }
+  INLINE void   WtBal(const float hi_wt_avg, float& wb_inc, float& wb_dec) {
+    float wbi = hi_gain * hi_wt_avg;
+    wb_inc = 1.0f / (1.0f + wbi); // gets sigmoidally small toward 0 as wbi gets smaller -- is quick acting but saturates -- apply pressure earlier..
+    wb_dec = 2.0f - wb_inc; // as wb_inc goes down, wb_dec goes up..  sum to 2
   }
   // compute weight balance factors for increase and decrease based on extent to which weights exceed thresholds
   
@@ -271,7 +260,7 @@ public:
 private:
   void        Initialize()      {   Defaults_init(); }
   void        Defaults_init() {
-    on = true; hi_thr = 0.4f;  lo_thr = 0.2f;  hi_gain = 4.0f;  lo_gain = 4.0f;
+    on = true; hi_thr = 0.75f; hi_gain = 4.0f;  // lo_thr = 0.2f; lo_gain = 4.0f;
   }
 };
 

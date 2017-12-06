@@ -1400,8 +1400,8 @@ void LEABRA_NETWORK_STATE::Compute_WtBalStats() {
     for(int pj=0; pj<n_prj; pj++) {
       LEABRA_PRJN_STATE* prjn = lay->GetRecvPrjnState(this, pj);
       if(!prjn->IsActive(this)) continue;
-      prjn->wt_avg_max = 0.0f;
-      prjn->wt_avg_avg = 0.0f;
+      prjn->hi_wt_avg_max = 0.0f;
+      prjn->hi_wt_avg_avg = 0.0f;
     }
     int denom = 0;
 
@@ -1415,8 +1415,8 @@ void LEABRA_NETWORK_STATE::Compute_WtBalStats() {
         LEABRA_PRJN_STATE* prjn = lay->GetRecvPrjnState(this, pj);
         if(!prjn->IsActive(this)) continue;
         LEABRA_CON_STATE* cg = uv->RecvConState(this, prjn->recv_idx);
-        prjn->wt_avg_max = fmaxf(prjn->wt_avg_max, cg->wt_avg);
-        prjn->wt_avg_avg += cg->wt_avg;
+        prjn->hi_wt_avg_max = fmaxf(prjn->hi_wt_avg_max, cg->hi_wt_avg);
+        prjn->hi_wt_avg_avg += cg->hi_wt_avg;
       }
     }
     if(denom > 0) {
@@ -1424,7 +1424,7 @@ void LEABRA_NETWORK_STATE::Compute_WtBalStats() {
       for(int pj=0; pj<n_prj; pj++) {
         LEABRA_PRJN_STATE* prjn = lay->GetRecvPrjnState(this, pj);
         if(!prjn->IsActive(this)) continue;
-        prjn->wt_avg_avg *= norm;
+        prjn->hi_wt_avg_avg *= norm;
       }
     }
   }

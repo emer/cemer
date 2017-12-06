@@ -476,10 +476,12 @@
     if(!learn || cg->size < 1 || !wt_bal.on) return;
     float sum_wt = 0.0f;
     for(int i=0; i<cg->size; i++) {
-      sum_wt += cg->PtrCn(i,WT,net);
+      float wt = cg->PtrCn(i,WT,net);
+      if(wt > wt_bal.hi_thr)
+        sum_wt += wt;
     }
     sum_wt /= (float)cg->size;
-    cg->wt_avg = sum_wt;
+    cg->hi_wt_avg = sum_wt;
     wt_bal.WtBal(sum_wt, cg->wb_inc, cg->wb_dec);
     // note: these are specific to recv unit and cannot be copied to sender!
     // BUT can copy to synapses:
