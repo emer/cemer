@@ -1223,10 +1223,13 @@ void Network::BuildLayerState_FromNet() {
     Layer* send_lay = prjn->from;
     ConSpec* cs = prjn->con_spec;
     ProjectionSpec* ps = prjn->spec;
+    prjn->recv_lay_idx = recv_lay->layer_idx;
+    prjn->send_lay_idx = send_lay->layer_idx;
     pst->Initialize_core
       (prjn->off, prjn->MainNotActive(), i, recv_lay->layer_idx, send_lay->layer_idx, prjn->send_prjn_idx,
        prjn->recv_idx, prjn->send_idx, prjn->spec_idx, cs->spec_idx, prjn->con_type->members.size);
     ps->Init_PrjnState(pst, net_state);
+
 
 #ifdef DMEM_COMPILE
     prjn->DMem_InitAggs(); // this references the network state, so do it here..

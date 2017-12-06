@@ -1751,8 +1751,8 @@ DataTable* Layer::ConVarsToTable(DataTable* dt, const String& var1, const String
                            const String& var9, const String& var10, const String& var11,
                            const String& var12, const String& var13, const String& var14,
                            PrjnState_cpp* prjn) {
-  NetworkState_cpp* net = GetValidNetState();
-  if(!net) return NULL;
+  NetworkState_cpp* netst = GetValidNetState();
+  if(!netst) return NULL;
 
   bool new_table = false;
   if(!dt) {
@@ -1762,9 +1762,9 @@ DataTable* Layer::ConVarsToTable(DataTable* dt, const String& var1, const String
   }
   dt->StructUpdate(true);
   for(int ui=0; ui < n_units_built; ui++) {
-    UnitState_cpp* u = GetUnitState(net, ui);
+    UnitState_cpp* u = GetUnitState(netst, ui);
     if(u->lesioned()) continue;
-    u->ConVarsToTable(net, dt, var1, var2, var3, var4, var5, var6, var7, var8,
+    u->ConVarsToTable(own_net, dt, var1, var2, var3, var4, var5, var6, var7, var8,
                       var9, var10, var11, var12, var13, var14,  prjn);
   }
   dt->StructUpdate(false);

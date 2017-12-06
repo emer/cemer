@@ -265,7 +265,10 @@
   {  un_idx = un_idx % un_geom_n;  un_y = un_idx / un_geom_x; un_x = un_idx % un_geom_x; }
   // #CAT_State get unit X,Y from unit index within a unit group
   INLINE void  GetUnFlatXYFmIdx(int un_idx, int& un_x, int& un_y) const
-  {  un_y = un_idx / flat_geom_x; un_x = un_idx % flat_geom_x; }
+  { if(n_ungps > 0) {
+      int gp_x, gp_y; GetGpUnXYFmIdx(un_idx, gp_x, gp_y, un_x, un_y);
+      un_x += gp_x * un_geom_x;  un_y += gp_y * un_geom_y; }
+    else { un_y = un_idx / flat_geom_x; un_x = un_idx % flat_geom_x; } }
   // #CAT_State get unit X,Y from flat unit index within layer
   INLINE void  GetGpXYFmIdx(int gp_idx, int& gp_x, int& gp_y) const
   {  if(gp_idx < 0) gp_idx = 0;  gp_y = gp_idx / gp_geom_x; gp_x = gp_idx % gp_geom_x; }

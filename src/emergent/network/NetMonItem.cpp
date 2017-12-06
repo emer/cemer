@@ -699,7 +699,7 @@ void NetMonItem::ScanObject_LayerUnits(Layer* lay, String var) {
   if(!net_state) return;
 
   if(var.startsWith('.')) var = var.after('.');
-  
+
   String range2;
   String range1;
   String rmdr;
@@ -720,6 +720,8 @@ void NetMonItem::ScanObject_LayerUnits(Layer* lay, String var) {
   }
   if(rmdr.startsWith('.')) rmdr = rmdr.after('.');
 
+  bool con_var = (rmdr.startsWith("r.") || rmdr.startsWith("s."));
+  
   bool on_unit = CheckVarOnUnit(rmdr, lay->own_net);
   if(MonError(!on_unit, "ScanObject_Layer", "variable not found on layer or unit, and is not r.* or s.* connection variable:", rmdr)) {
     return;
@@ -769,26 +771,29 @@ void NetMonItem::ScanObject_LayerUnits(Layer* lay, String var) {
   gpidx1 = MIN(gpidx1, lay->n_ungps-1);
   gpidx2 = MIN(gpidx2, lay->n_ungps-1);
   int ngp = 1+gpidx2-gpidx1;
-  unidx1 = MIN(unidx1, lay->un_geom_n-1);
-  unidx2 = MIN(unidx2, lay->un_geom_n-1);
-  int nun = 1+unidx2-unidx1;
-  
   
   if(gp_range.nonempty()) { // group case
+    unidx1 = MIN(unidx1, lay->un_geom_n-1);
+    unidx2 = MIN(unidx2, lay->un_geom_n-1);
+    int nun = 1+unidx2-unidx1;
     if(ngp > 1 && nun > 1) {
       geom.SetGeom(2, nun, ngp);
-      AddMatrixCol(valname, VT_FLOAT, &geom);
+      if(!con_var)
+        AddMatrixCol(valname, VT_FLOAT, &geom);
     }
     else if(ngp > 1) {
       geom.SetGeom(1, ngp);
-      AddMatrixCol(valname, VT_FLOAT, &geom);
+      if(!con_var)
+        AddMatrixCol(valname, VT_FLOAT, &geom);
     }
     else if(nun > 1) {
       geom.SetGeom(1, nun);
-      AddMatrixCol(valname, VT_FLOAT, &geom);
+      if(!con_var)
+        AddMatrixCol(valname, VT_FLOAT, &geom);
     }
     else {
-      AddScalarCol(valname, VT_FLOAT);
+      if(!con_var)
+        AddScalarCol(valname, VT_FLOAT);
     }
     for (int gi = gpidx1; gi <= gpidx2; ++gi) {
       for (int i = unidx1; i <= unidx2; ++i) {
@@ -799,12 +804,17 @@ void NetMonItem::ScanObject_LayerUnits(Layer* lay, String var) {
     }
   }
   else {                        // just unit idxs
+    unidx1 = MIN(unidx1, lay->n_units-1);
+    unidx2 = MIN(unidx2, lay->n_units-1);
+    int nun = 1+unidx2-unidx1;
     if(nun > 1) {
       geom.SetGeom(1, nun);
-      AddMatrixCol(valname, VT_FLOAT, &geom);
+      if(!con_var)
+        AddMatrixCol(valname, VT_FLOAT, &geom);
     }
     else {
-      AddScalarCol(valname, VT_FLOAT);
+      if(!con_var)
+        AddScalarCol(valname, VT_FLOAT);
     }
     for (int i = unidx1; i <= unidx2; ++i) {
       UnitState_cpp* unit = lay->GetUnitState(net_state, i);
@@ -929,7 +939,7 @@ void NetMonItem::ScanObject_PrjnCons(Projection* prj, String var) {
         UnitState_cpp* su = cg->UnState(j,net);
         if(!su) continue;
         taVector2i upos;
-        upos.SetXY(su->pos_x, su->pos_y);
+        su->GetUnFlatXY(net, upos.x, upos.y);
         con_geom_max.Max(upos);
         con_geom_min.Min(upos);
       }
@@ -941,7 +951,7 @@ void NetMonItem::ScanObject_PrjnCons(Projection* prj, String var) {
         UnitState_cpp* su = cg->UnState(j,net);
         if(!su) continue;
         taVector2i upos;
-        upos.SetXY(su->pos_x, su->pos_y);
+        su->GetUnFlatXY(net, upos.x, upos.y);
         con_geom_max.Max(upos);
         con_geom_min.Min(upos);
       }
@@ -971,7 +981,7 @@ void NetMonItem::ScanObject_PrjnCons(Projection* prj, String var) {
         UnitState_cpp* su = cg->UnState(j,net);
         if(!su) continue;
         taVector2i upos;
-        upos.SetXY(su->pos_x, su->pos_y);
+        su->GetUnFlatXY(net, upos.x, upos.y);
         upos -= con_geom_min;
         int idx = upos.y * con_geom.x + upos.x;
         ptrs[st_idx + idx] = &(cg->Cn(j,con_md->idx,net)); // set the ptr
@@ -984,7 +994,7 @@ void NetMonItem::ScanObject_PrjnCons(Projection* prj, String var) {
         UnitState_cpp* su = cg->UnState(j,net);
         if(!su) continue;
         taVector2i upos;
-        upos.SetXY(su->pos_x, su->pos_y);
+        su->GetUnFlatXY(net, upos.x, upos.y);
         upos -= con_geom_min;
         int idx = upos.y * con_geom.x + upos.x;
         ptrs[st_idx + idx] = &(cg->Cn(j,con_md->idx,net)); // set the ptr
@@ -1084,7 +1094,7 @@ void NetMonItem::ScanObject_RecvCons(ConState_cpp* cg, String var, String obj_nm
     UnitState_cpp* su = cg->UnState(j,net);
     if(!su) continue;
     taVector2i upos;
-    upos.SetXY(su->pos_x, su->pos_y);
+    su->GetUnFlatXY(net, upos.x, upos.y);
     con_geom_max.Max(upos);
     con_geom_min.Min(upos);
   }
@@ -1098,6 +1108,7 @@ void NetMonItem::ScanObject_RecvCons(ConState_cpp* cg, String var, String obj_nm
   String valname = GetColName(NULL, val_specs.size, obj_nm);
   AddMatrixCol(valname, VT_FLOAT, &geom);
 
+  int st_idx = ptrs.size;
   for(int j=0;j<n_cons;j++) {   // add blanks -- set them later
     ptrs.Add(NULL); members.Link(con_md);
   }
@@ -1105,10 +1116,10 @@ void NetMonItem::ScanObject_RecvCons(ConState_cpp* cg, String var, String obj_nm
     UnitState_cpp* su = cg->UnState(j,net);
     if(!su) continue;
     taVector2i upos;
-    upos.SetXY(su->pos_x, su->pos_y);
+    su->GetUnFlatXY(net, upos.x, upos.y);
     upos -= con_geom_min;
     int idx = upos.y * con_geom.x + upos.x;
-    ptrs[idx] = &(cg->Cn(j, con_md->idx, net));      // set the ptr
+    ptrs[st_idx + idx] = &(cg->Cn(j, con_md->idx, net));      // set the ptr
   }
 }
 
@@ -1127,7 +1138,7 @@ void NetMonItem::ScanObject_SendCons(ConState_cpp* cg, String var, String obj_nm
     UnitState_cpp* su = cg->UnState(j,net);
     if(!su) continue;
     taVector2i upos;
-    upos.SetXY(su->pos_x, su->pos_y);
+    su->GetUnFlatXY(net, upos.x, upos.y);
     con_geom_max.Max(upos);
     con_geom_min.Min(upos);
   }
@@ -1141,6 +1152,7 @@ void NetMonItem::ScanObject_SendCons(ConState_cpp* cg, String var, String obj_nm
   String valname = GetColName(NULL, val_specs.size, obj_nm);
   AddMatrixCol(valname, VT_FLOAT, &geom);
 
+  int st_idx = ptrs.size;
   for(int j=0;j<n_cons;j++) {   // add blanks -- set them later
     ptrs.Add(NULL); members.Link(con_md);
   }
@@ -1148,10 +1160,10 @@ void NetMonItem::ScanObject_SendCons(ConState_cpp* cg, String var, String obj_nm
     UnitState_cpp* su = cg->UnState(j,net);
     if(!su) continue;
     taVector2i upos;
-    upos.SetXY(su->pos_x, su->pos_y);
+    su->GetUnFlatXY(net, upos.x, upos.y);
     upos -= con_geom_min;
     int idx = upos.y * con_geom.x + upos.x;
-    ptrs[idx] = &(cg->Cn(j, con_md->idx, net));      // set the ptr
+    ptrs[st_idx + idx] = &(cg->Cn(j, con_md->idx, net));      // set the ptr
   }
 }
 

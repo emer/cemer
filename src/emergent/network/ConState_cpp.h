@@ -120,7 +120,7 @@ public:
   bool  ConValuesFromMatrix(NetworkState_cpp* net, float_Matrix& mat, const String& variable);
   // #CAT_Structure sets values of variable in the connections from the given array (false if var not found) -- uses flat index of cons to set: 0..size-1 -- must call Init_Weights_post at network level after running this!
 
-  DataTable*    ConVarsToTable(DataTable* dt, UnitState_cpp* ru, NetworkState_cpp* net,
+  DataTable*    ConVarsToTable(DataTable* dt, UnitState_cpp* ru, Network* net,
            const String& var1, const String& var2 = "",
            const String& var3 = "", const String& var4 = "", const String& var5 = "",
            const String& var6 = "", const String& var7 = "", const String& var8 = "",

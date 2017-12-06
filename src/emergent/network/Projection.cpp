@@ -690,7 +690,7 @@ DataTable* Projection::WeightsToTable(DataTable* dt, const String& col_nm_,
   String col_nm = col_nm_;
   if(col_nm.empty()) col_nm = from->name;
 
-  taVector2i log_pos;
+  taVector2i upos;
   int idx;
   if(recv_wts) {
     DataCol* scol = dt->FindMakeColName(col_nm, idx, VT_FLOAT, 2,
@@ -705,7 +705,8 @@ DataTable* Projection::WeightsToTable(DataTable* dt, const String& col_nm_,
       int wi;
       for(wi=0;wi<cg->size;wi++) {
         UNIT_STATE* ou = cg->UnState(wi, net);
-        scol->SetMatrixVal(cg->Cn(wi,ConState_cpp::WT,net), -1, ou->pos_x, ou->pos_y);
+        ou->GetUnFlatXY(net, upos.x, upos.y);
+        scol->SetMatrixVal(cg->Cn(wi,ConState_cpp::WT,net), -1, upos.x, upos.y);
       }
     }
   }
@@ -723,7 +724,8 @@ DataTable* Projection::WeightsToTable(DataTable* dt, const String& col_nm_,
       int wi;
       for(wi=0;wi<cg->size;wi++) {
         UNIT_STATE* ou = cg->UnState(wi, net);
-        scol->SetMatrixVal(cg->Cn(wi,ConState_cpp::WT,net), -1, ou->pos_x, ou->pos_y);
+        ou->GetUnFlatXY(net, upos.x, upos.y);
+        scol->SetMatrixVal(cg->Cn(wi,ConState_cpp::WT,net), -1, upos.x, upos.y);
       }
     }
   }

@@ -242,7 +242,7 @@ bool ConState_cpp::ConValuesFromMatrix(NetworkState_cpp* net, float_Matrix& mat,
   return true;
 }
 
-DataTable* ConState_cpp::ConVarsToTable(DataTable* dt, UnitState_cpp* ru, NetworkState_cpp* net,
+DataTable* ConState_cpp::ConVarsToTable(DataTable* dt, UnitState_cpp* ru, Network* net,
                               const String& var1, const String& var2,
                               const String& var3, const String& var4, const String& var5,
                               const String& var6, const String& var7, const String& var8,
@@ -255,11 +255,11 @@ DataTable* ConState_cpp::ConVarsToTable(DataTable* dt, UnitState_cpp* ru, Networ
   if(size <= 0) return NULL;            // nothing here
 
   bool new_table = false;
-  // if (!dt) {
-  //   taProject* proj = net->GetMyProj();
-  //   dt = proj->GetNewAnalysisDataTable("ConVars", true);
-  //   new_table = true;
-  // }
+  if (!dt) {
+    taProject* proj = net->GetMyProj();
+    dt = proj->GetNewAnalysisDataTable("ConVars", true);
+    new_table = true;
+  }
   dt->StructUpdate(true);
   const int nvars = 14;
   DataCol* cols[nvars];
@@ -269,9 +269,9 @@ DataTable* ConState_cpp::ConVarsToTable(DataTable* dt, UnitState_cpp* ru, Networ
   bool ruv[nvars];              // recv unit var
   bool suv[nvars];              // send unit var
 
-  TypeDef* rutd = ((Network*)net->net_owner)->UnitStateType();
+  TypeDef* rutd = net->UnitStateType();
   TypeDef* sutd = sutd;
-  TypeDef* con_type = ConType((Network*)net->net_owner);
+  TypeDef* con_type = ConType(net);
 
   return NULL;
 
@@ -327,10 +327,10 @@ DataTable* ConState_cpp::ConVarsToTable(DataTable* dt, UnitState_cpp* ru, Networ
         val = mds[i]->GetValVar((void*)ru);
       }
       else if(suv[i]) {
-        val = mds[i]->GetValVar((void*)UnState(j,net));
+        val = mds[i]->GetValVar((void*)UnState(j,net->net_state));
       }
       else {
-        val = Cn(j, mds[i]->idx, net);
+        val = Cn(j, mds[i]->idx, net->net_state);
       }
       cols[i]->SetVal(val, -1);
     }

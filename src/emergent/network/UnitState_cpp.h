@@ -67,9 +67,9 @@ public:
   bool  Snapshot(Network* nnet, const String& variable, SimpleMathSpec& math_op, bool arg_is_snap=true);
   // #CAT_Statistic take a snapshot of given variable: assign snap value on unit to given variable value, optionally using simple math operation on that value.  if arg_is_snap is true, then the 'arg' argument to the math operation is the current value of the snap variable.  for example, to compute intersection of variable with snap value, use MIN and arg_is_snap.
 
-  DataTable*    VarToTable(NetworkState_cpp* nnet, DataTable* dt, const String& variable);
+  DataTable*    VarToTable(Network* nnet, DataTable* dt, const String& variable);
   // #NULL_OK_0 #NULL_TEXT_0_NewTable #CAT_State send given variable to data table -- number of columns depends on variable (for connection variables, specify r. or s. (e.g., r.wt)) -- this uses a NetMonitor internally, so see documentation there for more information
-  DataTable*    ConVarsToTable(NetworkState_cpp* nnet, DataTable* dt, const String& var1, const String& var2 = "",
+  DataTable*    ConVarsToTable(Network* nnet, DataTable* dt, const String& var1, const String& var2 = "",
                const String& var3 = "", const String& var4 = "", const String& var5 = "",
                const String& var6 = "", const String& var7 = "", const String& var8 = "",
                const String& var9 = "", const String& var10 = "", const String& var11 = "",
