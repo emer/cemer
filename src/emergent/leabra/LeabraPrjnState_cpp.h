@@ -27,6 +27,7 @@ class LeabraConSpec_cpp; //
 #include <State_cpp>
 
 // member includes:
+#include <LeabraAvgMax_cpp>
 
 // declare all other types mentioned but not required to include:
 

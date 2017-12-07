@@ -3,7 +3,8 @@
 
   float	        net;            // #NO_SAVE #CAT_Activation netinput to this con_group: only computed for special statistics such as RelNetin
   float	        net_raw;        // #NO_SAVE #CAT_Activation raw summed netinput to this con_group -- only used for NETIN_PER_PRJN
-  float	        hi_wt_avg;	// #NO_SAVE #CAT_Learning average of effective weight values that exceed wt_bal.hi_thr across this con group -- used for weight balance
+  float	        wb_avg;	        // #NO_SAVE #CAT_Learning average of effective weight values that exceed wt_bal.avg_thr across this con state -- used for weight balance
+  float	        wb_fact;	// #NO_SAVE #CAT_Learning overall weight balance factor that drives changes in wb_inc vs. wb_dec via as sigmoidal function -- this is the net strength of weigth balance changes
   float	        wb_inc;	        // #NO_SAVE #CAT_Learning weight balance increment factor -- extra multiplier to add to weight increases to maintain overall weight balance
   float	        wb_dec;	        // #NO_SAVE #CAT_Learning weight balance decrement factor -- extra multiplier to add to weight decreases to maintain overall weight balance
 
@@ -41,8 +42,8 @@
 
 
   INLINE void  Init_ConState() {
-    net = 0.0f; net_raw = 0.0f; hi_wt_avg = 0.5f; 
-    wb_inc = 1.0f; wb_dec = 1.0f;
+    net = 0.0f; net_raw = 0.0f;
+    wb_avg = 0.0f; wb_fact = 0.0f; wb_inc = 1.0f; wb_dec = 1.0f;
   }
   // #IGNORE leabra initialize
 

@@ -239,23 +239,28 @@ private:
 
 
 class STATE_CLASS(WtBalanceSpec) : public STATE_CLASS(SpecMemberBase) {
-  // ##INLINE ##NO_TOKENS ##CAT_Leabra weight balance soft renormalization spec: maintains overall weight balance by progressively penalizing weight increases as a function of extent to which proportion of weights above a hi threshold -- plugs into soft bounding function -- see network times.bal_int for interval in trials of updating
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra weight balance soft renormalization spec: maintains overall weight balance by progressively penalizing weight increases as a function of how strong the weights are overall (subject to thresholding) and long time-averaged activation -- plugs into soft bounding function -- see network times.bal_int for interval in trials of updating
 INHERITED(SpecMemberBase)
 public:
-  bool          on;             // perform weight balance soft normalization?  if so, maintains overall weight balance across units by progressively penalizing weight increases as a function of amount of weight above a high threshold (hi_thr) -- this is generally very beneficial for larger models where hog units are a problem, but not as much for smaller models where the additional constraints are not beneficial
-  float         avg_thr;        // #CONDSHOW_ON_on #DEF_0.25 threshold for act_avg contribution to weight balance -- based on act_avg relative to avg_thr -- same statistic that we use to measure hogging -- penalized in proportion to sigmoidal function (1/(1+avg_gain*(act_avg - avg_thr))) that saturates at maximum of 1 which means that there are no weight increases and all weight decreases -- weight decreases increase proportionally
-  float         avg_gain;       // #CONDSHOW_ON_on #DEF_2 gain multiplier applied to above-threshold weight averages -- higher values turn weight increases down more rapidly as the weights become more imbalanced -- see avg_thr for equation
-  float         hi_thr;         // #CONDSHOW_ON_on #DEF_0.75 high threshold -- cutoff for including weights in average that drives decrease in size of weight increases, which are penalized in proportion to sigmoidal function (1/(1+hi_gain*(avg_above_hi_thr))) that saturates at maximum of 1 which means that there are no weight increases and all weight decreases -- weight decreases increase proportionally
-  float         hi_gain;        // #CONDSHOW_ON_on #DEF_2 gain multiplier applied to above-threshold weight averages -- higher values turn weight increases down more rapidly as the weights become more imbalanced -- see hi_thr for equation
+  bool          on;             // perform weight balance soft normalization?  if so, maintains overall weight balance across units by progressively penalizing weight increases as a function of amount of averaged weight above a high threshold (hi_thr) and long time-average activation above an act_thr -- this is generally very beneficial for larger models where hog units are a problem, but not as much for smaller models where the additional constraints are not beneficial -- uses a sigmoidal function: wb_inc = 1 / (1 + hi_gain*(wb_avg - hi_thr) + act_gain * (act_avg - act_thr))) 
+  float         avg_thr;         // #CONDSHOW_ON_on #DEF_0.5 threshold on weight value for inclusion into the weight average that is then subject to the further hi_thr threshold for then driving a change in weight balance -- this avg_thr allows only stronger weights to contribute so that weakening of lower weights does not dilute sensitivity to number and strength of strong weights
+  bool          norm_all;       // #CONDSHOW_ON_on normalize average by the full number of connections -- which then measures both the number and strength of above avg_thr weights -- or, if false, normalize only by number of above-threshold weights, which then is not sensitive to the number of such weights but just to their overall strength
+  float         hi_thr;         // #CONDSHOW_ON_on high threshold on weight average (subject to avg_thr) before it drives changes in weight increase vs. decrease factors 
+  float         hi_gain;        // #CONDSHOW_ON_on #DEF_2 gain multiplier applied to above-hi_thr thresholded weight averages -- higher values turn weight increases down more rapidly as the weights become more imbalanced 
+  float         act_thr;        // #CONDSHOW_ON_on #DEF_0.25 threshold for long time-average activation (act_avg) contribution to weight balance -- based on act_avg relative to act_thr -- same statistic that we use to measure hogging with default .3 threshold
+  float         act_gain;       // #CONDSHOW_ON_on gain multiplier applied to above-threshold weight averages -- higher values turn weight increases down more rapidly as the weights become more imbalanced -- see act_thr for equation
   // float         lo_thr;         // #CONDSHOW_ON_on #DEF_0.2 low threshold -- when average recv weights are below this threshold, weight decreases are penalized in proportion to sigmoidal 1/(1+lo_gain*(lo-thr-avg)) function that saturates at maximum of 1 which means that there are no weight decreases and all weight increases -- weight increases increase proportionally
   // float         lo_gain;        // #CONDSHOW_ON_on #DEF_4 gain multiplier applied to below-threshold weight averages -- higher values turn weight decreases down more rapidly as the weights become more imbalanced -- see hi_thr for equation
   
-  INLINE void   WtBal(const float hi_wt_avg, const float un_act_avg, float& wb_inc, float& wb_dec) {
-    float wbi = hi_gain * hi_wt_avg + avg_gain * (un_act_avg - avg_thr);
-    wb_inc = 1.0f / (1.0f + wbi); // gets sigmoidally small toward 0 as wbi gets smaller -- is quick acting but saturates -- apply pressure earlier..
+  INLINE void   WtBal
+    (const float wb_avg, const float act_avg, float& wb_fact, float& wb_inc, float& wb_dec) {
+    wb_fact = 0.0f;
+    if(wb_avg > hi_thr)         wb_fact += hi_gain * (wb_avg - hi_thr);
+    if(act_avg > act_thr)       wb_fact += act_gain * (act_avg - act_thr);
+    wb_inc = 1.0f / (1.0f + wb_fact); // gets sigmoidally small toward 0 as wb_fact gets larger -- is quick acting but saturates -- apply pressure earlier..
     wb_dec = 2.0f - wb_inc; // as wb_inc goes down, wb_dec goes up..  sum to 2
   }
-  // compute weight balance factors for increase and decrease based on extent to which weights exceed thresholds
+  // compute weight balance factors for increase and decrease based on extent to which weights and average act exceed thresholds
   
   
   STATE_DECO_KEY("ConSpec");
@@ -263,7 +268,8 @@ public:
 private:
   void        Initialize()      {   Defaults_init(); }
   void        Defaults_init() {
-    on = true; avg_thr = 0.25f; avg_gain = 2.0f; hi_thr = 0.75f; hi_gain = 2.0f;
+    on = true; avg_thr = 0.5f; norm_all = true; hi_thr = 0.6f; hi_gain = 4.0f;
+    act_thr = 0.25f; act_gain = 0.0f; 
     // lo_thr = 0.2f; lo_gain = 4.0f;
   }
 };

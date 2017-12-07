@@ -1,5 +1,6 @@
 // this contains core shared code, and is included directly in LeabraLayerSpec.h, _cpp.h, _cuda.h
 //{
+
   STATE_CLASS(LeabraInhibSpec) lay_inhib;	// #CAT_Activation #AKA_inhib how to compute layer-wide inhibition -- uses feedforward (FF) and feedback (FB) inhibition (FFFB) based on average netinput (FF) and activation (FB) -- net inhibition is MAX of all operative inhibition -- any inhibitory unit inhibition is just added on top of this computed inhibition
   STATE_CLASS(LeabraInhibSpec) unit_gp_inhib; // #CAT_Activation how to compute unit-group-level inhibition (only relevant if layer actually has unit groups -- net inhibition is MAX of all operative inhibition -- uses feedforward (FF) and feedback (FB) inhibition (FFFB) based on average netinput (FF) and activation (FB) -- any inhibitory unit inhibition is just added on top of this computed inhibition
   STATE_CLASS(LeabraInhibSpec) lay_gp_inhib;	// #CAT_Activation inhibition computed across layers within layer groups -- only applicable if the layer actually lives in a subgroup with other layers (and only in a first-level subgroup, not a sub-sub-group) -- only the specs of the FIRST layer in the layer group are used for computing inhib -- net inhibition is MAX of all operative inhibition -- uses feedforward (FF) and feedback (FB) inhibition (FFFB) based on average netinput (FF) and activation (FB) -- any inhibitory unit inhibition is just added on top of this computed inhibition
@@ -664,8 +665,10 @@
   // #CAT_Statistic compute standard deviation of the minus phase net inputs across the layer -- this is a key statistic to monitor over time for how much the units are gaining traction on the problem -- they should be getting more differentiated and sd should go up -- if not, then the network will likely fail -- must be called at end of minus phase
   
   INLINE virtual void   Compute_HogDeadPcts(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
+    lay->pre_hog_pct = 0.0f;
     lay->hog_pct = 0.0f;
     lay->dead_pct = 0.0f;
+    float pre_hog = 0.0f;
     float hog = 0.0f;
     float dead = 0.0f;
     float nu = 0.0f;
@@ -673,16 +676,19 @@
     const int li = lay->layer_idx;
     for(int thr_no=0; thr_no < net->n_thrs_built; thr_no++) {
       // integrate over thread raw data
-      float& lhog = net->ThrLayStats(thr_no, li, 0, LEABRA_NETWORK_STATE::HOGDEAD);
-      float& ldead = net->ThrLayStats(thr_no, li, 1, LEABRA_NETWORK_STATE::HOGDEAD);
-      float& lnu = net->ThrLayStats(thr_no, li, 2, LEABRA_NETWORK_STATE::HOGDEAD);
+      float& lprehog = net->ThrLayStats(thr_no, li, 0, LEABRA_NETWORK_STATE::HOGDEAD);
+      float& lhog = net->ThrLayStats(thr_no, li, 1, LEABRA_NETWORK_STATE::HOGDEAD);
+      float& ldead = net->ThrLayStats(thr_no, li, 2, LEABRA_NETWORK_STATE::HOGDEAD);
+      float& lnu = net->ThrLayStats(thr_no, li, 3, LEABRA_NETWORK_STATE::HOGDEAD);
 
+      pre_hog += lprehog;
       hog += lhog;
       dead += ldead;
       nu += lnu;
     }
 
     if(nu > 0.0f) {
+      lay->pre_hog_pct = pre_hog / nu;
       lay->hog_pct = hog / nu;
       lay->dead_pct = dead / nu;
     }

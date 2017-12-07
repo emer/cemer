@@ -21,10 +21,8 @@
 
 // member includes:
 #include <LeabraLayerSpec>
+#include <LeabraAvgMax>
 
-
-eTypeDef_Of(LeabraAvgMax);
-eTypeDef_Of(LeabraInhibVals);
 eTypeDef_Of(LeabraTwoDVals);
 eTypeDef_Of(LeabraMarginVals);
 // declare all other types mentioned but not required to include:
@@ -39,7 +37,6 @@ eTypeDef_Of(LeabraLayer);
 
 #include <State_main>
 
-#include <LeabraAvgMax_core>
 #include <LeabraLayer_mbrs>
 
 

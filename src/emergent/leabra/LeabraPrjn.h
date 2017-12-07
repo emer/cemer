@@ -20,7 +20,10 @@
 #include "network_def.h"
 #include <Projection>
 
+#include <State_main>
+
 // member includes:
+#include <LeabraAvgMax>
 
 // declare all other types mentioned but not required to include:
 class LeabraNetwork; //

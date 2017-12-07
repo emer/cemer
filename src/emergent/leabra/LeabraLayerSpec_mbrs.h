@@ -397,8 +397,9 @@ class STATE_CLASS(LeabraLayStats) : public STATE_CLASS(SpecMemberBase) {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra leabra layer-level statistics parameters
 INHERITED(SpecMemberBase)
 public:
-  float         hog_thr;           // #MIN_0 #MAX_1 #DEF_0.3;0.2 threshold on unit avg_act (long time-averaged activation), above which the unit is considered to be a 'hog' that is dominating the representational space
-  float         dead_thr;         // #MIN_0 #MAX_1 #DEF_0.01;0.005 threshold on unit avg_act (long time-averaged activation), below which the unit is considered to be inactive and not participating
+  float         pre_hog_thr;       // #MIN_0 #MAX_1 #DEF_0.25;0.2;0.15 threshold on unit avg_act (long time-averaged activation), above which (and below hog_thr) the unit is considered to be a 'pre-hog' that is likely on its way toward dominating the representational space -- drives pre_hog_pct in layer stats
+  float         hog_thr;           // #MIN_0 #MAX_1 #DEF_0.3;0.2 threshold on unit avg_act (long time-averaged activation), above which the unit is considered to be a 'hog' that is dominating the representational space -- drives hog_pct in layer stats
+  float         dead_thr;         // #MIN_0 #MAX_1 #DEF_0.01;0.005 threshold on unit avg_act (long time-averaged activation), below which the unit is considered to be inactive and not participating -- drives dead_pct in layer stats
 
   STATE_DECO_KEY("LayerSpec");
   STATE_TA_STD_CODE_SPEC(LeabraLayStats);
@@ -406,8 +407,7 @@ public:
 private:
   void	Initialize() {   Defaults_init(); }
   void	Defaults_init() {
-    hog_thr = 0.3f;
-    dead_thr = 0.01f;
+    pre_hog_thr = 0.25f;        hog_thr = 0.3f;    dead_thr = 0.01f;
   }
 };
 

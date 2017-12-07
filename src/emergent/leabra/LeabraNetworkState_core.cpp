@@ -1,8 +1,6 @@
 // contains core non-inline (INIMPL) functions from _core.h
 // if used, include directly in LeabraNetworkState.cpp, _cpp.cpp, _cuda.cpp
 
-#define LEABRA_AVG_MAX STATE_CLASS(LeabraAvgMax)
-
 ////////////////////////////////////////////////////////////////////////
 //              Build
 
@@ -274,6 +272,7 @@ void LEABRA_NETWORK_STATE::Init_Stats() {
   net_sd = 0.0f;
   avg_net_sd.ResetAvg();
 
+  pre_hog_pct = 0.0f;
   hog_pct = 0.0f;
   dead_pct = 0.0f;
 }
@@ -1396,12 +1395,12 @@ void LEABRA_NETWORK_STATE::Compute_WtBalStats() {
   for(int li=0; li < n_layers_built; li++) {
     LEABRA_LAYER_STATE* lay = GetLayerState(li);
     if(lay->lesioned()) continue;
+    LEABRA_LAYER_SPEC_CPP* ls = lay->GetLayerSpec(this);
     const int n_prj = lay->n_recv_prjns;
     for(int pj=0; pj<n_prj; pj++) {
       LEABRA_PRJN_STATE* prjn = lay->GetRecvPrjnState(this, pj);
       if(!prjn->IsActive(this)) continue;
-      prjn->hi_wt_avg_max = 0.0f;
-      prjn->hi_wt_avg_avg = 0.0f;
+      prjn->Init_WtBalStats();
     }
     int denom = 0;
 
@@ -1410,22 +1409,33 @@ void LEABRA_NETWORK_STATE::Compute_WtBalStats() {
     for(int ui = ust; ui < ued; ui++) {
       LEABRA_UNIT_STATE* uv = GetUnitState(ui);
       if(uv->lesioned()) continue;
-      denom++;
+      bool hog = (uv->act_avg > ls->lstats.hog_thr);
+      bool pre_hog = !hog && (uv->act_avg > ls->lstats.pre_hog_thr);
       for(int pj=0; pj<n_prj; pj++) {
         LEABRA_PRJN_STATE* prjn = lay->GetRecvPrjnState(this, pj);
         if(!prjn->IsActive(this)) continue;
         LEABRA_CON_STATE* cg = uv->RecvConState(this, prjn->recv_idx);
-        prjn->hi_wt_avg_max = fmaxf(prjn->hi_wt_avg_max, cg->hi_wt_avg);
-        prjn->hi_wt_avg_avg += cg->hi_wt_avg;
+        prjn->wb_avg.UpdtVals(cg->wb_avg, uv->flat_idx);
+        prjn->wb_fact.UpdtVals(cg->wb_fact, uv->flat_idx);
+        if(hog) {
+          prjn->wb_avg_hog.UpdtVals(cg->wb_avg, uv->flat_idx);
+          prjn->wb_fact_hog.UpdtVals(cg->wb_fact, uv->flat_idx);
+        }
+        else if(pre_hog) {
+          prjn->wb_avg_pre_hog.UpdtVals(cg->wb_avg, uv->flat_idx);
+          prjn->wb_fact_pre_hog.UpdtVals(cg->wb_fact, uv->flat_idx);
+        }
       }
     }
-    if(denom > 0) {
-      float norm = 1.0f / (float)denom;
-      for(int pj=0; pj<n_prj; pj++) {
-        LEABRA_PRJN_STATE* prjn = lay->GetRecvPrjnState(this, pj);
-        if(!prjn->IsActive(this)) continue;
-        prjn->hi_wt_avg_avg *= norm;
-      }
+    for(int pj=0; pj<n_prj; pj++) {
+      LEABRA_PRJN_STATE* prjn = lay->GetRecvPrjnState(this, pj);
+      if(!prjn->IsActive(this)) continue;
+      prjn->wb_avg.CalcAvg();
+      prjn->wb_avg_hog.CalcAvg();
+      prjn->wb_avg_pre_hog.CalcAvg();
+      prjn->wb_fact.CalcAvg();
+      prjn->wb_fact_hog.CalcAvg();
+      prjn->wb_fact_pre_hog.CalcAvg();
     }
   }
 }
@@ -1861,7 +1871,7 @@ void LEABRA_NETWORK_STATE::Compute_HogDeadPcts_Thr(int thr_no) {
     if(lay->lesioned()) continue;
     LEABRA_LAYER_SPEC_CPP* ls = lay->GetLayerSpec(this);
 
-    float hog = 0.0f;  float dead = 0.0f;  float nu = 0.0f;
+    float pre_hog = 0.0f;  float hog = 0.0f;  float dead = 0.0f;  float nu = 0.0f;
 
     const int ust = ThrLayUnStart(thr_no, li);
     const int ued = ThrLayUnEnd(thr_no, li);
@@ -1871,19 +1881,24 @@ void LEABRA_NETWORK_STATE::Compute_HogDeadPcts_Thr(int thr_no) {
       if(uv->act_avg > ls->lstats.hog_thr) {
         hog += 1.0f;
       }
+      else if(uv->act_avg > ls->lstats.pre_hog_thr) {
+        pre_hog += 1.0f;
+      }
       else if(uv->act_avg < ls->lstats.dead_thr) {
         dead += 1.0f;
       }
       nu += 1.0f;
     }
 
-    ThrLayStats(thr_no, li, 0, HOGDEAD) = hog;
-    ThrLayStats(thr_no, li, 1, HOGDEAD) = dead;
-    ThrLayStats(thr_no, li, 2, HOGDEAD) = nu;
+    ThrLayStats(thr_no, li, 0, HOGDEAD) = pre_hog;
+    ThrLayStats(thr_no, li, 1, HOGDEAD) = hog;
+    ThrLayStats(thr_no, li, 2, HOGDEAD) = dead;
+    ThrLayStats(thr_no, li, 3, HOGDEAD) = nu;
   }
 }
 
 void LEABRA_NETWORK_STATE::Compute_HogDeadPcts_Agg() {
+  float pre_hog = 0.0f;
   float hog = 0.0f;
   float dead = 0.0f;
   const int nlay = n_layers_built;
@@ -1892,14 +1907,17 @@ void LEABRA_NETWORK_STATE::Compute_HogDeadPcts_Agg() {
     if(lay->lesioned()) continue;
     LEABRA_LAYER_SPEC_CPP* ls = lay->GetLayerSpec(this);
     ls->Compute_HogDeadPcts(lay, this);
+    pre_hog += lay->pre_hog_pct;
     hog += lay->hog_pct;
     dead += lay->dead_pct;
   }
   if(nlay > 0) {
+    pre_hog_pct = pre_hog / (float)nlay;
     hog_pct = hog / (float)nlay;
     dead_pct = dead / (float)nlay;
   }
   else {
+    pre_hog_pct = 0.0f;
     hog_pct = 0.0f;
     dead_pct = 0.0f;
   }

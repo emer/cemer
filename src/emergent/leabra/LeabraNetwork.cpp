@@ -32,10 +32,7 @@
 #include <taMisc>
 #include <tabMisc>
 
-TA_BASEFUNS_CTORS_DEFN(LeabraAvgMax);
 TA_BASEFUNS_CTORS_DEFN(LeabraMarginVals);
-TA_BASEFUNS_CTORS_DEFN(LeabraInhibVals);
-
 TA_BASEFUNS_CTORS_DEFN(LeabraTimes);
 TA_BASEFUNS_CTORS_DEFN(LeabraNetStats);
 TA_BASEFUNS_CTORS_DEFN(LeabraNetMisc);

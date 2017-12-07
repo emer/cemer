@@ -22,13 +22,15 @@
 #pragma maketa_file_is_target LeabraLayer
 #pragma maketa_file_is_target LeabraLayerState
 
-// // member includes:
-// // these are needed for FLT_MAX
-// #ifndef __MAKETA__
-// #include <math.h>
-// #include <limits.h>
-// #include <float.h>
-// #endif
+// member includes:
+// these are needed for FLT_MAX
+#ifndef __MAKETA__
+#include <math.h>
+#include <limits.h>
+#include <float.h>
+#endif
+
+#define LEABRA_AVG_MAX STATE_CLASS(LeabraAvgMax)
 
 class LeabraAvgMax_cpp; // 
 
@@ -50,7 +52,7 @@ public:
   // update from data as it comes in
 
   INLINE void	CalcAvg()
-  { if(n > 0) avg = sum / (float)n; else avg = sum; }
+  { if(n > 0) avg = sum / (float)n; else { avg = sum; max = 0.0f; } }
   // compute the avg after doing UpdtVals on all the data
 
   INLINE void	UpdtFmAvgMax(const STATE_CLASS(LeabraAvgMax)& oth)

@@ -20,6 +20,9 @@
 
 // parent includes:
 #include <NetworkState_cpp> // replace with actual parent
+
+#include <State_cpp>
+
 #include <LeabraAvgMax_cpp>
 #include <LeabraNetwork_mbrs>
 

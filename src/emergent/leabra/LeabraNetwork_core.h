@@ -152,6 +152,7 @@ STATE_CLASS(Average)	avg_cos_diff;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statist
   STATE_CLASS(Average)	avg_trial_cos_diff; // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #DMEM_AGG_SUM average cosine (normalized dot product) trial diff (computed over previous epoch)
   float         net_sd;             // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic standard deviation of the minus phase net inputs across the layer -- this is a key statistic to monitor over time for how much the units are gaining traction on the problem -- they should be getting more differentiated and sd should go up -- if not, then the network will likely fail
   STATE_CLASS(Average)  avg_net_sd;         // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic standard deviation of the minus phase net inputs across the layer -- this is a key statistic to monitor over time for how much the units are gaining traction on the problem -- they should be getting more differentiated and sd should go up -- if not, then the network will likely fail
+  float         pre_hog_pct;       // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic the percentage of units in the network that have a long-time-averaged activitation level that is above a layer-specific threshold, indicating that they are at risk of developing into units that are 'hogging' the representational space (because this is computed on a time average, there is no epoch average of this statistic)
   float         hog_pct;           // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic the percentage of units in the network that have a long-time-averaged activitation level that is above a layer-specific threshold, indicating that they are 'hogging' the representational space (because this is computed on a time average, there is no epoch average of this statistic)
   float         dead_pct;           // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic the percentage of units in the network that have a long-time-averaged activitation level that is below a layer-specific threshold, indicating that they are effectively 'dead' and not participating in any representations (because this is computed on a time average, there is no epoch average of this statistic)
 
@@ -163,14 +164,14 @@ STATE_CLASS(Average)	avg_cos_diff;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statist
 
   INLINE void Initialize_net_core() {
     unlearnable_trial = false;    quarter = 0;    phase = MINUS_PHASE;
-    tot_cycle = 0;    rt_cycles = 0.0f;
+    tot_cycle = 0;      rt_cycles = 0.0f;
     send_pct = 0.0f;    send_pct_n = send_pct_tot = 0;
     trg_max_act = 0.0f;
-    ext_rew = 0.0f;    ext_rew_avail = false;
+    ext_rew = 0.0f;     ext_rew_avail = false;
     norm_err = 0.0f;
-    cos_err = 0.0f;    cos_err_prv = 0.0f;    cos_err_vs_prv = 0.0f;
+    cos_err = 0.0f;     cos_err_prv = 0.0f;    cos_err_vs_prv = 0.0f;
     cos_diff = 0.0f;    trial_cos_diff = 0.0f;
-    net_sd = 0.0f;    hog_pct = 0.0f;    dead_pct = 0.0f;
+    net_sd = 0.0f;      pre_hog_pct = 0.0f;   hog_pct = 0.0f;    dead_pct = 0.0f;
   }
   // #IGNORE
 

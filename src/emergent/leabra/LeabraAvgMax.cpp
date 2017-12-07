@@ -13,14 +13,8 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-#ifndef LeabraAvgMax_cpp_h
-#define LeabraAvgMax_cpp_h 1
+#include "LeabraAvgMax.h"
 
-// parent includes:
-#include <State_cpp>
+TA_BASEFUNS_CTORS_DEFN(LeabraAvgMax);
+TA_BASEFUNS_CTORS_DEFN(LeabraInhibVals);
 
-// member includes:
-
-#include <LeabraAvgMax_core>
-
-#endif // LeabraAvgMax_cpp_h

@@ -13,14 +13,23 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-#ifndef LeabraAvgMax_cpp_h
-#define LeabraAvgMax_cpp_h 1
+#ifndef LeabraAvgMax_h
+#define LeabraAvgMax_h 1
 
 // parent includes:
-#include <State_cpp>
+#include <taNBase>
+#include <network_def.h>
+
+#include <LeabraAvgMax_cpp>
+
+#include <State_main>
+
+eTypeDef_Of(LeabraAvgMax);
+eTypeDef_Of(LeabraInhibVals);
+#include <LeabraAvgMax_core>
 
 // member includes:
 
-#include <LeabraAvgMax_core>
+// declare all other types mentioned but not required to include:
 
-#endif // LeabraAvgMax_cpp_h
+#endif // LeabraAvgMax_h

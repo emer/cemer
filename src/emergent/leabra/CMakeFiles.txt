@@ -10,6 +10,7 @@
 
 # all headers that need maketa run on them
 set(leabra_HEADS_MAKETA
+  LeabraAvgMax.h
   LeabraCon.h
   LeabraPrjn.h
 
@@ -194,6 +195,7 @@ set(leabra_HEADS
 
 # all source files to compile: NOTE: do NOT include TA_ or .moc files -- auto generated
 set(leabra_SRCS
+  LeabraAvgMax.cpp
   LeabraCon.cpp
   LeabraConState_cpp.cpp
   LeabraUnitState_cpp.cpp

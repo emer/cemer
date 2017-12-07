@@ -24,16 +24,6 @@ eTypeDef_Of(LeabraInhibVals);
 eTypeDef_Of(LeabraTwoDVals);
 eTypeDef_Of(LeabraMarginVals);
 
-// member includes:
-#include <taMath_float>
-#include <Average>
-#include <LeabraLayer>
-#include <LeabraPrjn>
-#include <int_Array>
-
-// declare all other types mentioned but not required to include:
-class DataTable; // 
-
 eTypeDef_Of(LeabraNetworkState_cpp);
 eTypeDef_Of(LeabraLayerState_cpp);
 eTypeDef_Of(LeabraPrjnState_cpp);
@@ -51,6 +41,16 @@ eTypeDef_Of(LeabraNetMisc);
 eTypeDef_Of(LeabraNetDeep);
 eTypeDef_Of(RelNetinSched);
 eTypeDef_Of(LeabraNetwork);
+
+// member includes:
+#include <taMath_float>
+#include <Average>
+#include <LeabraLayer>
+#include <LeabraPrjn>
+#include <int_Array>
+
+// declare all other types mentioned but not required to include:
+class DataTable; // 
 
 #include <LeabraNetwork_mbrs>
 

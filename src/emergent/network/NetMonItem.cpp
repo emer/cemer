@@ -518,19 +518,38 @@ bool NetMonItem::ScanObject_InObject(taBase* obj, String var, taBase* name_obj, 
       return ScanObject_InUserData(obj, var.after("."), name_obj);
     }
 
-    String path = var.before('.',-1);
-    taBase* mbr = obj->FindFromPath(path, md);
-    if(!mbr) {
-      if(MonError(err_not_found, "ScanObject_InObject",
-                   "path to variable not found in parent object, path:",
-                   path, "var: ", var, "parent:", obj->DisplayPath())) {
-        return true; //no mon, but we did handle it
+    TypeDef* own_td = obj->GetTypeDef();
+    int net_base_off = 0;
+    md = TypeDef::FindMemberPathStatic(own_td, net_base_off, var, false);
+    if(md) {
+      if(name_obj) {
+        String valname = GetColName(name_obj, val_specs.size);
+        ValType vt = ValTypeForType(md->type);
+        AddScalarCol(valname, vt);
+        if(agg.op != Aggregate::NONE) {
+          AddScalarCol_Agg(valname, vt); // add the agg guy just to keep it consistent
+        }
       }
-      return false;             // silent fail bounces back
+      // if not adding a column, it is part of a pre-allocated matrix; just add vars
+      ptrs.Add((char*)obj + net_base_off);
+      members.Link(md);
+      return true;
     }
+    else {
+      String path = var.before('.',-1);
+      taBase* mbr = obj->FindFromPath(path, md);
+      if(!mbr) {
+        if(MonError(err_not_found, "ScanObject_InObject",
+                    "path to variable not found in parent object, path:",
+                    path, "var: ", var, "parent:", obj->DisplayPath())) {
+          return true; //no mon, but we did handle it
+        }
+        return false;             // silent fail bounces back
+      }
 
-    String membname = var.after('.',-1);
-    return ScanObject_InObject(mbr, membname, name_obj);
+      String membname = var.after('.',-1);
+      return ScanObject_InObject(mbr, membname, name_obj);
+    }
   }
   else {
     md = obj->FindMemberName(var);
@@ -1004,8 +1023,8 @@ void NetMonItem::ScanObject_PrjnCons(Projection* prj, String var) {
 }
 
 void NetMonItem::ScanObject_ProjectionList(Projection_List* pg, String var) {
-  if (ScanObject_InObject(pg, var, pg, false)) return; // false = test
-
+  // don't look in the list itself -- nothing here!
+  // if (ScanObject_InObject(pg, var, pg, false)) return; // false = test
   for (int i = 0; i < pg->size; i++) {
     if (Projection* prjn = pg->FastEl(i)) {
       if(prjn->MainIsActive()) {

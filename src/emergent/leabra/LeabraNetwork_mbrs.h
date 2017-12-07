@@ -65,7 +65,7 @@ public:
   bool		off_errs;	// #DEF_true #CAT_Statistic include in norm_err computation units that were incorrectly off (should have been on but were actually off) -- either 1 or both of off_errs and on_errs must be set
   bool		on_errs;	// #DEF_true #CAT_Statistic include in norm_err computation units that were incorrectly on (should have been off but were actually on) -- either 1 or both of off_errs and on_errs must be set
   bool          agg_unlearnable; // #DEF_false #CAT_Statistic should unlearnable trials be aggregated into epoch-level summary stats?  default is not to (i.e., false)
-  bool          wt_bal;         // #DEF_false #CAT_Statistic aggregate hi_wt_avg_max and hi_wt_avg_avg per projection when wt_balance mechanism is active (soft form of weight normalization) -- see times.wt_bal_int for interval when these stats are updated
+  bool          wt_bal;         // #DEF_false #CAT_Statistic aggregate weight balance statistics per projection when wt_balance mechanism is active (soft form of weight normalization) -- see times.wt_bal_int for interval when these stats are updated
 
   STATE_DECO_KEY("Network");
   STATE_TA_STD_CODE(LeabraNetStats);

@@ -12,6 +12,7 @@
   STATE_CLASS(LeabraAvgMax)        avg_netin;        // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Activation minus-phase net input values for the layer, averaged over an epoch-level timescale
   STATE_CLASS(LeabraAvgMax)        avg_netin_sum;        // #NO_SAVE #GUI_READ_ONLY #HIDDEN #CAT_Activation #DMEM_AGG_SUM sum of net input values for the layer, for computing average over an epoch-level timescale
   int           avg_netin_n;        // #NO_SAVE #GUI_READ_ONLY #HIDDEN #CAT_Activation #DMEM_AGG_SUM number of times sum is updated for computing average
+  float         pre_hog_pct;        // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic the percentage of units in the layer that have a long-time-averaged activitation level that is above the layerspec pre_hog_thr threshold, indicating that they are potentialy on their way toward 'hogging' the representational space (because this is computed on a time average, there is no epoch average of this statistic)
   float         hog_pct;           // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic the percentage of units in the layer that have a long-time-averaged activitation level that is above the layerspec hog_thr threshold, indicating that they are 'hogging' the representational space (because this is computed on a time average, there is no epoch average of this statistic)
   float         dead_pct;           // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic the percentage of units in the layer that have a long-time-averaged activitation level that is below the layerspec dead_thr threshold, indicating that they are effectively 'dead' and not participating in any representations (because this is computed on a time average, there is no epoch average of this statistic)
   float         bin_err;        // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic binary  error value for this layer -- 1 if sse > network.stats.cnt_err_thr, else 0 -- this is useful for producing a cnt_err measure by aggregating trial log data
@@ -125,7 +126,7 @@
     inherited::Init_Stats();
     avg_netin.InitVals();  avg_netin_sum.InitVals();  avg_netin_n = 0;
     avg_netin.max = 0.0f;  avg_netin_sum.max = 0.0f; // using max in averaging
-    hog_pct = 0.0f;    dead_pct = 0.0f;
+    pre_hog_pct = 0.0f;    hog_pct = 0.0f;    dead_pct = 0.0f;
     bin_err = 0.0f;    max_err = 0.0f;
     norm_err = 0.0f;   avg_norm_err.ResetAvg();
     cos_err = 0.0f;    avg_cos_err.ResetAvg();
