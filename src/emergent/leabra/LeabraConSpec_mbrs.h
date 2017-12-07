@@ -245,7 +245,8 @@ public:
   bool          on;             // perform weight balance soft normalization?  if so, maintains overall weight balance across units by progressively penalizing weight increases as a function of amount of averaged weight above a high threshold (hi_thr) and long time-average activation above an act_thr -- this is generally very beneficial for larger models where hog units are a problem, but not as much for smaller models where the additional constraints are not beneficial -- uses a sigmoidal function: wb_inc = 1 / (1 + hi_gain*(wb_avg - hi_thr) + act_gain * (act_avg - act_thr))) 
   float         avg_thr;         // #CONDSHOW_ON_on #DEF_0.5 threshold on weight value for inclusion into the weight average that is then subject to the further hi_thr threshold for then driving a change in weight balance -- this avg_thr allows only stronger weights to contribute so that weakening of lower weights does not dilute sensitivity to number and strength of strong weights
   bool          norm_all;       // #CONDSHOW_ON_on normalize average by the full number of connections -- which then measures both the number and strength of above avg_thr weights -- or, if false, normalize only by number of above-threshold weights, which then is not sensitive to the number of such weights but just to their overall strength
-  float         hi_thr;         // #CONDSHOW_ON_on high threshold on weight average (subject to avg_thr) before it drives changes in weight increase vs. decrease factors 
+  bool          thr_pre_hog;    // #CONDSHOW_ON_on hi_thr is a multiplier on the wb_avg_max values for the pre_hog units in this same projection -- automatically self-normalizing -- if no units meet pre_hog criteria then this automatically does not engage weight balance
+  float         hi_thr;         // #CONDSHOW_ON_on high threshold on weight average (subject to avg_thr) before it drives changes in weight increase vs. decrease factors -- see thr_pre_hog for meaning of this value
   float         hi_gain;        // #CONDSHOW_ON_on #DEF_2 gain multiplier applied to above-hi_thr thresholded weight averages -- higher values turn weight increases down more rapidly as the weights become more imbalanced 
   float         act_thr;        // #CONDSHOW_ON_on #DEF_0.25 threshold for long time-average activation (act_avg) contribution to weight balance -- based on act_avg relative to act_thr -- same statistic that we use to measure hogging with default .3 threshold
   float         act_gain;       // #CONDSHOW_ON_on gain multiplier applied to above-threshold weight averages -- higher values turn weight increases down more rapidly as the weights become more imbalanced -- see act_thr for equation
@@ -253,9 +254,18 @@ public:
   // float         lo_gain;        // #CONDSHOW_ON_on #DEF_4 gain multiplier applied to below-threshold weight averages -- higher values turn weight decreases down more rapidly as the weights become more imbalanced -- see hi_thr for equation
   
   INLINE void   WtBal
-    (const float wb_avg, const float act_avg, float& wb_fact, float& wb_inc, float& wb_dec) {
+    (const float wb_avg, const float act_avg, const float pre_hog_wb_avg_max,
+     float& wb_fact, float& wb_inc, float& wb_dec) {
     wb_fact = 0.0f;
-    if(wb_avg > hi_thr)         wb_fact += hi_gain * (wb_avg - hi_thr);
+    if(thr_pre_hog) {
+      if(pre_hog_wb_avg_max > 0.0f) {
+        float eff_hi_thr = hi_thr * pre_hog_wb_avg_max;
+        if(wb_avg > eff_hi_thr) wb_fact += hi_gain * (wb_avg - eff_hi_thr);
+      }
+    }
+    else {
+      if(wb_avg > hi_thr)       wb_fact += hi_gain * (wb_avg - hi_thr);
+    }
     if(act_avg > act_thr)       wb_fact += act_gain * (act_avg - act_thr);
     wb_inc = 1.0f / (1.0f + wb_fact); // gets sigmoidally small toward 0 as wb_fact gets larger -- is quick acting but saturates -- apply pressure earlier..
     wb_dec = 2.0f - wb_inc; // as wb_inc goes down, wb_dec goes up..  sum to 2
@@ -268,7 +278,7 @@ public:
 private:
   void        Initialize()      {   Defaults_init(); }
   void        Defaults_init() {
-    on = true; avg_thr = 0.5f; norm_all = true; hi_thr = 0.6f; hi_gain = 4.0f;
+    on = true; avg_thr = 0.5f; norm_all = true; thr_pre_hog = true; hi_thr = -0.2f; hi_gain = 4.0f;
     act_thr = 0.25f; act_gain = 0.0f; 
     // lo_thr = 0.2f; lo_gain = 4.0f;
   }

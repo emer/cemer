@@ -1402,7 +1402,6 @@ void LEABRA_NETWORK_STATE::Compute_WtBalStats() {
       if(!prjn->IsActive(this)) continue;
       prjn->Init_WtBalStats();
     }
-    int denom = 0;
 
     const int ust = lay->units_flat_idx;
     const int ued = lay->units_flat_idx + lay->n_units;

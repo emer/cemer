@@ -176,9 +176,9 @@ void LeabraNetworkState_cpp::Compute_Weights() {
   
   if(net_misc.wt_bal && (total_trials % times.wt_bal_int == 0)) {
     NET_THREAD_CALL(LeabraNetworkState_cpp::Compute_WtBal_Thr);
-    if(lstats.wt_bal) {
+    // if(lstats.wt_bal) {
       Compute_WtBalStats();
-    }
+    // }
   }
 }
 
