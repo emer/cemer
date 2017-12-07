@@ -795,7 +795,7 @@ void T3ExaminerViewer::StateButtonClicked() {
   taGuiDialog dlg;
   int new_width = dvm->GetStateDisplayWidth(button_str);
   dlg.Reset();
-  dlg.prompt = "Enter new width in pixels\n\nThis is for the value portion of width.\nLabel width automatically added.";
+  dlg.prompt = "Enter new width in pixels for the variable '" + button_str + "'\n\nThis is for the value portion of width.\nLabel width automatically added.";
   dlg.win_title = "Edit Display Width";
   dlg.AddWidget("main", "", "");
   dlg.AddVBoxLayout("mainv","","main","");
