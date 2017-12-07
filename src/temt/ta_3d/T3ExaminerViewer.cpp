@@ -19,15 +19,19 @@
 #include <T3Panel>
 #include <T3DataViewMain>
 #include <iContextMenuButton>
+#include <NetView>
 
 #include <iThumbWheel>
 #include <iMenuButton>
 #include <iFlowLayout>
 #include <taImage>
+#include <NameVar_Array>
+#include <taGuiDialog>
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QToolButton>
+#include <QPushButton>
 #include <QLabel>
 #include <QMenu>
 #include <QPrinter>
@@ -771,6 +775,39 @@ void T3ExaminerViewer::printbuttonClicked() {
   T3Panel* panl = GetPanel();
   if(!panl) return;
   panl->PrintImage();
+}
+
+void T3ExaminerViewer::StateButtonClicked() {
+  QPushButton* pButton = qobject_cast<QPushButton*>(sender());
+  if (!pButton) {
+    taMisc::Error("Programmer Error - please report - StateButtonClicked - not QPushButton!");
+    return;
+  }
+  T3Panel* panl = GetPanel();
+  if(!panl) return;
+  T3DataViewMain* dvm = panl->FirstChild();
+  if(!dvm) return;
+
+  QString button_text = pButton->text();
+  String button_str = button_text;
+  button_str = button_str.before(':');
+
+  taGuiDialog dlg;
+  int new_width = dvm->GetStateDisplayWidth(button_str);
+  dlg.Reset();
+  dlg.prompt = "Enter new width in pixels\n\nThis is for the value portion of width.\nLabel width automatically added.";
+  dlg.win_title = "Edit Display Width";
+  dlg.AddWidget("main", "", "");
+  dlg.AddVBoxLayout("mainv","","main","");
+  String curow = "lbl";
+  dlg.AddHBoxLayout(curow, "mainv","","");
+  dlg.AddLabel("full_lbl_lbl", "main", curow, "label=Width of value portion: ;");
+  dlg.AddIntField(&new_width, "full_lbl", "main", curow, "tooltip=enter width in pixels - current width is shown;");
+      
+  int drval = dlg.PostDialog(true);
+  if(drval != 0) {
+    dvm->SetStateDisplayWidth(button_str, new_width);
+  }
 }
 
 void T3ExaminerViewer::annoteLineClicked() {
@@ -1571,23 +1608,28 @@ void T3ExaminerViewer::showEvent(QShowEvent* ev) {
 }
 #endif
 
-void T3ExaminerViewer::UpdateStateValues(const String_Array& state_strs) {
+void T3ExaminerViewer::UpdateStateValues(const NameVar_Array& state_strs) {
+  T3Panel* panl = GetPanel();
+  if(!panl) return;
+  T3DataViewMain* dvm = panl->FirstChild();
+  if(!dvm) return;
+
   if (!state_labels_inited || state_labels.count() != state_strs.size) {
     ClearStateValues();
     for (int i=0; i<state_strs.size; i++) {
-      String str = state_strs[i];
-      QLabel* label = new QLabel(this);
-      label->setToolTip(taiMisc::ToolTipPreProcess("To add or remove state values select the \"Net State Values\" tab in the Net View control panel"));
-      state_labels.append(label);
-      state_labels[i]->setStyleSheet("background-color: white; color: black; border: 1px solid #AAAAAA;");
-      QFontMetrics fm(label->fontMetrics());
-      String label_part = str.before(':');
-      int label_part_in_pixels = fm.width(label_part);
-      int value_part_in_pixels = 70;      // don't calculate - we want the full label width to be constant for each label
-      if (label_part.contains_ci("phase")) {  // total hack!!
-        value_part_in_pixels = 120;
-      }
-      int fixed_width_total = label_part_in_pixels + value_part_in_pixels;
+      String var = state_strs[i].name;
+      int value_width_in_pixels = state_strs[i].value.toInt();
+      
+      QPushButton* button = new QPushButton(this);
+      button->setFont(taiM->buttonFont(taiMisc::sizMedium));
+      connect(button, SIGNAL(clicked()), this, SLOT(StateButtonClicked()));
+      button->setToolTip(taiMisc::ToolTipPreProcess("To add or remove state values select the \"Net State Values\" tab in the Net View control panel. Click on this item to change its width."));
+      state_labels.append(button);
+      state_labels[i]->setStyleSheet("background-color: white; color: black; border: 1px solid #AAAAAA; margin: 1px; padding: 1px; Text-align:left");
+      QFontMetrics fm(button->fontMetrics());
+      String label_part = var.through(':');
+      int label_part_in_pixels = fm.width(label_part) + 10;  // allow for padding etc so label is always readable
+      int fixed_width_total = label_part_in_pixels + value_width_in_pixels;
       
       int height = taiM->label_height(taiMisc::sizMedium);
       state_labels[i]->setFixedSize(fixed_width_total, height);
@@ -1597,17 +1639,17 @@ void T3ExaminerViewer::UpdateStateValues(const String_Array& state_strs) {
   }
   
   for (int i=0; i<state_strs.size; i++) {
-    state_labels.at(i)->setText(state_strs[i]);
+    state_labels.at(i)->setText(state_strs[i].name);
   }
 }
 
 void T3ExaminerViewer::ClearStateValues() {
   for (int i=state_labels.size()-1; i>=0; i--) {
-    QLabel* label = state_labels[i];
-    if (label) {
+    QPushButton* button = state_labels[i];
+    if (button) {
       state_labels.removeAt(i);
-      net_state_layout->removeWidget(label);
-      delete label;
+      net_state_layout->removeWidget(button);
+      delete button;
     }
   }
   state_labels_inited = false;

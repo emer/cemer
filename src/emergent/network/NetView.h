@@ -153,12 +153,13 @@ public:
   LayerLayout           lay_layout;     // how to display layers -- 2d or 3d
   bool                  lay_mv;         // whether to display layer move controls when the arrow button is pressed (can get in the way of viewing weights)
   bool                  net_text;       // whether to display network counters, stats, etc
+  int                   state_width_default;  // default display width in pixels for value portion of state display
   bool                  show_iconified; // show iconified layers -- otherwise they are removed entirely
   taTransform           net_text_xform;  // transform of coordinate system for the net text display element
   float                 net_text_rot;    // rotation of the text in the Z plane (in degrees) - default is upright, but if text area is rotated, then a different angle might work better
   MemberSpace           membs;          // #NO_SAVE #NO_COPY #READ_ONLY list of all the members possible in units; note: all items are new clones
   String_Array          cur_unit_vals;  // #NO_COPY #READ_ONLY currently selected unit values to display -- theoretically can display multiple values, but this is not currently supported, so it always just has one entry at most
-  String_Array          full_state_vals;  // #NO_COPY #READ_ONLY possible net state values to display
+  NameVar_Array         full_state_vals;  // #NO_COPY #READ_ONLY possible net state values to display
   String_Array          cur_state_vals;  // #NO_COPY #READ_ONLY currently selected net state values to display
   String_Array          hot_vars;       // current "hot" variables shown directly in explorer view
   UnitState_cpp*        unit_src;       // #NO_SAVE #NO_COPY #READ_ONLY unit last picked (if any) for display
@@ -225,6 +226,13 @@ public:
   // re-renders entire display (calls Render_impl) -- assumes structure is still same but various display elements may have changed.  if structure is different, then an InitDisplay is required first
   virtual void          UpdateUnitValues();
   // *only* updates unit values -- display and structure must be the same as last time
+  virtual void          NetStateListReorder(int from_index, int to_index);
+  // update list of state vars - item has been moved
+  virtual int           GetStateDisplayWidth(const String& name) override;
+  //
+  virtual void          SetStateDisplayWidth(const String& name, int width) override;;
+  //
+
   virtual void          InitCtrHist(bool force = false);
   // initialize counter history based on current settings -- this also serves as master for all history -- if force, then always reset history index positions too
   virtual void          SaveCtrHist();
@@ -234,7 +242,9 @@ public:
   ////////////////////////////////////////////////////////////////
   // misc util functions etc
   virtual void          GetMembs();
-  virtual void          GetNetMembs(); // these are the Network vars marked #VIEW (e.g. cycle, trial_name, ...)
+  virtual void          GetNetStateMembs(); // these are the Network vars marked #VIEW (e.g. cycle, trial_name, ...)
+  virtual void          GetNetStateVarNames(String_Array* vars);  // fill the list with the var names from full_state_vals
+
   virtual void          GetMaxSize(); // get max size from network
 
   void                  GetUnitColor(float val, iColor& col, float& sc_val);

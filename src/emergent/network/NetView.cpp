@@ -353,6 +353,7 @@ void NetView::Initialize() {
   net_text_xform.rotate.SetXYZR(1.0f, 0.0f, 0.0f, 0.5f * taMath_float::pi); // start at right mid
   net_text_xform.scale = 0.5f;
   net_text_rot = -90.0f;
+  state_width_default = 70; // pixels
 
   con_type = ANY_CON;
   prjn_starts_with = "";
@@ -423,13 +424,15 @@ void NetView::UpdateAfterEdit_impl() {
       if(view_params.lay_trans == 0.4f)
         view_params.lay_trans = 0.5f;
     }
-    taVersion v831(8, 3, 1);
-    if(taMisc::loading_version < v831) { // one-time update
+    taVersion v832(8, 3, 2);
+    if(taMisc::loading_version < v832) { // one-time update
       if (net()) {
         UserDataItem_List* ud_list = net()->user_data_;
         if (ud_list) {
           ud_list->Reset();
         }
+        
+        full_state_vals.Reset();
         
         // default to display of these state variables
         cur_state_vals.AddUnique("batch");
@@ -623,7 +626,7 @@ void NetView::BuildAll() { // populates all T3 guys
   }
   GetMaxSize();
   GetMembs();
-  GetNetMembs();
+  GetNetStateMembs();
 
   Network* nt = net();
   
@@ -763,7 +766,7 @@ UnitView* NetView::FindUnitView(UnitState_cpp* unit) {
   return NULL;
 }
 
-void NetView::GetNetMembs() {
+void NetView::GetNetStateMembs() {
   if(!net()) return;
   
   Network* nt = net();
@@ -773,11 +776,18 @@ void NetView::GetNetMembs() {
   for(int i=0; i < td->members.size ; i++) {
     MemberDef* md = td->members[i];
     if(!md->HasOption("VIEW")) continue;
-    String name = md->name;
-    full_state_vals.AddUnique(name);
+    if (full_state_vals.FindName(md->name) != -1) {
+      continue;
+    }
+    full_state_vals.Add(NameVar(md->name, state_width_default)); 
   }
-  
   // WHAT ABOUT members that don't exist anymore
+}
+
+void NetView::GetNetStateVarNames(String_Array* net_state_vars) {
+  for (int i=0; i<full_state_vals.size; i++) {
+    net_state_vars->Add(full_state_vals[i].name);
+  }
 }
 
 // this fills a member group with the valid memberdefs from the units and connections
@@ -1300,7 +1310,7 @@ void NetView::Render_impl() {
 void NetView::Render_new_net_text() {
   if (!net_text) return;
   
-  String_Array net_state_strs;
+  NameVar_Array net_state_strs;
   TypeDef* td = net()->GetTypeDef();
   
   for(int i=0; i<cur_state_vals.size; i++) {
@@ -1310,7 +1320,13 @@ void NetView::Render_new_net_text() {
       String net_state_text = md->name + ": ";
       String val = md->GetValStr((void*)net());
       net_state_text = net_state_text + val;
-      net_state_strs.Add(net_state_text);
+  
+      int width = 0;
+      int index = full_state_vals.FindName(var);
+      if (index != -1) {
+        width = full_state_vals[index].value.toInt();
+      }
+      net_state_strs.Add(NameVar(net_state_text, width));
     }
   }
   T3ExaminerViewer* vw = GetViewer();
@@ -1878,6 +1894,49 @@ void NetView::UpdateUnitValues() { // *actually* only does unit value updating
 //   taMisc::Info("UpdateUnitValues");
   LayerGroupView* lv = (LayerGroupView*)children.FastEl(0);
   lv->UpdateUnitValues();
+}
+
+void NetView::NetStateListReorder(int from_index, int to_index) {
+  full_state_vals.MoveIdx(from_index, to_index);
+  
+  // now update the order of the current list of displayed states
+  String_Array temp;
+  temp.Copy(cur_state_vals);
+  cur_state_vals.Reset();
+  for (int i=0; i<full_state_vals.size; i++) {
+    String name = full_state_vals[i].name;
+    if (temp.FindEl(name) != -1) {
+      cur_state_vals.Add(name);
+    }
+  }
+  
+  T3ExaminerViewer* vw = GetViewer();
+  if (vw) {
+    vw->state_labels_inited = false;
+    Render_new_net_text();
+  }
+
+}
+
+int NetView::GetStateDisplayWidth(const String& name) {
+  int index = full_state_vals.FindName(name);
+  if (index != -1) {
+    int width = full_state_vals[index].value.toInt();
+    return width;
+  }
+  return -1;
+}
+
+void NetView::SetStateDisplayWidth(const String& name, int width) {
+  int index = full_state_vals.FindName(name);
+  if (index != -1) {
+    full_state_vals[index].value = width;
+  }
+  T3ExaminerViewer* vw = GetViewer();
+  if (vw) {
+    vw->state_labels_inited = false;
+    Render_new_net_text();
+  }
 }
 
 void NetView::SaveCtrHist() {

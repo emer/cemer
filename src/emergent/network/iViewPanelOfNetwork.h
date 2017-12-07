@@ -163,13 +163,13 @@ protected:
   void                  CopyFrom_impl() override;
   void                  setHighlightSpec(BaseSpec* spec, bool force = false);
   void                  RebuildNetStateCurList();
-  void                  RebuildNetStateFullList();
 
 public slots:
   void                  viewWin_NotifySignal(ISelectableHost* src, int op); // forwarded to netview
   void                  dynbuttonActivated(int but_no); // for hot member buttons
   void                  unTrappedKeyPressEvent(QKeyEvent* e);
   // gets signal of same name from T3ExaminerViewer -- used for keyboard arrow nav
+  void                  NetStateOrderChanged(int from_index, int to_index);
 
 protected slots:
   void                  butScaleDefault_pressed();
@@ -184,7 +184,6 @@ protected slots:
   void                  hist_movie();
   void                  lvDisplayValues_selectionChanged();
   void                  lvDisplayValues_itemClicked(QTreeWidgetItem* item, int col);
-  void                  NetStateValues_selectionChanged();
   void                  NetStateValues_itemClicked(QTreeWidgetItem* item, int col);
   void                  tvSpecs_ItemSelected(iTreeViewItem* item);
   // note: this one seems a bit defunct for the iTreeView -- replaced with Notify below

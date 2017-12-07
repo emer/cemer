@@ -30,12 +30,14 @@
 #include <iFlowLayout>
 #include <iTreeListWidget>
 
+#include <taMisc>
 #include <taiMisc>
 
 #include <QVBoxLayout>
 #include <QCheckBox>
 #include <QToolBar>
 #include <QLabel>
+#include <QPushButton>
 #include <QAction>
 #include <QTabWidget>
 #include <QPushButton>
@@ -455,7 +457,9 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
 //     this, SLOT(tvSpecs_ItemSelected(iTreeViewItem*)) );
 
   ////////////////////////////////////////////////////////////////////////////
-  state_values = new iTreeListWidget();
+  state_values = new iTreeListWidget(this);
+
+  connect(state_values, SIGNAL(ListOrderChange(int, int)), this, SLOT(NetStateOrderChanged(int, int)) );
 
   tw->addTab(state_values, "Net State Values");
   
@@ -785,8 +789,10 @@ void iViewPanelOfNetwork::GetNetVars() {
   if (!td) return;
   
   MemberDef* md;
-  for (int i=0; i < nv->full_state_vals.size; i++) {
-    String name = nv->full_state_vals[i];
+  String_Array vars;
+  nv->GetNetStateVarNames(&vars);
+  for (int i=0; i < vars.size; i++) {
+    String name = vars[i];
     QTreeWidgetItem* titm = new QTreeWidgetItem(state_values);
     md = td->members.FindName(name);
     if (!md) {
@@ -853,18 +859,6 @@ void iViewPanelOfNetwork::lvDisplayValues_itemClicked(QTreeWidgetItem* item, int
   nv->UpdateDisplay(false);
 }
 
-void iViewPanelOfNetwork::NetStateValues_selectionChanged() {
-  if (updating) return;
-  
-  NetView *nv = getNetView();
-  if (!nv) return;
-
-  // build the list again to ensure they display in same order as they are in this list view
-  RebuildNetStateFullList();
-  RebuildNetStateCurList();
-  nv->UpdateDisplay(false);
-}
-
 void iViewPanelOfNetwork::NetStateValues_itemClicked(QTreeWidgetItem* changed_item, int col) {
   if (updating) return;
   
@@ -885,7 +879,7 @@ void iViewPanelOfNetwork::RebuildNetStateCurList() {
   QTreeWidgetItem* item;
   int col = 0;
   while ( (item = *it) ) {
-    Qt::CheckState chkd = item->checkState(col);
+   Qt::CheckState chkd = item->checkState(col);
     if (chkd) {
       nv->cur_state_vals.AddUnique(item->text(col));
     }
@@ -893,18 +887,14 @@ void iViewPanelOfNetwork::RebuildNetStateCurList() {
   }
 }
 
-void iViewPanelOfNetwork::RebuildNetStateFullList() {
+void iViewPanelOfNetwork::NetStateOrderChanged(int from_index, int to_index) {
+  if (updating) return;
+  
   NetView *nv = getNetView();
   if (!nv) return;
   
-  nv->full_state_vals.Reset();
-  QTreeWidgetItemIterator it(state_values);
-  QTreeWidgetItem* item;
-  int col = 0;
-  while ( (item = *it) ) {
-    nv->full_state_vals.AddUnique(item->text(0));
-    ++it;
-  }
+  nv->NetStateListReorder(from_index, to_index);
+  nv->UpdateDisplay(false);
 }
 
 void iViewPanelOfNetwork::setHighlightSpec(BaseSpec* spec, bool force) {
@@ -986,7 +976,7 @@ void iViewPanelOfNetwork::dynbuttonActivated(int but_no) {
     vw->setDynButtonChecked(but_no, true, true); // mutex
   }
   ColorScaleFromData();
-
+  
 //   nv->InitDisplay(false);
   nv->UpdateDisplay(true);     // update panel
 }

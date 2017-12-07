@@ -18,9 +18,12 @@
 #include <QTreeWidgetItem>
 #include <QDropEvent>
 
+#include <taMisc>
+
 iTreeListWidget::iTreeListWidget(QWidget* parent)
 :inherited(parent)
 {
+  parent_ = parent;
   init();
 }
 
@@ -41,23 +44,34 @@ void iTreeListWidget::dropEvent(QDropEvent* e) {
   {
     QList<QTreeWidgetItem*> dragItems = selectedItems();
     QTreeWidgetItem* item = dragItems.first();
-
+    
+    int from_index;
+    int to_index;
+    
     switch (drop_indicator)
     {
       case QAbstractItemView::AboveItem:
       case QAbstractItemView::BelowItem:
+      {
+        from_index = this->indexOfTopLevelItem(item);
+        to_index = drop_index.row();
         inherited::dropEvent(e);
+        emit ListOrderChange(from_index, to_index);
+      }
         break;
+        
       case QAbstractItemView::OnItem:
       {
         // remove the dragged item and insert as top level item in new location
-        int item_index = this->indexOfTopLevelItem(item);
-        this->takeTopLevelItem(item_index);
-        this->insertTopLevelItem(drop_index.row(), item);
-        this->itemSelectionChanged();  // if we had a model we would get "rowsInserted" - but this is a way to notify of something changing!
-        this->clearSelection();
+        // we don't allow children - this tree emulates a list!
+        from_index = this->indexOfTopLevelItem(item);
+        to_index = drop_index.row();
+        this->takeTopLevelItem(from_index);
+        this->insertTopLevelItem(to_index, item);
+        emit ListOrderChange(from_index, to_index);
       }
         break;
+        
       case QAbstractItemView::OnViewport:
         break;
     }

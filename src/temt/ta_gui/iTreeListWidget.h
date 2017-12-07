@@ -31,11 +31,20 @@ public:
   iTreeListWidget(QWidget* parent = 0);
   ~iTreeListWidget();
   
+#ifndef __MAKETA__
+signals:
+  void                ListOrderChange(int from_index, int ito_index);
+  //
+#endif
+
 protected:
+  QWidget*              parent_;
   void                  dropEvent(QDropEvent* e) override;
 
 private:
   void                  init();
+  
+  
 };
 
 #endif // iTreeListWidget_h

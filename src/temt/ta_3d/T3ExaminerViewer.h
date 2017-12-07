@@ -34,8 +34,10 @@ class iThumbWheel; //
 class QVBoxLayout; // 
 class QHBoxLayout; // 
 class QLabel; //
+class QPushButton; //
 class iMenuButton; //
-class iFlowLayout; //
+class iFlowLayout; ////
+class NameVar_Array;
 
 #ifdef TA_QT3D
 #else
@@ -176,8 +178,8 @@ public:
   QToolButton*    print_button;    // (printer) -- print current view to a file
   iMenuButton*    annote_button;   // (+) -- add annotations to the view
   
-  bool                state_labels_inited; // have the labels been created? we do that once and then just changed the label text
-  QList<QLabel*>      state_labels; // each network state variable and value is displayed as a label in the net_state_layout
+  bool                     state_labels_inited; // have the labels been created? we do that once and then just changed the label text
+  QList<QPushButton*>      state_labels; // each network state variable and value is displayed as a label in the net_state_layout
 
   static const int    n_views;      // number of saved view parameters to save (length of saved_views)
   T3SavedView_List    saved_views; // saved view information
@@ -286,7 +288,7 @@ public:
   // print the current viewer image to a printer
   virtual float         devicePixelRatio();
   // ratio of physical to logical pixels
-  virtual void          UpdateStateValues(const String_Array& net_state_strs);
+  virtual void          UpdateStateValues(const NameVar_Array& state_strs);
   // update the values of the net state labels in the net state layout portion of the frame
   virtual void          ClearStateValues();
   // update the values of the net state labels in the net state layout portion of the frame
@@ -304,6 +306,7 @@ public slots:
   void seekbuttonClicked();
   void snapshotbuttonClicked();
   void printbuttonClicked();
+  void StateButtonClicked();
 
   void annoteLineClicked();
   void annoteStartArrowClicked();
