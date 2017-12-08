@@ -230,7 +230,7 @@ public:
   // update list of state vars - item has been moved
   virtual int           GetStateDisplayWidth(const String& name) override;
   //
-  virtual void          SetStateDisplayWidth(const String& name, int width) override;;
+  virtual void          SetStateDisplayWidth(const String& name, int width) override;
   //
 
   virtual void          InitCtrHist(bool force = false);

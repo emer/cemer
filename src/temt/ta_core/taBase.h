@@ -1046,6 +1046,8 @@ public:
   // #CAT_ObjectMgmt send the ITEM_UPDATED data changed signal to indicate to gui elements etc that this item has been updated
   void                  StructUpdate(bool begin) { BatchUpdate(begin, true); }
   // #CAT_ObjectMgmt bracket structural changes with (nestable) true/false calls;
+  void                  StructUpdateClear();
+  // #CAT_ObjectMgmt clear out any existing struct updates -- good to add this in Program code that uses StructUpdate where an Error might prevent the end call from being made -- also clears any unresolved DataUpdates
   void                  DataUpdate(bool begin) { BatchUpdate(begin, false); }
   // #CAT_ObjectMgmt bracket data value changes with (nestable) true/false calls;
   bool                  InStructUpdate();

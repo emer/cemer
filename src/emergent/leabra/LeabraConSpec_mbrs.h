@@ -242,14 +242,13 @@ class STATE_CLASS(WtBalanceSpec) : public STATE_CLASS(SpecMemberBase) {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra weight balance soft renormalization spec: maintains overall weight balance by progressively penalizing weight increases as a function of how strong the weights are overall (subject to thresholding) and long time-averaged activation -- plugs into soft bounding function -- see network times.bal_int for interval in trials of updating
 INHERITED(SpecMemberBase)
 public:
-  bool          on;             // perform weight balance soft normalization?  if so, maintains overall weight balance across units by progressively penalizing weight increases as a function of amount of averaged weight above a high threshold (hi_thr) and long time-average activation above an act_thr -- this is generally very beneficial for larger models where hog units are a problem, but not as much for smaller models where the additional constraints are not beneficial -- uses a sigmoidal function: wb_inc = 1 / (1 + hi_gain*(wb_avg - hi_thr) + act_gain * (act_avg - act_thr))) 
-  float         avg_thr;         // #CONDSHOW_ON_on #DEF_0.5 threshold on weight value for inclusion into the weight average that is then subject to the further hi_thr threshold for then driving a change in weight balance -- this avg_thr allows only stronger weights to contribute so that weakening of lower weights does not dilute sensitivity to number and strength of strong weights
-  float         hi_thr;         // #CONDSHOW_ON_on #DEF_0.7 high threshold on weight average (subject to avg_thr) before it drives changes in weight increase vs. decrease factors
+  bool          on;             // perform weight balance soft normalization?  if so, maintains overall weight balance across units by progressively penalizing weight increases as a function of amount of averaged weight above a high threshold (hi_thr) and long time-average activation above an act_thr -- this is generally very beneficial for larger models where hog units are a problem, but not as much for smaller models where the additional constraints are not beneficial -- uses a sigmoidal function: wb_inc = 1 / (1 + hi_gain*(wb_avg - hi_thr) + act_gain * (act_avg - act_thr)))
+  float         avg_thr;        // #CONDSHOW_ON_on #DEF_0.5 threshold on weight value for inclusion into the weight average that is then subject to the further hi_thr threshold for then driving a change in weight balance -- this avg_thr allows only stronger weights to contribute so that weakening of lower weights does not dilute sensitivity to number and strength of strong weights
+  float         hi_thr;         // #CONDSHOW_ON_on #DEF_0.6 high threshold on weight average (subject to avg_thr) before it drives changes in weight increase vs. decrease factors
   float         hi_gain;        // #CONDSHOW_ON_on gain multiplier applied to above-hi_thr thresholded weight averages -- higher values turn weight increases down more rapidly as the weights become more imbalanced 
-  float         act_thr;        // #CONDSHOW_ON_on #DEF_0.2 threshold for long time-average activation (act_avg) contribution to weight balance -- based on act_avg relative to act_thr -- same statistic that we use to measure hogging with default .3 threshold
+  float         act_thr;        // #CONDSHOW_ON_on #DEF_0.25 threshold for long time-average activation (act_avg) contribution to weight balance -- based on act_avg relative to act_thr -- same statistic that we use to measure hogging with default .3 threshold
   float         act_gain;       // #CONDSHOW_ON_on gain multiplier applied to above-threshold weight averages -- higher values turn weight increases down more rapidly as the weights become more imbalanced -- see act_thr for equation
-  // float         lo_thr;         // #CONDSHOW_ON_on #DEF_0.2 low threshold -- when average recv weights are below this threshold, weight decreases are penalized in proportion to sigmoidal 1/(1+lo_gain*(lo-thr-avg)) function that saturates at maximum of 1 which means that there are no weight decreases and all weight increases -- weight increases increase proportionally
-  // float         lo_gain;        // #CONDSHOW_ON_on #DEF_4 gain multiplier applied to below-threshold weight averages -- higher values turn weight decreases down more rapidly as the weights become more imbalanced -- see hi_thr for equation
+  bool          no_targ;        // #CONDSHOW_ON_on #DEF_true exclude receiving projections into TARGET layers where units are clamped and also TRC (Pulvinar) thalamic neurons -- typically for clamped layers you do not want to be applying extra constraints such as this weight balancing dynamic -- the BCM hebbian learning is also automatically turned off for such layers as well
   
   INLINE void   WtBal
     (const float wb_avg, const float act_avg, float& wb_fact, float& wb_inc, float& wb_dec) {
@@ -267,9 +266,8 @@ public:
 private:
   void        Initialize()      {   Defaults_init(); }
   void        Defaults_init() {
-    on = true; avg_thr = 0.5f; hi_thr = 0.6f; hi_gain = 4.0f;
+    on = true; no_targ = true; avg_thr = 0.5f; hi_thr = 0.6f; hi_gain = 4.0f;
     act_thr = 0.25f; act_gain = 0.0f; 
-    // lo_thr = 0.2f; lo_gain = 4.0f;
   }
 };
 

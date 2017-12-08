@@ -2160,6 +2160,18 @@ void taBase::SigEmitUpdated() {
   SigEmit(SLS_ITEM_UPDATED);
 }
 
+void taBase::StructUpdateClear() {
+  taSigLink* dl = sig_link(); // doesn't autocreate
+  if(!dl) return;
+  if(dl->dbuCnt() == 0) return;
+  while(dl->dbuCnt() > 0) {
+    dl->SigLinkEmit(SLS_STRUCT_UPDATE_END);
+  }
+  while(dl->dbuCnt() < 0) {
+    dl->SigLinkEmit(SLS_DATA_UPDATE_END);
+  }
+}  
+
 bool taBase::InStructUpdate() {
   taSigLink* dl = sig_link(); // doesn't autocreate
   return (dl ? (dl->dbuCnt() > 0) : false);

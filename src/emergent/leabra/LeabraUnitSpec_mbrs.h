@@ -323,31 +323,30 @@ class STATE_CLASS(LeabraActAvgSpec) : public STATE_CLASS(SpecMemberBase) {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra rate constants for averaging over activations -- only used in XCAL learning rules
 INHERITED(SpecMemberBase)
 public:
-  float         ss_tau;                // #DEF_2;20 #MIN_1 time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly -- 1.4x the half-life), for continuously updating the super-short time-scale avg_ss value -- this is provides a pre-integration step before integrating into the avg_s short time scale
-  float         s_tau;                // #DEF_2;20 #MIN_1 time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly -- 1.4x the half-life), for continuously updating the short time-scale avg_s value from the super-short avg_ss value (cascade mode) -- avg_s represents the plus phase learning signal that reflects the most recent past information
-  float         m_tau;                // #DEF_10;100 #MIN_1 time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly -- 1.4x the half-life), for continuously updating the medium time-scale avg_m value from the short avg_s value (cascade mode) -- avg_m represents the minus phase learning signal that reflects the expectation representation prior to experiencing the outcome (in addition to the outcome)
-  float         m_in_s;                // #DEF_0.1 #MIN_0 #MAX_1 how much of the medium term average activation to include at the short (plus phase) avg_s_eff variable that is actually used in learning -- important to ensure that when unit turns off in plus phase (short time scale), enough medium-phase trace remains so that learning signal doesn't just go all the way to 0, at which point no learning would take place -- typically need faster time constant for updating s such that this trace of the m signal is lost
+  float         ss_tau;                // #DEF_2;4;7 #MIN_1 time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly -- 1.4x the half-life), for continuously updating the super-short time-scale avg_ss value -- this is provides a pre-integration step before integrating into the avg_s short time scale -- it is particularly important for spiking -- in general 4 is the largest value without starting to impair learning, but a value of 7 can be combined with m_in_s = 0 with somewhat worse results
+  float         s_tau;                // #DEF_2 #MIN_1 time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly -- 1.4x the half-life), for continuously updating the short time-scale avg_s value from the super-short avg_ss value (cascade mode) -- avg_s represents the plus phase learning signal that reflects the most recent past information
+  float         m_tau;                // #DEF_10 #MIN_1 time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly -- 1.4x the half-life), for continuously updating the medium time-scale avg_m value from the short avg_s value (cascade mode) -- avg_m represents the minus phase learning signal that reflects the expectation representation prior to experiencing the outcome (in addition to the outcome) -- the default value of 10 generally cannot be exceeded without impairing learning
+  float         m_in_s;                // #DEF_0.1;0 #MIN_0 #MAX_1 how much of the medium term average activation to include at the short (plus phase) avg_s_eff variable that is actually used in learning -- important to ensure that when unit turns off in plus phase (short time scale), enough medium-phase trace remains so that learning signal doesn't just go all the way to 0, at which point no learning would take place -- typically need faster time constant for updating s such that this trace of the m signal is lost -- can set ss_tau=7 and set this to 0 but learning is generally somewhat worse
 
   float         ss_dt;               // #READ_ONLY #EXPERT rate = 1 / tau
   float         s_dt;                // #READ_ONLY #EXPERT rate = 1 / tau
   float         m_dt;                // #READ_ONLY #EXPERT rate = 1 / tau
   float         s_in_s;              // #READ_ONLY #EXPERT 1-m_in_s
 
+  INLINE void   UpdtDts() 
+  { ss_dt = 1.0f / ss_tau;  s_dt = 1.0f / s_tau;  m_dt = 1.0f / m_tau;    s_in_s = 1.0f - m_in_s; }
+  
+  
   STATE_DECO_KEY("UnitSpec");
   STATE_TA_STD_CODE_SPEC(LeabraActAvgSpec);
   
-  STATE_UAE(ss_dt = 1.0f / ss_tau;  s_dt = 1.0f / s_tau;
-                    m_dt = 1.0f / m_tau;    s_in_s = 1.0f - m_in_s; );
+  STATE_UAE( UpdtDts(); );
   
 private:
   void        Initialize()      { Defaults_init(); }
   void        Defaults_init() {
-    ss_tau = 2.0f;  s_tau = 2.0f;  m_tau = 10.0f;  m_in_s = 0.1f;
-
-    ss_dt = 1.0f / ss_tau;
-    s_dt = 1.0f / s_tau;
-    m_dt = 1.0f / m_tau;
-    s_in_s = 1.0f - m_in_s;
+    ss_tau = 4.0f;  s_tau = 2.0f;  m_tau = 10.0f;  m_in_s = 0.1f;
+    UpdtDts();
   }
 };
 
@@ -514,6 +513,7 @@ public:
   bool          invert_nd;      // invert the adaptation effect for the act_nd (non-depressed) value that is typically used for learning-drivng averages (avg_ss, _s, _m) 
   float         max_gc;         // #CONDSHOW_ON_clamp||invert_nd for clamp or invert_nd, maximum k_na conductance that we expect to get -- apply a proportional reduction in clamped activation and/or enhancement of act_nd based on current k_na conductance
   float         max_adapt;      // #CONDSHOW_ON_clamp||invert_nd #DEF_0.5 for clamp or invert_nd, maximum amount of adaptation to apply to clamped activations / act_nd when conductance is at max_gc
+  bool          no_targ;        // #DEF_true automatically exclude units in TARGET layers and also TRC (Pulvinar) thalamic neurons from adaptation effects -- typically such layers should not be subject to these effects, so this makes it easier to not have to manually set those override params
 
   INLINE float Compute_Clamped(float clamp_act, float gc_kna_f, float gc_kna_m, float gc_kna_s) {
     float gc_kna = gc_kna_f + gc_kna_m + gc_kna_s;
@@ -537,7 +537,7 @@ public:
 private:
   void        Initialize()      { Defaults_init(); }
   void        Defaults_init() {
-    clamp = false;  invert_nd = false;  max_gc = .2f;  max_adapt = 0.5f;
+    clamp = false;  invert_nd = false;  max_gc = .2f;  max_adapt = 0.5f;  no_targ = true;
   }
 };
 

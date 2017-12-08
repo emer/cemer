@@ -169,6 +169,10 @@ void LEABRA_UNIT_SPEC::Init_UnitState(UNIT_STATE* uv, NETWORK_STATE* net, int th
   // not the scales
   // init netin gets act_sent, net_raw, etc
   u->spk_t = -1;
+
+  if(deep.IsTRC()) {
+    u->SetUnitFlag(LEABRA_UNIT_STATE::TRC);
+  }
 }
 
 

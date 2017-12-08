@@ -474,6 +474,9 @@
 
   INLINE virtual void 	Compute_WtBal(LEABRA_CON_STATE* cg, LEABRA_NETWORK_STATE* net, int thr_no) {
     if(!learn || cg->size < 1 || !wt_bal.on) return;
+    LEABRA_UNIT_STATE* ru = cg->ThrOwnUnState(net, thr_no);
+    if(wt_bal.no_targ &&
+       (ru->HasUnitFlag(LEABRA_UNIT_STATE::TRC) || ru->HasExtFlag(LEABRA_UNIT_STATE::TARG))) return;
     float sum_wt = 0.0f;
     int sum_n = 0;
     for(int i=0; i<cg->size; i++) {
@@ -488,7 +491,6 @@
     else
       sum_wt = 0.0f;
     cg->wb_avg = sum_wt;
-    LEABRA_UNIT_STATE* ru = cg->ThrOwnUnState(net, thr_no);
     wt_bal.WtBal(sum_wt, ru->act_avg, cg->wb_fact, cg->wb_inc, cg->wb_dec);
     // note: these are specific to recv unit and cannot be copied to sender!
     // BUT can copy to synapses:

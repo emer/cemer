@@ -145,6 +145,8 @@ void ProgObjList::SigEmit(int sls, void* op1, void* op2) {
 void ProgObjList::StructUpdateEls(bool begin) {
   for(int i=0;i<size;i++) {
     taBase* itm = FastEl(i);
+    if(begin)
+      itm->StructUpdateClear(); // clear any pending before blocking our own updates
     itm->StructUpdate(begin);
   }
 }

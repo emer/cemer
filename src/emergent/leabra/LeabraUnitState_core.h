@@ -12,6 +12,7 @@
     MATRIX      = 0x08000,     // matrix-like structure 
     DORSAL      = 0x10000,     // dorsal 
     VENTRAL     = 0x20000,     // ventral
+    TRC         = 0x40000,     // thalamic relay cell (Pulvinar)
   };
   
   float      bias_fwt;       // #NO_SAVE #CAT_Learning bias weight: fast learning linear (underlying) weight value -- learns according to the lrate specified in the connection spec -- this is converted into the effective weight value, "wt", via sigmoidal contrast enhancement (wt_sig)

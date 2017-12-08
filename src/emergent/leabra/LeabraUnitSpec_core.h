@@ -316,7 +316,10 @@
     if(cycle > 0 && deep.ApplyDeepMod()) {
       ext_in *= u->deep_mod;
     }
-    if(kna_misc.clamp) {
+    bool do_kna_clamp =
+      (kna_misc.clamp && !(kna_misc.no_targ &&
+                           (deep.IsTRC() || u->HasExtFlag(LEABRA_UNIT_STATE::TARG))));
+    if(do_kna_clamp) {
       u->net = kna_misc.Compute_Clamped(ext_in, u->gc_kna_f, u->gc_kna_m, u->gc_kna_s);
     }
     else {
@@ -328,7 +331,7 @@
       new_act = clamp_range.Clip(new_act);
     }
     u->act_eq = u->act = new_act;
-    if(kna_misc.clamp && kna_misc.invert_nd) {
+    if(do_kna_clamp && kna_misc.invert_nd) {
       if(clip) {
         u->act_nd = clamp_range.Clip(ext_in); // original non-adapted ext val
       }
@@ -583,7 +586,8 @@
 
     if((net->cycle >= 0) && lay->hard_clamped) {
       // Compute_HardClamp happens before deep_mod is available due to timing of updates
-      if(kna_misc.clamp) {
+      if(kna_misc.clamp &&
+         !(kna_misc.no_targ && (deep.IsTRC() || u->HasExtFlag(LEABRA_UNIT_STATE::TARG)))) {
         float ext_in = u->ext;
         if(deep.ApplyDeepMod())
           ext_in *= u->deep_mod;
@@ -786,6 +790,8 @@
   //              Self reg / adapt / depress
 
   INLINE virtual void Compute_ActAdapt_Cycle(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) {
+    if(kna_misc.no_targ && (deep.IsTRC() || u->HasExtFlag(LEABRA_UNIT_STATE::TARG)))
+      return;
     if(act_fun == SPIKE) {
       kna_adapt.Compute_dKNa_spike(u->spike > 0.1f, u->gc_kna_f, u->gc_kna_m, u->gc_kna_s);
     }
