@@ -471,12 +471,9 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   state_values->setSortingEnabled(false);
   state_values->setSelectionMode(QAbstractItemView::SingleSelection);
   state_values->setDragEnabled(true);
-//  state_values->setAcceptDrops(true);
   state_values->setDropIndicatorShown(true);
   state_values->setDragDropMode(QAbstractItemView::InternalMove);
 
-  connect(state_values, SIGNAL(itemSelectionChanged()), this,
-          SLOT(NetStateValues_selectionChanged()) );
   connect(state_values, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this,
           SLOT(NetStateValues_itemClicked(QTreeWidgetItem*, int)) );
 
