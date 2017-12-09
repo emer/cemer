@@ -101,9 +101,11 @@ void LeabraConSpec::UpdateAfterEdit_impl() {
       TestWarning(true, "UAE",
                   "updated lrate in conspec = 2 * previous value -- as of version 7.8.5 a previous implicit 2x factor was removed");
     }
-    // todo: conditionalize on version once new params are set
-    if(wt_bal.hi_thr == 0.4f) {
-      wt_bal.hi_thr = 0.6f;
+    taVersion v833(8, 3, 3);
+    if(taMisc::loading_version < v833) { // prevent repeated updates!
+      bool wbon = wt_bal.on;
+      wt_bal.Defaults();
+      wt_bal.on = wbon;
     }
   }
 }
