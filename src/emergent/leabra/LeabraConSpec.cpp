@@ -102,10 +102,8 @@ void LeabraConSpec::UpdateAfterEdit_impl() {
                   "updated lrate in conspec = 2 * previous value -- as of version 7.8.5 a previous implicit 2x factor was removed");
     }
     taVersion v833(8, 3, 3);
-    if(taMisc::loading_version < v833) { // prevent repeated updates!
-      bool wbon = wt_bal.on;
-      wt_bal.Defaults();
-      wt_bal.on = wbon;
+    if(taMisc::loading_version < v833) {
+      wt_bal.hi_thr = 0.6f; wt_bal.hi_gain = 3.0f; // only vals in common, need updating
     }
   }
 }
