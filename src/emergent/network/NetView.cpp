@@ -37,6 +37,8 @@
 #include <QApplication>
 #include <taSvg>
 #include <UserDataItem_List>
+#include <taProject>
+#include <DataTable>
 
 #include <T3Misc>
 #include <taMisc>
@@ -353,7 +355,7 @@ void NetView::Initialize() {
   net_text_xform.rotate.SetXYZR(1.0f, 0.0f, 0.0f, 0.5f * taMath_float::pi); // start at right mid
   net_text_xform.scale = 0.5f;
   net_text_rot = -90.0f;
-  state_width_default = 70; // pixels
+  state_width_default = 8; // characters
 
   con_type = ANY_CON;
   prjn_starts_with = "";
@@ -443,6 +445,15 @@ void NetView::UpdateAfterEdit_impl() {
         cur_state_vals.AddUnique("sse");
         cur_state_vals.AddUnique("trial_name");
         cur_state_vals.AddUnique("output_name");
+      }
+    }
+    taVersion v834(8, 3, 4);
+    if(taMisc::loading_version < v834) { // change from pixels to characters
+      for (int i=0; i<full_state_vals.size; i++) {
+        int value_in_pixels = full_state_vals[i].value.toInt();
+        if (value_in_pixels >= 70) {
+          full_state_vals[i].value = (int)taMath_float::round(value_in_pixels/9) + 1;
+        }
       }
     }
   }
@@ -1333,6 +1344,17 @@ void NetView::Render_new_net_text() {
   if (vw) {
     vw->UpdateStateValues(net_state_strs);
   }
+  
+//  taProject* proj = GetMyProj();
+//  if (proj) {
+//    DataTable* output_table = (DataTable*)proj->data.FindLeafName("TrialOutputData");
+//    if (output_table) {
+//      if (output_table->rows > 0) {
+//        float value = output_table->GetValAsFloat("Output_lay_cos_err", -1);
+//        taMisc::DebugInfo((String)value);
+//      }
+//    }
+//  }
 }
 
 void NetView::Render_wt_lines() {

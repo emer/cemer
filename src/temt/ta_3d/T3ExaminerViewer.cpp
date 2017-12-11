@@ -795,7 +795,7 @@ void T3ExaminerViewer::StateButtonClicked() {
   taGuiDialog dlg;
   int new_width = dvm->GetStateDisplayWidth(button_str);
   dlg.Reset();
-  dlg.prompt = "Enter new width in pixels for the variable '" + button_str + "'\n\nThis is for the value portion of width.\nLabel width automatically added.";
+  dlg.prompt = "Enter new width in characters for the variable '" + button_str + "'\n\nThis is for the value portion of width.\nLabel width automatically added.";
   dlg.win_title = "Edit Display Width";
   dlg.AddWidget("main", "", "");
   dlg.AddVBoxLayout("mainv","","main","");
@@ -1618,8 +1618,7 @@ void T3ExaminerViewer::UpdateStateValues(const NameVar_Array& state_strs) {
     ClearStateValues();
     for (int i=0; i<state_strs.size; i++) {
       String var = state_strs[i].name;
-      int value_width_in_pixels = state_strs[i].value.toInt();
-      
+      int value_width_in_chars = state_strs[i].value.toInt();      
       QPushButton* button = new QPushButton(this);
       button->setFont(taiM->buttonFont(taiMisc::sizMedium));
       connect(button, SIGNAL(clicked()), this, SLOT(StateButtonClicked()));
@@ -1629,8 +1628,7 @@ void T3ExaminerViewer::UpdateStateValues(const NameVar_Array& state_strs) {
       QFontMetrics fm(button->fontMetrics());
       String label_part = var.through(':');
       int label_part_in_pixels = fm.width(label_part) + 10;  // allow for padding etc so label is always readable
-      int fixed_width_total = label_part_in_pixels + value_width_in_pixels;
-      
+      int fixed_width_total = label_part_in_pixels + value_width_in_chars * fm.maxWidth();      
       int height = taiM->label_height(taiMisc::sizMedium);
       state_labels[i]->setFixedSize(fixed_width_total, height);
       net_state_layout->addWidget(state_labels.at(i));
