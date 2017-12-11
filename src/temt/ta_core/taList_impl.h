@@ -168,13 +168,13 @@ public:
 
   virtual int   FindTypeIdx(TypeDef* item_tp) const;
   // #CAT_Access find index of (first) element that inherits from given type (-1 = not found)
-  virtual int   FindNameContainsIdx(const String& item_nm) const;
-  // #CAT_Access Find index of (first) element whose name contains given name sub-string (-1 = nonot found)
+  virtual int   FindNameContainsIdx(const String& item_nm, int start_idx = -1) const;
+  // #CAT_Access Find index of (first) element whose name contains given name sub-string (-1 = not found) -- start_idx can speed up search if you have any idea where to start -- does a bidirectional search from that starting location
   virtual int   FindNameTypeIdx(const String& item_nm) const;
   // #CAT_Access Find index of (first) element with given object name or type name (item_nm) (-1 if not found)
 
   virtual taBase* FindType_(TypeDef* item_tp) const;    // #IGNORE
-  virtual taBase* FindNameContains_(const String& item_nm) const;
+  virtual taBase* FindNameContains_(const String& item_nm, int start_idx = -1) const;
   // #IGNORE
   virtual taBase* FindNameType_(const String& item_nm) const;
   // #IGNORE

@@ -135,7 +135,7 @@ public:
   { void* rval=NULL; if(InRange(i)) rval = el[i]; return rval; }
   // #IGNORE -- for internal use only, where you want NULL if i < 0
   void*         FastEl_(int i)  const   { return el[i]; }       // #IGNORE
-  virtual void* FindName_(const String& it) const;      // #IGNORE
+  virtual void* FindName_(const String& it, int start_idx = -1) const;      // #IGNORE
   void*         Pop_(); // #IGNORE -- NOTE: non-standard semantics, does not do a disown
   void*         TakeItem_(int idx); // #IGNORE -- WARNING: not for owned items!!!
   void*         First_() const
@@ -153,7 +153,7 @@ public:
   //    functions that are passed el of type    //
   ////////////////////////////////////////////////
   
-  virtual int   FindEl_(const void* it) const;                  // #IGNORE
+  virtual int   FindEl_(const void* it, int start_idx = -1) const;                  // #IGNORE
   
   virtual void  AddOnly_(void* it);
   // #IGNORE just puts the el on the list, doesn't do anything else
@@ -186,8 +186,8 @@ public:
   // functions that don't depend on the type    //
   ////////////////////////////////////////////////
   
-  virtual int   FindNameIdx(const String& it) const;
-  // #CAT_Access return the index of the item with given name on the list
+  virtual int   FindNameIdx(const String& it, int start_idx = -1) const;
+  // #CAT_Access return the index of the item with given name on the list -- uses hash table if set, and start_idx can speed up search if you have any idea where to start -- does a bidirectional search from that starting location
   
   virtual TypeDef* GetElType() const {return NULL;}
   // #IGNORE Default type for objects in group

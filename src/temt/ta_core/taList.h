@@ -63,12 +63,12 @@ public:
 
   T*            Edit_El(T* item) const          { return SafeEl(FindEl((taBase*)item)); }
   // #MENU #MENU_ON_Edit #USE_RVAL #ARG_ON_OBJ #CAT_Access Edit given list item
-  T*            FindName(const String& item_nm) const
-  { return (T*)FindName_(item_nm); }
-  // #MENU #USE_RVAL #ARGC_1 #CAT_Access Find element with given name (item_nm)
-  T*            FindNameContains(const String& item_nm) const
-  { return (T*)FindNameContains_(item_nm); }
-  // #MENU #USE_RVAL #ARGC_1 #CAT_Access Find element whose name contains given name sub-string
+  T*            FindName(const String& item_nm, int start_idx = -1) const
+  { return (T*)FindName_(item_nm, start_idx); }
+  // #MENU #USE_RVAL #ARGC_1 #CAT_Access Find element with given name (item_nm) -- uses hash table if set, and start_idx can speed up search if you have any idea where to start -- does a bidirectional search from that starting location
+  T*            FindNameContains(const String& item_nm, int start_idx = -1) const
+  { return (T*)FindNameContains_(item_nm, start_idx); }
+  // #MENU #USE_RVAL #ARGC_1 #CAT_Access Find element whose name contains given name sub-string -- start_idx can speed up search if you have any idea where to start -- does a bidirectional search from that starting location
   T*            FindType(TypeDef* item_tp) const
   { return (T*)FindType_(item_tp); }
   // #CAT_Access find given type element (NULL = not here), sets idx

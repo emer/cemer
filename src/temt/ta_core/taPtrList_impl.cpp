@@ -141,32 +141,77 @@ String taPtrList_impl::El_GetHashString_(void* it) const {
   return (hash_table->key_type == taHashTable::KT_NAME) ? El_GetName_(it) : _nilString;
 }
 
-int taPtrList_impl::FindEl_(const void* it) const {
+int taPtrList_impl::FindEl_(const void* it, int start_idx) const {
   if (hash_table && (hash_table->key_type == taHashTable::KT_PTR))
     return hash_table->FindHashValPtr(it);
   
-  int i;
-  for(i=0; i < size; i++) {
-    if(el[i] == it)
-      return i;
+  if(start_idx > 0) {
+    int upi = start_idx+1;
+    int dni = start_idx;
+    bool upo = false;
+    while(true) {
+      if(!upo && upi < size) {
+        if(el[upi] == it) return upi;
+        ++upi;
+      }
+      else {
+        upo = true;
+      }
+      if(dni >= 0) {
+        if(el[dni] == it) return dni;
+        --dni;
+      }
+      else if(upo) {
+        break;
+      }
+    }        
   }
-  return -1;
-}
-
-int taPtrList_impl::FindNameIdx(const String& nm) const {
-  if (hash_table && (hash_table->key_type == taHashTable::KT_NAME))
-    return hash_table->FindHashValString(nm);
-  
-  for(int i=0; i < size; i++) {
-    if(El_FindCheck_(el[i], nm)) {
-      return i;
+  else {
+    for(int i=0; i < size; i++) {
+      if(el[i] == it)
+        return i;
     }
   }
   return -1;
 }
 
-void* taPtrList_impl::FindName_(const String& nm) const {
-  int idx = FindNameIdx(nm);
+int taPtrList_impl::FindNameIdx(const String& nm, int start_idx) const {
+  if (hash_table && (hash_table->key_type == taHashTable::KT_NAME))
+    return hash_table->FindHashValString(nm);
+
+  if(start_idx > 0) {
+    int upi = start_idx+1;
+    int dni = start_idx;
+    bool upo = false;
+    while(true) {
+      if(!upo && upi < size) {
+        if(El_FindCheck_(el[upi], nm)) return upi;
+        ++upi;
+      }
+      else {
+        upo = true;
+      }
+      if(dni >= 0) {
+        if(El_FindCheck_(el[dni], nm)) return dni;
+        --dni;
+      }
+      else if(upo) {
+        break;
+      }
+    }        
+  }
+  else {
+    for(int i=0; i < size; i++) {
+      if(El_FindCheck_(el[i], nm)) {
+        return i;
+      }
+    }
+  }
+  return -1;
+}
+
+void* taPtrList_impl::FindName_(const String& nm, int start_idx) const {
+  int idx = FindNameIdx(nm, start_idx);
   if(idx >= 0) return el[idx];
   return NULL;
 }

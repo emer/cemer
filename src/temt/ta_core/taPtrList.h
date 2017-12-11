@@ -49,9 +49,9 @@ public:
   T*            Edit_El(T* item) const          { return SafeEl(FindEl(item)); }
   // #CAT_Access #MENU #MENU_ON_Edit #USE_RVAL #ARG_ON_OBJ Edit given list item
 
-  T*            FindName(const String& item_nm) const
-  { return (T*)FindName_(item_nm); }
-  // #CAT_Access find given named element (NULL = not here), sets idx
+  T*            FindName(const String& item_nm, int start_idx = -1) const
+  { return (T*)FindName_(item_nm, start_idx); }
+  // #CAT_Access find given named element (NULL = not here), sets idx -- uses hash table if set, and start_idx can speed up search if you have any idea where to start -- does a bidirectional search from that starting location
   T*            First()                         { return (T*)First_(); }
   // #CAT_Modify return first element, or NULL if list empty
   T*            TakeItem(int idx)       { return (T*)TakeItem_(idx); }
@@ -70,8 +70,9 @@ public:
   //    functions that are passed el of type    //
   ////////////////////////////////////////////////
 
-  virtual int   FindEl(const T* item) const     { return FindEl_((const void*)item); }
-  // #CAT_Access find element in list (-1 if not there)
+  virtual int   FindEl(const T* item, int start_idx = -1) const
+  { return FindEl_((const void*)item, start_idx); }
+  // #CAT_Access find element in list (-1 if not there) -- start_idx can speed up search if you have any idea where to start -- does a bidirectional search from that starting location
   virtual void  AddOnly(T* item)                { AddOnly_((void*)item); }
   // #IGNORE append a new pointer to end of list, does not own it or do anything else
   virtual void  Add(T* item)                    { Add_((void*)item); }

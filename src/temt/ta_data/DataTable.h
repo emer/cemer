@@ -455,10 +455,10 @@ public:
   virtual bool          RenameCol(const String& cur_nm, const String& new_nm);
   // #CAT_Columns rename column with current name cur_nm to new name new_nm (returns false if ccur_nm not found)
 
-  virtual DataCol*      FindColName(const String& col_nm, bool err_msg = false) const;
-  // #CAT_Columns find a column of the given name; if err_msg then generate an error if not found
-  virtual int           FindColNameIdx(const String& col_nm, bool err_msg = false) const;
-  // #CAT_Columns find a column index of the given name; if err_msg then generate an error if not found
+  virtual DataCol*      FindColName(const String& col_nm, bool err_msg = false, int start_idx = -1) const;
+  // #CAT_Columns find a column of the given name; if err_msg then generate an error if not found -- start_idx can speed up search if you have any idea where to start -- does a bidirectional search from that starting location
+  virtual int           FindColNameIdx(const String& col_nm, bool err_msg = false, int start_idx = -1) const;
+  // #CAT_Columns find a column index of the given name; if err_msg then generate an error if not found -- start_idx can speed up search if you have any idea where to start -- does a bidirectional search from that starting location
   virtual int           FindColNameIdxCamelSnake(const String& col_nm, bool err_msg = false) const;
   // #CAT_Columns find a column index of the given name, trying both camel and snake versions of the name if the original is not found; if err_msg then generate an error if not found
 

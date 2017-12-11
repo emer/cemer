@@ -1741,16 +1741,16 @@ bool DataTable::RenameCol(const String& cur_nm, const String& new_nm) {
   return true;
 }
 
-DataCol* DataTable::FindColName(const String& col_nm, bool err_msg) const {
+DataCol* DataTable::FindColName(const String& col_nm, bool err_msg, int start_idx) const {
   if(col_nm.empty()) return NULL;
-  DataCol* da = data.FindName(col_nm);
+  DataCol* da = data.FindName(col_nm, start_idx);
   TestError(!da && err_msg, "FindColName",  "could not find column named:", col_nm);
   return da;
 }
 
-int DataTable::FindColNameIdx(const String& col_nm, bool err_msg) const {
+int DataTable::FindColNameIdx(const String& col_nm, bool err_msg, int start_idx) const {
   if(col_nm.empty()) return -1;
-  int idx = data.FindNameIdx(col_nm);
+  int idx = data.FindNameIdx(col_nm, start_idx);
   TestError(idx < 0 && err_msg, "FindColNameIdx",  "could not find column named:", col_nm);
   return idx;
 }

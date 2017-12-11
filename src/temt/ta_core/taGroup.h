@@ -271,12 +271,12 @@ public:
     const String& name=NULLStr) { return (taGroup<T>*)NewGp_(n_gps, typ, name);}
   // #CAT_Modify Create and add n_gps new sub group(s) of given type (NULL = same type as this group)
 
-  T*            FindName(const String& item_nm)  const
-  { return (T*)FindName_(item_nm); }
-  // #CAT_Access Find element in top-level list with given name (nm) (NULL = not here)
-  virtual T*    FindNameContains(const String& item_nm) const
-  { return (T*)FindNameContains_(item_nm); }
-  // #CAT_Access Find (first) element in top-level list whose name contains given string (NULL = not here)
+  T*            FindName(const String& item_nm, int start_idx = -1)  const
+  { return (T*)FindName_(item_nm, start_idx); }
+  // #CAT_Access Find element in top-level list with given name (nm) (NULL = not here) -- uses hash table if set, and start_idx can speed up search if you have any idea where to start -- does a bidirectional search from that starting location
+  virtual T*    FindNameContains(const String& item_nm, int start_idx = -1) const
+  { return (T*)FindNameContains_(item_nm, start_idx); }
+  // #CAT_Access Find (first) element in top-level list whose name contains given string (NULL = not here), start_idx can speed up search if you have any idea where to start -- does a bidirectional search from that starting location
   virtual T*    FindType(TypeDef* item_tp) const
   { return (T*)FindType_(item_tp); }
   // #CAT_Access find in top-level list given type element (NULL = not here)

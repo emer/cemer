@@ -1156,18 +1156,43 @@ taBase* taList_impl::FindType_(TypeDef* it) const {
   return NULL;
 }
 
-int taList_impl::FindNameContainsIdx(const String& item_nm) const {
-  for(int i=0; i < size; i++) {
-    taBase* it = (taBase*)el[i];
-    if(it && it->GetName().contains(item_nm)) {
-      return i;
+int taList_impl::FindNameContainsIdx(const String& item_nm, int start_idx) const {
+  if(start_idx > 0) {
+    int upi = start_idx+1;
+    int dni = start_idx;
+    bool upo = false;
+    while(true) {
+      if(!upo && upi < size) {
+        taBase* it = (taBase*)el[upi];
+        if(it && it->GetName().contains(item_nm)) return upi;
+        ++upi;
+      }
+      else {
+        upo = true;
+      }
+      if(dni >= 0) {
+        taBase* it = (taBase*)el[dni];
+        if(it && it->GetName().contains(item_nm)) return dni;
+        --dni;
+      }
+      else if(upo) {
+        break;
+      }
+    }        
+  }
+  else {
+    for(int i=0; i < size; i++) {
+      taBase* it = (taBase*)el[i];
+      if(it && it->GetName().contains(item_nm)) {
+        return i;
+      }
     }
   }
   return -1;
 }
 
-taBase* taList_impl::FindNameContains_(const String& item_nm) const {
-  int idx = FindNameContainsIdx(item_nm);
+taBase* taList_impl::FindNameContains_(const String& item_nm, int start_idx) const {
+  int idx = FindNameContainsIdx(item_nm, start_idx);
   if(idx >= 0) return (taBase*)el[idx];
   return NULL;
 }

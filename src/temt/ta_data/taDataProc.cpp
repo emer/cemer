@@ -67,7 +67,7 @@ bool taDataProc::GetCommonCols(DataTable* dest, DataTable* src, DataOpList* dest
   src_cols->GetColumns(src);
   for(int i=0; i<src_cols->size;i++) {
     DataOpEl* sop = src_cols->FastEl(i);
-    int d_idx = dest->FindColNameIdx(sop->col_name);
+    int d_idx = dest->FindColNameIdx(sop->col_name, false); // , i);
     if(d_idx < 0) {
       src_cols->RemoveIdx(i); i--;
       continue;
@@ -148,14 +148,23 @@ bool taDataProc::CopyCommonColsRow_impl(DataTable* dest, DataTable* src, DataOpL
 bool taDataProc::CopyCommonColsRow(DataTable* dest, DataTable* src, int dest_row, int src_row) {
   if(!dest) { taMisc::Error("taDataProc::CopyCommonColsRow: dest is NULL"); return false; }
   if(!src) { taMisc::Error("taDataProc::CopyCommonColsRow: src is NULL"); return false; }
-  if(dest == src) {
-    taMisc::Error("taDataProc::CopyCommonColsRow -- src cannot be same as dest for this operation!");
-    return false;
+  // if(dest == src) {
+  //   taMisc::Error("taDataProc::CopyCommonColsRow -- src cannot be same as dest for this operation!");
+  //   return false;
+  // }
+  // this is very expensive for just one row -- not worth it
+  // DataOpList dest_cols;
+  // DataOpList src_cols;
+  // GetCommonCols(dest, src, &dest_cols, &src_cols);
+  // return CopyCommonColsRow_impl(dest, src, &dest_cols, &src_cols, dest_row, src_row);
+  for(int sci = 0; sci < src->data.size; sci++) {
+    DataCol* sda = src->data[sci];
+    DataCol* dda = dest->FindColName(sda->name, false, sci);
+    if(dda) {
+      dda->CopyFromRow(dest_row, *sda, src_row);
+    }
   }
-  DataOpList dest_cols;
-  DataOpList src_cols;
-  GetCommonCols(dest, src, &dest_cols, &src_cols);
-  return CopyCommonColsRow_impl(dest, src, &dest_cols, &src_cols, dest_row, src_row);
+  return true;
 }
 
 bool taDataProc::CopyCommonColData(DataTable* dest, DataTable* src) {
