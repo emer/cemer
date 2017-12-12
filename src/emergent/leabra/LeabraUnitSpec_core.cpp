@@ -556,7 +556,7 @@ float LEABRA_UNIT_SPEC::Compute_NetinExtras
   if(deep.ApplyDeepCtxt()) {
     net_ex += u->deep_ctxt;
   }
-  if(da_mod.on) {
+  if(da_mod.DoDaModNetin()) {
     net_ex += Compute_DaModNetin(u, net, thr_no, net_syn);
   }
   return net_ex;
@@ -734,15 +734,28 @@ void LEABRA_UNIT_SPEC::Send_DeepRawNetin(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_ST
 
 void LEABRA_UNIT_SPEC::Compute_ActFun_Rate(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) {
   float new_act;
-  if(u->act_raw < act.vm_act_thr && u->v_m_eq <= act.thr) {
-    // note: this is quite important -- if you directly use the gelin
-    // the whole time, then units are active right away -- need v_m_eq dynamics to
-    // drive subthreshold activation behavior
-    new_act = Compute_ActFun_Rate_fun(u->v_m_eq - act.thr);
+  if(da_mod.DoDaModGain()) {
+    float gain_eff = da_mod.DaModGain(u->da_p, act.gain,
+                                      net->phase == LEABRA_NETWORK_STATE::PLUS_PHASE);
+    if(u->act_raw < act.vm_act_thr && u->v_m_eq <= act.thr) {
+      new_act = act.NoisyXX1_gain(u->v_m_eq - act.thr, gain_eff);
+    }
+    else {
+      float g_e_thr = Compute_EThresh(u);
+      new_act = act.NoisyXX1_gain((u->net * g_bar.e) - g_e_thr, gain_eff);
+    }
   }
   else {
-    float g_e_thr = Compute_EThresh(u);
-    new_act = Compute_ActFun_Rate_fun((u->net * g_bar.e) - g_e_thr);
+    if(u->act_raw < act.vm_act_thr && u->v_m_eq <= act.thr) {
+      // note: this is quite important -- if you directly use the gelin
+      // the whole time, then units are active right away -- need v_m_eq dynamics to
+      // drive subthreshold activation behavior
+      new_act = Compute_ActFun_Rate_fun(u->v_m_eq - act.thr);
+    }
+    else {
+      float g_e_thr = Compute_EThresh(u);
+      new_act = Compute_ActFun_Rate_fun((u->net * g_bar.e) - g_e_thr);
+    }
   }
   float cur_act;
   if(kna_misc.invert_nd) {

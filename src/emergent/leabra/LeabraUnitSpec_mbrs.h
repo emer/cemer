@@ -72,6 +72,37 @@ public:
   }
   // noisy x/(x+1) function -- directly computes close approximation to x/(x+1) convolved with a gaussian noise function with variance nvar -- no need for a lookup table -- very reasonable approximation for standard range of parameters (nvar = .01 or less -- higher values of nvar are less accurate with large gains, but ok for lower gains)
 
+
+  INLINE float  XX1GainCor_gain(float x, float gain_arg) {
+    float gain_cor_fact = (gain_cor_range - (x / nvar)) / gain_cor_range;
+    if(gain_cor_fact < 0.0f) {
+      return XX1(gain_arg * x);
+    }
+    float new_gain = gain_arg * (1.0f - gain_cor * gain_cor_fact);
+    return XX1(new_gain * x);
+  }
+  // x/(x+1) with gain correction within gain_cor_range to compensate for convolution effects
+  
+  INLINE float  NoisyXX1_gain(float x, float gain_arg) {
+    if(x < interp_range) {
+      float sig_mult_eff_arg = sig_mult * powf(gain_arg * nvar, sig_mult_pow);
+      float sig_val_at_0_arg = 0.5f * sig_mult_eff_arg;
+    
+      if(x < 0.0f) {        // sigmoidal for < 0
+        return sig_mult_eff_arg / (1.0f + expf(-(x * sig_gain_nvar)));
+      }
+      else { // else x < interp_range
+        float interp = 1.0f - ((interp_range - x) / interp_range);
+        return sig_val_at_0_arg + interp * interp_val;
+      }
+    }
+    else {
+      return XX1GainCor_gain(x, gain_arg);
+    }
+  }
+  // noisy x/(x+1) function -- directly computes close approximation to x/(x+1) convolved with a gaussian noise function with variance nvar -- no need for a lookup table -- very reasonable approximation for standard range of parameters (nvar = .01 or less -- higher values of nvar are less accurate with large gains, but ok for lower gains)
+
+  
   STATE_DECO_KEY("UnitSpec");
   STATE_TA_STD_CODE_SPEC(LeabraActFunSpec);
   
@@ -748,9 +779,32 @@ class STATE_CLASS(DaModSpec) : public STATE_CLASS(SpecMemberBase) {
 INHERITED(SpecMemberBase)
 public:
   bool          on;               // whether to add dopamine factor to net input
+  bool          mod_gain;         // modulate gain instead of net input
   float         minus;            // #CONDSHOW_ON_on how much to multiply da_p in the minus phase to add to netinput -- use negative values for NoGo/indirect pathway/D2 type neurons
   float         plus;             // #CONDSHOW_ON_on #AKA_gain how much to multiply da_p in the plus phase to add to netinput -- use negative values for NoGo/indirect pathway/D2 type neurons
+  float         da_neg_gain;      // #CONDSHOW_ON_on&&mod_gain for negative dopamine, how much to change the default gain value as a function of dopamine: gain_eff = gain * (1 + da * da_neg_gain) -- da is multiplied by minus or plus depending on phase
+  float         da_pos_gain;      // #CONDSHOW_ON_on&&mod_gain for positive dopamine, how much to change the default gain value as a function of dopamine: gain_eff = gain * (1 + da * da_pos_gain) -- da is multiplied by minus or plus depending on phase
 
+  INLINE bool   DoDaModNetin() { return on && !mod_gain; }
+  // are we doing netin modulation
+  INLINE bool   DoDaModGain() { return on && mod_gain; }
+  // are we doing gain modulation
+
+  INLINE float  DaModGain(float da, float gain, bool plus_phase) {
+    float da_eff = da;
+    if(plus_phase)
+      da_eff *= plus;
+    else
+      da_eff *= minus;
+    if(da < 0.0f) {
+      return gain * (1.0f + da_eff * da_neg_gain);
+    }
+    else {
+      return gain * (1.0f + da_eff * da_pos_gain);
+    }
+  }
+  // get da-modulated gain value
+  
   STATE_DECO_KEY("UnitSpec");
   STATE_TA_STD_CODE_SPEC(DaModSpec);
 private:
