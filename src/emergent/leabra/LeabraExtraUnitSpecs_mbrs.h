@@ -159,7 +159,7 @@ public:
   STATE_TA_STD_CODE_SPEC(PVLVDaSpec);
 private:
   void  Initialize()    {
-    patch_cur = true;  rec_data = false;  se_gain = 0.1f;  Defaults_init();
+    patch_cur = true;  rec_data = false;  se_gain = 0.1f;  plus_only = true; Defaults_init();
   }
   void  Defaults_init() { tonic_da = 0.0f; }
 };

@@ -24,6 +24,7 @@
 #include <T3Misc>
 
 const float T3LayerNode::height = 0.05f;
+const float T3LayerNode::max_height = 0.005f;
 const float T3LayerNode::width = 0.5f;
 const float T3LayerNode::max_width = 0.05f;
 
@@ -83,6 +84,7 @@ void T3LayerNode::updateNode() {
 
 
 const float T3LayerNode::height = 0.05f;
+const float T3LayerNode::max_height = 0.005f;
 const float T3LayerNode::width = 0.5f;
 const float T3LayerNode::max_width = 0.05f;
 
@@ -184,11 +186,13 @@ void T3LayerNode::render() {
   float max_xy = MAX(max_size.x, max_size.y);
   float lay_wd = width / max_xy;
   lay_wd = MIN(lay_wd, max_width);
+  float lay_ht = height / max_xy;
+  lay_ht = MIN(lay_ht, max_height);
   
   float xfrac = .5f * fx;
   float yfrac = .5f * fy;
 
-  shape_->setDimensions(fx, fy, height / max_xy, -lay_wd);
+  shape_->setDimensions(fx, fy, lay_ht, -lay_wd);
   // note: LayerView already translates us up into vertical center of cell
   txfm_shape()->translation.setValue(xfrac, 0.0f, -yfrac);
 

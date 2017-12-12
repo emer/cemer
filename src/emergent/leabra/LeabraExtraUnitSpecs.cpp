@@ -880,6 +880,8 @@ void GPiInvUnitSpec::Initialize() {
 }
 
 void GPiInvUnitSpec::Defaults_init() {
+  SetUnique("dt", true);
+  dt.net_tau = 3.0f;
   gate_qtr = Q1_Q3;
 }
 

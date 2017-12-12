@@ -1731,13 +1731,21 @@ String_Data* DataTable::NewColString(const String& col_nm) {
 
 void DataTable::SetColName(const String& col_nm, int col) {
   DataCol* da = GetColData(col);
-  if(da) da->name = col_nm;
+  if(da) {
+    da->SetName(col_nm);
+    if(!InStructUpdate()) {
+      da->SigEmitUpdated();
+    }
+  }
 }
 
 bool DataTable::RenameCol(const String& cur_nm, const String& new_nm) {
   DataCol* da = FindColName(cur_nm);
   if(TestError(!da, "RenameCol", "column named", cur_nm, "not found")) return false;
-  da->name = new_nm;
+  da->SetName(new_nm);
+  if(!InStructUpdate()) {
+    da->SigEmitUpdated();
+  }
   return true;
 }
 
@@ -1986,7 +1994,7 @@ void DataTable::UniqueColNames() {
       DataCol* oda = data.FastEl(j);
       if(da->name == oda->name) {
         dupl++;
-        oda->name += "_" + String(dupl);
+        oda->SetName(oda->name + "_" + String(dupl));
       }
     }
   }

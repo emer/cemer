@@ -35,6 +35,7 @@ class E_API T3LayerNode: public T3NodeParent {
   INHERITED(T3NodeParent)
 public:
   static const float 	height; // = 0.05f height of layer frame shape itself (in fractions of a unit)
+  static const float 	max_height; // = 0.005f max height of layer frame shape itself (in fractions of a unit)
   static const float 	width; // = 0.5f width of layer frame shape (in frac of unit)
   static const float 	max_width; // = 0.05f maximum absolute width value (prevent mondo frames for very small nets)
 
@@ -74,6 +75,7 @@ typedef T3NodeParent inherited;
 #endif
 public:
   static const float 	height; // = 0.05f height of layer frame shape itself (in fractions of a unit)
+  static const float 	max_height; // = 0.005f height of layer frame shape itself (in fractions of a unit)
   static const float 	width; // = 0.5f width of layer frame shape (in frac of unit)
   static const float 	max_width; // = 0.05f maximum absolute width value (prevent mondo frames for very small nets)
 

@@ -284,9 +284,9 @@ void LayerView::Render_impl() {
   if(nv->lay_layout == NetView::THREE_D) {
 #ifdef TA_QT3D
     node_so->caption->TranslateXLeftTo
-      (QVector3D(-0.5f, -0.5f -0.5f*eff_lay_font_size,lay_wd));
+      (QVector3D(-0.5f, -0.5f -0.5f*eff_lay_font_size, lay_wd));
 #else // TA_QT3D
-    SbVec3f tran(0.0f, -eff_lay_font_size, lay_wd);
+    SbVec3f tran(0.0f, -0.8f * eff_lay_font_size, lay_wd);
     node_so->transformCaption(tran);
 #endif // TA_QT3D
 
@@ -302,7 +302,7 @@ void LayerView::Render_impl() {
                                                  0.5f + 1.1f * eff_lay_font_size));
     node_so->caption->RotateDeg(QVector3D(1.0f, 0.0f, 0.0f), -90.0f);
 #else // TA_QT3D
-    SbVec3f tran(0.0f, 0.5f * lay_wd, 1.1f * eff_lay_font_size);
+    SbVec3f tran(0.0f, 0.5f * lay_wd, 1.0f * eff_lay_font_size);
     SbRotation rot(SbVec3f(1.0f, 0.0f, 0.0f), -1.5707963f);
     node_so->transformCaption(rot, tran);
 #endif // TA_QT3D
