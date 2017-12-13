@@ -385,6 +385,8 @@ int Program::CallInit_impl(Program* caller) {
   Run_impl();
   CheckConfig(false);   // check after running!  see below
   script->Restart();    // for init, always restart script at beginning if run again
+  timer.ResetUsed();
+  timer.ResetAvg();
   if(!taMisc::check_ok)
     run_state = NOT_INIT;
   else
@@ -654,6 +656,10 @@ int Program::Cont_impl() {
   script->Cont();
   // note: shared var state likely changed, so update gui
   timer.EndIncrAvg();
+  if(HasProgFlag(TIMING)) {
+    taMisc::Info("Program",name,"secs used:", String(timer.s_used), "average:",
+                 String(timer.avg_used.avg), "n:", String(timer.avg_used.n));
+  }
   script_compiled = true; // override any run-generated changes!!
   // do not update this -- too tight -- only at end!
   // SigEmit(SLS_ITEM_UPDATED_ND);

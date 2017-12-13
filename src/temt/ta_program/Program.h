@@ -67,6 +67,7 @@ public:
     TRACE               = 0x0004, // trace the running of this program by recording each line to the css console as the program runs
     STARTUP_RUN         = 0x0008, // run this prgram at startup (after project is fully loaded and everything else has been initialized) -- if multiple programs are so marked, they will be run in the order they appear in the browser (depth first)
     OBJS_UPDT_GUI       = 0x0010, // when this flag is set, changes to the objs objects update the gui as they happen -- otherwise they are only updated after the program finishes (much faster)
+    TIMING              = 0x0020, // output time used after every time this program is used -- otherwise you can examine it or monitor it in the timer variable in this program -- it is always updated
   };
 
   enum ReturnVal { // system defined return values (<0 are for user defined)
@@ -143,7 +144,7 @@ public:
   ProgExpr              stop_step_cond;
   // #CONDSHOW_OFF_flags:NO_STOP_STEP #BROWSER_EDIT_LOOKUP optional condition for when the default stop / step check should be executed (this is automatically inserted at the end of the program) -- only stop / step when this expression is true -- allows e.g., longer time scales and specific conditions (e.g., errors) to be used for stopping
   TimeUsedHR            timer;
-  // #NO_DIFF timer for this program -- automatically started and stopped each time this program runs -- see the avg_used for overall sum and average time used per run -- accumulates until you manually call timer.ResetAvg() -- does not include Init running time
+  // #NO_DIFF #NO_SAVE timer for this program -- automatically started and stopped each time this program runs -- see the avg_used for overall sum and average time used per run -- accumulates until you manually call timer.ResetAvg() -- does not include Init running time
   ProgObjList           objs;
   // create persistent objects of any type here that are needed for the program -- each object will automatically create an associated variable
   ProgVar_List          objs_vars;
