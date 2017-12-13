@@ -80,6 +80,7 @@ void BpNetwork::Trial_Run() {
   DataUpdate(true);
   NET_STATE_RUN(BpNetworkState, Trial_Run());
   DataUpdate(false);
+  MonitorData();
 }
 
 

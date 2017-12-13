@@ -49,6 +49,8 @@ eTypeDef_Of(CustomPrjnSpec);
 #include "NetworkState_cuda.h"
 #endif
 
+TA_BASEFUNS_CTORS_DEFN(NetNetMonitor);
+
 TA_BASEFUNS_CTORS_DEFN(NetStatsSpecs);
 TA_BASEFUNS_CTORS_DEFN(NetworkCudaSpec);
 
@@ -203,6 +205,8 @@ void Network::InitLinks() {
   taBase::Own(spec_tables, this);
   taBase::Own(specs, this);
   taBase::Own(param_seqs, this);
+  taBase::Own(monitor, this);
+  taBase::Own(mon_data, this);
   taBase::Own(layers, this);
   taBase::Own(weights, this);
   taBase::Own(max_disp_size, this);
@@ -228,6 +232,10 @@ void Network::InitLinks() {
 
   brain_atlas = brain_atlases->FindNameContains("Talairach"); // default
 
+  monitor.network = this;
+  monitor.data = &mon_data;
+  mon_data.ClearDataFlag(DataTable::SAVE_ROWS);
+  
   ClearNetFlag(BUILT);
   ClearIntact();
   
@@ -270,6 +278,9 @@ void Network::CutLinks() {
   max_disp_size.CutLinks();
   max_disp_size2d.CutLinks();
   layers.CutLinks();            // then std kills
+  monitor.CutLinks();
+  mon_data.CutLinks();
+  param_seqs.CutLinks();
   specs.CutLinks();
   proj = NULL;
   inherited::CutLinks();
@@ -573,6 +584,8 @@ void Network::Init_Weights() {
 
   taMisc::Busy();
 
+  monitor.UpdateDataTable();
+
   SyncAllState();
   UpdateAllStateSpecs();
   
@@ -838,6 +851,8 @@ void Network::Build() {
   // one-stop call does everything..
   cuda_state->BuildCudaFmCpp(net_state);
 #endif  
+
+  monitor.UpdateDataTable();
   
   StructUpdate(false);
   --taMisc::no_auto_expand;
@@ -2639,6 +2654,7 @@ void Network::RemoveMonitors() {
     nm->RemoveMonitors();
   }
 }
+
 void Network::UpdateMonitors() {
   if (!proj) return;
   TokenSpace& ts = TA_NetMonitor.tokens;
@@ -2647,6 +2663,14 @@ void Network::UpdateMonitors() {
     if(nm->network.ptr() != this) continue;
     nm->UpdateDataTable();
   }
+}
+
+void Network::MonitorData() {
+  if(monitor.items.size == 0) return;
+  if(!taMisc::gui_active) return;
+  mon_data.EnforceRows(1);
+  mon_data.WriteItem(0);
+  monitor.GetMonVals();
 }
 
 void Network::NetControlPanel(ControlPanel* ctrl_panel, const String& extra_label, const String& sub_gp_nm) {

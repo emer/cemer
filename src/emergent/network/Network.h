@@ -38,6 +38,8 @@
 #include <taMarkUp>
 #include <taBase_RefList>
 #include <byte_Array>
+#include <NetMonitor>
+#include <DataTable>
 
 // declare all other types mentioned but not required to include:
 class ProjectBase; //
@@ -136,6 +138,27 @@ eTypeDef_Of(NetworkCudaSpec);
 #endif
 
 
+eTypeDef_Of(NetNetMonitor);
+
+class E_API NetNetMonitor: public NetMonitor {
+  // special network monitor for network itself -- hides network, data members
+INHERITED(NetMonitor)
+public:
+
+#ifdef __MAKETA__  
+  NetworkRef		network;
+  // #HIDDEN the overall network object that is being monitored -- if changed, any sub-objects will be updated based on path to new network
+  DataTableRef		data;
+  // #HIDDEN the data table that will be used to hold the monitor data
+#endif
+
+  TA_BASEFUNS_NOCOPY(NetNetMonitor);
+private:
+  void Initialize() { };
+  void Destroy() { };
+};
+
+
 eTypeDef_Of(NetStateSync);
 
 class E_API NetStateSync : public taOBase {
@@ -227,6 +250,8 @@ public:
   DataTable_Group spec_tables;  // #CAT_Structure #NO_SAVE Tables comparing parent and child specs
   BaseSpec_Group specs;         // #CAT_Structure Specifications for network parameters
   ParamSeq_Group param_seqs;    // #CAT_Structure parameter sequences keyed off of epoch -- supports automatic arbitrary parameter changes whenver the network epoch is incremented
+  NetNetMonitor monitor;        // #CAT_Statistic #TREE_SHOW special monitor automatically run at the finest grain of network updating (e.g., trial for backprop, cycle for Leabra) -- values can be viewed in the network state text in network view (e.g., for monitoring key activations during processing)
+  DataTable     mon_data;       // #CAT_Statistic #TREE_SHOW data for the monitor -- only single current row is kept at a time -- use a standard monitor program to accumulate data over longer time periods
   Layer_Group   layers;         // #CAT_Structure Layers or Groups of Layers
   Weights_List  weights;        // #CAT_Structure saved weights objects
 
@@ -738,6 +763,8 @@ public:
   // #CAT_ObjectMgmt Remove monitoring of all objects in all processes associated with parent project
   virtual void  UpdateMonitors();
   // #CAT_ObjectMgmt Update monitoring of all objects in all processes associated with parent project
+  virtual void  MonitorData();
+  // #CAT_Statistic run our own monitor to update data in mon_data -- algorithms should call this at the finest update frequency -- only runs if gui active
   virtual void  NetControlPanel(ControlPanel* editor, const String& extra_label = "",
                                 const String& sub_gp_nm = "");
   // #MENU #MENU_ON_ControlPanels #MENU_SEP_BEFORE #NULL_OK_0  #NULL_TEXT_0_NewCtrlPanel #CAT_Display add the key network counters and statistics to a project control panel (if ctrl_panel is NULL, a new one is created in .ctrl_panels).  The extra label is prepended to each member name, and if sub_group, then all items are placed in a subgroup with the network's name.  NOTE: be sure to click update_after on NetCounterInit and Incr at appropriate program level(s) to trigger updates of select edit display (typically in Train to update epoch -- auto update of all after Step so only needed for continuous update during runnign)

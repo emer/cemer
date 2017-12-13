@@ -33,7 +33,7 @@ INHERITED(taNBase)
 public:
   double        s_used;         // #SHOW #GUI_READ_ONLY total number of seconds used
   int           n_used;         // #SHOW #GUI_READ_ONLY number of individual times the timer has been used without resetting accumulation
-  Average       avg_used;       // #SHOW #GUI_READ_ONLY running average of s_used, updated whenever UpdtAvg is called -- useful for keeping track of averages over time
+  Average       avg_used;       // #SHOW #GUI_READ_ONLY running average of s_used seconds, updated whenever UpdtAvg is called -- useful for keeping track of averages over time
 
   virtual void  StartTimer(bool reset_used = true);
   // #CAT_TimeUsed record the current time as the starting time, and optionally reset the time used information

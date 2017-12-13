@@ -1538,6 +1538,7 @@ void taMisc::ClearConsoleHold() {
 
 int taMisc::ProcessEvents(bool waitproc_after) {
 #ifndef NO_TA_BASE
+  // taMisc::Info("e");
   int rval = taiMiscCore::ProcessEvents();
   if(waitproc_after) {
     if(taMisc::WaitProc)
@@ -1551,6 +1552,7 @@ int taMisc::ProcessEvents(bool waitproc_after) {
 
 int taMisc::RunPending(bool waitproc_after) {
 #ifndef NO_TA_BASE
+  // taMisc::Info("p");
   int rval = taiMiscCore::RunPending();
   if(waitproc_after) {
     if(taMisc::WaitProc)

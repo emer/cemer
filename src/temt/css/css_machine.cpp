@@ -119,7 +119,7 @@ cssClassType    cssMisc::VoidClassType("VoidClass");
 
 cssRef          cssMisc::VoidRef;  // for maketoken
 
-QTime           cssMisc::proc_events_timer;
+TimeUsedHR      cssMisc::proc_events_timer;
 
 void cssMisc::CodeConstExpr() {
   code_cur_top = ConstExprTop;
@@ -3563,13 +3563,21 @@ cssEl* cssProg::Cont() {
     }
   }
 
-  if(cssMisc::proc_events_timer.elapsed() > taMisc::css_gui_event_interval) {
-    taMisc::RunPending();
-    if(!top->AmCmdProg()) {
-      if(taMisc::WaitProc)
-        taMisc::WaitProc();         // manually run waitproc as it doesn't happen in pending now
+  if(taMisc::gui_active) {
+    cssMisc::proc_events_timer.EndTimer();
+    int nmsec = (int)(cssMisc::proc_events_timer.s_used * 1000.0);
+    if(nmsec > taMisc::css_gui_event_interval) {
+      // taMisc::Info(String(nmsec));
+      taMisc::RunPending();
+      if(!top->AmCmdProg()) {
+        if(taMisc::WaitProc)
+          taMisc::WaitProc();         // manually run waitproc as it doesn't happen in pending now
+      }
+      cssMisc::proc_events_timer.StartTimer(true);
     }
-    cssMisc::proc_events_timer.restart();
+    else {
+      cssMisc::proc_events_timer.StartTimer(false);
+    }
   }
 
   if(top->run_stat == cssEl::Running)

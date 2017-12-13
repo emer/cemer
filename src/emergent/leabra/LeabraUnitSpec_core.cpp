@@ -170,6 +170,12 @@ void LEABRA_UNIT_SPEC::Init_UnitState(UNIT_STATE* uv, NETWORK_STATE* net, int th
   // init netin gets act_sent, net_raw, etc
   u->spk_t = -1;
 
+  if(deep.IsSuper()) {
+    u->SetUnitFlag(LEABRA_UNIT_STATE::SUPER);
+  }
+  if(deep.IsDeep()) {
+    u->SetUnitFlag(LEABRA_UNIT_STATE::DEEP);
+  }
   if(deep.IsTRC()) {
     u->SetUnitFlag(LEABRA_UNIT_STATE::TRC);
   }

@@ -234,6 +234,7 @@ void LeabraNetwork::Cycle_Run() {
   NET_STATE_RUN(LeabraNetworkState, Cycle_Run());
   SyncAllState();
   Compute_OutputName();         // this used to be computed every cycle.. now just at end of cycle run
+  MonitorData();
 }
 
 

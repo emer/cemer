@@ -38,6 +38,7 @@
 #include <taDoc>
 #include <ProgLib>
 #include <taProjVersion>
+#include <TimeUsedHR>
 
 // declare all other types mentioned but not required to include:
 class cssProgSpace; // 
@@ -141,6 +142,8 @@ public:
   // control flags, for display and execution control
   ProgExpr              stop_step_cond;
   // #CONDSHOW_OFF_flags:NO_STOP_STEP #BROWSER_EDIT_LOOKUP optional condition for when the default stop / step check should be executed (this is automatically inserted at the end of the program) -- only stop / step when this expression is true -- allows e.g., longer time scales and specific conditions (e.g., errors) to be used for stopping
+  TimeUsedHR            timer;
+  // #NO_DIFF timer for this program -- automatically started and stopped each time this program runs -- see the avg_used for overall sum and average time used per run -- accumulates until you manually call timer.ResetAvg() -- does not include Init running time
   ProgObjList           objs;
   // create persistent objects of any type here that are needed for the program -- each object will automatically create an associated variable
   ProgVar_List          objs_vars;

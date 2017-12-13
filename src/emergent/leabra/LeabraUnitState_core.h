@@ -2,17 +2,20 @@
 //{
   // important: coordinate with any changes to UnitState_core UnitFlags -- ends at UN_FLAG_4 at 0x0010
   enum LeabraUnitFlags {        // #BITS extra flags on top of ext flags for leabra
-    D1R         = 0x00100,     // has predominantly D1 receptors
-    D2R         = 0x00200,     // has predominantly D2 receptors
-    ACQUISITION = 0x00400,     // involved in Acquisition
-    EXTINCTION  = 0x00800,     // involved in Extinction
-    APPETITIVE  = 0x01000,     // appetitive (positive valence) coding
-    AVERSIVE    = 0x02000,     // aversive (negative valence) coding
-    PATCH       = 0x04000,     // patch-like structure (striosomes)
-    MATRIX      = 0x08000,     // matrix-like structure 
-    DORSAL      = 0x10000,     // dorsal 
-    VENTRAL     = 0x20000,     // ventral
-    TRC         = 0x40000,     // thalamic relay cell (Pulvinar)
+    SUPER       = 0x00000100,   // superficial layer neocortical cell -- has deep.on role = SUPER
+    DEEP        = 0x00000200,   // deep layer neocortical cell -- has deep.on role = DEEP
+    TRC         = 0x00000400,   // thalamic relay cell (Pulvinar) cell -- has deep.on role = TRC
+
+    D1R         = 0x00001000,   // has predominantly D1 receptors
+    D2R         = 0x00002000,   // has predominantly D2 receptors
+    ACQUISITION = 0x00004000,   // involved in Acquisition
+    EXTINCTION  = 0x00008000,   // involved in Extinction
+    APPETITIVE  = 0x00010000,   // appetitive (positive valence) coding
+    AVERSIVE    = 0x00020000,   // aversive (negative valence) coding
+    PATCH       = 0x00040000,   // patch-like structure (striosomes)
+    MATRIX      = 0x00080000,   // matrix-like structure 
+    DORSAL      = 0x00100000,   // dorsal 
+    VENTRAL     = 0x00200000,   // ventral
   };
   
   float      bias_fwt;       // #NO_SAVE #CAT_Learning bias weight: fast learning linear (underlying) weight value -- learns according to the lrate specified in the connection spec -- this is converted into the effective weight value, "wt", via sigmoidal contrast enhancement (wt_sig)

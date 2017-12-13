@@ -650,8 +650,10 @@ int Program::Cont_impl() {
   // does all the checks.  this is the standard paradigm for such things --
   // init does checks. run assumes things are ok & thus can be fast.
   script->SetDebug((int)HasProgFlag(TRACE));
+  timer.StartTimer(true);
   script->Cont();
   // note: shared var state likely changed, so update gui
+  timer.EndIncrAvg();
   script_compiled = true; // override any run-generated changes!!
   // do not update this -- too tight -- only at end!
   // SigEmit(SLS_ITEM_UPDATED_ND);
