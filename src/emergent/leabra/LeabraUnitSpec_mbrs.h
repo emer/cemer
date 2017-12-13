@@ -809,7 +809,8 @@ public:
   STATE_TA_STD_CODE_SPEC(DaModSpec);
 private:
   void        Initialize()
-  { on = false;  minus = 0.0f;  plus = 0.01f; Defaults_init(); }
+  { on = false;  mod_gain = false;  minus = 0.0f;  plus = 0.01f;
+    da_neg_gain = 0.1f; da_pos_gain = 0.1f; Defaults_init(); }
   void        Defaults_init() { };
 };
 
