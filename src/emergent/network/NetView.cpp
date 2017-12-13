@@ -1326,10 +1326,22 @@ void NetView::Render_new_net_text() {
   
   for(int i=0; i<cur_state_vals.size; i++) {
     String var = cur_state_vals[i];
+    String val;
     MemberDef* md = td->members.FindName(var);
     if (md) {
       String net_state_text = md->name + ": ";
-      String val = md->GetValStr((void*)net());
+      if(hist_idx > 0) {
+        int cidx = (ctr_hist_idx.length - hist_idx);
+        int midx = ctr_hist_idx.CircIdx(cidx);
+        int chld_idx = GetHistoryIndex(var);
+        if(ctr_hist.InRange(chld_idx, midx)) {
+          val = ctr_hist.SafeEl(chld_idx, midx);
+        }
+      }
+      else {
+        val = md->GetValStr((void*)net());
+      }
+      
       net_state_text = net_state_text + val;
   
       int width = 0;
@@ -1977,6 +1989,20 @@ void NetView::SaveCtrHist() {
     ctr_hist.Set(val, chld_idx, eff_hist_idx);
     chld_idx++;
   }
+}
+
+int NetView::GetHistoryIndex(const String& var) {
+  int chld_idx = 0;
+  TypeDef* td = net()->GetTypeDef();
+  for(int i=td->members.size-1; i>=0; i--) {
+    MemberDef* md = td->members[i];
+    if(!md->HasOption("VIEW")) continue;
+    if (md->name == var) {
+      return chld_idx;
+    }
+    chld_idx++;
+  }
+  return -1;
 }
 
 void NetView::SigRecvUpdateView_impl() {

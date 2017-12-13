@@ -303,6 +303,9 @@ public:
                                   const String& fname_stub = "movie_img_");
   // #BUTTON record individual frames of the netview display from current position through to the end of the history buffer, as movie frames -- use ffmpeg http://ffmpeg.org to compile the individual PNG frames into an mp4 movie -- e.g., ffmpeg -framerate 10 -i movie_img_%05d.png -vcodec libx264 -pix_fmt yuv420p -crf 25 movie.mp4
 
+  int                   GetHistoryIndex(const String& var);
+  // this is temporary - need to think about the history storage which assumes a fixed order of vars but now users can alter the order! Plus we iterate through all Net members everytime we store history!!!
+  
   virtual void          unTrappedKeyPressEvent(QKeyEvent* e);
   // #IGNORE process key presses from examiner viewer -- for arrow-key navigation
 
