@@ -98,6 +98,38 @@ private:
   void  Destroy()               { };
 };
 
+eTypeDef_Of(NetViewStateItem);
+
+class E_API NetViewStateItem : public taNBase {
+  // ##NO_TOKENS #INLINE #NO_UPDATE_AFTER ##CAT_Display misc parameters for the network display
+  INHERITED(taNBase)
+public:
+  NetViewStateItem(String var_name, bool is_net_member, bool do_display = false, int width = 8);
+                                // taNBase name member is used for the variable name
+  bool              net_member; // is item a network member - alternative is monitor variable
+  bool              display;    // render the item?
+  int               width;      // width in chars of value portion of field
+  bool              found;      // set to true when rebuilding list - if not set it is stale and should be removed
+  
+  TA_SIMPLE_BASEFUNS(NetViewStateItem);
+private:
+  void  Initialize();
+  void  Destroy()               { };
+};
+
+eTypeDef_Of(NetViewStateItem_List);
+
+class E_API NetViewStateItem_List : public taList<NetViewStateItem> {
+  // ##NO_TOKENS ##NO_UPDATE_AFTER ##NO_EXPAND List of NetViewStateItem objects
+  INHERITED(taList<NetViewStateItem>)
+public:
+  
+  TA_BASEFUNS_NOCOPY(NetViewStateItem_List);
+private:
+  void Initialize()  { SetBaseType(&TA_NetViewStateItem); };
+  void Destroy()     { };
+};
+
 /*
  * Note that we keep simple ptr lists separately of the Layers, Prjns, etc., for ease
  * of iteration
@@ -159,12 +191,12 @@ public:
   float                 net_text_rot;    // rotation of the text in the Z plane (in degrees) - default is upright, but if text area is rotated, then a different angle might work better
   MemberSpace           membs;          // #NO_SAVE #NO_COPY #READ_ONLY list of all the members possible in units; note: all items are new clones
   String_Array          cur_unit_vals;  // #NO_COPY #READ_ONLY currently selected unit values to display -- theoretically can display multiple values, but this is not currently supported, so it always just has one entry at most
-  NameVar_Array         full_state_vals;  // #NO_COPY #READ_ONLY possible net state values to display
-  String_Array          cur_state_vals;  // #NO_COPY #READ_ONLY currently selected net state values to display
   String_Array          hot_vars;       // current "hot" variables shown directly in explorer view
   UnitState_cpp*        unit_src;       // #NO_SAVE #NO_COPY #READ_ONLY unit last picked (if any) for display
   String                unit_src_path;  // ##READ_ONLY path of unit_src unit relative to the network -- used for saving and reloading
   String                last_sel_unit_val;   // #READ_ONLY #SHOW #NO_SAVE value of last selected unit (for display)
+  NetViewStateItem_List state_items;    // #NO_COPY #READ_ONLY all standard net state items (i.e. marked VIEW) plua any in network owned monitor - maintains order, width, display flag
+  
 
   ConType               con_type;       // what type of connections should be shown (where there are multiple connections between two units)
   String                prjn_starts_with; // #NO_SAVE #NO_COPY #READ_ONLY based on the con_type setting, what the projection name should start with
@@ -226,12 +258,14 @@ public:
   // re-renders entire display (calls Render_impl) -- assumes structure is still same but various display elements may have changed.  if structure is different, then an InitDisplay is required first
   virtual void          UpdateUnitValues();
   // *only* updates unit values -- display and structure must be the same as last time
-  virtual void          NetStateListReorder(int from_index, int to_index);
+  virtual void          NetStateItemMoved(int from_index, int to_index);
   // update list of state vars - item has been moved
+  virtual void          NetStateItemDisplayChange(const String& name, bool show);
+  // item show/hide state has changed
   virtual int           GetStateDisplayWidth(const String& name) override;
-  //
+  // return the width in chars of the value portion of the state item
   virtual void          SetStateDisplayWidth(const String& name, int width) override;
-  //
+  // set the width in chars of the value portion of the state item
 
   virtual void          InitCtrHist(bool force = false);
   // initialize counter history based on current settings -- this also serves as master for all history -- if force, then always reset history index positions too
@@ -242,7 +276,7 @@ public:
   ////////////////////////////////////////////////////////////////
   // misc util functions etc
   virtual void          GetMembs();
-  virtual void          GetNetStateMembs(); // these are the Network vars marked #VIEW (e.g. cycle, trial_name, ...)
+  virtual void          GetNetStateItems(); // these are the Network vars marked #VIEW (e.g. cycle, trial_name, ...)
   virtual void          GetNetStateVarNames(String_Array* vars);  // fill the list with the var names from full_state_vals
 
   virtual void          GetMaxSize(); // get max size from network
@@ -302,9 +336,6 @@ public:
   virtual void          HistMovie(int x_size=720, int y_size=720,
                                   const String& fname_stub = "movie_img_");
   // #BUTTON record individual frames of the netview display from current position through to the end of the history buffer, as movie frames -- use ffmpeg http://ffmpeg.org to compile the individual PNG frames into an mp4 movie -- e.g., ffmpeg -framerate 10 -i movie_img_%05d.png -vcodec libx264 -pix_fmt yuv420p -crf 25 movie.mp4
-
-  int                   GetHistoryIndex(const String& var);
-  // this is temporary - need to think about the history storage which assumes a fixed order of vars but now users can alter the order! Plus we iterate through all Net members everytime we store history!!!
   
   virtual void          unTrappedKeyPressEvent(QKeyEvent* e);
   // #IGNORE process key presses from examiner viewer -- for arrow-key navigation
@@ -348,7 +379,7 @@ protected:
   void         OnWindowBind_impl(iT3Panel* vw) override;
   void         Render_pre() override; // #IGNORE
   void         Render_impl() override; // #IGNORE
-  void         Render_new_net_text();
+  void         RenderStateValues();
   void         Render_wt_lines();
   void         Reset_impl() override; // #IGNORE
   void         UpdateAutoScale(); // #IGNORE prepass updates scale from values

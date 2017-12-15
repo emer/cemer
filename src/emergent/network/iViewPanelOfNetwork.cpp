@@ -459,7 +459,7 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   ////////////////////////////////////////////////////////////////////////////
   state_values = new iTreeListWidget(this);
 
-  connect(state_values, SIGNAL(ListOrderChange(int, int)), this, SLOT(NetStateOrderChanged(int, int)) );
+  connect(state_values, SIGNAL(ListOrderChange(int, int)), this, SLOT(NetStateItemMoved(int, int)) );
 
   tw->addTab(state_values, "Net State Values");
   
@@ -778,29 +778,34 @@ void iViewPanelOfNetwork::GetNetVars() {
   NetView *nv = getNetView();
   if (!nv) return;
   
-  state_values->clear();
-
   Network* net = nv->net();
   if (!net) return;
   TypeDef* td = net->GetTypeDef();
   if (!td) return;
   
+  state_values->clear();
+
   MemberDef* md;
-  String_Array vars;
-  nv->GetNetStateVarNames(&vars);
-  for (int i=0; i < vars.size; i++) {
-    String name = vars[i];
-    QTreeWidgetItem* titm = new QTreeWidgetItem(state_values);
-    md = td->members.FindName(name);
-    if (!md) {
-      continue;
-    }
-    titm->setText(0, name);
-    titm->setText(1, md->desc);
-    if(nv->cur_state_vals.FindEl(name) < 0)
-      titm->setCheckState(0, Qt::Unchecked);
-    else
+  for (int i=0; i < nv->state_items.size; i++) {
+    NetViewStateItem* item = nv->state_items.SafeEl(i);
+    if (item) {
+      QTreeWidgetItem* titm = new QTreeWidgetItem(state_values);
+      if (item->net_member) {
+        md = td->members.FindName(item->name);
+        if (md) {
+          titm->setText(0, item->name);
+          titm->setText(1, md->desc);
+        }
+      }
+      else {
+        titm->setText(0, item->name);
+        titm->setText(1, "monitor variable");
+      }
+      if(item->display)
       titm->setCheckState(0, Qt::Checked);
+    else
+      titm->setCheckState(0, Qt::Unchecked);
+    }
   }
   state_values->resizeColumnToContents(0);
 }
@@ -858,39 +863,19 @@ void iViewPanelOfNetwork::lvDisplayValues_itemClicked(QTreeWidgetItem* item, int
 
 void iViewPanelOfNetwork::NetStateValues_itemClicked(QTreeWidgetItem* changed_item, int col) {
   if (updating) return;
-  
   NetView *nv = getNetView();
   if (!nv) return;
-
-  // build the list again to ensure they display in same order as they are in this list view
-  RebuildNetStateCurList();
+  
+  nv->NetStateItemDisplayChange(changed_item->text(0), changed_item->checkState(col));
   nv->UpdateDisplay(false);
 }
 
-void iViewPanelOfNetwork::RebuildNetStateCurList() {
-  NetView *nv = getNetView();
-  if (!nv) return;
-
-  nv->cur_state_vals.Reset();
-  QTreeWidgetItemIterator it(state_values);
-  QTreeWidgetItem* item;
-  int col = 0;
-  while ( (item = *it) ) {
-   Qt::CheckState chkd = item->checkState(col);
-    if (chkd) {
-      nv->cur_state_vals.AddUnique(item->text(col));
-    }
-    ++it;
-  }
-}
-
-void iViewPanelOfNetwork::NetStateOrderChanged(int from_index, int to_index) {
+void iViewPanelOfNetwork::NetStateItemMoved(int from_index, int to_index) {
   if (updating) return;
-  
   NetView *nv = getNetView();
   if (!nv) return;
   
-  nv->NetStateListReorder(from_index, to_index);
+  nv->NetStateItemMoved(from_index, to_index);
   nv->UpdateDisplay(false);
 }
 

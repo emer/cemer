@@ -162,14 +162,13 @@ protected:
   void                  GetValue_impl() override;
   void                  CopyFrom_impl() override;
   void                  setHighlightSpec(BaseSpec* spec, bool force = false);
-  void                  RebuildNetStateCurList();
 
 public slots:
   void                  viewWin_NotifySignal(ISelectableHost* src, int op); // forwarded to netview
   void                  dynbuttonActivated(int but_no); // for hot member buttons
   void                  unTrappedKeyPressEvent(QKeyEvent* e);
   // gets signal of same name from T3ExaminerViewer -- used for keyboard arrow nav
-  void                  NetStateOrderChanged(int from_index, int to_index);
+  void                  NetStateItemMoved(int from_index, int to_index);
 
 protected slots:
   void                  butScaleDefault_pressed();

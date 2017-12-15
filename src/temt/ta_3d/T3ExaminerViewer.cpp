@@ -19,7 +19,6 @@
 #include <T3Panel>
 #include <T3DataViewMain>
 #include <iContextMenuButton>
-#include <NetView>
 
 #include <iThumbWheel>
 #include <iMenuButton>
