@@ -19,6 +19,8 @@
 #include <Layer>
 #include <Projection>
 #include <SigLinkSignal>
+#include <Completions>
+#include <MemberDef>
 
 #include <taMisc>
 
@@ -234,6 +236,30 @@ void NetMonitor::GetMonVals() {
     NetMonItem* nmi = items.FastEl(i);
     if (!nmi->off)
       nmi->GetMonVals(data);
+  }
+}
+
+String NetMonitor::GetArgForCompletion(const String& method, const String& arg) {
+  if (method == "AddNetwork") {
+    return "network";
+  }
+  else if (method == "AddLayer") {
+    return "layer";
+  }
+  else if (method == "AddProjection") {
+    return "projection";
+  }
+  return "";
+}
+
+void NetMonitor::GetArgCompletionList(const String& method, const String& arg, taBase* arg_obj, Completions& completions) {
+  TypeDef* td = arg_obj->GetTypeDef();
+  if (td) {
+    MemberSpace mbr_space = td->members;
+    for (int i = 0; i < mbr_space.size; ++i) {
+      MemberDef* mbr_def = mbr_space.FastEl(i);
+      completions.member_completions.Link(mbr_def);
+    }
   }
 }
 

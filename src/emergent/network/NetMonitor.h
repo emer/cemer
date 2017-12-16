@@ -25,6 +25,7 @@
 #include <DataTableRef>
 
 // declare all other types mentioned but not required to include:
+class Completions; //
 
 eTypeDef_Of(NetMonitor);
 
@@ -53,11 +54,11 @@ public:
 
   NetMonItem* 	AddBlank();
   // #BUTTON #CAT_Monitor add a new blank monitor to be filled in
-  NetMonItem* 	AddNetwork(Network* net, const String& variable);
+  NetMonItem* 	AddNetwork(Network* network, const String& variable);
   // #BUTTON #CAT_Monitor monitor a value in the Network or its subobjects
-  NetMonItem* 	AddLayer(Layer* lay, const String& variable);
+  NetMonItem* 	AddLayer(Layer* layer, const String& variable);
   // #BUTTON #CAT_Monitor #PROJ_SCOPE monitor a value in the Layer or its subobjects
-  NetMonItem* 	AddProjection(Projection* prj, const String& variable);
+  NetMonItem* 	AddProjection(Projection* projection, const String& variable);
   // #BUTTON #CAT_Monitor #PROJ_SCOPE monitor a value in the Projection or its subobjects
   
   NetMonItem* 	AddObject(taBase* obj, const String& variable);
@@ -89,7 +90,9 @@ public:
   
   String_Array  var_completer_list;
   // #IGNORE the list of members that are shown by the completer for the NetMonItem variable field - only need one so shared by all NetMonItems
-  
+  String    GetArgForCompletion(const String& method, const String& arg) override;
+  void      GetArgCompletionList(const String& method, const String& arg, taBase* arg_obj, Completions& list) override;
+
   void	InitLinks() override;
   void	CutLinks() override;
   void	Copy_(const NetMonitor& cp);
