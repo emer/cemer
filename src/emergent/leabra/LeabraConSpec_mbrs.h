@@ -246,17 +246,27 @@ public:
   float         avg_thr;        // #CONDSHOW_ON_on #DEF_0.5 threshold on weight value for inclusion into the weight average that is then subject to the further hi_thr threshold for then driving a change in weight balance -- this avg_thr allows only stronger weights to contribute so that weakening of lower weights does not dilute sensitivity to number and strength of strong weights
   float         hi_thr;         // #CONDSHOW_ON_on #DEF_0.6 high threshold on weight average (subject to avg_thr) before it drives changes in weight increase vs. decrease factors
   float         hi_gain;        // #CONDSHOW_ON_on #DEF_3 gain multiplier applied to above-hi_thr thresholded weight averages -- higher values turn weight increases down more rapidly as the weights become more imbalanced 
+  float         lo_thr;         // #CONDSHOW_ON_on #DEF_0.55 low threshold on weight average (subject to avg_thr) before it drives changes in weight increase vs. decrease factors
+  float         lo_gain;        // #CONDSHOW_ON_on #DEF_3 gain multiplier applied to below-lo_thr thresholded weight averages -- lower values turn weight increases up more rapidly as the weights become more imbalanced 
   float         act_thr;        // #CONDSHOW_ON_on #DEF_0.25 threshold for long time-average activation (act_avg) contribution to weight balance -- based on act_avg relative to act_thr -- same statistic that we use to measure hogging with default .3 threshold
   float         act_gain;       // #CONDSHOW_ON_on #DEF_2 gain multiplier applied to above-threshold weight averages -- higher values turn weight increases down more rapidly as the weights become more imbalanced -- see act_thr for equation
   bool          no_targ;        // #CONDSHOW_ON_on #DEF_true exclude receiving projections into TARGET layers where units are clamped and also TRC (Pulvinar) thalamic neurons -- typically for clamped layers you do not want to be applying extra constraints such as this weight balancing dynamic -- the BCM hebbian learning is also automatically turned off for such layers as well
   
   INLINE void   WtBal
-    (const float wb_avg, const float act_avg, float& wb_fact, float& wb_inc, float& wb_dec) {
+    (float wb_avg, const float act_avg, float& wb_fact, float& wb_inc, float& wb_dec) {
     wb_fact = 0.0f;
-    if(wb_avg > hi_thr)       wb_fact += hi_gain * (wb_avg - hi_thr);
-    if(act_avg > act_thr)     wb_fact += act_gain * (act_avg - act_thr);
-    wb_inc = 1.0f / (1.0f + wb_fact); // gets sigmoidally small toward 0 as wb_fact gets larger -- is quick acting but saturates -- apply pressure earlier..
-    wb_dec = 2.0f - wb_inc; // as wb_inc goes down, wb_dec goes up..  sum to 2
+    if(wb_avg < lo_thr) {
+      if(wb_avg < avg_thr) wb_avg = avg_thr; // prevent extreme low if everyone below thr
+      wb_fact = lo_gain * (lo_thr - wb_avg);
+      wb_dec = 1.0f / (1.0f + wb_fact);
+      wb_inc = 2.0f - wb_dec;
+    }
+    else {
+      if(wb_avg > hi_thr)       wb_fact += hi_gain * (wb_avg - hi_thr);
+      if(act_avg > act_thr)     wb_fact += act_gain * (act_avg - act_thr);
+      wb_inc = 1.0f / (1.0f + wb_fact); // gets sigmoidally small toward 0 as wb_fact gets larger -- is quick acting but saturates -- apply pressure earlier..
+      wb_dec = 2.0f - wb_inc; // as wb_inc goes down, wb_dec goes up..  sum to 2
+    }
   }
   // compute weight balance factors for increase and decrease based on extent to which weights and average act exceed thresholds
   
@@ -267,6 +277,7 @@ private:
   void        Initialize()      {   Defaults_init(); }
   void        Defaults_init() {
     on = true; no_targ = true; avg_thr = 0.5f; hi_thr = 0.6f; hi_gain = 3.0f;
+    lo_thr = 0.55f; lo_gain = 3.0f; 
     act_thr = 0.25f; act_gain = 2.0f; 
   }
 };
