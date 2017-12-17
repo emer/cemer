@@ -2017,12 +2017,12 @@ void NetView::SetStateDisplayWidth(const String& name, int width) {
   if (item) {
     item->width = width;
   }
-
   T3ExaminerViewer* vw = GetViewer();
   if (vw) {
     vw->state_labels_inited = false;
     RenderStateValues();
   }
+  UpdatePanel();
 }
 
 void NetView::SaveCtrHist() {

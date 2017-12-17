@@ -466,7 +466,7 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   state_values->setRootIsDecorated(true); // makes it look like a list
 
   QStringList state_var_hrd;
-  state_var_hrd << "          Variable" << "        Description";
+  state_var_hrd << "          Variable" << "  Width" << "       Description";
   state_values->setHeaderLabels(state_var_hrd);
   state_values->setSortingEnabled(false);
   state_values->setSelectionMode(QAbstractItemView::SingleSelection);
@@ -518,8 +518,7 @@ void iViewPanelOfNetwork::UpdatePanel_impl() {
 
   if(nv->net()) {
     bool ok;
-    this->setStyleSheet("iViewPanel { background-color: #" +
-                        nv->net()->GetEditColor(ok).toString() + "; }");
+    this->setStyleSheet("iViewPanel { background-color: #" + nv->net()->GetEditColor(ok).toString() + "; }");
   }
   
   chkDisplay->setChecked(nv->display);
@@ -572,6 +571,19 @@ void iViewPanelOfNetwork::UpdatePanel_impl() {
     ++it;
     ++i;
   }
+  
+  // update state items
+  QTreeWidgetItemIterator state_item_iter(state_values);
+  QTreeWidgetItem* tree_item = NULL;
+  while (*state_item_iter) {
+    tree_item = *state_item_iter;
+    NetViewStateItem* state_item = nv->state_items.FindName(tree_item->text(0));
+    if(state_item) {
+      tree_item->setText(1, (String)state_item->width);
+    }
+    ++state_item_iter;
+  }
+
   // spec highlighting
   BaseSpec* cspc = m_cur_spec; // to see if it changes, if not, we force redisplay
   iTreeViewItem* tvi = dynamic_cast<iTreeViewItem*>(tvSpecs->currentItem());
@@ -790,15 +802,19 @@ void iViewPanelOfNetwork::GetNetVars() {
     NetViewStateItem* item = nv->state_items.SafeEl(i);
     if (item) {
       QTreeWidgetItem* titm = new QTreeWidgetItem(state_values);
+      titm->setTextAlignment(1, Qt::AlignCenter);
+
       if (item->net_member) {
         md = td->members.FindName(item->name);
         if (md) {
           titm->setText(0, item->name);
-          titm->setText(1, md->desc);
+          titm->setText(1, (String)item->width);
+          titm->setText(2, md->desc);
         }
       }
       else {
         titm->setText(0, item->name);
+        titm->setText(1, (String)item->width);
         titm->setText(1, "monitor variable");
       }
       if(item->display)
