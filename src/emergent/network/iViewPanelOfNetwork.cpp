@@ -458,13 +458,12 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
 
   ////////////////////////////////////////////////////////////////////////////
   state_values = new iTreeListWidget(this);
+  state_values->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
   connect(state_values, SIGNAL(ListOrderChange(int, int)), this, SLOT(NetStateItemMoved(int, int)) );
 
   tw->addTab(state_values, "Net State Values");
-  
   state_values->setRootIsDecorated(true); // makes it look like a list
-
   QStringList state_var_hrd;
   state_var_hrd << "          Variable" << "  Width" << "       Description";
   state_values->setHeaderLabels(state_var_hrd);
@@ -476,6 +475,8 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
 
   connect(state_values, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this,
           SLOT(NetStateValues_itemClicked(QTreeWidgetItem*, int)) );
+  connect(state_values, SIGNAL(itemChanged(QTreeWidgetItem*, int)), this,
+          SLOT(NetStateValues_itemChanged(QTreeWidgetItem*, int)) );
 
   layTopCtrls->addWidget(tw);
 
@@ -802,21 +803,28 @@ void iViewPanelOfNetwork::GetNetVars() {
     NetViewStateItem* item = nv->state_items.SafeEl(i);
     if (item) {
       QTreeWidgetItem* titm = new QTreeWidgetItem(state_values);
+      // we want the checkbox checkable and the width field editable - name and description should not be editable
+      // see code in NetStateValues_itemClicked()
+      // https://stackoverflow.com/questions/31202546/how-to-edit-only-one-column-of-a-qtreewidgetitem
+      titm->setFlags(Qt::ItemIsEditable | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled);
       titm->setTextAlignment(1, Qt::AlignCenter);
-
+      titm->setToolTip(0, taiMisc::ToolTipPreProcess("Drag and drop to reorder items in the NetView display"));
+      titm->setToolTip(1, taiMisc::ToolTipPreProcess("Click to edit display width"));
       if (item->net_member) {
         md = td->members.FindName(item->name);
         if (md) {
           titm->setText(0, item->name);
           titm->setText(1, (String)item->width);
           titm->setText(2, md->desc);
+          titm->setToolTip(2, taiMisc::ToolTipPreProcess(md->desc));
         }
       }
       else {
         titm->setText(0, item->name);
         titm->setText(1, (String)item->width);
         titm->setText(1, "monitor variable");
-      }
+        titm->setToolTip(2, taiMisc::ToolTipPreProcess(md->desc));
+     }
       if(item->display)
       titm->setCheckState(0, Qt::Checked);
     else
@@ -882,8 +890,24 @@ void iViewPanelOfNetwork::NetStateValues_itemClicked(QTreeWidgetItem* changed_it
   NetView *nv = getNetView();
   if (!nv) return;
   
-  nv->NetStateItemDisplayChange(changed_item->text(0), changed_item->checkState(col));
-  nv->UpdateDisplay(false);
+  if (col == 0) {
+    nv->NetStateItemDisplayChange(changed_item->text(0), changed_item->checkState(col)); // checkbox
+    nv->UpdateDisplay(false);
+  }
+  else if (col == 1) {
+    changed_item->treeWidget()->editItem(changed_item, 1); // this is the "width" field
+    nv->UpdateDisplay(false);
+  }
+}
+
+void iViewPanelOfNetwork::NetStateValues_itemChanged(QTreeWidgetItem* changed_item, int col) {
+  if (updating) return;
+  NetView *nv = getNetView();
+  if (!nv) return;
+  
+  if (col == 1) {
+    nv->SetStateDisplayWidth(changed_item->text(0), changed_item->text(1).toInt());
+  }
 }
 
 void iViewPanelOfNetwork::NetStateItemMoved(int from_index, int to_index) {
