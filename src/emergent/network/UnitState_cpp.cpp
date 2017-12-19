@@ -74,11 +74,13 @@ float UnitState_cpp::GetUnValName(NetworkState_cpp* nnet, const String& var_nm) 
 bool UnitState_cpp::SetCnValName(NetworkState_cpp* nnet, float val, const Variant& prjn, int dx, const String& var_nm, bool recv) {
   ConState_cpp* cg = NULL;
   if(prjn.isStringType()) {
+    String lay_nm = prjn.toString();
+    if(lay_nm.startsWith("Fm_")) lay_nm = lay_nm.after('_');
     if(recv) {
-      cg = FindRecvConStateFromName(nnet, prjn.toString());
+      cg = FindRecvConStateFromName(nnet, lay_nm);
     }
     else {
-      cg = FindSendConStateToName(nnet, prjn.toString());
+      cg = FindSendConStateToName(nnet, lay_nm);
     }
   }
   else {
@@ -109,11 +111,13 @@ bool UnitState_cpp::SetCnValName(NetworkState_cpp* nnet, float val, const Varian
 float UnitState_cpp::GetCnValName(NetworkState_cpp* nnet, const Variant& prjn, int dx, const String& var_nm, bool recv) const {
   ConState_cpp* cg = NULL;
   if(prjn.isStringType()) {
+    String lay_nm = prjn.toString();
+    if(lay_nm.startsWith("Fm_")) lay_nm = lay_nm.after('_');
     if(recv) {
-      cg = FindRecvConStateFromName(nnet, prjn.toString());
+      cg = FindRecvConStateFromName(nnet, lay_nm);
     }
     else {
-      cg = FindSendConStateToName(nnet, prjn.toString());
+      cg = FindSendConStateToName(nnet, lay_nm);
     }
   }
   else {
@@ -131,10 +135,10 @@ float UnitState_cpp::GetCnValName(NetworkState_cpp* nnet, const Variant& prjn, i
   }
   if(!cg) {
     if(recv) {
-      taMisc::Error("SetCnValName", "recv projection not found from:", prjn.toString());
+      taMisc::Error("GetCnValName", "recv projection not found from:", prjn.toString());
     }
     else {
-      taMisc::Error("SetCnValName", "send projection not found to:", prjn.toString());
+      taMisc::Error("GetCnValName", "send projection not found to:", prjn.toString());
     }
     return false;
   }

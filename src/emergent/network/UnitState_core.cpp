@@ -79,7 +79,7 @@ CON_STATE* UNIT_STATE::FindRecvConStateFromName(NETWORK_STATE* nnet, const char*
     CON_STATE* cg = RecvConState(nnet, g);
     PRJN_STATE* prjn = cg->GetPrjnState(nnet);
     LAYER_STATE* fm = prjn->GetSendLayer(nnet);
-    if(fm->LayerNameIs(fm_nm))
+    if(fm && fm->LayerNameIs(fm_nm))
       return cg;
   }
   return NULL;
@@ -91,7 +91,7 @@ CON_STATE* UNIT_STATE::FindSendConStateToName(NETWORK_STATE* nnet, const char* t
     CON_STATE* cg = SendConState(nnet, g);
     PRJN_STATE* prjn = cg->GetPrjnState(nnet);
     LAYER_STATE* tol = prjn->GetRecvLayer(nnet);
-    if(tol->LayerNameIs(to_nm))
+    if(tol && tol->LayerNameIs(to_nm))
       return cg;
   }
   return NULL;
