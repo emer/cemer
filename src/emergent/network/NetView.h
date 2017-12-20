@@ -123,7 +123,7 @@ class E_API NetViewStateItem_List : public taList<NetViewStateItem> {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##NO_EXPAND List of NetViewStateItem objects
   INHERITED(taList<NetViewStateItem>)
 public:
-  
+
   TA_BASEFUNS_NOCOPY(NetViewStateItem_List);
 private:
   void Initialize()  { SetBaseType(&TA_NetViewStateItem); };
@@ -196,7 +196,7 @@ public:
   String                unit_src_path;  // ##READ_ONLY path of unit_src unit relative to the network -- used for saving and reloading
   String                last_sel_unit_val;   // #READ_ONLY #SHOW #NO_SAVE value of last selected unit (for display)
   NetViewStateItem_List state_items;    // #NO_COPY #READ_ONLY all standard net state items (i.e. marked VIEW) plua any in network owned monitor - maintains order, width, display flag
-  
+  bool                  state_items_stale;
 
   ConType               con_type;       // what type of connections should be shown (where there are multiple connections between two units)
   String                prjn_starts_with; // #NO_SAVE #NO_COPY #READ_ONLY based on the con_type setting, what the projection name should start with
@@ -272,6 +272,7 @@ public:
   virtual void          SaveCtrHist();
   // save counter history -- called in UpdateUnitValues()
   virtual void          UpdatePanel(); // updates nvp, esp. after UAE etc.
+  void                  SigLinkRecv(taSigLink* dl, int sls, void* op1, void* op2) override;
 
   ////////////////////////////////////////////////////////////////
   // misc util functions etc
@@ -384,6 +385,7 @@ protected:
   void         Reset_impl() override; // #IGNORE
   void         UpdateAutoScale(); // #IGNORE prepass updates scale from values
   void         viewWin_NotifySignal(ISelectableHost* src, int op);
+  
 private:
   SIMPLE_COPY(NetView)
   void         Initialize();

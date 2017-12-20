@@ -289,7 +289,7 @@ NetView* NetView::New(Network* net, T3Panel*& fr) {
 
   // make sure we've got it all rendered:
   nv->BuildAll();
-
+  
   new_net_view.showFrame();
   return nv;
 }
@@ -379,7 +379,8 @@ void NetView::Initialize() {
   net_text_xform.scale = 0.5f;
   net_text_rot = -90.0f;
   state_width_default = 8; // characters
-
+  state_items_stale = true;
+  
   con_type = ANY_CON;
   prjn_starts_with = "";
   unit_disp_md = NULL;
@@ -466,6 +467,15 @@ void NetView::CutLinks() {
     delete nvp; // should delete our ref
     nvp = NULL;
   }
+  
+  Network* nt = net();
+  if (nt) {
+    NetNetMonitor* mon = &nt->monitor;
+    if (mon) {
+      mon->items.RemoveSigClient(this);
+    }
+  }
+
   view_params.CutLinks();
   font_sizes.CutLinks();
   max_size.CutLinks();
@@ -639,7 +649,7 @@ void NetView::BuildAll() { // populates all T3 guys
   GetMaxSize();
   GetMembs();
   GetNetStateItems();
-
+  
   Network* nt = net();
   
   // cannot preserve LayerView objects, so recording disp_mode info separately
@@ -688,6 +698,11 @@ void NetView::BuildAll() { // populates all T3 guys
         children.Add(pv);
       }
     }
+  }
+
+  NetNetMonitor* mon = &nt->monitor;
+  if (mon) {
+    mon->items.AddSigClient(this);
   }
 
   BuildAnnotations();
@@ -784,6 +799,8 @@ void NetView::GetNetStateItems() {
   Network* nt = net();
   if(!nt) return;
   
+  if (!state_items_stale) return;
+  
   // clear found flag - later remove any items not found
   for (int i=0; i<state_items.size; i++) {
     state_items.SafeEl(i)->found = false;
@@ -837,6 +854,7 @@ void NetView::GetNetStateItems() {
       state_items.RemoveIdx(i);
     }
   }
+  state_items_stale = false;
 }
 
 void NetView::GetNetStateVarNames(String_Array* net_state_vars) {
@@ -2097,5 +2115,10 @@ void NetView::viewWin_NotifySignal(ISelectableHost* src, int op) {
   setUnitSrc(uv, unit_new);
   InitDisplay();
   UpdateDisplay();
+}
+
+void NetView::SigLinkRecv(taSigLink* dl, int sls, void* op1, void* op2) {
+  inherited::SigLinkRecv(dl, sls, op1, op2);
+  state_items_stale = true;  // some net monitor item change
 }
 

@@ -574,15 +574,20 @@ void iViewPanelOfNetwork::UpdatePanel_impl() {
   }
   
   // update state items
-  QTreeWidgetItemIterator state_item_iter(state_values);
-  QTreeWidgetItem* tree_item = NULL;
-  while (*state_item_iter) {
-    tree_item = *state_item_iter;
-    NetViewStateItem* state_item = nv->state_items.FindName(tree_item->text(0));
-    if(state_item) {
-      tree_item->setText(1, (String)state_item->width);
+  if (nv->state_items_stale) {
+    GetNetVars();
+  }
+  else {
+    QTreeWidgetItemIterator state_item_iter(state_values);
+    QTreeWidgetItem* tree_item = NULL;
+    while (*state_item_iter) {
+      tree_item = *state_item_iter;
+      NetViewStateItem* state_item = nv->state_items.FindName(tree_item->text(0));
+      if(state_item) {
+        tree_item->setText(1, (String)state_item->width);
+      }
+      ++state_item_iter;
     }
-    ++state_item_iter;
   }
 
   // spec highlighting
@@ -796,6 +801,7 @@ void iViewPanelOfNetwork::GetNetVars() {
   TypeDef* td = net->GetTypeDef();
   if (!td) return;
   
+  nv->GetNetStateItems();
   state_values->clear();
 
   MemberDef* md;
@@ -822,7 +828,7 @@ void iViewPanelOfNetwork::GetNetVars() {
       else {
         titm->setText(0, item->name);
         titm->setText(1, (String)item->width);
-        titm->setText(1, "monitor variable");
+        titm->setText(2, "monitor variable");
         titm->setToolTip(2, taiMisc::ToolTipPreProcess(md->desc));
      }
       if(item->display)

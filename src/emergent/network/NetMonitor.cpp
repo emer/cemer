@@ -121,6 +121,7 @@ NetMonItem* NetMonitor::AddObject(taBase* obj, const String& variable) {
   nmi = (NetMonItem*)items.New_gui(1, &TA_NetMonItem); // use gui to update
   nmi->monitor = this;
   nmi->SetMonVals(obj, variable);
+  UpdateDataTable(false);  // do right away because Netview updates based on the DataTable columns not the items
   return nmi;
 }
 
