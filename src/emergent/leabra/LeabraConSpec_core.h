@@ -481,7 +481,7 @@
     int sum_n = 0;
     for(int i=0; i<cg->size; i++) {
       float wt = cg->PtrCn(i,WT,net);
-      if(wt > wt_bal.avg_thr) {
+      if(wt >= wt_bal.avg_thr) {
         sum_wt += wt;
         sum_n++;
       }

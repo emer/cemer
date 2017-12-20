@@ -436,6 +436,14 @@ void NetView::InitLinks() {
   taBase::Own(net_text_xform, this);
 
   ctr_hist_idx.matrix = &ctr_hist;
+  
+  Network* nt = net();
+  if (nt) {
+    NetNetMonitor* mon = &nt->monitor;
+    if (mon) {
+      mon->items.AddSigClient(this);
+    }
+  }
 }
 
 void NetView::UpdateAfterEdit_impl() {
@@ -475,7 +483,6 @@ void NetView::CutLinks() {
       mon->items.RemoveSigClient(this);
     }
   }
-
   view_params.CutLinks();
   font_sizes.CutLinks();
   max_size.CutLinks();
@@ -698,11 +705,6 @@ void NetView::BuildAll() { // populates all T3 guys
         children.Add(pv);
       }
     }
-  }
-
-  NetNetMonitor* mon = &nt->monitor;
-  if (mon) {
-    mon->items.AddSigClient(this);
   }
 
   BuildAnnotations();

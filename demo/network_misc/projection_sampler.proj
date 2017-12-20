@@ -1,5 +1,5 @@
-// ta_Dump File v3.0 -- code v8.2.2.0 rev11187
-LeabraProject .projects[0] { 
+// ta_Dump File v3.0 -- code v8.3.5.0 rev11282
+LeabraProject .projects[1] { 
  Doc_Group @.docs = [2] {
   taDoc @[0] { 
    UserDataItem_List @*(.user_data_) {
@@ -89,6 +89,29 @@ LeabraProject .projects[0] {
 	 T3DataView_List @.annote_children = [0] {
 	 };
 
+	 NetViewStateItem_List @.state_items = [20] {
+	  NetViewStateItem @[0] { };
+	  NetViewStateItem @[1] { };
+	  NetViewStateItem @[2] { };
+	  NetViewStateItem @[3] { };
+	  NetViewStateItem @[4] { };
+	  NetViewStateItem @[5] { };
+	  NetViewStateItem @[6] { };
+	  NetViewStateItem @[7] { };
+	  NetViewStateItem @[8] { };
+	  NetViewStateItem @[9] { };
+	  NetViewStateItem @[10] { };
+	  NetViewStateItem @[11] { };
+	  NetViewStateItem @[12] { };
+	  NetViewStateItem @[13] { };
+	  NetViewStateItem @[14] { };
+	  NetViewStateItem @[15] { };
+	  NetViewStateItem @[16] { };
+	  NetViewStateItem @[17] { };
+	  NetViewStateItem @[18] { };
+	  NetViewStateItem @[19] { };
+	 };
+
 	 ScaleRange_List @.scale_ranges = [2] {
 	  ScaleRange @[0] { };
 	  ScaleRange @[1] { };
@@ -118,6 +141,29 @@ LeabraProject .projects[0] {
 	 T3DataView_List @.annote_children = [0] {
 	 };
 
+	 NetViewStateItem_List @.state_items = [20] {
+	  NetViewStateItem @[0] { };
+	  NetViewStateItem @[1] { };
+	  NetViewStateItem @[2] { };
+	  NetViewStateItem @[3] { };
+	  NetViewStateItem @[4] { };
+	  NetViewStateItem @[5] { };
+	  NetViewStateItem @[6] { };
+	  NetViewStateItem @[7] { };
+	  NetViewStateItem @[8] { };
+	  NetViewStateItem @[9] { };
+	  NetViewStateItem @[10] { };
+	  NetViewStateItem @[11] { };
+	  NetViewStateItem @[12] { };
+	  NetViewStateItem @[13] { };
+	  NetViewStateItem @[14] { };
+	  NetViewStateItem @[15] { };
+	  NetViewStateItem @[16] { };
+	  NetViewStateItem @[17] { };
+	  NetViewStateItem @[18] { };
+	  NetViewStateItem @[19] { };
+	 };
+
 	 ScaleRange_List @.scale_ranges = [2] {
 	  ScaleRange @[0] { };
 	  ScaleRange @[1] { };
@@ -145,6 +191,29 @@ LeabraProject .projects[0] {
 	 };
 
 	 T3DataView_List @.annote_children = [0] {
+	 };
+
+	 NetViewStateItem_List @.state_items = [20] {
+	  NetViewStateItem @[0] { };
+	  NetViewStateItem @[1] { };
+	  NetViewStateItem @[2] { };
+	  NetViewStateItem @[3] { };
+	  NetViewStateItem @[4] { };
+	  NetViewStateItem @[5] { };
+	  NetViewStateItem @[6] { };
+	  NetViewStateItem @[7] { };
+	  NetViewStateItem @[8] { };
+	  NetViewStateItem @[9] { };
+	  NetViewStateItem @[10] { };
+	  NetViewStateItem @[11] { };
+	  NetViewStateItem @[12] { };
+	  NetViewStateItem @[13] { };
+	  NetViewStateItem @[14] { };
+	  NetViewStateItem @[15] { };
+	  NetViewStateItem @[16] { };
+	  NetViewStateItem @[17] { };
+	  NetViewStateItem @[18] { };
+	  NetViewStateItem @[19] { };
 	 };
 
 	 ScaleRange_List @.scale_ranges = [3] {
@@ -177,6 +246,29 @@ LeabraProject .projects[0] {
 	 T3DataView_List @.annote_children = [0] {
 	 };
 
+	 NetViewStateItem_List @.state_items = [20] {
+	  NetViewStateItem @[0] { };
+	  NetViewStateItem @[1] { };
+	  NetViewStateItem @[2] { };
+	  NetViewStateItem @[3] { };
+	  NetViewStateItem @[4] { };
+	  NetViewStateItem @[5] { };
+	  NetViewStateItem @[6] { };
+	  NetViewStateItem @[7] { };
+	  NetViewStateItem @[8] { };
+	  NetViewStateItem @[9] { };
+	  NetViewStateItem @[10] { };
+	  NetViewStateItem @[11] { };
+	  NetViewStateItem @[12] { };
+	  NetViewStateItem @[13] { };
+	  NetViewStateItem @[14] { };
+	  NetViewStateItem @[15] { };
+	  NetViewStateItem @[16] { };
+	  NetViewStateItem @[17] { };
+	  NetViewStateItem @[18] { };
+	  NetViewStateItem @[19] { };
+	 };
+
 	 ScaleRange_List @.scale_ranges = [2] {
 	  ScaleRange @[0] { };
 	  ScaleRange @[1] { };
@@ -204,6 +296,29 @@ LeabraProject .projects[0] {
 	 };
 
 	 T3DataView_List @.annote_children = [0] {
+	 };
+
+	 NetViewStateItem_List @.state_items = [20] {
+	  NetViewStateItem @[0] { };
+	  NetViewStateItem @[1] { };
+	  NetViewStateItem @[2] { };
+	  NetViewStateItem @[3] { };
+	  NetViewStateItem @[4] { };
+	  NetViewStateItem @[5] { };
+	  NetViewStateItem @[6] { };
+	  NetViewStateItem @[7] { };
+	  NetViewStateItem @[8] { };
+	  NetViewStateItem @[9] { };
+	  NetViewStateItem @[10] { };
+	  NetViewStateItem @[11] { };
+	  NetViewStateItem @[12] { };
+	  NetViewStateItem @[13] { };
+	  NetViewStateItem @[14] { };
+	  NetViewStateItem @[15] { };
+	  NetViewStateItem @[16] { };
+	  NetViewStateItem @[17] { };
+	  NetViewStateItem @[18] { };
+	  NetViewStateItem @[19] { };
 	 };
 
 	 ScaleRange_List @.scale_ranges = [3] {
@@ -236,6 +351,29 @@ LeabraProject .projects[0] {
 	 T3DataView_List @.annote_children = [0] {
 	 };
 
+	 NetViewStateItem_List @.state_items = [20] {
+	  NetViewStateItem @[0] { };
+	  NetViewStateItem @[1] { };
+	  NetViewStateItem @[2] { };
+	  NetViewStateItem @[3] { };
+	  NetViewStateItem @[4] { };
+	  NetViewStateItem @[5] { };
+	  NetViewStateItem @[6] { };
+	  NetViewStateItem @[7] { };
+	  NetViewStateItem @[8] { };
+	  NetViewStateItem @[9] { };
+	  NetViewStateItem @[10] { };
+	  NetViewStateItem @[11] { };
+	  NetViewStateItem @[12] { };
+	  NetViewStateItem @[13] { };
+	  NetViewStateItem @[14] { };
+	  NetViewStateItem @[15] { };
+	  NetViewStateItem @[16] { };
+	  NetViewStateItem @[17] { };
+	  NetViewStateItem @[18] { };
+	  NetViewStateItem @[19] { };
+	 };
+
 	 ScaleRange_List @.scale_ranges = [2] {
 	  ScaleRange @[0] { };
 	  ScaleRange @[1] { };
@@ -263,6 +401,29 @@ LeabraProject .projects[0] {
 	 };
 
 	 T3DataView_List @.annote_children = [0] {
+	 };
+
+	 NetViewStateItem_List @.state_items = [20] {
+	  NetViewStateItem @[0] { };
+	  NetViewStateItem @[1] { };
+	  NetViewStateItem @[2] { };
+	  NetViewStateItem @[3] { };
+	  NetViewStateItem @[4] { };
+	  NetViewStateItem @[5] { };
+	  NetViewStateItem @[6] { };
+	  NetViewStateItem @[7] { };
+	  NetViewStateItem @[8] { };
+	  NetViewStateItem @[9] { };
+	  NetViewStateItem @[10] { };
+	  NetViewStateItem @[11] { };
+	  NetViewStateItem @[12] { };
+	  NetViewStateItem @[13] { };
+	  NetViewStateItem @[14] { };
+	  NetViewStateItem @[15] { };
+	  NetViewStateItem @[16] { };
+	  NetViewStateItem @[17] { };
+	  NetViewStateItem @[18] { };
+	  NetViewStateItem @[19] { };
 	 };
 
 	 ScaleRange_List @.scale_ranges = [3] {
@@ -307,36 +468,6 @@ LeabraProject .projects[0] {
 
  Network_Group @.networks = [7] {
   LeabraNetwork @[0] { 
-   UserDataItem_List @*(.user_data_) {
-    UserDataItem @[0] { };
-    UserDataItem @[1] { };
-    UserDataItem @[2] { };
-    UserDataItem @[3] { };
-    UserDataItem @[4] { };
-    UserDataItem @[5] { };
-    UserDataItem @[6] { };
-    UserDataItem @[7] { };
-    UserDataItem @[8] { };
-    UserDataItem @[9] { };
-    UserDataItem @[10] { };
-    UserDataItem @[11] { };
-    UserDataItem @[12] { };
-    UserDataItem @[13] { };
-    UserDataItem @[14] { };
-    UserDataItem @[15] { };
-    UserDataItem @[16] { };
-    UserDataItem @[17] { };
-    UserDataItem @[18] { };
-    UserDataItem @[19] { };
-    UserDataItem @[20] { };
-    UserDataItem @[21] { };
-    UserDataItem @[22] { };
-    UserDataItem @[23] { };
-    UserDataItem @[24] { };
-    UserDataItem @[25] { };
-    UserDataItem @[26] { };
-   };
-
    BaseSpec_Group @.specs = [8] {
     LeabraUnitSpec @[0] { 
      BaseSpec_Group @.children = [0] {
@@ -381,23 +512,32 @@ LeabraProject .projects[0] {
    ParamSeq_Group @.param_seqs = [0] {
    };
 
+   NetMonItem_List @.monitor.items = [0] {
+   };
+
+   DataTableCols @.mon_data.data = [0] {
+   };
+
+   DataOpList @.mon_data.last_sort_spec.ops = [0] {
+   };
+
    Layer_Group @.layers = [4] {
     LeabraLayer @[0] { 
-     Projection_Group @.projections = [0] {
+     Projection_List @.projections = [0] {
      };
     };
     LeabraLayer @[1] { 
-     Projection_Group @.projections = [1] {
+     Projection_List @.projections = [1] {
       LeabraPrjn @[0] { };
      };
     };
     LeabraLayer @[2] { 
-     Projection_Group @.projections = [1] {
+     Projection_List @.projections = [1] {
       LeabraPrjn @[0] { };
      };
     };
     LeabraLayer @[3] { 
-     Projection_Group @.projections = [1] {
+     Projection_List @.projections = [1] {
       LeabraPrjn @[0] { };
      };
     };
@@ -407,36 +547,6 @@ LeabraProject .projects[0] {
    };
   };
   LeabraNetwork @[1] { 
-   UserDataItem_List @*(.user_data_) {
-    UserDataItem @[0] { };
-    UserDataItem @[1] { };
-    UserDataItem @[2] { };
-    UserDataItem @[3] { };
-    UserDataItem @[4] { };
-    UserDataItem @[5] { };
-    UserDataItem @[6] { };
-    UserDataItem @[7] { };
-    UserDataItem @[8] { };
-    UserDataItem @[9] { };
-    UserDataItem @[10] { };
-    UserDataItem @[11] { };
-    UserDataItem @[12] { };
-    UserDataItem @[13] { };
-    UserDataItem @[14] { };
-    UserDataItem @[15] { };
-    UserDataItem @[16] { };
-    UserDataItem @[17] { };
-    UserDataItem @[18] { };
-    UserDataItem @[19] { };
-    UserDataItem @[20] { };
-    UserDataItem @[21] { };
-    UserDataItem @[22] { };
-    UserDataItem @[23] { };
-    UserDataItem @[24] { };
-    UserDataItem @[25] { };
-    UserDataItem @[26] { };
-   };
-
    BaseSpec_Group @.specs = [8] {
     LeabraUnitSpec @[0] { 
      BaseSpec_Group @.children = [0] {
@@ -568,23 +678,32 @@ LeabraProject .projects[0] {
    ParamSeq_Group @.param_seqs = [0] {
    };
 
+   NetMonItem_List @.monitor.items = [0] {
+   };
+
+   DataTableCols @.mon_data.data = [0] {
+   };
+
+   DataOpList @.mon_data.last_sort_spec.ops = [0] {
+   };
+
    Layer_Group @.layers = [4] {
     LeabraLayer @[0] { 
-     Projection_Group @.projections = [0] {
+     Projection_List @.projections = [0] {
      };
     };
     LeabraLayer @[1] { 
-     Projection_Group @.projections = [1] {
+     Projection_List @.projections = [1] {
       LeabraPrjn @[0] { };
      };
     };
     LeabraLayer @[2] { 
-     Projection_Group @.projections = [1] {
+     Projection_List @.projections = [1] {
       LeabraPrjn @[0] { };
      };
     };
     LeabraLayer @[3] { 
-     Projection_Group @.projections = [1] {
+     Projection_List @.projections = [1] {
       LeabraPrjn @[0] { };
      };
     };
@@ -594,36 +713,6 @@ LeabraProject .projects[0] {
    };
   };
   LeabraNetwork @[2] { 
-   UserDataItem_List @*(.user_data_) {
-    UserDataItem @[0] { };
-    UserDataItem @[1] { };
-    UserDataItem @[2] { };
-    UserDataItem @[3] { };
-    UserDataItem @[4] { };
-    UserDataItem @[5] { };
-    UserDataItem @[6] { };
-    UserDataItem @[7] { };
-    UserDataItem @[8] { };
-    UserDataItem @[9] { };
-    UserDataItem @[10] { };
-    UserDataItem @[11] { };
-    UserDataItem @[12] { };
-    UserDataItem @[13] { };
-    UserDataItem @[14] { };
-    UserDataItem @[15] { };
-    UserDataItem @[16] { };
-    UserDataItem @[17] { };
-    UserDataItem @[18] { };
-    UserDataItem @[19] { };
-    UserDataItem @[20] { };
-    UserDataItem @[21] { };
-    UserDataItem @[22] { };
-    UserDataItem @[23] { };
-    UserDataItem @[24] { };
-    UserDataItem @[25] { };
-    UserDataItem @[26] { };
-   };
-
    BaseSpec_Group @.specs = [11] {
     LeabraUnitSpec @[0] { 
      BaseSpec_Group @.children = [0] {
@@ -688,35 +777,44 @@ LeabraProject .projects[0] {
    ParamSeq_Group @.param_seqs = [0] {
    };
 
+   NetMonItem_List @.monitor.items = [0] {
+   };
+
+   DataTableCols @.mon_data.data = [0] {
+   };
+
+   DataOpList @.mon_data.last_sort_spec.ops = [0] {
+   };
+
    Layer_Group @.layers = [6] {
     LeabraLayer @[0] { 
-     Projection_Group @.projections = [0] {
+     Projection_List @.projections = [0] {
      };
     };
     LeabraLayer @[1] { 
-     Projection_Group @.projections = [3] {
+     Projection_List @.projections = [3] {
       LeabraPrjn @[0] { };
       LeabraPrjn @[1] { };
       LeabraPrjn @[2] { };
      };
     };
     LeabraLayer @[2] { 
-     Projection_Group @.projections = [1] {
+     Projection_List @.projections = [1] {
       LeabraPrjn @[0] { };
      };
     };
     LeabraLayer @[3] { 
-     Projection_Group @.projections = [1] {
+     Projection_List @.projections = [1] {
       LeabraPrjn @[0] { };
      };
     };
     LeabraLayer @[4] { 
-     Projection_Group @.projections = [1] {
+     Projection_List @.projections = [1] {
       LeabraPrjn @[0] { };
      };
     };
     LeabraLayer @[5] { 
-     Projection_Group @.projections = [1] {
+     Projection_List @.projections = [1] {
       LeabraPrjn @[0] { };
      };
     };
@@ -726,36 +824,6 @@ LeabraProject .projects[0] {
    };
   };
   LeabraNetwork @[3] { 
-   UserDataItem_List @*(.user_data_) {
-    UserDataItem @[0] { };
-    UserDataItem @[1] { };
-    UserDataItem @[2] { };
-    UserDataItem @[3] { };
-    UserDataItem @[4] { };
-    UserDataItem @[5] { };
-    UserDataItem @[6] { };
-    UserDataItem @[7] { };
-    UserDataItem @[8] { };
-    UserDataItem @[9] { };
-    UserDataItem @[10] { };
-    UserDataItem @[11] { };
-    UserDataItem @[12] { };
-    UserDataItem @[13] { };
-    UserDataItem @[14] { };
-    UserDataItem @[15] { };
-    UserDataItem @[16] { };
-    UserDataItem @[17] { };
-    UserDataItem @[18] { };
-    UserDataItem @[19] { };
-    UserDataItem @[20] { };
-    UserDataItem @[21] { };
-    UserDataItem @[22] { };
-    UserDataItem @[23] { };
-    UserDataItem @[24] { };
-    UserDataItem @[25] { };
-    UserDataItem @[26] { };
-   };
-
    BaseSpec_Group @.specs = [6] {
     LeabraUnitSpec @[0] { 
      BaseSpec_Group @.children = [0] {
@@ -792,13 +860,22 @@ LeabraProject .projects[0] {
    ParamSeq_Group @.param_seqs = [0] {
    };
 
+   NetMonItem_List @.monitor.items = [0] {
+   };
+
+   DataTableCols @.mon_data.data = [0] {
+   };
+
+   DataOpList @.mon_data.last_sort_spec.ops = [0] {
+   };
+
    Layer_Group @.layers = [2] {
     LeabraLayer @[0] { 
-     Projection_Group @.projections = [0] {
+     Projection_List @.projections = [0] {
      };
     };
     LeabraLayer @[1] { 
-     Projection_Group @.projections = [1] {
+     Projection_List @.projections = [1] {
       LeabraPrjn @[0] { };
      };
     };
@@ -808,36 +885,6 @@ LeabraProject .projects[0] {
    };
   };
   LeabraNetwork @[4] { 
-   UserDataItem_List @*(.user_data_) {
-    UserDataItem @[0] { };
-    UserDataItem @[1] { };
-    UserDataItem @[2] { };
-    UserDataItem @[3] { };
-    UserDataItem @[4] { };
-    UserDataItem @[5] { };
-    UserDataItem @[6] { };
-    UserDataItem @[7] { };
-    UserDataItem @[8] { };
-    UserDataItem @[9] { };
-    UserDataItem @[10] { };
-    UserDataItem @[11] { };
-    UserDataItem @[12] { };
-    UserDataItem @[13] { };
-    UserDataItem @[14] { };
-    UserDataItem @[15] { };
-    UserDataItem @[16] { };
-    UserDataItem @[17] { };
-    UserDataItem @[18] { };
-    UserDataItem @[19] { };
-    UserDataItem @[20] { };
-    UserDataItem @[21] { };
-    UserDataItem @[22] { };
-    UserDataItem @[23] { };
-    UserDataItem @[24] { };
-    UserDataItem @[25] { };
-    UserDataItem @[26] { };
-   };
-
    BaseSpec_Group @.specs = [9] {
     LeabraUnitSpec @[0] { 
      BaseSpec_Group @.children = [0] {
@@ -886,24 +933,33 @@ LeabraProject .projects[0] {
    ParamSeq_Group @.param_seqs = [0] {
    };
 
+   NetMonItem_List @.monitor.items = [0] {
+   };
+
+   DataTableCols @.mon_data.data = [0] {
+   };
+
+   DataOpList @.mon_data.last_sort_spec.ops = [0] {
+   };
+
    Layer_Group @.layers = [4] {
     LeabraLayer @[0] { 
-     Projection_Group @.projections = [1] {
+     Projection_List @.projections = [1] {
       LeabraPrjn @[0] { };
      };
     };
     LeabraLayer @[1] { 
-     Projection_Group @.projections = [1] {
+     Projection_List @.projections = [1] {
       LeabraPrjn @[0] { };
      };
     };
     LeabraLayer @[2] { 
-     Projection_Group @.projections = [1] {
+     Projection_List @.projections = [1] {
       LeabraPrjn @[0] { };
      };
     };
     LeabraLayer @[3] { 
-     Projection_Group @.projections = [1] {
+     Projection_List @.projections = [1] {
       LeabraPrjn @[0] { };
      };
     };
@@ -913,36 +969,6 @@ LeabraProject .projects[0] {
    };
   };
   LeabraNetwork @[5] { 
-   UserDataItem_List @*(.user_data_) {
-    UserDataItem @[0] { };
-    UserDataItem @[1] { };
-    UserDataItem @[2] { };
-    UserDataItem @[3] { };
-    UserDataItem @[4] { };
-    UserDataItem @[5] { };
-    UserDataItem @[6] { };
-    UserDataItem @[7] { };
-    UserDataItem @[8] { };
-    UserDataItem @[9] { };
-    UserDataItem @[10] { };
-    UserDataItem @[11] { };
-    UserDataItem @[12] { };
-    UserDataItem @[13] { };
-    UserDataItem @[14] { };
-    UserDataItem @[15] { };
-    UserDataItem @[16] { };
-    UserDataItem @[17] { };
-    UserDataItem @[18] { };
-    UserDataItem @[19] { };
-    UserDataItem @[20] { };
-    UserDataItem @[21] { };
-    UserDataItem @[22] { };
-    UserDataItem @[23] { };
-    UserDataItem @[24] { };
-    UserDataItem @[25] { };
-    UserDataItem @[26] { };
-   };
-
    BaseSpec_Group @.specs = [8] {
     LeabraUnitSpec @[0] { 
      BaseSpec_Group @.children = [0] {
@@ -987,23 +1013,32 @@ LeabraProject .projects[0] {
    ParamSeq_Group @.param_seqs = [0] {
    };
 
+   NetMonItem_List @.monitor.items = [0] {
+   };
+
+   DataTableCols @.mon_data.data = [0] {
+   };
+
+   DataOpList @.mon_data.last_sort_spec.ops = [0] {
+   };
+
    Layer_Group @.layers = [4] {
     LeabraLayer @[0] { 
-     Projection_Group @.projections = [0] {
+     Projection_List @.projections = [0] {
      };
     };
     LeabraLayer @[1] { 
-     Projection_Group @.projections = [1] {
+     Projection_List @.projections = [1] {
       LeabraPrjn @[0] { };
      };
     };
     LeabraLayer @[2] { 
-     Projection_Group @.projections = [1] {
+     Projection_List @.projections = [1] {
       LeabraPrjn @[0] { };
      };
     };
     LeabraLayer @[3] { 
-     Projection_Group @.projections = [1] {
+     Projection_List @.projections = [1] {
       LeabraPrjn @[0] { };
      };
     };
@@ -1013,36 +1048,6 @@ LeabraProject .projects[0] {
    };
   };
   LeabraNetwork @[6] { 
-   UserDataItem_List @*(.user_data_) {
-    UserDataItem @[0] { };
-    UserDataItem @[1] { };
-    UserDataItem @[2] { };
-    UserDataItem @[3] { };
-    UserDataItem @[4] { };
-    UserDataItem @[5] { };
-    UserDataItem @[6] { };
-    UserDataItem @[7] { };
-    UserDataItem @[8] { };
-    UserDataItem @[9] { };
-    UserDataItem @[10] { };
-    UserDataItem @[11] { };
-    UserDataItem @[12] { };
-    UserDataItem @[13] { };
-    UserDataItem @[14] { };
-    UserDataItem @[15] { };
-    UserDataItem @[16] { };
-    UserDataItem @[17] { };
-    UserDataItem @[18] { };
-    UserDataItem @[19] { };
-    UserDataItem @[20] { };
-    UserDataItem @[21] { };
-    UserDataItem @[22] { };
-    UserDataItem @[23] { };
-    UserDataItem @[24] { };
-    UserDataItem @[25] { };
-    UserDataItem @[26] { };
-   };
-
    BaseSpec_Group @.specs = [9] {
     LeabraUnitSpec @[0] { 
      BaseSpec_Group @.children = [0] {
@@ -1109,24 +1114,33 @@ LeabraProject .projects[0] {
    ParamSeq_Group @.param_seqs = [0] {
    };
 
+   NetMonItem_List @.monitor.items = [0] {
+   };
+
+   DataTableCols @.mon_data.data = [0] {
+   };
+
+   DataOpList @.mon_data.last_sort_spec.ops = [0] {
+   };
+
    Layer_Group @.layers = [4] {
     LeabraLayer @[0] { 
-     Projection_Group @.projections = [1] {
+     Projection_List @.projections = [1] {
       LeabraPrjn @[0] { };
      };
     };
     LeabraLayer @[1] { 
-     Projection_Group @.projections = [1] {
+     Projection_List @.projections = [1] {
       LeabraPrjn @[0] { };
      };
     };
     LeabraLayer @[2] { 
-     Projection_Group @.projections = [1] {
+     Projection_List @.projections = [1] {
       LeabraPrjn @[0] { };
      };
     };
     LeabraLayer @[3] { 
-     Projection_Group @.projections = [1] {
+     Projection_List @.projections = [1] {
       LeabraPrjn @[0] { };
      };
     };
@@ -1137,7 +1151,7 @@ LeabraProject .projects[0] {
   };
  };
 };
-LeabraProject .projects[0] {
+LeabraProject .projects[1] {
  name="projection_sampler";
  desc="demonstrates how to use various ProjectionSpec's to connect units according to various patterns";
  tags="Demo, Projection, Network, Connections";
@@ -1722,12 +1736,38 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	  lay_layout=THREE_D;
 	  lay_mv=0;
 	  net_text=0;
+	  state_width_default=8;
 	  show_iconified=0;
 	  net_text_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=-0.5: z=0: }: };
 	  net_text_rot=0;
 	  cur_unit_vals{ r.wt;	  };
 	  hot_vars{ targ;ext;act;net;bias_wt;bias_dwt;act_eq;act_m;act_p;act_dif;avg_m;avg_l;act_avg;r.wt;r.wt*act;s.wt;r.dwt;s.dwt;	  };
 	  unit_src_path=".layers[3][24]";
+	  state_items {
+	   name="state_items";
+	   el_typ=NetViewStateItem;
+	   el_def=0;
+	   NetViewStateItem @[0] {name="batch": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[1] {name="epoch": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[2] {name="group": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[3] {name="trial": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[4] {name="tick": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[5] {name="cycle": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[6] {name="time": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[7] {name="total_trials": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[8] {name="sse": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[9] {name="group_name": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[10] {name="trial_name": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[11] {name="output_name": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[12] {name="quarter": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[13] {name="phase": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[14] {name="tot_cycle": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[15] {name="rt_cycles": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[16] {name="ext_rew": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[17] {name="norm_err": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[18] {name="cos_err": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[19] {name="minus_output_name": net_member=1: display=0: width=8: found=1: };
+	  };
 	  con_type=ANY_CON;
 	  hist_idx=0;
 	  hist_save=1;
@@ -1900,12 +1940,38 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	  lay_layout=THREE_D;
 	  lay_mv=0;
 	  net_text=0;
+	  state_width_default=8;
 	  show_iconified=0;
 	  net_text_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=-0.5: z=0: }: };
 	  net_text_rot=0;
 	  cur_unit_vals{ r.wt;	  };
 	  hot_vars{ targ;ext;act;net;bias_wt;bias_dwt;act_eq;act_m;act_p;act_dif;act_avg;r.wt;r.wt*act;s.wt;r.dwt;s.dwt;	  };
 	  unit_src_path=".layers[3][43]";
+	  state_items {
+	   name="state_items";
+	   el_typ=NetViewStateItem;
+	   el_def=0;
+	   NetViewStateItem @[0] {name="batch": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[1] {name="epoch": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[2] {name="group": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[3] {name="trial": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[4] {name="tick": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[5] {name="cycle": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[6] {name="time": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[7] {name="total_trials": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[8] {name="sse": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[9] {name="group_name": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[10] {name="trial_name": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[11] {name="output_name": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[12] {name="quarter": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[13] {name="phase": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[14] {name="tot_cycle": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[15] {name="rt_cycles": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[16] {name="ext_rew": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[17] {name="norm_err": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[18] {name="cos_err": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[19] {name="minus_output_name": net_member=1: display=0: width=8: found=1: };
+	  };
 	  con_type=ANY_CON;
 	  hist_idx=0;
 	  hist_save=1;
@@ -2078,12 +2144,38 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	  lay_layout=THREE_D;
 	  lay_mv=0;
 	  net_text=0;
+	  state_width_default=8;
 	  show_iconified=0;
 	  net_text_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=-0.5: z=0: }: };
 	  net_text_rot=0;
-	  cur_unit_vals{ s.wt;	  };
+	  cur_unit_vals{ r.wt;	  };
 	  hot_vars{ targ;ext;act;net;bias_wt;bias_dwt;act_eq;act_m;act_p;act_dif;act_avg;r.wt;r.wt*act;s.wt;r.dwt;s.dwt;	  };
-	  unit_src_path=".layers[5][20]";
+	  unit_src_path=".layers[5][9]";
+	  state_items {
+	   name="state_items";
+	   el_typ=NetViewStateItem;
+	   el_def=0;
+	   NetViewStateItem @[0] {name="batch": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[1] {name="epoch": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[2] {name="group": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[3] {name="trial": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[4] {name="tick": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[5] {name="cycle": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[6] {name="time": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[7] {name="total_trials": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[8] {name="sse": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[9] {name="group_name": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[10] {name="trial_name": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[11] {name="output_name": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[12] {name="quarter": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[13] {name="phase": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[14] {name="tot_cycle": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[15] {name="rt_cycles": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[16] {name="ext_rew": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[17] {name="norm_err": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[18] {name="cos_err": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[19] {name="minus_output_name": net_member=1: display=0: width=8: found=1: };
+	  };
 	  con_type=ANY_CON;
 	  hist_idx=0;
 	  hist_save=1;
@@ -2262,12 +2354,38 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	  lay_layout=THREE_D;
 	  lay_mv=0;
 	  net_text=1;
+	  state_width_default=8;
 	  show_iconified=0;
 	  net_text_xform {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=1: y=0: z=0: rot=1.570796: }: translate={x=1: y=0: z=-0.5: }: };
 	  net_text_rot=-90;
 	  cur_unit_vals{ r.wt;	  };
 	  hot_vars{ targ;ext;act;net;bias_wt;bias_dwt;act_eq;act_m;act_p;act_dif;act_avg;r.wt;r.wt*act;s.wt;r.dwt;s.dwt;	  };
 	  unit_src_path=".layers[1][21]";
+	  state_items {
+	   name="state_items";
+	   el_typ=NetViewStateItem;
+	   el_def=0;
+	   NetViewStateItem @[0] {name="batch": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[1] {name="epoch": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[2] {name="group": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[3] {name="trial": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[4] {name="tick": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[5] {name="cycle": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[6] {name="time": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[7] {name="total_trials": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[8] {name="sse": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[9] {name="group_name": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[10] {name="trial_name": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[11] {name="output_name": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[12] {name="quarter": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[13] {name="phase": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[14] {name="tot_cycle": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[15] {name="rt_cycles": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[16] {name="ext_rew": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[17] {name="norm_err": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[18] {name="cos_err": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[19] {name="minus_output_name": net_member=1: display=0: width=8: found=1: };
+	  };
 	  con_type=ANY_CON;
 	  hist_idx=0;
 	  hist_save=1;
@@ -2440,12 +2558,38 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	  lay_layout=THREE_D;
 	  lay_mv=0;
 	  net_text=0;
+	  state_width_default=8;
 	  show_iconified=0;
 	  net_text_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=-0.5: z=0: }: };
 	  net_text_rot=0;
 	  cur_unit_vals{ s.wt;	  };
 	  hot_vars{ targ;ext;act;net;bias_wt;bias_dwt;act_eq;act_m;act_p;act_dif;act_avg;r.wt;r.wt*act;s.wt;r.dwt;s.dwt;	  };
 	  unit_src_path=".layers[1][22]";
+	  state_items {
+	   name="state_items";
+	   el_typ=NetViewStateItem;
+	   el_def=0;
+	   NetViewStateItem @[0] {name="batch": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[1] {name="epoch": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[2] {name="group": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[3] {name="trial": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[4] {name="tick": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[5] {name="cycle": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[6] {name="time": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[7] {name="total_trials": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[8] {name="sse": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[9] {name="group_name": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[10] {name="trial_name": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[11] {name="output_name": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[12] {name="quarter": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[13] {name="phase": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[14] {name="tot_cycle": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[15] {name="rt_cycles": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[16] {name="ext_rew": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[17] {name="norm_err": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[18] {name="cos_err": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[19] {name="minus_output_name": net_member=1: display=0: width=8: found=1: };
+	  };
 	  con_type=ANY_CON;
 	  hist_idx=0;
 	  hist_save=1;
@@ -2624,12 +2768,38 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	  lay_layout=THREE_D;
 	  lay_mv=0;
 	  net_text=0;
+	  state_width_default=8;
 	  show_iconified=0;
 	  net_text_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=-0.5: z=0: }: };
 	  net_text_rot=0;
 	  cur_unit_vals{ r.wt;	  };
 	  hot_vars{ 	  };
 	  unit_src_path=".layers[1].units[79]";
+	  state_items {
+	   name="state_items";
+	   el_typ=NetViewStateItem;
+	   el_def=0;
+	   NetViewStateItem @[0] {name="batch": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[1] {name="epoch": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[2] {name="group": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[3] {name="trial": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[4] {name="tick": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[5] {name="cycle": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[6] {name="time": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[7] {name="total_trials": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[8] {name="sse": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[9] {name="group_name": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[10] {name="trial_name": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[11] {name="output_name": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[12] {name="quarter": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[13] {name="phase": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[14] {name="tot_cycle": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[15] {name="rt_cycles": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[16] {name="ext_rew": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[17] {name="norm_err": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[18] {name="cos_err": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[19] {name="minus_output_name": net_member=1: display=0: width=8: found=1: };
+	  };
 	  con_type=ANY_CON;
 	  hist_idx=0;
 	  hist_save=1;
@@ -2802,12 +2972,38 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	  lay_layout=THREE_D;
 	  lay_mv=0;
 	  net_text=0;
+	  state_width_default=8;
 	  show_iconified=0;
 	  net_text_xform {scale={x=0.7: y=0.7: z=0.7: }: rotate={x=1: y=0: z=0: rot=1.570796: }: translate={x=0: y=1: z=-1: }: };
 	  net_text_rot=-90;
 	  cur_unit_vals{ s.wt;	  };
 	  hot_vars{ targ;ext;act;net;bias_wt;bias_dwt;act_eq;act_m;act_p;act_dif;act_avg;r.wt;r.wt*act;s.wt;r.dwt;s.dwt;	  };
 	  unit_src_path=".layers[0][31]";
+	  state_items {
+	   name="state_items";
+	   el_typ=NetViewStateItem;
+	   el_def=0;
+	   NetViewStateItem @[0] {name="batch": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[1] {name="epoch": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[2] {name="group": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[3] {name="trial": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[4] {name="tick": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[5] {name="cycle": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[6] {name="time": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[7] {name="total_trials": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[8] {name="sse": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[9] {name="group_name": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[10] {name="trial_name": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[11] {name="output_name": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[12] {name="quarter": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[13] {name="phase": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[14] {name="tot_cycle": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[15] {name="rt_cycles": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[16] {name="ext_rew": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[17] {name="norm_err": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[18] {name="cos_err": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[19] {name="minus_output_name": net_member=1: display=0: width=8: found=1: };
+	  };
 	  con_type=ANY_CON;
 	  hist_idx=0;
 	  hist_save=1;
@@ -2986,44 +3182,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
  save_as_only=0;
  auto_name=1;
  last_change_desc="Project updated on wiki: emergent changes: doc link";
- tree_state{ .;.docs;.wizards;.ctrl_panels;.data;.data.gp[0];.data.gp[1];.data.gp[2];.programs;.networks;.networks[0];.networks[0].specs;.networks[0].layers;.networks[1];.networks[1].specs;.networks[1].layers;.networks[2];.networks[2].specs;.networks[2].specs[9];.networks[2].specs[9].children[0];.networks[2].specs[10];.networks[2].layers;.networks[2].layers[1];.networks[2].layers[1].projections;.networks[2].layers[1].projections[2];.networks[2].layers[5];.networks[2].layers[5].projections;.networks[3];.networks[3].spec_tables;.networks[3].specs;.networks[3].param_seqs;.networks[3].layers;.networks[3].layers[0];.networks[3].layers[0].projections;.networks[3].layers[1];.networks[3].layers[1].projections;.networks[3].weights;.networks[4];.networks[4].specs;.networks[4].specs[8];.networks[4].layers;.networks[4].layers[0];.networks[4].layers[0].projections;.networks[4].layers[1];.networks[4].layers[1].projections;.networks[4].layers[2];.networks[4].layers[2].projections;.networks[4].layers[3];.networks[4].layers[3].projections;.networks[5];.networks[5].specs;.networks[5].layers;.networks[6];.networks[6].specs;.networks[6].layers;.networks[6].layers[1];.networks[6].layers[1].projections;.networks[6].layers[2];.networks[6].layers[2].projections;.networks[6].layers[3];.networks[6].layers[3].projections;.networks[6].weights; };
+ tree_state{ .;.docs;.wizards;.ctrl_panels;.data;.data.gp[0];.data.gp[1];.data.gp[2];.programs;.viewers[0];.viewers[0].frames[2];.networks;.networks[0];.networks[0].specs;.networks[0].layers;.networks[1];.networks[1].specs;.networks[1].layers;.networks[2];.networks[2].specs;.networks[2].specs[9];.networks[2].specs[9].children[0];.networks[2].specs[10];.networks[2].layers;.networks[2].layers[1];.networks[2].layers[1].projections;.networks[2].layers[1].projections[2];.networks[2].layers[5];.networks[2].layers[5].projections;.networks[3];.networks[3].spec_tables;.networks[3].specs;.networks[3].param_seqs;.networks[3].layers;.networks[3].layers[0];.networks[3].layers[0].projections;.networks[3].layers[1];.networks[3].layers[1].projections;.networks[3].weights;.networks[4];.networks[4].specs;.networks[4].specs[8];.networks[4].layers;.networks[4].layers[0];.networks[4].layers[0].projections;.networks[4].layers[1];.networks[4].layers[1].projections;.networks[4].layers[2];.networks[4].layers[2].projections;.networks[4].layers[3];.networks[4].layers[3].projections;.networks[5];.networks[5].specs;.networks[5].layers;.networks[6];.networks[6].specs;.networks[6].layers;.networks[6].layers[1];.networks[6].layers[1].projections;.networks[6].layers[2];.networks[6].layers[2].projections;.networks[6].layers[3];.networks[6].layers[3].projections;.networks[6].weights; };
  networks {
   name="networks";
   el_typ=LeabraNetwork;
   el_def=0;
   LeabraNetwork @[0] {
-   UserDataItem_List @*(.user_data_) {
-    name=;
-    el_typ=UserDataItem;
-    el_def=0;
-    UserDataItem @[0] {name="cos_err": value=1: val_type_fixed=1: };
-    UserDataItem @[1] {name="norm_err": value=1: val_type_fixed=1: };
-    UserDataItem @[2] {name="ext_rew": value=1: val_type_fixed=1: };
-    UserDataItem @[3] {name="minus_output_name": value=1: val_type_fixed=1: };
-    UserDataItem @[4] {name="rt_cycles": value=1: val_type_fixed=1: };
-    UserDataItem @[5] {name="tot_cycle": value=1: val_type_fixed=1: };
-    UserDataItem @[6] {name="phase": value=1: val_type_fixed=1: };
-    UserDataItem @[7] {name="quarter": value=1: val_type_fixed=1: };
-    UserDataItem @[8] {name="sse": value=1: val_type_fixed=1: };
-    UserDataItem @[9] {name="output_name": value=1: val_type_fixed=1: };
-    UserDataItem @[10] {name="trial_name": value=1: val_type_fixed=1: };
-    UserDataItem @[11] {name="group_name": value=1: val_type_fixed=1: };
-    UserDataItem @[12] {name="total_trials": value=1: val_type_fixed=1: };
-    UserDataItem @[13] {name="time": value=1: val_type_fixed=1: };
-    UserDataItem @[14] {name="cycle": value=1: val_type_fixed=1: };
-    UserDataItem @[15] {name="tick": value=1: val_type_fixed=1: };
-    UserDataItem @[16] {name="trial": value=1: val_type_fixed=1: };
-    UserDataItem @[17] {name="group": value=1: val_type_fixed=1: };
-    UserDataItem @[18] {name="epoch": value=1: val_type_fixed=1: };
-    UserDataItem @[19] {name="batch": value=1: val_type_fixed=1: };
-    UserDataItem @[20] {name="trial_cos_diff": value=1: val_type_fixed=1: };
-    UserDataItem @[21] {name="avg_act_diff": value=1: val_type_fixed=1: };
-    UserDataItem @[22] {name="cos_diff": value=1: val_type_fixed=1: };
-    UserDataItem @[23] {name="minus_cycles": value=1: val_type_fixed=1: };
-    UserDataItem @[24] {name="ct_cycle": value=1: val_type_fixed=1: };
-    UserDataItem @[25] {name="phase_no": value=1: val_type_fixed=1: };
-    UserDataItem @[26] {name="maxda": value=1: val_type_fixed=1: };
-   };
    name="GaussRF";
    desc="Demo's GaussRFPrjnSpec for both receptive field prjns and also self-projections";
    flags=BUILD_INIT_WTS;
@@ -3054,27 +3218,28 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      act_range {min=0: max=1: range=1: scale=1: };
      sse_tol=0.5;
      act_fun=NOISY_XX1;
-     act {thr=0.25: gain=600: nvar=0.005: sig_mult=0.33: sig_mult_pow=0.8: sig_gain=3: interp_range=0.01: gain_cor_range=10: gain_cor=0.1: sig_gain_nvar=600: sig_mult_eff=0.7947142: sig_val_at_0=0.3973571: interp_val=0.4492686: };
-     act_misc {rec_nd=1: avg_nd=1: dif_avg=0: net_gain=1: act_max_hz=100: avg_trace=0: lambda=0: avg_tau=200: avg_init=0.15: avg_dt=0.005: };
-     spike {rise=0: decay=5: g_gain=5: window=3: eq_gain=10: eq_tau=50: eq_dt=0.02: };
+     act {thr=0.25: gain=600: nvar=0.005: avg_correct=1: vm_act_thr=0.01: sig_mult=0.33: sig_mult_pow=0.8: sig_gain=3: interp_range=0.01: gain_cor_range=10: gain_cor=0.1: sig_gain_nvar=600: sig_mult_eff=0.7947142: sig_val_at_0=0.3973571: interp_val=0.4492686: };
+     act_misc {rec_nd=1: avg_nd=1: dif_avg=0: net_gain=1: avg_trace=0: lambda=0: avg_tau=200: avg_init=0.15: avg_dt=0.005: };
+     spike {rise=0: decay=5: g_gain=5: window=3: act_max_hz=200: int_tau=5: int_dt=0.2: };
      spike_misc {ex=0: exp_slope=0.02: spk_thr=1.2: vm_r=0: t_r=6: clamp_max_p=0.11: clamp_type=REGULAR: eff_spk_thr=0.25: };
      opt_thresh {send=0.1: delta=0.005: };
      clamp_range {min=0: max=0.95: range=0.95: scale=1.052632: };
      vm_range {min=0: max=1: range=1: scale=1: };
      init {v_m=0.4: act=0: netin=0: };
-     dt {integ=1: vm_tau=4: net_tau=1.428571: fast_cyc=0: vm_dt=0.25: net_dt=0.7000002: };
+     dt {integ=1: vm_tau=4: net_tau=1.428571: vm_cyc=1: fast_cyc=0: vm_dt=0.25: vm_dt_cyc=0.25: net_dt=0.7000002: };
      act_avg {ss_tau=2: s_tau=2: m_tau=10: m_in_s=0.1: ss_dt=0.5: s_dt=0.5: m_dt=0.1: s_in_s=0.9: };
      avg_l {init=0.4: gain=1.5: min=0.1: tau=10: lrn_max=0.05: lrn_min=0.005: dt=0.1: lrn_fact=0.03214286: };
      avg_l_2 {err_mod=1: err_min=0.01: lay_act_thr=0.01: };
-     g_bar {e=1: l=0.1: i=1: };
-     e_rev {e=1: l=0.15: i=0.15: };
-     adapt {on=0: tau=144: vm_gain=0.1: spike_gain=0.01: Ei_dyn=1: Ei_gain=0.001: Ei_tau=50: dt=0.006944444: Ei_dt=0.02: };
+     g_bar {e=1: l=0.1: i=1: k=1: };
+     e_rev {e=1: l=0.15: i=0.15: k=0.1: };
+     kna_adapt {on=0: rate_rise=0.8: f_on=1: f_rise=0.05: f_max=0.1: f_tau=50: m_on=1: m_rise=0.02: m_max=0.1: m_tau=200: s_on=1: s_rise=0.001: s_max=1: s_tau=1000: f_dt=0.02: m_dt=0.005: s_dt=0.001: };
+     kna_misc {clamp=0: invert_nd=0: max_gc=0.2: max_adapt=0.5: no_targ=1: };
      stp {on=0: algorithm=CYCLES: f_r_ratio=0.02: rec_tau=200: p0=0.3: p0_norm=0.4: kre_tau=100: kre=0.002: fac_tau=4: fac=0.3: thresh=0.5: n_trials=1: rec_prob=0.1: rec_dt=0.005: fac_dt=0.25: kre_dt=0.01: oneo_p0_norm=2.5: };
      syn_delay {on=0: delay=4: };
      deep_raw_qtr=Q4;
      deep {on=0: role=SUPER: raw_thr_rel=0.1: raw_thr_abs=0.1: mod_min=0.8: mod_thr=0.1: ctxt_prv=0: tick_updt=-1: else_prv=0.9: mod_range=0.2: ctxt_new=1: else_new=0.1: };
-     trc {p_only_m=0: thal_gate=0: avg_clamp=0: deep_gain=0.2: clip=0: clip_max=0.4: std_gain=0.8: };
-     da_mod {on=0: minus=0: plus=0.1: };
+     trc {p_only_m=0: thal_gate=0: clamp_net=0: avg_clamp=0: deep_gain=0.2: clip=0: clip_max=0.4: std_gain=0.8: };
+     da_mod {on=0: mod_gain=0: minus=0: plus=0.1: da_neg_gain=0.1: da_pos_gain=0.1: };
      noise_type {type=NO_NOISE: trial_fixed=1: };
      noise {name="noise": type=GAUSSIAN: mean=0: var=0.001000000047497451: par=1: };
     };
@@ -3100,10 +3265,10 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      cur_lrate=0.02;
      lrs_mult=1;
      use_unlearnable=1;
-     xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: lrn_thr=0.01: d_rev_ratio=-9: };
+     xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: lrn_thr=0.01: s_mult=1: d_rev_ratio=-9: };
      wt_sig {gain=6: off=1.25: soft_bound=1: };
      momentum {on=0: dwavg_tau=1000: norm_min=0.001: m_tau=20: lrate_comp=0.01: dwavg_dt=0.001: dwavg_dt_c=0.999: m_dt=0.05: m_dt_c=0.95: };
-     wt_bal {on=0: hi_thr=0.4: hi_gain=4: lo_thr=0.2: lo_gain=4: };
+     wt_bal {on=0: avg_thr=0.5: hi_thr=0.6: hi_gain=3: lo_thr=0.6: lo_gain=6: act_thr=0.25: act_gain=0: no_targ=1: };
      adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
      slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
      deep {on=0: bg_lrate=1: fg_lrate=0: };
@@ -3142,7 +3307,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      margin {pct_marg=0.3: avg_tau=100: adapt_tau=500: tol_pct=0.25: avg_act=0.8: low_thr=0.501: med_thr=0.506: hi_thr=0.508: avg_dt=0.01: adapt_dt=0.002: };
      lay_lrate=1;
      cos_diff {avg_tau=100: lrate_mod=0: lrmod_fm_trc=0: lrmod_z_thr=-1.5: set_net_unlrn=0: avg_dt=0.01: avg_dt_c=0.99: };
-     lstats {hog_thr=0.3: dead_thr=0.01: };
+     lstats {pre_hog_thr=0.2: hog_thr=0.3: dead_thr=0.01: };
     };
     GaussRFPrjnSpec @[3] {
      name="GaussRF_HalfOvlp4x4";
@@ -3241,10 +3406,10 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      cur_lrate=0.02;
      lrs_mult=1;
      use_unlearnable=1;
-     xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: lrn_thr=0.01: d_rev_ratio=-9: };
+     xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: lrn_thr=0.01: s_mult=1: d_rev_ratio=-9: };
      wt_sig {gain=6: off=1.25: soft_bound=1: };
      momentum {on=0: dwavg_tau=1000: norm_min=0.001: m_tau=20: lrate_comp=0.01: dwavg_dt=0.001: dwavg_dt_c=0.999: m_dt=0.05: m_dt_c=0.95: };
-     wt_bal {on=0: hi_thr=0.4: hi_gain=4: lo_thr=0.2: lo_gain=4: };
+     wt_bal {on=0: avg_thr=0.5: hi_thr=0.6: hi_gain=3: lo_thr=0.6: lo_gain=6: act_thr=0.25: act_gain=0: no_targ=1: };
      adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
      slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
      deep {on=0: bg_lrate=1: fg_lrate=0: };
@@ -3282,6 +3447,41 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     name="param_seqs";
     el_typ=ParamSeq;
     el_def=0;
+   };
+   monitor {
+    name="monitor";
+    items {
+     name="items";
+     el_typ=NetMonItem;
+     el_def=0;
+    };
+    network=$.networks[0]$;
+    data=.networks[0].mon_data$$;
+    rmv_orphan_cols=1;
+   };
+   mon_data {
+    name="mon_data";
+    desc=;
+    data {
+     name="data";
+     el_typ=String_Data;
+     el_def=0;
+    };
+    data_flags=AUTO_CALC;
+    auto_load=NO_AUTO_LOAD;
+    auto_load_file=;
+    row_height=1;
+    max_col_width=50;
+    keygen 4 0=0;
+    last_sort_spec {
+     name="last_sort_spec";
+     ops {
+      name="ops";
+      el_typ=DataSortEl;
+      el_def=0;
+     };
+    };
+    row_with_hilite=-1;
    };
    layers {
     name="layers";
@@ -3331,8 +3531,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
       name="send_prjns";
       el_typ=LeabraPrjn;
       el_def=0;
-      Projection_Group @. = [0] = LeabraPrjn .networks[0].layers[1].projections[0];
-      Projection_Group @. = [1] = LeabraPrjn .networks[0].layers[2].projections[0];
+      Projection_List @. = [0] = LeabraPrjn .networks[0].layers[1].projections[0];
+      Projection_List @. = [1] = LeabraPrjn .networks[0].layers[2].projections[0];
      };
      unit_spec {type=LeabraUnitSpec: spec=.networks[0].specs[0]$$: };
      dist {fm_input=-1: fm_output=-1: };
@@ -3534,7 +3734,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
       name="send_prjns";
       el_typ=LeabraPrjn;
       el_def=0;
-      Projection_Group @. = [0] = LeabraPrjn .networks[0].layers[3].projections[0];
+      Projection_List @. = [0] = LeabraPrjn .networks[0].layers[3].projections[0];
      };
      unit_spec {type=LeabraUnitSpec: spec=$.networks[0].specs[0]$: };
      dist {fm_input=-1: fm_output=-1: };
@@ -3564,43 +3764,11 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
    max_disp_size2d {x=22: y=24: };
    times {quarter=25: deep_cyc=5: time_inc=0.001: wt_bal_int=10: minus=75: plus=25: total_cycles=100: thal_gate_cycle=-2: };
    lstats {trg_max_act_crit=0.5: off_errs=1: on_errs=1: agg_unlearnable=0: wt_bal=0: };
-   net_misc {spike=0: deep=0: bias_learn=0: trial_decay=0: diff_scale_p=0: diff_scale_q1=0: wt_bal=0: lay_gp_inhib=0: inhib_cons=0: };
+   net_misc {spike=0: deep=1: bias_learn=0: trial_decay=0: diff_scale_p=0: diff_scale_q1=0: wt_bal=0: lay_gp_inhib=0: inhib_cons=0: };
    deep {on=0: ctxt=0: raw_net=0: mod_net=0: raw_qtr=0: };
    rel_netin {on=1: trl_skip=10: epc_skip=10: };
   };
   LeabraNetwork @[1] {
-   UserDataItem_List @*(.user_data_) {
-    name=;
-    el_typ=UserDataItem;
-    el_def=0;
-    UserDataItem @[0] {name="cos_err": value=1: val_type_fixed=1: };
-    UserDataItem @[1] {name="norm_err": value=1: val_type_fixed=1: };
-    UserDataItem @[2] {name="ext_rew": value=1: val_type_fixed=1: };
-    UserDataItem @[3] {name="minus_output_name": value=1: val_type_fixed=1: };
-    UserDataItem @[4] {name="rt_cycles": value=1: val_type_fixed=1: };
-    UserDataItem @[5] {name="tot_cycle": value=1: val_type_fixed=1: };
-    UserDataItem @[6] {name="phase": value=1: val_type_fixed=1: };
-    UserDataItem @[7] {name="quarter": value=1: val_type_fixed=1: };
-    UserDataItem @[8] {name="sse": value=1: val_type_fixed=1: };
-    UserDataItem @[9] {name="output_name": value=1: val_type_fixed=1: };
-    UserDataItem @[10] {name="trial_name": value=1: val_type_fixed=1: };
-    UserDataItem @[11] {name="group_name": value=1: val_type_fixed=1: };
-    UserDataItem @[12] {name="total_trials": value=1: val_type_fixed=1: };
-    UserDataItem @[13] {name="time": value=1: val_type_fixed=1: };
-    UserDataItem @[14] {name="cycle": value=1: val_type_fixed=1: };
-    UserDataItem @[15] {name="tick": value=1: val_type_fixed=1: };
-    UserDataItem @[16] {name="trial": value=1: val_type_fixed=1: };
-    UserDataItem @[17] {name="group": value=1: val_type_fixed=1: };
-    UserDataItem @[18] {name="epoch": value=1: val_type_fixed=1: };
-    UserDataItem @[19] {name="batch": value=1: val_type_fixed=1: };
-    UserDataItem @[20] {name="trial_cos_diff": value=1: val_type_fixed=1: };
-    UserDataItem @[21] {name="avg_act_diff": value=1: val_type_fixed=1: };
-    UserDataItem @[22] {name="cos_diff": value=1: val_type_fixed=1: };
-    UserDataItem @[23] {name="minus_cycles": value=1: val_type_fixed=1: };
-    UserDataItem @[24] {name="ct_cycle": value=1: val_type_fixed=1: };
-    UserDataItem @[25] {name="phase_no": value=1: val_type_fixed=1: };
-    UserDataItem @[26] {name="maxda": value=1: val_type_fixed=1: };
-   };
    name="Tessel";
    desc="Demo's TesselPrjnSpec for both receptive field prjns and also self-projections";
    flags=BUILD_INIT_WTS;
@@ -3631,27 +3799,28 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      act_range {min=0: max=1: range=1: scale=1: };
      sse_tol=0.5;
      act_fun=NOISY_XX1;
-     act {thr=0.25: gain=600: nvar=0.005: sig_mult=0.33: sig_mult_pow=0.8: sig_gain=3: interp_range=0.01: gain_cor_range=10: gain_cor=0.1: sig_gain_nvar=600: sig_mult_eff=0.7947142: sig_val_at_0=0.3973571: interp_val=0.4492686: };
-     act_misc {rec_nd=1: avg_nd=1: dif_avg=0: net_gain=1: act_max_hz=100: avg_trace=0: lambda=0: avg_tau=200: avg_init=0.15: avg_dt=0.005: };
-     spike {rise=0: decay=5: g_gain=5: window=3: eq_gain=10: eq_tau=50: eq_dt=0.02: };
+     act {thr=0.25: gain=600: nvar=0.005: avg_correct=1: vm_act_thr=0.01: sig_mult=0.33: sig_mult_pow=0.8: sig_gain=3: interp_range=0.01: gain_cor_range=10: gain_cor=0.1: sig_gain_nvar=600: sig_mult_eff=0.7947142: sig_val_at_0=0.3973571: interp_val=0.4492686: };
+     act_misc {rec_nd=1: avg_nd=1: dif_avg=0: net_gain=1: avg_trace=0: lambda=0: avg_tau=200: avg_init=0.15: avg_dt=0.005: };
+     spike {rise=0: decay=5: g_gain=5: window=3: act_max_hz=200: int_tau=5: int_dt=0.2: };
      spike_misc {ex=0: exp_slope=0.02: spk_thr=1.2: vm_r=0: t_r=6: clamp_max_p=0.11: clamp_type=REGULAR: eff_spk_thr=0.25: };
      opt_thresh {send=0.1: delta=0.005: };
      clamp_range {min=0: max=0.95: range=0.95: scale=1.052632: };
      vm_range {min=0: max=1: range=1: scale=1: };
      init {v_m=0.4: act=0: netin=0: };
-     dt {integ=1: vm_tau=4: net_tau=1.428571: fast_cyc=0: vm_dt=0.25: net_dt=0.7000002: };
+     dt {integ=1: vm_tau=4: net_tau=1.428571: vm_cyc=1: fast_cyc=0: vm_dt=0.25: vm_dt_cyc=0.25: net_dt=0.7000002: };
      act_avg {ss_tau=2: s_tau=2: m_tau=10: m_in_s=0.1: ss_dt=0.5: s_dt=0.5: m_dt=0.1: s_in_s=0.9: };
      avg_l {init=0.4: gain=1.5: min=0.1: tau=10: lrn_max=0.05: lrn_min=0.005: dt=0.1: lrn_fact=0.03214286: };
      avg_l_2 {err_mod=1: err_min=0.01: lay_act_thr=0.01: };
-     g_bar {e=1: l=0.1: i=1: };
-     e_rev {e=1: l=0.15: i=0.15: };
-     adapt {on=0: tau=144: vm_gain=0.1: spike_gain=0.01: Ei_dyn=1: Ei_gain=0.001: Ei_tau=50: dt=0.006944444: Ei_dt=0.02: };
+     g_bar {e=1: l=0.1: i=1: k=1: };
+     e_rev {e=1: l=0.15: i=0.15: k=0.1: };
+     kna_adapt {on=0: rate_rise=0.8: f_on=1: f_rise=0.05: f_max=0.1: f_tau=50: m_on=1: m_rise=0.02: m_max=0.1: m_tau=200: s_on=1: s_rise=0.001: s_max=1: s_tau=1000: f_dt=0.02: m_dt=0.005: s_dt=0.001: };
+     kna_misc {clamp=0: invert_nd=0: max_gc=0.2: max_adapt=0.5: no_targ=1: };
      stp {on=0: algorithm=CYCLES: f_r_ratio=0.02: rec_tau=200: p0=0.3: p0_norm=0.4: kre_tau=100: kre=0.002: fac_tau=4: fac=0.3: thresh=0.5: n_trials=1: rec_prob=0.1: rec_dt=0.005: fac_dt=0.25: kre_dt=0.01: oneo_p0_norm=2.5: };
      syn_delay {on=0: delay=4: };
      deep_raw_qtr=Q4;
      deep {on=0: role=SUPER: raw_thr_rel=0.1: raw_thr_abs=0.1: mod_min=0.8: mod_thr=0.1: ctxt_prv=0: tick_updt=-1: else_prv=0.9: mod_range=0.2: ctxt_new=1: else_new=0.1: };
-     trc {p_only_m=0: thal_gate=0: avg_clamp=0: deep_gain=0.2: clip=0: clip_max=0.4: std_gain=0.8: };
-     da_mod {on=0: minus=0: plus=0.1: };
+     trc {p_only_m=0: thal_gate=0: clamp_net=0: avg_clamp=0: deep_gain=0.2: clip=0: clip_max=0.4: std_gain=0.8: };
+     da_mod {on=0: mod_gain=0: minus=0: plus=0.1: da_neg_gain=0.1: da_pos_gain=0.1: };
      noise_type {type=NO_NOISE: trial_fixed=1: };
      noise {name="noise": type=GAUSSIAN: mean=0: var=0.001000000047497451: par=1: };
     };
@@ -3677,10 +3846,10 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      cur_lrate=0.02;
      lrs_mult=1;
      use_unlearnable=1;
-     xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: lrn_thr=0.01: d_rev_ratio=-9: };
+     xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: lrn_thr=0.01: s_mult=1: d_rev_ratio=-9: };
      wt_sig {gain=6: off=1.25: soft_bound=1: };
      momentum {on=0: dwavg_tau=1000: norm_min=0.001: m_tau=20: lrate_comp=0.01: dwavg_dt=0.001: dwavg_dt_c=0.999: m_dt=0.05: m_dt_c=0.95: };
-     wt_bal {on=0: hi_thr=0.4: hi_gain=4: lo_thr=0.2: lo_gain=4: };
+     wt_bal {on=0: avg_thr=0.5: hi_thr=0.6: hi_gain=3: lo_thr=0.6: lo_gain=6: act_thr=0.25: act_gain=0: no_targ=1: };
      adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
      slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
      deep {on=0: bg_lrate=1: fg_lrate=0: };
@@ -3719,7 +3888,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      margin {pct_marg=0.3: avg_tau=100: adapt_tau=500: tol_pct=0.25: avg_act=0.8: low_thr=0.501: med_thr=0.506: hi_thr=0.508: avg_dt=0.01: adapt_dt=0.002: };
      lay_lrate=1;
      cos_diff {avg_tau=100: lrate_mod=0: lrmod_fm_trc=0: lrmod_z_thr=-1.5: set_net_unlrn=0: avg_dt=0.01: avg_dt_c=0.99: };
-     lstats {hog_thr=0.3: dead_thr=0.01: };
+     lstats {pre_hog_thr=0.2: hog_thr=0.3: dead_thr=0.01: };
     };
     TesselPrjnSpec @[3] {
      name="Tessel_EllipseHalfOvlp";
@@ -4154,10 +4323,10 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      cur_lrate=0.02;
      lrs_mult=1;
      use_unlearnable=1;
-     xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: lrn_thr=0.01: d_rev_ratio=-9: };
+     xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: lrn_thr=0.01: s_mult=1: d_rev_ratio=-9: };
      wt_sig {gain=6: off=1.25: soft_bound=1: };
      momentum {on=0: dwavg_tau=1000: norm_min=0.001: m_tau=20: lrate_comp=0.01: dwavg_dt=0.001: dwavg_dt_c=0.999: m_dt=0.05: m_dt_c=0.95: };
-     wt_bal {on=0: hi_thr=0.4: hi_gain=4: lo_thr=0.2: lo_gain=4: };
+     wt_bal {on=0: avg_thr=0.5: hi_thr=0.6: hi_gain=3: lo_thr=0.6: lo_gain=6: act_thr=0.25: act_gain=0: no_targ=1: };
      adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
      slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
      deep {on=0: bg_lrate=1: fg_lrate=0: };
@@ -4195,6 +4364,41 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     name="param_seqs";
     el_typ=ParamSeq;
     el_def=0;
+   };
+   monitor {
+    name="monitor";
+    items {
+     name="items";
+     el_typ=NetMonItem;
+     el_def=0;
+    };
+    network=$.networks[1]$;
+    data=.networks[1].mon_data$$;
+    rmv_orphan_cols=1;
+   };
+   mon_data {
+    name="mon_data";
+    desc=;
+    data {
+     name="data";
+     el_typ=String_Data;
+     el_def=0;
+    };
+    data_flags=AUTO_CALC;
+    auto_load=NO_AUTO_LOAD;
+    auto_load_file=;
+    row_height=1;
+    max_col_width=50;
+    keygen 4 0=0;
+    last_sort_spec {
+     name="last_sort_spec";
+     ops {
+      name="ops";
+      el_typ=DataSortEl;
+      el_def=0;
+     };
+    };
+    row_with_hilite=-1;
    };
    layers {
     name="layers";
@@ -4244,8 +4448,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
       name="send_prjns";
       el_typ=LeabraPrjn;
       el_def=0;
-      Projection_Group @. = [0] = LeabraPrjn .networks[1].layers[1].projections[0];
-      Projection_Group @. = [1] = LeabraPrjn .networks[1].layers[2].projections[0];
+      Projection_List @. = [0] = LeabraPrjn .networks[1].layers[1].projections[0];
+      Projection_List @. = [1] = LeabraPrjn .networks[1].layers[2].projections[0];
      };
      unit_spec {type=LeabraUnitSpec: spec=.networks[1].specs[0]$$: };
      dist {fm_input=-1: fm_output=-1: };
@@ -4447,7 +4651,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
       name="send_prjns";
       el_typ=LeabraPrjn;
       el_def=0;
-      Projection_Group @. = [0] = LeabraPrjn .networks[1].layers[3].projections[0];
+      Projection_List @. = [0] = LeabraPrjn .networks[1].layers[3].projections[0];
      };
      unit_spec {type=LeabraUnitSpec: spec=$.networks[1].specs[0]$: };
      dist {fm_input=-1: fm_output=-1: };
@@ -4482,38 +4686,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
    rel_netin {on=1: trl_skip=10: epc_skip=10: };
   };
   LeabraNetwork @[2] {
-   UserDataItem_List @*(.user_data_) {
-    name=;
-    el_typ=UserDataItem;
-    el_def=0;
-    UserDataItem @[0] {name="cos_err": value=1: val_type_fixed=1: };
-    UserDataItem @[1] {name="norm_err": value=1: val_type_fixed=1: };
-    UserDataItem @[2] {name="ext_rew": value=1: val_type_fixed=1: };
-    UserDataItem @[3] {name="minus_output_name": value=1: val_type_fixed=1: };
-    UserDataItem @[4] {name="rt_cycles": value=1: val_type_fixed=1: };
-    UserDataItem @[5] {name="tot_cycle": value=1: val_type_fixed=1: };
-    UserDataItem @[6] {name="phase": value=1: val_type_fixed=1: };
-    UserDataItem @[7] {name="quarter": value=1: val_type_fixed=1: };
-    UserDataItem @[8] {name="sse": value=1: val_type_fixed=1: };
-    UserDataItem @[9] {name="output_name": value=1: val_type_fixed=1: };
-    UserDataItem @[10] {name="trial_name": value=1: val_type_fixed=1: };
-    UserDataItem @[11] {name="group_name": value=1: val_type_fixed=1: };
-    UserDataItem @[12] {name="total_trials": value=1: val_type_fixed=1: };
-    UserDataItem @[13] {name="time": value=1: val_type_fixed=1: };
-    UserDataItem @[14] {name="cycle": value=1: val_type_fixed=1: };
-    UserDataItem @[15] {name="tick": value=1: val_type_fixed=1: };
-    UserDataItem @[16] {name="trial": value=1: val_type_fixed=1: };
-    UserDataItem @[17] {name="group": value=1: val_type_fixed=1: };
-    UserDataItem @[18] {name="epoch": value=1: val_type_fixed=1: };
-    UserDataItem @[19] {name="batch": value=1: val_type_fixed=1: };
-    UserDataItem @[20] {name="trial_cos_diff": value=1: val_type_fixed=1: };
-    UserDataItem @[21] {name="avg_act_diff": value=1: val_type_fixed=1: };
-    UserDataItem @[22] {name="cos_diff": value=1: val_type_fixed=1: };
-    UserDataItem @[23] {name="minus_cycles": value=1: val_type_fixed=1: };
-    UserDataItem @[24] {name="ct_cycle": value=1: val_type_fixed=1: };
-    UserDataItem @[25] {name="phase_no": value=1: val_type_fixed=1: };
-    UserDataItem @[26] {name="maxda": value=1: val_type_fixed=1: };
-   };
    name="TiledRF";
    desc="Demo's TiledRFPrjnSpec for receptive field prjns";
    flags=BUILD_INIT_WTS;
@@ -4522,7 +4694,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
    small_batch_n=10;
    stats {sse_unit_avg=0: sse_sqrt=0: cnt_err_tol=0: prerr=0: };
    n_units=1405;
-   n_cons=255492;
+   n_cons=296964;
    max_prjns=3;
    specs {
     name="specs";
@@ -4544,27 +4716,28 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      act_range {min=0: max=1: range=1: scale=1: };
      sse_tol=0.5;
      act_fun=NOISY_XX1;
-     act {thr=0.25: gain=600: nvar=0.005: sig_mult=0.33: sig_mult_pow=0.8: sig_gain=3: interp_range=0.01: gain_cor_range=10: gain_cor=0.1: sig_gain_nvar=600: sig_mult_eff=0.7947142: sig_val_at_0=0.3973571: interp_val=0.4492686: };
-     act_misc {rec_nd=1: avg_nd=1: dif_avg=0: net_gain=1: act_max_hz=100: avg_trace=0: lambda=0: avg_tau=200: avg_init=0.15: avg_dt=0.005: };
-     spike {rise=0: decay=5: g_gain=5: window=3: eq_gain=10: eq_tau=50: eq_dt=0.02: };
+     act {thr=0.25: gain=600: nvar=0.005: avg_correct=1: vm_act_thr=0.01: sig_mult=0.33: sig_mult_pow=0.8: sig_gain=3: interp_range=0.01: gain_cor_range=10: gain_cor=0.1: sig_gain_nvar=600: sig_mult_eff=0.7947142: sig_val_at_0=0.3973571: interp_val=0.4492686: };
+     act_misc {rec_nd=1: avg_nd=1: dif_avg=0: net_gain=1: avg_trace=0: lambda=0: avg_tau=200: avg_init=0.15: avg_dt=0.005: };
+     spike {rise=0: decay=5: g_gain=5: window=3: act_max_hz=200: int_tau=5: int_dt=0.2: };
      spike_misc {ex=0: exp_slope=0.02: spk_thr=1.2: vm_r=0: t_r=6: clamp_max_p=0.11: clamp_type=REGULAR: eff_spk_thr=0.25: };
      opt_thresh {send=0.1: delta=0.005: };
      clamp_range {min=0: max=0.95: range=0.95: scale=1.052632: };
      vm_range {min=0: max=1: range=1: scale=1: };
      init {v_m=0.4: act=0: netin=0: };
-     dt {integ=1: vm_tau=4: net_tau=1.428571: fast_cyc=0: vm_dt=0.25: net_dt=0.7000002: };
+     dt {integ=1: vm_tau=4: net_tau=1.428571: vm_cyc=1: fast_cyc=0: vm_dt=0.25: vm_dt_cyc=0.25: net_dt=0.7000002: };
      act_avg {ss_tau=2: s_tau=2: m_tau=10: m_in_s=0.1: ss_dt=0.5: s_dt=0.5: m_dt=0.1: s_in_s=0.9: };
      avg_l {init=0.4: gain=1.5: min=0.1: tau=10: lrn_max=0.05: lrn_min=0.005: dt=0.1: lrn_fact=0.03214286: };
      avg_l_2 {err_mod=1: err_min=0.01: lay_act_thr=0.01: };
-     g_bar {e=1: l=0.1: i=1: };
-     e_rev {e=1: l=0.15: i=0.15: };
-     adapt {on=0: tau=144: vm_gain=0.1: spike_gain=0.01: Ei_dyn=1: Ei_gain=0.001: Ei_tau=50: dt=0.006944444: Ei_dt=0.02: };
+     g_bar {e=1: l=0.1: i=1: k=1: };
+     e_rev {e=1: l=0.15: i=0.15: k=0.1: };
+     kna_adapt {on=0: rate_rise=0.8: f_on=1: f_rise=0.05: f_max=0.1: f_tau=50: m_on=1: m_rise=0.02: m_max=0.1: m_tau=200: s_on=1: s_rise=0.001: s_max=1: s_tau=1000: f_dt=0.02: m_dt=0.005: s_dt=0.001: };
+     kna_misc {clamp=0: invert_nd=0: max_gc=0.2: max_adapt=0.5: no_targ=1: };
      stp {on=0: algorithm=CYCLES: f_r_ratio=0.02: rec_tau=200: p0=0.3: p0_norm=0.4: kre_tau=100: kre=0.002: fac_tau=4: fac=0.3: thresh=0.5: n_trials=1: rec_prob=0.1: rec_dt=0.005: fac_dt=0.25: kre_dt=0.01: oneo_p0_norm=2.5: };
      syn_delay {on=0: delay=4: };
      deep_raw_qtr=Q4;
      deep {on=0: role=SUPER: raw_thr_rel=0.1: raw_thr_abs=0.1: mod_min=0.8: mod_thr=0.1: ctxt_prv=0: tick_updt=-1: else_prv=0.9: mod_range=0.2: ctxt_new=1: else_new=0.1: };
-     trc {p_only_m=0: thal_gate=0: avg_clamp=0: deep_gain=0.2: clip=0: clip_max=0.4: std_gain=0.8: };
-     da_mod {on=0: minus=0: plus=0.1: };
+     trc {p_only_m=0: thal_gate=0: clamp_net=0: avg_clamp=0: deep_gain=0.2: clip=0: clip_max=0.4: std_gain=0.8: };
+     da_mod {on=0: mod_gain=0: minus=0: plus=0.1: da_neg_gain=0.1: da_pos_gain=0.1: };
      noise_type {type=NO_NOISE: trial_fixed=1: };
      noise {name="noise": type=GAUSSIAN: mean=0: var=0.001000000047497451: par=1: };
     };
@@ -4590,10 +4763,10 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      cur_lrate=0.02;
      lrs_mult=1;
      use_unlearnable=1;
-     xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: lrn_thr=0.01: d_rev_ratio=-9: };
+     xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: lrn_thr=0.01: s_mult=1: d_rev_ratio=-9: };
      wt_sig {gain=6: off=1.25: soft_bound=1: };
      momentum {on=0: dwavg_tau=1000: norm_min=0.001: m_tau=20: lrate_comp=0.01: dwavg_dt=0.001: dwavg_dt_c=0.999: m_dt=0.05: m_dt_c=0.95: };
-     wt_bal {on=0: hi_thr=0.4: hi_gain=4: lo_thr=0.2: lo_gain=4: };
+     wt_bal {on=0: avg_thr=0.5: hi_thr=0.6: hi_gain=3: lo_thr=0.6: lo_gain=6: act_thr=0.25: act_gain=0: no_targ=1: };
      adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
      slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
      deep {on=0: bg_lrate=1: fg_lrate=0: };
@@ -4632,7 +4805,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      margin {pct_marg=0.3: avg_tau=100: adapt_tau=500: tol_pct=0.25: avg_act=0.8: low_thr=0.501: med_thr=0.506: hi_thr=0.508: avg_dt=0.01: adapt_dt=0.002: };
      lay_lrate=1;
      cos_diff {avg_tau=100: lrate_mod=0: lrmod_fm_trc=0: lrmod_z_thr=-1.5: set_net_unlrn=0: avg_dt=0.01: avg_dt_c=0.99: };
-     lstats {hog_thr=0.3: dead_thr=0.01: };
+     lstats {pre_hog_thr=0.2: hog_thr=0.3: dead_thr=0.01: };
     };
     LeabraConSpec @[3] {
      name="LeabraConSpec_0";
@@ -4656,10 +4829,10 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      cur_lrate=0.02;
      lrs_mult=1;
      use_unlearnable=1;
-     xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: lrn_thr=0.01: d_rev_ratio=-9: };
+     xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: lrn_thr=0.01: s_mult=1: d_rev_ratio=-9: };
      wt_sig {gain=6: off=1.25: soft_bound=1: };
      momentum {on=0: dwavg_tau=1000: norm_min=0.001: m_tau=20: lrate_comp=0.01: dwavg_dt=0.001: dwavg_dt_c=0.999: m_dt=0.05: m_dt_c=0.95: };
-     wt_bal {on=0: hi_thr=0.4: hi_gain=4: lo_thr=0.2: lo_gain=4: };
+     wt_bal {on=0: avg_thr=0.5: hi_thr=0.6: hi_gain=3: lo_thr=0.6: lo_gain=6: act_thr=0.25: act_gain=0: no_targ=1: };
      adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
      slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
      deep {on=0: bg_lrate=1: fg_lrate=0: };
@@ -4853,7 +5026,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
        send_gp_start {x=-1: y=-1: };
        wrap=1;
        reciprocal=1;
-       p_con=0.5;
+       p_con=1;
        symmetric=1;
        share_cons=0;
        wts_type=GAUSSIAN;
@@ -4879,7 +5052,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      send_gp_start {x=-1: y=-1: };
      wrap=1;
      reciprocal=0;
-     p_con=0.5;
+     p_con=1;
      symmetric=1;
      share_cons=0;
      wts_type=GAUSSIAN;
@@ -4933,6 +5106,41 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     el_typ=ParamSeq;
     el_def=0;
    };
+   monitor {
+    name="monitor";
+    items {
+     name="items";
+     el_typ=NetMonItem;
+     el_def=0;
+    };
+    network=$.networks[2]$;
+    data=.networks[2].mon_data$$;
+    rmv_orphan_cols=1;
+   };
+   mon_data {
+    name="mon_data";
+    desc=;
+    data {
+     name="data";
+     el_typ=String_Data;
+     el_def=0;
+    };
+    data_flags=AUTO_CALC;
+    auto_load=NO_AUTO_LOAD;
+    auto_load_file=;
+    row_height=1;
+    max_col_width=50;
+    keygen 4 0=0;
+    last_sort_spec {
+     name="last_sort_spec";
+     ops {
+      name="ops";
+      el_typ=DataSortEl;
+      el_def=0;
+     };
+    };
+    row_with_hilite=-1;
+   };
    layers {
     name="layers";
     el_typ=LeabraLayer;
@@ -4981,8 +5189,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
       name="send_prjns";
       el_typ=LeabraPrjn;
       el_def=0;
-      Projection_Group @. = [0] = LeabraPrjn .networks[2].layers[1].projections[0];
-      Projection_Group @. = [1] = LeabraPrjn .networks[2].layers[2].projections[0];
+      Projection_List @. = [0] = LeabraPrjn .networks[2].layers[1].projections[0];
+      Projection_List @. = [1] = LeabraPrjn .networks[2].layers[2].projections[0];
      };
      unit_spec {type=LeabraUnitSpec: spec=.networks[2].specs[0]$$: };
      dist {fm_input=-1: fm_output=-1: };
@@ -5078,9 +5286,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
       name="send_prjns";
       el_typ=LeabraPrjn;
       el_def=0;
-      Projection_Group @. = [0] = LeabraPrjn .networks[2].layers[3].projections[0];
-      Projection_Group @. = [1] = LeabraPrjn .networks[2].layers[4].projections[0];
-      Projection_Group @. = [2] = LeabraPrjn .networks[2].layers[5].projections[0];
+      Projection_List @. = [0] = LeabraPrjn .networks[2].layers[3].projections[0];
+      Projection_List @. = [1] = LeabraPrjn .networks[2].layers[4].projections[0];
+      Projection_List @. = [2] = LeabraPrjn .networks[2].layers[5].projections[0];
      };
      unit_spec {type=LeabraUnitSpec: spec=$.networks[2].specs[0]$: };
      dist {fm_input=-1: fm_output=-1: };
@@ -5282,7 +5490,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
       name="send_prjns";
       el_typ=LeabraPrjn;
       el_def=0;
-      Projection_Group @. = [0] = LeabraPrjn .networks[2].layers[1].projections[1];
+      Projection_List @. = [0] = LeabraPrjn .networks[2].layers[1].projections[1];
      };
      unit_spec {type=LeabraUnitSpec: spec=$.networks[2].specs[0]$: };
      dist {fm_input=-1: fm_output=-1: };
@@ -5350,7 +5558,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
       name="send_prjns";
       el_typ=LeabraPrjn;
       el_def=0;
-      Projection_Group @. = [0] = LeabraPrjn .networks[2].layers[1].projections[2];
+      Projection_List @. = [0] = LeabraPrjn .networks[2].layers[1].projections[2];
      };
      unit_spec {type=LeabraUnitSpec: spec=$.networks[2].specs[0]$: };
      dist {fm_input=-1: fm_output=-1: };
@@ -5385,38 +5593,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
    rel_netin {on=1: trl_skip=10: epc_skip=10: };
   };
   LeabraNetwork @[3] {
-   UserDataItem_List @*(.user_data_) {
-    name=;
-    el_typ=UserDataItem;
-    el_def=0;
-    UserDataItem @[0] {name="cos_err": value=1: val_type_fixed=1: };
-    UserDataItem @[1] {name="norm_err": value=1: val_type_fixed=1: };
-    UserDataItem @[2] {name="ext_rew": value=1: val_type_fixed=1: };
-    UserDataItem @[3] {name="minus_output_name": value=1: val_type_fixed=1: };
-    UserDataItem @[4] {name="rt_cycles": value=1: val_type_fixed=1: };
-    UserDataItem @[5] {name="tot_cycle": value=1: val_type_fixed=1: };
-    UserDataItem @[6] {name="phase": value=1: val_type_fixed=1: };
-    UserDataItem @[7] {name="quarter": value=1: val_type_fixed=1: };
-    UserDataItem @[8] {name="sse": value=1: val_type_fixed=1: };
-    UserDataItem @[9] {name="output_name": value=1: val_type_fixed=1: };
-    UserDataItem @[10] {name="trial_name": value=1: val_type_fixed=1: };
-    UserDataItem @[11] {name="group_name": value=1: val_type_fixed=1: };
-    UserDataItem @[12] {name="total_trials": value=1: val_type_fixed=1: };
-    UserDataItem @[13] {name="time": value=1: val_type_fixed=1: };
-    UserDataItem @[14] {name="cycle": value=1: val_type_fixed=1: };
-    UserDataItem @[15] {name="tick": value=1: val_type_fixed=1: };
-    UserDataItem @[16] {name="trial": value=1: val_type_fixed=1: };
-    UserDataItem @[17] {name="group": value=1: val_type_fixed=1: };
-    UserDataItem @[18] {name="epoch": value=1: val_type_fixed=1: };
-    UserDataItem @[19] {name="batch": value=1: val_type_fixed=1: };
-    UserDataItem @[20] {name="trial_cos_diff": value=1: val_type_fixed=1: };
-    UserDataItem @[21] {name="avg_act_diff": value=1: val_type_fixed=1: };
-    UserDataItem @[22] {name="cos_diff": value=1: val_type_fixed=1: };
-    UserDataItem @[23] {name="minus_cycles": value=1: val_type_fixed=1: };
-    UserDataItem @[24] {name="ct_cycle": value=1: val_type_fixed=1: };
-    UserDataItem @[25] {name="phase_no": value=1: val_type_fixed=1: };
-    UserDataItem @[26] {name="maxda": value=1: val_type_fixed=1: };
-   };
    name="TiledSubGpRF";
    desc="Demo's TiledRFPrjnSpec for receptive field prjns";
    flags=BUILD_INIT_WTS;
@@ -5447,27 +5623,28 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      act_range {min=0: max=1: range=1: scale=1: };
      sse_tol=0.5;
      act_fun=NOISY_XX1;
-     act {thr=0.25: gain=600: nvar=0.005: sig_mult=0.33: sig_mult_pow=0.8: sig_gain=3: interp_range=0.01: gain_cor_range=10: gain_cor=0.1: sig_gain_nvar=600: sig_mult_eff=0.7947142: sig_val_at_0=0.3973571: interp_val=0.4492686: };
-     act_misc {rec_nd=1: avg_nd=1: dif_avg=0: net_gain=1: act_max_hz=100: avg_trace=0: lambda=0: avg_tau=200: avg_init=0.15: avg_dt=0.005: };
-     spike {rise=0: decay=5: g_gain=5: window=3: eq_gain=10: eq_tau=50: eq_dt=0.02: };
+     act {thr=0.25: gain=600: nvar=0.005: avg_correct=1: vm_act_thr=0.01: sig_mult=0.33: sig_mult_pow=0.8: sig_gain=3: interp_range=0.01: gain_cor_range=10: gain_cor=0.1: sig_gain_nvar=600: sig_mult_eff=0.7947142: sig_val_at_0=0.3973571: interp_val=0.4492686: };
+     act_misc {rec_nd=1: avg_nd=1: dif_avg=0: net_gain=1: avg_trace=0: lambda=0: avg_tau=200: avg_init=0.15: avg_dt=0.005: };
+     spike {rise=0: decay=5: g_gain=5: window=3: act_max_hz=200: int_tau=5: int_dt=0.2: };
      spike_misc {ex=0: exp_slope=0.02: spk_thr=1.2: vm_r=0: t_r=6: clamp_max_p=0.11: clamp_type=REGULAR: eff_spk_thr=0.25: };
      opt_thresh {send=0.1: delta=0.005: };
      clamp_range {min=0: max=0.95: range=0.95: scale=1.052632: };
      vm_range {min=0: max=1: range=1: scale=1: };
      init {v_m=0.4: act=0: netin=0: };
-     dt {integ=1: vm_tau=4: net_tau=1.428571: fast_cyc=0: vm_dt=0.25: net_dt=0.7000002: };
+     dt {integ=1: vm_tau=4: net_tau=1.428571: vm_cyc=1: fast_cyc=0: vm_dt=0.25: vm_dt_cyc=0.25: net_dt=0.7000002: };
      act_avg {ss_tau=2: s_tau=2: m_tau=10: m_in_s=0.1: ss_dt=0.5: s_dt=0.5: m_dt=0.1: s_in_s=0.9: };
      avg_l {init=0.4: gain=1.5: min=0.1: tau=10: lrn_max=0.05: lrn_min=0.005: dt=0.1: lrn_fact=0.03214286: };
      avg_l_2 {err_mod=1: err_min=0.01: lay_act_thr=0.01: };
-     g_bar {e=1: l=0.1: i=1: };
-     e_rev {e=1: l=0.15: i=0.15: };
-     adapt {on=0: tau=144: vm_gain=0.1: spike_gain=0.01: Ei_dyn=1: Ei_gain=0.001: Ei_tau=50: dt=0.006944444: Ei_dt=0.02: };
+     g_bar {e=1: l=0.1: i=1: k=1: };
+     e_rev {e=1: l=0.15: i=0.15: k=0.1: };
+     kna_adapt {on=0: rate_rise=0.8: f_on=1: f_rise=0.05: f_max=0.1: f_tau=50: m_on=1: m_rise=0.02: m_max=0.1: m_tau=200: s_on=1: s_rise=0.001: s_max=1: s_tau=1000: f_dt=0.02: m_dt=0.005: s_dt=0.001: };
+     kna_misc {clamp=0: invert_nd=0: max_gc=0.2: max_adapt=0.5: no_targ=1: };
      stp {on=0: algorithm=CYCLES: f_r_ratio=0.02: rec_tau=200: p0=0.3: p0_norm=0.4: kre_tau=100: kre=0.002: fac_tau=4: fac=0.3: thresh=0.5: n_trials=1: rec_prob=0.1: rec_dt=0.005: fac_dt=0.25: kre_dt=0.01: oneo_p0_norm=2.5: };
      syn_delay {on=0: delay=4: };
      deep_raw_qtr=Q4;
      deep {on=0: role=SUPER: raw_thr_rel=0.1: raw_thr_abs=0.1: mod_min=0.8: mod_thr=0.1: ctxt_prv=0: tick_updt=-1: else_prv=0.9: mod_range=0.2: ctxt_new=1: else_new=0.1: };
-     trc {p_only_m=0: thal_gate=0: avg_clamp=0: deep_gain=0.2: clip=0: clip_max=0.4: std_gain=0.8: };
-     da_mod {on=0: minus=0: plus=0.1: };
+     trc {p_only_m=0: thal_gate=0: clamp_net=0: avg_clamp=0: deep_gain=0.2: clip=0: clip_max=0.4: std_gain=0.8: };
+     da_mod {on=0: mod_gain=0: minus=0: plus=0.1: da_neg_gain=0.1: da_pos_gain=0.1: };
      noise_type {type=NO_NOISE: trial_fixed=1: };
      noise {name="noise": type=GAUSSIAN: mean=0: var=0.001000000047497451: par=1: };
     };
@@ -5493,10 +5670,10 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      cur_lrate=0.02;
      lrs_mult=1;
      use_unlearnable=1;
-     xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: lrn_thr=0.01: d_rev_ratio=-9: };
+     xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: lrn_thr=0.01: s_mult=1: d_rev_ratio=-9: };
      wt_sig {gain=6: off=1.25: soft_bound=1: };
      momentum {on=0: dwavg_tau=1000: norm_min=0.001: m_tau=20: lrate_comp=0.01: dwavg_dt=0.001: dwavg_dt_c=0.999: m_dt=0.05: m_dt_c=0.95: };
-     wt_bal {on=0: hi_thr=0.4: hi_gain=4: lo_thr=0.2: lo_gain=4: };
+     wt_bal {on=0: avg_thr=0.5: hi_thr=0.6: hi_gain=3: lo_thr=0.6: lo_gain=6: act_thr=0.25: act_gain=0: no_targ=1: };
      adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
      slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
      deep {on=0: bg_lrate=1: fg_lrate=0: };
@@ -5535,7 +5712,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      margin {pct_marg=0.3: avg_tau=100: adapt_tau=500: tol_pct=0.25: avg_act=0.8: low_thr=0.501: med_thr=0.506: hi_thr=0.508: avg_dt=0.01: adapt_dt=0.002: };
      lay_lrate=1;
      cos_diff {avg_tau=100: lrate_mod=0: lrmod_fm_trc=0: lrmod_z_thr=-1.5: set_net_unlrn=0: avg_dt=0.01: avg_dt_c=0.99: };
-     lstats {hog_thr=0.3: dead_thr=0.01: };
+     lstats {pre_hog_thr=0.2: hog_thr=0.3: dead_thr=0.01: };
     };
     LeabraConSpec @[3] {
      name="LeabraConSpec_0";
@@ -5559,10 +5736,10 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      cur_lrate=0.02;
      lrs_mult=1;
      use_unlearnable=1;
-     xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: lrn_thr=0.01: d_rev_ratio=-9: };
+     xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: lrn_thr=0.01: s_mult=1: d_rev_ratio=-9: };
      wt_sig {gain=6: off=1.25: soft_bound=1: };
      momentum {on=0: dwavg_tau=1000: norm_min=0.001: m_tau=20: lrate_comp=0.01: dwavg_dt=0.001: dwavg_dt_c=0.999: m_dt=0.05: m_dt_c=0.95: };
-     wt_bal {on=0: hi_thr=0.4: hi_gain=4: lo_thr=0.2: lo_gain=4: };
+     wt_bal {on=0: avg_thr=0.5: hi_thr=0.6: hi_gain=3: lo_thr=0.6: lo_gain=6: act_thr=0.25: act_gain=0: no_targ=1: };
      adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
      slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
      deep {on=0: bg_lrate=1: fg_lrate=0: };
@@ -5635,6 +5812,41 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     el_typ=ParamSeq;
     el_def=0;
    };
+   monitor {
+    name="monitor";
+    items {
+     name="items";
+     el_typ=NetMonItem;
+     el_def=0;
+    };
+    network=$.networks[3]$;
+    data=.networks[3].mon_data$$;
+    rmv_orphan_cols=1;
+   };
+   mon_data {
+    name="mon_data";
+    desc=;
+    data {
+     name="data";
+     el_typ=String_Data;
+     el_def=0;
+    };
+    data_flags=AUTO_CALC;
+    auto_load=NO_AUTO_LOAD;
+    auto_load_file=;
+    row_height=1;
+    max_col_width=50;
+    keygen 4 0=0;
+    last_sort_spec {
+     name="last_sort_spec";
+     ops {
+      name="ops";
+      el_typ=DataSortEl;
+      el_def=0;
+     };
+    };
+    row_with_hilite=-1;
+   };
    layers {
     name="layers";
     el_typ=LeabraLayer;
@@ -5683,7 +5895,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
       name="send_prjns";
       el_typ=LeabraPrjn;
       el_def=0;
-      Projection_Group @. = [0] = LeabraPrjn .networks[3].layers[1].projections[0];
+      Projection_List @. = [0] = LeabraPrjn .networks[3].layers[1].projections[0];
      };
      unit_spec {type=LeabraUnitSpec: spec=.networks[3].specs[0]$$: };
      dist {fm_input=-1: fm_output=-1: };
@@ -5785,38 +5997,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
    rel_netin {on=1: trl_skip=10: epc_skip=10: };
   };
   LeabraNetwork @[4] {
-   UserDataItem_List @*(.user_data_) {
-    name=;
-    el_typ=UserDataItem;
-    el_def=0;
-    UserDataItem @[0] {name="cos_err": value=1: val_type_fixed=1: };
-    UserDataItem @[1] {name="norm_err": value=1: val_type_fixed=1: };
-    UserDataItem @[2] {name="ext_rew": value=1: val_type_fixed=1: };
-    UserDataItem @[3] {name="minus_output_name": value=1: val_type_fixed=1: };
-    UserDataItem @[4] {name="rt_cycles": value=1: val_type_fixed=1: };
-    UserDataItem @[5] {name="tot_cycle": value=1: val_type_fixed=1: };
-    UserDataItem @[6] {name="phase": value=1: val_type_fixed=1: };
-    UserDataItem @[7] {name="quarter": value=1: val_type_fixed=1: };
-    UserDataItem @[8] {name="sse": value=1: val_type_fixed=1: };
-    UserDataItem @[9] {name="output_name": value=1: val_type_fixed=1: };
-    UserDataItem @[10] {name="trial_name": value=1: val_type_fixed=1: };
-    UserDataItem @[11] {name="group_name": value=1: val_type_fixed=1: };
-    UserDataItem @[12] {name="total_trials": value=1: val_type_fixed=1: };
-    UserDataItem @[13] {name="time": value=1: val_type_fixed=1: };
-    UserDataItem @[14] {name="cycle": value=1: val_type_fixed=1: };
-    UserDataItem @[15] {name="tick": value=1: val_type_fixed=1: };
-    UserDataItem @[16] {name="trial": value=1: val_type_fixed=1: };
-    UserDataItem @[17] {name="group": value=1: val_type_fixed=1: };
-    UserDataItem @[18] {name="epoch": value=1: val_type_fixed=1: };
-    UserDataItem @[19] {name="batch": value=1: val_type_fixed=1: };
-    UserDataItem @[20] {name="trial_cos_diff": value=1: val_type_fixed=1: };
-    UserDataItem @[21] {name="avg_act_diff": value=1: val_type_fixed=1: };
-    UserDataItem @[22] {name="cos_diff": value=1: val_type_fixed=1: };
-    UserDataItem @[23] {name="minus_cycles": value=1: val_type_fixed=1: };
-    UserDataItem @[24] {name="ct_cycle": value=1: val_type_fixed=1: };
-    UserDataItem @[25] {name="phase_no": value=1: val_type_fixed=1: };
-    UserDataItem @[26] {name="maxda": value=1: val_type_fixed=1: };
-   };
    name="Random";
    desc="Demo's various random projections";
    flags=BUILD_INIT_WTS;
@@ -5847,27 +6027,28 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      act_range {min=0: max=1: range=1: scale=1: };
      sse_tol=0.5;
      act_fun=NOISY_XX1;
-     act {thr=0.25: gain=600: nvar=0.005: sig_mult=0.33: sig_mult_pow=0.8: sig_gain=3: interp_range=0.01: gain_cor_range=10: gain_cor=0.1: sig_gain_nvar=600: sig_mult_eff=0.7947142: sig_val_at_0=0.3973571: interp_val=0.4492686: };
-     act_misc {rec_nd=1: avg_nd=1: dif_avg=0: net_gain=1: act_max_hz=100: avg_trace=0: lambda=0: avg_tau=200: avg_init=0.15: avg_dt=0.005: };
-     spike {rise=0: decay=5: g_gain=5: window=3: eq_gain=10: eq_tau=50: eq_dt=0.02: };
+     act {thr=0.25: gain=600: nvar=0.005: avg_correct=1: vm_act_thr=0.01: sig_mult=0.33: sig_mult_pow=0.8: sig_gain=3: interp_range=0.01: gain_cor_range=10: gain_cor=0.1: sig_gain_nvar=600: sig_mult_eff=0.7947142: sig_val_at_0=0.3973571: interp_val=0.4492686: };
+     act_misc {rec_nd=1: avg_nd=1: dif_avg=0: net_gain=1: avg_trace=0: lambda=0: avg_tau=200: avg_init=0.15: avg_dt=0.005: };
+     spike {rise=0: decay=5: g_gain=5: window=3: act_max_hz=200: int_tau=5: int_dt=0.2: };
      spike_misc {ex=0: exp_slope=0.02: spk_thr=1.2: vm_r=0: t_r=6: clamp_max_p=0.11: clamp_type=REGULAR: eff_spk_thr=0.25: };
      opt_thresh {send=0.1: delta=0.005: };
      clamp_range {min=0: max=0.95: range=0.95: scale=1.052632: };
      vm_range {min=0: max=1: range=1: scale=1: };
      init {v_m=0.4: act=0: netin=0: };
-     dt {integ=1: vm_tau=4: net_tau=1.428571: fast_cyc=0: vm_dt=0.25: net_dt=0.7000002: };
+     dt {integ=1: vm_tau=4: net_tau=1.428571: vm_cyc=1: fast_cyc=0: vm_dt=0.25: vm_dt_cyc=0.25: net_dt=0.7000002: };
      act_avg {ss_tau=2: s_tau=2: m_tau=10: m_in_s=0.1: ss_dt=0.5: s_dt=0.5: m_dt=0.1: s_in_s=0.9: };
      avg_l {init=0.4: gain=1.5: min=0.1: tau=10: lrn_max=0.05: lrn_min=0.005: dt=0.1: lrn_fact=0.03214286: };
      avg_l_2 {err_mod=1: err_min=0.01: lay_act_thr=0.01: };
-     g_bar {e=1: l=0.1: i=1: };
-     e_rev {e=1: l=0.15: i=0.15: };
-     adapt {on=0: tau=144: vm_gain=0.1: spike_gain=0.01: Ei_dyn=1: Ei_gain=0.001: Ei_tau=50: dt=0.006944444: Ei_dt=0.02: };
+     g_bar {e=1: l=0.1: i=1: k=1: };
+     e_rev {e=1: l=0.15: i=0.15: k=0.1: };
+     kna_adapt {on=0: rate_rise=0.8: f_on=1: f_rise=0.05: f_max=0.1: f_tau=50: m_on=1: m_rise=0.02: m_max=0.1: m_tau=200: s_on=1: s_rise=0.001: s_max=1: s_tau=1000: f_dt=0.02: m_dt=0.005: s_dt=0.001: };
+     kna_misc {clamp=0: invert_nd=0: max_gc=0.2: max_adapt=0.5: no_targ=1: };
      stp {on=0: algorithm=CYCLES: f_r_ratio=0.02: rec_tau=200: p0=0.3: p0_norm=0.4: kre_tau=100: kre=0.002: fac_tau=4: fac=0.3: thresh=0.5: n_trials=1: rec_prob=0.1: rec_dt=0.005: fac_dt=0.25: kre_dt=0.01: oneo_p0_norm=2.5: };
      syn_delay {on=0: delay=4: };
      deep_raw_qtr=Q4;
      deep {on=0: role=SUPER: raw_thr_rel=0.1: raw_thr_abs=0.1: mod_min=0.8: mod_thr=0.1: ctxt_prv=0: tick_updt=-1: else_prv=0.9: mod_range=0.2: ctxt_new=1: else_new=0.1: };
-     trc {p_only_m=0: thal_gate=0: avg_clamp=0: deep_gain=0.2: clip=0: clip_max=0.4: std_gain=0.8: };
-     da_mod {on=0: minus=0: plus=0.1: };
+     trc {p_only_m=0: thal_gate=0: clamp_net=0: avg_clamp=0: deep_gain=0.2: clip=0: clip_max=0.4: std_gain=0.8: };
+     da_mod {on=0: mod_gain=0: minus=0: plus=0.1: da_neg_gain=0.1: da_pos_gain=0.1: };
      noise_type {type=NO_NOISE: trial_fixed=1: };
      noise {name="noise": type=GAUSSIAN: mean=0: var=0.001000000047497451: par=1: };
     };
@@ -5893,10 +6074,10 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      cur_lrate=0.02;
      lrs_mult=1;
      use_unlearnable=1;
-     xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: lrn_thr=0.01: d_rev_ratio=-9: };
+     xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: lrn_thr=0.01: s_mult=1: d_rev_ratio=-9: };
      wt_sig {gain=6: off=1.25: soft_bound=1: };
      momentum {on=0: dwavg_tau=1000: norm_min=0.001: m_tau=20: lrate_comp=0.01: dwavg_dt=0.001: dwavg_dt_c=0.999: m_dt=0.05: m_dt_c=0.95: };
-     wt_bal {on=0: hi_thr=0.4: hi_gain=4: lo_thr=0.2: lo_gain=4: };
+     wt_bal {on=0: avg_thr=0.5: hi_thr=0.6: hi_gain=3: lo_thr=0.6: lo_gain=6: act_thr=0.25: act_gain=0: no_targ=1: };
      adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
      slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
      deep {on=0: bg_lrate=1: fg_lrate=0: };
@@ -5935,7 +6116,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      margin {pct_marg=0.3: avg_tau=100: adapt_tau=500: tol_pct=0.25: avg_act=0.8: low_thr=0.501: med_thr=0.506: hi_thr=0.508: avg_dt=0.01: adapt_dt=0.002: };
      lay_lrate=1;
      cos_diff {avg_tau=100: lrate_mod=0: lrmod_fm_trc=0: lrmod_z_thr=-1.5: set_net_unlrn=0: avg_dt=0.01: avg_dt_c=0.99: };
-     lstats {hog_thr=0.3: dead_thr=0.01: };
+     lstats {pre_hog_thr=0.2: hog_thr=0.3: dead_thr=0.01: };
     };
     LeabraConSpec @[3] {
      name="LeabraConSpec_0";
@@ -5959,10 +6140,10 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      cur_lrate=0.02;
      lrs_mult=1;
      use_unlearnable=1;
-     xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: lrn_thr=0.01: d_rev_ratio=-9: };
+     xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: lrn_thr=0.01: s_mult=1: d_rev_ratio=-9: };
      wt_sig {gain=6: off=1.25: soft_bound=1: };
      momentum {on=0: dwavg_tau=1000: norm_min=0.001: m_tau=20: lrate_comp=0.01: dwavg_dt=0.001: dwavg_dt_c=0.999: m_dt=0.05: m_dt_c=0.95: };
-     wt_bal {on=0: hi_thr=0.4: hi_gain=4: lo_thr=0.2: lo_gain=4: };
+     wt_bal {on=0: avg_thr=0.5: hi_thr=0.6: hi_gain=3: lo_thr=0.6: lo_gain=6: act_thr=0.25: act_gain=0: no_targ=1: };
      adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
      slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
      deep {on=0: bg_lrate=1: fg_lrate=0: };
@@ -6104,6 +6285,41 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     el_typ=ParamSeq;
     el_def=0;
    };
+   monitor {
+    name="monitor";
+    items {
+     name="items";
+     el_typ=NetMonItem;
+     el_def=0;
+    };
+    network=$.networks[4]$;
+    data=.networks[4].mon_data$$;
+    rmv_orphan_cols=1;
+   };
+   mon_data {
+    name="mon_data";
+    desc=;
+    data {
+     name="data";
+     el_typ=String_Data;
+     el_def=0;
+    };
+    data_flags=AUTO_CALC;
+    auto_load=NO_AUTO_LOAD;
+    auto_load_file=;
+    row_height=1;
+    max_col_width=50;
+    keygen 4 0=0;
+    last_sort_spec {
+     name="last_sort_spec";
+     ops {
+      name="ops";
+      el_typ=DataSortEl;
+      el_def=0;
+     };
+    };
+    row_with_hilite=-1;
+   };
    layers {
     name="layers";
     el_typ=LeabraLayer;
@@ -6166,9 +6382,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
       name="send_prjns";
       el_typ=LeabraPrjn;
       el_def=0;
-      Projection_Group @. = [0] = LeabraPrjn .networks[4].layers[1].projections[0];
-      Projection_Group @. = [1] = LeabraPrjn .networks[4].layers[2].projections[0];
-      Projection_Group @. = [2] = LeabraPrjn .networks[4].layers[3].projections[0];
+      Projection_List @. = [0] = LeabraPrjn .networks[4].layers[1].projections[0];
+      Projection_List @. = [1] = LeabraPrjn .networks[4].layers[2].projections[0];
+      Projection_List @. = [2] = LeabraPrjn .networks[4].layers[3].projections[0];
      };
      unit_spec {type=LeabraUnitSpec: spec=.networks[4].specs[0]$$: };
      dist {fm_input=-1: fm_output=-1: };
@@ -6236,7 +6452,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
       name="send_prjns";
       el_typ=LeabraPrjn;
       el_def=0;
-      Projection_Group @. = [0] = LeabraPrjn .networks[4].layers[0].projections[0];
+      Projection_List @. = [0] = LeabraPrjn .networks[4].layers[0].projections[0];
      };
      unit_spec {type=LeabraUnitSpec: spec=$.networks[4].specs[0]$: };
      dist {fm_input=-1: fm_output=-1: };
@@ -6400,43 +6616,11 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
    max_disp_size2d {x=22: y=20: };
    times {quarter=25: deep_cyc=5: time_inc=0.001: wt_bal_int=10: minus=75: plus=25: total_cycles=100: thal_gate_cycle=-2: };
    lstats {trg_max_act_crit=0.5: off_errs=1: on_errs=1: agg_unlearnable=0: wt_bal=0: };
-   net_misc {spike=0: deep=0: bias_learn=0: trial_decay=0: diff_scale_p=0: diff_scale_q1=0: wt_bal=0: lay_gp_inhib=0: inhib_cons=0: };
+   net_misc {spike=0: deep=1: bias_learn=0: trial_decay=0: diff_scale_p=0: diff_scale_q1=0: wt_bal=0: lay_gp_inhib=0: inhib_cons=0: };
    deep {on=0: ctxt=0: raw_net=0: mod_net=0: raw_qtr=0: };
    rel_netin {on=1: trl_skip=10: epc_skip=10: };
   };
   LeabraNetwork @[5] {
-   UserDataItem_List @*(.user_data_) {
-    name=;
-    el_typ=UserDataItem;
-    el_def=0;
-    UserDataItem @[0] {name="cos_err": value=1: val_type_fixed=1: };
-    UserDataItem @[1] {name="norm_err": value=1: val_type_fixed=1: };
-    UserDataItem @[2] {name="ext_rew": value=1: val_type_fixed=1: };
-    UserDataItem @[3] {name="minus_output_name": value=1: val_type_fixed=1: };
-    UserDataItem @[4] {name="rt_cycles": value=1: val_type_fixed=1: };
-    UserDataItem @[5] {name="tot_cycle": value=1: val_type_fixed=1: };
-    UserDataItem @[6] {name="phase": value=1: val_type_fixed=1: };
-    UserDataItem @[7] {name="quarter": value=1: val_type_fixed=1: };
-    UserDataItem @[8] {name="sse": value=1: val_type_fixed=1: };
-    UserDataItem @[9] {name="output_name": value=1: val_type_fixed=1: };
-    UserDataItem @[10] {name="trial_name": value=1: val_type_fixed=1: };
-    UserDataItem @[11] {name="group_name": value=1: val_type_fixed=1: };
-    UserDataItem @[12] {name="total_trials": value=1: val_type_fixed=1: };
-    UserDataItem @[13] {name="time": value=1: val_type_fixed=1: };
-    UserDataItem @[14] {name="cycle": value=1: val_type_fixed=1: };
-    UserDataItem @[15] {name="tick": value=1: val_type_fixed=1: };
-    UserDataItem @[16] {name="trial": value=1: val_type_fixed=1: };
-    UserDataItem @[17] {name="group": value=1: val_type_fixed=1: };
-    UserDataItem @[18] {name="epoch": value=1: val_type_fixed=1: };
-    UserDataItem @[19] {name="batch": value=1: val_type_fixed=1: };
-    UserDataItem @[20] {name="trial_cos_diff": value=1: val_type_fixed=1: };
-    UserDataItem @[21] {name="avg_act_diff": value=1: val_type_fixed=1: };
-    UserDataItem @[22] {name="cos_diff": value=1: val_type_fixed=1: };
-    UserDataItem @[23] {name="minus_cycles": value=1: val_type_fixed=1: };
-    UserDataItem @[24] {name="ct_cycle": value=1: val_type_fixed=1: };
-    UserDataItem @[25] {name="phase_no": value=1: val_type_fixed=1: };
-    UserDataItem @[26] {name="maxda": value=1: val_type_fixed=1: };
-   };
    name="RandomLarge";
    desc="Demo's various random projections for very large nets";
    flags=BUILD_INIT_WTS;
@@ -6467,27 +6651,28 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      act_range {min=0: max=1: range=1: scale=1: };
      sse_tol=0.5;
      act_fun=NOISY_XX1;
-     act {thr=0.25: gain=600: nvar=0.005: sig_mult=0.33: sig_mult_pow=0.8: sig_gain=3: interp_range=0.01: gain_cor_range=10: gain_cor=0.1: sig_gain_nvar=600: sig_mult_eff=0.7947142: sig_val_at_0=0.3973571: interp_val=0.4492686: };
-     act_misc {rec_nd=1: avg_nd=1: dif_avg=0: net_gain=1: act_max_hz=100: avg_trace=0: lambda=0: avg_tau=200: avg_init=0.15: avg_dt=0.005: };
-     spike {rise=0: decay=5: g_gain=5: window=3: eq_gain=10: eq_tau=50: eq_dt=0.02: };
+     act {thr=0.25: gain=600: nvar=0.005: avg_correct=1: vm_act_thr=0.01: sig_mult=0.33: sig_mult_pow=0.8: sig_gain=3: interp_range=0.01: gain_cor_range=10: gain_cor=0.1: sig_gain_nvar=600: sig_mult_eff=0.7947142: sig_val_at_0=0.3973571: interp_val=0.4492686: };
+     act_misc {rec_nd=1: avg_nd=1: dif_avg=0: net_gain=1: avg_trace=0: lambda=0: avg_tau=200: avg_init=0.15: avg_dt=0.005: };
+     spike {rise=0: decay=5: g_gain=5: window=3: act_max_hz=200: int_tau=5: int_dt=0.2: };
      spike_misc {ex=0: exp_slope=0.02: spk_thr=1.2: vm_r=0: t_r=6: clamp_max_p=0.11: clamp_type=REGULAR: eff_spk_thr=0.25: };
      opt_thresh {send=0.1: delta=0.005: };
      clamp_range {min=0: max=0.95: range=0.95: scale=1.052632: };
      vm_range {min=0: max=1: range=1: scale=1: };
      init {v_m=0.4: act=0: netin=0: };
-     dt {integ=1: vm_tau=4: net_tau=1.428571: fast_cyc=0: vm_dt=0.25: net_dt=0.7000002: };
+     dt {integ=1: vm_tau=4: net_tau=1.428571: vm_cyc=1: fast_cyc=0: vm_dt=0.25: vm_dt_cyc=0.25: net_dt=0.7000002: };
      act_avg {ss_tau=2: s_tau=2: m_tau=10: m_in_s=0.1: ss_dt=0.5: s_dt=0.5: m_dt=0.1: s_in_s=0.9: };
      avg_l {init=0.4: gain=1.5: min=0.1: tau=10: lrn_max=0.05: lrn_min=0.005: dt=0.1: lrn_fact=0.03214286: };
      avg_l_2 {err_mod=1: err_min=0.01: lay_act_thr=0.01: };
-     g_bar {e=1: l=0.1: i=1: };
-     e_rev {e=1: l=0.15: i=0.15: };
-     adapt {on=0: tau=144: vm_gain=0.1: spike_gain=0.01: Ei_dyn=1: Ei_gain=0.001: Ei_tau=50: dt=0.006944444: Ei_dt=0.02: };
+     g_bar {e=1: l=0.1: i=1: k=1: };
+     e_rev {e=1: l=0.15: i=0.15: k=0.1: };
+     kna_adapt {on=0: rate_rise=0.8: f_on=1: f_rise=0.05: f_max=0.1: f_tau=50: m_on=1: m_rise=0.02: m_max=0.1: m_tau=200: s_on=1: s_rise=0.001: s_max=1: s_tau=1000: f_dt=0.02: m_dt=0.005: s_dt=0.001: };
+     kna_misc {clamp=0: invert_nd=0: max_gc=0.2: max_adapt=0.5: no_targ=1: };
      stp {on=0: algorithm=CYCLES: f_r_ratio=0.02: rec_tau=200: p0=0.3: p0_norm=0.4: kre_tau=100: kre=0.002: fac_tau=4: fac=0.3: thresh=0.5: n_trials=1: rec_prob=0.1: rec_dt=0.005: fac_dt=0.25: kre_dt=0.01: oneo_p0_norm=2.5: };
      syn_delay {on=0: delay=4: };
      deep_raw_qtr=Q4;
      deep {on=0: role=SUPER: raw_thr_rel=0.1: raw_thr_abs=0.1: mod_min=0.8: mod_thr=0.1: ctxt_prv=0: tick_updt=-1: else_prv=0.9: mod_range=0.2: ctxt_new=1: else_new=0.1: };
-     trc {p_only_m=0: thal_gate=0: avg_clamp=0: deep_gain=0.2: clip=0: clip_max=0.4: std_gain=0.8: };
-     da_mod {on=0: minus=0: plus=0.1: };
+     trc {p_only_m=0: thal_gate=0: clamp_net=0: avg_clamp=0: deep_gain=0.2: clip=0: clip_max=0.4: std_gain=0.8: };
+     da_mod {on=0: mod_gain=0: minus=0: plus=0.1: da_neg_gain=0.1: da_pos_gain=0.1: };
      noise_type {type=NO_NOISE: trial_fixed=1: };
      noise {name="noise": type=GAUSSIAN: mean=0: var=0.001000000047497451: par=1: };
     };
@@ -6513,10 +6698,10 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      cur_lrate=0.02;
      lrs_mult=1;
      use_unlearnable=1;
-     xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: lrn_thr=0.01: d_rev_ratio=-9: };
+     xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: lrn_thr=0.01: s_mult=1: d_rev_ratio=-9: };
      wt_sig {gain=6: off=1.25: soft_bound=1: };
      momentum {on=0: dwavg_tau=1000: norm_min=0.001: m_tau=20: lrate_comp=0.01: dwavg_dt=0.001: dwavg_dt_c=0.999: m_dt=0.05: m_dt_c=0.95: };
-     wt_bal {on=0: hi_thr=0.4: hi_gain=4: lo_thr=0.2: lo_gain=4: };
+     wt_bal {on=0: avg_thr=0.5: hi_thr=0.6: hi_gain=3: lo_thr=0.6: lo_gain=6: act_thr=0.25: act_gain=0: no_targ=1: };
      adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
      slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
      deep {on=0: bg_lrate=1: fg_lrate=0: };
@@ -6555,7 +6740,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      margin {pct_marg=0.3: avg_tau=100: adapt_tau=500: tol_pct=0.25: avg_act=0.8: low_thr=0.501: med_thr=0.506: hi_thr=0.508: avg_dt=0.01: adapt_dt=0.002: };
      lay_lrate=1;
      cos_diff {avg_tau=100: lrate_mod=0: lrmod_fm_trc=0: lrmod_z_thr=-1.5: set_net_unlrn=0: avg_dt=0.01: avg_dt_c=0.99: };
-     lstats {hog_thr=0.3: dead_thr=0.01: };
+     lstats {pre_hog_thr=0.2: hog_thr=0.3: dead_thr=0.01: };
     };
     LeabraConSpec @[3] {
      name="LeabraConSpec_0";
@@ -6579,10 +6764,10 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      cur_lrate=0.02;
      lrs_mult=1;
      use_unlearnable=1;
-     xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: lrn_thr=0.01: d_rev_ratio=-9: };
+     xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: lrn_thr=0.01: s_mult=1: d_rev_ratio=-9: };
      wt_sig {gain=6: off=1.25: soft_bound=1: };
      momentum {on=0: dwavg_tau=1000: norm_min=0.001: m_tau=20: lrate_comp=0.01: dwavg_dt=0.001: dwavg_dt_c=0.999: m_dt=0.05: m_dt_c=0.95: };
-     wt_bal {on=0: hi_thr=0.4: hi_gain=4: lo_thr=0.2: lo_gain=4: };
+     wt_bal {on=0: avg_thr=0.5: hi_thr=0.6: hi_gain=3: lo_thr=0.6: lo_gain=6: act_thr=0.25: act_gain=0: no_targ=1: };
      adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
      slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
      deep {on=0: bg_lrate=1: fg_lrate=0: };
@@ -6703,6 +6888,41 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     el_typ=ParamSeq;
     el_def=0;
    };
+   monitor {
+    name="monitor";
+    items {
+     name="items";
+     el_typ=NetMonItem;
+     el_def=0;
+    };
+    network=$.networks[5]$;
+    data=.networks[5].mon_data$$;
+    rmv_orphan_cols=1;
+   };
+   mon_data {
+    name="mon_data";
+    desc=;
+    data {
+     name="data";
+     el_typ=String_Data;
+     el_def=0;
+    };
+    data_flags=AUTO_CALC;
+    auto_load=NO_AUTO_LOAD;
+    auto_load_file=;
+    row_height=1;
+    max_col_width=50;
+    keygen 4 0=0;
+    last_sort_spec {
+     name="last_sort_spec";
+     ops {
+      name="ops";
+      el_typ=DataSortEl;
+      el_def=0;
+     };
+    };
+    row_with_hilite=-1;
+   };
    layers {
     name="layers";
     el_typ=LeabraLayer;
@@ -6751,9 +6971,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
       name="send_prjns";
       el_typ=LeabraPrjn;
       el_def=0;
-      Projection_Group @. = [0] = LeabraPrjn .networks[5].layers[1].projections[0];
-      Projection_Group @. = [1] = LeabraPrjn .networks[5].layers[2].projections[0];
-      Projection_Group @. = [2] = LeabraPrjn .networks[5].layers[3].projections[0];
+      Projection_List @. = [0] = LeabraPrjn .networks[5].layers[1].projections[0];
+      Projection_List @. = [1] = LeabraPrjn .networks[5].layers[2].projections[0];
+      Projection_List @. = [2] = LeabraPrjn .networks[5].layers[3].projections[0];
      };
      unit_spec {type=LeabraUnitSpec: spec=.networks[5].specs[0]$$: };
      dist {fm_input=-1: fm_output=-1: };
@@ -6989,38 +7209,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
    rel_netin {on=1: trl_skip=10: epc_skip=10: };
   };
   LeabraNetwork @[6] {
-   UserDataItem_List @*(.user_data_) {
-    name=;
-    el_typ=UserDataItem;
-    el_def=0;
-    UserDataItem @[0] {name="cos_err": value=1: val_type_fixed=1: };
-    UserDataItem @[1] {name="norm_err": value=1: val_type_fixed=1: };
-    UserDataItem @[2] {name="ext_rew": value=1: val_type_fixed=1: };
-    UserDataItem @[3] {name="minus_output_name": value=1: val_type_fixed=1: };
-    UserDataItem @[4] {name="rt_cycles": value=1: val_type_fixed=1: };
-    UserDataItem @[5] {name="tot_cycle": value=1: val_type_fixed=1: };
-    UserDataItem @[6] {name="phase": value=1: val_type_fixed=1: };
-    UserDataItem @[7] {name="quarter": value=1: val_type_fixed=1: };
-    UserDataItem @[8] {name="sse": value=1: val_type_fixed=1: };
-    UserDataItem @[9] {name="output_name": value=1: val_type_fixed=1: };
-    UserDataItem @[10] {name="trial_name": value=1: val_type_fixed=1: };
-    UserDataItem @[11] {name="group_name": value=1: val_type_fixed=1: };
-    UserDataItem @[12] {name="total_trials": value=1: val_type_fixed=1: };
-    UserDataItem @[13] {name="time": value=1: val_type_fixed=1: };
-    UserDataItem @[14] {name="cycle": value=1: val_type_fixed=1: };
-    UserDataItem @[15] {name="tick": value=1: val_type_fixed=1: };
-    UserDataItem @[16] {name="trial": value=1: val_type_fixed=1: };
-    UserDataItem @[17] {name="group": value=1: val_type_fixed=1: };
-    UserDataItem @[18] {name="epoch": value=1: val_type_fixed=1: };
-    UserDataItem @[19] {name="batch": value=1: val_type_fixed=1: };
-    UserDataItem @[20] {name="trial_cos_diff": value=1: val_type_fixed=1: };
-    UserDataItem @[21] {name="avg_act_diff": value=1: val_type_fixed=1: };
-    UserDataItem @[22] {name="cos_diff": value=1: val_type_fixed=1: };
-    UserDataItem @[23] {name="minus_cycles": value=1: val_type_fixed=1: };
-    UserDataItem @[24] {name="ct_cycle": value=1: val_type_fixed=1: };
-    UserDataItem @[25] {name="phase_no": value=1: val_type_fixed=1: };
-    UserDataItem @[26] {name="maxda": value=1: val_type_fixed=1: };
-   };
    name="GpTessel";
    desc="demonstrates the group-based random tessel prjn";
    flags=BUILD_INIT_WTS;
@@ -7051,27 +7239,28 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      act_range {min=0: max=1: range=1: scale=1: };
      sse_tol=0.5;
      act_fun=NOISY_XX1;
-     act {thr=0.25: gain=600: nvar=0.005: sig_mult=0.33: sig_mult_pow=0.8: sig_gain=3: interp_range=0.01: gain_cor_range=10: gain_cor=0.1: sig_gain_nvar=600: sig_mult_eff=0.7947142: sig_val_at_0=0.3973571: interp_val=0.4492686: };
-     act_misc {rec_nd=1: avg_nd=1: dif_avg=0: net_gain=1: act_max_hz=100: avg_trace=0: lambda=0: avg_tau=200: avg_init=0.15: avg_dt=0.005: };
-     spike {rise=0: decay=5: g_gain=5: window=3: eq_gain=10: eq_tau=50: eq_dt=0.02: };
+     act {thr=0.25: gain=600: nvar=0.005: avg_correct=1: vm_act_thr=0.01: sig_mult=0.33: sig_mult_pow=0.8: sig_gain=3: interp_range=0.01: gain_cor_range=10: gain_cor=0.1: sig_gain_nvar=600: sig_mult_eff=0.7947142: sig_val_at_0=0.3973571: interp_val=0.4492686: };
+     act_misc {rec_nd=1: avg_nd=1: dif_avg=0: net_gain=1: avg_trace=0: lambda=0: avg_tau=200: avg_init=0.15: avg_dt=0.005: };
+     spike {rise=0: decay=5: g_gain=5: window=3: act_max_hz=200: int_tau=5: int_dt=0.2: };
      spike_misc {ex=0: exp_slope=0.02: spk_thr=1.2: vm_r=0: t_r=6: clamp_max_p=0.11: clamp_type=REGULAR: eff_spk_thr=0.25: };
      opt_thresh {send=0.1: delta=0.005: };
      clamp_range {min=0: max=0.95: range=0.95: scale=1.052632: };
      vm_range {min=0: max=1: range=1: scale=1: };
      init {v_m=0.4: act=0: netin=0: };
-     dt {integ=1: vm_tau=4: net_tau=1.428571: fast_cyc=0: vm_dt=0.25: net_dt=0.7000002: };
+     dt {integ=1: vm_tau=4: net_tau=1.428571: vm_cyc=1: fast_cyc=0: vm_dt=0.25: vm_dt_cyc=0.25: net_dt=0.7000002: };
      act_avg {ss_tau=2: s_tau=2: m_tau=10: m_in_s=0.1: ss_dt=0.5: s_dt=0.5: m_dt=0.1: s_in_s=0.9: };
      avg_l {init=0.4: gain=1.5: min=0.1: tau=10: lrn_max=0.05: lrn_min=0.005: dt=0.1: lrn_fact=0.03214286: };
      avg_l_2 {err_mod=1: err_min=0.01: lay_act_thr=0.01: };
-     g_bar {e=1: l=0.1: i=1: };
-     e_rev {e=1: l=0.15: i=0.15: };
-     adapt {on=0: tau=144: vm_gain=0.1: spike_gain=0.01: Ei_dyn=1: Ei_gain=0.001: Ei_tau=50: dt=0.006944444: Ei_dt=0.02: };
+     g_bar {e=1: l=0.1: i=1: k=1: };
+     e_rev {e=1: l=0.15: i=0.15: k=0.1: };
+     kna_adapt {on=0: rate_rise=0.8: f_on=1: f_rise=0.05: f_max=0.1: f_tau=50: m_on=1: m_rise=0.02: m_max=0.1: m_tau=200: s_on=1: s_rise=0.001: s_max=1: s_tau=1000: f_dt=0.02: m_dt=0.005: s_dt=0.001: };
+     kna_misc {clamp=0: invert_nd=0: max_gc=0.2: max_adapt=0.5: no_targ=1: };
      stp {on=0: algorithm=CYCLES: f_r_ratio=0.02: rec_tau=200: p0=0.3: p0_norm=0.4: kre_tau=100: kre=0.002: fac_tau=4: fac=0.3: thresh=0.5: n_trials=1: rec_prob=0.1: rec_dt=0.005: fac_dt=0.25: kre_dt=0.01: oneo_p0_norm=2.5: };
      syn_delay {on=0: delay=4: };
      deep_raw_qtr=Q4;
      deep {on=0: role=SUPER: raw_thr_rel=0.1: raw_thr_abs=0.1: mod_min=0.8: mod_thr=0.1: ctxt_prv=0: tick_updt=-1: else_prv=0.9: mod_range=0.2: ctxt_new=1: else_new=0.1: };
-     trc {p_only_m=0: thal_gate=0: avg_clamp=0: deep_gain=0.2: clip=0: clip_max=0.4: std_gain=0.8: };
-     da_mod {on=0: minus=0: plus=0.1: };
+     trc {p_only_m=0: thal_gate=0: clamp_net=0: avg_clamp=0: deep_gain=0.2: clip=0: clip_max=0.4: std_gain=0.8: };
+     da_mod {on=0: mod_gain=0: minus=0: plus=0.1: da_neg_gain=0.1: da_pos_gain=0.1: };
      noise_type {type=NO_NOISE: trial_fixed=1: };
      noise {name="noise": type=GAUSSIAN: mean=0: var=0.001000000047497451: par=1: };
     };
@@ -7097,10 +7286,10 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      cur_lrate=0.02;
      lrs_mult=1;
      use_unlearnable=1;
-     xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: lrn_thr=0.01: d_rev_ratio=-9: };
+     xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: lrn_thr=0.01: s_mult=1: d_rev_ratio=-9: };
      wt_sig {gain=6: off=1.25: soft_bound=1: };
      momentum {on=0: dwavg_tau=1000: norm_min=0.001: m_tau=20: lrate_comp=0.01: dwavg_dt=0.001: dwavg_dt_c=0.999: m_dt=0.05: m_dt_c=0.95: };
-     wt_bal {on=0: hi_thr=0.4: hi_gain=4: lo_thr=0.2: lo_gain=4: };
+     wt_bal {on=0: avg_thr=0.5: hi_thr=0.6: hi_gain=3: lo_thr=0.6: lo_gain=6: act_thr=0.25: act_gain=0: no_targ=1: };
      adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
      slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
      deep {on=0: bg_lrate=1: fg_lrate=0: };
@@ -7139,7 +7328,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      margin {pct_marg=0.3: avg_tau=100: adapt_tau=500: tol_pct=0.25: avg_act=0.8: low_thr=0.501: med_thr=0.506: hi_thr=0.508: avg_dt=0.01: adapt_dt=0.002: };
      lay_lrate=1;
      cos_diff {avg_tau=100: lrate_mod=0: lrmod_fm_trc=0: lrmod_z_thr=-1.5: set_net_unlrn=0: avg_dt=0.01: avg_dt_c=0.99: };
-     lstats {hog_thr=0.3: dead_thr=0.01: };
+     lstats {pre_hog_thr=0.2: hog_thr=0.3: dead_thr=0.01: };
     };
     GpTesselPrjnSpec @[3] {
      name="GpRndTessel_Full";
@@ -7335,10 +7524,10 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      cur_lrate=0.02;
      lrs_mult=1;
      use_unlearnable=1;
-     xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: lrn_thr=0.01: d_rev_ratio=-9: };
+     xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: lrn_thr=0.01: s_mult=1: d_rev_ratio=-9: };
      wt_sig {gain=6: off=1.25: soft_bound=1: };
      momentum {on=0: dwavg_tau=1000: norm_min=0.001: m_tau=20: lrate_comp=0.01: dwavg_dt=0.001: dwavg_dt_c=0.999: m_dt=0.05: m_dt_c=0.95: };
-     wt_bal {on=0: hi_thr=0.4: hi_gain=4: lo_thr=0.2: lo_gain=4: };
+     wt_bal {on=0: avg_thr=0.5: hi_thr=0.6: hi_gain=3: lo_thr=0.6: lo_gain=6: act_thr=0.25: act_gain=0: no_targ=1: };
      adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
      slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
      deep {on=0: bg_lrate=1: fg_lrate=0: };
@@ -7376,6 +7565,41 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     name="param_seqs";
     el_typ=ParamSeq;
     el_def=0;
+   };
+   monitor {
+    name="monitor";
+    items {
+     name="items";
+     el_typ=NetMonItem;
+     el_def=0;
+    };
+    network=$.networks[6]$;
+    data=.networks[6].mon_data$$;
+    rmv_orphan_cols=1;
+   };
+   mon_data {
+    name="mon_data";
+    desc=;
+    data {
+     name="data";
+     el_typ=String_Data;
+     el_def=0;
+    };
+    data_flags=AUTO_CALC;
+    auto_load=NO_AUTO_LOAD;
+    auto_load_file=;
+    row_height=1;
+    max_col_width=50;
+    keygen 4 0=0;
+    last_sort_spec {
+     name="last_sort_spec";
+     ops {
+      name="ops";
+      el_typ=DataSortEl;
+      el_def=0;
+     };
+    };
+    row_with_hilite=-1;
    };
    layers {
     name="layers";
@@ -7439,10 +7663,10 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
       name="send_prjns";
       el_typ=LeabraPrjn;
       el_def=0;
-      Projection_Group @. = [0] = LeabraPrjn .networks[6].layers[1].projections[0];
-      Projection_Group @. = [1] = LeabraPrjn .networks[6].layers[2].projections[0];
-      Projection_Group @. = [2] = LeabraPrjn .networks[6].layers[0].projections[0];
-      Projection_Group @. = [3] = LeabraPrjn .networks[6].layers[3].projections[0];
+      Projection_List @. = [0] = LeabraPrjn .networks[6].layers[1].projections[0];
+      Projection_List @. = [1] = LeabraPrjn .networks[6].layers[2].projections[0];
+      Projection_List @. = [2] = LeabraPrjn .networks[6].layers[0].projections[0];
+      Projection_List @. = [3] = LeabraPrjn .networks[6].layers[3].projections[0];
      };
      unit_spec {type=LeabraUnitSpec: spec=.networks[6].specs[0]$$: };
      dist {fm_input=-1: fm_output=-1: };

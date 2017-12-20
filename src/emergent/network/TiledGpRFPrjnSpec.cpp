@@ -168,13 +168,17 @@ void STATE_CLASS(TiledGpRFPrjnSpec)::Init_Weights_Gaussian
   TAVECTOR2F suc;
   TAVECTOR2F sucw;
   TAVECTOR2F suncw;
-  
-  UNIT_STATE* su0 = cg->UnState(0, net);
-  int st_gp_idx = su0->gp_idx;
+
+  // special logic here to deal with random connections..
+  int prv_un_idx = -1;
+  int ug_idx = 0;
   for(int i=0; i<cg->size; i++) {
-    UNIT_STATE* su = cg->UnState(i, net); // using the unit coord allows it to work with random cons
-    int ug_idx = su->gp_idx - st_gp_idx;
+    UNIT_STATE* su = cg->UnState(i, net); 
     int un_idx = su->ungp_un_idx;
+    if(un_idx < prv_un_idx) {
+      ug_idx++;
+    }
+    prv_un_idx = un_idx;
 
     unc.x = un_idx % send_lay->un_geom_x;
     unc.y = un_idx / send_lay->un_geom_x;
@@ -298,12 +302,16 @@ void STATE_CLASS(TiledGpRFPrjnSpec)::Init_Weights_Sigmoid
   TAVECTOR2F sucw;
   TAVECTOR2F suncw;
   
-  UNIT_STATE* su0 = cg->UnState(0, net);
-  int st_gp_idx = su0->gp_idx;
+  // special logic here to deal with random connections..
+  int prv_un_idx = -1;
+  int ug_idx = 0;
   for(int i=0; i<cg->size; i++) {
-    UNIT_STATE* su = cg->UnState(i, net); // using the unit coord allows it to work with random cons
-    int ug_idx = su->gp_idx - st_gp_idx;
+    UNIT_STATE* su = cg->UnState(i, net); 
     int un_idx = su->ungp_un_idx;
+    if(un_idx < prv_un_idx) {
+      ug_idx++;
+    }
+    prv_un_idx = un_idx;
 
     unc.x = un_idx % send_lay->un_geom_x;
     unc.y = un_idx / send_lay->un_geom_x;

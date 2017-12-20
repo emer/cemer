@@ -196,7 +196,7 @@ public:
   String                unit_src_path;  // ##READ_ONLY path of unit_src unit relative to the network -- used for saving and reloading
   String                last_sel_unit_val;   // #READ_ONLY #SHOW #NO_SAVE value of last selected unit (for display)
   NetViewStateItem_List state_items;    // #NO_COPY #READ_ONLY all standard net state items (i.e. marked VIEW) plua any in network owned monitor - maintains order, width, display flag
-  bool                  state_items_stale;
+  bool                  state_items_stale; // #NO_SAVE #NO_COPY #READ_ONLY set to true to trigger updating of state items
 
   ConType               con_type;       // what type of connections should be shown (where there are multiple connections between two units)
   String                prjn_starts_with; // #NO_SAVE #NO_COPY #READ_ONLY based on the con_type setting, what the projection name should start with

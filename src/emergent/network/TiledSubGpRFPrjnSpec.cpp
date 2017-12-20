@@ -135,12 +135,16 @@ void STATE_CLASS(TiledSubGpRFPrjnSpec)::Init_Weights_Gaussian
 
   TAVECTOR2F s_ctr = (ru_nrm_pos * half_size) + half_size;
   
-  UNIT_STATE* su0 = cg->UnState(0, net);
-  int st_gp_idx = su0->gp_idx;
+  // special logic here to deal with random connections..
+  int prv_un_idx = -1;
+  int ug_idx = 0;
   for(int i=0; i<cg->size; i++) {
-    UNIT_STATE* su = cg->UnState(i, net); // using the unit coord allows it to work with random cons
-    int ug_idx = su->gp_idx - st_gp_idx;
+    UNIT_STATE* su = cg->UnState(i, net); 
     int un_idx = su->ungp_un_idx;
+    if(un_idx < prv_un_idx) {
+      ug_idx++;
+    }
+    prv_un_idx = un_idx;
 
     int un_x = un_idx % send_lay->un_geom_x;
     int un_y = un_idx / send_lay->un_geom_x;
