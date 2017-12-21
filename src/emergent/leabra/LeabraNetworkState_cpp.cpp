@@ -77,8 +77,8 @@ void LeabraNetworkState_cpp::Quarter_Init() {
 //   Quarter_Init_TargFlags();
 //   Compute_HardClamp();        // clamp all hard-clamped input acts
 
+  Quarter_Init_Deep();          // in previous version it was done before rescaling..
   Compute_NetinScale();       // compute net scaling
-  Quarter_Init_Deep();
 
   // also, super important to do this AFTER the Quarter_Init_Unit call so net is still
   // around for functions that use the previous value of it

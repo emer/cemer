@@ -192,6 +192,7 @@ void LeabraNetwork::Quarter_Init() {
   NET_STATE_RUN(LeabraNetworkState, Quarter_Init());
   
   SyncAllState();
+  SyncPrjnState();              // netin scale updated
 }
 
 
