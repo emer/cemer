@@ -81,7 +81,7 @@ void  iTreeWidget::init() {
   line_edit = NULL;
   in_double_click = false;
   
-  setAutoScroll(true);
+  setAutoScroll(false);
   setDragDropMode(DragDrop);
 
   iTreeWidgetDefaultDelegate* del = new iTreeWidgetDefaultDelegate(this);
