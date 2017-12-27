@@ -37,7 +37,9 @@
   STATE_CLASS(AdaptWtScaleSpec) adapt_scale;	// #CAT_Learning #CONDSHOW_ON_learn parameters to adapt the scale multiplier on weights, as a function of weight value
   STATE_CLASS(SlowWtsSpec)      slow_wts;       // #CAT_Learning #CONDSHOW_ON_learn slow weight specifications -- adds a more slowly-adapting weight factor on top of the standard more rapidly adapting weights
   STATE_CLASS(DeepLrateSpec)    deep;		// #CAT_Learning #CONDSHOW_ON_learn learning rate specs for DeepLeabra learning rate modulation -- effective learning rate can be enhanced for units receiving thalamic modulation vs. those without
-  STATE_CLASS(MarginLearnSpec)  margin;	// #CAT_Learning #CONDSHOW_ON_learn learning specs for modulation as a function of marginal activation status -- emphasize learning for units on the margin
+  STATE_CLASS(MarginLearnSpec)  margin;	        // #CAT_Learning #CONDSHOW_ON_learn learning specs for modulation as a function of marginal activation status -- emphasize learning for units on the margin
+  bool                          dwt_noise;      // #CAT_Learning #CONDSHOW_ON_learn add noise to weight changes according to noise parameters
+  STATE_CLASS(Random)           noise;          // #CAT_Learning #CONDSHOW_ON_learn&&dwt_noise parameters of noise to add to weight changes if dwt_noise is activated
 
 
   INLINE float	SigFmLinWt(float lw) { return wt_sig.SigFmLinWt(lw);  }
@@ -379,9 +381,12 @@
 
   INLINE void	C_Compute_Weights_CtLeabraXCAL
     (float& wt, float& dwt, float& fwt, float& swt, float& scale,
-     const float wb_inc, const float wb_dec)
+     const float wb_inc, const float wb_dec, int thr_no)
   {
     if(dwt == 0.0f) return;
+    if(dwt_noise) {
+      dwt += noise.Gen(thr_no);
+    }
     if(wt_sig.soft_bound) {
       if(dwt > 0.0f)	dwt *= wb_inc * (1.0f - fwt);
       else		dwt *= wb_dec * fwt;
@@ -405,10 +410,19 @@
 
   INLINE void	C_Compute_Weights_CtLeabraXCAL_slow
     (float& wt, float& dwt, float& fwt, float& swt, float& scale,
-     const float wb_inc, const float wb_dec)
+     const float wb_inc, const float wb_dec, int thr_no)
   { 
-    if(dwt > 0.0f)	dwt *= wb_inc * (1.0f - fwt);
-    else		dwt *= wb_dec * fwt;
+    if(dwt_noise) {
+      dwt += noise.Gen(thr_no);
+    }
+    if(wt_sig.soft_bound) {
+      if(dwt > 0.0f)	dwt *= wb_inc * (1.0f - fwt);
+      else		dwt *= wb_dec * fwt;
+    }
+    else {
+      if(dwt > 0.0f)	dwt *= wb_inc;
+      else		dwt *= wb_dec;
+    }
     fwt += dwt;
     float eff_wt = slow_wts.swt_pct * swt + slow_wts.fwt_pct * fwt;
     float nwt = scale * SigFmLinWt(eff_wt);
@@ -440,7 +454,7 @@
           // storing in synapses is about 2x faster and essentially no overhead vs. no wtbal
           // LEABRA_CON_STATE* rcg = cg->UnCons(i, net);
           C_Compute_Weights_CtLeabraXCAL_slow
-            (wts[i], dwts[i], fwts[i], swts[i], scales[i], wbincs[i], wbdecs[i]);
+            (wts[i], dwts[i], fwts[i], swts[i], scales[i], wbincs[i], wbdecs[i], thr_no);
             // (wts[i], dwts[i], fwts[i], swts[i], scales[i], rcg->wb_inc, rcg->wb_dec);
         }
       }
@@ -450,7 +464,7 @@
           // storing in synapses is about 2x faster and essentially no overhead vs. no wtbal
           // LEABRA_CON_STATE* rcg = cg->UnCons(i, net);
           C_Compute_Weights_CtLeabraXCAL
-            (wts[i], dwts[i], fwts[i], swts[i], scales[i], wbincs[i], wbdecs[i]);
+            (wts[i], dwts[i], fwts[i], swts[i], scales[i], wbincs[i], wbdecs[i], thr_no);
             // (wts[i], dwts[i], fwts[i], swts[i], scales[i], rcg->wb_inc, rcg->wb_dec);
         }
       }
@@ -459,13 +473,13 @@
       if(slow_wts.on) {
         for(int i=0; i<sz; i++) {
           C_Compute_Weights_CtLeabraXCAL_slow
-            (wts[i], dwts[i], fwts[i], swts[i], scales[i], 1.0f, 1.0f);
+            (wts[i], dwts[i], fwts[i], swts[i], scales[i], 1.0f, 1.0f, thr_no);
         }
       }
       else {
         for(int i=0; i<sz; i++) {
           C_Compute_Weights_CtLeabraXCAL
-            (wts[i], dwts[i], fwts[i], swts[i], scales[i], 1.0f, 1.0f);
+            (wts[i], dwts[i], fwts[i], swts[i], scales[i], 1.0f, 1.0f, thr_no);
         }
       }
     }
@@ -567,7 +581,8 @@
     wt_limits.min = 0.0f;  wt_limits.max = 1.0f;  wt_limits.sym = true;
     wt_limits.type = STATE_CLASS(WeightLimits)::MIN_MAX;
     rnd.mean = .5f;  rnd.var = .25f;
-    lrate = .04f;    cur_lrate = .02f;  lrs_mult = 1.0f;
+    lrate = .04f;    cur_lrate = .02f;  lrs_mult = 1.0f;  dwt_noise = false;
+    noise.type = STATE_CLASS(Random)::UNIFORM;  noise.mean = 0.0f;  noise.var = 0.001f;
   }
     
   INLINE int  GetStateSpecType() const override

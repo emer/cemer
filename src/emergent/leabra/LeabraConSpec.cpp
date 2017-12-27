@@ -101,10 +101,11 @@ void LeabraConSpec::UpdateAfterEdit_impl() {
       TestWarning(true, "UAE",
                   "updated lrate in conspec = 2 * previous value -- as of version 7.8.5 a previous implicit 2x factor was removed");
     }
-    taVersion v835(8, 3, 5);
-    if(taMisc::loading_version < v835) {
-      wt_bal.hi_thr = 0.6f; wt_bal.hi_gain = 3.0f; // only vals in common, need updating
-      wt_bal.lo_thr = 0.6f; wt_bal.lo_gain = 6.0f;
+    taVersion v836(8, 3, 6);
+    if(taMisc::loading_version < v836) {
+      wt_bal.avg_thr = 0.25f;
+      wt_bal.hi_thr = 0.4f; wt_bal.hi_gain = 4.0f;
+      wt_bal.lo_thr = 0.4f; wt_bal.lo_gain = 6.0f;
     }
   }
 }
@@ -341,7 +342,7 @@ void LeabraConSpec::GraphSlowWtsFun(int trials, DataTable* graph_data) {
   for(int trl = 0; trl < trials; trl++) {
     dwt = Random::UniformMinMax(-lrate, lrate);
     float dwt_save = dwt;
-    C_Compute_Weights_CtLeabraXCAL_slow(wt, dwt, fwt, swt, scale, 1.0f, 1.0f);
+    C_Compute_Weights_CtLeabraXCAL_slow(wt, dwt, fwt, swt, scale, 1.0f, 1.0f, 0);
     graph_data->AddBlankRow();
     trialc->SetValAsInt(trl, -1);
     dwtc->SetValAsFloat(dwt_save, -1);
