@@ -96,7 +96,11 @@ void taiWidgetField::lookupKeyPressed() {
         if (reference_arg) {
           arg_obj = cssi_arg_dlg->GetBaseForArg(reference_arg);
         }
-        class_base->GetArgCompletionList(cssi_arg_dlg->md->name, label()->text(), arg_obj, cur_text, arg_completions);
+        String pre_text = cur_text;
+        if (cur_text.contains('.')) {
+          pre_text = cur_text.before('.');
+        }
+        class_base->GetArgCompletionList(cssi_arg_dlg->md->name, label()->text(), arg_obj, pre_text, arg_completions);
         rep()->GetCompleter()->SetCompletions(&arg_completions);
       }
     }
@@ -127,7 +131,15 @@ void taiWidgetField::lookupKeyPressed() {
   if (completer) {
     member_completions.Reset();
     if (completer->field_type == iCodeCompleter::SIMPLE) {
-      tab->GetMemberCompletionList(lookupfun_md, rep()->text(), member_completions);
+      String text = rep()->text();
+      String pre_text = text;
+      if (text.contains('.')) {
+        pre_text = text.before('.');
+      }
+      tab->GetMemberCompletionList(lookupfun_md, pre_text, member_completions);
+      if (pre_text != text) {
+        member_completions.pre_text = pre_text + ".";
+      }
       rep()->GetCompleter()->SetCompletions(&member_completions);
     }
     else {  // iCodeCompleter::EXPRESSION
