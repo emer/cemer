@@ -27,6 +27,7 @@
 #include <NetMonitor>
 #include <Average>
 #include <Completions>
+#include <ProgExprBase>
 
 #include <taMisc>
 #include <taProject>
@@ -1396,12 +1397,21 @@ void NetMonItem::ToggleOffFlag() {
   SigEmitUpdated();
 }
 
-void NetMonItem::GetMemberCompletionList(const MemberDef* md, Completions& completions) {
+void NetMonItem::GetMemberCompletionList(const MemberDef* md, const String& cur_txt, Completions& completions) {
   if (object_type) {
-    MemberSpace mbr_space = object_type->members;
+    MemberSpace mbr_space;
+    TypeDef* special_td = ProgExprBase::GetSpecialCaseType(cur_txt);
+    if (special_td) {
+      mbr_space = special_td->members;
+    }
+    else {
+      mbr_space = object_type->members;
+    }
     for (int i = 0; i < mbr_space.size; ++i) {
       MemberDef* mbr_def = mbr_space.FastEl(i);
-      completions.member_completions.Link(mbr_def);
+      if (!mbr_def->IsEditorHidden()) {
+        completions.member_completions.Link(mbr_def);
+      }
     }
   }
 }

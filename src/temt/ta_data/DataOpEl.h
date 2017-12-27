@@ -57,7 +57,7 @@ public:
   // get owner index based suffix to append to name -- make them always unique in case of overlap
   String          GetDisplayName() const override;
   String          GetTypeDecoKey() const override { return "ProgArg"; }
-  void            GetMemberCompletionList(const MemberDef* md, Completions& completions) override;
+  void            GetMemberCompletionList(const MemberDef* md, const String& cur_txt, Completions& completions) override;
 
   bool            BrowserEditEnable() const override { return true; }
   bool            BrowserEditSet(const String& new_val_str, int move_after = 0) override;

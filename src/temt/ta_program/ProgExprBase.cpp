@@ -1882,5 +1882,37 @@ bool ProgExprBase::ExpressionTakesArgs(String expression) {
   return false;
 }
 
+TypeDef* ProgExprBase::GetSpecialCaseType(const String& text) {
+  TypeDef* td = NULL;
+  // crazy!! could not get Qt's reg ex to work with \[[0-9]] or the like
+  String text_with_sub = text;
+  text_with_sub.repl("[", "~");
+  text_with_sub.repl("]", "~");
+  bool match = false;
+  QRegExp re;
+  re.setCaseSensitivity(Qt::CaseInsensitive);
+  if (!match) {
+    re.setPattern(QString("units~([0-9]|[0-9]-[0-9]|[0-9]--[0-9])+~"));
+    if (re.exactMatch(text_with_sub)) {
+      match = true;
+      td = taMisc::FindTypeName("UnitState_cpp");
+    }
+  }
+  if (!match) {  // try units[grp_no][unit]
+    re.setPattern(QString("units~([0-9]|[0-9]-[0-9]|[0-9]--[0-9])+~~([0-9]|[0-9]-[0-9]|[0-9]--[0-9])+~"));
+    if (re.exactMatch(text_with_sub)) {
+      match = true;
+      td = taMisc::FindTypeName("UnitState_cpp");
+    }
+  }
+  if (!match) {  // try ungp[grp_no]
+    re.setPattern(QString("ungp~([0-9]|[0-9]-[0-9]|[0-9]--[0-9])+~"));
+    if (re.exactMatch(text_with_sub)) {
+      match = true;
+      td = taMisc::FindTypeName("LeabraUnGpState_cpp");
+    }
+  }
+  return td;
+}
 
 

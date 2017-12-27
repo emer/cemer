@@ -4094,7 +4094,7 @@ void taBase::WarnSettingToNull(taBase* old_par, taBase* new_par) {
   }
 }
 
-void taBase::GetArgCompletionList(const String& method, const String& arg, taBase* base_obj, Completions& completions) {
+void taBase::GetArgCompletionList(const String& method, const String& arg, taBase* base_obj, const String& cur_txt, Completions& completions) {
   if (method == "SetMember" && arg == "member") {
     TypeDef* td = GetTypeDef();
     if (td) {

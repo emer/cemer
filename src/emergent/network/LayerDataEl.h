@@ -92,7 +92,7 @@ public:
   String          GetDisplayName() const override;
   int             GetEnabled() const    override { return !off; }
   void            SetEnabled(bool value) override { off = !value; }
-  void            GetMemberCompletionList(const MemberDef* md, Completions& completions) override;
+  void            GetMemberCompletionList(const MemberDef* md, const String& cur_txt, Completions& completions) override;
 
   TA_SIMPLE_BASEFUNS(LayerDataEl);
 protected:

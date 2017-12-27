@@ -91,7 +91,7 @@ public:
   String_Array  var_completer_list;
   // #IGNORE the list of members that are shown by the completer for the NetMonItem variable field - only need one so shared by all NetMonItems
   String    GetArgForCompletion(const String& method, const String& arg) override;
-  void      GetArgCompletionList(const String& method, const String& arg, taBase* arg_obj, Completions& list) override;
+  void      GetArgCompletionList(const String& method, const String& arg, taBase* arg_obj, const String& cur_txt, Completions& list) override;
 
   void	InitLinks() override;
   void	CutLinks() override;

@@ -54,7 +54,7 @@ public:
   // #CAT_DataOp #BUTTON #LABEL_AddAllColumns add all columns from given data table -- optionally excluding string-valued columns
 
   String    GetArgForCompletion(const String& method, const String& arg) override;
-  void      GetArgCompletionList(const String& method, const String& arg, taBase* arg_obj, Completions& list) override;
+  void      GetArgCompletionList(const String& method, const String& arg, taBase* arg_obj, const String& cur_txt, Completions& list) override;
 
   taList_impl*	children_() override {return &ops;}
   Variant      Elem(const Variant& idx, IndexMode mode = IDX_UNK) const override

@@ -138,7 +138,7 @@ String DataSelectRowsProg::GetArgForCompletion(const String& method, const Strin
   return "dt";
 }
 
-void DataSelectRowsProg::GetArgCompletionList(const String& method, const String& arg, taBase* arg_obj, Completions& completions) {
+void DataSelectRowsProg::GetArgCompletionList(const String& method, const String& arg, taBase* arg_obj, const String& cur_txt, Completions& completions) {
   if (arg_obj) {
     if (arg_obj->InheritsFrom(&TA_DataTable)) {
       DataTable* table = (DataTable*)arg_obj;

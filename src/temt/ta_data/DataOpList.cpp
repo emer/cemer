@@ -108,7 +108,7 @@ String DataOpList::GetArgForCompletion(const String& method, const String& arg) 
   return "dt";
 }
 
-void DataOpList::GetArgCompletionList(const String& method, const String& arg, taBase* arg_obj, Completions& completions) {
+void DataOpList::GetArgCompletionList(const String& method, const String& arg, taBase* arg_obj, const String& cur_txt, Completions& completions) {
   if (arg_obj) {
     if (arg_obj->InheritsFrom(&TA_DataTable)) {
       DataTable* table = (DataTable*)arg_obj;

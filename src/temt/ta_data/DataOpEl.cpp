@@ -113,7 +113,7 @@ void DataOpEl::ClearColumns() {
   taBase::SetPointer((taBase**)&col_lookup, NULL);
 }
 
-void DataOpEl::GetMemberCompletionList(const MemberDef* md, Completions& completions) {
+void DataOpEl::GetMemberCompletionList(const MemberDef* md, const String& cur_txt, Completions& completions) {
   if (data_table) {
     FOREACH_ELEM_IN_LIST(DataCol, col, data_table->data) {
       completions.object_completions.Link(col);

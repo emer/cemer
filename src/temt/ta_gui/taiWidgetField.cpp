@@ -14,17 +14,19 @@
 //   Lesser General Public License for more details.
 
 #include "taiWidgetField.h"
+
 #include <taMisc>
 #include <MemberDef>
 #include <MethodDef>
 #include <BuiltinTypeDefs>
+#include <Completions>
+#include <DataTable>
+#include <ProgExprBase>
 
 #include <iDialogWidgetField>
 #include <iLineEdit>
 #include <iTextEdit>
 #include <iCodeCompleter>
-#include <Completions>
-#include <DataTable>
 #include <taiWidgetCompletionChooser>
 
 #include <css_qtdialog.h>
@@ -85,6 +87,7 @@ void taiWidgetField::lookupKeyPressed() {
     arg_completions.Reset();
     String reference_arg;  // the arg that holds a pointer to the object from which we can get a list
     taBase* class_base = (taBase*)host->Root();
+    String cur_text = leText->text();
     if (class_base) {
       if (label()) {
         reference_arg = class_base->GetArgForCompletion(cssi_arg_dlg->md->name, label()->text());
@@ -93,7 +96,7 @@ void taiWidgetField::lookupKeyPressed() {
         if (reference_arg) {
           arg_obj = cssi_arg_dlg->GetBaseForArg(reference_arg);
         }
-        class_base->GetArgCompletionList(cssi_arg_dlg->md->name, label()->text(), arg_obj, arg_completions);
+        class_base->GetArgCompletionList(cssi_arg_dlg->md->name, label()->text(), arg_obj, cur_text, arg_completions);
         rep()->GetCompleter()->SetCompletions(&arg_completions);
       }
     }
@@ -124,7 +127,7 @@ void taiWidgetField::lookupKeyPressed() {
   if (completer) {
     member_completions.Reset();
     if (completer->field_type == iCodeCompleter::SIMPLE) {
-      tab->GetMemberCompletionList(lookupfun_md, member_completions);
+      tab->GetMemberCompletionList(lookupfun_md, rep()->text(), member_completions);
       rep()->GetCompleter()->SetCompletions(&member_completions);
     }
     else {  // iCodeCompleter::EXPRESSION
@@ -203,9 +206,10 @@ void taiWidgetField::lookupKeyPressed_dialog() {
 }
 
 void taiWidgetField::characterEntered() {
+  arg_completions.Reset();
+  member_completions.Reset();
   cssiArgDialog* cssi_arg_dlg = dynamic_cast<cssiArgDialog*>(host);
   if (cssi_arg_dlg) {
-    arg_completions.Reset();
     String reference_arg;  // the arg that holds a pointer to the object from which we can get a list
     String cur_text = leText->text();
     taBase* class_base = (taBase*)host->Root();
@@ -223,7 +227,7 @@ void taiWidgetField::characterEntered() {
             String member_name = cssi_arg_dlg->GetArgValue(0);
             arg_completions.string_completions.Add(member_name);
           }
-          class_base->GetArgCompletionList(cssi_arg_dlg->md->name, label()->text(), arg_obj, arg_completions);
+          class_base->GetArgCompletionList(cssi_arg_dlg->md->name, label()->text(), arg_obj, cur_text, arg_completions);
           rep()->GetCompleter()->SetCompletions(&arg_completions);
           return;
         }
@@ -231,19 +235,26 @@ void taiWidgetField::characterEntered() {
           MemberDef* md = NULL;
           String member_name = cur_text.before('.', -1);
           class_base->FindMembeR(member_name, md);
+          TypeDef* td = NULL;
           if (md) {
-            TypeDef* td = md->type;
+            td = md->type;
+          }
+          else {  // special case?
+            td = ProgExprBase::GetSpecialCaseType(member_name);
+          }
+          if (td) {
             for (int i=0; i<td->members.size; i++) {
               MemberDef* member_md = td->members.FastEl(i);
-              if (!member_md->IsGuiReadOnly() && !member_md->IsEditorHidden()) {
+              if (!member_md->IsEditorHidden()) {
+//                if (!member_md->IsGuiReadOnly() && !member_md->IsEditorHidden()) {
                 arg_completions.member_completions.Link(member_md);
               }
             }
             arg_completions.pre_text = member_name + '.';
             rep()->GetCompleter()->SetCompletions(&arg_completions);
           }
-          return;
         }
+        return;
       }
     }
   }
@@ -257,10 +268,16 @@ void taiWidgetField::characterEntered() {
   
   iCodeCompleter* completer = rep()->GetCompleter();
   if (completer) {
-    arg_completions.Reset();
-    member_completions.Reset();
     if (completer->field_type == iCodeCompleter::SIMPLE) {
-      tab->GetMemberCompletionList(lookupfun_md, member_completions);
+      String text = rep()->text();
+      String pre_text = text;
+      if (text.contains('.')) {
+        pre_text = text.before('.');
+      }
+      tab->GetMemberCompletionList(lookupfun_md, pre_text, member_completions);
+      if (pre_text != text) {
+        member_completions.pre_text = pre_text + ".";
+      }
       rep()->GetCompleter()->SetCompletions(&member_completions);
     }
     else {  // iCodeCompleter::EXPRESSION
@@ -290,7 +307,7 @@ void taiWidgetField::characterEntered_dialog() {
     arg_completions.Reset();
     member_completions.Reset();
     if (completer->field_type == iCodeCompleter::SIMPLE) {
-      tab->GetMemberCompletionList(lookupfun_md, member_completions);
+      tab->GetMemberCompletionList(lookupfun_md, edit_dialog->txtText->toPlainText(), member_completions);
       edit_dialog->txtText->GetCompleter()->SetCompletions(&member_completions);
     }
     else {  // iCodeCompleter::EXPRESSION

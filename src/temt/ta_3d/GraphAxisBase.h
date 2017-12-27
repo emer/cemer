@@ -141,7 +141,7 @@ public:
 
   void                  CopyFromView_base(GraphAxisBase* cp);
   // special copy function that just copies user view options in a robust manner
-  void                  GetMemberCompletionList(const MemberDef* md, Completions& completions) override;
+  void                  GetMemberCompletionList(const MemberDef* md, const String& cur_txt, Completions& completions) override;
 
   void InitLinks() override;
   void CutLinks() override;

@@ -21,6 +21,7 @@
 #include <SigLinkSignal>
 #include <Completions>
 #include <MemberDef>
+#include <ProgExprBase>
 
 #include <taMisc>
 
@@ -253,9 +254,14 @@ String NetMonitor::GetArgForCompletion(const String& method, const String& arg) 
   return "";
 }
 
-void NetMonitor::GetArgCompletionList(const String& method, const String& arg, taBase* arg_obj, Completions& completions) {
+void NetMonitor::GetArgCompletionList(const String& method, const String& arg, taBase* arg_obj, const String& cur_txt, Completions& completions) {
   TypeDef* td = arg_obj->GetTypeDef();
   if (td) {
+    TypeDef* special_td = NULL;
+    special_td = ProgExprBase::GetSpecialCaseType(cur_txt);
+    if (special_td) {
+      td = special_td;
+    }
     MemberSpace mbr_space = td->members;
     for (int i = 0; i < mbr_space.size; ++i) {
       MemberDef* mbr_def = mbr_space.FastEl(i);

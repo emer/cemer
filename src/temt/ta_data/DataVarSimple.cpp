@@ -201,7 +201,7 @@ bool DataVarSimple::CvtFmCode(const String& code) {
   return true;
 }
 
-void DataVarSimple::GetMemberCompletionList(const MemberDef* md, Completions& completions) {
+void DataVarSimple::GetMemberCompletionList(const MemberDef* md, const String& cur_txt, Completions& completions) {
   if (GetData()) {
     FOREACH_ELEM_IN_LIST(DataCol, col, GetData()->data) {
       completions.object_completions.Link(col);

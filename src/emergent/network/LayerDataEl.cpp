@@ -90,7 +90,7 @@ int LayerDataEl::GetColIdx(DataTable* db) {
   return db->FindColNameIdx(col_name, true);
 }
 
-void LayerDataEl::GetMemberCompletionList(const MemberDef* md, Completions& completions) {
+void LayerDataEl::GetMemberCompletionList(const MemberDef* md, const String& cur_txt, Completions& completions) {
   if (md && md->name == "col_name") {
     if (data) {
       FOREACH_ELEM_IN_LIST(DataCol, col, data->data) {

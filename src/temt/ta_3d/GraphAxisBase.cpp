@@ -848,7 +848,7 @@ void GraphAxisBase::RenderAxis_Z(T3Axis* t3ax, const iVec3f& off,
   }
 }
 
-void GraphAxisBase::GetMemberCompletionList(const MemberDef* md, Completions& completions) {
+void GraphAxisBase::GetMemberCompletionList(const MemberDef* md, const String& cur_txt, Completions& completions) {
   if (md && md->name == "col_name") {
     if (GetGTV()->dataTable()) {
       DataTable* dt = GetGTV()->dataTable();

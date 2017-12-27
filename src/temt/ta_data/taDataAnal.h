@@ -215,7 +215,7 @@ public:
                                float thr_val = 0.5f, bool mean = true, bool view = true);
   // #CAT_Graph #MENU_BUTTON #MENU_ON_Graph average (or sum if mean = false) the values across all rows of the source data for given matrix column, and optionally generate a grid view matrix plot of the results, which tells you the frequency of activity of the individual cells of the matrix across the rows -- useful for seeing the overall distribution of unit activations in input / output patterns, for example
   
-  void    GetArgCompletionList(const String& method, const String& arg, taBase* arg_obj, Completions& list) override;
+  void    GetArgCompletionList(const String& method, const String& arg, taBase* arg_obj, const String& cur_txt, Completions& list) override;
   String  GetArgForCompletion(const String& method, const String& arg) override;
 
   String 	GetTypeDecoKey() const override { return "DataTable"; }
