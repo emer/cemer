@@ -1311,16 +1311,23 @@ Completions* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_po
           }
           else { // might be a special case
             // check for some variation of units or unit groups (add other special cases here as well)
-            String path_special = txt.after('.'); // e.g. network.layers.Hidden.units[1-2]. -> layers.Hidden.units[1-2]
-            int dot_pos = path_special.index('.', -1);
-            int search_from = dot_pos - path_special.length() - 1;  // should be negative!
-            path_special = path_special.before('.', search_from); // e.g. layers.Hidden.units[1-2]. -> layers.Hidden
-            MemberDef* md_special;
-            taBase* tab_special = base_base->FindFromPath(path_special, md_special);
-            if (tab_special && tab_special->InheritsFromName("Layer")) {
-              String text_special = txt.before('.', -1);
-              text_special = text_special.after('.', -1);
-              lookup_td = GetSpecialCaseType(text_special);
+            String path_special = _nilString;
+            if (txt.contains(".units[")) {
+              path_special = txt.after('.'); // e.g. network.layers.Hidden.units[1-2]. -> layers.Hidden.units[1-2]
+              path_special = path_special.before(".units[");
+            }
+            if (path_special.empty() && txt.contains(".ungp[")) {
+              path_special = txt.after('.'); // e.g. network.layers.Hidden.units[1-2]. -> layers.Hidden.units[1-2]
+              path_special = path_special.before(".ungp[");
+            }
+            if (path_special.nonempty()) {
+              MemberDef* md_special;
+              taBase* tab_special = base_base->FindFromPath(path_special, md_special);
+              if (tab_special && tab_special->InheritsFromName("Layer")) {
+                String text_special = txt.before('.', -1);
+                text_special = text_special.after('.', -1);
+                lookup_td = GetSpecialCaseType(text_special);
+              }
             }
           }
         }
@@ -1362,6 +1369,7 @@ Completions* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_po
       }
       break;
     }
+      
     case ProgExprBase::SCOPED: {                      // enums
       TypeDef* lookup_td = TypeDef::FindGlobalTypeName(base_path, false);
       if(lookup_td) {
