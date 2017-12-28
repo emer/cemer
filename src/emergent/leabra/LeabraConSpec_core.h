@@ -385,7 +385,7 @@
   {
     if(dwt == 0.0f) return;
     if(dwt_noise) {
-      dwt += noise.Gen(thr_no);
+      dwt += cur_lrate * noise.Gen(thr_no);
     }
     if(wt_sig.soft_bound) {
       if(dwt > 0.0f)	dwt *= wb_inc * (1.0f - fwt);
@@ -413,7 +413,7 @@
      const float wb_inc, const float wb_dec, int thr_no)
   { 
     if(dwt_noise) {
-      dwt += noise.Gen(thr_no);
+      dwt += cur_lrate * noise.Gen(thr_no);
     }
     if(wt_sig.soft_bound) {
       if(dwt > 0.0f)	dwt *= wb_inc * (1.0f - fwt);
