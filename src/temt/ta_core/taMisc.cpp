@@ -475,18 +475,18 @@ TypeDef*  taMisc::default_scope = NULL;
 
 taPtrList_impl* taMisc::init_hook_list = NULL;
 
-bool    taMisc::in_init = false;
-bool    taMisc::in_event_loop = false;
+bool            taMisc::in_init = false;
+bool            taMisc::in_event_loop = false;
 signed char     taMisc::quitting = QF_RUNNING;
-bool    taMisc::not_constr = true;
-bool    taMisc::use_gui = false; // set to default in Init_Gui
-bool    taMisc::in_dev_exe = false;
-bool    taMisc::use_plugins = true;
-bool    taMisc::gui_active = false;
-bool    taMisc::interactive = true;
-bool    taMisc::gui_no_win = false;
-bool    taMisc::server_active = false; // true while connected
-bool    taMisc::cluster_run = false;
+bool            taMisc::not_constr = true;
+bool            taMisc::use_gui = false; // set to default in Init_Gui
+bool            taMisc::in_dev_exe = false;
+bool            taMisc::use_plugins = true;
+bool            taMisc::gui_active = false;
+bool            taMisc::interactive = true;
+bool            taMisc::gui_no_win = false;
+bool            taMisc::server_active = false; // true while connected
+bool            taMisc::cluster_run = false;
 ContextFlag     taMisc::is_loading;
 taVersion       taMisc::loading_version;
 ContextFlag     taMisc::is_post_loading;
@@ -495,6 +495,7 @@ ContextFlag     taMisc::is_undo_loading;
 ContextFlag     taMisc::is_undo_saving;
 ContextFlag     taMisc::is_auto_saving;
 ContextFlag     taMisc::is_duplicating;
+int             taMisc::duplicate_cnt = 1;
 ContextFlag     taMisc::is_changing_type;
 ContextFlag     taMisc::is_checking;
 ContextFlag     taMisc::in_gui_call;

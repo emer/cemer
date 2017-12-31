@@ -568,7 +568,7 @@ public:
   static ContextFlag    in_eventproc; // #READ_ONLY #NO_SAVE #HIDDEN true if we are inside a process events or run pending function and thus should NOT do wait proc events..
   static ContextFlag    no_auto_expand; // #READ_ONLY #NO_SAVE #HIDDEN true to suppress auto-expanding (esp during code that makes a lot of objs)
   static TypeDef*       plugin_loading; // #READ_ONLY #NO_SAVE #HIDDEN the TypeDef of the plugin currently loading -- we stamp this into all formal classes
-
+  static int            duplicate_cnt; // #READ_ONLY #NO_SAVE #HIDDEN the number of items being duplicated
   static bool           err_cancel;     // #READ_ONLY #NO_SAVE #HIDDEN true if currently canceling error messages
   static int64_t        err_cancel_time; // #READ_ONLY #NO_SAVE #HIDDEN time point at which error cancel was last activated (internal seconds since jan 1 1970 time units)
   static int            err_cancel_time_thr; // #NO_SAVE #HIDDEN threshold for how long to wait in seconds between error events to consider it part of the same sequence of errors, and thus reset the err_waitproc_cnt back to 0

@@ -731,12 +731,13 @@ void* taPtrList_impl::DuplicateEl_(void* it) {
   if(it == NULL)
     return NULL;
   int idx = FindEl_(it); // can't be not found!
+  int insert_idx = idx + taMisc::duplicate_cnt;
   ++taMisc::is_duplicating;
   void* nw = El_MakeToken_(it);
-  Insert_(nw, idx + 1, true); //defer notify until after copy
+  Insert_(nw, insert_idx, true); //defer notify until after copy
   El_Copy_(nw, it); // note: DONT set name, leave as default
   --taMisc::is_duplicating;
-  SigEmit(SLS_LIST_ITEM_INSERT, nw, SafeEl_(idx));
+  SigEmit(SLS_LIST_ITEM_INSERT, nw, SafeEl_(insert_idx - 1));
   return nw;
 }
 

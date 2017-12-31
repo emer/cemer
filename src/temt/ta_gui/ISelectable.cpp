@@ -462,7 +462,9 @@ int ISelectable::EditAction_(ISelectable_PtrList& sel_items, int ea,
       }
       bool multi = false;
       bool multi_off = false;
+      taMisc::duplicate_cnt = 1; // default
       if(sel_items.size > 1) {
+        taMisc::duplicate_cnt = sel_items.size;
         ++taMisc::in_gui_multi_action;
         multi = true;
       }
@@ -478,6 +480,7 @@ int ISelectable::EditAction_(ISelectable_PtrList& sel_items, int ea,
         rval = trval;
         if (rval < 0) break; // forbidden or error
       }
+      taMisc::duplicate_cnt = 1;  // reset
       if(multi && !multi_off) // didn't reach end
         --taMisc::in_gui_multi_action;
       if (proj) {
