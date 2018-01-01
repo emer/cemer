@@ -43,5 +43,8 @@ void ClusterRun_QObj::promptCleanup() {
     master->Cleanup();
     master->Update();
   }
+  else {
+    master->CancelUpdate();
+  }
 }
 

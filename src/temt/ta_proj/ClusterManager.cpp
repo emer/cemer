@@ -842,6 +842,18 @@ ClusterManager::InitiateBackgroundSVNUpdate() {
   return 0;
 }
 
+int
+ClusterManager::CancelBackgroundSVNUpdate() {
+  // threads don't keep running anyway? 
+  // if(m_updtThr->is_updating) {
+  //   m_updtThr->stop();
+  // }
+  m_cluster_run.is_updating = false;
+  m_cluster_run.SigEmitUpdated();
+  m_cluster_run.UpdateUI();
+  return 0;
+}
+
 //This is the syncronous version of UpdateWorkingCopy.
 //It initiates the update in the background thread, but then
 //calls a wait on the thread until it completes.

@@ -451,7 +451,7 @@ bool NETWORK_STATE::Compute_Weights_Test_impl(int trial_no) {
   if(wt_update == ON_LINE) return true;
   if(wt_update == BATCH) return false;
   if(wt_update == SMALL_BATCH) {
-    int trial_no_eff = trial_no;
+    int trial_no_eff = total_trials; // much more reliable than trial_no
 #ifdef DMEM_COMPILE
     if(dmem_nprocs > 1) {
       trial_no_eff = ((trial_no_eff-1) / dmem_nprocs) + 1;

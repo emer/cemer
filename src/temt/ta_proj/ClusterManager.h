@@ -89,8 +89,10 @@ public:
   // add a file from working copy to svn
   void  CommitFiles(const String &commit_msg);
   // commit current working copy files
-  int InitiateBackgroundSVNUpdate();
+  int   InitiateBackgroundSVNUpdate();
   // update current working copy files in the background on a different thread
+  int   CancelBackgroundSVNUpdate();
+  // cancel any ongoing background svn update
   int   UpdateWorkingCopy();
   // update current working copy files -- returns the current svn revision number
   void  Cleanup();

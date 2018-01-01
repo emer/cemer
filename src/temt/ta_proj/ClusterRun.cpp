@@ -237,6 +237,10 @@ bool ClusterRun::LoadJobs() {
   return Update_impl(false);
 }
 
+void ClusterRun::CancelUpdate() {
+  m_cm->CancelBackgroundSVNUpdate();
+}
+  
 bool ClusterRun::Update_impl(bool do_svn_update) {
   if(QApplication::activeModalWidget() != NULL) {
     taMisc::Info("ClusterRun: modal window is now open, cancelling auto-update");
