@@ -1473,6 +1473,7 @@ void taiMisc::LoadCustomKeyBindings() {
   
   for (int i=0; i<taiMisc::ACTION_COUNT; i++) {
     in >> context >> action >> ks;
+//    taMisc::DebugInfo("context:" + String(context) + "    action:" + String(action));
     int context_val = TA_taiMisc.GetEnumVal((String)context, enum_tp_nm);
     int action_val = TA_taiMisc.GetEnumVal((String)action, enum_tp_nm);
     bindings->Add(static_cast<taiMisc::BindingContext>(context_val), static_cast<taiMisc::BoundAction>(action_val), ks);
@@ -1541,8 +1542,9 @@ void taiMisc::UpdateCustomKeyBindings() {
       KeyActionPair_PArray* custom_pairs = custom_bindings->CurrentBindings(static_cast<taiMisc::BindingContext>(ctxt));
       for (int i=custom_pairs->size-1; i>=0; i--) {  // start at end of list
         KeyActionPair* pair = &custom_pairs->SafeEl(i);
+        //        String action_str = TA_taiMisc.GetEnumString("BoundAction", static_cast<int>(pair->action));  // for debug
+        //        taMisc::DebugInfo(action_str);
         if (default_pairs->FindAction(pair->action) == -1) { // if pairing not found
-//          String action_str = TA_taiMisc.GetEnumString("BoundAction", static_cast<int>(pair->action));  // for debug
           custom_bindings->Remove(static_cast<taiMisc::BindingContext>(ctxt), pair->action, QKeySequence());  // just check action
         }
       }

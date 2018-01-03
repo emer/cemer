@@ -18,6 +18,10 @@
 #include <taiMisc>
 
 int KeyActionPair_PArray::FindKeySequence(QKeySequence key_sequence, int start) const {
+  if (key_sequence.isEmpty()) {
+    return -1;
+  }
+  
   int i;
   if(start < 0) {               // search backwards if start < 0
     for(i=size-start; i>=0; i--) {
