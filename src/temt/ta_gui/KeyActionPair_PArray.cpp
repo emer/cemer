@@ -65,7 +65,7 @@ int KeyActionPair_PArray::FindPair(taiMisc::BoundAction action, QKeySequence key
   }
   else {
     for(i=start; i<size; i++) {
-      if(FastEl(i).action == action)
+      if((FastEl(i).action == action) && (FastEl(i).key_sequence == key_sequence))
         return i;
     }
   }
