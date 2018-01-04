@@ -85,8 +85,6 @@ void T3NetNode::setDefaultCaptionTransform() {
 
 extern void T3NetNode_DragFinishCB(void* userData, SoDragger* dragger);
 // defined in qtso
-extern void T3NetText_DragFinishCB(void* userData, SoDragger* dragger);
-// defined in qtso
 
 SO_NODE_SOURCE(T3NetNode);
 
@@ -172,7 +170,7 @@ T3NetNode::T3NetNode(T3DataView* dataView_, bool show_draggers,
       net_text_drag_xform_->rotation.connectFrom(&net_text_drag_->dragger_->rotation);
       net_text_drag_xform_->scaleFactor.connectFrom(&net_text_drag_->dragger_->scaleFactor);
 
-      net_text_drag_->dragger_->addFinishCallback(T3NetText_DragFinishCB, (void*)this);
+//      net_text_drag_->dragger_->addFinishCallback(T3NetText_DragFinishCB, (void*)this);
       net_text_->addChild(net_text_drag_); // dragger then the xform it affects
       net_text_->addChild(net_text_drag_xform_);
       // we then copy the drag_xform back into the main xform in the CB, to effect the change

@@ -109,10 +109,6 @@ void NetViewParams::Initialize() {
 }
 
 void NetViewStateItem::Initialize() {
-//  net_member = false;
-//  display = false;
-//  width = 8;
-//  found = true;
 }
 
 NetViewStateItem::NetViewStateItem(String var_name, bool is_net_member, bool do_display, int the_width) {
@@ -373,11 +369,6 @@ void NetView::Initialize() {
   net_text = false;
   show_iconified = false;
   main_xform.rotate.SetXYZR(1.0f, 0.0f, 0.0f, .35f);
-  net_text_xform.translate.SetXYZ(1.0f, 0.0f, -0.5f); // right mid
-  //  net_text_xform.translate.SetXYZ(0.0f, 1.0f, -1.0f); // start at top back
-  net_text_xform.rotate.SetXYZR(1.0f, 0.0f, 0.0f, 0.5f * taMath_float::pi); // start at right mid
-  net_text_xform.scale = 0.5f;
-  net_text_rot = -90.0f;
   state_width_default = 8; // characters
   state_items_stale = true;
   
@@ -433,7 +424,6 @@ void NetView::InitLinks() {
   taBase::Own(eff_max_size, this);
   taBase::Own(font_sizes, this);
   taBase::Own(view_params, this);
-  taBase::Own(net_text_xform, this);
 
   ctr_hist_idx.matrix = &ctr_hist;
   
@@ -1177,52 +1167,6 @@ void T3NetNode_DragFinishCB(void* userData, SoDragger* dragr) {
   dragger->translation.setValue(0.0f, 0.0f, 0.0f);
   dragger->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
   dragger->scaleFactor.setValue(1.0f, 1.0f, 1.0f);
-
-  nv->UpdateDisplay();
-}
-
-// callback for netview net text transformer dragger
-void T3NetText_DragFinishCB(void* userData, SoDragger* dragr) {
-  SoTransformBoxDragger* dragger = (SoTransformBoxDragger*)dragr;
-  T3NetNode* netnd = (T3NetNode*)userData;
-  NetView* nv = static_cast<NetView*>(netnd->dataView());
-
-  SbRotation cur_rot;
-  cur_rot.setValue(SbVec3f(nv->net_text_xform.rotate.x, nv->net_text_xform.rotate.y,
-                           nv->net_text_xform.rotate.z), nv->net_text_xform.rotate.rot);
-
-  SbVec3f trans = dragger->translation.getValue();
-  cur_rot.multVec(trans, trans); // rotate the translation by current rotation
-  trans[0] *= nv->net_text_xform.scale.x;  trans[1] *= nv->net_text_xform.scale.y;
-  trans[2] *= nv->net_text_xform.scale.z;
-  taVector3f tr(trans[0], trans[1], trans[2]);
-  nv->net_text_xform.translate += tr;
-
-  const SbVec3f& scale = dragger->scaleFactor.getValue();
-  taVector3f sc(scale[0], scale[1], scale[2]);
-  if(sc < .1f) sc = .1f;        // prevent scale from going to small too fast!!
-  nv->net_text_xform.scale *= sc;
-
-  SbVec3f axis;
-  float angle;
-  dragger->rotation.getValue(axis, angle);
-  if(axis[0] != 0.0f || axis[1] != 0.0f || axis[2] != 1.0f || angle != 0.0f) {
-    SbRotation rot;
-    rot.setValue(SbVec3f(axis[0], axis[1], axis[2]), angle);
-    SbRotation nw_rot = rot * cur_rot;
-    nw_rot.getValue(axis, angle);
-
-    nv->net_text_xform.rotate.SetXYZR(axis[0], axis[1], axis[2], angle);
-  }
-
-  // reset the drag guy: note that drag is still connected to the drag xform so you
-  // need to reset dragger first, then the xform!
-  dragger->translation.setValue(0.0f, 0.0f, 0.0f);
-  dragger->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
-  dragger->scaleFactor.setValue(1.0f, 1.0f, 1.0f);
-  netnd->netTextDragXform()->scaleFactor.setValue(1.0f, 1.0f, 1.0f);
-  netnd->netTextDragXform()->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
-  netnd->netTextDragXform()->translation.setValue(0.0f, 0.0f, 0.0f);
 
   nv->UpdateDisplay();
 }
