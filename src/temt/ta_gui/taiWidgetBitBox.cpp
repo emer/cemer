@@ -124,7 +124,7 @@ void taiWidgetBitBox::AddBoolItem(bool auto_apply, String name, int val,
     lay->addSpacing(taiM->hsep_c);
   lay->addWidget(bcb);
   if (readOnly() || bit_ro) {
-    bcb->setReadOnly(true);
+    bcb->setReadOnly(true, true); // second true is for "bit_box_style"
   }
   QObject::connect(bcb, SIGNAL(clickedEx(iBitCheckBox*, bool)),
                    this, SLOT(bitCheck_clicked(iBitCheckBox*, bool) ) );
