@@ -63,9 +63,14 @@
 #include <iostream>
 #include <fstream>
 #include <stdlib.h>
-#include <unistd.h>
 #include <string.h>
 #include <time.h>
+
+#ifdef _WIN64
+#include <windows.h>
+#else
+#include <unistd.h>
+#endif
 
 using namespace std;
 
@@ -1587,14 +1592,11 @@ void MTRnd::InitSeeds(uint32_t seed) {
 
 uint32_t MTRnd::GetTimePidSeed() {
   int pid, tc;
-#ifdef TA_OS_WIN
+#ifdef _WIN64
   pid = (int)GetCurrentProcessId();
-#else
-  pid = (int)getpid();
-#endif
-#ifdef TA_OS_WIN
   tc = (int)GetTickCount(); // is in ms
 #else
+  pid = (int)getpid();
   tc = (int)clock();
 #endif
   uint64_t sdval = (uint64_t)tc * (uint64_t)pid;
