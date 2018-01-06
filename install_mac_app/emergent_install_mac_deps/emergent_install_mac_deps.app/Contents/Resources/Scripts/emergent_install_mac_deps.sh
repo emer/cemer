@@ -6,11 +6,15 @@
 # this should be the only thing you need to update: grab the latest versions
 QT_DMG=qt561_mac64.dmg
 COIN_DMG=coin_mac64_4_0.dmg
-QUARTER_DMG=quarter_mac64_qt56.dmg
 CMAKE_DMG=cmake-3.6.1_mac64.dmg
-SVN_DMG=Subversion-1.9.4_10.11.x.dmg
 MISC_DMG=misclibs_mac64_8_0.dmg
-NEEDS_BREW_APR=""
+# using homebrew for svn entirely
+NEEDS_BREW_SVN="true"
+
+# these are now obsolete
+#QUARTER_DMG=quarter_mac64_qt56.dmg
+#SVN_DMG=Subversion-1.9.4_10.11.x.dmg
+
 
 OS_VERS=`sw_vers | grep ProductVersion | cut -f2 | cut -f1,2 -d.`
 echo "installing on OSX version: $OS_VERS"
@@ -30,15 +34,15 @@ if [[ "$OS_VERS" == "10.9" ]]; then
     exit 1
 fi
 
-if [[ "$OS_VERS" == "10.10" ]]; then
-    echo "Note: updating the dependencies for 10.10"
-    SVN_DMG=Subversion-1.9.4_10.10.x.dmg
-fi
+# if [[ "$OS_VERS" == "10.10" ]]; then
+#     echo "Note: updating the dependencies for 10.10"
+#     SVN_DMG=Subversion-1.9.4_10.10.x.dmg
+# fi
 
-if [[ "$OS_VERS" == "10.12" ]]; then
-    echo "Note: updating the dependencies for 10.12: requires homebrew apr for Sierra"
-    NEEDS_BREW_APR=true
-fi
+# if [[ "$OS_VERS" == "10.12" ]]; then
+#     echo "Note: updating the dependencies for 10.12: requires homebrew apr for Sierra"
+#     NEEDS_BREW_APR=true
+# fi
 
 #FTP_REPO=ftp://grey.colorado.edu/pub/emergent
 #FTP_CMD="/usr/bin/ftp -ai"
@@ -73,10 +77,11 @@ echo " "
 
 downloadFTP ${MISC_DMG}
 downloadFTP ${COIN_DMG}
-downloadFTP ${QUARTER_DMG}
 downloadFTP ${CMAKE_DMG}
-downloadFTP ${SVN_DMG}
 downloadFTP ${QT_DMG}
+
+#downloadFTP ${QUARTER_DMG}
+#downloadFTP ${SVN_DMG}
 
 function mountDMG {
   # Argument should be the name of the DMG.
@@ -172,18 +177,20 @@ function installCMAKEinDMG {
   echo "then you may need to manually create cmake etc links in /usr/local/bin/"
 }
 
-function installHomeBrewAPR {
+function installHomeBrewSVN {
     echo " "
     echo "================================================="
-    echo "        Step 3: Installing apr and apr-util"
+    echo "        Step 3: Installing apr, -util, and svn"
     echo "================================================="
     echo " "
-    echo "Installing apache apr and apr-util from homebrew, doing the following commands:"
+    echo "Installing apache apr, apr-util and subversion from homebrew, doing the following commands:"
     echo '/usr/bin/ruby -e \"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)\"'
-    echo "brew install apr"
-    echo "brew install apr-util"
-    echo "brew --force --overwrite link apr"
-    echo "brew --force --overwrite link apr-util"
+    echo "brew install --force apr"
+    echo "brew install --force apr-util"
+    echo "brew install --force subversion"
+    echo "brew link --force --overwrite apr"
+    echo "brew link --force --overwrite apr-util"
+    echo "brew link --force --overwrite subversion"
     echo " "
     echo "IMPORTANT: if any of these commands fail, you may already have this installed, or may need to intervene manually.."
     echo " "
@@ -191,8 +198,12 @@ function installHomeBrewAPR {
     /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
     brew install --force apr
     brew install --force apr-util
-    brew link --force apr
-    brew link --force apr-util
+    brew install --force subversion
+    brew link --force --overwrite apr
+    brew link --force --overwrite apr-util
+    brew link --force --overwrite subversion
+
+    #
 }
 
 echo " "
@@ -206,14 +217,15 @@ echo " "
 # everything else is independent
 
 installPKGinDMG ${MISC_DMG}
-installPKGinDMG ${SVN_DMG}
 installCMAKEinDMG ${CMAKE_DMG}
 installPKGinDMG ${QT_DMG}
 installPKGinDMG ${COIN_DMG}
-installPKGinDMG ${QUARTER_DMG}
 
-if [[ "$NEEDS_BREW_APR" == "true" ]]; then
-    installHomeBrewAPR
+#installPKGinDMG ${QUARTER_DMG}
+#installPKGinDMG ${SVN_DMG}
+
+if [[ "$NEEDS_BREW_SVN" == "true" ]]; then
+    installHomeBrewSVN
 fi    
 
 echo " "
