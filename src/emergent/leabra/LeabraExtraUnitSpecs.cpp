@@ -1343,7 +1343,7 @@ bool LeabraContextUnitSpec::CheckConfig_Unit(Layer* lay, bool quiet) {
 
 void LeabraContextUnitSpec::TriggerUpdate(LeabraLayer* lay, bool update) {
   if (!lay) return;
-  lay->SetLayerFlagState(Layer::LAY_FLAG_4, update);
+  lay->SetLayerFlagState(Layer::LAY_FLAG_1, update);
   lay->SyncLayerState();
 }
 

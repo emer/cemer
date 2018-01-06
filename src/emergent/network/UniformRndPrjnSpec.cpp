@@ -16,9 +16,6 @@ void STATE_CLASS(UniformRndPrjnSpec)::Connect_impl(PRJN_STATE* prjn, NETWORK_STA
   LAYER_STATE* send_lay = prjn->GetSendLayer(net);
 
   int perm_thr_no = 0;          // permute thread number -- critical to use 0 instead of -1 so that all dmem procs have the same random connections
-  if(crazy_dont_use) {
-    perm_thr_no = -1;           // yeah, except this..
-  }
   
   const int rlay_no = recv_lay->n_units;
   const int slay_no = send_lay->n_units;

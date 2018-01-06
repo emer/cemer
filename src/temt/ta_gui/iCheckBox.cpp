@@ -52,22 +52,12 @@ void iCheckBox::init() {
   mread_only = false;
 }
 
-void iCheckBox::setReadOnly(bool value, bool bit_box_style) {
+void iCheckBox::setReadOnly(bool value) {
   if (mread_only == value)
     return;
   mread_only = value;
-  if (value) {
-    if (bit_box_style) {
-      this->setStyleSheet("QCheckBox { spacing: 7px; } QCheckBox::indicator { width: 12px; height: 12px; background-color: lightGray; }");
-    }
-    else {
-      this->setStyleSheet("QCheckBox { color: gray; }");
-    }
-  }
-  else {
-    this->setStyleSheet("QCheckBox { color: black; }");
-  }
-  setEnabled(!value); // temp
+  setStyleSheet("color: black"); // prevent text from going grey when ro
+  setEnabled(!value); // this does the right thing..
 }
 
 #endif

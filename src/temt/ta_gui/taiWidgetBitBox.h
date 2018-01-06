@@ -32,6 +32,7 @@ class TA_API iBitCheckBox: public iCheckBox { // #IGNORE specialized checkbox fo
 public:
   int           val;
   bool          auto_apply;
+  bool          bit_read_only;  // is forced read-only regardless
   iBitCheckBox(bool auto_apply, int val_, String label, QWidget* parent);
 
 public slots:

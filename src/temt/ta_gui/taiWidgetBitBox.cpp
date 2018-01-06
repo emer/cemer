@@ -35,6 +35,7 @@ QWidget * parent)
 {
   auto_apply = auto_apply_;
   val = val_;
+  bit_read_only = false;
   connect(this, SIGNAL(clicked(bool)), this, SLOT(this_clicked(bool)) );
 }
 
@@ -124,7 +125,8 @@ void taiWidgetBitBox::AddBoolItem(bool auto_apply, String name, int val,
     lay->addSpacing(taiM->hsep_c);
   lay->addWidget(bcb);
   if (readOnly() || bit_ro) {
-    bcb->setReadOnly(true, true); // second true is for "bit_box_style"
+    bcb->setReadOnly(true);
+    bcb->bit_read_only = true;
   }
   QObject::connect(bcb, SIGNAL(clickedEx(iBitCheckBox*, bool)),
                    this, SLOT(bitCheck_clicked(iBitCheckBox*, bool) ) );
@@ -136,10 +138,18 @@ void taiWidgetBitBox::GetImage(int val) {
     iBitCheckBox* bcb = dynamic_cast<iBitCheckBox*>(obj);
     if (bcb) {
       // CONDSHOW
-      bcb->setVisible(!(no_show & bcb->val));
+      if(no_show & bcb->val) {
+        bcb->setVisible(false);
+      }
+      else {
+        if(!bcb->isVisible()) {
+          bcb->setVisible(true);
+        }
+      }
       // CONDEDIT
-      if (!readOnly())
+      if(!bcb->bit_read_only) {
         bcb->setEnabled(!(no_edit & bcb->val));
+      }
       // value
       bcb->setChecked((val & bcb->val)); //note: prob raises signal -- ok
     }

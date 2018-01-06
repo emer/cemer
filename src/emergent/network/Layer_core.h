@@ -18,10 +18,7 @@
     PROJECT_WTS_NEXT    = 0x0020,       // #HIDDEN this layer is next in line for weight projection operation
     PROJECT_WTS_DONE    = 0x0040,       // #HIDDEN this layer is done with weight projection operation (prevents loops)
     UN_GEOM_NOT_XY      = 0x0080,       // #HIDDEN unit geometry n != x*y -- requires extra math
-    LAY_FLAG_1          = 0x0100,       // misc layer flag 1
-    LAY_FLAG_2          = 0x0200,       // misc layer flag 2
-    LAY_FLAG_3          = 0x0400,       // misc layer flag 3
-    LAY_FLAG_4          = 0x0800,       // misc layer flag 2
+    LAY_FLAG_1          = 0x0100,       // #NO_BIT misc layer flag 1
   };
 
   // note: must keep syncrhonized with UnitState

@@ -32,7 +32,7 @@ public:
   bool 		isReadOnly() const {return mread_only;}
 
 public slots:
-  virtual void	setReadOnly(bool value, bool bit_box_style = false);
+  virtual void	setReadOnly(bool value);
   
 protected:
   bool 		mread_only;
