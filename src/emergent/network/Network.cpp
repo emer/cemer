@@ -394,7 +394,7 @@ void Network::setStale() {
   RebuildAllViews();
   // taMisc::DebugInfo("net set stale");
   inherited::setStale();
-}
+} 
 
 void Network::UpdtAfterNetMod() {
   if(!HasNetFlag(BUILT)) return;
@@ -2671,6 +2671,13 @@ void Network::MonitorData() {
   mon_data.EnforceRows(1);
   mon_data.WriteItem(0);
   monitor.GetMonVals();
+}
+
+void Network::MonitorItemChange() {
+  NetView* nv = FindView();
+  if (nv) {
+    nv->MonitorUpdate();
+  }
 }
 
 void Network::NetControlPanel(ControlPanel* ctrl_panel, const String& extra_label, const String& sub_gp_nm) {

@@ -75,6 +75,8 @@ public:
   // #BUTTON #CAT_Monitor update the datatable configuration to match current set of monitored items -- call this during Init. if reset_first, then existing data rows are removed first
   void 		UpdateMonitors(bool reset_first = false) { UpdateDataTable(reset_first); }
   // #CAT_Monitor old name for UpdateDataTable
+  void    ItemsUpdated();
+  // #CAT_Display an item was added or removed from list of monitored items
 
   void 		GetMonVals();
   // #CAT_Monitor get all the values and store in current row of data table -- call in program to get new data
@@ -82,7 +84,7 @@ public:
   // #IGNORE called by the network to remove the objs from lists
   void		UpdateNetworkPtrs();
   // #IGNORE update pointers to objects within current network
-  void          UpdateNetworkPtrs_NewPar(taBase* old_net, taBase* new_net);
+  void    UpdateNetworkPtrs_NewPar(taBase* old_net, taBase* new_net);
   // #IGNORE update pointers to objects in new network
 
   taList_impl*	children_() override {return &items;}

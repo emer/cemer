@@ -757,6 +757,8 @@ public:
   virtual void  ReplaceSpecs(BaseSpec* old_sp, BaseSpec* new_sp, bool prompt = true);
   // #CAT_Structure #MENU_BUTTON #MENU_ON_Specs replace a spec of any kind, including iterating through any children of that spec and replacing all those with corresponding child in new spec
 
+  virtual void  MonitorItemChange();
+  // #CAT_Display some item has been added or deleted from NetNetMonitor (the network owned monitor)
   virtual void  MonitorVar(NetMonitor* net_mon, const String& variable);
   // #BUTTON #CAT_Statistic monitor (record in a datatable) the given variable on this network
   virtual void  RemoveMonitors();

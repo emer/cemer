@@ -15,6 +15,10 @@
 
 #include "NetMonItem_List.h"
 
+#include <Network>
+
+taTypeDef_Of(NetMonitor);
+
 TA_BASEFUNS_CTORS_DEFN(NetMonItem_List);
 
 String NetMonItem_List::GetColHeading(const KeyString& key) const {
@@ -38,3 +42,10 @@ const KeyString NetMonItem_List::GetListColKey(int col) const {
   }
 }
 
+void NetMonItem_List::SigEmit(int sls, void* op1, void* op2) {
+  inherited::SigEmit(sls, op1, op2);
+  NetMonitor* nm = (NetMonitor*)GetOwner(&TA_NetMonitor);
+  if (nm) {
+    nm->ItemsUpdated();
+  }
+}

@@ -272,14 +272,13 @@ public:
   virtual void          SaveCtrHist();
   // save counter history -- called in UpdateUnitValues()
   virtual void          UpdatePanel(); // updates nvp, esp. after UAE etc.
-  void                  SigLinkRecv(taSigLink* dl, int sls, void* op1, void* op2) override;
 
   ////////////////////////////////////////////////////////////////
   // misc util functions etc
   virtual void          GetMembs();
   virtual void          GetNetStateItems(); // these are the Network vars marked #VIEW (e.g. cycle, trial_name, ...)
   virtual void          GetNetStateVarNames(String_Array* vars);  // fill the list with the var names from full_state_vals
-
+  virtual void          MonitorUpdate();  // some item added or deleted from monitor
   virtual void          GetMaxSize(); // get max size from network
 
   void                  GetUnitColor(float val, iColor& col, float& sc_val);

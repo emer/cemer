@@ -426,14 +426,6 @@ void NetView::InitLinks() {
   taBase::Own(view_params, this);
 
   ctr_hist_idx.matrix = &ctr_hist;
-  
-  Network* nt = net();
-  if (nt) {
-    NetNetMonitor* mon = &nt->monitor;
-    if (mon) {
-      mon->items.AddSigClient(this);
-    }
-  }
 }
 
 void NetView::UpdateAfterEdit_impl() {
@@ -466,13 +458,6 @@ void NetView::CutLinks() {
     nvp = NULL;
   }
   
-  Network* nt = net();
-  if (nt) {
-    NetNetMonitor* mon = &nt->monitor;
-    if (mon) {
-      mon->items.RemoveSigClient(this);
-    }
-  }
   view_params.CutLinks();
   font_sizes.CutLinks();
   max_size.CutLinks();
@@ -2063,8 +2048,6 @@ void NetView::viewWin_NotifySignal(ISelectableHost* src, int op) {
   UpdateDisplay();
 }
 
-void NetView::SigLinkRecv(taSigLink* dl, int sls, void* op1, void* op2) {
-  inherited::SigLinkRecv(dl, sls, op1, op2);
+void NetView::MonitorUpdate() {
   state_items_stale = true;  // some net monitor item change
 }
-

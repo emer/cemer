@@ -270,3 +270,9 @@ void NetMonitor::GetArgCompletionList(const String& method, const String& arg, t
   }
 }
 
+void NetMonitor::ItemsUpdated() {
+  if (this->InheritsFrom(&TA_NetNetMonitor)) {
+    UpdateDataTable();
+    network->MonitorItemChange();
+  }
+}

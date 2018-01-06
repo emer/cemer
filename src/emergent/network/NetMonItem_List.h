@@ -35,6 +35,9 @@ public:
   int	NumListCols() const override {return 3;} 
   const KeyString GetListColKey(int col) const override;
   String GetColHeading(const KeyString&) const override; // header text for the indicated column
+
+  void SigEmit(int sls, void* op1 = NULL, void* op2 = NULL) override;
+
   TA_BASEFUNS_NOCOPY(NetMonItem_List);
   
 private:
