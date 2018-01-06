@@ -125,6 +125,7 @@ void ProgEl::Copy_(const ProgEl& cp) {
   SetBaseFlag(COPYING); // ala Copy__
   desc = cp.desc;
   flags = cp.flags;
+  ClearBreakpoint();
   code_string = cp.code_string;
   ClearBaseFlag(COPYING); // ala Copy__
 }
