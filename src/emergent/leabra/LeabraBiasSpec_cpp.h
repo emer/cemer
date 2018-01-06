@@ -27,7 +27,7 @@
 
 // declare all other types mentioned but not required to include:
 
-class LeabraBiasSpec_cpp : public LeabraConSpec_cpp {
+class E_API LeabraBiasSpec_cpp : public LeabraConSpec_cpp {
   // Leabra bias-weight connection specs (bias wts are a little bit special)
 INHERITED(LeabraConSpec)
 public:

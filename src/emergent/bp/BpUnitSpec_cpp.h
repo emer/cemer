@@ -32,7 +32,7 @@
 
 // declare all other types mentioned but not required to include:
 
-class BpUnitSpec_cpp : public UnitSpec_cpp {
+class E_API BpUnitSpec_cpp : public UnitSpec_cpp {
   // Plain C++ Backpropagation unit computation and parameters
 INHERITED(UnitSpec)
 public:

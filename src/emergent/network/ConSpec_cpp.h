@@ -30,7 +30,7 @@
 
 // declare all other types mentioned but not required to include:
 
-class ConSpec_cpp : public BaseSpec_cpp {
+class E_API ConSpec_cpp : public BaseSpec_cpp {
   // ##NO_TOKENS ##CAT_Network plain C++ version of ConSpec
   INHERITED(BaseSpec)
 public:

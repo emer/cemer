@@ -26,7 +26,7 @@
 
 // declare all other types mentioned but not required to include:
 
-class UnitSpec_cpp : public BaseSpec_cpp {
+class E_API UnitSpec_cpp : public BaseSpec_cpp {
   // ##NO_TOKENS ##CAT_Network plain C++ version of UnitSpec
 INHERITED(BaseSpec)
 public:

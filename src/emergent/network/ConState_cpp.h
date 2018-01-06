@@ -78,7 +78,7 @@ class DataTable; //
 
 
 
-class ConState_cpp {
+class E_API ConState_cpp {
   // ##NO_TOKENS ##NO_UPDATE_AFTER #STEM_BASE ##CAT_Network connection group -- manages one projection's worth of connections at a unit level -- can be either Recv or Send
 public:
 

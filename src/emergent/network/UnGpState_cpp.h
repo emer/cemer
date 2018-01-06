@@ -26,7 +26,7 @@
 
 // declare all other types mentioned but not required to include:
 
-class UnGpState_cpp {
+class E_API UnGpState_cpp {
   // ##NO_TOKENS ##NO_UPDATE_AFTER #STEM_BASE ##CAT_Network unit group state variables -- for use in computational State code
 public:
 

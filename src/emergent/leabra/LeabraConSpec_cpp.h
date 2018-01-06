@@ -37,7 +37,7 @@
 
 // declare all other types mentioned but not required to include:
 
-class LeabraConSpec_cpp : public ConSpec_cpp {
+class E_API LeabraConSpec_cpp : public ConSpec_cpp {
   // #STEM_BASE ##CAT_Leabra raw C++ version of Leabra connection specs
 INHERITED(ConSpec)
 public:

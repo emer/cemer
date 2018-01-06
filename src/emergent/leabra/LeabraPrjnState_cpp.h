@@ -31,7 +31,7 @@ class LeabraConSpec_cpp; //
 
 // declare all other types mentioned but not required to include:
 
-class LeabraPrjnState_cpp : public PrjnState_cpp {
+class E_API LeabraPrjnState_cpp : public PrjnState_cpp {
   // #STEM_BASE ##CAT_Leabra leabra specific projection -- has special variables at the projection-level
 INHERITED(PrjnState)
 public:

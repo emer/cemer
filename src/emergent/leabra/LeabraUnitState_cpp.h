@@ -30,7 +30,7 @@
 
 #define LEABRA_MAX_SPIKE_INTEG_WIN 10
 
-class LeabraUnitState_cpp : public UnitState_cpp {
+class E_API LeabraUnitState_cpp : public UnitState_cpp {
   // #STEM_BASE ##CAT_Leabra Leabra unit variables, point-neuron approximation
 INHERITED(UnitState)
 public:
@@ -40,7 +40,7 @@ public:
   LeabraUnitState_cpp() { Initialize_core(); }
 };
 
-class LeabraUnit : public LeabraUnitState_cpp {
+class E_API LeabraUnit : public LeabraUnitState_cpp {
   // LeabraUnit is an alias for LeabraUnitState_cpp for backward compatibility and simplicity in Programs
 public:
 };

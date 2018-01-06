@@ -31,7 +31,7 @@
 
 // declare all other types mentioned but not required to include:
 
-class BpConSpec_cpp : public ConSpec_cpp {
+class E_API BpConSpec_cpp : public ConSpec_cpp {
   // Plain C++ Backpropagation connection specfications -- learning rules
 INHERITED(ConSpec)
 public:

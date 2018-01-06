@@ -32,7 +32,7 @@
 
 // declare all other types mentioned but not required to include:
 
-class LeabraLayerState_cpp : public LayerState_cpp {
+class E_API LeabraLayerState_cpp : public LayerState_cpp {
   // #STEM_BASE ##CAT_Leabra pure C++ state version of leabra layer state values
 INHERITED(LayerState)
 public:

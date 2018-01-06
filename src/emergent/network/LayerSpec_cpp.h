@@ -26,7 +26,7 @@
 
 // declare all other types mentioned but not required to include:
 
-class LayerSpec_cpp : public BaseSpec_cpp {
+class E_API LayerSpec_cpp : public BaseSpec_cpp {
   // ##NO_TOKENS ##CAT_Network plain C++ version of LayerSpec
 INHERITED(BaseSpec)
 public:

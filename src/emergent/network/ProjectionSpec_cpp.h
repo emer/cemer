@@ -24,7 +24,7 @@
 
 #include <ProjectionSpec_mbrs>
 
-class ProjectionSpec_cpp : public BaseSpec_cpp {
+class E_API ProjectionSpec_cpp : public BaseSpec_cpp {
   // #STEM_BASE #VIRT_BASE ##CAT_Projection Specifies the connectivity between layers (ie. full vs. partial)
 INHERITED(BaseSpec)
 public:

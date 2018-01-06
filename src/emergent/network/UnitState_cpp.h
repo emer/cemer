@@ -33,7 +33,7 @@ class NetMonitor; //
 class DataTable; //
 
 
-class UnitState_cpp {
+class E_API UnitState_cpp {
   // ##NO_TOKENS ##NO_UPDATE_AFTER #STEM_BASE ##CAT_Network Generic unit variables -- basic computational unit of a neural network (e.g., a neuron-like processing unit) -- Unit contains all the structural information, and this class just contains the computationally-relevant variables
 public:
 
@@ -81,7 +81,7 @@ public:
 };
 
 
-class Unit : public UnitState_cpp {
+class E_API Unit : public UnitState_cpp {
   // Unit is an alias for UnitState_cpp for backward compatibility and simplicity in Programs
 public:
 };

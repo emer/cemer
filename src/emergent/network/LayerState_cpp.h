@@ -26,7 +26,7 @@
 
 // declare all other types mentioned but not required to include:
 
-class LayerState_cpp {
+class E_API LayerState_cpp {
   // ##NO_TOKENS ##NO_UPDATE_AFTER #STEM_BASE ##CAT_Network layer state variables -- for use in computational State code
 public:
 

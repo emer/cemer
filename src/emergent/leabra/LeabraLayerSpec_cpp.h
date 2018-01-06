@@ -37,7 +37,7 @@
 
 // declare all other types mentioned but not required to include:
 
-class LeabraLayerSpec_cpp : public LayerSpec_cpp {
+class E_API LeabraLayerSpec_cpp : public LayerSpec_cpp {
   // #STEM_BASE ##CAT_Leabra Leabra layer specs, computes inhibitory input for all units in layer
 INHERITED(LayerSpec)
 public:

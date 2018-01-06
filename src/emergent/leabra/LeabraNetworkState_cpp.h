@@ -42,7 +42,7 @@ class STATE_CLASS(LeabraUnitSpec); //
 class STATE_CLASS(LeabraConSpec); //
 
 
-class LeabraNetworkState_cpp : public NetworkState_cpp {
+class E_API LeabraNetworkState_cpp : public NetworkState_cpp {
   // #STEM_BASE ##CAT_Leabra network that uses the Leabra algorithms and objects
 INHERITED(NetworkState)
 public:

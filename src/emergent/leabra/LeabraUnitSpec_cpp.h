@@ -35,7 +35,7 @@
 
 // declare all other types mentioned but not required to include:
 
-class LeabraUnitSpec_cpp : public UnitSpec_cpp {
+class E_API LeabraUnitSpec_cpp : public UnitSpec_cpp {
   // #STEM_BASE ##CAT_Leabra Leabra unit specifications, point-neuron approximation
 INHERITED(UnitSpec)
 public:

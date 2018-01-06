@@ -105,7 +105,7 @@ private:
   void  Destroy() { }
 };
 
-class NetworkState_cpp {
+class E_API NetworkState_cpp {
   // ##NO_TOKENS ##NO_UPDATE_AFTER #STEM_BASE ##CAT_Network plain C++ implementation of NetworkState 
 public:
 

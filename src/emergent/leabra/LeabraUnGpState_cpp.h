@@ -32,7 +32,7 @@
 
 // declare all other types mentioned but not required to include:
 
-class LeabraUnGpState_cpp : public UnGpState_cpp {
+class E_API LeabraUnGpState_cpp : public UnGpState_cpp {
   // #STEM_BASE ##CAT_Leabra Leabra Unit group state data 
 INHERITED(UnGpState)
 public:

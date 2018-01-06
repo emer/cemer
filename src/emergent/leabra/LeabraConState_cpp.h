@@ -28,7 +28,7 @@
 
 // declare all other types mentioned but not required to include:
 
-class LeabraConState_cpp : public ConState_cpp {
+class E_API LeabraConState_cpp : public ConState_cpp {
   // #STEM_BASE ##CAT_Leabra Leabra connection state
 INHERITED(ConState)
 public:

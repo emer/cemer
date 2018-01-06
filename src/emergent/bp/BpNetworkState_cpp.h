@@ -27,7 +27,7 @@
 
 // declare all other types mentioned but not required to include:
 
-class BpNetworkState_cpp : public NetworkState_cpp {
+class E_API BpNetworkState_cpp : public NetworkState_cpp {
   // plain C++ Backpropagation network state -- key computational code
 INHERITED(NetworkState)
 public:

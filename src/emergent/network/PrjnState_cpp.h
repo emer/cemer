@@ -29,7 +29,7 @@
 
 // declare all other types mentioned but not required to include:
 
-class PrjnState_cpp {
+class E_API PrjnState_cpp {
   // ##NO_TOKENS ##NO_UPDATE_AFTER #STEM_BASE ##CAT_Network projection state variables -- for use in computational State code
 public:
 

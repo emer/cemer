@@ -28,7 +28,7 @@
 
 // declare all other types mentioned but not required to include:
 
-class BpUnitState_cpp : public UnitState_cpp {
+class E_API BpUnitState_cpp : public UnitState_cpp {
   // Backprop unit state values
 INHERITED(UnitState)
 public:
@@ -38,7 +38,7 @@ public:
   BpUnitState_cpp() { Initialize_core(); }
 };
 
-class BpUnit : public BpUnitState_cpp {
+class E_API BpUnit : public BpUnitState_cpp {
   // BpUnit is an alias for BpUnitState_cpp for backward compatibility and simplicity in Programs
 public:
 };
