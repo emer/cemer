@@ -151,6 +151,9 @@ public:
   DataTableRef		data;
   // #HIDDEN the data table that will be used to hold the monitor data
 #endif
+  
+  void    ItemsUpdated() override;
+  // #CAT_Display an item was added or removed from list of monitored items
 
   TA_BASEFUNS_NOCOPY(NetNetMonitor);
 private:

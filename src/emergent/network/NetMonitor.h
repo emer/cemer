@@ -75,7 +75,7 @@ public:
   // #BUTTON #CAT_Monitor update the datatable configuration to match current set of monitored items -- call this during Init. if reset_first, then existing data rows are removed first
   void 		UpdateMonitors(bool reset_first = false) { UpdateDataTable(reset_first); }
   // #CAT_Monitor old name for UpdateDataTable
-  void    ItemsUpdated();
+  virtual void    ItemsUpdated() {}
   // #CAT_Display an item was added or removed from list of monitored items
 
   void 		GetMonVals();
