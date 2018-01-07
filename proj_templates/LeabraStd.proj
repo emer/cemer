@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.3.0.0 rev11239
+// ta_Dump File v3.0 -- code v8.5.0.0 rev11309
 LeabraProject .projects[0] { 
  Doc_Group @.docs = [0] {
  };
@@ -454,7 +454,9 @@ LeabraProject .projects[0] {
      RndSeed @[1] { };
     };
 
-    ProgVar_List @.objs_vars = [0] {
+    ProgVar_List @.objs_vars = [2] {
+     ProgVar @[0] { };
+     ProgVar @[1] { };
     };
 
     ProgType_List @.types = [1] {
@@ -473,7 +475,7 @@ LeabraProject .projects[0] {
      ProgVar @[2] { };
     };
 
-    ProgVar_List @.vars = [12] {
+    ProgVar_List @.vars = [10] {
      ProgVar @[0] { };
      ProgVar @[1] { };
      ProgVar @[2] { };
@@ -484,8 +486,6 @@ LeabraProject .projects[0] {
      ProgVar @[7] { };
      ProgVar @[8] { };
      ProgVar @[9] { };
-     ProgVar @[10] { };
-     ProgVar @[11] { };
     };
 
     Function_List @.functions = [1] {
@@ -932,7 +932,8 @@ LeabraProject .projects[0] {
      };
     };
 
-    ProgVar_List @.objs_vars = [0] {
+    ProgVar_List @.objs_vars = [1] {
+     ProgVar @[0] { };
     };
 
     ProgType_List @.types = [0] {
@@ -943,8 +944,7 @@ LeabraProject .projects[0] {
      ProgVar @[1] { };
     };
 
-    ProgVar_List @.vars = [1] {
-     ProgVar @[0] { };
+    ProgVar_List @.vars = [0] {
     };
 
     Function_List @.functions = [0] {
@@ -1020,7 +1020,8 @@ LeabraProject .projects[0] {
      };
     };
 
-    ProgVar_List @.objs_vars = [0] {
+    ProgVar_List @.objs_vars = [1] {
+     ProgVar @[0] { };
     };
 
     ProgType_List @.types = [0] {
@@ -1030,9 +1031,8 @@ LeabraProject .projects[0] {
      ProgVar @[0] { };
     };
 
-    ProgVar_List @.vars = [2] {
+    ProgVar_List @.vars = [1] {
      ProgVar @[0] { };
-     ProgVar @[1] { };
     };
 
     Function_List @.functions = [0] {
@@ -1120,7 +1120,8 @@ LeabraProject .projects[0] {
      };
     };
 
-    ProgVar_List @.objs_vars = [0] {
+    ProgVar_List @.objs_vars = [1] {
+     ProgVar @[0] { };
     };
 
     ProgType_List @.types = [0] {
@@ -1130,10 +1131,9 @@ LeabraProject .projects[0] {
      ProgVar @[0] { };
     };
 
-    ProgVar_List @.vars = [3] {
+    ProgVar_List @.vars = [2] {
      ProgVar @[0] { };
      ProgVar @[1] { };
-     ProgVar @[2] { };
     };
 
     Function_List @.functions = [0] {
@@ -1835,6 +1835,29 @@ LeabraProject .projects[0] {
 	 T3DataView_List @.annote_children = [0] {
 	 };
 
+	 NetViewStateItem_List @.state_items = [20] {
+	  NetViewStateItem @[0] { };
+	  NetViewStateItem @[1] { };
+	  NetViewStateItem @[2] { };
+	  NetViewStateItem @[3] { };
+	  NetViewStateItem @[4] { };
+	  NetViewStateItem @[5] { };
+	  NetViewStateItem @[6] { };
+	  NetViewStateItem @[7] { };
+	  NetViewStateItem @[8] { };
+	  NetViewStateItem @[9] { };
+	  NetViewStateItem @[10] { };
+	  NetViewStateItem @[11] { };
+	  NetViewStateItem @[12] { };
+	  NetViewStateItem @[13] { };
+	  NetViewStateItem @[14] { };
+	  NetViewStateItem @[15] { };
+	  NetViewStateItem @[16] { };
+	  NetViewStateItem @[17] { };
+	  NetViewStateItem @[18] { };
+	  NetViewStateItem @[19] { };
+	 };
+
 	 ScaleRange_List @.scale_ranges = [12] {
 	  ScaleRange @[0] { };
 	  ScaleRange @[1] { };
@@ -2080,6 +2103,15 @@ LeabraProject .projects[0] {
    };
 
    ParamSeq_Group @.param_seqs = [0] {
+   };
+
+   NetMonItem_List @.monitor.items = [0] {
+   };
+
+   DataTableCols @.mon_data.data = [0] {
+   };
+
+   DataOpList @.mon_data.last_sort_spec.ops = [0] {
    };
 
    Layer_Group @.layers = [3] {
@@ -5446,6 +5478,30 @@ LeabraProject .projects[0] {
      name="objs_vars";
      el_typ=ProgVar;
      el_def=0;
+     ProgVar @[0] {
+      name="rnd_seeds";
+      var_type=T_Object;
+      object_type=RndSeed_List;
+      object_val=.programs.gp[0][1].objs[0]$$;
+      object_scope=NULL;
+      objs_ptr=1;
+      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+     ProgVar @[1] {
+      name="rnd_seed";
+      var_type=T_Object;
+      object_type=RndSeed;
+      object_val=.programs.gp[0][1].objs[1]$$;
+      object_scope=NULL;
+      objs_ptr=1;
+      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
     };
     types {
      name="types";
@@ -5616,36 +5672,12 @@ LeabraProject .projects[0] {
       init_from=NULL;
      };
      ProgVar @[9] {
-      name="rnd_seeds";
-      var_type=T_Object;
-      object_type=RndSeed_List;
-      object_val=.programs.gp[0][1].objs[0]$$;
-      object_scope=NULL;
-      objs_ptr=1;
-      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-      reference=0;
-      desc=;
-      init_from=NULL;
-     };
-     ProgVar @[10] {
       name="train_timer";
       var_type=T_Object;
       object_type=TimeUsed;
       object_val=.networks[0].train_time$$;
       object_scope=NULL;
       objs_ptr=0;
-      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-      reference=0;
-      desc=;
-      init_from=NULL;
-     };
-     ProgVar @[11] {
-      name="rnd_seed";
-      var_type=T_Object;
-      object_type=RndSeed;
-      object_val=.programs.gp[0][1].objs[1]$$;
-      object_scope=NULL;
-      objs_ptr=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc=;
@@ -5708,7 +5740,7 @@ LeabraProject .projects[0] {
 	    flags=CAN_REVERT_TO_CODE;
 	    code_string="rnd_seed->OldSeed()";
 	    result_var=NULL;
-	    obj=.programs.gp[0][1].vars[11]$$;
+	    obj=.programs.gp[0][1].objs_vars[1]$$;
 	    method=RndSeed::OldSeed;
 	    meth_args {
 	     name="meth_args";
@@ -5739,7 +5771,7 @@ LeabraProject .projects[0] {
 	    flags=CAN_REVERT_TO_CODE;
 	    code_string="rnd_seed->NewSeed()";
 	    result_var=NULL;
-	    obj=$.programs.gp[0][1].vars[11]$;
+	    obj=$.programs.gp[0][1].objs_vars[1]$;
 	    method=RndSeed::NewSeed;
 	    meth_args {
 	     name="meth_args";
@@ -5770,7 +5802,7 @@ LeabraProject .projects[0] {
 	    flags=CAN_REVERT_TO_CODE;
 	    code_string="rnd_seeds->UseSeed(network.batch % rnd_seeds.seeds.size)";
 	    result_var=NULL;
-	    obj=.programs.gp[0][1].vars[9]$$;
+	    obj=.programs.gp[0][1].objs_vars[0]$$;
 	    method=RndSeed_List::UseSeed;
 	    meth_args {
 	     name="meth_args";
@@ -5848,7 +5880,7 @@ LeabraProject .projects[0] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="train_timer = network.train_time";
-      result_var=.programs.gp[0][1].vars[10]$$;
+      result_var=.programs.gp[0][1].vars[9]$$;
       expr {
        expr="network.train_time";
       };
@@ -5952,7 +5984,7 @@ LeabraProject .projects[0] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="train_timer = network.train_time";
-      result_var=$.programs.gp[0][1].vars[10]$;
+      result_var=$.programs.gp[0][1].vars[9]$;
       expr {
        expr="network.train_time";
       };
@@ -5963,7 +5995,7 @@ LeabraProject .projects[0] {
       flags=CAN_REVERT_TO_CODE;
       code_string="train_timer->StartTimer(true)";
       result_var=NULL;
-      obj=$.programs.gp[0][1].vars[10]$;
+      obj=$.programs.gp[0][1].vars[9]$;
       method=TimeUsed::StartTimer;
       meth_args {
        name="meth_args";
@@ -6281,7 +6313,7 @@ LeabraProject .projects[0] {
       flags=CAN_REVERT_TO_CODE;
       code_string="train_timer->EndTimer()";
       result_var=NULL;
-      obj=$.programs.gp[0][1].vars[10]$;
+      obj=$.programs.gp[0][1].vars[9]$;
       method=TimeUsed::EndTimer;
       meth_args {
        name="meth_args";
@@ -7808,6 +7840,18 @@ this program can be extended to do arbitrary things to generate data and apply i
      name="objs_vars";
      el_typ=ProgVar;
      el_def=0;
+     ProgVar @[0] {
+      name="layer_writer_0";
+      var_type=T_Object;
+      object_type=LayerWriter;
+      object_val=.programs.gp[0][6].objs[0]$$;
+      object_scope=NULL;
+      objs_ptr=1;
+      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="this is a pointer to the LayerWriter object in objs -- edit that object to determine how information is presented to the network";
+      init_from=NULL;
+     };
     };
     types {
      name="types";
@@ -7847,18 +7891,6 @@ this program can be extended to do arbitrary things to generate data and apply i
      name="vars";
      el_typ=ProgVar;
      el_def=0;
-     ProgVar @[0] {
-      name="layer_writer_0";
-      var_type=T_Object;
-      object_type=LayerWriter;
-      object_val=.programs.gp[0][6].objs[0]$$;
-      object_scope=NULL;
-      objs_ptr=1;
-      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-      reference=0;
-      desc="this is a pointer to the LayerWriter object in objs -- edit that object to determine how information is presented to the network";
-      init_from=NULL;
-     };
     };
     functions {
      name="functions";
@@ -7875,7 +7907,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=CAN_REVERT_TO_CODE;
       code_string="layer_writer_0->SetDataNetwork(input_data, network)";
       result_var=NULL;
-      obj=.programs.gp[0][6].vars[0]$$;
+      obj=.programs.gp[0][6].objs_vars[0]$$;
       method=LayerWriter::SetDataNetwork;
       meth_args {
        name="meth_args";
@@ -7913,7 +7945,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=CAN_REVERT_TO_CODE;
       code_string="layer_writer_0->AutoConfig()";
       result_var=NULL;
-      obj=$.programs.gp[0][6].vars[0]$;
+      obj=$.programs.gp[0][6].objs_vars[0]$;
       method=LayerWriter::AutoConfig;
       meth_args {
        name="meth_args";
@@ -7940,7 +7972,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=CAN_REVERT_TO_CODE;
       code_string="layer_writer_0->CheckConfig(false)";
       result_var=NULL;
-      obj=$.programs.gp[0][6].vars[0]$;
+      obj=$.programs.gp[0][6].objs_vars[0]$;
       method=taList_impl::CheckConfig;
       meth_args {
        name="meth_args";
@@ -7972,7 +8004,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=CAN_REVERT_TO_CODE;
       code_string="layer_writer_0->SetDataNetwork(input_data, network)";
       result_var=NULL;
-      obj=$.programs.gp[0][6].vars[0]$;
+      obj=$.programs.gp[0][6].objs_vars[0]$;
       method=LayerWriter::SetDataNetwork;
       meth_args {
        name="meth_args";
@@ -8010,7 +8042,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=CAN_REVERT_TO_CODE;
       code_string="layer_writer_0->ApplyInputData()";
       result_var=NULL;
-      obj=$.programs.gp[0][6].vars[0]$;
+      obj=$.programs.gp[0][6].objs_vars[0]$;
       method=LayerWriter::ApplyInputData;
       meth_args {
        name="meth_args";
@@ -8961,6 +8993,18 @@ this program can be extended to do arbitrary things to generate data and apply i
      name="objs_vars";
      el_typ=ProgVar;
      el_def=0;
+     ProgVar @[0] {
+      name="trial_netmon";
+      var_type=T_Object;
+      object_type=NetMonitor;
+      object_val=.programs.gp[0][7].objs[0]$$;
+      object_scope=NULL;
+      objs_ptr=1;
+      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="pointer to the NetMonitor object in objs secton of this program that contains configuration for what to record and where to get it";
+      init_from=NULL;
+     };
     };
     types {
      name="types";
@@ -9000,18 +9044,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       desc="data table to record trial-level data to (this program writes new data to this table!)";
       init_from=NULL;
      };
-     ProgVar @[1] {
-      name="trial_netmon";
-      var_type=T_Object;
-      object_type=NetMonitor;
-      object_val=.programs.gp[0][7].objs[0]$$;
-      object_scope=NULL;
-      objs_ptr=1;
-      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-      reference=0;
-      desc="pointer to the NetMonitor object in objs secton of this program that contains configuration for what to record and where to get it";
-      init_from=NULL;
-     };
     };
     functions {
      name="functions";
@@ -9028,7 +9060,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=CAN_REVERT_TO_CODE;
       code_string="trial_netmon->SetDataNetwork(trial_mon_data, network)";
       result_var=NULL;
-      obj=.programs.gp[0][7].vars[1]$$;
+      obj=.programs.gp[0][7].objs_vars[0]$$;
       method=NetMonitor::SetDataNetwork;
       meth_args {
        name="meth_args";
@@ -9066,7 +9098,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=CAN_REVERT_TO_CODE;
       code_string="trial_netmon->CheckConfig(false)";
       result_var=NULL;
-      obj=$.programs.gp[0][7].vars[1]$;
+      obj=$.programs.gp[0][7].objs_vars[0]$;
       method=taBase::CheckConfig;
       meth_args {
        name="meth_args";
@@ -9093,7 +9125,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=CAN_REVERT_TO_CODE;
       code_string="trial_netmon->UpdateMonitors(true)";
       result_var=NULL;
-      obj=$.programs.gp[0][7].vars[1]$;
+      obj=$.programs.gp[0][7].objs_vars[0]$;
       method=NetMonitor::UpdateMonitors;
       meth_args {
        name="meth_args";
@@ -9141,7 +9173,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=CAN_REVERT_TO_CODE;
       code_string="trial_netmon->GetMonVals()";
       result_var=NULL;
-      obj=$.programs.gp[0][7].vars[1]$;
+      obj=$.programs.gp[0][7].objs_vars[0]$;
       method=NetMonitor::GetMonVals;
       meth_args {
        name="meth_args";
@@ -10282,6 +10314,18 @@ this program can be extended to do arbitrary things to generate data and apply i
      name="objs_vars";
      el_typ=ProgVar;
      el_def=0;
+     ProgVar @[0] {
+      name="epoch_netmon";
+      var_type=T_Object;
+      object_type=NetMonitor;
+      object_val=.programs.gp[0][8].objs[0]$$;
+      object_scope=NULL;
+      objs_ptr=1;
+      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="network monitor object that contains full specs for what to record and where to get it";
+      init_from=NULL;
+     };
     };
     types {
      name="types";
@@ -10322,18 +10366,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       init_from=NULL;
      };
      ProgVar @[1] {
-      name="epoch_netmon";
-      var_type=T_Object;
-      object_type=NetMonitor;
-      object_val=.programs.gp[0][8].objs[0]$$;
-      object_scope=NULL;
-      objs_ptr=1;
-      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-      reference=0;
-      desc="network monitor object that contains full specs for what to record and where to get it";
-      init_from=NULL;
-     };
-     ProgVar @[2] {
       name="epoch_timer";
       var_type=T_Object;
       object_type=TimeUsed;
@@ -10360,7 +10392,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       desc="get the epoch timer from current network";
       flags=CAN_REVERT_TO_CODE;
       code_string="epoch_timer = network.epoch_time";
-      result_var=.programs.gp[0][8].vars[2]$$;
+      result_var=.programs.gp[0][8].vars[1]$$;
       expr {
        expr="network.epoch_time";
       };
@@ -10371,7 +10403,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=CAN_REVERT_TO_CODE;
       code_string="epoch_netmon->SetDataNetwork(epoch_mon_data, network)";
       result_var=NULL;
-      obj=.programs.gp[0][8].vars[1]$$;
+      obj=.programs.gp[0][8].objs_vars[0]$$;
       method=NetMonitor::SetDataNetwork;
       meth_args {
        name="meth_args";
@@ -10409,7 +10441,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=CAN_REVERT_TO_CODE;
       code_string="epoch_netmon->CheckConfig(false)";
       result_var=NULL;
-      obj=$.programs.gp[0][8].vars[1]$;
+      obj=$.programs.gp[0][8].objs_vars[0]$;
       method=taBase::CheckConfig;
       meth_args {
        name="meth_args";
@@ -10436,7 +10468,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=CAN_REVERT_TO_CODE;
       code_string="epoch_netmon->UpdateMonitors(true)";
       result_var=NULL;
-      obj=$.programs.gp[0][8].vars[1]$;
+      obj=$.programs.gp[0][8].objs_vars[0]$;
       method=NetMonitor::UpdateMonitors;
       meth_args {
        name="meth_args";
@@ -10484,7 +10516,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=CAN_REVERT_TO_CODE;
       code_string="epoch_netmon->GetMonVals()";
       result_var=NULL;
-      obj=$.programs.gp[0][8].vars[1]$;
+      obj=$.programs.gp[0][8].objs_vars[0]$;
       method=NetMonitor::GetMonVals;
       meth_args {
        name="meth_args";
@@ -10499,7 +10531,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       desc="get the epoch timer from current network";
       flags=CAN_REVERT_TO_CODE;
       code_string="epoch_timer = network.epoch_time";
-      result_var=$.programs.gp[0][8].vars[2]$;
+      result_var=$.programs.gp[0][8].vars[1]$;
       expr {
        expr="network.epoch_time";
       };
@@ -14613,9 +14645,9 @@ this program can be extended to do arbitrary things to generate data and apply i
     el_typ=UserDataItem;
     el_def=0;
     UserDataItem @[0] {name="view_win_lft": value=0: val_type_fixed=0: };
-    UserDataItem @[1] {name="view_win_top": value=0.01764291: val_type_fixed=0: };
+    UserDataItem @[1] {name="view_win_top": value=0.01696899: val_type_fixed=0: };
     UserDataItem @[2] {name="view_win_wd": value=1: val_type_fixed=0: };
-    UserDataItem @[3] {name="view_win_ht": value=0.7974594: val_type_fixed=0: };
+    UserDataItem @[3] {name="view_win_ht": value=0.7969573: val_type_fixed=0: };
     UserDataItem @[4] {name="view_win_iconified": value=0: val_type_fixed=0: };
     UserDataItem @[5] {name="view_splitter_state": value=AAAA/wAAAAEAAAADAAABFwAAAfwAAAKMAf////8BAAAAAQA=: val_type_fixed=0: };
    };
@@ -14717,14 +14749,38 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	  lay_layout=THREE_D;
 	  lay_mv=1;
 	  net_text=1;
+	  state_width_default=8;
 	  show_iconified=0;
 	  net_text_xform {scale={x=0.7: y=0.7: z=0.7: }: rotate={x=1: y=0: z=0: rot=1.570796: }: translate={x=0: y=1: z=-1: }: };
 	  net_text_rot=-90;
 	  cur_unit_vals{ act;	  };
-	  full_state_vals{ batch;epoch;group;trial;quarter;tick;cycle;time;total_trials;sse;group_name;trial_name;output_name;phase;tot_cycle;rt_cycles;ext_rew;norm_err;cos_err;minus_output_name;	  };
-	  cur_state_vals{ batch;epoch;trial;quarter;cycle;sse;trial_name;output_name;	  };
 	  hot_vars{ targ;ext;act;net;bias_wt;bias_dwt;act_eq;act_m;act_p;act_dif;avg_m;avg_l;act_avg;r.wt;r.wt*act;s.wt;r.dwt;s.dwt;	  };
 	  unit_src_path=".layers[2][0]";
+	  state_items {
+	   name="state_items";
+	   el_typ=NetViewStateItem;
+	   el_def=0;
+	   NetViewStateItem @[0] {name="batch": net_member=1: display=1: width=4: found=1: };
+	   NetViewStateItem @[1] {name="epoch": net_member=1: display=1: width=4: found=1: };
+	   NetViewStateItem @[2] {name="group": net_member=1: display=0: width=4: found=1: };
+	   NetViewStateItem @[3] {name="trial": net_member=1: display=1: width=4: found=1: };
+	   NetViewStateItem @[4] {name="tick": net_member=1: display=0: width=4: found=1: };
+	   NetViewStateItem @[5] {name="cycle": net_member=1: display=1: width=4: found=1: };
+	   NetViewStateItem @[6] {name="time": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[7] {name="total_trials": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[8] {name="sse": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[9] {name="group_name": net_member=1: display=0: width=16: found=1: };
+	   NetViewStateItem @[10] {name="trial_name": net_member=1: display=1: width=16: found=1: };
+	   NetViewStateItem @[11] {name="output_name": net_member=1: display=1: width=16: found=1: };
+	   NetViewStateItem @[12] {name="quarter": net_member=1: display=1: width=4: found=1: };
+	   NetViewStateItem @[13] {name="phase": net_member=1: display=0: width=4: found=1: };
+	   NetViewStateItem @[14] {name="tot_cycle": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[15] {name="rt_cycles": net_member=1: display=0: width=4: found=1: };
+	   NetViewStateItem @[16] {name="ext_rew": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[17] {name="norm_err": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[18] {name="cos_err": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[19] {name="minus_output_name": net_member=1: display=0: width=16: found=1: };
+	  };
 	  con_type=ANY_CON;
 	  hist_idx=0;
 	  hist_save=1;
@@ -16866,9 +16922,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       el_typ=UserDataItem;
       el_def=0;
       UserDataItem @[0] {name="view_win_lft": value=0: val_type_fixed=0: };
-      UserDataItem @[1] {name="view_win_top": value=0.007057163: val_type_fixed=0: };
-      UserDataItem @[2] {name="view_win_wd": value=0.03203125: val_type_fixed=0: };
-      UserDataItem @[3] {name="view_win_ht": value=0.7445307: val_type_fixed=0: };
+      UserDataItem @[1] {name="view_win_top": value=0.008191925: val_type_fixed=0: };
+      UserDataItem @[2] {name="view_win_wd": value=0.02706271: val_type_fixed=0: };
+      UserDataItem @[3] {name="view_win_ht": value=0.7501463: val_type_fixed=0: };
       UserDataItem @[4] {name="view_win_iconified": value=0: val_type_fixed=0: };
       UserDataItem @[5] {name="view_visible": value=1: val_type_fixed=0: };
      };
@@ -16887,7 +16943,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
  save_as_only=0;
  auto_name=1;
  last_change_desc=;
- tree_state{ .;.docs;.wizards;.ctrl_panels;.data;.data.gp[0];.data.gp[1];.data.gp[2];.programs;.programs.gp[0];.programs.gp[1];.viewers[0];.viewers[0].frames[2];.networks;.networks[0];.networks[0].specs;.networks[0].specs[0];.networks[0].specs[1];.networks[0].specs[2];.networks[0].layers;.networks[0].weights; };
+ tree_state{ .;.docs;.wizards;.ctrl_panels;.data;.data.gp[0];.data.gp[1];.data.gp[2];.programs;.programs.gp[0];.programs.gp[1];.networks;.networks[0];.networks[0].specs;.networks[0].specs[0];.networks[0].specs[1];.networks[0].specs[2];.networks[0].layers;.networks[0].weights; };
  networks {
   name="networks";
   el_typ=LeabraNetwork;
@@ -16942,7 +16998,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        margin {pct_marg=0.3: avg_tau=100: adapt_tau=500: tol_pct=0.25: avg_act=0.8: low_thr=0.501: med_thr=0.506: hi_thr=0.508: avg_dt=0.01: adapt_dt=0.002: };
        lay_lrate=1;
        cos_diff {avg_tau=100: lrate_mod=0: lrmod_fm_trc=0: lrmod_z_thr=-1.5: set_net_unlrn=0: avg_dt=0.01: avg_dt_c=0.99: };
-       lstats {hog_thr=0.3: dead_thr=0.01: };
+       lstats {pre_hog_thr=0.2: hog_thr=0.3: dead_thr=0.01: };
       };
      };
      lay_inhib {on=1: gi=1.8: ff=1: fb=1: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
@@ -16957,7 +17013,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      margin {pct_marg=0.3: avg_tau=100: adapt_tau=500: tol_pct=0.25: avg_act=0.8: low_thr=0.501: med_thr=0.506: hi_thr=0.508: avg_dt=0.01: adapt_dt=0.002: };
      lay_lrate=1;
      cos_diff {avg_tau=100: lrate_mod=0: lrmod_fm_trc=0: lrmod_z_thr=-1.5: set_net_unlrn=0: avg_dt=0.01: avg_dt_c=0.99: };
-     lstats {hog_thr=0.3: dead_thr=0.01: };
+     lstats {pre_hog_thr=0.2: hog_thr=0.3: dead_thr=0.01: };
     };
     LeabraUnitSpec @[1] {
      name="LeabraUnitSpec_0";
@@ -16977,7 +17033,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      act_fun=NOISY_XX1;
      act {thr=0.5: gain=100: nvar=0.005: avg_correct=1: vm_act_thr=0.01: sig_mult=0.33: sig_mult_pow=0.8: sig_gain=3: interp_range=0.01: gain_cor_range=10: gain_cor=0.1: sig_gain_nvar=600: sig_mult_eff=0.1895352: sig_val_at_0=0.09476762: interp_val=0.3843991: };
      act_misc {rec_nd=1: avg_nd=1: dif_avg=0: net_gain=1: avg_trace=0: lambda=0: avg_tau=200: avg_init=0.15: avg_dt=0.005: };
-     spike {rise=0: decay=5: g_gain=9: window=3: act_max_hz=200: int_tau=5: int_dt=0.2: };
+     spike {rise=0: decay=5: g_gain=9: window=3: act_max_hz=180: int_tau=5: int_dt=0.2: };
      spike_misc {ex=0: exp_slope=0.02: spk_thr=1.2: vm_r=0.3: t_r=3: clamp_max_p=0.12: clamp_type=REGULAR: eff_spk_thr=0.5: };
      opt_thresh {send=0.1: delta=0.005: };
      clamp_range {min=0: max=0.95: range=0.95: scale=1.052632: };
@@ -16987,15 +17043,16 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      act_avg {ss_tau=2: s_tau=2: m_tau=10: m_in_s=0.1: ss_dt=0.5: s_dt=0.5: m_dt=0.1: s_in_s=0.9: };
      avg_l {init=0.4: gain=2.5: min=0.2: tau=10: lrn_max=0.5: lrn_min=0.0001: dt=0.1: lrn_fact=0.2173478: };
      avg_l_2 {err_mod=1: err_min=0.01: lay_act_thr=0.01: };
-     g_bar {e=1: l=0.1: i=1: k=1: };
+     g_bar {e=1: l=0.1: i=1: k=0.2: };
      e_rev {e=1: l=0.3: i=0.25: k=0.1: };
-     kna_adapt {on=0: rate_rise=0.8: f_on=1: f_rise=0.05: f_max=0.1: f_tau=50: m_on=1: m_rise=0.02: m_max=0.1: m_tau=200: s_on=1: s_rise=0.005: s_max=0.2: s_tau=1000: f_dt=0.02: m_dt=0.005: s_dt=0.001: };
+     kna_adapt {on=1: rate_rise=0.8: f_on=1: f_rise=0.05: f_max=0.1: f_tau=50: m_on=1: m_rise=0.02: m_max=0.1: m_tau=200: s_on=1: s_rise=0.001: s_max=1: s_tau=1000: f_dt=0.02: m_dt=0.005: s_dt=0.001: };
+     kna_misc {clamp=1: invert_nd=1: max_gc=0.2: max_adapt=0.3: no_targ=1: };
      stp {on=0: algorithm=CYCLES: f_r_ratio=0.02: rec_tau=200: p0=0.2: p0_norm=0.2: kre_tau=100: kre=0.002: fac_tau=4: fac=0.3: thresh=0.5: n_trials=1: rec_prob=0.1: rec_dt=0.005: fac_dt=0.25: kre_dt=0.01: oneo_p0_norm=5: };
      syn_delay {on=0: delay=4: };
      deep_raw_qtr=Q4;
      deep {on=0: role=SUPER: raw_thr_rel=0.1: raw_thr_abs=0.1: mod_min=0.8: mod_thr=0.1: ctxt_prv=0: tick_updt=-1: else_prv=0.9: mod_range=0.2: ctxt_new=1: else_new=0.1: };
      trc {p_only_m=0: thal_gate=0: clamp_net=0: avg_clamp=0: deep_gain=0.2: clip=0: clip_max=0.4: std_gain=0.8: };
-     da_mod {on=0: minus=0: plus=0.1: };
+     da_mod {on=0: mod_gain=0: minus=0: plus=0.1: da_neg_gain=0.1: da_pos_gain=0.1: };
      noise_type {type=NO_NOISE: trial_fixed=1: };
      noise {name="noise": type=GAUSSIAN: mean=0: var=0.001: par=1: };
     };
@@ -17029,17 +17086,20 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        learn=0;
        learn_qtr=Q4;
        lrate=0.04;
-       cur_lrate=0.08;
+       cur_lrate=0.04;
        lrs_mult=1;
        use_unlearnable=1;
        xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: lrn_thr=0.01: s_mult=1: d_rev_ratio=-9: };
        wt_sig {gain=6: off=1: soft_bound=1: };
        momentum {on=1: dwavg_tau=1000: norm_min=0.001: m_tau=20: lrate_comp=0.01: dwavg_dt=0.001: dwavg_dt_c=0.999: m_dt=0.05: m_dt_c=0.95: };
-       wt_bal {on=1: hi_thr=0.4: hi_gain=4: lo_thr=0.2: lo_gain=4: };
+       wt_bal {on=1: avg_thr=0.25: hi_thr=0.4: hi_gain=4: lo_thr=0.4: lo_gain=6: act_thr=0.25: act_gain=0: no_targ=1: };
        adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
        slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
        deep {on=0: bg_lrate=1: fg_lrate=0: };
        margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_lrn=0.5: };
+       dwt_noise=0;
+       dwt_noise_p0=0.7;
+       noise {name="noise": type=GAUSSIAN: mean=0: var=0.005: par=1: };
        use_lrate_sched=1;
        lrate_sched {
 	name="lrate_sched";
@@ -17075,11 +17135,14 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: lrn_thr=0.01: s_mult=1: d_rev_ratio=-9: };
        wt_sig {gain=6: off=1: soft_bound=1: };
        momentum {on=1: dwavg_tau=1000: norm_min=0.001: m_tau=20: lrate_comp=0.01: dwavg_dt=0.001: dwavg_dt_c=0.999: m_dt=0.05: m_dt_c=0.95: };
-       wt_bal {on=1: hi_thr=0.4: hi_gain=4: lo_thr=0.2: lo_gain=4: };
+       wt_bal {on=1: avg_thr=0.25: hi_thr=0.4: hi_gain=4: lo_thr=0.4: lo_gain=6: act_thr=0.25: act_gain=0: no_targ=1: };
        adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
        slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
        deep {on=0: bg_lrate=1: fg_lrate=0: };
        margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_lrn=0.5: };
+       dwt_noise=0;
+       dwt_noise_p0=0.7;
+       noise {name="noise": type=GAUSSIAN: mean=0: var=0.005: par=1: };
        use_lrate_sched=1;
        lrate_sched {
 	name="lrate_sched";
@@ -17103,11 +17166,14 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: lrn_thr=0.01: s_mult=1: d_rev_ratio=-9: };
      wt_sig {gain=6: off=1: soft_bound=1: };
      momentum {on=1: dwavg_tau=1000: norm_min=0.001: m_tau=20: lrate_comp=0.01: dwavg_dt=0.001: dwavg_dt_c=0.999: m_dt=0.05: m_dt_c=0.95: };
-     wt_bal {on=1: hi_thr=0.4: hi_gain=4: lo_thr=0.2: lo_gain=4: };
+     wt_bal {on=1: avg_thr=0.25: hi_thr=0.4: hi_gain=4: lo_thr=0.4: lo_gain=6: act_thr=0.25: act_gain=0: no_targ=1: };
      adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
      slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
      deep {on=0: bg_lrate=1: fg_lrate=0: };
      margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_lrn=0.5: };
+     dwt_noise=0;
+     dwt_noise_p0=0.7;
+     noise {name="noise": type=GAUSSIAN: mean=0: var=0.005: par=1: };
      use_lrate_sched=1;
      lrate_sched {
       name="lrate_sched";
@@ -17141,6 +17207,41 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     name="param_seqs";
     el_typ=ParamSeq;
     el_def=0;
+   };
+   monitor {
+    name="monitor";
+    items {
+     name="items";
+     el_typ=NetMonItem;
+     el_def=0;
+    };
+    network=$.networks[0]$;
+    data=.networks[0].mon_data$$;
+    rmv_orphan_cols=1;
+   };
+   mon_data {
+    name="mon_data";
+    desc=;
+    data {
+     name="data";
+     el_typ=String_Data;
+     el_def=0;
+    };
+    data_flags=AUTO_CALC;
+    auto_load=NO_AUTO_LOAD;
+    auto_load_file=;
+    row_height=1;
+    max_col_width=50;
+    keygen 4 0=0;
+    last_sort_spec {
+     name="last_sort_spec";
+     ops {
+      name="ops";
+      el_typ=DataSortEl;
+      el_def=0;
+     };
+    };
+    row_with_hilite=-1;
    };
    layers {
     name="layers";
@@ -17370,7 +17471,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
    max_disp_size2d {x=5: y=9: };
    times {quarter=25: deep_cyc=5: time_inc=0.001: wt_bal_int=10: minus=75: plus=25: total_cycles=100: thal_gate_cycle=-2: };
    lstats {trg_max_act_crit=0.5: off_errs=1: on_errs=1: agg_unlearnable=0: wt_bal=0: };
-   net_misc {spike=0: deep=0: bias_learn=0: trial_decay=0: diff_scale_p=0: diff_scale_q1=0: wt_bal=0: lay_gp_inhib=0: inhib_cons=0: };
+   net_misc {spike=0: deep=0: bias_learn=0: trial_decay=1: diff_scale_p=0: diff_scale_q1=0: wt_bal=1: lay_gp_inhib=0: inhib_cons=0: };
    deep {on=0: ctxt=0: raw_net=0: mod_net=0: raw_qtr=0: };
    rel_netin {on=1: trl_skip=10: epc_skip=10: };
   };

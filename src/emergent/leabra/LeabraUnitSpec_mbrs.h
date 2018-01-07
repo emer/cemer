@@ -543,10 +543,10 @@ class STATE_CLASS(KNaAdaptMiscSpec) : public STATE_CLASS(SpecMemberBase) {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra extra params associated with sodium-gated potassium channel adaptation mechanism
 INHERITED(SpecMemberBase)
 public:
-  bool          clamp;          // apply adaptation even to clamped layers
-  bool          invert_nd;      // invert the adaptation effect for the act_nd (non-depressed) value that is typically used for learning-drivng averages (avg_ss, _s, _m) 
-  float         max_gc;         // #CONDSHOW_ON_clamp||invert_nd for clamp or invert_nd, maximum k_na conductance that we expect to get -- apply a proportional reduction in clamped activation and/or enhancement of act_nd based on current k_na conductance
-  float         max_adapt;      // #CONDSHOW_ON_clamp||invert_nd #DEF_0.5 for clamp or invert_nd, maximum amount of adaptation to apply to clamped activations / act_nd when conductance is at max_gc
+  bool          clamp;          // #DEF_true apply adaptation even to clamped layers -- only happens if kna_adapt.on is true
+  bool          invert_nd;      // #DEF_true invert the adaptation effect for the act_nd (non-depressed) value that is typically used for learning-drivng averages (avg_ss, _s, _m) -- only happens if kna_adapt.on is true
+  float         max_gc;         // #CONDSHOW_ON_clamp||invert_nd #DEF_0.2 for clamp or invert_nd, maximum k_na conductance that we expect to get (prior to multiplying by g_bar.k) -- apply a proportional reduction in clamped activation and/or enhancement of act_nd based on current k_na conductance -- default is appropriate for default kna_adapt params
+  float         max_adapt;      // #CONDSHOW_ON_clamp||invert_nd has opposite effects for clamp and invert_nd (and only operative when kna_adapt.on in addition): for clamp on clamped layers, this is the maximum amount of adaptation to apply to clamped activations when conductance is at max_gc -- biologically, values around .5 correspond generally to strong adaptation in primary visual cortex (V1) -- for invert_nd, this is the maximum amount of adaptation to invert, which is key for allowing learning to operate successfully despite the depression of activations due to adaptation -- values around .2 to .4 are good for g_bar.k = .2, depending on how strongly inputs are depressed -- need to experiment to find the best value for a given config
   bool          no_targ;        // #DEF_true automatically exclude units in TARGET layers and also TRC (Pulvinar) thalamic neurons from adaptation effects -- typically such layers should not be subject to these effects, so this makes it easier to not have to manually set those override params
 
   INLINE float Compute_Clamped(float clamp_act, float gc_kna_f, float gc_kna_m, float gc_kna_s) {
@@ -571,7 +571,7 @@ public:
 private:
   void        Initialize()      { Defaults_init(); }
   void        Defaults_init() {
-    clamp = false;  invert_nd = false;  max_gc = .2f;  max_adapt = 0.5f;  no_targ = true;
+    clamp = true;  invert_nd = true;  max_gc = .2f;  max_adapt = 0.3f;  no_targ = true;
   }
 };
 

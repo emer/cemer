@@ -7,7 +7,7 @@
 # dependencies except qt and coin
 
 # this should be the only thing you need to update: grab the latest versions
-QT_DMG=qt561_mac64.dmg
+QT_DMG=qt593_mac64.dmg
 COIN_DMG=coin_mac64_4_0.dmg
 
 
@@ -195,12 +195,18 @@ function installBrewDeps {
     brew install --force apr-util
     brew install --force subversion
     brew install --force gsl ode libjpeg libpng
+    brew install --force libsndfile
+    
     brew link --force --overwrite pkg-config
     brew link --force --overwrite cmake
     brew link --force --overwrite apr
     brew link --force --overwrite apr-util
     brew link --force --overwrite subversion
     brew link --force --overwrite gsl ode libjpeg libpng
+    brew link --force --overwrite libsndfile
+    echo " "
+    echo "-- done with commands: again if any of these commands fail, you may need to intervene manually.."
+    echo " "
     set +v
 }
 
@@ -210,12 +216,10 @@ echo "        Step 2: Installing The Packages"
 echo "================================================="
 echo " "
 
-# these are listed in order of size and dependency, independent to dependent
-# QUARTER depends on COIN, QT
-# everything else is independent
+# there are no dependencies anymore
 
-#installPKGinDMG ${QT_DMG}
-#installPKGinDMG ${COIN_DMG}
+installPKGinDMG ${QT_DMG}
+installPKGinDMG ${COIN_DMG}
 
 installHomeBrew
 installBrewDeps

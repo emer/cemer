@@ -1,5 +1,5 @@
-// ta_Dump File v3.0 -- code v8.3.5.0 rev11282
-LeabraProject .projects[1] { 
+// ta_Dump File v3.0 -- code v8.5.0.0 rev11309
+LeabraProject .projects[0] { 
  Doc_Group @.docs = [2] {
   taDoc @[0] { 
    UserDataItem_List @*(.user_data_) {
@@ -1151,7 +1151,7 @@ LeabraProject .projects[1] {
   };
  };
 };
-LeabraProject .projects[1] {
+LeabraProject .projects[0] {
  name="projection_sampler";
  desc="demonstrates how to use various ProjectionSpec's to connect units according to various patterns";
  tags="Demo, Projection, Network, Connections";
@@ -1197,260 +1197,257 @@ LeabraProject .projects[1] {
 </html>
 ";
    html_text="<!DOCTYPE html><html lang=\"en\" dir=\"ltr\" class=\"client-js\"><head>
-<meta charset=\"UTF-8\"><title>ProjectionSpec - emergent</title>
-<meta name=\"generator\" content=\"MediaWiki 1.22.14\">
-<link rel=\"ExportRDF\" type=\"application/rdf+xml\" title=\"ProjectionSpec\" href=\"/emergent/index.php?title=Special:ExportRDF/ProjectionSpec&amp;xmlmime=rdf\">
+<meta charset=\"UTF-8\">
+<title>demos/projection sampler - emergent</title>
+<script>document.documentElement.className = document.documentElement.className.replace( /(^|\\s)client-nojs(\\s|$)/, \"$1client-js$2\" );</script>
+<script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
+mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":!1,\"wgNamespaceNumber\":0,\"wgPageName\":\"demos/projection_sampler\",\"wgTitle\":\"demos/projection sampler\",\"wgCurRevisionId\":12084,\"wgRevisionId\":12084,\"wgArticleId\":2870,\"wgIsArticle\":!0,\"wgIsRedirect\":!1,\"wgAction\":\"view\",\"wgUserName\":\"Oreilly\",\"wgUserGroups\":[\"bureaucrat\",\"svnadmins\",\"sysop\",\"*\",\"user\",\"autoconfirmed\"],\"wgCategories\":[\"PublishedProject\"],\"wgBreakFrames\":!1,\"wgPageContentLanguage\":\"en\",\"wgPageContentModel\":\"wikitext\",\"wgSeparatorTransformTable\":[\"\",\"\"],\"wgDigitTransformTable\":[\"\",\"\"],\"wgDefaultDateFormat\":\"dmy\",\"wgMonthNames\":[\"\",\"January\",\"February\",\"March\",\"April\",\"May\",\"June\",\"July\",\"August\",\"September\",\"October\",\"November\",\"December\"],\"wgMonthNamesShort\":[\"\",\"Jan\",\"Feb\",\"Mar\",\"Apr\",\"May\",\"Jun\",\"Jul\",\"Aug\",\"Sep\",\"Oct\",\"Nov\",\"Dec\"],\"wgRelevantPageName\":\"demos/projection_sampler\",\"wgRelevantArticleId\":2870,\"wgUserId\":3,\"wgUserEditCount\":3319,\"wgUserRegistration\":1178051527000,
+\"wgUserNewMsgRevisionId\":null,\"wgIsProbablyEditable\":!0,\"wgRestrictionEdit\":[],\"wgRestrictionMove\":[],\"sfgAutocompleteValues\":[],\"sfgAutocompleteOnAllChars\":!1,\"sfgFieldProperties\":[],\"sfgDependentFields\":[],\"sfgShowOnSelect\":[],\"sfgScriptPath\":\"/emergent/extensions/SemanticForms\",\"wgSVGEditEditor\":\"http://svg-edit.googlecode.com/svn/trunk/editor/svg-editor.html\",\"wgHeaderTabsTabIndexes\":[],\"wgWikiEditorEnabledModules\":{\"toolbar\":!0,\"dialogs\":!0,\"preview\":!0,\"publish\":!1},\"wgCategoryTreePageCategoryOptions\":\"{\\\"mode\\\":0,\\\"hideprefix\\\":20,\\\"showcount\\\":true,\\\"namespaces\\\":false}\"});mw.loader.implement(\"user.options\",function($,jQuery){mw.user.options.set({\"ccmeonemails\":\"1\",\"enotifminoredits\":\"1\",\"imagesize\":\"0\",\"previewontop\":\"\",\"rows\":\"30\",\"thumbsize\":\"0\",\"underline\":\"0\",\"watchmoves\":\"1\",\"editsection\":\"1\",\"rememberpassword\":\"1\",\"timecorrection\":\"ZoneInfo|-360|America/Denver\",\"watchlisttoken\":\"14fd6c804d78e99930123181974c128b983adb9e\"});});mw.loader.implement(\"user.tokens\",function($,jQuery){mw.user.tokens.set({\"editToken\":\"b995b202f8bb93db639f156ccbaec8f65a51e6a3+\\\\\",\"patrolToken\":\"8fb096ad05ea2b26a6286f5c58d822d55a51e6a3+\\\\\",\"watchToken\":\"6e5b310fde432b1057a5bdeab02d83905a51e6a3+\\\\\"});});mw.loader.load([\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\",\"mediawiki.legacy.wikibits\",\"skins.vector.js\"]);
+} );</script>
+<link rel=\"stylesheet\" href=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=mediawiki.legacy.commonPrint%2Cshared%7Cmediawiki.sectionAnchor%7Cmediawiki.skinning.interface%7Cskins.vector.styles&amp;only=styles&amp;skin=vector\">
+<link rel=\"stylesheet\" href=\"/emergent/extensions/HeaderTabs/skins/ext.headertabs.large.css\">
+<meta name=\"ResourceLoaderDynamicStyles\" content=\"\">
+<link rel=\"stylesheet\" href=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=site&amp;only=styles&amp;skin=vector\">
+<style>a{text-decoration:none}</style>
+<script async=\"\" src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=startup&amp;only=scripts&amp;skin=vector\"></script>
+<meta name=\"generator\" content=\"MediaWiki 1.26.4\">
+<link rel=\"ExportRDF\" type=\"application/rdf+xml\" title=\"demos/projection sampler\" href=\"/emergent/index.php?title=Special:ExportRDF/demos/projection_sampler&amp;xmlmime=rdf\">
+<link rel=\"alternate\" type=\"application/x-wiki\" title=\"Edit\" href=\"/emergent/index.php?title=demos/projection_sampler&amp;action=edit\">
+<link rel=\"edit\" title=\"Edit\" href=\"/emergent/index.php?title=demos/projection_sampler&amp;action=edit\">
 <link rel=\"shortcut icon\" href=\"/emergent/favicon.ico\">
 <link rel=\"search\" type=\"application/opensearchdescription+xml\" href=\"/emergent/opensearch_desc.php\" title=\"emergent (en)\">
 <link rel=\"EditURI\" type=\"application/rsd+xml\" href=\"https://grey.colorado.edu/emergent/api.php?action=rsd\">
 <link rel=\"alternate\" type=\"application/atom+xml\" title=\"emergent Atom feed\" href=\"/emergent/index.php?title=Special:RecentChanges&amp;feed=atom\">
-<link rel=\"stylesheet\" href=\"https://grey.colorado.edu/emergent/load.php?debug=false&amp;lang=en&amp;modules=ext.rtlcite%7Cmediawiki.legacy.commonPrint%2Cshared%7Cskins.vector&amp;only=styles&amp;skin=vector&amp;*\">
-<link rel=\"stylesheet\" href=\"/emergent/extensions/HeaderTabs/skins-jquery/ext.headertabs.jquery-large.css\"><meta name=\"ResourceLoaderDynamicStyles\" content=\"\">
-<link rel=\"stylesheet\" href=\"https://grey.colorado.edu/emergent/load.php?debug=false&amp;lang=en&amp;modules=site&amp;only=styles&amp;skin=vector&amp;*\">
-<style>a:lang(ar),a:lang(ckb),a:lang(kk-arab),a:lang(mzn),a:lang(ps),a:lang(ur){text-decoration:none}.mw-editsection{display:none}
-/* cache key: pdpwiki:resourceloader:filter:minify-css:7:d901f157ec9fff8ddab15d03002ebefd */</style>
-
-<script src=\"https://grey.colorado.edu/emergent/load.php?debug=false&amp;lang=en&amp;modules=startup&amp;only=scripts&amp;skin=vector&amp;*\"></script><script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery%2Cmediawiki&amp;only=scripts&amp;skin=vector&amp;version=20141215T005424Z\"></script>
-<script>if(window.mw){
-mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":false,\"wgNamespaceNumber\":0,\"wgPageName\":\"ProjectionSpec\",\"wgTitle\":\"ProjectionSpec\",\"wgCurRevisionId\":4508,\"wgRevisionId\":4508,\"wgArticleId\":301,\"wgIsArticle\":true,\"wgIsRedirect\":false,\"wgAction\":\"view\",\"wgUserName\":null,\"wgUserGroups\":[\"*\"],\"wgCategories\":[],\"wgBreakFrames\":false,\"wgPageContentLanguage\":\"en\",\"wgPageContentModel\":\"wikitext\",\"wgSeparatorTransformTable\":[\"\",\"\"],\"wgDigitTransformTable\":[\"\",\"\"],\"wgDefaultDateFormat\":\"dmy\",\"wgMonthNames\":[\"\",\"January\",\"February\",\"March\",\"April\",\"May\",\"June\",\"July\",\"August\",\"September\",\"October\",\"November\",\"December\"],\"wgMonthNamesShort\":[\"\",\"Jan\",\"Feb\",\"Mar\",\"Apr\",\"May\",\"Jun\",\"Jul\",\"Aug\",\"Sep\",\"Oct\",\"Nov\",\"Dec\"],\"wgRelevantPageName\":\"ProjectionSpec\",\"wgIsProbablyEditable\":false,\"wgRestrictionEdit\":[],\"wgRestrictionMove\":[],\"sfgAutocompleteValues\":[],\"sfgAutocompleteOnAllChars\":false,\"sfgFieldProperties\":[],\"sfgDependentFields\":[],\"sfgShowOnSelect\":[],\"sfgScriptPath\":\"/emergent/extensions/SemanticForms\",\"htTabIndexes\":[],\"wgSVGEditEditor\":\"http://svg-edit.googlecode.com/svn/trunk/editor/svg-editor.html\",\"wgWikiEditorEnabledModules\":{\"toolbar\":true,\"dialogs\":true,\"hidesig\":true,\"templateEditor\":false,\"templates\":false,\"preview\":true,\"previewDialog\":false,\"publish\":false,\"toc\":false},\"wgCategoryTreePageCategoryOptions\":\"{\\\"mode\\\":0,\\\"hideprefix\\\":20,\\\"showcount\\\":true,\\\"namespaces\\\":false}\"});
-}</script><script>if(window.mw){
-mw.loader.implement(\"user.options\",function(){mw.user.options.set({\"ccmeonemails\":0,\"cols\":80,\"date\":\"default\",\"diffonly\":0,\"disablemail\":0,\"disablesuggest\":0,\"editfont\":\"default\",\"editondblclick\":0,\"editsection\":false,\"editsectiononrightclick\":0,\"enotifminoredits\":0,\"enotifrevealaddr\":0,\"enotifusertalkpages\":1,\"enotifwatchlistpages\":0,\"extendwatchlist\":0,\"fancysig\":0,\"forceeditsummary\":0,\"gender\":\"unknown\",\"hideminor\":0,\"hidepatrolled\":0,\"imagesize\":2,\"justify\":0,\"math\":0,\"minordefault\":0,\"newpageshidepatrolled\":0,\"nocache\":0,\"noconvertlink\":0,\"norollbackdiff\":0,\"numberheadings\":0,\"previewonfirst\":0,\"previewontop\":1,\"rcdays\":7,\"rclimit\":50,\"rememberpassword\":0,\"rows\":25,\"searchlimit\":20,\"showhiddencats\":0,\"shownumberswatching\":1,\"showtoc\":1,\"showtoolbar\":1,\"skin\":\"vector\",\"stubthreshold\":0,\"thumbsize\":2,\"underline\":2,\"uselivepreview\":0,\"usenewrc\":0,\"vector-simplesearch\":1,\"watchcreations\":0,\"watchdefault\":0,\"watchdeletion\":0,\"watchlistdays\":3,\"watchlisthideanons\":0,\"watchlisthidebots\"
-:0,\"watchlisthideliu\":0,\"watchlisthideminor\":0,\"watchlisthideown\":0,\"watchlisthidepatrolled\":0,\"watchmoves\":0,\"wllimit\":250,\"useeditwarning\":1,\"prefershttps\":1,\"vector-collapsiblenav\":1,\"vector-collapsibletabs\":1,\"vector-editwarning\":1,\"vector-expandablesearch\":1,\"vector-footercleanup\":1,\"usebetatoolbar\":1,\"usebetatoolbar-cgd\":1,\"wikieditor-preview\":1,\"upwiz_deflicense\":\"default\",\"upwiz_def3rdparty\":\"default\",\"upwiz_deflicensetype\":\"default\",\"language\":\"en\",\"variant-gan\":\"gan\",\"variant-iu\":\"iu\",\"variant-kk\":\"kk\",\"variant-ku\":\"ku\",\"variant-shi\":\"shi\",\"variant-sr\":\"sr\",\"variant-tg\":\"tg\",\"variant-uz\":\"uz\",\"variant-zh\":\"zh\",\"searchNs0\":true,\"searchNs1\":false,\"searchNs2\":false,\"searchNs3\":false,\"searchNs4\":false,\"searchNs5\":false,\"searchNs6\":false,\"searchNs7\":false,\"searchNs8\":false,\"searchNs9\":false,\"searchNs10\":false,\"searchNs11\":false,\"searchNs12\":false,\"searchNs13\":false,\"searchNs14\":false,\"searchNs15\":false,\"searchNs102\":false,\"searchNs103\":false,\"searchNs106\":false,\"searchNs107\":false
-,\"searchNs108\":false,\"searchNs109\":false,\"searchNs500\":false,\"searchNs501\":false,\"extensionDrafts_enable\":true,\"variant\":\"en\"});},{},{});mw.loader.implement(\"user.tokens\",function(){mw.user.tokens.set({\"editToken\":\"+\\\\\",\"patrolToken\":false,\"watchToken\":false});},{},{});
-/* cache key: pdpwiki:resourceloader:filter:minify-js:7:29a96f854efc7725dc408d12e26e7835 */
-}</script>
-<script>if(window.mw){
-mw.loader.load([\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\",\"mediawiki.legacy.wikibits\",\"mediawiki.legacy.ajax\",\"skins.vector.js\"]);
-}</script><script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=ext.jquery.qtip%7Cext.smw%7Cext.smw.style%2Ctooltip%2Ctooltips%7Cext.smw.tooltip.styles&amp;skin=vector&amp;version=20150419T081543Z&amp;*\"></script><script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery.async%2Cclient%2Ccookie%2CdelayedBind%2CmwExtension%7Cmediawiki.legacy.ajax%2Cwikibits%7Cmediawiki.notify%2Cutil%7Cmediawiki.page.startup%7Cskins.vector.js&amp;skin=vector&amp;version=20150419T081544Z&amp;*\"></script>
-<!--[if lt IE 7]><style type=\"text/css\">body{behavior:url(\"/emergent/skins/vector/csshover.min.htc\")}</style><![endif]--><script async=\"\" src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=ext.Drafts%2Ccite%2Cheadertabs%7Cjquery.autoEllipsis%2CcheckboxShiftClick%2Chidpi%2ChighlightText%2CmakeCollapsible%2Cmw-jump%2Cplaceholder%2Csuggestions%2CtabIndex%7Cmediawiki.action.view.postEdit%7Cmediawiki.api%2Ccldr%2Chidpi%2CjqueryMsg%2Clanguage%2CsearchSuggest%2Cuser%7Cmediawiki.language.data%2Cinit%7Cmediawiki.libs.pluralruleparser%7Cmediawiki.page.ready%7Cskins.vector.collapsibleNav&amp;skin=vector&amp;version=20150809T180531Z&amp;*\"></script><script async=\"\" src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery.ui.core%2Ctabs%2Cwidget&amp;skin=vector&amp;version=20150208T001329Z&amp;*\"></script></head>
-<body class=\"mediawiki ltr sitedir-ltr ns-0 ns-subject page-ProjectionSpec skin-vector action-view vector-animateLayout\">
-		<div id=\"mw-page-base\" class=\"noprint\"><a href=\"http://grey.colorado.edu/emergent\"><img src=\"http://grey.colorado.edu/mediawiki/sites/emergent/images/6/6b/emergent_small.png\"></a></div>
+<!--[if lt IE 7]><style type=\"text/css\">body{behavior:url(\"/emergent/skins/Vector/csshover.min.htc\")}</style><![endif]-->
+</head>
+<body class=\"mediawiki ltr sitedir-ltr ns-0 ns-subject page-demos_projection_sampler skin-vector action-view\">
+		<div id=\"mw-page-base\" class=\"noprint\"></div>
 		<div id=\"mw-head-base\" class=\"noprint\"></div>
 		<div id=\"content\" class=\"mw-body\" role=\"main\">
 			<a id=\"top\"></a>
-			<div id=\"mw-js-message\" style=\"display:none;\"></div>
-						<h1 id=\"firstHeading\" class=\"firstHeading\" lang=\"en\"><span dir=\"auto\">ProjectionSpec</span></h1>
-			<div id=\"bodyContent\">
-								<div id=\"siteSub\">From emergent</div>
+
+						<div class=\"mw-indicators\">
+</div>
+			<h1 id=\"firstHeading\" class=\"firstHeading\" lang=\"en\">demos/projection sampler</h1>
+									<div id=\"bodyContent\" class=\"mw-body-content\">
+									<div id=\"siteSub\">From emergent</div>
 								<div id=\"contentSub\"></div>
 												<div id=\"jump-to-nav\" class=\"mw-jump\">
-					Jump to:					<a href=\"#mw-navigation\">navigation</a>, 					<a href=\"#p-search\">search</a>
+					Jump to:					<a href=\"#mw-head\">navigation</a>, 					<a href=\"#p-search\">search</a>
 				</div>
-				<div id=\"mw-content-text\" lang=\"en\" dir=\"ltr\" class=\"mw-content-ltr\"><div style=\"width: 50%;padding-left: 15px; border:2px solid #000000;\">Reference info for type <strong>ProjectionSpec</strong>: <a href=\"http://grey.colorado.edu/gendoc/emergent/ProjectionSpec.html\">Wiki</a> | <a href=\"ta:.Type.ProjectionSpec\">Emergent Help Browser</a></div> <div style=\"width: 50%;padding-left: 15px; border:2px solid #000000;\">Reference info for type <strong>Projection</strong>: <a href=\"http://grey.colorado.edu/gendoc/emergent/Projection.html\">Wiki</a> | <a href=\"ta:.Type.Projection\">Emergent Help Browser</a></div>
-<p>The ProjectionSpec is connected to one or more Projections to specify a pattern of connectivity.  The simplest case is a FullPrjnSpec, which specifies full connectivity, but there are many other types.  For now, the best documentation is just the reference information for each type of  -- click on that link and then on its children to find specific types.  There is also more detailed info below on some specs that require more of an explanation.
+				<div id=\"mw-content-text\" lang=\"en\" dir=\"ltr\" class=\"mw-content-ltr\"><table style=\"width: 35em; font-size: 90%; border: 1px solid #aaaaaa; background-color: #f9f9f9; color: black; margin-bottom: 0.5em; margin-left: 1em; padding: 0.2em; float: right; clear: right; text-align:left;\">
+<tbody><tr>
+<th style=\"text-align: center; background-color:#ccccff;\" colspan=\"2\"><big>demos/projection sampler</big>
+</th></tr>
+<tr>
+<th> Project Name
+</th>
+<td> projection_sampler
+</td></tr>
+<tr>
+<th> Filename
+</th>
+<td> <a href=\"/emergent/index.php/File:projection_sampler.proj\" title=\"File:projection sampler.proj\">File:projection sampler.proj</a> <a href=\"/emergent/index.php?title=.OpenProjectFromWeb(projection_sampler.proj,https://grey.colorado.edu/emergent/index.php/MainPage)&amp;action=edit&amp;redlink=1\" class=\"new\" title=\".OpenProjectFromWeb(projection sampler.proj,https://grey.colorado.edu/emergent/index.php/MainPage) (page does not exist)\"><span style=\"color:#000000;background-color:#C0C0C0;font-weight:bold; border:1px solid black; padding:0 3px 0 3px\">Open Project in emergent</span></a>
+</td></tr>
+<tr>
+<th> Author
+</th>
+<td>  Randall C. O'Reilly
+</td></tr>
+<tr>
+<th> Email
+</th>
+<td> emergent-users@grey.colorado.edu
+</td></tr>
+<tr>
+<th> Publication
+</th>
+<td> ERROR: Could not find title object]]
+</td></tr>
+<tr>
+<th> First Published
+</th>
+<td> Aug 30 2016
+</td></tr>
+<tr>
+<th> Tags
+</th>
+<td>  Demo, Projection, Network, Connections
+</td></tr>
+<tr>
+<th> Description
+</th>
+<td>  demonstrates how to use various ProjectionSpec's to connect units according to various patterns
+</td></tr>
+<tr>
+<th> Updated
+</th>
+<td> 30 August 2016
+</td></tr>
+<tr>
+<th> Versions
+</th>
+<td> 8.0.0,  8.0.2
+</td></tr>
+<tr>
+<th> Emergent Versions
+</th>
+<td> 8.0.0
+</td></tr>
+<tr>
+<th> Other Files
+</th>
+<td>
+</td></tr></tbody></table>
+<p><br>
+See <a href=\"/emergent/index.php/ProjectionSpec\" title=\"ProjectionSpec\">ProjectionSpec</a> for full information about all the different forms of projections demonstrated here.
 </p>
-<div id=\"toc\" class=\"toc\"><div id=\"toctitle\"><h2>Contents</h2><span class=\"toctoggle\">&nbsp;[<a href=\"#\" class=\"internal\" id=\"togglelink\">hide</a>]&nbsp;</span></div>
-<ul>
-<li class=\"toclevel-1 tocsection-1\"><a href=\"#Specific_Projection_Types\"><span class=\"tocnumber\">1</span> <span class=\"toctext\">Specific Projection Types</span></a></li>
-<li class=\"toclevel-1 tocsection-2\"><a href=\"#Projection_Spec_Choice_Guide\"><span class=\"tocnumber\">2</span> <span class=\"toctext\">Projection Spec Choice Guide</span></a>
-<ul>
-<li class=\"toclevel-2 tocsection-3\"><a href=\"#Receptive_Fields\"><span class=\"tocnumber\">2.1</span> <span class=\"toctext\">Receptive Fields</span></a>
-<ul>
-<li class=\"toclevel-3 tocsection-4\"><a href=\"#No_Recv_Unit_Groups\"><span class=\"tocnumber\">2.1.1</span> <span class=\"toctext\">No Recv Unit Groups</span></a></li>
-<li class=\"toclevel-3 tocsection-5\"><a href=\"#Recv_Unit_Groups\"><span class=\"tocnumber\">2.1.2</span> <span class=\"toctext\">Recv Unit Groups</span></a></li>
-</ul>
-</li>
-<li class=\"toclevel-2 tocsection-6\"><a href=\"#Various_Flavors_of_Random\"><span class=\"tocnumber\">2.2</span> <span class=\"toctext\">Various Flavors of Random</span></a></li>
-</ul>
-</li>
-</ul>
-</div>
-
-<h2><span class=\"mw-headline\" id=\"Specific_Projection_Types\">Specific Projection Types</span></h2>
-<ul>
-<li> <a href=\"/emergent/index.php/TesselPrjnSpec\" title=\"TesselPrjnSpec\">TesselPrjnSpec</a> -- connects two layers using tesselations (repeated patterns) of connectivity
-</li>
-<li> <a href=\"/emergent/index.php/ScriptPrjnSpec\" title=\"ScriptPrjnSpec\">ScriptPrjnSpec</a>  -- allows you to define any arbitrary patterns of connectivity by writing <a href=\"/emergent/index.php/css\" title=\"css\" class=\"mw-redirect\">css</a> script code.
-</li>
-</ul>
-<h2><span class=\"mw-headline\" id=\"Projection_Spec_Choice_Guide\">Projection Spec Choice Guide</span></h2>
-<p>Choosing the right projection spec can be difficult given the large number of options.  This guide attempts to help..
-</p><p>See the <a href=\"/emergent/index.php/demo\" title=\"demo\" class=\"mw-redirect\">demo</a> project: <code>demo/network_misc/projection_sampler.proj</code> for networks that demonstrate the use of the most popular of the following projection specs -- allows for interactive exploration as well.
-</p><p>First, some things are easy, like full connectivity (<a href=\"/emergent/index.php/FullPrjnSpec\" title=\"FullPrjnSpec\">FullPrjnSpec</a>) and one-to-one connectivity (<a href=\"/emergent/index.php/OneToOnePrjnSpec\" title=\"OneToOnePrjnSpec\">OneToOnePrjnSpec</a>), and the variant of that for unit groups, which connects entire unit groups to each other (<a href=\"/emergent/index.php/GpOneToOnePrjnSpec\" title=\"GpOneToOnePrjnSpec\">GpOneToOnePrjnSpec</a>).
-</p><p>It is when you need a more complex pattern of partial connectivity that things get a bit more difficult.  The following sections consider options for various general categories of connectivity.
-</p><p>If everything else fails, the <a href=\"/emergent/index.php/ScriptPrjnSpec\" title=\"ScriptPrjnSpec\">ScriptPrjnSpec</a> allows you to do anything, but requires programming.  The <a href=\"/emergent/index.php/TesselPrjnSpec\" title=\"TesselPrjnSpec\">TesselPrjnSpec</a> is the most flexible non-programming prjn spec, but it takes some effort to figure out.
-</p>
-<h3><span class=\"mw-headline\" id=\"Receptive_Fields\">Receptive Fields</span></h3>
-<p>A major category of connectivity is when you want receiving units to have a \"receptive field\" (RF) window of connections from the sending layer -- i.e., a spatially contiguous subset of sending units, typically in the shape of a square or a circle.  The position of this window onto the sending layer moves with the position of the receiving unit, resulting in a <b>topographic</b> pattern of connectivity.  This seems to be the default connectivity pattern in the brain.
-</p><p>One major subdivision in these specs is whether they depend on having the receiving units organized into unit groups, where each such group shares a common pattern of connectivity.  This is analogous to the hypercolumn or minicolumn in the brain.
-</p><p>The following list is organized in rough order of complexity, with simplest first -- use the simplest one that fits your needs, and you may need to experiment a bit to find the right one.
-</p>
-<h4><span class=\"mw-headline\" id=\"No_Recv_Unit_Groups\">No Recv Unit Groups</span></h4>
-<ul>
-<li> <a href=\"/emergent/index.php/GaussRFPrjnSpec\" title=\"GaussRFPrjnSpec\">GaussRFPrjnSpec</a> -- this is perhaps the simplest RF prjn spec -- it creates a square RF window of a specified width, and that window moves a fixed amount for every increment in receiving unit position, allowing for overlapping and non-overlapping connections, and it (optionally) initializes the weights to a gaussian function of the distance from the center of the receptive field.  This is useful for self-projections too where you want to introduce some topography into the receiving layer, such that neighboring units tend to represent similar things (as in the Kohonen-style self-organizing map).
-</li>
-</ul>
-<ul>
-<li> <a href=\"/emergent/index.php/TesselPrjnSpec\" title=\"TesselPrjnSpec\">TesselPrjnSpec</a> -- allows more complex prjn patterns (ellipses, or any arbitrary shape), and does not use unit groups -- can also set gaussian weights
-</li>
-</ul>
-<h4><span class=\"mw-headline\" id=\"Recv_Unit_Groups\">Recv Unit Groups</span></h4>
-<ul>
-<li> <a href=\"/emergent/index.php/TiledNovlpPrjnSpec\" title=\"TiledNovlpPrjnSpec\">TiledNovlpPrjnSpec</a> -- this is a fully automatic projection (no parameters) that connects unit groups with <b>non-overlapping</b> RF windows.
-</li>
-</ul>
-<ul>
-<li> <a href=\"/emergent/index.php/TiledRFPrjnSpec\" title=\"TiledRFPrjnSpec\">TiledRFPrjnSpec</a> -- a complex but very powerful spec for unit-group-based overlapping windows -- it automatically uses the relative sizes of the layers to compute the receptive field window sizes, etc, and can optionally apply to subsets of unit groups.
-</li>
-</ul>
-<ul>
-<li> <a href=\"/emergent/index.php/GpRndTesselPrjnSpec\" title=\"GpRndTesselPrjnSpec\">GpRndTesselPrjnSpec</a> -- does the same thing as TesselPrjnSpec but instead of operating on the level of individual units, it <b>operates on unit groups in both sending and receiving layers</b>, and then allows partial random connectivity (or not -- can also do full) for those connected groups -- compare to <a href=\"/emergent/index.php/RndGpOneToOnePrjnSpec\" title=\"RndGpOneToOnePrjnSpec\">RndGpOneToOnePrjnSpec</a>)
-</li>
-</ul>
-<h3><span class=\"mw-headline\" id=\"Various_Flavors_of_Random\">Various Flavors of Random</span></h3>
-<ul>
-<li> <a href=\"/emergent/index.php/UniformRndPrjnSpec\" title=\"UniformRndPrjnSpec\">UniformRndPrjnSpec</a> -- no spatial constraints at all -- just randomly connects units with given probability.  
-</li>
-</ul>
-<ul>
-<li> <a href=\"/emergent/index.php/PolarRndPrjnSpec\" title=\"PolarRndPrjnSpec\">PolarRndPrjnSpec</a> -- introduces a polar coordinate system of distance and angle away from a given sending unit location, and probability of connection is function of these coordinates -- creates a random topographic connection (see also Receptive Fields section above).
-</li>
-</ul>
-<ul>
-<li> <a href=\"/emergent/index.php/RndGpOneToOnePrjnSpec\" title=\"RndGpOneToOnePrjnSpec\">RndGpOneToOnePrjnSpec</a> -- does one-to-one group-wise connectivity between sending and receiving layer (<b>both</b> must have unit groups) and then has partial random connectivity within those group-wise connections.
-</li>
-</ul>
-<ul>
-<li> <a href=\"/emergent/index.php/GpRndTesselPrjnSpec\" title=\"GpRndTesselPrjnSpec\">GpRndTesselPrjnSpec</a> -- does the same thing as TesselPrjnSpec but instead of operating on the level of individual units, it <b>operates on unit groups in both sending and receiving layers</b>, and then allows partial random connectivity (or not -- can also do full) for those connected groups -- compare to <a href=\"/emergent/index.php/RndGpOneToOnePrjnSpec\" title=\"RndGpOneToOnePrjnSpec\">RndGpOneToOnePrjnSpec</a>)
-</li>
-</ul>
-
 <!-- 
 NewPP limit report
-CPU time usage: 0.038 seconds
-Real time usage: 0.043 seconds
-Preprocessor visited node count: 42/1000000
-Preprocessor generated node count: 84/1000000
-Post?expand include size: 226/2097152 bytes
-Template argument size: 24/2097152 bytes
-Highest expansion depth: 3/40
+Cached time: 20180107092139
+Cache expiry: 86400
+Dynamic content: false
+CPU time usage: 0.084 seconds
+Real time usage: 0.090 seconds
+Preprocessor visited node count: 78/1000000
+Preprocessor generated node count: 485/1000000
+Post?expand include size: 1700/2097152 bytes
+Template argument size: 705/2097152 bytes
+Highest expansion depth: 5/40
 Expensive parser function count: 0/100
 -->
 
-<!-- Saved in parser cache with key pdpwiki:pcache:idhash:301-0!*!0!!en!*!* and timestamp 20150907151954
+<!-- 
+Transclusion expansion time report (%,ms,calls,template)
+100.00%   62.429      1 - -total
+100.00%   62.429      1 - Template:PublishedProject
+  4.73%    2.950      1 - Template:emerlink
+  4.44%    2.773      1 - Template:cite
+-->
+
+<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2870-0!*!0!*!*!0!* and timestamp 20180107092139 and revision id 12084
  -->
-</div>								<div class=\"printfooter\">
-				Retrieved from \"<a href=\"https://grey.colorado.edu/emergent/index.php?title=ProjectionSpec&amp;oldid=4508\">https://grey.colorado.edu/emergent/index.php?title=ProjectionSpec&amp;oldid=4508</a>\"				</div>
-												<div id=\"catlinks\" class=\"catlinks catlinks-allhidden\"></div>												<div class=\"visualClear\"></div>
+</div>					<div class=\"printfooter\">
+						Retrieved from \"<a dir=\"ltr\" href=\"https://grey.colorado.edu/emergent/index.php?title=demos/projection_sampler&amp;oldid=12084\">https://grey.colorado.edu/emergent/index.php?title=demos/projection_sampler&amp;oldid=12084</a>\"					</div>
+				<div id=\"catlinks\" class=\"catlinks\"><div id=\"mw-normal-catlinks\" class=\"mw-normal-catlinks\"><a href=\"/emergent/index.php/Special:Categories\" title=\"Special:Categories\">Category</a>: <ul><li><a href=\"/emergent/index.php/Category:PublishedProject\" title=\"Category:PublishedProject\">PublishedProject</a></li></ul></div></div>				<div class=\"visualClear\"></div>
 							</div>
 		</div>
 		<div id=\"mw-navigation\">
 			<h2>Navigation menu</h2>
+
 			<div id=\"mw-head\">
-				<div id=\"p-personal\" role=\"navigation\" class=\"\" aria-labelledby=\"p-personal-label\">
-	<h3 id=\"p-personal-label\">Personal tools</h3>
-	<ul>
-<li id=\"pt-createaccount\"><a href=\"/emergent/index.php?title=Special:UserLogin&amp;returnto=ProjectionSpec&amp;type=signup\">Create account</a></li><li id=\"pt-login\"><a href=\"/emergent/index.php?title=Special:UserLogin&amp;returnto=ProjectionSpec\" title=\"You are encouraged to log in; however, it is not mandatory [o]\" accesskey=\"o\">Log in</a></li>	</ul>
-</div>
-				<div id=\"left-navigation\">
-					<div id=\"p-namespaces\" role=\"navigation\" class=\"vectorTabs\" aria-labelledby=\"p-namespaces-label\">
-	<h3 id=\"p-namespaces-label\">Namespaces</h3>
-	<ul>
-					<li id=\"ca-nstab-main\" class=\"selected\"><span><a href=\"/emergent/index.php/ProjectionSpec\" title=\"View the content page [c]\" accesskey=\"c\">Page</a></span></li>
-					<li id=\"ca-talk\" class=\"new\"><span><a href=\"/emergent/index.php?title=Talk:ProjectionSpec&amp;action=edit&amp;redlink=1\" title=\"Discussion about the content page [t]\" accesskey=\"t\">Discussion</a></span></li>
-			</ul>
-</div>
-<div id=\"p-variants\" role=\"navigation\" class=\"vectorMenu emptyPortlet\" aria-labelledby=\"p-variants-label\">
-	<h3 id=\"mw-vector-current-variant\">
-		</h3>
-	<h3 id=\"p-variants-label\" tabindex=\"0\"><span>Variants</span><a href=\"#\" tabindex=\"-1\"></a></h3>
-	<div class=\"menu\">
-		<ul>
-					</ul>
-	</div>
-</div>
-				</div>
+									<div id=\"p-personal\" role=\"navigation\" class=\"\" aria-labelledby=\"p-personal-label\">
+						<h3 id=\"p-personal-label\">Personal tools</h3>
+						<ul>
+							<li id=\"pt-userpage\"><a href=\"/emergent/index.php/User:Oreilly\" dir=\"auto\" title=\"Your user page [.]\" accesskey=\".\">Oreilly</a></li><li id=\"pt-mytalk\"><a href=\"/emergent/index.php/User_talk:Oreilly\" class=\"new\" title=\"Your talk page [n]\" accesskey=\"n\">Talk</a></li><li id=\"pt-preferences\"><a href=\"/emergent/index.php/Special:Preferences\" title=\"Your preferences\">Preferences</a></li><li id=\"pt-watchlist\"><a href=\"/emergent/index.php/Special:Watchlist\" title=\"A list of pages you are monitoring for changes [l]\" accesskey=\"l\">Watchlist</a></li><li id=\"pt-mycontris\"><a href=\"/emergent/index.php/Special:Contributions/Oreilly\" title=\"A list of your contributions [y]\" accesskey=\"y\">Contributions</a></li><li id=\"pt-logout\"><a href=\"/emergent/index.php?title=Special:UserLogout&amp;returnto=demos%2Fprojection+sampler\" title=\"Log out\">Log out</a></li>						</ul>
+					</div>
+									<div id=\"left-navigation\">
+										<div id=\"p-namespaces\" role=\"navigation\" class=\"vectorTabs\" aria-labelledby=\"p-namespaces-label\">
+						<h3 id=\"p-namespaces-label\">Namespaces</h3>
+						<ul>
+															<li id=\"ca-nstab-main\" class=\"selected\"><span><a href=\"/emergent/index.php/demos/projection_sampler\" title=\"View the content page [c]\" accesskey=\"c\">Page</a></span></li>
+															<li id=\"ca-talk\" class=\"new\"><span><a href=\"/emergent/index.php?title=Talk:demos/projection_sampler&amp;action=edit&amp;redlink=1\" title=\"Discussion about the content page [t]\" accesskey=\"t\" rel=\"discussion\">Discussion</a></span></li>
+													</ul>
+					</div>
+										<div id=\"p-variants\" role=\"navigation\" class=\"vectorMenu emptyPortlet\" aria-labelledby=\"p-variants-label\">
+												<h3 id=\"p-variants-label\">
+							<span>Variants</span><a href=\"#\"></a>
+						</h3>
+
+						<div class=\"menu\">
+							<ul>
+															</ul>
+						</div>
+					</div>
+									</div>
 				<div id=\"right-navigation\">
-					<div id=\"p-views\" role=\"navigation\" class=\"vectorTabs\" aria-labelledby=\"p-views-label\">
-	<h3 id=\"p-views-label\">Views</h3>
-	<ul>
-					<li id=\"ca-view\" class=\"selected\"><span><a href=\"/emergent/index.php/ProjectionSpec\">Read</a></span></li>
-					<li id=\"ca-viewsource\"><span><a href=\"/emergent/index.php?title=ProjectionSpec&amp;action=edit\" title=\"This page is protected.
-You can view its source [e]\" accesskey=\"e\">View source</a></span></li>
-					<li id=\"ca-history\" class=\"collapsible\"><span><a href=\"/emergent/index.php?title=ProjectionSpec&amp;action=history\" title=\"Past revisions of this page [h]\" accesskey=\"h\">View history</a></span></li>
-			</ul>
-</div>
-<div id=\"p-cactions\" role=\"navigation\" class=\"vectorMenu emptyPortlet\" aria-labelledby=\"p-cactions-label\">
-	<h3 id=\"p-cactions-label\" tabindex=\"0\"><span>Actions</span><a href=\"#\" tabindex=\"-1\"></a></h3>
-	<div class=\"menu\">
-		<ul>
-					</ul>
-	</div>
-</div>
-<div id=\"p-search\" role=\"search\">
-	<h3><label for=\"searchInput\">Search</label></h3>
-	<form action=\"/emergent/index.php\" id=\"searchform\">
-				<div id=\"simpleSearch\">
-						<input name=\"search\" placeholder=\"Search\" title=\"Search emergent [f]\" accesskey=\"f\" id=\"searchInput\">						<button type=\"submit\" name=\"button\" title=\"Search the pages for this text\" id=\"searchButton\"><img src=\"/emergent/skins/vector/images/search-ltr.png?303\" alt=\"Search\" width=\"12\" height=\"13\"></button>								<input type=\"hidden\" name=\"title\" value=\"Special:Search\">
-		</div>
-	</form>
-</div>
-				</div>
+										<div id=\"p-views\" role=\"navigation\" class=\"vectorTabs\" aria-labelledby=\"p-views-label\">
+						<h3 id=\"p-views-label\">Views</h3>
+						<ul>
+															<li id=\"ca-view\" class=\"selected\"><span><a href=\"/emergent/index.php/demos/projection_sampler\">Read</a></span></li>
+															<li id=\"ca-edit\"><span><a href=\"/emergent/index.php?title=demos/projection_sampler&amp;action=edit\" title=\"Edit this page [e]\" accesskey=\"e\">Edit</a></span></li>
+															<li id=\"ca-history\" class=\"collapsible\"><span><a href=\"/emergent/index.php?title=demos/projection_sampler&amp;action=history\" title=\"Past revisions of this page [h]\" accesskey=\"h\">View history</a></span></li>
+															<li id=\"ca-unwatch\" class=\"icon\"><span><a href=\"/emergent/index.php?title=demos/projection_sampler&amp;action=unwatch&amp;token=d61537a0ac2353cc6f8ed08065494b645a51e6a3%2B%5C\" title=\"Remove this page from your watchlist [w]\" accesskey=\"w\">Unwatch</a></span></li>
+													</ul>
+					</div>
+										<div id=\"p-cactions\" role=\"navigation\" class=\"vectorMenu\" aria-labelledby=\"p-cactions-label\">
+						<h3 id=\"p-cactions-label\"><span>More</span><a href=\"#\"></a></h3>
+
+						<div class=\"menu\">
+							<ul>
+																	<li id=\"ca-delete\">
+										<a href=\"/emergent/index.php?title=demos/projection_sampler&amp;action=delete\" title=\"Delete this page [d]\" accesskey=\"d\">Delete</a>
+									</li>
+																	<li id=\"ca-move\">
+										<a href=\"/emergent/index.php/Special:MovePage/demos/projection_sampler\" title=\"Move this page [m]\" accesskey=\"m\">Move</a>
+									</li>
+																	<li id=\"ca-protect\">
+										<a href=\"/emergent/index.php?title=demos/projection_sampler&amp;action=protect\" title=\"Protect this page [=]\" accesskey=\"=\">Protect</a>
+									</li>
+																	<li id=\"ca-purge\">
+										<a href=\"/emergent/index.php?title=demos/projection_sampler&amp;action=purge\">Refresh</a>
+									</li>
+															</ul>
+						</div>
+					</div>
+										<div id=\"p-search\" role=\"search\">
+						<h3>
+							<label for=\"searchInput\">Search</label>
+						</h3>
+
+						<form action=\"/emergent/index.php\" id=\"searchform\">
+							<div id=\"simpleSearch\">
+							<input type=\"search\" name=\"search\" placeholder=\"Search\" title=\"Search emergent [f]\" accesskey=\"f\" id=\"searchInput\"><input type=\"hidden\" value=\"Special:Search\" name=\"title\"><input type=\"submit\" name=\"fulltext\" value=\"Search\" title=\"Search the pages for this text\" id=\"mw-searchButton\" class=\"searchButton mw-fallbackSearchButton\"><input type=\"submit\" name=\"go\" value=\"Go\" title=\"Go to a page with this exact name if it exists\" id=\"searchButton\" class=\"searchButton\">							</div>
+						</form>
+					</div>
+									</div>
 			</div>
 			<div id=\"mw-panel\">
-					<div id=\"p-logo\" role=\"banner\"><a style=\"background-image: url(/mediawiki/sites//emergent/logo.png);\" href=\"/emergent/index.php/Main_Page\" title=\"Visit the main page\"></a></div>
-				<div class=\"portal\" role=\"navigation\" id=\"p-navigation\" aria-labelledby=\"p-navigation-label\">
-	<h3 id=\"p-navigation-label\">Navigation</h3>
-	<div class=\"body\">
-		<ul>
-			<li id=\"n-mainpage-description\"><a href=\"/emergent/index.php/Main_Page\" title=\"Visit the main page [z]\" accesskey=\"z\">Main page</a></li>
-			<li id=\"n-recentchanges\"><a href=\"/emergent/index.php/Special:RecentChanges\" title=\"A list of recent changes in the wiki [r]\" accesskey=\"r\">Recent changes</a></li>
-			<li id=\"n-Documentation\"><a href=\"/emergent/index.php/User_hub\">Documentation</a></li>
-			<li id=\"n-Submit-a-bug\"><a href=\"/emergent/index.php/How_to_submit_a_bug_report\">Submit a bug</a></li>
-			<li id=\"n-Bug-tracker\"><a href=\"//grey.colorado.edu/cgi-bin/bugzilla/index.cgi\" rel=\"nofollow\">Bug tracker</a></li>
-			<li id=\"n-Mailing-list\"><a href=\"//grey.colorado.edu/cgi-bin/mailman/listinfo/emergent-users\" rel=\"nofollow\">Mailing list</a></li>
-		</ul>
-	</div>
-</div>
-<div class=\"portal\" role=\"navigation\" id=\"p-tb\" aria-labelledby=\"p-tb-label\">
-	<h3 id=\"p-tb-label\">Tools</h3>
-	<div class=\"body\">
-		<ul>
-			<li id=\"t-whatlinkshere\"><a href=\"/emergent/index.php/Special:WhatLinksHere/ProjectionSpec\" title=\"A list of all wiki pages that link here [j]\" accesskey=\"j\">What links here</a></li>
-			<li id=\"t-recentchangeslinked\"><a href=\"/emergent/index.php/Special:RecentChangesLinked/ProjectionSpec\" title=\"Recent changes in pages linked from this page [k]\" accesskey=\"k\">Related changes</a></li>
-			<li id=\"t-specialpages\"><a href=\"/emergent/index.php/Special:SpecialPages\" title=\"A list of all special pages [q]\" accesskey=\"q\">Special pages</a></li>
-			<li id=\"t-permalink\"><a href=\"/emergent/index.php?title=ProjectionSpec&amp;oldid=4508\" title=\"Permanent link to this revision of the page\">Permanent link</a></li>
-			<li id=\"t-info\"><a href=\"/emergent/index.php?title=ProjectionSpec&amp;action=info\">Page information</a></li>
-			<li id=\"t-smwbrowselink\"><a href=\"/emergent/index.php/Special:Browse/ProjectionSpec\" rel=\"smw-browse\">Browse properties</a></li>
-		</ul>
-	</div>
-</div>
-<div class=\"portal\" role=\"navigation\" id=\"p-coll-print_export\" aria-labelledby=\"p-coll-print_export-label\">
-	<h3 id=\"p-coll-print_export-label\">Print/export</h3>
-	<div class=\"body\">
-		<ul>
-			<li id=\"coll-create_a_book\"><a href=\"/emergent/index.php?title=Special:Book&amp;bookcmd=book_creator&amp;referer=ProjectionSpec\">Create a book</a></li>
-			<li id=\"coll-download-as-rl\"><a href=\"/emergent/index.php?title=Special:Book&amp;bookcmd=render_article&amp;arttitle=ProjectionSpec&amp;oldid=4508&amp;writer=rl\">Download as PDF</a></li>
-			<li id=\"t-print\"><a href=\"/emergent/index.php?title=ProjectionSpec&amp;printable=yes\" title=\"Printable version of this page [p]\" accesskey=\"p\">Printable version</a></li>
-		</ul>
-	</div>
-</div>
-			</div>
+				<div id=\"p-logo\" role=\"banner\"><a class=\"mw-wiki-logo\" href=\"/emergent/index.php/Main_Page\" title=\"Visit the main page\"></a></div>
+						<div class=\"portal\" role=\"navigation\" id=\"p-navigation\" aria-labelledby=\"p-navigation-label\">
+			<h3 id=\"p-navigation-label\">Navigation</h3>
+
+			<div class=\"body\">
+									<ul>
+						<li id=\"n-mainpage-description\"><a href=\"/emergent/index.php/Main_Page\" title=\"Visit the main page [z]\" accesskey=\"z\">Main page</a></li><li id=\"n-recentchanges\"><a href=\"/emergent/index.php/Special:RecentChanges\" title=\"A list of recent changes in the wiki [r]\" accesskey=\"r\">Recent changes</a></li><li id=\"n-Documentation\"><a href=\"/emergent/index.php/User_hub\">Documentation</a></li><li id=\"n-Submit-a-bug\"><a href=\"/emergent/index.php/How_to_submit_a_bug_report\">Submit a bug</a></li><li id=\"n-Bug-tracker\"><a href=\"//grey.colorado.edu/cgi-bin/bugzilla/index.cgi\" rel=\"nofollow\">Bug tracker</a></li><li id=\"n-Mailing-list\"><a href=\"//grey.colorado.edu/cgi-bin/mailman/listinfo/emergent-users\" rel=\"nofollow\">Mailing list</a></li>					</ul>
+							</div>
+		</div>
+			<div class=\"portal\" role=\"navigation\" id=\"p-tb\" aria-labelledby=\"p-tb-label\">
+			<h3 id=\"p-tb-label\">Tools</h3>
+
+			<div class=\"body\">
+									<ul>
+						<li id=\"t-whatlinkshere\"><a href=\"/emergent/index.php/Special:WhatLinksHere/demos/projection_sampler\" title=\"A list of all wiki pages that link here [j]\" accesskey=\"j\">What links here</a></li><li id=\"t-recentchangeslinked\"><a href=\"/emergent/index.php/Special:RecentChangesLinked/demos/projection_sampler\" title=\"Recent changes in pages linked from this page [k]\" accesskey=\"k\">Related changes</a></li><li id=\"t-upload\"><a href=\"/emergent/index.php/Special:Upload\" title=\"Upload files [u]\" accesskey=\"u\">Upload file</a></li><li id=\"t-specialpages\"><a href=\"/emergent/index.php/Special:SpecialPages\" title=\"A list of all special pages [q]\" accesskey=\"q\">Special pages</a></li><li id=\"t-permalink\"><a href=\"/emergent/index.php?title=demos/projection_sampler&amp;oldid=12084\" title=\"Permanent link to this revision of the page\">Permanent link</a></li><li id=\"t-info\"><a href=\"/emergent/index.php?title=demos/projection_sampler&amp;action=info\" title=\"More information about this page\">Page information</a></li><li id=\"t-smwbrowselink\"><a href=\"/emergent/index.php/Special:Browse/demos/projection_sampler\" rel=\"smw-browse\">Browse properties</a></li>					</ul>
+							</div>
+		</div>
+			<div class=\"portal\" role=\"navigation\" id=\"p-coll-print_export\" aria-labelledby=\"p-coll-print_export-label\">
+			<h3 id=\"p-coll-print_export-label\">Print/export</h3>
+
+			<div class=\"body\">
+									<ul>
+						<li id=\"coll-create_a_book\"><a href=\"/emergent/index.php?title=Special:Book&amp;bookcmd=book_creator&amp;referer=demos%2Fprojection+sampler\">Create a book</a></li><li id=\"coll-download-as-rl\"><a href=\"/emergent/index.php?title=Special:Book&amp;bookcmd=render_article&amp;arttitle=demos%2Fprojection+sampler&amp;oldid=12084&amp;writer=rl\">Download as PDF</a></li><li id=\"t-print\"><a href=\"/emergent/index.php?title=demos/projection_sampler&amp;printable=yes\" title=\"Printable version of this page [p]\" accesskey=\"p\">Printable version</a></li>					</ul>
+							</div>
+		</div>
+				</div>
 		</div>
 		<div id=\"footer\" role=\"contentinfo\">
 							<ul id=\"footer-info\">
-											<li id=\"footer-info-lastmod\"> This page was last modified on 13 August 2009, at 11:09.</li>
-											<li id=\"footer-info-viewcount\">This page has been accessed 2,113 times.</li>
+											<li id=\"footer-info-lastmod\"> This page was last modified on 30 August 2016, at 03:18.</li>
 									</ul>
 							<ul id=\"footer-places\">
 											<li id=\"footer-places-about\"><a href=\"/emergent/index.php/emergent:About\" title=\"emergent:About\">About emergent</a></li>
 									</ul>
 										<ul id=\"footer-icons\" class=\"noprint\">
-					<li id=\"footer-poweredbyico\">
-						<a href=\"//www.mediawiki.org/\"><img src=\"/emergent/skins/common/images/poweredby_mediawiki_88x31.png\" alt=\"Powered by MediaWiki\" width=\"88\" height=\"31\"></a>
-						<a href=\"https://www.semantic-mediawiki.org/wiki/Semantic_MediaWiki\"><img src=\"/emergent/extensions/SemanticMediaWiki/resources/images/smw_button.png\" alt=\"Powered by Semantic MediaWiki\" width=\"88\" height=\"31\"></a>
-					</li>
-				</ul>
+											<li id=\"footer-poweredbyico\">
+							<a href=\"//www.mediawiki.org/\"><img src=\"/emergent/resources/assets/poweredby_mediawiki_88x31.png\" alt=\"Powered by MediaWiki\" srcset=\"/emergent/resources/assets/poweredby_mediawiki_132x47.png 1.5x, /emergent/resources/assets/poweredby_mediawiki_176x62.png 2x\" width=\"88\" height=\"31\"></a><a href=\"https://www.semantic-mediawiki.org/wiki/Semantic_MediaWiki\"><img src=\"/emergent/extensions/SemanticMediaWiki/resources/images/smw_button.png\" alt=\"Powered by Semantic MediaWiki\" width=\"88\" height=\"31\"></a>						</li>
+									</ul>
 						<div style=\"clear:both\"></div>
 		</div>
-		<script>/*<![CDATA[*/window.jQuery && jQuery.ready();/*]]>*/</script><script>if(window.mw){
-mw.loader.state({\"site\":\"loading\",\"user\":\"ready\",\"user.groups\":\"ready\"});
-}</script>
-<script>if(window.mw){
-mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawiki.hidpi\",\"mediawiki.page.ready\",\"mediawiki.searchSuggest\",\"ext.headertabs\",\"ext.Drafts\",\"ext.cite\",\"skins.vector.collapsibleNav\"],null,true);
-}</script>
-<script src=\"https://grey.colorado.edu/emergent/load.php?debug=false&amp;lang=en&amp;modules=site&amp;only=scripts&amp;skin=vector&amp;*\"></script>
-<!-- Served in 0.117 secs. -->
+		<script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
+mw.loader.state({\"user\":\"ready\",\"user.groups\":\"ready\"});mw.loader.load([\"mediawiki.action.view.postEdit\",\"site\",\"mediawiki.user\",\"mediawiki.hidpi\",\"mediawiki.page.ready\",\"mediawiki.searchSuggest\",\"mediawiki.page.watch.ajax\",\"ext.headertabs\"]);
+} );</script><script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
+mw.config.set({\"wgBackendResponseTime\":282});
+} );</script>
 	
 
 </body></html>";
@@ -3182,7 +3179,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
  save_as_only=0;
  auto_name=1;
  last_change_desc="Project updated on wiki: emergent changes: doc link";
- tree_state{ .;.docs;.wizards;.ctrl_panels;.data;.data.gp[0];.data.gp[1];.data.gp[2];.programs;.viewers[0];.viewers[0].frames[2];.networks;.networks[0];.networks[0].specs;.networks[0].layers;.networks[1];.networks[1].specs;.networks[1].layers;.networks[2];.networks[2].specs;.networks[2].specs[9];.networks[2].specs[9].children[0];.networks[2].specs[10];.networks[2].layers;.networks[2].layers[1];.networks[2].layers[1].projections;.networks[2].layers[1].projections[2];.networks[2].layers[5];.networks[2].layers[5].projections;.networks[3];.networks[3].spec_tables;.networks[3].specs;.networks[3].param_seqs;.networks[3].layers;.networks[3].layers[0];.networks[3].layers[0].projections;.networks[3].layers[1];.networks[3].layers[1].projections;.networks[3].weights;.networks[4];.networks[4].specs;.networks[4].specs[8];.networks[4].layers;.networks[4].layers[0];.networks[4].layers[0].projections;.networks[4].layers[1];.networks[4].layers[1].projections;.networks[4].layers[2];.networks[4].layers[2].projections;.networks[4].layers[3];.networks[4].layers[3].projections;.networks[5];.networks[5].specs;.networks[5].layers;.networks[6];.networks[6].specs;.networks[6].layers;.networks[6].layers[1];.networks[6].layers[1].projections;.networks[6].layers[2];.networks[6].layers[2].projections;.networks[6].layers[3];.networks[6].layers[3].projections;.networks[6].weights; };
+ tree_state{ .;.docs;.wizards;.ctrl_panels;.data;.data.gp[0];.data.gp[1];.data.gp[2];.programs;.networks;.networks[0];.networks[0].specs;.networks[0].layers;.networks[1];.networks[1].specs;.networks[1].layers;.networks[2];.networks[2].specs;.networks[2].specs[9];.networks[2].specs[9].children[0];.networks[2].specs[10];.networks[2].layers;.networks[2].layers[1];.networks[2].layers[1].projections;.networks[2].layers[1].projections[2];.networks[2].layers[5];.networks[2].layers[5].projections;.networks[3];.networks[3].spec_tables;.networks[3].specs;.networks[3].param_seqs;.networks[3].layers;.networks[3].layers[0];.networks[3].layers[0].projections;.networks[3].layers[1];.networks[3].layers[1].projections;.networks[3].weights;.networks[4];.networks[4].specs;.networks[4].specs[8];.networks[4].layers;.networks[4].layers[0];.networks[4].layers[0].projections;.networks[4].layers[1];.networks[4].layers[1].projections;.networks[4].layers[2];.networks[4].layers[2].projections;.networks[4].layers[3];.networks[4].layers[3].projections;.networks[5];.networks[5].specs;.networks[5].layers;.networks[6];.networks[6].specs;.networks[6].layers;.networks[6].layers[1];.networks[6].layers[1].projections;.networks[6].layers[2];.networks[6].layers[2].projections;.networks[6].layers[3];.networks[6].layers[3].projections;.networks[6].weights; };
  networks {
   name="networks";
   el_typ=LeabraNetwork;
@@ -3268,11 +3265,14 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: lrn_thr=0.01: s_mult=1: d_rev_ratio=-9: };
      wt_sig {gain=6: off=1.25: soft_bound=1: };
      momentum {on=0: dwavg_tau=1000: norm_min=0.001: m_tau=20: lrate_comp=0.01: dwavg_dt=0.001: dwavg_dt_c=0.999: m_dt=0.05: m_dt_c=0.95: };
-     wt_bal {on=0: avg_thr=0.5: hi_thr=0.6: hi_gain=3: lo_thr=0.6: lo_gain=6: act_thr=0.25: act_gain=0: no_targ=1: };
+     wt_bal {on=0: avg_thr=0.25: hi_thr=0.4: hi_gain=4: lo_thr=0.4: lo_gain=6: act_thr=0.25: act_gain=0: no_targ=1: };
      adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
      slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
      deep {on=0: bg_lrate=1: fg_lrate=0: };
      margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_lrn=0.5: };
+     dwt_noise=0;
+     dwt_noise_p0=0.7;
+     noise {name="noise": type=GAUSSIAN: mean=0: var=0.004999999888241291: par=1: };
      use_lrate_sched=1;
      lrate_sched {
       name="lrate_sched";
@@ -3409,11 +3409,14 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: lrn_thr=0.01: s_mult=1: d_rev_ratio=-9: };
      wt_sig {gain=6: off=1.25: soft_bound=1: };
      momentum {on=0: dwavg_tau=1000: norm_min=0.001: m_tau=20: lrate_comp=0.01: dwavg_dt=0.001: dwavg_dt_c=0.999: m_dt=0.05: m_dt_c=0.95: };
-     wt_bal {on=0: avg_thr=0.5: hi_thr=0.6: hi_gain=3: lo_thr=0.6: lo_gain=6: act_thr=0.25: act_gain=0: no_targ=1: };
+     wt_bal {on=0: avg_thr=0.25: hi_thr=0.4: hi_gain=4: lo_thr=0.4: lo_gain=6: act_thr=0.25: act_gain=0: no_targ=1: };
      adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
      slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
      deep {on=0: bg_lrate=1: fg_lrate=0: };
      margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_lrn=0.5: };
+     dwt_noise=0;
+     dwt_noise_p0=0.7;
+     noise {name="noise": type=GAUSSIAN: mean=0: var=0.004999999888241291: par=1: };
      use_lrate_sched=1;
      lrate_sched {
       name="lrate_sched";
@@ -3764,7 +3767,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
    max_disp_size2d {x=22: y=24: };
    times {quarter=25: deep_cyc=5: time_inc=0.001: wt_bal_int=10: minus=75: plus=25: total_cycles=100: thal_gate_cycle=-2: };
    lstats {trg_max_act_crit=0.5: off_errs=1: on_errs=1: agg_unlearnable=0: wt_bal=0: };
-   net_misc {spike=0: deep=1: bias_learn=0: trial_decay=0: diff_scale_p=0: diff_scale_q1=0: wt_bal=0: lay_gp_inhib=0: inhib_cons=0: };
+   net_misc {spike=0: deep=0: bias_learn=0: trial_decay=0: diff_scale_p=0: diff_scale_q1=0: wt_bal=0: lay_gp_inhib=0: inhib_cons=0: };
    deep {on=0: ctxt=0: raw_net=0: mod_net=0: raw_qtr=0: };
    rel_netin {on=1: trl_skip=10: epc_skip=10: };
   };
@@ -3849,11 +3852,14 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: lrn_thr=0.01: s_mult=1: d_rev_ratio=-9: };
      wt_sig {gain=6: off=1.25: soft_bound=1: };
      momentum {on=0: dwavg_tau=1000: norm_min=0.001: m_tau=20: lrate_comp=0.01: dwavg_dt=0.001: dwavg_dt_c=0.999: m_dt=0.05: m_dt_c=0.95: };
-     wt_bal {on=0: avg_thr=0.5: hi_thr=0.6: hi_gain=3: lo_thr=0.6: lo_gain=6: act_thr=0.25: act_gain=0: no_targ=1: };
+     wt_bal {on=0: avg_thr=0.25: hi_thr=0.4: hi_gain=4: lo_thr=0.4: lo_gain=6: act_thr=0.25: act_gain=0: no_targ=1: };
      adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
      slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
      deep {on=0: bg_lrate=1: fg_lrate=0: };
      margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_lrn=0.5: };
+     dwt_noise=0;
+     dwt_noise_p0=0.7;
+     noise {name="noise": type=GAUSSIAN: mean=0: var=0.004999999888241291: par=1: };
      use_lrate_sched=1;
      lrate_sched {
       name="lrate_sched";
@@ -4326,11 +4332,14 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: lrn_thr=0.01: s_mult=1: d_rev_ratio=-9: };
      wt_sig {gain=6: off=1.25: soft_bound=1: };
      momentum {on=0: dwavg_tau=1000: norm_min=0.001: m_tau=20: lrate_comp=0.01: dwavg_dt=0.001: dwavg_dt_c=0.999: m_dt=0.05: m_dt_c=0.95: };
-     wt_bal {on=0: avg_thr=0.5: hi_thr=0.6: hi_gain=3: lo_thr=0.6: lo_gain=6: act_thr=0.25: act_gain=0: no_targ=1: };
+     wt_bal {on=0: avg_thr=0.25: hi_thr=0.4: hi_gain=4: lo_thr=0.4: lo_gain=6: act_thr=0.25: act_gain=0: no_targ=1: };
      adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
      slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
      deep {on=0: bg_lrate=1: fg_lrate=0: };
      margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_lrn=0.5: };
+     dwt_noise=0;
+     dwt_noise_p0=0.7;
+     noise {name="noise": type=GAUSSIAN: mean=0: var=0.004999999888241291: par=1: };
      use_lrate_sched=1;
      lrate_sched {
       name="lrate_sched";
@@ -4766,11 +4775,14 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: lrn_thr=0.01: s_mult=1: d_rev_ratio=-9: };
      wt_sig {gain=6: off=1.25: soft_bound=1: };
      momentum {on=0: dwavg_tau=1000: norm_min=0.001: m_tau=20: lrate_comp=0.01: dwavg_dt=0.001: dwavg_dt_c=0.999: m_dt=0.05: m_dt_c=0.95: };
-     wt_bal {on=0: avg_thr=0.5: hi_thr=0.6: hi_gain=3: lo_thr=0.6: lo_gain=6: act_thr=0.25: act_gain=0: no_targ=1: };
+     wt_bal {on=0: avg_thr=0.25: hi_thr=0.4: hi_gain=4: lo_thr=0.4: lo_gain=6: act_thr=0.25: act_gain=0: no_targ=1: };
      adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
      slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
      deep {on=0: bg_lrate=1: fg_lrate=0: };
      margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_lrn=0.5: };
+     dwt_noise=0;
+     dwt_noise_p0=0.7;
+     noise {name="noise": type=GAUSSIAN: mean=0: var=0.004999999888241291: par=1: };
      use_lrate_sched=1;
      lrate_sched {
       name="lrate_sched";
@@ -4832,11 +4844,14 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: lrn_thr=0.01: s_mult=1: d_rev_ratio=-9: };
      wt_sig {gain=6: off=1.25: soft_bound=1: };
      momentum {on=0: dwavg_tau=1000: norm_min=0.001: m_tau=20: lrate_comp=0.01: dwavg_dt=0.001: dwavg_dt_c=0.999: m_dt=0.05: m_dt_c=0.95: };
-     wt_bal {on=0: avg_thr=0.5: hi_thr=0.6: hi_gain=3: lo_thr=0.6: lo_gain=6: act_thr=0.25: act_gain=0: no_targ=1: };
+     wt_bal {on=0: avg_thr=0.25: hi_thr=0.4: hi_gain=4: lo_thr=0.4: lo_gain=6: act_thr=0.25: act_gain=0: no_targ=1: };
      adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
      slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
      deep {on=0: bg_lrate=1: fg_lrate=0: };
      margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_lrn=0.5: };
+     dwt_noise=0;
+     dwt_noise_p0=0.7;
+     noise {name="noise": type=GAUSSIAN: mean=0: var=0.004999999888241291: par=1: };
      use_lrate_sched=1;
      lrate_sched {
       name="lrate_sched";
@@ -5588,7 +5603,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
    max_disp_size2d {x=52: y=62: };
    times {quarter=25: deep_cyc=5: time_inc=0.001: wt_bal_int=10: minus=75: plus=25: total_cycles=100: thal_gate_cycle=-2: };
    lstats {trg_max_act_crit=0.5: off_errs=1: on_errs=1: agg_unlearnable=0: wt_bal=0: };
-   net_misc {spike=0: deep=0: bias_learn=0: trial_decay=0: diff_scale_p=0: diff_scale_q1=0: wt_bal=0: lay_gp_inhib=0: inhib_cons=0: };
+   net_misc {spike=0: deep=1: bias_learn=0: trial_decay=0: diff_scale_p=0: diff_scale_q1=0: wt_bal=0: lay_gp_inhib=0: inhib_cons=0: };
    deep {on=0: ctxt=0: raw_net=0: mod_net=0: raw_qtr=0: };
    rel_netin {on=1: trl_skip=10: epc_skip=10: };
   };
@@ -5673,11 +5688,14 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: lrn_thr=0.01: s_mult=1: d_rev_ratio=-9: };
      wt_sig {gain=6: off=1.25: soft_bound=1: };
      momentum {on=0: dwavg_tau=1000: norm_min=0.001: m_tau=20: lrate_comp=0.01: dwavg_dt=0.001: dwavg_dt_c=0.999: m_dt=0.05: m_dt_c=0.95: };
-     wt_bal {on=0: avg_thr=0.5: hi_thr=0.6: hi_gain=3: lo_thr=0.6: lo_gain=6: act_thr=0.25: act_gain=0: no_targ=1: };
+     wt_bal {on=0: avg_thr=0.25: hi_thr=0.4: hi_gain=4: lo_thr=0.4: lo_gain=6: act_thr=0.25: act_gain=0: no_targ=1: };
      adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
      slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
      deep {on=0: bg_lrate=1: fg_lrate=0: };
      margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_lrn=0.5: };
+     dwt_noise=0;
+     dwt_noise_p0=0.7;
+     noise {name="noise": type=GAUSSIAN: mean=0: var=0.004999999888241291: par=1: };
      use_lrate_sched=1;
      lrate_sched {
       name="lrate_sched";
@@ -5739,11 +5757,14 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: lrn_thr=0.01: s_mult=1: d_rev_ratio=-9: };
      wt_sig {gain=6: off=1.25: soft_bound=1: };
      momentum {on=0: dwavg_tau=1000: norm_min=0.001: m_tau=20: lrate_comp=0.01: dwavg_dt=0.001: dwavg_dt_c=0.999: m_dt=0.05: m_dt_c=0.95: };
-     wt_bal {on=0: avg_thr=0.5: hi_thr=0.6: hi_gain=3: lo_thr=0.6: lo_gain=6: act_thr=0.25: act_gain=0: no_targ=1: };
+     wt_bal {on=0: avg_thr=0.25: hi_thr=0.4: hi_gain=4: lo_thr=0.4: lo_gain=6: act_thr=0.25: act_gain=0: no_targ=1: };
      adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
      slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
      deep {on=0: bg_lrate=1: fg_lrate=0: };
      margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_lrn=0.5: };
+     dwt_noise=0;
+     dwt_noise_p0=0.7;
+     noise {name="noise": type=GAUSSIAN: mean=0: var=0.004999999888241291: par=1: };
      use_lrate_sched=1;
      lrate_sched {
       name="lrate_sched";
@@ -6077,11 +6098,14 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: lrn_thr=0.01: s_mult=1: d_rev_ratio=-9: };
      wt_sig {gain=6: off=1.25: soft_bound=1: };
      momentum {on=0: dwavg_tau=1000: norm_min=0.001: m_tau=20: lrate_comp=0.01: dwavg_dt=0.001: dwavg_dt_c=0.999: m_dt=0.05: m_dt_c=0.95: };
-     wt_bal {on=0: avg_thr=0.5: hi_thr=0.6: hi_gain=3: lo_thr=0.6: lo_gain=6: act_thr=0.25: act_gain=0: no_targ=1: };
+     wt_bal {on=0: avg_thr=0.25: hi_thr=0.4: hi_gain=4: lo_thr=0.4: lo_gain=6: act_thr=0.25: act_gain=0: no_targ=1: };
      adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
      slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
      deep {on=0: bg_lrate=1: fg_lrate=0: };
      margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_lrn=0.5: };
+     dwt_noise=0;
+     dwt_noise_p0=0.7;
+     noise {name="noise": type=GAUSSIAN: mean=0: var=0.004999999888241291: par=1: };
      use_lrate_sched=1;
      lrate_sched {
       name="lrate_sched";
@@ -6143,11 +6167,14 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: lrn_thr=0.01: s_mult=1: d_rev_ratio=-9: };
      wt_sig {gain=6: off=1.25: soft_bound=1: };
      momentum {on=0: dwavg_tau=1000: norm_min=0.001: m_tau=20: lrate_comp=0.01: dwavg_dt=0.001: dwavg_dt_c=0.999: m_dt=0.05: m_dt_c=0.95: };
-     wt_bal {on=0: avg_thr=0.5: hi_thr=0.6: hi_gain=3: lo_thr=0.6: lo_gain=6: act_thr=0.25: act_gain=0: no_targ=1: };
+     wt_bal {on=0: avg_thr=0.25: hi_thr=0.4: hi_gain=4: lo_thr=0.4: lo_gain=6: act_thr=0.25: act_gain=0: no_targ=1: };
      adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
      slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
      deep {on=0: bg_lrate=1: fg_lrate=0: };
      margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_lrn=0.5: };
+     dwt_noise=0;
+     dwt_noise_p0=0.7;
+     noise {name="noise": type=GAUSSIAN: mean=0: var=0.004999999888241291: par=1: };
      use_lrate_sched=1;
      lrate_sched {
       name="lrate_sched";
@@ -6701,11 +6728,14 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: lrn_thr=0.01: s_mult=1: d_rev_ratio=-9: };
      wt_sig {gain=6: off=1.25: soft_bound=1: };
      momentum {on=0: dwavg_tau=1000: norm_min=0.001: m_tau=20: lrate_comp=0.01: dwavg_dt=0.001: dwavg_dt_c=0.999: m_dt=0.05: m_dt_c=0.95: };
-     wt_bal {on=0: avg_thr=0.5: hi_thr=0.6: hi_gain=3: lo_thr=0.6: lo_gain=6: act_thr=0.25: act_gain=0: no_targ=1: };
+     wt_bal {on=0: avg_thr=0.25: hi_thr=0.4: hi_gain=4: lo_thr=0.4: lo_gain=6: act_thr=0.25: act_gain=0: no_targ=1: };
      adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
      slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
      deep {on=0: bg_lrate=1: fg_lrate=0: };
      margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_lrn=0.5: };
+     dwt_noise=0;
+     dwt_noise_p0=0.7;
+     noise {name="noise": type=GAUSSIAN: mean=0: var=0.004999999888241291: par=1: };
      use_lrate_sched=1;
      lrate_sched {
       name="lrate_sched";
@@ -6767,11 +6797,14 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: lrn_thr=0.01: s_mult=1: d_rev_ratio=-9: };
      wt_sig {gain=6: off=1.25: soft_bound=1: };
      momentum {on=0: dwavg_tau=1000: norm_min=0.001: m_tau=20: lrate_comp=0.01: dwavg_dt=0.001: dwavg_dt_c=0.999: m_dt=0.05: m_dt_c=0.95: };
-     wt_bal {on=0: avg_thr=0.5: hi_thr=0.6: hi_gain=3: lo_thr=0.6: lo_gain=6: act_thr=0.25: act_gain=0: no_targ=1: };
+     wt_bal {on=0: avg_thr=0.25: hi_thr=0.4: hi_gain=4: lo_thr=0.4: lo_gain=6: act_thr=0.25: act_gain=0: no_targ=1: };
      adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
      slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
      deep {on=0: bg_lrate=1: fg_lrate=0: };
      margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_lrn=0.5: };
+     dwt_noise=0;
+     dwt_noise_p0=0.7;
+     noise {name="noise": type=GAUSSIAN: mean=0: var=0.004999999888241291: par=1: };
      use_lrate_sched=1;
      lrate_sched {
       name="lrate_sched";
@@ -7289,11 +7322,14 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: lrn_thr=0.01: s_mult=1: d_rev_ratio=-9: };
      wt_sig {gain=6: off=1.25: soft_bound=1: };
      momentum {on=0: dwavg_tau=1000: norm_min=0.001: m_tau=20: lrate_comp=0.01: dwavg_dt=0.001: dwavg_dt_c=0.999: m_dt=0.05: m_dt_c=0.95: };
-     wt_bal {on=0: avg_thr=0.5: hi_thr=0.6: hi_gain=3: lo_thr=0.6: lo_gain=6: act_thr=0.25: act_gain=0: no_targ=1: };
+     wt_bal {on=0: avg_thr=0.25: hi_thr=0.4: hi_gain=4: lo_thr=0.4: lo_gain=6: act_thr=0.25: act_gain=0: no_targ=1: };
      adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
      slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
      deep {on=0: bg_lrate=1: fg_lrate=0: };
      margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_lrn=0.5: };
+     dwt_noise=0;
+     dwt_noise_p0=0.7;
+     noise {name="noise": type=GAUSSIAN: mean=0: var=0.004999999888241291: par=1: };
      use_lrate_sched=1;
      lrate_sched {
       name="lrate_sched";
@@ -7527,11 +7563,14 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: lrn_thr=0.01: s_mult=1: d_rev_ratio=-9: };
      wt_sig {gain=6: off=1.25: soft_bound=1: };
      momentum {on=0: dwavg_tau=1000: norm_min=0.001: m_tau=20: lrate_comp=0.01: dwavg_dt=0.001: dwavg_dt_c=0.999: m_dt=0.05: m_dt_c=0.95: };
-     wt_bal {on=0: avg_thr=0.5: hi_thr=0.6: hi_gain=3: lo_thr=0.6: lo_gain=6: act_thr=0.25: act_gain=0: no_targ=1: };
+     wt_bal {on=0: avg_thr=0.25: hi_thr=0.4: hi_gain=4: lo_thr=0.4: lo_gain=6: act_thr=0.25: act_gain=0: no_targ=1: };
      adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
      slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
      deep {on=0: bg_lrate=1: fg_lrate=0: };
      margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_lrn=0.5: };
+     dwt_noise=0;
+     dwt_noise_p0=0.7;
+     noise {name="noise": type=GAUSSIAN: mean=0: var=0.004999999888241291: par=1: };
      use_lrate_sched=1;
      lrate_sched {
       name="lrate_sched";
@@ -7897,7 +7936,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
    max_disp_size2d {x=19: y=24: };
    times {quarter=25: deep_cyc=5: time_inc=0.001: wt_bal_int=10: minus=75: plus=25: total_cycles=100: thal_gate_cycle=-2: };
    lstats {trg_max_act_crit=0.5: off_errs=1: on_errs=1: agg_unlearnable=0: wt_bal=0: };
-   net_misc {spike=0: deep=0: bias_learn=0: trial_decay=0: diff_scale_p=0: diff_scale_q1=0: wt_bal=0: lay_gp_inhib=0: inhib_cons=0: };
+   net_misc {spike=0: deep=1: bias_learn=0: trial_decay=0: diff_scale_p=0: diff_scale_q1=0: wt_bal=0: lay_gp_inhib=0: inhib_cons=0: };
    deep {on=0: ctxt=0: raw_net=0: mod_net=0: raw_qtr=0: };
    rel_netin {on=1: trl_skip=10: epc_skip=10: };
   };

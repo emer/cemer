@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.2.2.0 rev11155
+// ta_Dump File v3.0 -- code v8.5.0.0 rev11309
 LeabraProject .projects[0] { 
  Doc_Group @.docs = [2] {
   taDoc @[0] { 
@@ -1182,6 +1182,29 @@ LeabraProject .projects[0] {
 	 T3DataView_List @.annote_children = [0] {
 	 };
 
+	 NetViewStateItem_List @.state_items = [20] {
+	  NetViewStateItem @[0] { };
+	  NetViewStateItem @[1] { };
+	  NetViewStateItem @[2] { };
+	  NetViewStateItem @[3] { };
+	  NetViewStateItem @[4] { };
+	  NetViewStateItem @[5] { };
+	  NetViewStateItem @[6] { };
+	  NetViewStateItem @[7] { };
+	  NetViewStateItem @[8] { };
+	  NetViewStateItem @[9] { };
+	  NetViewStateItem @[10] { };
+	  NetViewStateItem @[11] { };
+	  NetViewStateItem @[12] { };
+	  NetViewStateItem @[13] { };
+	  NetViewStateItem @[14] { };
+	  NetViewStateItem @[15] { };
+	  NetViewStateItem @[16] { };
+	  NetViewStateItem @[17] { };
+	  NetViewStateItem @[18] { };
+	  NetViewStateItem @[19] { };
+	 };
+
 	 ScaleRange_List @.scale_ranges = [24] {
 	  ScaleRange @[0] { };
 	  ScaleRange @[1] { };
@@ -1323,36 +1346,6 @@ LeabraProject .projects[0] {
 
  Network_Group @.networks = [1] {
   LeabraNetwork @[0] { 
-   UserDataItem_List @*(.user_data_) {
-    UserDataItem @[0] { };
-    UserDataItem @[1] { };
-    UserDataItem @[2] { };
-    UserDataItem @[3] { };
-    UserDataItem @[4] { };
-    UserDataItem @[5] { };
-    UserDataItem @[6] { };
-    UserDataItem @[7] { };
-    UserDataItem @[8] { };
-    UserDataItem @[9] { };
-    UserDataItem @[10] { };
-    UserDataItem @[11] { };
-    UserDataItem @[12] { };
-    UserDataItem @[13] { };
-    UserDataItem @[14] { };
-    UserDataItem @[15] { };
-    UserDataItem @[16] { };
-    UserDataItem @[17] { };
-    UserDataItem @[18] { };
-    UserDataItem @[19] { };
-    UserDataItem @[20] { };
-    UserDataItem @[21] { };
-    UserDataItem @[22] { };
-    UserDataItem @[23] { };
-    UserDataItem @[24] { };
-    UserDataItem @[25] { };
-    UserDataItem @[26] { };
-   };
-
    BaseSpec_Group @.specs = [4] {
     LeabraUnitSpec @[0] { 
      BaseSpec_Group @.children = [3] {
@@ -1430,23 +1423,32 @@ LeabraProject .projects[0] {
    ParamSeq_Group @.param_seqs = [0] {
    };
 
+   NetMonItem_List @.monitor.items = [0] {
+   };
+
+   DataTableCols @.mon_data.data = [0] {
+   };
+
+   DataOpList @.mon_data.last_sort_spec.ops = [0] {
+   };
+
    Layer_Group @.layers = [4] {
     LeabraLayer @[0] { 
-     Projection_Group @.projections = [0] {
+     Projection_List @.projections = [0] {
      };
     };
     LeabraLayer @[1] { 
-     Projection_Group @.projections = [1] {
+     Projection_List @.projections = [1] {
       LeabraPrjn @[0] { };
      };
     };
     LeabraLayer @[2] { 
-     Projection_Group @.projections = [1] {
+     Projection_List @.projections = [1] {
       LeabraPrjn @[0] { };
      };
     };
     LeabraLayer @[3] { 
-     Projection_Group @.projections = [1] {
+     Projection_List @.projections = [1] {
       LeabraPrjn @[0] { };
      };
     };
@@ -1503,288 +1505,260 @@ LeabraProject .projects[0] {
 </html>
 ";
    html_text="<!DOCTYPE html><html lang=\"en\" dir=\"ltr\" class=\"client-js\"><head>
-<meta charset=\"UTF-8\"><title>ScalarValLayerSpec - emergent</title>
-<meta name=\"generator\" content=\"MediaWiki 1.22.14\">
-<link rel=\"ExportRDF\" type=\"application/rdf+xml\" title=\"ScalarValLayerSpec\" href=\"/emergent/index.php?title=Special:ExportRDF/ScalarValLayerSpec&amp;xmlmime=rdf\">
+<meta charset=\"UTF-8\">
+<title>demos/scalar val test - emergent</title>
+<script>document.documentElement.className = document.documentElement.className.replace( /(^|\\s)client-nojs(\\s|$)/, \"$1client-js$2\" );</script>
+<script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
+mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":!1,\"wgNamespaceNumber\":0,\"wgPageName\":\"demos/scalar_val_test\",\"wgTitle\":\"demos/scalar val test\",\"wgCurRevisionId\":11958,\"wgRevisionId\":11958,\"wgArticleId\":2847,\"wgIsArticle\":!0,\"wgIsRedirect\":!1,\"wgAction\":\"view\",\"wgUserName\":\"Oreilly\",\"wgUserGroups\":[\"bureaucrat\",\"svnadmins\",\"sysop\",\"*\",\"user\",\"autoconfirmed\"],\"wgCategories\":[\"PublishedProject\"],\"wgBreakFrames\":!1,\"wgPageContentLanguage\":\"en\",\"wgPageContentModel\":\"wikitext\",\"wgSeparatorTransformTable\":[\"\",\"\"],\"wgDigitTransformTable\":[\"\",\"\"],\"wgDefaultDateFormat\":\"dmy\",\"wgMonthNames\":[\"\",\"January\",\"February\",\"March\",\"April\",\"May\",\"June\",\"July\",\"August\",\"September\",\"October\",\"November\",\"December\"],\"wgMonthNamesShort\":[\"\",\"Jan\",\"Feb\",\"Mar\",\"Apr\",\"May\",\"Jun\",\"Jul\",\"Aug\",\"Sep\",\"Oct\",\"Nov\",\"Dec\"],\"wgRelevantPageName\":\"demos/scalar_val_test\",\"wgRelevantArticleId\":2847,\"wgUserId\":3,\"wgUserEditCount\":3319,\"wgUserRegistration\":1178051527000,\"wgUserNewMsgRevisionId\"
+:null,\"wgIsProbablyEditable\":!0,\"wgRestrictionEdit\":[],\"wgRestrictionMove\":[],\"sfgAutocompleteValues\":[],\"sfgAutocompleteOnAllChars\":!1,\"sfgFieldProperties\":[],\"sfgDependentFields\":[],\"sfgShowOnSelect\":[],\"sfgScriptPath\":\"/emergent/extensions/SemanticForms\",\"wgSVGEditEditor\":\"http://svg-edit.googlecode.com/svn/trunk/editor/svg-editor.html\",\"wgHeaderTabsTabIndexes\":[],\"wgWikiEditorEnabledModules\":{\"toolbar\":!0,\"dialogs\":!0,\"preview\":!0,\"publish\":!1},\"wgCategoryTreePageCategoryOptions\":\"{\\\"mode\\\":0,\\\"hideprefix\\\":20,\\\"showcount\\\":true,\\\"namespaces\\\":false}\"});mw.loader.implement(\"user.options\",function($,jQuery){mw.user.options.set({\"ccmeonemails\":\"1\",\"enotifminoredits\":\"1\",\"imagesize\":\"0\",\"previewontop\":\"\",\"rows\":\"30\",\"thumbsize\":\"0\",\"underline\":\"0\",\"watchmoves\":\"1\",\"editsection\":\"1\",\"rememberpassword\":\"1\",\"timecorrection\":\"ZoneInfo|-360|America/Denver\",\"watchlisttoken\":\"14fd6c804d78e99930123181974c128b983adb9e\"});});mw.loader.implement(\"user.tokens\",function($,jQuery){mw.user.tokens.set({\"editToken\":\"5ecf841742a686d498da172605160b965a51e3fb+\\\\\",\"patrolToken\":\"0fd81923752fdc074ecdf8a6b688e01b5a51e3fb+\\\\\",\"watchToken\":\"f27a55ddcc1df9fbdeb5abd187e3fbed5a51e3fb+\\\\\"});});mw.loader.load([\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\",\"mediawiki.legacy.wikibits\",\"skins.vector.js\"]);
+} );</script>
+<link rel=\"stylesheet\" href=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=mediawiki.legacy.commonPrint%2Cshared%7Cmediawiki.sectionAnchor%7Cmediawiki.skinning.interface%7Cskins.vector.styles&amp;only=styles&amp;skin=vector\">
+<link rel=\"stylesheet\" href=\"/emergent/extensions/HeaderTabs/skins/ext.headertabs.large.css\">
+<meta name=\"ResourceLoaderDynamicStyles\" content=\"\">
+<link rel=\"stylesheet\" href=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=site&amp;only=styles&amp;skin=vector\">
+<style>a{text-decoration:none}</style>
+<script async=\"\" src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=startup&amp;only=scripts&amp;skin=vector\"></script>
+<meta name=\"generator\" content=\"MediaWiki 1.26.4\">
+<link rel=\"ExportRDF\" type=\"application/rdf+xml\" title=\"demos/scalar val test\" href=\"/emergent/index.php?title=Special:ExportRDF/demos/scalar_val_test&amp;xmlmime=rdf\">
+<link rel=\"alternate\" type=\"application/x-wiki\" title=\"Edit\" href=\"/emergent/index.php?title=demos/scalar_val_test&amp;action=edit\">
+<link rel=\"edit\" title=\"Edit\" href=\"/emergent/index.php?title=demos/scalar_val_test&amp;action=edit\">
 <link rel=\"shortcut icon\" href=\"/emergent/favicon.ico\">
 <link rel=\"search\" type=\"application/opensearchdescription+xml\" href=\"/emergent/opensearch_desc.php\" title=\"emergent (en)\">
 <link rel=\"EditURI\" type=\"application/rsd+xml\" href=\"https://grey.colorado.edu/emergent/api.php?action=rsd\">
 <link rel=\"alternate\" type=\"application/atom+xml\" title=\"emergent Atom feed\" href=\"/emergent/index.php?title=Special:RecentChanges&amp;feed=atom\">
-<link rel=\"stylesheet\" href=\"https://grey.colorado.edu/emergent/load.php?debug=false&amp;lang=en&amp;modules=ext.rtlcite%7Cmediawiki.legacy.commonPrint%2Cshared%7Cskins.vector&amp;only=styles&amp;skin=vector&amp;*\">
-<link rel=\"stylesheet\" href=\"/emergent/extensions/HeaderTabs/skins-jquery/ext.headertabs.jquery-large.css\"><meta name=\"ResourceLoaderDynamicStyles\" content=\"\">
-<link rel=\"stylesheet\" href=\"https://grey.colorado.edu/emergent/load.php?debug=false&amp;lang=en&amp;modules=site&amp;only=styles&amp;skin=vector&amp;*\">
-<style>a:lang(ar),a:lang(ckb),a:lang(kk-arab),a:lang(mzn),a:lang(ps),a:lang(ur){text-decoration:none}.mw-editsection{display:none}
-/* cache key: pdpwiki:resourceloader:filter:minify-css:7:d901f157ec9fff8ddab15d03002ebefd */</style>
-
-<script src=\"https://grey.colorado.edu/emergent/load.php?debug=false&amp;lang=en&amp;modules=startup&amp;only=scripts&amp;skin=vector&amp;*\"></script><script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery%2Cmediawiki&amp;only=scripts&amp;skin=vector&amp;version=20141215T005424Z\"></script>
-<script>if(window.mw){
-mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":false,\"wgNamespaceNumber\":0,\"wgPageName\":\"ScalarValLayerSpec\",\"wgTitle\":\"ScalarValLayerSpec\",\"wgCurRevisionId\":10589,\"wgRevisionId\":10589,\"wgArticleId\":372,\"wgIsArticle\":true,\"wgIsRedirect\":false,\"wgAction\":\"view\",\"wgUserName\":null,\"wgUserGroups\":[\"*\"],\"wgCategories\":[],\"wgBreakFrames\":false,\"wgPageContentLanguage\":\"en\",\"wgPageContentModel\":\"wikitext\",\"wgSeparatorTransformTable\":[\"\",\"\"],\"wgDigitTransformTable\":[\"\",\"\"],\"wgDefaultDateFormat\":\"dmy\",\"wgMonthNames\":[\"\",\"January\",\"February\",\"March\",\"April\",\"May\",\"June\",\"July\",\"August\",\"September\",\"October\",\"November\",\"December\"],\"wgMonthNamesShort\":[\"\",\"Jan\",\"Feb\",\"Mar\",\"Apr\",\"May\",\"Jun\",\"Jul\",\"Aug\",\"Sep\",\"Oct\",\"Nov\",\"Dec\"],\"wgRelevantPageName\":\"ScalarValLayerSpec\",\"wgIsProbablyEditable\":false,\"wgRestrictionEdit\":[],\"wgRestrictionMove\":[],\"sfgAutocompleteValues\":[],\"sfgAutocompleteOnAllChars\":false,\"sfgFieldProperties\":[],\"sfgDependentFields\":[],\"sfgShowOnSelect\":[],\"sfgScriptPath\":\"/emergent/extensions/SemanticForms\",\"htTabIndexes\":[],\"wgSVGEditEditor\":\"http://svg-edit.googlecode.com/svn/trunk/editor/svg-editor.html\",\"wgWikiEditorEnabledModules\":{\"toolbar\":true,\"dialogs\":true,\"hidesig\":true,\"templateEditor\":false,\"templates\":false,\"preview\":true,\"previewDialog\":false,\"publish\":false,\"toc\":false}});
-}</script><script>if(window.mw){
-mw.loader.implement(\"user.options\",function(){mw.user.options.set({\"ccmeonemails\":0,\"cols\":80,\"date\":\"default\",\"diffonly\":0,\"disablemail\":0,\"disablesuggest\":0,\"editfont\":\"default\",\"editondblclick\":0,\"editsection\":false,\"editsectiononrightclick\":0,\"enotifminoredits\":0,\"enotifrevealaddr\":0,\"enotifusertalkpages\":1,\"enotifwatchlistpages\":0,\"extendwatchlist\":0,\"fancysig\":0,\"forceeditsummary\":0,\"gender\":\"unknown\",\"hideminor\":0,\"hidepatrolled\":0,\"imagesize\":2,\"justify\":0,\"math\":0,\"minordefault\":0,\"newpageshidepatrolled\":0,\"nocache\":0,\"noconvertlink\":0,\"norollbackdiff\":0,\"numberheadings\":0,\"previewonfirst\":0,\"previewontop\":1,\"rcdays\":7,\"rclimit\":50,\"rememberpassword\":0,\"rows\":25,\"searchlimit\":20,\"showhiddencats\":0,\"shownumberswatching\":1,\"showtoc\":1,\"showtoolbar\":1,\"skin\":\"vector\",\"stubthreshold\":0,\"thumbsize\":2,\"underline\":2,\"uselivepreview\":0,\"usenewrc\":0,\"vector-simplesearch\":1,\"watchcreations\":0,\"watchdefault\":0,\"watchdeletion\":0,\"watchlistdays\":3,\"watchlisthideanons\":0,\"watchlisthidebots\"
-:0,\"watchlisthideliu\":0,\"watchlisthideminor\":0,\"watchlisthideown\":0,\"watchlisthidepatrolled\":0,\"watchmoves\":0,\"wllimit\":250,\"useeditwarning\":1,\"prefershttps\":1,\"vector-collapsiblenav\":1,\"vector-collapsibletabs\":1,\"vector-editwarning\":1,\"vector-expandablesearch\":1,\"vector-footercleanup\":1,\"usebetatoolbar\":1,\"usebetatoolbar-cgd\":1,\"wikieditor-preview\":1,\"upwiz_deflicense\":\"default\",\"upwiz_def3rdparty\":\"default\",\"upwiz_deflicensetype\":\"default\",\"language\":\"en\",\"variant-gan\":\"gan\",\"variant-iu\":\"iu\",\"variant-kk\":\"kk\",\"variant-ku\":\"ku\",\"variant-shi\":\"shi\",\"variant-sr\":\"sr\",\"variant-tg\":\"tg\",\"variant-uz\":\"uz\",\"variant-zh\":\"zh\",\"searchNs0\":true,\"searchNs1\":false,\"searchNs2\":false,\"searchNs3\":false,\"searchNs4\":false,\"searchNs5\":false,\"searchNs6\":false,\"searchNs7\":false,\"searchNs8\":false,\"searchNs9\":false,\"searchNs10\":false,\"searchNs11\":false,\"searchNs12\":false,\"searchNs13\":false,\"searchNs14\":false,\"searchNs15\":false,\"searchNs102\":false,\"searchNs103\":false,\"searchNs106\":false,\"searchNs107\":false
-,\"searchNs108\":false,\"searchNs109\":false,\"extensionDrafts_enable\":true,\"variant\":\"en\"});},{},{});mw.loader.implement(\"user.tokens\",function(){mw.user.tokens.set({\"editToken\":\"+\\\\\",\"patrolToken\":false,\"watchToken\":false});},{},{});
-/* cache key: pdpwiki:resourceloader:filter:minify-js:7:40f3858c02bab56210bb921598bbd826 */
-}</script>
-<script>if(window.mw){
-mw.loader.load([\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\",\"mediawiki.legacy.wikibits\",\"mediawiki.legacy.ajax\",\"skins.vector.js\"]);
-}</script><script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=ext.jquery.qtip%7Cext.smw%7Cext.smw.style%2Ctooltip%2Ctooltips%7Cext.smw.tooltip.styles&amp;skin=vector&amp;version=20141215T020648Z&amp;*\"></script><script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery.async%2Cclient%2Ccookie%2CdelayedBind%2CmwExtension%7Cmediawiki.legacy.ajax%2Cwikibits%7Cmediawiki.notify%2Cutil%7Cmediawiki.page.startup%7Cskins.vector.js&amp;skin=vector&amp;version=20141215T020648Z&amp;*\"></script>
-<!--[if lt IE 7]><style type=\"text/css\">body{behavior:url(\"/emergent/skins/vector/csshover.min.htc\")}</style><![endif]--><script async=\"\" src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=ext.Drafts%2Ccite%2Cheadertabs%7Cjquery.autoEllipsis%2CcheckboxShiftClick%2Chidpi%2ChighlightText%2CmakeCollapsible%2Cmw-jump%2Cplaceholder%2Csuggestions%2CtabIndex%7Cmediawiki.action.view.postEdit%7Cmediawiki.api%2Ccldr%2Chidpi%2CjqueryMsg%2Clanguage%2CsearchSuggest%2Cuser%7Cmediawiki.language.data%2Cinit%7Cmediawiki.libs.pluralruleparser%7Cmediawiki.page.ready%7Cskins.vector.collapsibleNav&amp;skin=vector&amp;version=20141215T020648Z&amp;*\"></script><script async=\"\" src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery.ui.core%2Ctabs%2Cwidget&amp;skin=vector&amp;version=20141215T020644Z&amp;*\"></script></head>
-<body class=\"mediawiki ltr sitedir-ltr ns-0 ns-subject page-ScalarValLayerSpec skin-vector action-view vector-animateLayout\">
-		<div id=\"mw-page-base\" class=\"noprint\"><a href=\"http://grey.colorado.edu/emergent\"><img src=\"http://grey.colorado.edu/mediawiki/sites/emergent/images/6/6b/emergent_small.png\"></a></div>
+<!--[if lt IE 7]><style type=\"text/css\">body{behavior:url(\"/emergent/skins/Vector/csshover.min.htc\")}</style><![endif]-->
+</head>
+<body class=\"mediawiki ltr sitedir-ltr ns-0 ns-subject page-demos_scalar_val_test skin-vector action-view\">
+		<div id=\"mw-page-base\" class=\"noprint\"></div>
 		<div id=\"mw-head-base\" class=\"noprint\"></div>
 		<div id=\"content\" class=\"mw-body\" role=\"main\">
 			<a id=\"top\"></a>
-			<div id=\"mw-js-message\" style=\"display:none;\"></div>
-						<h1 id=\"firstHeading\" class=\"firstHeading\" lang=\"en\"><span dir=\"auto\">ScalarValLayerSpec</span></h1>
-			<div id=\"bodyContent\">
-								<div id=\"siteSub\">From emergent</div>
+
+						<div class=\"mw-indicators\">
+</div>
+			<h1 id=\"firstHeading\" class=\"firstHeading\" lang=\"en\">demos/scalar val test</h1>
+									<div id=\"bodyContent\" class=\"mw-body-content\">
+									<div id=\"siteSub\">From emergent</div>
 								<div id=\"contentSub\"></div>
 												<div id=\"jump-to-nav\" class=\"mw-jump\">
-					Jump to:					<a href=\"#mw-navigation\">navigation</a>, 					<a href=\"#p-search\">search</a>
+					Jump to:					<a href=\"#mw-head\">navigation</a>, 					<a href=\"#p-search\">search</a>
 				</div>
-				<div id=\"mw-content-text\" lang=\"en\" dir=\"ltr\" class=\"mw-content-ltr\"><div style=\"width: 50%;padding-left: 15px; border:2px solid #000000;\">Reference info for type <strong>ScalarValLayerSpec</strong>: <a href=\"http://grey.colorado.edu/gendoc/emergent/ScalarValLayerSpec.html\">Wiki</a> | <a href=\"ta:.Type.ScalarValLayerSpec\">Emergent Help Browser</a></div>
-<p>Back to <a href=\"/emergent/index.php/Leabra\" title=\"Leabra\">Leabra</a>
-</p><p>The ScalarValLayerSpec encodes and decodes scalar, real-numbered values based on a coarse coded distributed representation (e.g., a Gaussian bump) across multiple units. This provides a very efficient and effective way of representing scalar values -- individual Leabra units do not do a very good job of that, as they have a strong binary bias.
-</p><p>See also <a href=\"/emergent/index.php/TwoDValLayerSpec\" title=\"TwoDValLayerSpec\">TwoDValLayerSpec</a>
+				<div id=\"mw-content-text\" lang=\"en\" dir=\"ltr\" class=\"mw-content-ltr\"><table style=\"width: 35em; font-size: 90%; border: 1px solid #aaaaaa; background-color: #f9f9f9; color: black; margin-bottom: 0.5em; margin-left: 1em; padding: 0.2em; float: right; clear: right; text-align:left;\">
+<tbody><tr>
+<th style=\"text-align: center; background-color:#ccccff;\" colspan=\"2\"><big>demos/scalar val test</big>
+</th></tr>
+<tr>
+<th> Project Name
+</th>
+<td> scalar_val_test
+</td></tr>
+<tr>
+<th> Filename
+</th>
+<td> <a href=\"/emergent/index.php/File:scalar_val_test.proj\" title=\"File:scalar val test.proj\">File:scalar val test.proj</a> <a href=\"/emergent/index.php?title=.OpenProjectFromWeb(scalar_val_test.proj,https://grey.colorado.edu/emergent/index.php/MainPage)&amp;action=edit&amp;redlink=1\" class=\"new\" title=\".OpenProjectFromWeb(scalar val test.proj,https://grey.colorado.edu/emergent/index.php/MainPage) (page does not exist)\"><span style=\"color:#000000;background-color:#C0C0C0;font-weight:bold; border:1px solid black; padding:0 3px 0 3px\">Open Project in emergent</span></a>
+</td></tr>
+<tr>
+<th> Author
+</th>
+<td>  Randall C. O'Reilly
+</td></tr>
+<tr>
+<th> Email
+</th>
+<td> emergent-users@grey.colorado.edu
+</td></tr>
+<tr>
+<th> Publication
+</th>
+<td> ERROR: Could not find title object]]
+</td></tr>
+<tr>
+<th> First Published
+</th>
+<td> Aug 30 2016
+</td></tr>
+<tr>
+<th> Tags
+</th>
+<td>  ScalarValLayerSpec, Leabra, Coarse Coding, Distributed Representations
+</td></tr>
+<tr>
+<th> Description
+</th>
+<td>  Tests the ScalarValLayerSpec, trained with different probabilities of a 0 or 1, showing that they accurately represent these probabilities as a graded scalar value
+</td></tr>
+<tr>
+<th> Updated
+</th>
+<td> 30 August 2016
+</td></tr>
+<tr>
+<th> Versions
+</th>
+<td> 8.0.0,  8.0.2
+</td></tr>
+<tr>
+<th> Emergent Versions
+</th>
+<td> 8.0.0
+</td></tr>
+<tr>
+<th> Other Files
+</th>
+<td>
+</td></tr></tbody></table>
+<p><br>
+Back to <a href=\"/emergent/index.php/Demos\" title=\"Demos\">Demos</a>
+</p><p>See <a href=\"/emergent/index.php/ScalarValLayerSpec\" title=\"ScalarValLayerSpec\">ScalarValLayerSpec</a> for full information about how scalar values can be represented with a coarse-coded distributed representation -- this demo allows different parameterizations to be tested on their ability to accurately represent probabilistic training values as a scalar value, which is an important and challenging property.
+</p><p>The <a href=\"/emergent/index.php?title=.PanelTab.ControlPanel&amp;action=edit&amp;redlink=1\" class=\"new\" title=\".PanelTab.ControlPanel (page does not exist)\"><span style=\"color:#000000;background-color:#C0C0C0;font-weight:bold; border:1px solid black; padding:0 3px 0 3px\">ControlPanel</span></a> has all the main parameters, and the <a href=\"/emergent/index.php?title=.T3Tab.EpochOutputData&amp;action=edit&amp;redlink=1\" class=\"new\" title=\".T3Tab.EpochOutputData (page does not exist)\"><span style=\"color:#000000;background-color:#C0C0C0;font-weight:bold; border:1px solid black; padding:0 3px 0 3px\">EpochOutputData</span></a> plots the <span style=\"background:#FFFFD0\"><tt><b>misc_2</b></tt></span> readout value from each of the different layers, compared to the target probability.
 </p>
-<div id=\"toc\" class=\"toc\"><div id=\"toctitle\"><h2>Contents</h2><span class=\"toctoggle\">&nbsp;[<a href=\"#\" class=\"internal\" id=\"togglelink\">hide</a>]&nbsp;</span></div>
-<ul>
-<li class=\"toclevel-1 tocsection-1\"><a href=\"#Demo_Project\"><span class=\"tocnumber\">1</span> <span class=\"toctext\">Demo Project</span></a></li>
-<li class=\"toclevel-1 tocsection-2\"><a href=\"#Generally_Good_Parameters\"><span class=\"tocnumber\">2</span> <span class=\"toctext\">Generally Good Parameters</span></a>
-<ul>
-<li class=\"toclevel-2 tocsection-3\"><a href=\"#Gaussian_Bump.2C_12_Units_for_0-1_Value_Rep\"><span class=\"tocnumber\">2.1</span> <span class=\"toctext\">Gaussian Bump, 12 Units for 0-1 Value Rep</span></a></li>
-<li class=\"toclevel-2 tocsection-4\"><a href=\"#Gaussian_Bump.2C_22_Units_for_0-1_Value_Rep\"><span class=\"tocnumber\">2.2</span> <span class=\"toctext\">Gaussian Bump, 22 Units for 0-1 Value Rep</span></a></li>
-<li class=\"toclevel-2 tocsection-5\"><a href=\"#Localist.2C_4_units_for_0-1_Value_Rep_.28used_in_PVLV.29\"><span class=\"tocnumber\">2.3</span> <span class=\"toctext\">Localist, 4 units for 0-1 Value Rep (used in PVLV)</span></a></li>
-</ul>
-</li>
-<li class=\"toclevel-1 tocsection-6\"><a href=\"#Special_Setup_for_ScalarValLayers\"><span class=\"tocnumber\">3</span> <span class=\"toctext\">Special Setup for ScalarValLayers</span></a>
-<ul>
-<li class=\"toclevel-2 tocsection-7\"><a href=\"#InputData_.28when_the_layer_receives_input.29\"><span class=\"tocnumber\">3.1</span> <span class=\"toctext\">InputData (when the layer receives input)</span></a></li>
-<li class=\"toclevel-2 tocsection-8\"><a href=\"#Monitoring_layer_values\"><span class=\"tocnumber\">3.2</span> <span class=\"toctext\">Monitoring layer values</span></a></li>
-</ul>
-</li>
-</ul>
-</div>
-
-<h2><span class=\"mw-headline\" id=\"Demo_Project\">Demo Project</span></h2>
-<p>Load the <a href=\"/emergent/index.php/Demo\" title=\"Demo\" class=\"mw-redirect\">Demo</a> project <code>demo/leabra/scalar_val_test.proj</code> for a test project that does localist and the 12 unit Gaussian bump, trained with different probabilities of a 0 or 1, showing that they accurately represent these probabilities as a graded scalar value.
-</p>
-<h2><span class=\"mw-headline\" id=\"Generally_Good_Parameters\">Generally Good Parameters</span></h2>
-<p>The following are sets of parameters that have been tested and found to work well at learning a scalar value representation based on probabilistic binary inputs and continuous-valued inputs.
-</p><p>As of v.7.0.0, <b>The default <a href=\"/emergent/index.php/LeabraUnitSpec\" title=\"LeabraUnitSpec\">LeabraUnitSpec</a> and <a href=\"/emergent/index.php/LeabraLayerSpec\" title=\"LeabraLayerSpec\">LeabraLayerSpec</a> parameters are recommended</b> for both LOCALIST and GAUSSIAN types -- previously special params were used for LOCALIST, but new defaults work better overall (for PVLV learning at least). A <b>gi=2.2</b> value seems to work best for FF_FB_INHIB.
-</p>
-<h3><span class=\"mw-headline\" id=\"Gaussian_Bump.2C_12_Units_for_0-1_Value_Rep\">Gaussian Bump, 12 Units for 0-1 Value Rep</span></h3>
-<ul>
-<li> Layer:
-</li>
-</ul>
-<dl>
-<dd><ul>
-<li> 12 units, 1 = value and 11 are value-coding
-</li>
-<li> unit range is -0.5 to 1.5 (margin around target value range of 0-1)
-</li>
-<li> unit values are: -.5, -.3, -.1 .1 .3 .5 .7 .9 1.1 1.3 1.5
-</li>
-</ul>
-</dd>
-</dl>
-<ul>
-<li> LeabraLayerSpec: k = 3
-</li>
-<li> ConSpec: for probabilistic encoding, using wt_sig = 1, 1 instead of 6, 1.25 is key; also err_sb off is more fidelitous.
-</li>
-</ul>
-<h3><span class=\"mw-headline\" id=\"Gaussian_Bump.2C_22_Units_for_0-1_Value_Rep\">Gaussian Bump, 22 Units for 0-1 Value Rep</span></h3>
-<ul>
-<li> Layer:
-<ul>
-<li> 22 units, 1 = value and 21 value coding
-</li>
-<li> unit_range -0.5 to 1.5
-</li>
-<li> unit values are -.5 to 1.5 in .1 increments
-</li>
-</ul>
-</li>
-<li> LeabraLayerSpec: k = 3
-</li>
-<li> ConSpec: for probabilistic encoding, using wt_sig = 1, 1 instead of 6, 1.25 is key; also err_sb off is more fidelitous.
-</li>
-</ul>
-<h3><span class=\"mw-headline\" id=\"Localist.2C_4_units_for_0-1_Value_Rep_.28used_in_PVLV.29\">Localist, 4 units for 0-1 Value Rep (used in <a href=\"/emergent/index.php/PVLV\" title=\"PVLV\" class=\"mw-redirect\">PVLV</a>)</span></h3>
-<ul>
-<li> Layer:
-<ul>
-<li> 4 units, 1 = value and 3 value coding
-</li>
-<li> unit_range = 0-1
-</li>
-<li> unit values are 0, .5, 1
-</li>
-</ul>
-</li>
-<li> LeabraLayerSpec: k = 1
-</li>
-</ul>
-<h2><span class=\"mw-headline\" id=\"Special_Setup_for_ScalarValLayers\">Special Setup for ScalarValLayers</span></h2>
-<p>There are two things you need to do different from standard layers:
-</p>
-<h3><span class=\"mw-headline\" id=\"InputData_.28when_the_layer_receives_input.29\">InputData (when the layer receives input)</span></h3>
-<ul>
-<li> See <a href=\"/emergent/index.php/InputData\" title=\"InputData\">InputData</a> for general information about this
-</li>
-<li> The key thing is that ScalarVals only need the 1st unit to receive external input, where this input is the scalar value to be represented on the layer (unless the clamp_pat flag is selected, in which case you can clamp the whole pattern if you want).
-</li>
-<li> To achieve this, just change the geometry of your input data table column that goes to this layer: select the column, and do Column/Change Col Cell Geom menu action, and change to 1x1 geom with 2 dims (NOTE: do NOT make it a scalar -- the system that applies input to the network requires that this be at least a 2d matrix).
-</li>
-</ul>
-<h3><span class=\"mw-headline\" id=\"Monitoring_layer_values\">Monitoring layer values</span></h3>
-<ul>
-<li> See <a href=\"/emergent/index.php/Monitor_Data\" title=\"Monitor Data\">Monitor Data</a> for general info about this
-</li>
-<li> As with input data, the key issue is recording only from the 1st unit that encodes the scalar value
-</li>
-<li> As of 4.0.17, the monitor system allows you to use the following syntax for the variable to monitor on a layer: units[0].act_eq (note: must use eq and not plain act, which is always zero -- can also monitor act_m or act_p) -- this will grab the value from the first unit in the layer, which is what you want.
-</li>
-</ul>
-
 <!-- 
 NewPP limit report
-CPU time usage: 0.044 seconds
-Real time usage: 0.051 seconds
-Preprocessor visited node count: 40/1000000
-Preprocessor generated node count: 74/1000000
-Post?expand include size: 113/2097152 bytes
-Template argument size: 18/2097152 bytes
-Highest expansion depth: 3/40
+Cached time: 20180107091019
+Cache expiry: 86400
+Dynamic content: false
+CPU time usage: 0.128 seconds
+Real time usage: 3.935 seconds
+Preprocessor visited node count: 97/1000000
+Preprocessor generated node count: 571/1000000
+Post?expand include size: 2154/2097152 bytes
+Template argument size: 952/2097152 bytes
+Highest expansion depth: 5/40
 Expensive parser function count: 0/100
 -->
 
-<!-- Saved in parser cache with key pdpwiki:pcache:idhash:372-0!*!0!!en!*!* and timestamp 20141227014754
+<!-- 
+Transclusion expansion time report (%,ms,calls,template)
+100.00% 3881.680      1 - -total
+ 99.87% 3876.523      1 - Template:PublishedProject
+ 97.63% 3789.611      1 - Template:cite
+  0.16%    6.073      3 - Template:emerlink
+  0.08%    3.245      1 - Template:var
+-->
+
+<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2847-0!*!0!*!*!0!* and timestamp 20180107091015 and revision id 11958
  -->
-</div>								<div class=\"printfooter\">
-				Retrieved from \"<a href=\"https://grey.colorado.edu/emergent/index.php?title=ScalarValLayerSpec&amp;oldid=10589\">https://grey.colorado.edu/emergent/index.php?title=ScalarValLayerSpec&amp;oldid=10589</a>\"				</div>
-												<div id=\"catlinks\" class=\"catlinks catlinks-allhidden\"></div>												<div class=\"visualClear\"></div>
+</div>					<div class=\"printfooter\">
+						Retrieved from \"<a dir=\"ltr\" href=\"https://grey.colorado.edu/emergent/index.php?title=demos/scalar_val_test&amp;oldid=11958\">https://grey.colorado.edu/emergent/index.php?title=demos/scalar_val_test&amp;oldid=11958</a>\"					</div>
+				<div id=\"catlinks\" class=\"catlinks\"><div id=\"mw-normal-catlinks\" class=\"mw-normal-catlinks\"><a href=\"/emergent/index.php/Special:Categories\" title=\"Special:Categories\">Category</a>: <ul><li><a href=\"/emergent/index.php/Category:PublishedProject\" title=\"Category:PublishedProject\">PublishedProject</a></li></ul></div></div>				<div class=\"visualClear\"></div>
 							</div>
 		</div>
 		<div id=\"mw-navigation\">
 			<h2>Navigation menu</h2>
+
 			<div id=\"mw-head\">
-				<div id=\"p-personal\" role=\"navigation\" class=\"\" aria-labelledby=\"p-personal-label\">
-	<h3 id=\"p-personal-label\">Personal tools</h3>
-	<ul>
-<li id=\"pt-createaccount\"><a href=\"/emergent/index.php?title=Special:UserLogin&amp;returnto=ScalarValLayerSpec&amp;type=signup\">Create account</a></li><li id=\"pt-login\"><a href=\"/emergent/index.php?title=Special:UserLogin&amp;returnto=ScalarValLayerSpec\" title=\"You are encouraged to log in; however, it is not mandatory [o]\" accesskey=\"o\">Log in</a></li>	</ul>
-</div>
-				<div id=\"left-navigation\">
-					<div id=\"p-namespaces\" role=\"navigation\" class=\"vectorTabs\" aria-labelledby=\"p-namespaces-label\">
-	<h3 id=\"p-namespaces-label\">Namespaces</h3>
-	<ul>
-					<li id=\"ca-nstab-main\" class=\"selected\"><span><a href=\"/emergent/index.php/ScalarValLayerSpec\" title=\"View the content page [c]\" accesskey=\"c\">Page</a></span></li>
-					<li id=\"ca-talk\" class=\"new\"><span><a href=\"/emergent/index.php?title=Talk:ScalarValLayerSpec&amp;action=edit&amp;redlink=1\" title=\"Discussion about the content page [t]\" accesskey=\"t\">Discussion</a></span></li>
-			</ul>
-</div>
-<div id=\"p-variants\" role=\"navigation\" class=\"vectorMenu emptyPortlet\" aria-labelledby=\"p-variants-label\">
-	<h3 id=\"mw-vector-current-variant\">
-		</h3>
-	<h3 id=\"p-variants-label\" tabindex=\"0\"><span>Variants</span><a href=\"#\" tabindex=\"-1\"></a></h3>
-	<div class=\"menu\">
-		<ul>
-					</ul>
-	</div>
-</div>
-				</div>
+									<div id=\"p-personal\" role=\"navigation\" class=\"\" aria-labelledby=\"p-personal-label\">
+						<h3 id=\"p-personal-label\">Personal tools</h3>
+						<ul>
+							<li id=\"pt-userpage\"><a href=\"/emergent/index.php/User:Oreilly\" dir=\"auto\" title=\"Your user page [.]\" accesskey=\".\">Oreilly</a></li><li id=\"pt-mytalk\"><a href=\"/emergent/index.php/User_talk:Oreilly\" class=\"new\" title=\"Your talk page [n]\" accesskey=\"n\">Talk</a></li><li id=\"pt-preferences\"><a href=\"/emergent/index.php/Special:Preferences\" title=\"Your preferences\">Preferences</a></li><li id=\"pt-watchlist\"><a href=\"/emergent/index.php/Special:Watchlist\" title=\"A list of pages you are monitoring for changes [l]\" accesskey=\"l\">Watchlist</a></li><li id=\"pt-mycontris\"><a href=\"/emergent/index.php/Special:Contributions/Oreilly\" title=\"A list of your contributions [y]\" accesskey=\"y\">Contributions</a></li><li id=\"pt-logout\"><a href=\"/emergent/index.php?title=Special:UserLogout&amp;returnto=demos%2Fscalar+val+test\" title=\"Log out\">Log out</a></li>						</ul>
+					</div>
+									<div id=\"left-navigation\">
+										<div id=\"p-namespaces\" role=\"navigation\" class=\"vectorTabs\" aria-labelledby=\"p-namespaces-label\">
+						<h3 id=\"p-namespaces-label\">Namespaces</h3>
+						<ul>
+															<li id=\"ca-nstab-main\" class=\"selected\"><span><a href=\"/emergent/index.php/demos/scalar_val_test\" title=\"View the content page [c]\" accesskey=\"c\">Page</a></span></li>
+															<li id=\"ca-talk\" class=\"new\"><span><a href=\"/emergent/index.php?title=Talk:demos/scalar_val_test&amp;action=edit&amp;redlink=1\" title=\"Discussion about the content page [t]\" accesskey=\"t\" rel=\"discussion\">Discussion</a></span></li>
+													</ul>
+					</div>
+										<div id=\"p-variants\" role=\"navigation\" class=\"vectorMenu emptyPortlet\" aria-labelledby=\"p-variants-label\">
+												<h3 id=\"p-variants-label\">
+							<span>Variants</span><a href=\"#\"></a>
+						</h3>
+
+						<div class=\"menu\">
+							<ul>
+															</ul>
+						</div>
+					</div>
+									</div>
 				<div id=\"right-navigation\">
-					<div id=\"p-views\" role=\"navigation\" class=\"vectorTabs\" aria-labelledby=\"p-views-label\">
-	<h3 id=\"p-views-label\">Views</h3>
-	<ul>
-					<li id=\"ca-view\" class=\"selected\"><span><a href=\"/emergent/index.php/ScalarValLayerSpec\">Read</a></span></li>
-					<li id=\"ca-viewsource\"><span><a href=\"/emergent/index.php?title=ScalarValLayerSpec&amp;action=edit\" title=\"This page is protected.
-You can view its source [e]\" accesskey=\"e\">View source</a></span></li>
-					<li id=\"ca-history\" class=\"collapsible\"><span><a href=\"/emergent/index.php?title=ScalarValLayerSpec&amp;action=history\" title=\"Past revisions of this page [h]\" accesskey=\"h\">View history</a></span></li>
-			</ul>
-</div>
-<div id=\"p-cactions\" role=\"navigation\" class=\"vectorMenu emptyPortlet\" aria-labelledby=\"p-cactions-label\">
-	<h3 id=\"p-cactions-label\" tabindex=\"0\"><span>Actions</span><a href=\"#\" tabindex=\"-1\"></a></h3>
-	<div class=\"menu\">
-		<ul>
-					</ul>
-	</div>
-</div>
-<div id=\"p-search\" role=\"search\">
-	<h3><label for=\"searchInput\">Search</label></h3>
-	<form action=\"/emergent/index.php\" id=\"searchform\">
-				<div id=\"simpleSearch\">
-						<input name=\"search\" placeholder=\"Search\" title=\"Search emergent [f]\" accesskey=\"f\" id=\"searchInput\">						<button type=\"submit\" name=\"button\" title=\"Search the pages for this text\" id=\"searchButton\"><img src=\"/emergent/skins/vector/images/search-ltr.png?303\" alt=\"Search\" width=\"12\" height=\"13\"></button>								<input type=\"hidden\" name=\"title\" value=\"Special:Search\">
-		</div>
-	</form>
-</div>
-				</div>
+										<div id=\"p-views\" role=\"navigation\" class=\"vectorTabs\" aria-labelledby=\"p-views-label\">
+						<h3 id=\"p-views-label\">Views</h3>
+						<ul>
+															<li id=\"ca-view\" class=\"selected\"><span><a href=\"/emergent/index.php/demos/scalar_val_test\">Read</a></span></li>
+															<li id=\"ca-edit\"><span><a href=\"/emergent/index.php?title=demos/scalar_val_test&amp;action=edit\" title=\"Edit this page [e]\" accesskey=\"e\">Edit</a></span></li>
+															<li id=\"ca-history\" class=\"collapsible\"><span><a href=\"/emergent/index.php?title=demos/scalar_val_test&amp;action=history\" title=\"Past revisions of this page [h]\" accesskey=\"h\">View history</a></span></li>
+															<li id=\"ca-unwatch\" class=\"icon\"><span><a href=\"/emergent/index.php?title=demos/scalar_val_test&amp;action=unwatch&amp;token=8aa8cdbf13be6e8b5f35d84de01e33485a51e3fb%2B%5C\" title=\"Remove this page from your watchlist [w]\" accesskey=\"w\">Unwatch</a></span></li>
+													</ul>
+					</div>
+										<div id=\"p-cactions\" role=\"navigation\" class=\"vectorMenu\" aria-labelledby=\"p-cactions-label\">
+						<h3 id=\"p-cactions-label\"><span>More</span><a href=\"#\"></a></h3>
+
+						<div class=\"menu\">
+							<ul>
+																	<li id=\"ca-delete\">
+										<a href=\"/emergent/index.php?title=demos/scalar_val_test&amp;action=delete\" title=\"Delete this page [d]\" accesskey=\"d\">Delete</a>
+									</li>
+																	<li id=\"ca-move\">
+										<a href=\"/emergent/index.php/Special:MovePage/demos/scalar_val_test\" title=\"Move this page [m]\" accesskey=\"m\">Move</a>
+									</li>
+																	<li id=\"ca-protect\">
+										<a href=\"/emergent/index.php?title=demos/scalar_val_test&amp;action=protect\" title=\"Protect this page [=]\" accesskey=\"=\">Protect</a>
+									</li>
+																	<li id=\"ca-purge\">
+										<a href=\"/emergent/index.php?title=demos/scalar_val_test&amp;action=purge\">Refresh</a>
+									</li>
+															</ul>
+						</div>
+					</div>
+										<div id=\"p-search\" role=\"search\">
+						<h3>
+							<label for=\"searchInput\">Search</label>
+						</h3>
+
+						<form action=\"/emergent/index.php\" id=\"searchform\">
+							<div id=\"simpleSearch\">
+							<input type=\"search\" name=\"search\" placeholder=\"Search\" title=\"Search emergent [f]\" accesskey=\"f\" id=\"searchInput\"><input type=\"hidden\" value=\"Special:Search\" name=\"title\"><input type=\"submit\" name=\"fulltext\" value=\"Search\" title=\"Search the pages for this text\" id=\"mw-searchButton\" class=\"searchButton mw-fallbackSearchButton\"><input type=\"submit\" name=\"go\" value=\"Go\" title=\"Go to a page with this exact name if it exists\" id=\"searchButton\" class=\"searchButton\">							</div>
+						</form>
+					</div>
+									</div>
 			</div>
 			<div id=\"mw-panel\">
-					<div id=\"p-logo\" role=\"banner\"><a style=\"background-image: url(/mediawiki/sites//emergent/logo.png);\" href=\"/emergent/index.php/Main_Page\" title=\"Visit the main page\"></a></div>
-				<div class=\"portal\" role=\"navigation\" id=\"p-navigation\" aria-labelledby=\"p-navigation-label\">
-	<h3 id=\"p-navigation-label\">Navigation</h3>
-	<div class=\"body\">
-		<ul>
-			<li id=\"n-mainpage-description\"><a href=\"/emergent/index.php/Main_Page\" title=\"Visit the main page [z]\" accesskey=\"z\">Main page</a></li>
-			<li id=\"n-recentchanges\"><a href=\"/emergent/index.php/Special:RecentChanges\" title=\"A list of recent changes in the wiki [r]\" accesskey=\"r\">Recent changes</a></li>
-			<li id=\"n-Documentation\"><a href=\"/emergent/index.php/User_hub\">Documentation</a></li>
-			<li id=\"n-Submit-a-bug\"><a href=\"/emergent/index.php/How_to_submit_a_bug_report\">Submit a bug</a></li>
-			<li id=\"n-Bug-tracker\"><a href=\"//grey.colorado.edu/cgi-bin/bugzilla/index.cgi\" rel=\"nofollow\">Bug tracker</a></li>
-			<li id=\"n-Mailing-list\"><a href=\"//grey.colorado.edu/cgi-bin/mailman/listinfo/emergent-users\" rel=\"nofollow\">Mailing list</a></li>
-		</ul>
-	</div>
-</div>
-<div class=\"portal\" role=\"navigation\" id=\"p-tb\" aria-labelledby=\"p-tb-label\">
-	<h3 id=\"p-tb-label\">Tools</h3>
-	<div class=\"body\">
-		<ul>
-			<li id=\"t-whatlinkshere\"><a href=\"/emergent/index.php/Special:WhatLinksHere/ScalarValLayerSpec\" title=\"A list of all wiki pages that link here [j]\" accesskey=\"j\">What links here</a></li>
-			<li id=\"t-recentchangeslinked\"><a href=\"/emergent/index.php/Special:RecentChangesLinked/ScalarValLayerSpec\" title=\"Recent changes in pages linked from this page [k]\" accesskey=\"k\">Related changes</a></li>
-			<li id=\"t-specialpages\"><a href=\"/emergent/index.php/Special:SpecialPages\" title=\"A list of all special pages [q]\" accesskey=\"q\">Special pages</a></li>
-			<li id=\"t-permalink\"><a href=\"/emergent/index.php?title=ScalarValLayerSpec&amp;oldid=10589\" title=\"Permanent link to this revision of the page\">Permanent link</a></li>
-			<li id=\"t-info\"><a href=\"/emergent/index.php?title=ScalarValLayerSpec&amp;action=info\">Page information</a></li>
-			<li id=\"t-smwbrowselink\"><a href=\"/emergent/index.php/Special:Browse/ScalarValLayerSpec\" rel=\"smw-browse\">Browse properties</a></li>
-		</ul>
-	</div>
-</div>
-<div class=\"portal\" role=\"navigation\" id=\"p-coll-print_export\" aria-labelledby=\"p-coll-print_export-label\">
-	<h3 id=\"p-coll-print_export-label\">Print/export</h3>
-	<div class=\"body\">
-		<ul>
-			<li id=\"coll-create_a_book\"><a href=\"/emergent/index.php?title=Special:Book&amp;bookcmd=book_creator&amp;referer=ScalarValLayerSpec\">Create a book</a></li>
-			<li id=\"coll-download-as-rl\"><a href=\"/emergent/index.php?title=Special:Book&amp;bookcmd=render_article&amp;arttitle=ScalarValLayerSpec&amp;oldid=10589&amp;writer=rl\">Download as PDF</a></li>
-			<li id=\"t-print\"><a href=\"/emergent/index.php?title=ScalarValLayerSpec&amp;printable=yes\" title=\"Printable version of this page [p]\" accesskey=\"p\">Printable version</a></li>
-		</ul>
-	</div>
-</div>
-			</div>
+				<div id=\"p-logo\" role=\"banner\"><a class=\"mw-wiki-logo\" href=\"/emergent/index.php/Main_Page\" title=\"Visit the main page\"></a></div>
+						<div class=\"portal\" role=\"navigation\" id=\"p-navigation\" aria-labelledby=\"p-navigation-label\">
+			<h3 id=\"p-navigation-label\">Navigation</h3>
+
+			<div class=\"body\">
+									<ul>
+						<li id=\"n-mainpage-description\"><a href=\"/emergent/index.php/Main_Page\" title=\"Visit the main page [z]\" accesskey=\"z\">Main page</a></li><li id=\"n-recentchanges\"><a href=\"/emergent/index.php/Special:RecentChanges\" title=\"A list of recent changes in the wiki [r]\" accesskey=\"r\">Recent changes</a></li><li id=\"n-Documentation\"><a href=\"/emergent/index.php/User_hub\">Documentation</a></li><li id=\"n-Submit-a-bug\"><a href=\"/emergent/index.php/How_to_submit_a_bug_report\">Submit a bug</a></li><li id=\"n-Bug-tracker\"><a href=\"//grey.colorado.edu/cgi-bin/bugzilla/index.cgi\" rel=\"nofollow\">Bug tracker</a></li><li id=\"n-Mailing-list\"><a href=\"//grey.colorado.edu/cgi-bin/mailman/listinfo/emergent-users\" rel=\"nofollow\">Mailing list</a></li>					</ul>
+							</div>
+		</div>
+			<div class=\"portal\" role=\"navigation\" id=\"p-tb\" aria-labelledby=\"p-tb-label\">
+			<h3 id=\"p-tb-label\">Tools</h3>
+
+			<div class=\"body\">
+									<ul>
+						<li id=\"t-whatlinkshere\"><a href=\"/emergent/index.php/Special:WhatLinksHere/demos/scalar_val_test\" title=\"A list of all wiki pages that link here [j]\" accesskey=\"j\">What links here</a></li><li id=\"t-recentchangeslinked\"><a href=\"/emergent/index.php/Special:RecentChangesLinked/demos/scalar_val_test\" title=\"Recent changes in pages linked from this page [k]\" accesskey=\"k\">Related changes</a></li><li id=\"t-upload\"><a href=\"/emergent/index.php/Special:Upload\" title=\"Upload files [u]\" accesskey=\"u\">Upload file</a></li><li id=\"t-specialpages\"><a href=\"/emergent/index.php/Special:SpecialPages\" title=\"A list of all special pages [q]\" accesskey=\"q\">Special pages</a></li><li id=\"t-permalink\"><a href=\"/emergent/index.php?title=demos/scalar_val_test&amp;oldid=11958\" title=\"Permanent link to this revision of the page\">Permanent link</a></li><li id=\"t-info\"><a href=\"/emergent/index.php?title=demos/scalar_val_test&amp;action=info\" title=\"More information about this page\">Page information</a></li><li id=\"t-smwbrowselink\"><a href=\"/emergent/index.php/Special:Browse/demos/scalar_val_test\" rel=\"smw-browse\">Browse properties</a></li>					</ul>
+							</div>
+		</div>
+			<div class=\"portal\" role=\"navigation\" id=\"p-coll-print_export\" aria-labelledby=\"p-coll-print_export-label\">
+			<h3 id=\"p-coll-print_export-label\">Print/export</h3>
+
+			<div class=\"body\">
+									<ul>
+						<li id=\"coll-create_a_book\"><a href=\"/emergent/index.php?title=Special:Book&amp;bookcmd=book_creator&amp;referer=demos%2Fscalar+val+test\">Create a book</a></li><li id=\"coll-download-as-rl\"><a href=\"/emergent/index.php?title=Special:Book&amp;bookcmd=render_article&amp;arttitle=demos%2Fscalar+val+test&amp;oldid=11958&amp;writer=rl\">Download as PDF</a></li><li id=\"t-print\"><a href=\"/emergent/index.php?title=demos/scalar_val_test&amp;printable=yes\" title=\"Printable version of this page [p]\" accesskey=\"p\">Printable version</a></li>					</ul>
+							</div>
+		</div>
+				</div>
 		</div>
 		<div id=\"footer\" role=\"contentinfo\">
 							<ul id=\"footer-info\">
-											<li id=\"footer-info-lastmod\"> This page was last modified on 4 May 2014, at 23:57.</li>
-											<li id=\"footer-info-viewcount\">This page has been accessed 1,882 times.</li>
+											<li id=\"footer-info-lastmod\"> This page was last modified on 30 August 2016, at 01:28.</li>
 									</ul>
 							<ul id=\"footer-places\">
 											<li id=\"footer-places-about\"><a href=\"/emergent/index.php/emergent:About\" title=\"emergent:About\">About emergent</a></li>
 									</ul>
 										<ul id=\"footer-icons\" class=\"noprint\">
-					<li id=\"footer-poweredbyico\">
-						<a href=\"//www.mediawiki.org/\"><img src=\"/emergent/skins/common/images/poweredby_mediawiki_88x31.png\" alt=\"Powered by MediaWiki\" width=\"88\" height=\"31\"></a>
-						<a href=\"https://www.semantic-mediawiki.org/wiki/Semantic_MediaWiki\"><img src=\"/emergent/extensions/SemanticMediaWiki/resources/images/smw_button.png\" alt=\"Powered by Semantic MediaWiki\" width=\"88\" height=\"31\"></a>
-					</li>
-				</ul>
+											<li id=\"footer-poweredbyico\">
+							<a href=\"//www.mediawiki.org/\"><img src=\"/emergent/resources/assets/poweredby_mediawiki_88x31.png\" alt=\"Powered by MediaWiki\" srcset=\"/emergent/resources/assets/poweredby_mediawiki_132x47.png 1.5x, /emergent/resources/assets/poweredby_mediawiki_176x62.png 2x\" width=\"88\" height=\"31\"></a><a href=\"https://www.semantic-mediawiki.org/wiki/Semantic_MediaWiki\"><img src=\"/emergent/extensions/SemanticMediaWiki/resources/images/smw_button.png\" alt=\"Powered by Semantic MediaWiki\" width=\"88\" height=\"31\"></a>						</li>
+									</ul>
 						<div style=\"clear:both\"></div>
 		</div>
-		<script>/*<![CDATA[*/window.jQuery && jQuery.ready();/*]]>*/</script><script>if(window.mw){
-mw.loader.state({\"site\":\"loading\",\"user\":\"ready\",\"user.groups\":\"ready\"});
-}</script>
-<script>if(window.mw){
-mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawiki.hidpi\",\"mediawiki.page.ready\",\"mediawiki.searchSuggest\",\"ext.headertabs\",\"ext.Drafts\",\"ext.cite\",\"skins.vector.collapsibleNav\"],null,true);
-}</script>
-<script src=\"https://grey.colorado.edu/emergent/load.php?debug=false&amp;lang=en&amp;modules=site&amp;only=scripts&amp;skin=vector&amp;*\"></script>
-<!-- Served in 0.343 secs. -->
+		<script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
+mw.loader.state({\"user\":\"ready\",\"user.groups\":\"ready\"});mw.loader.load([\"mediawiki.action.view.postEdit\",\"site\",\"mediawiki.user\",\"mediawiki.hidpi\",\"mediawiki.page.ready\",\"mediawiki.searchSuggest\",\"mediawiki.page.watch.ajax\",\"ext.headertabs\"]);
+} );</script><script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
+mw.config.set({\"wgBackendResponseTime\":4118});
+} );</script>
 	
 
 </body></html>";
@@ -2361,7 +2335,7 @@ Published on wiki: emergent page: demos/scalar_val_test with description: Tests 
       matrix_col_width=10;
       ar {
        name="ar";
-      [2] 0.88980192;0.11019807;      };
+      [2] 0.85840839;0.14159161;      };
      };
     };
     data_flags=SAVE_ROWS|AUTO_CALC;
@@ -2413,7 +2387,7 @@ Published on wiki: emergent page: demos/scalar_val_test with description: Tests 
 "1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";
 "1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";
 "1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";
-"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.0";
+"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.0";"1.0";"1.0";"1.0";
 "1.0";"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";
       };
      };
@@ -2617,7 +2591,7 @@ Published on wiki: emergent page: demos/scalar_val_test with description: Tests 
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
-1;1;1;1;1;1;1;1;1;0;
+1;1;1;1;1;1;0;0;0;0;
 0;0;0;0;0;0;0;0;0;0;
       };
      };
@@ -2644,7 +2618,7 @@ Published on wiki: emergent page: demos/scalar_val_test with description: Tests 
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
-1;1;1;1;1;1;1;1;1;0;
+1;1;1;1;1;1;0;0;0;0;
 0;0;0;0;0;0;0;0;0;0;
       };
      };
@@ -2671,7 +2645,7 @@ Published on wiki: emergent page: demos/scalar_val_test with description: Tests 
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
-1;1;1;1;1;1;1;1;1;0;
+1;1;1;1;1;1;0;0;0;0;
 0;0;0;0;0;0;0;0;0;0;
       };
      };
@@ -2690,16 +2664,16 @@ Published on wiki: emergent page: demos/scalar_val_test with description: Tests 
       matrix_col_width=10;
       ar {
        name="ar";
-      [100] 0.88980192;0.88980192;0.88980192;0.88980192;0.88980192;0.88980192;0.88980192;0.88980192;0.88980192;0.88980192;
-0.88980192;0.88980192;0.88980192;0.88980192;0.88980192;0.88980192;0.88980192;0.88980192;0.88980192;0.88980192;
-0.88980192;0.88980192;0.88980192;0.88980192;0.88980192;0.88980192;0.88980192;0.88980192;0.88980192;0.88980192;
-0.88980192;0.88980192;0.88980192;0.88980192;0.88980192;0.88980192;0.88980192;0.88980192;0.88980192;0.88980192;
-0.88980192;0.88980192;0.88980192;0.88980192;0.88980192;0.88980192;0.88980192;0.88980192;0.88980192;0.88980192;
-0.88980192;0.88980192;0.88980192;0.88980192;0.88980192;0.88980192;0.88980192;0.88980192;0.88980192;0.88980192;
-0.88980192;0.88980192;0.88980192;0.88980192;0.88980192;0.88980192;0.88980192;0.88980192;0.88980192;0.88980192;
-0.88980192;0.88980192;0.88980192;0.88980192;0.88980192;0.88980192;0.88980192;0.88980192;0.88980192;0.88980192;
-0.88980192;0.88980192;0.88980192;0.88980192;0.88980192;0.88980192;0.88980192;0.88980192;0.88980192;0.11019807;
-0.11019807;0.11019807;0.11019807;0.11019807;0.11019807;0.11019807;0.11019807;0.11019807;0.11019807;0.11019807;
+      [100] 0.85840839;0.85840839;0.85840839;0.85840839;0.85840839;0.85840839;0.85840839;0.85840839;0.85840839;0.85840839;
+0.85840839;0.85840839;0.85840839;0.85840839;0.85840839;0.85840839;0.85840839;0.85840839;0.85840839;0.85840839;
+0.85840839;0.85840839;0.85840839;0.85840839;0.85840839;0.85840839;0.85840839;0.85840839;0.85840839;0.85840839;
+0.85840839;0.85840839;0.85840839;0.85840839;0.85840839;0.85840839;0.85840839;0.85840839;0.85840839;0.85840839;
+0.85840839;0.85840839;0.85840839;0.85840839;0.85840839;0.85840839;0.85840839;0.85840839;0.85840839;0.85840839;
+0.85840839;0.85840839;0.85840839;0.85840839;0.85840839;0.85840839;0.85840839;0.85840839;0.85840839;0.85840839;
+0.85840839;0.85840839;0.85840839;0.85840839;0.85840839;0.85840839;0.85840839;0.85840839;0.85840839;0.85840839;
+0.85840839;0.85840839;0.85840839;0.85840839;0.85840839;0.85840839;0.85840839;0.85840839;0.85840839;0.85840839;
+0.85840839;0.85840839;0.85840839;0.85840839;0.85840839;0.85840839;0.14159161;0.14159161;0.14159161;0.14159161;
+0.14159161;0.14159161;0.14159161;0.14159161;0.14159161;0.14159161;0.14159161;0.14159161;0.14159161;0.14159161;
       };
      };
     };
@@ -4803,7 +4777,7 @@ Published on wiki: emergent page: demos/scalar_val_test with description: Tests 
      ProgVar @[6] {
       name="data_loop_index";
       var_type=T_Int;
-      int_val=5;
+      int_val=73;
       object_scope=NULL;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -5143,14 +5117,14 @@ Published on wiki: emergent page: demos/scalar_val_test with description: Tests 
       code_string="network->Compute_EpochStats()";
       result_var=NULL;
       obj=$.programs.gp[0][2].args[0]$;
-      method=LeabraNetwork::Compute_EpochStats;
+      method=Network::Compute_EpochStats;
       meth_args {
        name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
       meth_sig="void Compute_EpochStats()";
-      meth_desc=" compute epoch-level statistics; calls DMem_ComputeAggs (if dmem) and EpochSSE -- specific algos may add more compute epoch-level statistics, including SSE, AvgExtRew and AvgCycles";
+      meth_desc=" compute epoch-level statistics; calls DMem_ComputeAggs (if dmem) and EpochSSE -- specific algos may add more";
      };
      MethodCall @[9] {
       name="MethodCall_epochtimerEndTimer";
@@ -7405,7 +7379,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	agg_col {
 	 col_name="sv1";
 	};
-	agg {name="agg": op=MEAN: rel={name="Relation_59": rel=LESSTHANOREQUAL: val=0: val_string="": use_var=0: var=NULL: }: };
+	agg {name="agg": op=MEAN: rel={name="rel": rel=LESSTHANOREQUAL: val=0: val_string="": use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
 	 col_name="select_spec";
@@ -7507,7 +7481,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	agg_col {
 	 col_name="agg_col";
 	};
-	agg {name="agg": op=NONE: rel={name="Relation_61": rel=LESSTHANOREQUAL: val=0: val_string="": use_var=0: var=NULL: }: };
+	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: val_string="": use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
 	 col_name="select_spec";
@@ -7541,7 +7515,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	agg_col {
 	 col_name="agg_col";
 	};
-	agg {name="agg": op=NONE: rel={name="Relation_62": rel=LESSTHANOREQUAL: val=0: val_string="": use_var=0: var=NULL: }: };
+	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: val_string="": use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
 	 col_name="select_spec";
@@ -8380,7 +8354,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
      ProgVar @[0] {
       name="prob1";
       var_type=T_Real;
-      real_val=0.8898019272747683;
+      real_val=0.8584083937563296;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -8390,7 +8364,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
      ProgVar @[1] {
       name="prob2";
       var_type=T_Real;
-      real_val=0.1101980727252317;
+      real_val=0.1415916062436704;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -8674,7 +8648,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
     UserDataItem @[2] {name="view_win_wd": value=0.9980198: val_type_fixed=0: };
     UserDataItem @[3] {name="view_win_ht": value=0.7987127: val_type_fixed=0: };
     UserDataItem @[4] {name="view_win_iconified": value=0: val_type_fixed=0: };
-    UserDataItem @[5] {name="view_splitter_state": value=AAAA/wAAAAEAAAADAAAA2gAAAuoAAAM2AQAAAAcBAAAAAQE=: val_type_fixed=0: };
+    UserDataItem @[5] {name="view_splitter_state": value=AAAA/wAAAAEAAAADAAABbwAABLkAAAWaAQAAAAcBAAAAAQE=: val_type_fixed=0: };
    };
    name="Browser3";
    m_data=.$$;
@@ -8774,12 +8748,38 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	  lay_layout=THREE_D;
 	  lay_mv=0;
 	  net_text=1;
+	  state_width_default=8;
 	  show_iconified=0;
 	  net_text_xform {scale={x=0.5: y=0.5000002: z=0.5000002: }: rotate={x=1: y=0: z=0: rot=1.570796: }: translate={x=0.4965247: y=-0.1656941: z=-0.227156: }: };
 	  net_text_rot=-90;
-	  cur_unit_vals{ misc_1;	  };
+	  cur_unit_vals{ act;	  };
 	  hot_vars{ targ;ext;act;net;bias_wt;bias_dwt;act_eq;act_m;act_p;act_dif;avg_m;avg_l;act_avg;r.wt;r.wt*act;s.wt;r.dwt;s.dwt;misc_2;misc_1;ext_orig;	  };
 	  unit_src_path=".layers[3][0]";
+	  state_items {
+	   name="state_items";
+	   el_typ=NetViewStateItem;
+	   el_def=0;
+	   NetViewStateItem @[0] {name="batch": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[1] {name="epoch": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[2] {name="group": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[3] {name="trial": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[4] {name="tick": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[5] {name="cycle": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[6] {name="time": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[7] {name="total_trials": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[8] {name="sse": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[9] {name="group_name": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[10] {name="trial_name": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[11] {name="output_name": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[12] {name="quarter": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[13] {name="phase": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[14] {name="tot_cycle": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[15] {name="rt_cycles": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[16] {name="ext_rew": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[17] {name="norm_err": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[18] {name="cos_err": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[19] {name="minus_output_name": net_member=1: display=0: width=8: found=1: };
+	  };
 	  con_type=ANY_CON;
 	  hist_idx=0;
 	  hist_save=1;
@@ -10314,44 +10314,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
  save_as_only=0;
  auto_name=1;
  last_change_desc="Project updated on wiki: emergent changes: new doc link";
- tree_state{ .;.docs;.wizards;.ctrl_panels;.data;.data.gp[0];.data.gp[1];.data.gp[2];.programs;.programs.gp[0];.networks;.networks[0];.networks[0].specs;.networks[0].specs[0];.networks[0].specs[1];.networks[0].layers; };
+ tree_state{ .;.docs;.wizards;.ctrl_panels;.data;.data.gp[0];.data.gp[1];.data.gp[2];.programs;.programs.gp[0];.networks;.networks[0];.networks[0].specs;.networks[0].specs[0];.networks[0].specs[1];.networks[0].layers;.networks[0].weights; };
  networks {
   name="networks";
   el_typ=LeabraNetwork;
   el_def=0;
   LeabraNetwork @[0] {
-   UserDataItem_List @*(.user_data_) {
-    name=;
-    el_typ=UserDataItem;
-    el_def=0;
-    UserDataItem @[0] {name="minus_output_name": value=1: val_type_fixed=1: };
-    UserDataItem @[1] {name="cos_err": value=1: val_type_fixed=1: };
-    UserDataItem @[2] {name="norm_err": value=1: val_type_fixed=1: };
-    UserDataItem @[3] {name="ext_rew": value=1: val_type_fixed=1: };
-    UserDataItem @[4] {name="rt_cycles": value=1: val_type_fixed=1: };
-    UserDataItem @[5] {name="tot_cycle": value=1: val_type_fixed=1: };
-    UserDataItem @[6] {name="phase": value=1: val_type_fixed=1: };
-    UserDataItem @[7] {name="quarter": value=1: val_type_fixed=1: };
-    UserDataItem @[8] {name="output_name": value=1: val_type_fixed=1: };
-    UserDataItem @[9] {name="trial_name": value=1: val_type_fixed=1: };
-    UserDataItem @[10] {name="group_name": value=1: val_type_fixed=1: };
-    UserDataItem @[11] {name="sse": value=1: val_type_fixed=1: };
-    UserDataItem @[12] {name="total_trials": value=1: val_type_fixed=1: };
-    UserDataItem @[13] {name="time": value=1: val_type_fixed=1: };
-    UserDataItem @[14] {name="cycle": value=1: val_type_fixed=1: };
-    UserDataItem @[15] {name="tick": value=1: val_type_fixed=1: };
-    UserDataItem @[16] {name="trial": value=1: val_type_fixed=1: };
-    UserDataItem @[17] {name="group": value=1: val_type_fixed=1: };
-    UserDataItem @[18] {name="epoch": value=1: val_type_fixed=1: };
-    UserDataItem @[19] {name="batch": value=1: val_type_fixed=1: };
-    UserDataItem @[20] {name="trial_cos_diff": value=1: val_type_fixed=1: };
-    UserDataItem @[21] {name="avg_act_diff": value=1: val_type_fixed=1: };
-    UserDataItem @[22] {name="cos_diff": value=1: val_type_fixed=1: };
-    UserDataItem @[23] {name="maxda": value=1: val_type_fixed=1: };
-    UserDataItem @[24] {name="minus_cycles": value=1: val_type_fixed=1: };
-    UserDataItem @[25] {name="ct_cycle": value=1: val_type_fixed=1: };
-    UserDataItem @[26] {name="phase_no": value=1: val_type_fixed=1: };
-   };
    name="ScalarValTestNet";
    desc=;
    flags=BUILD_INIT_WTS;
@@ -10360,7 +10328,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
    small_batch_n=10;
    stats {sse_unit_avg=0: sse_sqrt=0: cnt_err_tol=0: prerr=0: };
    n_units=34;
-   n_cons=0;
+   n_cons=272;
    max_prjns=1;
    specs {
     name="specs";
@@ -10393,27 +10361,28 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        act_range {min=0: max=1: range=1: scale=1: };
        sse_tol=0.5;
        act_fun=NOISY_XX1;
-       act {thr=0.5: gain=100: nvar=0.005: sig_mult=0.33: sig_mult_pow=0.8: sig_gain=3: interp_range=0.01: gain_cor_range=10: gain_cor=0.1: sig_gain_nvar=600: sig_mult_eff=0.1895352: sig_val_at_0=0.09476762: interp_val=0.3843991: };
-       act_misc {rec_nd=0: avg_nd=1: dif_avg=0: net_gain=1: act_max_hz=100: avg_trace=0: lambda=0: avg_tau=200: avg_init=0.15: avg_dt=0.005: };
-       spike {rise=0: decay=5: g_gain=9: window=3: eq_gain=8: eq_tau=50: eq_dt=0.02: };
+       act {thr=0.5: gain=100: nvar=0.005: avg_correct=1: vm_act_thr=0.01: sig_mult=0.33: sig_mult_pow=0.8: sig_gain=3: interp_range=0.01: gain_cor_range=10: gain_cor=0.1: sig_gain_nvar=600: sig_mult_eff=0.1895352: sig_val_at_0=0.09476762: interp_val=0.3843991: };
+       act_misc {rec_nd=0: avg_nd=1: dif_avg=0: net_gain=1: avg_trace=0: lambda=0: avg_tau=200: avg_init=0.15: avg_dt=0.005: };
+       spike {rise=0: decay=5: g_gain=9: window=3: act_max_hz=180: int_tau=5: int_dt=0.2: };
        spike_misc {ex=0: exp_slope=0.02: spk_thr=1.2: vm_r=0.3: t_r=3: clamp_max_p=0.12: clamp_type=REGULAR: eff_spk_thr=0.5: };
        opt_thresh {send=0.1: delta=0.005: };
        clamp_range {min=0: max=0.95: range=0.95: scale=1.052632: };
        vm_range {min=0: max=2: range=2: scale=0.5: };
        init {v_m=0.4: act=0: netin=0: };
-       dt {integ=1: vm_tau=3.3: net_tau=1.4: fast_cyc=0: vm_dt=0.3030303: net_dt=0.7142857: };
+       dt {integ=1: vm_tau=3.3: net_tau=1.4: vm_cyc=1: fast_cyc=0: vm_dt=0.3030303: vm_dt_cyc=0.3030303: net_dt=0.7142857: };
        act_avg {ss_tau=2: s_tau=2: m_tau=10: m_in_s=0.1: ss_dt=0.5: s_dt=0.5: m_dt=0.1: s_in_s=0.9: };
        avg_l {init=0.4: gain=1.5: min=0.2: tau=10: lrn_max=0.05: lrn_min=0.005: dt=0.1: lrn_fact=0.03461539: };
        avg_l_2 {err_mod=1: err_min=0.01: lay_act_thr=0.01: };
-       g_bar {e=1: l=0.1: i=1: };
-       e_rev {e=1: l=0.3: i=0.25: };
-       adapt {on=0: tau=144: vm_gain=0.04: spike_gain=0.00805: Ei_dyn=1: Ei_gain=0.001: Ei_tau=50: dt=0.006944444: Ei_dt=0.02: };
+       g_bar {e=1: l=0.1: i=1: k=0.2: };
+       e_rev {e=1: l=0.3: i=0.25: k=0.1: };
+       kna_adapt {on=0: rate_rise=0.8: f_on=1: f_rise=0.05: f_max=0.1: f_tau=50: m_on=1: m_rise=0.02: m_max=0.1: m_tau=200: s_on=1: s_rise=0.001: s_max=1: s_tau=1000: f_dt=0.02: m_dt=0.005: s_dt=0.001: };
+       kna_misc {clamp=1: invert_nd=1: max_gc=0.2: max_adapt=0.3: no_targ=1: };
        stp {on=0: algorithm=CYCLES: f_r_ratio=0.02: rec_tau=200: p0=0.3: p0_norm=0.4: kre_tau=100: kre=0.002: fac_tau=4: fac=0.3: thresh=0.5: n_trials=1: rec_prob=0.1: rec_dt=0.005: fac_dt=0.25: kre_dt=0.01: oneo_p0_norm=2.5: };
        syn_delay {on=0: delay=4: };
        deep_raw_qtr=Q4;
        deep {on=0: role=SUPER: raw_thr_rel=0.1: raw_thr_abs=0.1: mod_min=0.8: mod_thr=0.1: ctxt_prv=0: tick_updt=-1: else_prv=0.9: mod_range=0.2: ctxt_new=1: else_new=0.1: };
-       trc {p_only_m=0: thal_gate=0: avg_clamp=0: deep_gain=0.2: clip=0: clip_max=0.4: std_gain=0.8: };
-       da_mod {on=0: minus=0: plus=0.1: };
+       trc {p_only_m=0: thal_gate=0: clamp_net=0: avg_clamp=0: deep_gain=0.2: clip=0: clip_max=0.4: std_gain=0.8: };
+       da_mod {on=0: mod_gain=0: minus=0: plus=0.1: da_neg_gain=0.1: da_pos_gain=0.1: };
        noise_type {type=NO_NOISE: trial_fixed=1: };
        noise {name="noise": type=GAUSSIAN: mean=0: var=0.001: par=1: };
       };
@@ -10433,27 +10402,28 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        act_range {min=0: max=1: range=1: scale=1: };
        sse_tol=0.5;
        act_fun=NOISY_XX1;
-       act {thr=0.5: gain=100: nvar=0.005: sig_mult=0.33: sig_mult_pow=0.8: sig_gain=3: interp_range=0.01: gain_cor_range=10: gain_cor=0.1: sig_gain_nvar=600: sig_mult_eff=0.1895352: sig_val_at_0=0.09476762: interp_val=0.3843991: };
-       act_misc {rec_nd=0: avg_nd=1: dif_avg=0: net_gain=1: act_max_hz=100: avg_trace=0: lambda=0: avg_tau=200: avg_init=0.15: avg_dt=0.005: };
-       spike {rise=0: decay=5: g_gain=9: window=3: eq_gain=8: eq_tau=50: eq_dt=0.02: };
+       act {thr=0.5: gain=100: nvar=0.005: avg_correct=1: vm_act_thr=0.01: sig_mult=0.33: sig_mult_pow=0.8: sig_gain=3: interp_range=0.01: gain_cor_range=10: gain_cor=0.1: sig_gain_nvar=600: sig_mult_eff=0.1895352: sig_val_at_0=0.09476762: interp_val=0.3843991: };
+       act_misc {rec_nd=0: avg_nd=1: dif_avg=0: net_gain=1: avg_trace=0: lambda=0: avg_tau=200: avg_init=0.15: avg_dt=0.005: };
+       spike {rise=0: decay=5: g_gain=9: window=3: act_max_hz=180: int_tau=5: int_dt=0.2: };
        spike_misc {ex=0: exp_slope=0.02: spk_thr=1.2: vm_r=0.3: t_r=3: clamp_max_p=0.12: clamp_type=REGULAR: eff_spk_thr=0.5: };
        opt_thresh {send=0.1: delta=0.005: };
        clamp_range {min=0: max=0.95: range=0.95: scale=1.052632: };
        vm_range {min=0: max=2: range=2: scale=0.5: };
        init {v_m=0.4: act=0: netin=0: };
-       dt {integ=1: vm_tau=3.3: net_tau=1.4: fast_cyc=0: vm_dt=0.3030303: net_dt=0.7142857: };
+       dt {integ=1: vm_tau=3.3: net_tau=1.4: vm_cyc=1: fast_cyc=0: vm_dt=0.3030303: vm_dt_cyc=0.3030303: net_dt=0.7142857: };
        act_avg {ss_tau=2: s_tau=2: m_tau=10: m_in_s=0.1: ss_dt=0.5: s_dt=0.5: m_dt=0.1: s_in_s=0.9: };
        avg_l {init=0.4: gain=1.5: min=0.2: tau=10: lrn_max=0.05: lrn_min=0.005: dt=0.1: lrn_fact=0.03461539: };
        avg_l_2 {err_mod=1: err_min=0.01: lay_act_thr=0.01: };
-       g_bar {e=1: l=0.1: i=1: };
-       e_rev {e=1: l=0.3: i=0.25: };
-       adapt {on=0: tau=144: vm_gain=0.04: spike_gain=0.00805: Ei_dyn=1: Ei_gain=0.001: Ei_tau=50: dt=0.006944444: Ei_dt=0.02: };
+       g_bar {e=1: l=0.1: i=1: k=0.2: };
+       e_rev {e=1: l=0.3: i=0.25: k=0.1: };
+       kna_adapt {on=0: rate_rise=0.8: f_on=1: f_rise=0.05: f_max=0.1: f_tau=50: m_on=1: m_rise=0.02: m_max=0.1: m_tau=200: s_on=1: s_rise=0.001: s_max=1: s_tau=1000: f_dt=0.02: m_dt=0.005: s_dt=0.001: };
+       kna_misc {clamp=1: invert_nd=1: max_gc=0.2: max_adapt=0.3: no_targ=1: };
        stp {on=0: algorithm=CYCLES: f_r_ratio=0.02: rec_tau=200: p0=0.3: p0_norm=0.4: kre_tau=100: kre=0.002: fac_tau=4: fac=0.3: thresh=0.5: n_trials=1: rec_prob=0.1: rec_dt=0.005: fac_dt=0.25: kre_dt=0.01: oneo_p0_norm=2.5: };
        syn_delay {on=0: delay=4: };
        deep_raw_qtr=Q4;
        deep {on=0: role=SUPER: raw_thr_rel=0.1: raw_thr_abs=0.1: mod_min=0.8: mod_thr=0.1: ctxt_prv=0: tick_updt=-1: else_prv=0.9: mod_range=0.2: ctxt_new=1: else_new=0.1: };
-       trc {p_only_m=0: thal_gate=0: avg_clamp=0: deep_gain=0.2: clip=0: clip_max=0.4: std_gain=0.8: };
-       da_mod {on=0: minus=0: plus=0.1: };
+       trc {p_only_m=0: thal_gate=0: clamp_net=0: avg_clamp=0: deep_gain=0.2: clip=0: clip_max=0.4: std_gain=0.8: };
+       da_mod {on=0: mod_gain=0: minus=0: plus=0.1: da_neg_gain=0.1: da_pos_gain=0.1: };
        noise_type {type=NO_NOISE: trial_fixed=1: };
        noise {name="noise": type=GAUSSIAN: mean=0: var=0.001: par=1: };
       };
@@ -10473,27 +10443,28 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        act_range {min=0: max=1: range=1: scale=1: };
        sse_tol=0.5;
        act_fun=NOISY_XX1;
-       act {thr=0.5: gain=100: nvar=0.005: sig_mult=0.33: sig_mult_pow=0.8: sig_gain=3: interp_range=0.01: gain_cor_range=10: gain_cor=0.1: sig_gain_nvar=600: sig_mult_eff=0.1895352: sig_val_at_0=0.09476762: interp_val=0.3843991: };
-       act_misc {rec_nd=0: avg_nd=1: dif_avg=0: net_gain=1: act_max_hz=100: avg_trace=0: lambda=0: avg_tau=200: avg_init=0.15: avg_dt=0.005: };
-       spike {rise=0: decay=5: g_gain=9: window=3: eq_gain=8: eq_tau=50: eq_dt=0.02: };
+       act {thr=0.5: gain=100: nvar=0.005: avg_correct=1: vm_act_thr=0.01: sig_mult=0.33: sig_mult_pow=0.8: sig_gain=3: interp_range=0.01: gain_cor_range=10: gain_cor=0.1: sig_gain_nvar=600: sig_mult_eff=0.1895352: sig_val_at_0=0.09476762: interp_val=0.3843991: };
+       act_misc {rec_nd=0: avg_nd=1: dif_avg=0: net_gain=1: avg_trace=0: lambda=0: avg_tau=200: avg_init=0.15: avg_dt=0.005: };
+       spike {rise=0: decay=5: g_gain=9: window=3: act_max_hz=180: int_tau=5: int_dt=0.2: };
        spike_misc {ex=0: exp_slope=0.02: spk_thr=1.2: vm_r=0.3: t_r=3: clamp_max_p=0.12: clamp_type=REGULAR: eff_spk_thr=0.5: };
        opt_thresh {send=0.1: delta=0.005: };
        clamp_range {min=0: max=0.95: range=0.95: scale=1.052632: };
        vm_range {min=0: max=2: range=2: scale=0.5: };
        init {v_m=0.4: act=0: netin=0: };
-       dt {integ=1: vm_tau=3.3: net_tau=1.4: fast_cyc=0: vm_dt=0.3030303: net_dt=0.7142857: };
+       dt {integ=1: vm_tau=3.3: net_tau=1.4: vm_cyc=1: fast_cyc=0: vm_dt=0.3030303: vm_dt_cyc=0.3030303: net_dt=0.7142857: };
        act_avg {ss_tau=2: s_tau=2: m_tau=10: m_in_s=0.1: ss_dt=0.5: s_dt=0.5: m_dt=0.1: s_in_s=0.9: };
        avg_l {init=0.4: gain=1.5: min=0.2: tau=10: lrn_max=0.05: lrn_min=0.005: dt=0.1: lrn_fact=0.03461539: };
        avg_l_2 {err_mod=1: err_min=0.01: lay_act_thr=0.01: };
-       g_bar {e=1: l=0.1: i=1: };
-       e_rev {e=1: l=0.3: i=0.25: };
-       adapt {on=0: tau=144: vm_gain=0.04: spike_gain=0.00805: Ei_dyn=1: Ei_gain=0.001: Ei_tau=50: dt=0.006944444: Ei_dt=0.02: };
+       g_bar {e=1: l=0.1: i=1: k=0.2: };
+       e_rev {e=1: l=0.3: i=0.25: k=0.1: };
+       kna_adapt {on=0: rate_rise=0.8: f_on=1: f_rise=0.05: f_max=0.1: f_tau=50: m_on=1: m_rise=0.02: m_max=0.1: m_tau=200: s_on=1: s_rise=0.001: s_max=1: s_tau=1000: f_dt=0.02: m_dt=0.005: s_dt=0.001: };
+       kna_misc {clamp=1: invert_nd=1: max_gc=0.2: max_adapt=0.3: no_targ=1: };
        stp {on=0: algorithm=CYCLES: f_r_ratio=0.02: rec_tau=200: p0=0.3: p0_norm=0.4: kre_tau=100: kre=0.002: fac_tau=4: fac=0.3: thresh=0.5: n_trials=1: rec_prob=0.1: rec_dt=0.005: fac_dt=0.25: kre_dt=0.01: oneo_p0_norm=2.5: };
        syn_delay {on=0: delay=4: };
        deep_raw_qtr=Q4;
        deep {on=0: role=SUPER: raw_thr_rel=0.1: raw_thr_abs=0.1: mod_min=0.8: mod_thr=0.1: ctxt_prv=0: tick_updt=-1: else_prv=0.9: mod_range=0.2: ctxt_new=1: else_new=0.1: };
-       trc {p_only_m=0: thal_gate=0: avg_clamp=0: deep_gain=0.2: clip=0: clip_max=0.4: std_gain=0.8: };
-       da_mod {on=0: minus=0: plus=0.1: };
+       trc {p_only_m=0: thal_gate=0: clamp_net=0: avg_clamp=0: deep_gain=0.2: clip=0: clip_max=0.4: std_gain=0.8: };
+       da_mod {on=0: mod_gain=0: minus=0: plus=0.1: da_neg_gain=0.1: da_pos_gain=0.1: };
        noise_type {type=NO_NOISE: trial_fixed=1: };
        noise {name="noise": type=GAUSSIAN: mean=0: var=0.001: par=1: };
       };
@@ -10502,27 +10473,28 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      act_range {min=0: max=1: range=1: scale=1: };
      sse_tol=0.5;
      act_fun=NOISY_XX1;
-     act {thr=0.5: gain=100: nvar=0.005: sig_mult=0.33: sig_mult_pow=0.8: sig_gain=3: interp_range=0.01: gain_cor_range=10: gain_cor=0.1: sig_gain_nvar=600: sig_mult_eff=0.1895352: sig_val_at_0=0.09476762: interp_val=0.3843991: };
-     act_misc {rec_nd=0: avg_nd=1: dif_avg=0: net_gain=1: act_max_hz=100: avg_trace=0: lambda=0: avg_tau=200: avg_init=0.15: avg_dt=0.005: };
-     spike {rise=0: decay=5: g_gain=9: window=3: eq_gain=8: eq_tau=50: eq_dt=0.02: };
+     act {thr=0.5: gain=100: nvar=0.005: avg_correct=1: vm_act_thr=0.01: sig_mult=0.33: sig_mult_pow=0.8: sig_gain=3: interp_range=0.01: gain_cor_range=10: gain_cor=0.1: sig_gain_nvar=600: sig_mult_eff=0.1895352: sig_val_at_0=0.09476762: interp_val=0.3843991: };
+     act_misc {rec_nd=0: avg_nd=1: dif_avg=0: net_gain=1: avg_trace=0: lambda=0: avg_tau=200: avg_init=0.15: avg_dt=0.005: };
+     spike {rise=0: decay=5: g_gain=9: window=3: act_max_hz=180: int_tau=5: int_dt=0.2: };
      spike_misc {ex=0: exp_slope=0.02: spk_thr=1.2: vm_r=0.3: t_r=3: clamp_max_p=0.12: clamp_type=REGULAR: eff_spk_thr=0.5: };
      opt_thresh {send=0.1: delta=0.005: };
      clamp_range {min=0: max=0.95: range=0.95: scale=1.052632: };
      vm_range {min=0: max=2: range=2: scale=0.5: };
      init {v_m=0.4: act=0: netin=0: };
-     dt {integ=1: vm_tau=3.3: net_tau=1.4: fast_cyc=0: vm_dt=0.3030303: net_dt=0.7142857: };
+     dt {integ=1: vm_tau=3.3: net_tau=1.4: vm_cyc=1: fast_cyc=0: vm_dt=0.3030303: vm_dt_cyc=0.3030303: net_dt=0.7142857: };
      act_avg {ss_tau=2: s_tau=2: m_tau=10: m_in_s=0.1: ss_dt=0.5: s_dt=0.5: m_dt=0.1: s_in_s=0.9: };
      avg_l {init=0.4: gain=1.5: min=0.2: tau=10: lrn_max=0.05: lrn_min=0.005: dt=0.1: lrn_fact=0.03461539: };
      avg_l_2 {err_mod=1: err_min=0.01: lay_act_thr=0.01: };
-     g_bar {e=1: l=0.1: i=1: };
-     e_rev {e=1: l=0.3: i=0.25: };
-     adapt {on=0: tau=144: vm_gain=0.04: spike_gain=0.00805: Ei_dyn=1: Ei_gain=0.001: Ei_tau=50: dt=0.006944444: Ei_dt=0.02: };
+     g_bar {e=1: l=0.1: i=1: k=0.2: };
+     e_rev {e=1: l=0.3: i=0.25: k=0.1: };
+     kna_adapt {on=0: rate_rise=0.8: f_on=1: f_rise=0.05: f_max=0.1: f_tau=50: m_on=1: m_rise=0.02: m_max=0.1: m_tau=200: s_on=1: s_rise=0.001: s_max=1: s_tau=1000: f_dt=0.02: m_dt=0.005: s_dt=0.001: };
+     kna_misc {clamp=1: invert_nd=1: max_gc=0.2: max_adapt=0.3: no_targ=1: };
      stp {on=0: algorithm=CYCLES: f_r_ratio=0.02: rec_tau=200: p0=0.3: p0_norm=0.4: kre_tau=100: kre=0.002: fac_tau=4: fac=0.3: thresh=0.5: n_trials=1: rec_prob=0.1: rec_dt=0.005: fac_dt=0.25: kre_dt=0.01: oneo_p0_norm=2.5: };
      syn_delay {on=0: delay=4: };
      deep_raw_qtr=Q4;
      deep {on=0: role=SUPER: raw_thr_rel=0.1: raw_thr_abs=0.1: mod_min=0.8: mod_thr=0.1: ctxt_prv=0: tick_updt=-1: else_prv=0.9: mod_range=0.2: ctxt_new=1: else_new=0.1: };
-     trc {p_only_m=0: thal_gate=0: avg_clamp=0: deep_gain=0.2: clip=0: clip_max=0.4: std_gain=0.8: };
-     da_mod {on=0: minus=0: plus=0.1: };
+     trc {p_only_m=0: thal_gate=0: clamp_net=0: avg_clamp=0: deep_gain=0.2: clip=0: clip_max=0.4: std_gain=0.8: };
+     da_mod {on=0: mod_gain=0: minus=0: plus=0.1: da_neg_gain=0.1: da_pos_gain=0.1: };
      noise_type {type=NO_NOISE: trial_fixed=1: };
      noise {name="noise": type=GAUSSIAN: mean=0: var=0.001: par=1: };
     };
@@ -10561,7 +10533,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        margin {pct_marg=0.3: avg_tau=100: adapt_tau=500: tol_pct=0.25: avg_act=0.8: low_thr=0.501: med_thr=0.506: hi_thr=0.508: avg_dt=0.01: adapt_dt=0.002: };
        lay_lrate=1;
        cos_diff {avg_tau=100: lrate_mod=0: lrmod_fm_trc=0: lrmod_z_thr=-1.5: set_net_unlrn=0: avg_dt=0.01: avg_dt_c=0.99: };
-       lstats {hog_thr=0.3: dead_thr=0.01: };
+       lstats {pre_hog_thr=0.2: hog_thr=0.3: dead_thr=0.01: };
        scalar {rep=LOCALIST: un_width=0.3: norm_width=0: clamp_pat=0: min_sum_act=0.2: clip_val=1: send_thr=0: init_nms=1: };
        unit_range {min=0: max=1: range=1: scale=1: };
        bias_val {un=NO_UN: un_shp=VAL: un_gain=1: wt=NO_WT: wt_gain=1: val=0: };
@@ -10592,7 +10564,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        margin {pct_marg=0.3: avg_tau=100: adapt_tau=500: tol_pct=0.25: avg_act=0.8: low_thr=0.501: med_thr=0.506: hi_thr=0.508: avg_dt=0.01: adapt_dt=0.002: };
        lay_lrate=1;
        cos_diff {avg_tau=100: lrate_mod=0: lrmod_fm_trc=0: lrmod_z_thr=-1.5: set_net_unlrn=0: avg_dt=0.01: avg_dt_c=0.99: };
-       lstats {hog_thr=0.3: dead_thr=0.01: };
+       lstats {pre_hog_thr=0.2: hog_thr=0.3: dead_thr=0.01: };
        scalar {rep=GAUSSIAN: un_width=0.3: norm_width=0: clamp_pat=0: min_sum_act=0.2: clip_val=1: send_thr=0: init_nms=1: };
        unit_range {min=-0.5: max=1.5: range=2: scale=0.5: };
        bias_val {un=NO_UN: un_shp=VAL: un_gain=1: wt=NO_WT: wt_gain=1: val=0: };
@@ -10623,7 +10595,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        margin {pct_marg=0.3: avg_tau=100: adapt_tau=500: tol_pct=0.25: avg_act=0.8: low_thr=0.501: med_thr=0.506: hi_thr=0.508: avg_dt=0.01: adapt_dt=0.002: };
        lay_lrate=1;
        cos_diff {avg_tau=100: lrate_mod=0: lrmod_fm_trc=0: lrmod_z_thr=-1.5: set_net_unlrn=0: avg_dt=0.01: avg_dt_c=0.99: };
-       lstats {hog_thr=0.3: dead_thr=0.01: };
+       lstats {pre_hog_thr=0.2: hog_thr=0.3: dead_thr=0.01: };
        scalar {rep=AVG_ACT: un_width=0.3: norm_width=0: clamp_pat=0: min_sum_act=0: clip_val=1: send_thr=0: init_nms=0: };
        unit_range {min=0: max=1: range=1: scale=1: };
        bias_val {un=NO_UN: un_shp=VAL: un_gain=1: wt=NO_WT: wt_gain=1: val=0: };
@@ -10643,7 +10615,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      margin {pct_marg=0.3: avg_tau=100: adapt_tau=500: tol_pct=0.25: avg_act=0.8: low_thr=0.501: med_thr=0.506: hi_thr=0.508: avg_dt=0.01: adapt_dt=0.002: };
      lay_lrate=1;
      cos_diff {avg_tau=100: lrate_mod=0: lrmod_fm_trc=0: lrmod_z_thr=-1.5: set_net_unlrn=0: avg_dt=0.01: avg_dt_c=0.99: };
-     lstats {hog_thr=0.3: dead_thr=0.01: };
+     lstats {pre_hog_thr=0.2: hog_thr=0.3: dead_thr=0.01: };
     };
     LeabraConSpec @[2] {
      name="LeabraConSpec_0";
@@ -10678,14 +10650,17 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        cur_lrate=0;
        lrs_mult=1;
        use_unlearnable=1;
-       xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: lrn_thr=0.01: d_rev_ratio=-9: };
+       xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: lrn_thr=0.01: s_mult=1: d_rev_ratio=-9: };
        wt_sig {gain=6: off=1: soft_bound=1: };
        momentum {on=0: dwavg_tau=1000: norm_min=0.001: m_tau=20: lrate_comp=0.01: dwavg_dt=0.001: dwavg_dt_c=0.999: m_dt=0.05: m_dt_c=0.95: };
-       wt_bal {on=0: hi_thr=0.4: hi_gain=4: lo_thr=0.2: lo_gain=4: };
+       wt_bal {on=0: avg_thr=0.25: hi_thr=0.4: hi_gain=4: lo_thr=0.4: lo_gain=6: act_thr=0.25: act_gain=0: no_targ=1: };
        adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
        slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
        deep {on=0: bg_lrate=1: fg_lrate=0: };
        margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_lrn=0.5: };
+       dwt_noise=0;
+       dwt_noise_p0=0.7;
+       noise {name="noise": type=GAUSSIAN: mean=0: var=0.004999999888241291: par=1: };
        use_lrate_sched=1;
        lrate_sched {
 	name="lrate_sched";
@@ -10718,14 +10693,17 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        cur_lrate=0.02;
        lrs_mult=1;
        use_unlearnable=1;
-       xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: lrn_thr=0.01: d_rev_ratio=-9: };
+       xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: lrn_thr=0.01: s_mult=1: d_rev_ratio=-9: };
        wt_sig {gain=6: off=1: soft_bound=1: };
        momentum {on=0: dwavg_tau=1000: norm_min=0.001: m_tau=20: lrate_comp=0.01: dwavg_dt=0.001: dwavg_dt_c=0.999: m_dt=0.05: m_dt_c=0.95: };
-       wt_bal {on=0: hi_thr=0.4: hi_gain=4: lo_thr=0.2: lo_gain=4: };
+       wt_bal {on=0: avg_thr=0.25: hi_thr=0.4: hi_gain=4: lo_thr=0.4: lo_gain=6: act_thr=0.25: act_gain=0: no_targ=1: };
        adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
        slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
        deep {on=0: bg_lrate=1: fg_lrate=0: };
        margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_lrn=0.5: };
+       dwt_noise=0;
+       dwt_noise_p0=0.7;
+       noise {name="noise": type=GAUSSIAN: mean=0: var=0.004999999888241291: par=1: };
        use_lrate_sched=1;
        lrate_sched {
 	name="lrate_sched";
@@ -10757,14 +10735,17 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        cur_lrate=0.02;
        lrs_mult=1;
        use_unlearnable=1;
-       xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: lrn_thr=0.01: d_rev_ratio=-9: };
+       xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: lrn_thr=0.01: s_mult=1: d_rev_ratio=-9: };
        wt_sig {gain=6: off=1: soft_bound=1: };
        momentum {on=0: dwavg_tau=1000: norm_min=0.001: m_tau=20: lrate_comp=0.01: dwavg_dt=0.001: dwavg_dt_c=0.999: m_dt=0.05: m_dt_c=0.95: };
-       wt_bal {on=0: hi_thr=0.4: hi_gain=4: lo_thr=0.2: lo_gain=4: };
+       wt_bal {on=0: avg_thr=0.25: hi_thr=0.4: hi_gain=4: lo_thr=0.4: lo_gain=6: act_thr=0.25: act_gain=0: no_targ=1: };
        adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
        slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
        deep {on=0: bg_lrate=1: fg_lrate=0: };
        margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_lrn=0.5: };
+       dwt_noise=0;
+       dwt_noise_p0=0.7;
+       noise {name="noise": type=GAUSSIAN: mean=0: var=0.004999999888241291: par=1: };
        use_lrate_sched=1;
        lrate_sched {
 	name="lrate_sched";
@@ -10796,14 +10777,17 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        cur_lrate=0.02;
        lrs_mult=1;
        use_unlearnable=1;
-       xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: lrn_thr=0.01: d_rev_ratio=-9: };
+       xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: lrn_thr=0.01: s_mult=1: d_rev_ratio=-9: };
        wt_sig {gain=6: off=1: soft_bound=1: };
        momentum {on=0: dwavg_tau=1000: norm_min=0.001: m_tau=20: lrate_comp=0.01: dwavg_dt=0.001: dwavg_dt_c=0.999: m_dt=0.05: m_dt_c=0.95: };
-       wt_bal {on=0: hi_thr=0.4: hi_gain=4: lo_thr=0.2: lo_gain=4: };
+       wt_bal {on=0: avg_thr=0.25: hi_thr=0.4: hi_gain=4: lo_thr=0.4: lo_gain=6: act_thr=0.25: act_gain=0: no_targ=1: };
        adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
        slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
        deep {on=0: bg_lrate=1: fg_lrate=0: };
        margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_lrn=0.5: };
+       dwt_noise=0;
+       dwt_noise_p0=0.7;
+       noise {name="noise": type=GAUSSIAN: mean=0: var=0.004999999888241291: par=1: };
        use_lrate_sched=1;
        lrate_sched {
 	name="lrate_sched";
@@ -10824,14 +10808,17 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      cur_lrate=0.01;
      lrs_mult=1;
      use_unlearnable=1;
-     xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: lrn_thr=0.01: d_rev_ratio=-9: };
+     xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: lrn_thr=0.01: s_mult=1: d_rev_ratio=-9: };
      wt_sig {gain=6: off=1: soft_bound=1: };
      momentum {on=0: dwavg_tau=1000: norm_min=0.001: m_tau=20: lrate_comp=0.01: dwavg_dt=0.001: dwavg_dt_c=0.999: m_dt=0.05: m_dt_c=0.95: };
-     wt_bal {on=0: hi_thr=0.4: hi_gain=4: lo_thr=0.2: lo_gain=4: };
+     wt_bal {on=0: avg_thr=0.25: hi_thr=0.4: hi_gain=4: lo_thr=0.4: lo_gain=6: act_thr=0.25: act_gain=0: no_targ=1: };
      adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
      slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
      deep {on=0: bg_lrate=1: fg_lrate=0: };
      margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_lrn=0.5: };
+     dwt_noise=0;
+     dwt_noise_p0=0.7;
+     noise {name="noise": type=GAUSSIAN: mean=0: var=0.004999999888241291: par=1: };
      use_lrate_sched=1;
      lrate_sched {
       name="lrate_sched";
@@ -10865,6 +10852,41 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     name="param_seqs";
     el_typ=ParamSeq;
     el_def=0;
+   };
+   monitor {
+    name="monitor";
+    items {
+     name="items";
+     el_typ=NetMonItem;
+     el_def=0;
+    };
+    network=$.networks[0]$;
+    data=.networks[0].mon_data$$;
+    rmv_orphan_cols=1;
+   };
+   mon_data {
+    name="mon_data";
+    desc=;
+    data {
+     name="data";
+     el_typ=String_Data;
+     el_def=0;
+    };
+    data_flags=AUTO_CALC;
+    auto_load=NO_AUTO_LOAD;
+    auto_load_file=;
+    row_height=1;
+    max_col_width=50;
+    keygen 4 0=0;
+    last_sort_spec {
+     name="last_sort_spec";
+     ops {
+      name="ops";
+      el_typ=DataSortEl;
+      el_def=0;
+     };
+    };
+    row_with_hilite=-1;
    };
    layers {
     name="layers";
@@ -10914,9 +10936,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       name="send_prjns";
       el_typ=LeabraPrjn;
       el_def=0;
-      Projection_Group @. = [0] = LeabraPrjn .networks[0].layers[1].projections[0];
-      Projection_Group @. = [1] = LeabraPrjn .networks[0].layers[2].projections[0];
-      Projection_Group @. = [2] = LeabraPrjn .networks[0].layers[3].projections[0];
+      Projection_List @. = [0] = LeabraPrjn .networks[0].layers[1].projections[0];
+      Projection_List @. = [1] = LeabraPrjn .networks[0].layers[2].projections[0];
+      Projection_List @. = [2] = LeabraPrjn .networks[0].layers[3].projections[0];
      };
      unit_spec {type=LeabraUnitSpec: spec=.networks[0].specs[0]$$: };
      dist {fm_input=0: fm_output=1: };

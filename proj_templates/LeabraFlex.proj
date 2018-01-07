@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.3.0.0 rev11239
+// ta_Dump File v3.0 -- code v8.5.0.0 rev11309
 LeabraProject .projects[0] { 
  Doc_Group @.docs = [2] {
   taDoc @[0] { 
@@ -878,7 +878,8 @@ LeabraProject .projects[0] {
      TimeUsed @[0] { };
     };
 
-    ProgVar_List @.objs_vars = [0] {
+    ProgVar_List @.objs_vars = [1] {
+     ProgVar @[0] { };
     };
 
     ProgType_List @.types = [0] {
@@ -889,8 +890,7 @@ LeabraProject .projects[0] {
      ProgVar @[1] { };
     };
 
-    ProgVar_List @.vars = [1] {
-     ProgVar @[0] { };
+    ProgVar_List @.vars = [0] {
     };
 
     Function_List @.functions = [0] {
@@ -984,7 +984,8 @@ LeabraProject .projects[0] {
      TimeUsed @[0] { };
     };
 
-    ProgVar_List @.objs_vars = [0] {
+    ProgVar_List @.objs_vars = [1] {
+     ProgVar @[0] { };
     };
 
     ProgType_List @.types = [0] {
@@ -995,8 +996,7 @@ LeabraProject .projects[0] {
      ProgVar @[1] { };
     };
 
-    ProgVar_List @.vars = [1] {
-     ProgVar @[0] { };
+    ProgVar_List @.vars = [0] {
     };
 
     Function_List @.functions = [0] {
@@ -1171,7 +1171,8 @@ LeabraProject .projects[0] {
      };
     };
 
-    ProgVar_List @.objs_vars = [0] {
+    ProgVar_List @.objs_vars = [1] {
+     ProgVar @[0] { };
     };
 
     ProgType_List @.types = [0] {
@@ -1183,11 +1184,10 @@ LeabraProject .projects[0] {
      ProgVar @[2] { };
     };
 
-    ProgVar_List @.vars = [4] {
+    ProgVar_List @.vars = [3] {
      ProgVar @[0] { };
      ProgVar @[1] { };
      ProgVar @[2] { };
-     ProgVar @[3] { };
     };
 
     Function_List @.functions = [3] {
@@ -1401,7 +1401,8 @@ LeabraProject .projects[0] {
      };
     };
 
-    ProgVar_List @.objs_vars = [0] {
+    ProgVar_List @.objs_vars = [1] {
+     ProgVar @[0] { };
     };
 
     ProgType_List @.types = [0] {
@@ -1412,8 +1413,7 @@ LeabraProject .projects[0] {
      ProgVar @[1] { };
     };
 
-    ProgVar_List @.vars = [1] {
-     ProgVar @[0] { };
+    ProgVar_List @.vars = [0] {
     };
 
     Function_List @.functions = [0] {
@@ -1490,7 +1490,8 @@ LeabraProject .projects[0] {
      };
     };
 
-    ProgVar_List @.objs_vars = [0] {
+    ProgVar_List @.objs_vars = [1] {
+     ProgVar @[0] { };
     };
 
     ProgType_List @.types = [0] {
@@ -1500,8 +1501,7 @@ LeabraProject .projects[0] {
      ProgVar @[0] { };
     };
 
-    ProgVar_List @.vars = [1] {
-     ProgVar @[0] { };
+    ProgVar_List @.vars = [0] {
     };
 
     Function_List @.functions = [0] {
@@ -1608,8 +1608,9 @@ LeabraProject .projects[0] {
        ForeachLoop @[2] { 
 	ProgEl_List @.loop_code = [4] {
 	 MemberMethodCall @[0] { 
-	  ProgArg_List @.meth_args = [1] {
+	  ProgArg_List @.meth_args = [2] {
 	   ProgArg @[0] { };
+	   ProgArg @[1] { };
 	  };
 	 };
 	 If @[1] { 
@@ -1936,8 +1937,9 @@ LeabraProject .projects[0] {
 	};
        };
        MemberMethodCall @[1] { 
-	ProgArg_List @.meth_args = [1] {
+	ProgArg_List @.meth_args = [2] {
 	 ProgArg @[0] { };
+	 ProgArg @[1] { };
 	};
        };
        If @[2] { 
@@ -1991,7 +1993,8 @@ LeabraProject .projects[0] {
      RndSeed @[0] { };
     };
 
-    ProgVar_List @.objs_vars = [0] {
+    ProgVar_List @.objs_vars = [1] {
+     ProgVar @[0] { };
     };
 
     ProgType_List @.types = [0] {
@@ -2001,7 +2004,7 @@ LeabraProject .projects[0] {
      ProgVar @[0] { };
     };
 
-    ProgVar_List @.vars = [15] {
+    ProgVar_List @.vars = [14] {
      ProgVar @[0] { };
      ProgVar @[1] { };
      ProgVar @[2] { };
@@ -2016,7 +2019,6 @@ LeabraProject .projects[0] {
      ProgVar @[11] { };
      ProgVar @[12] { };
      ProgVar @[13] { };
-     ProgVar @[14] { };
     };
 
     Function_List @.functions = [1] {
@@ -2784,7 +2786,8 @@ LeabraProject .projects[0] {
       };
      };
 
-     ProgVar_List @.objs_vars = [0] {
+     ProgVar_List @.objs_vars = [1] {
+      ProgVar @[0] { };
      };
 
      ProgType_List @.types = [0] {
@@ -2794,10 +2797,9 @@ LeabraProject .projects[0] {
       ProgVar @[0] { };
      };
 
-     ProgVar_List @.vars = [3] {
+     ProgVar_List @.vars = [2] {
       ProgVar @[0] { };
       ProgVar @[1] { };
-      ProgVar @[2] { };
      };
 
      Function_List @.functions = [0] {
@@ -2902,7 +2904,8 @@ LeabraProject .projects[0] {
       };
      };
 
-     ProgVar_List @.objs_vars = [0] {
+     ProgVar_List @.objs_vars = [1] {
+      ProgVar @[0] { };
      };
 
      ProgType_List @.types = [0] {
@@ -2912,11 +2915,10 @@ LeabraProject .projects[0] {
       ProgVar @[0] { };
      };
 
-     ProgVar_List @.vars = [4] {
+     ProgVar_List @.vars = [3] {
       ProgVar @[0] { };
       ProgVar @[1] { };
       ProgVar @[2] { };
-      ProgVar @[3] { };
      };
 
      Function_List @.functions = [0] {
@@ -3030,7 +3032,8 @@ LeabraProject .projects[0] {
       };
      };
 
-     ProgVar_List @.objs_vars = [0] {
+     ProgVar_List @.objs_vars = [1] {
+      ProgVar @[0] { };
      };
 
      ProgType_List @.types = [0] {
@@ -3040,10 +3043,9 @@ LeabraProject .projects[0] {
       ProgVar @[0] { };
      };
 
-     ProgVar_List @.vars = [3] {
+     ProgVar_List @.vars = [2] {
       ProgVar @[0] { };
       ProgVar @[1] { };
-      ProgVar @[2] { };
      };
 
      Function_List @.functions = [0] {
@@ -3143,7 +3145,8 @@ LeabraProject .projects[0] {
       };
      };
 
-     ProgVar_List @.objs_vars = [0] {
+     ProgVar_List @.objs_vars = [1] {
+      ProgVar @[0] { };
      };
 
      ProgType_List @.types = [0] {
@@ -3153,10 +3156,9 @@ LeabraProject .projects[0] {
       ProgVar @[0] { };
      };
 
-     ProgVar_List @.vars = [3] {
+     ProgVar_List @.vars = [2] {
       ProgVar @[0] { };
       ProgVar @[1] { };
-      ProgVar @[2] { };
      };
 
      Function_List @.functions = [0] {
@@ -3253,6 +3255,29 @@ LeabraProject .projects[0] {
 	 };
 
 	 T3DataView_List @.annote_children = [0] {
+	 };
+
+	 NetViewStateItem_List @.state_items = [20] {
+	  NetViewStateItem @[0] { };
+	  NetViewStateItem @[1] { };
+	  NetViewStateItem @[2] { };
+	  NetViewStateItem @[3] { };
+	  NetViewStateItem @[4] { };
+	  NetViewStateItem @[5] { };
+	  NetViewStateItem @[6] { };
+	  NetViewStateItem @[7] { };
+	  NetViewStateItem @[8] { };
+	  NetViewStateItem @[9] { };
+	  NetViewStateItem @[10] { };
+	  NetViewStateItem @[11] { };
+	  NetViewStateItem @[12] { };
+	  NetViewStateItem @[13] { };
+	  NetViewStateItem @[14] { };
+	  NetViewStateItem @[15] { };
+	  NetViewStateItem @[16] { };
+	  NetViewStateItem @[17] { };
+	  NetViewStateItem @[18] { };
+	  NetViewStateItem @[19] { };
 	 };
 
 	 ScaleRange_List @.scale_ranges = [1] {
@@ -3465,6 +3490,15 @@ LeabraProject .projects[0] {
    ParamSeq_Group @.param_seqs = [0] {
    };
 
+   NetMonItem_List @.monitor.items = [0] {
+   };
+
+   DataTableCols @.mon_data.data = [0] {
+   };
+
+   DataOpList @.mon_data.last_sort_spec.ops = [0] {
+   };
+
    Layer_Group @.layers = [3] {
     LeabraLayer @[0] { 
      Projection_List @.projections = [0] {
@@ -3538,8 +3572,8 @@ LeabraProject .projects[0] {
 <title>LeabraFlex - emergent</title>
 <script>document.documentElement.className = document.documentElement.className.replace( /(^|\\s)client-nojs(\\s|$)/, \"$1client-js$2\" );</script>
 <script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
-mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":!1,\"wgNamespaceNumber\":0,\"wgPageName\":\"LeabraFlex\",\"wgTitle\":\"LeabraFlex\",\"wgCurRevisionId\":11194,\"wgRevisionId\":11194,\"wgArticleId\":2315,\"wgIsArticle\":!0,\"wgIsRedirect\":!1,\"wgAction\":\"view\",\"wgUserName\":\"Oreilly\",\"wgUserGroups\":[\"bureaucrat\",\"svnadmins\",\"sysop\",\"*\",\"user\",\"autoconfirmed\"],\"wgCategories\":[],\"wgBreakFrames\":!1,\"wgPageContentLanguage\":\"en\",\"wgPageContentModel\":\"wikitext\",\"wgSeparatorTransformTable\":[\"\",\"\"],\"wgDigitTransformTable\":[\"\",\"\"],\"wgDefaultDateFormat\":\"dmy\",\"wgMonthNames\":[\"\",\"January\",\"February\",\"March\",\"April\",\"May\",\"June\",\"July\",\"August\",\"September\",\"October\",\"November\",\"December\"],\"wgMonthNamesShort\":[\"\",\"Jan\",\"Feb\",\"Mar\",\"Apr\",\"May\",\"Jun\",\"Jul\",\"Aug\",\"Sep\",\"Oct\",\"Nov\",\"Dec\"],\"wgRelevantPageName\":\"LeabraFlex\",\"wgRelevantArticleId\":2315,\"wgUserId\":3,\"wgUserEditCount\":2418,\"wgUserRegistration\":1178051527000,\"wgUserNewMsgRevisionId\":null,\"wgIsProbablyEditable\":!0,
-\"wgRestrictionEdit\":[],\"wgRestrictionMove\":[],\"wgRedirectedFrom\":\"LeabraFlexProgs\",\"sfgAutocompleteValues\":[],\"sfgAutocompleteOnAllChars\":!1,\"sfgFieldProperties\":[],\"sfgDependentFields\":[],\"sfgShowOnSelect\":[],\"sfgScriptPath\":\"/emergent/extensions/SemanticForms\",\"wgSVGEditEditor\":\"http://svg-edit.googlecode.com/svn/trunk/editor/svg-editor.html\",\"wgHeaderTabsTabIndexes\":[],\"wgWikiEditorEnabledModules\":{\"toolbar\":!0,\"dialogs\":!0,\"preview\":!0,\"publish\":!1},\"wgCategoryTreePageCategoryOptions\":\"{\\\"mode\\\":0,\\\"hideprefix\\\":20,\\\"showcount\\\":true,\\\"namespaces\\\":false}\",\"wgInternalRedirectTargetUrl\":\"/emergent/index.php/LeabraFlex\"});mw.loader.implement(\"user.options\",function($,jQuery){mw.user.options.set({\"ccmeonemails\":\"1\",\"enotifminoredits\":\"1\",\"imagesize\":\"0\",\"previewontop\":\"\",\"rows\":\"30\",\"thumbsize\":\"0\",\"underline\":\"0\",\"watchmoves\":\"1\",\"editsection\":\"1\",\"rememberpassword\":\"1\",\"timecorrection\":\"ZoneInfo|-360|America/Denver\",\"watchlisttoken\":\"14fd6c804d78e99930123181974c128b983adb9e\"});});mw.loader.implement(\"user.tokens\",function($,jQuery){mw.user.tokens.set({\"editToken\":\"0a88836d7a7345a895c33b77c32d4c75573565c5+\\\\\",\"patrolToken\":\"23ddb841cfc4d5ea0a31b9b98522b291573565c5+\\\\\",\"watchToken\":\"e09a6a8fb5e56280ca057cc6e9e63054573565c5+\\\\\"});});mw.loader.load([\"mediawiki.action.view.redirect\",\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\",\"mediawiki.legacy.wikibits\",\"skins.vector.js\"]);
+mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":!1,\"wgNamespaceNumber\":0,\"wgPageName\":\"LeabraFlex\",\"wgTitle\":\"LeabraFlex\",\"wgCurRevisionId\":13216,\"wgRevisionId\":13216,\"wgArticleId\":2315,\"wgIsArticle\":!0,\"wgIsRedirect\":!1,\"wgAction\":\"view\",\"wgUserName\":\"Oreilly\",\"wgUserGroups\":[\"bureaucrat\",\"svnadmins\",\"sysop\",\"*\",\"user\",\"autoconfirmed\"],\"wgCategories\":[],\"wgBreakFrames\":!1,\"wgPageContentLanguage\":\"en\",\"wgPageContentModel\":\"wikitext\",\"wgSeparatorTransformTable\":[\"\",\"\"],\"wgDigitTransformTable\":[\"\",\"\"],\"wgDefaultDateFormat\":\"dmy\",\"wgMonthNames\":[\"\",\"January\",\"February\",\"March\",\"April\",\"May\",\"June\",\"July\",\"August\",\"September\",\"October\",\"November\",\"December\"],\"wgMonthNamesShort\":[\"\",\"Jan\",\"Feb\",\"Mar\",\"Apr\",\"May\",\"Jun\",\"Jul\",\"Aug\",\"Sep\",\"Oct\",\"Nov\",\"Dec\"],\"wgRelevantPageName\":\"LeabraFlex\",\"wgRelevantArticleId\":2315,\"wgUserId\":3,\"wgUserEditCount\":3318,\"wgUserRegistration\":1178051527000,\"wgUserNewMsgRevisionId\":null,\"wgIsProbablyEditable\":!0,
+\"wgRestrictionEdit\":[],\"wgRestrictionMove\":[],\"sfgAutocompleteValues\":[],\"sfgAutocompleteOnAllChars\":!1,\"sfgFieldProperties\":[],\"sfgDependentFields\":[],\"sfgShowOnSelect\":[],\"sfgScriptPath\":\"/emergent/extensions/SemanticForms\",\"wgSVGEditEditor\":\"http://svg-edit.googlecode.com/svn/trunk/editor/svg-editor.html\",\"wgHeaderTabsTabIndexes\":[],\"wgWikiEditorEnabledModules\":{\"toolbar\":!0,\"dialogs\":!0,\"preview\":!0,\"publish\":!1},\"wgCategoryTreePageCategoryOptions\":\"{\\\"mode\\\":0,\\\"hideprefix\\\":20,\\\"showcount\\\":true,\\\"namespaces\\\":false}\"});mw.loader.implement(\"user.options\",function($,jQuery){mw.user.options.set({\"ccmeonemails\":\"1\",\"enotifminoredits\":\"1\",\"imagesize\":\"0\",\"previewontop\":\"\",\"rows\":\"30\",\"thumbsize\":\"0\",\"underline\":\"0\",\"watchmoves\":\"1\",\"editsection\":\"1\",\"rememberpassword\":\"1\",\"timecorrection\":\"ZoneInfo|-360|America/Denver\",\"watchlisttoken\":\"14fd6c804d78e99930123181974c128b983adb9e\"});});mw.loader.implement(\"user.tokens\",function($,jQuery){mw.user.tokens.set({\"editToken\":\"696f041992cb1ee5b562931484f85d2c5a51e1bc+\\\\\",\"patrolToken\":\"703ab38e141b886ca8b1977e286a95485a51e1bc+\\\\\",\"watchToken\":\"2bc05622990293d9f132277c127cc25a5a51e1bc+\\\\\"});});mw.loader.load([\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\",\"mediawiki.legacy.wikibits\",\"skins.vector.js\"]);
 } );</script>
 <link rel=\"stylesheet\" href=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=mediawiki.legacy.commonPrint%2Cshared%7Cmediawiki.sectionAnchor%7Cmediawiki.skinning.interface%7Cskins.vector.styles&amp;only=styles&amp;skin=vector\">
 <link rel=\"stylesheet\" href=\"/emergent/extensions/HeaderTabs/skins/ext.headertabs.large.css\">
@@ -3547,7 +3581,7 @@ mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":!1,\
 <link rel=\"stylesheet\" href=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=site&amp;only=styles&amp;skin=vector\">
 <style>a{text-decoration:none}</style>
 <script async=\"\" src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=startup&amp;only=scripts&amp;skin=vector\"></script>
-<meta name=\"generator\" content=\"MediaWiki 1.26.2\">
+<meta name=\"generator\" content=\"MediaWiki 1.26.4\">
 <link rel=\"ExportRDF\" type=\"application/rdf+xml\" title=\"LeabraFlex\" href=\"/emergent/index.php?title=Special:ExportRDF/LeabraFlex&amp;xmlmime=rdf\">
 <link rel=\"alternate\" type=\"application/x-wiki\" title=\"Edit\" href=\"/emergent/index.php?title=LeabraFlex&amp;action=edit\">
 <link rel=\"edit\" title=\"Edit\" href=\"/emergent/index.php?title=LeabraFlex&amp;action=edit\">
@@ -3555,7 +3589,6 @@ mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":!1,\
 <link rel=\"search\" type=\"application/opensearchdescription+xml\" href=\"/emergent/opensearch_desc.php\" title=\"emergent (en)\">
 <link rel=\"EditURI\" type=\"application/rsd+xml\" href=\"https://grey.colorado.edu/emergent/api.php?action=rsd\">
 <link rel=\"alternate\" type=\"application/atom+xml\" title=\"emergent Atom feed\" href=\"/emergent/index.php?title=Special:RecentChanges&amp;feed=atom\">
-<link rel=\"canonical\" href=\"https://grey.colorado.edu/emergent/index.php/LeabraFlex\">
 <!--[if lt IE 7]><style type=\"text/css\">body{behavior:url(\"/emergent/skins/Vector/csshover.min.htc\")}</style><![endif]-->
 </head>
 <body class=\"mediawiki ltr sitedir-ltr ns-0 ns-subject page-LeabraFlex skin-vector action-view\">
@@ -3569,25 +3602,44 @@ mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":!1,\
 			<h1 id=\"firstHeading\" class=\"firstHeading\" lang=\"en\">LeabraFlex</h1>
 									<div id=\"bodyContent\" class=\"mw-body-content\">
 									<div id=\"siteSub\">From emergent</div>
-								<div id=\"contentSub\"><span class=\"mw-redirectedfrom\">(Redirected from <a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;redirect=no\" title=\"LeabraFlexProgs\">LeabraFlexProgs</a>)</span></div>
+								<div id=\"contentSub\"></div>
 												<div id=\"jump-to-nav\" class=\"mw-jump\">
 					Jump to:					<a href=\"#mw-head\">navigation</a>, 					<a href=\"#p-search\">search</a>
 				</div>
-				<div id=\"mw-content-text\" lang=\"en\" dir=\"ltr\" class=\"mw-content-ltr\"><p>Documentation for the <code>LeabraFlex</code> project template (also avail in <code>demo/leabra/leabra_flex_progs.proj</code>), which provides a different way of configuring the <a href=\"/emergent/index.php/Leabra\" title=\"Leabra\">Leabra</a> programs that is more flexible and modular -- very useful for more complex projects that require extensive novel functionality, including interactive behaviors between the network and the programs that generate inputs to the network, things that happen at different points in the settling process, and supporting multiple different ways of running the model in a more efficient, modular fashion.
+				<div id=\"mw-content-text\" lang=\"en\" dir=\"ltr\" class=\"mw-content-ltr\"><p>Documentation for the <code>LeabraFlex</code> <a href=\"/emergent/index.php/Project_template\" title=\"Project template\">Project template</a>, which provides a different way of configuring the <a href=\"/emergent/index.php/Leabra\" title=\"Leabra\">Leabra</a> programs that is more flexible and modular -- very useful for more complex projects that require extensive novel functionality, including interactive behaviors between the network and the programs that generate inputs to the network, things that happen at different points in the settling process, and supporting multiple different ways of running the model in a more efficient, modular fashion.
 </p>
 <div id=\"toc\" class=\"toc\"><div id=\"toctitle\"><h2>Contents</h2></div>
 <ul>
-<li class=\"toclevel-1 tocsection-1\"><a href=\"#ConfigData.2FConfigTable\"><span class=\"tocnumber\">1</span> <span class=\"toctext\">ConfigData/ConfigTable</span></a></li>
-<li class=\"toclevel-1 tocsection-2\"><a href=\"#Program_Hierarchy\"><span class=\"tocnumber\">2</span> <span class=\"toctext\">Program Hierarchy</span></a></li>
-<li class=\"toclevel-1 tocsection-3\"><a href=\"#UtilProgs\"><span class=\"tocnumber\">3</span> <span class=\"toctext\">UtilProgs</span></a></li>
-<li class=\"toclevel-1 tocsection-4\"><a href=\"#DMem_.28MPI.29\"><span class=\"tocnumber\">4</span> <span class=\"toctext\">DMem (MPI)</span></a></li>
+<li class=\"toclevel-1 tocsection-1\"><a href=\"#ParamSet_Configuration_Mechanism\"><span class=\"tocnumber\">1</span> <span class=\"toctext\">ParamSet Configuration Mechanism</span></a>
+<ul>
+<li class=\"toclevel-2 tocsection-2\"><a href=\"#Converting_Existing_Projects\"><span class=\"tocnumber\">1.1</span> <span class=\"toctext\">Converting Existing Projects</span></a></li>
+</ul>
+</li>
+<li class=\"toclevel-1 tocsection-3\"><a href=\"#Program_Hierarchy\"><span class=\"tocnumber\">2</span> <span class=\"toctext\">Program Hierarchy</span></a></li>
+<li class=\"toclevel-1 tocsection-4\"><a href=\"#UtilProgs\"><span class=\"tocnumber\">3</span> <span class=\"toctext\">UtilProgs</span></a></li>
+<li class=\"toclevel-1 tocsection-5\"><a href=\"#DMem_.28MPI.29\"><span class=\"tocnumber\">4</span> <span class=\"toctext\">DMem (MPI)</span></a></li>
 </ul>
 </div>
 
-<h1><span class=\"mw-headline\" id=\"ConfigData.2FConfigTable\">ConfigData/ConfigTable</span><span class=\"mw-editsection\"><span class=\"mw-editsection-bracket\">[</span><a href=\"/emergent/index.php?title=LeabraFlex&amp;action=edit&amp;section=1\" title=\"Edit section: ConfigData/ConfigTable\">edit</a><span class=\"mw-editsection-bracket\">]</span></span></h1>
-<p>The <a href=\"/emergent/index.php/DataTable\" title=\"DataTable\">DataTable</a> in ConfigData/ConfigTable is key for the flex progs -- each row specifies a different configuration, which can call different Init, Run, and even Startup programs, to achieve very different behavior or configurations all within the same project.  This makes it very easy to add new functionality into the system without adding spaghetti or complex conditionals in existing programs -- just add a new config and a new program at the right level, to achieve new functionality.
+<h1><span class=\"mw-headline\" id=\"ParamSet_Configuration_Mechanism\">ParamSet Configuration Mechanism</span><span class=\"mw-editsection\"><span class=\"mw-editsection-bracket\">[</span><a href=\"/emergent/index.php?title=LeabraFlex&amp;action=edit&amp;section=1\" title=\"Edit section: ParamSet Configuration Mechanism\">edit</a><span class=\"mw-editsection-bracket\">]</span></span></h1>
+<p>In version 8.0.6 and above, the previous ConfigTable mechanism has been replaced with a new <a href=\"/emergent/index.php/ParamSet\" title=\"ParamSet\">ParamSet</a> mechanism that is simpler and more easily configured and extensible.
+</p><p>The master ControlPanel and ClusterRun now point to the <b>run_params</b> and <b>misc_params</b> variables on the <b>MasterTrain</b> program.  When MasterTrain runs (interactively in the gui), it Activates the currently-selected ParamSet configuration -- this copies the saved_value settings into the live, \"active\" current values of each item in the param set.  These items include variables in other key <a href=\"/emergent/index.php/Program\" title=\"Program\">Programs</a>, and parameters in the network that you want to control.  <i>It is easy to add any number of different sets of such parameters</i> -- you can either add new parameters to the existing Params groups, or you can make new groups for sets of parameters that vary mostly independently of the existing ones.
+</p><p>The param sets live in the <b>param_sets</b> group in the <a href=\"/emergent/index.php/Project\" title=\"Project\">Project</a>, in sub-groups called <b>RunParams</b> and <b>MiscParams</b>.  Within each of these groups, the first ParamSet object serves as the <b>Master</b> ParamSet, while all the remaining ones are <b>Clones.</b>  Whenever you add, remove, or modify an item within the Master, those changes are automatically copied to all the Clones.  This makes it easy to maintain a consistent set of parameters across all the configurations.  To make this more visually apparent, the Clones are shown with a grey background.  Nevertheless, the Master and Clone ParamSet objects all function in the identical way, and each has its own independent set of <b>saved_value</b> settings.  It is these saved values that distinguish each configuration.  When you Activate a ParamSet, you are copying the saved_value into the current \"live\" active value of that given item (whether it is a variable in a Program, or a value in a <a href=\"/emergent/index.php/Spec\" title=\"Spec\" class=\"mw-redirect\">Spec</a>, or any other value on any object anywhere in the software!).
+</p><p>We have removed the StdGlobalsInit program, which used to serve as the way to load all the values from the ConfigTable into live, active variables that you can then use in Programs.  Instead, these variables just live in the programs that use them directly, and the ParamSet's just point into those variables.  The <b>TrainStart</b> and <b>TrainEnd</b> programs have many of the RunParams variables. To see where a variable is, just do the <a href=\"/emergent/index.php/context_menu\" title=\"context menu\" class=\"mw-redirect\">context menu</a> on a given item label in the ParamSet, and select <b>Go To Object</b> and you'll be taken right there.  This is a major advantage over the previous DataTable mechanism, which didn't have this direct connection to the variables it controlled.
 </p>
-<h1><span class=\"mw-headline\" id=\"Program_Hierarchy\">Program Hierarchy</span><span class=\"mw-editsection\"><span class=\"mw-editsection-bracket\">[</span><a href=\"/emergent/index.php?title=LeabraFlex&amp;action=edit&amp;section=2\" title=\"Edit section: Program Hierarchy\">edit</a><span class=\"mw-editsection-bracket\">]</span></span></h1>
+<h2><span class=\"mw-headline\" id=\"Converting_Existing_Projects\">Converting Existing Projects</span><span class=\"mw-editsection\"><span class=\"mw-editsection-bracket\">[</span><a href=\"/emergent/index.php?title=LeabraFlex&amp;action=edit&amp;section=2\" title=\"Edit section: Converting Existing Projects\">edit</a><span class=\"mw-editsection-bracket\">]</span></span></h2>
+<p>Use the <a href=\"/emergent/index.php/LeabraFlex_v804_to_v810\" title=\"LeabraFlex v804 to v810\">LeabraFlex_v804_to_v810</a> <a href=\"/emergent/index.php/Patch\" title=\"Patch\">Patch</a> to automatically upgrade an older project to this new configuration -- see <a href=\"/emergent/index.php/PublishedPatchList\" title=\"PublishedPatchList\">PublishedPatchList</a> for list of all such patches.
+</p><p>If you want to do it manually, here are the main steps to convert an existing LeabraFlex project over to the new ParamSet mechanism:
+</p>
+<ul><li> Drag the MasterTrain, MasterRun, MasterStartup, TrainStart (TODO: others???) programs from a new LeabraFlex project on top of your existing versions of these programs (in that order -- select Assign To from the drop menu -- it is a good idea to first do Compare To and make sure that you didn't have any custom code in any of these programs that you'll want to keep -- this is relatively rare however).</li></ul>
+<ul><li> Do a Find on programs (all programs) and look for config_id -- this variable was passed around in the prior versions, but is absent in the new versions -- please remove it from all existing programs that have it).</li></ul>
+<ul><li> Drag over the RunParams NetConfig and LearnParams groups into param_sets from the new LeabraFlex -- these should be able to find the variables in your project once you've updated the above programs.  The default LearnParams just has one token item -- you'll probably want to adapt that to your actual project, and may have params in your ClusterRun or ControlPanel that you'll like to add. If these params are variables in StdGlobalsInit (likely) move them to TrainStart or another program and then add each one to the RunMaster or other param_set by selecting the variable and on the context menu choosing \"Add Var to Control Panel\".</li></ul>
+<ul><li> Make sure you've got everything you want from your existing ConfigTable into In the RunParams and / or MiscParams  Master's, and then go to the small menu in edit panel for RunParams group (and MiscParams if relevant) in middle Editor Panel, select Control Panel/CopyFromDataTable menu item, and select the ConfigTable -- this will copy over each of the rows of the config table as a new ParamSet in that group, with saved_value's copied from the column with the same name as the variable in the ParamSet.  Hence, make sure your param set variables are named the same as your ConfigTable column names.  You can change the names later in your ParamSet if you want.. the Master will auto-copy to all the clones!</li></ul>
+<ul><li> You can copy over the ClusterRun and ControlPanel (drop on existing and Assign To) once you've moved all the variables to the MiscParams configs.  These ones have the pointers to the MasterTrain variables.</li></ul>
+<ul><li> Then you can remove the ConfigTable and the StdGlobalsInit.  Try to run your project from the ControlPanel.  Fix any errors!</li></ul>
+<ul><li> It is really easy to create a new ParamSet_Group within the objs of a Program (there is a new button to do it) -- you can then select a set of variables from the program to add to the master param set in the group, and then add a call at the top of your prog_code to ActivateParamSet() in the ParamSet_Group object, with the name from a String variable that contains the name of the ParamSet to use -- and with that, you've got a program that can be run with different named configurations of its variables, making it easier for other programs to configure things.  You can then add this String variable to your MiscParams or other top-level param sets.  When you have a lot of complex functionality embedded within a single Program (e.g., a program that generates a complex environment), this really makes it a lot easier to configure and control, while still ensuring that each program is fully self-contained!</li></ul>
+<ul><li> Please update these instructions with any other helpful tips or missing steps!</li></ul>
+<h1><span class=\"mw-headline\" id=\"Program_Hierarchy\">Program Hierarchy</span><span class=\"mw-editsection\"><span class=\"mw-editsection-bracket\">[</span><a href=\"/emergent/index.php?title=LeabraFlex&amp;action=edit&amp;section=3\" title=\"Edit section: Program Hierarchy\">edit</a><span class=\"mw-editsection-bracket\">]</span></span></h1>
 <p>The call sequence is:
 </p>
 <ul><li> <b>MasterTrain</b></li></ul>
@@ -3597,10 +3649,10 @@ mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":!1,\
 <dl><dd><ul><li> typically calls one or more <b>TaskProgs</b>, increments counters and does appropriate Epoch and higher-level housekeeping as necessary.</li></ul></dd></dl></dd></dl></dd></dl>
 <p>MasterRun now has a <b>stop_step_grain</b> parameter that allows you to Step this program at different grain sizes (e.g., after an Epoch) and for different conditions -- this is completely extensible if you look at the underlying code, and very powerful.
 </p>
-<h1><span class=\"mw-headline\" id=\"UtilProgs\">UtilProgs</span><span class=\"mw-editsection\"><span class=\"mw-editsection-bracket\">[</span><a href=\"/emergent/index.php?title=LeabraFlex&amp;action=edit&amp;section=3\" title=\"Edit section: UtilProgs\">edit</a><span class=\"mw-editsection-bracket\">]</span></span></h1>
+<h1><span class=\"mw-headline\" id=\"UtilProgs\">UtilProgs</span><span class=\"mw-editsection\"><span class=\"mw-editsection-bracket\">[</span><a href=\"/emergent/index.php?title=LeabraFlex&amp;action=edit&amp;section=4\" title=\"Edit section: UtilProgs\">edit</a><span class=\"mw-editsection-bracket\">]</span></span></h1>
 <p>The UtilProgs contain all the basic functionality for training a network and monitoring, etc -- the task programs should consist of calls to these util programs in the desired order to achieve whatever form of processing is required.  The built-in BasicTrain program just does the equivalent of a standard LeabraTrial.
 </p>
-<h1><span class=\"mw-headline\" id=\"DMem_.28MPI.29\">DMem (MPI)</span><span class=\"mw-editsection\"><span class=\"mw-editsection-bracket\">[</span><a href=\"/emergent/index.php?title=LeabraFlex&amp;action=edit&amp;section=4\" title=\"Edit section: DMem (MPI)\">edit</a><span class=\"mw-editsection-bracket\">]</span></span></h1>
+<h1><span class=\"mw-headline\" id=\"DMem_.28MPI.29\">DMem (MPI)</span><span class=\"mw-editsection\"><span class=\"mw-editsection-bracket\">[</span><a href=\"/emergent/index.php?title=LeabraFlex&amp;action=edit&amp;section=5\" title=\"Edit section: DMem (MPI)\">edit</a><span class=\"mw-editsection-bracket\">]</span></span></h1>
 <p>The most efficient way to use multiple distributed memory (dmem) processors (via MPI) is to split different events across processors.  The standard Leabra programs do this by interleaving trials according to dmem processor (e.g., for 10 processors, proc 0 gets trials 0, 10, 20, ..; proc 1 gets 1, 11, 21, etc..).  For these flex progs, which can have interactive behavior and ill-defined sequences of events, this strategy is not always possible (the <b>ChoosePermutedEvent</b> program in EnviroProgs does implement this behavior however).  Here are some tips:
 </p>
 <ul><li> After version 8.0, you can add taMisc::dmem_proc to all calls to <a href=\"/emergent/index.php/Random\" title=\"Random\">Random</a> or various Permute etc functions that use random numbers and take a <b>thr_no</b> (thread number) argument -- as documented in <a href=\"/emergent/index.php/MTRnd\" title=\"MTRnd\">MTRnd</a>, this thr_no arg selects different random number sequences that are initialized from a single common seed, and will produce statistically independent sequences.  Thus, you can ensure that each node gets different random inputs and other parameters, as appropriate, without needing to have an entirely different seed for each node.  This also means that results can be fully replicable when starting from the same random seed, and that nodes can also generate the same random numbers as needed (if this is needed, it is a good idea to pass taMisc::dmem_proc + 1 to the Random calls, and reserve 0 for the common shared thread that should only be called identically from all processors -- otherwise it will diverge from the 0'th node relative to the others.</li></ul>
@@ -3611,13 +3663,13 @@ mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":!1,\
 
 <!-- 
 NewPP limit report
-Cached time: 20160512214138
+Cached time: 20180107090044
 Cache expiry: 86400
 Dynamic content: false
-CPU time usage: 0.024 seconds
-Real time usage: 0.026 seconds
-Preprocessor visited node count: 15/1000000
-Preprocessor generated node count: 20/1000000
+CPU time usage: 0.044 seconds
+Real time usage: 0.069 seconds
+Preprocessor visited node count: 19/1000000
+Preprocessor generated node count: 24/1000000
 Post?expand include size: 0/2097152 bytes
 Template argument size: 0/2097152 bytes
 Highest expansion depth: 2/40
@@ -3629,10 +3681,10 @@ Transclusion expansion time report (%,ms,calls,template)
 100.00%    0.000      1 - -total
 -->
 
-<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2315-0!*!0!!en!*!* and timestamp 20160512214138 and revision id 11194
+<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2315-0!*!0!!en!*!* and timestamp 20180107090044 and revision id 13216
  -->
 </div>					<div class=\"printfooter\">
-						Retrieved from \"<a dir=\"ltr\" href=\"https://grey.colorado.edu/emergent/index.php?title=LeabraFlex&amp;oldid=11194\">https://grey.colorado.edu/emergent/index.php?title=LeabraFlex&amp;oldid=11194</a>\"					</div>
+						Retrieved from \"<a dir=\"ltr\" href=\"https://grey.colorado.edu/emergent/index.php?title=LeabraFlex&amp;oldid=13216\">https://grey.colorado.edu/emergent/index.php?title=LeabraFlex&amp;oldid=13216</a>\"					</div>
 				<div id=\"catlinks\" class=\"catlinks catlinks-allhidden\"></div>				<div class=\"visualClear\"></div>
 							</div>
 		</div>
@@ -3671,7 +3723,7 @@ Transclusion expansion time report (%,ms,calls,template)
 															<li id=\"ca-view\" class=\"selected\"><span><a href=\"/emergent/index.php/LeabraFlex\">Read</a></span></li>
 															<li id=\"ca-edit\"><span><a href=\"/emergent/index.php?title=LeabraFlex&amp;action=edit\" title=\"Edit this page [e]\" accesskey=\"e\">Edit</a></span></li>
 															<li id=\"ca-history\" class=\"collapsible\"><span><a href=\"/emergent/index.php?title=LeabraFlex&amp;action=history\" title=\"Past revisions of this page [h]\" accesskey=\"h\">View history</a></span></li>
-															<li id=\"ca-unwatch\" class=\"icon\"><span><a href=\"/emergent/index.php?title=LeabraFlex&amp;action=unwatch&amp;token=f494f878fd49b9bc4a42d7984fd67370573565c5%2B%5C\" title=\"Remove this page from your watchlist [w]\" accesskey=\"w\">Unwatch</a></span></li>
+															<li id=\"ca-unwatch\" class=\"icon\"><span><a href=\"/emergent/index.php?title=LeabraFlex&amp;action=unwatch&amp;token=1b204be75ea4719bec53b7b61f7d81d35a51e1bc%2B%5C\" title=\"Remove this page from your watchlist [w]\" accesskey=\"w\">Unwatch</a></span></li>
 													</ul>
 					</div>
 										<div id=\"p-cactions\" role=\"navigation\" class=\"vectorMenu\" aria-labelledby=\"p-cactions-label\">
@@ -3721,7 +3773,7 @@ Transclusion expansion time report (%,ms,calls,template)
 
 			<div class=\"body\">
 									<ul>
-						<li id=\"t-whatlinkshere\"><a href=\"/emergent/index.php/Special:WhatLinksHere/LeabraFlex\" title=\"A list of all wiki pages that link here [j]\" accesskey=\"j\">What links here</a></li><li id=\"t-recentchangeslinked\"><a href=\"/emergent/index.php/Special:RecentChangesLinked/LeabraFlex\" title=\"Recent changes in pages linked from this page [k]\" accesskey=\"k\">Related changes</a></li><li id=\"t-upload\"><a href=\"/emergent/index.php/Special:Upload\" title=\"Upload files [u]\" accesskey=\"u\">Upload file</a></li><li id=\"t-specialpages\"><a href=\"/emergent/index.php/Special:SpecialPages\" title=\"A list of all special pages [q]\" accesskey=\"q\">Special pages</a></li><li id=\"t-permalink\"><a href=\"/emergent/index.php?title=LeabraFlex&amp;oldid=11194\" title=\"Permanent link to this revision of the page\">Permanent link</a></li><li id=\"t-info\"><a href=\"/emergent/index.php?title=LeabraFlex&amp;action=info\" title=\"More information about this page\">Page information</a></li><li id=\"t-smwbrowselink\"><a href=\"/emergent/index.php/Special:Browse/LeabraFlex\" rel=\"smw-browse\">Browse properties</a></li>					</ul>
+						<li id=\"t-whatlinkshere\"><a href=\"/emergent/index.php/Special:WhatLinksHere/LeabraFlex\" title=\"A list of all wiki pages that link here [j]\" accesskey=\"j\">What links here</a></li><li id=\"t-recentchangeslinked\"><a href=\"/emergent/index.php/Special:RecentChangesLinked/LeabraFlex\" title=\"Recent changes in pages linked from this page [k]\" accesskey=\"k\">Related changes</a></li><li id=\"t-upload\"><a href=\"/emergent/index.php/Special:Upload\" title=\"Upload files [u]\" accesskey=\"u\">Upload file</a></li><li id=\"t-specialpages\"><a href=\"/emergent/index.php/Special:SpecialPages\" title=\"A list of all special pages [q]\" accesskey=\"q\">Special pages</a></li><li id=\"t-permalink\"><a href=\"/emergent/index.php?title=LeabraFlex&amp;oldid=13216\" title=\"Permanent link to this revision of the page\">Permanent link</a></li><li id=\"t-info\"><a href=\"/emergent/index.php?title=LeabraFlex&amp;action=info\" title=\"More information about this page\">Page information</a></li><li id=\"t-smwbrowselink\"><a href=\"/emergent/index.php/Special:Browse/LeabraFlex\" rel=\"smw-browse\">Browse properties</a></li>					</ul>
 							</div>
 		</div>
 			<div class=\"portal\" role=\"navigation\" id=\"p-coll-print_export\" aria-labelledby=\"p-coll-print_export-label\">
@@ -3729,14 +3781,14 @@ Transclusion expansion time report (%,ms,calls,template)
 
 			<div class=\"body\">
 									<ul>
-						<li id=\"coll-create_a_book\"><a href=\"/emergent/index.php?title=Special:Book&amp;bookcmd=book_creator&amp;referer=LeabraFlex\">Create a book</a></li><li id=\"coll-download-as-rl\"><a href=\"/emergent/index.php?title=Special:Book&amp;bookcmd=render_article&amp;arttitle=LeabraFlex&amp;oldid=11194&amp;writer=rl\">Download as PDF</a></li><li id=\"t-print\"><a href=\"/emergent/index.php?title=LeabraFlex&amp;printable=yes\" title=\"Printable version of this page [p]\" accesskey=\"p\">Printable version</a></li>					</ul>
+						<li id=\"coll-create_a_book\"><a href=\"/emergent/index.php?title=Special:Book&amp;bookcmd=book_creator&amp;referer=LeabraFlex\">Create a book</a></li><li id=\"coll-download-as-rl\"><a href=\"/emergent/index.php?title=Special:Book&amp;bookcmd=render_article&amp;arttitle=LeabraFlex&amp;oldid=13216&amp;writer=rl\">Download as PDF</a></li><li id=\"t-print\"><a href=\"/emergent/index.php?title=LeabraFlex&amp;printable=yes\" title=\"Printable version of this page [p]\" accesskey=\"p\">Printable version</a></li>					</ul>
 							</div>
 		</div>
 				</div>
 		</div>
 		<div id=\"footer\" role=\"contentinfo\">
 							<ul id=\"footer-info\">
-											<li id=\"footer-info-lastmod\"> This page was last modified on 4 September 2015, at 02:19.</li>
+											<li id=\"footer-info-lastmod\"> This page was last modified on 18 November 2017, at 19:46.</li>
 									</ul>
 							<ul id=\"footer-places\">
 											<li id=\"footer-places-about\"><a href=\"/emergent/index.php/emergent:About\" title=\"emergent:About\">About emergent</a></li>
@@ -3750,7 +3802,7 @@ Transclusion expansion time report (%,ms,calls,template)
 		<script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
 mw.loader.state({\"user\":\"ready\",\"user.groups\":\"ready\"});mw.loader.load([\"mediawiki.toc\",\"mediawiki.action.view.postEdit\",\"site\",\"mediawiki.user\",\"mediawiki.hidpi\",\"mediawiki.page.ready\",\"mediawiki.searchSuggest\",\"mediawiki.page.watch.ajax\",\"ext.headertabs\"]);
 } );</script><script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
-mw.config.set({\"wgBackendResponseTime\":192});
+mw.config.set({\"wgBackendResponseTime\":289});
 } );</script>
 	
 
@@ -3916,7 +3968,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
      cust_label=0;
      desc="save log files when running interactively?";
      cust_desc=0;
-     base=.programs.gp[4][3].vars[8]$$;
+     base=.programs.gp[4][3].vars[7]$$;
      mbr=ProgVar::bool_val;
      data {ctrl_type=CONTROL: is_numeric=0: is_single=1: state=EXPLORE: saved_value="false": range="": notes="save log files while running interactively": };
     };
@@ -4119,7 +4171,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       cust_label=0;
       desc="number of epochs to train network for";
       cust_desc=0;
-      base=.programs.gp[4][3].vars[10]$$;
+      base=.programs.gp[4][3].vars[9]$$;
       mbr=ProgVar::int_val;
       data {ctrl_type=PARAM_SET: is_numeric=1: is_single=1: state=STABLE: saved_value="50": range="": notes="": };
      };
@@ -4129,7 +4181,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       cust_label=0;
       desc="number of trials per epoch";
       cust_desc=0;
-      base=.programs.gp[4][3].vars[11]$$;
+      base=.programs.gp[4][3].vars[10]$$;
       mbr=ProgVar::int_val;
       data {ctrl_type=PARAM_SET: is_numeric=1: is_single=1: state=STABLE: saved_value="50": range="": notes="": };
      };
@@ -4159,7 +4211,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       cust_label=0;
       desc="is this a testing-only run, no training?";
       cust_desc=0;
-      base=.programs.gp[4][3].vars[13]$$;
+      base=.programs.gp[4][3].vars[12]$$;
       mbr=ProgVar::bool_val;
       data {ctrl_type=PARAM_SET: is_numeric=0: is_single=1: state=STABLE: saved_value="false": range="": notes="": };
      };
@@ -4169,7 +4221,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       cust_label=0;
       desc="how frequently (epochs) to run a test during training";
       cust_desc=0;
-      base=.programs.gp[4][3].vars[14]$$;
+      base=.programs.gp[4][3].vars[13]$$;
       mbr=ProgVar::int_val;
       data {ctrl_type=PARAM_SET: is_numeric=1: is_single=1: state=STABLE: saved_value="1": range="": notes="": };
      };
@@ -4189,7 +4241,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       cust_label=0;
       desc="load initial weights from a file (specified in weights_file)";
       cust_desc=0;
-      base=.programs.gp[4][3].vars[1]$$;
+      base=.programs.gp[4][3].vars[0]$$;
       mbr=ProgVar::bool_val;
       data {ctrl_type=PARAM_SET: is_numeric=0: is_single=1: state=STABLE: saved_value="false": range="": notes="": };
      };
@@ -4199,7 +4251,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       cust_label=0;
       desc="full relative path (from project) of weights file to load -- use CRR: prefix to load from cluster run results directory";
       cust_desc=0;
-      base=.programs.gp[4][3].vars[2]$$;
+      base=.programs.gp[4][3].vars[1]$$;
       mbr=ProgVar::string_val;
       data {ctrl_type=PARAM_SET: is_numeric=0: is_single=1: state=STABLE: saved_value="": range="": notes="": };
      };
@@ -4209,7 +4261,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       cust_label=0;
       desc="after loading weights, reset epoch counter to this value (-1 = leave at value from the loaded weights)";
       cust_desc=0;
-      base=.programs.gp[4][3].vars[3]$$;
+      base=.programs.gp[4][3].vars[2]$$;
       mbr=ProgVar::int_val;
       data {ctrl_type=PARAM_SET: is_numeric=1: is_single=1: state=STABLE: saved_value="1": range="": notes="": };
      };
@@ -4219,7 +4271,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       cust_label=0;
       desc="learning rate schedule epochs per step of decrease in learning rate";
       cust_desc=0;
-      base=.programs.gp[4][3].vars[4]$$;
+      base=.programs.gp[4][3].vars[3]$$;
       mbr=ProgVar::int_val;
       data {ctrl_type=PARAM_SET: is_numeric=1: is_single=1: state=STABLE: saved_value="50": range="": notes="": };
      };
@@ -4229,7 +4281,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       cust_label=0;
       desc="number of steps in the learning rate schedule";
       cust_desc=0;
-      base=.programs.gp[4][3].vars[5]$$;
+      base=.programs.gp[4][3].vars[4]$$;
       mbr=ProgVar::int_val;
       data {ctrl_type=PARAM_SET: is_numeric=1: is_single=1: state=STABLE: saved_value="7": range="": notes="": };
      };
@@ -4239,7 +4291,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       cust_label=0;
       desc="if positive (3 is typical), then bump up the learning rate at this step in the schedule -- can help improve final performance level";
       cust_desc=0;
-      base=.programs.gp[4][3].vars[6]$$;
+      base=.programs.gp[4][3].vars[5]$$;
       mbr=ProgVar::int_val;
       data {ctrl_type=PARAM_SET: is_numeric=1: is_single=1: state=STABLE: saved_value="-1": range="": notes="": };
      };
@@ -4270,7 +4322,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
      el_def=0;
      group_type=GT_BUTTONS;
     };
-    date="2017_05_14_22_01_20";
+    date="2018_01_07_02_01_46";
    };
    ParamSet @[1] {
     name="RunParams1";
@@ -4317,7 +4369,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       cust_label=0;
       desc="number of epochs to train network for";
       cust_desc=0;
-      base=$.programs.gp[4][3].vars[10]$;
+      base=$.programs.gp[4][3].vars[9]$;
       mbr=ProgVar::int_val;
       data {ctrl_type=PARAM_SET: is_numeric=1: is_single=1: state=STABLE: saved_value="5": range="": notes="": };
      };
@@ -4327,7 +4379,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       cust_label=0;
       desc="number of trials per epoch";
       cust_desc=0;
-      base=$.programs.gp[4][3].vars[11]$;
+      base=$.programs.gp[4][3].vars[10]$;
       mbr=ProgVar::int_val;
       data {ctrl_type=PARAM_SET: is_numeric=1: is_single=1: state=STABLE: saved_value="25": range="": notes="": };
      };
@@ -4357,7 +4409,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       cust_label=0;
       desc="is this a testing-only run, no training?";
       cust_desc=0;
-      base=$.programs.gp[4][3].vars[13]$;
+      base=$.programs.gp[4][3].vars[12]$;
       mbr=ProgVar::bool_val;
       data {ctrl_type=PARAM_SET: is_numeric=0: is_single=1: state=STABLE: saved_value="false": range="": notes="": };
      };
@@ -4367,7 +4419,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       cust_label=0;
       desc="how frequently (epochs) to run a test during training";
       cust_desc=0;
-      base=$.programs.gp[4][3].vars[14]$;
+      base=$.programs.gp[4][3].vars[13]$;
       mbr=ProgVar::int_val;
       data {ctrl_type=PARAM_SET: is_numeric=1: is_single=1: state=STABLE: saved_value="1": range="": notes="": };
      };
@@ -4387,7 +4439,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       cust_label=0;
       desc="load initial weights from a file (specified in weights_file)";
       cust_desc=0;
-      base=$.programs.gp[4][3].vars[1]$;
+      base=$.programs.gp[4][3].vars[0]$;
       mbr=ProgVar::bool_val;
       data {ctrl_type=PARAM_SET: is_numeric=0: is_single=1: state=STABLE: saved_value="false": range="": notes="": };
      };
@@ -4397,7 +4449,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       cust_label=0;
       desc="full relative path (from project) of weights file to load -- use CRR: prefix to load from cluster run results directory";
       cust_desc=0;
-      base=$.programs.gp[4][3].vars[2]$;
+      base=$.programs.gp[4][3].vars[1]$;
       mbr=ProgVar::string_val;
       data {ctrl_type=PARAM_SET: is_numeric=0: is_single=1: state=STABLE: saved_value="": range="": notes="": };
      };
@@ -4407,7 +4459,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       cust_label=0;
       desc="after loading weights, reset epoch counter to this value (-1 = leave at value from the loaded weights)";
       cust_desc=0;
-      base=$.programs.gp[4][3].vars[3]$;
+      base=$.programs.gp[4][3].vars[2]$;
       mbr=ProgVar::int_val;
       data {ctrl_type=PARAM_SET: is_numeric=1: is_single=1: state=STABLE: saved_value="1": range="": notes="": };
      };
@@ -4417,7 +4469,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       cust_label=0;
       desc="learning rate schedule epochs per step of decrease in learning rate";
       cust_desc=0;
-      base=$.programs.gp[4][3].vars[4]$;
+      base=$.programs.gp[4][3].vars[3]$;
       mbr=ProgVar::int_val;
       data {ctrl_type=PARAM_SET: is_numeric=1: is_single=1: state=STABLE: saved_value="50": range="": notes="": };
      };
@@ -4427,7 +4479,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       cust_label=0;
       desc="number of steps in the learning rate schedule";
       cust_desc=0;
-      base=$.programs.gp[4][3].vars[5]$;
+      base=$.programs.gp[4][3].vars[4]$;
       mbr=ProgVar::int_val;
       data {ctrl_type=PARAM_SET: is_numeric=1: is_single=1: state=STABLE: saved_value="7": range="": notes="": };
      };
@@ -4437,7 +4489,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       cust_label=0;
       desc="if positive (3 is typical), then bump up the learning rate at this step in the schedule -- can help improve final performance level";
       cust_desc=0;
-      base=$.programs.gp[4][3].vars[6]$;
+      base=$.programs.gp[4][3].vars[5]$;
       mbr=ProgVar::int_val;
       data {ctrl_type=PARAM_SET: is_numeric=1: is_single=1: state=STABLE: saved_value="-1": range="": notes="": };
      };
@@ -4532,7 +4584,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
      el_def=0;
      group_type=GT_BUTTONS;
     };
-    date=;
+    date="2018_01_07_02_01_46";
    };
    ParamSet @[1] {
     name="NetConfig1";
@@ -4624,7 +4676,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
      el_def=0;
      group_type=GT_BUTTONS;
     };
-    date="2017_05_14_22_01_20";
+    date="2018_01_07_02_01_46";
    };
    ParamSet @[1] {
     name="LearnParams1";
@@ -7909,7 +7961,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      ProgVar @[9] {
       name="tag";
       var_type=T_String;
-      string_val="__RunMaster_NetMaster";
+      string_val="__RunMaster_NetConfigMaster_LearnParamsMaster";
       object_scope=NULL;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -8105,7 +8157,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="MethodCall_netconfigActivatetrue";
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
-	  code_string="run_params->Activate(true)";
+	  code_string="net_config->Activate(true)";
 	  result_var=NULL;
 	  obj=$.programs.gp[1][1].vars[2]$;
 	  method=ParamSet::Activate;
@@ -8132,7 +8184,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="MethodCall_learnparamsActivatetrue";
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
-	  code_string="net_params->Activate(true)";
+	  code_string="learn_params->Activate(true)";
 	  result_var=NULL;
 	  obj=$.programs.gp[1][1].vars[3]$;
 	  method=ParamSet::Activate;
@@ -9242,12 +9294,24 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="objs";
      el_typ=taNBase;
      el_def=0;
-     TimeUsed @[0] {name="BasicTrainTime": start={usr=95684: sys=45029: tot=149476688279: }: end={usr=95683: sys=45029: tot=149476688278: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+     TimeUsed @[0] {name="BasicTrainTime": start={usr=85186: sys=1802: tot=151531571186: }: end={usr=85186: sys=1802: tot=151531571186: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
     };
     objs_vars {
      name="objs_vars";
      el_typ=ProgVar;
      el_def=0;
+     ProgVar @[0] {
+      name="basic_train_time";
+      var_type=T_Object;
+      object_type=TimeUsed;
+      object_val=.programs.gp[2][0].objs[0]$$;
+      object_scope=NULL;
+      objs_ptr=1;
+      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
     };
     types {
      name="types";
@@ -9287,18 +9351,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="vars";
      el_typ=ProgVar;
      el_def=0;
-     ProgVar @[0] {
-      name="basic_train_time";
-      var_type=T_Object;
-      object_type=TimeUsed;
-      object_val=.programs.gp[2][0].objs[0]$$;
-      object_scope=NULL;
-      objs_ptr=1;
-      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-      reference=0;
-      desc=;
-      init_from=NULL;
-     };
     };
     functions {
      name="functions";
@@ -9315,7 +9367,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CAN_REVERT_TO_CODE;
       code_string="basic_train_time->ResetUsed()";
       result_var=NULL;
-      obj=.programs.gp[2][0].vars[0]$$;
+      obj=.programs.gp[2][0].objs_vars[0]$$;
       method=TimeUsed::ResetUsed;
       meth_args {
        name="meth_args";
@@ -9336,7 +9388,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CAN_REVERT_TO_CODE;
       code_string="basic_train_time->StartTimer(false)";
       result_var=NULL;
-      obj=$.programs.gp[2][0].vars[0]$;
+      obj=$.programs.gp[2][0].objs_vars[0]$;
       method=TimeUsed::StartTimer;
       meth_args {
        name="meth_args";
@@ -9650,7 +9702,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CAN_REVERT_TO_CODE;
       code_string="basic_train_time->EndTimer()";
       result_var=NULL;
-      obj=$.programs.gp[2][0].vars[0]$;
+      obj=$.programs.gp[2][0].objs_vars[0]$;
       method=TimeUsed::EndTimer;
       meth_args {
        name="meth_args";
@@ -9725,12 +9777,24 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="objs";
      el_typ=taNBase;
      el_def=0;
-     TimeUsed @[0] {name="BasicTrainTime": start={usr=3215: sys=830: tot=149439832771: }: end={usr=3216: sys=830: tot=149439832771: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+     TimeUsed @[0] {name="BasicTrainTime": start={usr=85190: sys=1803: tot=151531571188: }: end={usr=85191: sys=1803: tot=151531571189: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
     };
     objs_vars {
      name="objs_vars";
      el_typ=ProgVar;
      el_def=0;
+     ProgVar @[0] {
+      name="basic_train_time";
+      var_type=T_Object;
+      object_type=TimeUsed;
+      object_val=.programs.gp[2][1].objs[0]$$;
+      object_scope=NULL;
+      objs_ptr=1;
+      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
     };
     types {
      name="types";
@@ -9770,18 +9834,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="vars";
      el_typ=ProgVar;
      el_def=0;
-     ProgVar @[0] {
-      name="basic_train_time";
-      var_type=T_Object;
-      object_type=TimeUsed;
-      object_val=.programs.gp[2][1].objs[0]$$;
-      object_scope=NULL;
-      objs_ptr=1;
-      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-      reference=0;
-      desc=;
-      init_from=NULL;
-     };
     };
     functions {
      name="functions";
@@ -9798,7 +9850,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CAN_REVERT_TO_CODE;
       code_string="basic_train_time->ResetUsed()";
       result_var=NULL;
-      obj=.programs.gp[2][1].vars[0]$$;
+      obj=.programs.gp[2][1].objs_vars[0]$$;
       method=TimeUsed::ResetUsed;
       meth_args {
        name="meth_args";
@@ -9819,7 +9871,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CAN_REVERT_TO_CODE;
       code_string="basic_train_time->StartTimer(false)";
       result_var=NULL;
-      obj=$.programs.gp[2][1].vars[0]$;
+      obj=$.programs.gp[2][1].objs_vars[0]$;
       method=TimeUsed::StartTimer;
       meth_args {
        name="meth_args";
@@ -10133,7 +10185,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CAN_REVERT_TO_CODE;
       code_string="basic_train_time->EndTimer()";
       result_var=NULL;
-      obj=$.programs.gp[2][1].vars[0]$;
+      obj=$.programs.gp[2][1].objs_vars[0]$;
       method=TimeUsed::EndTimer;
       meth_args {
        name="meth_args";
@@ -10299,7 +10351,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      ProgVar @[5] {
       name="data_loop_index";
       var_type=T_Int;
-      int_val=6;
+      int_val=3;
       object_scope=NULL;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -10611,6 +10663,18 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="objs_vars";
      el_typ=ProgVar;
      el_def=0;
+     ProgVar @[0] {
+      name="perm_idx_table";
+      var_type=T_Object;
+      object_type=DataTable;
+      object_val=.programs.gp[3][0].objs[0]$$;
+      object_scope=NULL;
+      objs_ptr=1;
+      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
     };
     types {
      name="types";
@@ -10673,7 +10737,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      ProgVar @[1] {
       name="input_idx";
       var_type=T_Int;
-      int_val=3;
+      int_val=0;
       object_scope=NULL;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -10686,18 +10750,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       int_val=6;
       object_scope=NULL;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-      reference=0;
-      desc=;
-      init_from=NULL;
-     };
-     ProgVar @[3] {
-      name="perm_idx_table";
-      var_type=T_Object;
-      object_type=DataTable;
-      object_val=.programs.gp[3][0].objs[0]$$;
-      object_scope=NULL;
-      objs_ptr=1;
-      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc=;
       init_from=NULL;
@@ -10954,7 +11006,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	flags=CAN_REVERT_TO_CODE;
 	code_string="perm_idx_table->EnforceRows(dmem_rows)";
 	result_var=NULL;
-	obj=.programs.gp[3][0].vars[3]$$;
+	obj=.programs.gp[3][0].objs_vars[0]$$;
 	method=DataTable::EnforceRows;
 	meth_args {
 	 name="meth_args";
@@ -10979,9 +11031,9 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="MethodCall_permidxtableInitValsToRowNo0";
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
-	code_string="perm_idx_table->InitValsToRowNo(0)";
+	code_string="perm_idx_table->InitValsToRowNo(0, , )";
 	result_var=NULL;
-	obj=$.programs.gp[3][0].vars[3]$;
+	obj=$.programs.gp[3][0].objs_vars[0]$;
 	method=DataTable::InitValsToRowNo;
 	meth_args {
 	 name="meth_args";
@@ -11130,7 +11182,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	flags=CAN_REVERT_TO_CODE;
 	code_string="input_idx = perm_idx_table->GetVal(0, cur_idx)";
 	result_var=.programs.gp[3][0].vars[1]$$;
-	obj=$.programs.gp[3][0].vars[3]$;
+	obj=$.programs.gp[3][0].objs_vars[0]$;
 	method=DataTable::GetVal;
 	meth_args {
 	 name="meth_args";
@@ -11593,6 +11645,18 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="objs_vars";
      el_typ=ProgVar;
      el_def=0;
+     ProgVar @[0] {
+      name="layer_writer_0";
+      var_type=T_Object;
+      object_type=LayerWriter;
+      object_val=.programs.gp[3][2].objs[0]$$;
+      object_scope=NULL;
+      objs_ptr=1;
+      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="this is a pointer to the LayerWriter object in objs -- edit that object to determine how information is presented to the network";
+      init_from=NULL;
+     };
     };
     types {
      name="types";
@@ -11632,18 +11696,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="vars";
      el_typ=ProgVar;
      el_def=0;
-     ProgVar @[0] {
-      name="layer_writer_0";
-      var_type=T_Object;
-      object_type=LayerWriter;
-      object_val=.programs.gp[3][2].objs[0]$$;
-      object_scope=NULL;
-      objs_ptr=1;
-      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-      reference=0;
-      desc="this is a pointer to the LayerWriter object in objs -- edit that object to determine how information is presented to the network";
-      init_from=NULL;
-     };
     };
     functions {
      name="functions";
@@ -11660,7 +11712,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CAN_REVERT_TO_CODE;
       code_string="layer_writer_0->SetDataNetwork(input_data, network)";
       result_var=NULL;
-      obj=.programs.gp[3][2].vars[0]$$;
+      obj=.programs.gp[3][2].objs_vars[0]$$;
       method=LayerWriter::SetDataNetwork;
       meth_args {
        name="meth_args";
@@ -11698,7 +11750,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CAN_REVERT_TO_CODE;
       code_string="layer_writer_0->AutoConfig()";
       result_var=NULL;
-      obj=$.programs.gp[3][2].vars[0]$;
+      obj=$.programs.gp[3][2].objs_vars[0]$;
       method=LayerWriter::AutoConfig;
       meth_args {
        name="meth_args";
@@ -11725,7 +11777,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CAN_REVERT_TO_CODE;
       code_string="layer_writer_0->CheckConfig(false)";
       result_var=NULL;
-      obj=$.programs.gp[3][2].vars[0]$;
+      obj=$.programs.gp[3][2].objs_vars[0]$;
       method=taList_impl::CheckConfig;
       meth_args {
        name="meth_args";
@@ -11757,7 +11809,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CAN_REVERT_TO_CODE;
       code_string="layer_writer_0->SetDataNetwork(input_data, network)";
       result_var=NULL;
-      obj=$.programs.gp[3][2].vars[0]$;
+      obj=$.programs.gp[3][2].objs_vars[0]$;
       method=LayerWriter::SetDataNetwork;
       meth_args {
        name="meth_args";
@@ -11795,7 +11847,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CAN_REVERT_TO_CODE;
       code_string="layer_writer_0->ApplyInputData()";
       result_var=NULL;
-      obj=$.programs.gp[3][2].vars[0]$;
+      obj=$.programs.gp[3][2].objs_vars[0]$;
       method=LayerWriter::ApplyInputData;
       meth_args {
        name="meth_args";
@@ -11967,6 +12019,18 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="objs_vars";
      el_typ=ProgVar;
      el_def=0;
+     ProgVar @[0] {
+      name="rnd_seeds";
+      var_type=T_Object;
+      object_type=RndSeed_List;
+      object_val=.programs.gp[4][0].objs[0]$$;
+      object_scope=NULL;
+      objs_ptr=1;
+      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
     };
     types {
      name="types";
@@ -11994,18 +12058,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="vars";
      el_typ=ProgVar;
      el_def=0;
-     ProgVar @[0] {
-      name="rnd_seeds";
-      var_type=T_Object;
-      object_type=RndSeed_List;
-      object_val=.programs.gp[4][0].objs[0]$$;
-      object_scope=NULL;
-      objs_ptr=1;
-      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-      reference=0;
-      desc=;
-      init_from=NULL;
-     };
     };
     functions {
      name="functions";
@@ -12027,7 +12079,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CAN_REVERT_TO_CODE;
       code_string="rnd_seeds->UseSeed(network.batch % rnd_seeds.seeds.size)";
       result_var=NULL;
-      obj=.programs.gp[4][0].vars[0]$$;
+      obj=.programs.gp[4][0].objs_vars[0]$$;
       method=RndSeed_List::UseSeed;
       meth_args {
        name="meth_args";
@@ -12221,7 +12273,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="MethodCall_networkUnBuild";
 	desc="unlesion for unbuilt layers not allowed -- unbuild all first";
 	flags=NEW_EL|CAN_REVERT_TO_CODE;
-	code_string="network.UnBuild()";
+	code_string="network->UnBuild()";
 	result_var=NULL;
 	obj=.programs.gp[4][1].args[0]$$;
 	method=Network::UnBuild;
@@ -12414,7 +12466,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="MethodCall_leslaygpmatFmDelimStringlaygps";
 	desc="get into easier to use matrix format";
 	flags=CAN_REVERT_TO_CODE;
-	code_string="les_laygp_mat->FmDelimString(laygps, \" \")";
+	code_string="les_laygp_mat->FmDelimString(laygps, \":\")";
 	result_var=NULL;
 	obj=.programs.gp[4][1].functions[1].fun_code[0].local_vars[0]$$;
 	method=String_Matrix::FmDelimString;
@@ -12461,7 +12513,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="MemberMethodCall_laygpnetworklaye_FindNamelaygpnm";
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
-	  code_string="laygp = network.layers.gp.FindName(laygp_nm)";
+	  code_string="laygp = network.layers.gp.FindName(laygp_nm, )";
 	  obj=$.programs.gp[4][1].args[0]$;
 	  path="layers.gp";
 	  result_var=.programs.gp[4][1].functions[1].fun_code[0].local_vars[1]$$;
@@ -12476,14 +12528,25 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	    name="item_nm";
 	    required=1;
 	    def_val=;
-	    prev_expr=;
+	    prev_expr="laygp_nm";
 	    expr {
 	     expr="laygp_nm";
 	    };
 	   };
+	   ProgArg @[1] {
+	    arg_type=int;
+	    type="int";
+	    name="start_idx";
+	    required=0;
+	    def_val="-1";
+	    prev_expr=;
+	    expr {
+	     expr=;
+	    };
+	   };
 	  };
-	  meth_sig="Layer_ptr FindName(taString& item_nm)";
-	  meth_desc=" Find element in top-level list with given name (nm) (NULL = not here)";
+	  meth_sig="Layer_ptr FindName(taString& item_nm, int start_idx = -1)";
+	  meth_desc=" Find element in top-level list with given name (nm) (NULL = not here) -- uses hash table if set, and start_idx can speed up search if you have any idea where to start -- does a bidirectional search from that starting location";
 	 };
 	 If @[1] {
 	  name="If_iflaygp";
@@ -12806,7 +12869,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="MethodCall_leslaysmatFmDelimStringlays";
 	desc="get into easier to use matrix format";
 	flags=CAN_REVERT_TO_CODE;
-	code_string="les_lays_mat->FmDelimString(lays, \" \")";
+	code_string="les_lays_mat->FmDelimString(lays, \":\")";
 	result_var=NULL;
 	obj=.programs.gp[4][1].functions[2].fun_code[0].local_vars[0]$$;
 	method=String_Matrix::FmDelimString;
@@ -13220,7 +13283,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="MethodCall_lesprjnsmatFmDelimStringprjns";
 	desc="get into easier to use matrix format";
 	flags=CAN_REVERT_TO_CODE;
-	code_string="les_prjns_mat->FmDelimString(prjns, \" \")";
+	code_string="les_prjns_mat->FmDelimString(prjns, \":\")";
 	result_var=NULL;
 	obj=.programs.gp[4][1].functions[3].fun_code[0].local_vars[0]$$;
 	method=String_Matrix::FmDelimString;
@@ -13983,7 +14046,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="ProgramCall_BatchRndSeednetwork";
       desc="critical to build with same seed across dmem / mpi nodes if random connectivity used";
       flags=NEW_EL|CAN_REVERT_TO_CODE;
-      code_string="BatchRndSeed()";
+      code_string="BatchRndSeed(network)";
       prog_args {
        name="prog_args";
        el_typ=ProgArg;
@@ -14023,7 +14086,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="MethodCall_networkDMemConfirmHashtrue";
       desc="confirm that all nodes are using same exact network";
       flags=NEW_EL|CAN_REVERT_TO_CODE;
-      code_string="network.DMem_ConfirmHash()";
+      code_string="network->DMem_ConfirmHash(true)";
       result_var=NULL;
       obj=$.programs.gp[4][1].args[0]$;
       method=Network::DMem_ConfirmHash;
@@ -14304,14 +14367,25 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="item_nm";
 	  required=1;
 	  def_val=;
-	  prev_expr=;
+	  prev_expr="laygp_nm";
 	  expr {
 	   expr="laygp_nm";
 	  };
 	 };
+	 ProgArg @[1] {
+	  arg_type=int;
+	  type="int";
+	  name="start_idx";
+	  required=0;
+	  def_val="-1";
+	  prev_expr=;
+	  expr {
+	   expr=;
+	  };
+	 };
 	};
-	meth_sig="Layer_ptr FindName(taString& item_nm)";
-	meth_desc=" Find element in top-level list with given name (nm) (NULL = not here)";
+	meth_sig="Layer_ptr FindName(taString& item_nm, int start_idx = -1)";
+	meth_desc=" Find element in top-level list with given name (nm) (NULL = not here) -- uses hash table if set, and start_idx can speed up search if you have any idea where to start -- does a bidirectional search from that starting location";
        };
        If @[2] {
 	name="If_iflaygp";
@@ -14586,6 +14660,18 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="objs_vars";
      el_typ=ProgVar;
      el_def=0;
+     ProgVar @[0] {
+      name="dmem_rnd_seed";
+      var_type=T_Object;
+      object_type=RndSeed;
+      object_val=.programs.gp[4][3].objs[0]$$;
+      object_scope=NULL;
+      objs_ptr=1;
+      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
     };
     types {
      name="types";
@@ -14614,18 +14700,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      el_typ=ProgVar;
      el_def=0;
      ProgVar @[0] {
-      name="dmem_rnd_seed";
-      var_type=T_Object;
-      object_type=RndSeed;
-      object_val=.programs.gp[4][3].objs[0]$$;
-      object_scope=NULL;
-      objs_ptr=1;
-      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-      reference=0;
-      desc=;
-      init_from=NULL;
-     };
-     ProgVar @[1] {
       name="load_weights";
       var_type=T_Bool;
       bool_val=0;
@@ -14635,7 +14709,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="load initial weights from a file (specified in weights_file)";
       init_from=NULL;
      };
-     ProgVar @[2] {
+     ProgVar @[1] {
       name="weights_file";
       var_type=T_String;
       string_val=;
@@ -14645,7 +14719,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="full relative path (from project) of weights file to load -- use CRR: prefix to load from cluster run results directory";
       init_from=NULL;
      };
-     ProgVar @[3] {
+     ProgVar @[2] {
       name="load_st_epc";
       var_type=T_Int;
       int_val=1;
@@ -14655,7 +14729,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="after loading weights, reset epoch counter to this value (-1 = leave at value from the loaded weights)";
       init_from=NULL;
      };
-     ProgVar @[4] {
+     ProgVar @[3] {
       name="lrs_step_epochs";
       var_type=T_Int;
       int_val=50;
@@ -14665,7 +14739,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="learning rate schedule epochs per step of decrease in learning rate";
       init_from=NULL;
      };
-     ProgVar @[5] {
+     ProgVar @[4] {
       name="lrs_n_steps";
       var_type=T_Int;
       int_val=7;
@@ -14675,7 +14749,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="number of steps in the learning rate schedule";
       init_from=NULL;
      };
-     ProgVar @[6] {
+     ProgVar @[5] {
       name="lrs_bump_step";
       var_type=T_Int;
       int_val=-1;
@@ -14685,7 +14759,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="if positive (3 is typical), then bump up the learning rate at this step in the schedule -- can help improve final performance level";
       init_from=NULL;
      };
-     ProgVar @[7] {
+     ProgVar @[6] {
       name="LRSConSpec";
       var_type=T_Object;
       object_type=LeabraConSpec;
@@ -14697,7 +14771,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       init_from=NULL;
      };
-     ProgVar @[8] {
+     ProgVar @[7] {
       name="save_log_files_interactive";
       var_type=T_Bool;
       bool_val=0;
@@ -14707,7 +14781,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="save log files when running interactively?";
       init_from=NULL;
      };
-     ProgVar @[9] {
+     ProgVar @[8] {
       name="dmem_new_seed";
       var_type=T_Bool;
       bool_val=0;
@@ -14717,7 +14791,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="when running under dmem (MPI), generate a new random seed for each node after common initialization, to cause each node to have different random events, etc.   It is now possible to add taMisc::dmem_proc to the thr_no args to any random functions, and achieve fully reproducible results without this randomization.";
       init_from=NULL;
      };
-     ProgVar @[10] {
+     ProgVar @[9] {
       name="train_epochs";
       var_type=T_Int;
       int_val=50;
@@ -14727,7 +14801,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="number of epochs to train network for";
       init_from=NULL;
      };
-     ProgVar @[11] {
+     ProgVar @[10] {
       name="trials_per_epoch";
       var_type=T_Int;
       int_val=50;
@@ -14737,7 +14811,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="number of trials per epoch";
       init_from=NULL;
      };
-     ProgVar @[12] {
+     ProgVar @[11] {
       name="trials_per_epoch_eff";
       var_type=T_Int;
       int_val=50;
@@ -14747,7 +14821,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="effective value, taking into account number of MPI processors";
       init_from=NULL;
      };
-     ProgVar @[13] {
+     ProgVar @[12] {
       name="test_run";
       var_type=T_Bool;
       bool_val=0;
@@ -14757,7 +14831,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="is this a testing-only run, no training?";
       init_from=NULL;
      };
-     ProgVar @[14] {
+     ProgVar @[13] {
       name="test_interval";
       var_type=T_Int;
       int_val=1;
@@ -14804,7 +14878,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="trials_per_epoch_eff = trials_per_epoch";
-	result_var=.programs.gp[4][3].vars[12]$$;
+	result_var=.programs.gp[4][3].vars[11]$$;
 	expr {
 	 expr="trials_per_epoch";
 	};
@@ -14826,7 +14900,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc="dmem means that each guy does less -- uses randomization to get good mix across processors";
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="trials_per_epoch_eff = trials_per_epoch / taMisc::dmem_nprocs";
-	  result_var=$.programs.gp[4][3].vars[12]$;
+	  result_var=$.programs.gp[4][3].vars[11]$;
 	  expr {
 	   expr="trials_per_epoch / taMisc::dmem_nprocs";
 	  };
@@ -14848,7 +14922,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	    desc="round up..";
 	    flags=CAN_REVERT_TO_CODE;
 	    code_string="trials_per_epoch_eff += 1";
-	    var=$.programs.gp[4][3].vars[12]$;
+	    var=$.programs.gp[4][3].vars[11]$;
 	    expr {
 	     expr="1";
 	    };
@@ -15056,7 +15130,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	flags=CAN_REVERT_TO_CODE;
 	code_string="Print  \"loaded weights file:\" weights_file";
 	message="loaded weights file:";
-	print_var=$.programs.gp[4][3].vars[2]$;
+	print_var=$.programs.gp[4][3].vars[1]$;
 	print_var2=NULL;
 	print_var3=NULL;
 	print_var4=NULL;
@@ -15098,7 +15172,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CAN_REVERT_TO_CODE;
       code_string="LRSConSpec->LogLrateSched(lrs_step_epochs, lrs_n_steps, lrs_bump_step)";
       result_var=NULL;
-      obj=.programs.gp[4][3].vars[7]$$;
+      obj=.programs.gp[4][3].vars[6]$$;
       method=LeabraConSpec::LogLrateSched;
       meth_args {
        name="meth_args";
@@ -15159,7 +15233,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	flags=CAN_REVERT_TO_CODE;
 	code_string="dmem_rnd_seed->NewSeed()";
 	result_var=NULL;
-	obj=.programs.gp[4][3].vars[0]$$;
+	obj=.programs.gp[4][3].objs_vars[0]$$;
 	method=RndSeed::NewSeed;
 	meth_args {
 	 name="meth_args";
@@ -17086,7 +17160,7 @@ also save specs.";
      ProgVar @[0] {
       name="tag";
       var_type=T_String;
-      string_val="__RunMaster_NetMaster";
+      string_val="__RunMaster_NetConfigMaster_LearnParamsMaster";
       object_scope=NULL;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
       reference=0;
@@ -17444,7 +17518,7 @@ also save specs.";
       ProgVar @[0] {
        name="tag";
        var_type=T_String;
-       string_val="__RunMaster_NetMaster";
+       string_val="__RunMaster_NetConfigMaster_LearnParamsMaster";
        object_scope=NULL;
        flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
@@ -17588,7 +17662,7 @@ also save specs.";
        name="MethodCall_logfilenmepochou_logdirtruefalse";
        desc="only on dmem_proc 0";
        flags=CAN_REVERT_TO_CODE;
-       code_string="log_file_nm = epoch_output_data->GetFileNameFmProject(\".trn_epc.dat\", tag, log_dir, false)";
+       code_string="log_file_nm = epoch_output_data->SaveDataLogNameFmProject(\".trn_epc.dat\", tag, log_dir, true, false)";
        result_var=.programs.gp[4].gp[0][0].vars[3]$$;
        obj=$.programs.gp[4].gp[0][0].vars[4]$;
        method=DataTable::SaveDataLogNameFmProject;
@@ -17685,7 +17759,7 @@ also save specs.";
 	 name="MethodCall_logfilenmtrialou_ogdirfalsefalse";
 	 desc="all dmem procs";
 	 flags=CAN_REVERT_TO_CODE;
-	 code_string="log_file_nm = trial_output_data->GetFileNameFmProject(\".trn_trl.dat\", tag, log_dir, true)";
+	 code_string="log_file_nm = trial_output_data->SaveDataLogNameFmProject(\".trn_trl.dat\", tag, log_dir, false, false)";
 	 result_var=$.programs.gp[4].gp[0][0].vars[3]$;
 	 obj=.programs.gp[4].gp[0][0].vars[5]$$;
 	 method=DataTable::SaveDataLogNameFmProject;
@@ -18709,6 +18783,18 @@ also save specs.";
       name="objs_vars";
       el_typ=ProgVar;
       el_def=0;
+      ProgVar @[0] {
+       name="trial_netmon";
+       var_type=T_Object;
+       object_type=NetMonitor;
+       object_val=.programs.gp[4].gp[0][1].objs[0]$$;
+       object_scope=NULL;
+       objs_ptr=1;
+       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+       reference=0;
+       desc="pointer to the NetMonitor object in objs secton of this program that contains configuration for what to record and where to get it";
+       init_from=NULL;
+      };
      };
      types {
       name="types";
@@ -18749,18 +18835,6 @@ also save specs.";
        init_from=NULL;
       };
       ProgVar @[1] {
-       name="trial_netmon";
-       var_type=T_Object;
-       object_type=NetMonitor;
-       object_val=.programs.gp[4].gp[0][1].objs[0]$$;
-       object_scope=NULL;
-       objs_ptr=1;
-       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-       reference=0;
-       desc="pointer to the NetMonitor object in objs secton of this program that contains configuration for what to record and where to get it";
-       init_from=NULL;
-      };
-      ProgVar @[2] {
        name="run_already";
        var_type=T_Bool;
        bool_val=0;
@@ -18786,7 +18860,7 @@ also save specs.";
        flags=CAN_REVERT_TO_CODE;
        code_string="trial_netmon->SetDataNetwork(trial_mon_data, network)";
        result_var=NULL;
-       obj=.programs.gp[4].gp[0][1].vars[1]$$;
+       obj=.programs.gp[4].gp[0][1].objs_vars[0]$$;
        method=NetMonitor::SetDataNetwork;
        meth_args {
 	name="meth_args";
@@ -18824,7 +18898,7 @@ also save specs.";
        flags=CAN_REVERT_TO_CODE;
        code_string="trial_netmon->CheckConfig(false)";
        result_var=NULL;
-       obj=$.programs.gp[4].gp[0][1].vars[1]$;
+       obj=$.programs.gp[4].gp[0][1].objs_vars[0]$;
        method=taBase::CheckConfig;
        meth_args {
 	name="meth_args";
@@ -18851,7 +18925,7 @@ also save specs.";
        flags=CAN_REVERT_TO_CODE;
        code_string="trial_netmon->UpdateMonitors(true)";
        result_var=NULL;
-       obj=$.programs.gp[4].gp[0][1].vars[1]$;
+       obj=$.programs.gp[4].gp[0][1].objs_vars[0]$;
        method=NetMonitor::UpdateMonitors;
        meth_args {
 	name="meth_args";
@@ -18877,7 +18951,7 @@ also save specs.";
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="run_already = false";
-       result_var=.programs.gp[4].gp[0][1].vars[2]$$;
+       result_var=.programs.gp[4].gp[0][1].vars[1]$$;
        expr {
 	expr="false";
        };
@@ -18905,7 +18979,7 @@ also save specs.";
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="trial_netmon->SetDataNetwork(trial_mon_data, network)";
 	 result_var=NULL;
-	 obj=$.programs.gp[4].gp[0][1].vars[1]$;
+	 obj=$.programs.gp[4].gp[0][1].objs_vars[0]$;
 	 method=NetMonitor::SetDataNetwork;
 	 meth_args {
 	  name="meth_args";
@@ -18943,7 +19017,7 @@ also save specs.";
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="trial_netmon->UpdateMonitors(true)";
 	 result_var=NULL;
-	 obj=$.programs.gp[4].gp[0][1].vars[1]$;
+	 obj=$.programs.gp[4].gp[0][1].objs_vars[0]$;
 	 method=NetMonitor::UpdateMonitors;
 	 meth_args {
 	  name="meth_args";
@@ -18969,7 +19043,7 @@ also save specs.";
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="run_already = true";
-	 result_var=$.programs.gp[4].gp[0][1].vars[2]$;
+	 result_var=$.programs.gp[4].gp[0][1].vars[1]$;
 	 expr {
 	  expr="true";
 	 };
@@ -18998,7 +19072,7 @@ also save specs.";
        flags=CAN_REVERT_TO_CODE;
        code_string="trial_netmon->GetMonVals()";
        result_var=NULL;
-       obj=$.programs.gp[4].gp[0][1].vars[1]$;
+       obj=$.programs.gp[4].gp[0][1].objs_vars[0]$;
        method=NetMonitor::GetMonVals;
        meth_args {
 	name="meth_args";
@@ -20139,6 +20213,18 @@ also save specs.";
       name="objs_vars";
       el_typ=ProgVar;
       el_def=0;
+      ProgVar @[0] {
+       name="epoch_netmon";
+       var_type=T_Object;
+       object_type=NetMonitor;
+       object_val=.programs.gp[4].gp[0][2].objs[0]$$;
+       object_scope=NULL;
+       objs_ptr=1;
+       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+       reference=0;
+       desc="network monitor object that contains full specs for what to record and where to get it";
+       init_from=NULL;
+      };
      };
      types {
       name="types";
@@ -20179,18 +20265,6 @@ also save specs.";
        init_from=NULL;
       };
       ProgVar @[1] {
-       name="epoch_netmon";
-       var_type=T_Object;
-       object_type=NetMonitor;
-       object_val=.programs.gp[4].gp[0][2].objs[0]$$;
-       object_scope=NULL;
-       objs_ptr=1;
-       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-       reference=0;
-       desc="network monitor object that contains full specs for what to record and where to get it";
-       init_from=NULL;
-      };
-      ProgVar @[2] {
        name="epoch_timer";
        var_type=T_Object;
        object_type=TimeUsed;
@@ -20202,7 +20276,7 @@ also save specs.";
        desc="pointer to the network's epoch-level timer, to record how long it took to process an epoch";
        init_from=NULL;
       };
-      ProgVar @[3] {
+      ProgVar @[2] {
        name="run_already";
        var_type=T_Bool;
        bool_val=0;
@@ -20227,7 +20301,7 @@ also save specs.";
        desc="get the epoch timer from current network";
        flags=CAN_REVERT_TO_CODE;
        code_string="epoch_timer = network.epoch_time";
-       result_var=.programs.gp[4].gp[0][2].vars[2]$$;
+       result_var=.programs.gp[4].gp[0][2].vars[1]$$;
        expr {
 	expr="network.epoch_time";
        };
@@ -20238,7 +20312,7 @@ also save specs.";
        flags=CAN_REVERT_TO_CODE;
        code_string="epoch_netmon->SetDataNetwork(epoch_mon_data, network)";
        result_var=NULL;
-       obj=.programs.gp[4].gp[0][2].vars[1]$$;
+       obj=.programs.gp[4].gp[0][2].objs_vars[0]$$;
        method=NetMonitor::SetDataNetwork;
        meth_args {
 	name="meth_args";
@@ -20276,7 +20350,7 @@ also save specs.";
        flags=CAN_REVERT_TO_CODE;
        code_string="epoch_netmon->CheckConfig(false)";
        result_var=NULL;
-       obj=$.programs.gp[4].gp[0][2].vars[1]$;
+       obj=$.programs.gp[4].gp[0][2].objs_vars[0]$;
        method=taBase::CheckConfig;
        meth_args {
 	name="meth_args";
@@ -20303,7 +20377,7 @@ also save specs.";
        flags=CAN_REVERT_TO_CODE;
        code_string="epoch_netmon->UpdateMonitors(true)";
        result_var=NULL;
-       obj=$.programs.gp[4].gp[0][2].vars[1]$;
+       obj=$.programs.gp[4].gp[0][2].objs_vars[0]$;
        method=NetMonitor::UpdateMonitors;
        meth_args {
 	name="meth_args";
@@ -20329,7 +20403,7 @@ also save specs.";
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="run_already = false";
-       result_var=.programs.gp[4].gp[0][2].vars[3]$$;
+       result_var=.programs.gp[4].gp[0][2].vars[2]$$;
        expr {
 	expr="false";
        };
@@ -20357,7 +20431,7 @@ also save specs.";
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="epoch_netmon->SetDataNetwork(epoch_mon_data, network)";
 	 result_var=NULL;
-	 obj=$.programs.gp[4].gp[0][2].vars[1]$;
+	 obj=$.programs.gp[4].gp[0][2].objs_vars[0]$;
 	 method=NetMonitor::SetDataNetwork;
 	 meth_args {
 	  name="meth_args";
@@ -20395,7 +20469,7 @@ also save specs.";
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="epoch_netmon->UpdateMonitors(true)";
 	 result_var=NULL;
-	 obj=$.programs.gp[4].gp[0][2].vars[1]$;
+	 obj=$.programs.gp[4].gp[0][2].objs_vars[0]$;
 	 method=NetMonitor::UpdateMonitors;
 	 meth_args {
 	  name="meth_args";
@@ -20421,7 +20495,7 @@ also save specs.";
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="run_already = true";
-	 result_var=$.programs.gp[4].gp[0][2].vars[3]$;
+	 result_var=$.programs.gp[4].gp[0][2].vars[2]$;
 	 expr {
 	  expr="true";
 	 };
@@ -20450,7 +20524,7 @@ also save specs.";
        flags=CAN_REVERT_TO_CODE;
        code_string="epoch_netmon->GetMonVals()";
        result_var=NULL;
-       obj=$.programs.gp[4].gp[0][2].vars[1]$;
+       obj=$.programs.gp[4].gp[0][2].objs_vars[0]$;
        method=NetMonitor::GetMonVals;
        meth_args {
 	name="meth_args";
@@ -20465,7 +20539,7 @@ also save specs.";
        desc="get the epoch timer from current network";
        flags=CAN_REVERT_TO_CODE;
        code_string="epoch_timer = network.epoch_time";
-       result_var=$.programs.gp[4].gp[0][2].vars[2]$;
+       result_var=$.programs.gp[4].gp[0][2].vars[1]$;
        expr {
 	expr="network.epoch_time";
        };
@@ -21575,6 +21649,18 @@ and the testing data is updated.  The first epoch monitor should have all the it
       name="objs_vars";
       el_typ=ProgVar;
       el_def=0;
+      ProgVar @[0] {
+       name="trial_netmon";
+       var_type=T_Object;
+       object_type=NetMonitor;
+       object_val=.programs.gp[4].gp[0][3].objs[0]$$;
+       object_scope=NULL;
+       objs_ptr=1;
+       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+       reference=0;
+       desc="pointer to the NetMonitor object in objs secton of this program that contains configuration for what to record and where to get it";
+       init_from=NULL;
+      };
      };
      types {
       name="types";
@@ -21615,18 +21701,6 @@ and the testing data is updated.  The first epoch monitor should have all the it
        init_from=NULL;
       };
       ProgVar @[1] {
-       name="trial_netmon";
-       var_type=T_Object;
-       object_type=NetMonitor;
-       object_val=.programs.gp[4].gp[0][3].objs[0]$$;
-       object_scope=NULL;
-       objs_ptr=1;
-       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-       reference=0;
-       desc="pointer to the NetMonitor object in objs secton of this program that contains configuration for what to record and where to get it";
-       init_from=NULL;
-      };
-      ProgVar @[2] {
        name="run_already";
        var_type=T_Bool;
        bool_val=0;
@@ -21652,7 +21726,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
        flags=CAN_REVERT_TO_CODE;
        code_string="trial_netmon->SetDataNetwork(trial_mon_data, network)";
        result_var=NULL;
-       obj=.programs.gp[4].gp[0][3].vars[1]$$;
+       obj=.programs.gp[4].gp[0][3].objs_vars[0]$$;
        method=NetMonitor::SetDataNetwork;
        meth_args {
 	name="meth_args";
@@ -21690,7 +21764,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
        flags=CAN_REVERT_TO_CODE;
        code_string="trial_netmon->CheckConfig(false)";
        result_var=NULL;
-       obj=$.programs.gp[4].gp[0][3].vars[1]$;
+       obj=$.programs.gp[4].gp[0][3].objs_vars[0]$;
        method=taBase::CheckConfig;
        meth_args {
 	name="meth_args";
@@ -21717,7 +21791,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
        flags=CAN_REVERT_TO_CODE;
        code_string="trial_netmon->UpdateMonitors(true)";
        result_var=NULL;
-       obj=$.programs.gp[4].gp[0][3].vars[1]$;
+       obj=$.programs.gp[4].gp[0][3].objs_vars[0]$;
        method=NetMonitor::UpdateMonitors;
        meth_args {
 	name="meth_args";
@@ -21743,7 +21817,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="run_already = false";
-       result_var=.programs.gp[4].gp[0][3].vars[2]$$;
+       result_var=.programs.gp[4].gp[0][3].vars[1]$$;
        expr {
 	expr="false";
        };
@@ -21771,7 +21845,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="trial_netmon->SetDataNetwork(trial_mon_data, network)";
 	 result_var=NULL;
-	 obj=$.programs.gp[4].gp[0][3].vars[1]$;
+	 obj=$.programs.gp[4].gp[0][3].objs_vars[0]$;
 	 method=NetMonitor::SetDataNetwork;
 	 meth_args {
 	  name="meth_args";
@@ -21809,7 +21883,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="trial_netmon->UpdateMonitors(true)";
 	 result_var=NULL;
-	 obj=$.programs.gp[4].gp[0][3].vars[1]$;
+	 obj=$.programs.gp[4].gp[0][3].objs_vars[0]$;
 	 method=NetMonitor::UpdateMonitors;
 	 meth_args {
 	  name="meth_args";
@@ -21835,7 +21909,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="run_already = true";
-	 result_var=$.programs.gp[4].gp[0][3].vars[2]$;
+	 result_var=$.programs.gp[4].gp[0][3].vars[1]$;
 	 expr {
 	  expr="true";
 	 };
@@ -21864,7 +21938,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
        flags=CAN_REVERT_TO_CODE;
        code_string="trial_netmon->GetMonVals()";
        result_var=NULL;
-       obj=$.programs.gp[4].gp[0][3].vars[1]$;
+       obj=$.programs.gp[4].gp[0][3].objs_vars[0]$;
        method=NetMonitor::GetMonVals;
        meth_args {
 	name="meth_args";
@@ -22835,6 +22909,18 @@ and the testing data is updated.  The first epoch monitor should have all the it
       name="objs_vars";
       el_typ=ProgVar;
       el_def=0;
+      ProgVar @[0] {
+       name="epoch_netmon";
+       var_type=T_Object;
+       object_type=NetMonitor;
+       object_val=.programs.gp[4].gp[0][4].objs[0]$$;
+       object_scope=NULL;
+       objs_ptr=1;
+       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+       reference=0;
+       desc="network monitor object that contains full specs for what to record and where to get it";
+       init_from=NULL;
+      };
      };
      types {
       name="types";
@@ -22875,18 +22961,6 @@ and the testing data is updated.  The first epoch monitor should have all the it
        init_from=NULL;
       };
       ProgVar @[1] {
-       name="epoch_netmon";
-       var_type=T_Object;
-       object_type=NetMonitor;
-       object_val=.programs.gp[4].gp[0][4].objs[0]$$;
-       object_scope=NULL;
-       objs_ptr=1;
-       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-       reference=0;
-       desc="network monitor object that contains full specs for what to record and where to get it";
-       init_from=NULL;
-      };
-      ProgVar @[2] {
        name="run_already";
        var_type=T_Bool;
        bool_val=0;
@@ -22912,7 +22986,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
        flags=CAN_REVERT_TO_CODE;
        code_string="epoch_netmon->SetDataNetwork(epoch_mon_data, network)";
        result_var=NULL;
-       obj=.programs.gp[4].gp[0][4].vars[1]$$;
+       obj=.programs.gp[4].gp[0][4].objs_vars[0]$$;
        method=NetMonitor::SetDataNetwork;
        meth_args {
 	name="meth_args";
@@ -22950,7 +23024,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
        flags=CAN_REVERT_TO_CODE;
        code_string="epoch_netmon->CheckConfig(false)";
        result_var=NULL;
-       obj=$.programs.gp[4].gp[0][4].vars[1]$;
+       obj=$.programs.gp[4].gp[0][4].objs_vars[0]$;
        method=taBase::CheckConfig;
        meth_args {
 	name="meth_args";
@@ -22977,7 +23051,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
        flags=CAN_REVERT_TO_CODE;
        code_string="epoch_netmon->UpdateMonitors(true)";
        result_var=NULL;
-       obj=$.programs.gp[4].gp[0][4].vars[1]$;
+       obj=$.programs.gp[4].gp[0][4].objs_vars[0]$;
        method=NetMonitor::UpdateMonitors;
        meth_args {
 	name="meth_args";
@@ -23003,7 +23077,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="run_already = false";
-       result_var=.programs.gp[4].gp[0][4].vars[2]$$;
+       result_var=.programs.gp[4].gp[0][4].vars[1]$$;
        expr {
 	expr="false";
        };
@@ -23031,7 +23105,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="epoch_netmon->SetDataNetwork(epoch_mon_data, network)";
 	 result_var=NULL;
-	 obj=$.programs.gp[4].gp[0][4].vars[1]$;
+	 obj=$.programs.gp[4].gp[0][4].objs_vars[0]$;
 	 method=NetMonitor::SetDataNetwork;
 	 meth_args {
 	  name="meth_args";
@@ -23069,7 +23143,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="epoch_netmon->UpdateMonitors(true)";
 	 result_var=NULL;
-	 obj=$.programs.gp[4].gp[0][4].vars[1]$;
+	 obj=$.programs.gp[4].gp[0][4].objs_vars[0]$;
 	 method=NetMonitor::UpdateMonitors;
 	 meth_args {
 	  name="meth_args";
@@ -23095,7 +23169,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="run_already = true";
-	 result_var=$.programs.gp[4].gp[0][4].vars[2]$;
+	 result_var=$.programs.gp[4].gp[0][4].vars[1]$;
 	 expr {
 	  expr="true";
 	 };
@@ -23124,7 +23198,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
        flags=CAN_REVERT_TO_CODE;
        code_string="epoch_netmon->GetMonVals()";
        result_var=NULL;
-       obj=$.programs.gp[4].gp[0][4].vars[1]$;
+       obj=$.programs.gp[4].gp[0][4].objs_vars[0]$;
        method=NetMonitor::GetMonVals;
        meth_args {
 	name="meth_args";
@@ -23206,9 +23280,9 @@ and the testing data is updated.  The first epoch monitor should have all the it
     el_typ=UserDataItem;
     el_def=0;
     UserDataItem @[0] {name="view_win_lft": value=0: val_type_fixed=0: };
-    UserDataItem @[1] {name="view_win_top": value=0.05081157: val_type_fixed=0: };
-    UserDataItem @[2] {name="view_win_wd": value=0.9933594: val_type_fixed=0: };
-    UserDataItem @[3] {name="view_win_ht": value=0.7974594: val_type_fixed=0: };
+    UserDataItem @[1] {name="view_win_top": value=0.05032182: val_type_fixed=0: };
+    UserDataItem @[2] {name="view_win_wd": value=0.9930693: val_type_fixed=0: };
+    UserDataItem @[3] {name="view_win_ht": value=0.7969573: val_type_fixed=0: };
     UserDataItem @[4] {name="view_win_iconified": value=0: val_type_fixed=0: };
     UserDataItem @[5] {name="view_splitter_state": value=AAAA/wAAAAEAAAADAAABWAAAAnYAAAMgAf////8BAAAAAQA=: val_type_fixed=0: };
    };
@@ -23310,14 +23384,38 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	  lay_layout=THREE_D;
 	  lay_mv=1;
 	  net_text=1;
+	  state_width_default=8;
 	  show_iconified=0;
 	  net_text_xform {scale={x=0.7: y=0.7: z=0.7: }: rotate={x=1: y=0: z=0: rot=1.570796: }: translate={x=0: y=1: z=-1: }: };
 	  net_text_rot=-90;
 	  cur_unit_vals{ act;	  };
-	  full_state_vals{ batch;epoch;group;trial;quarter;tick;cycle;time;total_trials;sse;group_name;trial_name;output_name;phase;tot_cycle;rt_cycles;ext_rew;norm_err;cos_err;minus_output_name;	  };
-	  cur_state_vals{ batch;epoch;trial;quarter;cycle;sse;trial_name;output_name;	  };
 	  hot_vars{ targ;ext;act;net;bias_wt;bias_dwt;act_eq;act_m;act_p;act_dif;avg_m;avg_l;act_avg;r.wt;r.wt*act;s.wt;r.dwt;s.dwt;	  };
 	  unit_src_path=".layers[2][0]";
+	  state_items {
+	   name="state_items";
+	   el_typ=NetViewStateItem;
+	   el_def=0;
+	   NetViewStateItem @[0] {name="batch": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[1] {name="epoch": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[2] {name="group": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[3] {name="trial": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[4] {name="tick": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[5] {name="cycle": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[6] {name="time": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[7] {name="total_trials": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[8] {name="sse": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[9] {name="group_name": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[10] {name="trial_name": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[11] {name="output_name": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[12] {name="quarter": net_member=1: display=1: width=8: found=1: };
+	   NetViewStateItem @[13] {name="phase": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[14] {name="tot_cycle": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[15] {name="rt_cycles": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[16] {name="ext_rew": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[17] {name="norm_err": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[18] {name="cos_err": net_member=1: display=0: width=8: found=1: };
+	   NetViewStateItem @[19] {name="minus_output_name": net_member=1: display=0: width=8: found=1: };
+	  };
 	  con_type=ANY_CON;
 	  hist_idx=0;
 	  hist_save=1;
@@ -24945,9 +25043,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       el_typ=UserDataItem;
       el_def=0;
       UserDataItem @[0] {name="view_win_lft": value=0: val_type_fixed=0: };
-      UserDataItem @[1] {name="view_win_top": value=0.007057163: val_type_fixed=0: };
-      UserDataItem @[2] {name="view_win_wd": value=0.03203125: val_type_fixed=0: };
-      UserDataItem @[3] {name="view_win_ht": value=0.7445307: val_type_fixed=0: };
+      UserDataItem @[1] {name="view_win_top": value=0.008191925: val_type_fixed=0: };
+      UserDataItem @[2] {name="view_win_wd": value=0.02706271: val_type_fixed=0: };
+      UserDataItem @[3] {name="view_win_ht": value=0.7501463: val_type_fixed=0: };
       UserDataItem @[4] {name="view_win_iconified": value=0: val_type_fixed=0: };
       UserDataItem @[5] {name="view_visible": value=1: val_type_fixed=0: };
      };
@@ -24966,7 +25064,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
  save_as_only=0;
  auto_name=1;
  last_change_desc="svn rev: 10514 update startup program";
- tree_state{ .;.patches;.docs;.wizards;.ctrl_panels;.active_params;.active_params.gp[0];.active_params.gp[1];.active_params.gp[2];.data;.data.gp[0];.data.gp[1];.data.gp[2];.data.gp[3];.programs;.programs.gp[0];.programs.gp[1];.programs.gp[1].gp[0];.programs.gp[1].gp[1];.programs.gp[2];.programs.gp[3];.programs.gp[4];.programs.gp[4].gp[0];.viewers[0];.viewers[0].frames[2];.networks;.networks[0];.networks[0].specs;.networks[0].specs[0];.networks[0].specs[0].children[0];.networks[0].specs[2];.networks[0].layers;.networks[0].weights; };
+ tree_state{ .;.patches;.docs;.wizards;.ctrl_panels;.active_params;.active_params.gp[0];.active_params.gp[1];.active_params.gp[2];.data;.data.gp[0];.data.gp[1];.data.gp[2];.data.gp[3];.programs;.programs.gp[0];.programs.gp[1];.programs.gp[1].gp[0];.programs.gp[1].gp[1];.programs.gp[2];.programs.gp[3];.programs.gp[4];.programs.gp[4].gp[0];.networks;.networks[0];.networks[0].specs;.networks[0].specs[0];.networks[0].specs[0].children[0];.networks[0].specs[2];.networks[0].layers;.networks[0].weights; };
  networks {
   name="networks";
   el_typ=LeabraNetwork;
@@ -24975,7 +25073,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
    name="Network_0";
    desc=;
    flags=BUILD_INIT_WTS;
-   train_mode=TRAIN;
+   train_mode=TEST;
    wt_update=ON_LINE;
    small_batch_n=10;
    stats {sse_unit_avg=0: sse_sqrt=0: cnt_err_tol=0: prerr=0: };
@@ -25021,7 +25119,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        margin {pct_marg=0.3: avg_tau=100: adapt_tau=500: tol_pct=0.25: avg_act=0.8: low_thr=0.501: med_thr=0.506: hi_thr=0.508: avg_dt=0.01: adapt_dt=0.002: };
        lay_lrate=1;
        cos_diff {avg_tau=100: lrate_mod=0: lrmod_fm_trc=0: lrmod_z_thr=-1.5: set_net_unlrn=0: avg_dt=0.01: avg_dt_c=0.99: };
-       lstats {hog_thr=0.3: dead_thr=0.01: };
+       lstats {pre_hog_thr=0.2: hog_thr=0.3: dead_thr=0.01: };
       };
      };
      lay_inhib {on=1: gi=1.8: ff=1: fb=1: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
@@ -25036,7 +25134,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      margin {pct_marg=0.3: avg_tau=100: adapt_tau=500: tol_pct=0.25: avg_act=0.8: low_thr=0.501: med_thr=0.506: hi_thr=0.508: avg_dt=0.01: adapt_dt=0.002: };
      lay_lrate=1;
      cos_diff {avg_tau=100: lrate_mod=0: lrmod_fm_trc=0: lrmod_z_thr=-1.5: set_net_unlrn=0: avg_dt=0.01: avg_dt_c=0.99: };
-     lstats {hog_thr=0.3: dead_thr=0.01: };
+     lstats {pre_hog_thr=0.2: hog_thr=0.3: dead_thr=0.01: };
     };
     LeabraUnitSpec @[1] {
      name="LeabraUnitSpec_0";
@@ -25056,25 +25154,26 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      act_fun=NOISY_XX1;
      act {thr=0.5: gain=100: nvar=0.005: avg_correct=1: vm_act_thr=0.01: sig_mult=0.33: sig_mult_pow=0.8: sig_gain=3: interp_range=0.01: gain_cor_range=10: gain_cor=0.1: sig_gain_nvar=600: sig_mult_eff=0.1895352: sig_val_at_0=0.09476762: interp_val=0.3843991: };
      act_misc {rec_nd=1: avg_nd=1: dif_avg=0: net_gain=1: avg_trace=0: lambda=0: avg_tau=200: avg_init=0.15: avg_dt=0.005: };
-     spike {rise=0: decay=5: g_gain=9: window=3: act_max_hz=200: int_tau=5: int_dt=0.2: };
+     spike {rise=0: decay=5: g_gain=9: window=3: act_max_hz=180: int_tau=5: int_dt=0.2: };
      spike_misc {ex=0: exp_slope=0.02: spk_thr=1.2: vm_r=0.3: t_r=3: clamp_max_p=0.12: clamp_type=REGULAR: eff_spk_thr=0.5: };
      opt_thresh {send=0.1: delta=0.005: };
      clamp_range {min=0: max=0.95: range=0.95: scale=1.052632: };
      vm_range {min=0: max=2: range=2: scale=0.5: };
      init {v_m=0.4: act=0: netin=0: };
      dt {integ=1: vm_tau=3.3: net_tau=1.4: vm_cyc=1: fast_cyc=0: vm_dt=0.3030303: vm_dt_cyc=0.3030303: net_dt=0.7142857: };
-     act_avg {ss_tau=2: s_tau=2: m_tau=10: m_in_s=0.1: ss_dt=0.5: s_dt=0.5: m_dt=0.1: s_in_s=0.9: };
+     act_avg {ss_tau=4: s_tau=2: m_tau=10: m_in_s=0.1: ss_dt=0.25: s_dt=0.5: m_dt=0.1: s_in_s=0.9: };
      avg_l {init=0.4: gain=2.5: min=0.2: tau=10: lrn_max=0.5: lrn_min=0.0001: dt=0.1: lrn_fact=0.2173478: };
      avg_l_2 {err_mod=1: err_min=0.01: lay_act_thr=0.01: };
-     g_bar {e=1: l=0.2: i=1: k=1: };
+     g_bar {e=1: l=0.2: i=1: k=0.2: };
      e_rev {e=1: l=0.3: i=0.25: k=0.1: };
-     kna_adapt {on=0: rate_rise=0.8: f_on=1: f_rise=0.05: f_max=0.1: f_tau=50: m_on=1: m_rise=0.02: m_max=0.1: m_tau=200: s_on=1: s_rise=0.005: s_max=0.2: s_tau=1000: f_dt=0.02: m_dt=0.005: s_dt=0.001: };
+     kna_adapt {on=0: rate_rise=0.8: f_on=1: f_rise=0.05: f_max=0.1: f_tau=50: m_on=1: m_rise=0.02: m_max=0.1: m_tau=200: s_on=1: s_rise=0.001: s_max=1: s_tau=1000: f_dt=0.02: m_dt=0.005: s_dt=0.001: };
+     kna_misc {clamp=1: invert_nd=1: max_gc=0.2: max_adapt=0.3: no_targ=1: };
      stp {on=0: algorithm=CYCLES: f_r_ratio=0.02: rec_tau=200: p0=0.2: p0_norm=0.2: kre_tau=100: kre=0.002: fac_tau=4: fac=0.3: thresh=0.5: n_trials=1: rec_prob=0.1: rec_dt=0.005: fac_dt=0.25: kre_dt=0.01: oneo_p0_norm=5: };
      syn_delay {on=0: delay=4: };
      deep_raw_qtr=0;
      deep {on=0: role=SUPER: raw_thr_rel=0.1: raw_thr_abs=0.1: mod_min=0.8: mod_thr=0.1: ctxt_prv=0: tick_updt=-1: else_prv=0.9: mod_range=0.2: ctxt_new=1: else_new=0.1: };
      trc {p_only_m=0: thal_gate=0: clamp_net=0: avg_clamp=0: deep_gain=0.2: clip=0: clip_max=0.4: std_gain=0.8: };
-     da_mod {on=0: minus=0: plus=0.1: };
+     da_mod {on=0: mod_gain=0: minus=0: plus=0.1: da_neg_gain=0.1: da_pos_gain=0.1: };
      noise_type {type=NO_NOISE: trial_fixed=1: };
      noise {name="noise": type=GAUSSIAN: mean=0: var=0.001: par=1: };
     };
@@ -25114,11 +25213,14 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: lrn_thr=0.01: s_mult=1: d_rev_ratio=-9: };
        wt_sig {gain=6: off=1: soft_bound=1: };
        momentum {on=1: dwavg_tau=1000: norm_min=0.001: m_tau=20: lrate_comp=0.01: dwavg_dt=0.001: dwavg_dt_c=0.999: m_dt=0.05: m_dt_c=0.95: };
-       wt_bal {on=1: hi_thr=0.4: hi_gain=4: lo_thr=0.2: lo_gain=4: };
+       wt_bal {on=1: avg_thr=0.25: hi_thr=0.4: hi_gain=4: lo_thr=0.4: lo_gain=6: act_thr=0.25: act_gain=0: no_targ=1: };
        adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
        slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
        deep {on=0: bg_lrate=1: fg_lrate=0: };
        margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_lrn=0.5: };
+       dwt_noise=0;
+       dwt_noise_p0=0.7;
+       noise {name="noise": type=GAUSSIAN: mean=0: var=0.005: par=1: };
        use_lrate_sched=1;
        lrate_sched {
 	name="lrate_sched";
@@ -25196,11 +25298,14 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: lrn_thr=0.01: s_mult=1: d_rev_ratio=-9: };
        wt_sig {gain=6: off=1: soft_bound=1: };
        momentum {on=1: dwavg_tau=1000: norm_min=0.001: m_tau=20: lrate_comp=0.01: dwavg_dt=0.001: dwavg_dt_c=0.999: m_dt=0.05: m_dt_c=0.95: };
-       wt_bal {on=1: hi_thr=0.4: hi_gain=4: lo_thr=0.2: lo_gain=4: };
+       wt_bal {on=1: avg_thr=0.25: hi_thr=0.4: hi_gain=4: lo_thr=0.4: lo_gain=6: act_thr=0.25: act_gain=0: no_targ=1: };
        adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
        slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
        deep {on=0: bg_lrate=1: fg_lrate=0: };
        margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_lrn=0.5: };
+       dwt_noise=0;
+       dwt_noise_p0=0.7;
+       noise {name="noise": type=GAUSSIAN: mean=0: var=0.005: par=1: };
        use_lrate_sched=1;
        lrate_sched {
 	name="lrate_sched";
@@ -25266,11 +25371,14 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: lrn_thr=0.01: s_mult=1: d_rev_ratio=-9: };
      wt_sig {gain=6: off=1: soft_bound=1: };
      momentum {on=1: dwavg_tau=1000: norm_min=0.001: m_tau=20: lrate_comp=0.01: dwavg_dt=0.001: dwavg_dt_c=0.999: m_dt=0.05: m_dt_c=0.95: };
-     wt_bal {on=1: hi_thr=0.4: hi_gain=4: lo_thr=0.2: lo_gain=4: };
+     wt_bal {on=1: avg_thr=0.25: hi_thr=0.4: hi_gain=4: lo_thr=0.4: lo_gain=6: act_thr=0.25: act_gain=0: no_targ=1: };
      adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
      slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
      deep {on=0: bg_lrate=1: fg_lrate=0: };
      margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_lrn=0.5: };
+     dwt_noise=0;
+     dwt_noise_p0=0.7;
+     noise {name="noise": type=GAUSSIAN: mean=0: var=0.005: par=1: };
      use_lrate_sched=1;
      lrate_sched {
       name="lrate_sched";
@@ -25346,6 +25454,41 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     name="param_seqs";
     el_typ=ParamSeq;
     el_def=0;
+   };
+   monitor {
+    name="monitor";
+    items {
+     name="items";
+     el_typ=NetMonItem;
+     el_def=0;
+    };
+    network=$.networks[0]$;
+    data=.networks[0].mon_data$$;
+    rmv_orphan_cols=1;
+   };
+   mon_data {
+    name="mon_data";
+    desc=;
+    data {
+     name="data";
+     el_typ=String_Data;
+     el_def=0;
+    };
+    data_flags=AUTO_CALC;
+    auto_load=NO_AUTO_LOAD;
+    auto_load_file=;
+    row_height=1;
+    max_col_width=50;
+    keygen 4 0=0;
+    last_sort_spec {
+     name="last_sort_spec";
+     ops {
+      name="ops";
+      el_typ=DataSortEl;
+      el_def=0;
+     };
+    };
+    row_with_hilite=-1;
    };
    layers {
     name="layers";
@@ -25575,7 +25718,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
    max_disp_size2d {x=5: y=9: };
    times {quarter=25: deep_cyc=5: time_inc=0.001: wt_bal_int=10: minus=75: plus=25: total_cycles=100: thal_gate_cycle=-2: };
    lstats {trg_max_act_crit=0.5: off_errs=1: on_errs=1: agg_unlearnable=0: wt_bal=0: };
-   net_misc {spike=0: deep=0: bias_learn=0: trial_decay=0: diff_scale_p=0: diff_scale_q1=0: wt_bal=0: lay_gp_inhib=0: inhib_cons=0: };
+   net_misc {spike=0: deep=0: bias_learn=0: trial_decay=1: diff_scale_p=0: diff_scale_q1=0: wt_bal=1: lay_gp_inhib=0: inhib_cons=0: };
    deep {on=0: ctxt=0: raw_net=0: mod_net=0: raw_qtr=0: };
    rel_netin {on=1: trl_skip=10: epc_skip=10: };
   };

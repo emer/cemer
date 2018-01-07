@@ -763,8 +763,11 @@ void LEABRA_UNIT_SPEC::Compute_ActFun_Rate(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_
       new_act = Compute_ActFun_Rate_fun((u->net * g_bar.e) - g_e_thr);
     }
   }
+  bool do_kna_invert =
+    (kna_adapt.on && kna_misc.invert_nd &&
+     !(kna_misc.no_targ && (deep.IsTRC() || u->HasExtFlag(LEABRA_UNIT_STATE::TARG))));
   float cur_act;
-  if(kna_misc.invert_nd) {
+  if(do_kna_invert) {
     cur_act = u->act_eq;
   }
   else {
@@ -789,9 +792,14 @@ void LEABRA_UNIT_SPEC::Compute_ActFun_Rate(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_
     new_act *= u->deep_mod;
   }
 
-  if(kna_misc.invert_nd) {
+  if(do_kna_invert) {
     u->act_eq = act_range.Clip(new_act);
-    u->act = u->act_eq;
+    if(stp.on) {                   // short term plasticity, depression
+      u->act = u->act_eq * u->syn_tr; // overall probability of transmission
+    }
+    else {
+      u->act = u->act_eq;
+    }
     u->act_nd = kna_misc.Compute_ActNd(u->act_eq, u->gc_kna_f, u->gc_kna_m, u->gc_kna_s);
   }
   else {

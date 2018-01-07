@@ -1614,23 +1614,24 @@ void T3ExaminerViewer::UpdateStateValues(const NameVar_Array& state_strs) {
   if(!dvm) return;
 
   if (!state_labels_inited || state_labels.count() != state_strs.size) {
+    QFont font = taiM->buttonFont(taiMisc::sizMedium); 
+    QFontMetrics fm(font);
+    int height = taiM->label_height(taiMisc::sizMedium);
     ClearStateValues();
     for (int i=0; i<state_strs.size; i++) {
       String var = state_strs[i].name;
       int value_width_in_chars = state_strs[i].value.toInt();      
       QPushButton* button = new QPushButton(this);
-      button->setFont(taiM->buttonFont(taiMisc::sizMedium));
+      button->setFont(font);
       connect(button, SIGNAL(clicked()), this, SLOT(StateButtonClicked()));
       button->setToolTip(taiMisc::ToolTipPreProcess("To add or remove state values select the \"Net State Values\" tab in the Net View control panel. Click on this item to change its width."));
       state_labels.append(button);
-      state_labels[i]->setStyleSheet("background-color: white; color: black; border: 1px solid #AAAAAA; margin: 1px; padding: 1px; Text-align:left");
-      QFontMetrics fm(button->fontMetrics());
+      button->setStyleSheet("background-color: white; color: black; border: 1px solid #AAAAAA; margin: 1px; padding: 1px; Text-align:left");
       String label_part = var.through(':');
       int label_part_in_pixels = fm.width(label_part) + 10;  // allow for padding etc so label is always readable
       int fixed_width_total = label_part_in_pixels + value_width_in_chars * fm.maxWidth();      
-      int height = taiM->label_height(taiMisc::sizMedium);
-      state_labels[i]->setFixedSize(fixed_width_total, height);
-      net_state_layout->addWidget(state_labels.at(i));
+      button->setFixedSize(fixed_width_total, height);
+      net_state_layout->addWidget(button);
     }
     state_labels_inited = true;
   }
