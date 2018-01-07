@@ -16,8 +16,10 @@
 // this must be included in a defined State_core/main/cuda context with appropriate
 // #ifndef multiple-include protection AT THAT LEVEL not here..
 
+#ifdef __MAKETA__
 #pragma maketa_file_is_target Network
 #pragma maketa_file_is_target NetworkState
+#endif
 
 
 class STATE_CLASS(NetStatsSpecs) : public STATE_CLASS(taOBase) {

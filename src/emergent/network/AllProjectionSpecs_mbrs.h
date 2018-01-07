@@ -16,7 +16,9 @@
 // this must be included in a defined State_core/main/cuda context with appropriate
 // #ifndef multiple-include protection AT THAT LEVEL not here..
 
+#ifdef __MAKETA__
 #pragma maketa_file_is_target AllProjectionSpecs
+#endif
 
 class STATE_CLASS(TessEl) : public STATE_CLASS(taOBase) {
   // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Spec one element of a tesselation specification

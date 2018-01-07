@@ -19,7 +19,10 @@
 
 // this pragma ensures that maketa properly grabs this type information even though
 // this file is included in the other files -- we get ta info for main and _cpp, not cuda
+
+#ifdef __MAKETA__
 #pragma maketa_file_is_target LeabraUnitSpec
+#endif
 
 
 class STATE_CLASS(LeabraActFunSpec) : public STATE_CLASS(SpecMemberBase) {
@@ -27,7 +30,7 @@ class STATE_CLASS(LeabraActFunSpec) : public STATE_CLASS(SpecMemberBase) {
 INHERITED(SpecMemberBase)
 public:
   float         thr;                // #DEF_0.5 threshold value Theta (Q) for firing output activation (.5 is more accurate value based on AdEx biological parameters and normalization -- see BioParams button)
-  float         gain;                // #DEF_80;100;40 #MIN_0 gain (gamma) of the rate-coded activation functions -- 100 is default, 80 works better for larger models, and 40 is closer to the actual spiking behavior of the AdEx model -- use lower values for more graded signals, generally in lower input/sensory layers of the network
+  float         gain;                // #DEF_80;100;40;20 #MIN_0 gain (gamma) of the rate-coded activation functions -- 100 is default, 80 works better for larger models, and 20 is closer to the actual spiking behavior of the AdEx model -- use lower values for more graded signals, generally in lower input/sensory layers of the network
   float         nvar;                // #DEF_0.005;0.01 #MIN_0 variance of the Gaussian noise kernel for convolving with XX1 in NOISY_XX1 and NOISY_LINEAR -- determines the level of curvature of the activation function near the threshold -- increase for more graded responding there -- note that this is not actual stochastic noise, just constant convolved gaussian smoothness to the activation function
   float         avg_correct;         // correction factor (multiplier) for average activation level in this layer -- e.g., if using adaptation or stp, may be lower than usual -- taken into account in netinput scaling out of this layer
   float         vm_act_thr;          // #DEF_0.01 threshold on activation below which the direct vm - act.thr is used -- this should be low -- once it gets active should use net - g_e_thr ge-linear dynamics (gelin)
@@ -166,7 +169,7 @@ public:
   float         decay;           // #DEF_5 #MIN_0 exponential decay time (in cycles) of the synaptic conductance according to the alpha function 1/(decay - rise) [e^(-t/decay) - e^(-t/rise)] -- set to 0 to implement a delta function (not very useful)
   float         g_gain;          // #DEF_9 #MIN_0 multiplier for the spike-generated conductances when using alpha function which is normalized by area under the curve -- needed to recalibrate the alpha-function currents relative to rate code net input which is overall larger -- in general making this the same as the decay constant works well, effectively neutralizing the area normalization (results in consistent peak current, but differential integrated current over time as a function of rise and decay)
   int           window;          // #DEF_3 #MIN_0 #MAX_10 spike integration window -- when rise==0, this window is used to smooth out the spike impulses similar to a rise time -- each net contributes over the window in proportion to 1/window -- for rise > 0, this is used for computing the alpha function -- should be long enough to incorporate the bulk of the alpha function, but the longer the window, the greater the computational cost (max of 10 imposed by fixed buffer required in LeabraUnitState_cpp structure)
-  float         act_max_hz;      // #DEF_200 #MIN_1 for translating spiking interval (rate) into rate-code activation equivalent (and vice-versa, for clamped layers), what is the maximum firing rate associated with a maximum activation value (max act is typically 1.0 -- depends on act_range)
+  float         act_max_hz;      // #DEF_180 #MIN_1 for translating spiking interval (rate) into rate-code activation equivalent (and vice-versa, for clamped layers), what is the maximum firing rate associated with a maximum activation value (max act is typically 1.0 -- depends on act_range)
   float         int_tau;         // #DEF_5 #MIN_1 time constant for integrating the spiking interval in estimating spiking rate
 
   float         gg_decay;        // #READ_ONLY #NO_SAVE g_gain/decay
@@ -241,7 +244,7 @@ private:
   void        Initialize()    { Defaults_init(); }
   void        Defaults_init() {
     g_gain = 9.0f; rise = 0.0f; decay = 5.0f; window = 3;
-    act_max_hz = 200.0f;  int_tau = 5.0f;
+    act_max_hz = 180.0f;  int_tau = 5.0f;
     UpdateRates();
   }
 };

@@ -3,46 +3,21 @@
 # install emergent mac dependencies script
 # see http://grey.colorado.edu/emergent
 
+# As of emergent version 8.5, we are now using homebrew versions of all the
+# dependencies except qt and coin
+
 # this should be the only thing you need to update: grab the latest versions
 QT_DMG=qt561_mac64.dmg
 COIN_DMG=coin_mac64_4_0.dmg
-CMAKE_DMG=cmake-3.6.1_mac64.dmg
-MISC_DMG=misclibs_mac64_8_0.dmg
-# using homebrew for svn entirely
-NEEDS_BREW_SVN="true"
-
-# these are now obsolete
-#QUARTER_DMG=quarter_mac64_qt56.dmg
-#SVN_DMG=Subversion-1.9.4_10.11.x.dmg
 
 
-OS_VERS=`sw_vers | grep ProductVersion | cut -f2 | cut -f1,2 -d.`
+OS_VERS=`sw_vers | grep ProductVersion | cut -f2 | cut -f2 -d.`
 echo "installing on OSX version: $OS_VERS"
 
-if [[ "$OS_VERS" == "10.7" ]]; then
-    echo "SORRY: version 10.7 of Mac OSX is not supported for this version of the software"
+if (( $OS_VERS < 9 )); then
+    echo "SORRY: version $OS_VERS of Mac OSX is not supported for this version of the software"
     exit 1
 fi
-
-if [[ "$OS_VERS" == "10.8" ]]; then
-    echo "SORRY: version 10.8 of Mac OSX is not supported for this version of the software"
-    exit 1
-fi
-
-if [[ "$OS_VERS" == "10.9" ]]; then
-    echo "SORRY: version 10.9 of Mac OSX is not supported for this version of the software"
-    exit 1
-fi
-
-# if [[ "$OS_VERS" == "10.10" ]]; then
-#     echo "Note: updating the dependencies for 10.10"
-#     SVN_DMG=Subversion-1.9.4_10.10.x.dmg
-# fi
-
-# if [[ "$OS_VERS" == "10.12" ]]; then
-#     echo "Note: updating the dependencies for 10.12: requires homebrew apr for Sierra"
-#     NEEDS_BREW_APR=true
-# fi
 
 #FTP_REPO=ftp://grey.colorado.edu/pub/emergent
 #FTP_CMD="/usr/bin/ftp -ai"
@@ -52,8 +27,7 @@ FTP_CMD="/usr/bin/curl --progress-bar -O"
 
 DOWNLOAD_DIR=$HOME/Downloads
  
-if [[ ! -d $DOWNLOAD_DIR ]]
-then
+if [[ ! -d $DOWNLOAD_DIR ]]; then
   mkdir $DOWNLOAD_DIR
 fi
 
@@ -75,13 +49,8 @@ echo "        Step 1: Downloading The Packages"
 echo "================================================="
 echo " "
 
-downloadFTP ${MISC_DMG}
 downloadFTP ${COIN_DMG}
-downloadFTP ${CMAKE_DMG}
 downloadFTP ${QT_DMG}
-
-#downloadFTP ${QUARTER_DMG}
-#downloadFTP ${SVN_DMG}
 
 function mountDMG {
   # Argument should be the name of the DMG.
@@ -177,33 +146,62 @@ function installCMAKEinDMG {
   echo "then you may need to manually create cmake etc links in /usr/local/bin/"
 }
 
-function installHomeBrewSVN {
+function chownUserDir {
+    # Argument $1 is directory to chown
+    if [[ -d "$1" ]]; then
+	echo "directory: $1 exists -- doing sudo chown -R to user to allow brew to overwrite"
+	sudo chown -R $USER "$1"
+    fi
+}
+    
+    
+function installHomeBrew {
     echo " "
     echo "================================================="
-    echo "        Step 3: Installing apr, -util, and svn"
+    echo "        Installing HomeBrew itself"
     echo "================================================="
     echo " "
-    echo "Installing apache apr, apr-util and subversion from homebrew, doing the following commands:"
-    echo '/usr/bin/ruby -e \"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)\"'
-    echo "brew install --force apr"
-    echo "brew install --force apr-util"
-    echo "brew install --force subversion"
-    echo "brew link --force --overwrite apr"
-    echo "brew link --force --overwrite apr-util"
-    echo "brew link --force --overwrite subversion"
+    echo "Installing homebrew -- commands will echo below:"
     echo " "
     echo "IMPORTANT: if any of these commands fail, you may already have this installed, or may need to intervene manually.."
     echo " "
-    
+    set -v  # turn on verbose
     /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+    echo " "
+    echo "Some /usr/local subdirectories need to be owned by user for brew link to work"
+    chownUserDir /usr/local/share/doc
+    chownUserDir /usr/local/share/emacs
+    chownUserDir /usr/local/include/gsl
+    chownUserDir /usr/local/include/ode
+    echo " "
+    echo "-- done with commands: again if any of these commands fail, you may need to intervene manually.."
+    echo " "
+    set +v
+}
+
+function installBrewDeps {
+    echo " "
+    echo "================================================="
+    echo "        Installing dependencies using HomeBrew"
+    echo "================================================="
+    echo " "
+    echo "IMPORTANT: if any of these commands fail, you may already have this installed, or may need to intervene manually.."
+    echo " "
+    set -v  # turn on verbose
+    
+    brew install --force pkg-config
+    brew install --force cmake
     brew install --force apr
     brew install --force apr-util
     brew install --force subversion
+    brew install --force gsl ode libjpeg libpng
+    brew link --force --overwrite pkg-config
+    brew link --force --overwrite cmake
     brew link --force --overwrite apr
     brew link --force --overwrite apr-util
     brew link --force --overwrite subversion
-
-    #
+    brew link --force --overwrite gsl ode libjpeg libpng
+    set +v
 }
 
 echo " "
@@ -216,17 +214,11 @@ echo " "
 # QUARTER depends on COIN, QT
 # everything else is independent
 
-installPKGinDMG ${MISC_DMG}
-installCMAKEinDMG ${CMAKE_DMG}
-installPKGinDMG ${QT_DMG}
-installPKGinDMG ${COIN_DMG}
+#installPKGinDMG ${QT_DMG}
+#installPKGinDMG ${COIN_DMG}
 
-#installPKGinDMG ${QUARTER_DMG}
-#installPKGinDMG ${SVN_DMG}
-
-if [[ "$NEEDS_BREW_SVN" == "true" ]]; then
-    installHomeBrewSVN
-fi    
+installHomeBrew
+installBrewDeps
 
 echo " "
 echo "================================================="

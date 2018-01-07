@@ -19,8 +19,11 @@
 
 // this pragma ensures that maketa properly grabs this type information even though
 // this file is included in the other files -- we get ta info for main and _cpp, not cuda
+
+#ifdef __MAKETA__
 #pragma maketa_file_is_target BpUnitSpec
 #pragma maketa_file_is_target BpUnitSpec_cpp
+#endif
 
 class E_API STATE_CLASS(NLXX1ActSpec) : public STATE_CLASS(SpecMemberBase) {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra noisy linear XX1 activation function specifications

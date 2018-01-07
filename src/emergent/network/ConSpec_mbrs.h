@@ -15,8 +15,10 @@
 
 // this must be included in a defined State_cpp/cuda/main context with appropriate
 // #ifndef multiple-include protection AT THAT LEVEL not here..
-#pragma maketa_file_is_target ConSpec
 
+#ifdef __MAKETA__
+#pragma maketa_file_is_target ConSpec
+#endif
 
 class STATE_CLASS(WeightLimits) : public STATE_CLASS(SpecMemberBase) {
   // ##NO_TOKENS ##INLINE #NO_UPDATE_AFTER ##CAT_Network specifies weight limits for connections
