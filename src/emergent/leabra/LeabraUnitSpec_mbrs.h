@@ -651,9 +651,9 @@ private:
     kre_dt = 1.0f / kre_tau;
     oneo_p0_norm = 1.0f / p0_norm;
   
-    thresh = 0.5;
+    thresh = 0.5f;
     n_trials = 1;
-    rec_prob = 0.1;
+    rec_prob = 0.1f;
   }    
 };
 

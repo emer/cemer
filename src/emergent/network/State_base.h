@@ -20,7 +20,6 @@
 #pragma maketa_file_is_target NetworkState
 #endif
 
-
 // these are all the base State classes
 
 class STATE_CLASS(NetworkState); //

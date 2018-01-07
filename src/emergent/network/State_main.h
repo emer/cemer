@@ -32,7 +32,8 @@
 #ifdef STATE_SUFFIX
 #undef STATE_SUFFIX
 #endif
-#define STATE_SUFFIX 
+#define STATE_SUFFIX
+
 
 #ifdef INLINE
 #undef INLINE

@@ -17,7 +17,7 @@
 
 #include <Network>
 
-taTypeDef_Of(NetMonitor);
+eTypeDef_Of(NetMonitor);
 
 TA_BASEFUNS_CTORS_DEFN(NetMonItem_List);
 

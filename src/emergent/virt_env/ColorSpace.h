@@ -115,7 +115,7 @@ public:
   // #CAT_ColorSpace convert XYZ CIE standard color space into sRGB
 
   static inline void XYZrenormD65(float& X, float& Y, float& Z) {
-    X *= (1.0f / 0.95047f); Z *= (1.0f / 1.08883);
+    X *= (1.0f / 0.95047f); Z *= (1.0f / 1.08883f);
   }
   // #CAT_ColorSpace renormalize XZY values relative to the D65 outdoor white light values
   

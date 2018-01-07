@@ -48,12 +48,12 @@
 #define TABLE_MODULUS             (TABLE_LENGTH-1)
 
 /*  OVERSAMPLING FIR FILTER CHARACTERISTICS  */
-#define FIR_BETA                  .2
-#define FIR_GAMMA                 .1
-#define FIR_CUTOFF                .00000001
+#define FIR_BETA                  .2f
+#define FIR_GAMMA                 .1f
+#define FIR_CUTOFF                .00000001f
 
 #ifdef TA_OS_WIN
-#define M_PI                   3.141592653587932846
+#define M_PI                   3.141592653587932846f
 #endif
 
 WavetableGlottalSource::WavetableGlottalSource(

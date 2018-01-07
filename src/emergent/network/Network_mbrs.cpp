@@ -278,7 +278,7 @@ public:
   STATE_CLASS(TimeUsedHRd)() { start.QuadPart = 0; end.QuadPart = 0; used.QuadPart = 0; }
 };
 
-LARGE_INTEGER TimeUsedHRd::freq;
+LARGE_INTEGER STATE_CLASS(TimeUsedHRd)::freq;
 
 #else
 

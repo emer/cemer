@@ -38,12 +38,12 @@
 #include "ta_stdef.h"  // to get OS compiler switch
 #include <cmath>
 
-#define BETA                      5.658        /*  kaiser window parameters  */
-#define IzeroEPSILON              1E-21
+#define BETA                      5.658f        /*  kaiser window parameters  */
+#define IzeroEPSILON              1E-21f
 
 /*  SAMPLE RATE CONVERSION CONSTANTS  */
 #define ZERO_CROSSINGS            13                 /*  SRC CUTOFF FRQ      */
-#define LP_CUTOFF                 (11.0/13.0)        /*  (0.846 OF NYQUIST)  */
+#define LP_CUTOFF                 (11.0f/13.0f)        /*  (0.846 OF NYQUIST)  */
 #define FILTER_LENGTH             (ZERO_CROSSINGS * L_RANGE)
 
 //#define N_BITS                    16
@@ -68,7 +68,7 @@
 #define BUFFER_SIZE               1024                 /*  ring buffer size  */
 
 #ifdef TA_OS_WIN
-  #define M_PI                    3.141592653587932846
+  #define M_PI                    3.141592653587932846f
 #endif
 
 SampleRateConverter::SampleRateConverter(int sampleRate, float outputRate, std::vector<float>& outputData)

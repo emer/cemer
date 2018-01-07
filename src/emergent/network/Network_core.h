@@ -161,7 +161,13 @@
   // INLINE bool  NetStateFree(void** ptr) const { *ptr = NULL; return false; }
   // // #IGNORE free previously-malloc'd memory for network state in pointer and set *ptr = NULL -- each platform needs this defined
 
-  INLINE const char* GetStateSuffix() const { return STATE_SUFFIX_STR; }
+  INLINE const char* GetStateSuffix() const {
+#ifdef STATE_MAIN
+    return "";
+#else
+    return STATE_SUFFIX_STR;
+#endif    
+  }
   // #CAT_State get the suffix string for this state type ("_cpp", "_cuda", or blank for main)
   
   INLINE void   SetStateSizes(int nthr, int lay_sz, int prjn_sz, int ungp_sz, int unit_sz,

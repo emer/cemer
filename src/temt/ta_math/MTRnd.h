@@ -71,7 +71,25 @@
 #endif
 #endif
 
-class MTRndPar {
+#ifndef TA_API
+// The following ifdef block is the standard way of creating macros which make exporting 
+// from a DLL simpler. All files within this DLL are compiled with the TA_EXPORTS
+// symbol defined on the command line. this symbol should not be defined on any project
+// that uses this DLL. This way any other project whose source files include this file see 
+// TA_API functions as being imported from a DLL, whereas this DLL sees symbols
+// defined with this macro as being exported.
+#if (defined(TA_DLL) && (defined(_MSC_VER)) && (!defined(__MAKETA__)))
+  #ifdef TA_EXPORTS
+  #define TA_API __declspec(dllexport)
+  #else
+  #define TA_API __declspec(dllimport)
+  #endif
+#else 
+#define TA_API
+#endif
+#endif
+
+class TA_API MTRndPar {
   // #STEM_BASE ##NO_UPDATE_AFTER ##INLINE ##CAT_MATH one mersenne twister pseudo-random number generator, with dynamically generated parameters -- these can be dynamically created for parallel use by separate threads
 public:
   uint32_t aaa;
@@ -139,7 +157,7 @@ private:
 };
 
 
-class MTRnd  {
+class TA_API MTRnd  {
   // ##STATIC_MEMBERS A container for the Mersenne Twister (MT19937) random number generator by Makoto Matsumoto and Takuji Nishimura -- maintains list of dynamically created MT generators, each designed to be as different from each other as possible -- because generation takes a very long time, we initialize from a saved list of generators
 public:
   static const int      max_gens = 100; // maximum number of generators -- defaults to 100 -- cannot use more than this number of threads in parallel unless new parameters are generated and saved in the code

@@ -227,7 +227,7 @@ bool DoGRegionSpec::FilterImage_impl(bool motion_only) {
   if(OutSaveOk(image_save)) {
     ImageToTable(data_table, cur_img_r, cur_img_l);
   }
-  if(dog_save & OutSaveOk(dog_save)) {
+  if(dog_save && OutSaveOk(dog_save)) {
     DoGOutputToTable(data_table);
   }
   
@@ -459,7 +459,6 @@ void DoGRegionSpec::DoGFilterImage_thread(int thr_no) {
 bool DoGRegionSpec::InitDataTable() {
   inherited::InitDataTable();
 
-  int idx;
   if(dog_save & SAVE_DATA) {
     if(TestError((data_table.ptr() == NULL), "InitDataTable", "You need to set the data table variable of the DoGRegionSpec before calling Init()" )) {
       return false;

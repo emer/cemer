@@ -25,6 +25,16 @@ using namespace std;
 
 const String String_Matrix::blank;
 
+#ifdef TA_OS_WIN
+// this is needed on windows to generate the methods which are otherwise not used within ta
+// in how many different ways can M$ be so incredibly lame and frustrating!
+
+TA_API const String& dummy_ta_string_ref_fun(const String_Matrix& mtx) {
+  return mtx.SafeEl(1,2,3,4);
+}
+
+#endif
+
 int String_Matrix::defAlignment() const {
   return Qt::AlignLeft;
 }

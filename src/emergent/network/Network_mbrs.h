@@ -57,11 +57,11 @@ public:
 
   STATE_DECO_KEY("Network");
   STATE_TA_STD_CODE(NetworkCudaSpec);
-  STATE_UAE(
 #ifndef CUDA_COMPILE
+  STATE_UAE(
     on = false;                   // can never be on!
-#endif
             );
+#endif
   
 private:
   INLINE void  Initialize() {
@@ -456,12 +456,16 @@ public:
   static double pi;
   // #NO_SAVE #READ_ONLY the value of pi
 
+#ifdef TA_OS_WIN
+  static double exp_fast(double x) { return exp(x); }
+#else  
   static double exp_fast(double x) {
     _eco tmp;
     tmp.n.j = 0;
     tmp.n.i = (int)((1048576/M_LN2)*x + (1072693248 - 60801));
     return tmp.d;
   }
+#endif  
   // #CAT_ExpLog a fast approximation to the exponential function from Nicol Schraudolph Neural Computation, 1999
 
   static double fact_ln(int n);

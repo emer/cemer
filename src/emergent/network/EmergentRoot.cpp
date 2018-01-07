@@ -53,8 +53,8 @@ eTypeDef_Of(ProjectBase);
 
 TA_BASEFUNS_CTORS_DEFN(EmergentRoot);
 
-taTypeDef_Of(Network);
-taTypeDef_Of(ConSpec);
+eTypeDef_Of(Network);
+eTypeDef_Of(ConSpec);
 
 
 static void emergent_viewcolor_init() {

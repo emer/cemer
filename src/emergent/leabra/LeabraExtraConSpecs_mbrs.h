@@ -141,7 +141,7 @@ public:
 private:
   INLINE void	Initialize()    { Defaults_init(); }
   INLINE void	Defaults_init() {
-    dalr_gain = 1.0f;  dalr_base = 0.0f; da_lrn_thr = 0.02;  act_delta_thr = 0.02;
+    dalr_gain = 1.0f;  dalr_base = 0.0f; da_lrn_thr = 0.02f;  act_delta_thr = 0.02f;
   }
 };
 
