@@ -508,7 +508,7 @@ void iTableView::SetColumnWidth(int column, int n_chars) {
   cur_font.setPointSize(taMisc::GetCurrentFontSize("table"));
   QFontMetrics metrics(cur_font);
   if (n_chars < 1) n_chars = 1;
-  int eff_width = n_chars * metrics.maxWidth();
+  int eff_width = n_chars * metrics.width('m');
   this->setColumnWidth(column, eff_width);
 #if (QT_VERSION >= 0x050200)
   horizontalHeader()->setSectionResizeMode(column, QHeaderView::Interactive);
@@ -521,15 +521,15 @@ int iTableView::ConvertPixelsToChars(int n_pixels) {
   QFont cur_font = this->font();
   cur_font.setPointSize(taMisc::GetCurrentFontSize("table"));
   QFontMetrics metrics(cur_font);
-  return n_pixels / metrics.maxWidth();
+  return n_pixels / metrics.width('m');
 }
 
 int iTableView::ConvertCharsToPixels(int chars) {
   QFont cur_font = this->font();
   cur_font.setPointSize(taMisc::GetCurrentFontSize("table"));
   QFontMetrics metrics(cur_font);
-  int foo =  metrics.maxWidth() * chars;
-  return metrics.maxWidth() * chars;
+  int foo =  metrics.width('m') * chars;
+  return metrics.width('m') * chars;
 }
 
 ////////////////////////////////////////////////
