@@ -31,17 +31,17 @@ class E_API NetMonItem_List: public taList<NetMonItem> {
   // ##CAT_Network list of network monitor items
 INHERITED(taList<NetMonItem>)
 public:
+  bool              ignore_sig;
+  int	              NumListCols() const override {return 3;}
+  const KeyString   GetListColKey(int col) const override;
+  String            GetColHeading(const KeyString&) const override; // header text for the indicated column
 
-  int	NumListCols() const override {return 3;} 
-  const KeyString GetListColKey(int col) const override;
-  String GetColHeading(const KeyString&) const override; // header text for the indicated column
-
-  void SigEmit(int sls, void* op1 = NULL, void* op2 = NULL) override;
+  void              SigEmit(int sls, void* op1 = NULL, void* op2 = NULL) override;
 
   TA_BASEFUNS_NOCOPY(NetMonItem_List);
   
 private:
-  void		Initialize() {SetBaseType(&TA_NetMonItem);}
+  void		Initialize() { SetBaseType(&TA_NetMonItem); ignore_sig = false; }
   void		Destroy() {}
 };
 

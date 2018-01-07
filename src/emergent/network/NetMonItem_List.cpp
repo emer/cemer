@@ -16,6 +16,7 @@
 #include "NetMonItem_List.h"
 
 #include <Network>
+#include <SigLinkSignal>
 
 eTypeDef_Of(NetMonitor);
 
@@ -44,8 +45,16 @@ const KeyString NetMonItem_List::GetListColKey(int col) const {
 
 void NetMonItem_List::SigEmit(int sls, void* op1, void* op2) {
   inherited::SigEmit(sls, op1, op2);
+  if (sls == SLS_LIST_RESET_START) {
+    ignore_sig = true;
+  }
+  
   NetMonitor* nm = (NetMonitor*)GetOwner(&TA_NetMonitor);
-  if (nm) {
+  if (nm && !ignore_sig) {
     nm->ItemsUpdated();
+  }
+  
+  if (sls == SLS_LIST_RESET_END) {
+    ignore_sig = false;
   }
 }
