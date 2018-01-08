@@ -1,4 +1,4 @@
-/* -*- C++ -*- */
+/* -*2018+ -*- */
 // Copyright 2006-2017, Regents of the University of Colorado,
 // Carnegie Mellon University, Princeton University.
 //

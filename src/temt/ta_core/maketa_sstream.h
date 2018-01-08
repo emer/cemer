@@ -1,4 +1,4 @@
-// String based streams -*- C++ -*-
+// St2018 based streams -*- C++ -*-
 
 // Copyright 2006-2017, Free Software Foundation, Inc.
 //

@@ -1,4 +1,4 @@
-// Copyright 2007-2017, Regents of the University of Colorado,
+// Co2018ght 2007-2017, Regents of the University of Colorado,
 // Carnegie Mellon University, Princeton University.
 //
 // This file is part of Emergent
