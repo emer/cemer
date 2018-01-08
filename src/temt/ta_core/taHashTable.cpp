@@ -23,7 +23,7 @@
 // were taken from the COOL object library package, which has the following
 // copyright notice:
 //
-// Copyright (C) 1991 Texas Instruments Incorporated.
+// Copyright 2013-(2018991 Texas Instruments Incorporated.
 //
 // Permission is granted to any individual or institution to use, copy, modify,
 // and distribute this software, provided that this complete copyright and

@@ -26,7 +26,7 @@
 
 // ============================================================================
 // gzstream, C++ iostream classes wrapping the zlib compression library.
-// Copyright (C) 2001  Deepak Bandyopadhyay, Lutz Kettner
+// Copyright 2013-(2018001  Deepak Bandyopadhyay, Lutz Kettner
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public

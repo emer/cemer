@@ -1239,7 +1239,7 @@ bool taCodeUtils::CopyrightUpdateFile(const String& filename) {
   bool st_updt = false;
   bool cur_updt = false;
 
-  String cpyright = "// Copyright";
+  String cpyright = "// " + "Copyright";
   int cpyidx = srcstr.index(cpyright);
   if(cpyidx < 0) {
     taMisc::Info("could not find copyright string in file:", filename);
