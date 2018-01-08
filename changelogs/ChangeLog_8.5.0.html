@@ -1,0 +1,2026 @@
+<html><body>
+<h2>ChangeLog for Emergent Version 8.5.0
+  Revisions 11074:11312</h2>
+<table border="1" style="table-layout:fixed;width: 100%;">
+<tr>
+<td width="5%">Rev No.</td>
+<td width="10%">
+                Date               
+        </td>
+<td width="5%">
+                    Author
+                 
+        </td>
+<td width="">
+                    Message
+                 
+        </td>
+</tr>
+<tr>
+<td><pre>11074</pre></td>
+<td><pre>2017-09-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>last few expand fixes -- all done -- ready for 8.2.0</pre></td>
+</tr>
+<tr>
+<td><pre>11075</pre></td>
+<td><pre>2017-09-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>changelog update for actual rev</pre></td>
+</tr>
+<tr>
+<td><pre>11076</pre></td>
+<td><pre>2017-09-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>BrowserExpandAll actually uses Default expansion, which makes more sense</pre></td>
+</tr>
+<tr>
+<td><pre>11078</pre></td>
+<td><pre>2017-09-12</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Remove dependency on libquarter0 package in ubuntu packaging script
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>11080</pre></td>
+<td><pre>2017-09-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>updated version to 8.2.1 for any new changes</pre></td>
+</tr>
+<tr>
+<td><pre>11081</pre></td>
+<td><pre>2017-09-16</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Small convenience when coding - If you have an assignment to a String and you
+forget to quote the right hand side you will be queried as to whether you
+want the quotes added for you. 
+</pre></td>
+</tr>
+<tr>
+<td><pre>11082</pre></td>
+<td><pre>2017-09-17</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Parsing fix "a = b -" was not completing where as "a = b +" was completing
+</pre></td>
+</tr>
+<tr>
+<td><pre>11083</pre></td>
+<td><pre>2017-09-17</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>With the crash in StdEverything Wizard solved, re-enable the test in jenkins
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>11084</pre></td>
+<td><pre>2017-09-21</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Error caught by Xcode 9
+Ordered comparison between pointer and zero ('double_Matrix *' and 'int')
+vec_noise &gt; 0 should be vec_noise-&gt;size &gt; 0
+</pre></td>
+</tr>
+<tr>
+<td><pre>11085</pre></td>
+<td><pre>2017-09-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>progvar uses text-based search-and-replace -- can now change types e.g. int -&gt; real
+building fine for me with a full reconfigure on XC9
+</pre></td>
+</tr>
+<tr>
+<td><pre>11086</pre></td>
+<td><pre>2017-09-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* sig emit updated for UpdateArgs
+* no update code_string if has check init error -- should prevent updating on compile
+w/ unset fun etc but need to test the timing
+</pre></td>
+</tr>
+<tr>
+<td><pre>11087</pre></td>
+<td><pre>2017-09-22</pre></td>
+<td><pre>thazy</pre></td>
+<td><pre>revised learning rule for CEl units whereby US values (PosPV, NegPV; if present, i.e., &gt; 0.01f) are assigned to act_eq, the current time step ru_act value - working great; lrn_mod_act flag, if true, toggles learning via modulation of net_syn value (and thus actual activations) by phasic dopamine signals and Pos/NegPV inputs</pre></td>
+</tr>
+<tr>
+<td><pre>11088</pre></td>
+<td><pre>2017-09-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>finally fix the code_string so it always preserves a good, compilable version of code, and also doesn't get lost in Prog conversions -- GenCssBody_impl is now a bool, and returns true if successful</pre></td>
+</tr>
+<tr>
+<td><pre>11089</pre></td>
+<td><pre>2017-09-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* off flag on LayerWriterEl -- everything needs an off flag eventually :)
+* objs_vars NO_EXPAND default -- memberdef processing of these directives added
+</pre></td>
+</tr>
+<tr>
+<td><pre>11090</pre></td>
+<td><pre>2017-09-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>obey do_svn_cleanup pref
+</pre></td>
+</tr>
+<tr>
+<td><pre>11091</pre></td>
+<td><pre>2017-09-26</pre></td>
+<td><pre>thazy</pre></td>
+<td><pre></pre></td>
+</tr>
+<tr>
+<td><pre>11092</pre></td>
+<td><pre>2017-09-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* LeabraUnitSpec_core.h now contains all the core Unit-level code for Leabra, in a more standalone form that can (in principle) be applied to cuda etc -- haven't done that yet..
+* also made LeabraUnitVars more standalone as well
+* required adding a #pragma maketa_file_is_target to the _core header file so it will
+include all its stuff into the LeabraUnitSpec header -- maketa now parses this etc
+* todo: remove lookup function for nxx1, and noise schedule, and look for
+all cases of what we override in subclasses and simplify current excessive duplication
+between _core and regular unit spec -- should be possible for most wrapper cases.
+* then apply same techniques to conspec and layerspec (much smaller!)
+</pre></td>
+</tr>
+<tr>
+<td><pre>11093</pre></td>
+<td><pre>2017-09-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>new NXX1 closed-form approximation instead of lookup table -- the Graph function still
+shows the convolved version for reference but that is the only time it is used -- will
+fully encapsulate that there next so it doesn't take any other resources.
+</pre></td>
+</tr>
+<tr>
+<td><pre>11094</pre></td>
+<td><pre>2017-09-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* created _cuda versions of basic classes like MinMax* and Random
+* resolved noise -&gt; always use u-&gt;noise and just make sure it is in place when needed
+* removed noise_sched, just one noise_type class with all specs
+* moved funlookup for nxx1 to just the plotting function
+</pre></td>
+</tr>
+<tr>
+<td><pre>11095</pre></td>
+<td><pre>2017-09-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix errors in wizard for PBWM and eliminate warnings about tmp obj own for pfc, bg specs that
+have a DataTable member that is formattted during init.
+</pre></td>
+</tr>
+<tr>
+<td><pre>11096</pre></td>
+<td><pre>2017-09-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix for PBWM -- congroup netin was not being reset properly -- can't do that in
+_core unitspec, so need to do that separately in main unitspec
+</pre></td>
+</tr>
+<tr>
+<td><pre>11097</pre></td>
+<td><pre>2017-09-30</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* LeabraLayerSpec ported over to _core independent code
+* removed multigp stuff which never worked and is not used in any project I know of
+* issue: most of LeabraLayerSpec code involves both layer and ungpdata navigation -- not
+clear how to do this in generic way.. do we need separate *vars* class here?  probably,
+LeabraInhib is really the core of that -- already a multiple inherit for layer -- could
+just separate it entirely -- would need a n_ungp value on layer and a separate allocation..
+</pre></td>
+</tr>
+<tr>
+<td><pre>11098</pre></td>
+<td><pre>2017-10-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>CreateNewSpec and State functions with --new_spec and --new_state startup args for automating all the new _core etc boilerplate</pre></td>
+</tr>
+<tr>
+<td><pre>11099</pre></td>
+<td><pre>2017-10-06</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Allow the replacement of variables in the ClusterRun notes and label field to work recursively.
+I.e. if the main cluster run control panel mostly contains paramset pointers, one can still
+access the variables in the deeper paramsets in the label and notes field.
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>11100</pre></td>
+<td><pre>2017-10-11</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* DO NOT USE THIS OR ANY SUBSEQUENT SVN VERSION UNTIL FURTHER NOTICE!!!!!
+* This is the first checkin with the new separation of Network State (including specs)
+from the full emergent / TA system -- it will build and run LeabraStd, except that
+there isn't any feedback from the running stats on NetworkState back to Network so
+it stops after 1 epoch with presumed perfect performance -- minor easy fix but too tired
+now to do it..
+* This is completely minimal -- only the basic set of Leabra specs are enabled, along with
+basic Bp, and Cs / So will likely be dropped from further support as they are likely
+never used and people can use the LTS 7.1 for them if they really need to.
+* Cuda is not yet sync'd with the cpp (C++) versions but once that happens, it should
+"just work" :)  95%+ of the algorithm code is now ported over to the plain C++ "core"
+files.  see https://grey.colorado.edu/emergent/index.php/StateSeparation for more
+docs etc.
+</pre></td>
+</tr>
+<tr>
+<td><pre>11101</pre></td>
+<td><pre>2017-10-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>maketa issues all fixed -- still some bugs</pre></td>
+</tr>
+<tr>
+<td><pre>11102</pre></td>
+<td><pre>2017-10-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Much closer to working but still some issues -- copy to / from network, layers etc
+</pre></td>
+</tr>
+<tr>
+<td><pre>11103</pre></td>
+<td><pre>2017-10-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Now working correctly on LeabraStd!  Using optimized SyncState functions - everything
+only goes one way or the other -- makes sync deterministic -- key.  lots of little things
+off now fixed for basic code.  Next step is review of other code that could be moved
+into state, and then looking into moving projections over to state-based code.
+</pre></td>
+</tr>
+<tr>
+<td><pre>11104</pre></td>
+<td><pre>2017-10-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>remove unused inlines files
+</pre></td>
+</tr>
+<tr>
+<td><pre>11105</pre></td>
+<td><pre>2017-10-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fixed optimized compiling for Unit
+* enabled leabra dir PrjnSpec's
+* testing ch6 objrec.proj -- net scaling is wrong again!  can't figure out why
+</pre></td>
+</tr>
+<tr>
+<td><pre>11106</pre></td>
+<td><pre>2017-10-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fixed bug in netscale -- now working on objrec and getting exact same results on std, flex
+</pre></td>
+</tr>
+<tr>
+<td><pre>11107</pre></td>
+<td><pre>2017-10-16</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Not all tests in the server.txt test suit checked for emergent crashing in prior test
+
+If the test prior to the current test caused emergent to crash, some of the following tests
+would also fail due to not having a running emergent. Add a check that automatically restarts
+emergent if it isn't correctly running and accepting commands on the server socket
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>11108</pre></td>
+<td><pre>2017-10-17</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>The automated test logic for detecting if emergent is available, caught issues with emergent hanging, but not if it had crashed entirely
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>11109</pre></td>
+<td><pre>2017-10-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fix weight saving crash
+* fix index errors from ++ being called in the wrong place -- ++ is kinda evil..
+* save / load / sync acts_m/p_avg -- key state only on layer
+</pre></td>
+</tr>
+<tr>
+<td><pre>11110</pre></td>
+<td><pre>2017-10-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>-nowin fix for Qt5.6 and above: open a root window, and attach a new opengl widget to that, and that then allows offscreen renderer to attach</pre></td>
+</tr>
+<tr>
+<td><pre>11111</pre></td>
+<td><pre>2017-10-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>ifdef for initialize</pre></td>
+</tr>
+<tr>
+<td><pre>11112</pre></td>
+<td><pre>2017-10-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* moved OpenGl info to optional ScreenInfo command instead of having yet more
+stuff always showing at startup
+* discovered that setting a default surface format "fixed" the issue with mac having a
+premultiplied ARGB32 format -- this means that colors now return to the pre 5.6 defaults
+where transparency should be .6 instead of .4 -- I will bump version later in main base
+(doing this in an effective sub-branch now) and update those back to .6..
+* MAYBE this will do something useful with the way in which emergent interferes with
+google hangout ?? :)
+</pre></td>
+</tr>
+<tr>
+<td><pre>11113</pre></td>
+<td><pre>2017-10-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>don't open nowin for dmem proc &gt; 0</pre></td>
+</tr>
+<tr>
+<td><pre>11114</pre></td>
+<td><pre>2017-10-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>nope, actually each node needs its own offscreen renderer so each needs to connect</pre></td>
+</tr>
+<tr>
+<td><pre>11115</pre></td>
+<td><pre>2017-10-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>extra fixes for nowin under mpi</pre></td>
+</tr>
+<tr>
+<td><pre>11116</pre></td>
+<td><pre>2017-10-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>dmem_splitrowsacrossprocs -- ensures an even split -- duplicates items at random as they need</pre></td>
+</tr>
+<tr>
+<td><pre>11117</pre></td>
+<td><pre>2017-10-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>dmem_splitrowsacrossprocs -- ensures an even split -- duplicates items at random as they need -- fixed a few typos / bugs</pre></td>
+</tr>
+<tr>
+<td><pre>11118</pre></td>
+<td><pre>2017-10-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>dmem_splitrowsacrossprocs -- sheesh finally rewrote in a program and tested -- off by 1 error.. now should work</pre></td>
+</tr>
+<tr>
+<td><pre>11119</pre></td>
+<td><pre>2017-10-23</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Hierarchically process paramsets to look for "SEARCH" parameters in cluster run
+
+Previously, we were only going through the top level cluster run paramset to find parameters that should be added to the search,
+but not those in paramsets linked off of the cluster run pannel.
+
+This should fix #3560
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>11120</pre></td>
+<td><pre>2017-10-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* WARNING: DOES NOT COMPILE
+* but too much stuff done here to not save it -- and getting very close
+* this is major progress toward removing Unit and Unit_Group entirely, and migrating
+all appropriate code over to State side, including ProjectionSpec!
+* now the emergent side is only providing the essential template in layers, prjns and
+associated specs, and then the State handles everything from Unit down (in addition to
+mirroring everything else)
+* added position variables on layer, unit, unit_group to support display etc, now that
+we got rid of Unit..
+</pre></td>
+</tr>
+<tr>
+<td><pre>11121</pre></td>
+<td><pre>2017-10-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>And actually delete the unit* files
+</pre></td>
+</tr>
+<tr>
+<td><pre>11122</pre></td>
+<td><pre>2017-10-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* NOT LINKING fully but everything is actually COMPILING.. very close!
+</pre></td>
+</tr>
+<tr>
+<td><pre>11123</pre></td>
+<td><pre>2017-10-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* compiles and runs!  bug with wt_bal
+</pre></td>
+</tr>
+<tr>
+<td><pre>11124</pre></td>
+<td><pre>2017-10-26</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* removed now-unnec dependencies in Network -- lower include impact
+* UpdateStateSpecs in specs and UAE
+* Trial_Init_Specs moved to state-side, SetCurLrate still in conspec -- these spec calls
+are happening only on specs not through structure
+* STILL getting a problem with wt_bal!  that was supposed to fix it.. next..
+</pre></td>
+</tr>
+<tr>
+<td><pre>11125</pre></td>
+<td><pre>2017-10-26</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* wt bal fixed -- needed init -- had a todo comment.. :)
+* optimized to store on sending con state so it can be used without dereferencing..
+* edit methods for unitstate and con state on layer, projection
+</pre></td>
+</tr>
+<tr>
+<td><pre>11126</pre></td>
+<td><pre>2017-10-26</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* weight file save / load for layer vars now working -- life without TA is tough!
+* fixed bugs in threading -- was able to run objrec except for the projection was full
+</pre></td>
+</tr>
+<tr>
+<td><pre>11127</pre></td>
+<td><pre>2017-10-26</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* LayoutUnits does not check for intact -- netview now displays on startup properly
+* fixed separate UnitView -- just need direct unit pointer -- custom disp_pos for units
+works fine!  even in optimized block mode
+* fixed the monitor gaps for unitstate and constate -- all working -- even better
+than before in terms of ability to index specific units etc.
+* next step: projection specs!
+</pre></td>
+</tr>
+<tr>
+<td><pre>11128</pre></td>
+<td><pre>2017-10-26</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>backprop now working -- just needed spec creation functions..
+</pre></td>
+</tr>
+<tr>
+<td><pre>11129</pre></td>
+<td><pre>2017-10-26</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>undo wt bal optimization -- different for each recv unit -- can't copy to senders</pre></td>
+</tr>
+<tr>
+<td><pre>11130</pre></td>
+<td><pre>2017-10-30</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* MTRnd independent of TA -- just basic C
+* first few projection specs beyond full: onetoone, random, uniformrnd, and tessel
+* lots more State infrastructure to support above, incl permute on a simple int* array
+* still various issues here -- random was crashing..
+</pre></td>
+</tr>
+<tr>
+<td><pre>11131</pre></td>
+<td><pre>2017-10-31</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Fixed all the issues with projection specs -- on to more..
+</pre></td>
+</tr>
+<tr>
+<td><pre>11132</pre></td>
+<td><pre>2017-10-31</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>use ta_stdef.h code for defining int types instead of cstdint which is apparently only C++11
+</pre></td>
+</tr>
+<tr>
+<td><pre>11133</pre></td>
+<td><pre>2017-10-31</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>let's see if grey / jenkins likes this include..
+</pre></td>
+</tr>
+<tr>
+<td><pre>11134</pre></td>
+<td><pre>2017-10-31</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>one more include</pre></td>
+</tr>
+<tr>
+<td><pre>11135</pre></td>
+<td><pre>2017-10-31</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>moved all projection specs to network dir (so they can all be consolidated in the
+AllProjectionSpecs files) and ordered them for further conversion..
+</pre></td>
+</tr>
+<tr>
+<td><pre>11136</pre></td>
+<td><pre>2017-10-31</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Grey is running on https and thus all links need to be in https rather than http to prevent mixed content warning/errors.
+
+Try and convert gendoc over to using http.
+
+Not actually tested, so I don't know if this causes more breaks.
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>11137</pre></td>
+<td><pre>2017-10-31</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Convert a http://grey link to https://grey one.
+
+This is a link to gendoc in Typedef.cpp.
+
+Again, not tested at the moment.
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>11138</pre></td>
+<td><pre>2017-11-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* further reorg of prjn specs and network enum updates etc
+* TiledGpRfPrjnSpec working -- biggie for lvis type models
+</pre></td>
+</tr>
+<tr>
+<td><pre>11139</pre></td>
+<td><pre>2017-11-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>should fix weights init test: sync state and specs prior to init weights</pre></td>
+</tr>
+<tr>
+<td><pre>11140</pre></td>
+<td><pre>2017-11-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>GpOneToOnePrjnSpec and fixed TestLeabraUnit for accessing unit state correctly --
+should fix a few more tests
+</pre></td>
+</tr>
+<tr>
+<td><pre>11141</pre></td>
+<td><pre>2017-11-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fix for LoadSaveWeights test -- need to grab epoch number from state before doing
+sync because sync overwrites from net -&gt; state
+* pretty sure the one remaining test depends on network actually learning before 8 epochs, but it is configured with a ScalarVal which is not working yet.. so revisit after that is updated
+* also fixed EditState on network and added err msg for #MENU, #BUTTON elements in
+non-taBase objects
+</pre></td>
+</tr>
+<tr>
+<td><pre>11142</pre></td>
+<td><pre>2017-11-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix for edit dialog closing on ReConstr_Body -- previously the fix was selective to
+taMisc type, but really applies to all non-taBase objs
+</pre></td>
+</tr>
+<tr>
+<td><pre>11143</pre></td>
+<td><pre>2017-11-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* PolarRndPrjnSpec -- required importing taMath_double and Random::Density --
+still has a dependency on fact_ln from gsl but otherwise now all independent
+of ta code -- getting closer..
+</pre></td>
+</tr>
+<tr>
+<td><pre>11144</pre></td>
+<td><pre>2017-11-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* GpTesselPrjnSpec -- added Connect_Gps function to base ProjectionSpec, and p_con, sym_self
+params to GpOneToOne.. as well -- replaces GpCustomPrjnSpecBase
+</pre></td>
+</tr>
+<tr>
+<td><pre>11145</pre></td>
+<td><pre>2017-11-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* rndgp1to1 now replaced by GpOneToOne -- added AKA
+* converted MarkerGp, GpMap* prjns -- organized with 1to1
+</pre></td>
+</tr>
+<tr>
+<td><pre>11146</pre></td>
+<td><pre>2017-11-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>rest of TiledGpRF prjns..
+</pre></td>
+</tr>
+<tr>
+<td><pre>11147</pre></td>
+<td><pre>2017-11-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>GaussRFPrjn
+</pre></td>
+</tr>
+<tr>
+<td><pre>11148</pre></td>
+<td><pre>2017-11-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>TiledNovlpPrjnSpec
+</pre></td>
+</tr>
+<tr>
+<td><pre>11149</pre></td>
+<td><pre>2017-11-04</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>TiledGpMapConvergePrjnSpec
+</pre></td>
+</tr>
+<tr>
+<td><pre>11150</pre></td>
+<td><pre>2017-11-04</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Fixed bugs revealed by projection_sampler (one longstanding one!) -- the ConnectFromCk
+call returns the index of the connection made, NOT a bool!  proper test is &gt;= 0 -- that
+fixes the polarrnd case.  Also need to update prjn indexes first step in build..
+</pre></td>
+</tr>
+<tr>
+<td><pre>11151</pre></td>
+<td><pre>2017-11-04</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* setup framework for converting rest of leabra code: ExtraSpecs files that work
+much like AllProjectionSpecs -- one for each code path (main, cpp, cuda) -- much
+more efficient than defining one for each..
+* also fixed major bug (surpised tests didn't break on it) in wt_bal revert of
+optimization -- needs recv not send con state
+* got rid of some residual ta dependencies in network State code, now that
+all the relevant math code is now ta-independent..
+</pre></td>
+</tr>
+<tr>
+<td><pre>11152</pre></td>
+<td><pre>2017-11-04</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>All of the LeabraExtraConSpec's converted..  not too bad -- more efficient to do en masse
+</pre></td>
+</tr>
+<tr>
+<td><pre>11153</pre></td>
+<td><pre>2017-11-05</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Add the ability to load cluster runs through a CSS call for a specific ClusterRun table without needing to select it in the GUI.
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>11154</pre></td>
+<td><pre>2017-11-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>all Leabra UnitSpecs converted!  just layerspecs and then can actually start testing..
+</pre></td>
+</tr>
+<tr>
+<td><pre>11155</pre></td>
+<td><pre>2017-11-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix for ping latency caused by QNetworkAccessManager -- https://bugreports.qt.io/browse/QTBUG-40332
+Set QT_BEARER_POLL_TIMEOUT=-1 per workaround on that bug ticket.  Horrible bug.
+Sorry to everyone who has unwittingly been afflicted by it!
+</pre></td>
+</tr>
+<tr>
+<td><pre>11156</pre></td>
+<td><pre>2017-11-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>main leabra layer specs converted -- just a couple more conversions and then wizard..
+</pre></td>
+</tr>
+<tr>
+<td><pre>11157</pre></td>
+<td><pre>2017-11-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* Final conversions, including PFCPrjnSpec and BgPfcPrjnSpec
+* wizard re-enabled, but not quite working for pvlv or hippo..
+* sir.proj and sir52da projects both actually work, except we don't have decay state method
+on layers -- sir52 uses that for hidden..
+</pre></td>
+</tr>
+<tr>
+<td><pre>11158</pre></td>
+<td><pre>2017-11-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* CHOOSE_AS_MEMBER directive, applied to TimeUsed* classes -- allows to be chosen even
+when members of other objects
+* Layer.n_units_built -- records number of actual built units
+* reset spec_idx to -1 so we can tell which ones are not used (and we skip those for updating state)
+* reinstate con type check -- fixes some wizard issues
+* using setStale / useSetStale for network layers, prjns, specs so any structural changes
+will automatically invalidate the network state, and trigger view update -- should
+be much more robust hopefully..
+* most wizard stuff now working fine -- some further issues still debugging
+</pre></td>
+</tr>
+<tr>
+<td><pre>11159</pre></td>
+<td><pre>2017-11-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* tested and fixed ScalarValLayerSpec -- need a separate layer post function to
+actually clamp the activation pattern -- working!
+* bias_scale was being normalized incorrectly -- now fixed -- should fix one test result
+* hippo wizard is still not working properly.. and wwi crashes.. few more things..
+</pre></td>
+</tr>
+<tr>
+<td><pre>11160</pre></td>
+<td><pre>2017-11-11</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* lots of bugfixes and robustification  -- now running WWI and Hippo wizard and has DecayState on layer -- still need to add more of those layer-specific functions
+* will do a lot more testing tomorrow but should be ready for prime-time pretty soon!
+</pre></td>
+</tr>
+<tr>
+<td><pre>11161</pre></td>
+<td><pre>2017-11-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* many more bug fixes: NetView more robust, clearing unit_src when not built, and
+actually parsing unit path properly;
+* major bugs with UnGpState unit access fixed -- cereb_arm now working
+* added Unit, LeabraUnit as aliases for UnitState_cpp etc -- easier for Programs --
+main high-level program interface returns those -- overloaded so Leabra returns LeabraUnit
+* major optimization of ConState find unit from index -- cache a lo and hi index, and
+skip immediately if target is out of range, and otherwise use these to pro-rate search start location -- saving 15 sec for Build on WWI_emer
+* fixing indexes after vector chunking -- had skipped that before!  yikes!
+* added back program-friendly unitstate access routines that were there before
+* scalar val labeling moved back to main space -- now works.  added SetUnitName methods..
+</pre></td>
+</tr>
+<tr>
+<td><pre>11162</pre></td>
+<td><pre>2017-11-12</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Add a function to ClusterRun to allow to launch jobs from a css script without prompting the user for run dialog.
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>11163</pre></td>
+<td><pre>2017-11-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* DMem logic in place -- needs compile and test on blanca -- dmem must remain in Main space
+because it relies critically on typedef info for sync'ing variables
+* removed all compute methods from Layer and put in _Layer methods on NetworkState_core --
+can't have virtual methods in State classes so not good to have those methods there --
+Leabra was not properly overriding various of these methods..
+* added SetCycle and SetQuarter methods -- these must be sync'd for state and main -- state
+is usually the only one updating -- this is key extra fix for cereb_arm which has a very
+unusual cycle-by-cycle structure..
+* now going to test building on blanca and also testing all the textbook sims -- should
+be very close to full functionality with new version!  then finally on to cuda..
+</pre></td>
+</tr>
+<tr>
+<td><pre>11164</pre></td>
+<td><pre>2017-11-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>dmem compile fixes -- doesn't seem to be learning in test case though</pre></td>
+</tr>
+<tr>
+<td><pre>11165</pre></td>
+<td><pre>2017-11-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fixes to SSE computation -- was updating network instead of layer..
+</pre></td>
+</tr>
+<tr>
+<td><pre>11166</pre></td>
+<td><pre>2017-11-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* lots of stats fixes for netmax, relnet, prjn dmem sync, prjn state sync
+* overrides for prjn state accessor functions to get proper types, edit state on prjn
+* now everything SHOULD be down to just the dmem issues..
+</pre></td>
+</tr>
+<tr>
+<td><pre>11167</pre></td>
+<td><pre>2017-11-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>dmem fixes from blanca -- doh -- dmem is syncing the main objs not the state objs..</pre></td>
+</tr>
+<tr>
+<td><pre>11168</pre></td>
+<td><pre>2017-11-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>dmem now syncing on state, not mem</pre></td>
+</tr>
+<tr>
+<td><pre>11169</pre></td>
+<td><pre>2017-11-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>grr.. some READ_ONLY -&gt; GUI_READ_ONLY cases still</pre></td>
+</tr>
+<tr>
+<td><pre>11170</pre></td>
+<td><pre>2017-11-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>sheesh -- need op = MPI_SUM otherwise it skips those</pre></td>
+</tr>
+<tr>
+<td><pre>11171</pre></td>
+<td><pre>2017-11-14</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for 3567 - add null check so we don't try to deference base_ptr_ptr when FindFromPath fails.
+</pre></td>
+</tr>
+<tr>
+<td><pre>11172</pre></td>
+<td><pre>2017-11-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* Nearly final fixes -- tested most potentially tricky ccn book examples and everything
+working EXCEPT dyslex with lesions -- need extensive testing with all manner of
+lesioning!
+* and bvPVLV_cel is not showing proper 50% reward CS magnitude.. hmm..
+</pre></td>
+</tr>
+<tr>
+<td><pre>11173</pre></td>
+<td><pre>2017-11-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>state separation diagram</pre></td>
+</tr>
+<tr>
+<td><pre>11174</pre></td>
+<td><pre>2017-11-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>state separation diagram png</pre></td>
+</tr>
+<tr>
+<td><pre>11175</pre></td>
+<td><pre>2017-11-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>state separation diagram png</pre></td>
+</tr>
+<tr>
+<td><pre>11176</pre></td>
+<td><pre>2017-11-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>laygp inhib code translated, but layer group indexes in layers not computed yet
+</pre></td>
+</tr>
+<tr>
+<td><pre>11177</pre></td>
+<td><pre>2017-11-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>layer group inhibition now fixed, but unfortunately bvPVLV_cel still not exhibiting
+proper CS dopamine for 50% case..
+</pre></td>
+</tr>
+<tr>
+<td><pre>11178</pre></td>
+<td><pre>2017-11-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>snapshot now works</pre></td>
+</tr>
+<tr>
+<td><pre>11179</pre></td>
+<td><pre>2017-11-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* projection display mode = NONE -- no projection lines!
+* 2 pass projection connect framework -- 2nd pass can be used for making symmetric projections!  make_cons is now an int, goes 0, 1.. 2 if needed
+* consolidation of ProjectionSpec Connect_Gps code -- now handles recip, share_cons -- removed UnitGroupRF
+* TiledGPRFPrjnSpec now has p_con, and recip automatically makes symmetric prjns!  could be key for WWI models, which seem to benefit from partial connectivity in some prjns -- this opens up to many more
+</pre></td>
+</tr>
+<tr>
+<td><pre>11180</pre></td>
+<td><pre>2017-11-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>sync network state after ClearIntact -- also projects that use NetConfig program need to
+add an UnBuild() call before unlesioning layers to avoid new check on that for intact net.
+</pre></td>
+</tr>
+<tr>
+<td><pre>11181</pre></td>
+<td><pre>2017-11-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* network not intact if layer number of units changes
+* don't optimize cycle stats for clamped layers -- tiny perf issues and could be causing problems with wwi
+* cleanup READ_ONLY, EXPERT etc on layer, unitgroup
+</pre></td>
+</tr>
+<tr>
+<td><pre>11182</pre></td>
+<td><pre>2017-11-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>total_trials is updated internally, should not be marked #MAIN!  that should then fix
+adapting gi which should then fix WWI.. 
+</pre></td>
+</tr>
+<tr>
+<td><pre>11183</pre></td>
+<td><pre>2017-11-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* bvPVLV_cel fixed!  it was not properly detecting inhibitory connections!  so CeM was not
+getting properly inhibited from CElPosD2
+</pre></td>
+</tr>
+<tr>
+<td><pre>11184</pre></td>
+<td><pre>2017-11-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* NetMonItem now does proper error checks for invalid variable names -- puts error
+message in an error_msg member for later display during check config so it isn't too annoying.
+* copy some basic avg max stats to layers: acts, netin, etc -- easier to monitor etc.
+* chapter 3 inhib.proj now works.. 
+</pre></td>
+</tr>
+<tr>
+<td><pre>11185</pre></td>
+<td><pre>2017-11-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* Argh.. the assignment of units to unit groups by threads was off!  that was causing
+problems with the Feature decoder readout -- now finally should actually be fixed!
+* Also, made changing n_threads robust -- remove threads when unbuilding and set new threads
+when building
+</pre></td>
+</tr>
+<tr>
+<td><pre>11186</pre></td>
+<td><pre>2017-11-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>one more unit group indexing fix -- this fixes the hip proj -- hopefully that's it!
+</pre></td>
+</tr>
+<tr>
+<td><pre>11187</pre></td>
+<td><pre>2017-11-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* undo comment-out of clamped layer optimization -- that wasn't the problem
+* also undo threads removal -- other changes should make that unnec
+* start on support for ungp[] in monitor
+</pre></td>
+</tr>
+<tr>
+<td><pre>11188</pre></td>
+<td><pre>2017-11-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* NetMonItem: ungp_data -&gt; ungp -- monitoring of unit group state variables now supported
+* check index &lt; 0 for state sync
+* fix order of indexes on gp4d layer names
+</pre></td>
+</tr>
+<tr>
+<td><pre>11189</pre></td>
+<td><pre>2017-11-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>sort permuted subset of connection indexes so random connections are still in order --
+optimizes finding and possible still chunking.
+</pre></td>
+</tr>
+<tr>
+<td><pre>11190</pre></td>
+<td><pre>2017-11-18</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix for dmem agg of layer-level and prjn-level data -- can't use GetValidNetState when building as it is not built yet</pre></td>
+</tr>
+<tr>
+<td><pre>11191</pre></td>
+<td><pre>2017-11-18</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* net mon fix for non-ta items with sub-members -- need base offset
+* #SHOW on #GUI_READ_ONLY items in state
+</pre></td>
+</tr>
+<tr>
+<td><pre>11192</pre></td>
+<td><pre>2017-11-18</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* CRITICAL fix for mpi -- any randomness in projection code must pass thr_no = 0 for
+the random generator to ensure that different mpi processors get the same connectivity --
+otherwise each dmem proc will have a different network due to -1 defaulting to dmem_proc -- and that is very bad -- was causing problems with WWI_emer uniform rnd prjns -- this was
+not a new bug -- has been there forever!  yikes!
+* also fixed FindMemberPathStatic to put all the offset stuff in the net_base_off so
+you can just use md-&gt;off relative to that accumulated base offset, instead of accumulating
+on the memb off itself.  This should fix unit group monitor.
+</pre></td>
+</tr>
+<tr>
+<td><pre>11193</pre></td>
+<td><pre>2017-11-18</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* TestUnitGroups test project -- 10/10 batches should learn within 40 epochs
+* init prerr stats
+* ungp[-1] special case for - char
+</pre></td>
+</tr>
+<tr>
+<td><pre>11194</pre></td>
+<td><pre>2017-11-18</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* CRITICAL fixes to LeabraFlex ConfigNetwork -- MUST call BatchSameSeed before Build if
+any random connectivity is being used -- basically all prior experiments with random
+connectivity have been doomed to fail when running on dmem (i.e., all such lvis expts)
+* also update other std templates while at it to remove load warnings
+</pre></td>
+</tr>
+<tr>
+<td><pre>11195</pre></td>
+<td><pre>2017-11-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* Added SymmetricPrjnSpec -- can create symmetric inverse of any projection!
+* but it needs to pre-allocate connections -- no way to empirically determine them given
+way connections work..
+* added PrjnConStats (recv_con_stats, send_con_stats) to PrjnState / Projection -- tells
+you the max size, max alloc, and proportions of those and size relative to layer size -- can
+be used to tune symmetricprjnspec..
+* changed prjn-&gt;GetRecv/SendLayerState -&gt; GetRecv/SendLayer -- consistent with ConState
+* may need to do make clean_ta_leabra and/or clean_ta_network to get everything to build
+depending on your prior build state..
+</pre></td>
+</tr>
+<tr>
+<td><pre>11196</pre></td>
+<td><pre>2017-11-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* added prompt arg to Replace*Spec methods and report info if spec is replaced, and add to Network Spec menu, and add #DYN1 for operating on selected items
+* added ComputeHash and DMem_ConfirmHash to Network -- positive confirmation that networks
+are identical across dmem processors.  should save a lot of time in the future!
+</pre></td>
+</tr>
+<tr>
+<td><pre>11197</pre></td>
+<td><pre>2017-11-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fixup of dmem code from blanca</pre></td>
+</tr>
+<tr>
+<td><pre>11198</pre></td>
+<td><pre>2017-11-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>try a different SHA hash -- sha3 seems to be opening a widget??
+</pre></td>
+</tr>
+<tr>
+<td><pre>11199</pre></td>
+<td><pre>2017-11-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Ditch QCyrptographicHash which seems somehow broken on blanca, always insisting on opening
+a widget -- using a simple sha3 impl.
+</pre></td>
+</tr>
+<tr>
+<td><pre>11200</pre></td>
+<td><pre>2017-11-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>mv FindGSL to windows for backup but the native FindGSL is going to be better and is only thing that works on blanca</pre></td>
+</tr>
+<tr>
+<td><pre>11201</pre></td>
+<td><pre>2017-11-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>sheesh was probably just a segfault from using Recv instead of Send..</pre></td>
+</tr>
+<tr>
+<td><pre>11202</pre></td>
+<td><pre>2017-11-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>another bug fix</pre></td>
+</tr>
+<tr>
+<td><pre>11203</pre></td>
+<td><pre>2017-11-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>add FindGSL.cmake from blanca</pre></td>
+</tr>
+<tr>
+<td><pre>11204</pre></td>
+<td><pre>2017-11-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>findgsl don't load std args</pre></td>
+</tr>
+<tr>
+<td><pre>11205</pre></td>
+<td><pre>2017-11-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>new version of timing code -- last major thing to be converted..
+</pre></td>
+</tr>
+<tr>
+<td><pre>11206</pre></td>
+<td><pre>2017-11-21</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for bug 3571
+</pre></td>
+</tr>
+<tr>
+<td><pre>11207</pre></td>
+<td><pre>2017-11-21</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Increase maximum epochs in TestUnitGroups project to 60 epochs.
+Hook up test project into automated test framework.
+Tests for maximum epoch &lt; 50, mean epoch &lt; 40 and mode &lt; 35
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>11208</pre></td>
+<td><pre>2017-11-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>massive speedup in Compute_Weights by storing wt_bal inc/dec factors in synapse -- also optimized wt sig for 61 defaults</pre></td>
+</tr>
+<tr>
+<td><pre>11209</pre></td>
+<td><pre>2017-11-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>wwi benchmarking results -- major speedup</pre></td>
+</tr>
+<tr>
+<td><pre>11210</pre></td>
+<td><pre>2017-11-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* use direct flat_idx on unit instead of going out to network
+</pre></td>
+</tr>
+<tr>
+<td><pre>11211</pre></td>
+<td><pre>2017-11-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>BrowserSelectMe object whose spec is being prompted about in replace spec functions -- much better for seeing what is going on</pre></td>
+</tr>
+<tr>
+<td><pre>11212</pre></td>
+<td><pre>2017-11-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>updated bench results -- NETIN_PER_PRJN is slow -- turn off for big vision models -- getting nearly linear threading perf now</pre></td>
+</tr>
+<tr>
+<td><pre>11213</pre></td>
+<td><pre>2017-11-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>some progress on lesioning -- can now dynamically lesion / unlesion layers and everything seems to work as expected
+* but lesioning units produces crazy net inputs.. no idea yet.
+* and although I did many things to fix prjn_idx's, still haven't fixed multimod proj..
+</pre></td>
+</tr>
+<tr>
+<td><pre>11214</pre></td>
+<td><pre>2017-11-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>MAJOR fixes to lesion code:
+* Layer-level lesion of a built layer MUST call Lesion() on all of its units b/c MANY
+routines enter directly at the unit level!  and unlesion for unlesion..
+* Likewise, Unit-level Lesion must inactivate all of its con groups, b/c that is another direct
+entry point.
+* Both of the above were major oversights in existing code -- not sure how I missed this before
+but it means that lesioned layers were likely learning and doing lots of unit-level processing --
+prior to the threading re-write everything did go through the layer-level and so it would have
+worked then, but not since the threading rewrite..  yikes!
+* Moved the netin rescaling factors to LeabraPrjnState instead of ConState -- b/c it was
+computed recv-side, then copied to senders, it means that effectively a single scale factor
+was used for all projections, but not deterministically so... now it is deterministic, and we save on re-computing the scaling factor redundantly over-and-over again, and copying it out to the con groups.  not a major cost but anyway, this is much more sensible.  and it fixes a specific bug when the first unit in the layer was lesioned, as most keyed off of that one..
+</pre></td>
+</tr>
+<tr>
+<td><pre>11215</pre></td>
+<td><pre>2017-11-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fixed prjn_idx issue with obj_name_2d_www.proj -- there were duplicates already in the
+send_prjns, and while the code prevents adding any NEW dupes, it did not eliminate any
+existing ones -- now does that.
+* finally converted Projections_Group -&gt; _List which all the code assumes -- now safer
+</pre></td>
+</tr>
+<tr>
+<td><pre>11216</pre></td>
+<td><pre>2017-11-25</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Try and test for leasioning layers.
+
+first test to check if weights remain unchanged when the network is run while a layer is leasioned.
+
+Doesn't yet work, so remains commented out
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>11217</pre></td>
+<td><pre>2017-11-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Hopefully the last word on lesioning -- very fiddly..
+* Projections can now be lesioned / unlesioned -- this properly inactivates both sides of the
+connection state (send &amp; recv)
+* layer lesions its send and recv projections, which gets the both-sides effects
+* Compute_dWt in leabra now must check if ru is lesioned -- seems to have no perf effects
+b/c we're already reading the recv unitstate -- prevents learning even for UnitState lesions
+which only get one side of the constate..
+* logic all documented here: https://grey.colorado.edu/emergent/index.php/Lesion
+* updated TestLesionLayer (incl fixing spelling!) to just automatically save init weigths
+in TrainStart and then lesion the Hidden_copy layer, and then unlesion and save final
+weights in TrainEnd..  tested it and it works.. not the most flexible way to do it
+but it worked -- Kai feel free to make it more general with functions etc.
+</pre></td>
+</tr>
+<tr>
+<td><pre>11218</pre></td>
+<td><pre>2017-11-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* bump version to 8.3.0 -- plan to release at 8.5.0 (could be 9 but I like 8 a lot better :) with the cuda stuff all working
+</pre></td>
+</tr>
+<tr>
+<td><pre>11219</pre></td>
+<td><pre>2017-11-26</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* don't have defaults for LeabraChannels -- resets everything to 0
+* init.vm = .4 default
+</pre></td>
+</tr>
+<tr>
+<td><pre>11220</pre></td>
+<td><pre>2017-11-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* shade not-enabled items in WhereUsed report (iDialogList) and in diff compare output -- makes
+it easier to see what is actually relevant
+* use Qt Qcolor name lookup first, then our own list (not sure if we still need that but keeping
+just in case)
+* update threading benchmark projects -- not likely to be very comparable but anyway
+</pre></td>
+</tr>
+<tr>
+<td><pre>11221</pre></td>
+<td><pre>2017-11-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* trc.clamp_net for TRC layers -- maybe better?
+* just skip name members of owned objects -- couldn't get them to show up as RO without
+modifying type info which then spreads to everything else -- see Bug 3579
+</pre></td>
+</tr>
+<tr>
+<td><pre>11222</pre></td>
+<td><pre>2017-11-27</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Enable lesioning tests and some more minor fixes
+
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>11223</pre></td>
+<td><pre>2017-11-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>cuda cleanup</pre></td>
+</tr>
+<tr>
+<td><pre>11224</pre></td>
+<td><pre>2017-11-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>compile fix
+</pre></td>
+</tr>
+<tr>
+<td><pre>11225</pre></td>
+<td><pre>2017-11-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* checks for bias spec to be of correct type, and also double-checks in specs indexing for
+correct type -- catches the bug with John's project..
+</pre></td>
+</tr>
+<tr>
+<td><pre>11226</pre></td>
+<td><pre>2017-11-30</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>First iteration of new NetText display 
+ - still uses Network UserData (update on reopening project - not worth fixing as we are moving away from UserData anyway)
+ - additional checkbox on NetView control panel (center frame) so you can turn the old and new
+ versions on/off independently
+</pre></td>
+</tr>
+<tr>
+<td><pre>11227</pre></td>
+<td><pre>2017-11-30</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Remove net_state_text String from taMisc, left over from toolbar version.
+</pre></td>
+</tr>
+<tr>
+<td><pre>11228</pre></td>
+<td><pre>2017-11-30</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Dynamically changing layer types from target to hidden for ScalarValLayer didn't take effect.
+
+There is still an issue with LeabraLayerSpec starting in hidden and then dynamically switching to target
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>11229</pre></td>
+<td><pre>2017-12-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* Init_InputData resets layer ext_flags in addition to LayerState -- layer is #MAIN source of ext_flags so otherwise the sync was causing it to go the other way
+* first pass impl of K-Na adaptation -- strongly supported biologically and has multiple time constants to support very relevant effects.  need to explore param space now.
+</pre></td>
+</tr>
+<tr>
+<td><pre>11230</pre></td>
+<td><pre>2017-12-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>IMPORTANT additions and changes to basic activation dynamics in leabra
+* critical fix of bad oscillatory dynamic that can arise if a neuron is active and then goes back down in activity, below the threshold where we use vm - act.thr instead of the gelin g_e - g_e_thr -- those two transition nicely on the way UP but NOT on the way back down! Now including a new vm_act_thr param that checks if act_raw is already above this threshold, then don't use vm - act.thr.  actually I forgot to test this on other projs so I'll do that now and do another
+checkin with validated params here.
+* major improvement in computing a rate-code equivalent (act_eq, act_nd) from discrete spiking -- now updating an estimate of the average *spike interval* (new var: spike_int) over time, and then computing the spike rate from that..  looks great.  goes up immediately (but overall
+act is time averaged to smooth off the edges) but decays slowly..
+* exponential ex factor is NOT used in rate-code case -- doesn't make sense at all there..
+* allows spike_misc to be hidden for non-SPIKE case.
+* replaced previous adaptation mechanism from AdEx with 3 time constant (fast, med, slow) adaptation mechanism based on Na-gated K channels, which generate hyperpolarizing currents of various durations -- defaults tuned to fit data from Muller et al and broadly many typical PSTH data in cortex.
+* however: need to re-tune those params in presence of standard inhib dynamics, and then finally
+figure out how to combine learning with this adaptation mech dynamics..  probably need a separate calcium-like signal instead of using raw activation.
+</pre></td>
+</tr>
+<tr>
+<td><pre>11231</pre></td>
+<td><pre>2017-12-01</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Just a checkpoint.
+</pre></td>
+</tr>
+<tr>
+<td><pre>11232</pre></td>
+<td><pre>2017-12-01</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Add a test for dynamically switching layers from TARGET to HIDDEN and check if
+the there are or are not any differences between plus and minus phases
+
+Tests standard LeabraLayer and ScalarValLayer
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>11233</pre></td>
+<td><pre>2017-12-02</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>The new net_state_var list in the iViewPanelOfNetwork that allows you to choose and order the vars that will be
+displayed in the replacement for NetText now allows you to reorder the list.
+- I was using a QTreeWidget but that had the problem of not acting like list and so drops on items became children.
+- Then I tried a QListWidget but that doesn't have a header and for other reasons as well...
+- I decided to implement my own subclass of QTreeWidget that would be a tree but act like a list
+- Took forever to figure out how to handle drops on items so that they would really be like drops above item
+</pre></td>
+</tr>
+<tr>
+<td><pre>11234</pre></td>
+<td><pre>2017-12-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* taMisc::edit_width_float, _int -- specified max width of edit field for float, int numbers --
+keeps specs much more compact and prevents them from expanding to widest guy
+* iLineEdit max width also sets a min width of half the max -- gives some flex
+* #WIDTH_n directive can be used for any numeric field to specify a non-default edit width
+* fix graph view ledgend issues -- wasn't including alt_y axes for char width
+* new control panel members call SetCtrlType
+* NetMonItem -- parse units.varnm correctly
+</pre></td>
+</tr>
+<tr>
+<td><pre>11235</pre></td>
+<td><pre>2017-12-02</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Solution for update on reordering rows of net state variables
+</pre></td>
+</tr>
+<tr>
+<td><pre>11236</pre></td>
+<td><pre>2017-12-03</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>- Removed much of the old net_text code
+- Add a little space after checkbox labels in the net view control panel
+</pre></td>
+</tr>
+<tr>
+<td><pre>11237</pre></td>
+<td><pre>2017-12-03</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Order of net state vars in selection list now saved with project
+</pre></td>
+</tr>
+<tr>
+<td><pre>11238</pre></td>
+<td><pre>2017-12-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* read-only float fields also use same width constraints
+* legend for width != 1 graphs now fixed -- turns out graphline automatically incorporates width
+so we were double-counting
+* added a vm_cyc param to allow multiple iterations of vm update (beyond basic midpoint) -- didn't fix my oscillation problem but good to have around -- spiking might benefit from it.
+</pre></td>
+</tr>
+<tr>
+<td><pre>11239</pre></td>
+<td><pre>2017-12-03</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>- Reverse order of network state vars - were backwards
+- Tab now labeled "State Values" instead of "Net State Values"
+- all variables renamed from "net_state..." to "state..."
+- add full_state_vals to InitLinks/CutLinks
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>11240</pre></td>
+<td><pre>2017-12-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>k_na adaptation now can be applied to hard clamped inputs
+</pre></td>
+</tr>
+<tr>
+<td><pre>11241</pre></td>
+<td><pre>2017-12-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>New default for inhib fb_tau = 3 instead of 1.4 -- 3 needed for adaptation and is tiny bit
+better in WWI at start of learning -- otherwise 3 or even 5 has no detectable effects on
+ss relative to 1.4, but on lvis_fix8 1.4 seems to be better..
+</pre></td>
+</tr>
+<tr>
+<td><pre>11242</pre></td>
+<td><pre>2017-12-04</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>- Remove UserData items from Network UserData list
+- Set default network state vars that will display in NetView panel
+(batch, epoch, trial, quarter, cycle, sse, trial name, output name)
+-- no quarter state for BP project
+</pre></td>
+</tr>
+<tr>
+<td><pre>11243</pre></td>
+<td><pre>2017-12-04</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>- Bump version to 8.3.1
+- If project is older than 8.3.1 Network UserData is removed and the net view display
+is populated with the defaults (batch, epoch, trial ...)
+</pre></td>
+</tr>
+<tr>
+<td><pre>11244</pre></td>
+<td><pre>2017-12-04</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>- Simplify - pass state name/value strs in String_Array - avoids parsing
+- Next to do - if only a change in value just call SetText() on label
+</pre></td>
+</tr>
+<tr>
+<td><pre>11245</pre></td>
+<td><pre>2017-12-04</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>- If only updating state values just set the label text string
+</pre></td>
+</tr>
+<tr>
+<td><pre>11246</pre></td>
+<td><pre>2017-12-04</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Add tooltip to state display labels to direct users on how to add and remove states from display
+</pre></td>
+</tr>
+<tr>
+<td><pre>11247</pre></td>
+<td><pre>2017-12-04</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>update state_labels if state_strs.size != count</pre></td>
+</tr>
+<tr>
+<td><pre>11248</pre></td>
+<td><pre>2017-12-04</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* Fixed layer_type switching *test project* -- problem was AutoConfig of the ApplyInputs
+layer writer -- it auto-configs at Init time based on whatever flags are set on the network --
+best to just toggle AutoConfig off if you're using dynamic layer_type's
+* uae for list after get value -- was not being reached when elements not being shown
+</pre></td>
+</tr>
+<tr>
+<td><pre>11249</pre></td>
+<td><pre>2017-12-04</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>- Randy's solution for only updating state_labels is better - Removing ResetStatInfo()
+- A couple of SetToolTip calls were missing taiMisc::ProcessToolTip which forces wrapping
+</pre></td>
+</tr>
+<tr>
+<td><pre>11250</pre></td>
+<td><pre>2017-12-04</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>- use taiM-&gt;label_height(taiMisc::sizMedium) for net state labels so the label widget height changes
+along with the font size change
+- reduce width of net state labels by 10 pixels
+</pre></td>
+</tr>
+<tr>
+<td><pre>11251</pre></td>
+<td><pre>2017-12-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>invert_nd option for adaptation -- computes act_nd with an "inversion" of the adaptation effect -
+this var is then used in generating avg_* vars used in learning -- seems to work!!
+</pre></td>
+</tr>
+<tr>
+<td><pre>11252</pre></td>
+<td><pre>2017-12-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>new default params for slow adapt</pre></td>
+</tr>
+<tr>
+<td><pre>11253</pre></td>
+<td><pre>2017-12-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>LeabraUnitTest fixes -- remove adapt</pre></td>
+</tr>
+<tr>
+<td><pre>11254</pre></td>
+<td><pre>2017-12-06</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>- The widgets with separate labels were using a different font size than others, like QCheckbox or QPushButton --
+font size now consistent for all labels
+- A couple of widgets had no space added after the widget
+- As easy to fix as to file a bug
+</pre></td>
+</tr>
+<tr>
+<td><pre>11255</pre></td>
+<td><pre>2017-12-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fix to GetUnFlatXYIdx -- was not handling unit group case properly
+* major fixes to VarToTable and NetMonItem for dealing properly with connection-level monitors
+(r.wt, etc) -- was not properly dealing with unit group case -- needed to get flat idx, and use
+starting indexes properly, and exclude the unit-level column..
+</pre></td>
+</tr>
+<tr>
+<td><pre>11256</pre></td>
+<td><pre>2017-12-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>new form of wt_balance - IMPORTANT: not recommend to up update yet b/c I need to find good
+params and will update version and auto-update default params after testing..
+</pre></td>
+</tr>
+<tr>
+<td><pre>11257</pre></td>
+<td><pre>2017-12-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>also include a wt_bal factor based on act_avg -- this is the stat we use for hogging!
+</pre></td>
+</tr>
+<tr>
+<td><pre>11258</pre></td>
+<td><pre>2017-12-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* added pre_hog threshold and stats -- useful for seeing how units on the bubble are developing..
+* wt_bal and wt_fact stats using AvgMax so we can see exactly what is going on, broken out by hog, pre_hog and all
+* new wt_bal code -- previous had critical error in not only applying to above-threshold case -- now has two threshold params which allows replication of previous type, which we can now document -- new kind didn't work yet on WWI
+* another fix for NetMonItem -- wasn't naming prjn mons with sub-vars (.avg .max) properly..
+</pre></td>
+</tr>
+<tr>
+<td><pre>11259</pre></td>
+<td><pre>2017-12-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>wt_bal: relative threshold option -- otherwise weights are very different..
+</pre></td>
+</tr>
+<tr>
+<td><pre>11260</pre></td>
+<td><pre>2017-12-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>wt_bal: norm relative to overall max all the time -- much more stable and sensible
+</pre></td>
+</tr>
+<tr>
+<td><pre>11261</pre></td>
+<td><pre>2017-12-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* wt_bal: relative is hopeless -- need a hard threshold -- but turning off norm_all makes things
+very consistent across projections so that's good -- simplified code back down.  act_avg is
+looking pretty good too.
+</pre></td>
+</tr>
+<tr>
+<td><pre>11262</pre></td>
+<td><pre>2017-12-07</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>- net state display items can now be resized - click on item to get a dialog box to specify size
+- rewrite of some underlying net state display code to only update the list order if an item actually moves
+- version update to 8.3.2
+</pre></td>
+</tr>
+<tr>
+<td><pre>11263</pre></td>
+<td><pre>2017-12-07</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Add variable name to prompt string
+</pre></td>
+</tr>
+<tr>
+<td><pre>11264</pre></td>
+<td><pre>2017-12-08</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Remove connect call to obsolete slot
+</pre></td>
+</tr>
+<tr>
+<td><pre>11265</pre></td>
+<td><pre>2017-12-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* taBase::StructUpdateClear() -- call this in Programs before a StructUpdate begin bracket -- clears out any unresolved prior end's -- in C++ code we don't usually know if the obj is part of some larger embedded updates so this is only for certain outer-most loops which is usually in a Program.  !OBJS_UPDT_GUI case in Program automatically calls this to fix updating issues.
+* no_targ flags for weight balance and adaptation functions -- in general these should not apply
+to TARGET output layers or to TRC layers, so this makes that automatic
+* updated wt_bal params -- converging on effective params here and new version is stabilizing
+and allowed WWI to learn with V1 adaptation, so this is starting to look good!
+* also update ss_tau default to 4 and comments about param values for all such taus reflecting recent expts
+* fix a ;; in NetView.h that bothered maketa
+</pre></td>
+</tr>
+<tr>
+<td><pre>11266</pre></td>
+<td><pre>2017-12-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* bump version to 8.3.3
+* new wt_bal defaults working well on all tested cases: hi_gain = 3, act_gain = 2 (hi_thr=0.6, act_thr = 0.25)
+</pre></td>
+</tr>
+<tr>
+<td><pre>11267</pre></td>
+<td><pre>2017-12-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix for crashing -- can't call Defaults() within a UAE as it triggers a UAE itself.. always test!
+</pre></td>
+</tr>
+<tr>
+<td><pre>11268</pre></td>
+<td><pre>2017-12-11</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>- Size of net state fields now in characters
+- version bumped to 8.3.4
+- UAE checks and converts pixels to chars, though this probably is only an issue for a few projects
+</pre></td>
+</tr>
+<tr>
+<td><pre>11269</pre></td>
+<td><pre>2017-12-11</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>FindName methods on lists now take an optional start_idx arg -- does bidirectional search from that point -- can massively speed up finding if you have any hint of where it might appear -- unfortunately was not the major ratelimiting factor in EpochCompare</pre></td>
+</tr>
+<tr>
+<td><pre>11270</pre></td>
+<td><pre>2017-12-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* move layer names up a bit, and restrict max height so always looks ok even with 1 unit network
+* sigemitupdated on rename column
+* GPiInvUnitspec: dt.net_tau = 3 by default -- much better for PBWM nets..
+</pre></td>
+</tr>
+<tr>
+<td><pre>11271</pre></td>
+<td><pre>2017-12-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>cleanup mistaken edit</pre></td>
+</tr>
+<tr>
+<td><pre>11272</pre></td>
+<td><pre>2017-12-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>da mod gain option</pre></td>
+</tr>
+<tr>
+<td><pre>11273</pre></td>
+<td><pre>2017-12-13</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>This is a temporary fix for Net Text history.
+- Need to rethink history which currently stores a matrix of Strings in a fixed order matching
+the order of members in the Network class but now users can reorder the display of items.
+- Also, the save history code is going through the entire list of Network members every time it saves and
+checking for the VIEW directive when that list has already been created at startup in the new
+code for net text.
+- The temporary fix is to go through the list yet again to get the index to get the value! I could build
+a lookup table but that is just a slightly better bad idea!
+</pre></td>
+</tr>
+<tr>
+<td><pre>11274</pre></td>
+<td><pre>2017-12-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* major speedup by replacing QTime with TimeUsedHR in cssProg::Cont() test for whether the
+gui update should happen -- a factor of 2x faster in LeabraStd size of project, and proportionally faster for smaller networks..
+* experimented extensively with additional overhead of StopCheck, which calls the pending
+events loop -- not that big of an extra cost in LeabraStd -- and in neuron.proj the MAIN cost
+after getting rid of above is redrawing the graph.. should expt with using 3d objs instead
+of lines -- modern chips are highly optimized for 3d and NOT lines which are kind of a relic -- not even really supported in modern opengl api I think..  meanwhile netview is actually quite
+fast without the above extra delays (again 3d faster..)
+* added timer to Programs -- automatically tracks time used in each program -- very handy!
+* added monitor and mon_data to Network -- John to plug into net text -- even from basic
+testing this really seems like it could be handy -- e.g., just seeing average activations
+across layers, netmax -- hard to guesstimate those from visual display so having numbers there
+should be great.
+</pre></td>
+</tr>
+<tr>
+<td><pre>11275</pre></td>
+<td><pre>2017-12-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* add TIMING flag to Programs -- gives a report on console of time used each time run --
+convenient for high-level functions of interest.. too much output for tight inner ones.. great
+for optimizing EpochCompare..
+* reset average data during Init
+</pre></td>
+</tr>
+<tr>
+<td><pre>11276</pre></td>
+<td><pre>2017-12-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>forgot to initialize new da_mod gain mod params</pre></td>
+</tr>
+<tr>
+<td><pre>11277</pre></td>
+<td><pre>2017-12-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>param notes updates</pre></td>
+</tr>
+<tr>
+<td><pre>11278</pre></td>
+<td><pre>2017-12-15</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Add Network cycle monitor items to NetView state items and display
+- state tracking code completely rewritten to accomodate non Network member items
+- new implementation much simpler!
+- history code a bit simpler and the history list isn't rebuilt each time from Network members,
+just uses the state_items list
+- saving history time reducded from .14 millisecondss to .03 milliseconds
+- the network monitor items in state display are also kept in history
+- projects in the 8.3.2 to 8.3.4 range will lose the state item information - sorry
+</pre></td>
+</tr>
+<tr>
+<td><pre>11279</pre></td>
+<td><pre>2017-12-16</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for bug 3607 - AddNetwork, AddLayer, AddProjection dialogs not completing the variable field
+- arguments to these methods changed from net, lay and prj to network, layer and projection because they make
+better field labels and there is plenty of room
+</pre></td>
+</tr>
+<tr>
+<td><pre>11280</pre></td>
+<td><pre>2017-12-17</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Add column for display width to Net State tab of Network view controller panel
+- made sure it updates when changed in NetView
+- next is to make the width editable in the view controller panel
+</pre></td>
+</tr>
+<tr>
+<td><pre>11281</pre></td>
+<td><pre>2017-12-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>lo threshold and gain for wt bal</pre></td>
+</tr>
+<tr>
+<td><pre>11282</pre></td>
+<td><pre>2017-12-17</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>- Net State item width can now be edited from the view control panelm - phew
+- Tool tips added to all columns
+</pre></td>
+</tr>
+<tr>
+<td><pre>11283</pre></td>
+<td><pre>2017-12-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* new weight balance params for lo_thr, gain: .6 and 6 are best -- really improve lvis but
+are actually worse for WWI -- exploring that more.
+* fixes for unit / con access functions
+</pre></td>
+</tr>
+<tr>
+<td><pre>11284</pre></td>
+<td><pre>2017-12-20</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>NetView gets notifications from NetMonitorItems_List so we can keep the state vars up to date
+</pre></td>
+</tr>
+<tr>
+<td><pre>11285</pre></td>
+<td><pre>2017-12-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fix to TiledGpRFPrjnSpec -- way of computing gp_idx was not correct -- MAY fix diffs
+with the WWI_emer model..  surprized lvis was fine..
+* updated param defaults for inhib.gp_tau
+* fix for John's AddSigLinkClient -- only do it once in the InitLinks, not in build, and also add appropriate CD's for the stale flag -- didn't test however!
+</pre></td>
+</tr>
+<tr>
+<td><pre>11286</pre></td>
+<td><pre>2017-12-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* netin scaling is updated AFTER computing deep context netin in old code -- switched that
+order
+* also update projections after Quarter_Init because scale_eff is updated then
+</pre></td>
+</tr>
+<tr>
+<td><pre>11287</pre></td>
+<td><pre>2017-12-26</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Experiment - set AutoScroll to false
+</pre></td>
+</tr>
+<tr>
+<td><pre>11288</pre></td>
+<td><pre>2017-12-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* LeabraConSpec: added dwt_noise and noise params for adding random noise to dwt changes -- attempt to replicate weird effects of uniform rnd prjn on mpi -- perhaps best for top-down cons?
+* updated wt_bal defaults: avg_thr = 0.25 makes more sense than higher threshold -- don't want to specifically penalize strong high weights -- only want to exclude contrast-enhancing reduction in smaller weights -- at .25 with typical init weights can use orig hi thr .4 gain 4, low works well at .4 gain 6. -- empirically this seems best for main test cases
+* UniformRndPrjnSpec: p_con = 1 works exactly like FullPrjn -- easier than switching specs -- and add back the crazy dmem behavior while testing for replacements
+</pre></td>
+</tr>
+<tr>
+<td><pre>11289</pre></td>
+<td><pre>2017-12-27</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Most of the fix for bug 3583 - completer not working for NetMonItem variable for new state variables
+-- Had to change a couple of APIs to pass current text so lots of files were touched
+-- units[n-n] units[n-n][n-n] and ungp[n-n] all complete in arg dialog and property dialog
+-- parsing code for these special cases is in ProgExprBase
+-- still need to plug in call to ctrl-L lookup case
+-- still need to plu in call to inline editing of code
+</pre></td>
+</tr>
+<tr>
+<td><pre>11290</pre></td>
+<td><pre>2017-12-27</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Update lookupKeyPressed() code to handle units[n], etc
+</pre></td>
+</tr>
+<tr>
+<td><pre>11291</pre></td>
+<td><pre>2017-12-28</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Inline editing now completes for network.layers.SomeLayer.units[...] and similar
+- but network.layers.SomeLayer.units[...].i_val.g_i (for example) doesn't complete
+- in other words works for direct member of UnitState or UnGpState but not member of member so
+a bit more to do
+- should be easy to generalize now for other convenience names!
+</pre></td>
+</tr>
+<tr>
+<td><pre>11292</pre></td>
+<td><pre>2017-12-28</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Simpler parsing
+</pre></td>
+</tr>
+<tr>
+<td><pre>11293</pre></td>
+<td><pre>2017-12-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>apply dwt_noise with cur_lrate
+</pre></td>
+</tr>
+<tr>
+<td><pre>11294</pre></td>
+<td><pre>2017-12-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Analysis of weight changes in WWI_emer model suggest high-frequency of zero dwt's, then
+gaussian distribution of rest -- added dwt_noise_p0 = 0.7 default to capture this distribution,
+noise default = GAUSSIAN, var=.005 -- that matches initial dwts in WWI -- possibly get larger
+dwt's as learning proceeds, so try range between .01 and .005
+</pre></td>
+</tr>
+<tr>
+<td><pre>11295</pre></td>
+<td><pre>2017-12-31</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Change duplicate behavior to keep duplicate items together when inserting.
+</pre></td>
+</tr>
+<tr>
+<td><pre>11296</pre></td>
+<td><pre>2018-01-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>use total_trials instead of trial_no for Compute_Weights_Test -- much more reliable</pre></td>
+</tr>
+<tr>
+<td><pre>11297</pre></td>
+<td><pre>2018-01-03</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix - keyboard shortcuts bug 3617 - the shortcuts were actually getting saved properly
+but actually deleted on loading!
+- FindKeySequence should have been returning not found for all empty key sequences. This
+bug has certainly been there since I wrote the code a couple of years ago!
+</pre></td>
+</tr>
+<tr>
+<td><pre>11298</pre></td>
+<td><pre>2018-01-03</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>FindPair() - test should be the same whether searching backwards or forwards
+</pre></td>
+</tr>
+<tr>
+<td><pre>11299</pre></td>
+<td><pre>2018-01-04</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Remove dead NetText drag code
+</pre></td>
+</tr>
+<tr>
+<td><pre>11300</pre></td>
+<td><pre>2018-01-05</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Change styling on BitBox checkboxes - coloring the checkbox gray and leaving the text black
+- Certainly more readable but is it enough to clue the user?
+</pre></td>
+</tr>
+<tr>
+<td><pre>11301</pre></td>
+<td><pre>2018-01-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>add the E_API to all _cpp.h class definitions -- nothing extra required -- gets the macro
+from somewhere ok apparently.. that was easy -- we'll see what windows says..
+</pre></td>
+</tr>
+<tr>
+<td><pre>11302</pre></td>
+<td><pre>2018-01-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* remove crazy option from UniformRndPrjn -- done exploring that weirdness for now..
+* remove extra unused LAY_FLAG_'s and make hidden
+* fix read only for iCheckBox -- setEnabled is the right way to do this, plus a style color: black to keep it from going grey -- problem was that CONDEDIT case in bits was overwriting the
+read only setting -- need to cache the bit_on flag.
+* update version to 8.5.0 in prep for impending release
+* updated to Qt 5.9.3 -- updated packager for that -- but now getting crash on exit.. :(
+</pre></td>
+</tr>
+<tr>
+<td><pre>11303</pre></td>
+<td><pre>2018-01-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>windows compile for mtrnd</pre></td>
+</tr>
+<tr>
+<td><pre>11304</pre></td>
+<td><pre>2018-01-06</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Catch changes to NetMonItem_List, update monitors data table and notify NetView BUT only for the network's owned monitor.
+</pre></td>
+</tr>
+<tr>
+<td><pre>11305</pre></td>
+<td><pre>2018-01-06</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>The OO way!
+</pre></td>
+</tr>
+<tr>
+<td><pre>11306</pre></td>
+<td><pre>2018-01-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* touch AllProjectionSpecs.h (add a space) -- need to touch this whenever a constituent
+.h file needs to be re-scanned by maketa!  gotta remember that!
+* new emergent_install_mac_deps script using svn from homebrew
+</pre></td>
+</tr>
+<tr>
+<td><pre>11307</pre></td>
+<td><pre>2018-01-06</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Clear breakpoint of copy - bug 3569
+</pre></td>
+</tr>
+<tr>
+<td><pre>11308</pre></td>
+<td><pre>2018-01-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>#ifdef __MAKETA__ for maketa #pragma's -- windows doesn't like them..
+</pre></td>
+</tr>
+<tr>
+<td><pre>11309</pre></td>
+<td><pre>2018-01-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>all the crap required to build on windows.. hate this platform.. :(</pre></td>
+</tr>
+<tr>
+<td><pre>11310</pre></td>
+<td><pre>2018-01-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* updated proj templates and demo projs
+* kna_misc.clamp and invert_nd functions properly conditional on kna_adapt.on
+and updated param notes and defautlts
+* attempted fix for net state text width scaling on windows -- boxes were super wide
+</pre></td>
+</tr>
+<tr>
+<td><pre>11311</pre></td>
+<td><pre>2018-01-07</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Possible fix for crash on quit
+</pre></td>
+</tr>
+<tr>
+<td><pre>11312</pre></td>
+<td><pre>2018-01-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>another attempt to fix windows -- use width of 'm' instead of maxWidth which is returning absurdly large value on windows</pre></td>
+</tr>
+</table>
+</body></html>

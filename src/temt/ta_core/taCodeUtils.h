@@ -1,4 +1,4 @@
-// Copyright 2017, Regents of the University of Colorado,
+// Copyright 2013-2017, Regents of the University of Colorado,
 // Carnegie Mellon University, Princeton University.
 //
 // This file is part of The Emergent Toolkit
@@ -82,8 +82,10 @@ public:
 					  const String& src_dir);
   // #CAT_File create all new source files for an existing type -- just calls TypeDef version of this
 
-  static String GetCurSvnRevYear(const String& filename);
+  static String GetCurSvnRevYear(const String& filename, int& last_change_rev);
   // #CAT_File get current year of last svn revision of given file
+  static String GetFirstSvnRevYear(const String& filename, int last_change_rev);
+  // #CAT_File get year of first svn revision of given file
   static bool	CopyrightUpdateFile(const String& filename);
   // #CAT_File update copyright year in given file, based on svn info or current year
   static bool	CopyrightUpdateDir(const String& top_path, const String& src_dir);

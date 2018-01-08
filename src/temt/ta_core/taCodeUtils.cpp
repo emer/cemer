@@ -1,4 +1,4 @@
-// Copyright 2017, Regents of the University of Colorado,
+// Copyright 2013-2017, Regents of the University of Colorado,
 // Carnegie Mellon University, Princeton University.
 //
 // This file is part of The Emergent Toolkit
@@ -1133,14 +1133,14 @@ bool taCodeUtils::CreateNewSrcFilesExisting(const String& type_nm, const String&
   return true;
 }
 
-String taCodeUtils::GetCurSvnRevYear(const String& filename) {
+String taCodeUtils::GetCurSvnRevYear(const String& filename, int& last_change_rev) {
   String yr = QDate::currentDate().toString("yyyy");
 
   SubversionClient svn_client;
   int rev = 0;
   int kind = 0;
   String root_url;
-  int last_change_rev = 0;
+  last_change_rev = 0;
   int last_changed_date = 0;
   String last_changed_author;
   int64_t sz = 0;
@@ -1165,11 +1165,79 @@ String taCodeUtils::GetCurSvnRevYear(const String& filename) {
   return yr;
 }
 
+String taCodeUtils::GetFirstSvnRevYear(const String& filename, int last_change_rev) {
+  String yr = "2017";
+
+  SubversionClient svn_client;
+  // now try to find prior revision!
+  int_PArray    revs_good;       // one per rev -- revision number
+  int_PArray    revs;            // one per rev -- revision number
+  String_PArray commit_msgs;     // one per rev -- the commit message
+  String_PArray authors;         // one per rev -- author of rev
+  int_PArray    times_good;      // one per rev -- time as secs since 1970
+  int_PArray    times;           // one per rev -- time as secs since 1970
+  int_PArray    files_start_idx; // one per rev -- starting index in files/actions
+  int_PArray    files_n;    // one per rev -- number of files in files/actions
+  String_PArray files;      // raw list of all files for all logs
+  String_PArray actions; // one-to-one with files, mod action for each file
+
+  String url;
+  try {
+    svn_client.GetUrlFromPath(url, filename);
+  }
+  catch (const SubversionClient::Exception &ex) {
+    taMisc::Error("Subversion client error in GetUrl\n", ex.what());
+    return yr;
+  }
+
+  int prev_rev = last_change_rev - 1;
+  int search_chunk = 100;
+  while(true) {
+    try {
+      svn_client.GetLogs(revs, commit_msgs, authors, times, files_start_idx, files_n,
+                          files, actions, url, prev_rev, search_chunk);
+    }
+    catch (const SubversionClient::Exception &ex) {
+      break;
+    }
+    prev_rev -= search_chunk;
+    if(prev_rev < search_chunk) {
+      break;
+    }
+    revs_good = revs;
+    times_good = times;
+  }
+
+  if(revs_good.size == 0) {
+    taMisc::Info("No first revision found!");
+    return yr;
+  }
+
+  int lowest_rev = revs_good[0];
+  int lowest_idx = 0;
+  for(int i=0; i<revs_good.size; i++) {
+    int revt = revs_good[i];
+    if(revt < lowest_rev) {
+      lowest_rev = revt;
+      lowest_idx = i;
+    }
+  }
+  if(lowest_idx < 0) return yr;
+  
+  yr = taDateTime::fmTimeToString(times_good[lowest_idx], "yyyy");
+  // taMisc::Info("svn info:", filename, "rev:", String(last_change_rev), "author:",
+  //              last_changed_author, "year:", yr);
+  
+  return yr;
+}
+
 bool taCodeUtils::CopyrightUpdateFile(const String& filename) {
   String srcstr;
   srcstr.LoadFromFile(filename);
 
   bool mod = false;
+  bool st_updt = false;
+  bool cur_updt = false;
 
   String cpyright = "// Copyright";
   int cpyidx = srcstr.index(cpyright);
@@ -1187,30 +1255,45 @@ bool taCodeUtils::CopyrightUpdateFile(const String& filename) {
 
   int ecomma = srcstr.index(',', nxtidx);
   String curyr = srcstr.at(nxtidx, ecomma-nxtidx);
+  String styr;
   int dashidx = curyr.index('-');
-  if(dashidx > 0) {             // get rid of dashed-year
-    int st = nxtidx + dashidx;
-    srcstr.del(st, ecomma-st);
+  if(dashidx > 0) {             // deal with dashed-year
+    int est = nxtidx + dashidx;
+    styr = curyr.before('-');
     curyr = curyr.after('-');
-    mod = true;
   }
 
-  String yr = GetCurSvnRevYear(filename);
+  int last_change_rev = 0;
+  String yr = GetCurSvnRevYear(filename, last_change_rev);
+  
+  if(styr.empty()) {
+    styr = GetFirstSvnRevYear(filename, last_change_rev);
+    srcstr = srcstr.at(0, nxtidx) + styr + "-" + srcstr.at(nxtidx, srcstr.length()-nxtidx);
+    mod = true;
+    dashidx = nxtidx + 5;
+    st_updt = true;
+  }
 
   if(yr != curyr) {
     for(int i=0; i<yr.length();i++) {
-      srcstr[nxtidx + i] = yr[i];
+      srcstr[dashidx+1 + i] = yr[i];
     }
     mod = true;
+    cur_updt = true;
   }
 
   if(mod) {
     srcstr.SaveToFile(filename);
-    taMisc::Info("Replaced copyright to:", yr, "in:",filename);
+    if(st_updt) {
+      taMisc::Info("Updated copyright start year to:", styr, "in:",filename);
+    }
+    if(cur_updt) {
+      taMisc::Info("Updated copyright end year to:", yr, "in:",filename);
+    }
   }
-  // else {
-  //   taMisc::Info("copyright was already up-to-date:", yr, "in:",filename);
-  // }
+  else {
+    taMisc::Info("copyright was already up-to-date:", yr, "in:",filename);
+  }
 
   return mod;
 }
