@@ -1292,9 +1292,9 @@ bool taCodeUtils::CopyrightUpdateFile(const String& filename) {
       taMisc::Info("Updated copyright end year to:", yr, "in:",filename);
     }
   }
-  else {
-    taMisc::Info("copyright was already up-to-date:", yr, "in:",filename);
-  }
+  // else {
+  //   taMisc::Info("copyright was already up-to-date:", yr, "in:",filename);
+  // }
 
   return mod;
 }
