@@ -71,7 +71,7 @@ using namespace std;
 // http://www.mathertel.de This work is licensed under a BSD style
 // license. See http://www.mathertel.de/License.aspx
 
-// Copyright (c) 2005-2007 by Matthias Hertel, http://www.mathertel.de/
+// Copyright (c) 2005-2018 by Matthias Hertel, http://www.mathertel.de/
 
 // All rights reserved.
 

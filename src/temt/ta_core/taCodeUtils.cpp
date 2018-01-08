@@ -1,4 +1,4 @@
-// Co2018ght 2013-2017, Regents of the University of Colorado,
+// Copyright 2013-2018, Regents of the University of Colorado,
 // Carnegie Mellon University, Princeton University.
 //
 // This file is part of The Emergent Toolkit
@@ -1239,7 +1239,7 @@ bool taCodeUtils::CopyrightUpdateFile(const String& filename) {
   bool st_updt = false;
   bool cur_updt = false;
 
-  String cpyright = "// " + "Copyright";
+  String cpyright = String("// ") + "Copyright ";
   int cpyidx = srcstr.index(cpyright);
   if(cpyidx < 0) {
     taMisc::Info("could not find copyright string in file:", filename);
@@ -1261,6 +1261,7 @@ bool taCodeUtils::CopyrightUpdateFile(const String& filename) {
     int est = nxtidx + dashidx;
     styr = curyr.before('-');
     curyr = curyr.after('-');
+    dashidx += nxtidx;          // for srcstr coords
   }
 
   int last_change_rev = 0;
