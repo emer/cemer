@@ -31,8 +31,8 @@ echo "  --emer-mac-arch-bits=NN      set up for 32-bit or 64-bit compilation"
 echo "  --qt5                        configure for Qt5 -- must set QTDIR enviro var to qt install dir (e.g., /usr/local/Qt5.2.0/5.2.0/clang_64)"
 echo "  --qt3d                       configure for Qt3D instead of Coin3D / Quarter"
 echo "  --qt4                        configure for Qt4 -- either qt5 or 4 must be explicitly set, just to be sure you got the right one"
-echo "  --webview                    for qt5 with version >= 5.6, use web view instead of web engine"
-echo "  --noweb                      do not use either webview or webengine -- e.g., for clusters"
+echo "  --webkit                    for qt5 with version >= 5.6, use web view instead of web engine"
+echo "  --noweb                      do not use either webkit or webengine -- e.g., for clusters"
 echo "  --c++11                      enable c++11 support, using e.g., -std=c++11 flag"
 echo "  --sanitize                   enable advanced sanitization on clang: -fsanitize=address"
 echo "                               (requires recent / latest clang version)"
@@ -167,8 +167,8 @@ do
       shift 1
     ;;
 
-    --webview | -webview | webview)
-      webview="webview"
+    --webkit | -webkit | webkit)
+      webkit="webkit"
       cmake_cmd="$cmake_cmd -DUSE_QT_WEBKIT=ON"
       shift 1
     ;;
@@ -233,7 +233,7 @@ echo "  cuda:         $cuda"
 echo "  hpcprof:      $hpcprof"
 echo "  clean:        $clean"
 echo "  build-dir:    $build_dir"
-echo "  qt-version:   $qt_version,  webview: $webview  noweb: $noweb"
+echo "  qt-version:   $qt_version,  webkit: $webkit  noweb: $noweb"
 echo "  generator:    $generator"
 echo "  verbose:      $verbose_build"
 echo "  sanitize:     $sanitize"
