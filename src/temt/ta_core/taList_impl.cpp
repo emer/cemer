@@ -304,7 +304,8 @@ void taList_impl::UpdateAll() {
   for (int i = 0; i < size; ++i) {
     taBase* child = (taBase*)FastEl_(i);
     // we only include owned items, not linked
-    if (!child || (child->GetOwner() != this))
+    if (!child || (child->GetOwner() != this) || child->isDestroying() ||
+        child->HasBaseFlag(DESTROYED))
       continue;
     if(child->HasOption("NO_UPDATE_AFTER"))
       continue;

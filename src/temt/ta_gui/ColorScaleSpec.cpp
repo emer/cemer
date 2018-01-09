@@ -108,8 +108,7 @@ void ColorScaleSpec::UpdateAfterEdit() {
   if (GetName().startsWith("P_")) {
     String name = GetName();
     if (name == "P_DarkLight" || name == "P_LightDark") {
-      ColorScaleSpec_Group* grp = dynamic_cast<ColorScaleSpec_Group*>(owner);
-      grp->RemoveEl_(this);
+      CloseLater();
     }
     else {
       name.repl("P_", "C_");
