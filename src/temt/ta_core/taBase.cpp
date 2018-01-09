@@ -2197,7 +2197,7 @@ void taBase::SetMember(const String& member, const String& value) {
   int base_off = 0;
   MemberDef* mbr_def = TypeDef::FindMemberPathStatic(td, base_off, member, false); // no warn
   if(mbr_def && !mbr_def->IsGuiReadOnly()) {
-    void* address = MemberDef::GetOff_static(this, base_off, mbr_def->off);
+    void* address = mbr_def->GetOff(this, base_off);
     mbr_def->type->SetValStr(value, address, NULL, mbr_def);
     UpdateAfterEdit();
     taMisc::Info("SetMember: Object", GetName(), " - member", member, "value changed to", value);
@@ -2210,7 +2210,7 @@ String taBase::GetMemberStrVal(const String& member) const {
   int base_off = 0;
   MemberDef* mbr_def = TypeDef::FindMemberPathStatic(td, base_off, member, true); // warn!
   if(mbr_def) {
-    void* address = MemberDef::GetOff_static(this, base_off, mbr_def->off);
+    void* address = mbr_def->GetOff(this, base_off);
     return mbr_def->type->GetValStr(address, NULL, mbr_def);
   }
   return _nilString;

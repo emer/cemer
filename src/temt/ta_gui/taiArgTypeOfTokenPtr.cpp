@@ -69,7 +69,7 @@ void taiArgTypeOfTokenPtr::GetImage_impl(taiWidget* dat, const void* base){
       int net_base_off = 0;
       MemberDef* md = TypeDef::FindMemberPathStatic(own_td, net_base_off, mb_nm, false); // no warn
       if (md && (md->type->name == "TypeDef_ptr")) {
-        TypeDef* mbr_typ = *(TypeDef**)(MemberDef::GetOff_static(base, net_base_off, md->off));
+        TypeDef* mbr_typ = *(TypeDef**)(md->GetOff(base, net_base_off));
         if(mbr_typ->InheritsFrom(npt) || npt->InheritsFrom(mbr_typ))
           npt = mbr_typ;                // make sure this applies to this argument..
       }

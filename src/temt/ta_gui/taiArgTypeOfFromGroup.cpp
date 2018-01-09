@@ -154,7 +154,7 @@ taList_impl* taiArgTypeOfFromGroup::GetList(const void* base) {
     int base_off = 0;
     MemberDef* mbr_def = TypeDef::FindMemberPathStatic(td, base_off, submb_nm, true); // warn
     if(mbr_def) {
-      void* address = MemberDef::GetOff_static(mb_base, base_off, mbr_def->off);
+      void* address = mbr_def->GetOff(mb_base, base_off);
       mb_base = (taBase*)address;
     }
   }

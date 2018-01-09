@@ -195,7 +195,7 @@ bool PatchRec::ApplyPatch_Assign(taProject* proj) {
     }
     ApplyInfo("ASSIGN target:", obj_path_names, "Mbr:\n",
               obj->DisplayPath() + "." + mbr_path, "= " + value);
-    void* addr = MemberDef::GetOff_static(obj, net_base_off, md->off);
+    void* addr = md->GetOff(obj, net_base_off);
     md->type->SetValStr(value, addr);
     String act_val = md->type->GetValStr(addr, NULL, md, TypeDef::SC_VALUE, false);
     if(act_val != value) {

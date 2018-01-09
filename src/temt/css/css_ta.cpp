@@ -76,7 +76,7 @@ bool cssTA::BuildCssObjFromArgTypes(cssClassInst* obj, const MethodDef* md, void
       int net_base_off = 0;
       MemberDef* tmd = TypeDef::FindMemberPathStatic(own_td, net_base_off, init_argval, true);
       if(tmd != NULL) {
-	void* mbrbase = MemberDef::GetOff_static(base, net_base_off, tmd->off);
+	void* mbrbase = tmd->GetOff(base, net_base_off);
 	val = tmd->type->GetValStr(mbrbase, NULL, tmd, TypeDef::SC_DEFAULT, true); // force_inline
 	// get val from member
       }

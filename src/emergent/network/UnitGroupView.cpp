@@ -324,7 +324,7 @@ void UnitGroupView::UpdateUnitViewBase_Sub_impl(int midx, MemberDef* disp_md) {
       uvd_bases.Set(NULL, coord.x, coord.y, midx);
       if(!unit || !smd) continue;  // rest will be null too, but we loop to null disp_base
       if(unit->lesioned()) continue;
-      void* sbaddr = MemberDef::GetOff_static(unit, net_base_off, smd->off);
+      void* sbaddr = smd->GetOff(unit, net_base_off);
       uvd_bases.Set(sbaddr, coord.x, coord.y, midx);
     }
   }

@@ -75,14 +75,11 @@ public:
   MemberDef*    Clone()         { return new MemberDef(*this); }
   MemberDef*    MakeToken()     { return new MemberDef(); }
 
-  inline void*  GetOff(const void* base) const {
+  inline void*  GetOff(const void* base, int extra_base_off = 0) const {
     if (is_static) return addr;
-    return (void*)&((ta_memb_ptr_class*)((char*)base+base_off)->*off);
+    return (void*)&((ta_memb_ptr_class*)((char*)base+base_off+extra_base_off)->*off);
   }
   // get offset of member relative to overall class base pointer
-  static inline void*  GetOff_static(const void* base, int base_off_, ta_memb_ptr off_) {
-    return (void*)&((ta_memb_ptr_class*)((char*)base+base_off_)->*off_);
-  }    
   inline int   GetRelOff() const {
     return ((char*)&((ta_memb_ptr_class*)((char*)0+base_off)->*off)) - (char*)0;
   }

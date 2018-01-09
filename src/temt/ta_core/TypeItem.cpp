@@ -181,12 +181,12 @@ bool TypeItem::GetCondOpt(const String condkey, const TypeDef* base_td, const vo
     TypeDef* eff_td = (TypeDef*)base_td;
     MemberDef* md = TypeDef::FindMemberPathStatic(eff_td, net_base_off, mbr, false); // no warn..
     if (md) {
-      mbr_base = MemberDef::GetOff_static(base, net_base_off, md->off);
+      mbr_base = md->GetOff(base, net_base_off);
     }
 
     if (!md || !mbr_base) {
       // this can happen in valid cases (controlpanel), and the msg is annoying
-      //    taMisc::Warning("taiType::CheckProcessCondMembMeth: conditionalizing member", mbr, "not found!");
+      // taMisc::Warning("taiType::CheckProcessCondMembMeth: conditionalizing member", mbr, "not found!");
       return false;
     }
 
@@ -199,6 +199,7 @@ bool TypeItem::GetCondOpt(const String condkey, const TypeDef* base_td, const vo
     else {
       // explicit value mode
       String mbr_val = md->type->GetValStr(mbr_base, NULL, md, TypeDef::SC_VALUE, true); // inline
+      // taMisc::Info("mbr_val:", mbr_val);
       while (true) {
         String nxtval;
         if (val.contains(',')) {

@@ -34,7 +34,7 @@ taiWidget* taiTypeOfVariant::GetWidgetRep_impl(IWidgetHost* host_, taiWidget* pa
 //       int net_base_off = 0;
 //       MemberDef* tdmd = TypeDef::FindMemberPathStatic(own_td, net_base_off, fixtyp, false); // no warn
 //       if (tdmd && (tdmd->type == &TA_bool)) {
-//      if(*((bool*)(MemberDef::GetOff_static(base, net_base_off, tdmd->off)))) {
+//      if(*((bool*)(tdmd->GetOff(base, net_base_off)))) {
 //        flags_ |= taiWidgetVariantBase::flgFixedType;
 //      }
 //       }

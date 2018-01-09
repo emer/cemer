@@ -350,7 +350,7 @@ bool ActrCondition::Matches(ActrProduction& prod, bool why_not) {
     TypeDef* eff_td = (TypeDef*)obj->GetTypeDef();
     MemberDef* md = TypeDef::FindMemberPathStatic(eff_td, net_base_off, obj_path, true); // yes warn..
     if (md) {
-      mbr_base = MemberDef::GetOff_static(obj, net_base_off, md->off);
+      mbr_base = md->GetOff(obj, net_base_off);
       Variant tval = md->type->GetValVar(mbr_base, md);
       match = MatchVarVal(tval, why_not);
     }

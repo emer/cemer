@@ -77,7 +77,7 @@ void taiWidgetTypeItemMenu::GetTarget() {
         int net_base_off = 0;
         MemberDef* tdmd = TypeDef::FindMemberPathStatic(own_td, net_base_off, mb_nm, false); // no warn
         if (tdmd && (tdmd->type->name == "TypeDef_ptr")) {
-          targ_typ = *(TypeDef**)(MemberDef::GetOff_static(menubase, net_base_off, tdmd->off));
+          targ_typ = *(TypeDef**)(tdmd->GetOff(menubase, net_base_off));
         }
       }
     }

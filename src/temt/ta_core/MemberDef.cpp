@@ -224,9 +224,19 @@ String MemberDef::GetHTML(bool gendoc, bool short_fmt) const {
     rval.cat("</h3>\n");
     rval.cat("<p>").cat(trim(desc).xml_esc()).cat("</p>\n");
     if(taMisc::help_detail >= taMisc::HD_DETAILS) {
-      rval.cat("<p> Size: ").cat(String(type->size)).cat("</p>\n");
+      String offstr;
+      if(is_static) {
+        offstr << "+" << addr;
+      }
+      else {
+        offstr << "+" << GetRelOff();
+        if(base_off > 0) {
+          offstr << "+" << base_off;
+        }
+      }
+      rval.cat("Off: ").cat(offstr).cat(" Size: ").cat(String(type->size)).cat("<br>\n");
       if(opts.size > 0) {
-        rval.cat("<p>").cat(GetOptsHTML()).cat("</p>\n");
+        rval.cat(GetOptsHTML()).cat("<br>\n");
       }
     }
   }
@@ -252,15 +262,15 @@ void MemberDef::PrintType(String& col1, String& col2) const {
     col2 = name + ";";
   col2 << "  // ";
   if(taMisc::type_info_ == taMisc::MEMB_OFFSETS) {
-    intptr_t ui_off = (intptr_t)GetOff((void*)0x100); // 0x100 is arbitrary non-zero number..
-    ui_off -= 0x100;                          // now get rid of offset
-    if(ui_off > 0) {
-      col2 << "+" << ui_off;
-      if(base_off > 0)
-        col2 << "+" << base_off;
+    if(is_static) {
+      col2 << "+" << addr;
     }
-    if(base_off > 0)
-      col2 << "+" << base_off;
+    else {
+      col2 << "+" << GetRelOff();
+      if(base_off > 0) {
+        col2 << "+" << base_off;
+      }
+    }
   }
   if(!desc.empty())
     col2 << " " << desc;
