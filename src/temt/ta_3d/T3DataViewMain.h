@@ -134,9 +134,9 @@ public:
   virtual void          AnnoteClearAll();
   // #MENU_BUTTON remove all existing annotations
   
-  virtual int           GetStateDisplayWidth(const String& name) { return -1; }
+  virtual int           GetNetTextItemWidth(const String& name) { return -1; }
   // get saved width for this state var - subclasses should implement if they have state vars to display
-  virtual void          SetStateDisplayWidth(const String& name, int width) { ; }
+  virtual void          SetNetTextItemWidth(const String& name, int width) { ; }
   // update saved width for this state var - subclasses should implement if they have state vars to display
 
   void         InitLinks() override;

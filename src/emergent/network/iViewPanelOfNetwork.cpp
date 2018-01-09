@@ -582,7 +582,7 @@ void iViewPanelOfNetwork::UpdatePanel_impl() {
     QTreeWidgetItem* tree_item = NULL;
     while (*state_item_iter) {
       tree_item = *state_item_iter;
-      NetViewStateItem* state_item = nv->state_items.FindName(tree_item->text(0));
+      NetViewStateItem* state_item = nv->net_state_text.state_items.FindName(tree_item->text(0));
       if(state_item) {
         tree_item->setText(1, (String)state_item->width);
       }
@@ -801,12 +801,12 @@ void iViewPanelOfNetwork::GetNetVars() {
   TypeDef* td = net->GetTypeDef();
   if (!td) return;
   
-  nv->GetNetStateItems();
+  nv->GetNetTextItems();
   state_values->clear();
 
   MemberDef* md;
-  for (int i=0; i < nv->state_items.size; i++) {
-    NetViewStateItem* item = nv->state_items.SafeEl(i);
+  for (int i=0; i < nv->net_state_text.state_items.size; i++) {
+    NetViewStateItem* item = nv->net_state_text.GetItem(i);
     if (item) {
       QTreeWidgetItem* titm = new QTreeWidgetItem(state_values);
       // we want the checkbox checkable and the width field editable - name and description should not be editable
@@ -897,7 +897,7 @@ void iViewPanelOfNetwork::NetStateValues_itemClicked(QTreeWidgetItem* changed_it
   if (!nv) return;
   
   if (col == 0) {
-    nv->NetStateItemDisplayChange(changed_item->text(0), changed_item->checkState(col)); // checkbox
+    nv->net_state_text.ShowItem(changed_item->text(0), changed_item->checkState(col)); // checkbox
     nv->UpdateDisplay(false);
   }
   else if (col == 1) {
@@ -912,7 +912,7 @@ void iViewPanelOfNetwork::NetStateValues_itemChanged(QTreeWidgetItem* changed_it
   if (!nv) return;
   
   if (col == 1) {
-    nv->SetStateDisplayWidth(changed_item->text(0), changed_item->text(1).toInt());
+    nv->SetNetTextItemWidth(changed_item->text(0), changed_item->text(1).toInt());
   }
 }
 
@@ -921,7 +921,7 @@ void iViewPanelOfNetwork::NetStateItemMoved(int from_index, int to_index) {
   NetView *nv = getNetView();
   if (!nv) return;
   
-  nv->NetStateItemMoved(from_index, to_index);
+  nv->net_state_text.MoveItem(from_index, to_index);
   nv->UpdateDisplay(false);
 }
 

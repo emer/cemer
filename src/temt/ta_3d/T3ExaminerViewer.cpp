@@ -792,7 +792,7 @@ void T3ExaminerViewer::StateButtonClicked() {
   button_str = button_str.before(':');
 
   taGuiDialog dlg;
-  int new_width = dvm->GetStateDisplayWidth(button_str);
+  int new_width = dvm->GetNetTextItemWidth(button_str);
   dlg.Reset();
   dlg.prompt = "Enter new width in characters for the variable '" + button_str + "'\n\nThis is for the value portion of width.\nLabel width automatically added.";
   dlg.win_title = "Edit Display Width";
@@ -805,7 +805,7 @@ void T3ExaminerViewer::StateButtonClicked() {
       
   int drval = dlg.PostDialog(true);
   if(drval != 0) {
-    dvm->SetStateDisplayWidth(button_str, new_width);
+    dvm->SetNetTextItemWidth(button_str, new_width);
   }
 }
 

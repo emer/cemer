@@ -89,6 +89,7 @@ set(network_HEADS_MAKETA_base
   BrainView.h
   BrainVolumeView.h
   iViewPanelOfBrain.h
+  NetStateText.h
 )
 
 # multiple inheritence -- in correspondence with deps below
@@ -424,6 +425,7 @@ set(network_SRCS
   sha3.c
   NetworkVoxelMapper.cpp
   NiftiReader.cpp
+  NetStateText.cpp
 )
 
 set(network_FILES ${network_HEADS} ${network_SRCS})

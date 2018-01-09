@@ -30,6 +30,7 @@
 #include <ColorScale>
 #include <ScaleRange_List>
 #include <NameVar_Array>
+#include <NetStateText>
 
 // declare all other types mentioned but not required to include:
 class iViewPanelOfNetwork; //
@@ -98,42 +99,12 @@ private:
   void  Destroy()               { };
 };
 
-eTypeDef_Of(NetViewStateItem);
-
-class E_API NetViewStateItem : public taNBase {
-  // ##NO_TOKENS #INLINE #NO_UPDATE_AFTER ##CAT_Display misc parameters for the network display
-  INHERITED(taNBase)
-public:
-  NetViewStateItem(String var_name, bool is_net_member, bool do_display = false, int width = 8);
-                                // taNBase name member is used for the variable name
-  bool              net_member; // is item a network member - alternative is monitor variable
-  bool              display;    // render the item?
-  int               width;      // width in chars of value portion of field
-  bool              found;      // set to true when rebuilding list - if not set it is stale and should be removed
-  
-  TA_SIMPLE_BASEFUNS(NetViewStateItem);
-private:
-  void  Initialize();
-  void  Destroy()               { };
-};
-
-eTypeDef_Of(NetViewStateItem_List);
-
-class E_API NetViewStateItem_List : public taList<NetViewStateItem> {
-  // ##NO_TOKENS ##NO_UPDATE_AFTER ##NO_EXPAND List of NetViewStateItem objects
-  INHERITED(taList<NetViewStateItem>)
-public:
-
-  TA_BASEFUNS_NOCOPY(NetViewStateItem_List);
-private:
-  void Initialize()  { SetBaseType(&TA_NetViewStateItem); };
-  void Destroy()     { };
-};
 
 /*
  * Note that we keep simple ptr lists separately of the Layers, Prjns, etc., for ease
  * of iteration
 */
+
 
 eTypeDef_Of(NetView);
 
@@ -185,18 +156,16 @@ public:
   LayerLayout           lay_layout;     // how to display layers -- 2d or 3d
   bool                  lay_mv;         // whether to display layer move controls when the arrow button is pressed (can get in the way of viewing weights)
   bool                  net_text;       // whether to display network counters, stats, etc
-  int                   state_width_default;  // default display width in pixels for value portion of state display
+  NetStateText          net_state_text; // holds the list of net text items, which to display, etc.
+  bool                  state_items_stale; // #NO_SAVE #NO_COPY #READ_ONLY set to true to trigger updating of state items
+
   bool                  show_iconified; // show iconified layers -- otherwise they are removed entirely
-  taTransform           net_text_xform;  // transform of coordinate system for the net text display element
-  float                 net_text_rot;    // rotation of the text in the Z plane (in degrees) - default is upright, but if text area is rotated, then a different angle might work better
   MemberSpace           membs;          // #NO_SAVE #NO_COPY #READ_ONLY list of all the members possible in units; note: all items are new clones
   String_Array          cur_unit_vals;  // #NO_COPY #READ_ONLY currently selected unit values to display -- theoretically can display multiple values, but this is not currently supported, so it always just has one entry at most
   String_Array          hot_vars;       // current "hot" variables shown directly in explorer view
   UnitState_cpp*        unit_src;       // #NO_SAVE #NO_COPY #READ_ONLY unit last picked (if any) for display
   String                unit_src_path;  // ##READ_ONLY path of unit_src unit relative to the network -- used for saving and reloading
   String                last_sel_unit_val;   // #READ_ONLY #SHOW #NO_SAVE value of last selected unit (for display)
-  NetViewStateItem_List state_items;    // #NO_COPY #READ_ONLY all standard net state items (i.e. marked VIEW) plua any in network owned monitor - maintains order, width, display flag
-  bool                  state_items_stale; // #NO_SAVE #NO_COPY #READ_ONLY set to true to trigger updating of state items
 
   ConType               con_type;       // what type of connections should be shown (where there are multiple connections between two units)
   String                prjn_starts_with; // #NO_SAVE #NO_COPY #READ_ONLY based on the con_type setting, what the projection name should start with
@@ -253,20 +222,11 @@ public:
   // hard reset of display, esp. Unit values -- also calls BuildAll.  Note this does not call Render -- that is done by UpdateDisplay, so a full reset is InitDisplay followed by UpdateDisplay
   virtual void          InitPanel();
   // hard reset of panel, esp. membr vars
-
   virtual void          UpdateDisplay(bool update_panel = true);
   // re-renders entire display (calls Render_impl) -- assumes structure is still same but various display elements may have changed.  if structure is different, then an InitDisplay is required first
   virtual void          UpdateUnitValues();
   // *only* updates unit values -- display and structure must be the same as last time
-  virtual void          NetStateItemMoved(int from_index, int to_index);
-  // update list of state vars - item has been moved
-  virtual void          NetStateItemDisplayChange(const String& name, bool show);
-  // item show/hide state has changed
-  virtual int           GetStateDisplayWidth(const String& name) override;
-  // return the width in chars of the value portion of the state item
-  virtual void          SetStateDisplayWidth(const String& name, int width) override;
-  // set the width in chars of the value portion of the state item
-
+ 
   virtual void          InitCtrHist(bool force = false);
   // initialize counter history based on current settings -- this also serves as master for all history -- if force, then always reset history index positions too
   virtual void          SaveCtrHist();
@@ -274,11 +234,17 @@ public:
   virtual void          UpdatePanel(); // updates nvp, esp. after UAE etc.
 
   ////////////////////////////////////////////////////////////////
+  // for text display of net variable values
+  virtual void          GetNetTextItems();
+  virtual void          MonitorUpdate();  // some item added or deleted from monitor
+  virtual int           GetNetTextItemWidth(const String& name) override;
+  // return the display width in chars of the value portion of the state text item
+  virtual void          SetNetTextItemWidth(const String& name, int width) override;
+  // set the display width in chars of the value portion of the state text item
+
+  ////////////////////////////////////////////////////////////////
   // misc util functions etc
   virtual void          GetMembs();
-  virtual void          GetNetStateItems(); // these are the Network vars marked #VIEW (e.g. cycle, trial_name, ...)
-  virtual void          GetNetStateVarNames(String_Array* vars);  // fill the list with the var names from full_state_vals
-  virtual void          MonitorUpdate();  // some item added or deleted from monitor
   virtual void          GetMaxSize(); // get max size from network
 
   void                  GetUnitColor(float val, iColor& col, float& sc_val);

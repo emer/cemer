@@ -79,9 +79,6 @@ TA_BASEFUNS_CTORS_DEFN(NetViewParams);
 
 TA_BASEFUNS_CTORS_DEFN(NetViewFontSizes);
 
-TA_BASEFUNS_CTORS_DEFN(NetViewStateItem);
-TA_BASEFUNS_CTORS_DEFN(NetViewStateItem_List);
-
 TA_BASEFUNS_CTORS_DEFN(NetView);
 
 void NetViewFontSizes::Initialize() {
@@ -106,17 +103,6 @@ void NetViewParams::Initialize() {
   unit_trans = 0.6f;
   laygp_width = 1.0f;
   show_laygp = true;
-}
-
-void NetViewStateItem::Initialize() {
-}
-
-NetViewStateItem::NetViewStateItem(String var_name, bool is_net_member, bool do_display, int the_width) {
-  name = var_name;
-  net_member = is_net_member;
-  display = do_display;
-  width = the_width;
-  found = true;
 }
 
 #ifndef TA_QT3D
@@ -369,7 +355,6 @@ void NetView::Initialize() {
   net_text = false;
   show_iconified = false;
   main_xform.rotate.SetXYZR(1.0f, 0.0f, 0.0f, .35f);
-  state_width_default = 8; // characters
   state_items_stale = true;
   
   con_type = ANY_CON;
@@ -415,7 +400,7 @@ void NetView::InitLinks() {
   taBase::Own(scale, this);
   taBase::Own(scale_ranges, this);
   taBase::Own(cur_unit_vals, this);
-  taBase::Own(state_items, this);
+  taBase::Own(net_state_text, this);
   taBase::Own(hot_vars, this);
   taBase::Own(ctr_hist, this);
   taBase::Own(ctr_hist_idx, this);
@@ -464,7 +449,7 @@ void NetView::CutLinks() {
   ctr_hist_idx.CutLinks();
   ctr_hist.CutLinks();
   cur_unit_vals.CutLinks();
-  state_items.CutLinks();
+  net_state_text.CutLinks();
   scale_ranges.CutLinks();
   scale.CutLinks();
   lay_disp_modes.CutLinks();
@@ -630,7 +615,7 @@ void NetView::BuildAll() { // populates all T3 guys
   }
   GetMaxSize();
   GetMembs();
-  GetNetStateItems();
+  GetNetTextItems();
   
   Network* nt = net();
   
@@ -770,75 +755,13 @@ UnitView* NetView::FindUnitView(UnitState_cpp* unit) {
   return NULL;
 }
 
-void NetView::GetNetStateItems() {
+void NetView::GetNetTextItems() {
   if(!net()) return;
+  if(!state_items_stale) return;
   
-  Network* nt = net();
-  if(!nt) return;
+  net_state_text.GetItems(net());
   
-  if (!state_items_stale) return;
-  
-  // clear found flag - later remove any items not found
-  for (int i=0; i<state_items.size; i++) {
-    state_items.SafeEl(i)->found = false;
-  }
-  
-  // get the network members
-  TypeDef* td = net()->GetTypeDef();
-  for(int i=0; i < td->members.size ; i++) {
-    MemberDef* md = td->members[i];
-    if(!md->HasOption("VIEW")) continue;
-    
-    bool add = true;
-    NetViewStateItem* existing_item = state_items.FindName(md->name);
-    if (existing_item) {
-      add = false;
-      existing_item->found = true;
-    }
-    if (add) {
-      NetViewStateItem* item = new NetViewStateItem(md->name, true, false, 8);
-      String name = item->name;
-      // default display items
-      if (name == "batch" || name == "epoch" || name == "trial" || name == "quarter"
-          || name == "cycle" || name == "sse" || name == "trial_name" || name == "output_name") {
-        item->display = true;
-      }
-      state_items.Add(item);
-    }
-  }
-  
-  // Now the Network monitor items
-  DataTable* monitor_data = &nt->mon_data;
-  if (monitor_data) {
-    for (int i=0; i<monitor_data->data.size; i++) {
-      String mon_item_name = monitor_data->data.SafeEl(i)->GetName();
-      bool add = true;
-      NetViewStateItem* existing_item = state_items.FindName(mon_item_name);
-      if (existing_item) {
-        add = false;
-        existing_item->found = true;
-      }
-      if (add) {
-        NetViewStateItem* item = new NetViewStateItem(mon_item_name, false, false, 8);
-        state_items.Add(item);
-      }
-    }
-  }
-  
-  // remove not found
-  for (int i=state_items.size -1; i>=0; i--) {
-    if (!state_items.SafeEl(i)->found) {
-      state_items.RemoveIdx(i);
-    }
-  }
   state_items_stale = false;
-}
-
-void NetView::GetNetStateVarNames(String_Array* net_state_vars) {
-  for (int i=0; i<state_items.size; i++) {
-    NetViewStateItem* item = state_items.SafeEl(i);
-    net_state_vars->Add(item->name);
-  }
 }
 
 // this fills a member group with the valid memberdefs from the units and connections
@@ -948,7 +871,7 @@ void NetView::InitCtrHist(bool force) {
     if(!md->HasOption("VIEW")) continue;
     if(net()->HasUserData(md->name) && !net()->GetUserDataAsBool(md->name)) continue;
   }
-  n_counters = state_items.size;
+  n_counters = net_state_text.state_items.size;
   
   MatrixGeom nwgm(2, n_counters, hist_max);
   bool init_idx = force;
@@ -1317,8 +1240,8 @@ void NetView::RenderStateValues() {
   NameVar_Array net_state_strs;
   TypeDef* td = net()->GetTypeDef();
   
-  for(int i=0; i<state_items.size; i++) {
-    NetViewStateItem* item = state_items.SafeEl(i);
+  for(int i=0; i<net_state_text.state_items.size; i++) {
+    NetViewStateItem* item = net_state_text.GetItem(i);
     if (item->display == false) {
       continue;
     }
@@ -1930,42 +1853,12 @@ void NetView::UpdateUnitValues() { // *actually* only does unit value updating
   lv->UpdateUnitValues();
 }
 
-void NetView::NetStateItemMoved(int from_index, int to_index) {
-  state_items.MoveIdx(from_index, to_index);
-
-  T3ExaminerViewer* vw = GetViewer();
-  if (vw) {
-    vw->state_labels_inited = false;
-    RenderStateValues();
-  }
+int NetView::GetNetTextItemWidth(const String& name) {
+  return net_state_text.GetItemDisplayWidth(name);
 }
 
-void NetView::NetStateItemDisplayChange(const String& name, bool show) {
-  NetViewStateItem* item = state_items.FindName(name);
-  if (item) {
-    item->display = show;
-  }
-
-  T3ExaminerViewer* vw = GetViewer();
-  if (vw) {
-    vw->state_labels_inited = false;
-    RenderStateValues();
-  }
-}
-
-int NetView::GetStateDisplayWidth(const String& name) {
-  NetViewStateItem* item = state_items.FindName(name);
-  if (item) {
-    return item->width;
-  }
-  return -1;
-}
-
-void NetView::SetStateDisplayWidth(const String& name, int width) {
-  NetViewStateItem* item = state_items.FindName(name);
-  if (item) {
-    item->width = width;
-  }
+void NetView::SetNetTextItemWidth(const String& name, int width) {
+  net_state_text.SetItemDisplayWidth(name, width);
   T3ExaminerViewer* vw = GetViewer();
   if (vw) {
     vw->state_labels_inited = false;
@@ -1981,8 +1874,8 @@ void NetView::SaveCtrHist() {
   int circ_idx = ctr_hist_idx.CircAddLimit(hist_max);
   int eff_hist_idx = ctr_hist_idx.CircIdx(circ_idx);
   
-  for(int i=0; i<state_items.size; i++) {
-    NetViewStateItem* item = state_items.SafeEl(i);
+  for(int i=0; i<net_state_text.state_items.size; i++) {
+    NetViewStateItem* item = net_state_text.GetItem(i);
     if (item->net_member) {
       MemberSpace* ms = &td->members;
       MemberDef* md = ms->FindName(item->name);
