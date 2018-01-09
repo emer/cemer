@@ -755,15 +755,6 @@ UnitView* NetView::FindUnitView(UnitState_cpp* unit) {
   return NULL;
 }
 
-void NetView::GetNetTextItems() {
-  if(!net()) return;
-  if(!state_items_stale) return;
-  
-  net_state_text.GetItems(net());
-  
-  state_items_stale = false;
-}
-
 // this fills a member group with the valid memberdefs from the units and connections
 void NetView::GetMembs() {
   if(!net()) return;
@@ -1247,7 +1238,7 @@ void NetView::RenderStateValues() {
     }
     String var = item->name;
     String val;
-    String net_state_text = item->name + ": ";
+    String item_text = item->name + ": ";
     if (item->net_member) {
       MemberDef* md = td->members.FindName(var);
       if (md) {
@@ -1283,8 +1274,8 @@ void NetView::RenderStateValues() {
         }
       }
     }
-    net_state_text = net_state_text + val;
-    net_state_strs.Add(NameVar(net_state_text, item->width));
+    item_text = item_text + val;
+    net_state_strs.Add(NameVar(item_text, item->width));
 
   }
   T3ExaminerViewer* vw = GetViewer();
@@ -1853,20 +1844,6 @@ void NetView::UpdateUnitValues() { // *actually* only does unit value updating
   lv->UpdateUnitValues();
 }
 
-int NetView::GetNetTextItemWidth(const String& name) {
-  return net_state_text.GetItemDisplayWidth(name);
-}
-
-void NetView::SetNetTextItemWidth(const String& name, int width) {
-  net_state_text.SetItemDisplayWidth(name, width);
-  T3ExaminerViewer* vw = GetViewer();
-  if (vw) {
-    vw->state_labels_inited = false;
-    RenderStateValues();
-  }
-  UpdatePanel();
-}
-
 void NetView::SaveCtrHist() {
   TypeDef* td = net()->GetTypeDef();
   
@@ -1939,6 +1916,29 @@ void NetView::viewWin_NotifySignal(ISelectableHost* src, int op) {
   setUnitSrc(uv, unit_new);
   InitDisplay();
   UpdateDisplay();
+}
+
+void NetView::GetNetTextItems() {
+  if(!net()) return;
+  if(!state_items_stale) return;
+  
+  net_state_text.GetItems(net());
+  
+  state_items_stale = false;
+}
+
+int NetView::GetNetTextItemWidth(const String& name) {
+  return net_state_text.GetItemDisplayWidth(name);
+}
+
+void NetView::SetNetTextItemWidth(const String& name, int width) {
+  net_state_text.SetItemDisplayWidth(name, width);
+  T3ExaminerViewer* vw = GetViewer();
+  if (vw) {
+    vw->state_labels_inited = false;
+    RenderStateValues();
+  }
+  UpdatePanel();
 }
 
 void NetView::MonitorUpdate() {

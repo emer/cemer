@@ -23,6 +23,7 @@
 #include <taiWidgetFieldRegexp>
 #include <iLineEdit>
 #include <iHColorScaleBar>
+#include <iTreeListWidget>
 
 #include <taMisc>
 #include <taiMisc>
@@ -344,6 +345,28 @@ iViewPanelOfBrain::iViewPanelOfBrain(BrainView* dv_)
   lvDisplayValues->setSelectionMode(QAbstractItemView::SingleSelection);
   connect(lvDisplayValues, SIGNAL(itemSelectionChanged()), this, SLOT(lvDisplayValues_selectionChanged()));
 
+  ////////////////////////////////////////////////////////////////////////////
+  state_values = new iTreeListWidget(this);
+  state_values->setEditTriggers(QAbstractItemView::NoEditTriggers);
+  
+  connect(state_values, SIGNAL(ListOrderChange(int, int)), this, SLOT(NetStateItemMoved(int, int)) );
+  
+  tw->addTab(state_values, "Net State Values");
+  state_values->setRootIsDecorated(true); // makes it look like a list
+  QStringList state_var_hrd;
+  state_var_hrd << "          Variable" << "  Width" << "       Description";
+  state_values->setHeaderLabels(state_var_hrd);
+  state_values->setSortingEnabled(false);
+  state_values->setSelectionMode(QAbstractItemView::SingleSelection);
+  state_values->setDragEnabled(true);
+  state_values->setDropIndicatorShown(true);
+  state_values->setDragDropMode(QAbstractItemView::InternalMove);
+  
+  connect(state_values, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this,
+          SLOT(NetStateValues_itemClicked(QTreeWidgetItem*, int)) );
+  connect(state_values, SIGNAL(itemChanged(QTreeWidgetItem*, int)), this,
+          SLOT(NetStateValues_itemChanged(QTreeWidgetItem*, int)) );
+
   layTopCtrls->addWidget(tw);
 }
 
@@ -416,6 +439,24 @@ void iViewPanelOfBrain::UpdatePanel_impl()
     ++it;
     ++i;
   }
+  
+  // update state items
+  if (bv->state_items_stale) {
+    GetNetVars();
+  }
+  else {
+    QTreeWidgetItemIterator state_item_iter(state_values);
+    QTreeWidgetItem* tree_item = NULL;
+    while (*state_item_iter) {
+      tree_item = *state_item_iter;
+      NetViewStateItem* state_item = bv->net_state_text.state_items.FindName(tree_item->text(0));
+      if(state_item) {
+        tree_item->setText(1, (String)state_item->width);
+      }
+      ++state_item_iter;
+    }
+  }
+
   ColorScaleFromData();
 
   --updating;
@@ -692,6 +733,54 @@ void iViewPanelOfBrain::GetVars()
   lvDisplayValues->resizeColumnToContents(0);
 }
 
+void iViewPanelOfBrain::GetNetVars() {
+  BrainView *bv = getBrainView();
+  if (!bv) return;
+  
+  Network* net = bv->net();
+  if (!net) return;
+  TypeDef* td = net->GetTypeDef();
+  if (!td) return;
+  
+  bv->GetNetTextItems();
+  state_values->clear();
+  
+  MemberDef* md;
+  for (int i=0; i < bv->net_state_text.state_items.size; i++) {
+    NetViewStateItem* item = bv->net_state_text.GetItem(i);
+    if (item) {
+      QTreeWidgetItem* titm = new QTreeWidgetItem(state_values);
+      // we want the checkbox checkable and the width field editable - name and description should not be editable
+      // see code in NetStateValues_itemClicked()
+      // https://stackoverflow.com/questions/31202546/how-to-edit-only-one-column-of-a-qtreewidgetitem
+      titm->setFlags(Qt::ItemIsEditable | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled);
+      titm->setTextAlignment(1, Qt::AlignCenter);
+      titm->setToolTip(0, taiMisc::ToolTipPreProcess("Drag and drop to reorder items in the NetView display"));
+      titm->setToolTip(1, taiMisc::ToolTipPreProcess("Click to edit display width"));
+      if (item->net_member) {
+        md = td->members.FindName(item->name);
+        if (md) {
+          titm->setText(0, item->name);
+          titm->setText(1, (String)item->width);
+          titm->setText(2, md->desc);
+          titm->setToolTip(2, taiMisc::ToolTipPreProcess(md->desc));
+        }
+      }
+      else {
+        titm->setText(0, item->name);
+        titm->setText(1, (String)item->width);
+        titm->setText(2, "monitor variable");
+        titm->setToolTip(2, taiMisc::ToolTipPreProcess(md->desc));
+      }
+      if(item->display)
+        titm->setCheckState(0, Qt::Checked);
+      else
+        titm->setCheckState(0, Qt::Unchecked);
+    }
+  }
+  state_values->resizeColumnToContents(0);
+}
+
 void iViewPanelOfBrain::InitPanel()
 {
   if (BrainView *bv = getBrainView()) {
@@ -779,3 +868,38 @@ void iViewPanelOfBrain::UpdateWidgetLimits()
     m_slice_end_slid->setRange(1, max_slices);
   }
 }
+
+void iViewPanelOfBrain::NetStateValues_itemClicked(QTreeWidgetItem* changed_item, int col) {
+  if (updating) return;
+  BrainView *bv = getBrainView();
+  if (!bv) return;
+  
+  if (col == 0) {
+    bv->net_state_text.ShowItem(changed_item->text(0), changed_item->checkState(col)); // checkbox
+    bv->UpdateDisplay(false);
+  }
+  else if (col == 1) {
+    changed_item->treeWidget()->editItem(changed_item, 1); // this is the "width" field
+    bv->UpdateDisplay(false);
+  }
+}
+
+void iViewPanelOfBrain::NetStateValues_itemChanged(QTreeWidgetItem* changed_item, int col) {
+  if (updating) return;
+  BrainView *bv = getBrainView();
+  if (!bv) return;
+  
+  if (col == 1) {
+    bv->SetNetTextItemWidth(changed_item->text(0), changed_item->text(1).toInt());
+  }
+}
+
+void iViewPanelOfBrain::NetStateItemMoved(int from_index, int to_index) {
+  if (updating) return;
+  BrainView *bv = getBrainView();
+  if (!bv) return;
+  
+  bv->net_state_text.MoveItem(from_index, to_index);
+  bv->UpdateDisplay(false);
+}
+

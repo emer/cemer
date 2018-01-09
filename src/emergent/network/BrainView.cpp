@@ -28,6 +28,7 @@
 #include <iT3ViewspaceWidget>
 #include <taMath_float>
 #include <T3Color>
+#include <taSigLinkItr>
 
 #include <taMisc>
 
@@ -110,10 +111,6 @@ void BrainView::Initialize() {
   net_text = false;
   unit_src = NULL;
   lay_mv = true;
-  net_text_xform.translate.SetXYZ(0.0f, 1.0f, -1.0f); // start at top back
-  net_text_xform.rotate.SetXYZR(1.0f, 0.0f, 0.0f, 0.5f * taMath_float::pi); // start at right mid
-  net_text_xform.scale = 0.7f;
-  net_text_rot = -90.0f;
 
   unit_con_md = false;
   unit_disp_md = NULL;
@@ -139,7 +136,7 @@ void BrainView::Initialize() {
   view_params.unit_trans = 0.9f;  // with high-fill pct, unit trans should be much higher
   show_atlas = false;
   brain_area_regexp = ".*/.*/.*/.*/Hippocampus"; // default to show Hippocampus
-
+  state_items_stale = true;
 
   QString data_path(taMisc::app_dir.toQString());
   if (data_path.size() != 0) {
@@ -161,7 +158,7 @@ void BrainView::InitLinks() {
   taBase::Own(scale_ranges, this);
   taBase::Own(cur_unit_vals, this);
   taBase::Own(view_params, this);
-  taBase::Own(net_text_xform, this);
+  taBase::Own(net_state_text, this);
 }
 
 void BrainView::CutLinks() {
@@ -173,7 +170,20 @@ void BrainView::CutLinks() {
   cur_unit_vals.CutLinks();
   scale_ranges.CutLinks();
   scale.CutLinks();
+  net_state_text.CutLinks();
   inherited::CutLinks();
+}
+
+BrainView* Network::FindBrainView() {
+  taSigLink* dl = sig_link();
+  if(dl) {
+    taSigLinkItr itr;
+    BrainView* el;
+    FOR_DLC_EL_OF_TYPE(BrainView, el, dl, itr) {
+      return el;
+    }
+  }
+  return NULL;
 }
 
 void BrainView::CopyFromView(BrainView* cp) {
@@ -213,6 +223,8 @@ void BrainView::BuildAll() { // populates all T3 guys
   bvv->SetData(nt);
   children.Add(bvv);
   bvv->BuildAll();
+  
+  GetNetTextItems();
 }
 
 void BrainView::UpdateName() {
@@ -614,139 +626,54 @@ void BrainView::Render_impl() {
   }
 
   if(net_text) {
-#ifdef TA_QT3D
-
-#else // TA_QT3D
-    SoTransform* tx = node_so->netTextXform();
-    net_text_xform.CopyTo(tx);
-#endif // TA_QT3D
-
-    Render_net_text();
+    RenderStateValues();
+  }
+  else {
+    vw->ClearStateValues();
   }
 
   inherited::Render_impl();
 }
 
-void BrainView::Render_net_text() {
-  T3NetNode* node_so = this->node_so(); //cache
-
-#ifdef TA_QT3D
-
-#else // TA_QT3D
-  SoSeparator* net_txt = node_so->netText();
-  if(!net_txt) return;          // screwup
-
+void BrainView::RenderStateValues() {
+  if (!net_text) return;
+  
+  NameVar_Array net_state_strs;
   TypeDef* td = net()->GetTypeDef();
-  int per_row = 2;
-
-  int chld_idx = 0;
-  int cur_row = 0;
-  int cur_col = 0;
-  for(int i=td->members.size-1; i>=0; i--) {
-    MemberDef* md = td->members[i];
-    if(!md->HasOption("VIEW")) continue;
-    if(net()->HasUserData(md->name) && !net()->GetUserDataAsBool(md->name)) continue;
-    chld_idx++;
-    if(md->type->InheritsFrom(&TA_taString) || md->type->IsEnum()) {
-      if(cur_col > 0) {
-        cur_row++;
-        cur_col=0;
-      }
-      cur_row++;
-      cur_col=0;
+  
+  for(int i=0; i<net_state_text.state_items.size; i++) {
+    NetViewStateItem* item = net_state_text.GetItem(i);
+    if (item->display == false) {
+      continue;
     }
-    else {
-      cur_col++;
-      if(cur_col >= per_row) {
-        cur_col = 0;
-        cur_row++;
+    String var = item->name;
+    String val;
+    String item_text = item->name + ": ";
+    if (item->net_member) {
+      MemberDef* md = td->members.FindName(var);
+      if (md) {
+        val = md->GetValStr((void*)net());
       }
     }
-  }
-
-  int n_rows = cur_row;
-  int txt_st_off = 3 + 1;       // 3 we add below + 1 transform
-  if(node_so->netTextDrag())
-    txt_st_off+=2;              // dragger + extra xform
-
-  bool build_text = false;
-
-  if(net_txt->getNumChildren() < txt_st_off) { // haven't made basic guys yet
-    T3Panel* fr = GetFrame();
-    iColor txtcolr = fr->GetTextColor();
-    build_text = true;
-    SoBaseColor* bc = new SoBaseColor;
-    bc->rgb.setValue(txtcolr.redf(), txtcolr.greenf(), txtcolr.bluef());
-    net_txt->addChild(bc);
-    // doesn't seem to make much diff:
-    SoComplexity* cplx = new SoComplexity;
-    cplx->value.setValue(taMisc::text_complexity);
-    net_txt->addChild(cplx);
-    SoFont* fnt = new SoFont();
-    fnt->size.setValue(view_params.net_vals);
-    fnt->name = (const char*)taMisc::t3d_font_name;
-    net_txt->addChild(fnt);
-  }
-  else if(net_txt->getNumChildren() != txt_st_off + chld_idx) {
-    // if not adding up, nuke existing and rebuild
-    int nc = net_txt->getNumChildren();
-    for(int i=nc-1;i>=txt_st_off;i--) {
-      net_txt->removeChild(i);
-    }
-    build_text = true;
-  }
-
-  float rot_rad = net_text_rot / taMath_float::deg_per_rad;
-
-  chld_idx = 0;
-  cur_row = 0;
-  cur_col = 0;
-  // todo: could optimize 1st 3 counters to be on 1 row to save a row..
-  for(int i=td->members.size-1; i>=0; i--) {
-    MemberDef* md = td->members[i];
-    if(!md->HasOption("VIEW")) continue;
-    if(net()->HasUserData(md->name) && !net()->GetUserDataAsBool(md->name)) continue;
-    if(build_text) {
-      SoSeparator* tsep = new SoSeparator;
-      net_txt->addChild(tsep);
-      SoTransform* tr = new SoTransform;
-      tsep->addChild(tr);
-      bool cur_str = false;
-      if((md->type->InheritsFrom(&TA_taString) || md->type->IsEnum())) {
-        cur_str = true;
-        if(cur_col > 0) { // go to next
-          cur_row++;
-          cur_col=0;
-        }
-      }
-      float xv = 0.05f + (float)cur_col / (float)(per_row);
-      float yv = ((float)(cur_row+1.0f) / (float)(n_rows + 2.0f));
-      tr->translation.setValue(xv, 0.0f, -yv);
-      tr->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), rot_rad);
-      SoAsciiText* txt = new SoAsciiText();
-      txt->justification = SoAsciiText::LEFT;
-      tsep->addChild(txt);
-      if(cur_str) {
-        cur_row++;
-        cur_col=0;
-      }
-      else {
-        cur_col++;
-        if(cur_col >= per_row) {
-          cur_col = 0;
-          cur_row++;
+    else {  // monitor var
+      Network* nt = net();
+      if (nt) {
+        DataTable* monitor_data = &nt->mon_data;
+        if (monitor_data) {
+          if (monitor_data->rows > 0) {
+            val = monitor_data->GetValAsVar(item->name, -1).toString();
+          }
         }
       }
     }
-    SoSeparator* tsep = (SoSeparator*)net_txt->getChild(chld_idx + txt_st_off);
-    SoAsciiText* txt = (SoAsciiText*)tsep->getChild(1);
-    String el = md->name + ": ";
-    String val = md->type->GetValStr(md->GetOff((void*)net()));;
-    el += val;
-    txt->string.setValue(el.chars());
-    chld_idx++;
+    item_text = item_text + val;
+    net_state_strs.Add(NameVar(item_text, item->width));
+    
   }
-#endif // TA_QT3D
+  T3ExaminerViewer* vw = GetViewer();
+  if (vw) {
+    vw->UpdateStateValues(net_state_strs);
+  }
 }
 
 void BrainView::Reset_impl() {
@@ -880,7 +807,7 @@ void BrainView::SigRecvUpdateView_impl() {
   if (!display) return;
   UpdateUnitValues();
   if(net_text) {
-    Render_net_text();
+    RenderStateValues();
   }
 }
 
@@ -1309,3 +1236,31 @@ void BrainView::EmitAll()
     bvp->EmitViewAtlasRegexpChanged(brain_area_regexp);
   }
 }
+
+void BrainView::GetNetTextItems() {
+  if(!net()) return;
+  if(!state_items_stale) return;
+  
+  net_state_text.GetItems(net());
+  
+  state_items_stale = false;
+}
+
+int BrainView::GetNetTextItemWidth(const String& name) {
+  return net_state_text.GetItemDisplayWidth(name);
+}
+
+void BrainView::SetNetTextItemWidth(const String& name, int width) {
+  net_state_text.SetItemDisplayWidth(name, width);
+  T3ExaminerViewer* vw = GetViewer();
+  if (vw) {
+    vw->state_labels_inited = false;
+    RenderStateValues();
+  }
+  UpdatePanel();
+}
+
+void BrainView::MonitorUpdate() {
+  state_items_stale = true;  // some net monitor item change
+}
+

@@ -36,11 +36,15 @@ class QCheckBox; //
 class QTabWidget; //
 class QPushButton; //
 class QTreeWidget; //
+class QTreeWidgetItem; //
 class QSpinBox; //
 class QComboBox; //
 class QSlider; //
 class QLabel; //
 class ISelectableHost; //
+class iTreeListWidget; //
+class iTreeListWidgetItem; //
+
 
 eTypeDef_Of(iViewPanelOfBrain);
 
@@ -71,11 +75,13 @@ public:
 
   QTabWidget*           tw;
   QTreeWidget*          lvDisplayValues;
+  iTreeListWidget*      state_values;  // list of network variables that can be displayed and continuously updated in network view
 
   BrainView*            getBrainView();
 
   void                  ColorScaleFromData();
   virtual void          GetVars();
+  virtual void          GetNetVars();
   virtual void          InitPanel() override;
 
   iViewPanelOfBrain(BrainView* dv_);
@@ -126,6 +132,8 @@ public slots:
   void          EmitColorBrainAreaRegexpChanged(const QString& regexp);
   void          EmitViewAtlasRegexpChanged(const QString& regexp);
 
+  void          NetStateItemMoved(int from_index, int to_index);
+
 #ifndef __MAKETA__
 signals:
   void          DataNameChanged(const QString& name);
@@ -147,6 +155,8 @@ protected slots:
   void                  butEditAtlas_pressed();
   void                  butSetColor_pressed();
   void                  lvDisplayValues_selectionChanged();
+  void                  NetStateValues_itemClicked(QTreeWidgetItem* item, int col);
+  void                  NetStateValues_itemChanged(QTreeWidgetItem* item, int col);
 
 private:
   QComboBox*        m_view_plane_comb;

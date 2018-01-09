@@ -792,6 +792,9 @@ public:
   // #CAT_Display find existing or make a new viewer of this network (NULL=use existing empty frame if any, else make new frame)
   virtual NetView* FindView();
   // #CAT_Display find (first) existing viewer of this network
+  virtual BrainView* FindBrainView();
+  // #CAT_Display find (first) existing viewer of this network
+
   virtual String GetViewVar();
   // #CAT_Display get the currently viewed variable name from netview
   virtual bool  SetViewVar(const String& view_var);

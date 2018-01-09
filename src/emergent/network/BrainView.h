@@ -28,6 +28,7 @@
 #include <T3DataView_List>
 #include <String_Array>
 #include <taVector3i>
+#include <NetStateText>
 
 // declare all other types mentioned but not required to include:
 class iViewPanelOfBrain; //
@@ -94,9 +95,11 @@ public:
 
   bool                  display;        // whether to update the display when values change (under control of programs)
   bool                  lay_mv;         // keep this..
+
   bool                  net_text;       // whether to display text box below network with counters etc
-  taTransform           net_text_xform;  // transform of coordinate system for the net text display element
-  float                 net_text_rot;    // rotation of the text in the Z plane (in degrees) - default is upright, but if text area is rotated, then a different angle might work better
+  NetStateText          net_state_text; // holds the list of net text items, which to display, etc.
+  bool                  state_items_stale; // #NO_SAVE #NO_COPY #READ_ONLY set to true to trigger updating of state items
+
   MemberSpace           membs;          // #NO_SAVE #NO_COPY #READ_ONLY list of all the members possible in units; note: all items are new clones
   String_Array          cur_unit_vals;  // #NO_COPY #READ_ONLY currently selected unit values to display -- theoretically can display multiple values, but this is not currently supported, so it always just has one entry at most
   UnitState_cpp*        unit_src;       // #NO_SAVE #NO_COPY #READ_ONLY unit last picked (if any) for display
@@ -123,7 +126,7 @@ public:
   ////////////////////////////////////////////////////////////////
   // display updating & rendering
 
-  void         BuildAll() override;
+  void                  BuildAll() override;
   // creates fully populated subviews (but not So -- that is done in Render)
   virtual void          InitDisplay(bool init_panel = true);
   // hard reset of display, esp. Unit values -- also calls BuildAll.  Note this does not call Render -- that is done by UpdateDisplay, so a full reset is InitDisplay followed by UpdateDisplay
@@ -136,12 +139,22 @@ public:
   // *only* updates unit values -- display and structure must be the same as last time
   virtual void          UpdatePanel(); // updates nvp, esp. after UAE etc.
 
-  
+  ////////////////////////////////////////////////////////////////
+  // for text display of net variable values
+  virtual void          GetNetTextItems();
+  // get network vars marked #VIEW and any vars being monitored by the network owned monitor
+  virtual void          MonitorUpdate();
+  // some item added or deleted from monitor
+  virtual int           GetNetTextItemWidth(const String& name) override;
+  // return the display width in chars of the value portion of the state text item
+  virtual void          SetNetTextItemWidth(const String& name, int width) override;
+  // set the display width in chars of the value portion of the state text item
+
   ////////////////////////////////////////////////////////////////
   // view state functions etc
   bool            IsValid() const;
-  String         DataName() const;
-  taVector3i         Dimensions() const;
+  String          DataName() const;
+  taVector3i      Dimensions() const;
   AnatomicalPlane ViewPlane() const;
   int             SliceStart() const;
   int             SliceEnd() const;
@@ -250,10 +263,10 @@ protected:
   void         OnWindowBind_impl(iT3Panel* vw) override;
   void         Render_pre() override; // #IGNORE
   void         Render_impl() override; // #IGNORE
-  void                  Render_net_text();
+  void         RenderStateValues();
   void         Reset_impl() override; // #IGNORE
-  void                  UpdateAutoScale(); // #IGNORE prepass updates scale from values
-  void                  viewWin_NotifySignal(ISelectableHost* src, int op);
+  void         UpdateAutoScale(); // #IGNORE prepass updates scale from values
+  void         viewWin_NotifySignal(ISelectableHost* src, int op);
 
 private:
   SIMPLE_COPY(BrainView)

@@ -2683,6 +2683,10 @@ void Network::MonitorItemChange() {
   if (nv) {
     nv->MonitorUpdate();
   }
+  BrainView* bv = FindBrainView();
+  if (bv) {
+    bv->MonitorUpdate();
+  }
 }
 
 void Network::NetControlPanel(ControlPanel* ctrl_panel, const String& extra_label, const String& sub_gp_nm) {
