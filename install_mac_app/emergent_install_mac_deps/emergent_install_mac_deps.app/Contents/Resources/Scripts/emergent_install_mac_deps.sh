@@ -197,6 +197,14 @@ function installBrewDeps {
     brew install --force gsl ode libjpeg libpng
     brew install --force libsndfile
     
+    brew upgrade pkg-config
+    brew upgrade cmake
+    brew upgrade apr
+    brew upgrade apr-util
+    brew upgrade subversion
+    brew upgrade gsl ode libjpeg libpng
+    brew upgrade libsndfile
+
     brew link --force --overwrite pkg-config
     brew link --force --overwrite cmake
     brew link --force --overwrite apr
@@ -204,6 +212,7 @@ function installBrewDeps {
     brew link --force --overwrite subversion
     brew link --force --overwrite gsl ode libjpeg libpng
     brew link --force --overwrite libsndfile
+
     echo " "
     echo "-- done with commands: again if any of these commands fail, you may need to intervene manually.."
     echo " "
