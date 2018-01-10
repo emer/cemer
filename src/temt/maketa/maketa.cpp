@@ -535,6 +535,10 @@ TypeDef* MTA::FindName(const String& nm, int& lex_token) {
   TypeDef *rval = NULL;
   if((itm = taMisc::types.FindName(nm)) != NULL) {
     Info(5, "FindName: found type in types list:", nm);
+    if(nm == "type") {
+      Info(1, "Found type: type -- ignoring");
+      return NULL;
+    }
     rval = itm;
   }
 
