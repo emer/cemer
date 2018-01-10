@@ -270,9 +270,9 @@ public:
   int           n_threads;      // #NO_SAVE #CAT_State number of CPU threads to use -- defaults to value in preferences, but can be overridden.  is copied to net_state->threads.n_threads which is actual thread impl
   NetworkCudaSpec  cuda;        // #CAT_CUDA parameters for NVIDA CUDA GPU implementation -- only applicable for CUDA_COMPILE binaries
 
-  String        group_name;     // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW name associated with the current group of trials, if such a grouping is applicable (typically set by a LayerWriter)
-  String        trial_name;     // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW name associated with the current trial (e.g., name of input pattern, typically set by a LayerWriter)
-  String        output_name;    // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW name for the output produced by the network (must be computed by a program)
+  String        group_name;     // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW #VIEW_WIDTH_12 name associated with the current group of trials, if such a grouping is applicable (typically set by a LayerWriter)
+  String        trial_name;     // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW #VIEW_WIDTH_12 name associated with the current trial (e.g., name of input pattern, typically set by a LayerWriter)
+  String        output_name;    // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW #VIEW_WIDTH_12 name for the output produced by the network (must be computed by a program)
 
   TimeUsed      train_time;     // #NO_SAVE #GUI_READ_ONLY #EXPERT #CAT_Statistic time used for computing entire training (across epochs) (managed entirely by programs -- not always used)
   TimeUsed      epoch_time;     // #NO_SAVE #GUI_READ_ONLY #EXPERT #CAT_Statistic time used for computing an epoch (managed entirely by programs -- not always used)

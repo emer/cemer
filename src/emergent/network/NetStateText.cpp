@@ -65,6 +65,13 @@ void NetStateText::GetItems(Network* net) {
           || name == "cycle" || name == "sse" || name == "trial_name" || name == "output_name") {
         item->display = true;
       }
+      String def_width_str = md->OptionAfter("VIEW_WIDTH_");
+      if (def_width_str.nonempty()) {
+        int def_width = (int)def_width_str;
+        if (def_width > 0) {
+          item->width = def_width;
+        }
+      }
       state_items.Add(item);
     }
   }

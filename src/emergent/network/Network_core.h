@@ -106,16 +106,16 @@
   int           small_batch_n_eff; // #MAIN #CONDEDIT_ON_main_obj #GUI_READ_ONLY #EXPERT #NO_SAVE #CAT_Learning effective batch_n value = batch_n except for dmem when it = (batch_n / epc_nprocs) >= 1
   STATE_CLASS(NetStatsSpecs) stats; // #CAT_Statistic parameters controling the computation of statistics
 
-  int           batch;          // #MAIN #CONDEDIT_ON_main_obj #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW batch counter: number of times network has been trained over a full sequence of epochs (updated by program)
-  int           epoch;          // #MAIN #CONDEDIT_ON_main_obj #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW epoch counter: number of times a complete set of training patterns has been presented (updated by program)
-  int           group;          // #MAIN #CONDEDIT_ON_main_obj #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW group counter: optional extra counter to record sequence-level information (sequence = group of trials)
-  int           trial;          // #MAIN #CONDEDIT_ON_main_obj #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW trial counter: number of external input patterns that have been presented in the current epoch (updated by program)
-  int           tick;           // #MAIN #CONDEDIT_ON_main_obj #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW tick ..counter: optional extra counter to record a level of organization below the trial level (for cases where trials have multiple component elements)
-  int           cycle;          // #MAIN #CONDEDIT_ON_main_obj #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW cycle counter: number of iterations of activation updating (settling) on the current external input pattern (updated by program)
-  float         time;           // #CONDEDIT_ON_main_obj #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW the current time, relative to some established starting point, in algorithm-specific units (often miliseconds) -- updated internally by network
-  int           total_trials;   // #CONDEDIT_ON_main_obj #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW total number of trials counter: number of external input patterns that have been presented since the weights were initialized -- updated internally by network
+  int           batch;          // #MAIN #CONDEDIT_ON_main_obj #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW #VIEW_WIDTH_4 batch counter: number of times network has been trained over a full sequence of epochs (updated by program)
+  int           epoch;          // #MAIN #CONDEDIT_ON_main_obj #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW #VIEW_WIDTH_4 epoch counter: number of times a complete set of training patterns has been presented (updated by program)
+  int           group;          // #MAIN #CONDEDIT_ON_main_obj #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW #VIEW_WIDTH_4 group counter: optional extra counter to record sequence-level information (sequence = group of trials)
+  int           trial;          // #MAIN #CONDEDIT_ON_main_obj #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW #VIEW_WIDTH_4 trial counter: number of external input patterns that have been presented in the current epoch (updated by program)
+  int           tick;           // #MAIN #CONDEDIT_ON_main_obj #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW #VIEW_WIDTH_4 tick ..counter: optional extra counter to record a level of organization below the trial level (for cases where trials have multiple component elements)
+  int           cycle;          // #MAIN #CONDEDIT_ON_main_obj #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW #VIEW_WIDTH_4 cycle counter: number of iterations of activation updating (settling) on the current external input pattern (updated by program)
+  float         time;           // #CONDEDIT_ON_main_obj #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW #VIEW_WIDTH_8 the current time, relative to some established starting point, in algorithm-specific units (often miliseconds) -- updated internally by network
+  int           total_trials;   // #CONDEDIT_ON_main_obj #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW #VIEW_WIDTH_6 total number of trials counter: number of external input patterns that have been presented since the weights were initialized -- updated internally by network
 
-  float         sse;            // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW sum squared error over the network, for the current external input pattern
+  float         sse;            // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW #VIEW_WIDTH_8 sum squared error over the network, for the current external input pattern
   float         sum_sse;        // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic total sum squared error over an epoch or similar larger set of external input patterns
   STATE_CLASS(Average)	avg_sse;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #DMEM_AGG_SUM average sum squared error over an epoch or similar larger set of external input patterns
   float         cnt_err;        // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic count of number of times the sum squared error was above cnt_err_tol over an epoch or similar larger set of external input patterns

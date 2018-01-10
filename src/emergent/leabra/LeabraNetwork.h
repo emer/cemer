@@ -61,7 +61,7 @@ public:
 
 #include <LeabraNetwork_core>
   
-  String	minus_output_name; // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW output_name in the minus phase -- for recording in logs as network's response (output_name in plus phase is clamped target value)
+  String	minus_output_name; // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW #VIEW_WIDTH_12 output_name in the minus phase -- for recording in logs as network's response (output_name in plus phase is clamped target value)
 
   inline LeabraNetworkState_cpp* LeabraNetState() { return (LeabraNetworkState_cpp*)net_state; }
   // #CAT_State leabra network state
