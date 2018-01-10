@@ -38,9 +38,7 @@
   STATE_CLASS(SlowWtsSpec)      slow_wts;       // #CAT_Learning #CONDSHOW_ON_learn slow weight specifications -- adds a more slowly-adapting weight factor on top of the standard more rapidly adapting weights
   STATE_CLASS(DeepLrateSpec)    deep;		// #CAT_Learning #CONDSHOW_ON_learn learning rate specs for DeepLeabra learning rate modulation -- effective learning rate can be enhanced for units receiving thalamic modulation vs. those without
   STATE_CLASS(MarginLearnSpec)  margin;	        // #CAT_Learning #CONDSHOW_ON_learn learning specs for modulation as a function of marginal activation status -- emphasize learning for units on the margin
-  bool                          dwt_noise;      // #CAT_Learning #CONDSHOW_ON_learn add noise to weight changes according to noise parameters
-  float                         dwt_noise_p0;   // #CAT_Learning #CONDSHOW_ON_learn&&dwt_noise #DEF_0.7 probability of dwt_noise being zero (i.e., no noise added) -- may work better to have rarer noise -- this is the stastics of normal weight changes
-  STATE_CLASS(Random)           noise;          // #CAT_Learning #CONDSHOW_ON_learn&&dwt_noise parameters of noise to add to weight changes if dwt_noise is activated and conditioned on dwt_noise_p0 
+  STATE_CLASS(DwtShareSpec)     dwt_share;      // #CAT_Learning #CONDSHOW_ON_learn share dwt changes across different neighboring connections -- a kind of structured randomness within a long-term relationship..
 
 
   INLINE float	SigFmLinWt(float lw) { return wt_sig.SigFmLinWt(lw);  }
@@ -385,11 +383,6 @@
      const float wb_inc, const float wb_dec, int thr_no)
   {
     if(dwt == 0.0f) return;
-    if(dwt_noise) {
-      if(!STATE_CLASS(Random)::BoolProb(dwt_noise_p0)) {
-        dwt += cur_lrate * noise.Gen(thr_no);
-      }
-    }
     if(wt_sig.soft_bound) {
       if(dwt > 0.0f)	dwt *= wb_inc * (1.0f - fwt);
       else		dwt *= wb_dec * fwt;
@@ -415,11 +408,6 @@
     (float& wt, float& dwt, float& fwt, float& swt, float& scale,
      const float wb_inc, const float wb_dec, int thr_no)
   { 
-    if(dwt_noise) {
-      if(!STATE_CLASS(Random)::BoolProb(dwt_noise_p0)) {
-        dwt += cur_lrate * noise.Gen(thr_no);
-      }
-    }
     if(wt_sig.soft_bound) {
       if(dwt > 0.0f)	dwt *= wb_inc * (1.0f - fwt);
       else		dwt *= wb_dec * fwt;
@@ -449,6 +437,26 @@
     float* scales = cg->OwnCnVar(SCALE);
     const int sz = cg->size;
 
+    bool dwt_sh = (dwt_share.on && sz >= dwt_share.neigh &&
+                   (dwt_share.p_share == 1.0f || Random::BoolProb(dwt_share.p_share, thr_no)));
+    
+    if(dwt_sh && dwt_share.common) {
+      int neigh = dwt_share.neigh;
+      int n_pool = sz / neigh;
+      if(n_pool < 1) { n_pool = 1; neigh = sz; }
+      for(int pi=0; pi < n_pool; pi++) {
+        float dwt = 0.0f;
+        for(int ni=0; ni < neigh; ni++) {
+          int i = pi*neigh + ni;
+          if(i < sz) dwt += dwts[i];
+        }
+        for(int ni=0; ni < neigh; ni++) {
+          int i = pi*neigh + ni;
+          if(i < sz) dwts[i] = dwt;
+        }
+      }
+    }
+    
     if(wt_bal.on) {
       float* wbincs = cg->OwnCnVar(WB_INC);
       float* wbdecs = cg->OwnCnVar(WB_DEC);
@@ -464,13 +472,30 @@
         }
       }
       else {
-        for(int i=0; i<sz; i++) {
-          // note: MUST get these from ru -- diff for each con -- can't copy to sender!
-          // storing in synapses is about 2x faster and essentially no overhead vs. no wtbal
-          // LEABRA_CON_STATE* rcg = cg->UnCons(i, net);
-          C_Compute_Weights_CtLeabraXCAL
-            (wts[i], dwts[i], fwts[i], swts[i], scales[i], wbincs[i], wbdecs[i], thr_no);
+        if(dwt_sh && !dwt_share.common) {
+          int neigh = dwt_share.neigh;
+          for(int i=0; i<sz; i++) {
+            float dwt = 0.0f;
+            for(int ni = -neigh; ni <= neigh; ni++) {
+              int j = i + ni;
+              if(j < 0)         j += sz;
+              else if(j >= sz)  j -= sz;
+              dwt += dwts[j];
+            }
+            dwts[i] = dwt;
+            C_Compute_Weights_CtLeabraXCAL
+              (wts[i], dwts[i], fwts[i], swts[i], scales[i], wbincs[i], wbdecs[i], thr_no);
+          }
+        }
+        else {
+          for(int i=0; i<sz; i++) {
+            // note: MUST get these from ru -- diff for each con -- can't copy to sender!
+            // storing in synapses is about 2x faster and essentially no overhead vs. no wtbal
+            // LEABRA_CON_STATE* rcg = cg->UnCons(i, net);
+            C_Compute_Weights_CtLeabraXCAL
+              (wts[i], dwts[i], fwts[i], swts[i], scales[i], wbincs[i], wbdecs[i], thr_no);
             // (wts[i], dwts[i], fwts[i], swts[i], scales[i], rcg->wb_inc, rcg->wb_dec);
+          }
         }
       }
     }
@@ -586,8 +611,7 @@
     wt_limits.min = 0.0f;  wt_limits.max = 1.0f;  wt_limits.sym = true;
     wt_limits.type = STATE_CLASS(WeightLimits)::MIN_MAX;
     rnd.mean = .5f;  rnd.var = .25f;
-    lrate = .04f;    cur_lrate = .02f;  lrs_mult = 1.0f;  dwt_noise = false; dwt_noise_p0 = 0.7f;
-    noise.type = STATE_CLASS(Random)::GAUSSIAN;  noise.mean = 0.0f;  noise.var = 0.005f;
+    lrate = .04f;    cur_lrate = .02f;  lrs_mult = 1.0f;
   }
     
   INLINE int  GetStateSpecType() const override

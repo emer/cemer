@@ -233,9 +233,10 @@ public:
   STATE_TA_STD_CODE_SPEC(LeabraMomentum);
   STATE_UAE( UpdtVals(); );
 private:
-  void	Initialize()    {   Defaults_init(); }
+  void	Initialize()    {  Defaults_init(); }
   void	Defaults_init() {
-    on = true; dwavg_tau = 1000.0f;  norm_min = 0.001f;  m_tau = 20.0f;  lrate_comp = 0.01f;
+    on = true; dwavg_tau = 1000.0f;  norm_min = 0.001f;  m_tau = 20.0f;
+    lrate_comp = 0.01f;
     UpdtVals();
   }
 };
@@ -392,6 +393,25 @@ public:
 private:
   void	Initialize()    {  lrate_mod = false;  sign_dwt = false;  Defaults_init(); }
   void	Defaults_init() {  stable_lrate = 0.5f;  sign_lrn = 0.5f; }
+};
+
+
+class STATE_CLASS(DwtShareSpec) : public STATE_CLASS(SpecMemberBase) {
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra share dwt changes across different neighboring connections -- a kind of structured randomness within a long-term relationship..
+INHERITED(SpecMemberBase)
+public:
+  bool          on;             // enable dwt sharing
+  int           neigh;          // #CONDSHOW_ON_on number of neighbors to share weights weith
+  bool          common;         // #CONDSHOW_ON_on sharing pool of synapses are all in common with each other -- every neigh synapses are in a common pool -- otherwise each synapse shares with neigh units *on either size* (i.e., true share size is actually 2x neigh in this case)
+  float         p_share;        // #CONDSHOW_ON_on #MIN_0 #MAX_1 probability of sharing dwts -- per sending unit (all synapses for given sender share at the same time)
+
+  
+  STATE_DECO_KEY("ConSpec");
+  STATE_TA_STD_CODE_SPEC(DwtShareSpec);
+private:
+  void	Initialize()    {  on = false;  neigh = 2; common = false;  p_share = 0.5f;
+    Defaults_init(); }
+  void	Defaults_init() {  }
 };
 
 

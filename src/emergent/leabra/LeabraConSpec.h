@@ -51,6 +51,7 @@ eTypeDef_Of(AdaptWtScaleSpec);
 eTypeDef_Of(SlowWtsSpec);
 eTypeDef_Of(DeepLrateSpec);
 eTypeDef_Of(MarginLearnSpec);
+eTypeDef_Of(DwtShareSpec);
 
 #include <LeabraConSpec_mbrs>
 
