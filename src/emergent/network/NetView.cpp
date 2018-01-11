@@ -288,6 +288,17 @@ NetView* Network::FindView() {
   return NULL;
 }
 
+void Network::FindViews(T3DataView_List* dv_list) {
+  taSigLink* dl = sig_link();
+  if(dl) {
+    taSigLinkItr itr;
+    NetView* el;
+    FOR_DLC_EL_OF_TYPE(NetView, el, dl, itr) {
+      dv_list->Link(el);
+    }
+  }
+}
+
 NetView* Network::FindMakeView(T3Panel* fr) {
   taSigLink* dl = sig_link();
   if(dl) {

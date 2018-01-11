@@ -186,6 +186,17 @@ BrainView* Network::FindBrainView() {
   return NULL;
 }
 
+void Network::FindBrainViews(T3DataView_List* dv_list) {
+  taSigLink* dl = sig_link();
+  if(dl) {
+    taSigLinkItr itr;
+    BrainView* el;
+    FOR_DLC_EL_OF_TYPE(BrainView, el, dl, itr) {
+      dv_list->Link(el);
+    }
+  }
+}
+
 void BrainView::CopyFromView(BrainView* cp) {
   Copy_(*cp);
   T3DataViewMain::CopyFromViewFrame(cp);

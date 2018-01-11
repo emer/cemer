@@ -2679,13 +2679,22 @@ void Network::MonitorData() {
 }
 
 void Network::MonitorItemChange() {
-  NetView* nv = FindView();
-  if (nv) {
-    nv->MonitorUpdate();
+  T3DataView_List nv_list;
+  FindViews(&nv_list);
+  for (int i=0; i<nv_list.size; i++) {
+    NetView* nv = (NetView*)nv_list.SafeEl(i);
+    if (nv) {
+      nv->MonitorUpdate();
+    }
   }
-  BrainView* bv = FindBrainView();
-  if (bv) {
-    bv->MonitorUpdate();
+  
+  T3DataView_List bv_list;
+  FindBrainViews(&bv_list);
+  for (int i=0; i<bv_list.size; i++) {
+    BrainView* bv = (BrainView*)bv_list.SafeEl(i);
+    if (bv) {
+      bv->MonitorUpdate();
+    }
   }
 }
 

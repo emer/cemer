@@ -40,6 +40,7 @@
 #include <byte_Array>
 #include <NetMonitor>
 #include <DataTable>
+#include <T3DataView_List>
 
 // declare all other types mentioned but not required to include:
 class ProjectBase; //
@@ -792,9 +793,12 @@ public:
   // #CAT_Display find existing or make a new viewer of this network (NULL=use existing empty frame if any, else make new frame)
   virtual NetView* FindView();
   // #CAT_Display find (first) existing viewer of this network
+  virtual void FindViews(T3DataView_List* dv_list);
+  // #CAT_Display find all existing viewers of this network
   virtual BrainView* FindBrainView();
   // #CAT_Display find (first) existing viewer of this network
-
+  virtual void FindBrainViews(T3DataView_List* dv_list);
+  // #CAT_Display find all existing viewers of this network
   virtual String GetViewVar();
   // #CAT_Display get the currently viewed variable name from netview
   virtual bool  SetViewVar(const String& view_var);
