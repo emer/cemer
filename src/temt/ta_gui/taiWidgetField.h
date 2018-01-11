@@ -23,6 +23,7 @@
 
 // declare all other types mentioned but not required to include:
 class iDialogWidgetField;
+class iCodeCompleter;
 
 class TA_API taiWidgetField : public taiWidgetText {
   Q_OBJECT
@@ -31,7 +32,7 @@ class TA_API taiWidgetField : public taiWidgetText {
 public:
   taiWidgetField(TypeDef* typ_, IWidgetHost* host, taiWidget* par, QWidget* gui_parent_, int flags = 0, MemberDef* md = NULL, taBase* base = NULL);
   ~taiWidgetField();
-
+  
 protected slots:
   void                  btnEdit_clicked(bool) override;
   void                  lookupKeyPressed() override;
@@ -40,7 +41,11 @@ protected slots:
   void                  characterEntered_dialog();
 
 public:
-
+  void                  CharacterEnteredInArgDialog();
+  void                  CharacterEnteredInField();
+  void                  MemberCompletion();
+  Completions*          ExpressionCompletion(iCodeCompleter* completer, const String& expr, int cur_pos);
+  
 protected:
   iDialogWidgetField*     edit_dialog;    // an edit dialog, if created
 };

@@ -82,9 +82,9 @@ void taiWidgetField::btnEdit_clicked(bool) {
 }
 
 void taiWidgetField::lookupKeyPressed() {
+  arg_completions.Reset();
   cssiArgDialog* cssi_arg_dlg = dynamic_cast<cssiArgDialog*>(host);
   if (cssi_arg_dlg) {
-    arg_completions.Reset();
     String reference_arg;  // the arg that holds a pointer to the object from which we can get a list
     taBase* class_base = (taBase*)host->Root();
     String cur_text = leText->text();
@@ -123,28 +123,15 @@ void taiWidgetField::lookupKeyPressed() {
   // wasn't a cssi_arg_dialog
   if(!lookupfun_md || !lookupfun_base) return;
   
-  taBase* tab = (taBase*)lookupfun_base;
   int cur_pos = rep()->cursorPosition();
-  int new_pos = -1;
-  Completions* expr_completions = NULL;
+  Completions* completions = NULL;
   iCodeCompleter* completer = rep()->GetCompleter();
   if (completer) {
-    member_completions.Reset();
     if (completer->field_type == iCodeCompleter::SIMPLE) {
-      String text = rep()->text();
-      String pre_text = text;
-      if (text.contains('.')) {
-        pre_text = text.before('.');
-      }
-      tab->GetMemberCompletionList(lookupfun_md, pre_text, member_completions);
-      if (pre_text != text) {
-        member_completions.pre_text = pre_text + ".";
-      }
-      rep()->GetCompleter()->SetCompletions(&member_completions);
+      MemberCompletion();
     }
     else {  // iCodeCompleter::EXPRESSION
-      expr_completions = tab->StringFieldLookupForCompleter(rep()->text(), cur_pos, lookupfun_md->name, new_pos);
-      rep()->GetCompleter()->SetCompletions(expr_completions);
+      completions = ExpressionCompletion(completer, rep()->text(), cur_pos);
     }
   }
 
@@ -154,15 +141,15 @@ void taiWidgetField::lookupKeyPressed() {
   rep()->setFocus();
 #endif
   
-  if (expr_completions) {
-    taiWidgetCompletionChooser* chooser = new taiWidgetCompletionChooser(NULL, NULL, NULL, NULL, 0, expr_completions->seed);
-    chooser->SetCompletions(expr_completions);
+  if (completions) {
+    taiWidgetCompletionChooser* chooser = new taiWidgetCompletionChooser(NULL, NULL, NULL, NULL, 0, completions->seed);
+    chooser->SetCompletions(completions);
     bool ok_choice = chooser->OpenChooser();
     
     if (ok_choice) {
       String selection_text = chooser->GetSelectionText();
       rep()->GetCompleter()->chooser_selection = selection_text;
-      rep()->setText(expr_completions->pre_text + selection_text + expr_completions->append_text);
+      rep()->setText(completions->pre_text + selection_text + completions->append_text);
       rep()->GetCompleter()->chooser_selection = _nilString;
     }
   }
@@ -184,16 +171,13 @@ void taiWidgetField::lookupKeyPressed_dialog() {
   if(!edit_dialog) return;
 
   QTextCursor cursor(edit_dialog->txtText->textCursor());
-
+  Completions* completions = NULL;
   taBase* tab = (taBase*)lookupfun_base;
   int cur_pos = cursor.position();
-  int new_pos = -1;
   
-  Completions* completions = NULL;
-  
-  if (rep()->GetCompleter()) {
-    completions = tab->StringFieldLookupForCompleter(edit_dialog->txtText->toPlainText(), cur_pos, lookupfun_md->name, new_pos);
-    rep()->GetCompleter()->SetCompletions(completions);
+  iCodeCompleter* completer = rep()->GetCompleter();
+  if (completer) {
+    ExpressionCompletion(completer, edit_dialog->txtText->toPlainText(), cur_pos);
   }
   
 #ifdef TA_OS_MAC
@@ -202,29 +186,30 @@ void taiWidgetField::lookupKeyPressed_dialog() {
   rep()->setFocus();
 #endif
   
-  taiWidgetCompletionChooser* chooser = new taiWidgetCompletionChooser(NULL, NULL, NULL, NULL, 0, completions->seed);
-  chooser->SetCompletions(completions);
-  bool ok_choice = chooser->OpenChooser();
-  
-  if (ok_choice) {
-    String selection_text = chooser->GetSelectionText();
-    edit_dialog->txtText->setPlainText(completions->pre_text + selection_text + completions->append_text);
-    QTextCursor cur2(edit_dialog->txtText->textCursor());
-    new_pos = cur_pos + selection_text.length() + completions->seed.length();
-    cur2.setPosition(new_pos);
-    edit_dialog->txtText->setTextCursor(cur2);
+  if (completions) {
+    taiWidgetCompletionChooser* chooser = new taiWidgetCompletionChooser(NULL, NULL, NULL, NULL, 0, completions->seed);
+    chooser->SetCompletions(completions);
+    bool ok_choice = chooser->OpenChooser();
+    
+    if (ok_choice) {
+      String selection_text = chooser->GetSelectionText();
+      edit_dialog->txtText->setPlainText(completions->pre_text + selection_text + completions->append_text);
+      QTextCursor cur2(edit_dialog->txtText->textCursor());
+      int new_pos = cur_pos + selection_text.length() + completions->seed.length();
+      cur2.setPosition(new_pos);
+      edit_dialog->txtText->setTextCursor(cur2);
+    }
+    delete chooser;
   }
-  delete chooser;
 }
 
 void taiWidgetField::characterEntered() {
   arg_completions.Reset();
-  member_completions.Reset();
   cssiArgDialog* cssi_arg_dlg = dynamic_cast<cssiArgDialog*>(host);
   if (cssi_arg_dlg) {
     String reference_arg;  // the arg that holds a pointer to the object from which we can get a list
-    String cur_text = leText->text();
     taBase* class_base = (taBase*)host->Root();
+    String cur_text = leText->text();
     if (class_base) {
       if (label()) { // why isn't the label always set - conditional field might be the issue
         if (!cur_text.contains('.')) {
@@ -272,29 +257,13 @@ void taiWidgetField::characterEntered() {
   }
   
   // wasn't a cssi_arg_dialog
-  if(!lookupfun_md || !lookupfun_base) return;
-  
-  taBase* tab = (taBase*)lookupfun_base;
-  int cur_pos = rep()->cursorPosition();
-  int new_pos = -1;
-  
   iCodeCompleter* completer = rep()->GetCompleter();
   if (completer) {
     if (completer->field_type == iCodeCompleter::SIMPLE) {
-      String text = rep()->text();
-      String pre_text = text;
-      if (text.contains('.')) {
-        pre_text = text.before('.');
-      }
-      tab->GetMemberCompletionList(lookupfun_md, pre_text, member_completions);
-      if (pre_text != text) {
-        member_completions.pre_text = pre_text + ".";
-      }
-      rep()->GetCompleter()->SetCompletions(&member_completions);
+      MemberCompletion();
     }
     else {  // iCodeCompleter::EXPRESSION
-      Completions* completions = tab->StringFieldLookupForCompleter(rep()->text(), cur_pos, lookupfun_md->name, new_pos);
-      rep()->GetCompleter()->SetCompletions(completions);
+      ExpressionCompletion(completer, rep()->text(), rep()->cursorPosition());
     }
   }
   
@@ -316,15 +285,12 @@ void taiWidgetField::characterEntered_dialog() {
   int new_pos = -1;
   iCodeCompleter* completer = edit_dialog->txtText->GetCompleter();
   if (completer) {
-    arg_completions.Reset();
-    member_completions.Reset();
     if (completer->field_type == iCodeCompleter::SIMPLE) {
       tab->GetMemberCompletionList(lookupfun_md, edit_dialog->txtText->toPlainText(), member_completions);
       edit_dialog->txtText->GetCompleter()->SetCompletions(&member_completions);
     }
     else {  // iCodeCompleter::EXPRESSION
-      Completions* completions = tab->StringFieldLookupForCompleter(edit_dialog->txtText->toPlainText(), cur_pos, lookupfun_md->name, new_pos);
-      edit_dialog->txtText->GetCompleter()->SetCompletions(completions);
+      ExpressionCompletion(completer, edit_dialog->txtText->toPlainText(), cur_pos);
     }
   }
   
@@ -333,4 +299,35 @@ void taiWidgetField::characterEntered_dialog() {
   rep()->window()->setFocus();
   rep()->setFocus();
 #endif
+}
+
+void taiWidgetField::MemberCompletion() {
+  if(!lookupfun_md || !lookupfun_base) return;
+  
+  member_completions.Reset();
+  taBase* tab = (taBase*)lookupfun_base;
+  int cur_pos = rep()->cursorPosition();
+  
+  iCodeCompleter* completer = rep()->GetCompleter();
+  String text = rep()->text();
+  String pre_text = text;
+  if (text.contains('.')) {
+    pre_text = text.before('.');
+  }
+  tab->GetMemberCompletionList(lookupfun_md, pre_text, member_completions);
+  if (pre_text != text) {
+    member_completions.pre_text = pre_text + ".";
+  }
+  rep()->GetCompleter()->SetCompletions(&member_completions);
+}
+
+Completions* taiWidgetField::ExpressionCompletion(iCodeCompleter* completer, const String& expr, int cur_pos) {
+  if(!lookupfun_md || !lookupfun_base) return NULL;
+  if(!completer) return NULL;
+  
+  taBase* tab = (taBase*)lookupfun_base;
+  int new_pos = -1;
+  Completions* completions = tab->StringFieldLookupForCompleter(expr, cur_pos, lookupfun_md->name, new_pos);
+  completer->SetCompletions(completions);
+  return completions;
 }
