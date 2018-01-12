@@ -506,9 +506,9 @@ void taDataProc::SortThruIndex_impl(DataTable* dt, DataSortSpec* spec, int arr[]
 
   /* partition */
   while (i <= j) {
-    while (SortThruIndex_Compare(dt, spec, arr[i], pivot_row_table, true))
+    while (i < dt->rows && SortThruIndex_Compare(dt, spec, arr[i], pivot_row_table, true))
       i++;
-    while (SortThruIndex_Compare(dt, spec, arr[j], pivot_row_table, false))
+    while (j > 0 && SortThruIndex_Compare(dt, spec, arr[j], pivot_row_table, false))
       j--;
     if (i <= j) {
       tmp = arr[i];
