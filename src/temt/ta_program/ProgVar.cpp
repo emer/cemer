@@ -30,6 +30,8 @@ taTypeDef_Of(Loop);
 #include <ControlPanel>
 #include <taProject>
 #include <FlatTreeEl_List>
+#include <Completions>
+#include <ProgExprBase>
 
 #include <taMisc>
 #include <tabMisc>
@@ -1382,3 +1384,19 @@ bool ProgVar::ReplaceWithVar(ProgVar* repl_var) {
   if(!prog) return false;
   return prog->UpdatePointers_NewObj(this, repl_var);
 }
+
+void ProgVar::GetMemberCompletionList(const MemberDef* md, const String& cur_txt, Completions& completions) {
+  if (completion_type.nonempty()) {
+    bool ref = false;
+    TypeDef* td = ProgVar::GetTypeDefFromString(completion_type, ref);
+    if (td == NULL) return;
+    bool include_subtypes = true;
+    ProgExprBase::GetTokensOfType(td, &completions.object_completions, this->GetMyProj(), &TA_taProject, include_subtypes);
+    String txt = cur_txt;
+    txt = txt.trimr();
+    if (txt.endsWith(':')) {
+      completions.pre_text = cur_txt;
+    }
+  }
+}
+

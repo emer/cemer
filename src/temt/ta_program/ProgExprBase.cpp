@@ -43,6 +43,8 @@
 #include <EnumDef>
 #include <Completions>
 #include <AssignExpr>
+#include <TokenSpace>
+
 
 TA_BASEFUNS_CTORS_DEFN(ProgExprBase);
 TA_BASEFUNS_CTORS_DEFN(ProgExprShort);
@@ -1627,9 +1629,9 @@ ProgExprBase::LookUpType ProgExprBase::Test_ParseForLookup(const String test_nam
   return lookup_type;
 }
 
-void ProgExprBase::GetTokensOfType(TypeDef* td, taBase_List* tokens, taBase* scope, TypeDef* scope_type, ProgVar::VarType var_type) {
+void ProgExprBase::GetTokensOfType(TypeDef* td, taBase_List* tokens, taBase* scope, TypeDef* scope_type, bool include_subtypes) {
   if (td == NULL || tokens == NULL) return;
-    
+  
   for(int i=0; i<td->tokens.size; i++) {
     taBase* btmp = (taBase*)td->tokens.FastEl(i);
     if(!btmp)
@@ -1643,6 +1645,12 @@ void ProgExprBase::GetTokensOfType(TypeDef* td, taBase_List* tokens, taBase* sco
         continue;
     }
     tokens->Link(btmp);
+  }
+  if (include_subtypes) {
+    for (int i = 0; i < td->children.size; ++i) {
+      TypeDef* chld_td = td->children[i];
+      GetTokensOfType(chld_td, tokens, scope, scope_type, true);
+    }
   }
   tokens->Sort();
 }

@@ -200,7 +200,7 @@ public:
   static bool           ExprLookupIsFunc(const String& txt);  // is it a function or program lookup
   static bool           ExprIsType(const String& txt);  // bool, int, float, etc
   static void           GetTokensOfType(TypeDef* td, taBase_List* tokens, taBase* scope = NULL,
-                                        TypeDef* scope_type = NULL, ProgVar::VarType = ProgVar::T_UnDef);
+                                        TypeDef* scope_type = NULL, bool include_subtypes = false);
   static void           GetListItems(taList_impl* list, taBase_List* tokens);
   static void           GetGroupItems(taGroup_impl* groups, taBase_List* tokens, bool top_group = true);
   // top_group should be true on first call so the subgroups are listed but after that false so subsubgroups are not listed but subsub leaves are listed

@@ -62,9 +62,11 @@ public:
   VarType       var_type;       // type of variable -- determines which xxx_val(s) is/are used
   int           int_val;        // #CONDSHOW_ON_var_type:T_Int,T_HardEnum #CONDEDIT_ON_flags:EDIT_VAL integer value -- this is the current actual value of the variable at all times for global variables, and is used as an initialization value for local variables (they start with this value, but what you see here is NOT their current value as the program runs)
   double        real_val;       // #CONDSHOW_ON_var_type:T_Real #CONDEDIT_ON_flags:EDIT_VAL real value -- this is the current actual value of the variable at all times for global variables, and is used as an initialization value for local variables (they start with this value, but what you see here is NOT their current value as the program runs)
-  String        string_val;     // #CONDSHOW_ON_var_type:T_String #CONDEDIT_ON_flags:EDIT_VAL #EDIT_DIALOG string value -- this is the current actual value of the variable at all times for global variables, and is used as an initialization value for local variables (they start with this value, but what you see here is NOT their current value as the program runs)
+  String        string_val;     // #CONDSHOW_ON_var_type:T_String #CONDEDIT_ON_flags:EDIT_VAL #EDIT_DIALOG #ADD_COMPLETER_SIMPLE string value -- this is the current actual value of the variable at all times for global variables, and is used as an initialization value for local variables (they start with this value, but what you see here is NOT their current value as the program runs)
   bool          bool_val;       // #CONDSHOW_ON_var_type:T_Bool #CONDEDIT_ON_flags:EDIT_VAL boolean value -- this is the current actual value of the variable at all times for global variables, and is used as an initialization value for local variables (they start with this value, but what you see here is NOT their current value as the program runs)
   TypeDef*      object_type;    // #CONDSHOW_ON_var_type:T_Object #NO_NULL #TYPE_taBase #LABEL_min_type the minimum acceptable type of the object
+  String        completion_type; // #CONDSHOW_ON_var_type:T_String #EDIT_DIALOG if specified completion of the string_val field will only show objects of this type when "completing"
+  
   taBaseRef     object_val;     // #CONDSHOW_ON_var_type:T_Object #CONDEDIT_ON_flags:EDIT_VAL #NULL_OK #TYPE_ON_object_type #SCOPE_taProject #SCOPEOBJ_ON_object_scope object pointer value -- this is not the object itself, just a pointer to it -- object must exist somewhere.  if it is in this program's .objs, then the name will be automatically set -- this is the current actual value of the variable at all times for global variables, and is used as an initialization value for local variables (they start with this value, but what you see here is NOT their current value as the program runs)
   taBaseRef     object_scope;    // #CONDSHOW_ON_var_type:T_Object #TYPE_taNBase #SCOPE_taProject #NULL_OK for object pointers, if this is set (non NULL), then restrict selection of objects to those that are under this object -- can make it easier for the user to find the right kind of object to select for this variable
   TypeDef*      hard_enum_type; // #CONDSHOW_ON_var_type:T_HardEnum #ENUM_TYPE #TYPE_taBase #LABEL_enum_type type information for hard enum (value goes in int_val)
@@ -222,6 +224,7 @@ public:
 
   virtual ProgVar*      GetInitFromVar(bool warn = true);
   // #CAT_ProgVar get the program variable to initialize from in the init_from program -- warn = emit a warning if the variable is not found
+  void                  GetMemberCompletionList(const MemberDef* md, const String& cur_txt, Completions& completions) override;
 
   int           ReplaceValStr
     (const String& srch, const String& repl, const String& mbr_filt,
