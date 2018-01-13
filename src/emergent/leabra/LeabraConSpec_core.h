@@ -404,7 +404,7 @@
   }
   // #IGNORE overall compute weights for CtLeabraXCAL learning rule -- no slow wts
 
-  INLINE void	C_Compute_Weights_CtLeabraXCAL_slow
+  INLINE void   C_Compute_Weights_CtLeabraXCAL_slow
     (float& wt, float& dwt, float& fwt, float& swt, float& scale,
      const float wb_inc, const float wb_dec, int thr_no)
   { 
@@ -429,7 +429,26 @@
   }
   // #IGNORE overall compute weights for CtLeabraXCAL learning rule -- slow wts
 
-  INLINE void	Compute_Weights(CON_STATE* scg, NETWORK_STATE* net, int thr_no) override {
+
+  INLINE float C_Compute_Weights_dwtshare
+  (bool dwt_sep, float* dwts, const int i, const int neigh, const int sz) {
+    if(dwt_sep) {
+      float dwt = 0.0f;
+      for(int ni = -neigh; ni <= neigh; ni++) {
+        int j = i + ni;
+        if(j < 0)         j += sz;
+        else if(j >= sz)  j -= sz;
+        dwt += dwts[j];
+      }
+      return dwt;
+    }
+    else {
+      return dwts[i];
+    }
+  }
+  // #IGNORE separate dwt share or just dwt, depending on dwt_sep
+
+  INLINE void   Compute_Weights(CON_STATE* scg, NETWORK_STATE* net, int thr_no) override {
     if(!learn) return;
     LEABRA_CON_STATE* cg = (LEABRA_CON_STATE*)scg;
     float* wts = cg->OwnCnVar(WT);      float* dwts = cg->OwnCnVar(DWT);
@@ -439,77 +458,62 @@
 
     bool dwt_sh = (dwt_share.on && sz >= dwt_share.neigh &&
                    (dwt_share.p_share == 1.0f || Random::BoolProb(dwt_share.p_share, thr_no)));
+    int neigh = dwt_share.neigh;
+    bool dwt_sep = dwt_sh && !dwt_share.common;
     
     if(dwt_sh && dwt_share.common) {
-      int neigh = dwt_share.neigh;
       int n_pool = sz / neigh;
       if(n_pool < 1) { n_pool = 1; neigh = sz; }
+      else if(n_pool * neigh < sz) n_pool++;
       for(int pi=0; pi < n_pool; pi++) {
         float dwt = 0.0f;
         for(int ni=0; ni < neigh; ni++) {
           int i = pi*neigh + ni;
-          if(i < sz) dwt += dwts[i];
+          if(i >= sz) break;
+          dwt += dwts[i];
         }
         for(int ni=0; ni < neigh; ni++) {
           int i = pi*neigh + ni;
-          if(i < sz) dwts[i] = dwt;
+          if(i >= sz) break;
+          dwts[i] = dwt; // ok to write back bc all now processed
         }
       }
     }
-    
+
     if(wt_bal.on) {
+      // note: MUST get these from ru -- diff for each con -- can't copy to sender!
+      // storing in synapses is about 2x faster and essentially no overhead vs. no wtbal
       float* wbincs = cg->OwnCnVar(WB_INC);
       float* wbdecs = cg->OwnCnVar(WB_DEC);
 
       if(slow_wts.on) {
         for(int i=0; i<sz; i++) {
-          // note: MUST get these from ru -- diff for each con -- can't copy to sender!
-          // storing in synapses is about 2x faster and essentially no overhead vs. no wtbal
-          // LEABRA_CON_STATE* rcg = cg->UnCons(i, net);
+          float dwt = C_Compute_Weights_dwtshare(dwt_sep, dwts, i, neigh, sz);
           C_Compute_Weights_CtLeabraXCAL_slow
-            (wts[i], dwts[i], fwts[i], swts[i], scales[i], wbincs[i], wbdecs[i], thr_no);
-            // (wts[i], dwts[i], fwts[i], swts[i], scales[i], rcg->wb_inc, rcg->wb_dec);
+            (wts[i], dwt, fwts[i], swts[i], scales[i], wbincs[i], wbdecs[i], thr_no);
         }
       }
       else {
-        if(dwt_sh && !dwt_share.common) {
-          int neigh = dwt_share.neigh;
-          for(int i=0; i<sz; i++) {
-            float dwt = 0.0f;
-            for(int ni = -neigh; ni <= neigh; ni++) {
-              int j = i + ni;
-              if(j < 0)         j += sz;
-              else if(j >= sz)  j -= sz;
-              dwt += dwts[j];
-            }
-            dwts[i] = dwt;
-            C_Compute_Weights_CtLeabraXCAL
-              (wts[i], dwts[i], fwts[i], swts[i], scales[i], wbincs[i], wbdecs[i], thr_no);
-          }
-        }
-        else {
-          for(int i=0; i<sz; i++) {
-            // note: MUST get these from ru -- diff for each con -- can't copy to sender!
-            // storing in synapses is about 2x faster and essentially no overhead vs. no wtbal
-            // LEABRA_CON_STATE* rcg = cg->UnCons(i, net);
-            C_Compute_Weights_CtLeabraXCAL
-              (wts[i], dwts[i], fwts[i], swts[i], scales[i], wbincs[i], wbdecs[i], thr_no);
-            // (wts[i], dwts[i], fwts[i], swts[i], scales[i], rcg->wb_inc, rcg->wb_dec);
-          }
+        for(int i=0; i<sz; i++) {
+          float dwt = C_Compute_Weights_dwtshare(dwt_sep, dwts, i, neigh, sz);
+          C_Compute_Weights_CtLeabraXCAL
+            (wts[i], dwt, fwts[i], swts[i], scales[i], wbincs[i], wbdecs[i], thr_no);
         }
       }
     }
     else {
       if(slow_wts.on) {
         for(int i=0; i<sz; i++) {
+          float dwt = C_Compute_Weights_dwtshare(dwt_sep, dwts, i, neigh, sz);
           C_Compute_Weights_CtLeabraXCAL_slow
-            (wts[i], dwts[i], fwts[i], swts[i], scales[i], 1.0f, 1.0f, thr_no);
+            (wts[i], dwt, fwts[i], swts[i], scales[i], 1.0f, 1.0f, thr_no);
         }
       }
       else {
         for(int i=0; i<sz; i++) {
+          float dwt = C_Compute_Weights_dwtshare(dwt_sep, dwts, i, neigh, sz);
           C_Compute_Weights_CtLeabraXCAL
-            (wts[i], dwts[i], fwts[i], swts[i], scales[i], 1.0f, 1.0f, thr_no);
+            (wts[i], dwt, fwts[i], swts[i], scales[i], 1.0f, 1.0f, thr_no);
         }
       }
     }
