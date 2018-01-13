@@ -1386,12 +1386,28 @@ bool ProgVar::ReplaceWithVar(ProgVar* repl_var) {
 }
 
 void ProgVar::GetMemberCompletionList(const MemberDef* md, const String& cur_txt, Completions& completions) {
+  TypeDef* completion_td = NULL;
+  bool ref = false;
   if (completion_type.nonempty()) {
-    bool ref = false;
-    TypeDef* td = ProgVar::GetTypeDefFromString(completion_type, ref);
-    if (td == NULL) return;
+    completion_td = ProgVar::GetTypeDefFromString(completion_type, ref);
+  }
+  else {  // control panel member uses same completion type as actual var pointed to - of course
+    ControlPanelMember* cp_member = NULL;
+    taBase* base = GetOwner(&TA_ControlPanelMember);
+    if (base) {
+      cp_member = (ControlPanelMember*)base;
+      if (cp_member) {
+        ProgVar* pv = (ProgVar*)cp_member->base;
+        if (pv) {
+          String comp_type = pv->completion_type;
+          completion_td = ProgVar::GetTypeDefFromString(comp_type, ref);
+        }
+      }
+    }
+  }
+  if (completion_td) {
     bool include_subtypes = true;
-    ProgExprBase::GetTokensOfType(td, &completions.object_completions, this->GetMyProj(), &TA_taProject, include_subtypes);
+    ProgExprBase::GetTokensOfType(completion_td, &completions.object_completions, this->GetMyProj(), &TA_taProject, include_subtypes);
     String txt = cur_txt;
     txt = txt.trimr();
     if (txt.endsWith(':')) {
