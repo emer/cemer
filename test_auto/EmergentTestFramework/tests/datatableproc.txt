@@ -60,6 +60,12 @@ Sort
     Run Emergent Program	Sort
     Prog Var Should Equal	test_failed	0    
 
+Permute
+    Ensure Emergent Free
+    Set Suite Variable     ${program_test}       "Permute"    
+    Run Emergent Program	Permute
+    Prog Var Should Equal	test_failed	0    
+
 Select
     Ensure Emergent Free
     Set Suite Variable     ${program_test}       "Select"    
