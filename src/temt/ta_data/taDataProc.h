@@ -86,10 +86,14 @@ public:
   // these only reorder the index that keeps track of the tables visible items
   static bool  SortThruIndex(DataTable* dt, DataSortSpec* spec);
   // #NULL_OK_0 #NULL_TEXT_0_NewDataTable #CAT_Order does the pre and post work needed for sorting using indexes - calls the sort implementation
-  static bool  SortThruIndex_Compare(const DataTable* dt, const DataSortSpec* spec, int i, const DataTable& pivotRow, bool isLess);
+  static bool  SortThruIndex_compare(const DataTable* dt, const DataSortSpec* spec, int i, const DataTable& pivotRow, bool isLess);
   // #IGNORE helper function for sorting: compare values
-  static void  SortThruIndex_impl(DataTable* dt, DataSortSpec* spec, int* arr, int left, int right, DataTable& pivot_row_table);
-  // #IGNORE sort the table index based on spec
+  static void  SortThruIndex_quicksort(DataTable* dt, DataSortSpec* spec, int* arr, int left, 
+int right, DataTable& pivot_row_table);
+  // #IGNORE overall quicksort function
+  static int  SortThruIndex_partition(DataTable* dt, DataSortSpec* spec, int* arr, int left, 
+int right, DataTable& pivot_row_table);
+  // #IGNORE partition function for quicksort
 
   // these move the data
   static bool  Permute(DataTable* dest, DataTable* src, int thr_no = -1);

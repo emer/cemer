@@ -405,34 +405,34 @@ bool taDataProc::SortInPlace(DataTable* dt, DataSortSpec* spec) {
 }
 
 // SortThruIndex - sorts the currently visible data table rows
-bool taDataProc::SortThruIndex(DataTable* dt, DataSortSpec* spec)
-{
+bool taDataProc::SortThruIndex(DataTable* dt, DataSortSpec* spec) {
   if (dt->rows <= 1)
     return false;
 
   if(!spec) {
-      taMisc::Error("taDataProc::SortThruIndex_Compare: DataTable.current_sort_spec is NULL");
-      return false;
-    }
+    taMisc::Error("taDataProc::SortThruIndex: DataTable.current_sort_spec is NULL");
+    return false;
+  }
 
   // Sort implementation requires a place to keep a row of data
   // Create a single row table that gets reused on each recursion
-  DataTable pivot_row_table(false);
-  pivot_row_table.OwnTempObj(); // this is ESSENTIAL for temp data tables -- otherwise cols can't access their parent table b/c owner is not set!
+  DataTable pivot_data(false);
+  pivot_data.OwnTempObj(); // this is ESSENTIAL for temp data tables -- otherwise cols can't access their parent table b/c owner is not set!
 
-  pivot_row_table.Copy_NoData(*dt);            // give it same structure
-  pivot_row_table.AddBlankRow();               // always just has one row
+  pivot_data.Copy_NoData(*dt);            // give it same structure
+  pivot_data.AddBlankRow();               // always just has one row
 
   dt->StructUpdate(true);
 
   const int n_rows = dt->row_indexes.size;
   int *order = new (std::nothrow) int[n_rows];
 
-  for (int i=0; i < n_rows; i++)
+  for (int i=0; i < n_rows; i++) {
     order[i] = i;               // key: use *logical* indexes here always -- sort goes through current row_indexes always..
+  }
 
   spec->GetColumns(dt);
-  SortThruIndex_impl(dt, spec, order, 0, n_rows-1, pivot_row_table);
+  SortThruIndex_quicksort(dt, spec, order, 0, n_rows-1, pivot_data);
   spec->ClearColumns();
 
   // now need to translate new order into raw indexes
@@ -450,82 +450,94 @@ bool taDataProc::SortThruIndex(DataTable* dt, DataSortSpec* spec)
   return true;
 }
 
-// SortThruIndex_Compare - values in someRow compared to values in pivotRow based on sortSpec
-bool taDataProc::SortThruIndex_Compare(const DataTable* dt, const DataSortSpec* spec, int someRow, const DataTable& pivotRow, bool isLess) {
-  for(int k=0;k<spec->ops.size; k++) {
+// SortThruIndex_compare - values in cmp_row compared to values in pivotRow based on sortSpec
+bool taDataProc::SortThruIndex_compare
+(const DataTable* dt, const DataSortSpec* spec, int cmp_row, const DataTable& pivot_data, bool less_or_eq)
+{
+  // any < or > value triggers a return from the loop -- fall-through is equal case
+  // need to be careful about which condition equal belongs to, depending on case
+  // less_or_eq is <= and otherwise > according to partition logic
+
+  for(int k=0; k < spec->ops.size; k++) {
     DataSortEl* ds = (DataSortEl*)spec->ops.FastEl(k);
     if(ds->col_idx < 0)
       continue;
 
     DataCol* dca = dt->data.FastEl(ds->col_idx);
-    Variant va = dca->GetValAsVar(someRow);
-    DataCol* dcb = pivotRow.data.FastEl(ds->col_idx); // get column from single row table
+    Variant va = dca->GetValAsVar(cmp_row);
+    DataCol* dcb = pivot_data.data.FastEl(ds->col_idx); // get column from single row table
     Variant vb = dcb->GetValAsVar(0);  // only one row in this table
 
-    if(ds->order == DataSortEl::ASCENDING) {
-      if (isLess) {
-        if (va < vb)
-          return true;
-        if (va > vb)
-          return false;
-      }
-      else {
-        if (va > vb)
-          return true;
-        if (va < vb)
-          return false;
-      }
+    // order just reverses return value, logic is for ascending
+    bool true_val = (ds->order == DataSortEl::ASCENDING);
+
+    if (less_or_eq) {
+      if (va < vb) return true_val;
+      if (va > vb) return !true_val;
     }
-    else {  // descending
-      if (isLess) {
-        if (va > vb)
-          return true;
-        if (va < vb)
-          return false;
-      }
-      else {
-        if (va < vb)
-          return true;
-        if (va > vb)
-          return false;
-      }
+    else {
+      if (va > vb) return true_val;
+      if (va < vb) return !true_val;
     }
   }
-  return false;
+  if(less_or_eq) return true;       // less_or_eq gets ==
+  return false;                     // > doesn't get ==
 }
+
+// original from John appears to have been based on this:
+// https://stackoverflow.com/questions/6435131/indexed-array-quicksort-debug
+// this seems like a much more well validated version:
+// https://codereview.stackexchange.com/questions/77782/quick-sort-implementation
+// updating to that..
 
 // SortThruIndex_impl - An implementation of quicksort that sorts via indirection and calls  a compare function.
 // Pivot row table used as an intermediary
-void taDataProc::SortThruIndex_impl(DataTable* dt, DataSortSpec* spec, int arr[], int left, int right, DataTable& pivot_row_table) {
-  int i = left, j = right;
-  int tmp;
-  int pivotIndex = ((left + right) / 2);
 
+static void sort_swap_index(int arr[], int si, int sj) {
+  int tmp = arr[si];
+  arr[si] = arr[sj];
+  arr[sj] = tmp;
+}
+
+int taDataProc::SortThruIndex_partition
+(DataTable* dt, DataSortSpec* spec, int arr[], int left, int right, DataTable& pivot_data) {
+
+  int pivot_idx = left + (right - left) / 2; // avoids int overflow when sizes are large
   // a place to store the row that is the pivot for the sort
-  pivot_row_table.CopyFromRow(0, *dt, arr[pivotIndex]);
+  pivot_data.CopyFromRow(0, *dt, arr[pivot_idx]);
 
+  // move the pivot point value to the front.
+  sort_swap_index(arr, pivot_idx, left);
+  
+  int i = left + 1;
+  int j = right;
+  
   /* partition */
   while (i <= j) {
-    while (i < dt->rows && SortThruIndex_Compare(dt, spec, arr[i], pivot_row_table, true))
+    while (i <= j && SortThruIndex_compare(dt, spec, arr[i], pivot_data, true)) { // <=
       i++;
-    while (j > 0 && SortThruIndex_Compare(dt, spec, arr[j], pivot_row_table, false))
+    }
+    while (i <= j && SortThruIndex_compare(dt, spec, arr[j], pivot_data, false)) { // >
       j--;
-    if (i <= j) {
-      tmp = arr[i];
-      arr[i] = arr[j];
-      arr[j] = tmp;
-      i++;
-      j--;
+    }
+    
+    if (i < j) {
+      sort_swap_index(arr, i, j);
     }
   };
 
-  /* recursion */
-  if (left < j) {
-    SortThruIndex_impl(dt, spec, arr, left, j, pivot_row_table);
+  sort_swap_index(arr, i-1, left);
+  return i-1;
+}
+
+void taDataProc::SortThruIndex_quicksort
+(DataTable* dt, DataSortSpec* spec, int arr[], int left, int right, DataTable& pivot_data) {
+  if (left >= right) {
+    return;
   }
-  if (i < right) {
-    SortThruIndex_impl(dt, spec, arr, i, right, pivot_row_table);
-  }
+  int part = SortThruIndex_partition(dt, spec, arr, left, right, pivot_data);
+  SortThruIndex_quicksort(dt, spec, arr, left, part - 1, pivot_data);
+  SortThruIndex_quicksort(dt, spec, arr, part + 1, right, pivot_data);
 }
 
 // if dest == src do in place

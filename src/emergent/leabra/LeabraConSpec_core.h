@@ -611,7 +611,7 @@
     wt_limits.min = 0.0f;  wt_limits.max = 1.0f;  wt_limits.sym = true;
     wt_limits.type = STATE_CLASS(WeightLimits)::MIN_MAX;
     rnd.mean = .5f;  rnd.var = .25f;
-    lrate = .04f;    cur_lrate = .02f;  lrs_mult = 1.0f;
+    lrate = .04f;    cur_lrate = .04f;  lrs_mult = 1.0f;
   }
     
   INLINE int  GetStateSpecType() const override

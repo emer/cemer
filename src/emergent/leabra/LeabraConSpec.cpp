@@ -133,6 +133,7 @@ bool LeabraConSpec::SetCurLrate(LeabraNetworkState_cpp* net) {
     lrs_mult = lrate_sched.GetVal(net->epoch);
     cur_lrate *= lrs_mult;
     if(cur_lrate != prv_cur_lrate) {
+      // taMisc::Info("lr updt:", name, "prev:", String(prv_cur_lrate), "cur:", String(cur_lrate));
       rval = true;
       UpdateStateSpecs();       // update my state-side guys!
     }
