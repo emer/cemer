@@ -379,7 +379,7 @@
 
 
   INLINE void	C_Compute_Weights_CtLeabraXCAL
-    (float& wt, float& dwt, float& fwt, float& swt, float& scale,
+    (float& wt, float dwt, float& fwt, float& swt, float& scale,
      const float wb_inc, const float wb_dec, int thr_no)
   {
     if(dwt == 0.0f) return;
@@ -396,7 +396,7 @@
     // swt = fwt;  // leave swt as pristine original weight value -- saves time
     // and is useful for visualization!
     wt = scale * SigFmLinWt(fwt);
-    dwt = 0.0f;
+    // dwt = 0.0f;
 
     if(adapt_scale.on) {
       adapt_scale.AdaptWtScale(scale, wt);
@@ -405,7 +405,7 @@
   // #IGNORE overall compute weights for CtLeabraXCAL learning rule -- no slow wts
 
   INLINE void   C_Compute_Weights_CtLeabraXCAL_slow
-    (float& wt, float& dwt, float& fwt, float& swt, float& scale,
+    (float& wt, float dwt, float& fwt, float& swt, float& scale,
      const float wb_inc, const float wb_dec, int thr_no)
   { 
     if(wt_sig.soft_bound) {
@@ -421,7 +421,7 @@
     float nwt = scale * SigFmLinWt(eff_wt);
     wt += slow_wts.wt_dt * (nwt - wt);
     swt += slow_wts.slow_dt * (fwt - swt);
-    dwt = 0.0f;
+    // dwt = 0.0f;
     
     if(adapt_scale.on) {
       adapt_scale.AdaptWtScale(scale, wt);
@@ -459,7 +459,7 @@
     bool dwt_sh = (dwt_share.on && sz >= dwt_share.neigh &&
                    (dwt_share.p_share == 1.0f || Random::BoolProb(dwt_share.p_share, thr_no)));
     int neigh = dwt_share.neigh;
-    bool dwt_sep = dwt_sh && !dwt_share.common;
+    bool dwt_sep = (dwt_sh && !dwt_share.common);
     
     if(dwt_sh && dwt_share.common) {
       int n_pool = sz / neigh;
@@ -516,6 +516,10 @@
             (wts[i], dwt, fwts[i], swts[i], scales[i], 1.0f, 1.0f, thr_no);
         }
       }
+    }
+    // reset dwts after updating -- dwtshare requires doing this after the fact
+    for(int i=0; i<sz; i++) {
+      dwts[i] = 0.0f;
     }
   }
 
