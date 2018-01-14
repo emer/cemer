@@ -56,6 +56,10 @@ void iDialogWidgetField::init(bool read_only_, const String& desc) {
   }
   txtText = new iTextEdit(this, true);  // true - add a completer to this text field
   if (txtText->GetCompleter()) {
+    // set the field type to be the same as the iLineEdit
+    if (field->leText && field->leText->GetCompleter()) {
+      txtText->GetCompleter()->SetFieldType(field->leText->GetCompleter()->field_type);
+    }
     txtText->GetCompleter()->SetHostType(iCodeCompleter::TEXT_EDIT_HOST);
   }
   layOuter->addWidget(txtText);

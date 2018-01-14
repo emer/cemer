@@ -285,6 +285,7 @@ void taiWidgetField::characterEntered_dialog() {
   int new_pos = -1;
   iCodeCompleter* completer = edit_dialog->txtText->GetCompleter();
   if (completer) {
+    member_completions.Reset();
     if (completer->field_type == iCodeCompleter::SIMPLE) {
       tab->GetMemberCompletionList(lookupfun_md, edit_dialog->txtText->toPlainText(), member_completions);
       edit_dialog->txtText->GetCompleter()->SetCompletions(&member_completions);
