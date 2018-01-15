@@ -402,8 +402,8 @@ void iTreeView::CollapseItem_impl(iTreeViewItem* item) {
 //              ExpandDefault
 
 void iTreeView::ExpandDefault() {
-  if (tree_state_restored) {
-    tree_state_restored = false; // used to prevent expanding to defaults if we already expanded to saved state
+  // prevent expanding to defaults if we already expanded to saved state
+  if (!tree_state_restored) {
     return;
   }
   ExpandDefault_impl();
