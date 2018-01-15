@@ -18,6 +18,7 @@
 #include <Program_Group>
 #include <Program_TopGroup>
 #include <ObjDiff>
+#include <taProject>
 
 #include <taMisc>
 #include <tabMisc>
@@ -75,6 +76,10 @@ bool ProgLib::UpdateProgram(Program* prog, ObjLibEl* lib_el) {
   prog->UpdateAfterEdit();      // make sure
   prog->SigEmitUpdateAllMembers();
   prog->RunLoadInitCode();
+  taProject* proj = GET_OWNER(prog, taProject);
+  if(proj) {
+    proj->RefreshAllViews();
+  }
   return true;
 }
 

@@ -39,6 +39,7 @@ public:
   enum MonoZero {               // what to use as the effective zero point for monochrome channel -- values above this contribute to ON channel while those below contribute to OFF channel
     MEAN_ZERO,                  // place the zero-point for monochrome channel at mean image value
     FIX_ZERO,                   // place the zero-point for monochrome channel at fixed mono_zero_fix point
+    NET_FILTER,                 // use net filter instead of separate on vs. off
   };
 
   MonoZero      mono_zero;       // what to use as the effective zero point for monochrome channel -- values above this contribute to ON channel while those below contribute to OFF channel
@@ -102,6 +103,8 @@ protected:
   // implementation of DoG filtering for a given image and output -- manages threaded calls to _thread version
   virtual void DoGFilterImage_thread(int thr_no);
   // threaded routine for actually filtering
+  virtual void DoGFilterImageMonoNet_thread(int thr_no);
+  // threaded routine for actually filtering -- monochrome NET_FILT case only
 
   virtual bool DoGOutputToTable(DataTable* dtab, bool fmt_only = false);
   // send current time step of dog output to data table for viewing

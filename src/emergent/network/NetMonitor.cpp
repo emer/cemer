@@ -166,10 +166,11 @@ void NetMonitor::SetNetwork(Network* net) {
 }
 
 void NetMonitor::UpdateNetworkPtrs() {
-  if(network == prev_network) return; // already done
+  // if(network == prev_network) return; // not much cost to just always do -- saves frustration
+  // when it doesn't update!
   if(!network) return;
   items.UpdatePointers_NewParType(&TA_Network, network);
-  // this should now be redundant, right?
+  // this should now be redundant -- except for null case!?
   for (int i = 0; i < items.size; ++i) {
     NetMonItem* nmi = items.FastEl(i);
     if (nmi->object_type) {
@@ -179,7 +180,7 @@ void NetMonitor::UpdateNetworkPtrs() {
     }
   }
   // this updates paths
-  if(prev_network) {
+  if(network != prev_network) {
     UpdateNetworkPtrs_NewPar(prev_network, network);
   }
   prev_network = network;       // update now that we've changed everything

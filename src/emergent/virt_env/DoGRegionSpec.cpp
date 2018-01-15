@@ -244,6 +244,11 @@ bool DoGRegionSpec::DoGFilterImage(float_Matrix* image, float_Matrix* out) {
     PrecomputeColor(cur_img, (n_colors == 1));
   }
 
+  bool do_net = false;
+  if(mono_zero == NET_FILTER && (!dog_color_only || !rgb_img)) {
+    do_net = true;
+  }
+  
   if(!dog_color_only) {         // get monochrome zero point
     if(mono_zero == FIX_ZERO) {
       mono_zero_val = mono_zero_fix;
@@ -261,18 +266,33 @@ bool DoGRegionSpec::DoGFilterImage(float_Matrix* image, float_Matrix* out) {
 
   cur_dog_filter = &dog_specs;
   cur_dog_off = 0;
-  IMG_THREAD_CALL(DoGRegionSpec::DoGFilterImage_thread);
+  if(do_net) {
+    IMG_THREAD_CALL(DoGRegionSpec::DoGFilterImageMonoNet_thread);
+  }
+  if(!do_net || rgb_img) {
+    IMG_THREAD_CALL(DoGRegionSpec::DoGFilterImage_thread);
+  }
 
   if(dog_specs_2.on) {
     cur_dog_filter = &dog_specs_2;
     cur_dog_off += n_colors;
-    IMG_THREAD_CALL(DoGRegionSpec::DoGFilterImage_thread);
+    if(do_net) {
+      IMG_THREAD_CALL(DoGRegionSpec::DoGFilterImageMonoNet_thread);
+    }
+    if(!do_net || rgb_img) {
+      IMG_THREAD_CALL(DoGRegionSpec::DoGFilterImage_thread);
+    }
   }
 
   if(dog_specs_3.on) {
     cur_dog_filter = &dog_specs_3;
     cur_dog_off += n_colors;
-    IMG_THREAD_CALL(DoGRegionSpec::DoGFilterImage_thread);
+    if(do_net) {
+      IMG_THREAD_CALL(DoGRegionSpec::DoGFilterImageMonoNet_thread);
+    }
+    if(!do_net || rgb_img) {
+      IMG_THREAD_CALL(DoGRegionSpec::DoGFilterImage_thread);
+    }
   }
 
   if(dog_renorm != NO_RENORM) {
@@ -287,7 +307,6 @@ void DoGRegionSpec::DoGFilterImage_thread(int thr_no) {
   taVector2i ed;
   GetThread2DGeom(thr_no, dog_img_geom, st, ed);
 
-  const float* net_flt = (const float*)cur_dog_filter->net_filter.data();
   const float* on_flt = (const float*)cur_dog_filter->on_filter.data();
   const float* off_flt = (const float*)cur_dog_filter->off_filter.data();
   int   flt_wd = cur_dog_filter->half_size; // half-size
@@ -298,9 +317,13 @@ void DoGRegionSpec::DoGFilterImage_thread(int thr_no) {
   taVector2i st_ne = (flt_wd - input_size.border); // no edge
   taVector2i ed_ne = dog_img_geom - (flt_wd - input_size.border);
 
+  int st_chan = 0;              // starting channel
   float mono_gain = 1.0f;
   if(!dog_color_only && n_colors > 1) {
     mono_gain = dog_mono_gain;
+    if(mono_zero == NET_FILTER) {
+      st_chan = 1;              // did this separately, start only with color
+    }
   }
   
   taVector2i oc;         // current coord -- output space
@@ -316,7 +339,7 @@ void DoGRegionSpec::DoGFilterImage_thread(int thr_no) {
       taVector2i icc = input_size.border + cur_dog_filter->spacing * oc; // image coords center
 
       // y = on/off, x = color channel
-      for(int chan = 0; chan < n_colors; chan++) {
+      for(int chan = st_chan; chan < n_colors; chan++) {
         float cnv_sum = 0.0f;
         float on_sum = 0.0f;
         float off_sum = 0.0f;
@@ -331,29 +354,6 @@ void DoGRegionSpec::DoGFilterImage_thread(int thr_no) {
             if(ne) {
               int img_st = dog_img->FastElIndex2d(icc.x - flt_wd, icc.y + yf);
               // vectorizing doesn't work well for if / then!
-// #ifdef TA_VEC_USE
-//               int xf;
-//               for(xf = 0; xf < flt_vecw; xf+= 4, fi+=4) {
-//                 Vec4f ivals;  ivals_on.load(dog_img->el + img_st + xf);
-//                 Vec4f fvals_on;  fvals_on.load(on_flt + fi);
-//                 Vec4f ivals_rel;  ivals_rel = ivals - mono_zero_val;
-//                 Vec4f fvals_off;  fvals_off.load(off_flt + fi);
-//                 Vec4f prod_on = ivals_on * fvals_on;
-//                 Vec4f prod_off = ivals_off * fvals_off;
-//                 on_sum += horizontal_add(prod_on);
-//                 off_sum += horizontal_add(prod_off);
-//               }
-//               for(; xf < flt_wdf; xf++, fi++) { // get the residuals
-//                 float img_val = dog_img->FastEl_Flat(img_st + xf);
-//                 float img_rel = img_val - mono_zero_val;
-//                 if(img_rel >= 0.0f) {
-//                   on_sum +=  img_rel * on_flt[fi];
-//                 }
-//                 else {
-//                   off_sum += -img_rel * off_flt[fi];
-//                 }
-//               }
-// #else              
               for(int xf = 0; xf < flt_wdf; xf++, fi++) {
                 float img_val = dog_img->FastEl_Flat(img_st + xf);
                 float img_rel = img_val - mono_zero_val;
@@ -364,7 +364,6 @@ void DoGRegionSpec::DoGFilterImage_thread(int thr_no) {
                   off_sum += -img_rel * off_flt[fi];
                 }
               }
-// #endif              
             }
             else {
               for(int xf = -flt_wd; xf <= flt_wd; xf++, fi++) {
@@ -456,6 +455,85 @@ void DoGRegionSpec::DoGFilterImage_thread(int thr_no) {
     }
   }
 }
+
+
+void DoGRegionSpec::DoGFilterImageMonoNet_thread(int thr_no) {
+  taVector2i st;
+  taVector2i ed;
+  GetThread2DGeom(thr_no, dog_img_geom, st, ed);
+
+  const float* net_flt = (const float*)cur_dog_filter->net_filter.data();
+  int   flt_wd = cur_dog_filter->half_size; // half-size
+  int   flt_wdf = cur_dog_filter->size;     // full-size
+  int   flt_vecw = flt_wdf / 4;
+  flt_vecw *= 4;
+
+  taVector2i st_ne = (flt_wd - input_size.border); // no edge
+  taVector2i ed_ne = dog_img_geom - (flt_wd - input_size.border);
+
+  float mono_gain = 1.0f;
+  if(!dog_color_only && n_colors > 1) {
+    mono_gain = dog_mono_gain;
+  }
+  
+  taVector2i oc;         // current coord -- output space
+  taVector2i ic;         // input coord
+
+  float_Matrix* dog_img = cur_img;
+
+  int chan = 0;                 // only mono
+  ColorChannel cchan = (ColorChannel)chan;
+  
+  for(oc.y = st.y; oc.y < ed.y; oc.y++) {
+    bool y_ne = (oc.y >= st_ne.y && oc.y < ed_ne.y); // y no edge
+    for(oc.x = st.x; oc.x < ed.x; oc.x++) {
+      bool ne = y_ne && (oc.x >= st_ne.x && oc.x < ed_ne.x); // no edge
+
+      taVector2i icc = input_size.border + cur_dog_filter->spacing * oc; // image coords center
+      
+      float cnv_sum = 0.0f;
+
+      if(rgb_img) {
+        dog_img = GetImageForChan(cchan);
+      }
+      int fi = 0;
+      for(int yf = -flt_wd; yf <= flt_wd; yf++) {
+        if(ne) {
+          int img_st = dog_img->FastElIndex2d(icc.x - flt_wd, icc.y + yf);
+          // vectorizing doesn't work well for if / then!
+          for(int xf = 0; xf < flt_wdf; xf++, fi++) {
+            float img_val = dog_img->FastEl_Flat(img_st + xf);
+            cnv_sum += img_val * net_flt[fi];
+          }
+        }
+        else {
+          for(int xf = -flt_wd; xf <= flt_wd; xf++, fi++) {
+            ic.y = icc.y + yf;
+            ic.x = icc.x + xf;
+            if(ic.WrapClip(wrap, input_size.retina_size)) {
+              if(region.edge_mode == VisRegionParams::CLIP) continue;
+            }
+            float img_val = dog_img->FastEl2d(ic.x, ic.y);
+            cnv_sum +=  img_val * net_flt[fi];
+          }
+        }
+      }
+      cnv_sum *= mono_gain;
+      cnv_sum *= cur_dog_filter->gain;
+        
+      if(cnv_sum >= 0.0f) {
+        cur_out->FastEl4d(cur_dog_off, 0, oc.x, oc.y) = cnv_sum; // feat x = 0 = on
+        cur_out->FastEl4d(cur_dog_off, 1, oc.x, oc.y) = 0.0f;      // feat x = 1 = off
+      }
+      else {
+        cur_out->FastEl4d(cur_dog_off, 0, oc.x, oc.y) = 0.0f;      // feat x = 0 = on
+        cur_out->FastEl4d(cur_dog_off, 1, oc.x, oc.y) = -cnv_sum; // feat x = 1 = off
+      }
+    }
+  }
+}
+
+
 
 ////////////////////////////////////////////////////////////////////
 //      DoGRegion       Data Table Output
