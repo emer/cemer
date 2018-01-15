@@ -30,13 +30,13 @@ class TA_API NameValue : public taNBase {
   // #INSTANCE #NO_TOKENS #NO_UPDATE_AFTER name/value pair
 INHERITED(taNBase)
 public:
-  String 	value;			// Value for name
+  String        value;                  // Value for name
 
   TA_BASEFUNS(NameValue);
 private:
-  void 	Copy_(const NameValue& cp)		{ value = cp.value; }
+  void  Copy_(const NameValue& cp)              { value = cp.value; }
   void  Initialize() {}
-  void	Destroy() {}
+  void  Destroy() {}
 };
 
 #endif // NameValue_h

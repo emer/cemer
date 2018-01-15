@@ -30,16 +30,16 @@ taTypeDef_Of(taiMimeFactory);
 class TA_API taiMimeFactory: public taNBase { // ##NO_CSS ##NO_MEMBERS
 INHERITED(taNBase)
 public:
-  static const String 	text_plain;
+  static const String   text_plain;
   
-  static QByteArray	StrToByteArray(const String& str);
-  static QByteArray	StrToByteArray(const QString& str);
+  static QByteArray     StrToByteArray(const String& str);
+  static QByteArray     StrToByteArray(const QString& str);
     // convenience, for converting strings to bytearrays
     
   TA_BASEFUNS_NOCOPY(taiMimeFactory);//
 private:
-  void	Initialize() {}
-  void	Destroy() {}
+  void  Initialize() {}
+  void  Destroy() {}
 };
 
 #define TA_MFBASEFUNS(T) \

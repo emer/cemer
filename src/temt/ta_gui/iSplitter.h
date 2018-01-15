@@ -28,19 +28,19 @@ public:
   iSplitter(QWidget *parent = 0);
   iSplitter(Qt::Orientation orientation, QWidget *parent = 0);
   ~iSplitter();
-		
+                
 public slots:
-  void 	collapseToggle(int index);
-  void	saveSizes();
-		
+  void  collapseToggle(int index);
+  void  saveSizes();
+                
 protected:
-  QList<int> 	saved_sizes;
-  bool		in_collapsing;	// in collapse mode
+  QList<int>    saved_sizes;
+  bool          in_collapsing;  // in collapse mode
 
   QSplitterHandle* createHandle() override;
   void showEvent(QShowEvent* ev) override;
 protected slots:
-  void		showDelayed();
+  void          showDelayed();
 };
 
 #endif // iSplitter_h

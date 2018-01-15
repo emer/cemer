@@ -41,7 +41,7 @@ public:
   { return (ProgEl*)loop_code.New(1, el_type); }
   // #BUTTON #TYPE_ProgEl add a new loop code element
 
-  taList_impl*	children_() override { return &loop_code; }
+  taList_impl*  children_() override { return &loop_code; }
   bool          HasSubCode() override { return true; }
 
   ProgVar*     FindVarName(const String& var_nm) const override;

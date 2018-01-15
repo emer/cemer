@@ -31,24 +31,24 @@ class TA_API IfContinue: public ProgEl {
   // ##PROGEL_COMPLETION if condition is true, continue looping (skip any following code and loop back to top of loop) (can leave condition empty to just insert an unconditional continue)
 INHERITED(ProgEl)
 public:
-  ProgExpr		cond; 		// #BROWSER_EDIT_LOOKUP conditionalizing expression for continuing loop
+  ProgExpr              cond;           // #BROWSER_EDIT_LOOKUP conditionalizing expression for continuing loop
 
-  bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
-  bool		CvtFmCode(const String& code) override;
-  bool		IsCtrlProgEl() 	override { return true; }
+  bool          CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
+  bool          CvtFmCode(const String& code) override;
+  bool          IsCtrlProgEl()  override { return true; }
 
-  String	GetDisplayName() const override;
-  String 	GetTypeDecoKey() const override { return "ProgCtrl"; }
-  String	GetToolbarName() const override { return "continue"; }
+  String        GetDisplayName() const override;
+  String        GetTypeDecoKey() const override { return "ProgCtrl"; }
+  String        GetToolbarName() const override { return "continue"; }
 
   PROGEL_SIMPLE_BASEFUNS(IfContinue);
 protected:
-  void		CheckThisConfig_impl(bool quiet, bool& rval) override;
-  bool		GenCssBody_impl(Program* prog) override;
+  void          CheckThisConfig_impl(bool quiet, bool& rval) override;
+  bool          GenCssBody_impl(Program* prog) override;
 
 private:
-  void	Initialize();
-  void	Destroy()	{ CutLinks(); }
+  void  Initialize();
+  void  Destroy()       { CutLinks(); }
 };
 
 #endif // IfContinue_h

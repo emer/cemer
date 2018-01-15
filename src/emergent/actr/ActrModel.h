@@ -50,8 +50,8 @@ public:
   
   TA_SIMPLE_BASEFUNS(ActrGlobalParams);
 private:
-  void	Initialize();
-  void 	Destroy()	{ };
+  void  Initialize();
+  void  Destroy()       { };
 };
 
 
@@ -77,12 +77,12 @@ public:
   };
 
   enum YY_Flags {               // #IGNORE parsing flags
-    YYRet_Exit	= 0,	// script is done being parsed
-    YYRet_Ok	= 1,	// everything is fine
-    YYRet_NoSrc	= -2,	// don't code last line as source
-    YYRet_Err	= -3,	// error
-    YYRet_Blank = -4,	// blank line
-    YYRet_Parse = -5 	// need to parse more
+    YYRet_Exit  = 0,    // script is done being parsed
+    YYRet_Ok    = 1,    // everything is fine
+    YYRet_NoSrc = -2,   // don't code last line as source
+    YYRet_Err   = -3,   // error
+    YYRet_Blank = -4,   // blank line
+    YYRet_Parse = -5    // need to parse more
   };
 
   String                desc;  // #EDIT_DIALOG #HIDDEN_INLINE description of this model

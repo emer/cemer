@@ -30,7 +30,7 @@ class TA_API DataVarWrite : public DataVarSimple {
   // A program element for writing to a data table -- scalar var/col and matrix var/col supported, and enum to/from Matrix localist code also supported (see DataVarWriteMatrix for accessing individual matrix cells)
 INHERITED(DataVarSimple)
 public:
-  String	GetDisplayName() const override;
+  String        GetDisplayName() const override;
   String  GetToolbarName() const override { return "write to\ndata table"; }
   bool    CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
 
@@ -38,8 +38,8 @@ public:
 protected:
 
 private:
-  void	Initialize();
-  void	Destroy()	{ CutLinks(); }
+  void  Initialize();
+  void  Destroy()       { CutLinks(); }
 };
 
 #endif // DataVarWrite_h

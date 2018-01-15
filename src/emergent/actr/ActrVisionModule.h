@@ -39,8 +39,8 @@ public:
 
   TA_SIMPLE_BASEFUNS(ActrVisParams);
 private:
-  void	Initialize();
-  void	Destroy()	{ };
+  void  Initialize();
+  void  Destroy()       { };
 };
 
 eTypeDef_Of(ActrAttnParams);
@@ -57,8 +57,8 @@ public:
 
   TA_SIMPLE_BASEFUNS(ActrAttnParams);
 private:
-  void	Initialize();
-  void	Destroy()	{ };
+  void  Initialize();
+  void  Destroy()       { };
 };
 
 eTypeDef_Of(ActrVisionModule);

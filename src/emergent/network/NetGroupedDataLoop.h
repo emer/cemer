@@ -33,46 +33,46 @@ class E_API NetGroupedDataLoop: public Loop {
 INHERITED(Loop)
 public:
   enum Order {
-    SEQUENTIAL,			// present events (input data rows) in sequential order
-    PERMUTED,			// permute the order of event (input data row) presentation
-    RANDOM, 			// pick an event (input data row) at random (with replacement)
+    SEQUENTIAL,                 // present events (input data rows) in sequential order
+    PERMUTED,                   // permute the order of event (input data row) presentation
+    RANDOM,                     // pick an event (input data row) at random (with replacement)
   };
 
-  ProgVarRef	data_var;	// #ITEM_FILTER_DataProgVarFilter program variable pointing to the data table to use
-  ProgVarRef	group_index_var; // #ITEM_FILTER_StdProgVarFilter program variable for the group index used in the loop -- goes from 0 to number of groups in data table-1
-  ProgVarRef	item_index_var; // #ITEM_FILTER_StdProgVarFilter program variable for the item index used in the loop -- goes from 0 to number of items in current group
-  ProgVarRef	group_order_var; // #ITEM_FILTER_StdProgVarFilter variable that contains the order to process data groups in -- is automatically created if not set
-  ProgVarRef	item_order_var; // #ITEM_FILTER_StdProgVarFilter variable that contains the order to process data items in -- is automatically created if not set
-  Order		group_order;	// #READ_ONLY #SHOW order to process data groups in -- set from group_order_var
-  Order		item_order;	// #READ_ONLY #SHOW order to process data items in -- set from item_order_var
-  int		group_col;	// column in the data table that contains the group names
-  bool		update_after;	// call update-after-edit on the network object after changing the trial counter -- this is necessary to update control panels that monitor information at the trial level
-  int_Array	group_idx_list;	// #READ_ONLY list of group starting indicies
-  int_Array	item_idx_list;	// #READ_ONLY list of item indicies within group
+  ProgVarRef    data_var;       // #ITEM_FILTER_DataProgVarFilter program variable pointing to the data table to use
+  ProgVarRef    group_index_var; // #ITEM_FILTER_StdProgVarFilter program variable for the group index used in the loop -- goes from 0 to number of groups in data table-1
+  ProgVarRef    item_index_var; // #ITEM_FILTER_StdProgVarFilter program variable for the item index used in the loop -- goes from 0 to number of items in current group
+  ProgVarRef    group_order_var; // #ITEM_FILTER_StdProgVarFilter variable that contains the order to process data groups in -- is automatically created if not set
+  ProgVarRef    item_order_var; // #ITEM_FILTER_StdProgVarFilter variable that contains the order to process data items in -- is automatically created if not set
+  Order         group_order;    // #READ_ONLY #SHOW order to process data groups in -- set from group_order_var
+  Order         item_order;     // #READ_ONLY #SHOW order to process data items in -- set from item_order_var
+  int           group_col;      // column in the data table that contains the group names
+  bool          update_after;   // call update-after-edit on the network object after changing the trial counter -- this is necessary to update control panels that monitor information at the trial level
+  int_Array     group_idx_list; // #READ_ONLY list of group starting indicies
+  int_Array     item_idx_list;  // #READ_ONLY list of item indicies within group
 
-  String	GetDisplayName() const override;
+  String        GetDisplayName() const override;
   bool    CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
   bool    CvtFmCode(const String& code) override;
 
-  virtual void	GetOrderVals();
+  virtual void  GetOrderVals();
   // get order values from order_var variables
-  virtual void	GetGroupList();
+  virtual void  GetGroupList();
   // initialize the group_idx_list from the data: idx's are where group name changes
   virtual void  GetItemList(int group_idx); // 
-  String	GetToolbarName() const override { return "gp data lp"; }
+  String        GetToolbarName() const override { return "gp data lp"; }
 
   PROGEL_SIMPLE_BASEFUNS(NetGroupedDataLoop);
 protected:
-  virtual void	GetOrderVars(); // make order variables in program
-  virtual void	GetIndexVars(); // make index variables in program if not already set
-  void   	UpdateAfterEdit_impl() override;
-  void	  CheckThisConfig_impl(bool quiet, bool& rval) override;
-  void		GenCssPre_impl(Program* prog) override; 
-  void		GenCssPost_impl(Program* prog) override; 
+  virtual void  GetOrderVars(); // make order variables in program
+  virtual void  GetIndexVars(); // make index variables in program if not already set
+  void          UpdateAfterEdit_impl() override;
+  void    CheckThisConfig_impl(bool quiet, bool& rval) override;
+  void          GenCssPre_impl(Program* prog) override; 
+  void          GenCssPost_impl(Program* prog) override; 
 
 private:
-  void	Initialize();
-  void	Destroy() { CutLinks(); }
+  void  Initialize();
+  void  Destroy() { CutLinks(); }
 };
 
 #endif // NetGroupedDataLoop_h

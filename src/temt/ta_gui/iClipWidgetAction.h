@@ -29,16 +29,16 @@ INHERITED(QWidgetAction)
   Q_OBJECT
 public:
   
-  virtual QMimeData* 	mimeData() const = 0;
+  virtual QMimeData*    mimeData() const = 0;
   virtual QStringList   mimeTypes() const = 0;
   
   iClipWidgetAction(QObject* parent = NULL);
   
 public slots:
-  void			copyToClipboard(); // copy the mimedata to the clipboard
+  void                  copyToClipboard(); // copy the mimedata to the clipboard
 
 protected:
-  QWidget* 	createWidget(QWidget* parent) override;
+  QWidget*      createWidget(QWidget* parent) override;
 };
 
 #endif // iClipWidgetAction_h

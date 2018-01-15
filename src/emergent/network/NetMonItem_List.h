@@ -32,7 +32,7 @@ class E_API NetMonItem_List: public taList<NetMonItem> {
 INHERITED(taList<NetMonItem>)
 public:
   bool              ignore_sig;
-  int	              NumListCols() const override {return 3;}
+  int                 NumListCols() const override {return 3;}
   const KeyString   GetListColKey(int col) const override;
   String            GetColHeading(const KeyString&) const override; // header text for the indicated column
 
@@ -41,8 +41,8 @@ public:
   TA_BASEFUNS_NOCOPY(NetMonItem_List);
   
 private:
-  void		Initialize() { SetBaseType(&TA_NetMonItem); ignore_sig = false; }
-  void		Destroy() {}
+  void          Initialize() { SetBaseType(&TA_NetMonItem); ignore_sig = false; }
+  void          Destroy() {}
 };
 
 #endif // NetMonItem_List_h

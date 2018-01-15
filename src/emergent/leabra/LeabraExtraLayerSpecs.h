@@ -43,25 +43,25 @@ public:
 
 #include <ScalarValLayerSpec>
   
-  virtual void	LabelUnits(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net);
+  virtual void  LabelUnits(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net);
   // #CAT_ScalarVal label units in given layer with their underlying values
     virtual void LabelUnits_ugp(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net,
                                 int gpidx);
     // #CAT_ScalarVal label units with their underlying values
-  virtual void	LabelUnitsNet();
+  virtual void  LabelUnitsNet();
   // #BUTTON #CAT_ScalarVal label all layers in given network using this spec
 
-  void	HelpConfig() override;	// #BUTTON get help message for configuring this spec
+  void  HelpConfig() override;  // #BUTTON get help message for configuring this spec
   bool  CheckConfig_Layer(Layer* lay, bool quiet=false) override;
 
   TA_SIMPLE_BASEFUNS(ScalarValLayerSpec);
 protected:
   SPEC_DEFAULTS;
-  void	UpdateAfterEdit_impl() override;
+  void  UpdateAfterEdit_impl() override;
 private:
-  void 	Initialize();
-  void	Defaults_init();
-  void	Destroy()		{ };
+  void  Initialize();
+  void  Defaults_init();
+  void  Destroy()               { };
 };
 
 
@@ -74,17 +74,17 @@ public:
 
 #include <ExtRewLayerSpec>
 
-  void	HelpConfig() override;	// #BUTTON get help message for configuring this spec
+  void  HelpConfig() override;  // #BUTTON get help message for configuring this spec
   bool  CheckConfig_Layer(Layer* lay, bool quiet=false) override;
 
   TA_SIMPLE_BASEFUNS(ExtRewLayerSpec);
 protected:
   SPEC_DEFAULTS;
-  void	UpdateAfterEdit_impl() override;
+  void  UpdateAfterEdit_impl() override;
 private:
-  void 	Initialize();
-  void	Defaults_init();
-  void	Destroy()		{ };
+  void  Initialize();
+  void  Defaults_init();
+  void  Destroy()               { };
 };
 
 
@@ -97,27 +97,27 @@ public:
 
 #include <TwoDValLayerSpec>
 
-  virtual void	LabelUnits(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net);
+  virtual void  LabelUnits(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net);
   // #CAT_TwoDVal label units in given layer with their underlying values
   virtual void   LabelUnits_ugp(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net, int gpidx);
   // #CAT_TwoDVal label units with their underlying values
-  virtual void	LabelUnitsNet();
+  virtual void  LabelUnitsNet();
   // #BUTTON #CAT_TwoDVal label all layers in given network using this spec
 
-  virtual void	ReConfig(Network* net, int n_units = -1);
+  virtual void  ReConfig(Network* net, int n_units = -1);
   // #BUTTON reconfigure layer and associated specs for current scalar.rep type; if n_units > 0, changes number of units in layer to specified value
 
-  void	HelpConfig() override;	// #BUTTON get help message for configuring this spec
+  void  HelpConfig() override;  // #BUTTON get help message for configuring this spec
   bool  CheckConfig_Layer(Layer* lay, bool quiet=false) override;
 
   TA_SIMPLE_BASEFUNS(TwoDValLayerSpec);
 protected:
   SPEC_DEFAULTS;
-  void	UpdateAfterEdit_impl() override;
+  void  UpdateAfterEdit_impl() override;
 private:
-  void 	Initialize();
-  void	Defaults_init() 	{ };
-  void	Destroy()		{ };
+  void  Initialize();
+  void  Defaults_init()         { };
+  void  Destroy()               { };
 };
 
 
@@ -132,8 +132,8 @@ public:
 
   TA_BASEFUNS_NOCOPY(DecodeTwoDValLayerSpec);
 private:
- void 	Initialize()            { };
-  void	Destroy()		{ };
+ void   Initialize()            { };
+  void  Destroy()               { };
 };
 
 

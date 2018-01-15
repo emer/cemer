@@ -41,14 +41,14 @@ public:
   static QList<int>     IndexList(const BrainAtlas& atlas, const QString& labelsRegexp);
   static QString        Label(const BrainAtlas& atlas, unsigned int index);
   static unsigned int   Index(const BrainAtlas& atlas, const QString& label);
-  static QColor   	Color(const BrainAtlas& atlas, unsigned int index);
+  static QColor         Color(const BrainAtlas& atlas, unsigned int index);
 
   static QStringList    AtlasesAvailable(const QString& atlas_dir);
   static BrainAtlasInfo ParseAtlasHeader(const QString& filename);
   
   static void           SetLabels(BrainAtlas& atlas, const QStringList& labels);
   static void           SetColors(BrainAtlas& atlas, const QList<QColor>& colors);
-  static void   	SetColor(BrainAtlas& atlas, QColor clr, unsigned int index);
+  static void           SetColor(BrainAtlas& atlas, QColor clr, unsigned int index);
 };  
 
 #endif // BrainAtlasUtils_h

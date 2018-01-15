@@ -41,20 +41,20 @@ taTypeDef_Of(T3Color);
 class TA_API T3Color { // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS color for Coin 3d uses
 public:
 #ifdef __MAKETA__
-  float 	r;
-  float 	g;
-  float 	b;
+  float         r;
+  float         g;
+  float         b;
 #else
   union {
     struct {
-      float 	r;
-      float 	g;
-      float 	b;
+      float     r;
+      float     g;
+      float     b;
     };
-    float	rgb[3];
+    float       rgb[3];
   };
 #endif
-  void		setValue(float r_, float g_, float b_) {r = r_; g = g_; b = b_;}
+  void          setValue(float r_, float g_, float b_) {r = r_; g = g_; b = b_;}
   T3Color() {r = g = b = 0.0f;}
   T3Color(float r_, float g_, float b_) {r = r_; g = g_; b = b_;}
   T3Color(float x_) {r = x_; g = x_; b = x_;}

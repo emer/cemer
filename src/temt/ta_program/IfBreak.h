@@ -31,24 +31,24 @@ class TA_API IfBreak: public ProgEl {
   // ##PROGEL_COMPLETION if condition is true, break out of current loop (can leave condition empty to just insert an unconditional break
 INHERITED(ProgEl)
 public:
-  ProgExpr		cond; 		// #BROWSER_EDIT_LOOKUP conditionalizing expression for breaking loop
+  ProgExpr              cond;           // #BROWSER_EDIT_LOOKUP conditionalizing expression for breaking loop
 
-  bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
-  bool		CvtFmCode(const String& code) override;
-  bool		IsCtrlProgEl() 	override { return true; }
+  bool          CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
+  bool          CvtFmCode(const String& code) override;
+  bool          IsCtrlProgEl()  override { return true; }
 
-  String	GetDisplayName() const override;
-  String 	GetTypeDecoKey() const override { return "ProgCtrl"; }
-  String	GetToolbarName() const override { return "break"; }
+  String        GetDisplayName() const override;
+  String        GetTypeDecoKey() const override { return "ProgCtrl"; }
+  String        GetToolbarName() const override { return "break"; }
 
   PROGEL_SIMPLE_BASEFUNS(IfBreak);
 protected:
-  void		CheckThisConfig_impl(bool quiet, bool& rval) override;
-  bool		GenCssBody_impl(Program* prog) override;
+  void          CheckThisConfig_impl(bool quiet, bool& rval) override;
+  bool          GenCssBody_impl(Program* prog) override;
 
 private:
-  void	Initialize();
-  void	Destroy()	{ CutLinks(); }
+  void  Initialize();
+  void  Destroy()       { CutLinks(); }
 };
 
 #endif // IfBreak_h

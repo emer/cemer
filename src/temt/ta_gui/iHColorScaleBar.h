@@ -33,7 +33,7 @@ public:
   iHColorScaleBar(ColorScale* c, SpanMode sm, bool adj = false, bool ed = true,
     QWidget* parent = NULL);
 private:
-  void		Init(ColorScale* c);
+  void          Init(ColorScale* c);
 };
 
 

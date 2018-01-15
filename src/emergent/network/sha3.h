@@ -23,7 +23,7 @@ extern "C" {
 #include <stdint.h>
 
 #define SHA3_KECCAK_SPONGE_WORDS                        \
-	(((1600)/8/*bits to byte*/)/sizeof(uint64_t))
+        (((1600)/8/*bits to byte*/)/sizeof(uint64_t))
 
 typedef struct sha3_context_ {
     uint64_t saved;             /* the portion of the input message that we

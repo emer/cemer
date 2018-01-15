@@ -35,18 +35,21 @@ public:
   static String_Array emergent_src_paths;
   // #NO_SAVE #HIDDEN list of all our source paths
 
+  static void   CharTest(const char* str);
+  // #CAT_Debug testing char args
+  
   static bool   InitSrcPaths();
   // #CAT_File make sure that source paths are updated
   
-  static bool	CreateNewSrcFiles(const String& type_nm, const String& top_path,
+  static bool   CreateNewSrcFiles(const String& type_nm, const String& top_path,
                                   const String& src_dir);
   // #CAT_File create new .h header and .cpp source file for type name as top_path/src_dir/<type_nm>.h|.cpp, and create header include stubs in top_path/include/<type_nm>|.h -- top_path must be full path to source top (e.g., $HOME/emergent) -- if files already exist, a _new suffix is added, and return value is false (else true) -- also does svn add using shell to add to svn -- files have src_dir/COPYRIGHT.txt appended at top if avail, and .cpp file automatically includes header
 
-  static bool	CreateNewSpecFiles(const String& type_nm, const String& top_path,
+  static bool   CreateNewSpecFiles(const String& type_nm, const String& top_path,
                                    const String& src_dir);
   // #CAT_File for Spec files in emergent: create new _core, _mbrs _cpp and _cuda and plain .h header and .cpp source files, for type name as top_path/src_dir/<type_nm>.h|.cpp, and create header include stubs in top_path/include/<type_nm>|.h -- top_path must be full path to source top (e.g., $HOME/emergent) -- if files already exist they are not overwritten, and return value is false (else true) -- also does svn add using shell to add to svn -- files have src_dir/COPYRIGHT.txt appended at top if avail, and .cpp file automatically includes header
 
-  static bool	CreateNewStateFiles(const String& type_nm, const String& top_path,
+  static bool   CreateNewStateFiles(const String& type_nm, const String& top_path,
                                    const String& src_dir);
   // #CAT_File for State files in emergent: create new _core, _cpp and _cuda .h header and .cpp source files, for type name as top_path/src_dir/<type_nm>.h|.cpp, and create header include stubs in top_path/include/<type_nm>|.h -- top_path must be full path to source top (e.g., $HOME/emergent) -- if files already exist they are not overwritten, and return value is false (else true) -- also does svn add using shell to add to svn -- files have src_dir/COPYRIGHT.txt appended at top if avail, and .cpp file automatically includes header
 
@@ -55,42 +58,42 @@ public:
   static bool   RemoveFileSVN(const String& filename);
   // #CAT_File remove file in current working directory (or absolute path) -- returns success -- uses shell command to "svn rm" -- requires svn commandline to be avail
 
-  static bool	RenameType(const String& type_nm, const String& new_nm,
+  static bool   RenameType(const String& type_nm, const String& new_nm,
                            const String& top_path, const String& src_dir);
   // #CAT_File rename type name to new name, replacing string in all files in given directory (WARNING: just does a very basic gsub string replacement, so type name better be unique!), and doing an svn mv on the file name for that type (does this before replace) -- recommend svn commit prior to doing this!
 
-  static bool	ReplaceInDir(const String& search_nm, const String& repl_nm,
+  static bool   ReplaceInDir(const String& search_nm, const String& repl_nm,
                              const String& top_path, const String& src_dir);
   // #CAT_File replace string in all files in given directory (WARNING: just does a very basic gsub string replacement, so caveat emptor on unwanted side effects!) -- definitely recommend svn commit prior to doing this!
-  static bool	ReplaceInAllFiles(const String& search_nm, const String& repl_nm,
+  static bool   ReplaceInAllFiles(const String& search_nm, const String& repl_nm,
                                   const String& top_path);
   // #CAT_File replace string in all files in emergent code base (WARNING: just does a very basic gsub string replacement, so caveat emptor on unwanted side effects!) -- definitely recommend svn commit prior to doing this!
 
-  static bool	RemoveType(const String& type_nm, 
+  static bool   RemoveType(const String& type_nm, 
                            const String& top_path, const String& src_dir);
   // #CAT_File removes a given type -- svn rm files that define the type (assumes one type per file!) including the include files, and reports on all the files that reference this type in the rest of the code
 
   static bool   FixIncludes(const String& top_path);
 
-  static bool	ListAllInherits(const String& type_nm);
+  static bool   ListAllInherits(const String& type_nm);
   // #CAT_File List all of the types that inherit from the given type -- goes beyond the direct parentage lists to see subclasses of subclasses
 
   static String TypeIncludes(TypeDef* td);
   // get the include files for give type, based on existing ta info
 
-  static bool	CreateNewSrcFilesExisting(const String& type_nm, const String& top_path,
-					  const String& src_dir);
+  static bool   CreateNewSrcFilesExisting(const String& type_nm, const String& top_path,
+                                          const String& src_dir);
   // #CAT_File create all new source files for an existing type -- just calls TypeDef version of this
 
   static String GetCurSvnRevYear(const String& filename, int& last_change_rev);
   // #CAT_File get current year of last svn revision of given file
   static String GetFirstSvnRevYear(const String& filename, int last_change_rev);
   // #CAT_File get year of first svn revision of given file
-  static bool	CopyrightUpdateFile(const String& filename);
+  static bool   CopyrightUpdateFile(const String& filename);
   // #CAT_File update copyright year in given file, based on svn info or current year
-  static bool	CopyrightUpdateDir(const String& top_path, const String& src_dir);
+  static bool   CopyrightUpdateDir(const String& top_path, const String& src_dir);
   // #CAT_File update copyright in all files in given directory
-  static bool	CopyrightUpdateAllFiles(const String& top_path);
+  static bool   CopyrightUpdateAllFiles(const String& top_path);
   // #CAT_File update copyright in all files in emergent code base
 };
 

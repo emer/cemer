@@ -34,7 +34,7 @@ public:
   STATE_DECO_KEY("Network");
   STATE_TA_STD_CODE(NetStatsSpecs);
 private:
-  INLINE void	Initialize() {
+  INLINE void   Initialize() {
     sse_unit_avg = false;
     sse_sqrt = false;
     cnt_err_tol = 0.0f;
@@ -213,7 +213,7 @@ public:
   INLINE int MinVal() const     { int mn = MIN(x, y); return mn; }
 
   INLINE bool  FitN(int n) {            // adjust x and y to fit x total elements
-    if((x * y) == n)	return false;
+    if((x * y) == n)    return false;
     y = (int)sqrtf((float)n);
     if(y < 1)
       y = 1;
@@ -229,7 +229,7 @@ public:
       if(x*y == n) return true; // got lucky
     }
     if(n < 20) {
-      x = n;    y = 1;		// just go linear for small values
+      x = n;    y = 1;          // just go linear for small values
       return true;
     }
     // else just go with an imperfect fit

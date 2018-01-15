@@ -30,20 +30,20 @@ class E_API GaborFitter : public GaborFilter {
   // ##CAT_Image fits a gabor filter from image data
 INHERITED(GaborFilter)
 public:
-  float		fit_dist;	// #READ_ONLY #SHOW fit distance
+  float         fit_dist;       // #READ_ONLY #SHOW fit distance
 
   virtual float ParamDist(const GaborFilter& oth);
   // #CAT_GaborFilter return euclidian distance between parameters for this spec and the other one
 
-//   virtual float	FitData(float_Matrix& data_vals, bool use_cur_vals = false);
+//   virtual float      FitData(float_Matrix& data_vals, bool use_cur_vals = false);
   // find best-fitting parameters for given data.  use_cur_vals = use current values as initial reasonable guess (skip first-pass search)
-//   virtual float	FitData_firstpass(float_Matrix& data_vals);
-//   virtual float	SquaredDist(float_Matrix& data_vals);
+//   virtual float      FitData_firstpass(float_Matrix& data_vals);
+//   virtual float      SquaredDist(float_Matrix& data_vals);
 
-//   virtual float	TestFit();	// #BUTTON test the fitting function
+//   virtual float      TestFit();      // #BUTTON test the fitting function
  
-  void 	Initialize();
-  void	Destroy() { };
+  void  Initialize();
+  void  Destroy() { };
   TA_SIMPLE_BASEFUNS(GaborFitter);
 };
 

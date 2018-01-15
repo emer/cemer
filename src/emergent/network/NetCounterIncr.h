@@ -29,18 +29,18 @@ class E_API NetCounterIncr: public NetCounterBase {
   // increment a network counter: program keeps a local version of the counter, and updates both this and the network's copy
 INHERITED(NetCounterBase)
 public:
-  String	GetDisplayName() const override;
-  String	GetToolbarName() const override { return "net ctr inc"; }
+  String        GetDisplayName() const override;
+  String        GetToolbarName() const override { return "net ctr inc"; }
   bool    CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
   bool    CvtFmCode(const String& code) override;
 
   PROGEL_SIMPLE_BASEFUNS(NetCounterIncr);
 protected:
-  bool		GenCssBody_impl(Program* prog) override;
+  bool          GenCssBody_impl(Program* prog) override;
 
 private:
-  void	Initialize() { };
-  void	Destroy() { };
+  void  Initialize() { };
+  void  Destroy() { };
 };
 
 #endif // NetCounterIncr_h

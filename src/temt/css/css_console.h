@@ -33,30 +33,30 @@ INHERITED(QObject)
   Q_OBJECT
 friend class ConThread;
 public:
-  static cssConsole*	Get_SysConsole(QObject* parent = NULL);
+  static cssConsole*    Get_SysConsole(QObject* parent = NULL);
     // get the system console instance, instantiating if necessary
 
-  virtual const QString	prompt(); // note: QStrings used for threadsafety
-  virtual void		setPrompt(const QString& value);
-  virtual void		setTitle(const QString& value) {} // ex. for windows console
+  virtual const QString prompt(); // note: QStrings used for threadsafety
+  virtual void          setPrompt(const QString& value);
+  virtual void          setTitle(const QString& value) {} // ex. for windows console
   
-  virtual void		Start(); // call when prompt set, and ready to receive input
+  virtual void          Start(); // call when prompt set, and ready to receive input
   
   cssConsole(QObject* parent = NULL);
   ~cssConsole();
   
 signals:
-  void			NewLine(QString ln, bool eof); 
+  void                  NewLine(QString ln, bool eof); 
   // YOU MUST CONNECT EXPLICITLY VIA Qt::QueuedConnection 
   
 protected:
-  ConThread*	  thread;
-  static cssConsole*	m_sys_instance;
+  ConThread*      thread;
+  static cssConsole*    m_sys_instance;
   
-  static cssConsole*	New_SysConsole(QObject* parent = NULL);
+  static cssConsole*    New_SysConsole(QObject* parent = NULL);
 
 protected: // thread
-  void				emit_NewLine(String ln, bool eof);
+  void                          emit_NewLine(String ln, bool eof);
 
 };
 

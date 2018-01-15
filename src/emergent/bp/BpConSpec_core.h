@@ -20,11 +20,11 @@
     WU_MOMENT_ELIM,              // momentum and weight elimination
   };
   
-  float 	lrate;		// learning rate
-  float		cur_lrate;	// #READ_ONLY #NO_INHERIT #SHOW current actual learning rate = lrate * lrate_sched current value (* 1 if no lrate_sched)
-  float 	momentum;	// momentum factor -- as of 8.0 this is standardized to NOT include an additional learning rate factor (previous AFTER_LRATE option -- momentum is effectively after the learning rate)
+  float         lrate;          // learning rate
+  float         cur_lrate;      // #READ_ONLY #NO_INHERIT #SHOW current actual learning rate = lrate * lrate_sched current value (* 1 if no lrate_sched)
+  float         momentum;       // momentum factor -- as of 8.0 this is standardized to NOT include an additional learning rate factor (previous AFTER_LRATE option -- momentum is effectively after the learning rate)
   DecayType     decay_type;     // type of weight decay to apply (before 8.0 this was set by selecting a function, but this prevents optimization)
-  float 	decay;		// #CONDSHOW_OFF_decay_type:NO_DECAY decay rate -- the learning rate is also applied to the decay -- i.e., decay comes before the learning rate factor
+  float         decay;          // #CONDSHOW_OFF_decay_type:NO_DECAY decay rate -- the learning rate is also applied to the decay -- i.e., decay comes before the learning rate factor
   WtUpdtType    wt_updt;        // #READ_ONLY type of weight update to perform -- computed from other parameters set -- used to optimize computation
 
   INLINE int  GetStateSpecType() const override { return BP_NETWORK_STATE::T_BpConSpec; }
@@ -57,10 +57,10 @@
   // could give it a try.. would only work for compute_dwt -- overall unlikely to be
   // worth it though, so postponing in favor of CUDA etc at this point
   
-  INLINE float		C_Compute_dEdA(const float wt, const float ru_dEdNet)
+  INLINE float          C_Compute_dEdA(const float wt, const float ru_dEdNet)
   { return wt * ru_dEdNet; }
   // #IGNORE 
-  INLINE virtual float 	Compute_dEdA(CON_STATE* cg, NETWORK_STATE* net, int thr_no) {
+  INLINE virtual float  Compute_dEdA(CON_STATE* cg, NETWORK_STATE* net, int thr_no) {
     // this is ptr-con based and thus very slow..
     float rval = 0.0f;
     CON_STATE_LOOP(cg, rval += C_Compute_dEdA(cg->PtrCn(i,WT,net),
@@ -69,11 +69,11 @@
   }
   // get error from units I send to
 
-  INLINE void 		C_Compute_dWt(float& dwt, const float ru_dEdNet,
+  INLINE void           C_Compute_dWt(float& dwt, const float ru_dEdNet,
                                      const float su_act)
   { dwt += su_act * ru_dEdNet; }
   // #IGNORE
-  INLINE void 		Compute_dWt(CON_STATE* cg, NETWORK_STATE* net, int thr_no) override {
+  INLINE void           Compute_dWt(CON_STATE* cg, NETWORK_STATE* net, int thr_no) override {
     BP_UNIT_STATE* ru = (BP_UNIT_STATE*)cg->ThrOwnUnState(net, thr_no);
     const float ru_dEdNet = ru->dEdNet;
     float* dwts = cg->OwnCnVar(DWT);
@@ -236,7 +236,7 @@
   }
 #endif
 
-  INLINE void	Compute_Weights(CON_STATE* cg, NETWORK_STATE* net, int thr_no) override {
+  INLINE void   Compute_Weights(CON_STATE* cg, NETWORK_STATE* net, int thr_no) override {
     float* wts = cg->OwnCnVar(WT);
     float* dwts = cg->OwnCnVar(DWT);
     float* pdws = cg->OwnCnVar(PDW);

@@ -26,13 +26,13 @@ INHERITED(QTextBrowser)
   Q_OBJECT
 public:
   
-  void		setSource(const QUrl& url) override;
+  void          setSource(const QUrl& url) override;
   
   iTextBrowser(QWidget* parent = 0);
   ~iTextBrowser();
   
 signals:
-  void 			setSourceRequest(iTextBrowser* tb,
+  void                  setSourceRequest(iTextBrowser* tb,
     const QUrl& url, bool& cancel);
 
 private:

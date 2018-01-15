@@ -45,7 +45,7 @@ typedef T3NodeLeaf inherited;
   TA_SO_NODE_HEADER(T3GridColViewNode);
 #endif // def __MAKETA__
 public:
-  static void	initClass();
+  static void   initClass();
 
   T3GridColViewNode(T3DataView* colspec = NULL);
 

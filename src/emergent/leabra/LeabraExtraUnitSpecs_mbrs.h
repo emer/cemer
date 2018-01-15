@@ -25,14 +25,14 @@ class STATE_CLASS(TDRewIntegSpec) : public STATE_CLASS(SpecMemberBase) {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra misc specs for TDRewIntegUnitSpec
 INHERITED(SpecMemberBase)
 public:
-  float		discount;	// discount factor for V(t+1) from TDRewPredLayer
-  bool		max_r_v;	// represent the maximum of extrew (r) and tdrewpred estimate of V(t+1) instead of the sum of these two factors -- produces a kind of "absorbing" reward function instead of a cumulative reward function
+  float         discount;       // discount factor for V(t+1) from TDRewPredLayer
+  bool          max_r_v;        // represent the maximum of extrew (r) and tdrewpred estimate of V(t+1) instead of the sum of these two factors -- produces a kind of "absorbing" reward function instead of a cumulative reward function
 
   STATE_DECO_KEY("UnitSpec");
   STATE_TA_STD_CODE_SPEC(TDRewIntegSpec);
 private:
-  void	Initialize()    { discount = .8f;  max_r_v = false; }
-  void	Defaults_init() { };
+  void  Initialize()    { discount = .8f;  max_r_v = false; }
+  void  Defaults_init() { };
 };
 
 
@@ -50,8 +50,8 @@ public:
   STATE_DECO_KEY("UnitSpec");
   STATE_TA_STD_CODE_SPEC(BLAmygDaMod);
 private:
-  void	Initialize()    {   Defaults_init(); }
-  void	Defaults_init() {
+  void  Initialize()    {   Defaults_init(); }
+  void  Defaults_init() {
     pct_act = 1.0f;  burst_da_gain = 0.1f;  dip_da_gain = 0.1f;  us_clamp_avg = 0.2f;
   }
 };
@@ -69,8 +69,8 @@ public:
   STATE_TA_STD_CODE_SPEC(BLAmygAChMod);
   STATE_UAE( mod_min_c = 1.0f - mod_min; );
 private:
-  void	Initialize()    {   Defaults_init(); }
-  void	Defaults_init() {
+  void  Initialize()    {   Defaults_init(); }
+  void  Defaults_init() {
     on = true;    mod_min = 0.8f;    mod_min_c = 1.0f - mod_min;
   }
 };
@@ -91,11 +91,11 @@ public:
   STATE_DECO_KEY("UnitSpec");
   STATE_TA_STD_CODE_SPEC(CElAmygDaMod);
 private:
-  void	Initialize() {
+  void  Initialize() {
     burst_da_gain = 0.0f;  dip_da_gain = 0.1f;  acq_deep_mod = true;  us_clamp_avg = 0.2f;
     Defaults_init();
   }
-  void	Defaults_init() { }
+  void  Defaults_init() { }
 };
 
 
@@ -363,8 +363,8 @@ public:
   STATE_DECO_KEY("UnitSpec");
   STATE_TA_STD_CODE_SPEC(PFCGateSpec);
 private:
-  void	Initialize()    {   out_gate = false;  Defaults_init(); }
-  void	Defaults_init() {   out_q1only = true;  mnt_thal = 1.0f;  gate_thr = 0.2f; }
+  void  Initialize()    {   out_gate = false;  Defaults_init(); }
+  void  Defaults_init() {   out_q1only = true;  mnt_thal = 1.0f;  gate_thr = 0.2f; }
 };
 
 
@@ -382,8 +382,8 @@ public:
   STATE_DECO_KEY("UnitSpec");
   STATE_TA_STD_CODE_SPEC(PFCMaintSpec);
 private:
-  void	Initialize()    {   max_mnt = 100;  Defaults_init(); }
-  void	Defaults_init() {
+  void  Initialize()    {   max_mnt = 100;  Defaults_init(); }
+  void  Defaults_init() {
     s_mnt_min = 0.3f;  s_mnt_max = 0.5f;  mnt_net_max = 0.5f;  clear = 0.5f;
     use_dyn = true;
   }
@@ -406,7 +406,7 @@ public:
   STATE_DECO_KEY("UnitSpec");
   STATE_TA_STD_CODE(PFCDynEl);
 private:
-  void	Initialize()    { init = 1.0f; rise_tau = 0.0f;  decay_tau = 0.0f; }
+  void  Initialize()    { init = 1.0f; rise_tau = 0.0f;  decay_tau = 0.0f; }
 };
 
 
@@ -416,15 +416,15 @@ INHERITED(SpecMemberBase)
 public:
   bool          mod_ec_out;             // #DEF_true modulate ECout projection strength in same way as ECin projections -- i.e., when ECin is off and CA3 is on during recall mode, ECout projections to CA1 are also off 
   bool          ca3_on_p;               // #DEF_false are CA3 projections active into CA1 during the plus phase?  according to phase modulation these should be off, but on the other hand, error-driven learning theory says that they should be on in the plus phase, so that the plus is as similar to the minus as possible.  the need for this option results from a fundamental confusion of training signals due to the common plus phase used for both the EC-CA1 auto-encoder and the CA3->CA1 recall pathway
-  float		recall_decay; 		// #DEF_0;1 proportion to decay activations at start of recall phase
-  float		plus_decay; 		// #DEF_0;1 proportion to decay activations at start of plus phase
-  bool		use_test_mode;		// #DEF_true if network train_mode == TEST, then don't modulate CA3 off in plus phase, and keep ECin -> CA1 on, and don't decay -- makes it more likely to at least get input parts right
+  float         recall_decay;           // #DEF_0;1 proportion to decay activations at start of recall phase
+  float         plus_decay;             // #DEF_0;1 proportion to decay activations at start of plus phase
+  bool          use_test_mode;          // #DEF_true if network train_mode == TEST, then don't modulate CA3 off in plus phase, and keep ECin -> CA1 on, and don't decay -- makes it more likely to at least get input parts right
 
   STATE_DECO_KEY("UnitSpec");
   STATE_TA_STD_CODE_SPEC(ThetaPhaseSpecs);
 private:
-  void	Initialize()    {   Defaults_init(); }
-  void	Defaults_init() {
+  void  Initialize()    {   Defaults_init(); }
+  void  Defaults_init() {
     mod_ec_out = true;  ca3_on_p = false;  recall_decay = 1.0f;  plus_decay = 0.0f;
     use_test_mode = true;
   }
@@ -444,11 +444,11 @@ public:
   STATE_DECO_KEY("UnitSpec");
   STATE_TA_STD_CODE_SPEC(CerebGranuleSpecs);
 private:
-  void	Initialize()    {
+  void  Initialize()    {
     act_thr = 0.5f;  inhib_start_time = 10;  lrn_start_time = 60;  lrn_end_time = 90;
     inhib_net_pct = 0.5f;
   }
-  void	Defaults_init() {  };
+  void  Defaults_init() {  };
 };
 
 
@@ -457,17 +457,17 @@ class STATE_CLASS(CtxtUpdateSpec) : public STATE_CLASS(SpecMemberBase) {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra context updating specifications
 INHERITED(SpecMemberBase)
 public:
-  float		fm_hid;		// from hidden (inputs to context layer)
-  float		fm_prv;		// from previous context layer values (maintenance)
-  float		to_out;		// outputs from context layer
+  float         fm_hid;         // from hidden (inputs to context layer)
+  float         fm_prv;         // from previous context layer values (maintenance)
+  float         to_out;         // outputs from context layer
 
   STATE_DECO_KEY("UnitSpec");
   STATE_TA_STD_CODE_SPEC(CtxtUpdateSpec);
 private:
-  void	Initialize()    {
+  void  Initialize()    {
     fm_hid = 1.0f;  fm_prv = 0.0f;  to_out = 1.0f;
   }
-  void	Defaults_init() { }; 	// note: does NOT do any init -- these vals are not really subject to defaults in the usual way, so don't mess with them
+  void  Defaults_init() { };    // note: does NOT do any init -- these vals are not really subject to defaults in the usual way, so don't mess with them
 };
 
 
@@ -475,14 +475,14 @@ class STATE_CLASS(CtxtNSpec) : public STATE_CLASS(SpecMemberBase) {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra context counting specifications
 INHERITED(SpecMemberBase)
 public:
-  int		n_trials;	// #MIN_1 update every n trials
-  int		n_offs;		// #MIN_0 offset of n during count, ex using 2 lays with 0 and N/2 gives half alternating offset
+  int           n_trials;       // #MIN_1 update every n trials
+  int           n_offs;         // #MIN_0 offset of n during count, ex using 2 lays with 0 and N/2 gives half alternating offset
 
   STATE_DECO_KEY("UnitSpec");
   STATE_TA_STD_CODE_SPEC(CtxtNSpec);
 private:
-  void	Initialize() 	{ n_trials = 2; n_offs = 0; }
-  void	Defaults_init() { }; 	// note: does NOT do any init -- these vals are not really subject to defaults in the usual way, so don't mess with them
+  void  Initialize()    { n_trials = 2; n_offs = 0; }
+  void  Defaults_init() { };    // note: does NOT do any init -- these vals are not really subject to defaults in the usual way, so don't mess with them
 };
 
 

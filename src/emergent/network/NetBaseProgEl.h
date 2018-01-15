@@ -31,11 +31,11 @@ class E_API NetBaseProgEl: public ProgEl {
 INHERITED(ProgEl)
 public:
   // Signature must match that of the item_filter_fun typedef.
-  static bool		NetProgVarFilter(void* base, void* var); // Network* progvar filter -- only shows Network* items -- use in ITEM_FILTER comment directive
+  static bool           NetProgVarFilter(void* base, void* var); // Network* progvar filter -- only shows Network* items -- use in ITEM_FILTER comment directive
   TA_BASEFUNS_NOCOPY(NetBaseProgEl);
 private:
- void	Initialize() { };
- void	Destroy() { };
+ void   Initialize() { };
+ void   Destroy() { };
 };
 
 

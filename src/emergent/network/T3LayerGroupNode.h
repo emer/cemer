@@ -34,24 +34,24 @@ class E_API T3LayerGroupNode: public T3NodeParent {
   Q_OBJECT
   INHERITED(T3NodeParent)
 public:
-  iVec3i		pos; 	// starting position
-  iVec3i		lgp_max_size; 	// layer group max_size
-  iVec3f		max_size; // maximum size of network x,y,z
-  bool			show_drag;
-  bool			hide_lines;
-  bool			mode_2d;
+  iVec3i                pos;    // starting position
+  iVec3i                lgp_max_size;   // layer group max_size
+  iVec3f                max_size; // maximum size of network x,y,z
+  bool                  show_drag;
+  bool                  hide_lines;
+  bool                  mode_2d;
 
   T3LineBox*            frame;
 
-  void 	setGeom(int px, int py, int pz, 
-	  	float lg_max_x, float lg_max_y, float lg_max_z,
-	  	float max_x, float max_y, float max_z);
+  void  setGeom(int px, int py, int pz, 
+                float lg_max_x, float lg_max_y, float lg_max_z,
+                float max_x, float max_y, float max_z);
 
   void  updateNode() override;
   
   T3LayerGroupNode(Qt3DNode* par = NULL, T3DataView* dataView_ = NULL,
                    bool show_draggers = true,
-		   bool hide_lines = false, bool mode_2d = false);
+                   bool hide_lines = false, bool mode_2d = false);
   ~T3LayerGroupNode();
 };
 
@@ -68,44 +68,44 @@ typedef T3NodeParent inherited;
   SO_NODE_HEADER(T3LayerGroupNode);
 #endif
 public:
-  static void		initClass();
+  static void           initClass();
 
-  void 			setGeom(int px, int py, int pz, 
-				float lg_max_x, float lg_max_y, float lg_max_z,
-				float max_x, float max_y, float max_z);
+  void                  setGeom(int px, int py, int pz, 
+                                float lg_max_x, float lg_max_y, float lg_max_z,
+                                float max_x, float max_y, float max_z);
 
-  bool			hideLines() { return hide_lines_; }
-  SoDrawStyle* 		drawStyle() { return drw_styl_; } // #IGNORE
+  bool                  hideLines() { return hide_lines_; }
+  SoDrawStyle*          drawStyle() { return drw_styl_; } // #IGNORE
 
   T3LayerGroupNode(T3DataView* dataView_ = NULL, bool show_draggers = true,
-		   bool hide_lines = false, bool mode_2d = false);
+                   bool hide_lines = false, bool mode_2d = false);
 
 protected:
   
-  iVec3i		pos; 	// starting position
-  iVec3i		lgp_max_size; 	// layer group max_size
-  iVec3f		max_size; // maximum size of network x,y,z
+  iVec3i                pos;    // starting position
+  iVec3i                lgp_max_size;   // layer group max_size
+  iVec3f                max_size; // maximum size of network x,y,z
 
-  void			render(); // called after pos/geom changes
+  void                  render(); // called after pos/geom changes
   ~T3LayerGroupNode();
 
 private:
-  SoLineBox3d*		shape_;
-  SoDrawStyle*		drw_styl_;
+  SoLineBox3d*          shape_;
+  SoDrawStyle*          drw_styl_;
 
-  bool			show_drag_;
-  bool			hide_lines_;
-  bool			mode_2d_;
+  bool                  show_drag_;
+  bool                  hide_lines_;
+  bool                  mode_2d_;
 
-  SoSeparator*		xy_drag_sep_;
-  SoTransform*		xy_drag_xf_;
-  SoTranslate2Dragger*	xy_dragger_;
-  SoCalculator*		xy_drag_calc_;
+  SoSeparator*          xy_drag_sep_;
+  SoTransform*          xy_drag_xf_;
+  SoTranslate2Dragger*  xy_dragger_;
+  SoCalculator*         xy_drag_calc_;
 
-  SoSeparator*		z_drag_sep_;
-  SoTransform*		z_drag_xf_;
-  SoTranslate1Dragger*	z_dragger_;
-  SoCalculator*		z_drag_calc_;
+  SoSeparator*          z_drag_sep_;
+  SoTransform*          z_drag_xf_;
+  SoTranslate1Dragger*  z_dragger_;
+  SoCalculator*         z_drag_calc_;
 };
 
 #endif // TA_QT3D

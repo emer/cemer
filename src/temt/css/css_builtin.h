@@ -26,80 +26,80 @@ class cssTA_Matrix;
 
 class CSS_API cssBI { // built-in functions for css
 public:
-  static cssElCFun*	asgn;
-  static cssElCFun*	asgn_add;
-  static cssElCFun*	asgn_sub;
-  static cssElCFun*	asgn_mult;
-  static cssElCFun*	asgn_div;
-  static cssElCFun*	asgn_mod;
-  static cssElCFun*	asgn_lshift;
-  static cssElCFun*	asgn_rshift;
-  static cssElCFun*	asgn_and;
-  static cssElCFun*	asgn_xor;
-  static cssElCFun*	asgn_or;
-  static cssElCFun*	init_asgn;
-  static cssElCFun*	asgn_post_pp;
-  static cssElCFun*	asgn_pre_pp;
-  static cssElCFun*	asgn_post_mm;
-  static cssElCFun*	asgn_pre_mm;
-  static cssElCFun*	new_opr;
-  static cssElCFun*	del_opr;
-  static cssElCFun*	constr;	// construct an object
-  static cssElCFun*	add;
-  static cssElCFun*	sub;
-  static cssElCFun*	mul;
-  static cssElCFun*	div;
-  static cssElCFun*	modulo;
-  static cssElCFun*	bit_and;
-  static cssElCFun*	bit_xor;
-  static cssElCFun*	bit_or;
-  static cssElCFun*	neg;
-  static cssElCFun*	addr_of;
-  static cssElCFun*	de_ptr;
-  static cssElCFun*	de_array;
-  static cssElCFun*	make_matrix;
-  static cssElCFun*	points_at;
-  static cssElCFun*	member_fun;
-  static cssElCFun*	member_call;
-  static cssElCFun*	rshift;
-  static cssElCFun*	lshift;
-  static cssElCFun*	scoper;
-  static cssElCFun*	pop;
-  static cssElCFun*	cast;
-  static cssElCFun*	cond;
-  static cssElCFun*	switch_jump;
-  static cssElCFun*	doloop;
-  static cssElCFun*	foreach_cond;
+  static cssElCFun*     asgn;
+  static cssElCFun*     asgn_add;
+  static cssElCFun*     asgn_sub;
+  static cssElCFun*     asgn_mult;
+  static cssElCFun*     asgn_div;
+  static cssElCFun*     asgn_mod;
+  static cssElCFun*     asgn_lshift;
+  static cssElCFun*     asgn_rshift;
+  static cssElCFun*     asgn_and;
+  static cssElCFun*     asgn_xor;
+  static cssElCFun*     asgn_or;
+  static cssElCFun*     init_asgn;
+  static cssElCFun*     asgn_post_pp;
+  static cssElCFun*     asgn_pre_pp;
+  static cssElCFun*     asgn_post_mm;
+  static cssElCFun*     asgn_pre_mm;
+  static cssElCFun*     new_opr;
+  static cssElCFun*     del_opr;
+  static cssElCFun*     constr; // construct an object
+  static cssElCFun*     add;
+  static cssElCFun*     sub;
+  static cssElCFun*     mul;
+  static cssElCFun*     div;
+  static cssElCFun*     modulo;
+  static cssElCFun*     bit_and;
+  static cssElCFun*     bit_xor;
+  static cssElCFun*     bit_or;
+  static cssElCFun*     neg;
+  static cssElCFun*     addr_of;
+  static cssElCFun*     de_ptr;
+  static cssElCFun*     de_array;
+  static cssElCFun*     make_matrix;
+  static cssElCFun*     points_at;
+  static cssElCFun*     member_fun;
+  static cssElCFun*     member_call;
+  static cssElCFun*     rshift;
+  static cssElCFun*     lshift;
+  static cssElCFun*     scoper;
+  static cssElCFun*     pop;
+  static cssElCFun*     cast;
+  static cssElCFun*     cond;
+  static cssElCFun*     switch_jump;
+  static cssElCFun*     doloop;
+  static cssElCFun*     foreach_cond;
 
-  static cssElCFun*	push_root;	// pushes a root value on stack
-  static cssElCFun*	push_next; 	// pushes next program item on stack
-  static cssElCFun*	push_cur_this;	// push current this pointer on stack
-  static cssElCFun*	push_dummy_this; // push a dummy this pointer on stack
-  static cssElCFun*	arg_swap;	// flips the args on the stack
-  static cssElCFun*	fun_done;	// call the FunDone function on obj before me (function cleanup)
-  static cssElCFun*	array_alloc;
-  static cssElCFun*	sstream_rewind;
+  static cssElCFun*     push_root;      // pushes a root value on stack
+  static cssElCFun*     push_next;      // pushes next program item on stack
+  static cssElCFun*     push_cur_this;  // push current this pointer on stack
+  static cssElCFun*     push_dummy_this; // push a dummy this pointer on stack
+  static cssElCFun*     arg_swap;       // flips the args on the stack
+  static cssElCFun*     fun_done;       // call the FunDone function on obj before me (function cleanup)
+  static cssElCFun*     array_alloc;
+  static cssElCFun*     sstream_rewind;
 
-  static cssElCFun*	gt;
-  static cssElCFun*	lt;
-  static cssElCFun*	eq;
-  static cssElCFun*	ge;
-  static cssElCFun*	le;
-  static cssElCFun*	ne;
-  static cssElCFun*	land;
-  static cssElCFun*	lor;
-  static cssElCFun*	lnot;
-  static cssElCFun*	bitneg;
-  static cssElCFun*	power;
+  static cssElCFun*     gt;
+  static cssElCFun*     lt;
+  static cssElCFun*     eq;
+  static cssElCFun*     ge;
+  static cssElCFun*     le;
+  static cssElCFun*     ne;
+  static cssElCFun*     land;
+  static cssElCFun*     lor;
+  static cssElCFun*     lnot;
+  static cssElCFun*     bitneg;
+  static cssElCFun*     power;
 
-  static cssInt*	true_int;
-  static cssInt*	false_int;
-  static cssConstBool*	semicolon_mark;
-  static cssConstBool*	colon_mark;
-  static cssConstBool*	comma_mark;
+  static cssInt*        true_int;
+  static cssInt*        false_int;
+  static cssConstBool*  semicolon_mark;
+  static cssConstBool*  colon_mark;
+  static cssConstBool*  comma_mark;
 
-  static cssTA_Base*	root;		// root script element
-  static cssTA_Matrix*  matrix_inst;	// instance of matrix for making tokens
+  static cssTA_Base*    root;           // root script element
+  static cssTA_Matrix*  matrix_inst;    // instance of matrix for making tokens
 };
 
 #endif // css_builtin_h

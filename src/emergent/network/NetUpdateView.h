@@ -30,26 +30,26 @@ class E_API NetUpdateView: public NetBaseProgEl {
   // #PROGEL_COMPLETION update the network view, conditional on an update_net_view variable that is created by this progam element
 INHERITED(NetBaseProgEl)
 public:
-  ProgVarRef	network_var;	// #ITEM_FILTER_NetProgVarFilter variable that points to the network
-  ProgVarRef	update_var;	// #ITEM_FILTER_StdProgVarFilter variable that controls whether we update the display or not
+  ProgVarRef    network_var;    // #ITEM_FILTER_NetProgVarFilter variable that points to the network
+  ProgVarRef    update_var;     // #ITEM_FILTER_StdProgVarFilter variable that controls whether we update the display or not
   
-  String	GetDisplayName() const override;
-  String 	GetTypeDecoKey() const override { return "Function"; }
-  String	GetToolbarName() const override { return "net updt\nview"; }
+  String        GetDisplayName() const override;
+  String        GetTypeDecoKey() const override { return "Function"; }
+  String        GetToolbarName() const override { return "net updt\nview"; }
   bool    CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
   bool    CvtFmCode(const String& code) override;
 
   PROGEL_SIMPLE_BASEFUNS(NetUpdateView);
 protected:
-  void	UpdateAfterEdit_impl() override;
-  void	CheckThisConfig_impl(bool quiet, bool& rval) override;
-  virtual void	GetUpdateVar(); // get the update_var variable
+  void  UpdateAfterEdit_impl() override;
+  void  CheckThisConfig_impl(bool quiet, bool& rval) override;
+  virtual void  GetUpdateVar(); // get the update_var variable
 
-  bool		GenCssBody_impl(Program* prog) override;
+  bool          GenCssBody_impl(Program* prog) override;
 
 private:
-  void	Initialize();
-  void	Destroy();
+  void  Initialize();
+  void  Destroy();
 };
 
 #endif // NetUpdateView_h

@@ -43,8 +43,8 @@ public:
 
   TA_SIMPLE_BASEFUNS(ActrMotorParams);
 private:
-  void	Initialize();
-  void	Destroy()	{ };
+  void  Initialize();
+  void  Destroy()       { };
 };
 
 eTypeDef_Of(ActrMotorTimeParams);
@@ -69,8 +69,8 @@ public:
 
   TA_SIMPLE_BASEFUNS(ActrMotorTimeParams);
 private:
-  void	Initialize();
-  void	Destroy()	{ };
+  void  Initialize();
+  void  Destroy()       { };
 };
 
 eTypeDef_Of(ActrMotorModule);

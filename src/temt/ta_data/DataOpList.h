@@ -33,30 +33,30 @@ class TA_API DataOpList : public taList<DataOpEl> {
 INHERITED(taList<DataOpEl>)
 public:
 
-  virtual void 	SetDataTable(DataTable* dt);
+  virtual void  SetDataTable(DataTable* dt);
   // #CAT_DataOp set the data table to enable looking up columns
 
-  virtual void 	GetColumns(DataTable* dt);
+  virtual void  GetColumns(DataTable* dt);
   // #CAT_DataOp get the column pointers for given data table (looking up by name)
-  virtual void 	ClearColumns();
+  virtual void  ClearColumns();
   // #CAT_DataOp clear column pointers (don't keep these guys hanging around)
 
   virtual DataOpEl* AddColumn(const String& col_name, DataTable* dt);
   // #CAT_DataOp #BUTTON add a new column to operate on from given data table
-  virtual void	AddAllColumns(DataTable* dt, bool exclude_strings = false);
+  virtual void  AddAllColumns(DataTable* dt, bool exclude_strings = false);
   // #CAT_DataOp add all columns from given data table
-  virtual void	AddAllColumns_gui(DataTable* dt, bool exclude_strings = false);
+  virtual void  AddAllColumns_gui(DataTable* dt, bool exclude_strings = false);
   // #CAT_DataOp #BUTTON #LABEL_AddAllColumns add all columns from given data table, optionally excluding string-valued columns
 
   String    GetArgForCompletion(const String& method, const String& arg) override;
   void      GetArgCompletionList(const String& method, const String& arg, taBase* arg_obj, const String& cur_txt, Completions& list) override;
 
-  void	SigEmit(int sls, void* op1 = NULL, void* op2 = NULL) override;
+  void  SigEmit(int sls, void* op1 = NULL, void* op2 = NULL) override;
 
   TA_BASEFUNS_NOCOPY(DataOpList);
 private:
-  void	Initialize() 		{ SetBaseType(&TA_DataOpEl); }
-  void 	Destroy()		{ };
+  void  Initialize()            { SetBaseType(&TA_DataOpEl); }
+  void  Destroy()               { };
 };
 
 #endif // DataOpList_h

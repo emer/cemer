@@ -30,18 +30,18 @@ class TA_API MemberFmArg: public MemberProgEl {
   // set a member (attribute) on an object to a value given by a startup argument passed to overall program when it was run -- if argument was not set by user, nothing happens.  IMPORTANT: must also include a RegisterArgs program element BEFORE this item in the program code to register this argument and process the command list
 INHERITED(MemberProgEl)
 public:
-  String		arg_name; // argument name -- this will be passed on the command line as <arg_name>=<value> (no spaces) (e.g., if arg_name is "rate" then command line would be rate=0.01 and internal arg name is just "rate" -- can be accessed using taMisc arg functions using that name)
-  bool			update_after; // call UpdateAfterEdit after setting the member: useful for updating displays and triggering other computations based on changed value, but this comes at a performance cost 
-  bool			quiet;	      // do not emit a message when arg is set and member value is assigned (otherwise, informational msg is printed -- useful for startup code output)
+  String                arg_name; // argument name -- this will be passed on the command line as <arg_name>=<value> (no spaces) (e.g., if arg_name is "rate" then command line would be rate=0.01 and internal arg name is just "rate" -- can be accessed using taMisc arg functions using that name)
+  bool                  update_after; // call UpdateAfterEdit after setting the member: useful for updating displays and triggering other computations based on changed value, but this comes at a performance cost 
+  bool                  quiet;        // do not emit a message when arg is set and member value is assigned (otherwise, informational msg is printed -- useful for startup code output)
   
-  bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
-  bool		CvtFmCode(const String& code) override;
+  bool          CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
+  bool          CvtFmCode(const String& code) override;
 
-  String	GetDisplayName() const override;
-  String 	GetTypeDecoKey() const override { return "ProgVar"; }
-  String	GetToolbarName() const override { return "memb=arg"; }
+  String        GetDisplayName() const override;
+  String        GetTypeDecoKey() const override { return "ProgVar"; }
+  String        GetToolbarName() const override { return "memb=arg"; }
 
-  void	GenRegArgs(Program* prog);
+  void  GenRegArgs(Program* prog);
   // #IGNORE generate RegisterArgs code
 
   //  PROGEL_SIMPLE_BASEFUNS(MemberFmArg);
@@ -49,15 +49,15 @@ public:
   SIMPLE_LINKS(MemberFmArg);
   TA_BASEFUNS(MemberFmArg);
 protected:
-  ProgVar* 		prv_obj; // #IGNORE used to track changes in obj type to clear expr
+  ProgVar*              prv_obj; // #IGNORE used to track changes in obj type to clear expr
   
-  void		UpdateAfterEdit_impl() override;
+  void          UpdateAfterEdit_impl() override;
   void          CheckThisConfig_impl(bool quiet, bool& rval) override;
-  bool		GenCssBody_impl(Program* prog) override;
+  bool          GenCssBody_impl(Program* prog) override;
 
 private:
-  void	Initialize();
-  void	Destroy()	{CutLinks();}
+  void  Initialize();
+  void  Destroy()       {CutLinks();}
 }; 
 
 #endif // MemberFmArg_h

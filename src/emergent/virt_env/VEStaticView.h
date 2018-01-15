@@ -36,25 +36,25 @@ class E_API VEStaticView: public T3DataView {
 INHERITED(T3DataView)
 friend class VEWorldView;
 public:
-  VEStatic*		Static() const { return (VEStatic*)data();}
-  virtual void		SetStatic(VEStatic* ob);
+  VEStatic*             Static() const { return (VEStatic*)data();}
+  virtual void          SetStatic(VEStatic* ob);
   
   DATAVIEW_PARENT(VEWorldView)
 
-  virtual void		SetDraggerPos();
+  virtual void          SetDraggerPos();
   // set dragger position, based on shape
 
-  bool			isVisible() const;
-  bool		ignoreSigEmit() const override { return !isVisible(); }
+  bool                  isVisible() const;
+  bool          ignoreSigEmit() const override { return !isVisible(); }
 
-  void 	SetDefaultName() override {} // leave it blank
+  void  SetDefaultName() override {} // leave it blank
   TA_BASEFUNS_NOCOPY(VEStaticView);
 protected:
-  void	Initialize();
-  void	Destroy();
+  void  Initialize();
+  void  Destroy();
 
-  void		Render_pre() override;
-  void		Render_impl() override;
+  void          Render_pre() override;
+  void          Render_impl() override;
 };
 
 #endif // VEStaticView_h

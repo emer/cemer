@@ -47,7 +47,7 @@ class CSS_API QcssConsole : public iConsole {
   void keyPressEvent(QKeyEvent * e) override;
   void resizeEvent(QResizeEvent* e) override;
 
-  cssCmdShell* 	cmd_shell; // the command shell
+  cssCmdShell*  cmd_shell; // the command shell
   static QcssConsole *theInstance;
 };
 

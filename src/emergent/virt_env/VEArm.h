@@ -57,8 +57,8 @@ public:
   float         hand_mid;       // #READ_ONLY hand / 2
   float         elbow_gap_mid;  // #READ_ONLY /2
   float         wrist_gap_mid;  // #READ_ONLY /2
-  float 	La;             // #READ_ONLY the length of the humerus including the elbow gap
-  float 	Lf;             // #READ_ONLY length of the forearm (ulna,hand,gaps)
+  float         La;             // #READ_ONLY the length of the humerus including the elbow gap
+  float         Lf;             // #READ_ONLY length of the forearm (ulna,hand,gaps)
   float         Ltot;           // #READ_ONLY total length of the arm
 
   TA_SIMPLE_BASEFUNS(VEArmLengths);
@@ -76,10 +76,10 @@ class E_API VEArmAngles : public taOBase {
   // ##INLINE lengths of arm parameters
 INHERITED(taOBase)
 public:
-  float  vert_axis_rot;	// angle of the upper arm's projection on the horizontal plane -- this corresponds to a rotation around the vertical axis.
-  float  abduction;	// angle of the upper arm with the negative vertical axis (or with the torso) -- this corresponds to abduction.
-  float  rotation;	// degree of rotation of the humerus around its own axis -- this corresponds to upper arm rotation.
-  float  elbow;		// rotation of the ulna around the elbow on its hinge joint relative to the humerus -- 0 is straight in line with the humerus, and positive numbers produce contraction of that angle
+  float  vert_axis_rot; // angle of the upper arm's projection on the horizontal plane -- this corresponds to a rotation around the vertical axis.
+  float  abduction;     // angle of the upper arm with the negative vertical axis (or with the torso) -- this corresponds to abduction.
+  float  rotation;      // degree of rotation of the humerus around its own axis -- this corresponds to upper arm rotation.
+  float  elbow;         // rotation of the ulna around the elbow on its hinge joint relative to the humerus -- 0 is straight in line with the humerus, and positive numbers produce contraction of that angle
 
   bool          up_y;           // #NO_SAVE if true, then Y is the vertical axis -- this is the default
   float         alpha;          // #HIDDEN #NO_SAVE canonical names for the angles
@@ -87,9 +87,9 @@ public:
   float         gamma;          // #HIDDEN #NO_SAVE canonical names for the angles
   float         delta;          // #HIDDEN #NO_SAVE canonical names for the angles
 
-  void	GreekToEnglish();
+  void  GreekToEnglish();
   // update human readable versions from alpha, beta, etc
-  void	EnglishToGreek();
+  void  EnglishToGreek();
   // update alpha, beta, etc from human readable versions
 
   TA_SIMPLE_BASEFUNS(VEArmAngles);
@@ -262,7 +262,7 @@ public:
   MuscType      musc_type;       // The muscle model. Either linear (output force proportional to stimulus) or Hill-type (the muscle model used in Gribble et al. 1998) -- should correspond with actual type of muscle objects used
   float         hill_mu;         // #CONDSHOW_ON_musc_type:HILL #DEF_0.06 mu parameter for the Hill-type muscle -- dependence of muscle's threshold length on velocity
   ControlType   ctrl_type;       // type of controller to use to drive muscles in response to the difference between target lengths and current lengths
-  float 	world_step;      // #READ_ONLY a copy of the owner VEWorld's stepsize, used for calculating speeds
+  float         world_step;      // #READ_ONLY a copy of the owner VEWorld's stepsize, used for calculating speeds
   float         arm_time;        // #GUI_READ_ONLY #SHOW #NO_SAVE time counter for arm integration
 
   VEArmDelays   delays;          // Delay Parameters -- used to delay inputs/outputs to VEArm -- each is expressed as a discrete time step (1 step = 5 ms), where the arm starts receiving the relevant inputs/outputs at the time step specified (so a delay value of 1 = no delay)
@@ -390,7 +390,7 @@ public:
   float_Matrix  musc_io_err;       // #READ_ONLY #SHOW #EXPERT #NO_SAVE Inferior Olivary error signal for each muscle -- if hand_io_err is triggered, then each muscle has an error if its individual muscle rate of error change is over threshold
   float         musc_io_err_mag; // #READ_ONLY #SHOW #EXPERT #NO_SAVE overall magnitude of Inferior Olivary error signal for each muscle -- if hand_io_err is triggered, then each muscle has an error if its individual muscle error is over threshold
 
-  ColorScalePtr	color_scale;    // #IGNORE for coloring insertion points -- not saved..
+  ColorScalePtr color_scale;    // #IGNORE for coloring insertion points -- not saved..
 
   ///////////////////////////////////////////////////////////
   //            Initialization
@@ -398,7 +398,7 @@ public:
   virtual bool  CheckArm(bool quiet = false);
   // #CAT_Init check to see if the arm is all configured OK -- it flags an error if not unless quiet -- returns true if OK, false if not
 
-  virtual void	InitMuscles();
+  virtual void  InitMuscles();
   // #CAT_Init initialize muscles and insertion point data
 
   virtual bool  ConfigArm(float humerus_length = 0.28, float humerus_radius = 0.015,

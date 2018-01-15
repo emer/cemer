@@ -30,15 +30,15 @@ class E_API WtInitPrompt: public IfGuiPrompt {
   // special program element for prompting whether to initialize network weights -- only prompts if network has been trained (epoch > 0) -- requires a variable named: network -- will complain if not found!
 INHERITED(IfGuiPrompt)
 public:
-  String	GetToolbarName() const override { return "wt init prmt"; }
+  String        GetToolbarName() const override { return "wt init prmt"; }
   TA_BASEFUNS_NOCOPY(WtInitPrompt);
 protected:
-  void		GenCssPre_impl(Program* prog) override; 
-  void		GenCssPost_impl(Program* prog) override; 
+  void          GenCssPre_impl(Program* prog) override; 
+  void          GenCssPost_impl(Program* prog) override; 
 
 private:
-  void	Initialize();
-  void	Destroy()	{ } //
+  void  Initialize();
+  void  Destroy()       { } //
 };
 
 #endif // WtInitPrompt_h

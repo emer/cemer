@@ -32,17 +32,17 @@ class TA_API DataSelectEl : public DataOpEl {
   INHERITED(DataOpEl)
 public:
   String        name;           // #HIDDEN #READ_ONLY cached name value
-  bool		on;		// use this selection criterion?  can be useful to have various selections available but not enabled as needs change.  see also enable_var to dynamically determine use of selection crtiteria based on a variable.
-  Relation::Relations	rel;		// #CONDEDIT_ON_on relation of column to expression for selection
-  bool		use_var;	// #CONDEDIT_ON_on if true, use a program variable to specify the selection value
-  Variant	cmp;		// #CONDEDIT_ON_use_var:false&&on literal compare value of column to this comparison value
-  ProgVarRef	var;		// #CONDEDIT_ON_use_var&&on variable that contains the comparison value: note -- this MUST be a global var in vars or args, not in local vars!
-  ProgVarRef	enable_var;	// #CONDEDIT_ON_on optional variable that is evaluated as either true or false *at the start of the select procedure* to determine if this select criterion is enabled -- can setup a large set of criteria and flexibly enable them as appropriate. note -- this MUST be a global var in vars or args, not in local vars!
-  bool		act_enabled;	// #READ_ONLY #NO_SAVE actual enabled value to use -- reflects on && enable_var
+  bool          on;             // use this selection criterion?  can be useful to have various selections available but not enabled as needs change.  see also enable_var to dynamically determine use of selection crtiteria based on a variable.
+  Relation::Relations   rel;            // #CONDEDIT_ON_on relation of column to expression for selection
+  bool          use_var;        // #CONDEDIT_ON_on if true, use a program variable to specify the selection value
+  Variant       cmp;            // #CONDEDIT_ON_use_var:false&&on literal compare value of column to this comparison value
+  ProgVarRef    var;            // #CONDEDIT_ON_use_var&&on variable that contains the comparison value: note -- this MUST be a global var in vars or args, not in local vars!
+  ProgVarRef    enable_var;     // #CONDEDIT_ON_on optional variable that is evaluated as either true or false *at the start of the select procedure* to determine if this select criterion is enabled -- can setup a large set of criteria and flexibly enable them as appropriate. note -- this MUST be a global var in vars or args, not in local vars!
+  bool          act_enabled;    // #READ_ONLY #NO_SAVE actual enabled value to use -- reflects on && enable_var
 
-  bool	Eval(const Variant& val); // evaluate expression
+  bool  Eval(const Variant& val); // evaluate expression
 
-  virtual void 	UpdateEnabled(); // update the act_enabled flag based on flag and variable
+  virtual void  UpdateEnabled(); // update the act_enabled flag based on flag and variable
 
   String        GetName() const override  { return name; }
   bool          SetName(const String& nm) override;
@@ -54,10 +54,10 @@ public:
   void          SetEnabled(bool value) override { on = value; }
 
   void  Initialize();
-  void 	Destroy()		{ };
+  void  Destroy()               { };
   TA_SIMPLE_BASEFUNS(DataSelectEl);
 protected:
-  void	 CheckThisConfig_impl(bool quiet, bool& rval) override;
+  void   CheckThisConfig_impl(bool quiet, bool& rval) override;
 };
 
 #endif // DataSelectEl_h

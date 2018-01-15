@@ -37,13 +37,13 @@ public:
   virtual VisRegionSpecBase* FindRetinalRes(VisRegionParams::Resolution res);
   // find first spec with given resolution
   virtual VisRegionSpecBase* FindRetinalRegionRes(VisRegionParams::Region reg,
-					      VisRegionParams::Resolution res);
+                                              VisRegionParams::Resolution res);
   // find first spec with given retinal region and resolution (falls back to res then reg if no perfect match)
 
   TA_BASEFUNS_NOCOPY(VisRegionSpecBaseList);
 private:
-  void	Initialize() 		{ SetBaseType(&TA_VisRegionSpecBase); }
-  void 	Destroy()		{ };
+  void  Initialize()            { SetBaseType(&TA_VisRegionSpecBase); }
+  void  Destroy()               { };
 };
 
 #endif // VisRegionSpecBaseList_h

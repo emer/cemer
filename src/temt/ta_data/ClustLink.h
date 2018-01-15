@@ -31,13 +31,13 @@ class TA_API ClustLink : public taBase {
   // ##INLINE ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Math a link in the cluster tree with distance
 INHERITED(taBase)
 public:
-  float		dist;		// distance to this node from parent
-  ClustNode*	node;		// cluster node
+  float         dist;           // distance to this node from parent
+  ClustNode*    node;           // cluster node
 
-  void	Initialize();
-  void	Destroy()	{ CutLinks(); }
-  void	CutLinks() override;
-  void	Copy_(const ClustLink& cp);
+  void  Initialize();
+  void  Destroy()       { CutLinks(); }
+  void  CutLinks() override;
+  void  Copy_(const ClustLink& cp);
   TA_BASEFUNS_LITE(ClustLink);
 };
 

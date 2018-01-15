@@ -34,8 +34,8 @@ INHERITED(ProgEl)
 public:
   String              src_table;  // #HIDDEN #ADD_COMPLETER_SIMPLE
   String              dest_table; // #HIDDEN #ADD_COMPLETER_SIMPLE
-  ProgVarRef          src_data_var;	// #ITEM_FILTER_DataProgVarFilter program variable pointing to source data for operation
-  ProgVarRef          dest_data_var;	// #NULL_OK #ITEM_FILTER_DataProgVarFilter program variable pointing to destination (result) data for operation (if NULL, a new one will be automatically created)
+  ProgVarRef          src_data_var;     // #ITEM_FILTER_DataProgVarFilter program variable pointing to source data for operation
+  ProgVarRef          dest_data_var;    // #NULL_OK #ITEM_FILTER_DataProgVarFilter program variable pointing to destination (result) data for operation (if NULL, a new one will be automatically created)
 
   virtual DataTable*  GetSrcData(); // get source data table pointer from src_data_var (or NULL)
   virtual DataTable*  GetDestData(); // get dsource data table pointer from dest_data_var (or NULL)
@@ -50,8 +50,8 @@ protected:
   void                CheckThisConfig_impl(bool quiet, bool& rval) override;
  
 private:
-  void	Initialize();
-  void	Destroy()	{ CutLinks(); }
+  void  Initialize();
+  void  Destroy()       { CutLinks(); }
 };
 
 #endif // DataSrcDestProg_h

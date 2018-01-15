@@ -64,50 +64,50 @@ public:
     TS_DONE,    // finished running the task, waiting to sync
   };
   
-  static bool		inMainThread(); // return true for the caller if it is the main thread of the program
-  static void		DeleteTaskThread(taTaskThread* tt); 
+  static bool           inMainThread(); // return true for the caller if it is the main thread of the program
+  static void           DeleteTaskThread(taTaskThread* tt); 
    // use this to delete, do not delete directly!
 
-  TimeUsedHR		start_latency; 	// amount of time waiting to start
-  TimeUsedHR		run_time; 	// amount of time actually running jobs
+  TimeUsedHR            start_latency;  // amount of time waiting to start
+  TimeUsedHR            run_time;       // amount of time actually running jobs
   
-  inline bool		isActive() const {return m_active;}
+  inline bool           isActive() const {return m_active;}
   // currently alive and ready to be used -- could be in any of ThreadState states
 
-  void			setLog(bool log_on) {m_log = log_on;}
+  void                  setLog(bool log_on) {m_log = log_on;}
   // set whether to log data or not
-  inline bool		log() const {return m_log;} 
+  inline bool           log() const {return m_log;} 
   // log timing data (start latency, run_time)
 
-  taTask*		task() const {return m_task;}
+  taTask*               task() const {return m_task;}
   // current task we're associated with
-  void			setTask(taTask* t);
+  void                  setTask(taTask* t);
   // assign a task for this thread
 
-  void			runTask();	// run the task in this thread
-  void 			sync(); 	// sync up with the thread after finished running task
-  void			terminate(); 	// note: lexical override only
+  void                  runTask();      // run the task in this thread
+  void                  sync();         // sync up with the thread after finished running task
+  void                  terminate();    // note: lexical override only
   
   taTaskThread(bool log = false, int affinity = -1); // NEVER make static version, only via new, and always delete with Delete method
 
 protected:
   ~taTaskThread(); // do not elevate to public, always delete through static guy
   
-  QMutex		mutex;// #IGNORE
-  QWaitCondition 	released;// #IGNORE
-  QWaitCondition 	synced;// #IGNORE
-  taTaskRef		m_task;
-  const int		m_affinity; // -1-default; note: this may be ignored
+  QMutex                mutex;// #IGNORE
+  QWaitCondition        released;// #IGNORE
+  QWaitCondition        synced;// #IGNORE
+  taTaskRef             m_task;
+  const int             m_affinity; // -1-default; note: this may be ignored
 #ifndef __MAKETA__
-  static Qt::HANDLE	m_main_thread_id; // set on create (may be needed for affinity)
-  Qt::HANDLE		m_thread_id; // for the thread, set in run
+  static Qt::HANDLE     m_main_thread_id; // set on create (may be needed for affinity)
+  Qt::HANDLE            m_thread_id; // for the thread, set in run
 #endif
-  volatile ThreadState	m_state;
-  volatile bool		m_active;
-  bool			m_log;
+  volatile ThreadState  m_state;
+  volatile bool         m_active;
+  bool                  m_log;
   
-  void 	run() override;
-  void			SetAffinity(); // called from run() in thread
+  void  run() override;
+  void                  SetAffinity(); // called from run() in thread
 };
 
 #endif // taTaskThread_h

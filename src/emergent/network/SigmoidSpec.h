@@ -59,7 +59,7 @@ public:
   SIMPLE_COPY(SigmoidSpec);
   TA_BASEFUNS(SigmoidSpec);
 protected:
-  void	UpdateAfterEdit_impl() override;
+  void  UpdateAfterEdit_impl() override;
 private:
   void  Initialize()            { off = 0.0f; gain = 1.0f; gain_eq_1 = true; }
   void  Destroy()               { };

@@ -33,24 +33,24 @@ class TA_API Switch: public ProgEl {
   // ##DEF_CHILD_cases ##PROGEL_COMPLETION #ADD_PARENS switches execution based on the value of given variable -- each case expression is matched to a corresponding case_code item one-to-one
 INHERITED(ProgEl)
 public:
-  ProgVarRef        switch_var;	 // #ITEM_FILTER_StdProgVarFilter #CUST_CHOOSER_NewProgVarCustChooser variable to switch on
+  ProgVarRef        switch_var;  // #ITEM_FILTER_StdProgVarFilter #CUST_CHOOSER_NewProgVarCustChooser variable to switch on
 
-  ProgEl_List       cases; 	// #TREE_SHOW variable value and code to execute for each case (list of CaseBlock objects)
+  ProgEl_List       cases;      // #TREE_SHOW variable value and code to execute for each case (list of CaseBlock objects)
   int               ProgElChildrenCount() const override { return cases.size; }
 
-  virtual void	    AddCase();
+  virtual void      AddCase();
   // #BUTTON make a new case item
-  virtual void	    AddDefaultCase();
+  virtual void      AddDefaultCase();
   // #BUTTON make a default case item
-  virtual void	    CasesFmEnum(bool add_default = false);
+  virtual void      CasesFmEnum(bool add_default = false);
   // #BUTTON #CONFIRM add all the cases for an enumerated type (switch_var must be either HARD_ENUM or DYN_ENUM) -- if add_default is true then add a default case at the end as well
 
   bool          CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
   bool          CvtFmCode(const String& code) override;
-  bool          IsCtrlProgEl() 	override { return true; }
+  bool          IsCtrlProgEl()  override { return true; }
   bool          HasDefaultCase();
 
-  taList_impl*	children_() override { return &cases; }
+  taList_impl*  children_() override { return &cases; }
   ProgVar*      FindVarName(const String& var_nm) const override;
   String        GetDisplayName() const override;
   String        GetTypeDecoKey() const override { return "ProgCtrl"; }
@@ -61,20 +61,20 @@ public:
 
   PROGEL_SIMPLE_BASEFUNS(Switch);
 protected:
-  void		CheckThisConfig_impl(bool quiet, bool& rval) override;
-  void		CheckChildConfig_impl(bool quiet, bool& rval) override;
-  void		PreGenChildren_impl(int& item_id) override;
-  void		GenCssPre_impl(Program* prog) override; 
-  bool		GenCssBody_impl(Program* prog) override; 
-  void		GenCssPost_impl(Program* prog) override; 
-  const String	GenListing_children(int indent_level) const override;
+  void          CheckThisConfig_impl(bool quiet, bool& rval) override;
+  void          CheckChildConfig_impl(bool quiet, bool& rval) override;
+  void          PreGenChildren_impl(int& item_id) override;
+  void          GenCssPre_impl(Program* prog) override; 
+  bool          GenCssBody_impl(Program* prog) override; 
+  void          GenCssPost_impl(Program* prog) override; 
+  const String  GenListing_children(int indent_level) const override;
 
-  virtual void	    CasesFmEnum_hard(); // switch_var is a hard enum
-  virtual void	    CasesFmEnum_dyn();	// switch_var is a dynamic enum
+  virtual void      CasesFmEnum_hard(); // switch_var is a hard enum
+  virtual void      CasesFmEnum_dyn();  // switch_var is a dynamic enum
 
 private:
-  void	Initialize();
-  void	Destroy()	{CutLinks();} //
+  void  Initialize();
+  void  Destroy()       {CutLinks();} //
 };
 
 #endif // Switch_h

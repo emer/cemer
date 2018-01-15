@@ -48,7 +48,7 @@ public:
   virtual bool          UpdateFromType(TypeDef* td);
   // updates our type information from method typedef that we apply to -- returns true if any changes
 
-  bool	       HasName() const override { return true; }
+  bool         HasName() const override { return true; }
   bool         SetName(const String& nm) override       { name = nm; return true; }
   String       GetName() const           override       { return name; }
 

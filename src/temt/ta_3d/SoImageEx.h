@@ -59,35 +59,35 @@ typedef SoSeparator inherited;
   TA_SO_NODE_HEADER(SoImageEx);
 #endif // def __MAKETA__
 public:
-  static void		initClass();
+  static void           initClass();
   
-  static bool		SetTextureFile(SoTexture2* sotx, const String& fname);
+  static bool           SetTextureFile(SoTexture2* sotx, const String& fname);
   // #IGNORE set a texture from a file, using simage if available, else Qt
-  static bool		SetTextureImage(SoTexture2* sotx, const QImage& img);
+  static bool           SetTextureImage(SoTexture2* sotx, const QImage& img);
   // #IGNORE set a texture from a QImage (note: y is flipped for Coin's base 0)
   
-  SoTexture2*		texture;  // #IGNORE 
+  SoTexture2*           texture;  // #IGNORE 
   
-  void		setImage(const QImage& src);  // #IGNORE 
-  void		setImage(const taMatrix& src, bool top_zero = false);
+  void          setImage(const QImage& src);  // #IGNORE 
+  void          setImage(const taMatrix& src, bool top_zero = false);
   // gray: X,Y; rgb: X,Y,[rgb] -- tz false is normal convention for pdp
   
   SoImageEx();
 protected:
-  static bool 		SetTextureFile_impl(SoTexture2* sotx, const String& fname,
+  static bool           SetTextureFile_impl(SoTexture2* sotx, const String& fname,
     bool use_simage); 
 
-  const char*  	getFileFormatName() const override {return "Separator"; } 
+  const char*   getFileFormatName() const override {return "Separator"; } 
 
-  SoRect*		shape;
-  byte_Matrix		img;
-  iVec2i		d; // cached for clarity
+  SoRect*               shape;
+  byte_Matrix           img;
+  iVec2i                d; // cached for clarity
   
-  void		adjustScale(); // called after setting image to adjust aspect
-  void		setImage2(const QImage& src);
-  void		setImage3(const QImage& src);
-  void		setImage2(const taMatrix& src, bool top_zero);
-  void		setImage3(const taMatrix& src, bool top_zero);
+  void          adjustScale(); // called after setting image to adjust aspect
+  void          setImage2(const QImage& src);
+  void          setImage3(const QImage& src);
+  void          setImage2(const taMatrix& src, bool top_zero);
+  void          setImage3(const taMatrix& src, bool top_zero);
   ~SoImageEx();
 };
 

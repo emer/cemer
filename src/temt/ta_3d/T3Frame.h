@@ -40,10 +40,10 @@ class TA_API T3FrameMesh : public Qt3DRender::QGeometryRenderer {
   Q_PROPERTY(float frame_width READ frameWidth WRITE setFrameWidth NOTIFY frameWidthChanged)
 
 public:
-  float		m_width;          // overall x dimension
-  float		m_height;         // y dimension
-  float		m_depth;          // z dimension
-  float		m_frame_width;    // width of the frame -- goes in this amount from overall width, height
+  float         m_width;          // overall x dimension
+  float         m_height;         // y dimension
+  float         m_depth;          // z dimension
+  float         m_frame_width;    // width of the frame -- goes in this amount from overall width, height
 
   void setWidth(float wd)
   { if(m_width != wd) { m_width = wd; updateGeometry(); } }
@@ -98,10 +98,10 @@ class TA_API T3Frame : public T3ColorEntity {
   Q_OBJECT
   INHERITED(T3ColorEntity)
 public:
-  float		width;          // overall x dimension
-  float		height;         // y dimension
-  float		depth;          // z dimension
-  float		frame_width;    // width of the frame -- goes in this amount from overall width, height
+  float         width;          // overall x dimension
+  float         height;         // y dimension
+  float         depth;          // z dimension
+  float         frame_width;    // width of the frame -- goes in this amount from overall width, height
   T3FrameMesh*  frame;          // frame mesh
 
   virtual void  setGeom(float wd, float ht, float dp, float frwd);

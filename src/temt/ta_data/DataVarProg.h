@@ -32,14 +32,14 @@ class TA_API DataVarProg : public DataVarBase {
 INHERITED(DataVarBase)
 public:
 
-  bool        set_data;	  // if true, values in data table are set according to current variable values, otherwise, it gets data from the data table into the variables
+  bool        set_data;   // if true, values in data table are set according to current variable values, otherwise, it gets data from the data table into the variables
   bool        all_matches; // if true will set or read from any variable in the global vars list (ONLY) whose name matches a column name of specified data table
   bool        quiet;      // #CONDSHOW_OFF_row_spec:CUR_ROW do not generate an error if the row_var value is not found (either row num beyond bounds, or row_val not found -- just don't set anything)
 
-  ProgVarRef	var_1;		// #CONDSHOW_OFF_all_matches #ITEM_FILTER_StdProgVarFilter program variable to operate on -- name must match name of column in data table!
-  ProgVarRef	var_2;		// #CONDSHOW_OFF_all_matches #ITEM_FILTER_StdProgVarFilter program variable to operate on -- name must match name of column in data table!
-  ProgVarRef	var_3;		// #CONDSHOW_OFF_all_matches #ITEM_FILTER_StdProgVarFilter program variable to operate on -- name must match name of column in data table!
-  ProgVarRef	var_4;		// #CONDSHOW_OFF_all_matches #ITEM_FILTER_StdProgVarFilter program variable to operate on -- name must match name of column in data table!
+  ProgVarRef    var_1;          // #CONDSHOW_OFF_all_matches #ITEM_FILTER_StdProgVarFilter program variable to operate on -- name must match name of column in data table!
+  ProgVarRef    var_2;          // #CONDSHOW_OFF_all_matches #ITEM_FILTER_StdProgVarFilter program variable to operate on -- name must match name of column in data table!
+  ProgVarRef    var_3;          // #CONDSHOW_OFF_all_matches #ITEM_FILTER_StdProgVarFilter program variable to operate on -- name must match name of column in data table!
+  ProgVarRef    var_4;          // #CONDSHOW_OFF_all_matches #ITEM_FILTER_StdProgVarFilter program variable to operate on -- name must match name of column in data table!
 
   String  GetDisplayName() const override;
   String  GetToolbarName() const override { return "data=vars"; }
@@ -50,14 +50,14 @@ public:
 
   PROGEL_SIMPLE_BASEFUNS(DataVarProg);
 protected:
-  bool	        GenCssBody_impl(Program* prog) override;
+  bool          GenCssBody_impl(Program* prog) override;
   virtual bool  GenCss_OneVar(Program* prog, ProgVar* var, const String& idnm, int var_no);
   virtual bool  GenCss_OneVarMat(Program* prog, ProgVar* mat_var, const String& idnm, int var_no);
   virtual bool  GenCss_OneVarMatEnum(Program* prog, ProgVar* mat_var, const String& idnm, int var_no);
 
 private:
-  void	Initialize();
-  void	Destroy()	{ CutLinks(); }
+  void  Initialize();
+  void  Destroy()       { CutLinks(); }
 };
 
 #endif // DataVarProg_h

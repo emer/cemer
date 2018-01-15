@@ -31,13 +31,13 @@ class TA_API CondBase : public ProgEl {
   // #VIRT_BASE ##DEF_CHILD_true_code ##PROGEL_COMPLETION base class for If and ElseIf which have both a conditional expression and code to execute when the conditional is true (the true_code)
   INHERITED(ProgEl)
 public:
-  ProgExpr	    cond; 	// #BROWSER_EDIT_LOOKUP condition expression to test for true or false
-  ProgEl_List	  true_code; 	// #AKA_else_code #TREE_SHOW items to execute if condition true
+  ProgExpr          cond;       // #BROWSER_EDIT_LOOKUP condition expression to test for true or false
+  ProgEl_List     true_code;    // #AKA_else_code #TREE_SHOW items to execute if condition true
   
   int           ProgElChildrenCount() const override { return true_code.size; }
 
-  bool          IsCtrlProgEl() 	override { return true; }
-  taList_impl*	children_() override { return &true_code; }
+  bool          IsCtrlProgEl()  override { return true; }
+  taList_impl*  children_() override { return &true_code; }
   bool          HasSubCode() override { return true; }
 
   bool          BrowserEditTest() override;

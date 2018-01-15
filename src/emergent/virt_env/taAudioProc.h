@@ -30,14 +30,14 @@ eTypeDef_Of(taAudioProc);
 class E_API taAudioProc : public taNBase {
   // #STEM_BASE ##CAT_Audio basic audio processing operations
 INHERITED(taNBase)
-public:	
+public: 
 
-  static bool	SpeakText(const String& text);
+  static bool   SpeakText(const String& text);
   // #CAT_SpeechOut #BUTTON generate an speech synthesis output of the given text string -- returns false if not successful
 
   TA_SIMPLE_BASEFUNS(taAudioProc);
 private:
-  void 	Initialize();
+  void  Initialize();
   void  Destroy();
 };
 

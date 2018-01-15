@@ -38,8 +38,8 @@ public:
 
   TA_BASEFUNS_NOCOPY(PluginMakeTask);
 private:
-  void	Initialize();
-  void	Destroy();
+  void  Initialize();
+  void  Destroy();
 };
 
 #endif // PluginMakeTask_h

@@ -32,8 +32,8 @@ public:
 
   TA_BASEFUNS_NOCOPY(BpProject);
 private:
-  void	Initialize();
-  void 	Destroy()		{}
+  void  Initialize();
+  void  Destroy()               {}
 };
 
 #endif // BpProject_h

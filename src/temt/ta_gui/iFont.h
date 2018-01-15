@@ -35,29 +35,29 @@ class TA_API iFont {
   // #NO_TOKENS represents font information
 public:
   enum Attributes { // #BITS
-    Bold		= 0x01,
-    Italic		= 0x02,
-    Underline		= 0x04
+    Bold                = 0x01,
+    Italic              = 0x02,
+    Underline           = 0x04
   };
 
-  String 	fontName; // family name of the font, such as 'Helvetica' or 'Arial'
-  Attributes	attribs; // #BITS font modifiers
-  float		pointSize; // point size of the font -- will be aproximated in 3D
-  int		stretch; // #EXPERT #DEF_100 the degree of stretch, less is narrower
+  String        fontName; // family name of the font, such as 'Helvetica' or 'Arial'
+  Attributes    attribs; // #BITS font modifiers
+  float         pointSize; // point size of the font -- will be aproximated in 3D
+  int           stretch; // #EXPERT #DEF_100 the degree of stretch, less is narrower
 
-  bool 		bold() const {return  (attribs && Bold);}
-  void 		setBold(bool value);
-  bool 		italic() const {return  (attribs && Italic);}
-  void 		setItalic(bool value);
-  void		setPointSize(float value);
-  void 		setPointSize(int value);
-  void 		setStretch(int value);
-  bool 		underline() const {return (attribs && Underline);}
-  void 		setUnderline(bool value);
+  bool          bold() const {return  (attribs && Bold);}
+  void          setBold(bool value);
+  bool          italic() const {return  (attribs && Italic);}
+  void          setItalic(bool value);
+  void          setPointSize(float value);
+  void          setPointSize(int value);
+  void          setStretch(int value);
+  bool          underline() const {return (attribs && Underline);}
+  void          setUnderline(bool value);
 
-  void		copy(const iFont& src);
+  void          copy(const iFont& src);
 
-  bool		equals(const iFont& b);
+  bool          equals(const iFont& b);
   
   iFont& operator=(const iFont& val); // must use value copy
 
@@ -66,9 +66,9 @@ public:
   ~iFont();
 
 #ifdef TA_GUI
-  void		copyFrom(const QFont& src); //#IGNORE
-  void		copyTo(QFont& dst) const; //#IGNORE
-  void		setRawName(const char* raw_name);
+  void          copyFrom(const QFont& src); //#IGNORE
+  void          copyTo(QFont& dst) const; //#IGNORE
+  void          setRawName(const char* raw_name);
   iFont(const char* raw_name); //Iv-compatible constructor TODO: this s/b nuked!
   iFont(const QFont& val);
   iFont& operator=(const QFont& val);
@@ -78,11 +78,11 @@ public:
 #ifdef TA_QT3D
 
 #else // TA_QT3D
-  void		copyTo(SoFont* dst, float pts_per_unit = 36.0f) const; //#IGNORE
+  void          copyTo(SoFont* dst, float pts_per_unit = 36.0f) const; //#IGNORE
 #endif // TA_QT3D
 protected:
   static String defName; // #IGNORE
-  void		init(); // #IGNORE
+  void          init(); // #IGNORE
 };
 
 #endif // iFont_h

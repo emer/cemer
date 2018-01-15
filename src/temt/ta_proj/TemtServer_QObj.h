@@ -30,12 +30,12 @@ class TA_API TemtServer_QObj: public taBase_QObj {
 friend class TemtServer;
   Q_OBJECT
 public:
-  inline TemtServer*	owner() {return (TemtServer*)taBase_QObj::owner;}
+  inline TemtServer*    owner() {return (TemtServer*)taBase_QObj::owner;}
   TemtServer_QObj(TemtServer* owner_): taBase_QObj((taOABase*)owner_) {}
   
 #ifndef __MAKETA__ // maketa chokes on the net class types etc.
 public slots:
-  void 			server_newConnection();
+  void                  server_newConnection();
 #endif
 };
 

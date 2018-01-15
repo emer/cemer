@@ -56,7 +56,7 @@ class E_API T3BrainNode: public T3NodeLeaf {
   SO_NODE_HEADER(T3BrainNode);
 #endif
 public:
-  static void		initClass();
+  static void           initClass();
 
   SoSeparator*          brain_group; //#IGNORE
   SoMaterial**          brain_tex_mat_array; //#IGNORE

@@ -28,26 +28,26 @@ class TA_API iDialogTextEdit : public iDialog {
   Q_OBJECT
 INHERITED(iDialog)
 public:
-  QTextEdit*	txtText;
-  QPushButton*	btnPrint;
-  QPushButton*	btnCopy;
-  QPushButton*	btnOk; // read/write only
-  QPushButton* 	btnCancel; // or close, if read only
+  QTextEdit*    txtText;
+  QPushButton*  btnPrint;
+  QPushButton*  btnCopy;
+  QPushButton*  btnOk; // read/write only
+  QPushButton*  btnCancel; // or close, if read only
   
-  bool		isReadOnly() {return m_readOnly;}
-  virtual void	setText(const QString& value);
+  bool          isReadOnly() {return m_readOnly;}
+  virtual void  setText(const QString& value);
   
   iDialogTextEdit(bool readOnly = false, QWidget* parent = 0);
   ~iDialogTextEdit();
 protected:
-  bool		m_readOnly;
+  bool          m_readOnly;
   
 protected slots:
-  void		btnPrint_clicked();
-  void		copyToClipboard(); // copy text of msg to clipboard
+  void          btnPrint_clicked();
+  void          copyToClipboard(); // copy text of msg to clipboard
   
 private:
-  void 		init(bool readOnly);
+  void          init(bool readOnly);
 };
 
 

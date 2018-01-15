@@ -172,7 +172,7 @@ public:
   String          NetworkBrainAreas() const;
 
   float           SliceTransparencyXformed() const;
-  // transformed slice transparency for use in actual rendering	
+  // transformed slice transparency for use in actual rendering 
     
   void            SetDataName(const String& data_name);
   void            SetDimensions(const taVector3i& dimensions);

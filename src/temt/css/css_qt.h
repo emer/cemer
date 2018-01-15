@@ -29,13 +29,13 @@ class cssClassInst;
 
 class CSS_API cssiSession  { // this handles events for css/qt
 public:
-  static void	CancelProgEdits(cssProgSpace* prsp);
+  static void   CancelProgEdits(cssProgSpace* prsp);
   // cancel any active edit dialogs for given prog space
-  static void	CancelClassEdits(cssClassType* cltyp);
+  static void   CancelClassEdits(cssClassType* cltyp);
   // cancel any active edit dialogs for given class type
-  static void	CancelObjEdits(cssClassInst* clobj);
+  static void   CancelObjEdits(cssClassInst* clobj);
   // cancel any active edit dialogs for given class object
-  static void	RaiseObjEdits();
+  static void   RaiseObjEdits();
   // bring all object edit dialogs to the front (e.g., after loading)
 
 private:

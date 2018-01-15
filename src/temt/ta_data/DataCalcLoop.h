@@ -45,7 +45,7 @@ public:
   bool              use_col_numbers; // #DEF_false use column numbers instead of names to access the column data within the loop -- this is significantly faster but also much more brittle -- if the columns change at all after the program is compiled, difficult-to-debug errors can occur -- use with caution!
   ProgVar_List      src_col_vars;  // #READ_ONLY source column variables
   ProgVar_List      dest_col_vars;  // #READ_ONLY dest column variables
-  ProgVar           src_row_var;	// #HIDDEN #READ_ONLY #NO_SAVE variable for FindVarName rval for src_row loop variable
+  ProgVar           src_row_var;        // #HIDDEN #READ_ONLY #NO_SAVE variable for FindVarName rval for src_row loop variable
 
   int               ProgElChildrenCount() const override { return loop_code.size; }
 
@@ -60,7 +60,7 @@ public:
   void              UpdateSpecDataTable() override;
   void              GetArgCompletionList(const String& method, const String& arg, taBase* arg_obj, const String& cur_txt, Completions& list) override;
 
-  virtual ProgEl*   AddLoopCode(TypeDef* el_type)	{ return (ProgEl*)loop_code.New(1, el_type); }
+  virtual ProgEl*   AddLoopCode(TypeDef* el_type)       { return (ProgEl*)loop_code.New(1, el_type); }
   // #BUTTON #TYPE_ProgEl add a new loop code element
 
   ProgVar*          FindVarName(const String& var_nm) const override;
@@ -81,14 +81,14 @@ protected:
   virtual void        UpdateColVars();
   // sync col vars from cols
 
-  void		GenCssPre_impl(Program* prog) override; 
-  bool		GenCssBody_impl(Program* prog) override; 
-  void		GenCssPost_impl(Program* prog) override; 
-  const String	GenListing_children(int indent_level) const override;
+  void          GenCssPre_impl(Program* prog) override; 
+  bool          GenCssBody_impl(Program* prog) override; 
+  void          GenCssPost_impl(Program* prog) override; 
+  const String  GenListing_children(int indent_level) const override;
 
 private:
-  void	Initialize();
-  void	Destroy()	{ CutLinks(); }
+  void  Initialize();
+  void  Destroy()       { CutLinks(); }
 };
 
 #endif // DataCalcLoop_h

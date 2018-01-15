@@ -29,6 +29,11 @@ using namespace std;
 
 String_Array taCodeUtils::emergent_src_paths;
 
+
+void taCodeUtils::CharTest(const char* str) {
+  taMisc::Info(str);
+}
+
 bool taCodeUtils::InitSrcPaths() {
   if(emergent_src_paths.size > 0)
     return false;

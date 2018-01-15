@@ -40,22 +40,22 @@ public:
     PDS_DONE // Run finished -- note, could be an error
   };
   
-  ProgramRef		prog; // program to run
-  ProgDispatchState	pds; 
-  Program::ReturnVal	prog_rval; // rval 
+  ProgramRef            prog; // program to run
+  ProgDispatchState     pds; 
+  Program::ReturnVal    prog_rval; // rval 
   
-  inline TemtClient*	owner() {return (TemtClient*)taBase_QObj::owner;}
+  inline TemtClient*    owner() {return (TemtClient*)taBase_QObj::owner;}
   
-  void			SetProg(Program* prog);
+  void                  SetProg(Program* prog);
   
   TemtClient_QObj(TemtClient* owner_): taBase_QObj((taOABase*)owner_) {init();}
   
 #ifndef __MAKETA__ // maketa chokes on the net class types etc.
 public slots:
-  void			prog_Run(); // run the prog
-  void 			sock_readyRead();
-  void 			sock_disconnected(); //note: we only allow one for now, so monitor it here
-  void 			sock_stateChanged(QAbstractSocket::SocketState socketState);
+  void                  prog_Run(); // run the prog
+  void                  sock_readyRead();
+  void                  sock_disconnected(); //note: we only allow one for now, so monitor it here
+  void                  sock_stateChanged(QAbstractSocket::SocketState socketState);
 #endif
 private:
   void init();

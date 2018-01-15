@@ -40,16 +40,16 @@ public:
     xx = x; yy = y; zz = z; rr = rot;
   }
 
-  void	FromEuler(float theta_x, float theta_y, float theta_z);
+  void  FromEuler(float theta_x, float theta_y, float theta_z);
   // #CAT_Rotation #BUTTON convert from Euler angles
 
-  void	RotateAxis(float x_axis, float y_axis, float z_axis, float rot_ang);
+  void  RotateAxis(float x_axis, float y_axis, float z_axis, float rot_ang);
   // #CAT_Rotation #BUTTON rotate this rotation by given axis rotation parameters
-  void	RotateEuler(float theta_x, float theta_y, float theta_z);
+  void  RotateEuler(float theta_x, float theta_y, float theta_z);
   // #CAT_Rotation #BUTTON rotate this rotation by given rotation parameters
-  void	RotateXYZ(float& x, float& y, float& z);
+  void  RotateXYZ(float& x, float& y, float& z);
   // #CAT_Rotation rotate x,y,z vector according to the current rotation parameters
-  void	RotateVec(taVector3f& vec);
+  void  RotateVec(taVector3f& vec);
   // #CAT_Rotation rotate vector according to the current rotation parameters
 
   String        GetStr() const {return taVector3f::GetStr() + ", " + String(rot); }
@@ -66,6 +66,6 @@ private:
   void                  Destroy() {}
 };
 
-typedef taAxisAngle FloatRotation;	// #INSTANCE obsolete version of taAxisAngle
+typedef taAxisAngle FloatRotation;      // #INSTANCE obsolete version of taAxisAngle
 
 #endif // taAxisAngle_h

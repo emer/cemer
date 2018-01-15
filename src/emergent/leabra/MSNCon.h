@@ -28,7 +28,7 @@ eTypeDef_Of(MSNCon);
 class E_API MSNCon : public LeabraCon {
   // connection for recv cons into matrix units -- stores the sender activation prior to any gating update signals, used for learning
 public:
-  float		ntr;	// #NO_SAVE new trace -- drives updates to trace value -- su * (1-ru_msn) for gated, or su * ru_msn for not-gated (or for non-thalamic cases)
+  float         ntr;    // #NO_SAVE new trace -- drives updates to trace value -- su * (1-ru_msn) for gated, or su * ru_msn for not-gated (or for non-thalamic cases)
   float         tr;     // #NO_SAVE current ongoing trace of activations, which drive learning -- adds ntr and clears after learning on current values -- includes both thal gated (+ and other nongated, - inputs)
 
   MSNCon() { ntr = tr = 0.0f; }

@@ -52,9 +52,9 @@ public:
     xx = x; yy = y; zz = z;
   }
 
-  void	ToMatrix(taMatrix& mat) const;
+  void  ToMatrix(taMatrix& mat) const;
   // set values to a 1d matrix object (can be any type of matrix object)
-  void	FromMatrix(taMatrix& mat);
+  void  FromMatrix(taMatrix& mat);
   // set values from a matrix object (can be any type of matrix object)
 
   TA_BASEFUNS_LITE(taVector3f);
@@ -181,6 +181,6 @@ inline taVector3f operator / (float td, const taVector3f& v) {
   taVector3f rv; rv.x = td / v.x; rv.y = td / v.y; rv.z = td / v.z; return rv;
 }
 
-typedef taVector3f FloatTDCoord;	// #INSTANCE obsolete version of taVector3f
+typedef taVector3f FloatTDCoord;        // #INSTANCE obsolete version of taVector3f
 
 #endif // taVector3f_h

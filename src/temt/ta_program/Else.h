@@ -48,18 +48,18 @@ public:
   
   PROGEL_SIMPLE_BASEFUNS(Else);
 protected:
-  void		UpdateAfterEdit_impl() override;
-  void		CheckThisConfig_impl(bool quiet, bool& rval) override;
-  void		CheckChildConfig_impl(bool quiet, bool& rval) override;
-  void		PreGenChildren_impl(int& item_id) override;
-  void		GenCssPre_impl(Program* prog) override; 
-  bool		GenCssBody_impl(Program* prog) override; //replaces If
-  void		GenCssPost_impl(Program* prog) override; 
-  const String	GenListing_children(int indent_level) const override;
+  void          UpdateAfterEdit_impl() override;
+  void          CheckThisConfig_impl(bool quiet, bool& rval) override;
+  void          CheckChildConfig_impl(bool quiet, bool& rval) override;
+  void          PreGenChildren_impl(int& item_id) override;
+  void          GenCssPre_impl(Program* prog) override; 
+  bool          GenCssBody_impl(Program* prog) override; //replaces If
+  void          GenCssPost_impl(Program* prog) override; 
+  const String  GenListing_children(int indent_level) const override;
 
 private:
-  void	Initialize();
-  void	Destroy()	{CutLinks();} //
+  void  Initialize();
+  void  Destroy()       {CutLinks();} //
 };
 
 #endif // Else_h

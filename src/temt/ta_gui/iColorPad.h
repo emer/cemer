@@ -34,27 +34,27 @@ typedef QWidget inherited;
 #endif
   Q_OBJECT
 public:
-  enum BlockFill {		// fill types for grid blocks
-    COLOR,			// color indicates value
-    AREA,			// area indicates value
-    LINEAR 			// linear size of square side indicates value
+  enum BlockFill {              // fill types for grid blocks
+    COLOR,                      // color indicates value
+    AREA,                       // area indicates value
+    LINEAR                      // linear size of square side indicates value
   };
 
   iColorScaleBar* sb;
-  float 	padval;
-  float 	oldpadval;
-  BlockFill 	fill_type;
-  iColor fg;			// #IGNORE foreground color;
-  iColor bg;			// #IGNORE background color;
-  iColor tc;			// #IGNORE text color;
+  float         padval;
+  float         oldpadval;
+  BlockFill     fill_type;
+  iColor fg;                    // #IGNORE foreground color;
+  iColor bg;                    // #IGNORE background color;
+  iColor tc;                    // #IGNORE text color;
 
-  virtual void		SetFillType(BlockFill b);
-  virtual void		Set(float val);
-  virtual void		Reset();
-  virtual void		ReFill();
-  virtual float		GetVal();
-  virtual void		GetColors();
-  virtual void		Toggle();
+  virtual void          SetFillType(BlockFill b);
+  virtual void          Set(float val);
+  virtual void          Reset();
+  virtual void          ReFill();
+  virtual float         GetVal();
+  virtual void          GetColors();
+  virtual void          Toggle();
   iColorPad(iColorScaleBar* tsb, BlockFill s = COLOR, QWidget* parent = NULL);
   ~iColorPad();
 };

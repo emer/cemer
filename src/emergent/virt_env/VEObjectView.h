@@ -35,24 +35,24 @@ class E_API VEObjectView: public T3DataViewPar {
 INHERITED(T3DataViewPar)
 friend class VEWorldView;
 public:
-  VEObject*		Object() const { return (VEObject*)data();}
-  virtual void		SetObject(VEObject* ob);
+  VEObject*             Object() const { return (VEObject*)data();}
+  virtual void          SetObject(VEObject* ob);
   
   DATAVIEW_PARENT(VEWorldView)
 
-  void		BuildAll() override;
+  void          BuildAll() override;
   
-  bool			isVisible() const;
-  bool		ignoreSigEmit() const override { return !isVisible(); }
+  bool                  isVisible() const;
+  bool          ignoreSigEmit() const override { return !isVisible(); }
 
-  void 	SetDefaultName() override {} // leave it blank
+  void  SetDefaultName() override {} // leave it blank
   TA_BASEFUNS_NOCOPY(VEObjectView);
 protected:
-  void	Initialize();
-  void	Destroy();
+  void  Initialize();
+  void  Destroy();
 
-  void		Render_pre() override;
-  void		Render_impl() override;
+  void          Render_pre() override;
+  void          Render_impl() override;
 };
 
 #endif // VEObjectView_h

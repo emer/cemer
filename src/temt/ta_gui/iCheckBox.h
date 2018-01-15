@@ -29,14 +29,14 @@ public:
   iCheckBox(const char* text, QWidget* parent); //note: can't have defaults, ambiguity
   iCheckBox(bool value, QWidget* parent); //note: can't have defaults, ambiguity
 
-  bool 		isReadOnly() const {return mread_only;}
+  bool          isReadOnly() const {return mread_only;}
 
 public slots:
-  virtual void	setReadOnly(bool value);
+  virtual void  setReadOnly(bool value);
   
 protected:
-  bool 		mread_only;
-  void		init();
+  bool          mread_only;
+  void          init();
 };
 
 #endif // iCheckBox_h

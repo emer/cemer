@@ -1,8 +1,8 @@
 // this is included directly in AllProjectionSpecs_cpp / _cuda
 // {
-  int	n_conns;		// number of connections to make (-1 for size of layer)
-  int	recv_start;		// starting unit index for recv connections
-  int 	send_start;		// starting unit index for sending connections
+  int   n_conns;                // number of connections to make (-1 for size of layer)
+  int   recv_start;             // starting unit index for recv connections
+  int   send_start;             // starting unit index for sending connections
   bool  use_gp;                 // if unit groups are present in the recv or sender layer, and the other layer fits within one unit group, then connectivity will be replicated for across groups in that layer
 
   INIMPL void  Connect_impl(PRJN_STATE* prjn, NETWORK_STATE* net, int make_cons) override;

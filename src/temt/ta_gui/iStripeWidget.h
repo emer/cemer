@@ -30,7 +30,7 @@ public:
     // convenient way to set both
   void        setHiLightColor(const QColor& val);
   void        SetExceptionColor(const QColor& val, const QColor& dark_val);
-  inline int	stripeHeight() const {return mstripeHeight;}
+  inline int    stripeHeight() const {return mstripeHeight;}
   void        setStripeHeight(int val);
   void        setTopMargin(int val);
   void        setBottomMargin(int val); // helpful to insure room for scrollbars

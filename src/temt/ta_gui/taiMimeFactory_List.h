@@ -33,21 +33,21 @@ class TA_API taiMimeFactory_List: public taList<taiMimeFactory> {
 INHERITED(taList<taiMimeFactory>)
 public:
   static taiMimeFactory_List* instance() {return g_instance;}
-  static void		setInstance(taiMimeFactory_List* value);
+  static void           setInstance(taiMimeFactory_List* value);
    // we set this during InitLinks for the app-wide global instance
     
   static taiMimeFactory* StatGetInstanceByType(TypeDef* td);
     // get an instance of the exact factory from the global list, making if needed
   
-  taiMimeFactory*	GetInstanceByType(TypeDef* td);
+  taiMimeFactory*       GetInstanceByType(TypeDef* td);
     // get an instance of the exact factory, making if needed
     
   TA_BASEFUNS_NOCOPY(taiMimeFactory_List);
 protected:
-  static taiMimeFactory_List*	g_instance; // we set this during InitLinks for the global guy
+  static taiMimeFactory_List*   g_instance; // we set this during InitLinks for the global guy
 private:
-  void	Initialize() {SetBaseType(&TA_taiMimeFactory);}
-  void	Destroy();
+  void  Initialize() {SetBaseType(&TA_taiMimeFactory);}
+  void  Destroy();
 };
 
 #endif // taiMimeFactory_List_h

@@ -29,13 +29,13 @@ class STATE_CLASS(WtScaleSpec) : public STATE_CLASS(SpecMemberBase) {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra weight scaling specification
 INHERITED(SpecMemberBase)
 public:
-  float		abs;		// #DEF_1 #MIN_0 absolute scaling (not subject to normalization: directly multiplies weight values)
-  float		rel;		// [Default: 1] #MIN_0 relative scaling that shifts balance between different projections (subject to normalization across all other projections into unit)
+  float         abs;            // #DEF_1 #MIN_0 absolute scaling (not subject to normalization: directly multiplies weight values)
+  float         rel;            // [Default: 1] #MIN_0 relative scaling that shifts balance between different projections (subject to normalization across all other projections into unit)
   bool          no_plus_net;    // #DEF_false do not send net input in the plus phase over this connection -- prevents this connection from driving error-driven learning in areas that it projects to -- typically used for projections to decoder output layers or in other specialized testing situations
 
-  INLINE float	NetScale() 	{ return abs * rel; }
+  INLINE float  NetScale()      { return abs * rel; }
 
-  INLINE float	SLayActScale(const float savg, const float lay_sz, const float n_cons) {
+  INLINE float  SLayActScale(const float savg, const float lay_sz, const float n_cons) {
     const float sem_extra = 2.0f;    // nobody ever modifies this, so keep it const
     int slay_act_n = (int)(savg * lay_sz + .5f); // sending layer actual # active
     slay_act_n = MAX(slay_act_n, 1);
@@ -55,18 +55,18 @@ public:
   }
   // compute scaling factor (new version) based on sending layer activity level (savg) and number of connections and overall layer size -- uses a fixed sem_extra standard-error-of-the-mean (SEM) extra value of 2 to add to the average expected number of active connections to receive, for purposes of computing scaling factors with partial connectivity -- for 25% layer activity, binomial SEM = sqrt(p(1-p)) = .43, so 3x = 1.3 so 2 is a reasonable default
 
-  INLINE float	FullScale(const float savg, const float lay_sz, const float n_cons)
+  INLINE float  FullScale(const float savg, const float lay_sz, const float n_cons)
   { return NetScale() * SLayActScale(savg, lay_sz, n_cons); }
   // full scaling factor -- product of above two sub-factors
 
   STATE_DECO_KEY("ConSpec");
   STATE_TA_STD_CODE_SPEC(WtScaleSpec);
 private:
-  void	Initialize() {
+  void  Initialize() {
     rel = 1.0f;    abs = 1.0f;
     Defaults_init();
   }
-  void	Defaults_init() {  no_plus_net = false; }
+  void  Defaults_init() {  no_plus_net = false; }
 };
 
 
@@ -77,12 +77,12 @@ public:
   float         m_lrn;          // #DEF_1 #MIN_0 multiplier on learning based on the medium-term floating average threshold which produces error-driven learning -- this is typically 1 when error-driven learning is being used, and 0 when pure hebbian learning is used -- note that the long-term floating average threshold is provided by the receiving unit
   bool          set_l_lrn;      // #DEF_false if true, set a fixed l_lrn weighting factor that determines how much of the long-term floating average threshold (i.e., BCM, Hebbian) component of learning is used -- this is useful for setting a fully Hebbian learning connection, e.g., by setting m_lrn = 0 and l_lrn = 1. If false, then the receiving unit's avg_l_lrn factor is used, which dynamically modulates the amount of the long-term component as a function of how active overall it is
   float         l_lrn;          // #CONDSHOW_ON_set_l_lrn fixed l_lrn weighting factor that determines how much of the long-term floating average threshold (i.e., BCM, Hebbian) component of learning is used -- this is useful for setting a fully Hebbian learning connection, e.g., by setting m_lrn = 0 and l_lrn = 1. 
-  float		d_rev;		// #DEF_0.1 #MIN_0 proportional point within LTD range where magnitude reverses to go back down to zero at zero -- err-driven svm component does better with smaller values, and BCM-like mvl component does better with larger values -- 0.1 is a compromise
-  float		d_thr;		// #DEF_0.0001;0.01 #MIN_0 minimum LTD threshold value below which no weight change occurs -- small default value is mainly to optimize computation for the many values close to zero associated with inactive synapses
+  float         d_rev;          // #DEF_0.1 #MIN_0 proportional point within LTD range where magnitude reverses to go back down to zero at zero -- err-driven svm component does better with smaller values, and BCM-like mvl component does better with larger values -- 0.1 is a compromise
+  float         d_thr;          // #DEF_0.0001;0.01 #MIN_0 minimum LTD threshold value below which no weight change occurs -- small default value is mainly to optimize computation for the many values close to zero associated with inactive synapses
   float         lrn_thr;        // #DEF_0.01 xcal learning threshold -- don't learn when sending unit activation is below this value in both phases -- due to the nature of the learning function being 0 when the sr coproduct is 0, it should not affect learning in any substantial way -- nonstandard learning algorithms that have different properties should ignore it
   float         s_mult;        // multiplicative factor on short-time-scale average activations -- to compensate for overall average differences in activation level at end of settling vs. earlier -- needed especially for adaptation mechanism
 
-  float		d_rev_ratio;	// #HIDDEN #READ_ONLY -(1-d_rev)/d_rev -- multiplication factor in learning rule -- builds in the minus sign!
+  float         d_rev_ratio;    // #HIDDEN #READ_ONLY -(1-d_rev)/d_rev -- multiplication factor in learning rule -- builds in the minus sign!
 
   INLINE float  dWtFun(const float srval, const float thr_p) {
     float rval;
@@ -131,8 +131,8 @@ public:
              );
   
 private:
-  void	Initialize() {   Defaults_init(); }
-  void	Defaults_init() {
+  void  Initialize() {   Defaults_init(); }
+  void  Defaults_init() {
     m_lrn = 1.0f;  set_l_lrn = false;  l_lrn = 1.0f;  d_rev = 0.10f;  d_thr = 0.0001f;
     lrn_thr = 0.01f; s_mult = 1.0f; d_rev_ratio = -(1.0f - d_rev) / d_rev;
   }
@@ -143,18 +143,18 @@ class STATE_CLASS(WtSigSpec) : public STATE_CLASS(SpecMemberBase) {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra sigmoidal weight function specification
 INHERITED(SpecMemberBase)
 public:
-  float		gain;		// #DEF_1;6 #MIN_0 gain (contrast, sharpness) of the weight contrast function (1 = linear)
-  float		off;		// #DEF_1 #MIN_0 offset of the function (1=centered at .5, >1=higher, <1=lower) -- 1 is standard for XCAL
+  float         gain;           // #DEF_1;6 #MIN_0 gain (contrast, sharpness) of the weight contrast function (1 = linear)
+  float         off;            // #DEF_1 #MIN_0 offset of the function (1=centered at .5, >1=higher, <1=lower) -- 1 is standard for XCAL
   bool          soft_bound;     // #DEF_true apply exponential soft bounding to the weight changes 
 
-  static INLINE float	SigFun(const float w, const float gn, const float of) {
+  static INLINE float   SigFun(const float w, const float gn, const float of) {
     if(w <= 0.0f) return 0.0f;
     if(w >= 1.0f) return 1.0f;
     return (1.0f / (1.0f + powf((of * (1.0f - w)) / w, gn)));
   }
   // static version of function for implementing weight sigmodid
 
-  static INLINE float	SigFun61(const float w) {
+  static INLINE float   SigFun61(const float w) {
     if(w <= 0.0f) return 0.0f;
     if(w >= 1.0f) return 1.0f;
     const float pwguy = (1.0f - w) / w;
@@ -162,28 +162,28 @@ public:
   }
   // static version of function for implementing weight sigmodid -- for default gain = 6, offset = 1 params
 
-  static INLINE float	InvFun(const float w, const float gn, const float of) {
+  static INLINE float   InvFun(const float w, const float gn, const float of) {
     if(w <= 0.0f) return 0.0f;
     if(w >= 1.0f) return 1.0f;
     return 1.0f / (1.0f + powf((1.0f - w) / w, 1.0f / gn) / of);
   }
   // static version of function for implementing inverse of weight sigmoid
 
-  static INLINE float	InvFun61(const float w) {
+  static INLINE float   InvFun61(const float w) {
     if(w <= 0.0f) return 0.0f;
     if(w >= 1.0f) return 1.0f;
     return 1.0f / (1.0f + powf((1.0f - w) / w, 1.0f / 6.0f));
   }
   // static version of function for implementing inverse of weight sigmoid -- for default gain = 6, offset = 1 params
 
-  INLINE float	SigFmLinWt(float lw) {
+  INLINE float  SigFmLinWt(float lw) {
     if(gain == 1.0f && off == 1.0f) return lw;
     if(gain == 6.0f && off == 1.0f) return SigFun61(lw);
     return SigFun(lw, gain, off);
   }
   // get sigmoidal contrast-enhanced weight from linear weight
   
-  INLINE float	LinFmSigWt(const float sw) {
+  INLINE float  LinFmSigWt(const float sw) {
     if(gain == 1.0f && off == 1.0f) return sw;
     if(gain == 6.0f && off == 1.0f) return InvFun61(sw);
     return InvFun(sw, gain, off);
@@ -193,8 +193,8 @@ public:
   STATE_DECO_KEY("ConSpec");
   STATE_TA_STD_CODE_SPEC(WtSigSpec);
 private:
-  void	Initialize()    {  Defaults_init(); }
-  void	Defaults_init() {  gain = 6.0f;  off = 1.0f;  soft_bound = true; }
+  void  Initialize()    {  Defaults_init(); }
+  void  Defaults_init() {  gain = 6.0f;  off = 1.0f;  soft_bound = true; }
 };
 
 
@@ -233,8 +233,8 @@ public:
   STATE_TA_STD_CODE_SPEC(LeabraMomentum);
   STATE_UAE( UpdtVals(); );
 private:
-  void	Initialize()    {  Defaults_init(); }
-  void	Defaults_init() {
+  void  Initialize()    {  Defaults_init(); }
+  void  Defaults_init() {
     on = true; dwavg_tau = 1000.0f;  norm_min = 0.001f;  m_tau = 20.0f;
     lrate_comp = 0.01f;
     UpdtVals();
@@ -300,7 +300,7 @@ public:
 
   float         dt;             // #READ_ONLY #EXPERT rate = 1 / tau
   
-  INLINE void	AdaptWtScale(float& scale, const float wt) {
+  INLINE void   AdaptWtScale(float& scale, const float wt) {
     const float nrm_wt = wt / scale;
     if(nrm_wt < lo_thr) {
       scale += dt * (lo_scale - scale);
@@ -315,8 +315,8 @@ public:
   STATE_TA_STD_CODE_SPEC(AdaptWtScaleSpec);
   STATE_UAE( dt = 1.0f / tau; );
 private:
-  void	Initialize()     {   on = false;  Defaults_init(); }
-  void	Defaults_init() {
+  void  Initialize()     {   on = false;  Defaults_init(); }
+  void  Defaults_init() {
     tau = 5000.0f;  lo_thr = 0.25f;  hi_thr = 0.75f;  lo_scale = 0.01f;  hi_scale = 2.0f;
     dt = 1.0f / tau;
   }
@@ -333,7 +333,7 @@ public:
   float         wt_tau;        // #CONDSHOW_ON_on #DEF_1;4:60 #MIN_1 time constant for how quickly the effective weight (wt) adapts to changes in the fast weight values -- the biological rise time to maximum fast weight change is about 20 seconds, so for 100 msec trials = 10 trials per second, that is ~200 trials -- a value of 44 produces this result -- for more coarse-grained time scales, e.g., 1 trial / sec, scale proportionally, e.g., a value of 5 for 20 trials -- computationally this value is optional and 1 will negate its effects
 
   float         fwt_pct;       // #CONDSHOW_ON_on #READ_ONLY #EXPERT percent of fast contribution to effective weight = 1 - swt_pct
-  float		slow_dt;	// #CONDSHOW_ON_on #READ_ONLY #EXPERT rate constant of slow updating = 1 / slow_tau
+  float         slow_dt;        // #CONDSHOW_ON_on #READ_ONLY #EXPERT rate constant of slow updating = 1 / slow_tau
   float         wt_dt;          // #CONDSHOW_ON_on #READ_ONLY #EXPERT rate constant of wt adaptation = 1 / wt_tau
 
   INLINE void   UpdtVals() {
@@ -345,8 +345,8 @@ public:
   STATE_TA_STD_CODE_SPEC(SlowWtsSpec);
   STATE_UAE( UpdtVals(); );
 private:
-  void	Initialize()    {   on = false;  wt_tau = 1.0f;  Defaults_init(); }
-  void	Defaults_init() {   swt_pct = 0.8f; slow_tau = 100; UpdtVals(); }
+  void  Initialize()    {   on = false;  wt_tau = 1.0f;  Defaults_init(); }
+  void  Defaults_init() {   swt_pct = 0.8f; slow_tau = 100; UpdtVals(); }
 
 };
 
@@ -362,8 +362,8 @@ public:
   STATE_DECO_KEY("ConSpec");
   STATE_TA_STD_CODE_SPEC(DeepLrateSpec);
 private:
-  void	Initialize() {  on = false;  bg_lrate = 1.0f;  fg_lrate = 0.0f;  Defaults_init(); }
-  void	Defaults_init()  { };
+  void  Initialize() {  on = false;  bg_lrate = 1.0f;  fg_lrate = 0.0f;  Defaults_init(); }
+  void  Defaults_init()  { };
 };
 
 
@@ -391,8 +391,8 @@ public:
   STATE_DECO_KEY("ConSpec");
   STATE_TA_STD_CODE_SPEC(MarginLearnSpec);
 private:
-  void	Initialize()    {  lrate_mod = false;  sign_dwt = false;  Defaults_init(); }
-  void	Defaults_init() {  stable_lrate = 0.5f;  sign_lrn = 0.5f; }
+  void  Initialize()    {  lrate_mod = false;  sign_dwt = false;  Defaults_init(); }
+  void  Defaults_init() {  stable_lrate = 0.5f;  sign_lrn = 0.5f; }
 };
 
 
@@ -409,9 +409,9 @@ public:
   STATE_DECO_KEY("ConSpec");
   STATE_TA_STD_CODE_SPEC(DwtShareSpec);
 private:
-  void	Initialize()    {  on = false;  neigh = 2; common = false;  p_share = 0.5f;
+  void  Initialize()    {  on = false;  neigh = 2; common = false;  p_share = 0.5f;
     Defaults_init(); }
-  void	Defaults_init() {  }
+  void  Defaults_init() {  }
 };
 
 

@@ -523,7 +523,7 @@ public:
   // #CAT_Columns removes indicated column
   inline void           RemoveAllCols() { Reset(); }
   // #CAT_Columns #MENU #MENU_ON_Columns #CONFIRM remove all columns (and data)
-  virtual void 	        DuplicateCol(const Variant& col);
+  virtual void          DuplicateCol(const Variant& col);
   // #CAT_Columns duplicates indicated column
   virtual void          Reset();
   // #CAT_Columns remove all columns (and data) -- this cannot be undone!

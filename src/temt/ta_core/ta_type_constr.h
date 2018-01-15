@@ -75,68 +75,68 @@ public:
 
 class TA_API MemberDef_data {
 public:
-  const char*  	type;
-  const char*	name;
-  const char*	desc;
-  const char*	opts;
-  const char*	lists;
-  ta_memb_ptr	off;		// offset if not static
-  bool		is_static;
-  void*		addr;		// address static absolute addr
-  bool		fun_ptr;
+  const char*   type;
+  const char*   name;
+  const char*   desc;
+  const char*   opts;
+  const char*   lists;
+  ta_memb_ptr   off;            // offset if not static
+  bool          is_static;
+  void*         addr;           // address static absolute addr
+  bool          fun_ptr;
 };
 
 class TA_API PropertyDef_data {
 public:
-  const char* 	type;
-  const char*	name;
-  const char*	desc;
-  const char*	opts;
-  const char*	lists;
-  bool		is_static;
+  const char*   type;
+  const char*   name;
+  const char*   desc;
+  const char*   opts;
+  const char*   lists;
+  bool          is_static;
   ta_prop_get_fun prop_get; // stub function to get the property (as Variant)
   ta_prop_set_fun prop_set; // stub function to set the property (as Variant)
 };
 
 class TA_API MethodArgs_data {
 public:
-  const char* 	type;
-  const char*	name;
-  const char*	def;		// default value
+  const char*   type;
+  const char*   name;
+  const char*   def;            // default value
 };
 
 class TA_API MethodDef_data {
 public:
   const char*   type;
-  const char*	name;
-  const char*	desc;
-  const char*	opts;
-  const char*	lists;
-  short		fun_overld;	// number of times overloaded
-  short		fun_argc;	// nofun, or # of parameters to the function
-  short		fun_argd;	// indx for start of the default args (-1 if none)
-  bool		is_virtual;	// note: only true when 'virtual' keyword was present
-  bool		is_static;
-  ta_void_fun 	addr;		// address (static or reg_fun only)
-  css_fun_stub_ptr stubp; 	// css function pointer
-  MethodArgs_data* fun_args;	// args to the function
+  const char*   name;
+  const char*   desc;
+  const char*   opts;
+  const char*   lists;
+  short         fun_overld;     // number of times overloaded
+  short         fun_argc;       // nofun, or # of parameters to the function
+  short         fun_argd;       // indx for start of the default args (-1 if none)
+  bool          is_virtual;     // note: only true when 'virtual' keyword was present
+  bool          is_static;
+  ta_void_fun   addr;           // address (static or reg_fun only)
+  css_fun_stub_ptr stubp;       // css function pointer
+  MethodArgs_data* fun_args;    // args to the function
 };
 
 class TA_API EnumDef_data {
 public:
-  const char* 	name;
-  const char*	desc;
-  const char*	opts;
-  int		val;
+  const char*   name;
+  const char*   desc;
+  const char*   opts;
+  int           val;
 };
 
 //////////////////////////////////////////////////////////////////////
 //    methods for actually initializing things from data structures
 
 extern TA_API void tac_AddEnum(TypeDef& tp, const char* name, const char* desc,
-			       const char* inh_opts, const char* opts, const char* lists,
-			       const char* src_file, int src_st, int src_ed,
-			       EnumDef_data* dt);
+                               const char* inh_opts, const char* opts, const char* lists,
+                               const char* src_file, int src_st, int src_ed,
+                               EnumDef_data* dt);
 extern TA_API void tac_ThisEnum(TypeDef& tp, EnumDef_data* dt);
 extern TA_API void tac_AddMembers(TypeDef& tp, MemberDef_data* dt);
 extern TA_API void tac_AddProperties(TypeDef& tp, PropertyDef_data* dt);

@@ -56,7 +56,7 @@ public:
   virtual void Compute_SoftMax(LeabraLayer* lay, LeabraNetwork* net);
   // compute the softmax
   
-  void	Compute_CycleStats_Pre(LeabraLayer* lay, LeabraNetwork* net) override;
+  void  Compute_CycleStats_Pre(LeabraLayer* lay, LeabraNetwork* net) override;
 
  TA_SIMPLE_BASEFUNS(GPiSoftMaxLayerSpec);
 protected:

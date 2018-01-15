@@ -27,27 +27,27 @@ public:
   iSpinBox(QWidget* parent = 0);
 
   // from hidden lineedit
-  bool		hasSelectedText();
-  void		cut();
-  void		copy();
-  void		paste();
-  void		del();
+  bool          hasSelectedText();
+  void          cut();
+  void          copy();
+  void          paste();
+  void          del();
   void          setMinCharWidth(int num); // hint for min chars, 0=no min
   void          setCharWidth(int num); // set a fixed width, 0 = no fixed
 
 #ifndef __MAKETA__
 signals:
-  void		focusChanged(bool got_focus);
-  void		selectionChanged(); // note: passed on from hidden lineedit control
+  void          focusChanged(bool got_focus);
+  void          selectionChanged(); // note: passed on from hidden lineedit control
 #endif
 
 public slots:
-  virtual void	setReadOnly(bool value); //note: hides inherited member
+  virtual void  setReadOnly(bool value); //note: hides inherited member
 protected:
-  void 		focusInEvent(QFocusEvent* ev) override;
-  void 		focusOutEvent(QFocusEvent* ev) override;
-  void 		wheelEvent(QWheelEvent * event) override;
-  void		init();
+  void          focusInEvent(QFocusEvent* ev) override;
+  void          focusOutEvent(QFocusEvent* ev) override;
+  void          wheelEvent(QWheelEvent * event) override;
+  void          init();
 private:
   int updating;
 };

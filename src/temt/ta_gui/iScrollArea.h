@@ -26,12 +26,12 @@ INHERITED(QScrollArea)
   Q_OBJECT
 public:
 
-  QSize 	sizeHint() const;
+  QSize         sizeHint() const;
 
   explicit iScrollArea(QWidget* parent = 0);
 
 private:
-  void		init();
+  void          init();
 };
 
 #endif // iScrollArea_h

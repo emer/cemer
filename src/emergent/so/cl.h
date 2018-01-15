@@ -34,11 +34,11 @@ class E_API ClConSpec : public SoConSpec {
   // competitive learning connection spec (uses normalized input activation)
 INHERITED(SoConSpec)
 public:
-  inline void	C_Compute_dWt(float& dwt, const float ru_act, const float su_act,
+  inline void   C_Compute_dWt(float& dwt, const float ru_act, const float su_act,
                               const float sum_in_act, const float wt)
   { dwt += ru_act * ((su_act / sum_in_act) - wt); }
 
-  inline void 	Compute_dWt(ConState* gcg, Network* net, int thr_no)  override {
+  inline void   Compute_dWt(ConState* gcg, Network* net, int thr_no)  override {
     SoConState* cg = (SoConState*)gcg;
     SoUnitState* ru = (SoUnitState*)cg->ThrOwnUnVars(net, thr_no);
     Compute_AvgInAct(cg, (SoNetwork*)net, thr_no);
@@ -53,8 +53,8 @@ public:
 
   TA_BASEFUNS_NOCOPY(ClConSpec);
 private:
-  void 	Initialize()		{ };
-  void	Destroy()		{ };
+  void  Initialize()            { };
+  void  Destroy()               { };
 };
 
 eTypeDef_Of(SoftClConSpec);
@@ -63,11 +63,11 @@ class E_API SoftClConSpec : public SoConSpec {
   // soft competitive learning connection spec
 INHERITED(SoConSpec)
 public:
-  inline void	C_Compute_dWt(float& dwt, const float ru_act, const float su_act,
+  inline void   C_Compute_dWt(float& dwt, const float ru_act, const float su_act,
                               const float wt)
   { dwt += ru_act * (su_act - wt); }
 
-  inline void 	Compute_dWt(ConState* cg, Network* net, int thr_no) override {
+  inline void   Compute_dWt(ConState* cg, Network* net, int thr_no) override {
     SoUnitState* ru = (SoUnitState*)cg->ThrOwnUnVars(net, thr_no);
     const float ru_act = ru->act;
     float* dwts = cg->OwnCnVar(DWT);
@@ -77,8 +77,8 @@ public:
 
   TA_BASEFUNS_NOCOPY(SoftClConSpec);
 private:
-  void 	Initialize()		{ };
-  void	Destroy()		{ };
+  void  Initialize()            { };
+  void  Destroy()               { };
 };
 
 
@@ -88,13 +88,13 @@ class E_API ClLayerSpec : public SoLayerSpec {
   // competitive learning layer spec
 INHERITED(SoLayerSpec)
 public:
-  void	Compute_Act_post(SoLayer* lay, SoNetwork* net) override;
+  void  Compute_Act_post(SoLayer* lay, SoNetwork* net) override;
   // set activation to be 1.0 for unit with most input, 0 else
 
   TA_BASEFUNS_NOCOPY(ClLayerSpec);
 private:
-  void	Initialize();
-  void	Destroy()	{ };
+  void  Initialize();
+  void  Destroy()       { };
 };
 
 eTypeDef_Of(SoftClUnitSpec);
@@ -103,7 +103,7 @@ class E_API SoftClUnitSpec : public SoUnitSpec {
   // soft competitive learning unit spec
 INHERITED(SoUnitSpec)
 public:
-  float		var;		// variance of the Gaussian activation function
+  float         var;            // variance of the Gaussian activation function
   float         norm_const;     // #HIDDEN normalization const for Gaussian
   float         denom_const;    // #HIDDEN denominator const for Gaussian
 
@@ -114,10 +114,10 @@ public:
 
   TA_SIMPLE_BASEFUNS(SoftClUnitSpec);
 protected:
-  void	UpdateAfterEdit_impl() override;
+  void  UpdateAfterEdit_impl() override;
 private:
-  void	Initialize();
-  void	Destroy()	{ };
+  void  Initialize();
+  void  Destroy()       { };
 };
 
 eTypeDef_Of(SoftClLayerSpec);
@@ -127,13 +127,13 @@ class E_API SoftClLayerSpec : public SoLayerSpec {
 INHERITED(SoLayerSpec)
 public:
 
-  void	Compute_Act_post(SoLayer* lay, SoNetwork* net) override;
+  void  Compute_Act_post(SoLayer* lay, SoNetwork* net) override;
   // set activation to be softmax of unit activations
 
   TA_BASEFUNS_NOCOPY(SoftClLayerSpec);
 private:
-  void	Initialize();
-  void	Destroy()	{ };
+  void  Initialize();
+  void  Destroy()       { };
 };
 
 

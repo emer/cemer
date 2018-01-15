@@ -1,10 +1,10 @@
-  STATE_CLASS(ScalarValSpec)	 scalar;	// specifies how values are represented in terms of distributed patterns of activation across the layer
-  STATE_CLASS(MinMaxRange)	 unit_range;	// range of values represented across the units; for GAUSSIAN, add extra values above and below true useful range to prevent edge effects.
-  STATE_CLASS(ScalarValBias)	 bias_val;	// specifies bias for given value (as gaussian bump) 
+  STATE_CLASS(ScalarValSpec)     scalar;        // specifies how values are represented in terms of distributed patterns of activation across the layer
+  STATE_CLASS(MinMaxRange)       unit_range;    // range of values represented across the units; for GAUSSIAN, add extra values above and below true useful range to prevent edge effects.
+  STATE_CLASS(ScalarValBias)     bias_val;      // specifies bias for given value (as gaussian bump) 
   STATE_CLASS(MinMaxRange)       avg_act_range; // #CONDSHOW_ON_scalar.rep:AVG_ACT range of variability of the average layer activity, used for AVG_ACT type to renormalize acts.avg before projecting it into the unit_range of values
-  STATE_CLASS(MinMaxRange)	 val_range;	// #READ_ONLY #NO_INHERIT actual range of values (scalar.min/max taking into account un_range)
+  STATE_CLASS(MinMaxRange)       val_range;     // #READ_ONLY #NO_INHERIT actual range of values (scalar.min/max taking into account un_range)
 
-  INIMPL virtual void	Compute_BiasVal(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net);
+  INIMPL virtual void   Compute_BiasVal(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net);
   // #CAT_ScalarVal initialize the bias value 
     INIMPL virtual void Compute_WtBias_Val(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net,
                                            int gpidx, float val);
@@ -19,20 +19,20 @@
                                               int gpidx);
     // #IGNORE
 
-  INIMPL virtual void	ClampValue_ugp(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net,
+  INIMPL virtual void   ClampValue_ugp(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net,
                                        int gpidx, float rescale=1.0f);
   // #CAT_ScalarVal clamp value in the first unit's ext field to the units in the group
-  INIMPL virtual float	ClampAvgAct(int ugp_size);
+  INIMPL virtual float  ClampAvgAct(int ugp_size);
   // #CAT_ScalarVal computes the average activation for a clamped unit pattern (for computing rescaling)
-  INIMPL virtual void	ReadValue(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net);
+  INIMPL virtual void   ReadValue(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net);
   // #CAT_ScalarVal read out current value represented by activations in layer
     INIMPL virtual float ReadValue_ugp(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net,
                                 int gpidx);
     // #CAT_ScalarVal unit group version: read out current value represented by activations in layer
-  INIMPL virtual void 	Compute_ExtToPlus_ugp(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net,
+  INIMPL virtual void   Compute_ExtToPlus_ugp(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net,
                                       int gpidx);
   // #CAT_ScalarVal copy ext values to act_p -- used for internally-generated training signals for learning in several subclasses
-  INIMPL virtual void 	Compute_ExtToAct_ugp(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net,
+  INIMPL virtual void   Compute_ExtToAct_ugp(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net,
                                      int gpidx);
   // #CAT_ScalarVal copy ext values to act -- used for dynamically computed clamped layers
   INIMPL virtual void HardClampExt(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net);

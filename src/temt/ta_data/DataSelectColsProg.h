@@ -57,8 +57,8 @@ protected:
   bool      GenCssBody_impl(Program* prog) override;
 
 private:
-  void	Initialize();
-  void	Destroy()	{ CutLinks(); }
+  void  Initialize();
+  void  Destroy()       { CutLinks(); }
 };
 
 #endif // DataSelectColsProg_h

@@ -55,7 +55,7 @@ public:
   TypeDef* UnitStateType() const override;
   TypeDef* ConStateType() const override;
   
-  void	SetProjectionDefaultTypes(Projection* prjn) override;
+  void  SetProjectionDefaultTypes(Projection* prjn) override;
 
   TA_SIMPLE_BASEFUNS(BpNetwork);
 private:

@@ -31,26 +31,26 @@ class TA_API taPlugin_List: public taPluginBase_List {
   // plugins available to the program (also used for descs)
 INHERITED(taPluginBase_List)
 public:
-  inline taPlugin*	FastEl(int i) {return (taPlugin*)inherited::FastEl(i);}
-  taPlugin*		FindFilename(const String& value);
-  inline taPlugin*	FindUniqueId(const String& value)
+  inline taPlugin*      FastEl(int i) {return (taPlugin*)inherited::FastEl(i);}
+  taPlugin*             FindFilename(const String& value);
+  inline taPlugin*      FindUniqueId(const String& value)
     {return (taPlugin*)inherited::FindUniqueId(value);}
   
-  void			EnableAllPlugins(); // enable all the available plugins
-  void			ListAllPlugins(); // list all the available plugins and their status
-  void			LoadPlugins(); // Load all the enabled plugins (init's type system), unload remainder
-  void			InitPlugins(); // Initialize all the loaded plugins -- creates/loads state object first; then plugin can post Wizards, etc.
+  void                  EnableAllPlugins(); // enable all the available plugins
+  void                  ListAllPlugins(); // list all the available plugins and their status
+  void                  LoadPlugins(); // Load all the enabled plugins (init's type system), unload remainder
+  void                  InitPlugins(); // Initialize all the loaded plugins -- creates/loads state object first; then plugin can post Wizards, etc.
   int                   ActivePluginCount();
   // how many enabled, loaded plugins are in this list
   
-  void			ViewPluginLog(); // #MENU_CONTEXT #BUTTON view the most recent plugin log
+  void                  ViewPluginLog(); // #MENU_CONTEXT #BUTTON view the most recent plugin log
   TA_BASEFUNS_NOCOPY(taPlugin_List);
   
 protected:
-  void		ReconcilePlugins(); // reconciles our list with list of plugins
+  void          ReconcilePlugins(); // reconciles our list with list of plugins
 private:
-  void	Initialize() {SetBaseType(&TA_taPlugin);} // usually upclassed
-  void	Destroy() {}
+  void  Initialize() {SetBaseType(&TA_taPlugin);} // usually upclassed
+  void  Destroy() {}
 };
 
 #endif // taPlugin_List_h

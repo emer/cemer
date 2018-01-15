@@ -29,9 +29,9 @@ class taBase; //
 class TA_API DumpPathToken {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS Path tokens for quicker loading
 public:
-  taBase*	object;
-  String	path;
-  String	token_id;
+  taBase*       object;
+  String        path;
+  String        token_id;
 
   DumpPathToken(taBase* obj, const String& pat, const String& tok_id);
 };

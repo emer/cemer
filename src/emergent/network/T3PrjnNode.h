@@ -32,7 +32,7 @@ class E_API T3PrjnNode: public T3NodeParent {
   Q_OBJECT
   INHERITED(T3NodeParent)
 public:
-  bool			projected;
+  bool                  projected;
   bool                  mode_2d;
   T3LineStrip*          line;
 
@@ -60,28 +60,28 @@ typedef T3NodeParent inherited;
   SO_NODE_HEADER(T3PrjnNode);
 #endif
 public:
-  static void		initClass();
+  static void           initClass();
 
-  void		setEndPoint(const SbVec3f& value); // #IGNORE sets endpoint, relative to its origin
-  void		setArrowColor(const SbColor& clr, float transp);
+  void          setEndPoint(const SbVec3f& value); // #IGNORE sets endpoint, relative to its origin
+  void          setArrowColor(const SbColor& clr, float transp);
   // #IGNORE set arrow color
 
   T3PrjnNode(T3DataView* dataView_ = NULL, bool projected = true, float rad = .01f);
 
 protected:
-  bool			projected_;
-  float			radius;
-  SoComplexity*		complexity;
-  SoTransform*		trln_prjn; // #IGNORE
-  SoTransform*		rot_prjn; // #IGNORE
-  SoTransform*		trln_arr; // #IGNORE
-  SoCone*		arr_prjn;  // #IGNORE arrow head
-  SoCylinder*		line_prjn;  // #IGNORE line
-  SoMaterial*		arr_mat;  // #IGNORE arrow material (color)
+  bool                  projected_;
+  float                 radius;
+  SoComplexity*         complexity;
+  SoTransform*          trln_prjn; // #IGNORE
+  SoTransform*          rot_prjn; // #IGNORE
+  SoTransform*          trln_arr; // #IGNORE
+  SoCone*               arr_prjn;  // #IGNORE arrow head
+  SoCylinder*           line_prjn;  // #IGNORE line
+  SoMaterial*           arr_mat;  // #IGNORE arrow material (color)
 
   ~T3PrjnNode();
 private:
-  void			init();
+  void                  init();
 };
 
 #endif // TA_QT3D

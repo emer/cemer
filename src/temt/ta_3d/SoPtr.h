@@ -24,35 +24,35 @@
 // declare all other types mentioned but not required to include:
 
 // externals
-class SoBase;			//
-class SoNode;			//
-class SoGroup;		//
-class SoSeparator;		//
-class SoSeparatorKit;		// #IGNORE
-class SoSelection;		// #IGNORE
-class SoTransform;		// #IGNORE
+class SoBase;                   //
+class SoNode;                   //
+class SoGroup;          //
+class SoSeparator;              //
+class SoSeparatorKit;           // #IGNORE
+class SoSelection;              // #IGNORE
+class SoTransform;              // #IGNORE
 
 
 class TA_API SoPtr_impl { // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS "safe" ptr for SoBase objects -- automatically does ref counts
 public:
-  inline operator 	bool() const {return (m_ptr);} // for ptr-like NULL checks
+  inline operator       bool() const {return (m_ptr);} // for ptr-like NULL checks
   SoPtr_impl() {m_ptr = 0;}
   ~SoPtr_impl();
 protected:
-  SoBase*	m_ptr;
-  void		set(SoBase* src);
+  SoBase*       m_ptr;
+  void          set(SoBase* src);
 };
 
 template<class T>
 class SoPtr: public SoPtr_impl { // "safe" ptr for SoBase objects -- automatically does ref counts
 public:
-  T*		ptr() const {return (T*)m_ptr;}
+  T*            ptr() const {return (T*)m_ptr;}
 
   operator T*() const {return (T*)m_ptr;}
   T* operator->() const {return (T*)m_ptr;}
 
 protected:
-  void		set(T* src) {SoPtr_impl::set((SoBase*)src);}
+  void          set(T* src) {SoPtr_impl::set((SoBase*)src);}
 };
 
 // macro for creating safe ptrs of SoBase classes
@@ -84,10 +84,10 @@ SoPtr_Of(SoTransform);
 
 #define SOCACHEGROUP_DECL(T) \
 protected: \
-  static T*	T ## _inst; \
+  static T*     T ## _inst; \
   T() {Initialize(); if (! T ## _inst) T ## _inst = this;} \
 public: \
-  static T*	GetInstance(); \
+  static T*     GetInstance(); \
   ~T() { if (T ## _inst == this) T ## _inst= NULL; Destroy();}
 
 #define SOCACHEGROUP_IMPL(T) \

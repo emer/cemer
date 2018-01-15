@@ -30,29 +30,29 @@ class E_API ProjectBase : public taProject {
   // ##FILETYPE_Project ##EXT_proj ##COMPRESS #VIRT_BASE Base class for a pdp project (do not create one of these -- create an algorithm-specific version)
 INHERITED(taProject)
 public:
-  Network_Group		networks;	// Networks of interconnected units
+  Network_Group         networks;       // Networks of interconnected units
 
-  virtual Network* 	GetNewNetwork(TypeDef* typ = NULL);
+  virtual Network*      GetNewNetwork(TypeDef* typ = NULL);
   // get a new network object
-  virtual Network* 	GetDefNetwork();
+  virtual Network*      GetDefNetwork();
   // get default network from project
 
-  void		SaveRecoverFile_strm(std::ostream& strm) override;
+  void          SaveRecoverFile_strm(std::ostream& strm) override;
 
-  virtual void	AutoBuildNets();
+  virtual void  AutoBuildNets();
   // build networks according to their own individual auto_bulid modes
   
   void  BgRunKilled() override;
-  void	Dump_Load_post() override;
+  void  Dump_Load_post() override;
 
-  void 	InitLinks_impl() override; // special, for this class only
-  void 	InitLinks_post() override; // special, for this class only
-  void	CutLinks_impl() override; // special, so we can do base class guys first (esp. viewers)
-  void	Copy_(const ProjectBase& cp);
+  void  InitLinks_impl() override; // special, for this class only
+  void  InitLinks_post() override; // special, for this class only
+  void  CutLinks_impl() override; // special, so we can do base class guys first (esp. viewers)
+  void  Copy_(const ProjectBase& cp);
   TA_BASEFUNS(ProjectBase);
 private:
-  void	Initialize();
-  void 	Destroy()		{ CutLinks(); }
+  void  Initialize();
+  void  Destroy()               { CutLinks(); }
 };
 
 #endif // ProjectBase_h

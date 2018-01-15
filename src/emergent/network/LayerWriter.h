@@ -31,37 +31,37 @@ class E_API LayerWriter : public taNBase {
   // #STEM_BASE ##CAT_Network ##DEF_CHILD_layer_data #DEF_CHILDNAME_LayerDataEls controls the writing of input data from a data source to network layers
 INHERITED(taNBase)
 public:
-  DataTableRef		data;
+  DataTableRef          data;
   // the data object with input data to present to the network
-  NetworkRef		network;
+  NetworkRef            network;
   // the network to present the input data to
-  LayerDataEl_List	layer_data;
+  LayerDataEl_List      layer_data;
   // the layers/input data channel mappings to present to the network
 
-  virtual LayerDataEl*	AddLayerData()	{ return (LayerDataEl*)layer_data.New(1); }
+  virtual LayerDataEl*  AddLayerData()  { return (LayerDataEl*)layer_data.New(1); }
   // #BUTTON add a new layer data item
 
-  virtual void 	SetDataNetwork(DataTable* db, Network* net);
+  virtual void  SetDataNetwork(DataTable* db, Network* net);
   // #CAT_LayerWriter set the data table and network pointers -- convenience function for programs 
 
-  virtual void	AutoConfig(bool remove_unused = true);
+  virtual void  AutoConfig(bool remove_unused = true);
   // #BUTTON #CAT_LayerWriter do a 'best guess' configuration of items by matching up like-named data Channels and network Layers -- if remove_unused is true, then layer writer elements that existed previously but were not found in input data and network are removed
 
-  virtual bool	ApplyInputData();
+  virtual bool  ApplyInputData();
   // #CAT_LayerWriter apply data to the layers, using the network's current context settings (TEST,TRAIN,etc) -- returns success
 
-  taList_impl*	children_() override {return &layer_data;}
-  String	GetDisplayName() const override;
+  taList_impl*  children_() override {return &layer_data;}
+  String        GetDisplayName() const override;
 
   TA_SIMPLE_BASEFUNS(LayerWriter);
 protected:
-  void	UpdateAfterEdit_impl() override;
-  void	CheckThisConfig_impl(bool quiet, bool& rval) override;
+  void  UpdateAfterEdit_impl() override;
+  void  CheckThisConfig_impl(bool quiet, bool& rval) override;
   void CheckChildConfig_impl(bool quiet, bool& rval) override;
     
 private:
-  void	Initialize();
-  void 	Destroy() {}
+  void  Initialize();
+  void  Destroy() {}
 };
 
 #endif // LayerWriter_h

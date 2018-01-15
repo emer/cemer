@@ -30,29 +30,29 @@ class TA_API UserScript: public ProgEl {
   // a user-defined css script (can access all program variables, etc)
 INHERITED(ProgEl)
 public:
-  ProgExpr		script;	// #BROWSER_EDIT_LOOKUP the css (C++ syntax) code to be executed
+  ProgExpr              script; // #BROWSER_EDIT_LOOKUP the css (C++ syntax) code to be executed
 
- virtual void	    	ImportFromFile(std::istream& strm); // #MENU_ON_Object #MENU_CONTEXT #BUTTON #EXT_css import script from file
- virtual void	    	ExportToFile(std::ostream& strm); // #MENU_ON_Object #MENU_CONTEXT #BUTTON #EXT_css export script to file
+ virtual void           ImportFromFile(std::istream& strm); // #MENU_ON_Object #MENU_CONTEXT #BUTTON #EXT_css import script from file
+ virtual void           ExportToFile(std::ostream& strm); // #MENU_ON_Object #MENU_CONTEXT #BUTTON #EXT_css export script to file
 
-  virtual void	    ImportFromFileName(const String& fnm); // import script from file
-  virtual void	    ExportToFileName(const String& fnm); // export script to file
+  virtual void      ImportFromFileName(const String& fnm); // import script from file
+  virtual void      ExportToFileName(const String& fnm); // export script to file
   
-  void		SetProgExprFlags() override;
-  String	GetDisplayName() const override;
-  String	GetToolbarName() const override { return "script"; }
-  String 	GetTypeDecoKey() const override { return "ProgVar"; }
-  bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
-  bool		CvtFmCode(const String& code) override;
+  void          SetProgExprFlags() override;
+  String        GetDisplayName() const override;
+  String        GetToolbarName() const override { return "script"; }
+  String        GetTypeDecoKey() const override { return "ProgVar"; }
+  bool          CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
+  bool          CvtFmCode(const String& code) override;
 
   PROGEL_SIMPLE_BASEFUNS(UserScript);
 protected:
   void          UpdateAfterEdit_impl() override;
-  bool		GenCssBody_impl(Program* prog) override;
+  bool          GenCssBody_impl(Program* prog) override;
 
 private:
-  void	Initialize();
-  void	Destroy()	{}
+  void  Initialize();
+  void  Destroy()       {}
 };
 
 #endif // UserScript_h

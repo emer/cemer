@@ -36,27 +36,27 @@ class E_API VEJointView: public T3DataView {
 INHERITED(T3DataView)
 friend class VEWorldView;
 public:
-  VEJoint*		Joint() const { return (VEJoint*)data();}
-  virtual void		SetJoint(VEJoint* ob);
+  VEJoint*              Joint() const { return (VEJoint*)data();}
+  virtual void          SetJoint(VEJoint* ob);
   
   DATAVIEW_PARENT(VEWorldView)
 
-  virtual void		FixOrientation(bool force=false);
+  virtual void          FixOrientation(bool force=false);
   // fix the orientation of joint
-  virtual void		SetDraggerPos();
+  virtual void          SetDraggerPos();
   // set dragger position, based on shape
 
-  bool			isVisible() const;
-  bool		ignoreSigEmit() const override { return !isVisible(); }
+  bool                  isVisible() const;
+  bool          ignoreSigEmit() const override { return !isVisible(); }
 
-  void 	SetDefaultName() override {} // leave it blank
+  void  SetDefaultName() override {} // leave it blank
   TA_BASEFUNS_NOCOPY(VEJointView);
 protected:
-  void	Initialize();
-  void	Destroy();
+  void  Initialize();
+  void  Destroy();
 
-  void		Render_pre() override;
-  void		Render_impl() override;
+  void          Render_pre() override;
+  void          Render_impl() override;
 };
 
 #endif // VEJointView_h

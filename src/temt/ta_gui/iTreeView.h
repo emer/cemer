@@ -141,9 +141,9 @@ public:
   // whether the node is visible in this show context
   virtual void          TreeStructUpdate(bool begin);
   // call at start / end of tree structure updates
-  virtual void	        EmitTreeStructToUpdate();
+  virtual void          EmitTreeStructToUpdate();
   // emit signal that tree structure is about to be updated
-  virtual void	        EmitTreeStructUpdated();
+  virtual void          EmitTreeStructUpdated();
   // emit signal that tree structure was updated
   bool                  IsSearchMatch(iTreeViewItem* item);
 

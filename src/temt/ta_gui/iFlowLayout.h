@@ -50,12 +50,12 @@ public:
   Qt::Orientations expandingDirections() const; //
 
 public: // required or desired overrides
-  int 			count() const;
-  QLayoutItem* 		itemAt(int index) const;
-  QSize 		sizeHint() const;
+  int                   count() const;
+  QLayoutItem*          itemAt(int index) const;
+  QSize                 sizeHint() const;
   QSize minimumSize() const; //
 //    void setGeometry(const QRect &rect);
-  QLayoutItem*		takeAt(int index);
+  QLayoutItem*          takeAt(int index);
 
 protected:
   Qt::Alignment malignment;

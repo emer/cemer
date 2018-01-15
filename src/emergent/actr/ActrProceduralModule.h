@@ -44,8 +44,8 @@ protected:
   void UpdateAfterEdit_impl() override;
 
 private:
-  void	Initialize();
-  void 	Destroy()	{ };
+  void  Initialize();
+  void  Destroy()       { };
 };
 
 eTypeDef_Of(ActrProceduralModule);
@@ -91,7 +91,7 @@ public:
 
   TA_SIMPLE_BASEFUNS(ActrProceduralModule);
 protected:
-  void	 CheckChildConfig_impl(bool quiet, bool& rval) override;
+  void   CheckChildConfig_impl(bool quiet, bool& rval) override;
 
 private:
   void Initialize();

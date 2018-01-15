@@ -32,40 +32,40 @@ class TA_API LocalVars: public ProgEl {
   // ##DEF_CHILD_local_vars #AKA_ProgVars local program variables -- these variables do NOT use or update the values that are shown -- they exist only as script variables (unlike global args and vars)
 INHERITED(ProgEl)
 public:
-  ProgVar_List		local_vars;	// the list of variables -- these variables do NOT update their values as shown here -- they exist only as script variables (unlike global args and vars)
+  ProgVar_List          local_vars;     // the list of variables -- these variables do NOT update their values as shown here -- they exist only as script variables (unlike global args and vars)
   
-  virtual ProgVar*	AddVar();
+  virtual ProgVar*      AddVar();
   // #BUTTON add a new variable
-  virtual ProgVar*	AddFloatMatrix();
+  virtual ProgVar*      AddFloatMatrix();
   // #BUTTON add a new float_Matrix* variable -- these have to be in local vars so are frequently created..
-  virtual ProgVar*	AddDoubleMatrix();
+  virtual ProgVar*      AddDoubleMatrix();
   // #BUTTON add a new double_Matrix* variable -- these have to be in local vars so are frequently created..
-  virtual ProgVar*	AddIntMatrix();
+  virtual ProgVar*      AddIntMatrix();
   // #BUTTON add a new int_Matrix* variable -- these have to be in local vars so are frequently created..
-  virtual ProgVar*	AddStringMatrix();
+  virtual ProgVar*      AddStringMatrix();
   // #BUTTON add a new String_Matrix* variable -- these have to be in local vars so are frequently created..
-  virtual ProgVar*	AddVarMatrix();
+  virtual ProgVar*      AddVarMatrix();
   // #BUTTON add a new Variant_Matrix* variable -- these have to be in local vars so are frequently created..
 
-  ProgVar*	FindVarName(const String& var_nm) const override;
+  ProgVar*      FindVarName(const String& var_nm) const override;
 
-  bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
-  bool		CvtFmCode(const String& code) override;
+  bool          CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
+  bool          CvtFmCode(const String& code) override;
 
-  taList_impl*	children_() override {return &local_vars;}
-  String	GetDisplayName() const override;
-  String 	GetTypeDecoKey() const override { return "ProgVar"; }
-  String	GetToolbarName() const override { return "loc vars"; }
+  taList_impl*  children_() override {return &local_vars;}
+  String        GetDisplayName() const override;
+  String        GetTypeDecoKey() const override { return "ProgVar"; }
+  String        GetToolbarName() const override { return "loc vars"; }
 
   PROGEL_SIMPLE_BASEFUNS(LocalVars);
 protected:
-  void		CheckChildConfig_impl(bool quiet, bool& rval) override;
-  bool		GenCssBody_impl(Program* prog) override;
-  const String	GenListing_children(int indent_level) const override;
+  void          CheckChildConfig_impl(bool quiet, bool& rval) override;
+  bool          GenCssBody_impl(Program* prog) override;
+  const String  GenListing_children(int indent_level) const override;
 
 private:
-  void	Initialize();
-  void	Destroy();
+  void  Initialize();
+  void  Destroy();
 };
 
 #endif // LocalVars_h

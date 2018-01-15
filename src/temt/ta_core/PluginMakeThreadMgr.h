@@ -31,20 +31,20 @@ class TA_API PluginMakeThreadMgr : public taThreadMgr {
 INHERITED(taThreadMgr)
 public:
   // following are args for the MakePlugin function that is called
-  bool		make_pending;
-  String	plugin_path;
-  String	plugin_name;
-  bool		system_plugin;
-  bool		full_rebuild;
+  bool          make_pending;
+  String        plugin_path;
+  String        plugin_name;
+  bool          system_plugin;
+  bool          full_rebuild;
 
-  void		MakePlugin(const String& plugin_path, const String& plugin_name,
-			   bool system_plugin = false, bool full_rebuild=true);
+  void          MakePlugin(const String& plugin_path, const String& plugin_name,
+                           bool system_plugin = false, bool full_rebuild=true);
   // runs the task for this
   
   TA_BASEFUNS_NOCOPY(PluginMakeThreadMgr);
 private:
-  void	Initialize();
-  void	Destroy();
+  void  Initialize();
+  void  Destroy();
 };
 
 #endif // PluginMakeThreadMgr_h

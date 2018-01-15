@@ -32,14 +32,14 @@ class TA_API DataSortProg : public DataSrcDestProg {
   // sorts src_data into dest_data according to sort_spec
 INHERITED(DataSrcDestProg)
 public:
-  DataSortSpec		sort_spec; // #TREE_SHOW data sorting specification
+  DataSortSpec          sort_spec; // #TREE_SHOW data sorting specification
 
   virtual DataOpEl* AddColumn(const String& col_name) { return sort_spec.AddColumn(col_name, GetSrcData()); }
   // #CAT_Data #BUTTON add a new column to operate on
-  virtual void	AddAllColumns();
+  virtual void  AddAllColumns();
   // #BUTTON #CAT_Data add all columns from src_data to the sort_spec list of ops columns 
 
-  void	UpdateSpecDataTable() override;
+  void  UpdateSpecDataTable() override;
 
   String  GetDisplayName() const override;
   String  GetToolbarName() const override { return "sort"; }
@@ -53,8 +53,8 @@ protected:
   bool    GenCssBody_impl(Program* prog) override; 
 
 private:
-  void	Initialize();
-  void	Destroy()	{ CutLinks(); }
+  void  Initialize();
+  void  Destroy()       { CutLinks(); }
 };
 
 #endif // DataSortProg_h

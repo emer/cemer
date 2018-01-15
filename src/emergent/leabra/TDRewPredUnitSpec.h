@@ -7,7 +7,7 @@
     u->misc_1 = 0.0f;             // reset..
   }
   
-  INLINE void	Compute_Act_Rate(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) override {
+  INLINE void   Compute_Act_Rate(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) override {
     if(!Quarter_DeepRawNow(net->quarter)) { // plus phase marker..
       u->ext = u->misc_1;                  // clamp to previous prediction
       u->act_eq = u->act_nd = u->act = u->net = u->ext;
@@ -19,7 +19,7 @@
     }
   }
     
-  INLINE void	Compute_Act_Spike(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no)  override {
+  INLINE void   Compute_Act_Spike(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no)  override {
     Compute_Act_Rate(u, net, thr_no);
   }
 

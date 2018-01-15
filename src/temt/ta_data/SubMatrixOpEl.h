@@ -31,14 +31,14 @@ class TA_API SubMatrixOpEl : public DataOpEl {
   // sub matrix operations element -- specifies a sub-matrix column and offset of that sub-matrix into larger matrix to operate on
   INHERITED(DataOpEl)
 public:
-  MatrixGeom		offset;
+  MatrixGeom            offset;
 
   String GetDisplayName() const override;
   void  Initialize();
-  void 	Destroy()		{ };
+  void  Destroy()               { };
   TA_SIMPLE_BASEFUNS(SubMatrixOpEl);
 protected:
-  void	 CheckThisConfig_impl(bool quiet, bool& rval) override;
+  void   CheckThisConfig_impl(bool quiet, bool& rval) override;
 };
 
 #endif // SubMatrixOpEl_h

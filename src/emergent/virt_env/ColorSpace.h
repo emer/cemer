@@ -255,10 +255,10 @@ public:
 
   TA_SIMPLE_BASEFUNS(ColorSpace);
 // protected:
-//   void	UpdateAfterEdit_impl() override;
+//   void       UpdateAfterEdit_impl() override;
 private:
-  void 	Initialize();
-  void	Destroy() { };
+  void  Initialize();
+  void  Destroy() { };
 };
 
 #endif // ColorSpace_h

@@ -55,7 +55,7 @@ public:
   TypeDef*      src_type;      // #CONDSHOW_ON_cond_src:OBJ_MEMBER #NO_NULL #TYPE_taBase type of object with source data to match against
   taBaseRef     src;           // #TYPE_ON_src_type #PROJ_SCOPE the source object to obtain data to match against (e.g., buffer, etc)
   String        unit_name;     // #CONDSHOW_ON_cond_src:NET_UNIT name of unit within layer to obtain unit value from -- can only access named units
-  String	unit_val;      // #CONDSHOW_ON_cond_src:NET_UNIT variable name on unit to obtain unit value from
+  String        unit_val;      // #CONDSHOW_ON_cond_src:NET_UNIT variable name on unit to obtain unit value from
   String        obj_path;      // #CONDSHOW_ON_cond_src:OBJ_MEMBER path within object to obtain comparison value from
   String        dt_col_name;   // #CONDSHOW_ON_cond_src:DATA_CELL name of column within data table cell to obtain value from
   int           dt_row;        // #CONDSHOW_ON_cond_src:DATA_CELL row number within data table cell to obtain value from (use -1 for last row)

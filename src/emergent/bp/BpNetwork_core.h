@@ -11,7 +11,7 @@
     N_BpConSpecs,    // derived classes start from this one -- use class name for subclasses
   };
 
-  bool	bp_to_inputs;	// #DEF_false backpropagate errors to input layers (faster if not done, which is the default)
+  bool  bp_to_inputs;   // #DEF_false backpropagate errors to input layers (faster if not done, which is the default)
   int   prev_epoch;     // #NO_SAVE #HIDDEN #READ_ONLY previous epoch counter -- for detecting changes
   bool  lrate_updtd;    // #NO_SAVE #HIDDEN #READ_ONLY if learning rate was updated..
 

@@ -33,19 +33,19 @@ class E_API T3NetNode: public T3NodeParent {
   Q_OBJECT
   INHERITED(T3NodeParent)
 public:
-  bool			show_drag;
-  bool			show_net_text_drag;
-  bool			mode_2d;
+  bool                  show_drag;
+  bool                  show_net_text_drag;
+  bool                  mode_2d;
 
   T3LineBox*            frame;
   T3Entity*             net_text;
   T3LineStrip*          wt_lines;
 
-  void	setDefaultCaptionTransform() override;
+  void  setDefaultCaptionTransform() override;
   
   T3NetNode(Qt3DNode* par = NULL, T3DataView* dataView_ = NULL, bool show_draggers = true,
-	    bool show_net_text = true, bool show_nt_drag = true,
-	    bool mode_2d = false);
+            bool show_net_text = true, bool show_nt_drag = true,
+            bool mode_2d = false);
   ~T3NetNode();
 };
 
@@ -60,42 +60,42 @@ typedef T3NodeParent inherited;
   SO_NODE_HEADER(T3NetNode);
 #endif
 public:
-  static void		initClass();
+  static void           initClass();
 
-  SoDrawStyle*		shapeDraw() {return shape_draw_;} // #IGNORE
-  SoSeparator*		netText() {return net_text_;} // #IGNORE extra text of network vars etc
-  SoTransform* 		netTextXform() {return net_text_xform_;} // #IGNORE
-  SoTransform* 		netTextDragXform() {return net_text_drag_xform_;} // #IGNORE
-  bool			netTextDrag() {return show_net_text_drag_;}
-  SoSeparator*		wtLinesSep() {return wt_lines_;} // #IGNORE
-  SoDrawStyle*		wtLinesDraw() {return wt_lines_draw_;} // #IGNORE
-  SoIndexedLineSet*	wtLinesSet() {return wt_lines_set_;} // #IGNORE
-  SoVertexProperty* 	wtLinesVtxProp() {return wt_lines_vtx_prop_;} // #IGNORE
+  SoDrawStyle*          shapeDraw() {return shape_draw_;} // #IGNORE
+  SoSeparator*          netText() {return net_text_;} // #IGNORE extra text of network vars etc
+  SoTransform*          netTextXform() {return net_text_xform_;} // #IGNORE
+  SoTransform*          netTextDragXform() {return net_text_drag_xform_;} // #IGNORE
+  bool                  netTextDrag() {return show_net_text_drag_;}
+  SoSeparator*          wtLinesSep() {return wt_lines_;} // #IGNORE
+  SoDrawStyle*          wtLinesDraw() {return wt_lines_draw_;} // #IGNORE
+  SoIndexedLineSet*     wtLinesSet() {return wt_lines_set_;} // #IGNORE
+  SoVertexProperty*     wtLinesVtxProp() {return wt_lines_vtx_prop_;} // #IGNORE
 
   T3NetNode(T3DataView* dataView_ = NULL, bool show_draggers = true,
-	    bool show_net_text = true, bool show_nt_drag = true,
-	    bool mode_2d = false);
+            bool show_net_text = true, bool show_nt_drag = true,
+            bool mode_2d = false);
 
 protected:
-  void		setDefaultCaptionTransform(); // override
+  void          setDefaultCaptionTransform(); // override
   ~T3NetNode();
 
 protected:
-  SoDrawStyle*		shape_draw_;
-  SoLineBox3d*		shape_; //#IGNORE
-  SoSeparator* 		net_text_; // network text variables
-  SoSeparator* 		wt_lines_; // weight lines
-  SoDrawStyle*		wt_lines_draw_;
-  SoIndexedLineSet*	wt_lines_set_;
-  SoVertexProperty*	wt_lines_vtx_prop_;
+  SoDrawStyle*          shape_draw_;
+  SoLineBox3d*          shape_; //#IGNORE
+  SoSeparator*          net_text_; // network text variables
+  SoSeparator*          wt_lines_; // weight lines
+  SoDrawStyle*          wt_lines_draw_;
+  SoIndexedLineSet*     wt_lines_set_;
+  SoVertexProperty*     wt_lines_vtx_prop_;
 
-  bool			show_drag_;
-  bool			show_net_text_drag_;
-  bool			mode_2d_;
-  T3TransformBoxDragger* drag_;	// my position dragger
-  T3TransformBoxDragger* net_text_drag_;	// my net text dragger
-  SoTransform*		net_text_xform_;
-  SoTransform*		net_text_drag_xform_;
+  bool                  show_drag_;
+  bool                  show_net_text_drag_;
+  bool                  mode_2d_;
+  T3TransformBoxDragger* drag_; // my position dragger
+  T3TransformBoxDragger* net_text_drag_;        // my net text dragger
+  SoTransform*          net_text_xform_;
+  SoTransform*          net_text_drag_xform_;
 };
 
 #endif // TA_QT3D

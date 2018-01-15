@@ -31,14 +31,14 @@ class E_API ScalarValSelfPrjnSpec : public ProjectionSpec {
   // special projection for making self-connection that establishes neighbor similarity in scalar val
 INHERITED(ProjectionSpec)
 public:
-  int	width;			// width of neighborhood, in units (i.e., connect width units to the left, and width units to the right)
-  float	wt_width;		// #CONDEDIT_ON_init_wts width of the sigmoid for providing initial weight values
-  float	wt_max;			// #CONDEDIT_ON_init_wts maximum weight value (of 1st neighbor -- not of self unit!)
+  int   width;                  // width of neighborhood, in units (i.e., connect width units to the left, and width units to the right)
+  float wt_width;               // #CONDEDIT_ON_init_wts width of the sigmoid for providing initial weight values
+  float wt_max;                 // #CONDEDIT_ON_init_wts maximum weight value (of 1st neighbor -- not of self unit!)
 
-  virtual void	Connect_UnitGroup(Layer* lay, Layer::AccessMode acc_md, int gpidx,
-				  Projection* prjn, int make_cons);
-  void	Connect_impl(Projection* prjn, int make_cons) override;
-  void	Init_Weights_Prjn(Projection* prjn, ConState_cpp* cg, Network* net, int thr_no)
+  virtual void  Connect_UnitGroup(Layer* lay, Layer::AccessMode acc_md, int gpidx,
+                                  Projection* prjn, int make_cons);
+  void  Connect_impl(Projection* prjn, int make_cons) override;
+  void  Init_Weights_Prjn(Projection* prjn, ConState_cpp* cg, Network* net, int thr_no)
     override;
   bool  HasRandomScale() override { return false; }
 
@@ -47,9 +47,9 @@ public:
 protected:
   SPEC_DEFAULTS;
 private:
-  void	Initialize();
-  void 	Destroy()		{ };
-  void	Defaults_init() 	{ };
+  void  Initialize();
+  void  Destroy()               { };
+  void  Defaults_init()         { };
 };
 
 #endif // ScalarValSelfPrjnSpec_h

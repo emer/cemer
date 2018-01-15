@@ -37,28 +37,28 @@ class TA_API taPluginInst: public QPluginLoader { // ##NO_INSTANCE an instance o
 INHERITED(QPluginLoader)
 public:
   enum LoadState {
-    LS_OUT_OF_DATE	= -4, // library file is out of date -- needs to be recompiled
-    LS_INIT_FAIL	= -3, // failure trying to init plugin
-    LS_TYPE_FAIL	= -2, // failure trying to init types
-    LS_LOAD_FAIL	= -1, // could not be loaded (prob needs to be recompiled)
-    LS_NOT_LOADED	=  0, // true if not yet loaded, or unloaded
-    LS_LOADED		    , // true once lo-level loaded, for enumeration
-    LS_TYPE_INIT	    , // true once the type initialization done (can no longer unload)
-    LS_PLUG_INIT	      // true once initialized
+    LS_OUT_OF_DATE      = -4, // library file is out of date -- needs to be recompiled
+    LS_INIT_FAIL        = -3, // failure trying to init plugin
+    LS_TYPE_FAIL        = -2, // failure trying to init types
+    LS_LOAD_FAIL        = -1, // could not be loaded (prob needs to be recompiled)
+    LS_NOT_LOADED       =  0, // true if not yet loaded, or unloaded
+    LS_LOADED               , // true once lo-level loaded, for enumeration
+    LS_TYPE_INIT            , // true once the type initialization done (can no longer unload)
+    LS_PLUG_INIT              // true once initialized
   };
   
-  String		name;	    // derived from filename
-  taPlugin* 		plugin_rep; // nulled if pl deletes
-  LoadState		load_state; // true once probed, for enumeration
-  String		mod_time; // #READ_ONLY #NO_SAVE #SHOW date and time when the library plugin file was last modified (installed)
-  int64_t		mod_time_int; // #READ_ONLY #NO_SAVE #HIDDEN time stamp for library file last modification date (internal seconds since jan 1 1970 time units) -- this is used as a trigger for determining when to rebuild
+  String                name;       // derived from filename
+  taPlugin*             plugin_rep; // nulled if pl deletes
+  LoadState             load_state; // true once probed, for enumeration
+  String                mod_time; // #READ_ONLY #NO_SAVE #SHOW date and time when the library plugin file was last modified (installed)
+  int64_t               mod_time_int; // #READ_ONLY #NO_SAVE #HIDDEN time stamp for library file last modification date (internal seconds since jan 1 1970 time units) -- this is used as a trigger for determining when to rebuild
     
-  IPlugin*		plugin(); // access to the plugin object -- note: should be valid, because we don't register failed probes
+  IPlugin*              plugin(); // access to the plugin object -- note: should be valid, because we don't register failed probes
   
-  bool			InitTypes(); // done first, and only if enabled; true if succeed
-  bool			InitPlugin();  // done last, and only if enabled
+  bool                  InitTypes(); // done first, and only if enabled; true if succeed
+  bool                  InitPlugin();  // done last, and only if enabled
 
-  static String		PluginNameFmFileName(const String& fname);
+  static String         PluginNameFmFileName(const String& fname);
   // extract plugin name from file name
   
   taPluginInst(const String& fileName);

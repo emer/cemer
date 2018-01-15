@@ -32,12 +32,12 @@ class E_API ImageProcCall : public StaticMethodCall {
   // call a taImageProc function
 INHERITED(StaticMethodCall)
 public:
-  String	GetToolbarName() const override { return "img proc()"; }
-  bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
+  String        GetToolbarName() const override { return "img proc()"; }
+  bool          CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
   TA_BASEFUNS_NOCOPY(ImageProcCall);
 private:
-  void	Initialize();
-  void	Destroy()	{ };
+  void  Initialize();
+  void  Destroy()       { };
 }; 
 
 #endif // ImageProcCall_h

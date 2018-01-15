@@ -47,7 +47,7 @@ public:
 
   bool          one_to_one;     // if true, then the same total number of units or groups must be selected for recv and send sides, and they are connected in a one-to-one fashion -- otherwise, the connection is all-to-all for all of the selected recv and sending units
 
-  void	Connect_impl(Projection* prjn, int make_cons) override;
+  void  Connect_impl(Projection* prjn, int make_cons) override;
 
 
   TA_SIMPLE_BASEFUNS(RowColPrjnSpec);

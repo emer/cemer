@@ -50,7 +50,7 @@ public:
   STATE_DECO_KEY("Projection");
   STATE_TA_STD_CODE(PrjnConStats);
 private:
-  INLINE void	Initialize() {
+  INLINE void   Initialize() {
     ResetStats();
   }
 };

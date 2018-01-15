@@ -147,9 +147,9 @@ INHERITED(NetMonitor)
 public:
 
 #ifdef __MAKETA__  
-  NetworkRef		network;
+  NetworkRef            network;
   // #HIDDEN the overall network object that is being monitored -- if changed, any sub-objects will be updated based on path to new network
-  DataTableRef		data;
+  DataTableRef          data;
   // #HIDDEN the data table that will be used to hold the monitor data
 #endif
   
@@ -180,8 +180,8 @@ public:
 
   TA_SIMPLE_BASEFUNS(NetStateSync);
 private:
-  void	Initialize()    { };
-  void 	Destroy()	{ };
+  void  Initialize()    { };
+  void  Destroy()       { };
 };
 
 eTypeDef_Of(NetStateSync_List);

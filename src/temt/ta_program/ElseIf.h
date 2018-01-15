@@ -31,31 +31,31 @@ class TA_API ElseIf: public CondBase {
   //  #ADD_PARENS a conditional test element: if(condition) then run true_code -- comes after a previous If or ElseIf and only runs if that previous test was false -- can be followed in turn by an Else or ElseElseIf to run if condition is false
 INHERITED(CondBase)
 public:
-  bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
-  bool		CvtFmCode(const String& code) override;
+  bool          CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
+  bool          CvtFmCode(const String& code) override;
 
   virtual bool  CheckAfterIf();
   // check if comes after if or else if
 
-  String	GetDisplayName() const override;
-  String 	GetTypeDecoKey() const override { return "ProgCtrl"; }
-  ProgVar*	FindVarName(const String& var_nm) const override;
-  String	GetToolbarName() const override { return "else if"; }
+  String        GetDisplayName() const override;
+  String        GetTypeDecoKey() const override { return "ProgCtrl"; }
+  ProgVar*      FindVarName(const String& var_nm) const override;
+  String        GetToolbarName() const override { return "else if"; }
   
   PROGEL_SIMPLE_BASEFUNS(ElseIf);
 protected:
-  void		UpdateAfterEdit_impl() override;
-  void		CheckThisConfig_impl(bool quiet, bool& rval) override;
-  void		CheckChildConfig_impl(bool quiet, bool& rval) override;
-  void		PreGenChildren_impl(int& item_id) override;
-  void		GenCssPre_impl(Program* prog) override; 
-  bool		GenCssBody_impl(Program* prog) override; //replaces ElseIf
-  void		GenCssPost_impl(Program* prog) override; 
+  void          UpdateAfterEdit_impl() override;
+  void          CheckThisConfig_impl(bool quiet, bool& rval) override;
+  void          CheckChildConfig_impl(bool quiet, bool& rval) override;
+  void          PreGenChildren_impl(int& item_id) override;
+  void          GenCssPre_impl(Program* prog) override; 
+  bool          GenCssBody_impl(Program* prog) override; //replaces ElseIf
+  void          GenCssPost_impl(Program* prog) override; 
   const String  GenListing_children(int indent_level) const override;
 
 private:
-  void	Initialize();
-  void	Destroy()	{CutLinks();} //
+  void  Initialize();
+  void  Destroy()       {CutLinks();} //
 };
 
 #endif // ElseIf_h

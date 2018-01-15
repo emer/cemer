@@ -25,8 +25,8 @@
 
 class SoBase {// ##NO_INSTANCE ##NO_TOKENS
 public:
-	int dummy; // #IGNORE
-	virtual ~SoBase() {}
+        int dummy; // #IGNORE
+        virtual ~SoBase() {}
 };
 
 #endif // SoBase_h

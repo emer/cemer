@@ -2488,7 +2488,7 @@ public:
         __m128i x1 = _mm_cvtsi64_si128(i);                 // 64 bit load
         xmm = _mm_unpacklo_epi64(x1,x1);                   // broadcast
 #else
-		xmm =  _mm_set1_epi64x(i);
+                xmm =  _mm_set1_epi64x(i);
 #endif
 #else
         union {
@@ -2504,7 +2504,7 @@ public:
         } u;
         u.ii = i;
         xmm = _mm_set1_epi64(u.m);
-		_m_empty();        */
+                _m_empty();        */
 
 #endif  // __x86_64__
 #else   // Other compilers
@@ -2522,7 +2522,7 @@ public:
         __m128i x1 = _mm_cvtsi64_si128(i1);                // 64 bit load
         xmm = _mm_unpacklo_epi64(x0,x1);                   // combine
 #else
-		xmm = _mm_set_epi64x(i1, i0);
+                xmm = _mm_set_epi64x(i1, i0);
 #endif
 #else   // MS compiler in 32-bit mode
         union {
@@ -2530,7 +2530,7 @@ public:
             int32_t r[4];
         } u;
         u.q[0] = i0;  u.q[1] = i1;
-		// this is inefficient, but other solutions are worse
+                // this is inefficient, but other solutions are worse
         xmm = _mm_setr_epi32(u.r[0], u.r[1], u.r[2], u.r[3]);
 #endif  // __x86_64__
 #else   // Other compilers
@@ -4887,18 +4887,18 @@ static inline Vec4ui compress_saturated (Vec2uq const & low, Vec2uq const & high
     // but available in all known processors with SSE4.2
 #if defined (__GNUC__) || defined(__clang__)
 static inline uint32_t vml_popcnt (uint32_t a) __attribute__ ((pure));
-static inline uint32_t vml_popcnt (uint32_t a) {	
+static inline uint32_t vml_popcnt (uint32_t a) {        
     uint32_t r;
     __asm("popcnt %1, %0" : "=r"(r) : "r"(a) : );
     return r;
 }
 #else
-static inline uint32_t vml_popcnt (uint32_t a) {	
+static inline uint32_t vml_popcnt (uint32_t a) {        
     return _mm_popcnt_u32(a);  // MS intrinsic
 }
 #endif // platform
 #else  // no SSE4.2
-static inline uint32_t vml_popcnt (uint32_t a) {	
+static inline uint32_t vml_popcnt (uint32_t a) {        
     // popcnt instruction not available
     uint32_t b = a - ((a >> 1) & 0x55555555);
     uint32_t c = (b & 0x33333333) + ((b >> 2) & 0x33333333);
@@ -4912,13 +4912,13 @@ static inline uint32_t vml_popcnt (uint32_t a) {
 // Define bit-scan-forward function. Gives index to lowest set bit
 #if defined (__GNUC__) || defined(__clang__)
 static inline uint32_t bit_scan_reverse (uint32_t a) __attribute__ ((pure));
-static inline uint32_t bit_scan_forward (uint32_t a) {	
+static inline uint32_t bit_scan_forward (uint32_t a) {  
     uint32_t r;
     __asm("bsfl %1, %0" : "=r"(r) : "r"(a) : );
     return r;
 }
 #else
-static inline uint32_t bit_scan_forward (uint32_t a) {	
+static inline uint32_t bit_scan_forward (uint32_t a) {  
     unsigned long r;
     _BitScanForward(&r, a);                      // defined in intrin.h for MS and Intel compilers
     return r;
@@ -4928,13 +4928,13 @@ static inline uint32_t bit_scan_forward (uint32_t a) {
 // Define bit-scan-reverse function. Gives index to highest set bit = floor(log2(a))
 #if defined (__GNUC__) || defined(__clang__)
 static inline uint32_t bit_scan_reverse (uint32_t a) __attribute__ ((pure));
-static inline uint32_t bit_scan_reverse (uint32_t a) {	
+static inline uint32_t bit_scan_reverse (uint32_t a) {  
     uint32_t r;
     __asm("bsrl %1, %0" : "=r"(r) : "r"(a) : );
     return r;
 }
 #else
-static inline uint32_t bit_scan_reverse (uint32_t a) {	
+static inline uint32_t bit_scan_reverse (uint32_t a) {  
     unsigned long r;
     _BitScanReverse(&r, a);                      // defined in intrin.h for MS and Intel compilers
     return r;

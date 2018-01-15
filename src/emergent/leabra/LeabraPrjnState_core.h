@@ -1,7 +1,7 @@
 // this contains core shared code, and is included directly in LeabraPrjnState _cpp.h, _cuda.h
 // {
 
-  float	        scale_eff;           // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Activation effective scaling value for this projection -- computed based on sending layer running average activation (acts_p_avg_eff), number of recv connections, and con spec wt_scale parameters -- produces normalized overall netin values
+  float         scale_eff;           // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Activation effective scaling value for this projection -- computed based on sending layer running average activation (acts_p_avg_eff), number of recv connections, and con spec wt_scale parameters -- produces normalized overall netin values
   float         netin_avg;           // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic average netinput values for the recv projections into this layer
   float         netin_rel;           // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic relative netinput values for the recv projections into this layer
 

@@ -23,9 +23,9 @@ class BpUnitState_cuda : public UnitState_cuda {
   // NVIDIA CUDA backprop unit variables: MUST be exact memory-aligned copy of BpUnitState
 public:
   float         bias_pdw;       // #VIEW_HOT previous bias weight change
-  float 	err; 		// #VIEW_HOT error value -- this is E for target units, not dEdA
-  float 	dEdA;		// #VIEW_HOT derivative of error wrt activation
-  float 	dEdNet;		// #VIEW_HOT derivative of error wrt net input
+  float         err;            // #VIEW_HOT error value -- this is E for target units, not dEdA
+  float         dEdA;           // #VIEW_HOT derivative of error wrt activation
+  float         dEdNet;         // #VIEW_HOT derivative of error wrt net input
   float         misc1;          // miscellaneous computational value -- used for  exp(netin) in SOFTMAX case, and to hold the index of the most active unit among input connections for MAX_POOL (cast to int)
 };
 
@@ -66,7 +66,7 @@ public:
 
   BpActFun      act_fun;        // activation function to use -- note that act_range is ignored for most functions except linear-based ones, and for output units using the cross-entropy error function
   BpErrFun      error_fun;      // error function to use: only applicable to layers of type TARGET -- squared error is appropriate for unbounded linear targets, while cross-entropy is more appropriate for binary targets
-  float		err_tol;	// #DEF_0.05;0 error tolerance: no error signal for a unit if |targ-act| < err_tol) (i.e., as if act == targ exactly) -- often useful to set to .05 or so to prevent over-learning with binary training signals -- big weights often needed to get very high or low activations
+  float         err_tol;        // #DEF_0.05;0 error tolerance: no error signal for a unit if |targ-act| < err_tol) (i.e., as if act == targ exactly) -- often useful to set to .05 or so to prevent over-learning with binary training signals -- big weights often needed to get very high or low activations
   
   // this stuff not supported in CUDA (yet)
   
@@ -159,10 +159,10 @@ public:
     WU_MOMENT_ELIM,              // momentum and weight elimination
   };
   
-  float		cur_lrate;	// #READ_ONLY #NO_INHERIT #SHOW current actual learning rate = lrate * lrate_sched current value (* 1 if no lrate_sched)
-  float 	momentum;	// momentum factor -- as of 8.0 this is standardized to NOT include an additional learning rate factor (previous AFTER_LRATE option -- momentum is effectively after the learning rate)
+  float         cur_lrate;      // #READ_ONLY #NO_INHERIT #SHOW current actual learning rate = lrate * lrate_sched current value (* 1 if no lrate_sched)
+  float         momentum;       // momentum factor -- as of 8.0 this is standardized to NOT include an additional learning rate factor (previous AFTER_LRATE option -- momentum is effectively after the learning rate)
   DecayType     decay_type;     // type of weight decay to apply (before 8.0 this was set by selecting a function, but this prevents optimization)
-  float 	decay;		// #CONDSHOW_OFF_decay_type:NO_DECAY decay rate -- the learning rate is also applied to the decay -- i.e., decay comes before the learning rate factor
+  float         decay;          // #CONDSHOW_OFF_decay_type:NO_DECAY decay rate -- the learning rate is also applied to the decay -- i.e., decay comes before the learning rate factor
   WtUpdtType    wt_updt;        // #READ_ONLY type of weight update to perform -- computed from other parameters set -- used to optimize computation
 
 };

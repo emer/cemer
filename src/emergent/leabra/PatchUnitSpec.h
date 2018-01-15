@@ -10,8 +10,8 @@
   }
 
   // no learning in this one -- just a readout of PFC activation
-  INLINE void 	Compute_dWt(UNIT_STATE* u, NETWORK_STATE* net, int thr_no) override { };
-  INLINE void	Compute_Weights(UNIT_STATE* u, NETWORK_STATE* net, int thr_no) override { };
+  INLINE void   Compute_dWt(UNIT_STATE* u, NETWORK_STATE* net, int thr_no) override { };
+  INLINE void   Compute_Weights(UNIT_STATE* u, NETWORK_STATE* net, int thr_no) override { };
 
   INLINE void Initialize_core() {
   }

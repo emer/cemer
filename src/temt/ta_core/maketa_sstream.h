@@ -42,7 +42,7 @@
  */
 
 #ifndef _CPP_SSTREAM
-#define _CPP_SSTREAM	1
+#define _CPP_SSTREAM    1
 
 #include "maketa_iostream.h"
 

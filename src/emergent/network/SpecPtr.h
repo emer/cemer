@@ -30,44 +30,44 @@ class E_API SpecPtr_impl : public taOBase {
   // ##INLINE ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Spec magic pointer to a spec
 INHERITED(taOBase)
 public:
-  TypeDef*	base_type;	// #TYPE_BaseSpec #HIDDEN #NO_SAVE base type for type field
-  TypeDef*	type;		// #TYPE_ON_base_type The type of the spec to use
+  TypeDef*      base_type;      // #TYPE_BaseSpec #HIDDEN #NO_SAVE base type for type field
+  TypeDef*      type;           // #TYPE_ON_base_type The type of the spec to use
 
-  virtual BaseSpec* GetSpec() const	{ return NULL; } // get the spec pointer
+  virtual BaseSpec* GetSpec() const     { return NULL; } // get the spec pointer
 
-  virtual bool	SetSpec_impl(BaseSpec* es, bool update_if_set) { return false; }
+  virtual bool  SetSpec_impl(BaseSpec* es, bool update_if_set) { return false; }
   // set the spec pointer -- if update_if_set then UAE called on owner if a new spec is set -- don't do this for SetDefaultSpec
   inline bool   SetSpec(BaseSpec* es) { return SetSpec_impl(es, true); }
   // default set spec call -- does UAE
 
-  BaseSpec* 	operator=(BaseSpec* cp)	{ SetSpec(cp); return cp; }
+  BaseSpec*     operator=(BaseSpec* cp) { SetSpec(cp); return cp; }
 
-  virtual void	SetDefaultSpec(taBase* ownr, TypeDef* td);
+  virtual void  SetDefaultSpec(taBase* ownr, TypeDef* td);
   // for class that owns ptr
-  virtual void	SetBaseType(TypeDef* td);
+  virtual void  SetBaseType(TypeDef* td);
   // for overloaded classes
   virtual BaseSpec_Group* GetSpecGroup();
   // get the group where specs go
-  virtual void	GetSpecOfType(bool verbose = false);
+  virtual void  GetSpecOfType(bool verbose = false);
   // get a spec of type type in GetSpecGroup group -- if existing one is not found, make a new one -- verbose = report about it
 
-  virtual void	CheckSpec(TypeDef* obj_td = NULL);
+  virtual void  CheckSpec(TypeDef* obj_td = NULL);
   // check the spec for !NULL and type match, and for proper type of object (obj_td) that is using this spec (if obj_td is null, it is set to owner type -- can be diff for various other cases) -- fix if out of whack -- this is what used to be called in the UpdateAfterEdit and is now called in the network CheckSpecs prior to build
 
-  virtual bool	CheckObjTypeForSpec(TypeDef* obj_td = NULL);
+  virtual bool  CheckObjTypeForSpec(TypeDef* obj_td = NULL);
   // check for proper type of object (obj_td) that is using this spec (if obj_td is null, it is set to owner type -- can be diff for various other cases) -- just a check -- no message or anything (message is in CheckSpec
 
 //  taBase* UpdatePointers_NewPar_FindNew(taBase* old_guy, taBase* old_par,
-//						 taBase* new_par) override;
-//  int	UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr) override;
+//                                               taBase* new_par) override;
+//  int UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr) override;
 
   TA_BASEFUNS(SpecPtr_impl);
 protected:
-  void	UpdateAfterEdit_impl() override;
+  void  UpdateAfterEdit_impl() override;
 private:
-  void	Initialize();
-  void 	Destroy()		{ };
-  void	Copy_(const SpecPtr_impl& cp);
+  void  Initialize();
+  void  Destroy()               { };
+  void  Copy_(const SpecPtr_impl& cp);
 };
 
 eTypeDef_Of(SpecPtr);
@@ -76,13 +76,13 @@ template<class T>
 class SpecPtr : public SpecPtr_impl {
 INHERITED(SpecPtr_impl)
 public:
-  taSmartRefT<T>	spec;		// #TYPE_ON_type the actual spec itself
+  taSmartRefT<T>        spec;           // #TYPE_ON_type the actual spec itself
 
-  inline T*		SPtr() const		{ return spec.ptr(); }
+  inline T*             SPtr() const            { return spec.ptr(); }
   // use this call to access the spec pointer value in all client calls -- fast!
-  BaseSpec*	GetSpec() const	override { return SPtr(); }
+  BaseSpec*     GetSpec() const override { return SPtr(); }
 
-  bool		SetSpec_impl(BaseSpec* es, bool update_if_set) override  {
+  bool          SetSpec_impl(BaseSpec* es, bool update_if_set) override  {
     if (spec.ptr() == es) return true; // low level setting, ex. streaming, handled in UAE
     if(!owner) return false;
     if(!es || (es->InheritsFrom(base_type) && es->CheckObjectType(owner))) {
@@ -91,41 +91,41 @@ public:
       if(es) { type = es->GetTypeDef(); es->SpecSet(owner);}
       if(prv_spec) { prv_spec->SpecUnSet(owner); }
       if(update_if_set) {
-        owner->UpdateAfterEdit();	// owner might need to apply this change to all subs
+        owner->UpdateAfterEdit();       // owner might need to apply this change to all subs
       }
       return true;
     }
     TestError(true, "SetSpec", "incorrect type of Spec:",
-		  es->DisplayPath(), "of type:", es->GetTypeDef()->name,
-		  "should be at least:", base_type->name,"in object:",owner->DisplayPath());
+                  es->DisplayPath(), "of type:", es->GetTypeDef()->name,
+                  "should be at least:", base_type->name,"in object:",owner->DisplayPath());
     return false;
   }
 
-  void		SetDefaultSpec(taBase* ownr, TypeDef* td) override
+  void          SetDefaultSpec(taBase* ownr, TypeDef* td) override
   { SpecPtr_impl::SetDefaultSpec(ownr, td); }
-  void		SetDefaultSpec(taBase* ownr)
+  void          SetDefaultSpec(taBase* ownr)
   { SetDefaultSpec(ownr, T::StatTypeDef(1)); }
 
-  virtual T* 	NewChild()
+  virtual T*    NewChild()
   {  T* rval = (T*)spec->children.NewEl(1); rval->UpdateSpec(); return rval; }
 
-  T* 		operator->() const	{ return SPtr(); }
-  T* 		operator=(T* cp)	{ SetSpec(cp); return cp; }
-  bool 		operator!=(T* cp) const	{ return (spec.ptr() != cp); }
-  bool 		operator==(T* cp) const	{ return (spec.ptr() == cp); }
+  T*            operator->() const      { return SPtr(); }
+  T*            operator=(T* cp)        { SetSpec(cp); return cp; }
+  bool          operator!=(T* cp) const { return (spec.ptr() != cp); }
+  bool          operator==(T* cp) const { return (spec.ptr() == cp); }
   
-  operator T*()	const		{ return SPtr(); }
-  operator BaseSpec*() const	{ return SPtr(); }
-  operator bool() const 	{ return (bool)spec; }
+  operator T*() const           { return SPtr(); }
+  operator BaseSpec*() const    { return SPtr(); }
+  operator bool() const         { return (bool)spec; }
 
-  void  InitLinks() override	{ SpecPtr_impl::InitLinks(); taBase::Own(spec, this); }
-  void  CutLinks() override	{ spec.CutLinks(); SpecPtr_impl::CutLinks(); }
+  void  InitLinks() override    { SpecPtr_impl::InitLinks(); taBase::Own(spec, this); }
+  void  CutLinks() override     { spec.CutLinks(); SpecPtr_impl::CutLinks(); }
   
   TA_TMPLT_BASEFUNS_LITE(SpecPtr,T);
 private:
-  void	Copy_(const SpecPtr<T>& cp) { spec.set(cp.SPtr()); } 
-  void 	Initialize()		{ }
-  void	Destroy()		{ CutLinks(); }
+  void  Copy_(const SpecPtr<T>& cp) { spec.set(cp.SPtr()); } 
+  void  Initialize()            { }
+  void  Destroy()               { CutLinks(); }
 };
 
 #define SPECPTREX_OF(API, T)            \
@@ -134,8 +134,8 @@ class API T ## _SPtr : public SpecPtr<T> { \
 private: \
   typedef SpecPtr<T> inherited;\
   void  Copy_(const T ## _SPtr&) {} \
-  void 	Initialize() { }; \
-  void	Destroy() { }; \
+  void  Initialize() { }; \
+  void  Destroy() { }; \
 public: \
   TA_BASEFUNS_LITE(T ## _SPtr); \
 }

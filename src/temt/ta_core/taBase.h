@@ -1667,7 +1667,7 @@ private:
 
 
 /////////////////////////////////////////////
-//	Operators
+//      Operators
 
 #ifndef __MAKETA__
 inline std::istream& operator>>(std::istream &strm, taBase &obj)

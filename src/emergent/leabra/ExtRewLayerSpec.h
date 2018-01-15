@@ -1,15 +1,15 @@
 // this is included directly in LeabraExtraLayerSpecs_cpp / _cuda
 // {
 
-  enum RewardType {		// how do we get the reward values?
-    OUT_ERR_REW,		// get rewards as a function of errors on the output layer ONLY WHEN RewTarg layer act > .5 -- get from markerconspec from output layer(s)
-    EXT_REW,			// get rewards as external inputs marked as ext_flag = TARG to the first unit in the layer (if ext val == norew_val, then no ext rew signaled)
-    DA_REW			// get rewards from da values on first unit in layer (if ext val == norew_val, then no ext rew signaled)
+  enum RewardType {             // how do we get the reward values?
+    OUT_ERR_REW,                // get rewards as a function of errors on the output layer ONLY WHEN RewTarg layer act > .5 -- get from markerconspec from output layer(s)
+    EXT_REW,                    // get rewards as external inputs marked as ext_flag = TARG to the first unit in the layer (if ext val == norew_val, then no ext rew signaled)
+    DA_REW                      // get rewards from da values on first unit in layer (if ext val == norew_val, then no ext rew signaled)
   };
 
-  RewardType	rew_type;	// how do we get the reward values?
-  STATE_CLASS(OutErrSpec)	out_err;	// #CONDEDIT_ON_rew_type:OUT_ERR_REW how to compute external rewards based on output performance
-  STATE_CLASS(ExtRewSpec)	rew;		// misc reward computation specifications
+  RewardType    rew_type;       // how do we get the reward values?
+  STATE_CLASS(OutErrSpec)       out_err;        // #CONDEDIT_ON_rew_type:OUT_ERR_REW how to compute external rewards based on output performance
+  STATE_CLASS(ExtRewSpec)       rew;            // misc reward computation specifications
 
 
   INLINE virtual void Compute_Rew(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
@@ -38,7 +38,7 @@
     INIMPL virtual void Compute_NoRewAct(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net);
     // #CAT_ExtRew used in above routines: clamp norew_val values for when no reward information is present
 
-  INIMPL void	Compute_HardClamp_Layer(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) override;
+  INIMPL void   Compute_HardClamp_Layer(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) override;
 
   INLINE void Initialize_core() {
     rew_type = OUT_ERR_REW;

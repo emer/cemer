@@ -32,8 +32,8 @@ class TA_API T3GridViewNode: public T3NodeParent {
   Q_OBJECT
   INHERITED(T3NodeParent)
 public:
-  static float 		frame_margin; // #HIDDEN #NO_SAVE = .05 size of margin around stage for frame
-  static float 		frame_width; // #HIDDEN #NO_SAVE = .02 width of frame itself
+  static float          frame_margin; // #HIDDEN #NO_SAVE = .05 size of margin around stage for frame
+  static float          frame_width; // #HIDDEN #NO_SAVE = .02 width of frame itself
 
   float                 width;
   bool                  show_drag;
@@ -42,9 +42,9 @@ public:
   T3Entity*             header;
   T3Entity*             body;
 
-  void		        updateNode() override;
-  virtual void		setWidth(float wdth);
-  void		        setDefaultCaptionTransform() override;
+  void                  updateNode() override;
+  virtual void          setWidth(float wdth);
+  void                  setDefaultCaptionTransform() override;
 
   T3GridViewNode(Qt3DNode* par = NULL, T3DataView* dataView_ = NULL,
                  float wdth=1.0f, bool show_draggers = true);
@@ -69,44 +69,44 @@ typedef T3NodeParent inherited;
   TA_SO_NODE_HEADER(T3GridViewNode);
 #endif // def __MAKETA__
 public:
-  static float 		frame_margin; // #HIDDEN #NO_SAVE = .05 size of margin around stage for frame
-  static float 		frame_width; // #HIDDEN #NO_SAVE = .02 width of frame itself
-  static void		initClass();
+  static float          frame_margin; // #HIDDEN #NO_SAVE = .05 size of margin around stage for frame
+  static float          frame_width; // #HIDDEN #NO_SAVE = .02 width of frame itself
+  static void           initClass();
 
-  SoFrame*		frame() const {return frame_;} // #IGNORE 
-  SoGroup*		grid() const {return grid_;}  // #IGNORE 
-  SoMaterial*		matStage() const {return mat_stage_;}  // #IGNORE 
-  SoSeparator*		header() const {return header_;}  // #IGNORE 
-  SoSeparator*		body() const {return body_;}  // #IGNORE 
+  SoFrame*              frame() const {return frame_;} // #IGNORE 
+  SoGroup*              grid() const {return grid_;}  // #IGNORE 
+  SoMaterial*           matStage() const {return mat_stage_;}  // #IGNORE 
+  SoSeparator*          header() const {return header_;}  // #IGNORE 
+  SoSeparator*          body() const {return body_;}  // #IGNORE 
 
-  SoScrollBar*		ColScrollBar() const { return col_scroll_bar_; }  // #IGNORE 
-  SoScrollBar*		RowScrollBar() const { return row_scroll_bar_; }  // #IGNORE 
+  SoScrollBar*          ColScrollBar() const { return col_scroll_bar_; }  // #IGNORE 
+  SoScrollBar*          RowScrollBar() const { return row_scroll_bar_; }  // #IGNORE 
 
-  virtual void		render();
-  virtual void		setWidth(float wdth);
-  virtual float		getWidth() { return width_; }
+  virtual void          render();
+  virtual void          setWidth(float wdth);
+  virtual float         getWidth() { return width_; }
 
-  //  void		addRemoveChildNode(SoNode* node, bool adding) override {}
+  //  void              addRemoveChildNode(SoNode* node, bool adding) override {}
   
   T3GridViewNode(T3DataView* dataView_ = NULL, float wdth=1.0f, bool show_draggers = true);
   // dataview is a GridTableView object
 
 protected:
-  float			width_;
-  SoSeparator*		stage_;
-  SoMaterial*		mat_stage_;
-  SoTranslation*	  txlt_stage_;
-  SoSeparator*		  header_;
-  SoSeparator*		  body_;//
-  SoSeparator*		  grid_;
-  SoFrame*		frame_; 
+  float                 width_;
+  SoSeparator*          stage_;
+  SoMaterial*           mat_stage_;
+  SoTranslation*          txlt_stage_;
+  SoSeparator*            header_;
+  SoSeparator*            body_;//
+  SoSeparator*            grid_;
+  SoFrame*              frame_; 
 
-  bool			show_drag_;
-  T3TransformBoxDragger* drag_;	// my position dragger
+  bool                  show_drag_;
+  T3TransformBoxDragger* drag_; // my position dragger
 
-  SoScrollBar*		col_scroll_bar_;
-  SoTransform*		col_sb_tx_; // col scrollbar transform
-  SoScrollBar*		row_scroll_bar_;
+  SoScrollBar*          col_scroll_bar_;
+  SoTransform*          col_sb_tx_; // col scrollbar transform
+  SoScrollBar*          row_scroll_bar_;
 
   ~T3GridViewNode();
 };

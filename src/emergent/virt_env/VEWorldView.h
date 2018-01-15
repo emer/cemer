@@ -50,53 +50,53 @@ friend class iViewPanelOfVEWorld;
 public:
   static VEWorldView* New(VEWorld* wl, T3Panel*& fr);
 
-  bool		display_on;  	// #DEF_true 'true' if display should be updated
-  bool		drag_objs;	// allow user to drag/rotate/rescale objects
-  float		drag_size;	// size of the dragger controls
-  bool		show_joints;	// show a visual representation of the joints
+  bool          display_on;     // #DEF_true 'true' if display should be updated
+  bool          drag_objs;      // allow user to drag/rotate/rescale objects
+  float         drag_size;      // size of the dragger controls
+  bool          show_joints;    // show a visual representation of the joints
 
-  virtual const String	caption() const; // what to show in viewer
+  virtual const String  caption() const; // what to show in viewer
 
-  VEWorld*		World() const {return (VEWorld*)data();}
-  virtual void		SetWorld(VEWorld* wl);
+  VEWorld*              World() const {return (VEWorld*)data();}
+  virtual void          SetWorld(VEWorld* wl);
 
-  virtual void		InitDisplay(bool init_panel = true);
+  virtual void          InitDisplay(bool init_panel = true);
   // does a hard reset on the display, reinitializing variables etc.  Note does NOT do Updatedisplay -- that is a separate step
-  virtual void		UpdateDisplay(bool update_panel = true);
+  virtual void          UpdateDisplay(bool update_panel = true);
   // full re-render of the display (generally calls Render_impl)
 
-  virtual void		InitPanel();
+  virtual void          InitPanel();
   // lets panel init itself after struct changes
-  virtual void		UpdatePanel();
+  virtual void          UpdatePanel();
   // after changes to props
 
 
-  virtual void		SetupCameras();
+  virtual void          SetupCameras();
   // configure the cameras during rendering -- called by Render_impl
-  virtual void		CreateLights();
+  virtual void          CreateLights();
   // create the lights during render_pre
-  virtual void		CreateTextures();
+  virtual void          CreateTextures();
   // create the textures during render_pre
-  virtual void		SetupLights();
+  virtual void          SetupLights();
   // configure the lights during rendering -- called by Render_impl
 
-  virtual QImage	GetCameraImage(int cam_no);
+  virtual QImage        GetCameraImage(int cam_no);
   // #IGNORE get the output of the given camera number (currently 0 or 1)
 
-  bool			isVisible() const;
-  bool		ignoreSigEmit() const override { return !isVisible(); }
+  bool                  isVisible() const;
+  bool          ignoreSigEmit() const override { return !isVisible(); }
 
-  void		BuildAll() override;
+  void          BuildAll() override;
   
-  virtual void		UpdateName();
-  void		OnWindowBind_impl(iT3Panel* vw) override;
+  virtual void          UpdateName();
+  void          OnWindowBind_impl(iT3Panel* vw) override;
   // #IGNORE
 
-  void 	Initialize();
-  void 	Destroy()	{ CutLinks(); }
-  void 	InitLinks() override;
-  void	CutLinks() override;
-  void	Copy_(const VEWorldView& cp);
+  void  Initialize();
+  void  Destroy()       { CutLinks(); }
+  void  InitLinks() override;
+  void  CutLinks() override;
+  void  Copy_(const VEWorldView& cp);
   T3_DATAVIEWFUNS(VEWorldView, T3DataViewMain) // 
 protected:
 #ifndef __MAKETA__
@@ -104,20 +104,20 @@ protected:
 #ifdef TA_QT3D
 
 #else // TA_QT3D
-  SoOffscreenRendererQt*	cam_renderer;
+  SoOffscreenRendererQt*        cam_renderer;
 #if (QT_VERSION >= 0x050600)
   QOpenGLWidget*                nowin_widg;
 #endif
 #endif // TA_QT3D
 #endif
-  bool			nowin_rebuild_done; // #NO_SAVE flag for manual rebuild of scene for nowin mode -- only do this once
+  bool                  nowin_rebuild_done; // #NO_SAVE flag for manual rebuild of scene for nowin mode -- only do this once
 
-  void		SigRecvUpdateAfterEdit_impl() override;
-  void		SigRecvUpdateView_impl() override;
-  void 	UpdateAfterEdit_impl() override;
+  void          SigRecvUpdateAfterEdit_impl() override;
+  void          SigRecvUpdateView_impl() override;
+  void  UpdateAfterEdit_impl() override;
 
-  void		Render_pre() override;
-  void		Render_impl() override;
+  void          Render_pre() override;
+  void          Render_impl() override;
 
 };
 

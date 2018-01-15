@@ -68,23 +68,23 @@ typedef T3Node inherited;
   TA_SO_NODE_HEADER(T3NodeParent);
 #endif // def __MAKETA__
 public:
-  static void		initClass();
+  static void           initClass();
 
-  SoFont*		captionFont(bool auto_create = false) override;
-  SoSeparator*		shapeSeparator() override {return shapeSeparator_;}
-  virtual SoSeparator*	childNodes() override; // use this to set/get T3Node children
+  SoFont*               captionFont(bool auto_create = false) override;
+  SoSeparator*          shapeSeparator() override {return shapeSeparator_;}
+  virtual SoSeparator*  childNodes() override; // use this to set/get T3Node children
   
-  void			addRemoveChildNode(SoNode* node, bool adding) override;
+  void                  addRemoveChildNode(SoNode* node, bool adding) override;
 
   T3NodeParent(T3DataView* dataView_ = NULL);
 
 protected:
-  SoSeparator*		captionSeparator(bool auto_create = false) override;
+  SoSeparator*          captionSeparator(bool auto_create = false) override;
 
   ~T3NodeParent();
 protected:
-  SoSeparator*		shapeSeparator_; // #IGNORE
-  SoSeparator*		childNodes_; // #IGNORE
+  SoSeparator*          shapeSeparator_; // #IGNORE
+  SoSeparator*          childNodes_; // #IGNORE
 };
 
 #endif // TA_QT3D

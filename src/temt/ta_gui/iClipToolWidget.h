@@ -28,12 +28,12 @@ INHERITED(QToolButton)
   Q_OBJECT
 public:
 
-  bool			autoCopy() const {return m_autoCopy;}
+  bool                  autoCopy() const {return m_autoCopy;}
     // whether a click automatically copies data to clipboard
-  void			setAutoCopy(bool value);
+  void                  setAutoCopy(bool value);
   
-  bool			dragEnabled() const {return m_dragEnabled;}
-  void			setDragEnabled(bool value);
+  bool                  dragEnabled() const {return m_dragEnabled;}
+  void                  setDragEnabled(bool value);
 
   iClipToolWidget(iClipWidgetAction* cwa = NULL, QWidget* parent = NULL);
 
@@ -41,17 +41,17 @@ public:
 #ifndef __MAKETA__
 protected:
   QPointer<iClipWidgetAction> m_cwa;
-  bool			m_autoCopy;
-  bool			m_dragEnabled;
-  QPoint		dragStartPosition;
+  bool                  m_autoCopy;
+  bool                  m_dragEnabled;
+  QPoint                dragStartPosition;
   
   virtual Qt::DropActions supportedDropActions () const; // def is Copy
   
-  void 			mousePressEvent(QMouseEvent* event) override;
-  void 			mouseReleaseEvent(QMouseEvent* event) override;
-  void 			mouseMoveEvent(QMouseEvent* event) override;
+  void                  mousePressEvent(QMouseEvent* event) override;
+  void                  mouseReleaseEvent(QMouseEvent* event) override;
+  void                  mouseMoveEvent(QMouseEvent* event) override;
 private:
-  void			Init();
+  void                  Init();
 #endif
 };
 

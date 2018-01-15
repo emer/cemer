@@ -31,14 +31,14 @@ class TA_API MiscCall : public StaticMethodCall {
   // call a taMisc function
 INHERITED(StaticMethodCall)
 public:
-  String	GetToolbarName() const override { return "misc()"; }
+  String        GetToolbarName() const override { return "misc()"; }
 
-  bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
+  bool          CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
 
   TA_BASEFUNS_NOCOPY(MiscCall);
 private:
-  void	Initialize();
-  void	Destroy()	{ };
+  void  Initialize();
+  void  Destroy()       { };
 }; 
 
 #endif // MiscCall_h

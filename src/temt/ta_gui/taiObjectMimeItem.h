@@ -31,27 +31,27 @@ INHERITED(taiMimeItem)
 friend class taiObjectsMimeItem;
 friend class taiMimeSource; //TEMP
 public:
-  inline String		typeName() {return m_type_name;};
-  inline String		path() {return m_path;}
-  TypeDef*		td() {return m_td;}
-  taBase*		obj(); // note: only valid when in-process
+  inline String         typeName() {return m_type_name;};
+  inline String         path() {return m_path;}
+  TypeDef*              td() {return m_td;}
+  taBase*               obj(); // note: only valid when in-process
   
 #ifndef __MAKETA__
-  int			GetObjectData(std::istringstream& result);
+  int                   GetObjectData(std::istringstream& result);
   // #IGNORE gets the object data for the current item; returns number of bytes
 #endif
 
   TA_BASEFUNS_NOCOPY(taiObjectMimeItem);
 protected:
-  String		m_type_name;
-  TypeDef*		m_td;
-  String		m_path;
-  taBase*		m_obj;
-  bool		Constr_impl(const String&) override;
-  void		DecodeData_impl() override;
+  String                m_type_name;
+  TypeDef*              m_td;
+  String                m_path;
+  taBase*               m_obj;
+  bool          Constr_impl(const String&) override;
+  void          DecodeData_impl() override;
 private:
-  void	Initialize();
-  void	Destroy() {}
+  void  Initialize();
+  void  Destroy() {}
 };
 
 #endif // taiObjectMimeItem_h

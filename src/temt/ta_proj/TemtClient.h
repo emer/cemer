@@ -52,8 +52,8 @@ INHERITED(taOABase)
 friend class TableParams;
 public:
   enum ClientState {
-    CS_READY,	// expecting a command
-    CS_DATA_IN,	// expecting another line of data in (from previous command)
+    CS_READY,   // expecting a command
+    CS_DATA_IN, // expecting another line of data in (from previous command)
     CS_DISCONNECTED // client has disconnected
   };
   
@@ -78,16 +78,16 @@ public:
     QJsonDocument::JsonFormat     json_format; // #READ_ONLY #NO_SAVE return to client document format - compact or indented
   #endif
   
-  ClientState		state; // #READ_ONLY #SHOW #NO_SAVE comm state
-  bool			isConnected() const {return (state != CS_DISCONNECTED);}
+  ClientState           state; // #READ_ONLY #SHOW #NO_SAVE comm state
+  bool                  isConnected() const {return (state != CS_DISCONNECTED);}
   
   TemtClient_QObj* adapter(); // #IGNORE
   TA_BASEFUNS(TemtClient);
 
-  TemtServer*		server; // #READ_ONLY #NO_SAVE (will never change) set on create; NOT refcnted
+  TemtServer*           server; // #READ_ONLY #NO_SAVE (will never change) set on create; NOT refcnted
 
-  void			CloseClient();
-  void			SetSocket(QTcpSocket* sock); // #IGNORE
+  void                  CloseClient();
+  void                  SetSocket(QTcpSocket* sock); // #IGNORE
 
   void      SendError(const String& err_msg, TemtClient::ServerError err = UNSPECIFIED); // relay to SendError in format of received message
   void      SendErrorNATIVE(const String& err_msg, TemtClient::ServerError err = UNSPECIFIED); // send error reply in ascii
@@ -102,25 +102,25 @@ public:
 #endif
   
   void      WriteLine(const String& ln); // low level write, note: adds eol
-  void			Write(const String& txt); // low level write
+  void                  Write(const String& txt); // low level write
   
 public: // commands, all are cmdXXX where XXX is exact command name
   virtual void    RunCommand(const String& cmd);  // dispatch specified command
-  virtual void 		cmdAppendData();
-  virtual void		cmdCloseProject();
-  virtual void		cmdEcho(); // echos, for test
-  virtual void 		cmdGetData();
-  virtual void 		cmdGetDataCell();
-  virtual void 		cmdGetDataMatrixCell();
-  virtual void 		cmdGetVar();
-  virtual void 		cmdGetRunState();
-  virtual void		cmdOpenProject();
-  virtual void 		cmdRemoveData();
-  virtual void		cmdRunProgram(bool sync);
-  virtual void 		cmdSetData();
-  virtual void 		cmdSetDataCell();
-  virtual void 		cmdSetDataMatrixCell();
-  virtual void		cmdSetVar();
+  virtual void          cmdAppendData();
+  virtual void          cmdCloseProject();
+  virtual void          cmdEcho(); // echos, for test
+  virtual void          cmdGetData();
+  virtual void          cmdGetDataCell();
+  virtual void          cmdGetDataMatrixCell();
+  virtual void          cmdGetVar();
+  virtual void          cmdGetRunState();
+  virtual void          cmdOpenProject();
+  virtual void          cmdRemoveData();
+  virtual void          cmdRunProgram(bool sync);
+  virtual void          cmdSetData();
+  virtual void          cmdSetDataCell();
+  virtual void          cmdSetDataMatrixCell();
+  virtual void          cmdSetVar();
   virtual void    cmdSetImage();
   virtual void    cmdCollectConsoleOutput();
   virtual void    cmdGetConsoleOutput();
@@ -132,14 +132,14 @@ public: // commands, all are cmdXXX where XXX is exact command name
 #endif
   
 public: // slot forwardees
-  void 			sock_readyRead();
-  void 			sock_disconnected(); 
-  void 			sock_stateChanged(QAbstractSocket::SocketState socketState);
+  void                  sock_readyRead();
+  void                  sock_disconnected(); 
+  void                  sock_stateChanged(QAbstractSocket::SocketState socketState);
   // #IGNORE
 
 protected:
-  static String 	ReadQuotedString(const String& str, int& p, bool& err);
-  static String		NextToken(const String& str, int& p, bool& err);
+  static String         ReadQuotedString(const String& str, int& p, bool& err);
+  static String         NextToken(const String& str, int& p, bool& err);
     // skip ws, get the next token; removes quotes and processes quoted/escaped strings
 
   bool CalcRowParams(String operation, DataTable* table, int& row_from, int& rows, int row_to);
@@ -177,33 +177,33 @@ protected:
     };
     bool markers;
     
-    bool	ValidateParams(Cmd cmd = Get, bool mat = false);
+    bool        ValidateParams(Cmd cmd = Get, bool mat = false);
     TableParams(TemtClient* tc_, DataTable* tab_)
       {tc = tc_; tab = tab_;}
   };
 
-  virtual void 		cmdGetDataCell_impl(TableParams& p);
-  virtual void 		cmdSetDataCell_impl(TableParams& p);
-  QPointer<QTcpSocket>	sock; // #IGNORE the socket for the connected client
+  virtual void          cmdGetDataCell_impl(TableParams& p);
+  virtual void          cmdSetDataCell_impl(TableParams& p);
+  QPointer<QTcpSocket>  sock; // #IGNORE the socket for the connected client
 #endif
-  String_PArray		lines; // have to buffer between raw in and processing them -- this is a queue
+  String_PArray         lines; // have to buffer between raw in and processing them -- this is a queue
   
 // every command line is parsed into the following pieces before dispatching the command:
-  String		      cmd_line; // the last cmd line
-  String		      cmd; // this is the first item, the command
-  String_PArray		pos_params; // positional (no "=") parameters, if any; str quoting/escaping already done (used by ascii parser)
-  NameVar_PArray	name_params; // name params; str quoting/escaping already done
-  taProjectRef		cur_proj; // set by OpenProject cmd, or to proj0
+  String                      cmd_line; // the last cmd line
+  String                      cmd; // this is the first item, the command
+  String_PArray         pos_params; // positional (no "=") parameters, if any; str quoting/escaping already done (used by ascii parser)
+  NameVar_PArray        name_params; // name params; str quoting/escaping already done
+  taProjectRef          cur_proj; // set by OpenProject cmd, or to proj0
 #if (QT_VERSION >= 0x050000)
   QJsonObject     tableData;  // #IGNORE this is the json data table data
 #endif
-  taProject*		GetCurrentProject(); // gets, and maybe asserts
-  DataTable* 		GetAssertTable(const String& nm); // gets, and sends errs if not found; supports <GlobalTableName> or <ProgName>.<LocalTableName> formats
-  Program* 		  GetAssertProgram(const String& pnm); // gets, and sends errs if not found
+  taProject*            GetCurrentProject(); // gets, and maybe asserts
+  DataTable*            GetAssertTable(const String& nm); // gets, and sends errs if not found; supports <GlobalTableName> or <ProgName>.<LocalTableName> formats
+  Program*                GetAssertProgram(const String& pnm); // gets, and sends errs if not found
   
-  void			    setState(ClientState cs);
+  void                      setState(ClientState cs);
   
-  void			    HandleLines(); // line handling loop
+  void                      HandleLines(); // line handling loop
   void          ParseCommand(const String& cl);
   void          ParseCommandNATIVE(const String& cl);
 #if (QT_VERSION >= 0x050000)
@@ -218,9 +218,9 @@ protected:
 #endif
   
 private:
-  void	Copy_(const TemtClient& cp);
-  void	Initialize();
-  void 	Destroy();
+  void  Copy_(const TemtClient& cp);
+  void  Initialize();
+  void  Destroy();
 };
 
 #endif // TemtClient_h

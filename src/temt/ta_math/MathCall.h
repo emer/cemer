@@ -31,14 +31,14 @@ class TA_API MathCall : public StaticMethodCall {
   // call a taMath function
 INHERITED(StaticMethodCall)
 public:
-  String	GetToolbarName() const override { return "math()"; }
+  String        GetToolbarName() const override { return "math()"; }
 
-  bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
+  bool          CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
 
   TA_BASEFUNS_NOCOPY(MathCall);
 private:
-  void	Initialize();
-  void	Destroy()	{ };
+  void  Initialize();
+  void  Destroy()       { };
 }; 
 
 #endif // MathCall_h

@@ -31,17 +31,17 @@ class TA_API DataSelectSpec : public DataOpBaseSpec {
   // #CAT_Data a datatable select specification (list of select elements)
   INHERITED(DataOpBaseSpec)
 public:
-  Relation::CombOp	comb_op;	// how to combine individual expressions for each column
+  Relation::CombOp      comb_op;        // how to combine individual expressions for each column
 
-  virtual void 	UpdateEnabled(); // update the act_enabled flags based on variables etc
+  virtual void  UpdateEnabled(); // update the act_enabled flags based on variables etc
 
   void GetColumns(DataTable* dt) override { inherited::GetColumns(dt); UpdateEnabled(); }
 
   String GetDisplayName() const override;
   TA_SIMPLE_BASEFUNS(DataSelectSpec);
 private:
-  void	Initialize();
-  void 	Destroy()		{ };
+  void  Initialize();
+  void  Destroy()               { };
 };
 
 #endif // DataSelectSpec_h

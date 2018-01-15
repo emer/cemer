@@ -426,9 +426,9 @@ public:
   // #CAT_Find return 'true' if target appears at position pos in String
 
 #ifdef TA_USE_QT
-  bool			matches_wildcard(const taString& wild) const;
+  bool                  matches_wildcard(const taString& wild) const;
   // #CAT_Find return 'true' if target wildcard string matches this string -- ? matches any single character, * matches a string of characters, and [...] matches any set of characters within the brackets
-  bool			matches_regexp(const taString& regexp) const;
+  bool                  matches_regexp(const taString& regexp) const;
   // #CAT_Find return 'true' if target regular expression string matches this string -- . matches any single character, .* matches a string of characters, [...] matches any set of characters within the brackets, c{1,5} matches 1-5 repeats of given character, ^ anchors to start of string, $ to end, \\d = digit, \\D = non-digit, \\s = whitespace, \\S = non-whitespace, \\w = word (letter or number) \\W = not
 #endif
 

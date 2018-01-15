@@ -47,15 +47,15 @@ typedef T3Node inherited;
   TA_SO_NODE_HEADER(T3NodeLeaf);
 #endif // def __MAKETA__
 public:
-  static void		initClass();
+  static void           initClass();
 
-  SoFont*		captionFont(bool auto_create = false) override;
-  SoSeparator*		shapeSeparator() override {return this;}
+  SoFont*               captionFont(bool auto_create = false) override;
+  SoSeparator*          shapeSeparator() override {return this;}
 
   T3NodeLeaf(T3DataView* dataView_ = NULL);
 
 protected:
-  SoSeparator*		captionSeparator(bool auto_create = false) override;
+  SoSeparator*          captionSeparator(bool auto_create = false) override;
 
   ~T3NodeLeaf();
 };

@@ -49,8 +49,8 @@ public:
   
   TA_BASEFUNS_NOCOPY(FullPrjnSpec);
 private:
-  void	Initialize() 		{ Initialize_core(); }
-  void 	Destroy()		{ };
+  void  Initialize()            { Initialize_core(); }
+  void  Destroy()               { };
 };
 
 
@@ -68,8 +68,8 @@ public:
   
   TA_SIMPLE_BASEFUNS(OneToOnePrjnSpec);
 private:
-  void	Initialize()            { Initialize_core(); SetUnique("self_con", true); self_con = true; }
-  void 	Destroy()		{ };
+  void  Initialize()            { Initialize_core(); SetUnique("self_con", true); self_con = true; }
+  void  Destroy()               { };
 };
 
 
@@ -80,9 +80,9 @@ class E_API GpOneToOnePrjnSpec : public OneToOnePrjnSpec {
 INHERITED(OneToOnePrjnSpec)
 public:
 #ifdef __MAKETA__
-  int	n_conns;		// number of unit groups to connect (-1 for size of layer)
-  int	recv_start;		// starting unit group index for recv layer connections -- start making connections in this group -- index goes through x dimension first (inner) then y dimension (outer)
-  int	send_start;		// starting unit group index for send layer connections -- start making connections in this group -- index goes through x dimension first (inner) then y dimension (outer)
+  int   n_conns;                // number of unit groups to connect (-1 for size of layer)
+  int   recv_start;             // starting unit group index for recv layer connections -- start making connections in this group -- index goes through x dimension first (inner) then y dimension (outer)
+  int   send_start;             // starting unit group index for send layer connections -- start making connections in this group -- index goes through x dimension first (inner) then y dimension (outer)
   bool  use_gp;                 // #HIDDEN this is not used for GpOneToOnePrjnSpec
 #endif
 
@@ -90,8 +90,8 @@ public:
 
   TA_BASEFUNS_NOCOPY(GpOneToOnePrjnSpec);
 private:
-  void	Initialize()		{ Initialize_core(); }
-  void 	Destroy()		{ };
+  void  Initialize()            { Initialize_core(); }
+  void  Destroy()               { };
 };
 
 
@@ -122,8 +122,8 @@ public:
 
   TA_SIMPLE_BASEFUNS(GpMapConvergePrjnSpec);
 private:
-  void	Initialize()            { Initialize_core(); }
-  void 	Destroy()		{ };
+  void  Initialize()            { Initialize_core(); }
+  void  Destroy()               { };
 };
 
 eTypeDef_Of(GpMapDivergePrjnSpec);
@@ -137,8 +137,8 @@ public:
 
   TA_SIMPLE_BASEFUNS(GpMapDivergePrjnSpec);
 private:
-  void	Initialize()            { Initialize_core(); }
-  void 	Destroy()		{ };
+  void  Initialize()            { Initialize_core(); }
+  void  Destroy()               { };
 };
 
 
@@ -163,8 +163,8 @@ protected:
   }
    
 private:
-  void	Initialize()    { Initialize_core(); }
-  void 	Destroy()	{ };
+  void  Initialize()    { Initialize_core(); }
+  void  Destroy()       { };
 };
 
 
@@ -186,8 +186,8 @@ protected:
   }
    
 private:
-  void	Initialize()    { Initialize_core(); }
-  void 	Destroy()	{ };
+  void  Initialize()    { Initialize_core(); }
+  void  Destroy()       { };
 };
 
 
@@ -204,8 +204,8 @@ public:
 protected:
   void UpdateAfterEdit_impl() override;
 private:
-  void	Initialize()    { Initialize_core(); }
-  void	Destroy()	{ };
+  void  Initialize()    { Initialize_core(); }
+  void  Destroy()       { };
 };
 
 
@@ -220,8 +220,8 @@ public:
   
   TA_SIMPLE_BASEFUNS(SymmetricPrjnSpec);
 private:
-  void	Initialize()	{ Initialize_core(); }
-  void	Destroy()	{ };
+  void  Initialize()    { Initialize_core(); }
+  void  Destroy()       { };
 };
 
 
@@ -236,8 +236,8 @@ INHERITED(taList<TessEl>)
 public:
   TA_BASEFUNS_LITE_NOCOPY(TessEl_List);
 private:
-  void	Initialize() 		{ };
-  void 	Destroy()		{ };
+  void  Initialize()            { };
+  void  Destroy()               { };
 };
 
 eTypeDef_Of(TesselPrjnSpec);
@@ -249,20 +249,20 @@ public:
 
 #include <TesselPrjnSpec>
 
-  String	last_make_cmd; // #READ_ONLY #SHOW shows the last Make.. command that was run (if blank, none or it was done prior to the addition of this feature in version 4.1.0) -- useful for modifying later
-  String	last_weights_cmd; // #READ_ONLY #SHOW shows the last Weights.. command that was run (if blank, none or it was done prior to the addition of this feature in version 4.1.0) -- useful for modifying later
-  TessEl_List	send_offs;	// offsets of the sending units -- these are added to the location of the recv unit to determine which sending units to receive from -- can create any arbitrary patterns here, or use the MakeEllipse or MakeRectangle buttons to create those std patterns
+  String        last_make_cmd; // #READ_ONLY #SHOW shows the last Make.. command that was run (if blank, none or it was done prior to the addition of this feature in version 4.1.0) -- useful for modifying later
+  String        last_weights_cmd; // #READ_ONLY #SHOW shows the last Weights.. command that was run (if blank, none or it was done prior to the addition of this feature in version 4.1.0) -- useful for modifying later
+  TessEl_List   send_offs;      // offsets of the sending units -- these are added to the location of the recv unit to determine which sending units to receive from -- can create any arbitrary patterns here, or use the MakeEllipse or MakeRectangle buttons to create those std patterns
 
-  virtual void	MakeEllipse(int half_width, int half_height, int ctr_x, int ctr_y);
+  virtual void  MakeEllipse(int half_width, int half_height, int ctr_x, int ctr_y);
   // #BUTTON #MENU_SEP_BEFORE make a connection pattern in the form of an elipse: center is located at ctr_x,y and extends half_width and half_height therefrom
-  virtual void	MakeRectangle(int width, int height, int left, int bottom);
+  virtual void  MakeRectangle(int width, int height, int left, int bottom);
   // #BUTTON make a connection pattern in the form of a rectangle starting at left, bottom coordinate and going right and up by width, height
-//TODO  virtual void	MakeFromNetView(NetView* view);
+//TODO  virtual void    MakeFromNetView(NetView* view);
   /* #MENU make connection pattern from selected units in netview,
      first unit is center, then sender positions */
-  virtual void	WeightsFromDist(float scale);
+  virtual void  WeightsFromDist(float scale);
   // #BUTTON assign weights as a linear function of sender distance
-  virtual void	WeightsFromGausDist(float scale, float sigma);
+  virtual void  WeightsFromGausDist(float scale, float sigma);
   // #BUTTON assign weights as a Gaussian function of sender distance
 
   virtual void  SyncSendOffs();
@@ -277,8 +277,8 @@ public:
 protected:
   void UpdateAfterEdit_impl() override;
 private:
-  void	Initialize() { Initialize_core(); send_offs.SetBaseType(&TA_TessEl); }
-  void	Destroy()    { CutLinks(); FreeSendOffs(); }
+  void  Initialize() { Initialize_core(); send_offs.SetBaseType(&TA_TessEl); }
+  void  Destroy()    { CutLinks(); FreeSendOffs(); }
 };
 
 
@@ -293,8 +293,8 @@ INHERITED(taList<GpTessEl>)
 public:
   TA_BASEFUNS_LITE_NOCOPY(GpTessEl_List);
 private:
-void	Initialize() 		{ SetBaseType(&TA_GpTessEl); }
-  void 	Destroy()		{ };
+void    Initialize()            { SetBaseType(&TA_GpTessEl); }
+  void  Destroy()               { };
 };
 
 eTypeDef_Of(GpTesselPrjnSpec);
@@ -306,15 +306,15 @@ public:
 
 #include <GpTesselPrjnSpec>
 
-  String	last_make_cmd; // #READ_ONLY #SHOW shows the last Make.. command that was run (if blank, none or it was done prior to the addition of this feature in version 8.0.0) -- useful for modifying later
-  GpTessEl_List	send_gp_offs;	// offsets of the sending unit groups
+  String        last_make_cmd; // #READ_ONLY #SHOW shows the last Make.. command that was run (if blank, none or it was done prior to the addition of this feature in version 8.0.0) -- useful for modifying later
+  GpTessEl_List send_gp_offs;   // offsets of the sending unit groups
 
   
-  virtual void	MakeRectangle(int width, int height, int left, int bottom);
+  virtual void  MakeRectangle(int width, int height, int left, int bottom);
   // #BUTTON make a connection pattern in the form of a rectangle starting at left, bottom coordinate and going right and up by width, height
-  virtual void	MakeEllipse(int half_width, int half_height, int ctr_x, int ctr_y);
+  virtual void  MakeEllipse(int half_width, int half_height, int ctr_x, int ctr_y);
   // #BUTTON make a connection pattern in the form of an elipse: center is located at ctr_x,y and extends half_width and half_height therefrom
-  virtual void	SetPCon(float p_con, int start = 0, int end = -1);
+  virtual void  SetPCon(float p_con, int start = 0, int end = -1);
   // #BUTTON set p_con value for a range of send_gp_offs (default = all; end-1 = all)
 
   virtual void  SyncSendOffs();
@@ -330,8 +330,8 @@ protected:
   void UpdateAfterEdit_impl() override;
 
 private:
-  void	Initialize() { Initialize_core(); send_gp_offs.SetBaseType(&TA_GpTessEl); }
-  void	Destroy()    { CutLinks(); FreeSendOffs(); }
+  void  Initialize() { Initialize_core(); send_gp_offs.SetBaseType(&TA_GpTessEl); }
+  void  Destroy()    { CutLinks(); FreeSendOffs(); }
 };
 
 
@@ -347,12 +347,12 @@ public:
 
 #include <TiledGpRFPrjnSpec>  
 
-  taVector2i 	trg_recv_geom;	// #READ_ONLY #SHOW target receiving layer gp geometry -- computed from send and rf_width, move by TrgRecvFmSend button, or given by TrgSendFmRecv
-  taVector2i 	trg_send_geom;	// #READ_ONLY #SHOW target sending layer geometry -- computed from recv and rf_width, move by TrgSendFmRecv button, or given by TrgRecvFmSend
+  taVector2i    trg_recv_geom;  // #READ_ONLY #SHOW target receiving layer gp geometry -- computed from send and rf_width, move by TrgRecvFmSend button, or given by TrgSendFmRecv
+  taVector2i    trg_send_geom;  // #READ_ONLY #SHOW target sending layer geometry -- computed from recv and rf_width, move by TrgSendFmRecv button, or given by TrgRecvFmSend
 
-  virtual bool	TrgRecvFmSend(int send_x, int send_y);
+  virtual bool  TrgRecvFmSend(int send_x, int send_y);
   // #BUTTON compute target recv layer geometry based on given sending layer geometry -- updates trg_recv_geom and trg_send_geom members, including fixing send to be an appropriate even multiple of rf_move -- returns true if send values provided result are same "good" ones that come out the end
-  virtual bool	TrgSendFmRecv(int recv_x, int recv_y);
+  virtual bool  TrgSendFmRecv(int recv_x, int recv_y);
   // #BUTTON compute target recv layer geometry based on given sending layer geometry -- updates trg_recv_geom and trg_send_geom members, including fixing recv to be an appropriate even multiple of rf_move --  -- returns true if send values provided result are same "good" ones that come out the end
 
   TA_SIMPLE_BASEFUNS(TiledGpRFPrjnSpec);
@@ -360,8 +360,8 @@ protected:
   void  UpdateAfterEdit_impl() override;
   
 private:
-  void	Initialize()            { Initialize_core(); }
-  void 	Destroy()		{ };
+  void  Initialize()            { Initialize_core(); }
+  void  Destroy()               { };
 };
 
 
@@ -376,8 +376,8 @@ public:
   
   TA_SIMPLE_BASEFUNS(TiledGpRFOneToOnePrjnSpec);
 private:
-  void	Initialize()    { Initialize_core(); }
-  void	Destroy()	{ };
+  void  Initialize()    { Initialize_core(); }
+  void  Destroy()       { };
 };
 
 
@@ -392,8 +392,8 @@ public:
 
   TA_SIMPLE_BASEFUNS(TiledGpRFOneToOneWtsPrjnSpec);
 private:
-  void	Initialize()    { Initialize_core(); }
-  void	Destroy()	{ };
+  void  Initialize()    { Initialize_core(); }
+  void  Destroy()       { };
 };
 
 
@@ -407,12 +407,12 @@ public:
 
 #include <TiledSubGpRFPrjnSpec>
   
-  taVector2i 	trg_recv_geom;	// #READ_ONLY #SHOW target receiving layer gp geometry -- computed from send and rf_width, move by TrgRecvFmSend button, or given by TrgSendFmRecv
-  taVector2i 	trg_send_geom;	// #READ_ONLY #SHOW target sending layer geometry -- computed from recv and rf_width, move by TrgSendFmRecv button, or given by TrgRecvFmSend
+  taVector2i    trg_recv_geom;  // #READ_ONLY #SHOW target receiving layer gp geometry -- computed from send and rf_width, move by TrgRecvFmSend button, or given by TrgSendFmRecv
+  taVector2i    trg_send_geom;  // #READ_ONLY #SHOW target sending layer geometry -- computed from recv and rf_width, move by TrgSendFmRecv button, or given by TrgRecvFmSend
 
-  virtual bool	TrgRecvFmSend(int send_x, int send_y);
+  virtual bool  TrgRecvFmSend(int send_x, int send_y);
   // #BUTTON compute target recv layer geometry based on given sending layer geometry -- updates trg_recv_geom and trg_send_geom members, including fixing send to be an appropriate even multiple of rf_move -- returns true if send values provided result are same "good" ones that come out the end
-  virtual bool	TrgSendFmRecv(int recv_x, int recv_y);
+  virtual bool  TrgSendFmRecv(int recv_x, int recv_y);
   // #BUTTON compute target recv layer geometry based on given sending layer geometry -- updates trg_recv_geom and trg_send_geom members, including fixing recv to be an appropriate even multiple of rf_move --  -- returns true if send values provided result are same "good" ones that come out the end
 
   TA_SIMPLE_BASEFUNS(TiledSubGpRFPrjnSpec);
@@ -434,13 +434,13 @@ public:
 
 #include <TiledRFPrjnSpec>
 
-  virtual void	SelectRF(Projection* prjn);
+  virtual void  SelectRF(Projection* prjn);
   // #BUTTON select all sending and receiving units in the receptive field of this projection
 
   TA_SIMPLE_BASEFUNS(TiledRFPrjnSpec);
 private:
-  void	Initialize()    { Initialize_core(); }
-  void 	Destroy()	{ };
+  void  Initialize()    { Initialize_core(); }
+  void  Destroy()       { };
 };
 
 
@@ -453,13 +453,13 @@ public:
 
 #include <TiledNovlpPrjnSpec>
   
-//   virtual void	SelectRF(Projection* prjn);
+//   virtual void       SelectRF(Projection* prjn);
   // #BUTTON select all sending and receiving units in the receptive field of this projection
 
   TA_SIMPLE_BASEFUNS(TiledNovlpPrjnSpec);
 private:
-  void	Initialize()    { Initialize_core(); }
-  void 	Destroy()       { };
+  void  Initialize()    { Initialize_core(); }
+  void  Destroy()       { };
 };
 
 
@@ -472,18 +472,18 @@ public:
 
 #include <TiledGpMapConvergePrjnSpec>
 
-  taVector2i 	 trg_recv_geom;	// #READ_ONLY #SHOW target receiving layer gp geometry -- computed from send and rf_width, move by TrgRecvFmSend button, or given by TrgSendFmRecv
-  taVector2i 	 trg_send_geom;	// #READ_ONLY #SHOW target sending layer *unit group* geometry -- computed from recv and rf_width, move by TrgSendFmRecv button, or given by TrgRecvFmSend
+  taVector2i     trg_recv_geom; // #READ_ONLY #SHOW target receiving layer gp geometry -- computed from send and rf_width, move by TrgRecvFmSend button, or given by TrgSendFmRecv
+  taVector2i     trg_send_geom; // #READ_ONLY #SHOW target sending layer *unit group* geometry -- computed from recv and rf_width, move by TrgSendFmRecv button, or given by TrgRecvFmSend
 
-  virtual bool	TrgRecvFmSend(int send_x, int send_y);
+  virtual bool  TrgRecvFmSend(int send_x, int send_y);
   // #BUTTON compute target recv layer geometry based on given sending unit group geometry (size of one unit group within sending layer) -- updates trg_recv_geom and trg_send_geom members, including fixing send to be an appropriate even multiple of rf_move -- returns true if send values provided result are same "good" ones that come out the end
-  virtual bool	TrgSendFmRecv(int recv_x, int recv_y);
+  virtual bool  TrgSendFmRecv(int recv_x, int recv_y);
   // #BUTTON compute target recv layer geometry based on given sending layer geometry -- updates trg_recv_geom and trg_send_geom members, including fixing recv to be an appropriate even multiple of rf_move --  -- returns true if send values provided result are same "good" ones that come out the end
 
   TA_SIMPLE_BASEFUNS(TiledGpMapConvergePrjnSpec);
 private:
-  void	Initialize()    { Initialize_core(); }
-  void 	Destroy()	{ };
+  void  Initialize()    { Initialize_core(); }
+  void  Destroy()       { };
 };
 
 
@@ -499,18 +499,18 @@ public:
 
 #include <GaussRFPrjnSpec>
 
-  taVector2i 	 trg_recv_geom;	// #READ_ONLY #SHOW target receiving layer geometry (either gp or unit, depending on outer vs. inner) -- computed from send and rf_width, move by TrgRecvFmSend button, or given by TrgSendFmRecv
-  taVector2i 	 trg_send_geom;	// #READ_ONLY #SHOW target sending layer geometry -- computed from recv and rf_width, move by TrgSendFmRecv button, or given by TrgRecvFmSend
+  taVector2i     trg_recv_geom; // #READ_ONLY #SHOW target receiving layer geometry (either gp or unit, depending on outer vs. inner) -- computed from send and rf_width, move by TrgRecvFmSend button, or given by TrgSendFmRecv
+  taVector2i     trg_send_geom; // #READ_ONLY #SHOW target sending layer geometry -- computed from recv and rf_width, move by TrgSendFmRecv button, or given by TrgRecvFmSend
 
-  virtual bool	TrgRecvFmSend(int send_x, int send_y);
+  virtual bool  TrgRecvFmSend(int send_x, int send_y);
   // #BUTTON compute target recv layer geometry based on given sending layer geometry -- updates trg_recv_geom and trg_send_geom members, including fixing send to be an appropriate even multiple of rf_move -- returns true if send values provided result are same "good" ones that come out the end
-  virtual bool	TrgSendFmRecv(int recv_x, int recv_y);
+  virtual bool  TrgSendFmRecv(int recv_x, int recv_y);
   // #BUTTON compute target recv layer geometry based on given sending layer geometry -- updates trg_recv_geom and trg_send_geom members, including fixing recv to be an appropriate even multiple of rf_move --  -- returns true if send values provided result are same "good" ones that come out the end
 
   TA_SIMPLE_BASEFUNS(GaussRFPrjnSpec);
 private:
-  void	Initialize()    { Initialize_core(); }
-  void 	Destroy()	{ };
+  void  Initialize()    { Initialize_core(); }
+  void  Destroy()       { };
 };
 
 
@@ -525,8 +525,8 @@ public:
   
   TA_SIMPLE_BASEFUNS(GradientWtsPrjnSpec);
 private:
- void	Initialize()    { Initialize_core(); }
-  void 	Destroy()	{ };
+ void   Initialize()    { Initialize_core(); }
+  void  Destroy()       { };
 };
 
 

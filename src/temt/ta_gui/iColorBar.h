@@ -33,10 +33,10 @@ typedef QWidget inherited;
 #endif
   Q_OBJECT
 public:
-  ColorScaleRef		scale;
-  virtual int 		blocks();
+  ColorScaleRef         scale;
+  virtual int           blocks();
 
-  virtual void		SetColorScale(ColorScale* c);
+  virtual void          SetColorScale(ColorScale* c);
   iColorBar(ColorScale* c, QWidget* parent = NULL);
   ~iColorBar();
 };

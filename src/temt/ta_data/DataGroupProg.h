@@ -32,13 +32,13 @@ class TA_API DataGroupProg : public DataSrcDestProg {
   // groups src_data into dest_data according to group_spec
 INHERITED(DataSrcDestProg)
 public:
-  DataGroupSpec		group_spec; // #TREE_SHOW data grouping specification
+  DataGroupSpec         group_spec; // #TREE_SHOW data grouping specification
 
   virtual DataOpEl* AddColumn(const String& col_name) { return group_spec.AddColumn(col_name, GetSrcData()); }
   // #CAT_Data #BUTTON add a new column to operate on
-  virtual void	AddAllColumns();
+  virtual void  AddAllColumns();
   // #BUTTON #CAT_Data add all columns from src_data to the group_spec list of ops columns 
-  void	UpdateSpecDataTable() override;
+  void  UpdateSpecDataTable() override;
 
   String  GetDisplayName() const override;
   String  GetToolbarName() const override { return "group"; }
@@ -52,8 +52,8 @@ protected:
   bool    GenCssBody_impl(Program* prog) override; 
 
 private:
-  void	Initialize();
-  void	Destroy()	{ CutLinks(); }
+  void  Initialize();
+  void  Destroy()       { CutLinks(); }
 };
 
 #endif // DataGroupProg_h

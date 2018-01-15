@@ -31,16 +31,16 @@ class E_API EmergentRoot : public taRootBase {
 INHERITED(taRootBase)
 public:
 
-  void	About() override;
+  void  About() override;
 #ifdef TA_GUI
-  taBase*	Browse(const char* init_path=NULL);
+  taBase*       Browse(const char* init_path=NULL);
   // #MENU #ARGC_0 #USE_RVAL #NO_REVERT_AFTER use object browser to find an object, starting with initial path if given
 #endif
 
   TA_BASEFUNS_NOCOPY(EmergentRoot);
 private:
-  void 	Initialize();
-  void 	Destroy() { };
+  void  Initialize();
+  void  Destroy() { };
 };
 
 

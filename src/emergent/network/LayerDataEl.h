@@ -58,9 +58,9 @@ friend class LayerWriter_List;
 INHERITED(taOBase)
 public:
   enum NetTarget {
-    LAYER,			// read/write the layer information
-    TRIAL_NAME,			// read/write the network trial_name field
-    GROUP_NAME,			// read/write the network group_name field
+    LAYER,                      // read/write the layer information
+    TRIAL_NAME,                 // read/write the network trial_name field
+    GROUP_NAME,                 // read/write the network group_name field
   };
 
   bool            off;
@@ -88,7 +88,7 @@ public:
   virtual void  ToggleOff();
   // #MENU #MENU_ON_Object #DYN1 #CAT_Structure toggle the off status of this layer writer -- if on, turn off, if off, turn on
 
-  String          GetName() const override		{ return col_name; }
+  String          GetName() const override              { return col_name; }
   String          GetDisplayName() const override;
   int             GetEnabled() const    override { return !off; }
   void            SetEnabled(bool value) override { off = !value; }
@@ -97,11 +97,11 @@ public:
   TA_SIMPLE_BASEFUNS(LayerDataEl);
 protected:
   void  UpdateAfterEdit_impl() override;
-  void 	CheckThisConfig_impl(bool quiet, bool& rval) override;
+  void  CheckThisConfig_impl(bool quiet, bool& rval) override;
 
 private:
-  void	Initialize();
-  void 	Destroy();
+  void  Initialize();
+  void  Destroy();
 };
 
 #endif // LayerDataEl_h

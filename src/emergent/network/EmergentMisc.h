@@ -28,7 +28,7 @@ eTypeDef_Of(EmergentMisc);
 class E_API EmergentMisc { 
   // #NO_TOKENS miscellaneous things for Emergent
 public:
-  static int	Main(int& argc, const char* argv[]);
+  static int    Main(int& argc, const char* argv[]);
   // #IGNORE the main startup function -- this is called from bin/main.cpp
 };
 

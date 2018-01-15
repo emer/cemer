@@ -31,22 +31,22 @@ class TA_API RegisterArgs: public ProgEl {
   // register command-line arguments for any MemberFmArg, ProgVarFmArg DataColsFmArgs program elements contained in the prog_code of the program that this item appears in.  calls taMisc::UpdateArgs(), so any any other taMisc::AddArgName MiscCall's placed before this will also be processed
 INHERITED(ProgEl)
 public:
-  String	GetDisplayName() const override;
-  String 	GetTypeDecoKey() const override { return "ProgVar"; }
-  String	GetToolbarName() const override { return "reg args"; }
-  bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
-  bool		CvtFmCode(const String& code) override;
+  String        GetDisplayName() const override;
+  String        GetTypeDecoKey() const override { return "ProgVar"; }
+  String        GetToolbarName() const override { return "reg args"; }
+  bool          CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
+  bool          CvtFmCode(const String& code) override;
 
   PROGEL_SIMPLE_BASEFUNS(RegisterArgs);
 protected:
-  bool	GenCssBody_impl(Program* prog) override;
+  bool  GenCssBody_impl(Program* prog) override;
 
-  virtual void		AddArgsFmCode(Program* prog, ProgEl_List& progs);
+  virtual void          AddArgsFmCode(Program* prog, ProgEl_List& progs);
   // main function: iterates recursively through progs, adding any that add args to gen_code
 
 private:
-  void	Initialize();
-  void	Destroy()	{CutLinks();}
+  void  Initialize();
+  void  Destroy()       {CutLinks();}
 }; 
 
 #endif // RegisterArgs_h

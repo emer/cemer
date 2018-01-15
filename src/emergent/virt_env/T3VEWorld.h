@@ -53,7 +53,7 @@ public:
                                    float far_radius, float threshold, float epsilon);
   bool                  getShadows() { return shadows; }
 
-  // SoSeparator*	childNodes() override;
+  // SoSeparator*       childNodes() override;
 
   T3VEWorld(Qt3DNode* par = NULL, T3DataView* world = NULL);
   ~T3VEWorld();
@@ -111,7 +111,7 @@ public:
                                    float far_radius, float threshold, float epsilon);
   bool                  getShadows() { return shadows; }
 
-  SoSeparator*	childNodes() override;
+  SoSeparator*  childNodes() override;
 
 protected:
   SoShadowGroup*        shadow_group; // this owns everything..

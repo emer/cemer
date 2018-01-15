@@ -31,25 +31,25 @@ class TA_API ReturnExpr: public ProgEl {
   // ##PROGEL_COMPLETION return from a function with a given expression (can be empty to return from a void function) -- you can return from the code or init segments of a program to end execution at that point
 INHERITED(ProgEl)
 public:
-  ProgExpr		expr;
+  ProgExpr              expr;
   // #BROWSER_EDIT_LOOKUP expression to return from function with (can be empty to return from a void function)
   
-  bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
-  bool		CvtFmCode(const String& code) override;
-  bool		IsCtrlProgEl() 	override { return true; }
+  bool          CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
+  bool          CvtFmCode(const String& code) override;
+  bool          IsCtrlProgEl()  override { return true; }
 
-  String	GetDisplayName() const override;
-  String 	GetTypeDecoKey() const override { return "ProgCtrl"; }
-  String	GetToolbarName() const override { return "return"; }
+  String        GetDisplayName() const override;
+  String        GetTypeDecoKey() const override { return "ProgCtrl"; }
+  String        GetToolbarName() const override { return "return"; }
 
   PROGEL_SIMPLE_BASEFUNS(ReturnExpr);
 protected:
-  void		CheckChildConfig_impl(bool quiet, bool& rval) override;
-  bool		GenCssBody_impl(Program* prog) override;
+  void          CheckChildConfig_impl(bool quiet, bool& rval) override;
+  bool          GenCssBody_impl(Program* prog) override;
 
 private:
-  void	Initialize();
-  void	Destroy()	{CutLinks();}
+  void  Initialize();
+  void  Destroy()       {CutLinks();}
 }; 
 
 #endif // ReturnExpr_h

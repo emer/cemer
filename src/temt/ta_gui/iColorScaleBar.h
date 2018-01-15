@@ -48,41 +48,41 @@ typedef QWidget inherited;
   Q_OBJECT
 public:
   enum SpanMode {
-    RANGE,			// Range mode
-    MIN_MAX 			// min max
+    RANGE,                      // Range mode
+    MIN_MAX                     // min max
   };
-  float 		min() {return bar->scale->min;}
-  float 		max() {return bar->scale->max;}
-  float			range() {return bar->scale->range;}
-  float			zero() {return bar->scale->zero;}
+  float                 min() {return bar->scale->min;}
+  float                 max() {return bar->scale->max;}
+  float                 range() {return bar->scale->range;}
+  float                 zero() {return bar->scale->zero;}
 
-  SpanMode		sm;
-  bool			adjustflag;	// do we have min/max/range adjuster buttons
-  bool			editflag;	// is the label editable
+  SpanMode              sm;
+  bool                  adjustflag;     // do we have min/max/range adjuster buttons
+  bool                  editflag;       // is the label editable
 
-  QBoxLayout*		layOuter;  // hor or vert as indicated
-  iColorBar*		bar;		// actual bar
+  QBoxLayout*           layOuter;  // hor or vert as indicated
+  iColorBar*            bar;            // actual bar
 
-  iLineEdit*  		min_frep;
-  iLineEdit*  		max_frep;
+  iLineEdit*            min_frep;
+  iLineEdit*            max_frep;
 
-  QAbstractButton* 	enlarger;	// increase range button
-  QAbstractButton* 	shrinker;	// decrease range button
+  QAbstractButton*      enlarger;       // increase range button
+  QAbstractButton*      shrinker;       // decrease range button
   // note: not currently supported
-  // QAbstractButton* 	min_incr;	// increment minimum button
-  // QAbstractButton* 	min_decr;	// decrement minimum button
-  // QAbstractButton* 	max_incr;	// increment maximum button
-  // QAbstractButton* 	max_decr;	// decrement maximum button
+  // QAbstractButton*   min_incr;       // increment minimum button
+  // QAbstractButton*   min_decr;       // decrement minimum button
+  // QAbstractButton*   max_incr;       // increment maximum button
+  // QAbstractButton*   max_decr;       // decrement maximum button
 
-  iWidget_List	  	padlist; 	// #IGNORE list of color pads for palletes
+  iWidget_List          padlist;        // #IGNORE list of color pads for palletes
 
-  void			emit_scaleValueChanged();
+  void                  emit_scaleValueChanged();
   virtual void SetRange(float val);
   virtual void SetRoundRange(float val);
   virtual void SetMinMax(float min,float max);
-  virtual float GetVal(int idx);	// returns value of the index
-  virtual const iColor GetColor(int idx, bool* ok = NULL);	// return color[idx];
-  virtual const iColor GetContrastColor(int idx, bool* ok = NULL);	// return color[idx];
+  virtual float GetVal(int idx);        // returns value of the index
+  virtual const iColor GetColor(int idx, bool* ok = NULL);      // return color[idx];
+  virtual const iColor GetContrastColor(int idx, bool* ok = NULL);      // return color[idx];
 
   virtual void SetColorScale(ColorScale* c);
 
@@ -106,18 +106,18 @@ public slots:
 
 #ifndef __MAKETA__
 signals:
-  void		scaleValueChanged(); // one of the values was changed
+  void          scaleValueChanged(); // one of the values was changed
 #endif
 
 protected:
-  bool		hor; // true for horizontal, false for vertical
-  float		cur_min;	// currently displayed values
-  float		cur_max;	// currently displayed values
-  bool		cur_minmax_set;	// there are currently set values
+  bool          hor; // true for horizontal, false for vertical
+  float         cur_min;        // currently displayed values
+  float         cur_max;        // currently displayed values
+  bool          cur_minmax_set; // there are currently set values
   
-  void 		InitLayout(); // call this in final inherited class constructor
+  void          InitLayout(); // call this in final inherited class constructor
 private:
-  void 		Init(bool hor, bool adj, bool ed);
+  void          Init(bool hor, bool adj, bool ed);
 };
 
 

@@ -32,7 +32,7 @@ class TA_API MemberAssign: public MemberProgEl {
   // set a member (attribute) on an object to a value given by an expression
 INHERITED(MemberProgEl)
 public:
-  ProgExpr		expr; // #BROWSER_EDIT_LOOKUP the expression to compute and assign to the member
+  ProgExpr              expr; // #BROWSER_EDIT_LOOKUP the expression to compute and assign to the member
   bool        update_after; // call UpdateAfterEdit after setting the member: useful for updating displays and triggering other computations based on changed value, but this comes at a performance cost
   
   bool        CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
@@ -46,13 +46,13 @@ public:
 
   PROGEL_SIMPLE_BASEFUNS(MemberAssign);
 protected:
-  void		UpdateAfterEdit_impl() override;
-  void		CheckChildConfig_impl(bool quiet, bool& rval) override;
-  bool		GenCssBody_impl(Program* prog) override;
+  void          UpdateAfterEdit_impl() override;
+  void          CheckChildConfig_impl(bool quiet, bool& rval) override;
+  bool          GenCssBody_impl(Program* prog) override;
 
 private:
-  void	Initialize();
-  void	Destroy()	{CutLinks();}
+  void  Initialize();
+  void  Destroy()       {CutLinks();}
 }; 
 
 #endif // MemberAssign_h

@@ -32,34 +32,34 @@ class TA_API OtherProgramVar : public ProgEl {
   // ##PROGEL_COMPLETION A program element for exchanging variable information between programs -- variables must have the same names in both programs
 INHERITED(ProgEl)
 public:
-  ProgramRef	other_prog; 	// the other program with variables that you want to get or set
-  bool		set_other;	// if true, values in other program are set from our variable values, otherwise our variables get values from those in other program
-  ProgVarRef	var_1;		// #ITEM_FILTER_StdProgVarFilter #CUST_CHOOSER_NewProgVarCustChooser program variable to operate on -- name must match name of variable in other program!
-  ProgVarRef	var_2;		// #ITEM_FILTER_StdProgVarFilter #CUST_CHOOSER_NewProgVarCustChooser program variable to operate on -- name must match name of variable in other program!
-  ProgVarRef	var_3;		// #ITEM_FILTER_StdProgVarFilter #CUST_CHOOSER_NewProgVarCustChooser program variable to operate on -- name must match name of variable in other program!
-  ProgVarRef	var_4;		// #ITEM_FILTER_StdProgVarFilter #CUST_CHOOSER_NewProgVarCustChooser program variable to operate on -- name must match name of variable in other program!
+  ProgramRef    other_prog;     // the other program with variables that you want to get or set
+  bool          set_other;      // if true, values in other program are set from our variable values, otherwise our variables get values from those in other program
+  ProgVarRef    var_1;          // #ITEM_FILTER_StdProgVarFilter #CUST_CHOOSER_NewProgVarCustChooser program variable to operate on -- name must match name of variable in other program!
+  ProgVarRef    var_2;          // #ITEM_FILTER_StdProgVarFilter #CUST_CHOOSER_NewProgVarCustChooser program variable to operate on -- name must match name of variable in other program!
+  ProgVarRef    var_3;          // #ITEM_FILTER_StdProgVarFilter #CUST_CHOOSER_NewProgVarCustChooser program variable to operate on -- name must match name of variable in other program!
+  ProgVarRef    var_4;          // #ITEM_FILTER_StdProgVarFilter #CUST_CHOOSER_NewProgVarCustChooser program variable to operate on -- name must match name of variable in other program!
 
-  virtual Program*	GetOtherProg();
+  virtual Program*      GetOtherProg();
   // safe call to get other program: emits error if other_prog is null (used by program)
 
-  String	GetDisplayName() const override;
-  String 	GetTypeDecoKey() const override { return "Program"; }
-  String	GetToolbarName() const override { return "oth prg var"; }
+  String        GetDisplayName() const override;
+  String        GetTypeDecoKey() const override { return "Program"; }
+  String        GetToolbarName() const override { return "oth prg var"; }
 
   bool          CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
   bool          CvtFmCode(const String& code) override;
 
   PROGEL_SIMPLE_BASEFUNS(OtherProgramVar);
 protected:
-  void	CheckThisConfig_impl(bool quiet, bool& rval) override;
+  void  CheckThisConfig_impl(bool quiet, bool& rval) override;
 
-  void	GenCssPre_impl(Program* prog) override; 
-  bool	GenCssBody_impl(Program* prog) override;
-  void	GenCssPost_impl(Program* prog) override; 
-  virtual bool	GenCss_OneVar(Program* prog, ProgVarRef& var, int var_no);
+  void  GenCssPre_impl(Program* prog) override; 
+  bool  GenCssBody_impl(Program* prog) override;
+  void  GenCssPost_impl(Program* prog) override; 
+  virtual bool  GenCss_OneVar(Program* prog, ProgVarRef& var, int var_no);
 private:
-  void	Initialize();
-  void	Destroy()	{ CutLinks(); }
+  void  Initialize();
+  void  Destroy()       { CutLinks(); }
 };
 
 #endif // OtherProgramVar_h

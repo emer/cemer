@@ -41,8 +41,8 @@ public:
 
   TA_SIMPLE_BASEFUNS(ActrActParams);
 private:
-  void	Initialize();
-  void	Destroy()	{ };
+  void  Initialize();
+  void  Destroy()       { };
 };
 
 
@@ -67,8 +67,8 @@ public:
 
   TA_SIMPLE_BASEFUNS(ActrRetrievalParams);
 private:
-  void	Initialize();
-  void	Destroy()	{ };
+  void  Initialize();
+  void  Destroy()       { };
 };
 
 eTypeDef_Of(ActrPartialParams);
@@ -86,8 +86,8 @@ public:
 
   TA_SIMPLE_BASEFUNS(ActrPartialParams);
 private:
-  void	Initialize();
-  void	Destroy()	{ };
+  void  Initialize();
+  void  Destroy()       { };
 };
 
 eTypeDef_Of(ActrAssocParams);
@@ -104,8 +104,8 @@ public:
 
   TA_SIMPLE_BASEFUNS(ActrAssocParams);
 private:
-  void	Initialize();
-  void	Destroy()	{ };
+  void  Initialize();
+  void  Destroy()       { };
 };
 
 // todo: add blending parameters

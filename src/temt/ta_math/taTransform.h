@@ -53,6 +53,6 @@ private:
   void                  Destroy() {}
 };
 
-typedef taTransform FloatTransform;	// #INSTANCE obsolete version of taTransform
+typedef taTransform FloatTransform;     // #INSTANCE obsolete version of taTransform
 
 #endif // taTransform_h

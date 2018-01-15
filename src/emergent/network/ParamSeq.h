@@ -50,7 +50,7 @@ public:
   int             GetEnabled() const override { return on; }
   void            SetEnabled(bool value) override { on = value; }
   String          GetTypeDecoKey() const override { return "ControlPanel"; }
-  taList_impl*	  children_() override {return &steps;}
+  taList_impl*    children_() override {return &steps;}
   
   TA_SIMPLE_BASEFUNS(ParamSeq);
 protected:

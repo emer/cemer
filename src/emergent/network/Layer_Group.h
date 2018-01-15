@@ -45,7 +45,7 @@ public:
   static bool nw_itm_def_arg;   // #IGNORE default arg val for FindMake..
 
   PosVector3i    pos;           // #READ_ONLY #SHOW Position of Group of layers relative to network (0,0,0 is lower left hand corner) -- this is computed automatically from layers
-  PosVector2i    pos2d;		// #READ_ONLY #SHOW 2D network view display position of layer group relative to the overall nework (0,0 is lower left hand corner)
+  PosVector2i    pos2d;         // #READ_ONLY #SHOW 2D network view display position of layer group relative to the overall nework (0,0 is lower left hand corner)
   PosVector3i    max_disp_size;  // #AKA_max_size #READ_ONLY #SHOW #CAT_Structure maximum display size of the layer group -- computed automatically from the layers within the group
   PosVector2i    max_disp_size2d;  // #READ_ONLY #SHOW #CAT_Structure maximum 2D display size of the layer group -- computed automatically from the layers within the group
 

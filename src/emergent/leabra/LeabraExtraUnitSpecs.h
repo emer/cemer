@@ -67,9 +67,9 @@ public:
 protected:
   SPEC_DEFAULTS;
 private:
-  void	Initialize() 		{ };
-  void	Defaults_init()		{ };
-  void	Destroy()		{ };
+  void  Initialize()            { };
+  void  Defaults_init()         { };
+  void  Destroy()               { };
 };
 
 
@@ -89,7 +89,7 @@ protected:
   SPEC_DEFAULTS;
 private:
   void  Initialize();
-  void	Defaults_init();
+  void  Defaults_init();
   void  Destroy()     { };
 };
 
@@ -129,7 +129,7 @@ protected:
   SPEC_DEFAULTS;
 private:
   void  Initialize();
-  void	Defaults_init();
+  void  Defaults_init();
   void  Destroy()     { };
 };
 
@@ -146,16 +146,16 @@ public:
 
 #include <TDRewPredUnitSpec>
   
-  void	HelpConfig();	// #BUTTON get help message for configuring this spec
+  void  HelpConfig();   // #BUTTON get help message for configuring this spec
   bool  CheckConfig_Unit(Layer* lay, bool quiet=false) override;
 
   TA_BASEFUNS_NOCOPY(TDRewPredUnitSpec);
 protected:
   SPEC_DEFAULTS;
 private:
-  void 	Initialize();
-  void	Defaults_init();
-  void	Destroy()		{ };
+  void  Initialize();
+  void  Defaults_init();
+  void  Destroy()               { };
 };
 
 
@@ -168,17 +168,17 @@ public:
 
 #include <TDRewIntegUnitSpec>
 
-  void	HelpConfig();	// #BUTTON get help message for configuring this spec
+  void  HelpConfig();   // #BUTTON get help message for configuring this spec
   bool  CheckConfig_Unit(Layer* lay, bool quiet=false)  override;
 
   TA_SIMPLE_BASEFUNS(TDRewIntegUnitSpec);
 protected:
   SPEC_DEFAULTS;
-  void	UpdateAfterEdit_impl() override;
+  void  UpdateAfterEdit_impl() override;
 private:
-  void 	Initialize();
-  void	Defaults_init();
-  void	Destroy()		{ };
+  void  Initialize();
+  void  Defaults_init();
+  void  Destroy()               { };
 };
 
 
@@ -191,16 +191,16 @@ public:
 
 #include <TDDeltaUnitSpec>
 
-  void	HelpConfig();	// #BUTTON get help message for configuring this spec
+  void  HelpConfig();   // #BUTTON get help message for configuring this spec
   bool  CheckConfig_Unit(Layer* lay, bool quiet=false) override;
 
   TA_SIMPLE_BASEFUNS(TDDeltaUnitSpec);
 protected:
   SPEC_DEFAULTS;
 private:
-  void 	Initialize();
-  void	Defaults_init();
-  void	Destroy()		{ };
+  void  Initialize();
+  void  Defaults_init();
+  void  Destroy()               { };
 };
 
 
@@ -304,7 +304,7 @@ protected:
   SPEC_DEFAULTS;
 private:
   void  Initialize();
-  void	Defaults_init();
+  void  Defaults_init();
   void  Destroy()     { };
 };
 
@@ -326,7 +326,7 @@ protected:
   SPEC_DEFAULTS;
 private:
   void  Initialize();
-  void	Defaults_init();
+  void  Defaults_init();
   void  Destroy()     { };
 };
 
@@ -388,7 +388,7 @@ protected:
   SPEC_DEFAULTS;
 private:
   void  Initialize();
-  void	Defaults_init() { };
+  void  Defaults_init() { };
   void  Destroy()     { };
 };
 
@@ -495,7 +495,7 @@ protected:
   SPEC_DEFAULTS;
 private:
   void  Initialize();
-  void	Defaults_init();
+  void  Defaults_init();
   void  Destroy()     { };
 };
 
@@ -516,7 +516,7 @@ protected:
   SPEC_DEFAULTS;
 private:
   void  Initialize();
-  void	Defaults_init();
+  void  Defaults_init();
   void  Destroy()     { };
 };
 
@@ -559,7 +559,7 @@ public:
   virtual void  UpdtDynTable();
   // check and make sure table is all OK
 
-  virtual void	GraphPFCDyns(DataTable* graph_data, int n_trials=20);
+  virtual void  GraphPFCDyns(DataTable* graph_data, int n_trials=20);
   // #MENU_BUTTON #MENU_ON_Graph #NULL_OK #NULL_TEXT_NewGraphData graph the pfc dynamics for response of deep_raw over time after gating has taken place -- update occurs once each quarter that deep_raw is computed (typically once per trial)
 
   virtual void  CopyToState_Dyns(void* state_spec, const char* state_suffix);
@@ -574,9 +574,9 @@ protected:
   SPEC_DEFAULTS;
   void  UpdateAfterEdit_impl() override;
 private:
-  void	Initialize();
-  void	Defaults_init();
-  void	Destroy()		{ CutLinks(); FreeDyns(); }
+  void  Initialize();
+  void  Defaults_init();
+  void  Destroy()               { CutLinks(); FreeDyns(); }
 };
 
 
@@ -600,9 +600,9 @@ protected:
   SPEC_DEFAULTS;
 
 private:
-  void 	Initialize();
-  void	Defaults_init();
-  void	Destroy()		{ };
+  void  Initialize();
+  void  Defaults_init();
+  void  Destroy()               { };
 };
 
 
@@ -621,9 +621,9 @@ public:
 protected:
   SPEC_DEFAULTS;
 private:
-  void 	Initialize();
-  void	Defaults_init()		{ };
-  void	Destroy()		{ };
+  void  Initialize();
+  void  Defaults_init()         { };
+  void  Destroy()               { };
 };
 
 
@@ -694,7 +694,7 @@ protected:
   SPEC_DEFAULTS;
 private:
   void  Initialize();
-  void	Defaults_init();
+  void  Defaults_init();
   void  Destroy()     { };
 };
 

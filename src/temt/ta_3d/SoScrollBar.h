@@ -54,76 +54,76 @@ typedef SoSeparator inherited;
   TA_SO_NODE_HEADER(SoScrollBar);
 #endif // def __MAKETA__
 public:
-  static void		initClass();
+  static void           initClass();
   SoScrollBar(int min_=0, int max_=10, int val_=0, int ps_=5, int ss_=1,
-	      float wdth_ = .025f, float dpth_ = .01f);
+              float wdth_ = .025f, float dpth_ = .01f);
 
-  int	value() const		{ return value_; }	
-  int	minimum() const		{ return minimum_; }
-  int	maximum() const		{ return maximum_; }
-  int	pageStep() const	{ return pageStep_; }
-  int	singleStep() const	{ return singleStep_; }
-  float width()	const		{ return width_; } // width is Y axis (length is X) 
-  float depth()	const		{ return depth_; } // depth is Z axis
+  int   value() const           { return value_; }      
+  int   minimum() const         { return minimum_; }
+  int   maximum() const         { return maximum_; }
+  int   pageStep() const        { return pageStep_; }
+  int   singleStep() const      { return singleStep_; }
+  float width() const           { return width_; } // width is Y axis (length is X) 
+  float depth() const           { return depth_; } // depth is Z axis
 
-  void	setValue(int new_val);
-  void	setMinimum(int new_min);
-  void	setMaximum(int new_max);
-  void	setPageStep(int new_ps);
-  void	setSingleStep(int new_ss);
+  void  setValue(int new_val);
+  void  setMinimum(int new_min);
+  void  setMaximum(int new_max);
+  void  setPageStep(int new_ps);
+  void  setSingleStep(int new_ss);
   void  setWidth(float new_width);
   void  setDepth(float new_depth);
 
-  SoMaterial* getBoxMat() 		{ return box_mat_; } // #IGNORE
-  SoMaterial* getSlideMat() 		{ return slide_mat_; } // #IGNORE
-  SoMaterial* getActiveMat() 		{ return active_mat_; } // #IGNORE
+  SoMaterial* getBoxMat()               { return box_mat_; } // #IGNORE
+  SoMaterial* getSlideMat()             { return slide_mat_; } // #IGNORE
+  SoMaterial* getActiveMat()            { return active_mat_; } // #IGNORE
 
-  void	setValueChangedCB(SoScrollBarCB cb_fun, void* user_data = NULL);
+  void  setValueChangedCB(SoScrollBarCB cb_fun, void* user_data = NULL);
   // #IGNORE set callback for when value changes
 
-  void	DragStartCB(SoTranslate1Dragger* dragger);
+  void  DragStartCB(SoTranslate1Dragger* dragger);
   // #IGNORE callback: do not touch!
-  void	DraggingCB(SoTranslate1Dragger* dragger);
+  void  DraggingCB(SoTranslate1Dragger* dragger);
   // #IGNORE callback: do not touch!
-  void	DragFinishCB(SoTranslate1Dragger* dragger);
+  void  DragFinishCB(SoTranslate1Dragger* dragger);
   // #IGNORE callback: do not touch!
 protected:
-  const char*  	getFileFormatName() const override {return "Separator"; } 
+  const char*   getFileFormatName() const override {return "Separator"; } 
 
-  float	width_;
-  float	depth_;	
-  int	minimum_;
-  int	maximum_;
-  int	value_;
-  int 	start_val_;
-  int	pageStep_;		// also controls the size of the bar
-  int	singleStep_;
+  float width_;
+  float depth_; 
+  int   minimum_;
+  int   maximum_;
+  int   value_;
+  int   start_val_;
+  int   pageStep_;              // also controls the size of the bar
+  int   singleStep_;
 
-  SoScrollBarCB	valueChanged_cb_; // value has changed callback
-  void*		valueChanged_ud_; // user data
+  SoScrollBarCB valueChanged_cb_; // value has changed callback
+  void*         valueChanged_ud_; // user data
 
   // listed as ordered elements -- everything lives within the switch
-  SoSwitch* 	  switch_;	// switch
-  SoMaterial* 	  box_mat_;	// box material
-  SoCube* 	  box_;		// containing box for slider
-  SoMaterial* 	  slide_mat_;	// slider material (inactive)
-  SoTranslation*  pos_;		// position of slider
+  SoSwitch*       switch_;      // switch
+  SoMaterial*     box_mat_;     // box material
+  SoCube*         box_;         // containing box for slider
+  SoMaterial*     slide_mat_;   // slider material (inactive)
+  SoTranslation*  pos_;         // position of slider
   SoTranslate1Dragger* dragger_; // the dragger
 
   // this is the slider that replaces guy in dragger
-  SoSeparator*	slider_sep_;	// slider separator
-  SoTransform*	slider_tx_;	// slider transform (rotate)
-  SoCylinder*	slider_;	// slider itself
+  SoSeparator*  slider_sep_;    // slider separator
+  SoTransform*  slider_tx_;     // slider transform (rotate)
+  SoCylinder*   slider_;        // slider itself
 
-  SoSeparator*	active_sep_; 	// active slider sep
-  SoMaterial* 	active_mat_;	// slider material (active)
+  SoSeparator*  active_sep_;    // active slider sep
+  SoMaterial*   active_mat_;    // slider material (active)
 
-  void	fixValues();		// make sure values are sensible
-  float	getPos();		// get position for slider based on value
-  int	getValFmPos(float pos);	// get value from position
-  void	repositionSlider();	// reposition the slider based on current values
-  float	sliderSize();		// get size of slider
-  void	valueChangedCB();	// perform value changed callback
+  void  fixValues();            // make sure values are sensible
+  float getPos();               // get position for slider based on value
+  int   getValFmPos(float pos); // get value from position
+  void  repositionSlider();     // reposition the slider based on current values
+  float sliderSize();           // get size of slider
+  void  valueChangedCB();       // perform value changed callback
 };
 
 #endif // SoScrollBar_h

@@ -820,17 +820,17 @@ static inline VTYPE atan_d(VTYPE const & y, VTYPE const & x) {
     const double MOREBITSO2 = MOREBITS * 0.5;
     const double T3PO8 = VM_SQRT2 + 1.; // 2.41421356237309504880;
 
-	const double P4atan = -8.750608600031904122785E-1;
-	const double P3atan = -1.615753718733365076637E1;
-	const double P2atan = -7.500855792314704667340E1;
-	const double P1atan = -1.228866684490136173410E2;
-	const double P0atan = -6.485021904942025371773E1;
+        const double P4atan = -8.750608600031904122785E-1;
+        const double P3atan = -1.615753718733365076637E1;
+        const double P2atan = -7.500855792314704667340E1;
+        const double P1atan = -1.228866684490136173410E2;
+        const double P0atan = -6.485021904942025371773E1;
 
-	const double Q4atan = 2.485846490142306297962E1;
-	const double Q3atan = 1.650270098316988542046E2;
-	const double Q2atan = 4.328810604912902668951E2;
-	const double Q1atan = 4.853903996359136964868E2;
-	const double Q0atan = 1.945506571482613964425E2;
+        const double Q4atan = 2.485846490142306297962E1;
+        const double Q3atan = 1.650270098316988542046E2;
+        const double Q2atan = 4.328810604912902668951E2;
+        const double Q1atan = 4.853903996359136964868E2;
+        const double Q0atan = 1.945506571482613964425E2;
 
     VTYPE t, x1, x2, y1, y2, s, fac, a, b, z, zz, px, qx, re;  // data vectors
     BTYPE swapxy, notbig, notsmal;                             // boolean vectors

@@ -30,11 +30,11 @@ INHERITED(QLabel)
 public:
   IWidgetHost*          host; // dialog or edit panel that this belongs to (optional)
 
-  bool			highlight() {return mhighlight;}
-  int			index() {return mindex;}
-  inline QVariant	userData() const {return muser_data;}
+  bool                  highlight() {return mhighlight;}
+  int                   index() {return mindex;}
+  inline QVariant       userData() const {return muser_data;}
     // put anything you want here
-  void			setUserData(const QVariant& value);
+  void                  setUserData(const QVariant& value);
   virtual void          updateBgColor();
 
   iLabel(QWidget* parent = 0);
@@ -42,23 +42,23 @@ public:
   iLabel(int index_, const QString& text, QWidget* parent); 
 
 public slots:
-  void			setHighlight(bool value);
-  void			setLighten(bool value);
+  void                  setHighlight(bool value);
+  void                  setLighten(bool value);
   
 #ifndef __MAKETA__
 signals:
-  void			contextMenuInvoked(iLabel* sender, QContextMenuEvent* e);
+  void                  contextMenuInvoked(iLabel* sender, QContextMenuEvent* e);
 #endif
 
 protected:
-  bool 			mhighlight;
-  bool 			mlighten;
-  int			mindex;
-  QVariant		muser_data;
+  bool                  mhighlight;
+  bool                  mlighten;
+  int                   mindex;
+  QVariant              muser_data;
 
-  void 	contextMenuEvent (QContextMenuEvent* e) override; 
+  void  contextMenuEvent (QContextMenuEvent* e) override; 
 private:
-  void		init();
+  void          init();
 };
 
 #endif // iLabel_h

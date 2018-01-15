@@ -45,7 +45,7 @@ eTypeDef_Of(ImgProcCallTask);
 class E_API ImgProcCallTask : public taTask {
 INHERITED(taTask)
 public:
-  ThreadImgProcCall    meth_call;	// #IGNORE method to call on the object
+  ThreadImgProcCall    meth_call;       // #IGNORE method to call on the object
 
   void run() override;
 
@@ -53,8 +53,8 @@ public:
 
   TA_BASEFUNS_NOCOPY(ImgProcCallTask);
 private:
-  void	Initialize();
-  void	Destroy();
+  void  Initialize();
+  void  Destroy();
 };
 
 
@@ -64,9 +64,9 @@ class E_API ImgProcCallThreadMgr : public taThreadMgr {
   // #INLINE thread manager for ImgProcCall tasks -- manages threads and tasks, and coordinates threads running the tasks
 INHERITED(taThreadMgr)
 public:
-  ImgProcThreadBase*	img_proc() 	{ return (ImgProcThreadBase*)owner; }
+  ImgProcThreadBase*    img_proc()      { return (ImgProcThreadBase*)owner; }
 
-  void		Run(ThreadImgProcCall& meth_call);
+  void          Run(ThreadImgProcCall& meth_call);
   // #IGNORE run given function, passing thread number as arg -- splits computation into n_threads components
   
   TA_BASEFUNS_NOCOPY(ImgProcCallThreadMgr);
@@ -74,8 +74,8 @@ protected:
   void UpdateAfterEdit_impl() override;
   
 private:
-  void	Initialize();
-  void	Destroy();
+  void  Initialize();
+  void  Destroy();
 };
 
 eTypeDef_Of(ImgProcThreadBase);
@@ -92,8 +92,8 @@ public:
   
   TA_SIMPLE_BASEFUNS(ImgProcThreadBase);
 private:
-  void 	Initialize() { };
-  void	Destroy() { };
+  void  Initialize() { };
+  void  Destroy() { };
 };
 
 #endif // ImgProcThreadBase_h

@@ -34,9 +34,9 @@ typedef QWidget inherited;
 #endif
   Q_OBJECT
 public:
-  QHBoxLayout*		lay;
+  QHBoxLayout*          lay;
   iComboBox*            combo_box;
-  QVBoxLayout*		vlay;
+  QVBoxLayout*          vlay;
   QToolButton*          prev_button;
   QToolButton*          next_button;
 

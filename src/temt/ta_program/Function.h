@@ -81,11 +81,11 @@ public:
   String       GenProgName() const override;
   bool         UpdateProgName() override;
   // below from taNBase for name:
-  bool	       HasName() const override { return true; }
+  bool         HasName() const override { return true; }
   bool         SetName(const String& nm) override;
   String       GetName() const override { return name; }
-  void 	       SetDefaultName() override;
-  void 	       MakeNameUnique() override;
+  void         SetDefaultName() override;
+  void         MakeNameUnique() override;
 
   bool         CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
   bool         CvtFmCode(const String& code) override;

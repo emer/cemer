@@ -38,18 +38,18 @@ typedef SoIndexedLineSet inherited;
  TA_SO_NODE_HEADER(SoLineBox3d);
 #endif // def __MAKETA__
 public:
-  static void		initClass();
+  static void           initClass();
 
-  bool		center;		// if true, location is at center, else at lower-left-corner
-  float		width;		// x
-  float		height;		// y
-  float		depth;		// z
+  bool          center;         // if true, location is at center, else at lower-left-corner
+  float         width;          // x
+  float         height;         // y
+  float         depth;          // z
 
-  void 		render();
+  void          render();
 
   SoLineBox3d(float wd = 1.0f, float ht = 1.0f, float dp = 1.0f, bool ctr = true);
 protected:
-  const char*  	getFileFormatName() const override {return "IndexedLineSet"; } 
+  const char*   getFileFormatName() const override {return "IndexedLineSet"; } 
 
 };
 

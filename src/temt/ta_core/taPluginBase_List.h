@@ -31,20 +31,20 @@ class TA_API taPluginBase_List: public taList<taPluginBase> {
   // ##CHILDREN_INLINE ##NO_UPDATE_AFTER ##NO_TOKENS plugins available to the program (also used for deps)
 INHERITED(taList<taPluginBase>)
 public:
-  taPluginBase*		FindUniqueId(const String& value); // find by unique_id
+  taPluginBase*         FindUniqueId(const String& value); // find by unique_id
   
   TA_BASEFUNS_NOCOPY(taPluginBase_List);
   
 protected:
 // forbid most clip ops, since we are managed based on existing plugins
-  virtual void		QueryEditActions_impl(const taiMimeSource* ms,
+  virtual void          QueryEditActions_impl(const taiMimeSource* ms,
     int& allowed, int& forbidden);
-  void		ChildQueryEditActions_impl(const MemberDef* md, const taBase* child,
+  void          ChildQueryEditActions_impl(const MemberDef* md, const taBase* child,
     const taiMimeSource* ms, int& allowed, int& forbidden) override;
 
 private:
-  void	Initialize() {}
-  void	Destroy() {}
+  void  Initialize() {}
+  void  Destroy() {}
 };
 
 #endif // taPluginBase_List_h

@@ -25,7 +25,7 @@
 
 
 class TA_API iPanelOfDataTable_Mbr : public iPanelOfDataTable {
-  Q_OBJECT			// use this for member data tables that you want to have an edit panel for -- does a few things differently
+  Q_OBJECT                      // use this for member data tables that you want to have an edit panel for -- does a few things differently
 INHERITED(iPanelOfDataTable)
 public:
   String       panel_type() const override; // this string is on the subpanel button for this panel

@@ -1,16 +1,16 @@
 // this contains core shared code, and is included directly in LeabraLayerSpec.h, _cpp.h, _cuda.h
 //{
 
-  STATE_CLASS(LeabraInhibSpec) lay_inhib;	// #CAT_Activation #AKA_inhib how to compute layer-wide inhibition -- uses feedforward (FF) and feedback (FB) inhibition (FFFB) based on average netinput (FF) and activation (FB) -- net inhibition is MAX of all operative inhibition -- any inhibitory unit inhibition is just added on top of this computed inhibition
+  STATE_CLASS(LeabraInhibSpec) lay_inhib;       // #CAT_Activation #AKA_inhib how to compute layer-wide inhibition -- uses feedforward (FF) and feedback (FB) inhibition (FFFB) based on average netinput (FF) and activation (FB) -- net inhibition is MAX of all operative inhibition -- any inhibitory unit inhibition is just added on top of this computed inhibition
   STATE_CLASS(LeabraInhibSpec) unit_gp_inhib; // #CAT_Activation how to compute unit-group-level inhibition (only relevant if layer actually has unit groups -- net inhibition is MAX of all operative inhibition -- uses feedforward (FF) and feedback (FB) inhibition (FFFB) based on average netinput (FF) and activation (FB) -- any inhibitory unit inhibition is just added on top of this computed inhibition
-  STATE_CLASS(LeabraInhibSpec) lay_gp_inhib;	// #CAT_Activation inhibition computed across layers within layer groups -- only applicable if the layer actually lives in a subgroup with other layers (and only in a first-level subgroup, not a sub-sub-group) -- only the specs of the FIRST layer in the layer group are used for computing inhib -- net inhibition is MAX of all operative inhibition -- uses feedforward (FF) and feedback (FB) inhibition (FFFB) based on average netinput (FF) and activation (FB) -- any inhibitory unit inhibition is just added on top of this computed inhibition
-  STATE_CLASS(LayerAvgActSpec) avg_act;	// #CAT_Activation expected average activity levels in the layer -- used for computing running-average computation that is then used for netinput scaling (also specifies time constant for updating average), and for the target value for adapting inhibition in inhib_adapt
+  STATE_CLASS(LeabraInhibSpec) lay_gp_inhib;    // #CAT_Activation inhibition computed across layers within layer groups -- only applicable if the layer actually lives in a subgroup with other layers (and only in a first-level subgroup, not a sub-sub-group) -- only the specs of the FIRST layer in the layer group are used for computing inhib -- net inhibition is MAX of all operative inhibition -- uses feedforward (FF) and feedback (FB) inhibition (FFFB) based on average netinput (FF) and activation (FB) -- any inhibitory unit inhibition is just added on top of this computed inhibition
+  STATE_CLASS(LayerAvgActSpec) avg_act; // #CAT_Activation expected average activity levels in the layer -- used for computing running-average computation that is then used for netinput scaling (also specifies time constant for updating average), and for the target value for adapting inhibition in inhib_adapt
   STATE_CLASS(LeabraAdaptInhib) inhib_adapt; // #CAT_Activation adapt an extra inhibitory gain value to keep overall layer activation within a given target range, based on avg_act.targ_init target value (TARGET or deep TRC layers use the running-average plus phase average actitvation) -- gain applies to all forms of inhibition (layer, unit group) that are in effect
-  STATE_CLASS(LeabraInhibMisc) inhib_misc;	// #CAT_Activation extra parameters for special forms of inhibition beyond the basic FFFB dynamic specified in inhib
+  STATE_CLASS(LeabraInhibMisc) inhib_misc;      // #CAT_Activation extra parameters for special forms of inhibition beyond the basic FFFB dynamic specified in inhib
   STATE_CLASS(LeabraClampSpec) clamp;        // #CAT_Activation how to clamp external inputs to units (hard vs. soft)
   STATE_CLASS(LayerDecaySpec)  decay;        // #CAT_Activation decay of activity state vars between trials
-  STATE_CLASS(LeabraDelInhib)  del_inhib;	// #CAT_Activation delayed inhibition, as a function of per-unit net input on prior trial and/or phase -- produces temporal derivative effects
-  STATE_CLASS(LeabraActMargin) margin;	// #CAT_Activation marginal activation computation -- detects those units that are on the edges of an attractor and focuses extra learning on them
+  STATE_CLASS(LeabraDelInhib)  del_inhib;       // #CAT_Activation delayed inhibition, as a function of per-unit net input on prior trial and/or phase -- produces temporal derivative effects
+  STATE_CLASS(LeabraActMargin) margin;  // #CAT_Activation marginal activation computation -- detects those units that are on the edges of an attractor and focuses extra learning on them
   float           lay_lrate;    // #CAT_Statistic layer-level learning rate modulator, multiplies learning rates for all connections coming into layer(s) that this spec applies to -- sets lrate_mod value on layer -- see also cos_diff for additional lrate modulation on top of this
   STATE_CLASS(LeabraCosDiffMod) cos_diff;    // #CAT_Statistic leabra layer-level cosine of difference between plus and minus phase activations -- used to modulate amount of hebbian learning, and overall learning rate
   STATE_CLASS(LeabraLayStats)  lstats;       // #CAT_Statistic layer-level statistics parameters
@@ -21,7 +21,7 @@
   // UnGpState for unit groups: per unit group, replacing LeabraUnGpData from before
 
   ///////////////////////////////////////////////////////////////////////
-  //	Access, status functions
+  //    Access, status functions
 
   inline bool   HasUnitGpInhib(LEABRA_LAYER_STATE* lay)
   { return (unit_gp_inhib.on && lay->n_ungps > 0); }
@@ -31,7 +31,7 @@
   // does this layer have layer level inhibition
 
   ///////////////////////////////////////////////////////////////////////
-  //	General Init functions
+  //    General Init functions
 
   // IMPORTANT: because we cannot have virtual functions in LayerState, any override of layer
   // compute methods MUST be accompanied by a rewrite of the parent NetworkState function
@@ -93,7 +93,7 @@
   // #CAT_Activation decay the state of this layer -- not normally called but available for programs etc to control specific layers
 
   ///////////////////////////////////////////////////////////////////////
-  //	Trial_Init -- at start of trial
+  //    Trial_Init -- at start of trial
 
   INIMPL virtual void  Trial_Init_Specs(LEABRA_NETWORK_STATE* net);
   // #CAT_Learning initialize specs and specs update network flags
@@ -102,7 +102,7 @@
   // #CAT_Learning layer level trial init -- overload where needed
 
   ///////////////////////////////////////////////////////////////////////
-  //	Quarter_Init -- at start of settling
+  //    Quarter_Init -- at start of settling
 
   INIMPL virtual float Compute_AvgExt(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net);
   // #CAT_Activation compute average of unit ext or targ values, depending on ext flags
@@ -174,14 +174,14 @@
 
 
   ///////////////////////////////////////////////////////////////////////
-  //	Cycle Step 1: Netinput 
+  //    Cycle Step 1: Netinput 
 
   // main computation is direct Send_NetinDelta call on units through threading mechanism
   // followed by Compute_NetinInteg on units
 
 
   ///////////////////////////////////////////////////////////////////////
-  //	Cycle Step 2: Inhibition
+  //    Cycle Step 2: Inhibition
 
   INLINE virtual void  Compute_Inhib_FfFb
     (LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net, STATE_CLASS_CPP(LeabraInhibVals)& i_val, const float netin_avg,
@@ -266,19 +266,19 @@
   // #CAT_Activation Stage 2.2: for layer groups, need to propagate inhib out to unit groups
 
   ///////////////////////////////////////////////////////////////////////
-  //	Cycle Step 3: Activation
+  //    Cycle Step 3: Activation
 
   // main function is basic Compute_Act which calls a bunch of sub-functions on the unitspec
   // called directly on units through threading mechanism
 
   ///////////////////////////////////////////////////////////////////////
-  //	Cycle Stats
+  //    Cycle Stats
 
   INLINE virtual void  Compute_CycleStats_Pre(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) { };
   // #CAT_Statistic pre-cycle-stats -- done in single thread prior to cycle stats -- good place to intervene for whole-layer dynamics
 
   ///////////////////////////////////////////////////////////////////////
-  //	Quarter_Final
+  //    Quarter_Final
 
   INLINE virtual void  Quarter_Final_Pre(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) { };
   // #CAT_Activation perform computations in layers at end of settling -- this is a pre-stage that occurs prior to final Quarter_Final -- use this for anything that needs to happen prior to the standard Quarter_Final across layers (called by network Quarter_Final)
@@ -351,13 +351,13 @@
   // #CAT_Activation after settling, keep track of phase variables, etc.
   
   ///////////////////////////////////////////////////////////////////////
-  //	Learning
+  //    Learning
 
   INLINE virtual void  Compute_dWt_Layer_pre(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) { };
   // #CAT_Learning do special computations at layer level prior to standard unit-level thread dwt computation -- not used in base class but is in various derived classes
 
   ///////////////////////////////////////////////////////////////////////
-  //	Trial-level Stats
+  //    Trial-level Stats
 
   INLINE virtual float  Compute_SSE(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net,
                                     int& n_vals, bool unit_avg = false, bool sqrt = false) {

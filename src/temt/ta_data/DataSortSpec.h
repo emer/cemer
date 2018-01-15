@@ -33,8 +33,8 @@ public:
 
   TA_BASEFUNS(DataSortSpec);
 private:
- void	Initialize();
-  void 	Destroy()		{ };
+ void   Initialize();
+  void  Destroy()               { };
 };
 
 #endif // DataSortSpec_h

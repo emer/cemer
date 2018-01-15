@@ -199,13 +199,13 @@ typedef struct YYSTYPE
 #line 54 "css_parse.y"
 {
   cssElPlusIVal el_ival;
-  cssElPtr     	el;		/* for coding */
-  int		ival;		/* for program indexes (progdx) and other ints */
-  char*        	nm;
+  cssElPtr      el;             /* for coding */
+  int           ival;           /* for program indexes (progdx) and other ints */
+  char*         nm;
 }
 /* Line 1529 of yacc.c.  */
 #line 208 "y.tab.h"
-	YYSTYPE;
+        YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
 # define YYSTYPE_IS_TRIVIAL 1

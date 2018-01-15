@@ -26,11 +26,11 @@ INHERITED(taOBase)
 public:
   bool          on;             // renormalize initial weight values
   bool          mult_norm;      // #CONDSHOW_ON_on use multiplicative normalization to rescale the weight values to hit the target value, which is appropriate for all-positive weight values (e.g., Leabra) -- otherwise use addition to add/subtract a constant from all weights to hit the target value, which is approparite for pos/neg signed weight values (e.g., backprop)
-  float		avg_wt;	        // #CONDSHOW_ON_on target average weight value per connection to renormalize to -- e.g., the sum across all weights will be adjusted so that it equals n_cons * avg_wt
+  float         avg_wt;         // #CONDSHOW_ON_on target average weight value per connection to renormalize to -- e.g., the sum across all weights will be adjusted so that it equals n_cons * avg_wt
 
   STATE_DECO_KEY("ProjectionSpec");
   STATE_TA_STD_CODE(RenormInitWtsSpec);
 private:
-  void 	Initialize()  { on = false;  mult_norm = true;  avg_wt = 0.5f; }
+  void  Initialize()  { on = false;  mult_norm = true;  avg_wt = 0.5f; }
 };
 

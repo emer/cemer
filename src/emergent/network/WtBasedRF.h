@@ -63,8 +63,8 @@ public:
   
   TA_SIMPLE_BASEFUNS(WtBasedRF);
 protected:
-  void	UpdateAfterEdit_impl() override;
-  void	CheckThisConfig_impl(bool quiet, bool& rval) override;
+  void  UpdateAfterEdit_impl() override;
+  void  CheckThisConfig_impl(bool quiet, bool& rval) override;
 
 private:
   void Initialize();

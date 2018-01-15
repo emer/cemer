@@ -33,25 +33,25 @@ class TA_API DataColsFmArgs: public ProgEl {
 INHERITED(ProgEl)
 public:
   enum RowType {
-    CUR_ROW,			// use the current row (i.e., the last one added or specifically set by Read or Write operation)
-    ROW_NUM,			// row_var variable contains the row number to operate on
-    ROW_VAL,			// row_var variable contains a value that is used to find the row number by searching within data table column with the same name as the row_var variable
+    CUR_ROW,                    // use the current row (i.e., the last one added or specifically set by Read or Write operation)
+    ROW_NUM,                    // row_var variable contains the row number to operate on
+    ROW_VAL,                    // row_var variable contains a value that is used to find the row number by searching within data table column with the same name as the row_var variable
   };
 
-  ProgVarRef	data_var;	// #ITEM_FILTER_DataProgVarFilter program variable pointing to data table with columns that are to be set from startup args
-  RowType	row_spec;	// how the row number within data table is specified
-  ProgVarRef	row_var;	// #CONDEDIT_OFF_row_spec:CUR_ROW #ITEM_FILTER_StdProgVarFilter #CUST_CHOOSER_NewProgVarCustChooser program variable containing information about which row to operate on (depends on row_spec for what this information is)
+  ProgVarRef    data_var;       // #ITEM_FILTER_DataProgVarFilter program variable pointing to data table with columns that are to be set from startup args
+  RowType       row_spec;       // how the row number within data table is specified
+  ProgVarRef    row_var;        // #CONDEDIT_OFF_row_spec:CUR_ROW #ITEM_FILTER_StdProgVarFilter #CUST_CHOOSER_NewProgVarCustChooser program variable containing information about which row to operate on (depends on row_spec for what this information is)
 
   virtual DataTable* GetData() const;
   // get actual data table pointer from variable
 
-  String	GetDisplayName() const override;
-  String 	GetTypeDecoKey() const override { return "DataTable"; }
-  String	GetToolbarName() const override { return "data=args"; }
+  String        GetDisplayName() const override;
+  String        GetTypeDecoKey() const override { return "DataTable"; }
+  String        GetToolbarName() const override { return "data=args"; }
   bool    CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
   bool    CvtFmCode(const String& code) override;
 
-  void	GenRegArgs(Program* prog);
+  void  GenRegArgs(Program* prog);
   // #IGNORE generate RegisterArgs code
 
 DataColsFmArgs::RowType        StringToRowType(const String& row_type);
@@ -61,11 +61,11 @@ DataColsFmArgs::RowType        StringToRowType(const String& row_type);
 protected:
   void UpdateAfterEdit_impl() override;
   void CheckThisConfig_impl(bool quiet, bool& rval) override;
-  bool	GenCssBody_impl(Program* prog) override;
+  bool  GenCssBody_impl(Program* prog) override;
 
 private:
-  void	Initialize();
-  void	Destroy()	{CutLinks();}
+  void  Initialize();
+  void  Destroy()       {CutLinks();}
 }; 
 
 #endif // DataColsFmArgs_h

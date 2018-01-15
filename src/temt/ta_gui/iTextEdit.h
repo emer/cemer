@@ -33,7 +33,7 @@ public:
 
   bool              completion_enabled;
   
-  virtual void      clearExtSelection();	   // clear extended selection mode and also clear any existing selection
+  virtual void      clearExtSelection();           // clear extended selection mode and also clear any existing selection
   iCodeCompleter*   GetCompleter() { return completer; }
 
 public slots:
@@ -43,14 +43,14 @@ public slots:
   
 #ifndef __MAKETA__
 signals:
-  void              lookupKeyPressed();	// use this as hook for looking up information based on current text etc (completion) -- bound to Ctrl-L
+  void              lookupKeyPressed(); // use this as hook for looking up information based on current text etc (completion) -- bound to Ctrl-L
   void              completed(QModelIndex index); // emit this signal when the use makes a completion selection
   void              characterEntered(); // use this as hook for looking up information based on current text etc (completion) -- when using the Completer feature rather than lookup feature
 #endif
 
 protected:
-  bool              ext_select_on;	 // toggled by Ctrl+space -- extends selection with keyboard movement
-  QString           prev_find_str;	 // previous find string
+  bool              ext_select_on;       // toggled by Ctrl+space -- extends selection with keyboard movement
+  QString           prev_find_str;       // previous find string
   iCodeCompleter*   completer; //
   int               cursor_position_from_end; // cursor position for start of completion - only set during completion
   int               cursor_offset;   // compensate for cursor movement by user while completion selections are visible

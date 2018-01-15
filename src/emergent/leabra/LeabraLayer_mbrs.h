@@ -45,6 +45,6 @@ public:
   STATE_DECO_KEY("Layer");
   STATE_TA_STD_CODE(LeabraMarginVals);
 private:
-  void	Initialize()    { InitVals(); }
+  void  Initialize()    { InitVals(); }
 };
 

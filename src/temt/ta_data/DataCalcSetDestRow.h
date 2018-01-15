@@ -32,11 +32,11 @@ class TA_API DataCalcSetDestRow : public DataSrcDestProg {
 INHERITED(DataSrcDestProg)
 public:
 #ifdef __MAKETA__
-  ProgVarRef	    src_data_var;	// #READ_ONLY #HIDDEN #ITEM_FILTER_DataProgVarFilter source data for operation
-  ProgVarRef	    dest_data_var;	// #READ_ONLY #SHOW #ITEM_FILTER_DataProgVarFilter destination table to add row in -- automatically updated from DataCalcLoop
+  ProgVarRef        src_data_var;       // #READ_ONLY #HIDDEN #ITEM_FILTER_DataProgVarFilter source data for operation
+  ProgVarRef        dest_data_var;      // #READ_ONLY #SHOW #ITEM_FILTER_DataProgVarFilter destination table to add row in -- automatically updated from DataCalcLoop
 #endif
 
-  virtual void	GetDataPtrsFmLoop();
+  virtual void  GetDataPtrsFmLoop();
   // get my data table ptrs from parent calc loop obj
 
   String    GetDisplayName() const override;
@@ -44,17 +44,17 @@ public:
   bool      CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
   bool      CvtFmCode(const String& code) override;
 
-  void 	InitLinks() override;
+  void  InitLinks() override;
   TA_BASEFUNS(DataCalcSetDestRow);
 protected:
   void      UpdateAfterEdit_impl() override;
-  void	    CheckThisConfig_impl(bool quiet, bool& rval) override;
-  bool	    GenCssBody_impl(Program* prog) override; 
+  void      CheckThisConfig_impl(bool quiet, bool& rval) override;
+  bool      GenCssBody_impl(Program* prog) override; 
 
 private:
-  void	Copy_(const DataCalcSetDestRow& cp);
-  void	Initialize();
-  void	Destroy()	{ CutLinks(); }
+  void  Copy_(const DataCalcSetDestRow& cp);
+  void  Initialize();
+  void  Destroy()       { CutLinks(); }
 };
 
 #endif // DataCalcSetDestRow_h

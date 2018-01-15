@@ -41,7 +41,7 @@ public:
 
   int             GetEnabled() const override;
   String          GetTypeDecoKey() const override { return "ControlPanel"; }
-  taList_impl*	  children_() override {return &mbrs;}
+  taList_impl*    children_() override {return &mbrs;}
 
   virtual void  AutoName();
   // #IGNORE

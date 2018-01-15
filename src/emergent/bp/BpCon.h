@@ -30,7 +30,7 @@ eTypeDef_Of(BpCon);
 class E_API BpCon : public Connection {
   // #STEM_BASE ##CAT_Bp Bp connection
 public:
-  float		pdw;		// #NO_SAVE previous delta-weight change -- needed for momentum term in the learning mechanism
+  float         pdw;            // #NO_SAVE previous delta-weight change -- needed for momentum term in the learning mechanism
 
   BpCon() { pdw = 0.0f; }
 };

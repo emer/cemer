@@ -30,17 +30,17 @@ class TA_API DoneWritingDataRow: public DataOneProg {
   // add this after you are done writing everything to the current row of the data table, and it will update displays and write to log files, etc (just calls WriteClose() on data table var object)
 INHERITED(DataOneProg)
 public:
-  String	GetDisplayName() const override;
-  String	GetToolbarName() const override { return "row done"; }
+  String        GetDisplayName() const override;
+  String        GetToolbarName() const override { return "row done"; }
   bool          CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
   bool          CvtFmCode(const String& code) override;
 
   TA_BASEFUNS_NOCOPY(DoneWritingDataRow);
 protected:
-  bool		GenCssBody_impl(Program* prog) override;
+  bool          GenCssBody_impl(Program* prog) override;
 private:
-  void	Initialize();
-  void	Destroy()	{ }
+  void  Initialize();
+  void  Destroy()       { }
 }; 
 
 #endif // DoneWritingDataRow_h

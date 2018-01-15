@@ -34,14 +34,14 @@ class E_API IndexByGps: public SpecMemberBase {
   INHERITED(SpecMemberBase)
     public:
 
-  bool on; 	// when true, uses unit groups for indexing layer
-  bool x;		// #CONDSHOW_ON_on use unit groups for indexing in x-dimension, else flat indexing using units only
-  bool y; 	// #CONDSHOW_ON_on use gps for indexing in y
+  bool on;      // when true, uses unit groups for indexing layer
+  bool x;               // #CONDSHOW_ON_on use unit groups for indexing in x-dimension, else flat indexing using units only
+  bool y;       // #CONDSHOW_ON_on use gps for indexing in y
 
   TA_SIMPLE_BASEFUNS(IndexByGps);
  protected:
   SPEC_DEFAULTS;
-  void	UpdateAfterEdit_impl() override;
+  void  UpdateAfterEdit_impl() override;
 
  private:
   void Initialize() { };
@@ -56,49 +56,49 @@ class E_API TopoWtsPrjnSpec: public FullPrjnSpec {
   INHERITED(FullPrjnSpec)
     public:
 
-  enum TopoPattern { 	// pattern of connectivity to establish
-    X2X,			// map x-dimension of send layer to x-dim recv
-    X2Y,			// x-dim of send to y-dim recv
-    Y2Y,			// y send to y recv
-    Y2X,			// y send to x recv
-    X2X_Y2Y,	// map in both dimensions - x-dim of send to x-dim recv and y-to-y
-    X2Y_Y2X,	// x-to-y and y-to-x
+  enum TopoPattern {    // pattern of connectivity to establish
+    X2X,                        // map x-dimension of send layer to x-dim recv
+    X2Y,                        // x-dim of send to y-dim recv
+    Y2Y,                        // y send to y recv
+    Y2X,                        // y send to x recv
+    X2X_Y2Y,    // map in both dimensions - x-dim of send to x-dim recv and y-to-y
+    X2Y_Y2X,    // x-to-y and y-to-x
   };
 
-  enum GradType {	// type of function to use to establish the gradient
-    LINEAR,			// linear fall-off as a function of distance
-    GAUSSIAN,		// gaussian fall-off as a function of distance
+  enum GradType {       // type of function to use to establish the gradient
+    LINEAR,                     // linear fall-off as a function of distance
+    GAUSSIAN,           // gaussian fall-off as a function of distance
   };
 
-  enum WrapReflect { 	// type of wt equalization to use at stripe edges
-    NONE, 		// usually should be avoided as clipping will produce unequalized netins to recv units
-    WRAP,			// compensates for clipping by wrapping around to the other side of layer/stripe
-    REFLECT,	// compensates for clipped connections by double-counting mirror image of clipped cons
+  enum WrapReflect {    // type of wt equalization to use at stripe edges
+    NONE,               // usually should be avoided as clipping will produce unequalized netins to recv units
+    WRAP,                       // compensates for clipping by wrapping around to the other side of layer/stripe
+    REFLECT,    // compensates for clipped connections by double-counting mirror image of clipped cons
   };
 
   TopoPattern topo_pattern; // #CONDSHOW_ON_init_wts topological pattern of connectivity between send and recv layers
 
-  MinMaxRange wt_range;	// #CONDSHOW_ON_init_wts range of weakest (min) to strongest (max) weight values generated
+  MinMaxRange wt_range; // #CONDSHOW_ON_init_wts range of weakest (min) to strongest (max) weight values generated
 
   bool invert;// #CONDSHOW_ON_init_wts invert the gradient, such that the min is located "below" the recv units, and the max is furthest away
 
   IndexByGps index_by_gps_send; // #CONDSHOW_ON_init_wts
   IndexByGps index_by_gps_recv; // #CONDSHOW_ON_init_wts
 
-  bool custom_send_range;	// #CONDSHOW_ON_init_wts use custom (sub)range of send layer
+  bool custom_send_range;       // #CONDSHOW_ON_init_wts use custom (sub)range of send layer
   taVector2i send_range_start;// #CONDSHOW_ON_init_wts start coords used in send layer (either unit groups or units depending on use_send_gps setting)
   taVector2i send_range_end;// #CONDSHOW_ON_init_wts end coords used in send layer (either unit groups or units depending on use_send_gps setting) -- use -1 for last unit/group
 
-  bool custom_recv_range;	// #CONDSHOW_ON_init_wts use custom (sub)range of recv layer?
+  bool custom_recv_range;       // #CONDSHOW_ON_init_wts use custom (sub)range of recv layer?
   taVector2i recv_range_start;// #CONDSHOW_ON_init_wts start coords used in recv layer (either unit groups or units depending on use_recv_gps setting)
   taVector2i recv_range_end;// #CONDSHOW_ON_init_wts end coords used in recv layer (either unit groups or units depending on use_recv_gps setting) -- use -1 for last unit/group
 
   WrapReflect wrap_reflect; // #CONDSHOW_ON_init_wts how to deal with clipped edges
 
-  GradType grad_type;	// #CONDSHOW_ON_init_wts type of gradient to make -- applies to both axes
-  float gauss_sig;		// #CONDSHOW_ON_grad_type:GAUSSIAN #CONDSHOW_ON_init_wts gaussian sigma (width), in normalized units where entire distance across sending layer is 1.0
+  GradType grad_type;   // #CONDSHOW_ON_init_wts type of gradient to make -- applies to both axes
+  float gauss_sig;              // #CONDSHOW_ON_grad_type:GAUSSIAN #CONDSHOW_ON_init_wts gaussian sigma (width), in normalized units where entire distance across sending layer is 1.0
 
-  void	Init_Weights_Prjn(Projection* prjn, ConState* cg, Network* net, int thr_no)
+  void  Init_Weights_Prjn(Projection* prjn, ConState* cg, Network* net, int thr_no)
     override;
   // calls one of the four InitWeights fns below according to use of unit groups
   bool  HasRandomScale() override { return false; }
@@ -122,23 +122,23 @@ class E_API TopoWtsPrjnSpec: public FullPrjnSpec {
   // actually set the weight value from distance value -- used by above four main routines -- can overload to implement different gradient functions -- cg_idx is index within con group, and dist is computed normalized distance value (0-1)
 
   virtual float ComputeTopoDist(Projection* prjn, ConState* cg, Unit* ru, int i, float ri_x, float ri_y,
-				taVector2i srs, taVector2i sre, taVector2i rrs, taVector2i rre, taVector2i ri_pos);
+                                taVector2i srs, taVector2i sre, taVector2i rrs, taVector2i rre, taVector2i ri_pos);
   // computes the normalized Euclidean distance between idx'd send unit and current recv unit -- used by above four main routines
 
   virtual bool ReflectClippedWt(Projection* prjn, ConState* cg, Unit* ru, int i, taVector2i ri_pos,
-				taVector2i srs, taVector2i sre, taVector2i rrs, taVector2i rre, float ri_x, float ri_y);
+                                taVector2i srs, taVector2i sre, taVector2i rrs, taVector2i rre, float ri_x, float ri_y);
   // returns dbl_add = true if a particular sending wt is clipped by recv lay edge
 
   bool TestWarning_impl(bool test, const String& fun_name, const String& a,
-		   const String& b=NULLStr, const String& c=NULLStr, const String& d=NULLStr,
-		   const String& e=NULLStr, const String& f=NULLStr, const String& g=NULLStr,
-		   const String& h=NULLStr) const override;
+                   const String& b=NULLStr, const String& c=NULLStr, const String& d=NULLStr,
+                   const String& e=NULLStr, const String& f=NULLStr, const String& g=NULLStr,
+                   const String& h=NULLStr) const override;
 
   TA_SIMPLE_BASEFUNS(TopoWtsPrjnSpec);
  protected:
   SPEC_DEFAULTS;
 
-  int already_warned;		// don't keep warning beyond first n..
+  int already_warned;           // don't keep warning beyond first n..
 
  private:
   void Initialize();

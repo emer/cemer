@@ -28,12 +28,12 @@
 class TA_API VPUList : public taPtrList<VPUnref> {
   // ##NO_CSS ##NO_MEMBERS a list of unresolved variable pointers that are to be resolved later..
 protected:
-  void		El_Done_(void* it)	{ delete (VPUnref*)it; }
+  void          El_Done_(void* it)      { delete (VPUnref*)it; }
   String El_GetName_(void* it) const { return ((VPUnref*)it)->name; }
 public:
-  void	Resolve();	// attempt to resolve references
+  void  Resolve();      // attempt to resolve references
 
-  virtual void	AddVPU(void* b, taBase* par, const String& p, MemberDef* md = NULL);
+  virtual void  AddVPU(void* b, taBase* par, const String& p, MemberDef* md = NULL);
 
   ~VPUList()                            { Reset(); }
 };

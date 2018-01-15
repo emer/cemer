@@ -296,7 +296,7 @@ public:
   // #IGNORE itm_idx is a hint from source, -1 means not specified or ignore
   
   // output
-  virtual String&  	Print(String& strm, int indent=0) const;
+  virtual String&       Print(String& strm, int indent=0) const;
   // #CAT_Display print the items on the list
 protected:
   virtual void          ItemRemoved_() {} // we overload this in groups to update the leaf counts

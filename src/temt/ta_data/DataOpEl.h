@@ -37,8 +37,8 @@ public:
   // #READ_ONLY #HIDDEN #NO_SAVE data table -- gets set dynamically
   DataCol*        col_lookup;
   // #NULL_OK #NO_SAVE #HIDDEN #NO_EDIT #NO_UPDATE_POINTER lookup column in data table to operate on -- sets col_name field (which is what is actually used) and returns to NULL after selection is applied
-  String          col_name;	// #ADD_COMPLETER_SIMPLE name of column in data table to operate on (either enter directly or lookup from col_lookup)
-  int             col_idx;	// #READ_ONLY #NO_SAVE column idx (from GetColumns)
+  String          col_name;     // #ADD_COMPLETER_SIMPLE name of column in data table to operate on (either enter directly or lookup from col_lookup)
+  int             col_idx;      // #READ_ONLY #NO_SAVE column idx (from GetColumns)
 
   virtual void    SetDataTable(DataTable* dt);
   // #CAT_DataOp set the data table to enable looking up columns
@@ -65,12 +65,12 @@ public:
   TA_SIMPLE_BASEFUNS(DataOpEl);
   
 protected:
-  void	UpdateAfterEdit_impl() override;	// set col_name from col_lookup
-  void	CheckThisConfig_impl(bool quiet, bool& rval) override;
+  void  UpdateAfterEdit_impl() override;        // set col_name from col_lookup
+  void  CheckThisConfig_impl(bool quiet, bool& rval) override;
   
 private:
   void  Initialize();
-  void 	Destroy()		{ };
+  void  Destroy()               { };
 };
 
 #endif // DataOpEl_h

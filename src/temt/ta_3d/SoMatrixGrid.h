@@ -48,49 +48,49 @@ INHERITED(SoSeparator)
   TA_SO_NODE_HEADER(SoMatrixGrid);
 #endif // def __MAKETA__
 public:
-  enum MatrixLayout { 	// order of display for matrix cols
-    BOT_ZERO, 		// row zero is displayed at bottom of cell (default)
-    TOP_ZERO 		// row zero is displayed at top of cell (ex. for images)
+  enum MatrixLayout {   // order of display for matrix cols
+    BOT_ZERO,           // row zero is displayed at bottom of cell (default)
+    TOP_ZERO            // row zero is displayed at top of cell (ex. for images)
   };
 
-  static void		initClass();
+  static void           initClass();
 
-  MatrixLayout	mat_layout; 	// #DEF_BOT_ZERO layout of matrix and image cells
-  taMatrixRef	matrix;	    	// the matrix to render (required!)
+  MatrixLayout  mat_layout;     // #DEF_BOT_ZERO layout of matrix and image cells
+  taMatrixRef   matrix;         // the matrix to render (required!)
   int           slice_idx;      // if >= 0, then we are actually plotting a slice of matrix, at this index, instead of the full matrix
-  bool		odd_y;		// how to deal with odd-dimensional matricies: put extra odd dimension in the y axis (else x)
-  ColorScale*	scale; 		// The color scale for this display (required!)
-  bool		val_text;	// display text representation of values?
+  bool          odd_y;          // how to deal with odd-dimensional matricies: put extra odd dimension in the y axis (else x)
+  ColorScale*   scale;          // The color scale for this display (required!)
+  bool          val_text;       // display text representation of values?
 
-  int		max_txt_len;	// #DEF_6 maximum text length (determines font size)
-  float		spacing;	// #DEF_0.1 space between cell blocks, as a proportion of max of X, Y cell size
-  float		block_height;	// #DEF_0.2 how tall (in Z dimension) to make the blocks (relative to the max of their X or Y size)
-  float		trans_max;	// #DEF_0.6 maximum transparency value (for zero scaled values)
-  void*		user_data;	// optional user data associated with this guy (e.g., DataCol)
-  void*	        parent_obj;	// optional parent obj that manages this (e.g., GridTableView)
+  int           max_txt_len;    // #DEF_6 maximum text length (determines font size)
+  float         spacing;        // #DEF_0.1 space between cell blocks, as a proportion of max of X, Y cell size
+  float         block_height;   // #DEF_0.2 how tall (in Z dimension) to make the blocks (relative to the max of their X or Y size)
+  float         trans_max;      // #DEF_0.6 maximum transparency value (for zero scaled values)
+  void*         user_data;      // optional user data associated with this guy (e.g., DataCol)
+  void*         parent_obj;     // optional parent obj that manages this (e.g., GridTableView)
   bool          render_svg;     // if true, render to svg
   String*       svg_str;        // string to render to
   taVector3f    svg_off;        // position offset for svg rendering output
   taVector3f    svg_sz;         // sizes
 
-  void		setMatrix(taMatrix* mat, bool oddy, int slice = -1);
-  void		setColorScale(ColorScale* cs);
-  void		setLayout(MatrixLayout layout);
-  void		setValText(bool val_txt);
-  void		setBlockHeight(float blk_ht);
+  void          setMatrix(taMatrix* mat, bool oddy, int slice = -1);
+  void          setColorScale(ColorScale* cs);
+  void          setLayout(MatrixLayout layout);
+  void          setValText(bool val_txt);
+  void          setBlockHeight(float blk_ht);
 
-  void 		render();
+  void          render();
   // basic render -- generates static structures and then calls renderValues
-  void		renderValues();
+  void          renderValues();
   // optimized render update for when only the matrix values have changed (matrix geom MUST not have changed)
 
-  void 		ValToDispText(float val, String& str);
+  void          ValToDispText(float val, String& str);
   // get text representation of value
 
-  SoTransform*	transform() const { return transform_; }
+  SoTransform*  transform() const { return transform_; }
   // #IGNORE the master transform, for the whole entity
   using inherited::getMatrix;
-  taMatrix*	getMatrix() const { return matrix; }
+  taMatrix*     getMatrix() const { return matrix; }
 
   SoMatrixGrid(taMatrix* mat = NULL, int slice = -1, bool oddy = true,
                ColorScale* cs = NULL, MatrixLayout layout = BOT_ZERO,
@@ -98,24 +98,24 @@ public:
   ~SoMatrixGrid();
 
 protected:
-  const char*  	getFileFormatName() const override {return "Separator"; } 
+  const char*   getFileFormatName() const override {return "Separator"; } 
 
   SoIndexedTriangleStripSet* shape_;
-  SoTransform*		transform_; // for entire object: goes first in this
-  SoVertexProperty*	vtx_prop_;
-  SoSeparator* 		cell_text_; // cell text variables
-  SoFont* 		cell_fnt_; //fnt we add to the text (not refed)
+  SoTransform*          transform_; // for entire object: goes first in this
+  SoVertexProperty*     vtx_prop_;
+  SoSeparator*          cell_text_; // cell text variables
+  SoFont*               cell_fnt_; //fnt we add to the text (not refed)
 
-  float		max_xy;		// max of unit x,y cell size
-  float		cl_spc;		// computed cell spacing
-  float		blk_ht;		// computed block height
+  float         max_xy;         // max of unit x,y cell size
+  float         cl_spc;         // computed cell spacing
+  float         blk_ht;         // computed block height
   
-  void		render_block_idx(int c00_0, int mat_idx, 
-				 int32_t* coords_dat, int32_t* norms_dat,
-				 int32_t* mats_dat, int& cidx, int& nidx, int& midx);
+  void          render_block_idx(int c00_0, int mat_idx, 
+                                 int32_t* coords_dat, int32_t* norms_dat,
+                                 int32_t* mats_dat, int& cidx, int& nidx, int& midx);
   // render one set of block indicies
-  void		render_text(bool build_text, int& t_idx, float xp, float xp1, float yp,
-			    float yp1, float zp, float ufontsz);
+  void          render_text(bool build_text, int& t_idx, float xp, float xp1, float yp,
+                            float yp1, float zp, float ufontsz);
   // setup all the cell_text_ stuff
 };
 

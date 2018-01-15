@@ -44,20 +44,20 @@ public:
   bool                  expanded;  // whether this node is currently expanded to show children or not
   T3TwoDText*           caption;   // optional caption for this node
   
-  virtual void		setCaption(const QString& txt);
+  virtual void          setCaption(const QString& txt);
   // set the caption for this node to given text -- creates the caption node under this one if it does not already exist
 
-  virtual void		createCaption();
+  virtual void          createCaption();
   // create the caption node
-  virtual void		setDefaultCaptionTransform();
+  virtual void          setDefaultCaptionTransform();
   // set the default caption transform; this is called after creating caption first time
-  virtual void	        resizeCaption(float sz);
+  virtual void          resizeCaption(float sz);
   // resize caption to given fractional height relative to a 1.0 viewport height
   virtual iColor        getTextColor();
   // get the text color from the T3Panel
   
-  virtual void		clear() { } // optional method, for clearing out the content; called from ReInit
-  virtual void		updateNode() { } // update all the geom, children etc of node
+  virtual void          clear() { } // optional method, for clearing out the content; called from ReInit
+  virtual void          updateNode() { } // update all the geom, children etc of node
 
   T3Node(Qt3DNode* parent = 0, T3DataView* dataView_ = NULL);
   ~T3Node();
@@ -136,10 +136,10 @@ enum T3AlignText {              // for abstracting over Qt3D and SoAsciiText
   The coordinate space for "pos" and "geom" calls follows the emergent conventions. The values
   are in integral units in some abstract 3-d space; the frame of reference is as follows:
 
-  Dimension	emergent Inventor
-  left-->right	+x	+x
-  bott->top	+y	+y
-  back->front	-z	+z
+  Dimension     emergent Inventor
+  left-->right  +x      +x
+  bott->top     +y      +y
+  back->front   -z      +z
 
   Because of how layers are stacked, the emergent-y space is scaled with respect to the other
   spaces. However, this is not done with transforms (it would distort shapes), but merely
@@ -257,60 +257,60 @@ typedef SoSeparator inherited;
 #endif // def __MAKETA__
 public:
 
-  static void		initClass();
+  static void           initClass();
 
-  static void		insertChildBefore(SoGroup* group, SoNode* child, SoNode* before);
+  static void           insertChildBefore(SoGroup* group, SoNode* child, SoNode* before);
    // #IGNORE insert before node; before=NULL for end;
-  static void		insertChildAfter(SoGroup* group, SoNode* child, SoNode* after);
+  static void           insertChildAfter(SoGroup* group, SoNode* child, SoNode* after);
    // #IGNORE insert before node; after=NULL for start
-  static SoNode*	getNodeByName(SoGroup* group, const char* name);
+  static SoNode*        getNodeByName(SoGroup* group, const char* name);
   // #IGNORE find node by name, if any
 
-  inline T3DataView*	dataView() {return dataView_;} // #IGNORE the T3DataView that owns/created this node
+  inline T3DataView*    dataView() {return dataView_;} // #IGNORE the T3DataView that owns/created this node
 
-  virtual SoFont*	captionFont(bool auto_create = false) = 0; // #IGNORE 
-  SoAsciiText*		captionNode(bool auto_create = false); // #IGNORE 
-  SoSeparator*	        topSeparator() {return this;} // #IGNORE 
-  SoTransform*		transform() const {return transform_;} // #IGNORE the master transform, for the whole entity
-  virtual SoSeparator*	shapeSeparator() = 0;                  // #IGNORE 
-  SoTransform*		txfm_shape() const {return txfm_shape_;}
+  virtual SoFont*       captionFont(bool auto_create = false) = 0; // #IGNORE 
+  SoAsciiText*          captionNode(bool auto_create = false); // #IGNORE 
+  SoSeparator*          topSeparator() {return this;} // #IGNORE 
+  SoTransform*          transform() const {return transform_;} // #IGNORE the master transform, for the whole entity
+  virtual SoSeparator*  shapeSeparator() = 0;                  // #IGNORE 
+  SoTransform*          txfm_shape() const {return txfm_shape_;}
   // #IGNORE the transform for the shape
-  SoMaterial*		material() const {return material_;} // #IGNORE 
-  virtual SoSeparator*	childNodes() {return NULL;} // #IGNORE use this to set/get T3Node children
+  SoMaterial*           material() const {return material_;} // #IGNORE 
+  virtual SoSeparator*  childNodes() {return NULL;} // #IGNORE use this to set/get T3Node children
 
-  virtual const char*	caption();
-  virtual void		setCaption(const char* value); //NOTE: if you want to transform, you MUST call transformCaption every time after calling setCaption
+  virtual const char*   caption();
+  virtual void          setCaption(const char* value); //NOTE: if you want to transform, you MUST call transformCaption every time after calling setCaption
   virtual iColor        getTextColor();
   // get the text color from the T3Panel
   
-  virtual void		clear() {} // optional method, for clearing out the content; called from ReInit
-  void			transformCaption(const iVec3f& translate); // #IGNORE
-  void			transformCaption(const SbRotation& rotate, const iVec3f& translate); // #IGNORE
-  void			resizeCaption(float sz);
-  virtual bool		expanded() {return true;} // many nodes have an expanded and compact rep
-  virtual void		setExpanded(bool value) {}
+  virtual void          clear() {} // optional method, for clearing out the content; called from ReInit
+  void                  transformCaption(const iVec3f& translate); // #IGNORE
+  void                  transformCaption(const SbRotation& rotate, const iVec3f& translate); // #IGNORE
+  void                  resizeCaption(float sz);
+  virtual bool          expanded() {return true;} // many nodes have an expanded and compact rep
+  virtual void          setExpanded(bool value) {}
 
-  virtual void		addRemoveChildNode(SoNode* node, bool adding); // #IGNORE called by pdpDataView (default prints console error)
+  virtual void          addRemoveChildNode(SoNode* node, bool adding); // #IGNORE called by pdpDataView (default prints console error)
 
   T3Node(T3DataView* dataView_ = NULL);
 
 protected:
-  SoAsciiText*		captionNode_;
-  const char*  		getFileFormatName() const override {return "Separator"; }
+  SoAsciiText*          captionNode_;
+  const char*           getFileFormatName() const override {return "Separator"; }
   // makes output files fully general
-  virtual SoSeparator*	captionSeparator(bool auto_create = false) = 0;
-  SoTransform*		captionTransform(bool auto_create = false);
-  virtual void		setDefaultCaptionTransform(); // call transformCaption to set the default transform; this is called after creating Node first time
-  void			transformCaption(const SbRotation* rotate, const iVec3f* translate); // #IGNORE
-  void 			initCommon(); // shared code, can only be called in a subclass constructor
+  virtual SoSeparator*  captionSeparator(bool auto_create = false) = 0;
+  SoTransform*          captionTransform(bool auto_create = false);
+  virtual void          setDefaultCaptionTransform(); // call transformCaption to set the default transform; this is called after creating Node first time
+  void                  transformCaption(const SbRotation* rotate, const iVec3f* translate); // #IGNORE
+  void                  initCommon(); // shared code, can only be called in a subclass constructor
 
   ~T3Node();
 
 private:
   T3DataView*           dataView_; // #IGNORE private since it can be accessed through dataView().
-  SoTransform*		transform_; // #IGNORE
-  SoTransform*		txfm_shape_; // #IGNORE NOTE: must be created in subclass init
-  SoMaterial*		material_; // #IGNORE NOTE: must be created in subclass init
+  SoTransform*          transform_; // #IGNORE
+  SoTransform*          txfm_shape_; // #IGNORE NOTE: must be created in subclass init
+  SoMaterial*           material_; // #IGNORE NOTE: must be created in subclass init
 };
 
 #endif // TA_QT3D

@@ -31,8 +31,8 @@ typedef QMap<int, QLayout*> QMap_int_QLayout;
 class TA_API iFormLayout : public QFormLayout {
 INHERITED(QFormLayout)
 public:
-  bool		isVisible(int row);
-  void		setVisible(int row, bool val);
+  bool          isVisible(int row);
+  void          setVisible(int row, bool val);
   
   iFormLayout(QWidget *parent = NULL);
   ~iFormLayout();
@@ -42,11 +42,11 @@ public: // required or desired overrides
 
 protected:
 #ifndef __MAKETA__
-  QBitArray		m_inv; // invisible guys -- out of range implies visible
-  QMap_int_QWidget	m_inv_labels; // invisible labels
-  QMap_int_QLayout	m_inv_fields; // invisible fields	
+  QBitArray             m_inv; // invisible guys -- out of range implies visible
+  QMap_int_QWidget      m_inv_labels; // invisible labels
+  QMap_int_QLayout      m_inv_fields; // invisible fields       
 #endif
-  int			GetIndexFromRowRole(int row, ItemRole role); 
+  int                   GetIndexFromRowRole(int row, ItemRole role); 
     // hacky method to get raw index, ex. for takeAt use
 private:
   void init();

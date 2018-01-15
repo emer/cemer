@@ -32,7 +32,7 @@ class E_API LayerDataEl_List: public taList<LayerDataEl> {
 INHERITED(taList<LayerDataEl>)
 public:
 
-  virtual void 	SetDataNetwork(DataTable* db, Network* net);
+  virtual void  SetDataNetwork(DataTable* db, Network* net);
   // #CAT_LayerData set the data table and network pointers enable looking up columns/layer names
 
   virtual LayerDataEl* FindColName(const String& chn_name);
@@ -48,13 +48,13 @@ public:
   virtual LayerDataEl* FindLayerData(const String& chn_name, const String& lay_name);
   // #CAT_LayerData find (first) layer data that applies to given data column name and layer name
   virtual LayerDataEl* FindMakeLayerData(const String& chn_name, const String& lay_name,
-					 bool& made_new);
+                                         bool& made_new);
   // #CAT_LayerData find (first) layer data that applies to given data column name and layer name -- make it if it doesn't exist
 
   TA_BASEFUNS_NOCOPY(LayerDataEl_List);
 private:
-  void	Initialize() { SetBaseType(&TA_LayerDataEl); }
-  void 	Destroy() {}
+  void  Initialize() { SetBaseType(&TA_LayerDataEl); }
+  void  Destroy() {}
 };
 
 #endif // LayerDataEl_List_h

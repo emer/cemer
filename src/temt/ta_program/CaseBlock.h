@@ -32,17 +32,17 @@ class TA_API CaseBlock: public CodeBlock {
   // ##PROGEL_COMPLETION one case element of a switch: if switch variable is equal to case_val, then this chunk of code is run
   INHERITED(CodeBlock)
 public:
-  ProgExpr	case_val; // #BROWSER_EDIT_LOOKUP value of the switch variable -- if the switch condition value is equal to this, then this code is run (must use a concrete, literal expression here -- no variables or functions)
+  ProgExpr      case_val; // #BROWSER_EDIT_LOOKUP value of the switch variable -- if the switch condition value is equal to this, then this code is run (must use a concrete, literal expression here -- no variables or functions)
   
   bool          is_default;
   // make this a default case which is selected if none of the other cases match the switch condition
   
-  bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
-  bool		CvtFmCode(const String& code) override;
-  bool		IsCtrlProgEl() 	override { return true; }
+  bool          CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
+  bool          CvtFmCode(const String& code) override;
+  bool          IsCtrlProgEl()  override { return true; }
 
-  String	GetDisplayName() const override;
-  String	GetToolbarName() const override { return "case"; }
+  String        GetDisplayName() const override;
+  String        GetToolbarName() const override { return "case"; }
 
   bool    ChooseMe() override;
   // #IGNORE code to run when object drop from toolbar
@@ -50,14 +50,14 @@ public:
   PROGEL_SIMPLE_BASEFUNS(CaseBlock);
 protected:
   void    UpdateAfterEdit_impl() override;
-  void		CheckThisConfig_impl(bool quiet, bool& rval) override;
-  void		GenCssPre_impl(Program* prog) override; 
-  bool		GenCssBody_impl(Program* prog) override;
-  void		GenCssPost_impl(Program* prog) override; 
+  void          CheckThisConfig_impl(bool quiet, bool& rval) override;
+  void          GenCssPre_impl(Program* prog) override; 
+  bool          GenCssBody_impl(Program* prog) override;
+  void          GenCssPost_impl(Program* prog) override; 
 
 private:
-  void	Initialize();
-  void	Destroy();
+  void  Initialize();
+  void  Destroy();
 };
 
 #endif // CaseBlock_h

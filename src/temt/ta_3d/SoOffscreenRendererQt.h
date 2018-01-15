@@ -59,27 +59,27 @@ public:
   virtual SbBool render(SoPath * scene);
 
 #if (QT_VERSION >= 0x050000)
-  virtual void		makeBuffer(int width, int height, const QOpenGLFramebufferObjectFormat& fmt);
+  virtual void          makeBuffer(int width, int height, const QOpenGLFramebufferObjectFormat& fmt);
 #else
-  virtual void		makeBuffer(int width, int height, const QGLFormat& fmt);
+  virtual void          makeBuffer(int width, int height, const QGLFormat& fmt);
 #endif
   // create the pixel buffer of given size and format -- this should be called prior to render, otherwise a default will be constructed
-  virtual void		makeMultisampleBuffer(int width, int height, int samples = -1);
+  virtual void          makeMultisampleBuffer(int width, int height, int samples = -1);
   // create the pixel buffer of given size, setting the gl format information to use multisample antialiasing -- a -1 means use default value (4), otherwise use what is specified
 
 #if (QT_VERSION >= 0x050000)
   QOpenGLFramebufferObject* getBuffer() { return pbuff; }
 #else
-  QGLPixelBuffer*	getBuffer() { return pbuff; }
+  QGLPixelBuffer*       getBuffer() { return pbuff; }
 #endif
   // returns the pixel buffer that has the image in it
-  QImage		getImage()  { return pbuff->toImage(); }
+  QImage                getImage()  { return pbuff->toImage(); }
   // use the QImage for all file IO stuff etc
 
 protected:
   // NOTE: just putting all the pimpl stuff right here for simplicity, since its not much
 
-  virtual void	Constr(const SbViewportRegion & vpr,
+  virtual void  Constr(const SbViewportRegion & vpr,
                        SoGLRenderAction * glrenderaction = NULL, QT_GL_WIDGET* glwidg = NULL);
   virtual SbBool renderFromBase(SoBase * base);
 
@@ -88,10 +88,10 @@ protected:
   QGLContext*               gl_ctxt; // this is the gl context active when pbuff was made -- always set this to be active again when using pbuff
   QT_GL_WIDGET*                own_gl_widg; // our own gl widget if we don't have gl_widg or gl_ctxt
 #else
-  QGLPixelBuffer*	pbuff;
+  QGLPixelBuffer*       pbuff;
 #endif
   // the offscreen rendering supported by qt
-  uint32_t		cache_context; // our unique context id
+  uint32_t              cache_context; // our unique context id
   QPointer<QT_GL_WIDGET>   gl_widg; // the gl widget that was passed to us, to attach to and get context from
   
 

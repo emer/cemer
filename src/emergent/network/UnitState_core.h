@@ -24,7 +24,7 @@
   // #READ_ONLY #HIDDEN #NO_SAVE #CAT_State index of this unit in a flat array of unit state -- 0 is special null case -- real idx's start at 1
   int           lay_un_idx;
   // #READ_ONLY #HIDDEN #NO_SAVE #CAT_State index of this unit in owning layer ("leaf index") -- index in flat list of units irrespective of group structure
-  int		gp_idx;
+  int           gp_idx;
   // #READ_ONLY #HIDDEN #NO_SAVE #CAT_State index of the sub-unit group this unit belongs in, if this unit belongs in a unit group (always -1 if no unit groups) -- same as layer_gp_idx of owning unit gp
   int           ungp_un_idx;
   // #READ_ONLY #HIDDEN #NO_SAVE #CAT_State index of unit within owning unit group -- either for a sub-unit-group (at gp_idx) if layer has them, or within master layer units group

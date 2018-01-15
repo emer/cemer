@@ -32,52 +32,52 @@ class TA_API taiMimeItem: public taOBase {
 INHERITED(taOBase)
 public:
   enum MimeItemFlags { // #BITS
-    MIF_ZOMBIE		= 0x0001, // constr process failed -- we are a zombie
-    MIF_DECODED		= 0x0002 // true once we decode
+    MIF_ZOMBIE          = 0x0001, // constr process failed -- we are a zombie
+    MIF_DECODED         = 0x0002 // true once we decode
   };
   
-  static int 		data(const QMimeData* md, const QString& mimeType,
+  static int            data(const QMimeData* md, const QString& mimeType,
     taString& result); // convenience data accessor 
   
-  static taiMimeItem* 	ExtractByType(TypeDef* td, taiMimeSource* ms, 
+  static taiMimeItem*   ExtractByType(TypeDef* td, taiMimeSource* ms, 
     const String& mimetype = _nilString);
     // return an instance of td, a taiMimeItem class, if possible
 
   
-  QByteArray 		data(const QString& mimeType) const;
-  inline int		flags() const {return m_flags;}
-  bool			isThisProcess() const; // from ms
-  const QMimeData*	mimeData() const;
-  inline taiMimeSource*	ms() const {return m_ms;} 
+  QByteArray            data(const QString& mimeType) const;
+  inline int            flags() const {return m_flags;}
+  bool                  isThisProcess() const; // from ms
+  const QMimeData*      mimeData() const;
+  inline taiMimeSource* ms() const {return m_ms;} 
   virtual const String  subkey() const {return _nilString;} 
     // subkeys are a type-dependent way to have more than one guy of the type
   
-  bool			Constr(taiMimeSource* ms, const String& subkey = _nilString);
+  bool                  Constr(taiMimeSource* ms, const String& subkey = _nilString);
     // returns true if ok, otherwise false, and zombie set
     
-  void	SetIndex(int idx) override {m_index = idx;} // iml index as convenience
-  int	GetIndex() const override {return m_index;}
+  void  SetIndex(int idx) override {m_index = idx;} // iml index as convenience
+  int   GetIndex() const override {return m_index;}
   TA_BASEFUNS_NOCOPY(taiMimeItem);
 
 public: // TAI_xxx instance interface -- used for dynamic creation
-  virtual taiMimeItem* 	Extract(taiMimeSource* ms, 
+  virtual taiMimeItem*  Extract(taiMimeSource* ms, 
     const String& mimetype = _nilString) {return NULL;}
     // if this type can be made from the given md and using the optionally specified specific mimetype (otherwise its default mimetype, or set of possible types is used); NULL result means no, otherwise the newly created and constructed instance is supplied
 
 protected:
-  int			m_index;
-  int			m_flags;
-  taiMimeSource*	m_ms;
+  int                   m_index;
+  int                   m_flags;
+  taiMimeSource*        m_ms;
   
-  inline bool		isDecoded() const {return (m_flags & MIF_DECODED);}
+  inline bool           isDecoded() const {return (m_flags & MIF_DECODED);}
   
-  void			AssertData(); // insures data is fetched/decoded
-  virtual bool		Constr_impl(const String& subky) {return true;}
+  void                  AssertData(); // insures data is fetched/decoded
+  virtual bool          Constr_impl(const String& subky) {return true;}
     // returns true if constr went ok
-  virtual void		DecodeData_impl() {}
+  virtual void          DecodeData_impl() {}
 private:
-  void	Initialize();
-  void	Destroy() {}
+  void  Initialize();
+  void  Destroy() {}
 };
 
 #endif // taiMimeItem_h

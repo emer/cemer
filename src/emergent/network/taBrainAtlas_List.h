@@ -31,9 +31,9 @@ class E_API taBrainAtlas_List : public taList<taBrainAtlas> {
   // #NO_TOKENS List of brain atlases.
   INHERITED(taList<taBrainAtlas>)
 public:
-  bool		not_init;	// list has not been initialized yet
+  bool          not_init;       // list has not been initialized yet
 
-  virtual void	LoadAtlases();	// load the list
+  virtual void  LoadAtlases();  // load the list
 
   TA_BASEFUNS_SC(taBrainAtlas_List);
 private:

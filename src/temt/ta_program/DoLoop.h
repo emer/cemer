@@ -32,24 +32,24 @@ class TA_API DoLoop: public Loop {
   // #PROGEL_COMPLETION #ADD_PARENS Do loop_code repatedly while loop_test expression is true (test-after): do loop_code while(loop_test);
 INHERITED(Loop)
 public:
-  ProgExpr		test; // #BROWSER_EDIT_LOOKUP a test expression for whether to continue looping (e.g., 'i < max')
+  ProgExpr              test; // #BROWSER_EDIT_LOOKUP a test expression for whether to continue looping (e.g., 'i < max')
   
-  bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
-  bool		CvtFmCode(const String& code) override;
-  bool		IsCtrlProgEl() 	override { return true; }
+  bool          CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
+  bool          CvtFmCode(const String& code) override;
+  bool          IsCtrlProgEl()  override { return true; }
 
-  String	GetDisplayName() const override;
-  String	GetToolbarName() const override { return "do while"; }
+  String        GetDisplayName() const override;
+  String        GetToolbarName() const override { return "do while"; }
 
   PROGEL_SIMPLE_BASEFUNS(DoLoop);
 protected:
-  void		CheckThisConfig_impl(bool quiet, bool& rval) override;
-  void		GenCssPre_impl(Program* prog) override; 
-  void		GenCssPost_impl(Program* prog) override; 
+  void          CheckThisConfig_impl(bool quiet, bool& rval) override;
+  void          GenCssPre_impl(Program* prog) override; 
+  void          GenCssPost_impl(Program* prog) override; 
 
 private:
-  void	Initialize() {}
-  void	Destroy()	{}
+  void  Initialize() {}
+  void  Destroy()       {}
 };
 
 #endif // DoLoop_h

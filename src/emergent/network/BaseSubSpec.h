@@ -34,29 +34,29 @@ INHERITED(taNBase)
 public:
   String_Array  unique; // #HIDDEN string list of unique members
 
-  virtual BaseSubSpec*	FindParent();
+  virtual BaseSubSpec*  FindParent();
   // #MENU #USE_RVAL #MENU_ON_Actions Find the corresponding parent subspec of this one
-  virtual BaseSpec*	FindParentBaseSpec();
+  virtual BaseSpec*     FindParentBaseSpec();
   // #MENU #USE_RVAL Find the parent spec of this one
 
-  virtual void	SetUnique(int memb_no, bool on); // set inherit bit
-  virtual void	SetUnique(const String& memb_nm, bool on); // set inherit bit
-  virtual bool	GetUnique(int memb_no);	     	// check inherit bit
-  virtual bool	GetUnique(const String& memb_nm);	// check inherit bit
+  virtual void  SetUnique(int memb_no, bool on); // set inherit bit
+  virtual void  SetUnique(const String& memb_nm, bool on); // set inherit bit
+  virtual bool  GetUnique(int memb_no);         // check inherit bit
+  virtual bool  GetUnique(const String& memb_nm);       // check inherit bit
 
-  virtual void	UpdateMember(BaseSubSpec* from, int memb_no);
+  virtual void  UpdateMember(BaseSubSpec* from, int memb_no);
   // copy member from given sub spec if not unique
-  virtual void	UpdateSpec();
+  virtual void  UpdateSpec();
   // update from parent sub spec, if one exists
 
-  void	InitLinks() override;
+  void  InitLinks() override;
   TA_BASEFUNS(BaseSubSpec);
 protected:
-  void	UpdateAfterEdit_impl() override;
+  void  UpdateAfterEdit_impl() override;
 private:
-  void 	Copy_(const BaseSubSpec& cp);
-  void 	Initialize();
-  void	Destroy();
+  void  Copy_(const BaseSubSpec& cp);
+  void  Initialize();
+  void  Destroy();
 };
 
 #endif // BaseSubSpec_h

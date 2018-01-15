@@ -30,20 +30,20 @@ class TA_API ProgVarFmArg: public ProgEl {
   // sets a variable (vars or args) in a program from a startup command-line argument (if arg was not set by user, nothing happens). IMPORTANT: must also include a RegisterArgs program element BEFORE this item in the program code to register this argument and process the command list
 INHERITED(ProgEl)
 public:
-  ProgramRef		prog; 	// program that you want to set variable from argument in
-  String		var_name; // name of variable in program to set
-  String		arg_name; // argument name -- this will be passed on the command line as <arg_name>=<value> (no spaces) (e.g., if arg_name is "rate" then command line would be rate=0.01 and internal arg name is just "rate" -- can be accessed using taMisc arg functions using that name)
+  ProgramRef            prog;   // program that you want to set variable from argument in
+  String                var_name; // name of variable in program to set
+  String                arg_name; // argument name -- this will be passed on the command line as <arg_name>=<value> (no spaces) (e.g., if arg_name is "rate" then command line would be rate=0.01 and internal arg name is just "rate" -- can be accessed using taMisc arg functions using that name)
 
-  virtual Program*	GetOtherProg();
+  virtual Program*      GetOtherProg();
   // safe call to get other program: emits error if other_prog is null (used by program)
 
-  String	GetDisplayName() const override;
-  String 	GetTypeDecoKey() const override { return "ProgVar"; }
-  String	GetToolbarName() const override { return "var=arg"; }
-  bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
-  bool		CvtFmCode(const String& code) override;
+  String        GetDisplayName() const override;
+  String        GetTypeDecoKey() const override { return "ProgVar"; }
+  String        GetToolbarName() const override { return "var=arg"; }
+  bool          CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
+  bool          CvtFmCode(const String& code) override;
 
-  void	GenRegArgs(Program* prog);
+  void  GenRegArgs(Program* prog);
 
   // #IGNORE generate RegisterArgs code
 
@@ -51,11 +51,11 @@ public:
 protected:
   void UpdateAfterEdit_impl() override;
   void CheckThisConfig_impl(bool quiet, bool& rval) override;
-  bool	GenCssBody_impl(Program* prog) override;
+  bool  GenCssBody_impl(Program* prog) override;
 
 private:
-  void	Initialize();
-  void	Destroy()	{CutLinks();}
+  void  Initialize();
+  void  Destroy()       {CutLinks();}
 }; 
 
 #endif // ProgVarFmArg_h

@@ -117,7 +117,7 @@
 
   float         sse;            // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW #VIEW_WIDTH_8 sum squared error over the network, for the current external input pattern
   float         sum_sse;        // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic total sum squared error over an epoch or similar larger set of external input patterns
-  STATE_CLASS(Average)	avg_sse;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #DMEM_AGG_SUM average sum squared error over an epoch or similar larger set of external input patterns
+  STATE_CLASS(Average)  avg_sse;        // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #DMEM_AGG_SUM average sum squared error over an epoch or similar larger set of external input patterns
   float         cnt_err;        // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic count of number of times the sum squared error was above cnt_err_tol over an epoch or similar larger set of external input patterns
   float         cur_cnt_err;    // #NO_SAVE #GUI_READ_ONLY #DMEM_AGG_SUM #CAT_Statistic current cnt_err -- used for computing cnt_err
   float         pct_err;        // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic epoch-wise average of count of number of times the sum squared error was above cnt_err_tol over an epoch or similar larger set of external input patterns (= cnt_err / n)

@@ -47,10 +47,10 @@ public:
 
 #include <BpUnitSpec_core>
 
-  virtual void	GraphActFun(DataTable* graph_data, float min = -5.0, float max = 5.0);
+  virtual void  GraphActFun(DataTable* graph_data, float min = -5.0, float max = 5.0);
   // #BUTTON #NULL_OK graph the activation function along with derivative (NULL = new graph log)
 
-  void 	(*err_fun)(BpUnitSpec* spec, BpUnitState_cpp* u);
+  void  (*err_fun)(BpUnitSpec* spec, BpUnitState_cpp* u);
   // #LIST_BpUnit_Error #OBSOLETE #HIDDEN #READ_ONLY #NO_SAVE replaced by enum -- this points to the error fun, set appropriately
   
   TypeDef*      MinBiasSpecType() const override { return &TA_BpConSpec; }
@@ -71,10 +71,10 @@ private:
 // #REG_FUN
 E_API void Bp_Squared_Error(BpUnitSpec* spec, BpUnitState_cpp* u)
 // #LIST_BpUnit_Error #OBSOLETE -- replaced with enum -- Squared error function for bp
-     ;				// term here so scanner picks up comment
+     ;                          // term here so scanner picks up comment
 // #REG_FUN
 E_API void Bp_CrossEnt_Error(BpUnitSpec* spec, BpUnitState_cpp* u)
 // #LIST_BpUnit_Error #OBSOLETE -- replaced with enum -- Cross entropy error function for bp
-     ;				// term here so scanner picks up comment
+     ;                          // term here so scanner picks up comment
 
 #endif // BpUnitSpec_h

@@ -38,7 +38,7 @@ class BpNetwork;
 
 
 //////////////////////////////////////////////////////////////
-//	                Specialized types
+//                      Specialized types
 
 // todo: re-enable once base classes are working!
 #if 0
@@ -66,8 +66,8 @@ public:
 
   TA_BASEFUNS_NOCOPY(HebbBpConSpec);
 private:
-  void	Initialize()		{ };
-  void 	Destroy()		{ };
+  void  Initialize()            { };
+  void  Destroy()               { };
 };
 
 
@@ -77,12 +77,12 @@ class E_API ErrScaleBpConSpec : public BpConSpec {
   // con spec that scales the error by given parameter -- can be used to differentially weight the learning impact of one projection relative to another
 INHERITED(BpConSpec)
 public:
-  float		err_scale;	// the scaling parameter
+  float         err_scale;      // the scaling parameter
 
-  inline float 		C_Compute_dEdA(const float wt, const float ru_dEdNet)
+  inline float          C_Compute_dEdA(const float wt, const float ru_dEdNet)
   { return err_scale * wt * ru_dEdNet; }
 
-  inline float 	Compute_dEdA(ConState* cg, Network* net, int thr_no) override {
+  inline float  Compute_dEdA(ConState* cg, Network* net, int thr_no) override {
     // this is ptr-con based and thus very slow..
     float rval = 0.0f;
     CON_GROUP_LOOP(cg, rval += C_Compute_dEdA(cg->PtrCn(i,WT,net),
@@ -94,9 +94,9 @@ public:
 protected:
   SPEC_DEFAULTS;
 private:
-  void 	Initialize()	{ err_scale = 1.0f; }
-  void 	Destroy()	{ };
-  void	Defaults_init() { };
+  void  Initialize()    { err_scale = 1.0f; }
+  void  Destroy()       { };
+  void  Defaults_init() { };
 };
 
 eTypeDef_Of(DeltaBarDeltaBpCon);
@@ -104,7 +104,7 @@ eTypeDef_Of(DeltaBarDeltaBpCon);
 class E_API DeltaBarDeltaBpCon : public BpCon {
   // delta-bar-delta connection object with local learning rate
 public:
-  float 		lr; 		// #NO_SAVE local synapse-specific learning rate
+  float                 lr;             // #NO_SAVE local synapse-specific learning rate
 
   DeltaBarDeltaBpCon() { lr = 0.0f; }
 };
@@ -119,9 +119,9 @@ public:
     LR = N_BP_CON_VARS,         // local learning rate
   };
 
-  float		lrate_incr;	// rate of learning rate increase (additive)
-  float		lrate_decr;	// rate of learning rate decrease (multiplicative)
-  float		act_lrate_incr;	// #HIDDEN actual lrate increase (times lrate)
+  float         lrate_incr;     // rate of learning rate increase (additive)
+  float         lrate_decr;     // rate of learning rate decrease (multiplicative)
+  float         act_lrate_incr; // #HIDDEN actual lrate increase (times lrate)
 
   inline void   Init_Weights(ConState* cg, Network* net, int thr_no) override {
     Init_Weights_symflag(net, thr_no);
@@ -143,7 +143,7 @@ public:
     }
   }
 
-  inline void	C_UpdateLrate(float& lr, const float dwt, const float pdw) {
+  inline void   C_UpdateLrate(float& lr, const float dwt, const float pdw) {
     const float prod = pdw * dwt;
     if(prod > 0.0f)
       lr += act_lrate_incr;
@@ -172,7 +172,7 @@ public:
     C_UpdateLrate(lr, dwt, pdw);
   }
   
-  inline void	Compute_Weights(ConState* cg, Network* net, int thr_no) override {
+  inline void   Compute_Weights(ConState* cg, Network* net, int thr_no) override {
     float* wts = cg->OwnCnVar(WT);
     float* dwts = cg->OwnCnVar(DWT);
     float* pdws = cg->OwnCnVar(PDW);
@@ -200,15 +200,15 @@ public:
   TA_SIMPLE_BASEFUNS(DeltaBarDeltaBpConSpec);
 protected:
   SPEC_DEFAULTS;
-  void	UpdateAfterEdit_impl() override;
+  void  UpdateAfterEdit_impl() override;
 private:
-  void	Initialize();
-  void 	Destroy()		{ };
-  void	Defaults_init();
+  void  Initialize();
+  void  Destroy()               { };
+  void  Defaults_init();
 };
 
 //////////////////////////////////////////
-//	Additional Unit Types		//
+//      Additional Unit Types           //
 //////////////////////////////////////////
 
 eTypeDef_Of(BpContextSpec);
@@ -217,22 +217,22 @@ class E_API BpContextSpec : public BpUnitSpec {
   // for context units in simple recurrent nets (SRN), expects one-to-one prjn from layer it copies, must be AFTER that layer in .layers
 INHERITED(BpUnitSpec)
 public:
-  float		hysteresis;	 // hysteresis factor: (1-hyst)*new + hyst*old
-  float		hysteresis_c;	 // #READ_ONLY complement of hysteresis
-  RandomSpec	initial_act;	 // initial activation value
-  String	variable;	 // name of unit variable to copy into
-  UnitState::ExtFlags unit_flags;	 // flags to set on the unit after copying value
-  MemberDef*	var_md;		 // #IGNORE memberdef of variable
+  float         hysteresis;      // hysteresis factor: (1-hyst)*new + hyst*old
+  float         hysteresis_c;    // #READ_ONLY complement of hysteresis
+  RandomSpec    initial_act;     // initial activation value
+  String        variable;        // name of unit variable to copy into
+  UnitState::ExtFlags unit_flags;        // flags to set on the unit after copying value
+  MemberDef*    var_md;          // #IGNORE memberdef of variable
 
   void Init_Acts(UnitState* uv, Network* net, int thr_no) override;
   void Compute_Act(UnitState* uv, Network* net, int thr_no) override;
   // copy activation from corresponding unit in projection from layer
 
   // nullify all other functions..
-  void Compute_Netin(UnitState*, Network* net, int thr_no) 	override { };
-  void Init_dWt(UnitState*, Network* net, int thr_no) 	override { };
-  void Compute_dWt(UnitState*, Network* net, int thr_no) 	override { };
-  void Compute_Weights(UnitState*, Network* net, int thr_no) 	override { };
+  void Compute_Netin(UnitState*, Network* net, int thr_no)      override { };
+  void Init_dWt(UnitState*, Network* net, int thr_no)   override { };
+  void Compute_dWt(UnitState*, Network* net, int thr_no)        override { };
+  void Compute_Weights(UnitState*, Network* net, int thr_no)    override { };
 
   // bp special functions
   void Compute_Error(BpUnitState*, BpNetwork* net, int thr_no)  override { };
@@ -242,11 +242,11 @@ public:
   TA_SIMPLE_BASEFUNS(BpContextSpec);
 protected:
   SPEC_DEFAULTS;
-  void	UpdateAfterEdit_impl() override;
+  void  UpdateAfterEdit_impl() override;
 private:
-  void 	Initialize();
-  void	Destroy()		{ };
-  void	Defaults_init() 	{ };
+  void  Initialize();
+  void  Destroy()               { };
+  void  Defaults_init()         { };
 };
 
 #endif // disabled above
@@ -282,8 +282,8 @@ public:
 protected:
   void UpdateAfterEdit_impl() override;
 private:
-  void	Initialize();
-  void 	Destroy()		{}
+  void  Initialize();
+  void  Destroy()               {}
 };
 
 

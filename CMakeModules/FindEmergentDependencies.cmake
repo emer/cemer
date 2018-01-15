@@ -166,6 +166,11 @@ else (WIN32)
   find_package(ZLIB)
 endif (WIN32)
 
+# JPEG -- not needed
+# if (WIN32)
+# else (WIN32)
+#   find_package(JPEG)
+# endif (WIN32)
 
 # SndFile (optional)
 find_package(SndFile)
@@ -245,6 +250,7 @@ endif (WIN32)
 
 # all dependency libraries to link to -- used automatically in EMERGENT_LINK_LIBRARIES
 # specify in executables
+# not including: ${JPEG_LIBRARIES}
 set(EMERGENT_DEP_LIBRARIES ${COIN_LIBRARY} ${QT_LIBRARIES}
     ${ODE_LIBRARY} ${GSL_LIBRARIES}
     ${OPENGL_LIBRARIES} ${ZLIB_LIBRARIES}

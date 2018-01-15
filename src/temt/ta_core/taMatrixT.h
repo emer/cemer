@@ -202,7 +202,7 @@ protected: \
 #define MAT_COPY_SAME_FAST(y,T) \
   void  Copy_(const y& cp) {  if(ElView() || cp.ElView()) { \
       Copy_Matrix_impl(&cp); return; } \
-    SetGeomN(cp.geom);				 \
+    SetGeomN(cp.geom);                           \
     memcpy(data(), cp.data(), size * sizeof(T)); \
     }
 

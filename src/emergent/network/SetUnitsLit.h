@@ -33,32 +33,32 @@ class E_API SetUnitsLit: public ProgEl {
   // #OBSOLETE set units in input_data table to present to the network based on dynamic enum values where the type name of the dynamic enum corresponds to the layer name in the input data: values supplied as literal items
 INHERITED(ProgEl)
 public:
-  ProgVarRef	input_data_var;	// #ITEM_FILTER_DataProgVarFilter program variable pointing to the input data table
-  bool		set_nm;		// set trial name based on unit names here
-  int		offset;		// add this additional offset to unit indicies -- useful for unit groups with same sets of units
-  DynEnum	unit_1; 	// unit to activate -- order doesn't matter -- can be any unit
-  DynEnum	unit_2; 	// unit to activate -- order doesn't matter -- can be any unit
-  DynEnum	unit_3; 	// unit to activate -- order doesn't matter -- can be any unit
-  DynEnum	unit_4; 	// unit to activate -- order doesn't matter -- can be any unit
+  ProgVarRef    input_data_var; // #ITEM_FILTER_DataProgVarFilter program variable pointing to the input data table
+  bool          set_nm;         // set trial name based on unit names here
+  int           offset;         // add this additional offset to unit indicies -- useful for unit groups with same sets of units
+  DynEnum       unit_1;         // unit to activate -- order doesn't matter -- can be any unit
+  DynEnum       unit_2;         // unit to activate -- order doesn't matter -- can be any unit
+  DynEnum       unit_3;         // unit to activate -- order doesn't matter -- can be any unit
+  DynEnum       unit_4;         // unit to activate -- order doesn't matter -- can be any unit
 
-  String	GetDisplayName() const override;
-  String 	GetTypeDecoKey() const override { return "Function"; }
-  String	GetToolbarName() const override { return "set units lit"; }
+  String        GetDisplayName() const override;
+  String        GetTypeDecoKey() const override { return "Function"; }
+  String        GetToolbarName() const override { return "set units lit"; }
   bool      CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
   bool      CvtFmCode(const String& code) override;
 
   PROGEL_SIMPLE_BASEFUNS(SetUnitsLit);
 protected:
-  void	UpdateAfterEdit_impl() override;
-  void	CheckThisConfig_impl(bool quiet, bool& rval) override;
-  virtual bool	GetInputDataVar();
+  void  UpdateAfterEdit_impl() override;
+  void  CheckThisConfig_impl(bool quiet, bool& rval) override;
+  virtual bool  GetInputDataVar();
 
-  bool		GenCssBody_impl(Program* prog) override;
-  virtual bool	GenCss_OneUnit(Program* prog, DynEnum& un, const String& idnm, DataTable* idat);
+  bool          GenCssBody_impl(Program* prog) override;
+  virtual bool  GenCss_OneUnit(Program* prog, DynEnum& un, const String& idnm, DataTable* idat);
 
 private:
-  void	Initialize();
-  void	Destroy();
+  void  Initialize();
+  void  Destroy();
 };
 
 #endif // SetUnitsLit_h

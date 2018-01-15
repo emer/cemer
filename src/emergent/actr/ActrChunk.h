@@ -56,8 +56,8 @@ public:
   
   TA_SIMPLE_BASEFUNS(ActrActVals);
 private:
-  void	Initialize();
-  void 	Destroy()	{ };
+  void  Initialize();
+  void  Destroy()       { };
 };
 
 eTypeDef_Of(ActrActTimeVals);
@@ -72,8 +72,8 @@ public:
   
   TA_SIMPLE_BASEFUNS(ActrActTimeVals);
 private:
-  void	Initialize();
-  void 	Destroy()	{ };
+  void  Initialize();
+  void  Destroy()       { };
 };
 
 eTypeDef_Of(ActrChunk);
@@ -184,7 +184,7 @@ public:
   virtual void          CopyChunkData(ActrChunk* fm_ck);
   // #CAT_ActR copy only the data from another chunk -- for use in runtime -- doesn't copy flags or other things -- just the values
 
-  taList_impl*	children_() override {return &slots;}	
+  taList_impl*  children_() override {return &slots;}   
   Variant      Elem(const Variant& idx, IndexMode mode = IDX_UNK) const override
   { return slots.Elem(idx, mode); }
   String& Print(String& strm, int indent = 0) const override;

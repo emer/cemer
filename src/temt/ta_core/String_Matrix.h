@@ -48,7 +48,7 @@ public:
   void          Split(const String& str, const String& delim = "");
   // Convenience method that calls FmDelimString for splitting a string into an array. Splits on every character by default.
 
-  virtual void		InitFromChars(const char** vals, int n=-1)
+  virtual void          InitFromChars(const char** vals, int n=-1)
   { int eff_n = size; if(n > 0) { eff_n = n; if(size < n) SetGeom(1,n); }
     for(int i=0;i<eff_n;i++) FastEl_Flat(i) = vals[i]; }
   // #IGNORE initialize values from an array of char* strings, with optional number parameter n (if unspecified or -1, then array is assumed to be size of matrix)

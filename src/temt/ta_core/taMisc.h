@@ -878,7 +878,7 @@ public:
   // #CAT_Utility #IGNORE format a floating number for given streaming output context
   static String StreamFormatDouble(double val, TypeDef::StrContext sc);
   // #CAT_Utility #IGNORE format a double floating number for given streaming output context
-  static void	NormalizeRealString(String& str);
+  static void   NormalizeRealString(String& str);
   // make NaN and infinity representations consistent across platforms in real string
 
   static double NiceRoundNumber(double x, bool round);
@@ -922,7 +922,7 @@ public:
   // #CAT_File return string that has a valid final path separator
   static String NoFinalPathSep(const String& in);
   // #CAT_File return string that has no final path separator
-  static int	PosFinalPathSep(const String& in);
+  static int    PosFinalPathSep(const String& in);
   // #CAT_File position of final path separator, -1 if not found
   static String UnescapeBackslash(const String& in);
   // #CAT_File change double-backslash to a single-backslash in string
@@ -933,7 +933,7 @@ public:
   // #CAT_File get directory component from full path, n_up is number of directories to go up from the final directory
   static String PathToUnixSep(const String& path);
   // #CAT_File convert path to unix-style / separators, which can be read on windows in any case, and don't cause escaping issues
-  static bool	IsQualifiedPath(const String& fname);
+  static bool   IsQualifiedPath(const String& fname);
   // #CAT_File true if the fname is already an absolute or qualified relative path
 
   static bool   FileExists(const String& filename);
@@ -941,7 +941,7 @@ public:
   static String GetTemporaryPath();
   // #CAT_File return path to system temporary file directory (e.g., /tmp) that user can write to
 
-#ifndef NO_TA_BASE		// all of these are not for maketa
+#ifndef NO_TA_BASE              // all of these are not for maketa
 
   static String ExpandFilePath(const String& path, taProject* proj = NULL);
   // #CAT_File expand any special variables or shortcuts in the file path -- CR: unpacks to the current cluster run svn directory for this project (if available), CRR:, CRM: are results and models subdirs of CR, ~ is the current user's home directory (see CompressFilePath for inverse) -- called by all standard file operations
@@ -1008,7 +1008,7 @@ public:
                          bool ignoreCase = false);
   // #CAT_File return a string showing the differences between two files -- uses taStringDiff
 
-#endif	// NO_TA_BASE
+#endif  // NO_TA_BASE
 
   static String FindFileOnPath(String_PArray& paths, const String& fname);
   // #CAT_File helper function: try to find file fnm in one of the load_include paths -- returns complete path to file (or empty str if not found)
@@ -1033,19 +1033,19 @@ public:
   /////////////////////////////////////////////////
   // Computer system info, and timing
 
-  static int	CpuCount();
+  static int    CpuCount();
   // #CAT_System number of physical cpus
-  static String	HostName();
+  static String HostName();
   // #CAT_System name of the computer
-  static String	UserName();
+  static String UserName();
   // #CAT_System name of user of the computer
-  static int	ProcessId();
+  static int    ProcessId();
   // #CAT_System returns a process-specific Id
-  static int	TickCount();
+  static int    TickCount();
   // #CAT_System ticks since system started -- def of a 'tick' is system dependent
-  static void	SleepS(int sec);
+  static void   SleepS(int sec);
   // #CAT_System sleep the specified number of seconds
-  static void	SleepMs(int msec);
+  static void   SleepMs(int msec);
   // #CAT_System sleep the specified number of milliseconds
   static int    ExecuteCommand(const String& cmd);
   // #CAT_System execute given command -- currently just uses the "system" function call on all platforms, which seems to work well

@@ -36,10 +36,10 @@ class TA_API taTask: public taOBase {
   // ##TOKENS ##INSTANCE ##CAT_Thread a single processing element: just a generic wrapper for whatever you want a thread to do: just has a run function and an id
 INHERITED(taOBase)
 public:
-  int			task_id; // #READ_ONLY #SHOW #NO_COPY unique id per list of tasks -- typically one per thread
+  int                   task_id; // #READ_ONLY #SHOW #NO_COPY unique id per list of tasks -- typically one per thread
   TimeUsedHR            wait_time; // amount of time spent in spin-lock wait
 
-  virtual void		run() {} // must be overridden, to dispatch actual proc
+  virtual void          run() {} // must be overridden, to dispatch actual proc
   
   void SyncSpin0(int usec_wait = 0);
   // synchronize all the threads using atomic int counters and spin waiting (active looping) -- if usec_wait > 0, then sleep for given number of micro seconds during each wait loop
@@ -50,13 +50,13 @@ public:
 
   taThreadMgr*  mgr();
 
-  int		GetIndex() const override {return task_id;}
-  void		SetIndex(int val) override {task_id = val;}
+  int           GetIndex() const override {return task_id;}
+  void          SetIndex(int val) override {task_id = val;}
   TA_BASEFUNS(taTask);
 private:
-  void	Copy_(const taTask& cp) {}
-  void	Initialize();
-  void	Destroy() {}
+  void  Copy_(const taTask& cp) {}
+  void  Initialize();
+  void  Destroy() {}
 };
 
 TA_SMART_PTRS(TA_API, taTask);

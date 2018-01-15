@@ -36,7 +36,7 @@ typedef SoSeparator inherited;
   TA_SO_NODE_HEADER(T3TransformBoxRotatorRotator);
 #endif // def __MAKETA__
 public:
-  static void		initClass();
+  static void           initClass();
   T3TransformBoxRotatorRotator(bool active = false, float half_size=1.1f, float line_width=.4f);
 };
 

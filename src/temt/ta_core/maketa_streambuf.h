@@ -69,37 +69,37 @@ typedef signed long long int streampos;
 typedef signed long long int streamoff;
 typedef int streamsize;
 
-#define _S_boolalpha 	0x0001
-#define _S_dec 		0x0002
-#define _S_fixed  	0x0004
-#define _S_hex 		0x0008
-#define _S_internal  	0x0010
-#define _S_left    	0x0020
-#define _S_oct 		0x0040
-#define _S_right 	0x0080
-#define _S_scientific 	0x0100
+#define _S_boolalpha    0x0001
+#define _S_dec          0x0002
+#define _S_fixed        0x0004
+#define _S_hex          0x0008
+#define _S_internal     0x0010
+#define _S_left         0x0020
+#define _S_oct          0x0040
+#define _S_right        0x0080
+#define _S_scientific   0x0100
 #define _S_showbase     0x0200
-#define _S_showpoint 	0x0400
-#define _S_showpos 	0x0800
-#define _S_skipws 	0x1000
-#define _S_unitbuf 	0x2000
-#define _S_uppercase 	0x4000
-#define _S_adjustfield 	0x00b0
-#define _S_basefield 	0x004a
-#define _S_floatfield 	0x0104
+#define _S_showpoint    0x0400
+#define _S_showpos      0x0800
+#define _S_skipws       0x1000
+#define _S_unitbuf      0x2000
+#define _S_uppercase    0x4000
+#define _S_adjustfield  0x00b0
+#define _S_basefield    0x004a
+#define _S_floatfield   0x0104
 
    // 27.4.2.1.3  Type ios_base::iostate
-#define _S_badbit 	0x01
-#define _S_eofbit 	0x02
-#define _S_failbit     	0x04
+#define _S_badbit       0x01
+#define _S_eofbit       0x02
+#define _S_failbit      0x04
 
    // 27.4.2.1.4  Type openmode
-#define _S_app 		0x01
-#define _S_ate 		0x02
-#define _S_bin 		0x04
-#define _S_in 		0x08
-#define _S_out 		0x10
-#define _S_trunc 	0x20
+#define _S_app          0x01
+#define _S_ate          0x02
+#define _S_bin          0x04
+#define _S_in           0x08
+#define _S_out          0x10
+#define _S_trunc        0x20
 
 class ios {
 public:
@@ -127,27 +127,27 @@ public:
 
   // 27.4.2.1.4  Type openmode
   enum openmode {
-    app =    	_S_app,
-    ate =    	_S_ate,
-    binary = 	_S_bin,
-    in =     	_S_in,
-    out =    	_S_out,
-    trunc =  	_S_trunc
+    app =       _S_app,
+    ate =       _S_ate,
+    binary =    _S_bin,
+    in =        _S_in,
+    out =       _S_out,
+    trunc =     _S_trunc
   };
 
   // 27.4.2.1.3  Type ios_base::iostate
   enum iostate {
-    badbit =  	_S_badbit,
-    eofbit =  	_S_eofbit,
-    failbit = 	_S_failbit,
-    goodbit = 	0
+    badbit =    _S_badbit,
+    eofbit =    _S_eofbit,
+    failbit =   _S_failbit,
+    goodbit =   0
   };
 
   // 27.4.2.1.5  Type seekdir
   enum seekdir {
-    beg = 		0,
-    cur = 		SEEK_CUR, // 1
-    end = 		SEEK_END // 2
+    beg =               0,
+    cur =               SEEK_CUR, // 1
+    end =               SEEK_END // 2
   };
 
   fmtflags flags() const;

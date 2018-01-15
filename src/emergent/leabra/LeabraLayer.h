@@ -45,7 +45,7 @@ class E_API LeabraLayer : public Layer {
 INHERITED(Layer)
 public:
 
-  LeabraLayerSpec_SPtr	spec;	// #CAT_Structure the spec for this layer: controls all functions of layer
+  LeabraLayerSpec_SPtr  spec;   // #CAT_Structure the spec for this layer: controls all functions of layer
 
 #include <LeabraLayer_core>
  
@@ -77,31 +77,31 @@ public:
   void  CheckSpecs() override;
 
   ////////////////////////////////////////////
-  //	TwoD Misc structural routines
+  //    TwoD Misc structural routines
 
   virtual bool   TwoDValMode();
   // #CAT_TwoD are we operating in TwoD value spec mode?  i.e., the layerspec is set to a TwoDValLayerSpec
   
-  void	ApplyInputData_2d(NETWORK_STATE* net, taMatrix* data, ExtFlags ext_flags,
+  void  ApplyInputData_2d(NETWORK_STATE* net, taMatrix* data, ExtFlags ext_flags,
                           Random* ran, const taVector2i& offs, bool na_by_range=false) override;
-  void	ApplyInputData_Gp4d(NETWORK_STATE* net, taMatrix* data, ExtFlags ext_flags,
+  void  ApplyInputData_Gp4d(NETWORK_STATE* net, taMatrix* data, ExtFlags ext_flags,
                             Random* ran, bool na_by_range=false) override;
   
   ////////////////////////////////////////////
-  //	Misc structural routines
+  //    Misc structural routines
 
   bool          SetLayerSpec(LayerSpec* sp) override;
   LayerSpec*    GetMainLayerSpec() const override { return (LayerSpec*)spec.SPtr(); }
   
-  void	InitLinks() override;
-  void	CutLinks() override;
+  void  InitLinks() override;
+  void  CutLinks() override;
   SIMPLE_COPY(LeabraLayer);
   TA_BASEFUNS(LeabraLayer);
 protected:
   void  CheckThisConfig_impl(bool quiet, bool& rval) override;
 private:
-  void	Initialize();
-  void	Destroy()		{ CutLinks(); }
+  void  Initialize();
+  void  Destroy()               { CutLinks(); }
 };
 
 TA_SMART_PTRS(E_API, LeabraLayer);

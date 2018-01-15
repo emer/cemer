@@ -40,99 +40,99 @@ INHERITED(taImage)
 public:
 
   enum PenStyles {
-    NO_PEN,		// no line at all. For example, QPainter::drawRect() fills but does not draw any boundary line.
-    SOLID_LINE,		// A plain line.
-    DASH_LINE,		// Dashes separated by a few pixels.
-    DOT_LINE,		// Dots separated by a few pixels.
-    DASH_DOT_LINE,	// Alternate dots and dashes.
-    DASH_DOTDOT_LINE,	// One dash, two dots, one dash, two dots.
-    CUSTOM_DASH_LINE,	// A custom pattern defined using QPainterPathStroker::setDashPattern().
+    NO_PEN,             // no line at all. For example, QPainter::drawRect() fills but does not draw any boundary line.
+    SOLID_LINE,         // A plain line.
+    DASH_LINE,          // Dashes separated by a few pixels.
+    DOT_LINE,           // Dots separated by a few pixels.
+    DASH_DOT_LINE,      // Alternate dots and dashes.
+    DASH_DOTDOT_LINE,   // One dash, two dots, one dash, two dots.
+    CUSTOM_DASH_LINE,   // A custom pattern defined using QPainterPathStroker::setDashPattern().
   };
 
   enum CoordType {
-      PIXELS,			// raw pixels
-      NORMALIZED,			// normalized 0-1 values
+      PIXELS,                   // raw pixels
+      NORMALIZED,                       // normalized 0-1 values
     };
 
-  CoordType 	coord_type;	// type of coordinates to use in drawing (0,0 is lower left)
+  CoordType     coord_type;     // type of coordinates to use in drawing (0,0 is lower left)
 
-  virtual void 	InitCanvas();
+  virtual void  InitCanvas();
   // #CAT_Canvas initialize the canvas -- MUST be called prior to drawing!
-  inline bool	CheckInit() {
+  inline bool   CheckInit() {
     TestError(!m_init, "CheckInit", "Must call InitCanvas before drawing!");
     return m_init;
   }
-  virtual void	EraseRGBA(float r, float g, float b, float a);
+  virtual void  EraseRGBA(float r, float g, float b, float a);
   // #CAT_Canvas erase image to given rgba color
-  virtual void	EraseName(const String& name);
+  virtual void  EraseName(const String& name);
   // #CAT_Canvas erase image to given color name
 
-  virtual void	Point(float x, float y);
+  virtual void  Point(float x, float y);
   // #CAT_Draw 
-  virtual void	Line(float x1, float y1, float x2, float y2);
+  virtual void  Line(float x1, float y1, float x2, float y2);
   // #CAT_Draw 
-  virtual void 	Rect(float l, float b, float r, float t);
+  virtual void  Rect(float l, float b, float r, float t);
   // #CAT_Draw 
-  virtual void 	Circle(float x, float y, float r);
+  virtual void  Circle(float x, float y, float r);
   // #CAT_Draw 
-  virtual void 	Ellipse(float x, float y, float rx, float ry);
+  virtual void  Ellipse(float x, float y, float rx, float ry);
   // #CAT_Draw 
-  virtual void 	FillRect(float l, float b, float r, float t);
+  virtual void  FillRect(float l, float b, float r, float t);
   // #CAT_Draw 
-  virtual void 	FillCircle(float x, float y, float r);
+  virtual void  FillCircle(float x, float y, float r);
   // #CAT_Draw 
-  virtual void 	FillEllipse(float x, float y, float rx, float ry);
+  virtual void  FillEllipse(float x, float y, float rx, float ry);
   // #CAT_Draw 
   
-  virtual void 	NewPath();
+  virtual void  NewPath();
   // #CAT_Path start a new path (must have done DrawPath or FillPath on any prior paths first!)
-  virtual void 	MoveTo(float x, float y);
+  virtual void  MoveTo(float x, float y);
   // #CAT_Path move current path position to given coordinate without drawing -- will create a new path if not yet initialized
-  virtual void 	LineTo(float x, float y);
+  virtual void  LineTo(float x, float y);
   // #CAT_Path 
-  virtual void 	CurveTo(float x, float y, float x1, float y1, float x2, float y2);
+  virtual void  CurveTo(float x, float y, float x1, float y1, float x2, float y2);
   // #CAT_Path draw Bezier curve to given x,y point, using x1,y1 and x2,y2 as control points that determine curvature
-  virtual void 	DrawPath();
+  virtual void  DrawPath();
   // #CAT_Path draw the current path using current pen brush and close it -- a NewPath or MoveTo is required to start a new path
-  virtual void 	FillPath();
+  virtual void  FillPath();
   // #CAT_Path fill the current path using current fill brush and close it -- a NewPath or MoveTo is required to start again
-  virtual void 	DrawFillPath();
+  virtual void  DrawFillPath();
   // #CAT_Path draw outline and fill the current path using current pen and fill brush and close it -- a NewPath or MoveTo is required to start again
-  virtual void 	DeletePath();
+  virtual void  DeletePath();
   // #CAT_Path delete the current path -- called by DrawPath and FillPath -- use to remove accidental path if needed
 
-  virtual void 	TextLeft(const String& txt, float x, float y);
+  virtual void  TextLeft(const String& txt, float x, float y);
   // #CAT_Text draw text left justified
-  virtual void 	TextCenter(const String& txt, float x, float y);
+  virtual void  TextCenter(const String& txt, float x, float y);
   // #CAT_Text draw text centered
-  virtual void 	TextRight(const String& txt, float x, float y);
+  virtual void  TextRight(const String& txt, float x, float y);
   // #CAT_Text  draw text right justified
-  virtual void	SetFont(const String& font_name, int point_size=-1, int weight=-1, bool italic=false);
+  virtual void  SetFont(const String& font_name, int point_size=-1, int weight=-1, bool italic=false);
   // #CAT_Text set font for text drawing operations
 
-  virtual void 	ClipRect(float l, float b, float r, float t);
+  virtual void  ClipRect(float l, float b, float r, float t);
   // #CAT_Clip
 
-  virtual void	PenColorRGBA(float r, float g, float b, float a);
+  virtual void  PenColorRGBA(float r, float g, float b, float a);
   // #CAT_Draw values are from 0-1 in proportion to amount of each given color, a is alpha transparency value, 0=transparent, 1=opaque
-  virtual void	PenColorHSVA(float h, float s, float v, float a);
+  virtual void  PenColorHSVA(float h, float s, float v, float a);
   // #CAT_Draw h=hue (0-360), s=saturation (0-1), v=value/brightness (0-1), a is alpha transparency value, 0=transparent, 1=opaque
-  virtual void	PenColorCMYKA(float c, float m, float y, float k, float a);
+  virtual void  PenColorCMYKA(float c, float m, float y, float k, float a);
   // #CAT_Draw values are from 0-1 in proportion to amount of each given color, a is alpha transparency value, 0=transparent, 1=opaque
-  virtual void	PenColorName(const String& name);
+  virtual void  PenColorName(const String& name);
   // #CAT_Draw 
-  virtual void	PenWidth(float width);
+  virtual void  PenWidth(float width);
   // #CAT_Draw 
-  virtual void	FillColorRGBA(float r, float g, float b, float a);
+  virtual void  FillColorRGBA(float r, float g, float b, float a);
   // #CAT_Draw values are from 0-1 in proportion to amount of each given color, a is alpha transparency value, 0=transparent, 1=opaque
-  virtual void	FillColorHSVA(float h, float s, float v, float a);
+  virtual void  FillColorHSVA(float h, float s, float v, float a);
   // #CAT_Draw h=hue (0-360), s=saturation (0-1), v=value/brightness (0-1), a is alpha transparency value, 0=transparent, 1=opaque
-  virtual void	FillColorCMYKA(float c, float m, float y, float k, float a);
+  virtual void  FillColorCMYKA(float c, float m, float y, float k, float a);
   // #CAT_Draw values are from 0-1 in proportion to amount of each given color, a is alpha transparency value, 0=transparent, 1=opaque
-  virtual void	FillColorName(const String& name);
+  virtual void  FillColorName(const String& name);
   // #CAT_Draw 
-//  virtual void	PenStyle(int style);
-  virtual void	PenStyle(PenStyles style);
+//  virtual void        PenStyle(int style);
+  virtual void  PenStyle(PenStyles style);
   // #CAT_Draw
 
   virtual bool  DrawSvgFile(const String& file_name, float l=0, float b=0,
@@ -147,14 +147,14 @@ public:
   void  ImageChanging() override;
   void  ImageChanged() override;
 
-  void	Copy_(const taCanvas& cp);
+  void  Copy_(const taCanvas& cp);
   TA_BASEFUNS(taCanvas);
 protected:
 #ifdef TA_GUI
-  QPainter	q_painter;
+  QPainter      q_painter;
   QPainterPath*  cur_path;
-  QBrush	fill_brush;
-  bool		m_init;
+  QBrush        fill_brush;
+  bool          m_init;
 #endif
 private:
   void Initialize();

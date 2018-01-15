@@ -30,12 +30,12 @@ taTypeDef_Of(taiObjectsMimeItem);
 class TA_API taiObjectsMimeItem: public taiMultiMimeItem { // for tacss objects
 INHERITED(taiMultiMimeItem)
 public:
-  bool			allBase() const; // true if all objs derive from taBase
-  bool			isMulti() const  {return (items.size > 1);}
-  taiObjectMimeItem*	item(int idx) const 
+  bool                  allBase() const; // true if all objs derive from taBase
+  bool                  isMulti() const  {return (items.size > 1);}
+  taiObjectMimeItem*    item(int idx) const 
     {return (taiObjectMimeItem*)items.FastEl(idx);} 
 
-  TypeDef*		CommonSubtype() const; // type of item (if 1) or common subtype if multiple
+  TypeDef*              CommonSubtype() const; // type of item (if 1) or common subtype if multiple
 
   TA_BASEFUNS_NOCOPY(taiObjectsMimeItem);
   
@@ -44,11 +44,11 @@ public: // TAI_xxx instance interface -- used for dynamic creation
     const String& mimetype = _nilString) override;
 
 protected:
-  mutable signed char	m_all_base; // 0=unknown; -1 no, 1=yes
-  bool		Constr_impl(const String&) override;
+  mutable signed char   m_all_base; // 0=unknown; -1 no, 1=yes
+  bool          Constr_impl(const String&) override;
 private:
-  void	Initialize();
-  void	Destroy() {}
+  void  Initialize();
+  void  Destroy() {}
 }; //
 
 #endif // taiObjectsMimeItem_h

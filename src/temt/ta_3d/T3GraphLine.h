@@ -38,10 +38,10 @@ class TA_API T3GraphLine: public T3NodeLeaf {
   INHERITED(T3NodeLeaf)
 public:
   enum LineStyle { // corresponds to GraphColView::LineStyle
-    SOLID,			// -----
-    DOT,			// .....
-    DASH,			// - - -
-    DASH_DOT			// _._._
+    SOLID,                      // -----
+    DOT,                        // .....
+    DASH,                       // - - -
+    DASH_DOT                    // _._._
 #ifndef __MAKETA__
     ,LineStyle_MIN = SOLID, // also the default
     LineStyle_MAX = DASH_DOT
@@ -49,17 +49,17 @@ public:
   };
 
   enum MarkerStyle { // MUST correspond to GraphPlotView::PointStyle
-    CIRCLE = 1,			// o
-    SQUARE,			// []
-    DIAMOND,			// <>
-    TRIANGLE_UP,		// #AKA_TRIANGLE ^
-    TRIANGLE_DN,		// #AKA_MINUS v
+    CIRCLE = 1,                 // o
+    SQUARE,                     // []
+    DIAMOND,                    // <>
+    TRIANGLE_UP,                // #AKA_TRIANGLE ^
+    TRIANGLE_DN,                // #AKA_MINUS v
     TRIANGLE_RT,                // #AKA_BACKSLASH >
     TRIANGLE_LT,                // #AKA_BAR <
-    POINT,			// #AKA_SLASH .
-    PLUS,			// +
-    CROSS,			// x
-    STAR,			// *
+    POINT,                      // #AKA_SLASH .
+    PLUS,                       // +
+    CROSS,                      // x
+    STAR,                       // *
     MarkerStyle_NONE = 0,       // #IGNORE pseudo value, not actually used
     MarkerStyle_MIN = CIRCLE,   // #IGNORE
     MarkerStyle_MAX = STAR,     // #IGNORE
@@ -78,7 +78,7 @@ public:
   bool                  value_color_mode;
   LineStyle             lineStyle;
   float                 marker_size;
-  float	                font_size;
+  float                 font_size;
   float                 width;  // width of graph
   bool                  z_on;   // is z axis on or not?
   QColor                color;  // line color
@@ -91,37 +91,37 @@ public:
   { return marker_size * mark_pts[idx * 2 + xy]; }
   // get the marker point at given index and xy coord (x=0, y=1) -- use XY enum
 
-  void 			setLineStyle(LineStyle value, float line_width = 0.0f);
-  void			setMarkerSize(float sz);
+  void                  setLineStyle(LineStyle value, float line_width = 0.0f);
+  void                  setMarkerSize(float sz);
 
-  void			clear() override; //
+  void                  clear() override; //
 
   // text api
-  void			textAt(const iVec3f& pt, const char* str);
+  void                  textAt(const iVec3f& pt, const char* str);
   // render indicated text at the pt
 
-  void			startBatch();
+  void                  startBatch();
   // start a batch edit of the lines -- must be followed by a finishBatch call!  just turns off notification of updates
-  void			finishBatch();
+  void                  finishBatch();
   // done with batch update -- turn notification back on and do a touch
 
-  void			setValueColorMode(bool value);
+  void                  setValueColorMode(bool value);
   // non valueColor drawing api
-  void			setDefaultColor(const QColor& color); // call after reset to set default color (black if not called)
-  void			moveTo(const iVec3f& pt); // use to start a new line segment
-  void			lineTo(const iVec3f& to); // add arc to current line, in default color
-  void			errBar(const iVec3f& pt, float err, float bar_width); // render error bar at given point
-  void			markerAt(const iVec3f& pt, MarkerStyle style); // render a marker at indicated location in default color
+  void                  setDefaultColor(const QColor& color); // call after reset to set default color (black if not called)
+  void                  moveTo(const iVec3f& pt); // use to start a new line segment
+  void                  lineTo(const iVec3f& to); // add arc to current line, in default color
+  void                  errBar(const iVec3f& pt, float err, float bar_width); // render error bar at given point
+  void                  markerAt(const iVec3f& pt, MarkerStyle style); // render a marker at indicated location in default color
 
   // valueColor drawing api
-  void			moveTo(const iVec3f& pt, const QColor& color);
+  void                  moveTo(const iVec3f& pt, const QColor& color);
   // use to start a new line segment in valueColor mode
-  void			lineTo(const iVec3f& to, const QColor& color);
+  void                  lineTo(const iVec3f& to, const QColor& color);
   //  add arc to current line, in valueColor mode
-  void			errBar(const iVec3f& pt, float err, float bar_width,
+  void                  errBar(const iVec3f& pt, float err, float bar_width,
                                const QColor& color);
   // render error bar at given point
-  void			markerAt(const iVec3f& pt, MarkerStyle style,
+  void                  markerAt(const iVec3f& pt, MarkerStyle style,
                                  const QColor& color);
   // render a marker at indicated location in valueColor mode
 
@@ -129,7 +129,7 @@ public:
   // string of SVG commands for drawing marker at given point -- just the move, line guys
 
   void                  setNodeUpdating(bool updating) override;
-  void			setDefaultCaptionTransform() override;
+  void                  setDefaultCaptionTransform() override;
   
   T3GraphLine(Qt3DNode* par = NULL, T3DataView* dataView_ = NULL, float fnt_sz = .05f,
               float width = 1.0f, bool z_on = false);
@@ -154,10 +154,10 @@ typedef T3NodeLeaf inherited;
 #endif // def __MAKETA__
 public:
   enum LineStyle { // corresponds to GraphColView::LineStyle
-    SOLID,			// -----
-    DOT,			// .....
-    DASH,			// - - -
-    DASH_DOT			// _._._
+    SOLID,                      // -----
+    DOT,                        // .....
+    DASH,                       // - - -
+    DASH_DOT                    // _._._
 #ifndef __MAKETA__
     ,LineStyle_MIN = SOLID, // also the default
     LineStyle_MAX = DASH_DOT
@@ -165,17 +165,17 @@ public:
   };
 
   enum MarkerStyle { // MUST correspond to GraphPlotView::PointStyle
-    CIRCLE = 1,			// o
-    SQUARE,			// []
-    DIAMOND,			// <>
-    TRIANGLE_UP,		// #AKA_TRIANGLE ^
-    TRIANGLE_DN,		// #AKA_MINUS v
+    CIRCLE = 1,                 // o
+    SQUARE,                     // []
+    DIAMOND,                    // <>
+    TRIANGLE_UP,                // #AKA_TRIANGLE ^
+    TRIANGLE_DN,                // #AKA_MINUS v
     TRIANGLE_RT,                // #AKA_BACKSLASH >
     TRIANGLE_LT,                // #AKA_BAR <
-    POINT,			// #AKA_SLASH .
-    PLUS,			// +
-    CROSS,			// x
-    STAR,			// *
+    POINT,                      // #AKA_SLASH .
+    PLUS,                       // +
+    CROSS,                      // x
+    STAR,                       // *
     MarkerStyle_NONE = 0,       // #IGNORE pseudo value, not actually used
     MarkerStyle_MIN = CIRCLE,   // #IGNORE
     MarkerStyle_MAX = STAR,     // #IGNORE
@@ -186,7 +186,7 @@ public:
     Y = 1,
   };
 
-  static void		initClass();
+  static void           initClass();
 
   static float          mark_pts[160]; // #HIDDEN #NO_SAVE [2*n] list of X,Y points used in markers
   static int            mark_pts_n; // #HIDDEN #NO_SAVE total number of mark_pts
@@ -197,39 +197,39 @@ public:
   { return marker_size_ * mark_pts[idx * 2 + xy]; }
   // get the marker point at given index and xy coord (x=0, y=1) -- use XY enum
 
-  SoFont*		labelFont() const {return labelFont_;} // #IGNORE setup after creating
-  void 			setLineStyle(LineStyle value, float line_width = 0.0f);
-  void			setMarkerSize(float sz);
-  bool			valueColorMode(){return valueColorMode_;}
-  void			setValueColorMode(bool value);
+  SoFont*               labelFont() const {return labelFont_;} // #IGNORE setup after creating
+  void                  setLineStyle(LineStyle value, float line_width = 0.0f);
+  void                  setMarkerSize(float sz);
+  bool                  valueColorMode(){return valueColorMode_;}
+  void                  setValueColorMode(bool value);
 
-  void			clear() override; //
+  void                  clear() override; //
 
   // text api
-  void			textAt(const iVec3f& pt, const char* str);
+  void                  textAt(const iVec3f& pt, const char* str);
   // render indicated text at the pt
 
-  void			startBatch();
+  void                  startBatch();
   // start a batch edit of the lines -- must be followed by a finishBatch call!  just turns off notification of updates
-  void			finishBatch();
+  void                  finishBatch();
   // done with batch update -- turn notification back on and do a touch
 
   // non valueColor drawing api
-  void			setDefaultColor(const T3Color& color); // call after reset to set default color (black if not called)
-  void			moveTo(const iVec3f& pt); // use to start a new line segment
-  void			lineTo(const iVec3f& to); // add arc to current line, in default color
-  void			errBar(const iVec3f& pt, float err, float bar_width); // render error bar at given point
-  void			markerAt(const iVec3f& pt, MarkerStyle style); // render a marker at indicated location in default color
+  void                  setDefaultColor(const T3Color& color); // call after reset to set default color (black if not called)
+  void                  moveTo(const iVec3f& pt); // use to start a new line segment
+  void                  lineTo(const iVec3f& to); // add arc to current line, in default color
+  void                  errBar(const iVec3f& pt, float err, float bar_width); // render error bar at given point
+  void                  markerAt(const iVec3f& pt, MarkerStyle style); // render a marker at indicated location in default color
 
   // valueColor drawing api
-  void			moveTo(const iVec3f& pt, const T3Color& color);
+  void                  moveTo(const iVec3f& pt, const T3Color& color);
   // use to start a new line segment in valueColor mode
-  void			lineTo(const iVec3f& to, const T3Color& color);
+  void                  lineTo(const iVec3f& to, const T3Color& color);
   //  add arc to current line, in valueColor mode
-  void			errBar(const iVec3f& pt, float err, float bar_width,
+  void                  errBar(const iVec3f& pt, float err, float bar_width,
                                const T3Color& color);
   // render error bar at given point
-  void			markerAt(const iVec3f& pt, MarkerStyle style,
+  void                  markerAt(const iVec3f& pt, MarkerStyle style,
                                  const T3Color& color);
   // render a marker at indicated location in valueColor mode
 
@@ -239,26 +239,26 @@ public:
   T3GraphLine(T3DataView* dataView_ = NULL, float fnt_sz = .05f);
 
 protected:
-  uint32_t		defColor_; // def is black
-  bool			valueColorMode_;
-  LineStyle		lineStyle_;
-  float 		marker_size_;
-  SoSeparator*		line_sep;
-  SoDrawStyle*		lineDrawStyle_;
-  SoLineSet*		lines;		// we use the vertexProperty for points etc.
-  SoLineSet*		errbars;
-  SoLineSet*		markers;
-  SoSeparator*		textSep_; // optional text separator
-  SoComplexity*		complexity_;
-  SoFont*		labelFont_;
-  float			font_size_;
-  SoPackedColor*	textColor_;
-  iVec3f		lastText_; // where last text was rendered, for our next translate
+  uint32_t              defColor_; // def is black
+  bool                  valueColorMode_;
+  LineStyle             lineStyle_;
+  float                 marker_size_;
+  SoSeparator*          line_sep;
+  SoDrawStyle*          lineDrawStyle_;
+  SoLineSet*            lines;          // we use the vertexProperty for points etc.
+  SoLineSet*            errbars;
+  SoLineSet*            markers;
+  SoSeparator*          textSep_; // optional text separator
+  SoComplexity*         complexity_;
+  SoFont*               labelFont_;
+  float                 font_size_;
+  SoPackedColor*        textColor_;
+  iVec3f                lastText_; // where last text was rendered, for our next translate
 
-  void			assertText();
+  void                  assertText();
     // makes sure text separator is created;
-  void			initValueColorMode(); // called in several places
-  void			setDefaultCaptionTransform() override; // sets text justif and transform for 3D
+  void                  initValueColorMode(); // called in several places
+  void                  setDefaultCaptionTransform() override; // sets text justif and transform for 3D
   ~T3GraphLine();
 };
 

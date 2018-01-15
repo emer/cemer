@@ -28,7 +28,7 @@
   INIMPL virtual GateType      MatrixGateType(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no);
   // get type of gating that given unit participates in
   
-  INLINE void	Compute_ApplyInhib
+  INLINE void   Compute_ApplyInhib
   (LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no, LEABRA_LAYER_STATE* lay, float ival) override {
     inherited::Compute_ApplyInhib(u, net, thr_no, lay, ival);
 
@@ -73,7 +73,7 @@
     inherited::Compute_Act_Rate(u, net, thr_no);
   }
     
-  INLINE void	Compute_Act_Spike(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) override {
+  INLINE void   Compute_Act_Spike(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) override {
     // note: critical for this to come BEFORE updating new act!
     if(dorsal_ventral == DORSAL && matrix_patch == MATRIX) {
       Compute_PatchShunt(u, net, thr_no);

@@ -29,10 +29,10 @@ class TA_API iDialogLineEdit : public iDialog {
   Q_OBJECT
 INHERITED(iDialog)
 public:
-  iLabel*	prompt;
-  iLineEdit*	lnEdit;
-  QPushButton*	btnOk; // read/write only
-  QPushButton* 	btnCancel; // or close, if read only
+  iLabel*       prompt;
+  iLineEdit*    lnEdit;
+  QPushButton*  btnOk; // read/write only
+  QPushButton*  btnCancel; // or close, if read only
 
   static bool LineEditDialog
     (QString& str_val, const QString& prompt, 
@@ -44,7 +44,7 @@ public:
 protected:
   
 private:
-  void 		init();
+  void          init();
 };
 
 #endif // iDialogLineEdit_h

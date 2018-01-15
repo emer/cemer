@@ -42,7 +42,7 @@ public:
   // #HIDDEN #NO_SAVE temp copy of obj.object_type
   MethodDef*      method;
   // #TYPE_ON_obj_type the method to call on object obj
-  ProgArg_List		meth_args;
+  ProgArg_List          meth_args;
   // #TREE_SHOW arguments to be passed to the method
   String          meth_sig;
   // #READ_ONLY #SHOW signature of the method, for reference
@@ -54,22 +54,22 @@ public:
   bool        ChooseMe() override;
   // #IGNORE pop chooser for selecting object of this type
 
-  taList_impl*	children_() override {return &meth_args;}
-  String	GetDisplayName() const override;
-  String 	GetTypeDecoKey() const override { return "Function"; }
-  String	GetToolbarName() const override { return "method()"; }
-  void 	Help() override;
+  taList_impl*  children_() override {return &meth_args;}
+  String        GetDisplayName() const override;
+  String        GetTypeDecoKey() const override { return "Function"; }
+  String        GetToolbarName() const override { return "method()"; }
+  void  Help() override;
 
   PROGEL_SIMPLE_BASEFUNS(MethodCall);
 protected:
-  void		UpdateAfterEdit_impl() override;
-  void 	        CheckThisConfig_impl(bool quiet, bool& rval) override;
-  void		CheckChildConfig_impl(bool quiet, bool& rval) override;
-  bool		GenCssBody_impl(Program* prog) override;
+  void          UpdateAfterEdit_impl() override;
+  void          CheckThisConfig_impl(bool quiet, bool& rval) override;
+  void          CheckChildConfig_impl(bool quiet, bool& rval) override;
+  bool          GenCssBody_impl(Program* prog) override;
 
 private:
-  void	Initialize();
-  void	Destroy()	{CutLinks();}
+  void  Initialize();
+  void  Destroy()       {CutLinks();}
 }; 
 
 #endif // MethodCall_h

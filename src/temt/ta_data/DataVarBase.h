@@ -32,12 +32,12 @@ class TA_API DataVarBase : public DataOneProg {
 INHERITED(DataOneProg)
 public:
   enum RowType {
-    CUR_ROW,			// use the current row (i.e., the last one added or specifically set by Read or Write operation)
-    ROW_NUM,			// set row_var to a variable that contains the row number to operate on
+    CUR_ROW,                    // use the current row (i.e., the last one added or specifically set by Read or Write operation)
+    ROW_NUM,                    // set row_var to a variable that contains the row number to operate on
     ROW_VAL,      // set row_var to a variable that contains a value that is used to find the row number by searching within data table column with the same name as the row_var variable
   };
 
-  RowType     row_spec;	  // how the row number within data table is specified
+  RowType     row_spec;   // how the row number within data table is specified
   ProgVarRef  row_var;    // #CONDSHOW_OFF_row_spec:CUR_ROW #ITEM_FILTER_StdProgVarFilter program variable containing information about which row to operate on (depends on row_spec for what this information is)
 
   void                        UpdateAfterEdit_impl() override;
@@ -47,8 +47,8 @@ public:
 protected:
 
 private:
-  void	Initialize();
-  void	Destroy()	{ CutLinks(); }
+  void  Initialize();
+  void  Destroy()       { CutLinks(); }
 };
 
 #endif // DataVarBase_h

@@ -32,13 +32,13 @@ class TA_API DataCalcCopyCommonCols : public DataSrcDestProg {
 INHERITED(DataSrcDestProg)
 public:
 #ifdef __MAKETA__
-  ProgVarRef	    src_data_var;	// #READ_ONLY #SHOW #ITEM_FILTER_DataProgVarFilter source data for copying -- automatically updated from DataCalcLoop
-  ProgVarRef	    dest_data_var;	// #READ_ONLY #SHOW #ITEM_FILTER_DataProgVarFilter destination table for copying -- automatically updated from DataCalcLoop
+  ProgVarRef        src_data_var;       // #READ_ONLY #SHOW #ITEM_FILTER_DataProgVarFilter source data for copying -- automatically updated from DataCalcLoop
+  ProgVarRef        dest_data_var;      // #READ_ONLY #SHOW #ITEM_FILTER_DataProgVarFilter destination table for copying -- automatically updated from DataCalcLoop
 #endif
-  bool		only_named_cols;
+  bool          only_named_cols;
   // only copy columns that are named in src_cols and dest_cols (otherwise just operates on all the datatable columns)
 
-  virtual void	GetDataPtrsFmLoop();
+  virtual void  GetDataPtrsFmLoop();
   // get my data table ptrs from parent calc loop obj
 
   String    GetDisplayName() const override;
@@ -46,7 +46,7 @@ public:
   bool      CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
   bool      CvtFmCode(const String& code) override;
 
-  void 	InitLinks() override;
+  void  InitLinks() override;
   SIMPLE_COPY_EX(DataCalcCopyCommonCols,CopyInner_);
   TA_BASEFUNS(DataCalcCopyCommonCols);
 protected:
@@ -55,9 +55,9 @@ protected:
   bool      GenCssBody_impl(Program* prog) override;
 
 private:
-  void	Copy_(const DataCalcCopyCommonCols& cp);
-  void	Initialize();
-  void	Destroy()	{ CutLinks(); }
+  void  Copy_(const DataCalcCopyCommonCols& cp);
+  void  Initialize();
+  void  Destroy()       { CutLinks(); }
 };
 
 #endif // DataCalcCopyCommonCols_h

@@ -1,7 +1,7 @@
 // this is included directly in LeabraExtraConSpecs_cpp / _cuda
 // {
 
-  STATE_CLASS(ChlSpecs)	chl;		// #CAT_Learning CHL learning parameters
+  STATE_CLASS(ChlSpecs) chl;            // #CAT_Learning CHL learning parameters
 
   INLINE float Compute_SAvgCor(LEABRA_CON_STATE* cg, LEABRA_NETWORK_STATE* net, int thr_no) {
     LEABRA_LAYER_STATE* slay = cg->GetSendLayer(net);
@@ -11,22 +11,22 @@
   }
   // #IGNORE compute sending average activation, corrected
 
-  INLINE float	C_Compute_Hebb(const float cg_savg_cor, const float lin_wt,
-			       const float ru_act, const float su_act) 
+  INLINE float  C_Compute_Hebb(const float cg_savg_cor, const float lin_wt,
+                               const float ru_act, const float su_act) 
   { return ru_act * (su_act * (cg_savg_cor - lin_wt) - (1.0f - su_act) * lin_wt); }
   // #IGNORE compute Hebbian associative learning
 
-  INLINE float 	C_Compute_Err_LeabraCHL(const float lin_wt,
-					const float ru_act_p, const float ru_act_m,
-					const float su_act_p, const float su_act_m)
+  INLINE float  C_Compute_Err_LeabraCHL(const float lin_wt,
+                                        const float ru_act_p, const float ru_act_m,
+                                        const float su_act_p, const float su_act_m)
   { float err = (ru_act_p * su_act_p) - (ru_act_m * su_act_m);
-    if(err > 0.0f)	err *= (1.0f - lin_wt);
-    else		err *= lin_wt;
+    if(err > 0.0f)      err *= (1.0f - lin_wt);
+    else                err *= lin_wt;
     return err;
   }
   // #IGNORE compute generec error term, sigmoid case
 
-  INLINE void 	C_Compute_dWt_LeabraCHL(float& dwt, const float heb, const float err)
+  INLINE void   C_Compute_dWt_LeabraCHL(float& dwt, const float heb, const float err)
   {  dwt += cur_lrate * (chl.err * err + chl.hebb * heb); }
   // #IGNORE combine associative and error-driven weight change, actually update dwt
 
@@ -62,7 +62,7 @@
     }
   }
 
-  INLINE void	C_Compute_Weights_LeabraCHL
+  INLINE void   C_Compute_Weights_LeabraCHL
     (float& wt, float& dwt, float& fwt, float& swt, float& scale)
   { if(dwt != 0.0f) {
       fwt += dwt;
@@ -73,7 +73,7 @@
   }
   // #IGNORE 
 
-  INLINE void	C_Compute_Weights_LeabraCHL_slow
+  INLINE void   C_Compute_Weights_LeabraCHL_slow
     (float& wt, float& dwt, float& fwt, float& swt, float& scale)
   { 
     fwt += dwt;

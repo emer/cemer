@@ -32,7 +32,7 @@
 
   BpActFun      act_fun;        // activation function to use -- note that act_range is ignored for most functions except linear-based ones, and for output units using the cross-entropy error function
   BpErrFun      error_fun;      // error function to use: only applicable to layers of type TARGET -- squared error is appropriate for unbounded linear targets, while cross-entropy is more appropriate for binary targets
-  float		err_tol;	// #DEF_0.05;0 error tolerance: no error signal for a unit if |targ-act| < err_tol) (i.e., as if act == targ exactly) -- often useful to set to .05 or so to prevent over-learning with binary training signals -- big weights often needed to get very high or low activations
+  float         err_tol;        // #DEF_0.05;0 error tolerance: no error signal for a unit if |targ-act| < err_tol) (i.e., as if act == targ exactly) -- often useful to set to .05 or so to prevent over-learning with binary training signals -- big weights often needed to get very high or low activations
   bool          save_err;       // whether to save the actual error value -- this requires extra computation and is not necessary for learning -- just for instructional / informational purposes
   STATE_CLASS(NLXX1ActSpec)  nlxx1; // #CONDSHOW_ON_act_fun:NLXX1 specs for nlxx1 function when that is being used
   STATE_CLASS(GaussActSpec)  gauss; // #CONDSHOW_ON_act_fun:GAUSS||act_fun:RBF specs for Gaussian bump or RBF activation function when that is being used
@@ -200,7 +200,7 @@
   }
 
 
-  INLINE virtual void 	Compute_Error(BP_UNIT_STATE* u, BP_NETWORK_STATE* net, int thr_no) {
+  INLINE virtual void   Compute_Error(BP_UNIT_STATE* u, BP_NETWORK_STATE* net, int thr_no) {
     if(!u->HasExtFlag(UNIT_STATE::TARG)) return;
     if(u->HasExtFlag(UNIT_STATE::UN_FLAG_1)) return; // dropout flag
 
@@ -233,7 +233,7 @@
   }
   // call the unit error function (only on target units)
 
-  INLINE virtual void 	Compute_dEdA(BP_UNIT_STATE* u, BP_NETWORK_STATE* net, int thr_no) {
+  INLINE virtual void   Compute_dEdA(BP_UNIT_STATE* u, BP_NETWORK_STATE* net, int thr_no) {
     // note: this has to be done at unit level b/c of sequencing with dEdNet etc
     // don't compute to inputs by default
     u->dEdA = 0.0f;
@@ -261,7 +261,7 @@
   }
   // compute derivative of error with respect to unit activation
   
-  INLINE virtual void 	Compute_dEdNet(BP_UNIT_STATE* u, BP_NETWORK_STATE* net, int thr_no) {
+  INLINE virtual void   Compute_dEdNet(BP_UNIT_STATE* u, BP_NETWORK_STATE* net, int thr_no) {
     if(u->HasExtFlag(UNIT_STATE::EXT) && !net->bp_to_inputs) {
       u->dEdNet = 0.0f;
       return;

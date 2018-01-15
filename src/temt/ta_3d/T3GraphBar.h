@@ -57,7 +57,7 @@ typedef T3NodeLeaf inherited;
 #endif // def __MAKETA__
 public:
 
-  static void		initClass();
+  static void           initClass();
 
   virtual void          SetBar(iVec3f& pos, iVec3f& size, const T3Color& color);
 

@@ -30,16 +30,16 @@ class E_API VELinearMuscle : public VEMuscle {
   // A muscle that exerts force proportional to its input
   INHERITED(VEMuscle)
 public:
-  float 	gain;
-  float 	old_length1;
-  float 	old_length2; // past lengths, used to obtain contraction speed with the 3 point method. UpdateIPs keeps them actualized. old_length2 is the length 2 timesteps ago.
+  float         gain;
+  float         old_length1;
+  float         old_length2; // past lengths, used to obtain contraction speed with the 3 point method. UpdateIPs keeps them actualized. old_length2 is the length 2 timesteps ago.
 
-  taVector3f 	Contract(float stim) override;
+  taVector3f    Contract(float stim) override;
   // Returns the force vector (pointing towards the proximal insertion point) resulting from a given stimulation of the muscle;
 
   float Length() override;       // Returns current length of muscle
-  float Speed() override;  	// Returns muscle's contraction speed one world stepsize ago
-  void UpOld() override;		// update past values stored
+  float Speed() override;       // Returns muscle's contraction speed one world stepsize ago
+  void UpOld() override;                // update past values stored
   void InitBuffs() override;     // Initialize the buffers that store past values
   float Old_Length() override;   // Delayed value of muscle length
   float Old_Speed() override;    // Delayed value of muscle speed

@@ -7,7 +7,7 @@
 # dependencies except qt and coin
 
 # this should be the only thing you need to update: grab the latest versions
-QT_DMG=qt593_mac64.dmg
+QT_DMG=qt5931_mac64.dmg
 COIN_DMG=coin_mac64_4_0.dmg
 
 

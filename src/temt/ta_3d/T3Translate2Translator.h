@@ -37,11 +37,11 @@ typedef SoSeparator inherited;
   TA_SO_NODE_HEADER(T3Translate2Translator);
 #endif // def __MAKETA__
 public:
-  static void		initClass();
+  static void           initClass();
   T3Translate2Translator(bool active = false, float bar_len = 2.0f, float bar_width=0.1f,
-			   float cone_radius=0.25f, float cone_ht=.5f);
+                           float cone_radius=0.25f, float cone_ht=.5f);
 protected:
-  const char*  	getFileFormatName() const override {return "Separator"; } 
+  const char*   getFileFormatName() const override {return "Separator"; } 
 };
 
 #endif // T3Translate2Translator_h

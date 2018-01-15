@@ -36,34 +36,34 @@ INHERITED(QThread)
 public:
   using inherited::usleep;
 
-  taThreadMgr*		mgr;
+  taThreadMgr*          mgr;
   // our manager -- controls everything
   
-  inline bool		isActive() const { return m_active; }
+  inline bool           isActive() const { return m_active; }
   // currently alive -- means it is somewhere in the run() function
-  void			stopMe();
+  void                  stopMe();
   // stop this thread -- just sets m_stop_req = true -- manager needs to start tasks to get them to actually see the new signal and then stop -- all tasks must be stopped at the same time!
-  inline bool		isRunning() const { return m_running; }
+  inline bool           isRunning() const { return m_running; }
   // is actually running a task at this time -- otherwise it is waiting on the mgr->wait wait condition
 
-  taTask*		task() const {return m_task;}
+  taTask*               task() const {return m_task;}
   // current task we're associated with
-  void			setTask(taTask* t);
+  void                  setTask(taTask* t);
   // assign a task for this thread
 
   taManagedThread(taThreadMgr* mg);
   // should only be called by the mgr..
   ~taManagedThread();
 protected:
-  taTaskRef		m_task;
-  bool			m_active;  // set to true when in run() state
-  bool			m_running; // set to true when running
-  bool			m_stop_req; // set to true to signal that this thread should exit
+  taTaskRef             m_task;
+  bool                  m_active;  // set to true when in run() state
+  bool                  m_running; // set to true when running
+  bool                  m_stop_req; // set to true to signal that this thread should exit
 
   virtual void          run_wait(); // standard wait-mode
   virtual void          run_spin(); // spin-wait mode
   
-  void 	run() override;
+  void  run() override;
 };
 
 #endif // taManagedThread_h

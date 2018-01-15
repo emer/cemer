@@ -32,7 +32,7 @@ class TA_API DataGroupEl : public DataOpEl {
   INHERITED(DataOpEl)
 public:
   String        name;           // #HIDDEN #READ_ONLY cached name value
-  AggregateSpec	agg;		// how to aggregate this information
+  AggregateSpec agg;            // how to aggregate this information
 
   String        GetName() const override { return name; }
   bool          SetName(const String& nm) override;
@@ -41,10 +41,10 @@ public:
   bool          BrowserEditSet(const String& new_val_str, int move_after = 0) override;
 
   void  Initialize();
-  void 	Destroy()		{ };
+  void  Destroy()               { };
   TA_SIMPLE_BASEFUNS(DataGroupEl);
 protected:
-  void	 CheckThisConfig_impl(bool quiet, bool& rval) override;
+  void   CheckThisConfig_impl(bool quiet, bool& rval) override;
 };
 
 #endif // DataGroupEl_h

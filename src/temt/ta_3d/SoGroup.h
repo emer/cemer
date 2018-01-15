@@ -27,7 +27,7 @@
 
 class SoGroup: public SoNode {
 public:
-	int dummy; // #IGNORE
+        int dummy; // #IGNORE
 };
 
 #endif // SoGroup_h

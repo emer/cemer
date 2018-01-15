@@ -65,10 +65,10 @@ public:
 
   TA_SIMPLE_BASEFUNS(AudInputSpec);
 protected:
-  void 	UpdateAfterEdit_impl() override;
+  void  UpdateAfterEdit_impl() override;
 private:
-  void 	Initialize();
-  void	Destroy() { };
+  void  Initialize();
+  void  Destroy() { };
 };
 
 
@@ -87,10 +87,10 @@ public:
   
   TA_SIMPLE_BASEFUNS(AudDftSpec);
 protected:
-  void 	UpdateAfterEdit_impl() override;
+  void  UpdateAfterEdit_impl() override;
 private:
-  void 	Initialize();
-  void	Destroy() { };
+  void  Initialize();
+  void  Destroy() { };
 };
 
 
@@ -124,10 +124,10 @@ public:
 
   TA_SIMPLE_BASEFUNS(MelFBankSpec);
 protected:
-  void 	UpdateAfterEdit_impl() override;
+  void  UpdateAfterEdit_impl() override;
 private:
-  void 	Initialize();
-  void	Destroy() { };
+  void  Initialize();
+  void  Destroy() { };
 };
 
 
@@ -144,10 +144,10 @@ public:
 
   TA_SIMPLE_BASEFUNS(AudRenormSpec);
 protected:
-  void 	UpdateAfterEdit_impl() override;
+  void  UpdateAfterEdit_impl() override;
 private:
-  void 	Initialize();
-  void	Destroy() { };
+  void  Initialize();
+  void  Destroy() { };
 };
 
 
@@ -158,35 +158,35 @@ class E_API AudGaborSpec : public taOBase {
 INHERITED(taOBase)
 public:
   bool          on;             // use this gabor filtering of the time-frequency space filtered input (time in terms of steps of the DFT transform, and discrete frequency factors based on the FFT window and input sample rate)
-  int		sz_time;	// #CONDSHOW_ON_on #DEF_6;8;12;16;24 size of the filter in the time (horizontal) domain, in terms of steps of the underlying DFT filtering steps
-  int		sz_freq;	// #CONDSHOW_ON_on #DEF_6;8;12;16;24 size of the filter in the frequency domain, in terms of discrete frequency factors based on the FFT window and input sample rate
-  int		spc_time;	// #CONDSHOW_ON_on spacing in the time (horizontal) domain, in terms of steps
-  int		spc_freq;	// #CONDSHOW_ON_on spacing in the frequency (vertical) domain
-  float		wvlen;		// #CONDSHOW_ON_on #DEF_1.5;2 wavelength of the sine waves in normalized units
-  float		sig_len;	// #CONDSHOW_ON_on #DEF_0.6 gaussian sigma for the length dimension (elongated axis perpendicular to the sine waves) -- normalized as a function of filter size in relevant dimension
-  float		sig_wd;	// #CONDSHOW_ON_on #DEF_0.3 gaussian sigma for the width dimension (in the direction of the sine waves) -- normalized as a function of filter size in relevant dimension
-  float		sig_hor_len;    // #CONDSHOW_ON_on #DEF_0.3 gaussian sigma for the length of special horizontal narrow-band filters -- normalized as a function of filter size in relevant dimension
-  float		sig_hor_wd;     // #CONDSHOW_ON_on #DEF_0.1 gaussian sigma for the horizontal dimension for special horizontal narrow-band filters -- normalized as a function of filter size in relevant dimension
-  float		gain;		// #CONDSHOW_ON_on #DEF_2 overall gain multiplier applied after gabor filtering -- only relevant if not using renormalization (otherwize it just gets renormed away)
-  int		n_horiz;	// #CONDSHOW_ON_on #DEF_4 number of horizontally-elongated,  pure time-domain, frequency-band specific filters to include, evenly spaced over the available frequency space for this filter set -- in addition to these, there are two diagonals (45, 135) and a vertically-elongated (wide frequency band) filter
-  float		phase_off;	// #CONDSHOW_ON_on #DEF_0;1.5708 offset for the sine phase -- default is an asymmetric sine wave -- can make it into a symmetric cosine gabor by using PI/2 = 1.5708
-  bool		circle_edge;	// #CONDSHOW_ON_on #DEF_true cut off the filter (to zero) outside a circle of diameter filter_size -- makes the filter more radially symmetric
+  int           sz_time;        // #CONDSHOW_ON_on #DEF_6;8;12;16;24 size of the filter in the time (horizontal) domain, in terms of steps of the underlying DFT filtering steps
+  int           sz_freq;        // #CONDSHOW_ON_on #DEF_6;8;12;16;24 size of the filter in the frequency domain, in terms of discrete frequency factors based on the FFT window and input sample rate
+  int           spc_time;       // #CONDSHOW_ON_on spacing in the time (horizontal) domain, in terms of steps
+  int           spc_freq;       // #CONDSHOW_ON_on spacing in the frequency (vertical) domain
+  float         wvlen;          // #CONDSHOW_ON_on #DEF_1.5;2 wavelength of the sine waves in normalized units
+  float         sig_len;        // #CONDSHOW_ON_on #DEF_0.6 gaussian sigma for the length dimension (elongated axis perpendicular to the sine waves) -- normalized as a function of filter size in relevant dimension
+  float         sig_wd; // #CONDSHOW_ON_on #DEF_0.3 gaussian sigma for the width dimension (in the direction of the sine waves) -- normalized as a function of filter size in relevant dimension
+  float         sig_hor_len;    // #CONDSHOW_ON_on #DEF_0.3 gaussian sigma for the length of special horizontal narrow-band filters -- normalized as a function of filter size in relevant dimension
+  float         sig_hor_wd;     // #CONDSHOW_ON_on #DEF_0.1 gaussian sigma for the horizontal dimension for special horizontal narrow-band filters -- normalized as a function of filter size in relevant dimension
+  float         gain;           // #CONDSHOW_ON_on #DEF_2 overall gain multiplier applied after gabor filtering -- only relevant if not using renormalization (otherwize it just gets renormed away)
+  int           n_horiz;        // #CONDSHOW_ON_on #DEF_4 number of horizontally-elongated,  pure time-domain, frequency-band specific filters to include, evenly spaced over the available frequency space for this filter set -- in addition to these, there are two diagonals (45, 135) and a vertically-elongated (wide frequency band) filter
+  float         phase_off;      // #CONDSHOW_ON_on #DEF_0;1.5708 offset for the sine phase -- default is an asymmetric sine wave -- can make it into a symmetric cosine gabor by using PI/2 = 1.5708
+  bool          circle_edge;    // #CONDSHOW_ON_on #DEF_true cut off the filter (to zero) outside a circle of diameter filter_size -- makes the filter more radially symmetric
 
   int           n_filters;      // #CONDSHOW_ON_on #READ_ONLY #SHOW total number of filters = 3 + n_horiz
 
   
-  virtual void	RenderFilters(float_Matrix& fltrs);
+  virtual void  RenderFilters(float_Matrix& fltrs);
   // generate filters into the given matrix, which is formatted as: [sz_time_steps][sz_freq][n_filters]
 
-  virtual void	GridFilters(float_Matrix& fltrs, DataTable* disp_data, bool reset = true);
+  virtual void  GridFilters(float_Matrix& fltrs, DataTable* disp_data, bool reset = true);
   // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable plot the filters into data table and generate a grid view (reset any existing data first)
 
   TA_SIMPLE_BASEFUNS(AudGaborSpec);
 protected:
-  void 	UpdateAfterEdit_impl() override;
+  void  UpdateAfterEdit_impl() override;
 private:
-  void 	Initialize();
-  void	Destroy() { };
+  void  Initialize();
+  void  Destroy() { };
 };
 
 
@@ -202,10 +202,10 @@ public:
 
   TA_SIMPLE_BASEFUNS(MelCepstrumSpec);
 protected:
-  void 	UpdateAfterEdit_impl() override;
+  void  UpdateAfterEdit_impl() override;
 private:
-  void 	Initialize();
-  void	Destroy() { };
+  void  Initialize();
+  void  Destroy() { };
 };
 
 
@@ -215,15 +215,15 @@ class E_API AuditoryProc : public ImgProcThreadBase {
   // Auditory processing system -- parameters for performing various auditory processing steps on sound waveforms, resulting in activation patterns suitable as input to a network
 INHERITED(ImgProcThreadBase)
 public:
-  enum SaveMode {		// how to add new data to the data table
-    NONE_SAVE,			// don't save anything at all -- overrides any more specific save guys and prevents any addition or modification to the data table
-    FIRST_ROW,			// always overwrite the first row -- does EnforceRows(1) if rows = 0
-    ADD_ROW,			// always add a new row and write to that, preserving a history of inputs over time -- should be reset at some interval!
+  enum SaveMode {               // how to add new data to the data table
+    NONE_SAVE,                  // don't save anything at all -- overrides any more specific save guys and prevents any addition or modification to the data table
+    FIRST_ROW,                  // always overwrite the first row -- does EnforceRows(1) if rows = 0
+    ADD_ROW,                    // always add a new row and write to that, preserving a history of inputs over time -- should be reset at some interval!
   };
 
 
-  DataTableRef	data_table;	// data table for saving filter results for viewing and applying to networks etc
-  SaveMode	save_mode;	// how to add new data to the data table
+  DataTableRef  data_table;     // data table for saving filter results for viewing and applying to networks etc
+  SaveMode      save_mode;      // how to add new data to the data table
   AudInputSpec  input;          // specifications of the raw auditory input
   AudDftSpec    dft;            // specifications for how to compute the discrete fourier transform (DFT, using FFT)
   MelFBankSpec  mel_fbank;      // specifications of the mel feature bank frequency sampling of the DFT (FFT) of the input sound
@@ -232,7 +232,7 @@ public:
   AudGaborSpec  gabor2;    // #CONDSHOW_ON_mel_fbank.on full set of frequency / time gabor filters -- second size
   AudGaborSpec  gabor3;    // #CONDSHOW_ON_mel_fbank.on full set of frequency / time gabor filters -- third size
   MelCepstrumSpec mfcc;         // #CONDSHOW_ON_mel_fbank.on specifications of the mel cepstrum discrete cosine transform of the mel fbank filter features
-  V1KwtaSpec	gabor_kwta;	// #CONDSHOW_ON_gabor1.on k-winner-take-all inhibitory dynamics for the time-gabor output
+  V1KwtaSpec    gabor_kwta;     // #CONDSHOW_ON_gabor1.on k-winner-take-all inhibitory dynamics for the time-gabor output
 
 
   ///////////////////////////////////////////////////
@@ -253,7 +253,7 @@ public:
   
   
   //////////////////////////////////////////////////////////////
-  //	Outputs
+  //    Outputs
 
   bool                  first_step; // #READ_ONLY #NO_SAVE #SHOW is this the first step of processing -- turns of prv smoothing of dft power
   int                   input_pos;   // #READ_ONLY #NO_SAVE #SHOW current position in the sound_full input -- in terms of sample number
@@ -266,7 +266,7 @@ public:
 
   float_Matrix          sound_full;  // #READ_ONLY #NO_SAVE the full sound input obtained from the sound input
   float_Matrix          window_in;  // #READ_ONLY #NO_SAVE [input.win_samples] the raw sound input, one channel at a time
-  complex_float_Matrix	dft_out;   // #READ_ONLY #NO_SAVE [2, dft_size] discrete fourier transform (fft) output complex representation
+  complex_float_Matrix  dft_out;   // #READ_ONLY #NO_SAVE [2, dft_size] discrete fourier transform (fft) output complex representation
   float_Matrix          dft_power_out; // #READ_ONLY #NO_SAVE [dft_use] power of the dft, up to the nyquist limit frequency (1/2 input.win_samples)
   float_Matrix          dft_log_power_out; // #READ_ONLY #NO_SAVE [dft_use] log power of the dft, up to the nyquist limit frequency (1/2 input.win_samples)
   float_Matrix          dft_power_trial_out; // #READ_ONLY #NO_SAVE [dft_use][input.total_steps][input.channels] full trial's worth of power of the dft, up to the nyquist limit frequency (1/2 input.win_samples)
@@ -275,7 +275,7 @@ public:
   float_Matrix          mel_fbank_out; // #READ_ONLY #NO_SAVE [mel.n_filters] mel scale transformation of dft_power, using triangular filters, resulting in the mel filterbank output -- the natural log of this is typically applied
   float_Matrix          mel_fbank_trial_out; // #READ_ONLY #NO_SAVE [mel.n_filters][input.total_steps][input.channels] full trial's worth of mel feature-bank output -- only if using gabors
 
-  float_Matrix	        gabor_gci;	 // #READ_ONLY #NO_SAVE inhibitory conductances, for computing kwta
+  float_Matrix          gabor_gci;       // #READ_ONLY #NO_SAVE inhibitory conductances, for computing kwta
   float_Matrix          gabor1_trial_raw; // #READ_ONLY #NO_SAVE [gabor.n_filters*2][mel.n_filters][input.trial_steps][input.channels] raw output of gabor1 -- full trial's worth of gabor steps
   float_Matrix          gabor1_trial_out; // #READ_ONLY #NO_SAVE [gabor.n_filters*2][mel.n_filters][input.trial_steps][input.channels] post-kwta output of full trial's worth of gabor steps
   
@@ -291,49 +291,49 @@ public:
   virtual bool  NeedsInit();
   // #CAT_Auditory does system need init?
   
-  virtual bool 	Init();
+  virtual bool  Init();
   // #BUTTON initialize everything to be ready to start filtering -- calls InitFilters, InitOutMatrix, InitDataTable
 
   virtual void  InitFromSound(taSound* sound, int n_chans = 1, int chan = 0);
   // #CAT_Auditory get sample_rate and channels info from given sound object -- n_chans arg is how many channels we want to process -- overrides number of channels present in sound obj if >= 1 (i.e., use -1 to just use number of channels present in sound object) -- if sound obj has multiple channels and n_chans = 1, then chan specifies which channel to read from
 
-  virtual bool	InitSound();
+  virtual bool  InitSound();
   // #CAT_Auditory reset the current sound information -- unloads any existing sound
   
-  virtual bool	LoadSound(taSound* sound);
+  virtual bool  LoadSound(taSound* sound);
   // #CAT_Auditory load a new sound into the system for subsequent processing -- grabs the sound data into sound_full
 
-  virtual bool	StartNewSound();
+  virtual bool  StartNewSound();
   // #CAT_Auditory start a new sound -- zeros out stuff from previous sound..
   
   virtual int   InputStepsLeft();
   // #CAT_Auditory number of steps left to process in the current input sound
 
-  virtual bool	ProcessTrial();
+  virtual bool  ProcessTrial();
   // #CAT_Auditory process a full trial worth of sound -- iterates over steps to fill a trial's worth of sound data
 
-  virtual bool	StepToSample(int samp_pos);
+  virtual bool  StepToSample(int samp_pos);
   // #CAT_Auditory incrementally step forward through sound until given sample position is within the nearest step to the start of the trial
 
-  virtual bool	WrapBorder(int chan);
+  virtual bool  WrapBorder(int chan);
   // #CAT_Auditory at start of trial, wrap-around previous end-of-trial border values to now be the current start-of-trial border values
 
-  virtual bool	StepForward(int chan);
+  virtual bool  StepForward(int chan);
   // #CAT_Auditory Step the current trial's worth of data forward by one step -- just does a copy of the _trial output data one step to the left, making room for a new step at the end
 
-  virtual bool	CopyStepFromStep(int to_step, int fm_step, int chan);
+  virtual bool  CopyStepFromStep(int to_step, int fm_step, int chan);
   // #CAT_Auditory copy a step of trial data to given step index from given step index
 
-  virtual bool	ProcessStep(int chan, int step);
+  virtual bool  ProcessStep(int chan, int step);
   // #CAT_Auditory process a step worth of sound input from current input_pos, and increment input_pos by input.step_samples
 
-  virtual bool	SoundToWindow(int in_pos, int chan);
+  virtual bool  SoundToWindow(int in_pos, int chan);
   // #CAT_Auditory get sound from sound_full at given position and channel, into window_in -- pads with zeros for any amount not available in the sound_full input
 
   virtual bool  FilterWindow(int chan, int step);
   // #CAT_Auditory filter the current window_in input data according to current settings -- called by ProcessStep, but can be called separately 
   
-  virtual bool	FilterTrial(int chan);
+  virtual bool  FilterTrial(int chan);
   // #CAT_Auditory process filters that operate over an entire trial at a time 
 
   virtual bool  NewTableRow();
@@ -342,13 +342,13 @@ public:
   virtual bool  OutputToTable(int chan);
   // #CAT_Auditory record the current trial's worth of filter output into data table for given channel
   
-  virtual void	PlotMelFilters(DataTable* disp_data);
+  virtual void  PlotMelFilters(DataTable* disp_data);
   // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable plot the Mel scale triangular filters
-  virtual void	GridGaborFilters(DataTable* disp_data, int gabor_n = 1);
+  virtual void  GridGaborFilters(DataTable* disp_data, int gabor_n = 1);
   // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable plot the full gabor filters as a grid display -- choose which set of gabors to plot (1-3)
   
  protected:
-  void	UpdateAfterEdit_impl() override;
+  void  UpdateAfterEdit_impl() override;
 
   virtual void  UpdateConfig();
   // update all configuration params, called by UAE

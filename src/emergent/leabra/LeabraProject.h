@@ -36,8 +36,8 @@ public:
   
   TA_BASEFUNS_NOCOPY(LeabraProject);
 private:
-  void	Initialize();
-  void 	Destroy()		{}
+  void  Initialize();
+  void  Destroy()               {}
 };
 
 #endif // LeabraProject_h

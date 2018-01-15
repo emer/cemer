@@ -37,12 +37,12 @@ public:
   iLineEdit(QWidget* parent = 0, bool add_completer = false);
   iLineEdit(const char* text, QWidget* parent, bool add_completer = false);
 
-  inline int	  charWidth() {return mchar_width;}
-  void		  setCharWidth(int num);      // sets width to accommodate num chars of
-  inline int	  minCharWidth() {return mmin_char_width;}
-  void		  setMinCharWidth(int num);   // sets aprox min width to accommodate num chars of average text in current font; 0=no restriction; limited to 128
-  virtual void	  clearExtSelection();        // clear extended selection mode and also clear any existing selection
-  virtual void	  emitReturnPressed();        // emit this signal
+  inline int      charWidth() {return mchar_width;}
+  void            setCharWidth(int num);      // sets width to accommodate num chars of
+  inline int      minCharWidth() {return mmin_char_width;}
+  void            setMinCharWidth(int num);   // sets aprox min width to accommodate num chars of average text in current font; 0=no restriction; limited to 128
+  virtual void    clearExtSelection();        // clear extended selection mode and also clear any existing selection
+  virtual void    emitReturnPressed();        // emit this signal
   iCodeCompleter* GetCompleter() { return completer; }
     
 #ifndef __MAKETA__
@@ -67,7 +67,7 @@ protected slots:
 protected:
   int               mmin_char_width;  // note: we limit to 128
   int               mchar_width;      // note: we limit to 128
-  bool              ext_select_on;	  // toggled by Ctrl+space -- extends selection with keyboard movement
+  bool              ext_select_on;        // toggled by Ctrl+space -- extends selection with keyboard movement
   int               orig_text_length; // length of iLineEdit::text() before completion
   iCodeCompleter*   completer; //
   
@@ -79,7 +79,7 @@ protected:
   bool              eventFilter(QObject* obj, QEvent * e) override;
 
 private:
-  void		      init(bool add_completer = false);
+  void                init(bool add_completer = false);
 };
 
 #endif // iLineEdit_h

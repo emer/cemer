@@ -504,13 +504,13 @@ static iMainWindowViewer* FindMainWinParent(QObject* obj);
   // map vertical coordinate value within given child widget to the coordinates of the scroll area main widget (underlying space that is being scrolled over) -- sa_main_widg is the main widget() of the scroll area
 #endif
   
-  //		Delete children
+  //            Delete children
 #ifndef __MAKETA__
-  static void	        DeleteChildrenLater(QObject* obj);
+  static void           DeleteChildrenLater(QObject* obj);
   // convenience function -- deleteLater all children
-  static void	        DeleteChildrenNow(QObject* obj);
+  static void           DeleteChildrenNow(QObject* obj);
   // convenience function -- delete *now* all children
-  static void	        DeleteWidgetsLater(QObject* obj);
+  static void           DeleteWidgetsLater(QObject* obj);
   // convenience function -- deleteLater all widgets -- does hide first -- prevents bugs
 #endif
   

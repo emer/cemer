@@ -30,7 +30,7 @@ class TA_API If: public CondBase {
   // #AKA_IfElse  #ADD_PARENS a conditional test element: if(condition) then run true_code -- can be followed by an Else or ElseIf to run if condition is false
 INHERITED(CondBase)
 public:
-  ProgEl_List	    false_code; // #HIDDEN #NO_SAVE #OBSOLETE items to execute if condition false (now moved to a separate Else code)
+  ProgEl_List       false_code; // #HIDDEN #NO_SAVE #OBSOLETE items to execute if condition false (now moved to a separate Else code)
 
   bool            CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
   bool            CvtFmCode(const String& code) override;
@@ -42,20 +42,20 @@ public:
   
   PROGEL_SIMPLE_BASEFUNS(If);
 protected:
-  void		UpdateAfterEdit_impl() override;
-  void		CheckThisConfig_impl(bool quiet, bool& rval) override;
-  void		CheckChildConfig_impl(bool quiet, bool& rval) override;
-  void		PreGenChildren_impl(int& item_id) override;
-  void		GenCssPre_impl(Program* prog) override; 
-  bool		GenCssBody_impl(Program* prog) override; //replaces If
-  void		GenCssPost_impl(Program* prog) override;
+  void          UpdateAfterEdit_impl() override;
+  void          CheckThisConfig_impl(bool quiet, bool& rval) override;
+  void          CheckChildConfig_impl(bool quiet, bool& rval) override;
+  void          PreGenChildren_impl(int& item_id) override;
+  void          GenCssPre_impl(Program* prog) override; 
+  bool          GenCssBody_impl(Program* prog) override; //replaces If
+  void          GenCssPost_impl(Program* prog) override;
   const String  GenListing_children(int indent_level) const override;
 
   void    ConvertFromIfElse(); // #IGNORE
 
 private:
-  void	Initialize();
-  void	Destroy()	{CutLinks();} //
+  void  Initialize();
+  void  Destroy()       {CutLinks();} //
 };
 
 #endif // If_h

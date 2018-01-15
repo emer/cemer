@@ -29,13 +29,13 @@ class TA_API DumpPathSubList : public taPtrList<DumpPathSub> {
   // ##NO_CSS ##NO_MEMBERS
 INHERITED(taPtrList<DumpPathSub>)
 protected:
-  void		El_Done_(void* it)	{ delete (DumpPathSub*)it; }
-  String	El_GetName_(void* it) const { return ((DumpPathSub*)it)->old_path; }
+  void          El_Done_(void* it)      { delete (DumpPathSub*)it; }
+  String        El_GetName_(void* it) const { return ((DumpPathSub*)it)->old_path; }
 public:
-  void	AddPath(TypeDef* td, taBase* par, String& o, String& n);
-  void 	FixPath(TypeDef* td, taBase* par, String& path);
+  void  AddPath(TypeDef* td, taBase* par, String& o, String& n);
+  void  FixPath(TypeDef* td, taBase* par, String& path);
   // fixes given path (td and par are for scoping search)
-  void 	unFixPath(TypeDef* td, taBase* par, String& path);
+  void  unFixPath(TypeDef* td, taBase* par, String& path);
   // un-fixes given path to original path value
 
   ~DumpPathSubList()            { Reset(); }

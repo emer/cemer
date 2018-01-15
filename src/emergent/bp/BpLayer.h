@@ -57,8 +57,8 @@ public:
 
   TA_BASEFUNS_NOCOPY(BpLayer);
 private:
-  void	Initialize();
-  void 	Destroy()		{ };
+  void  Initialize();
+  void  Destroy()               { };
 };
 
 #endif // BpLayer_h

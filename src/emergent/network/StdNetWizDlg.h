@@ -34,34 +34,34 @@ class E_API StdNetWizDlg : public taNBase {
   // #CAT_Wizard dialog for StdNetwork() wizard action
 INHERITED(taNBase)
 public:
-  taGuiDialog* 	Dlg1;  
-  taGuiDialog*	Dlg2;  
-  NetworkRef 	network;  
-  int 		n_layers;  
-  DataTable*	net_config;	// network configuration data table
+  taGuiDialog*  Dlg1;  
+  taGuiDialog*  Dlg2;  
+  NetworkRef    network;  
+  int           n_layers;  
+  DataTable*    net_config;     // network configuration data table
  
-  void 	NewNetwork();
+  void  NewNetwork();
   // #MENU #MENU_ON_Actions callback for dialog
-  void 	NLayersFmNetwork();
+  void  NLayersFmNetwork();
   // #MENU callback for dialog
-  void 	ConfigOneLayer(int lay_no, const String& nm, const String& typ);
+  void  ConfigOneLayer(int lay_no, const String& nm, const String& typ);
   // #MENU callback for dialog
-  void 	NewNetDefaultConfig();
+  void  NewNetDefaultConfig();
   // #MENU callback for dialog
-  void 	AddNewLayerRow();
+  void  AddNewLayerRow();
   // #MENU callback for dialog
-  void 	RefreshLayerList();
+  void  RefreshLayerList();
   // #MENU callback for dialog
 
-  virtual bool	DoDialog();
+  virtual bool  DoDialog();
   // do the dialog and configure the network based on results -- returns true if network configured, false if not
   virtual bool  NoDialog();
   // just use defaults, no dialog
   
   TA_SIMPLE_BASEFUNS(StdNetWizDlg);
 private:
-  void 	Initialize();
-  void 	Destroy()	{ CutLinks(); }
+  void  Initialize();
+  void  Destroy()       { CutLinks(); }
 };
   
 #endif // StdNetWizDlg_h

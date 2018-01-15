@@ -39,14 +39,14 @@ public:
 
 #include <BpConSpec_core>
 
-  Schedule	lrate_sched;	// schedule of learning rate over training epochs (multiplies lrate to produce cur_lrate factor)
-  void 		(*decay_fun)(BpConSpec* spec, float& wt, float& dwt);
+  Schedule      lrate_sched;    // schedule of learning rate over training epochs (multiplies lrate to produce cur_lrate factor)
+  void          (*decay_fun)(BpConSpec* spec, float& wt, float& dwt);
   // #OBSOLETE #HIDDEN #READ_ONLY #NO_SAVE #LIST_BpConSpec_WtDecay #CONDEDIT_OFF_decay:0 the weight decay function to use
 
-  virtual void	SetCurLrate(BpNetworkState_cpp* net);
+  virtual void  SetCurLrate(BpNetworkState_cpp* net);
   // set current learning rate based on schedule given epoch
 
-  virtual void	LogLrateSched(int epcs_per_step = 50, int n_steps=7);
+  virtual void  LogLrateSched(int epcs_per_step = 50, int n_steps=7);
   // #BUTTON #CAT_Learning establish a logarithmic learning rate schedule with given total number of steps (including first step at lrate) and epochs per step: numbers go down in sequence: 1, .5, .2, .1, .05, .02, .01, etc.. this is a particularly good lrate schedule for large nets on hard tasks
 
   TA_BASEFUNS(BpConSpec);
@@ -66,10 +66,10 @@ private:
 // #REG_FUN
 E_API void Bp_Simple_WtDecay(BpConSpec* spec, float& wt, float& dwt)
 // #LIST_BpConSpec_WtDecay #OBSOLETE -- replaced with enum -- Simple weight decay (subtract decay*wt)
-     ;				// term here so maketa picks up comment
+     ;                          // term here so maketa picks up comment
 // #REG_FUN
 E_API void Bp_WtElim_WtDecay(BpConSpec* spec, float& wt, float& dwt)
 // #LIST_BpConSpec_WtDecay #OBSOLETE -- replaced with enum -- Weight Elimination (Rumelhart) weight decay
-     ;				// term here so maketa picks up comment
+     ;                          // term here so maketa picks up comment
 
 #endif // BpConSpec_h

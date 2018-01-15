@@ -39,24 +39,24 @@ typedef SoTriangleStripSet inherited;
   TA_SO_NODE_HEADER(SoRect);
 #endif // def __MAKETA__
 public:
-  static void		initClass();
+  static void           initClass();
 
-  float		width;
-  float		height;
+  float         width;
+  float         height;
 
 #ifndef __MAKETA__
-  SoMFVec3f& 	vertex(); //  #IGNORE accessor shortcut for vertices
-  SoMFVec3f& 	normal(); // #IGNORE accessor shortcut for normals
+  SoMFVec3f&    vertex(); //  #IGNORE accessor shortcut for vertices
+  SoMFVec3f&    normal(); // #IGNORE accessor shortcut for normals
 #endif
 
-  void		setDimensions(float wd, float ht);
+  void          setDimensions(float wd, float ht);
   SoRect();
 
 protected:
-  const char*  	getFileFormatName() const override {return "TriangleStripSet"; } 
-  void 		render(); // #IGNORE
-  void 		renderH(); // #IGNORE
-  void 		renderV(); // #IGNORE
+  const char*   getFileFormatName() const override {return "TriangleStripSet"; } 
+  void          render(); // #IGNORE
+  void          renderH(); // #IGNORE
+  void          renderV(); // #IGNORE
 };
 
 #endif // SoRect_h

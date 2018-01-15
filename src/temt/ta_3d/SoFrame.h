@@ -40,34 +40,34 @@ typedef SoTriangleStripSet inherited;
 #endif // def __MAKETA__
 public:
   enum Orientation {
-    Hor,	// lies flat in x-z plane
-    Ver		// lies flat in x-y plan
+    Hor,        // lies flat in x-z plane
+    Ver         // lies flat in x-y plan
   };
 
-  static void		initClass();
+  static void           initClass();
 
-  float		base; //note: these could be fields
-  float		height;
-  float		depth;
-  float		inset; // #DEF_0.05
-  Orientation	orientation; // #DEF_Hor
+  float         base; //note: these could be fields
+  float         height;
+  float         depth;
+  float         inset; // #DEF_0.05
+  Orientation   orientation; // #DEF_Hor
 
 #ifndef __MAKETA__
-  SoMFVec3f& 	vertex(); //  #IGNORE accessor shortcut for vertices
-  SoMFVec3f& 	normal(); // #IGNORE accessor shortcut for normals
+  SoMFVec3f&    vertex(); //  #IGNORE accessor shortcut for vertices
+  SoMFVec3f&    normal(); // #IGNORE accessor shortcut for normals
 #endif
 
-  void		setDimensions(float bs, float ht, float dp); // use existing inset
-  void		setDimensions(float bs, float ht, float dp, float in);
-  void		setInset(float value);
-  void		setOrientation(Orientation ori);
+  void          setDimensions(float bs, float ht, float dp); // use existing inset
+  void          setDimensions(float bs, float ht, float dp, float in);
+  void          setInset(float value);
+  void          setOrientation(Orientation ori);
   SoFrame(Orientation ori = Hor, float in = 0.05f);
 
 protected:
-  const char*  	getFileFormatName() const override {return "TriangleStripSet"; } 
-  void 		render(); // #IGNORE
-  void 		renderH(); // #IGNORE
-  void 		renderV(); // #IGNORE
+  const char*   getFileFormatName() const override {return "TriangleStripSet"; } 
+  void          render(); // #IGNORE
+  void          renderH(); // #IGNORE
+  void          renderV(); // #IGNORE
 };
 
 #endif // SoFrame_h

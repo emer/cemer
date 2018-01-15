@@ -33,41 +33,41 @@ class TA_API TemtServer: public taOABase {
   // #INSTANCE #TOKENS Temt Server, for tcp-based remote services 
 INHERITED(taOABase)
 public:
-  unsigned short	port; // #DEF_5360 port number to use -- each instance must have unique port
-  bool			open; // #NO_SAVE #SHOW #READ_ONLY set when server is open and accepting connections
-  TemtClient_List	clients; // #SHOW #NO_SAVE #READ_ONLY how many clients are connected
+  unsigned short        port; // #DEF_5360 port number to use -- each instance must have unique port
+  bool                  open; // #NO_SAVE #SHOW #READ_ONLY set when server is open and accepting connections
+  TemtClient_List       clients; // #SHOW #NO_SAVE #READ_ONLY how many clients are connected
   
   inline TemtServer_QObj* adapter() {return (TemtServer_QObj*)taOABase::adapter;} // #IGNORE
   
-  bool			isOpen() const {return open;}
+  bool                  isOpen() const {return open;}
 
-  bool			InitServer() // initializes the server
+  bool                  InitServer() // initializes the server
     {bool ok = true; InitServer_impl(ok); return ok;}
   
-  bool			OpenServer(); // #BUTTON #ENABLE_OFF_open open the server and accept connections
-  void			CloseServer(bool notify = true); // #BUTTON #ENABLE_ON_open #ARGC_0 stop the server and close open connections
+  bool                  OpenServer(); // #BUTTON #ENABLE_OFF_open open the server and accept connections
+  void                  CloseServer(bool notify = true); // #BUTTON #ENABLE_ON_open #ARGC_0 stop the server and close open connections
   
 // callbacks
-  void			ClientDisconnected(TemtClient* client); // #IGNORE
+  void                  ClientDisconnected(TemtClient* client); // #IGNORE
 
   SIMPLE_LINKS(TemtServer);
   TA_BASEFUNS(TemtServer);
 
 #ifndef __MAKETA__ // maketa chokes on the net class types etc.
 public: // slot forwardees
-  void 			server_newConnection(); //
+  void                  server_newConnection(); //
 #endif
 
 protected:
-  QTcpServer*		server; // #IGNORE
+  QTcpServer*           server; // #IGNORE
   
-  TemtClient*		m_client; // #IGNORE unitary client
+  TemtClient*           m_client; // #IGNORE unitary client
   
-  virtual void		InitServer_impl(bool& ok); // impl routine, set ok=f for failure
+  virtual void          InitServer_impl(bool& ok); // impl routine, set ok=f for failure
 private:
-  void	Copy_(const TemtServer& cp); // copying not really supported...
-  void	Initialize();
-  void 	Destroy();
+  void  Copy_(const TemtServer& cp); // copying not really supported...
+  void  Initialize();
+  void  Destroy();
 };
 
 #endif // TemtServer_h

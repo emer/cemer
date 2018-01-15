@@ -28,10 +28,10 @@ class E_API ZshConSpec : public SoConSpec {
   // zero-sum-hebbian (subtractive normalization) learning
 INHERITED(SoConSpec)
 public:
-  bool		soft_wt_bound;
+  bool          soft_wt_bound;
   // soft weight bounding *(1-wt) for inc, *wt for dec
 
-  inline void	C_Compute_dWt(float& dwt, const float ru_act, const float su_act,
+  inline void   C_Compute_dWt(float& dwt, const float ru_act, const float su_act,
                               const float avg_in_act, const float wt)
   { float tmp = ru_act * (su_act - avg_in_act);
     if(soft_wt_bound) {
@@ -41,7 +41,7 @@ public:
     dwt += tmp;
   }
 
-  inline void 	Compute_dWt(ConState* gcg, Network* net, int thr_no) override {
+  inline void   Compute_dWt(ConState* gcg, Network* net, int thr_no) override {
     SoConState* cg = (SoConState*)gcg;
     SoUnitState* ru = (SoUnitState*)cg->ThrOwnUnVars(net, thr_no);
     Compute_AvgInAct(cg, (SoNetwork*)net, thr_no);
@@ -56,8 +56,8 @@ public:
 
   TA_SIMPLE_BASEFUNS(ZshConSpec);
 private:
-  void 	Initialize();
-  void	Destroy()		{ };
+  void  Initialize();
+  void  Destroy()               { };
 };
 
 eTypeDef_Of(MaxInConSpec);
@@ -66,10 +66,10 @@ class E_API MaxInConSpec : public ZshConSpec {
   // approximation to MaxIn (Zsh + SoftCl) -- MaxIn is an algorithm developed in O'Reilly, 1994, which is based on units that have a signal-to-noise ratio activation function and maximize this ratio over learning.  It basically amounts to Zsh plus SoftCl, though the actual derivative for MaxIn dynamically weights the Zsh-like term, which is missing in this version
 INHERITED(ZshConSpec)
 public:
-  float		k_scl;
+  float         k_scl;
   // strength of the soft-competitive learning component
 
-  inline void	C_Compute_dWt(float& dwt, const float ru_act, const float su_act,
+  inline void   C_Compute_dWt(float& dwt, const float ru_act, const float su_act,
                               const float avg_in_act, const float wt)
   { float tmp = ru_act * (su_act - avg_in_act) +
       k_scl * ru_act * (su_act - wt);
@@ -80,7 +80,7 @@ public:
     dwt += tmp;
   }
 
-  inline void 	Compute_dWt(ConState* gcg, Network* net, int thr_no) override {
+  inline void   Compute_dWt(ConState* gcg, Network* net, int thr_no) override {
     SoConState* cg = (SoConState*)gcg;
     SoUnitState* ru = (SoUnitState*)cg->ThrOwnUnVars(net, thr_no);
     Compute_AvgInAct(cg, (SoNetwork*)net, thr_no);
@@ -96,8 +96,8 @@ public:
 
   TA_SIMPLE_BASEFUNS(MaxInConSpec);
 private:
-  void 	Initialize();
-  void	Destroy()		{ };
+  void  Initialize();
+  void  Destroy()               { };
 };
 
 #endif // zsh_h

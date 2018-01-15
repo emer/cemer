@@ -12,12 +12,12 @@
    ALL_SAME,                    // all units have the same weight distribution -- this is only applicable to the receiving layer side, not the sending layer
   };
 
-  TAVECTOR2I	send_gp_size;		// number of groups in the sending receptive field
-  TAVECTOR2I	send_gp_skip;		// number of groups to skip per each recv group (typically 1/2 of the size for nice overlap)
-  TAVECTOR2I	send_gp_start;		// starting offset for sending groups -- for wrapping this was previously automatically set to -send_gp_skip (else 0), but you can now set this to anything you want
-  bool		wrap;			// if true, then connectivity has a wrap-around structure so it starts at -gp_skip (wrapped to right/top) and goes +gp_skip past the right/top edge (wrapped to left/bottom)
-  bool		reciprocal;		// if true, make the appropriate reciprocal connections for a backwards projection from recv to send
-  float		p_con;                  // proportion connectivity within each group -- uses permuted uniform random -- also optimized for full connectivity when = 1
+  TAVECTOR2I    send_gp_size;           // number of groups in the sending receptive field
+  TAVECTOR2I    send_gp_skip;           // number of groups to skip per each recv group (typically 1/2 of the size for nice overlap)
+  TAVECTOR2I    send_gp_start;          // starting offset for sending groups -- for wrapping this was previously automatically set to -send_gp_skip (else 0), but you can now set this to anything you want
+  bool          wrap;                   // if true, then connectivity has a wrap-around structure so it starts at -gp_skip (wrapped to right/top) and goes +gp_skip past the right/top edge (wrapped to left/bottom)
+  bool          reciprocal;             // if true, make the appropriate reciprocal connections for a backwards projection from recv to send
+  float         p_con;                  // proportion connectivity within each group -- uses permuted uniform random -- also optimized for full connectivity when = 1
   bool          symmetric;              // #CONDSHOW_OFF_p_con:1 for partial connectivity in either reciprocal or same-layer (self) projections, make the pattern of connections symmetric with connectivity going the other direction
   bool          share_cons;             // units in unit groups after the first unit group share connection values (weights etc) with those in the first unit group -- generally only works if wrap is true so that all units have same scope and order of connectivity -- also the number of units in the unit groups MUST be an even multiple of the number of threads, so that the source and user units are both in the same thread
   InitWtsType   wts_type;               // #CONDSHOW_ON_init_wts type of initial weights to create for init_wts
@@ -28,7 +28,7 @@
     
   STATE_CLASS(SigmoidInitWtsSpec) full_sig;          // #CONDSHOW_ON_init_wts&&wts_type:SIGMOID parameters for sigmoid initial weight distribution for the full width of the projection across all sending unit groups
   STATE_CLASS(SigmoidInitWtsSpec) gp_sig;            // #CONDSHOW_ON_init_wts&&wts_type:SIGMOID parameters for sigmoid initial weight distribution for each individual sending unit group
-  STATE_CLASS(MinMaxRange)	wt_range;               // #CONDSHOW_ON_init_wts range of weakest (min) to strongest (max) weight values generated -- typically want to center this around .5, and often fairly subtle differences (.4 - .6) produce reasonably strong effects on Leabra networks
+  STATE_CLASS(MinMaxRange)      wt_range;               // #CONDSHOW_ON_init_wts range of weakest (min) to strongest (max) weight values generated -- typically want to center this around .5, and often fairly subtle differences (.4 - .6) produce reasonably strong effects on Leabra networks
 
   INIMPL bool ConnectPassCheck(PRJN_STATE* prjn, NETWORK_STATE* net, int pass) const override;
   
@@ -40,14 +40,14 @@
   INLINE bool  HasRandomScale() override { return false; }
 
 
-  INIMPL virtual void	Init_Weights_Gaussian
+  INIMPL virtual void   Init_Weights_Gaussian
     (PRJN_STATE* prjn, NETWORK_STATE* net, int thr_no, CON_STATE* cg);
   // gaussian initial weights
-  INIMPL virtual void	Init_Weights_Sigmoid
+  INIMPL virtual void   Init_Weights_Sigmoid
     (PRJN_STATE* prjn, NETWORK_STATE* net, int thr_no, CON_STATE* cg);
   // sigmoid initial weights
 
-  INIMPL void	Initialize_core();
+  INIMPL void   Initialize_core();
 
   INLINE int  GetStateSpecType() const override
   { return NETWORK_STATE::T_TiledGpRFPrjnSpec; }

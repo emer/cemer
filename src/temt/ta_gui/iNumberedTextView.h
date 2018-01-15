@@ -34,12 +34,12 @@ public:
   ~iNumberedTextView();
 
   /** Returns the iTextEdit of the main view. */
-  iTextEdit* 	textEdit() const { return view; }
+  iTextEdit*    textEdit() const { return view; }
   /** the iNumberBar has a lot of the functionality -- access it directly */
-  iNumberBar* 	numberBar() const { return numbers; }
+  iNumberBar*   numberBar() const { return numbers; }
 
   /** set the lines to highlight in the view -- -1 for none */
-  void	setHighlightLines(int start_ln, int n_lines=1);
+  void  setHighlightLines(int start_ln, int n_lines=1);
 
   /** @internal Used to get tooltip events from the view for the hover signal. */
   bool eventFilter( QObject *obj, QEvent *event );
@@ -60,9 +60,9 @@ private:
   iTextEdit *view;
   iNumberBar *numbers;
   QHBoxLayout *box;
-  int 	hl_line;
-  int 	hl_n;
-  bool	in_text_changed;
+  int   hl_line;
+  int   hl_n;
+  bool  in_text_changed;
 };
 
 

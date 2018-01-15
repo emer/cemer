@@ -32,8 +32,8 @@ public:
 
   TA_BASEFUNS_NOCOPY(SomUnitSpec);
 private:
-  void	Initialize()	{ };
-  void	Destroy()	{ };
+  void  Initialize()    { };
+  void  Destroy()       { };
 };
 
 
@@ -43,13 +43,13 @@ class E_API NeighborEl : public taOBase {
   // ##NO_TOKENS #NO_UPDATE_AFTER one element of a neighborhood function
 INHERITED(taOBase)
 public:
-  taVector2i	off;		// offset from "winning" unit
-  float		act_val;	// activation value for this unit
+  taVector2i    off;            // offset from "winning" unit
+  float         act_val;        // activation value for this unit
 
   TA_SIMPLE_BASEFUNS(NeighborEl);
 private:
-  void	Initialize();
-  void	Destroy()	{ };
+  void  Initialize();
+  void  Destroy()       { };
 };
 
 eTypeDef_Of(NeighborEl_List);
@@ -61,8 +61,8 @@ public:
   NOCOPY(NeighborEl_List);
   TA_BASEFUNS(NeighborEl_List);
 private:
-  void	Initialize() 		{ SetBaseType(&TA_NeighborEl); }
-  void 	Destroy()		{ };
+  void  Initialize()            { SetBaseType(&TA_NeighborEl); }
+  void  Destroy()               { };
 };
 
 eTypeDef_Of(SomLayerSpec);
@@ -71,35 +71,35 @@ class E_API SomLayerSpec : public SoLayerSpec {
   // self-organizing map activates a neighborhood of elements
 INHERITED(SoLayerSpec)
 public:
-  NeighborEl_List	neighborhood;
+  NeighborEl_List       neighborhood;
   // neighborhood kernel function (determines activations around max unit)
-  bool			wrap;
+  bool                  wrap;
   // whether to wrap the neighborhood function around the output layer or not
 
-  virtual void	KernelEllipse(int half_width, int half_height, int ctr_x, int ctr_y);
+  virtual void  KernelEllipse(int half_width, int half_height, int ctr_x, int ctr_y);
   // #MENU_BUTTON #MENU_ON_Kernel make a kernel in the form of an elipse
-  virtual void	KernelRectangle(int width, int height, int ctr_x, int ctr_y);
+  virtual void  KernelRectangle(int width, int height, int ctr_x, int ctr_y);
   // #MENU_BUTTON make a kernel in the form of a rectangle
-//   virtual void	KernelFromNetView(NetView* view);
+//   virtual void       KernelFromNetView(NetView* view);
   // #MENU_BUTTON make kernel from selected units in netview, first unit is center, then other positions
 
   virtual void  StepKernelActs(float val=1.0);
   // #MENU_BUTTON #MENU_ON_Acts kernel activations are 1.0, others are 0
-  virtual void	LinearKernelActs(float scale=1.0);
+  virtual void  LinearKernelActs(float scale=1.0);
   // #MENU_BUTTON assign acts as a linear function of distance from center
-  virtual void	GaussianKernelActs(float scale=1.0, float sigma=1.0);
+  virtual void  GaussianKernelActs(float scale=1.0, float sigma=1.0);
   // #MENU_BUTTON assign kernel acts as a Gaussian function of distance from center
 
-  int		WrapClip(int coord, int max_coord);
+  int           WrapClip(int coord, int max_coord);
   // does coordinate wrapping
 
-  void	Compute_Act_post(SoLayer* lay, SoNetwork* net) override;
+  void  Compute_Act_post(SoLayer* lay, SoNetwork* net) override;
   // set activation as function of kernel
 
   TA_SIMPLE_BASEFUNS(SomLayerSpec);
 private:
-  void	Initialize();
-  void	Destroy()	{ CutLinks(); }
+  void  Initialize();
+  void  Destroy()       { CutLinks(); }
 };
 
 

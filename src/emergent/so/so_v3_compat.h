@@ -24,8 +24,8 @@ class E_API SoTrial : public TrialProcess {
 INHERITED(TrialProcess)
 public:
   
-  void	Initialize()		{ };
-  void	Destroy()		{ };
+  void  Initialize()            { };
+  void  Destroy()               { };
   TA_BASEFUNS_NOCOPY(SoTrial);
 };
 
@@ -34,10 +34,10 @@ class E_API V3SoProject : public V3ProjectBase {
 INHERITED(V3ProjectBase)
 public:
 
-  bool	ConvertToV4_impl() override; 
+  bool  ConvertToV4_impl() override; 
 
-  void	Initialize() {};
-  void	Destroy() 	{ };
+  void  Initialize() {};
+  void  Destroy()       { };
   TA_BASEFUNS(V3SoProject);
 };
 

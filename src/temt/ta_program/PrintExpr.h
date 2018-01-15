@@ -32,7 +32,7 @@ class TA_API PrintExpr: public ProgEl {
   // ##PROGEL_COMPLETION print out (to the console) an expression -- e.g., an informational message for the user
 INHERITED(ProgEl)
 public:
-  ProgExpr		  expr;
+  ProgExpr                expr;
   // #BROWSER_EDIT_LOOKUP print out (to console) this expression -- it just does the equivalent of 'cout << expr << endl;' so you can put multiple << segments in the expression to print out multiple things -- you DO need to include quotes around strings!
   bool          debug; // if false just print; if set check Program_Group debug_mode and only print if that is true
 
@@ -47,13 +47,13 @@ public:
 
   PROGEL_SIMPLE_BASEFUNS(PrintExpr);
 protected:
-  void 	  UpdateAfterEdit_impl() override;
-  void 	  CheckThisConfig_impl(bool quiet, bool& rval) override;
+  void    UpdateAfterEdit_impl() override;
+  void    CheckThisConfig_impl(bool quiet, bool& rval) override;
   bool    GenCssBody_impl(Program* prog) override;
 
 private:
-  void	  Initialize();
-  void	  Destroy()	{CutLinks();}
+  void    Initialize();
+  void    Destroy()     {CutLinks();}
 }; 
 
 #endif // PrintExpr_h

@@ -44,59 +44,59 @@ public:
   MonoZero      mono_zero;       // what to use as the effective zero point for monochrome channel -- values above this contribute to ON channel while those below contribute to OFF channel
   float         mono_zero_fix;   // #CONDSHOW_ON_mono_zero:FIX_ZERO fixed intensity value for monochrome zero point
   
-  DoGFilter	dog_specs;	// Difference of Gaussian retinal filter specification
-  DoGFilter	dog_specs_2;	// Difference of Gaussian retinal filter specification -- another set -- combined with any other sets selected
-  DoGFilter	dog_specs_3;	// Difference of Gaussian retinal filter specification -- another set -- combined with any other sets selected
+  DoGFilter     dog_specs;      // Difference of Gaussian retinal filter specification
+  DoGFilter     dog_specs_2;    // Difference of Gaussian retinal filter specification -- another set -- combined with any other sets selected
+  DoGFilter     dog_specs_3;    // Difference of Gaussian retinal filter specification -- another set -- combined with any other sets selected
   bool          dog_color_only; // #CONDSHOW_ON_dog_specs.on&&color:COLOR only apply DoG's to color opponent channels -- not to monochrome channel -- only relevant for COLOR processing obviously..
   float         dog_mono_gain;  // #CONDSHOW_ON_dog_specs.on&&color:COLOR&&!dog_color_only extra gain factor to apply to to mono channel only when it is included together with color -- tends to be very strong so needs to be weakened
-  RenormMode	dog_renorm;	// #DEF_NO_RENORM how to renormalize the output of filters
-  DataSave	dog_save;	// how to save the DoG outputs for the current time step in the data table
-  V1KwtaSpec	dog_kwta;	// k-winner-take-all inhibitory dynamics for the DoG filter output -- applied to combined DoG feature output if there are multiple
+  RenormMode    dog_renorm;     // #DEF_NO_RENORM how to renormalize the output of filters
+  DataSave      dog_save;       // how to save the DoG outputs for the current time step in the data table
+  V1KwtaSpec    dog_kwta;       // k-winner-take-all inhibitory dynamics for the DoG filter output -- applied to combined DoG feature output if there are multiple
   
-  XYNGeom	dog_feat_geom; 	// #CONDSHOW_ON_dog_specs.on #READ_ONLY #SHOW size of one hypercolumn of features for DoG filtering -- x axis = color channel: 0 = monochrome (not if dog_color_only true), 1 = red vs. green, 2 = blue vs. yellow, y axis = 2 = on/off  (2 units total for monochrome, 4 or 6 total for color)
-  taVector2i	dog_img_geom; 	// #CONDSHOW_ON_dog_specs.on #READ_ONLY #SHOW size of dog-filtered image output -- number of hypercolumns in each axis to cover entire output -- this is completely determined by retina_size, border and spacing parameters
+  XYNGeom       dog_feat_geom;  // #CONDSHOW_ON_dog_specs.on #READ_ONLY #SHOW size of one hypercolumn of features for DoG filtering -- x axis = color channel: 0 = monochrome (not if dog_color_only true), 1 = red vs. green, 2 = blue vs. yellow, y axis = 2 = on/off  (2 units total for monochrome, 4 or 6 total for color)
+  taVector2i    dog_img_geom;   // #CONDSHOW_ON_dog_specs.on #READ_ONLY #SHOW size of dog-filtered image output -- number of hypercolumns in each axis to cover entire output -- this is completely determined by retina_size, border and spacing parameters
 
-  int		n_colors;	// #READ_ONLY number of color channels to be processed (1 = monochrome, 3 = full color, 2 = color + dog_color_only)
-  int		n_dogs;	        // #READ_ONLY number of separate sets of dog filters in effect
+  int           n_colors;       // #READ_ONLY number of color channels to be processed (1 = monochrome, 3 = full color, 2 = color + dog_color_only)
+  int           n_dogs;         // #READ_ONLY number of separate sets of dog filters in effect
   float         mono_zero_mean; // #READ_ONLY #NO_SAVE #SHOW mean value of monochrome image -- potentially used for zero point for monochrome channel
   float         mono_zero_val;  // #READ_ONLY #NO_SAVE actual value to use for monochrome zero point
-  float_Matrix	dog_out_r;	// #READ_ONLY #NO_SAVE final output of the dog filter processing for the right eye -- [feat.x][feat.y][img.x][img.y]
-  float_Matrix	dog_out_l;	// #READ_ONLY #NO_SAVE final output of the dog filter processing for the left eye -- [feat.x][feat.y][img.x][img.y]
-  float_Matrix	dog_raw_r;	// #READ_ONLY #NO_SAVE raw, pre kwta output of the dog filter processing for the right eye -- [feat.x][feat.y][img.x][img.y]
-  float_Matrix	dog_raw_l;	// #READ_ONLY #NO_SAVE raw, pre kwta output of the dog filter processing for the left eye -- [feat.x][feat.y][img.x][img.y]
+  float_Matrix  dog_out_r;      // #READ_ONLY #NO_SAVE final output of the dog filter processing for the right eye -- [feat.x][feat.y][img.x][img.y]
+  float_Matrix  dog_out_l;      // #READ_ONLY #NO_SAVE final output of the dog filter processing for the left eye -- [feat.x][feat.y][img.x][img.y]
+  float_Matrix  dog_raw_r;      // #READ_ONLY #NO_SAVE raw, pre kwta output of the dog filter processing for the right eye -- [feat.x][feat.y][img.x][img.y]
+  float_Matrix  dog_raw_l;      // #READ_ONLY #NO_SAVE raw, pre kwta output of the dog filter processing for the left eye -- [feat.x][feat.y][img.x][img.y]
 
-  float_Matrix	kwta_gci;	// #READ_ONLY #NO_SAVE inhibitory conductances tmp for kwta
+  float_Matrix  kwta_gci;       // #READ_ONLY #NO_SAVE inhibitory conductances tmp for kwta
   
   virtual String GetDoGFiltName(int filt_no);
   // get name for each filter channel (0-5) = on;off;rvc;gvm;bvy;yvb
 
-  virtual void	GraphDoGFilter(DataTable* disp_data, int n_filter = 1);
+  virtual void  GraphDoGFilter(DataTable* disp_data, int n_filter = 1);
   // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable #LABEL_GraphDoGFilter plot the difference-of-gaussians filter into data table and generate a graph -- can specify which filter to graph (1,2 or 3)
-  virtual void	GridDoGFilter(DataTable* disp_data, int n_filter = 1);
+  virtual void  GridDoGFilter(DataTable* disp_data, int n_filter = 1);
   // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable #LABEL_GridDoGFilter plot the difference-of-gaussians filter into data table and generate a grid view -- can specify which filter to graph (1,2 or 3)
 
-  virtual void	PlotSpacing(DataTable* disp_data, bool reset = true);
+  virtual void  PlotSpacing(DataTable* disp_data, bool reset = true);
   // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable #ARGC_1 plot the arrangement of the filters (centers) in the data table using given value, and generate a grid view
 
   // todo: add CheckConfig!!
 
-  void 	Initialize();
-  void	Destroy() { };
+  void  Initialize();
+  void  Destroy() { };
   TA_SIMPLE_BASEFUNS(DoGRegionSpec);
 protected:
-  DoGFilter*    cur_dog_filter;	// currrent dog filter
+  DoGFilter*    cur_dog_filter; // currrent dog filter
   int           cur_dog_off;    // dog x offset
 
-  void	UpdateAfterEdit_impl() override;
+  void  UpdateAfterEdit_impl() override;
 
-  void	UpdateGeom() override;
+  void  UpdateGeom() override;
 
   bool NeedsInit() override;
   bool InitFilters() override;
   bool InitOutMatrix() override;
   bool InitDataTable() override;
 
-  bool	FilterImage_impl(bool motion_only = false) override;
+  bool  FilterImage_impl(bool motion_only = false) override;
 
   virtual bool DoGFilterImage(float_Matrix* image, float_Matrix* out);
   // implementation of DoG filtering for a given image and output -- manages threaded calls to _thread version

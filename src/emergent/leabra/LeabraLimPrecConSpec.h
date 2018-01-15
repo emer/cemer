@@ -1,9 +1,9 @@
 // this is included directly in LeabraExtraConSpecs_cpp / _cuda
 // {
 
-  float		prec_levels;	// number of levels of precision available in the weight values
+  float         prec_levels;    // number of levels of precision available in the weight values
 
-  INLINE float	PrecLimitVal(const float val) {
+  INLINE float  PrecLimitVal(const float val) {
     int tmp = (int)((prec_levels * val) + .5f); // integerize with rounding -- val 0-1
     float rval = (float)tmp / prec_levels;
     if(rval > 1.0f) rval = 1.0f;

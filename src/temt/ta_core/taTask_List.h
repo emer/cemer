@@ -31,11 +31,11 @@ class TA_API taTask_List : public taList<taTask> {
   // ##CAT_Thread a list of tasks
   INHERITED(taList<taTask>)
 public:
-  String 	GetTypeDecoKey() const override { return "Task"; }
+  String        GetTypeDecoKey() const override { return "Task"; }
   TA_BASEFUNS_NOCOPY(taTask_List);
 private:
-  void	Initialize() {SetBaseType(&TA_taTask);}
-  void 	Destroy()		{Reset(); }; //
+  void  Initialize() {SetBaseType(&TA_taTask);}
+  void  Destroy()               {Reset(); }; //
 };
 
 #endif // taTask_List_h

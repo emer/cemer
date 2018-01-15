@@ -68,7 +68,7 @@ public:
   bool              IsTreeDirty() { return tree_dirty; }
 
   void              resizeColumnsToContents(); // convenience: resizes all but last col
-  virtual void      clearExtSelection();	   // clear extended selection mode and also clear any existing selection
+  virtual void      clearExtSelection();           // clear extended selection mode and also clear any existing selection
 
 #ifndef __MAKETA__
   void              scrollTo(const QModelIndex &index, ScrollHint hint = EnsureVisible) override;
@@ -99,7 +99,7 @@ protected:
   int               key_mods; // we captur this from the drop event
   bool              m_highlightRows;
   bool              m_sibling_sel; // if true, only siblings (items at same level) can be selected -- items at different levels of the tree will not be selected -- true by default
-  bool              ext_select_on;	   // toggled by Ctrl+space -- extends selection with keyboard movement
+  bool              ext_select_on;         // toggled by Ctrl+space -- extends selection with keyboard movement
   mutable void*     m_highlightColors; // a QMap
   int               scrollTimerId;
   

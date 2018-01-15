@@ -4,7 +4,7 @@
   STATE_CLASS(LHbRMTgSpecs)   lhb;         // lhb options and misc specs
   STATE_CLASS(LHbRMTgGains)   gains;       // gain parameters (multiplicative constants) for various sources of inputs
 
-  INIMPL virtual void	Compute_Lhb(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no);
+  INIMPL virtual void   Compute_Lhb(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no);
   // compute the LHb value based on recv projections from VSMatrix_dir/ind, VSPatch_dir/ind, and PV_pos/neg
   
   INIMPL virtual bool  GetRecvLayers
@@ -30,8 +30,8 @@
     Compute_Act_Rate(u, net, thr_no);
   }
 
-  INLINE void 	Compute_dWt(UNIT_STATE* u, NETWORK_STATE* net, int thr_no) override { };
-  INLINE void	Compute_Weights(UNIT_STATE* u, NETWORK_STATE* net, int thr_no) override { };
+  INLINE void   Compute_dWt(UNIT_STATE* u, NETWORK_STATE* net, int thr_no) override { };
+  INLINE void   Compute_Weights(UNIT_STATE* u, NETWORK_STATE* net, int thr_no) override { };
 
   INLINE void Initialize_core() {
     deep_raw_qtr = Q4;

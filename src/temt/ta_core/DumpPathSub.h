@@ -29,10 +29,10 @@ class TypeDef; //
 class TA_API DumpPathSub {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS Path element substitution
 public:
-  TypeDef*	type;
-  taBase*	parent;		// for relative paths
-  String	old_path;
-  String	new_path;
+  TypeDef*      type;
+  taBase*       parent;         // for relative paths
+  String        old_path;
+  String        new_path;
 
   DumpPathSub(TypeDef* td, taBase* par, const String& o, const String& n);
 };

@@ -35,24 +35,24 @@ class E_API VESpaceView: public T3DataViewPar {
 INHERITED(T3DataViewPar)
 friend class VEWorldView;
 public:
-  VESpace*		Space() const { return (VESpace*)data();}
-  virtual void		SetSpace(VESpace* ob);
+  VESpace*              Space() const { return (VESpace*)data();}
+  virtual void          SetSpace(VESpace* ob);
   
   DATAVIEW_PARENT(VEWorldView)
 
-  void		BuildAll() override;
+  void          BuildAll() override;
   
-  bool			isVisible() const;
-  bool		ignoreSigEmit() const override { return !isVisible(); }
+  bool                  isVisible() const;
+  bool          ignoreSigEmit() const override { return !isVisible(); }
 
-  void 	SetDefaultName() override {} // leave it blank
+  void  SetDefaultName() override {} // leave it blank
   TA_BASEFUNS_NOCOPY(VESpaceView);
 protected:
-  void	Initialize();
-  void	Destroy();
+  void  Initialize();
+  void  Destroy();
 
-  void		Render_pre() override;
-  void		Render_impl() override;
+  void          Render_pre() override;
+  void          Render_impl() override;
 };
 
 #endif // VESpaceView_h

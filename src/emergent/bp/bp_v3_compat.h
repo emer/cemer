@@ -29,26 +29,26 @@ class E_API BpTrial : public TrialProcess {
   // standard Bp feed-forward trial
 INHERITED(TrialProcess)
 public:
-  bool		bp_to_inputs;	// #DEF_false backpropagate errors to input layers (faster if not done, which is the default)
+  bool          bp_to_inputs;   // #DEF_false backpropagate errors to input layers (faster if not done, which is the default)
 
-  void	Initialize();
-  void 	Destroy()		{ CutLinks(); }
+  void  Initialize();
+  void  Destroy()               { CutLinks(); }
   TA_SIMPLE_BASEFUNS(BpTrial);
 };
 
 //////////////////////////////////////////
-//	Additional Stat Types 		//
+//      Additional Stat Types           //
 //////////////////////////////////////////
 
 class E_API CE_Stat : public Stat {
   // ##COMPUTE_IN_TrialProcess Cross-entropy error statistic (asymmetric divergence)
 INHERITED(Stat)
 public:
-  StatVal	ce;			// cross-entropy error
-  float		tolerance;		// if error is less than this, its 0
+  StatVal       ce;                     // cross-entropy error
+  float         tolerance;              // if error is less than this, its 0
 
-  void	Initialize();
-  void 	Destroy()		{ CutLinks(); }
+  void  Initialize();
+  void  Destroy()               { CutLinks(); }
   TA_SIMPLE_BASEFUNS(CE_Stat);
 };
 
@@ -56,10 +56,10 @@ class E_API NormDotProd_Stat : public Stat {
   // ##COMPUTE_IN_TrialProcess Normalized Dot Product of act and target values
 INHERITED(Stat)
 public:
-  StatVal	ndp;		 // normalized dot product
+  StatVal       ndp;             // normalized dot product
 
-  void	Initialize();
-  void 	Destroy()		{ CutLinks(); }
+  void  Initialize();
+  void  Destroy()               { CutLinks(); }
   TA_SIMPLE_BASEFUNS(NormDotProd_Stat);
 };
 
@@ -67,13 +67,13 @@ class E_API VecCor_Stat : public Stat {
   // ##COMPUTE_IN_TrialProcess Vector Correlation of act and target values
 INHERITED(Stat)
 public:
-  StatVal	vcor;		 // vector correlation
-  float		dp;		 // #HIDDEN
-  float		l1;		 // #HIDDEN
-  float		l2;		 // #HIDDEN
+  StatVal       vcor;            // vector correlation
+  float         dp;              // #HIDDEN
+  float         l1;              // #HIDDEN
+  float         l2;              // #HIDDEN
 
-  void	Initialize();
-  void 	Destroy()		{ CutLinks(); }
+  void  Initialize();
+  void  Destroy()               { CutLinks(); }
   TA_SIMPLE_BASEFUNS(VecCor_Stat);
 };
 
@@ -81,10 +81,10 @@ class E_API NormVecLen_Stat : public Stat {
   // ##COMPUTE_IN_TrialProcess Normalized Vector Length of act and target values
 INHERITED(Stat)
 public:
-  StatVal	nvl;		 // normalized vector length
+  StatVal       nvl;             // normalized vector length
 
-  void	Initialize();
-  void 	Destroy()		{ CutLinks(); }
+  void  Initialize();
+  void  Destroy()               { CutLinks(); }
   TA_SIMPLE_BASEFUNS(NormVecLen_Stat);
 };
 
@@ -106,21 +106,21 @@ class E_API RBpTrial : public BpTrial {
   // one presentation of an event to RBp
 INHERITED(BpTrial)
 public:
-  float		time;
+  float         time;
   // #READ_ONLY #SHOW current time (relative to start of sequence)
-  float		dt;
+  float         dt;
   // #READ_ONLY #SHOW this is made to correspond to the dt used by units
-  float		time_window;	// time window to pay attention to derivatives for
-  float		bp_gap;		// time period to go before performing a bp
-  bool		real_time;
+  float         time_window;    // time window to pay attention to derivatives for
+  float         bp_gap;         // time period to go before performing a bp
+  bool          real_time;
   // use 'real time' model (else time_window = length of sequence)
-  bool		bp_performed;	// #READ_ONLY true if bp was just performed last step
+  bool          bp_performed;   // #READ_ONLY true if bp was just performed last step
 
-  int		time_win_ticks;	// #READ_ONLY time window in ticks
-  int		bp_gap_ticks;	// #READ_ONLY bp window in ticks
+  int           time_win_ticks; // #READ_ONLY time window in ticks
+  int           bp_gap_ticks;   // #READ_ONLY bp window in ticks
 
-  void 	Initialize();
-  void 	Destroy()		{ CutLinks(); }
+  void  Initialize();
+  void  Destroy()               { CutLinks(); }
   TA_SIMPLE_BASEFUNS(RBpTrial);
 };
 
@@ -128,8 +128,8 @@ class E_API RBpSequence : public SequenceProcess {
   // one sequence of events, handles TimeEvents properly
 INHERITED(SequenceProcess)
 public:
-  void 	Initialize() {}
-  void 	Destroy()		{ CutLinks(); }
+  void  Initialize() {}
+  void  Destroy()               { CutLinks(); }
   TA_BASEFUNS_NOCOPY(RBpSequence);
 };
 
@@ -138,27 +138,27 @@ class E_API RBpSE_Stat : public SE_Stat {
   // Squared error for recurrent backprop, mulitplies by dt
 INHERITED(SE_Stat)
 public:
-  void	Initialize();
-  void 	Destroy()		{ CutLinks(); }
+  void  Initialize();
+  void  Destroy()               { CutLinks(); }
   TA_BASEFUNS_NOCOPY(RBpSE_Stat);
 };
 
 
 //////////////////////////////////////////
-//	Almeida-Pineda Algorithm	//
+//      Almeida-Pineda Algorithm        //
 //////////////////////////////////////////
 
 class E_API APBpCycle : public CycleProcess {
   // one cycle of processing in almeida-pineda (either act or bp depending on 'phase')
 INHERITED(CycleProcess)
 public:
-  APBpSettle*	apbp_settle;
+  APBpSettle*   apbp_settle;
   // #NO_SUBTYPE #READ_ONLY #NO_SAVE pointer to parent settle proc
-  APBpTrial* 	apbp_trial;
+  APBpTrial*    apbp_trial;
   // #NO_SUBTYPE #READ_ONLY #NO_SAVE pointer to parent phase trial
 
-  void 	Initialize();
-  void 	Destroy()		{ CutLinks(); }
+  void  Initialize();
+  void  Destroy()               { CutLinks(); }
   TA_SIMPLE_BASEFUNS(APBpCycle);
 };
 
@@ -166,11 +166,11 @@ class E_API APBpSettle : public SettleProcess {
   // one settling phase in Almeide-Pineda (either act or bp depending on phase)
 INHERITED(SettleProcess)
 public:
-  APBpTrial* 	apbp_trial;
+  APBpTrial*    apbp_trial;
   // #NO_SUBTYPE #READ_ONLY #NO_SAVE pointer to parent phase trial
 
-  void 	Initialize();
-  void 	Destroy()		{ CutLinks(); }
+  void  Initialize();
+  void  Destroy()               { CutLinks(); }
   TA_SIMPLE_BASEFUNS(APBpSettle);
 };
 
@@ -179,25 +179,25 @@ class E_API APBpTrial : public TrialProcess {
   // one Almeida-Pineda BP Trial
 INHERITED(TrialProcess)
 public:
-  enum StateInit {		// ways of initializing the state of the network
-    DO_NOTHING,			// do nothing
-    INIT_STATE 			// initialize state
+  enum StateInit {              // ways of initializing the state of the network
+    DO_NOTHING,                 // do nothing
+    INIT_STATE                  // initialize state
   };
 
   enum Phase {
-    ACT_PHASE,			// activation phase
-    BP_PHASE 			// backpropagation phase
+    ACT_PHASE,                  // activation phase
+    BP_PHASE                    // backpropagation phase
   };
 
-  Counter	phase_no;	// Current phase number
-  Phase		phase;		// state variable for phase
-  StateInit	trial_init;	// how to initialize network state at start of trial
-  bool		no_bp_stats;	// don't do stats/logging in the bp phase
-  bool		no_bp_test; 	// don't run the bp phase when testing
+  Counter       phase_no;       // Current phase number
+  Phase         phase;          // state variable for phase
+  StateInit     trial_init;     // how to initialize network state at start of trial
+  bool          no_bp_stats;    // don't do stats/logging in the bp phase
+  bool          no_bp_test;     // don't run the bp phase when testing
 
 
-  void	Initialize();
-  void 	Destroy()		{ CutLinks(); }
+  void  Initialize();
+  void  Destroy()               { CutLinks(); }
   TA_SIMPLE_BASEFUNS(APBpTrial);
 };
 
@@ -206,10 +206,10 @@ class E_API APBpMaxDa_De : public Stat {
      when to stop settling in almeida-pineda algorithm */
 INHERITED(Stat)
 public:
-  StatVal	da_de;		// max of delta-activation or delta-error
+  StatVal       da_de;          // max of delta-activation or delta-error
 
-  void 	Initialize();		// set minimums
-  void 	Destroy()		{ CutLinks(); }
+  void  Initialize();           // set minimums
+  void  Destroy()               { CutLinks(); }
   TA_SIMPLE_BASEFUNS(APBpMaxDa_De);
 };
 
@@ -217,10 +217,10 @@ class E_API V3BpProject : public V3ProjectBase {
 INHERITED(V3ProjectBase)
   public:
 
-  bool	ConvertToV4_impl() override; 
+  bool  ConvertToV4_impl() override; 
 
-  void	Initialize() {};
-  void	Destroy() 	{ };
+  void  Initialize() {};
+  void  Destroy()       { };
   TA_BASEFUNS_NOCOPY(V3BpProject);
 };
 

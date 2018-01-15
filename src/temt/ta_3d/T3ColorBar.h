@@ -31,21 +31,21 @@ class TA_API T3ColorBar : public T3NodeLeaf {
   Q_OBJECT
   INHERITED(T3NodeLeaf)
 public:
-  float			height;
-  float			width;
+  float                 height;
+  float                 width;
 
-  ColorScaleRef		scale;
+  ColorScaleRef         scale;
 
-  virtual int 		blocks();
-  void	                clear() override;
+  virtual int           blocks();
+  void                  clear() override;
 
-  virtual void		SetColorScale(ColorScale* c);
-  void			SetDimensions(float wd, float ht);
+  virtual void          SetColorScale(ColorScale* c);
+  void                  SetDimensions(float wd, float ht);
   T3ColorBar(Qt3DNode* par = NULL, T3DataView* dataView_ = NULL, ColorScale* c = NULL);
   ~T3ColorBar();
 
-  // SoTriangleStripSet*	bars_; // one rectangle per subbar
-  // void			render();
+  // SoTriangleStripSet*        bars_; // one rectangle per subbar
+  // void                       render();
 };
 
 #else // TA_QT3D
@@ -60,24 +60,24 @@ typedef T3NodeLeaf inherited;
   TA_SO_NODE_HEADER(T3ColorBar);
 #endif // def __MAKETA__
 public:
-  static void		initClass();
+  static void           initClass();
 
-  float			height;
-  float			width;
+  float                 height;
+  float                 width;
 
-  ColorScaleRef		scale;
+  ColorScaleRef         scale;
 
-  virtual int 		blocks();
-  void		clear() override;
+  virtual int           blocks();
+  void          clear() override;
 
-  virtual void		SetColorScale(ColorScale* c);
-  void			SetDimensions(float wd, float ht);
+  virtual void          SetColorScale(ColorScale* c);
+  void                  SetDimensions(float wd, float ht);
   T3ColorBar(ColorScale* c = NULL, T3DataView* dataView_ = NULL);
 
 protected:
-  SoTriangleStripSet*	bars_; // one rectangle per subbar
+  SoTriangleStripSet*   bars_; // one rectangle per subbar
 
-  void			render();
+  void                  render();
   ~T3ColorBar();
 };
 

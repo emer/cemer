@@ -47,8 +47,8 @@ class QT_QTTHUMBWHEEL_EXPORT iThumbWheel : public QAbstractSlider
 public:
     iThumbWheel(QWidget *parent = 0);
     iThumbWheel(int minimum, int maximum, int pageStep,
-		 int value, Qt::Orientation orientation,
-		 QWidget *parent = 0);
+                 int value, Qt::Orientation orientation,
+                 QWidget *parent = 0);
 
     ~iThumbWheel();
 

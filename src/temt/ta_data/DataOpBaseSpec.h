@@ -33,39 +33,39 @@ class TA_API DataOpBaseSpec : public taNBase {
   // #STEM_BASE ##CAT_Data ##DEF_CHILD_ops ##DEF_CHILDNAME_Operators a datatable operation specification -- contains a list of operation elements associated with different data columns
 INHERITED(taNBase)
 public:
-  DataOpList	ops;		// the list of operation elements, associated with different data columns
+  DataOpList    ops;            // the list of operation elements, associated with different data columns
 
-  virtual void 	SetDataTable(DataTable* dt) { ops.SetDataTable(dt); }
+  virtual void  SetDataTable(DataTable* dt) { ops.SetDataTable(dt); }
   // #CAT_DataOp set the data table to enable looking up columns
 
-  virtual void 	GetColumns(DataTable* dt) { ops.GetColumns(dt); }
+  virtual void  GetColumns(DataTable* dt) { ops.GetColumns(dt); }
   // #CAT_DataOp get the column pointers for given data table (looking up by name)
-  virtual void 	ClearColumns() { ops.ClearColumns(); }
+  virtual void  ClearColumns() { ops.ClearColumns(); }
   // #CAT_DataOp clear column pointers (don't keep these guys hanging around)
 
   virtual DataOpEl* AddColumn(const String& col_name, DataTable* dt)
   { return ops.AddColumn(col_name, dt); }
   // #CAT_DataOp #BUTTON add a new column to operate on from given data table
-  virtual void	AddAllColumns(DataTable* dt, bool exclude_strings = false)
+  virtual void  AddAllColumns(DataTable* dt, bool exclude_strings = false)
   { ops.AddAllColumns(dt, exclude_strings); }
   // #CAT_DataOp add all columns from given data table -- optionally excluding string-valued columns -- use this one in Programs (gui one selects new columns in browser)
-  virtual void	AddAllColumns_gui(DataTable* dt, bool exclude_strings = false)
+  virtual void  AddAllColumns_gui(DataTable* dt, bool exclude_strings = false)
   { ops.AddAllColumns_gui(dt, exclude_strings); }
   // #CAT_DataOp #BUTTON #LABEL_AddAllColumns add all columns from given data table -- optionally excluding string-valued columns
 
   String    GetArgForCompletion(const String& method, const String& arg) override;
   void      GetArgCompletionList(const String& method, const String& arg, taBase* arg_obj, const String& cur_txt, Completions& list) override;
 
-  taList_impl*	children_() override {return &ops;}
+  taList_impl*  children_() override {return &ops;}
   Variant      Elem(const Variant& idx, IndexMode mode = IDX_UNK) const override
   { return ops.Elem(idx, mode); }
-  String 	GetTypeDecoKey() const override { return "DataTable"; }
+  String        GetTypeDecoKey() const override { return "DataTable"; }
   TA_SIMPLE_BASEFUNS(DataOpBaseSpec);
 protected:
-  void	CheckChildConfig_impl(bool quiet, bool& rval) override;
+  void  CheckChildConfig_impl(bool quiet, bool& rval) override;
 private:
-  void	Initialize();
-  void 	Destroy()		{ };
+  void  Initialize();
+  void  Destroy()               { };
 };
 
 #endif // DataOpBaseSpec_h

@@ -121,9 +121,9 @@ public:
 protected:
   SPEC_DEFAULTS;
 private:
-  void 	Initialize();
-  void	Defaults_init();
-  void	Destroy()		{ };
+  void  Initialize();
+  void  Defaults_init();
+  void  Destroy()               { };
 };
 
 
@@ -140,9 +140,9 @@ public:
 protected:
   SPEC_DEFAULTS;
 private:
-  void 	Initialize();
-  void	Defaults_init()		{ };
-  void	Destroy()		{ };
+  void  Initialize();
+  void  Defaults_init()         { };
+  void  Destroy()               { };
 };
 
 
@@ -159,9 +159,9 @@ public:
 protected:
   SPEC_DEFAULTS;
 private:
-  void 	Initialize();
-  void	Defaults_init();
-  void	Destroy()		{ };
+  void  Initialize();
+  void  Defaults_init();
+  void  Destroy()               { };
 };
 
 
@@ -178,9 +178,9 @@ public:
 protected:
   SPEC_DEFAULTS;
 private:
-  void 	Initialize();
-  void	Defaults_init();
-  void	Destroy()		{ };
+  void  Initialize();
+  void  Defaults_init();
+  void  Destroy()               { };
 };
 
 
@@ -197,9 +197,9 @@ public:
 protected:
   SPEC_DEFAULTS;
 private:
-  void 	Initialize();
-  void	Defaults_init();
-  void	Destroy()		{ };
+  void  Initialize();
+  void  Defaults_init();
+  void  Destroy()               { };
 };
 
 
@@ -216,9 +216,9 @@ public:
 protected:
   SPEC_DEFAULTS;
 private:
-  void 	Initialize();
-  void	Defaults_init()		{ };
-  void	Destroy()		{ };
+  void  Initialize();
+  void  Defaults_init()         { };
+  void  Destroy()               { };
 };
 
 
@@ -238,9 +238,9 @@ public:
 protected:
   SPEC_DEFAULTS;
 private:
-  void 	Initialize();
-  void	Defaults_init();
-  void	Destroy()		{ };
+  void  Initialize();
+  void  Defaults_init();
+  void  Destroy()               { };
 };
 
 
@@ -258,7 +258,7 @@ protected:
   SPEC_DEFAULTS;
 private:
   void  Initialize();
-  void	Defaults_init();
+  void  Defaults_init();
   void  Destroy()     { };
 };
 
@@ -279,7 +279,7 @@ protected:
   SPEC_DEFAULTS;
 private:
   void  Initialize();
-  void	Defaults_init();
+  void  Defaults_init();
   void  Destroy()     { };
 };
 
@@ -299,7 +299,7 @@ protected:
   SPEC_DEFAULTS;
 private:
   void  Initialize();
-  void	Defaults_init();
+  void  Defaults_init();
   void  Destroy()     { };
 };
 
@@ -320,7 +320,7 @@ protected:
   SPEC_DEFAULTS;
 private:
   void  Initialize();
-  void	Defaults_init();
+  void  Defaults_init();
   void  Destroy()     { };
 };
 
@@ -340,9 +340,9 @@ public:
 protected:
   SPEC_DEFAULTS;
 private:
-  void 	Initialize();
-  void	Defaults_init();
-  void	Destroy()		{ };
+  void  Initialize();
+  void  Defaults_init();
+  void  Destroy()               { };
 };
 
 
@@ -359,9 +359,9 @@ public:
 protected:
   SPEC_DEFAULTS;
 private:
-  void 	Initialize();
-  void	Defaults_init();
-  void	Destroy()		{ };
+  void  Initialize();
+  void  Defaults_init();
+  void  Destroy()               { };
 };
 
 
@@ -379,7 +379,7 @@ protected:
   SPEC_DEFAULTS;
 private:
   void  Initialize();
-  void	Defaults_init();
+  void  Defaults_init();
   void  Destroy()     { };
 };
 

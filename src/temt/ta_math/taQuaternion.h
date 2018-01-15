@@ -53,13 +53,13 @@ public:
   { ss = s; xx = x; yy = y; zz = z; }
   // #CAT_Quaternion get scalar and xyz imaginary values
 
-  void	ToMatrix(taMatrix& mat) const;
+  void  ToMatrix(taMatrix& mat) const;
   // set values to a 1x4 matrix object (can be any type of matrix object) -- in order: s,x,y,z
 
-  void	FromMatrix(taMatrix& mat);
+  void  FromMatrix(taMatrix& mat);
   // set values from a matrix object (can be any type of matrix object) -- in order: s,x,y,z
 
-  inline void	FromEuler(float theta_x, float theta_y, float theta_z) {
+  inline void   FromEuler(float theta_x, float theta_y, float theta_z) {
     float cos_z_2 = cosf(0.5f*theta_z);
     float cos_y_2 = cosf(0.5f*theta_y);
     float cos_x_2 = cosf(0.5f*theta_x);
@@ -75,19 +75,19 @@ public:
   }
   // #CAT_Quaternion #BUTTON set quaternion from 3 extrinsic rotations around the X,Y,Z axes in the order X, Y, Z
 
-  inline void	FromEulerVec(const taVector3f& euler) {
+  inline void   FromEulerVec(const taVector3f& euler) {
     FromEuler(euler.x, euler.y, euler.z);
   }
   // #CAT_Quaternion set quaternion from three Euler angles in vector form
 
-  inline void	FromEulerZXZ(float alpha, float beta, float gamma) {
+  inline void   FromEulerZXZ(float alpha, float beta, float gamma) {
     float ca2 = cosf(0.5*alpha);
     float cb2 = cosf(0.5*beta);
     float cg2 = cosf(0.5*gamma);
     float sa2 = sinf(0.5*alpha);
     float sb2 = sinf(0.5*beta);
     float sg2 = sinf(0.5*gamma);
-	  
+          
     s = ca2*cb2*cg2 - sa2*cb2*sg2;
     x = sa2*sb2*sg2 + ca2*sb2*cg2;
     //y = sa2*sb2*cg2 - ca2*sb2*sg2; // intrinsic in alpha,beta,gamma order 
@@ -96,19 +96,19 @@ public:
   }
   // #CAT_Quaternion set quaternion from 3 extrinsic rotations around the Z,X,Z axes in the order alpha, beta, gamma
 
-  inline void	FromEulerVecZXZ(const taVector3f& euler) {
+  inline void   FromEulerVecZXZ(const taVector3f& euler) {
     FromEulerZXZ(euler.x, euler.y, euler.z);
   }
   // #CAT_Quaternion set quaternion from three Euler ZXZ angles in vector form
 
-  inline void	FromEulerYXY(float alpha, float beta, float gamma) {
+  inline void   FromEulerYXY(float alpha, float beta, float gamma) {
     float ca2 = cosf(0.5*alpha);
     float cb2 = cosf(0.5*beta);
     float cg2 = cosf(0.5*gamma);
     float sa2 = sinf(0.5*alpha);
     float sb2 = sinf(0.5*beta);
     float sg2 = sinf(0.5*gamma);
-	  
+          
     s = ca2*cb2*cg2 - sa2*cb2*sg2;
     x = sa2*sb2*sg2 + ca2*sb2*cg2;
     y = sa2*cb2*cg2 + ca2*cb2*sg2;
@@ -117,12 +117,12 @@ public:
   }
   // #CAT_Quaternion set quaternion from 3 extrinsic rotations around the Y,X,Y axes in the order alpha, beta, gamma
 
-  inline void	FromEulerVecYXY(const taVector3f& euler) {
+  inline void   FromEulerVecYXY(const taVector3f& euler) {
     FromEulerZXZ(euler.x, euler.y, euler.z);
   }
   // #CAT_Quaternion set quaternion from three Euler YXY angles in vector form
   
-  inline void	FromVector(float d_x, float d_y, float d_z) {
+  inline void   FromVector(float d_x, float d_y, float d_z) {
     float theta_x = atan2f(d_y, d_z);
     float theta_y = atan2f(d_x * cosf(theta_x), d_z);
     float theta_z = atan2(cosf(theta_x), sinf(theta_x) * sinf(theta_y));
@@ -130,18 +130,18 @@ public:
   }
   // #CAT_Quaternion #BUTTON set quaternion from angles computed for a displacement vector
 
-  inline void	FromVectorVec(const taVector3f& dvec) {
+  inline void   FromVectorVec(const taVector3f& dvec) {
     FromVector(dvec.x, dvec.y, dvec.z);
   }
   // #CAT_Quaternion #BUTTON set quaternion from angles computed for a displacement vector
 
-  inline void	ToEuler(float& theta_z, float& theta_y, float& theta_x, bool homogenous=true) const {
+  inline void   ToEuler(float& theta_z, float& theta_y, float& theta_x, bool homogenous=true) const {
     float sqs = s*s;    
     float sqx = x*x;    
     float sqy = y*y;    
     float sqz = z*z;    
     if(homogenous) {
-      theta_x = atan2f(2.0f * (x*y + z*s), sqx - sqy - sqz + sqs);    		
+      theta_x = atan2f(2.0f * (x*y + z*s), sqx - sqy - sqz + sqs);              
       theta_y = asinf(-2.0f * (x*z - y*s));
       theta_z = atan2f(2.0f * (y*z + x*s), -sqx - sqy + sqz + sqs);    
     }
@@ -153,61 +153,61 @@ public:
   }
   // #CAT_Quaternion return three Euler angles from quaternion
 
-  inline void	ToEulerVec(taVector3f& euler, bool homogenous=true) const {
+  inline void   ToEulerVec(taVector3f& euler, bool homogenous=true) const {
     ToEuler(euler.x, euler.y, euler.z);
   }
   // #CAT_Quaternion return three Euler angles from quaternion into a 3D vector
 
-  inline void	ToEulerZXZ(float& alpha, float& beta, float& gamma) const {
+  inline void   ToEulerZXZ(float& alpha, float& beta, float& gamma) const {
     beta = acosf(1.0f - 2.0f*(x*x + y*y));
     if(beta == 0) {
       alpha = 2.0f*acos(s);
       gamma = 0;
     } else {
-	  alpha = atan2f(x*z + s*y, s*x - y*z);
+          alpha = atan2f(x*z + s*y, s*x - y*z);
       gamma = atan2f(x*z - s*y, y*z + s*x);
     }
   }
   // #CAT_Quaternion return three Euler ZXZ angles from quaternion
 
-  inline void	ToEulerVecZXZ(taVector3f& euler) const {
+  inline void   ToEulerVecZXZ(taVector3f& euler) const {
     ToEulerZXZ(euler.x, euler.y, euler.z);
   }
   // #CAT_Quaternion return three Euler angles from quaternion into a 3D vector
   
-  inline void	ToEulerYXY(float& alpha, float& beta, float& gamma) const {
-	beta = acosf(1.0f - 2.0f*(x*x + z*z));
+  inline void   ToEulerYXY(float& alpha, float& beta, float& gamma) const {
+        beta = acosf(1.0f - 2.0f*(x*x + z*z));
     if(beta == 0) {   // y-axis rotation
       alpha = 2.0f*acos(s);
       gamma = 0;
     } else {  
-	  alpha = atan2f(x*y + s*z, s*x - y*z);
+          alpha = atan2f(x*y + s*z, s*x - y*z);
       gamma = atan2f(x*y - s*z, y*z + s*x);
     }
   }
   // #CAT_Quaternion return three Euler ZXZ angles from quaternion
 
-  inline void	ToEulerVecYXY(taVector3f& euler) const {
+  inline void   ToEulerVecYXY(taVector3f& euler) const {
     ToEulerYXY(euler.x, euler.y, euler.z);
   }
     // #CAT_Quaternion return three Euler angles from quaternion into a 3D vector
   
-  void	FromAxisAngle(const taAxisAngle& axa);
+  void  FromAxisAngle(const taAxisAngle& axa);
   // #CAT_Quaternion set quaternion from taAxisAngle (axis + angle) value
 
-  inline void	FromAxisAngle(float x_axis, float y_axis, float z_axis, float rot_ang) {
+  inline void   FromAxisAngle(float x_axis, float y_axis, float z_axis, float rot_ang) {
     float ang2 = rot_ang*0.5f; float sinang2 = sinf(ang2);
     s = cosf(ang2); x = x_axis * sinang2; y = y_axis * sinang2; z = z_axis * sinang2;
   }
   // #CAT_Quaternion set quaternion from taAxisAngle (axis + angle) value
 
-  void	ToAxisAngle(taAxisAngle& axa) const;
+  void  ToAxisAngle(taAxisAngle& axa) const;
   // #CAT_Quaternion set taAxisAngle from this quaternion
 
-  void	ToRotMatrix(float_Matrix& mat) const;
+  void  ToRotMatrix(float_Matrix& mat) const;
   // #CAT_Quaternion create a 3x3 rotation matrix from quaternion
 
-  void	RotateAxis(float x_axis, float y_axis, float z_axis, float rot_ang) {
+  void  RotateAxis(float x_axis, float y_axis, float z_axis, float rot_ang) {
     taQuaternion q; q.FromAxisAngle(x_axis, y_axis, z_axis, rot_ang);
     q.Normalize();
     //*this = q * (*this);
@@ -215,7 +215,7 @@ public:
   }
   // #CAT_Quaternion #BUTTON rotate this rotation by given axis rotation parameters
 
-  void	RotateEuler(float theta_x, float theta_y, float theta_z) {
+  void  RotateEuler(float theta_x, float theta_y, float theta_z) {
     taQuaternion q; q.FromEuler(theta_x, theta_y, theta_z);
     q.Normalize();
     // *this = q * (*this);
@@ -223,7 +223,7 @@ public:
   }
   // #CAT_Quaternion #BUTTON rotate this rotation by given rotation parameters
   
-  void	RotateEulerZXZ(float alpha, float beta, float gamma) {
+  void  RotateEulerZXZ(float alpha, float beta, float gamma) {
     taQuaternion q; q.FromEulerZXZ(alpha, beta, gamma);
     q.Normalize();
     *this = q*(*this);
@@ -231,7 +231,7 @@ public:
   }
   // #CAT_Quaternion #BUTTON rotate this quaternion by given Euler ZXZ rotation angles
 
-  void	RotateEulerYXY(float alpha, float beta, float gamma) {
+  void  RotateEulerYXY(float alpha, float beta, float gamma) {
     taQuaternion q; q.FromEulerYXY(alpha, beta, gamma);
     q.Normalize();
     *this = q * (*this);
@@ -239,7 +239,7 @@ public:
   }
   // #CAT_Quaternion #BUTTON rotate this quaternion by given Euler YXY rotation angles
 
-  void	RotateXYZ(float& xx, float& yy, float& zz) {
+  void  RotateXYZ(float& xx, float& yy, float& zz) {
     taQuaternion vecq(0, xx, yy, zz); // convert vec to quat
     taQuaternion conj = this->Conjugated();
     taQuaternion rotv = *this * vecq * conj;
@@ -247,7 +247,7 @@ public:
   }
   // #CAT_Quaternion #BUTTON rotate x,y,z vector according to current rotation parameters
 
-  void	RotateVec(taVector3f& vec) {
+  void  RotateVec(taVector3f& vec) {
     RotateXYZ(vec.x, vec.y, vec.z);
   }
   // #CAT_Quaternion #BUTTON rotate vector according to current rotation parameters
@@ -351,8 +351,8 @@ public:
   taQuaternion& operator /= (float scale);
 
 #ifndef __MAKETA__
-  void		ToODE(dQuaternion dq) const;
-  void		FromODE(const dQuaternion dq);
+  void          ToODE(dQuaternion dq) const;
+  void          FromODE(const dQuaternion dq);
 #endif
 
   String        GetStr() const { return String(s) + ", " + String(x) + ", " + String(y) + ", " + String(z);  }

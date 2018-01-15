@@ -47,9 +47,9 @@ public:
   virtual void  CopyToMatrixGeom(MatrixGeom& geom);
   virtual void  CopyToMatrixIndex(MatrixIndex& idx);
 
-  void	        ToMatrix(taMatrix& mat) const;
+  void          ToMatrix(taMatrix& mat) const;
   // set values to a 1d matrix object (can be any type of matrix object)
-  void	        FromMatrix(taMatrix& mat);
+  void          FromMatrix(taMatrix& mat);
   // set values from a matrix object (can be any type of matrix object)
 
   taVector2i(int xx)                     { SetXY(xx, xx); }
@@ -237,6 +237,6 @@ inline taVector2i operator / (int td, const taVector2i& v) {
   taVector2i rv; rv.x = td / v.x; rv.y = td / v.y; return rv;
 }
 
-typedef taVector2i TwoDCoord;		// #INSTANCE obsolete version of taVector2i
+typedef taVector2i TwoDCoord;           // #INSTANCE obsolete version of taVector2i
 
 #endif // taVector2i_h

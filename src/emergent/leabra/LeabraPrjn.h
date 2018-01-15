@@ -43,8 +43,8 @@ public:
   TA_BASEFUNS(LeabraPrjn);
   SIMPLE_COPY(LeabraPrjn);
 private:
-  void 	Initialize();
-  void 	Destroy();
+  void  Initialize();
+  void  Destroy();
 };
 
 #endif // LeabraPrjn_h

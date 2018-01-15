@@ -32,18 +32,18 @@ class TA_API DataOneProg : public ProgEl {
   // #VIRT_BASE #NO_INSTANCE a program element for operations on one data table (virtual base class -- do not use)
 INHERITED(ProgEl)
 public:
-  ProgVarRef	    data_var;	// #ITEM_FILTER_DataProgVarFilter program variable pointing to data table for operation
+  ProgVarRef        data_var;   // #ITEM_FILTER_DataProgVarFilter program variable pointing to data table for operation
 
   virtual DataTable* GetData() const;
   // get actual data table pointer from variable
 
-  String 	GetTypeDecoKey() const override { return "DataTable"; }
+  String        GetTypeDecoKey() const override { return "DataTable"; }
   PROGEL_SIMPLE_BASEFUNS(DataOneProg);
 protected:
-  void	 CheckThisConfig_impl(bool quiet, bool& rval) override;
+  void   CheckThisConfig_impl(bool quiet, bool& rval) override;
 private:
-  void	Initialize();
-  void	Destroy()	{ CutLinks(); }
+  void  Initialize();
+  void  Destroy()       { CutLinks(); }
 };
 
 #endif // DataOneProg_h

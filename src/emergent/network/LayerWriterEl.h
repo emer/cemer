@@ -33,13 +33,13 @@ class E_API LayerWriterEl : public LayerDataEl {
   // #STEM_BASE controls the writing of input data from a data source to a network layer
 INHERITED(LayerDataEl)
 public: 
-  bool		use_layer_type; // #DEF_true use layer_type information on the layer to determine flags to set (if false, turn on EXPERT showing to view flags)
-  bool		quiet;		// turn off warning messages (e.g., about layer_type = HIDDEN)
-  bool		na_by_range;	// #EXPERT use act_range on the unitspec for the units to determine inputs that are not appplicable (n/a) and thus do not get relevant flags or values set: those that have input values outside the range are n/a
-  UnitState_cpp::ExtFlags ext_flags;	// #EXPERT #CONDSHOW_OFF_use_layer_type:true how to flag the unit/layer's external input status
-  Random	noise;		// #EXPERT noise optionally added to values when applied
+  bool          use_layer_type; // #DEF_true use layer_type information on the layer to determine flags to set (if false, turn on EXPERT showing to view flags)
+  bool          quiet;          // turn off warning messages (e.g., about layer_type = HIDDEN)
+  bool          na_by_range;    // #EXPERT use act_range on the unitspec for the units to determine inputs that are not appplicable (n/a) and thus do not get relevant flags or values set: those that have input values outside the range are n/a
+  UnitState_cpp::ExtFlags ext_flags;    // #EXPERT #CONDSHOW_OFF_use_layer_type:true how to flag the unit/layer's external input status
+  Random        noise;          // #EXPERT noise optionally added to values when applied
 
-  virtual bool	ApplyInputData(DataTable* db, Network* net);
+  virtual bool  ApplyInputData(DataTable* db, Network* net);
   // #CAT_LayerWriter apply data to the layer on network, using the network's current context settings (TEST,TRAIN,etc) -- returns success
 
   void  InitLinks() override;
@@ -47,11 +47,11 @@ public:
   SIMPLE_COPY(LayerWriterEl);
   TA_BASEFUNS(LayerWriterEl);
 protected:
-  void	CheckThisConfig_impl(bool quiet, bool& rval) override;
+  void  CheckThisConfig_impl(bool quiet, bool& rval) override;
 
 private:
-  void	Initialize();
-  void 	Destroy();
+  void  Initialize();
+  void  Destroy();
 };
 
 #endif // LayerWriterEl_h

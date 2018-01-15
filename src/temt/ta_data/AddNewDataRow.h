@@ -30,18 +30,18 @@ class TA_API AddNewDataRow: public DataOneProg {
   // add a new row to data table (just calls AddBlankRow() on data table var object)
 INHERITED(DataOneProg)
 public:
-  String	GetDisplayName() const override;
-  String	GetToolbarName() const override { return "new row"; }
+  String        GetDisplayName() const override;
+  String        GetToolbarName() const override { return "new row"; }
   bool      CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
   bool      CvtFmCode(const String& code) override;
 
 
   TA_BASEFUNS_NOCOPY(AddNewDataRow);
 protected:
-  bool		GenCssBody_impl(Program* prog) override;
+  bool          GenCssBody_impl(Program* prog) override;
 private:
-  void	Initialize();
-  void	Destroy()	{ }
+  void  Initialize();
+  void  Destroy()       { }
 }; 
 
 #endif // AddNewDataRow_h

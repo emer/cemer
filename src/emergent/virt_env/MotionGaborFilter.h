@@ -48,47 +48,47 @@ public:
     AMP,
   };
 
-  int		x_size;		// overall size of the filtered region
-  int		y_size;		// overall size of the filtered region
-  int		t_size;		// overall size of the filtered region
-  float		ctr_x;		// center in x coord
-  float		ctr_y;		// center in y coord
-  float		ctr_t;		// center in y coord
+  int           x_size;         // overall size of the filtered region
+  int           y_size;         // overall size of the filtered region
+  int           t_size;         // overall size of the filtered region
+  float         ctr_x;          // center in x coord
+  float         ctr_y;          // center in y coord
+  float         ctr_t;          // center in y coord
 
-  float		spat_angle;	// angle of sine wave in 2-d space (in radians)
-  float		time_angle;	// angle of sine wave in 2-d time (in radians)
+  float         spat_angle;     // angle of sine wave in 2-d space (in radians)
+  float         time_angle;     // angle of sine wave in 2-d time (in radians)
 
-  float		phase;		// phase of sine wave wrt the center of the gaussian (radians)
-  float		freq;		// frequency of the sine wave
-  float		freq_t;		// frequency of the sine wave
+  float         phase;          // phase of sine wave wrt the center of the gaussian (radians)
+  float         freq;           // frequency of the sine wave
+  float         freq_t;         // frequency of the sine wave
 
-  float		width;		// width of the gaussian in the wave direction
-  float		length;		// width of the gaussian in the wave direction
-  float		width_t;	// width of the gaussian in the wave direction
-  float		amp;		// amplitude (maximum value)
-  bool		use_3d_gabors;
-  float_Matrix  filter;		// #READ_ONLY #NO_SAVE #NO_COPY our filter
+  float         width;          // width of the gaussian in the wave direction
+  float         length;         // width of the gaussian in the wave direction
+  float         width_t;        // width of the gaussian in the wave direction
+  float         amp;            // amplitude (maximum value)
+  bool          use_3d_gabors;
+  float_Matrix  filter;         // #READ_ONLY #NO_SAVE #NO_COPY our filter
 
-  virtual float	Eval(float x, float y, float t);
+  virtual float Eval(float x, float y, float t);
   // #CAT_GaborFilter evaluate gabor function for given coordinates
-  virtual void	RenderFilter(float_Matrix& flt);
+  virtual void  RenderFilter(float_Matrix& flt);
   // #CAT_GaborFilter render filter into matrix
-  virtual void	UpdateFilter();
+  virtual void  UpdateFilter();
   // #CAT_GaborFilter make our personal filter (RenderFilter(filter)) according to current params
 
-  virtual float	GetParam(MotionGaborParam param);
+  virtual float GetParam(MotionGaborParam param);
   // #CAT_GaborFilter get particular parameter value
 
-  virtual void	GraphFilter(DataTable* disp_data);
+  virtual void  GraphFilter(DataTable* disp_data);
   // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable plot the filter into data table and generate a graph from it
-  virtual void	GridFilter(DataTable* disp_data, bool reset = true);
+  virtual void  GridFilter(DataTable* disp_data, bool reset = true);
   // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable plot the filter into data table and generate a grid view of it (reset an existing data first)
 
   virtual String& PrintParams(String& strm);
   // #CAT_GaborFilter output current parameter values to stream
 
-  void 	Initialize();
-  void	Destroy() { };
+  void  Initialize();
+  void  Destroy() { };
   TA_SIMPLE_BASEFUNS(MotionGaborFilter);
 };
 

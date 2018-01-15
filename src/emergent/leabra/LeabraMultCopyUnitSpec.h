@@ -1,8 +1,8 @@
 // this is included directly in LeabraExtraUnitSpecs_cpp / _cuda
 // {
 
-  bool		one_minus;	// if true, use 1-mult activation as the multiplier -- this is useful with mutually exclusive options in the multipliers, where you hook each up to the *other* alternative, such that this other alternative inhibits this option
-  float		mult_gain;	// multiplier gain -- multiply the mult act value by this gain, with a max overall resulting net mult value of 1
+  bool          one_minus;      // if true, use 1-mult activation as the multiplier -- this is useful with mutually exclusive options in the multipliers, where you hook each up to the *other* alternative, such that this other alternative inhibits this option
+  float         mult_gain;      // multiplier gain -- multiply the mult act value by this gain, with a max overall resulting net mult value of 1
 
   INIMPL virtual void  Compute_MultCopy(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no);
   

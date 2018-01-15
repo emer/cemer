@@ -33,12 +33,12 @@ class TA_API DataJoinProg : public DataSrcDestProg {
   // joins two datatables (src and src_b) into dest datatable indexed by a common column
 INHERITED(DataSrcDestProg)
 public:
-  ProgVarRef		src_b_data_var;	// #ITEM_FILTER_DataProgVarFilter variable pointing to second source data for operation
-  DataJoinSpec		join_spec; 	// data grouping specification
+  ProgVarRef            src_b_data_var; // #ITEM_FILTER_DataProgVarFilter variable pointing to second source data for operation
+  DataJoinSpec          join_spec;      // data grouping specification
 
   virtual DataTable* GetSrcBData(); // get source data table pointer from src_data_var (or NULL)
 
-  void	UpdateSpecDataTable() override;
+  void  UpdateSpecDataTable() override;
 
   String    GetDisplayName() const override;
   String    GetToolbarName() const override { return "join"; }
@@ -53,8 +53,8 @@ protected:
   bool      GenCssBody_impl(Program* prog) override;
 
 private:
-  void	Initialize();
-  void	Destroy()	{ CutLinks(); }
+  void  Initialize();
+  void  Destroy()       { CutLinks(); }
 };
 
 #endif // DataJoinProg_h

@@ -45,40 +45,40 @@ public:
   };
 
 #ifdef __MAKETA__
-  String	name;		// #HIDDEN_INLINE name of object
+  String        name;           // #HIDDEN_INLINE name of object
 #endif
-  int		x_size;		// overall size of the filtered region
-  int		y_size;		// overall size of the filtered region
-  float		ctr_x;		// center in x coord
-  float		ctr_y;		// center in y coord
-  float		angle;		// angle of sine wave in 2-d space (in radians)
-  float		phase;		// phase of sine wave wrt the center of the gaussian (radians)
-  float		freq;		// frequency of the sine wave
-  float		length;		// length of the gaussian perpendicular to the wave direction
-  float		width;		// width of the gaussian in the wave direction
-  float		amp;		// amplitude (maximum value)
-  float_Matrix	filter;		// #READ_ONLY #NO_SAVE #NO_COPY our filter
+  int           x_size;         // overall size of the filtered region
+  int           y_size;         // overall size of the filtered region
+  float         ctr_x;          // center in x coord
+  float         ctr_y;          // center in y coord
+  float         angle;          // angle of sine wave in 2-d space (in radians)
+  float         phase;          // phase of sine wave wrt the center of the gaussian (radians)
+  float         freq;           // frequency of the sine wave
+  float         length;         // length of the gaussian perpendicular to the wave direction
+  float         width;          // width of the gaussian in the wave direction
+  float         amp;            // amplitude (maximum value)
+  float_Matrix  filter;         // #READ_ONLY #NO_SAVE #NO_COPY our filter
 
-  virtual float	Eval(float x, float y);
+  virtual float Eval(float x, float y);
   // #CAT_GaborFilter evaluate gabor function for given coordinates
-  virtual void	RenderFilter(float_Matrix& flt);
+  virtual void  RenderFilter(float_Matrix& flt);
   // #CAT_GaborFilter render filter into matrix
-  virtual void	UpdateFilter();
+  virtual void  UpdateFilter();
   // #CAT_GaborFilter make our personal filter (RenderFilter(filter)) according to current params
 
-  virtual float	GetParam(GaborParam param);
+  virtual float GetParam(GaborParam param);
   // #CAT_GaborFilter get particular parameter value
 
-  virtual void	GraphFilter(DataTable* disp_data);
+  virtual void  GraphFilter(DataTable* disp_data);
   // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable plot the filter into data table and generate a graph from it
-  virtual void	GridFilter(DataTable* disp_data, bool reset = true);
+  virtual void  GridFilter(DataTable* disp_data, bool reset = true);
   // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable plot the filter into data table and generate a grid view of it (reset an existing data first)
 
   virtual String& PrintParams(String& strm);
   // #CAT_GaborFilter output current parameter values to stream
 
-  void 	Initialize();
-  void	Destroy() { };
+  void  Initialize();
+  void  Destroy() { };
   TA_SIMPLE_BASEFUNS(GaborFilter);
 };
 

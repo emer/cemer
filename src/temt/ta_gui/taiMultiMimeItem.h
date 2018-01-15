@@ -31,20 +31,20 @@ class TA_API taiMultiMimeItem: public taiMimeItem { // #VIRT_BASE
 INHERITED(taiMimeItem)
 public:
   
-  inline int		count() const {return items.size;}
-  taiMimeItem*		item(int idx) const {return items.FastEl(idx);} //note: can be replaced with strongly typed version
+  inline int            count() const {return items.size;}
+  taiMimeItem*          item(int idx) const {return items.FastEl(idx);} //note: can be replaced with strongly typed version
   
-  void	InitLinks() override;
-  void	CutLinks() override;
+  void  InitLinks() override;
+  void  CutLinks() override;
   TA_ABSTRACT_BASEFUNS(taiMultiMimeItem)
   
 protected:
-  taiMimeItem_List	items; // the subitems
+  taiMimeItem_List      items; // the subitems
   
 private:
   NOCOPY(taiMultiMimeItem)
-  void	Initialize();
-  void	Destroy() {CutLinks();}
+  void  Initialize();
+  void  Destroy() {CutLinks();}
 };
 
 #endif // taiMultiMimeItem_h

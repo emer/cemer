@@ -188,7 +188,7 @@ public:
   UnitDisplayMode       unit_disp_mode; // how to display unit values
   UnitTextDisplay       unit_text_disp; // what labels to display with units
   taVector3f            max_size;       // #NO_COPY #READ_ONLY maximum size in each dimension of the net
-  taVector3f            max_size2d;  	// #NO_COPY #READ_ONLY maximum size in each dimension of the net for 2D display purposes (using pos2d)
+  taVector3f            max_size2d;     // #NO_COPY #READ_ONLY maximum size in each dimension of the net for 2D display purposes (using pos2d)
   taVector3f            eff_max_size;   // #NO_COPY #READ_ONLY effective maximum size in each dimension of the net for current view
   NetViewFontSizes      font_sizes;     // font sizes for various items
   NetViewParams         view_params;    // misc view parameters
@@ -334,7 +334,7 @@ protected:
   T3DataView_PtrList    prjns;          // #IGNORE list of prjn objects under us
   iViewPanelOfNetwork*  nvp; // created during first Render
   bool                  no_init_on_rerender; // set by some routines to prevent init on render to avoid losing history data -- only when known to be safe..
-  LayerLayout   	prev_lay_layout;  // #IGNORE previous layer layout -- for detecting changes
+  LayerLayout           prev_lay_layout;  // #IGNORE previous layer layout -- for detecting changes
 
   void         UpdateAfterEdit_impl() override;
   void         ChildAdding(taDataView* child) override; // #IGNORE also add to aux list
@@ -358,3 +358,4 @@ private:
 };
 
 #endif // NetView_h
+

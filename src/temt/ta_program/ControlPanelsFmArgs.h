@@ -32,29 +32,29 @@ class TA_API ControlPanelsFmArgs: public ProgEl {
   // #AKA_SelectEditsFmArgs sets ControlPanel value(s) based on startup arguments of the name of the control panel item -- items must be single atomic value items -- not classes
 INHERITED(ProgEl)
 public:
-  ProgVarRef		ctrl_panel_var;	// #ITEM_FILTER_ObjProgVarFilter #AKA_sel_edit_var program variable pointing to control panel that contains the items to access with startup arguments
+  ProgVarRef            ctrl_panel_var; // #ITEM_FILTER_ObjProgVarFilter #AKA_sel_edit_var program variable pointing to control panel that contains the items to access with startup arguments
 
-  virtual ControlPanel* 	GetControlPanel() const;
+  virtual ControlPanel*         GetControlPanel() const;
   // get actual control panel from variable
 
-  String	GetDisplayName() const override;
-  String 	GetTypeDecoKey() const override { return "ProgVar"; }
-  String	GetToolbarName() const override { return "ctrl=args"; }
+  String        GetDisplayName() const override;
+  String        GetTypeDecoKey() const override { return "ProgVar"; }
+  String        GetToolbarName() const override { return "ctrl=args"; }
   bool    CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
   bool    CvtFmCode(const String& code) override;
 
-  void	GenRegArgs(Program* prog);
+  void  GenRegArgs(Program* prog);
   // #IGNORE generate RegisterArgs code
 
   PROGEL_SIMPLE_BASEFUNS(ControlPanelsFmArgs);
 protected:
   void UpdateAfterEdit_impl() override;
   void CheckThisConfig_impl(bool quiet, bool& rval) override;
-  bool	GenCssBody_impl(Program* prog) override;
+  bool  GenCssBody_impl(Program* prog) override;
 
 private:
-  void	Initialize();
-  void	Destroy()	{CutLinks();}
+  void  Initialize();
+  void  Destroy()       {CutLinks();}
 }; 
 
 #endif // ControlPanelsFmArgs_h

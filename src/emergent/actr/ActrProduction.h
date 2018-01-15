@@ -40,8 +40,8 @@ public:
 
   TA_SIMPLE_BASEFUNS(ActrProdUtilVals);
 private:
-  void	Initialize();
-  void	Destroy()	{ };
+  void  Initialize();
+  void  Destroy()       { };
 };
 
 eTypeDef_Of(ActrProdTimeVals);
@@ -57,8 +57,8 @@ public:
 
   TA_SIMPLE_BASEFUNS(ActrProdTimeVals);
 private:
-  void	Initialize();
-  void	Destroy()	{ };
+  void  Initialize();
+  void  Destroy()       { };
 };
 
 eTypeDef_Of(ActrProduction);
@@ -148,7 +148,7 @@ public:
 protected:
   void  UpdateAfterEdit_impl() override;
   void  CheckThisConfig_impl(bool quiet, bool& rval) override;
-  void	 CheckChildConfig_impl(bool quiet, bool& rval) override;
+  void   CheckChildConfig_impl(bool quiet, bool& rval) override;
 
 private:
   void Initialize();

@@ -30,13 +30,13 @@ class taBase; //
 class TA_API VPUnref {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS stores a Value that couldn't be cashed out only works with taBase elements because they have paths..
 public:
-  String	name;		// just for looking up purposes
-  MemberDef*	memb_def;	// memberdef of the pointer
-  void* 	base;		// location of ptr to set, usually taBase**, but could be taSmartRef*
-  taBase* 	parent;		// location's parent to update
-  String 	path;
+  String        name;           // just for looking up purposes
+  MemberDef*    memb_def;       // memberdef of the pointer
+  void*         base;           // location of ptr to set, usually taBase**, but could be taSmartRef*
+  taBase*       parent;         // location's parent to update
+  String        path;
 
-  taBase* 	Resolve();
+  taBase*       Resolve();
 
   VPUnref(void* base, taBase* par, const String& p, MemberDef* md = NULL);
 };

@@ -36,30 +36,30 @@ class iCodeCompleter;
 class CSS_API cssiEditDialog : public taiEditorOfClass {
   // edit dialog for editing css classes
 public:
-  static cssiType*	GetTypeFromEl(cssEl* el, bool read_only);
+  static cssiType*      GetTypeFromEl(cssEl* el, bool read_only);
   // this decodes cssEl types into cssiTypes, which are then used to render edit
   
-  cssClassInst*		obj;	// class object to edit
-  cssProgSpace*		top;	// top-level progspace where edit was called
-  taiType_List 		type_el; // type elements (not stored on classes, so kept here)
+  cssClassInst*         obj;    // class object to edit
+  cssProgSpace*         top;    // top-level progspace where edit was called
+  taiType_List          type_el; // type elements (not stored on classes, so kept here)
 
   cssiEditDialog(cssClassInst* ob, cssProgSpace* tp = NULL,
     bool read_only_ = false, bool modal_ = false, QObject* parent = 0);
   ~cssiEditDialog();
 
-  void		GetImage_Membs() override;
-  void		GetValue() override;
-  int		  Edit(bool modal_ = false, int min_width=-1, int min_height=-1) override;
+  void          GetImage_Membs() override;
+  void          GetValue() override;
+  int             Edit(bool modal_ = false, int min_width=-1, int min_height=-1) override;
   // ati is for when leading argument(s) are predetermined, and user shouldn't be prompted for them
 
 protected:
-  void	 	GetName(int idx, cssEl* md, String& name, String& desc);
-  void		ClearBody_impl() override; // delete the data items
-  void		Constr_Inline() override {} // n/a
-  void		Constr_Widget_Labels() override; // construct the data and label elements of the dialog
-  void		Constr_Strings() override;
+  void          GetName(int idx, cssEl* md, String& name, String& desc);
+  void          ClearBody_impl() override; // delete the data items
+  void          Constr_Inline() override {} // n/a
+  void          Constr_Widget_Labels() override; // construct the data and label elements of the dialog
+  void          Constr_Strings() override;
 private:
-  void	Initialize();
+  void  Initialize();
 };
 
 
@@ -71,7 +71,7 @@ class CSS_API cssiArgDialog : public cssiEditDialog {
   // #IGNORE edit dialog for editing function arguments
 INHERITED(cssiEditDialog)
 public:
-  bool                  err_flag; 	// true if an arg was improperly set
+  bool                  err_flag;       // true if an arg was improperly set
   MethodDef*            md;
   TypeDef*              typ;
   int                   use_argc;
@@ -93,9 +93,9 @@ public:
   void        Ok() override;
 
 protected:
-  void		Constr_impl() override;
-  void		Constr_Strings() override;
-  void		Constr_Widget_Labels() override; // construct the static elements of the dialog
+  void          Constr_impl() override;
+  void          Constr_Strings() override;
+  void          Constr_Widget_Labels() override; // construct the static elements of the dialog
 };
 
 

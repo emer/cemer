@@ -32,8 +32,8 @@ public:
   TA_BASEFUNS2_NOCOPY(TemtClient_List, taList<TemtClient>);
 
 private:
-  void	Initialize() {SetBaseType(&TA_TemtClient);}
-  void 	Destroy() {}
+  void  Initialize() {SetBaseType(&TA_TemtClient);}
+  void  Destroy() {}
 };
 
 #endif // TemtClient_List_h

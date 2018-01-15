@@ -20,30 +20,30 @@
     Q2_Q4 = Q2 | Q4,           // #NO_BIT standard beta frequency option, for bg, pfc
   };
 
-  bool		inhib;		// #DEF_false #CAT_Activation makes the connection inhibitory (to g_i instead of net)
-  STATE_CLASS(WtScaleSpec)	wt_scale;	// #CAT_Activation scale effective weight values to control the overall strength of a projection -- relative shifts balance among different projections, while absolute is a direct multipler
+  bool          inhib;          // #DEF_false #CAT_Activation makes the connection inhibitory (to g_i instead of net)
+  STATE_CLASS(WtScaleSpec)      wt_scale;       // #CAT_Activation scale effective weight values to control the overall strength of a projection -- relative shifts balance among different projections, while absolute is a direct multipler
 
-  bool		learn;		// #CAT_Learning #DEF_true individual control over whether learning takes place in this connection spec -- if false, no learning will take place regardless of any other settings -- if true, learning will take place if it is enabled at the network and other relevant levels
+  bool          learn;          // #CAT_Learning #DEF_true individual control over whether learning takes place in this connection spec -- if false, no learning will take place regardless of any other settings -- if true, learning will take place if it is enabled at the network and other relevant levels
   Quarters      learn_qtr;      // #CAT_Learning #CONDSHOW_ON_learn quarters after which learning (Compute_dWt) should take place
-  float		lrate;		// #CAT_Learning #CONDSHOW_ON_learn #DEF_0.04 #MIN_0  learning rate -- how fast the weights change per experience -- since version 7.8.5, a hidden factor of 2 has been removed, so this should be 2x what you used to use previously (e.g., default used to be .02, now is .04) -- this governs the rate of change for the fastest adapting weights -- see slow_wts for a more slowly adapting factor
-  float		cur_lrate;	// #READ_ONLY #NO_INHERIT #SHOW #CONDSHOW_ON_learn #CAT_Learning current actual learning rate = lrate * lrate_sched current value (* 1 if no lrate_sched)
-  float		lrs_mult;	// #READ_ONLY #NO_INHERIT #CAT_Learning learning rate multiplier obtained from the learning rate schedule
+  float         lrate;          // #CAT_Learning #CONDSHOW_ON_learn #DEF_0.04 #MIN_0  learning rate -- how fast the weights change per experience -- since version 7.8.5, a hidden factor of 2 has been removed, so this should be 2x what you used to use previously (e.g., default used to be .02, now is .04) -- this governs the rate of change for the fastest adapting weights -- see slow_wts for a more slowly adapting factor
+  float         cur_lrate;      // #READ_ONLY #NO_INHERIT #SHOW #CONDSHOW_ON_learn #CAT_Learning current actual learning rate = lrate * lrate_sched current value (* 1 if no lrate_sched)
+  float         lrs_mult;       // #READ_ONLY #NO_INHERIT #CAT_Learning learning rate multiplier obtained from the learning rate schedule
   bool          use_unlearnable; // #CAT_Learning #CONDSHOW_ON_learn #AKA_ignore_unlearnable ignore unlearnable trials
 
-  STATE_CLASS(XCalLearnSpec)	xcal;		// #CAT_Learning #CONDSHOW_ON_learn XCAL (eXtended Contrastive Attractor Learning) learning parameters
-  STATE_CLASS(WtSigSpec)	wt_sig;		// #CAT_Learning #CONDSHOW_ON_learn sigmoidal weight function for contrast enhancement: high gain makes weights more binary & discriminative
+  STATE_CLASS(XCalLearnSpec)    xcal;           // #CAT_Learning #CONDSHOW_ON_learn XCAL (eXtended Contrastive Attractor Learning) learning parameters
+  STATE_CLASS(WtSigSpec)        wt_sig;         // #CAT_Learning #CONDSHOW_ON_learn sigmoidal weight function for contrast enhancement: high gain makes weights more binary & discriminative
   STATE_CLASS(LeabraMomentum)   momentum;      // #CAT_Learning #CONDSHOW_ON_learn implements standard, simple momentum and normalization by the overall running-average magnitude of weight changes (which serves as an estimate of the variance in the weight changes, assuming zero net mean overall) -- accentuates consistent directions of weight change and cancels out dithering
   STATE_CLASS(WtBalanceSpec)    wt_bal;         // #CAT_Learning #CONDSHOW_ON_learn weight balance maintenance spec: a soft form of normalization that maintains overall weight balance across units by progressively penalizing weight increases as a function of extent to which average weights exceed target value, and vice-versa when weight average is less than target -- alters rate of weight increases vs. decreases in soft bounding function
-  STATE_CLASS(AdaptWtScaleSpec) adapt_scale;	// #CAT_Learning #CONDSHOW_ON_learn parameters to adapt the scale multiplier on weights, as a function of weight value
+  STATE_CLASS(AdaptWtScaleSpec) adapt_scale;    // #CAT_Learning #CONDSHOW_ON_learn parameters to adapt the scale multiplier on weights, as a function of weight value
   STATE_CLASS(SlowWtsSpec)      slow_wts;       // #CAT_Learning #CONDSHOW_ON_learn slow weight specifications -- adds a more slowly-adapting weight factor on top of the standard more rapidly adapting weights
-  STATE_CLASS(DeepLrateSpec)    deep;		// #CAT_Learning #CONDSHOW_ON_learn learning rate specs for DeepLeabra learning rate modulation -- effective learning rate can be enhanced for units receiving thalamic modulation vs. those without
-  STATE_CLASS(MarginLearnSpec)  margin;	        // #CAT_Learning #CONDSHOW_ON_learn learning specs for modulation as a function of marginal activation status -- emphasize learning for units on the margin
+  STATE_CLASS(DeepLrateSpec)    deep;           // #CAT_Learning #CONDSHOW_ON_learn learning rate specs for DeepLeabra learning rate modulation -- effective learning rate can be enhanced for units receiving thalamic modulation vs. those without
+  STATE_CLASS(MarginLearnSpec)  margin;         // #CAT_Learning #CONDSHOW_ON_learn learning specs for modulation as a function of marginal activation status -- emphasize learning for units on the margin
   STATE_CLASS(DwtShareSpec)     dwt_share;      // #CAT_Learning #CONDSHOW_ON_learn share dwt changes across different neighboring connections -- a kind of structured randomness within a long-term relationship..
 
 
-  INLINE float	SigFmLinWt(float lw) { return wt_sig.SigFmLinWt(lw);  }
+  INLINE float  SigFmLinWt(float lw) { return wt_sig.SigFmLinWt(lw);  }
   // #CAT_Learning get contrast-enhanced weight from linear weight value
-  INLINE float	LinFmSigWt(float sig_wt) { return wt_sig.LinFmSigWt(sig_wt); }
+  INLINE float  LinFmSigWt(float sig_wt) { return wt_sig.LinFmSigWt(sig_wt); }
   // #CAT_Learning get linear weight value from contrast-enhanced sigmoidal weight value
 
   INLINE  bool Quarter_LearnNow(int qtr)
@@ -184,7 +184,7 @@
     
   
   ///////////////////////////////////////////////////////////////
-  //	Activation: Netinput -- only NetinDelta is supported
+  //    Activation: Netinput -- only NetinDelta is supported
 
   INLINE virtual bool  DoesStdNetin() { return true; }
   // #IGNORE does this connection send standard netinput? if so, it will be included in the CUDA send netin computation -- otherwise a separate function is required
@@ -199,12 +199,12 @@
   INLINE virtual bool  IsDeepModCon() { return false; }
   // #IGNORE is this a send deep_mod connection (SendDeepModConSpec) -- optimized check for higher speed
 
-  INLINE void 	C_Send_NetinDelta(const float wt, float* send_netin_vec,
+  INLINE void   C_Send_NetinDelta(const float wt, float* send_netin_vec,
                                   const int ru_idx, const float su_act_delta_eff)
   { send_netin_vec[ru_idx] += wt * su_act_delta_eff; }
   // #IGNORE
 #ifdef TA_VEC_USE
-  INLINE void 	Send_NetinDelta_vec(LEABRA_CON_STATE* cg, const float su_act_delta_eff,
+  INLINE void   Send_NetinDelta_vec(LEABRA_CON_STATE* cg, const float su_act_delta_eff,
                                     float* send_netin_vec, const float* wts) {
     VECF sa(su_act_delta_eff);
     const int sz = cg->size;
@@ -227,7 +227,7 @@
   }
   // #IGNORE vectorized version
 #endif
-  INLINE void 	Send_NetinDelta_impl(LEABRA_CON_STATE* cg, LEABRA_NETWORK_STATE* net,
+  INLINE void   Send_NetinDelta_impl(LEABRA_CON_STATE* cg, LEABRA_NETWORK_STATE* net,
                                      int thr_no, const float su_act_delta, const float* wts)  {
     LEABRA_PRJN_STATE* prjn = cg->GetPrjnState(net);
     const float su_act_delta_eff = prjn->scale_eff * su_act_delta;
@@ -252,7 +252,7 @@
   }
 
   // #IGNORE implementation that uses specified weights -- typically only diff in different subclasses is the weight variables used
-  INLINE virtual void 	Send_NetinDelta(LEABRA_CON_STATE* cg, LEABRA_NETWORK_STATE* net,
+  INLINE virtual void   Send_NetinDelta(LEABRA_CON_STATE* cg, LEABRA_NETWORK_STATE* net,
                                         int thr_no, const float su_act_delta) {
     // note: _impl is used b/c subclasses replace WT var with another variable
     Send_NetinDelta_impl(cg, net, thr_no, su_act_delta, cg->OwnCnVar(WT));
@@ -260,10 +260,10 @@
   // #IGNORE #CAT_Activation sender-based delta-activation net input for con group (send net input to receivers) -- always goes into tmp matrix (thr_no >= 0!) and is then integrated into net through Compute_NetinInteg function on units
 
   // recv-based also needed for some statistics, but is NOT used for main compute code -- uses act_eq for sender act as well
-  INLINE float 	C_Compute_Netin(const float wt, const float su_act)
-  { return wt * su_act;	}
+  INLINE float  C_Compute_Netin(const float wt, const float su_act)
+  { return wt * su_act; }
   // #IGNORE NOTE: doesn't work with spiking -- need a separate function to use act_eq for that case -- using act_eq does NOT work with scalarval etc
-  INLINE float 	Compute_Netin(CON_STATE* rcg, NETWORK_STATE* net, int thr_no) override  {
+  INLINE float  Compute_Netin(CON_STATE* rcg, NETWORK_STATE* net, int thr_no) override  {
     LEABRA_CON_STATE* cg = (LEABRA_CON_STATE*)rcg;
     LEABRA_PRJN_STATE* prjn = cg->GetPrjnState(net);
     // this is slow b/c going through the PtrCn
@@ -275,7 +275,7 @@
   // #IGNORE
 
   ///////////////////////////////////////////////////////////////
-  //	Learning
+  //    Learning
 
   /////////////////////////////////////
   // CtLeabraXCAL code
@@ -304,7 +304,7 @@
   // }
   // also: fminf(ru_avg_l,1.0f) for threshold as an option..
 
-  INLINE float 	C_Compute_dWt_CtLeabraXCAL
+  INLINE float  C_Compute_dWt_CtLeabraXCAL
     (const float ru_avg_s, const float ru_avg_m, const float su_avg_s, const float su_avg_m,
      const float ru_avg_l, const float ru_avg_l_lrn, const float ru_margin) 
   { float srs = xcal.s_mult * ru_avg_s * su_avg_s;
@@ -319,7 +319,7 @@
   }
   // #IGNORE compute temporally eXtended Contrastive Attractor Learning (XCAL), returning new dwt
 
-  INLINE void	Compute_dWt(CON_STATE* scg, NETWORK_STATE* rnet, int thr_no) override  {
+  INLINE void   Compute_dWt(CON_STATE* scg, NETWORK_STATE* rnet, int thr_no) override  {
     LEABRA_NETWORK_STATE* net = (LEABRA_NETWORK_STATE*)rnet;
     if(!learn || (use_unlearnable && net->unlearnable_trial)) return;
     LEABRA_CON_STATE* cg = (LEABRA_CON_STATE*)scg;
@@ -378,18 +378,18 @@
   }
 
 
-  INLINE void	C_Compute_Weights_CtLeabraXCAL
+  INLINE void   C_Compute_Weights_CtLeabraXCAL
     (float& wt, float dwt, float& fwt, float& swt, float& scale,
      const float wb_inc, const float wb_dec, int thr_no)
   {
     if(dwt == 0.0f) return;
     if(wt_sig.soft_bound) {
-      if(dwt > 0.0f)	dwt *= wb_inc * (1.0f - fwt);
-      else		dwt *= wb_dec * fwt;
+      if(dwt > 0.0f)    dwt *= wb_inc * (1.0f - fwt);
+      else              dwt *= wb_dec * fwt;
     }
     else {
-      if(dwt > 0.0f)	dwt *= wb_inc;
-      else		dwt *= wb_dec;
+      if(dwt > 0.0f)    dwt *= wb_inc;
+      else              dwt *= wb_dec;
     }
     fwt += dwt;
     C_ApplyLimits(fwt);
@@ -409,12 +409,12 @@
      const float wb_inc, const float wb_dec, int thr_no)
   { 
     if(wt_sig.soft_bound) {
-      if(dwt > 0.0f)	dwt *= wb_inc * (1.0f - fwt);
-      else		dwt *= wb_dec * fwt;
+      if(dwt > 0.0f)    dwt *= wb_inc * (1.0f - fwt);
+      else              dwt *= wb_dec * fwt;
     }
     else {
-      if(dwt > 0.0f)	dwt *= wb_inc;
-      else		dwt *= wb_dec;
+      if(dwt > 0.0f)    dwt *= wb_inc;
+      else              dwt *= wb_dec;
     }
     fwt += dwt;
     float eff_wt = slow_wts.swt_pct * swt + slow_wts.fwt_pct * fwt;
@@ -524,7 +524,7 @@
   }
 
 
-  INLINE virtual void 	Compute_WtBal(LEABRA_CON_STATE* cg, LEABRA_NETWORK_STATE* net, int thr_no) {
+  INLINE virtual void   Compute_WtBal(LEABRA_CON_STATE* cg, LEABRA_NETWORK_STATE* net, int thr_no) {
     if(!learn || cg->size < 1 || !wt_bal.on) return;
     LEABRA_UNIT_STATE* ru = cg->ThrOwnUnState(net, thr_no);
     if(wt_bal.no_targ &&
@@ -569,7 +569,7 @@
 
   
   /////////////////////////////////////
-  // 	Bias Weights
+  //    Bias Weights
 
   // same as original:
   INLINE void B_Init_dWt(UNIT_STATE* uv, NETWORK_STATE* net, int thr_no) override {

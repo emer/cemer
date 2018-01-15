@@ -31,18 +31,18 @@ class TA_API iColorMatrixGrid: QWidget {
 INHERITED(QWidget)
   Q_OBJECT
 public:
-  int		cellSize() const {return m_cellSize;} // h/w of each grid square; 0=auto
-  void		setCellSize(int value);
+  int           cellSize() const {return m_cellSize;} // h/w of each grid square; 0=auto
+  void          setCellSize(int value);
 
   iColorMatrixGrid(QWidget* parent = NULL);
 
 protected:
-  int		m_cellSize;
+  int           m_cellSize;
   
-  void 		paintEvent(QPaintEvent* event) override;
+  void          paintEvent(QPaintEvent* event) override;
   
 private:
-  void		Init();
+  void          Init();
 };
 
 #endif // iColorMatrixGrid_h

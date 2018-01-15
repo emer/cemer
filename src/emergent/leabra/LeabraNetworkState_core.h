@@ -63,7 +63,7 @@
 
 
   ///////////////////////////////////////////////////////////////////////
-  //	Overloaded accessors for Leabra type, only most popular
+  //    Overloaded accessors for Leabra type, only most popular
 
   INLINE LEABRA_LAYER_STATE* GetLayerState(int lay_idx) const {
     return (LEABRA_LAYER_STATE*)inherited::GetLayerState(lay_idx); 
@@ -97,7 +97,7 @@
   }
 
   ///////////////////////////////////////////////////////////////////////
-  //	General Init functions
+  //    General Init functions
 
   INIMPL void Init_Weights_Layers() override;
   INIMPL void Init_Stats() override;
@@ -121,7 +121,7 @@
 
 
   ///////////////////////////////////////////////////////////////////////
-  //	TrialInit -- at start of trial
+  //    TrialInit -- at start of trial
 
 
   INIMPL virtual void Trial_Init_Counters();
@@ -135,7 +135,7 @@
 
 
   ///////////////////////////////////////////////////////////////////////
-  //	QuarterInit -- at start of a given quarter trial of processing
+  //    QuarterInit -- at start of a given quarter trial of processing
 
   INIMPL virtual void Quarter_Init_TargFlags_Thr(int thr_no);
   // #IGNORE initialize at start of settling phase -- sets target external input flags based on phase -- not called by default -- direct to unit level function
@@ -177,7 +177,7 @@
 
 
   ////////////////////////////////////////////////////////////////
-  //	Cycle_Run
+  //    Cycle_Run
   
   INIMPL virtual void Cycle_Run_Thr(int thr_no);
   // #IGNORE compute cycle(s) of updating: netinput, inhibition, activations -- multiple cycles can be run depending on lthreads.n_cycles setting and whether multiple 
@@ -185,7 +185,7 @@
   // #CAT_Cycle increment the cycle-level counters -- called internally during Cycle_Run()
   
   ///////////////////////////////////////////////////////
-  //	Cycle Stage 1: netinput
+  //    Cycle Stage 1: netinput
 
   INIMPL void Send_Netin_Thr(int thr_no) override;
   // #IGNORE compute netinputs -- sender-delta based -- only send when sender activations change -- sends into tmp array that is then integrated into net_raw, gi_raw
@@ -204,24 +204,24 @@
 
   
   ///////////////////////////////////////////////////////////////////////
-  //	Cycle Step 2: Inhibition
+  //    Cycle Step 2: Inhibition
 
-  INIMPL virtual void	Compute_Inhib();
+  INIMPL virtual void   Compute_Inhib();
   // #IGNORE compute inhibitory conductances via inhib functions (FFFB) -- calls Compute_NetinStats and LayInhibToGps to coordinate group-level inhibition sharing
     INIMPL virtual void Compute_Inhib_LayGp();
     // #IGNORE compute inhibition across layer groups -- if layer spec lay_gp_inhib flag is on anywhere
 
   
   ///////////////////////////////////////////////////////////////////////
-  //	Cycle Step 3: Activation
+  //    Cycle Step 3: Activation
   
-  INIMPL void	Compute_Act_Thr(int thr_no) override;
+  INIMPL void   Compute_Act_Thr(int thr_no) override;
   // #IGNORE compute activations
-  INIMPL virtual void	Compute_Act_Rate_Thr(int thr_no);
+  INIMPL virtual void   Compute_Act_Rate_Thr(int thr_no);
   // #IGNORE rate coded activations
-  INIMPL virtual void	Compute_Act_Spike_Thr(int thr_no);
+  INIMPL virtual void   Compute_Act_Spike_Thr(int thr_no);
   // #IGNORE spiking activations
-  INIMPL virtual void	Compute_Act_Post_Thr(int thr_no);
+  INIMPL virtual void   Compute_Act_Post_Thr(int thr_no);
   // #IGNORE post processing after activations have been computed -- special algorithm code takes advantage of this stage to send modulator variables -- all such vars should EXCLUSIVELY be sent during this stage, and running average activations (SRAvg) also computed
 
 
@@ -230,27 +230,27 @@
 
 
   ///////////////////////////////////////////////////////////////////////
-  //	Cycle Stats
+  //    Cycle Stats
 
-  INIMPL virtual void	Compute_CycleStats_Pre();
+  INIMPL virtual void   Compute_CycleStats_Pre();
   // #CAT_Cycle compute cycle-level stats -- acts AvgMax, OutputName, etc -- network-level pre-step -- happens after Compute_Act and prior to Compute_Act_Post -- good place to insert any layer-level modification of unit-level activations
-  INIMPL virtual void	Compute_CycleStats_Thr(int thr_no);
+  INIMPL virtual void   Compute_CycleStats_Thr(int thr_no);
   // #IGNORE compute cycle-level stats -- acts AvgMax -- fast layer level computation
-  INIMPL virtual void	Compute_ActEqStats_Thr(int thr_no);
+  INIMPL virtual void   Compute_ActEqStats_Thr(int thr_no);
   // #IGNORE compute cycle-level stats -- acts AvgMax -- fast layer level computation
-  INIMPL virtual void	Compute_CycleStats_Post();
+  INIMPL virtual void   Compute_CycleStats_Post();
   // #CAT_Cycle compute cycle-level stats -- acts AvgMax, OutputName, etc -- network-level post-step
   INIMPL virtual void   Compute_RTCycles();
   // #CAT_Statistic compute the rt_cycles statistic based on trg_max_act and trg_max_act_crit criterion, only in the minus phase -- this is a good measure for computing the reaction time (RT) of the network, as in a psychological experiment -- called automatically in Compute_CycleStats_Post()
 
-  INIMPL virtual void	Compute_GcIStats_Thr(int thr_no);
+  INIMPL virtual void   Compute_GcIStats_Thr(int thr_no);
   // #IGNORE compute cycle-level stats -- inhibitory conductance AvgMax -- fast layer level computation
-  INIMPL virtual void	Compute_GcIStats_Post();
+  INIMPL virtual void   Compute_GcIStats_Post();
   // #CAT_Cycle compute cycle-level stats -- inhibitory conductance AvgMax -- single thread post-step
 
   
   ///////////////////////////////////////////////////////////////////////
-  //	DeepLeabra deep_raw Updating -- called after superficial layer updating
+  //    DeepLeabra deep_raw Updating -- called after superficial layer updating
 
   INIMPL virtual void Compute_DeepRaw_Thr(int thr_no);
   // #IGNORE update deep_raw variables, using the proper sequence of unit-level calls
@@ -266,7 +266,7 @@
   // #IGNORE clear the synaptic trace for MSN connections (Medium Spiny Neurons in the Striatum)
 
   ///////////////////////////////////////////////////////////////////////
-  //	Quarter Final
+  //    Quarter Final
 
   INIMPL virtual void Quarter_Final_Pre();
   // #CAT_QuarterFinal perform computations in layers at end of quarter -- this is a pre-stage that occurs prior to final Quarter_Final_impl -- use this for anything that needs to happen prior to the standard Quarter_Final across units and layers (called by Quarter_Final)
@@ -279,16 +279,16 @@
   // #CAT_QuarterFinal update counters at end of quarter
 
   ///////////////////////////////////////////////////////////////////////
-  //	Trial Update and Final
+  //    Trial Update and Final
 
-  INIMPL virtual void	Compute_AbsRelNetin();
+  INIMPL virtual void   Compute_AbsRelNetin();
   // #CAT_Statistic compute the absolute layer-level and relative netinput from different projections into layers in network -- this should NOT be called from programs (although previously it was) -- it is automatically called in Trial_Final now, and projection-level netin data is subjected to settings of rel_netin if NETIN_PER_PRJN flag is not set
-  INIMPL virtual void	Compute_AvgAbsRelNetin();
+  INIMPL virtual void   Compute_AvgAbsRelNetin();
   // #CAT_Statistic compute time-average absolute layer-level and relative netinput from different projections into layers in network (e.g. over epoch timescale)
 
 
   ///////////////////////////////////////////////////////////////////////
-  //	Learning
+  //    Learning
 
   INIMPL virtual void Compute_dWt_Layer_pre();
   // #IGNORE do special computations at layer level prior to standard unit-level thread dwt computation -- not used in base class but is in various derived classes
@@ -303,7 +303,7 @@
 
 
   ///////////////////////////////////////////////////////////////////////
-  //	Stats
+  //    Stats
 
   INIMPL virtual void Set_ExtRew(bool avail, float ext_rew_val);
   // #CAT_Statistic set ext_rew_avail and ext_rew value -- for script access to these values
@@ -359,23 +359,23 @@
 
   INIMPL void Compute_EpochStats_Layer(LAYER_STATE* lay) override;
 
-  INIMPL virtual void	Compute_AvgCycles();
+  INIMPL virtual void   Compute_AvgCycles();
   // #CAT_Statistic compute average cycles (at an epoch-level timescale)
-  INIMPL   virtual void	Compute_AvgExtRew();
+  INIMPL   virtual void Compute_AvgExtRew();
   // #CAT_Statistic compute average external reward information (at an epoch-level timescale)
-  INIMPL virtual void	Compute_AvgNormErr();
+  INIMPL virtual void   Compute_AvgNormErr();
   // #CAT_Statistic compute average norm_err (at an epoch-level timescale)
-  INIMPL virtual void	Compute_AvgCosErr();
+  INIMPL virtual void   Compute_AvgCosErr();
   // #CAT_Statistic compute average cos_err (at an epoch-level timescale)
-  INIMPL virtual void	Compute_AvgSendPct();
+  INIMPL virtual void   Compute_AvgSendPct();
   // #CAT_Statistic compute average sending pct (at an epoch-level timescale)
-  INIMPL virtual void	Compute_AvgCosDiff();
+  INIMPL virtual void   Compute_AvgCosDiff();
   // #CAT_Statistic compute average cos_diff (at an epoch-level timescale)
-  INIMPL virtual void	Compute_AvgTrialCosDiff();
+  INIMPL virtual void   Compute_AvgTrialCosDiff();
   // #CAT_Statistic compute average trial_cos_diff (at an epoch-level timescale)
-  INIMPL virtual void	Compute_AvgAvgActDiff();
+  INIMPL virtual void   Compute_AvgAvgActDiff();
   // #CAT_Statistic compute average avg_act_diff (at an epoch-level timescale)
-  INIMPL virtual void	Compute_AvgNetSd();
+  INIMPL virtual void   Compute_AvgNetSd();
   // #CAT_Statistic compute average net_sd (at an epoch-level timescale)
 
 

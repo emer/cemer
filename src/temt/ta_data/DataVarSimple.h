@@ -30,7 +30,7 @@ class TA_API DataVarSimple : public DataVarBase {
   // #VIRT_BASE A program element for exchanging information between program variables and data table values in columns with the same names as the variables -- scalar var/col and matrix var/col supported, and enum to/from Matrix localist code also supported (see DataVarSimpleMatrix for accessing individual matrix cells)
 INHERITED(DataVarBase)
 public:
-  ProgVarRef    var;		// #LABEL_variable  #ITEM_FILTER_StdProgVarFilter program variable to write to (when reading from data table) or read from (when writing to data table)
+  ProgVarRef    var;            // #LABEL_variable  #ITEM_FILTER_StdProgVarFilter program variable to write to (when reading from data table) or read from (when writing to data table)
   String        column_name;  // #ADD_COMPLETER_SIMPLE the data table column to read from or write to
 
   void          CheckThisConfig_impl(bool quiet, bool& rval) override;
@@ -47,8 +47,8 @@ protected:
   bool          CvtFmCode(const String& code) override;
 
 private:
-  void	Initialize();
-  void	Destroy()	{ CutLinks(); }
+  void  Initialize();
+  void  Destroy()       { CutLinks(); }
 };
 
 #endif // DataVarSimple_h

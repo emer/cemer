@@ -40,28 +40,28 @@ class STATE_CLASS(LeabraAvgMax) : public STATE_CLASS(taOBase) {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra holds average and max statistics
 INHERITED(taOBase)
 public:
-  float		avg;		// #DMEM_AGG_SUM average value
-  float		max;		// #DMEM_AGG_SUM maximum value
-  int 		max_i;		// index of unit with maximum value
-  float		sum;		// #DMEM_AGG_SUM sum for computing average
-  int		n;		// #DMEM_AGG_SUM number of items in sum
+  float         avg;            // #DMEM_AGG_SUM average value
+  float         max;            // #DMEM_AGG_SUM maximum value
+  int           max_i;          // index of unit with maximum value
+  float         sum;            // #DMEM_AGG_SUM sum for computing average
+  int           n;              // #DMEM_AGG_SUM number of items in sum
 
-  INLINE void	InitVals()	{ avg = sum = 0.0f; n = 0; max = -FLT_MAX; max_i = -1; }
+  INLINE void   InitVals()      { avg = sum = 0.0f; n = 0; max = -FLT_MAX; max_i = -1; }
   // init for computing update from new data
 
-  INLINE void	UpdtVals(float val, int idx)
+  INLINE void   UpdtVals(float val, int idx)
   { sum += val; ++n; if(val > max) { max = val; max_i = idx; } }
   // update from data as it comes in
 
-  INLINE void	CalcAvg()
+  INLINE void   CalcAvg()
   { if(n > 0) avg = sum / (float)n; else { avg = sum; max = 0.0f; } }
   // compute the avg after doing UpdtVals on all the data
 
-  INLINE void	UpdtFmAvgMax(const STATE_CLASS(LeabraAvgMax)& oth)
+  INLINE void   UpdtFmAvgMax(const STATE_CLASS(LeabraAvgMax)& oth)
   { sum += oth.sum; n += oth.n; if(oth.max > max) { max = oth.max; max_i = oth.max_i; } }
   // update a higher-order guy from a lower-level guy (e.g., layer from unit group)
 
-  INLINE void	CopyFmAvgMax(const STATE_CLASS(LeabraAvgMax)& oth)
+  INLINE void   CopyFmAvgMax(const STATE_CLASS(LeabraAvgMax)& oth)
   { avg = oth.avg;  max = oth.max; max_i = oth.max_i; sum = oth.sum; n = oth.n; }
   // copy from other
 
@@ -73,7 +73,7 @@ public:
   STATE_DECO_KEY("Layer");
   STATE_TA_STD_CODE(LeabraAvgMax);
 private:
-  void	Initialize()    { avg = sum = max = 0.0f; n = 0; max_i = -1; }
+  void  Initialize()    { avg = sum = max = 0.0f; n = 0; max_i = -1; }
 };
 
 class STATE_CLASS(LeabraInhibVals) : public STATE_CLASS(taOBase) {
@@ -82,9 +82,9 @@ INHERITED(taOBase)
 public:
   float         ffi;            // computed feedforward inhibition
   float         fbi;            // computed feedback inhibition (total)
-  float		g_i;		// overall value of the inhibition -- this is what is added into the unit g_i inhibition level (along with any synaptic unit-driven inhibition)
-  float		g_i_orig; 	// original value of the inhibition (before any layer group effects set in)
-  float		lay_g_i;	// for unit groups, this is the layer-level inhibition that is MAX'd with the unit-group level inhibition to produce the net inhibition, if unit_gp_inhib is on
+  float         g_i;            // overall value of the inhibition -- this is what is added into the unit g_i inhibition level (along with any synaptic unit-driven inhibition)
+  float         g_i_orig;       // original value of the inhibition (before any layer group effects set in)
+  float         lay_g_i;        // for unit groups, this is the layer-level inhibition that is MAX'd with the unit-group level inhibition to produce the net inhibition, if unit_gp_inhib is on
 
   INLINE void   InitVals() {
     ffi = 0.0f;  fbi = 0.0f;  g_i = 0.0f;  g_i_orig = 0.0f;  lay_g_i = 0.0f;
@@ -94,6 +94,6 @@ public:
   STATE_DECO_KEY("Layer");
   STATE_TA_STD_CODE(LeabraInhibVals);
 private:
-  void	Initialize()    { InitVals(); }
+  void  Initialize()    { InitVals(); }
 };
 

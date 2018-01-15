@@ -33,8 +33,8 @@ public:
   TA_BASEFUNS(taiMimeItem_List);
 private:
   NOCOPY(taiMimeItem_List)
-  void	Initialize() {SetBaseType(&TA_taiMimeItem);}
-  void	Destroy() {}
+  void  Initialize() {SetBaseType(&TA_taiMimeItem);}
+  void  Destroy() {}
 };
 
 #endif // taiMimeItem_List_h

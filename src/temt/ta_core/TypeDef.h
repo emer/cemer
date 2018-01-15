@@ -153,9 +153,9 @@ public:
   String        c_name;         // C name, when diff from name (ex 'unsigned_char' vs 'unsigned char")
   String        namespc;        // name space scope
   
-  String	source_file;	// source file name where defined -- no path information, just file name -- this is the effective source file -- any special include file active during transclusion will be in special
-  int		source_start;	// starting source code line number
-  int		source_end;	// ending source code line number
+  String        source_file;    // source file name where defined -- no path information, just file name -- this is the effective source file -- any special include file active during transclusion will be in special
+  int           source_start;   // starting source code line number
+  int           source_end;     // ending source code line number
 
 #if !defined(NO_TA_BASE) && defined(DMEM_COMPILE) && !defined(__MAKETA__)
   void*         dmem_type; // actually ptr to: MPI_Datatype_PArray
@@ -255,12 +255,12 @@ public:
   TypeDef(const String& nm);
 #ifdef NO_TA_BASE
   TypeDef(const String& nm, const String& dsc, const String& inop, const String& op,
-	  const String& lis,
+          const String& lis,
           int type_flags, uint siz, bool global_obj=false);
   // global_obj=true for global (non new'ed) typedef objs
 #else
   TypeDef(const String& nm, const String& dsc, const String& inop, const String& op,
-	  const String& lis, const String& src_file, int src_st, int src_ed,
+          const String& lis, const String& src_file, int src_st, int src_ed,
           int type_flags, uint siz, void** inst, bool toks=false, bool global_obj=false);
   // global_obj=true for global (non new'ed) typedef objs
 #endif
@@ -288,7 +288,7 @@ public:
   // check if have a list in common
 
   /////////////////////////////////////////////////////////////
-  //		Parents, Inheritance
+  //            Parents, Inheritance
 
   TypeDef*     GetOwnerType() const override
   { if (owner) return owner->owner; else return NULL; }
@@ -442,7 +442,7 @@ public:
   // set type of a template class
 
   /////////////////////////////////////////////////////////////
-  //		Finding stuff within type
+  //            Finding stuff within type
 
   static MemberDef* FindMemberPathStatic
     (TypeDef*& own_td, int& net_base_off, const String& path, bool warn = true);
@@ -531,7 +531,7 @@ public:
   // true only if value is empty, ex 0 or ""
 
   /////////////////////////////////////////////////////////////
-  //		Copying, Comparing
+  //            Copying, Comparing
 
   void          CopyFromSameType(void* trg_base, void* src_base,
                                          MemberDef* memb_def = NULL);
@@ -547,7 +547,7 @@ public:
   // copy a particular member from same type
 
   /////////////////////////////////////////////////////////////
-  // 		Value printing
+  //            Value printing
 
   String&       Print(String& strm, void* base, int indent=0) const;
   // output value information for display purposes
@@ -559,7 +559,7 @@ public:
   String&       PrintTokens(String& strm, int indent=0) const;
 
   /////////////////////////////////////////////////////////////
-  //		HTML docs
+  //            HTML docs
 
   String        GetHTML(bool gendoc=false) const;
   // gets an HTML representation of this type -- for help view etc -- gendoc = external html file rendering instead of internal help browser
@@ -572,7 +572,7 @@ public:
   // render the members and methods for given lists of items -- can pre-filter the lists and render them separately (e.g., to separate regular from EXPERT items)
 
   /////////////////////////////////////////////////////////////
-  // 		Dump: Saving and loading of type instances to/from streams
+  //            Dump: Saving and loading of type instances to/from streams
 
   int           Dump_Save(std::ostream& strm, void* base, void* par=NULL, int indent=0);
   // called by the user to save an object

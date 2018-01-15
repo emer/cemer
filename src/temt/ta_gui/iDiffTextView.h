@@ -44,17 +44,17 @@ public:
   // fix the line spacing to be normal and not so wide like it defaults to..
 
   /** Returns the iTextEdit of the main view. */
-  iTextEdit* 	textEdit0() const { return view0; }
+  iTextEdit*    textEdit0() const { return view0; }
   /** the iNumberBar has a lot of the functionality -- access it directly */
-  iNumberBar* 	numberBar0() const { return numbers0; }
+  iNumberBar*   numberBar0() const { return numbers0; }
 
   /** Returns the iTextEdit of the main view. */
-  iTextEdit* 	textEdit1() const { return view1; }
+  iTextEdit*    textEdit1() const { return view1; }
   /** the iNumberBar has a lot of the functionality -- access it directly */
-  iNumberBar* 	numberBar1() const { return numbers1; }
+  iNumberBar*   numberBar1() const { return numbers1; }
 
   /** set the lines to highlight in the view -- -1 for none */
-  void	setHighlightLines(int start_ln, int n_lines=1);
+  void  setHighlightLines(int start_ln, int n_lines=1);
 
   /** @internal Used to get tooltip events from the view for the hover signal. */
   bool eventFilter( QObject *obj, QEvent *event );
@@ -80,9 +80,9 @@ private:
   iNumberBar *numbers0;
   iNumberBar *numbers1;
   iSplitter   *split;
-  int 	hl_line;
-  int 	hl_n;
-  bool	in_text_changed;
+  int   hl_line;
+  int   hl_n;
+  bool  in_text_changed;
 };
 
 #endif // iDiffTextView_h

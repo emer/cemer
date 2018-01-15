@@ -25,57 +25,57 @@ class QLabel; //
 class iSpinBox; //
 
 //////////////////////////////////
-// 	iDimEdit		//
+//      iDimEdit                //
 //////////////////////////////////
 
 class TA_API iDimEdit: public QWidget {
   // #IGNORE provides a horizontal striped background, to highlight items
   Q_OBJECT
 public:
-  QHBoxLayout*		lay;
-  QLabel*		lblDims;
-  iSpinBox*		spnDims;
-  QWidget*		wdgDimEdits;
-  QHBoxLayout*		layDimEdits;
-  QWidgetList		dimLabels;
-  QWidgetList		dimEdits;
+  QHBoxLayout*          lay;
+  QLabel*               lblDims;
+  iSpinBox*             spnDims;
+  QWidget*              wdgDimEdits;
+  QHBoxLayout*          layDimEdits;
+  QWidgetList           dimLabels;
+  QWidgetList           dimEdits;
 
 
-  int			dims() const; // number of dims
-  void			setDims(int value);
-  int			dim(int idx) const; // value of a given dim
-  void			setDim(int idx, int value);
-  int			maxDims() const {return m_maxDims;} // default=8
-  void			setMaxDims(int value);
-  bool			isDimsReadOnly() const {return m_dimsReadOnly;}
-  void			setDimsReadOnly(bool value);
-  bool 			isReadOnly() const {return m_readOnly;}
+  int                   dims() const; // number of dims
+  void                  setDims(int value);
+  int                   dim(int idx) const; // value of a given dim
+  void                  setDim(int idx, int value);
+  int                   maxDims() const {return m_maxDims;} // default=8
+  void                  setMaxDims(int value);
+  bool                  isDimsReadOnly() const {return m_dimsReadOnly;}
+  void                  setDimsReadOnly(bool value);
+  bool                  isReadOnly() const {return m_readOnly;}
   
   iDimEdit(QWidget* parent = NULL);
   ~iDimEdit();
   
 public slots:
-  void			setReadOnly(bool value);
+  void                  setReadOnly(bool value);
 
 #ifndef __MAKETA__
 signals:
-  void			changed(iDimEdit* sender); // called after user changes a dim and/or number of dims
+  void                  changed(iDimEdit* sender); // called after user changes a dim and/or number of dims
 #endif
   
 protected:
-  int			m_maxDims;
-  int			m_changing; // changing ref count
-  bool			m_dimsReadOnly; // dimension only
-  bool			m_readOnly;  //all
-  bool			inRange(int idx) const;
-  void			setDims_impl(int value);
+  int                   m_maxDims;
+  int                   m_changing; // changing ref count
+  bool                  m_dimsReadOnly; // dimension only
+  bool                  m_readOnly;  //all
+  bool                  inRange(int idx) const;
+  void                  setDims_impl(int value);
   
 protected slots:
-  void			dim_valueChanged(int value);
-  void			dims_valueChanged(int value);
+  void                  dim_valueChanged(int value);
+  void                  dims_valueChanged(int value);
   
 private:
-  void			init();
+  void                  init();
 };
 
 #endif // iDimEdit_h

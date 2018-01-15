@@ -32,17 +32,17 @@ class E_API LeabraUnGpData : public taOBase, public LeabraInhib {
 INHERITED(taOBase)
 public:
 
-  String 	GetTypeDecoKey() const override { return "Unit"; }
+  String        GetTypeDecoKey() const override { return "Unit"; }
 
-  virtual void		Init_State();
+  virtual void          Init_State();
   // initialize state -- called during InitWeights -- mainly for derived classes
 
-  void	InitLinks() override;
-  void	Copy_(const LeabraUnGpData& cp);
+  void  InitLinks() override;
+  void  Copy_(const LeabraUnGpData& cp);
   TA_BASEFUNS(LeabraUnGpData);
 private:
-  void	Initialize();
-  void	Destroy()		{ };
+  void  Initialize();
+  void  Destroy()               { };
 };
 
 #endif // LeabraUnGpData_h

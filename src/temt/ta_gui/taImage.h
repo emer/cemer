@@ -45,52 +45,52 @@ class TA_API taImage : public taNBase {
   INHERITED(taNBase)
 public:
 #ifdef TA_GUI
-  QImage&  	GetImage() { return q_img; }
+  QImage&       GetImage() { return q_img; }
   // #IGNORE get the underlying qt image
-  void  	SetImage(const QImage& img) { q_img = img; }
+  void          SetImage(const QImage& img) { q_img = img; }
   // #CAT_Image #IGNORE set the underlying qt image
 #endif
-  virtual bool	LoadImage(const String& fname);
+  virtual bool  LoadImage(const String& fname);
   // #BUTTON #CAT_File #FILE_DIALOG_LOAD #EXT_png,jpg load the image from given file name (leave file name blank to get a chooser)
   virtual bool  LoadImageFromBase64(const QByteArray &data);
   // #CAT_Image #IGNORE loads an image passed as a QByteArray, the client server code uses this
   virtual bool  LoadImageFromString(const String &image_string);
   // #CAT_Image  loads an image passed as a String that will get turned into a QByteArray, used for already loaded SVG
-  virtual bool	SaveImage(const String& fname);
+  virtual bool  SaveImage(const String& fname);
   // #BUTTON #CAT_File #FILE_DIALOG_SAVE #EXT_png,jpg save the image to given file name (leave file name blank to get a chooser) -- uses extension to determine format
 
-  virtual float	GetPixelGrey_float(int x, int y);
+  virtual float GetPixelGrey_float(int x, int y);
   // #CAT_Image get the pixel value as a greyscale for given coordinates
-  virtual bool	GetPixelRGB_float(int x, int y, float& r, float& g, float& b);
+  virtual bool  GetPixelRGB_float(int x, int y, float& r, float& g, float& b);
   // #CAT_Image get the pixel value as floating point RGB values for given coordinates
 
-  virtual bool	ImageToMatrix_grey(float_Matrix& grey_data);
+  virtual bool  ImageToMatrix_grey(float_Matrix& grey_data);
   // #CAT_Data convert image to greyscale Matrix floating point image data (alias for ImageToGrey_float): note that this uses standard matrix convention where 0,0 = bottom left of image, not top left..
-  virtual bool	ImageToMatrix_rgb(float_Matrix& rgb_data);
+  virtual bool  ImageToMatrix_rgb(float_Matrix& rgb_data);
   // #CAT_Data convert image to RGB Matrix floating point image data (alias for ImageToMatrix_rgb) -- rgb_data is 3 dimensional with 3rd dim = r,g,b: note that this uses standard matrix convention where 0,0 = bottom left of image, not top left..
-  virtual bool	ImageToMatrix_rgba(float_Matrix& rgba_data);
+  virtual bool  ImageToMatrix_rgba(float_Matrix& rgba_data);
   // #CAT_Data convert image to RGBA Matrix floating point image data, preserving alpha channel -- rgba_data is 3 dimensional with 3rd dim = r,g,b,a: note that this uses standard matrix convention where 0,0 = bottom left of image, not top left..
 
-  virtual bool	ImageFromMatrix_grey(const float_Matrix& grey_data);
+  virtual bool  ImageFromMatrix_grey(const float_Matrix& grey_data);
   // #CAT_Data convert from greyscale Matrix floating point image data to this image: note that this uses standard matrix convention where 0,0 = bottom left of image, not top left..  resulting image is size of matrix data (makes a new image)
-  virtual bool	ImageFromMatrix_rgb(const float_Matrix& rgb_data);
+  virtual bool  ImageFromMatrix_rgb(const float_Matrix& rgb_data);
   // #CAT_Data convert from RGB Matrix floating point image data to this image -- img_data is 3 dimensional with 3rd dim = r,g,b: note that this uses standard matrix convention where 0,0 = bottom left of image, not top left.. resulting image is size of matrix data (makes a new image)
-  virtual bool	ImageFromMatrix_rgba(const float_Matrix& rgba_data);
+  virtual bool  ImageFromMatrix_rgba(const float_Matrix& rgba_data);
   // #CAT_Data convert from RGBA Matrix floating point image data to this image -- img_data is 3 dimensional with 3rd dim = r,g,b,a: note that this uses standard matrix convention where 0,0 = bottom left of image, not top left.. resulting image is size of matrix data (makes a new image)
 
-  virtual bool	ImageToDataCell(DataTable* dt, const Variant& col, int row);
+  virtual bool  ImageToDataCell(DataTable* dt, const Variant& col, int row);
   // #BUTTON #CAT_Data set image to datatable cell indexed by col (name or number) and row -- uses cell dimensionality and type -- only amount that fits in cell is copied. row = -1 = last row
-  virtual bool	ImageFromDataCell(DataTable* dt, const Variant& col, int row);
+  virtual bool  ImageFromDataCell(DataTable* dt, const Variant& col, int row);
   // #BUTTON #CAT_Data set image from data in datatable cell indexed by col (name or number) and row -- resulting image is size of cell matrix data (makes a new image)
-  virtual bool	ConfigDataColName(DataTable* dt, const String& col_nm, ValType val_type, 
-				  bool rgb = true);
+  virtual bool  ConfigDataColName(DataTable* dt, const String& col_nm, ValType val_type, 
+                                  bool rgb = true);
   // #CAT_Data configure data column with given name (if it doesn't exist, it is created) to represent current image -- if rgb is false, then a greyscale image is configured (2d)
 
-  virtual bool	ScaleImage(float sx, float sy, bool smooth=true);
+  virtual bool  ScaleImage(float sx, float sy, bool smooth=true);
   // #BUTTON #CAT_Image scale image by given normalized scaling factors in each dimension
-  virtual bool	RotateImage(float norm_deg, bool smooth=true);
+  virtual bool  RotateImage(float norm_deg, bool smooth=true);
   // #BUTTON #CAT_Image rotate image by given normalized degrees (1 = 360deg)
-  virtual bool	TranslateImage(float move_x, float move_y, bool smooth=true);
+  virtual bool  TranslateImage(float move_x, float move_y, bool smooth=true);
   // #BUTTON #CAT_Image translate image by given normalized factors (-1 = all the way left, +1 = all the way right, etc)
   inline float  sRGBToLinear_val(float srgb)
   { float lin; if(srgb <= 0.04045f) lin = srgb / 12.92f;
@@ -108,9 +108,9 @@ public:
   virtual bool  ScaleColors(float mult);
   // #CAT_Image multiply colors by given linear multiplicative factor
 
-  virtual bool	GetImageSize(int& width, int& height);
+  virtual bool  GetImageSize(int& width, int& height);
   // #CAT_Image get size of current image
-  virtual bool	SetImageSize(int width, int height);
+  virtual bool  SetImageSize(int width, int height);
   // #BUTTON #CAT_Image set size of current image -- if currently same size, then returns false and nothing happens; otherwise, a new image data structure of given size is created, using ARGB32 format
 
   virtual void  ImageChanging() { };
@@ -121,23 +121,23 @@ public:
   ////////////////////////////////////
   // Obsolete Interfaces: do not use:
   
-  virtual bool	ImageToDataCellName(DataTable* dt, const String& col_nm, int row);
+  virtual bool  ImageToDataCellName(DataTable* dt, const String& col_nm, int row);
   // #CAT_zzzObsolete set image to datatable cell indexed by col name and row number -- uses cell dimensionality and type -- only amount that fits in cell is copied. row = -1 = last row
-  virtual bool	ImageToGrey_float(float_Matrix& grey_data) { return ImageToMatrix_grey(grey_data); }
+  virtual bool  ImageToGrey_float(float_Matrix& grey_data) { return ImageToMatrix_grey(grey_data); }
   // #CAT_zzzObsolete convert image to greyscale floating point image data: note that this uses standard matrix convention where 0,0 = bottom left of image, not top left..
-  virtual bool	ImageToRGB_float(float_Matrix& rgb_data)  { return ImageToMatrix_rgb(rgb_data); }
+  virtual bool  ImageToRGB_float(float_Matrix& rgb_data)  { return ImageToMatrix_rgb(rgb_data); }
   // #CAT_zzzObsolete convert image to RGB floating point image data -- img_data is 3 dimensional with 3rd dim = r,g,b: note that this uses standard matrix convention where 0,0 = bottom left of image, not top left..
 
 
   TA_BASEFUNS(taImage);
 protected:
 #ifdef TA_GUI
-  QImage	q_img;
+  QImage        q_img;
 #endif
 private:
-  void	Copy_(const taImage& cp);
-  void 	Initialize();
-  void	Destroy() { };
+  void  Copy_(const taImage& cp);
+  void  Initialize();
+  void  Destroy() { };
 };
 
 #endif // taImage_h

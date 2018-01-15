@@ -1,15 +1,15 @@
 // this is included directly in LeabraExtraLayerSpecs_cpp / _cuda
 // {
 
-  STATE_CLASS(TwoDValSpec)       twod;		// specifies how values are represented in terms of distributed patterns of activation across the layer
-  STATE_CLASS(MinMaxRange)       x_range;	// range of values represented across the X (horizontal) axis; for GAUSSIAN, add extra values above and below true useful range to prevent edge effects.
-  STATE_CLASS(MinMaxRange)       y_range;	// range of values represented across the Y (vertical) axis; for GAUSSIAN, add extra values above and below true useful range to prevent edge effects.
-  STATE_CLASS(TwoDValBias)       bias_val;	// specifies bias values
-  STATE_CLASS(MinMaxRange)       x_val_range;	// #READ_ONLY #NO_INHERIT actual range of values (scalar.min/max taking into account un_range)
-  STATE_CLASS(MinMaxRange)       y_val_range;	// #READ_ONLY #NO_INHERIT actual range of values (scalar.min/max taking into account un_range)
+  STATE_CLASS(TwoDValSpec)       twod;          // specifies how values are represented in terms of distributed patterns of activation across the layer
+  STATE_CLASS(MinMaxRange)       x_range;       // range of values represented across the X (horizontal) axis; for GAUSSIAN, add extra values above and below true useful range to prevent edge effects.
+  STATE_CLASS(MinMaxRange)       y_range;       // range of values represented across the Y (vertical) axis; for GAUSSIAN, add extra values above and below true useful range to prevent edge effects.
+  STATE_CLASS(TwoDValBias)       bias_val;      // specifies bias values
+  STATE_CLASS(MinMaxRange)       x_val_range;   // #READ_ONLY #NO_INHERIT actual range of values (scalar.min/max taking into account un_range)
+  STATE_CLASS(MinMaxRange)       y_val_range;   // #READ_ONLY #NO_INHERIT actual range of values (scalar.min/max taking into account un_range)
 
   INIMPL virtual void  ClampValue_ugp(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net, int gpidx,
-			       float rescale=1.0f);
+                               float rescale=1.0f);
   // #CAT_TwoDVal clamp value in the first unit's ext field to the units in the group
   INIMPL virtual void  ReadValue(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net);
   // #CAT_TwoDVal read out current value represented by activations in layer
@@ -21,7 +21,7 @@
                                         int gpidx);
   // #IGNORE
 
-  INIMPL virtual void	Compute_BiasVal(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net);
+  INIMPL virtual void   Compute_BiasVal(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net);
   // #CAT_TwoDVal initialize the bias value 
     INIMPL virtual void Compute_WtBias_Val(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net, int gpidx,
                                            float x_val, float y_val);
@@ -35,7 +35,7 @@
     Compute_BiasVal(lay, net);
   }
       
-  INIMPL void	Quarter_Init_Layer(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) override;
+  INIMPL void   Quarter_Init_Layer(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) override;
     INIMPL void Quarter_Init_TargFlags_Layer(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) override;
     INIMPL virtual void Quarter_Init_TargFlags_Layer_ugp
       (LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net, int gpidx);

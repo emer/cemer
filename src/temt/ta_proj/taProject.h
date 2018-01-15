@@ -174,7 +174,7 @@ public:
   virtual taBase*       FindMakeNewDataProc(TypeDef* typ, const String& nm);
   // #CAT_Data find existing data processing object of given type, or else make one and give it nm
   virtual ControlPanel*   FindMakeControlPanel(const String& seledit_name,
-					   TypeDef* type = &TA_ControlPanel);
+                                           TypeDef* type = &TA_ControlPanel);
   // #CAT_Edit get control panel object of given name, or make one if not found
   virtual taDoc*        FindMakeDoc(const String& doc_name, const String& wiki_nm = "",
                                     const String& web_url = "");
@@ -224,7 +224,7 @@ public:
 
   virtual String        GetDir();
   // #CAT_File get the project directory
-  virtual void		SetProjAsCurrent();
+  virtual void          SetProjAsCurrent();
   // #CAT_File set the current project to be the current active project -- this also sets the proj_dir for this project to be the current working directory for the file system (whenever this project enters scope, this should be called, so files are always loaded appropriately)
   virtual void          SaveRecoverFile();
   // #CAT_File Save a recover file of this project, usually called when a signal is received indicating a crash condition

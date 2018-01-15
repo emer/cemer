@@ -36,7 +36,7 @@ typedef SoSeparator inherited;
   TA_SO_NODE_HEADER(T3ScaleUniformScaler);
 #endif // def __MAKETA__
 public:
-  static void		initClass();
+  static void           initClass();
   T3ScaleUniformScaler(bool active = false, float half_size=1.1f, float cube_size=0.6f);
 };
 

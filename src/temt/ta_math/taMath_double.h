@@ -281,10 +281,10 @@ public:
   // #CAT_Probability complement of the error function (1.0 - erf(x)) */
 
   static double dprime(double mean_signal, double stdev_signal,
-		       double mean_noise, double stdev_noise);
+                       double mean_noise, double stdev_noise);
   // #CAT_Probability d' signal detection sensitivity measure (actually d_a for unequal variances) -- = (mean_signal - mean_noise) / sqrt(0.5 * (stdev_signal^2 + stdev_noise^2)) -- difference in means divided by the average standard deviations
   static double hits_fa(double dprime, double& hits, double& false_alarms, 
-		       double crit_z=0.5);
+                       double crit_z=0.5);
   // #CAT_Probability returns hits and false alarms (reference args), and overall percent correct (return value: hits + correct rejections / 2) associated with a given dprime level and z-normalized criterion (0.5 = half way between the means, 0 = right at the noise mean, 1 = right at the signal mean) -- results are just the area under the normal curve relative to the criterion
 
   static double chisq_p(double X, double v);
@@ -466,7 +466,7 @@ public:
 
 
   static double  vec_dprime(const double_Matrix* signal_vec,
-			    const double_Matrix* noise_vec);
+                            const double_Matrix* noise_vec);
   // #CAT_Statistics computes the d-prime (d') statistic from signal and noise vectors -- just computes the mean and standard deviation of each vector and then computes d' from there using standard formula (see plain dprime function)
 
   static bool   vec_regress_lin(const double_Matrix* x_vec, const double_Matrix* y_vec,

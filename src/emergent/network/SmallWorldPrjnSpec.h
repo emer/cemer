@@ -34,12 +34,12 @@ public:
   DataTable     prjns;          // #HIDDEN #NO_SAVE 
   DataTable     coords;         // #HIDDEN #NO_SAVE 
 
-  void	Connect_impl(Projection* prjn, int make_cons) override;
+  void  Connect_impl(Projection* prjn, int make_cons) override;
 
   TA_SIMPLE_BASEFUNS(SmallWorldPrjnSpec);
 private:
-  void	Initialize();
-  void 	Destroy()		{ };
+  void  Initialize();
+  void  Destroy()               { };
 };
 
 #endif // SmallWorldPrjnSpec_h

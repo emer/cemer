@@ -31,26 +31,26 @@ class TA_API IfReturn: public ProgEl {
   // if condition is true, return (from void function or stop further execution of code or init segments of Program) (can leave condition empty to just insert an unconditional return)
 INHERITED(ProgEl)
 public:
-  ProgExpr		cond; 		// #BROWSER_EDIT_LOOKUP conditionalizing expression for returning
+  ProgExpr              cond;           // #BROWSER_EDIT_LOOKUP conditionalizing expression for returning
 
-  bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
-  bool		CvtFmCode(const String& code) override;
-  bool		IsCtrlProgEl() 	override { return true; }
+  bool          CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
+  bool          CvtFmCode(const String& code) override;
+  bool          IsCtrlProgEl()  override { return true; }
 
-  String	GetDisplayName() const override;
-  String 	GetTypeDecoKey() const override { return "ProgCtrl"; }
-  String	GetToolbarName() const override { return "if.return"; }
+  String        GetDisplayName() const override;
+  String        GetTypeDecoKey() const override { return "ProgCtrl"; }
+  String        GetToolbarName() const override { return "if.return"; }
 
   PROGEL_SIMPLE_BASEFUNS(IfReturn);
 protected:
-  void		CheckThisConfig_impl(bool quiet, bool& rval) override;
-  bool		GenCssBody_impl(Program* prog) override;
-  void		UpdateAfterEdit_impl() override;
+  void          CheckThisConfig_impl(bool quiet, bool& rval) override;
+  bool          GenCssBody_impl(Program* prog) override;
+  void          UpdateAfterEdit_impl() override;
   void    ConvertToReturnExpr(); // #IGNORE separate into an If statement and a return statement - delete "this"
 
 private:
-  void	Initialize();
-  void	Destroy()	{ CutLinks(); }
+  void  Initialize();
+  void  Destroy()       { CutLinks(); }
 };
 
 #endif // IfReturn_h

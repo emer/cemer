@@ -97,7 +97,7 @@ public:
   // #CAT_ActR update buffer state -- call this whenver anything changes!
 
   String       GetDesc() const override {return desc;}
-  String 	GetTypeDecoKey() const override { return "DataTable"; }
+  String        GetTypeDecoKey() const override { return "DataTable"; }
 
   TA_SIMPLE_BASEFUNS(ActrBuffer);
 private:

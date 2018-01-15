@@ -1,12 +1,12 @@
 // this contains core shared code, and is included directly in LeabraConState _cpp.h, _cuda.h
 //{
 
-  float	        net;            // #NO_SAVE #CAT_Activation netinput to this con_group: only computed for special statistics such as RelNetin
-  float	        net_raw;        // #NO_SAVE #CAT_Activation raw summed netinput to this con_group -- only used for NETIN_PER_PRJN
-  float	        wb_avg;	        // #NO_SAVE #CAT_Learning average of effective weight values that exceed wt_bal.avg_thr across this con state -- used for weight balance
-  float	        wb_fact;	// #NO_SAVE #CAT_Learning overall weight balance factor that drives changes in wb_inc vs. wb_dec via as sigmoidal function -- this is the net strength of weigth balance changes
-  float	        wb_inc;	        // #NO_SAVE #CAT_Learning weight balance increment factor -- extra multiplier to add to weight increases to maintain overall weight balance
-  float	        wb_dec;	        // #NO_SAVE #CAT_Learning weight balance decrement factor -- extra multiplier to add to weight decreases to maintain overall weight balance
+  float         net;            // #NO_SAVE #CAT_Activation netinput to this con_group: only computed for special statistics such as RelNetin
+  float         net_raw;        // #NO_SAVE #CAT_Activation raw summed netinput to this con_group -- only used for NETIN_PER_PRJN
+  float         wb_avg;         // #NO_SAVE #CAT_Learning average of effective weight values that exceed wt_bal.avg_thr across this con state -- used for weight balance
+  float         wb_fact;        // #NO_SAVE #CAT_Learning overall weight balance factor that drives changes in wb_inc vs. wb_dec via as sigmoidal function -- this is the net strength of weigth balance changes
+  float         wb_inc;         // #NO_SAVE #CAT_Learning weight balance increment factor -- extra multiplier to add to weight increases to maintain overall weight balance
+  float         wb_dec;         // #NO_SAVE #CAT_Learning weight balance decrement factor -- extra multiplier to add to weight decreases to maintain overall weight balance
 
 
   INLINE LEABRA_CON_SPEC_CPP* GetConSpec(NETWORK_STATE* nnet) const {

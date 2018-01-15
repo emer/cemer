@@ -56,13 +56,13 @@ public:
     PARENT_USED,    // this spec is used but one or more of its child specs are unused
     CHILD_USED,     // this spec is not used but one or more of its child specs are used
   };
-  static bool       nw_itm_def_arg;	// #IGNORE default arg val for FindMake..
+  static bool       nw_itm_def_arg;     // #IGNORE default arg val for FindMake..
 
   bool              is_used;    // #READ_ONLY #HIDDEN #NO_INHERIT is THIS spec used - ignore usage of children
   UsedStatus        used_status;  // #HIDDEN #NO_INHERIT for gui use only to indicate to user the usage of this spec and child specs
   
   bool              is_new;     // #READ_ONLY #HIDDEN #NO_INHERIT #NO_SAVE is this spec newly created?  if so, prompt user to apply it to some objects..
-  String            desc;	// #EDIT_DIALOG #NO_INHERIT Description of what this variable is for
+  String            desc;       // #EDIT_DIALOG #NO_INHERIT Description of what this variable is for
   String_Array      unique; // #HIDDEN string list of unique members
   NameVar_Array     saved; // #HIDDEN values of members that are not overriding parent values - reset to these values if override is click
   TypeDef*          min_obj_type;
@@ -81,20 +81,20 @@ public:
   virtual BaseSpec* FindParent() const;
   // #MENU #USE_RVAL #MENU_ON_Actions Find the parent spec of this one
 
-  virtual void	SetUnique(int memb_no, bool on); // set inherit bit
-  virtual void	SetUnique(const String& memb_nm, bool on); // set inherit bit
-  virtual bool	GetUnique(int memb_no) const;	     	  // check inherit bit
-  virtual bool	GetUnique(const String& memb_nm) const; // check inherit bit
+  virtual void  SetUnique(int memb_no, bool on); // set inherit bit
+  virtual void  SetUnique(const String& memb_nm, bool on); // set inherit bit
+  virtual bool  GetUnique(int memb_no) const;             // check inherit bit
+  virtual bool  GetUnique(const String& memb_nm) const; // check inherit bit
 
   virtual bool  IsInheritedAndHasParent(const String& memb_nm) const;
   // is given member inherited from its parent (i.e., NOT unique) and parent actually has this member ot inherit from
 
-  virtual void	UpdateMember(BaseSpec* from, int memb_no);
+  virtual void  UpdateMember(BaseSpec* from, int memb_no);
   // copy member from given parent
-  virtual void	UpdateSpec();
+  virtual void  UpdateSpec();
   // update values from parent, and update children
-  virtual void	UpdateChildren();	// update any children
-  virtual void	UpdateSubSpecs() { };	// update any subspec objects (overload me)
+  virtual void  UpdateChildren();       // update any children
+  virtual void  UpdateSubSpecs() { };   // update any subspec objects (overload me)
 
   virtual BaseSpec* NewChild(TypeDef* child_type);
   // #BUTTON #TYPE_ON_children.el_base #NO_SAVE_ARG_VAL #CAT_Modify create a new child spec that inherits from this one but can have its own unique parameters
@@ -103,16 +103,16 @@ public:
   
   virtual bool  CheckType(TypeDef* td);
   // checks typedef type, issues error and returns false if not sufficient
-  virtual bool	CheckObjectType(taBase* obj);
+  virtual bool  CheckObjectType(taBase* obj);
   // checks object type, issues error and returns false if not sufficient
-  virtual void	SpecSet(taBase* obj);
+  virtual void  SpecSet(taBase* obj);
   // #IGNORE called just after the spec was set but before obj->UAE
-  virtual void	SpecUnSet(taBase* obj);
+  virtual void  SpecUnSet(taBase* obj);
   // #IGNORE called just after the spec was un-set from given object
 
   virtual BaseSpec* FindMakeChild(const String& nm, TypeDef* td = NULL, bool& nw_itm = nw_itm_def_arg, const String& alt_nm = NULLStr);
   // find a child spec of given name, and if not, make it (if nm is not found and alt_nm != NULL, it is searched for)
-  virtual bool 	    RemoveChild(const String& nm, TypeDef* td = NULL);
+  virtual bool      RemoveChild(const String& nm, TypeDef* td = NULL);
   // remove a child based on name or type
 
   void            MemberUpdateAfterEdit(MemberDef* md, bool edit_dialog = false) override;
@@ -122,7 +122,7 @@ public:
                           SpecUser* obj4=NULL);
   // #BUTTON #NULL_OK #TYPE_ON_min_user_type #PREFER_NULL apply this spec to given object(s) (leave NULL any that are not needed)
   
-  virtual void	  Defaults();
+  virtual void    Defaults();
   // #BUTTON #CONFIRM #CAT_ObjectMgmt restore specs to their default original parameter values, for parameters that have a strong default value -- WARNING: you will lose any unique parameters for anything that has a strong default value
   // note: typically do NOT redefine basic Defaults function -- see SPEC_DEFAULTS comment above
 
@@ -154,27 +154,27 @@ public:
   virtual void    ResetAllSpecIdxs();
   // #IGNORE reset all the state spec_idx spec indexes to -1 -- called prior to building so only used specs have a valid spec_idx
   
-  void	InitLinks() override;
-  void	CutLinks() override;
+  void  InitLinks() override;
+  void  CutLinks() override;
   TA_BASEFUNS(BaseSpec);
 protected:
-  void	UpdateAfterEdit_impl() override;
+  void  UpdateAfterEdit_impl() override;
   void  CheckThisConfig_impl(bool quiet, bool& ok) override;
   void  CheckChildConfig_impl(bool quiet, bool& rval) override;
   virtual bool  CheckType_impl(TypeDef* td);
   // #IGNORE actually does the check
-  virtual bool	CheckObjectType_impl(taBase* obj);
+  virtual bool  CheckObjectType_impl(taBase* obj);
   // #IGNORE actually does the check
-  virtual void	Defaults_impl() { };
+  virtual void  Defaults_impl() { };
   // #IGNORE this is base of impl class -- derived cases should call inherited then do their thing (usu just Defaults_init) -- very much like UAE_impl -- note that Defaults cals Defaults_Members
-  virtual void	DefaultsMembers();
+  virtual void  DefaultsMembers();
   // #IGNORE just a simple loop to call defaults on all the member objects in a class
 
 private:
-  void 	Initialize();
-  void	Destroy();
-  void 	Copy_(const BaseSpec& cp);
-  void	Defaults_init() { };
+  void  Initialize();
+  void  Destroy();
+  void  Copy_(const BaseSpec& cp);
+  void  Defaults_init() { };
   // #IGNORE put basic default params init stuff in here -- can check other params that might have been set -- Initialize can call this + do other housekeeping inits, or this can call Initialize if the two are sufficiently synonymous
 };
 

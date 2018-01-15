@@ -34,15 +34,15 @@ public:
 
 #include <LeabraBiasSpec_core>
   
-  bool	CheckObjectType_impl(taBase* obj) override;
+  bool  CheckObjectType_impl(taBase* obj) override;
 
   TA_SIMPLE_BASEFUNS(LeabraBiasSpec);
 protected:
   SPEC_DEFAULTS;
 private:
-  void 	Initialize();
-  void	Destroy()		{ };
-  void	Defaults_init();
+  void  Initialize();
+  void  Destroy()               { };
+  void  Defaults_init();
 };
 
 TA_SMART_PTRS(E_API, LeabraBiasSpec)

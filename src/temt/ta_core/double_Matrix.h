@@ -41,7 +41,7 @@ public:
   virtual void          InitVals(double val=0.0) { for(int i=0;i<size;i++) FastEl_Flat(i) = val; }
   // initialize values to given fixed value
 
-  virtual void		InitFromDoubles(double* vals, int n=-1)
+  virtual void          InitFromDoubles(double* vals, int n=-1)
   { int eff_n = size; if(n > 0) { eff_n = n; if(size < n) SetGeom(1,n); }
     for(int i=0;i<eff_n;i++) FastEl_Flat(i) = vals[i]; }
   // initialize values from an array of doubles, with optional number parameter n (if unspecified or -1, then array is assumed to be size of matrix)

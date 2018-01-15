@@ -29,25 +29,25 @@ class TA_API Comment: public ProgEl {
   // insert a highlighted (possibly) multi-line comment -- useful for describing an upcoming chunk of code
 INHERITED(ProgEl)
 public:
-  bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
-  bool		CvtFmCode(const String& code) override;
-  bool		IsCtrlProgEl() 	override { return true; }
+  bool          CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
+  bool          CvtFmCode(const String& code) override;
+  bool          IsCtrlProgEl()  override { return true; }
 
   String        GetColText(const KeyString& key, int itm_idx = -1) const override;
   bool          BrowserEditSet(const String& code, int move_after=0) override;
 
-  String	GetDisplayName() const override;
-  String	GetTypeDecoKey() const override { return "Comment"; }
-  String	GetToolbarName() const override { return "comment"; }
+  String        GetDisplayName() const override;
+  String        GetTypeDecoKey() const override { return "Comment"; }
+  String        GetToolbarName() const override { return "comment"; }
 
   PROGEL_SIMPLE_BASEFUNS(Comment);
 protected:
-  bool		useDesc() const override {return false;} 
-  bool		GenCssBody_impl(Program* prog) override;
+  bool          useDesc() const override {return false;} 
+  bool          GenCssBody_impl(Program* prog) override;
 
 private:
-  void	Initialize();
-  void	Destroy()	{CutLinks();}
+  void  Initialize();
+  void  Destroy()       {CutLinks();}
 }; 
 
 #endif // Comment_h

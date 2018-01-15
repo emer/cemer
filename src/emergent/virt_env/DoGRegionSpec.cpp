@@ -249,7 +249,11 @@ bool DoGRegionSpec::DoGFilterImage(float_Matrix* image, float_Matrix* out) {
       mono_zero_val = mono_zero_fix;
     }
     else if(mono_zero == MEAN_ZERO) {
-      float_Matrix* mono_img = GetImageForChan((ColorChannel)0);
+      float_Matrix* mono_img;
+      if(rgb_img)
+        mono_img = GetImageForChan((ColorChannel)0);
+      else
+        mono_img = cur_img;
       mono_zero_mean = taMath_float::vec_mean(mono_img);
       mono_zero_val= mono_zero_mean;
     }

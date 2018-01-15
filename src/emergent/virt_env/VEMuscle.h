@@ -34,17 +34,17 @@ class E_API VEMuscle : public taNBase {
   INHERITED(taNBase)
 public:
 
-  taVector3f 	IPprox;    // proximal/medial insertion point
-  taVector3f 	IPdist;    // distal/lateral insertion point
-  taVector3f 	p3;        // point of intersection with the bending line
-  bool 		bend;      // true if the muscle is currently bending
+  taVector3f    IPprox;    // proximal/medial insertion point
+  taVector3f    IPdist;    // distal/lateral insertion point
+  taVector3f    p3;        // point of intersection with the bending line
+  bool          bend;      // true if the muscle is currently bending
 
-  virtual taVector3f 	Contract(float stim);
+  virtual taVector3f    Contract(float stim);
   // #IGNORE Returns the force vector (pointing towards the proximal insertion point) resulting from a given stimulation of the muscle;
 
   virtual float Length();       // Returns current length of muscle
-  virtual float Speed();  	// Returns muscle's contraction speed one world stepsize ago
-  virtual void UpOld();		// update past values stored
+  virtual float Speed();        // Returns muscle's contraction speed one world stepsize ago
+  virtual void UpOld();         // update past values stored
   virtual void InitBuffs();     // Initialize the buffers that store past values
   virtual float Old_Length();   // Delayed value of muscle length
   virtual float Old_Speed();    // Delayed value of muscle speed

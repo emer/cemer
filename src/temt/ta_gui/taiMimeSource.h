@@ -57,41 +57,41 @@ class TA_API taiMimeSource: public QObject { // #NO_CSS #NO_MEMBERS a delegate/w
 INHERITED(QObject)
   Q_OBJECT
 public:
-  static taiMimeSource*	New(const QMimeData* md);
-  static taiMimeSource*	NewFromClipboard(); // whatever is on clipboard
+  static taiMimeSource* New(const QMimeData* md);
+  static taiMimeSource* NewFromClipboard(); // whatever is on clipboard
 public:
-  QByteArray 		data(const QString& mimeType) const;
-  int			data(const QString& mimeType, taString& result) const; // provides data to a String; returns # bytes
+  QByteArray            data(const QString& mimeType) const;
+  int                   data(const QString& mimeType, taString& result) const; // provides data to a String; returns # bytes
 #ifndef __MAKETA__
-  int			data(const QString& mimeType, std::istringstream& result) const; // #IGNORE provides data to an istrstream; returns # bytes
+  int                   data(const QString& mimeType, std::istringstream& result) const; // #IGNORE provides data to an istrstream; returns # bytes
 #endif
-  QStringList 	        formats() const;
-  bool			hasFormat(const QString& mimeType) const;
-  const QMimeData*	mimeData() const {return m_md;}
-  int			srcAction() const {return m_src_action;}
-  bool			isThisProcess() const {return m_this_proc;}
+  QStringList           formats() const;
+  bool                  hasFormat(const QString& mimeType) const;
+  const QMimeData*      mimeData() const {return m_md;}
+  int                   srcAction() const {return m_src_action;}
+  bool                  isThisProcess() const {return m_this_proc;}
   
-  taiObjectsMimeItem*	objects() const; // convenience GetMimeItem accessor for this type -- NULL if not tacss on clipboard
+  taiObjectsMimeItem*   objects() const; // convenience GetMimeItem accessor for this type -- NULL if not tacss on clipboard
 
-  taiMimeItem*		GetMimeItem(TypeDef* td, const String& subkey = _nilString);
+  taiMimeItem*          GetMimeItem(TypeDef* td, const String& subkey = _nilString);
     // get a guy of specified taiMimeItem type, using optional subkey; NULL if that type not supported; note: we check our list first, before trying to make a new guy
     
-  void			ResolveObjects(); // for inProcess, binds all objects to the paths, prior to opeations
+  void                  ResolveObjects(); // for inProcess, binds all objects to the paths, prior to opeations
   
   ~taiMimeSource();
 
 public slots:
-  void			ms_destroyed(); // mostly for debug
+  void                  ms_destroyed(); // mostly for debug
 
 protected:
-  const QMimeData* 	m_md;
-  taiMimeItem_List	items;
+  const QMimeData*      m_md;
+  taiMimeItem_List      items;
   // the following are extracted from the common tacss header info:
-  int			m_src_action;
-  bool			m_this_proc;
+  int                   m_src_action;
+  bool                  m_this_proc;
   
-  void			Decode(); // decodes the guy, noop if decoded
-  bool			Decode_common(String arg);
+  void                  Decode(); // decodes the guy, noop if decoded
+  bool                  Decode_common(String arg);
   
   taiMimeSource(const QMimeData* m_md); // creates an instance from a non-null m_md; if m_md is tacss, fields are decoded
 
@@ -104,42 +104,42 @@ public: // compatability interface
   calls such that terminal guys can grok looking at all objects, not just
   one at a time.
 */
-  int			count() const {return (mi) ? mi->count() : 0;}
-  bool			isMulti() const  {return (mi) ? (mi->count() > 1) : false;}
-  bool			isObject() const;
+  int                   count() const {return (mi) ? mi->count() : 0;}
+  bool                  isMulti() const  {return (mi) ? (mi->count() > 1) : false;}
+  bool                  isObject() const;
 
 #ifndef __MAKETA__
-  int			objectData(std::istringstream& istr);
+  int                   objectData(std::istringstream& istr);
 #endif
-  taBase*		tabObject() const; 
+  taBase*               tabObject() const; 
   
-  int			index() const; // current index value; -1 if none
-  void			setIndex(int val) 
+  int                   index() const; // current index value; -1 if none
+  void                  setIndex(int val) 
     {iter_idx = ((val >= 0) && (val < count())) ? val : -1;}
     // sets index; must be -1 or in range, else sets to -1
-  String		typeName() const 
+  String                typeName() const 
     {return (isObject() && inRange()) ? 
       ((taiObjectMimeItem*)item())->typeName() : _nilString;}
     // ITER empty if not a tacss object mime type
-  TypeDef*		td() const 
+  TypeDef*              td() const 
     {return (isObject() && inRange()) ?
       ((taiObjectMimeItem*)item())->td() : NULL;}
     // ITER the TypeDef associated with typeName, or NULL if not in our type list or not tacss
-  bool			isBase() const 
+  bool                  isBase() const 
    {return (isObject() && inRange()) ? true : false;};
     // ITER true if the object is derived from taBase NOTE: all objects are base
-  String		path() const 
+  String                path() const 
     {return (isObject() && inRange()) ? 
       ((taiObjectMimeItem*)item())->path() : _nilString;};
     // ITER if a taBase object, its full path
 protected: // compatability interface
-  int			m_itm_cnt;
-  mutable taiObjectsMimeItem*	mi; // cache
-  int			iter_idx; // iteration index: =-1, not started yet; >=0 < items.size, in range; =size, past end
-  bool			inRange() const {return ((iter_idx >= 0) && (iter_idx < count()));}// true if index in range
-  taiMimeItem*		item() const {return item(iter_idx);} // current item -- must always be checked with inRange before access
+  int                   m_itm_cnt;
+  mutable taiObjectsMimeItem*   mi; // cache
+  int                   iter_idx; // iteration index: =-1, not started yet; >=0 < items.size, in range; =size, past end
+  bool                  inRange() const {return ((iter_idx >= 0) && (iter_idx < count()));}// true if index in range
+  taiMimeItem*          item() const {return item(iter_idx);} // current item -- must always be checked with inRange before access
 
-  taiMimeItem*		item(int idx) const {
+  taiMimeItem*          item(int idx) const {
     if (mi) return mi->item(idx); else return NULL;} // TEMP
 };
 

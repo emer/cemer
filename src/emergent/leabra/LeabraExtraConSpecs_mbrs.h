@@ -25,21 +25,21 @@ class STATE_CLASS(ChlSpecs) : public STATE_CLASS(SpecMemberBase) {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra Leabra CHL mixture of learning factors (hebbian vs. error-driven) specification
 INHERITED(SpecMemberBase)
 public:
-  bool		use;	        // use CHL learning instead of standard XCAL learning -- allows easy exploration of CHL vs. XCAL
-  float		hebb;		// [Default: .001] #MIN_0 amount of hebbian learning (should be relatively small, can be effective at .0001)
-  float		err;		// #READ_ONLY #SHOW [Default: .999] amount of error driven learning, automatically computed to be 1-hebb
-  float		savg_cor;       // #DEF_0.4:0.8 #MIN_0 #MAX_1 proportion of correction to apply to sending average activation for hebbian learning component (0=none, 1=all, .5=half, etc)
-  float		savg_thresh;    // #DEF_0.001 #MIN_0 threshold of sending average activation below which learning does not occur (prevents learning when there is no input)
+  bool          use;            // use CHL learning instead of standard XCAL learning -- allows easy exploration of CHL vs. XCAL
+  float         hebb;           // [Default: .001] #MIN_0 amount of hebbian learning (should be relatively small, can be effective at .0001)
+  float         err;            // #READ_ONLY #SHOW [Default: .999] amount of error driven learning, automatically computed to be 1-hebb
+  float         savg_cor;       // #DEF_0.4:0.8 #MIN_0 #MAX_1 proportion of correction to apply to sending average activation for hebbian learning component (0=none, 1=all, .5=half, etc)
+  float         savg_thresh;    // #DEF_0.001 #MIN_0 threshold of sending average activation below which learning does not occur (prevents learning when there is no input)
 
   STATE_DECO_KEY("ConSpec");
   STATE_TA_STD_CODE_SPEC(ChlSpecs);
   STATE_UAE( err = 1.0f - hebb; );
 private:
-  INLINE void	Initialize() {
+  INLINE void   Initialize() {
     use = true;    hebb = .001f;    err = 1.0f - hebb;    savg_cor = .4f;
     savg_thresh = .001f;
   }
-  INLINE void	Defaults_init() { };
+  INLINE void   Defaults_init() { };
 };
 
 
@@ -63,8 +63,8 @@ public:
   STATE_DECO_KEY("ConSpec");
   STATE_TA_STD_CODE_SPEC(LatAmygGains);
 private:
-  INLINE void	Initialize() {  Defaults_init();  dar = D1D2R; }
-  INLINE void	Defaults_init() {
+  INLINE void   Initialize() {  Defaults_init();  dar = D1D2R; }
+  INLINE void   Defaults_init() {
     burst_da_gain = 1.0f;    dip_da_gain= 1.0f;    wt_decay_rate = 0.001f;
     wt_decay_floor = 0.5f;    neg_lrate = 0.001f;
   }
@@ -116,8 +116,8 @@ public:
   STATE_DECO_KEY("ConSpec");
   STATE_TA_STD_CODE_SPEC(BLAmygLearnSpec);
 private:
-  INLINE void	Initialize()    {   Defaults_init(); }
-  INLINE void	Defaults_init() {
+  INLINE void   Initialize()    {   Defaults_init(); }
+  INLINE void   Defaults_init() {
     dalr_gain = 1.0f;  dalr_base = 0.0f;  da_lrn_thr = 0.02f;  act_delta_thr = 0.05f;
     deep_lrn_mod = true;  deep_lrn_thr = 0.05f;
   }
@@ -139,8 +139,8 @@ public:
   STATE_DECO_KEY("ConSpec");
   STATE_TA_STD_CODE_SPEC(CElAmygLearnSpec);
 private:
-  INLINE void	Initialize()    { Defaults_init(); }
-  INLINE void	Defaults_init() {
+  INLINE void   Initialize()    { Defaults_init(); }
+  INLINE void   Defaults_init() {
     dalr_gain = 1.0f;  dalr_base = 0.0f; da_lrn_thr = 0.02f;  act_delta_thr = 0.02f;
   }
 };
@@ -163,8 +163,8 @@ public:
   STATE_DECO_KEY("ConSpec");
   STATE_TA_STD_CODE_SPEC(MSNTraceSpec);
 private:
-  INLINE void	Initialize()    { Defaults_init(); }
-  INLINE void	Defaults_init() {
+  INLINE void   Initialize()    { Defaults_init(); }
+  INLINE void   Defaults_init() {
     ach_reset_thr = 0.5f;  msn_deriv = true;  max_vs_deep_mod = 0.5f;
   }
 };
@@ -229,8 +229,8 @@ public:
   STATE_DECO_KEY("ConSpec");
   STATE_TA_STD_CODE_SPEC(MSNTraceThalLrates);
 private:
-  INLINE void	Initialize()            { Defaults_init(); }
-  INLINE void	Defaults_init() {
+  INLINE void   Initialize()            { Defaults_init(); }
+  INLINE void   Defaults_init() {
     full_params = false;    not_gated = 0.7f;
     gate_go_pos = 1.0f;    gate_go_neg = 1.0f;    gate_nogo_pos = 0.1f;
     gate_nogo_neg = 1.0f;  not_go_pos = 0.7f;     not_go_neg = 0.7f;

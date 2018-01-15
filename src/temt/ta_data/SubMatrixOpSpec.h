@@ -31,7 +31,7 @@ class TA_API SubMatrixOpSpec : public DataOpBaseSpec {
   // sub matrix operations spec -- contains a list of columns that contain sub matricies, and their offsets within a larger matrix
 INHERITED(DataOpBaseSpec)
 public:
-  DataTableRef		sub_matrix_table;
+  DataTableRef          sub_matrix_table;
   // pointer to a sub matrix data table, for looking up the column names in the spec (different tables can be used for actual processing as long as they have the same structure)
 
   TA_SIMPLE_BASEFUNS(SubMatrixOpSpec);
@@ -39,8 +39,8 @@ protected:
   void UpdateAfterEdit_impl() override;
 
 private:
-  void	Initialize();
-  void 	Destroy()		{ };
+  void  Initialize();
+  void  Destroy()               { };
 };
 
 #endif // SubMatrixOpSpec_h

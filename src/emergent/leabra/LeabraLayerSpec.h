@@ -71,7 +71,7 @@ public:
   // #BUTTON #NULL_OK #NULL_TEXT_NewReportData create a data table with the current layer average activations (acts_m_avg, acts_p_avg, acts_p_avg_eff) and the values specified in the layerspec avg_act.init -- this is useful for setting the .init values accurately based on actual levels 
 
   ////////////////////////////////////////////
-  //	Misc structural routines
+  //    Misc structural routines
 
   virtual LeabraLayer* FindLayerFmSpec(LeabraLayer* lay, int& prjn_idx, TypeDef* layer_spec);
   // #CAT_Structure find a layer that given layer receives from based on the type of layer spec
@@ -80,22 +80,22 @@ public:
   static  LeabraLayer* FindLayerFmSpecNet(Network* net, TypeDef* layer_spec);
   // #CAT_Structure find a layer in network based on the type of layer spec
 
-  virtual void	HelpConfig();	// #BUTTON #CAT_Structure get help message for configuring this spec
+  virtual void  HelpConfig();   // #BUTTON #CAT_Structure get help message for configuring this spec
   bool CheckConfig_Layer(Layer* lay, bool quiet=false) override;
   // check for for misc configuration settings required by different algorithms, including settings on the processes NOTE: this routine augments the default layer checks, it doesn't replace them
 
   String        GetToolbarName() const override { return "layer spec"; }
 
-  void	InitLinks() override;
+  void  InitLinks() override;
   SIMPLE_COPY(LeabraLayerSpec);
   TA_BASEFUNS(LeabraLayerSpec);
 protected:
   SPEC_DEFAULTS;
-  void	UpdateAfterEdit_impl() override;
+  void  UpdateAfterEdit_impl() override;
 private:
-  void 	Initialize();
-  void	Destroy()		{ CutLinks(); }
-  void	Defaults_init();
+  void  Initialize();
+  void  Destroy()               { CutLinks(); }
+  void  Defaults_init();
 };
 
 SPECPTR_OF(LeabraLayerSpec);

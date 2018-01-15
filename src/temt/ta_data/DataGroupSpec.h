@@ -30,12 +30,12 @@ class TA_API DataGroupSpec : public DataOpBaseSpec {
   // #CAT_Data a datatable grouping specification (list of group elements)
 INHERITED(DataOpBaseSpec)
 public:
-  bool	append_agg_name;	// if true, append aggregation operator name (e.g., group, mean, last, etc) to column names of destination data table (otherwise, just keep same names as source)
+  bool  append_agg_name;        // if true, append aggregation operator name (e.g., group, mean, last, etc) to column names of destination data table (otherwise, just keep same names as source)
 
   TA_SIMPLE_BASEFUNS(DataGroupSpec);
 private:
-  void	Initialize();
-  void 	Destroy()		{ };
+  void  Initialize();
+  void  Destroy()               { };
 };
 
 #endif // DataGroupSpec_h

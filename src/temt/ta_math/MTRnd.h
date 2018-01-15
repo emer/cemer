@@ -63,7 +63,7 @@
 
 #ifndef __MAKETA__ // we define all these in maketa/ta_type.h so don't need them during scanning
 # ifdef _MSC_VER
-  typedef int		        int32_t;
+  typedef int                   int32_t;
   typedef unsigned int          uint;
   typedef unsigned int          uint32_t;
   typedef long long             int64_t;

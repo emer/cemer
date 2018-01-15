@@ -32,17 +32,17 @@ class E_API VEObjCarouselView: public VEBodyView {
 INHERITED(VEBodyView)
 friend class VEWorldView;
 public:
-  VEObjCarousel*	ObjCarousel() const { return (VEObjCarousel*)data();}
-  virtual void		SetObjCarousel(VEObjCarousel* ob);
+  VEObjCarousel*        ObjCarousel() const { return (VEObjCarousel*)data();}
+  virtual void          SetObjCarousel(VEObjCarousel* ob);
 
   TA_BASEFUNS_NOCOPY(VEObjCarouselView);
 
 protected:
-  void	Initialize();
-  void	Destroy();
+  void  Initialize();
+  void  Destroy();
 
-  void		Render_pre() override;
-  void		Render_impl() override;
+  void          Render_pre() override;
+  void          Render_impl() override;
 };
 
 #endif // VEObjCarouselView_h

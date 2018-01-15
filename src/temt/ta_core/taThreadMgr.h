@@ -45,43 +45,43 @@ INHERITED(taOBase)
 public:
   static taThreadMgr_PList all_thread_mgrs; // #NO_SAVE #READ_ONLY all thread managers -- used for global termination as they must all be terminated through the manager -- managers automatically add and remove themselves from this list
 
-  int			n_threads; 	// #MIN_1 #NO_SAVE NOTE: not saved -- initialized from user prefs.  desired number of threads to use -- typically the number of physical processors (cores) available -- see preferences/options thread_defaults field for details.
-  int			terminate_max_wait; // #EXPERT #NO_SAVE number of iterations to wait for threads to self-terminate before taking them out more forcefully
+  int                   n_threads;      // #MIN_1 #NO_SAVE NOTE: not saved -- initialized from user prefs.  desired number of threads to use -- typically the number of physical processors (cores) available -- see preferences/options thread_defaults field for details.
+  int                   terminate_max_wait; // #EXPERT #NO_SAVE number of iterations to wait for threads to self-terminate before taking them out more forcefully
 
-  TypeDef*		task_type;	 // #NO_SAVE #READ_ONLY the type of task object to create -- this should be set *prior* to calling InitAll() and should NOT change during the lifetime of the manager, unless an explicit RemoveAll() call is made first
+  TypeDef*              task_type;       // #NO_SAVE #READ_ONLY the type of task object to create -- this should be set *prior* to calling InitAll() and should NOT change during the lifetime of the manager, unless an explicit RemoveAll() call is made first
 
-  taTask_List		tasks;	 // #NO_SAVE #READ_ONLY the tasks for the threads to perform -- we manage these and allocate them to threads -- all are of type task_type
-  taManagedThread_PList	threads; // #NO_SAVE #READ_ONLY the threads -- we manage them completely
+  taTask_List           tasks;   // #NO_SAVE #READ_ONLY the tasks for the threads to perform -- we manage these and allocate them to threads -- all are of type task_type
+  taManagedThread_PList threads; // #NO_SAVE #READ_ONLY the threads -- we manage them completely
 
   ///////////////////////////////////////////
   // Stats on the overhead of the system
 
-  bool			get_timing;	// #NO_SAVE #READ_ONLY collect timing information as the system runs -- this is set by StartTimers and turned off by EndTimers
+  bool                  get_timing;     // #NO_SAVE #READ_ONLY collect timing information as the system runs -- this is set by StartTimers and turned off by EndTimers
   bool                  spin_wait;      // #NO_SAVE use spin-wait instead of mutex-based wait() that goes to the OS -- experimental..
-  TimeUsedHR		run_time; 	// #EXPERT #NO_SAVE total time (in secs and fractions thereof) from end of RunThreads() call (after telling threads to wake up) to start of SyncThreads() call
-  TimeUsedHR		sync_time;	// #EXPERT #NO_SAVE total time (in secs and fractions thereof) in SyncThreads() waiting to sync up the threads
-  TimeUsedHR		total_time;	// #EXPERT #NO_SAVE total time (in secs and fractions thereof) from start of RunThreads() to end of SyncThreads()
-  int			n_wake_in_sync; // #EXPERT #NO_SAVE number of threads that had to be woken in the sync process -- i.e., they hadn't even started running by the time the main thread finished!
+  TimeUsedHR            run_time;       // #EXPERT #NO_SAVE total time (in secs and fractions thereof) from end of RunThreads() call (after telling threads to wake up) to start of SyncThreads() call
+  TimeUsedHR            sync_time;      // #EXPERT #NO_SAVE total time (in secs and fractions thereof) in SyncThreads() waiting to sync up the threads
+  TimeUsedHR            total_time;     // #EXPERT #NO_SAVE total time (in secs and fractions thereof) from start of RunThreads() to end of SyncThreads()
+  int                   n_wake_in_sync; // #EXPERT #NO_SAVE number of threads that had to be woken in the sync process -- i.e., they hadn't even started running by the time the main thread finished!
 
-  double		run_time_pct; 	// #EXPERT #NO_SAVE percent of total time spent running -- computed in EndTimers()
-  double		sync_time_pct;	// #EXPERT #NO_SAVE percent of total time spent syncing -- computed in EndTimers()
-  double		wake_in_sync_pct; // #EXPERT #NO_SAVE percent of total threads run that had to be woken during the sync process
-  Average		spin_wait_time; // #EXPERT #NO_SAVE average data across threads for time spent in spin wait
+  double                run_time_pct;   // #EXPERT #NO_SAVE percent of total time spent running -- computed in EndTimers()
+  double                sync_time_pct;  // #EXPERT #NO_SAVE percent of total time spent syncing -- computed in EndTimers()
+  double                wake_in_sync_pct; // #EXPERT #NO_SAVE percent of total threads run that had to be woken during the sync process
+  Average               spin_wait_time; // #EXPERT #NO_SAVE average data across threads for time spent in spin wait
 
   //////////////////////////////////////////////////////
-  //		These are used by the managed threads
+  //            These are used by the managed threads
 
-  QAtomicInt		n_to_run;
+  QAtomicInt            n_to_run;
   // #IGNORE number of threads that should start to run -- this is set to threads.size at start of run, and checked in sync threads
-  QAtomicInt		n_running;
+  QAtomicInt            n_running;
   // #IGNORE number of threads that are currently running -- atomically incremented and decremented by the threads as they run and finish their task
-  QAtomicInt		n_started;
+  QAtomicInt            n_started;
   // #IGNORE number of threads that actually started the task -- this is reset to 0 at start of run, and atomically incremented by the threads when they start running -- ensures that everyone runs..
-  QAtomicInt		n_active;
+  QAtomicInt            n_active;
   // #IGNORE number of threads that are activated and ready to start running -- used for syncing on task startup
-  QMutex		wait_mutex;
+  QMutex                wait_mutex;
   // #IGNORE mutex for guarding the wait guy
-  QWaitCondition 	wait;
+  QWaitCondition        wait;
   // #IGNORE overall wait condition -- all threads are waiting for the wakeAll from this condition, unless they are actually running
 
   QAtomicInt    sync_ctr0;       // #IGNORE for thread sync -- this is the counter that keeps incrementing 
@@ -95,15 +95,15 @@ public:
 
   
   //////////////////////////////////////////////////////
-  //		Main interface for users
+  //            Main interface for users
 
-  virtual void	InitAll();	// initialize the threads and tasks -- this checks for current sizes and is very fast if nothing has changed, so is safe to insert at start of computation just to be sure -- can be overloaded with other initialization functionality too though..
-  virtual void	RemoveAll();	// remove all the threads and tasks -- generally only called if task_type is changed, such that a subsequent InitAll will create all new guys
+  virtual void  InitAll();      // initialize the threads and tasks -- this checks for current sizes and is very fast if nothing has changed, so is safe to insert at start of computation just to be sure -- can be overloaded with other initialization functionality too though..
+  virtual void  RemoveAll();    // remove all the threads and tasks -- generally only called if task_type is changed, such that a subsequent InitAll will create all new guys
 
-  void 	Run();		// actually run the overall set of tasks -- this is a sample basic function that calls InitAll(), RunThreads() then runs task[0] on the main thread, then calls SyncThreads() -- subclasses can provide customized functions that initialize task parameters etc
+  void  Run();          // actually run the overall set of tasks -- this is a sample basic function that calls InitAll(), RunThreads() then runs task[0] on the main thread, then calls SyncThreads() -- subclasses can provide customized functions that initialize task parameters etc
 
-  virtual void	RunThreads();	// start the threads running their current task: NOTE this is ONLY called on the actual threads, and does not run the main thread
-  virtual void	SyncThreads();	// synchronize the threads at the end of running to ensure everyone has finished their task and is ready to move on
+  virtual void  RunThreads();   // start the threads running their current task: NOTE this is ONLY called on the actual threads, and does not run the main thread
+  virtual void  SyncThreads();  // synchronize the threads at the end of running to ensure everyone has finished their task and is ready to move on
   virtual void  SyncThreadsStart(); // synchronize all threads started -- after this call, all threads have started running
 
   virtual void  SyncSpin(int thread_no, int sync_no = 0, int usec_wait = 0);
@@ -111,41 +111,41 @@ public:
   virtual void  InitSyncCtrs();
   // #IGNORE initialize the sync_* ctrs for SyncSpin -- called at start of Run
 
-  virtual void	StartTimers();
+  virtual void  StartTimers();
   // Start accumulating timing information on all threads -- must be called *after* everything is initialized and ready to run
-  virtual void	EndTimers(bool print_report = true);
+  virtual void  EndTimers(bool print_report = true);
   // Finish accumulating timing information on all threads, compute summary information, and optionally report that to cout
   virtual String TimersReport();
   // return a string with a summary report on thread timing data -- only valid after EndTimers
 
-  static void	TerminateAllThreads();
+  static void   TerminateAllThreads();
   // static function for terminating all the threads, e.g., in the err signal handler or quit routine
   
-  void 	InitLinks() override;
-  void	CutLinks() override;
+  void  InitLinks() override;
+  void  CutLinks() override;
   TA_BASEFUNS_NOCOPY(taThreadMgr);
 protected:
-  void	UpdateAfterEdit_impl() override;
+  void  UpdateAfterEdit_impl() override;
 
   // these are the basic housekeeping functions that are called by InitAll and RemoveAll
 
-  void	InitThreads();
+  void  InitThreads();
   // initialize (create) n_threads-1 threads -- checks for size first and returns quickly if correct
-  void	RemoveThreads();
+  void  RemoveThreads();
   // remove all the threads -- tells them to stop, then waits for them to actually stop, then deletes them
 
-  void	CreateTasks();
+  void  CreateTasks();
   // create n_threads tasks of given type
-  void	SetTasksToThreads(); // set the tasks to the threads
+  void  SetTasksToThreads(); // set the tasks to the threads
 
 private:
-  void	Initialize();
-  void	Destroy();
+  void  Initialize();
+  void  Destroy();
 };
 
 
 ///////////////////////////////////////////////////////////////
-// 	Helpful code for tasks that call methods on objects
+//      Helpful code for tasks that call methods on objects
 
 // this was modified from http://www.partow.net/programming/templatecallback/index.html
 // by Arash Partow, available for free use under simple common license

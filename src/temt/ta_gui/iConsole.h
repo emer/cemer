@@ -152,7 +152,7 @@ protected:
   QStringList recordedScript; // commands that have succeeded
   int historyIndex; // Current history index (needed because afaik QStringList does not have such an index)
   QFile logfile;    // log std out/err msgs to this file if open
-  bool	ext_select_on;	   // toggled by Ctrl+space -- extends selection with keyboard movement
+  bool  ext_select_on;     // toggled by Ctrl+space -- extends selection with keyboard movement
 
 #ifndef TA_OS_WIN
   iInterceptor *stdoutiInterceptor; // Stdout interceptor

@@ -43,27 +43,27 @@ public:
     Z
   };
 
-  Axis			axis;
+  Axis                  axis;
   float                 font_size;
-  int			axis_n;	// number of axis (can be multiple Y axes..)
+  int                   axis_n; // number of axis (can be multiple Y axes..)
   float                 width;
   QColor                color;
 
   T3Entity*             labels;
   T3LineStrip*          lines;
   
-  void			clear() override;
-  void			addLabel(const char* text, const iVec3f& at);
+  void                  clear() override;
+  void                  addLabel(const char* text, const iVec3f& at);
   // add the label text, justified per axis (used for tick labels)
-  void			addLabel(const char* text, const iVec3f& at, int just);
+  void                  addLabel(const char* text, const iVec3f& at, int just);
   // add the label text, with explicit justification (used for axis title, and unit labels)
-  void			addLabelRot(const char* text, const iVec3f& at, int just,
-				    const QVector3D& rot_ax, float rot_ang);
+  void                  addLabelRot(const char* text, const iVec3f& at, int just,
+                                    const QVector3D& rot_ax, float rot_ang);
   // #IGNORE add the label text, with explicit justification (used for axis title, and unit labels)
-  void			addLine(const iVec3f& from, const iVec3f to);
+  void                  addLine(const iVec3f& from, const iVec3f to);
 
   void                  setNodeUpdating(bool updating) override;
-  void			setDefaultCaptionTransform() override; // sets text justif and transform for 3D
+  void                  setDefaultCaptionTransform() override; // sets text justif and transform for 3D
 
   T3Axis(Qt3DNode* par = NULL, T3DataView* dataView_ = NULL, Axis axis = X, 
          float fnt_sz=.05f, float width = 1.0f, int n_axis = 0);
@@ -97,39 +97,39 @@ public:
     Z
   };
 
-  static void		initClass(); //
+  static void           initClass(); //
 
-  float			font_size;
+  float                 font_size;
   
-  Axis			axis() const {return axis_;} //note: lifetime invariant
-  SoFont*		labelFont() const {return labelFont_;} // #IGNORE setup after creating
-  float			fontSize() const { return font_size; }
+  Axis                  axis() const {return axis_;} //note: lifetime invariant
+  SoFont*               labelFont() const {return labelFont_;} // #IGNORE setup after creating
+  float                 fontSize() const { return font_size; }
 
-  void			clear() override;
-  void			addLabel(const char* text, const iVec3f& at);
+  void                  clear() override;
+  void                  addLabel(const char* text, const iVec3f& at);
   // add the label text, justified per axis (used for tick labels)
-  void			addLabel(const char* text, const iVec3f& at, int just);
+  void                  addLabel(const char* text, const iVec3f& at, int just);
   // add the label text, with explicit justification (used for axis title, and unit labels)
   // SoAsciiText::Justification just
-  void			addLabelRot(const char* text, const iVec3f& at, int just,
-				    SbRotation& rot);
+  void                  addLabelRot(const char* text, const iVec3f& at, int just,
+                                    SbRotation& rot);
   // #IGNORE add the label text, with explicit justification (used for axis title, and unit labels)
-  void			addLine(const iVec3f& from, const iVec3f to);
+  void                  addLine(const iVec3f& from, const iVec3f to);
 
   T3Axis(Axis axis = X, T3DataView* dataView_ = NULL, float fnt_sz=.05f, int n_axis = 0);
 
 protected:
-  Axis			axis_; // note: lifetime invariant
-  int			n_ax_;	// number of axis (can be multiple Y axes..)
-  SoSeparator* 		line_sep;
-  SoDrawStyle* 		line_style;
-  SoLineSet*		lines; // we use the vertexProperty for points etc.
-  iVec3f 		last_label_at; // used so we just need to issue delta translates
-  SoComplexity*		complexity_;
-  SoFont*		labelFont_;
-  SoSeparator*		labels;
+  Axis                  axis_; // note: lifetime invariant
+  int                   n_ax_;  // number of axis (can be multiple Y axes..)
+  SoSeparator*          line_sep;
+  SoDrawStyle*          line_style;
+  SoLineSet*            lines; // we use the vertexProperty for points etc.
+  iVec3f                last_label_at; // used so we just need to issue delta translates
+  SoComplexity*         complexity_;
+  SoFont*               labelFont_;
+  SoSeparator*          labels;
 
-  void			setDefaultCaptionTransform() override; // sets text justif and transform for 3D
+  void                  setDefaultCaptionTransform() override; // sets text justif and transform for 3D
   ~T3Axis();
 };
 

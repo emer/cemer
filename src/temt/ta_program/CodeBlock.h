@@ -33,37 +33,37 @@ class TA_API CodeBlock: public ProgEl {
   // ##DEF_CHILD_prog_code a block of code (list of program elements), each executed in sequence
 INHERITED(ProgEl)
 public:
-  ProgEl_List	    	prog_code; // list of Program elements: the block of code
+  ProgEl_List           prog_code; // list of Program elements: the block of code
 
-  int 		ProgElChildrenCount() const override { return prog_code.size; }
+  int           ProgElChildrenCount() const override { return prog_code.size; }
 
-  virtual ProgEl*	AddProgCode(TypeDef* el_type)
+  virtual ProgEl*       AddProgCode(TypeDef* el_type)
   { return (ProgEl*)prog_code.New(1, el_type); }
   // #BUTTON #TYPE_ProgEl add a new program code element
 
-  bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
-  bool		CvtFmCode(const String& code) override;
+  bool          CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
+  bool          CvtFmCode(const String& code) override;
 
-  taList_impl*	children_() override { return &prog_code; }
-  ProgVar*	FindVarName(const String& var_nm) const override;
-  String	GetDisplayName() const override;
-  String	GetToolbarName() const override { return "block"; }
-  String 	GetTypeDecoKey() const override { return "ProgCtrl"; }
+  taList_impl*  children_() override { return &prog_code; }
+  ProgVar*      FindVarName(const String& var_nm) const override;
+  String        GetDisplayName() const override;
+  String        GetToolbarName() const override { return "block"; }
+  String        GetTypeDecoKey() const override { return "ProgCtrl"; }
 
   bool          BrowserEditTest() override;
 
   PROGEL_SIMPLE_BASEFUNS(CodeBlock);
 protected:
-  void		CheckChildConfig_impl(bool quiet, bool& rval) override;
-  void		PreGenChildren_impl(int& item_id) override;
-  void		GenCssPre_impl(Program* prog) override; 
-  bool		GenCssBody_impl(Program* prog) override;
-  void		GenCssPost_impl(Program* prog) override; 
-  const String	GenListing_children(int indent_level) const override;
+  void          CheckChildConfig_impl(bool quiet, bool& rval) override;
+  void          PreGenChildren_impl(int& item_id) override;
+  void          GenCssPre_impl(Program* prog) override; 
+  bool          GenCssBody_impl(Program* prog) override;
+  void          GenCssPost_impl(Program* prog) override; 
+  const String  GenListing_children(int indent_level) const override;
 
 private:
-  void	Initialize();
-  void	Destroy()	{CutLinks();}
+  void  Initialize();
+  void  Destroy()       {CutLinks();}
 };
 
 #endif // CodeBlock_h

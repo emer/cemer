@@ -39,42 +39,42 @@ class E_API iViewPanelOfVEWorld: public iViewPanel {
   Q_OBJECT
 public:
 
-  QVBoxLayout*		layOuter;
-  QHBoxLayout*		 layDispCheck;
-  QCheckBox*		  chkDisplay;
-  QCheckBox*		  chkDragObjs;
-  QCheckBox*		  chkShowJoints;
+  QVBoxLayout*          layOuter;
+  QHBoxLayout*           layDispCheck;
+  QCheckBox*              chkDisplay;
+  QCheckBox*              chkDragObjs;
+  QCheckBox*              chkShowJoints;
   QLabel*                   lblDragSize;
   taiWidgetField*                 fldDragSize;
 
-  QHBoxLayout*		 layCams;
-  QVBoxLayout*		  layCam0;
-  QLabel*		  labcam0;
-  QLabel*		  labcam0_txt;
+  QHBoxLayout*           layCams;
+  QVBoxLayout*            layCam0;
+  QLabel*                 labcam0;
+  QLabel*                 labcam0_txt;
 
-  QVBoxLayout*		  layCam1;
-  QLabel*		  labcam1;
-  QLabel*		  labcam1_txt;
+  QVBoxLayout*            layCam1;
+  QLabel*                 labcam1;
+  QLabel*                 labcam1_txt;
 
-  iMethodButtonMgr*	meth_but_mgr;
-  QWidget*		widCmdButtons;
+  iMethodButtonMgr*     meth_but_mgr;
+  QWidget*              widCmdButtons;
 
-  VEWorldView*		wv() {return (VEWorldView*)m_dv;} //
+  VEWorldView*          wv() {return (VEWorldView*)m_dv;} //
 
   iViewPanelOfVEWorld(VEWorldView* dv_);
   ~iViewPanelOfVEWorld();
 
 public: // ISigLinkClient interface
-  void*	This() override {return (void*)this;} //
-  TypeDef*	GetTypeDef() const override {return &TA_iViewPanelOfVEWorld;}
+  void* This() override {return (void*)this;} //
+  TypeDef*      GetTypeDef() const override {return &TA_iViewPanelOfVEWorld;}
 
 protected:
-  bool			req_full_redraw;
-  void		UpdatePanel_impl() override;
-  void		GetValue_impl() override;
+  bool                  req_full_redraw;
+  void          UpdatePanel_impl() override;
+  void          GetValue_impl() override;
 
 // public slots:
-//   void			viewWin_NotifySignal(ISelectableHost* src, int op); // forwarded to netview
+//   void                       viewWin_NotifySignal(ISelectableHost* src, int op); // forwarded to netview
 
   //protected slots:
 };

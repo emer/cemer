@@ -28,7 +28,7 @@ public:
   iMenuButton(const QString& text, QWidget* parent);
 
 private:
-  void		init();
+  void          init();
 };
 
 #endif // iMenuButton_h

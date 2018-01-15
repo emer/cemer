@@ -24,32 +24,32 @@ class TA_API iColorButton: public QToolButton {
 INHERITED(QToolButton)
   Q_OBJECT
 public:
-  bool		useAlpha() const {return m_use_alpha;}
-  void		setUseAlpha(bool val) {m_use_alpha = val;}
+  bool          useAlpha() const {return m_use_alpha;}
+  void          setUseAlpha(bool val) {m_use_alpha = val;}
 
-  QColor	color() const {return m_col;}
-  void		setColor(const QColor& val);
+  QColor        color() const {return m_col;}
+  void          setColor(const QColor& val);
   
-//  QSize		sizeHint() const;
+//  QSize               sizeHint() const;
   
   explicit iColorButton(QWidget* parent = 0);
   iColorButton(int r, int g, int b, int a = 255, QWidget* parent = 0);
   
 #ifndef __MAKETA__
 signals:
-  void		colorChanged(); // sent when user changes color (but not programmatically)
+  void          colorChanged(); // sent when user changes color (but not programmatically)
 #endif
 
 protected:
-  QColor	m_col;
-  bool		m_use_alpha;
-  void 		paintEvent(QPaintEvent* pe);
+  QColor        m_col;
+  bool          m_use_alpha;
+  void          paintEvent(QPaintEvent* pe);
   
 protected slots:
-  void		this_clicked();
+  void          this_clicked();
   
 private:
-  void		init(int r=0, int b=0, int g=0, int a=0);
+  void          init(int r=0, int b=0, int g=0, int a=0);
 };
 
 #endif // iColorButton_h

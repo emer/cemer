@@ -32,13 +32,13 @@ class E_API CerebConj2PrjnSpec : public ProjectionSpec {
   // cerebellar-inspired conjunctive projection spec, 2nd order conjunctions between two topographic input maps -- first one in layer prjn is outer group (across unit groups), 2nd one is inner group (within unit groups)
 INHERITED(ProjectionSpec)
 public:
-  taVector2i 	 rf_width;	// size of the receptive field -- should be an even number
-  taVector2f     rf_move;	// how much to move in input coordinates per each receiving increment (unit group or unit within group, depending on whether inner or outer) -- typically 1/2 rf_width
-  float		gauss_sigma;	// #CONDEDIT_ON_init_wts gaussian width parameter for initial weight values to give a tuning curve
-  bool		wrap;		// if true, then connectivity has a wrap-around structure so it starts at -rf_move (wrapped to right/top) and goes +rf_move past the right/top edge (wrapped to left/bottom)
+  taVector2i     rf_width;      // size of the receptive field -- should be an even number
+  taVector2f     rf_move;       // how much to move in input coordinates per each receiving increment (unit group or unit within group, depending on whether inner or outer) -- typically 1/2 rf_width
+  float         gauss_sigma;    // #CONDEDIT_ON_init_wts gaussian width parameter for initial weight values to give a tuning curve
+  bool          wrap;           // if true, then connectivity has a wrap-around structure so it starts at -rf_move (wrapped to right/top) and goes +rf_move past the right/top edge (wrapped to left/bottom)
 
-  taVector2i 	 trg_recv_geom;	// #READ_ONLY #SHOW target receiving layer geometry (either gp or unit, depending on outer vs. inner) -- computed from send and rf_width, move by TrgRecvFmSend button, or given by TrgSendFmRecv
-  taVector2i 	 trg_send_geom;	// #READ_ONLY #SHOW target sending layer geometry -- computed from recv and rf_width, move by TrgSendFmRecv button, or given by TrgRecvFmSend
+  taVector2i     trg_recv_geom; // #READ_ONLY #SHOW target receiving layer geometry (either gp or unit, depending on outer vs. inner) -- computed from send and rf_width, move by TrgRecvFmSend button, or given by TrgSendFmRecv
+  taVector2i     trg_send_geom; // #READ_ONLY #SHOW target sending layer geometry -- computed from recv and rf_width, move by TrgSendFmRecv button, or given by TrgRecvFmSend
 
   virtual  void Connect_Inner(Projection* prjn, int make_cons);
   // inner connect: unit position within the unit group determines sender location
@@ -46,22 +46,22 @@ public:
   // outer connect: unit_group position determines sender location
 
   void Connect_impl(Projection* prjn, int make_cons) override;
-  void	Init_Weights_Prjn(Projection* prjn, ConState_cpp* cg, Network* net, int thr_no)
+  void  Init_Weights_Prjn(Projection* prjn, ConState_cpp* cg, Network* net, int thr_no)
     override;
   bool  HasRandomScale() override { return false; }
 
-  virtual bool	TrgRecvFmSend(int send_x, int send_y);
+  virtual bool  TrgRecvFmSend(int send_x, int send_y);
   // #BUTTON compute target recv layer geometry based on given sending layer geometry -- updates trg_recv_geom and trg_send_geom members, including fixing send to be an appropriate even multiple of rf_move -- returns true if send values provided result are same "good" ones that come out the end
-  virtual bool	TrgSendFmRecv(int recv_x, int recv_y);
+  virtual bool  TrgSendFmRecv(int recv_x, int recv_y);
   // #BUTTON compute target recv layer geometry based on given sending layer geometry -- updates trg_recv_geom and trg_send_geom members, including fixing recv to be an appropriate even multiple of rf_move --  -- returns true if send values provided result are same "good" ones that come out the end
 
   TA_SIMPLE_BASEFUNS(CerebConj2PrjnSpec);
 protected:
   SPEC_DEFAULTS;
 private:
-  void	Initialize();
-  void 	Destroy()		{ };
-  void	Defaults_init() 	{ };
+  void  Initialize();
+  void  Destroy()               { };
+  void  Defaults_init()         { };
 };
 
 #endif // CerebConj2PrjnSpec_h

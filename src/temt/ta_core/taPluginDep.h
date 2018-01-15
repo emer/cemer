@@ -31,20 +31,20 @@ class TA_API taPluginDep: public taPluginBase {
 INHERITED(taPluginBase)
 public:
   enum DepCheck {
-    DC_OK,		// a-ok
-    DC_MISSING, 	// required guy is missing
-    DC_NOT_LOADED	// guy is listed, but not loaded
+    DC_OK,              // a-ok
+    DC_MISSING,         // required guy is missing
+    DC_NOT_LOADED       // guy is listed, but not loaded
   };
   
-  DepCheck		dep_check; // #READ_ONLY #SHOW #NO_SAVE set if plugin_dep is missing in plugins
+  DepCheck              dep_check; // #READ_ONLY #SHOW #NO_SAVE set if plugin_dep is missing in plugins
   
   TA_BASEFUNS(taPluginDep); //
 protected:
   void CheckThisConfig_impl(bool quiet, bool& rval) override; // only for _deps
 private:
-  void	Initialize();
-  void	Destroy() {}
-  void	Copy_(const taPluginDep& cp); //note: we only use this for descs, not actual plugins
+  void  Initialize();
+  void  Destroy() {}
+  void  Copy_(const taPluginDep& cp); //note: we only use this for descs, not actual plugins
 };
 
 #endif // taPluginDep_h

@@ -41,9 +41,9 @@ public:
   inline void   SetXY(float xx, float yy)       { x = xx; y = yy; }
   inline void   GetXY(float& xx, float& yy)     { xx = x; yy = y; }
 
-  void	ToMatrix(taMatrix& mat) const;
+  void  ToMatrix(taMatrix& mat) const;
   // set values to a 1d matrix object (can be any type of matrix object)
-  void	FromMatrix(taMatrix& mat);
+  void  FromMatrix(taMatrix& mat);
   // set values from a matrix object (can be any type of matrix object)
 
   taVector2f(float xx)                      { SetXY(xx, xx); }
@@ -151,6 +151,6 @@ inline taVector2f operator / (float td, const taVector2f& v) {
   taVector2f rv; rv.x = td / v.x; rv.y = td / v.y; return rv;
 }
 
-typedef taVector2f FloatTwoDCoord;	// #INSTANCE obsolete version of taVector2f
+typedef taVector2f FloatTwoDCoord;      // #INSTANCE obsolete version of taVector2f
 
 #endif // taVector2f_h
