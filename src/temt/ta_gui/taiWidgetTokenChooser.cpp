@@ -200,8 +200,15 @@ bool taiWidgetTokenChooser::ShowToken(taBase* obj, TypeDef* td, int i) const {
   //    td->InheritsFromName("DataTable_Group")) {
   //   taMisc::Info("got group!");
   // }
+
   taBase* owner = obj->GetOwner();
   if(!owner) return false;
+  
+  // keeps templates out of the list of actual instances
+  if (owner == &tabMisc::root->templates || obj->GetPath().startsWith(".templates")) {
+    return false;
+  }
+  
   if(!targ_typ->InheritsFrom(&TA_taList_impl) && !targ_typ->HasOption("CHOOSE_AS_MEMBER")) {
     // not for lists which DO mostly live as members of other objects, and are
     // selected for putting things somewhere..
@@ -211,6 +218,11 @@ bool taiWidgetTokenChooser::ShowToken(taBase* obj, TypeDef* td, int i) const {
       // either an owned member of another token, or effectively such as a managed pointer
       // member, as in the AR() matrix on a DataCol
 
+     TypeDef* obj_td = obj->GetTypeDef();
+     if (obj_td->HasOption("CHOOSE_AS_MEMBER")) {
+        return true;
+      }
+      
       if(!owner->InheritsFrom(&TA_taProject)) { // allow project members!
         return false;
       }
@@ -219,10 +231,6 @@ bool taiWidgetTokenChooser::ShowToken(taBase* obj, TypeDef* td, int i) const {
   taBase* parent = obj->GetParent(); // must have owner and not just be on some list
   if (!parent)
     return false;
-  // keeps templates out of the list of actual instances
-  if (owner == &tabMisc::root->templates) {
-    return false;
-  }
 
   taBase* mbrown = obj->GetMemberOwner(false);
   if(mbrown) {

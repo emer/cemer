@@ -142,7 +142,7 @@ eTypeDef_Of(NetworkCudaSpec);
 eTypeDef_Of(NetNetMonitor);
 
 class E_API NetNetMonitor: public NetMonitor {
-  // special network monitor for network itself -- hides network, data members
+  // ##CHOOSE_AS_MEMBER special network monitor for network itself -- hides network, data members
 INHERITED(NetMonitor)
 public:
 
