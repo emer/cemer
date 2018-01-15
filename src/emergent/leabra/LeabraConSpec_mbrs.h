@@ -397,21 +397,18 @@ private:
 
 
 class STATE_CLASS(DwtShareSpec) : public STATE_CLASS(SpecMemberBase) {
-  // ##INLINE ##NO_TOKENS ##CAT_Leabra share dwt changes across different neighboring connections -- a kind of structured randomness within a long-term relationship..
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra share dwt changes across different neighboring connections -- a kind of structured randomness within a long-term relationship -- has potential benefits for top-down projections to disrupt positive feedback loops and inject some randomness in learning directions -- not useful for feedforward projections
 INHERITED(SpecMemberBase)
 public:
-  bool          on;             // enable dwt sharing
-  int           neigh;          // #CONDSHOW_ON_on number of neighbors to share weights weith
-  bool          common;         // #CONDSHOW_ON_on sharing pool of synapses are all in common with each other -- every neigh synapses are in a common pool -- otherwise each synapse shares with neigh units *on either size* (i.e., true share size is actually 2x neigh in this case)
-  float         p_share;        // #CONDSHOW_ON_on #MIN_0 #MAX_1 probability of sharing dwts -- per sending unit (all synapses for given sender share at the same time)
-
+  bool          on;             // enable dwt sharing -- share dwt changes across different neighboring connections -- a kind of structured randomness within a long-term relationship -- has potential benefits for top-down projections to disrupt positive feedback loops and inject some randomness in learning directions -- not useful for feedforward projections
+  int           neigh;          // #CONDSHOW_ON_on #DEF_8 number of neighbors to share dwts with -- each sending synapse shares with neigh units *on either side* of itself (i.e., total number of shared synapses = 2*neigh -- just adds up all those dwt values in computing its own dwt) -- thus there is some amount of overlap and also non-overlap in the set of shared synapses -- this works slightly better than having a common group of shared synapses
+  float         p_share;        // #CONDSHOW_ON_on #DEF_0.05 #MIN_0 #MAX_1 probability of sharing dwts -- per sending unit (all synapses for given sender share at the same time) -- can't do this too frequently without disrupting learning
   
   STATE_DECO_KEY("ConSpec");
   STATE_TA_STD_CODE_SPEC(DwtShareSpec);
 private:
-  void  Initialize()    {  on = false;  neigh = 2; common = false;  p_share = 0.5f;
-    Defaults_init(); }
-  void  Defaults_init() {  }
+  void  Initialize()    { on = false;   Defaults_init(); }
+  void  Defaults_init() { neigh = 8; p_share = 0.05f; }
 };
 
 

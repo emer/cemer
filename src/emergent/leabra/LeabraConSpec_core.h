@@ -431,8 +431,8 @@
 
 
   INLINE float C_Compute_Weights_dwtshare
-  (bool dwt_sep, float* dwts, const int i, const int neigh, const int sz) {
-    if(dwt_sep) {
+  (bool dwt_sh, float* dwts, const int i, const int neigh, const int sz) {
+    if(dwt_sh) {
       float dwt = 0.0f;
       for(int ni = -neigh; ni <= neigh; ni++) {
         int j = i + ni;
@@ -446,7 +446,7 @@
       return dwts[i];
     }
   }
-  // #IGNORE separate dwt share or just dwt, depending on dwt_sep
+  // #IGNORE do dwt sharing or just dwt, depending on dwt_sh
 
   INLINE void   Compute_Weights(CON_STATE* scg, NETWORK_STATE* net, int thr_no) override {
     if(!learn) return;
@@ -456,29 +456,9 @@
     float* scales = cg->OwnCnVar(SCALE);
     const int sz = cg->size;
 
-    bool dwt_sh = (dwt_share.on && sz >= dwt_share.neigh &&
-                   (dwt_share.p_share == 1.0f || Random::BoolProb(dwt_share.p_share, thr_no)));
     int neigh = dwt_share.neigh;
-    bool dwt_sep = (dwt_sh && !dwt_share.common);
-    
-    if(dwt_sh && dwt_share.common) {
-      int n_pool = sz / neigh;
-      if(n_pool < 1) { n_pool = 1; neigh = sz; }
-      else if(n_pool * neigh < sz) n_pool++;
-      for(int pi=0; pi < n_pool; pi++) {
-        float dwt = 0.0f;
-        for(int ni=0; ni < neigh; ni++) {
-          int i = pi*neigh + ni;
-          if(i >= sz) break;
-          dwt += dwts[i];
-        }
-        for(int ni=0; ni < neigh; ni++) {
-          int i = pi*neigh + ni;
-          if(i >= sz) break;
-          dwts[i] = dwt; // ok to write back bc all now processed
-        }
-      }
-    }
+    bool dwt_sh = (dwt_share.on && sz > 2 * neigh &&
+                   (dwt_share.p_share == 1.0f || Random::BoolProb(dwt_share.p_share, thr_no)));
 
     if(wt_bal.on) {
       // note: MUST get these from ru -- diff for each con -- can't copy to sender!
@@ -488,14 +468,14 @@
 
       if(slow_wts.on) {
         for(int i=0; i<sz; i++) {
-          float dwt = C_Compute_Weights_dwtshare(dwt_sep, dwts, i, neigh, sz);
+          float dwt = C_Compute_Weights_dwtshare(dwt_sh, dwts, i, neigh, sz);
           C_Compute_Weights_CtLeabraXCAL_slow
             (wts[i], dwt, fwts[i], swts[i], scales[i], wbincs[i], wbdecs[i], thr_no);
         }
       }
       else {
         for(int i=0; i<sz; i++) {
-          float dwt = C_Compute_Weights_dwtshare(dwt_sep, dwts, i, neigh, sz);
+          float dwt = C_Compute_Weights_dwtshare(dwt_sh, dwts, i, neigh, sz);
           C_Compute_Weights_CtLeabraXCAL
             (wts[i], dwt, fwts[i], swts[i], scales[i], wbincs[i], wbdecs[i], thr_no);
         }
@@ -504,14 +484,14 @@
     else {
       if(slow_wts.on) {
         for(int i=0; i<sz; i++) {
-          float dwt = C_Compute_Weights_dwtshare(dwt_sep, dwts, i, neigh, sz);
+          float dwt = C_Compute_Weights_dwtshare(dwt_sh, dwts, i, neigh, sz);
           C_Compute_Weights_CtLeabraXCAL_slow
             (wts[i], dwt, fwts[i], swts[i], scales[i], 1.0f, 1.0f, thr_no);
         }
       }
       else {
         for(int i=0; i<sz; i++) {
-          float dwt = C_Compute_Weights_dwtshare(dwt_sep, dwts, i, neigh, sz);
+          float dwt = C_Compute_Weights_dwtshare(dwt_sh, dwts, i, neigh, sz);
           C_Compute_Weights_CtLeabraXCAL
             (wts[i], dwt, fwts[i], swts[i], scales[i], 1.0f, 1.0f, thr_no);
         }

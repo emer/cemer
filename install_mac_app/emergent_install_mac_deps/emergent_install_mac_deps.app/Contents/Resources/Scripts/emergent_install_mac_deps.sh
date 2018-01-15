@@ -167,16 +167,18 @@ function installHomeBrew {
     echo " "
     set -v  # turn on verbose
     /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+    set +v
     echo " "
     echo "Some /usr/local subdirectories need to be owned by user for brew link to work"
+    set -v  # turn on verbose
     chownUserDir /usr/local/share/doc
     chownUserDir /usr/local/share/emacs
     chownUserDir /usr/local/include/gsl
     chownUserDir /usr/local/include/ode
+    set +v
     echo " "
     echo "-- done with commands: again if any of these commands fail, you may need to intervene manually.."
     echo " "
-    set +v
 }
 
 function installBrewDeps {
@@ -189,34 +191,34 @@ function installBrewDeps {
     echo " "
     set -v  # turn on verbose
     
-    brew install --force pkg-config
-    brew install --force cmake
-    brew install --force apr
-    brew install --force apr-util
-    brew install --force subversion
-    brew install --force gsl ode libjpeg libpng
-    brew install --force libsndfile
+    /usr/local/bin/brew install --force pkg-config
+    /usr/local/bin/brew install --force cmake
+    /usr/local/bin/brew install --force apr
+    /usr/local/bin/brew install --force apr-util
+    /usr/local/bin/brew install --force subversion
+    /usr/local/bin/brew install --force gsl ode libjpeg libpng
+    /usr/local/bin/brew install --force libsndfile
     
-    brew upgrade pkg-config
-    brew upgrade cmake
-    brew upgrade apr
-    brew upgrade apr-util
-    brew upgrade subversion
-    brew upgrade gsl ode libjpeg libpng
-    brew upgrade libsndfile
+    /usr/local/bin/brew upgrade pkg-config
+    /usr/local/bin/brew upgrade cmake
+    /usr/local/bin/brew upgrade apr
+    /usr/local/bin/brew upgrade apr-util
+    /usr/local/bin/brew upgrade subversion
+    /usr/local/bin/brew upgrade gsl ode libjpeg libpng
+    /usr/local/bin/brew upgrade libsndfile
 
-    brew link --force --overwrite pkg-config
-    brew link --force --overwrite cmake
-    brew link --force --overwrite apr
-    brew link --force --overwrite apr-util
-    brew link --force --overwrite subversion
-    brew link --force --overwrite gsl ode libjpeg libpng
-    brew link --force --overwrite libsndfile
+    /usr/local/bin/brew link --force --overwrite pkg-config
+    /usr/local/bin/brew link --force --overwrite cmake
+    /usr/local/bin/brew link --force --overwrite apr
+    /usr/local/bin/brew link --force --overwrite apr-util
+    /usr/local/bin/brew link --force --overwrite subversion
+    /usr/local/bin/brew link --force --overwrite gsl ode libjpeg libpng
+    /usr/local/bin/brew link --force --overwrite libsndfile
 
+    set +v
     echo " "
     echo "-- done with commands: again if any of these commands fail, you may need to intervene manually.."
     echo " "
-    set +v
 }
 
 echo " "
