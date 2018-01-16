@@ -265,9 +265,11 @@ void NetMonitor::GetArgCompletionList(const String& method, const String& arg, t
     }
     MemberSpace mbr_space = td->members;
     for (int i = 0; i < mbr_space.size; ++i) {
-      MemberDef* mbr_def = mbr_space.FastEl(i);
-      completions.member_completions.Link(mbr_def);
+      MemberDef* md = mbr_space.FastEl(i);
+      String category = md->OptionAfter("CAT_");
+      if (category == "Statistic" || category == "Counter" || category == "Bias" || category == "Activation") {
+        completions.member_completions.Link(md);
+      }
     }
   }
 }
-
