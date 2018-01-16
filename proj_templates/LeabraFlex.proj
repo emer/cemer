@@ -1,5 +1,5 @@
-// ta_Dump File v3.0 -- code v8.5.0.0 rev11309
-LeabraProject .projects[0] { 
+// ta_Dump File v3.0 -- code v8.5.0.0 rev11349
+LeabraProject .projects[1] { 
  Doc_Group @.docs = [2] {
   taDoc @[0] { 
    UserDataItem_List @*(.user_data_) {
@@ -3257,7 +3257,7 @@ LeabraProject .projects[0] {
 	 T3DataView_List @.annote_children = [0] {
 	 };
 
-	 NetViewStateItem_List @.state_items = [20] {
+	 NetViewStateItem_List @.net_state_text.state_items = [20] {
 	  NetViewStateItem @[0] { };
 	  NetViewStateItem @[1] { };
 	  NetViewStateItem @[2] { };
@@ -3522,7 +3522,7 @@ LeabraProject .projects[0] {
   };
  };
 };
-LeabraProject .projects[0] {
+LeabraProject .projects[1] {
  name="LeabraFlex";
  desc="flexible modular framework for Leabra Programs";
  tags="Leabra, flex";
@@ -3572,25 +3572,23 @@ LeabraProject .projects[0] {
 <title>LeabraFlex - emergent</title>
 <script>document.documentElement.className = document.documentElement.className.replace( /(^|\\s)client-nojs(\\s|$)/, \"$1client-js$2\" );</script>
 <script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
-mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":!1,\"wgNamespaceNumber\":0,\"wgPageName\":\"LeabraFlex\",\"wgTitle\":\"LeabraFlex\",\"wgCurRevisionId\":13216,\"wgRevisionId\":13216,\"wgArticleId\":2315,\"wgIsArticle\":!0,\"wgIsRedirect\":!1,\"wgAction\":\"view\",\"wgUserName\":\"Oreilly\",\"wgUserGroups\":[\"bureaucrat\",\"svnadmins\",\"sysop\",\"*\",\"user\",\"autoconfirmed\"],\"wgCategories\":[],\"wgBreakFrames\":!1,\"wgPageContentLanguage\":\"en\",\"wgPageContentModel\":\"wikitext\",\"wgSeparatorTransformTable\":[\"\",\"\"],\"wgDigitTransformTable\":[\"\",\"\"],\"wgDefaultDateFormat\":\"dmy\",\"wgMonthNames\":[\"\",\"January\",\"February\",\"March\",\"April\",\"May\",\"June\",\"July\",\"August\",\"September\",\"October\",\"November\",\"December\"],\"wgMonthNamesShort\":[\"\",\"Jan\",\"Feb\",\"Mar\",\"Apr\",\"May\",\"Jun\",\"Jul\",\"Aug\",\"Sep\",\"Oct\",\"Nov\",\"Dec\"],\"wgRelevantPageName\":\"LeabraFlex\",\"wgRelevantArticleId\":2315,\"wgUserId\":3,\"wgUserEditCount\":3318,\"wgUserRegistration\":1178051527000,\"wgUserNewMsgRevisionId\":null,\"wgIsProbablyEditable\":!0,
-\"wgRestrictionEdit\":[],\"wgRestrictionMove\":[],\"sfgAutocompleteValues\":[],\"sfgAutocompleteOnAllChars\":!1,\"sfgFieldProperties\":[],\"sfgDependentFields\":[],\"sfgShowOnSelect\":[],\"sfgScriptPath\":\"/emergent/extensions/SemanticForms\",\"wgSVGEditEditor\":\"http://svg-edit.googlecode.com/svn/trunk/editor/svg-editor.html\",\"wgHeaderTabsTabIndexes\":[],\"wgWikiEditorEnabledModules\":{\"toolbar\":!0,\"dialogs\":!0,\"preview\":!0,\"publish\":!1},\"wgCategoryTreePageCategoryOptions\":\"{\\\"mode\\\":0,\\\"hideprefix\\\":20,\\\"showcount\\\":true,\\\"namespaces\\\":false}\"});mw.loader.implement(\"user.options\",function($,jQuery){mw.user.options.set({\"ccmeonemails\":\"1\",\"enotifminoredits\":\"1\",\"imagesize\":\"0\",\"previewontop\":\"\",\"rows\":\"30\",\"thumbsize\":\"0\",\"underline\":\"0\",\"watchmoves\":\"1\",\"editsection\":\"1\",\"rememberpassword\":\"1\",\"timecorrection\":\"ZoneInfo|-360|America/Denver\",\"watchlisttoken\":\"14fd6c804d78e99930123181974c128b983adb9e\"});});mw.loader.implement(\"user.tokens\",function($,jQuery){mw.user.tokens.set({\"editToken\":\"696f041992cb1ee5b562931484f85d2c5a51e1bc+\\\\\",\"patrolToken\":\"703ab38e141b886ca8b1977e286a95485a51e1bc+\\\\\",\"watchToken\":\"2bc05622990293d9f132277c127cc25a5a51e1bc+\\\\\"});});mw.loader.load([\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\",\"mediawiki.legacy.wikibits\",\"skins.vector.js\"]);
+mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":!1,\"wgNamespaceNumber\":0,\"wgPageName\":\"LeabraFlex\",\"wgTitle\":\"LeabraFlex\",\"wgCurRevisionId\":13216,\"wgRevisionId\":13216,\"wgArticleId\":2315,\"wgIsArticle\":!0,\"wgIsRedirect\":!1,\"wgAction\":\"view\",\"wgUserName\":null,\"wgUserGroups\":[\"*\"],\"wgCategories\":[],\"wgBreakFrames\":!1,\"wgPageContentLanguage\":\"en\",\"wgPageContentModel\":\"wikitext\",\"wgSeparatorTransformTable\":[\"\",\"\"],\"wgDigitTransformTable\":[\"\",\"\"],\"wgDefaultDateFormat\":\"dmy\",\"wgMonthNames\":[\"\",\"January\",\"February\",\"March\",\"April\",\"May\",\"June\",\"July\",\"August\",\"September\",\"October\",\"November\",\"December\"],\"wgMonthNamesShort\":[\"\",\"Jan\",\"Feb\",\"Mar\",\"Apr\",\"May\",\"Jun\",\"Jul\",\"Aug\",\"Sep\",\"Oct\",\"Nov\",\"Dec\"],\"wgRelevantPageName\":\"LeabraFlex\",\"wgRelevantArticleId\":2315,\"wgIsProbablyEditable\":!1,\"wgRestrictionEdit\":[],\"wgRestrictionMove\":[],\"sfgAutocompleteValues\":[],\"sfgAutocompleteOnAllChars\":!1,\"sfgFieldProperties\":[],\"sfgDependentFields\":[],\"sfgShowOnSelect\":[],
+\"sfgScriptPath\":\"/emergent/extensions/SemanticForms\",\"wgSVGEditEditor\":\"http://svg-edit.googlecode.com/svn/trunk/editor/svg-editor.html\",\"wgHeaderTabsTabIndexes\":[],\"wgWikiEditorEnabledModules\":{\"toolbar\":!0,\"dialogs\":!0,\"preview\":!0,\"publish\":!1},\"wgCategoryTreePageCategoryOptions\":\"{\\\"mode\\\":0,\\\"hideprefix\\\":20,\\\"showcount\\\":true,\\\"namespaces\\\":false}\"});mw.loader.implement(\"user.options\",function($,jQuery){mw.user.options.set({\"variant\":\"en\"});});mw.loader.implement(\"user.tokens\",function($,jQuery){mw.user.tokens.set({\"editToken\":\"+\\\\\",\"patrolToken\":\"+\\\\\",\"watchToken\":\"+\\\\\"});});mw.loader.load([\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\",\"mediawiki.legacy.wikibits\",\"skins.vector.js\"]);
 } );</script>
 <link rel=\"stylesheet\" href=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=mediawiki.legacy.commonPrint%2Cshared%7Cmediawiki.sectionAnchor%7Cmediawiki.skinning.interface%7Cskins.vector.styles&amp;only=styles&amp;skin=vector\">
 <link rel=\"stylesheet\" href=\"/emergent/extensions/HeaderTabs/skins/ext.headertabs.large.css\">
 <meta name=\"ResourceLoaderDynamicStyles\" content=\"\">
 <link rel=\"stylesheet\" href=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=site&amp;only=styles&amp;skin=vector\">
-<style>a{text-decoration:none}</style>
+<style>a:lang(ar),a:lang(kk-arab),a:lang(mzn),a:lang(ps),a:lang(ur){text-decoration:none}</style>
 <script async=\"\" src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=startup&amp;only=scripts&amp;skin=vector\"></script>
 <meta name=\"generator\" content=\"MediaWiki 1.26.4\">
 <link rel=\"ExportRDF\" type=\"application/rdf+xml\" title=\"LeabraFlex\" href=\"/emergent/index.php?title=Special:ExportRDF/LeabraFlex&amp;xmlmime=rdf\">
-<link rel=\"alternate\" type=\"application/x-wiki\" title=\"Edit\" href=\"/emergent/index.php?title=LeabraFlex&amp;action=edit\">
-<link rel=\"edit\" title=\"Edit\" href=\"/emergent/index.php?title=LeabraFlex&amp;action=edit\">
 <link rel=\"shortcut icon\" href=\"/emergent/favicon.ico\">
 <link rel=\"search\" type=\"application/opensearchdescription+xml\" href=\"/emergent/opensearch_desc.php\" title=\"emergent (en)\">
 <link rel=\"EditURI\" type=\"application/rsd+xml\" href=\"https://grey.colorado.edu/emergent/api.php?action=rsd\">
 <link rel=\"alternate\" type=\"application/atom+xml\" title=\"emergent Atom feed\" href=\"/emergent/index.php?title=Special:RecentChanges&amp;feed=atom\">
 <!--[if lt IE 7]><style type=\"text/css\">body{behavior:url(\"/emergent/skins/Vector/csshover.min.htc\")}</style><![endif]-->
-</head>
+<script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery%2Cmediawiki&amp;only=scripts&amp;skin=vector&amp;version=%2B%2Bg4NuYj\"></script></head>
 <body class=\"mediawiki ltr sitedir-ltr ns-0 ns-subject page-LeabraFlex skin-vector action-view\">
 		<div id=\"mw-page-base\" class=\"noprint\"></div>
 		<div id=\"mw-head-base\" class=\"noprint\"></div>
@@ -3621,13 +3619,13 @@ mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":!1,\
 </ul>
 </div>
 
-<h1><span class=\"mw-headline\" id=\"ParamSet_Configuration_Mechanism\">ParamSet Configuration Mechanism</span><span class=\"mw-editsection\"><span class=\"mw-editsection-bracket\">[</span><a href=\"/emergent/index.php?title=LeabraFlex&amp;action=edit&amp;section=1\" title=\"Edit section: ParamSet Configuration Mechanism\">edit</a><span class=\"mw-editsection-bracket\">]</span></span></h1>
+<h1><span class=\"mw-headline\" id=\"ParamSet_Configuration_Mechanism\">ParamSet Configuration Mechanism</span></h1>
 <p>In version 8.0.6 and above, the previous ConfigTable mechanism has been replaced with a new <a href=\"/emergent/index.php/ParamSet\" title=\"ParamSet\">ParamSet</a> mechanism that is simpler and more easily configured and extensible.
 </p><p>The master ControlPanel and ClusterRun now point to the <b>run_params</b> and <b>misc_params</b> variables on the <b>MasterTrain</b> program.  When MasterTrain runs (interactively in the gui), it Activates the currently-selected ParamSet configuration -- this copies the saved_value settings into the live, \"active\" current values of each item in the param set.  These items include variables in other key <a href=\"/emergent/index.php/Program\" title=\"Program\">Programs</a>, and parameters in the network that you want to control.  <i>It is easy to add any number of different sets of such parameters</i> -- you can either add new parameters to the existing Params groups, or you can make new groups for sets of parameters that vary mostly independently of the existing ones.
 </p><p>The param sets live in the <b>param_sets</b> group in the <a href=\"/emergent/index.php/Project\" title=\"Project\">Project</a>, in sub-groups called <b>RunParams</b> and <b>MiscParams</b>.  Within each of these groups, the first ParamSet object serves as the <b>Master</b> ParamSet, while all the remaining ones are <b>Clones.</b>  Whenever you add, remove, or modify an item within the Master, those changes are automatically copied to all the Clones.  This makes it easy to maintain a consistent set of parameters across all the configurations.  To make this more visually apparent, the Clones are shown with a grey background.  Nevertheless, the Master and Clone ParamSet objects all function in the identical way, and each has its own independent set of <b>saved_value</b> settings.  It is these saved values that distinguish each configuration.  When you Activate a ParamSet, you are copying the saved_value into the current \"live\" active value of that given item (whether it is a variable in a Program, or a value in a <a href=\"/emergent/index.php/Spec\" title=\"Spec\" class=\"mw-redirect\">Spec</a>, or any other value on any object anywhere in the software!).
 </p><p>We have removed the StdGlobalsInit program, which used to serve as the way to load all the values from the ConfigTable into live, active variables that you can then use in Programs.  Instead, these variables just live in the programs that use them directly, and the ParamSet's just point into those variables.  The <b>TrainStart</b> and <b>TrainEnd</b> programs have many of the RunParams variables. To see where a variable is, just do the <a href=\"/emergent/index.php/context_menu\" title=\"context menu\" class=\"mw-redirect\">context menu</a> on a given item label in the ParamSet, and select <b>Go To Object</b> and you'll be taken right there.  This is a major advantage over the previous DataTable mechanism, which didn't have this direct connection to the variables it controlled.
 </p>
-<h2><span class=\"mw-headline\" id=\"Converting_Existing_Projects\">Converting Existing Projects</span><span class=\"mw-editsection\"><span class=\"mw-editsection-bracket\">[</span><a href=\"/emergent/index.php?title=LeabraFlex&amp;action=edit&amp;section=2\" title=\"Edit section: Converting Existing Projects\">edit</a><span class=\"mw-editsection-bracket\">]</span></span></h2>
+<h2><span class=\"mw-headline\" id=\"Converting_Existing_Projects\">Converting Existing Projects</span></h2>
 <p>Use the <a href=\"/emergent/index.php/LeabraFlex_v804_to_v810\" title=\"LeabraFlex v804 to v810\">LeabraFlex_v804_to_v810</a> <a href=\"/emergent/index.php/Patch\" title=\"Patch\">Patch</a> to automatically upgrade an older project to this new configuration -- see <a href=\"/emergent/index.php/PublishedPatchList\" title=\"PublishedPatchList\">PublishedPatchList</a> for list of all such patches.
 </p><p>If you want to do it manually, here are the main steps to convert an existing LeabraFlex project over to the new ParamSet mechanism:
 </p>
@@ -3639,7 +3637,7 @@ mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":!1,\
 <ul><li> Then you can remove the ConfigTable and the StdGlobalsInit.  Try to run your project from the ControlPanel.  Fix any errors!</li></ul>
 <ul><li> It is really easy to create a new ParamSet_Group within the objs of a Program (there is a new button to do it) -- you can then select a set of variables from the program to add to the master param set in the group, and then add a call at the top of your prog_code to ActivateParamSet() in the ParamSet_Group object, with the name from a String variable that contains the name of the ParamSet to use -- and with that, you've got a program that can be run with different named configurations of its variables, making it easier for other programs to configure things.  You can then add this String variable to your MiscParams or other top-level param sets.  When you have a lot of complex functionality embedded within a single Program (e.g., a program that generates a complex environment), this really makes it a lot easier to configure and control, while still ensuring that each program is fully self-contained!</li></ul>
 <ul><li> Please update these instructions with any other helpful tips or missing steps!</li></ul>
-<h1><span class=\"mw-headline\" id=\"Program_Hierarchy\">Program Hierarchy</span><span class=\"mw-editsection\"><span class=\"mw-editsection-bracket\">[</span><a href=\"/emergent/index.php?title=LeabraFlex&amp;action=edit&amp;section=3\" title=\"Edit section: Program Hierarchy\">edit</a><span class=\"mw-editsection-bracket\">]</span></span></h1>
+<h1><span class=\"mw-headline\" id=\"Program_Hierarchy\">Program Hierarchy</span></h1>
 <p>The call sequence is:
 </p>
 <ul><li> <b>MasterTrain</b></li></ul>
@@ -3649,10 +3647,10 @@ mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":!1,\
 <dl><dd><ul><li> typically calls one or more <b>TaskProgs</b>, increments counters and does appropriate Epoch and higher-level housekeeping as necessary.</li></ul></dd></dl></dd></dl></dd></dl>
 <p>MasterRun now has a <b>stop_step_grain</b> parameter that allows you to Step this program at different grain sizes (e.g., after an Epoch) and for different conditions -- this is completely extensible if you look at the underlying code, and very powerful.
 </p>
-<h1><span class=\"mw-headline\" id=\"UtilProgs\">UtilProgs</span><span class=\"mw-editsection\"><span class=\"mw-editsection-bracket\">[</span><a href=\"/emergent/index.php?title=LeabraFlex&amp;action=edit&amp;section=4\" title=\"Edit section: UtilProgs\">edit</a><span class=\"mw-editsection-bracket\">]</span></span></h1>
+<h1><span class=\"mw-headline\" id=\"UtilProgs\">UtilProgs</span></h1>
 <p>The UtilProgs contain all the basic functionality for training a network and monitoring, etc -- the task programs should consist of calls to these util programs in the desired order to achieve whatever form of processing is required.  The built-in BasicTrain program just does the equivalent of a standard LeabraTrial.
 </p>
-<h1><span class=\"mw-headline\" id=\"DMem_.28MPI.29\">DMem (MPI)</span><span class=\"mw-editsection\"><span class=\"mw-editsection-bracket\">[</span><a href=\"/emergent/index.php?title=LeabraFlex&amp;action=edit&amp;section=5\" title=\"Edit section: DMem (MPI)\">edit</a><span class=\"mw-editsection-bracket\">]</span></span></h1>
+<h1><span class=\"mw-headline\" id=\"DMem_.28MPI.29\">DMem (MPI)</span></h1>
 <p>The most efficient way to use multiple distributed memory (dmem) processors (via MPI) is to split different events across processors.  The standard Leabra programs do this by interleaving trials according to dmem processor (e.g., for 10 processors, proc 0 gets trials 0, 10, 20, ..; proc 1 gets 1, 11, 21, etc..).  For these flex progs, which can have interactive behavior and ill-defined sequences of events, this strategy is not always possible (the <b>ChoosePermutedEvent</b> program in EnviroProgs does implement this behavior however).  Here are some tips:
 </p>
 <ul><li> After version 8.0, you can add taMisc::dmem_proc to all calls to <a href=\"/emergent/index.php/Random\" title=\"Random\">Random</a> or various Permute etc functions that use random numbers and take a <b>thr_no</b> (thread number) argument -- as documented in <a href=\"/emergent/index.php/MTRnd\" title=\"MTRnd\">MTRnd</a>, this thr_no arg selects different random number sequences that are initialized from a single common seed, and will produce statistically independent sequences.  Thus, you can ensure that each node gets different random inputs and other parameters, as appropriate, without needing to have an entirely different seed for each node.  This also means that results can be fully replicable when starting from the same random seed, and that nodes can also generate the same random numbers as needed (if this is needed, it is a good idea to pass taMisc::dmem_proc + 1 to the Random calls, and reserve 0 for the common shared thread that should only be called identically from all processors -- otherwise it will diverge from the 0'th node relative to the others.</li></ul>
@@ -3663,11 +3661,11 @@ mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":!1,\
 
 <!-- 
 NewPP limit report
-Cached time: 20180107090044
+Cached time: 20180116210413
 Cache expiry: 86400
 Dynamic content: false
-CPU time usage: 0.044 seconds
-Real time usage: 0.069 seconds
+CPU time usage: 0.040 seconds
+Real time usage: 0.075 seconds
 Preprocessor visited node count: 19/1000000
 Preprocessor generated node count: 24/1000000
 Post?expand include size: 0/2097152 bytes
@@ -3681,7 +3679,7 @@ Transclusion expansion time report (%,ms,calls,template)
 100.00%    0.000      1 - -total
 -->
 
-<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2315-0!*!0!!en!*!* and timestamp 20180107090044 and revision id 13216
+<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2315-0!*!0!!en!*!* and timestamp 20180116210413 and revision id 13216
  -->
 </div>					<div class=\"printfooter\">
 						Retrieved from \"<a dir=\"ltr\" href=\"https://grey.colorado.edu/emergent/index.php?title=LeabraFlex&amp;oldid=13216\">https://grey.colorado.edu/emergent/index.php?title=LeabraFlex&amp;oldid=13216</a>\"					</div>
@@ -3695,7 +3693,7 @@ Transclusion expansion time report (%,ms,calls,template)
 									<div id=\"p-personal\" role=\"navigation\" class=\"\" aria-labelledby=\"p-personal-label\">
 						<h3 id=\"p-personal-label\">Personal tools</h3>
 						<ul>
-							<li id=\"pt-userpage\"><a href=\"/emergent/index.php/User:Oreilly\" dir=\"auto\" title=\"Your user page [.]\" accesskey=\".\">Oreilly</a></li><li id=\"pt-mytalk\"><a href=\"/emergent/index.php/User_talk:Oreilly\" class=\"new\" title=\"Your talk page [n]\" accesskey=\"n\">Talk</a></li><li id=\"pt-preferences\"><a href=\"/emergent/index.php/Special:Preferences\" title=\"Your preferences\">Preferences</a></li><li id=\"pt-watchlist\"><a href=\"/emergent/index.php/Special:Watchlist\" title=\"A list of pages you are monitoring for changes [l]\" accesskey=\"l\">Watchlist</a></li><li id=\"pt-mycontris\"><a href=\"/emergent/index.php/Special:Contributions/Oreilly\" title=\"A list of your contributions [y]\" accesskey=\"y\">Contributions</a></li><li id=\"pt-logout\"><a href=\"/emergent/index.php?title=Special:UserLogout&amp;returnto=LeabraFlex\" title=\"Log out\">Log out</a></li>						</ul>
+							<li id=\"pt-createaccount\"><a href=\"/emergent/index.php?title=Special:UserLogin&amp;returnto=LeabraFlex&amp;type=signup\" title=\"You are encouraged to create an account and log in; however, it is not mandatory\">Create account</a></li><li id=\"pt-login\"><a href=\"/emergent/index.php?title=Special:UserLogin&amp;returnto=LeabraFlex\" title=\"You are encouraged to log in; however, it is not mandatory [o]\" accesskey=\"o\">Log in</a></li>						</ul>
 					</div>
 									<div id=\"left-navigation\">
 										<div id=\"p-namespaces\" role=\"navigation\" class=\"vectorTabs\" aria-labelledby=\"p-namespaces-label\">
@@ -3721,28 +3719,16 @@ Transclusion expansion time report (%,ms,calls,template)
 						<h3 id=\"p-views-label\">Views</h3>
 						<ul>
 															<li id=\"ca-view\" class=\"selected\"><span><a href=\"/emergent/index.php/LeabraFlex\">Read</a></span></li>
-															<li id=\"ca-edit\"><span><a href=\"/emergent/index.php?title=LeabraFlex&amp;action=edit\" title=\"Edit this page [e]\" accesskey=\"e\">Edit</a></span></li>
+															<li id=\"ca-viewsource\"><span><a href=\"/emergent/index.php?title=LeabraFlex&amp;action=edit\" title=\"This page is protected.
+You can view its source [e]\" accesskey=\"e\">View source</a></span></li>
 															<li id=\"ca-history\" class=\"collapsible\"><span><a href=\"/emergent/index.php?title=LeabraFlex&amp;action=history\" title=\"Past revisions of this page [h]\" accesskey=\"h\">View history</a></span></li>
-															<li id=\"ca-unwatch\" class=\"icon\"><span><a href=\"/emergent/index.php?title=LeabraFlex&amp;action=unwatch&amp;token=1b204be75ea4719bec53b7b61f7d81d35a51e1bc%2B%5C\" title=\"Remove this page from your watchlist [w]\" accesskey=\"w\">Unwatch</a></span></li>
 													</ul>
 					</div>
-										<div id=\"p-cactions\" role=\"navigation\" class=\"vectorMenu\" aria-labelledby=\"p-cactions-label\">
+										<div id=\"p-cactions\" role=\"navigation\" class=\"vectorMenu emptyPortlet\" aria-labelledby=\"p-cactions-label\">
 						<h3 id=\"p-cactions-label\"><span>More</span><a href=\"#\"></a></h3>
 
 						<div class=\"menu\">
 							<ul>
-																	<li id=\"ca-delete\">
-										<a href=\"/emergent/index.php?title=LeabraFlex&amp;action=delete\" title=\"Delete this page [d]\" accesskey=\"d\">Delete</a>
-									</li>
-																	<li id=\"ca-move\">
-										<a href=\"/emergent/index.php/Special:MovePage/LeabraFlex\" title=\"Move this page [m]\" accesskey=\"m\">Move</a>
-									</li>
-																	<li id=\"ca-protect\">
-										<a href=\"/emergent/index.php?title=LeabraFlex&amp;action=protect\" title=\"Protect this page [=]\" accesskey=\"=\">Protect</a>
-									</li>
-																	<li id=\"ca-purge\">
-										<a href=\"/emergent/index.php?title=LeabraFlex&amp;action=purge\">Refresh</a>
-									</li>
 															</ul>
 						</div>
 					</div>
@@ -3773,7 +3759,7 @@ Transclusion expansion time report (%,ms,calls,template)
 
 			<div class=\"body\">
 									<ul>
-						<li id=\"t-whatlinkshere\"><a href=\"/emergent/index.php/Special:WhatLinksHere/LeabraFlex\" title=\"A list of all wiki pages that link here [j]\" accesskey=\"j\">What links here</a></li><li id=\"t-recentchangeslinked\"><a href=\"/emergent/index.php/Special:RecentChangesLinked/LeabraFlex\" title=\"Recent changes in pages linked from this page [k]\" accesskey=\"k\">Related changes</a></li><li id=\"t-upload\"><a href=\"/emergent/index.php/Special:Upload\" title=\"Upload files [u]\" accesskey=\"u\">Upload file</a></li><li id=\"t-specialpages\"><a href=\"/emergent/index.php/Special:SpecialPages\" title=\"A list of all special pages [q]\" accesskey=\"q\">Special pages</a></li><li id=\"t-permalink\"><a href=\"/emergent/index.php?title=LeabraFlex&amp;oldid=13216\" title=\"Permanent link to this revision of the page\">Permanent link</a></li><li id=\"t-info\"><a href=\"/emergent/index.php?title=LeabraFlex&amp;action=info\" title=\"More information about this page\">Page information</a></li><li id=\"t-smwbrowselink\"><a href=\"/emergent/index.php/Special:Browse/LeabraFlex\" rel=\"smw-browse\">Browse properties</a></li>					</ul>
+						<li id=\"t-whatlinkshere\"><a href=\"/emergent/index.php/Special:WhatLinksHere/LeabraFlex\" title=\"A list of all wiki pages that link here [j]\" accesskey=\"j\">What links here</a></li><li id=\"t-recentchangeslinked\"><a href=\"/emergent/index.php/Special:RecentChangesLinked/LeabraFlex\" title=\"Recent changes in pages linked from this page [k]\" accesskey=\"k\">Related changes</a></li><li id=\"t-specialpages\"><a href=\"/emergent/index.php/Special:SpecialPages\" title=\"A list of all special pages [q]\" accesskey=\"q\">Special pages</a></li><li id=\"t-permalink\"><a href=\"/emergent/index.php?title=LeabraFlex&amp;oldid=13216\" title=\"Permanent link to this revision of the page\">Permanent link</a></li><li id=\"t-info\"><a href=\"/emergent/index.php?title=LeabraFlex&amp;action=info\" title=\"More information about this page\">Page information</a></li><li id=\"t-smwbrowselink\"><a href=\"/emergent/index.php/Special:Browse/LeabraFlex\" rel=\"smw-browse\">Browse properties</a></li>					</ul>
 							</div>
 		</div>
 			<div class=\"portal\" role=\"navigation\" id=\"p-coll-print_export\" aria-labelledby=\"p-coll-print_export-label\">
@@ -3800,9 +3786,9 @@ Transclusion expansion time report (%,ms,calls,template)
 						<div style=\"clear:both\"></div>
 		</div>
 		<script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
-mw.loader.state({\"user\":\"ready\",\"user.groups\":\"ready\"});mw.loader.load([\"mediawiki.toc\",\"mediawiki.action.view.postEdit\",\"site\",\"mediawiki.user\",\"mediawiki.hidpi\",\"mediawiki.page.ready\",\"mediawiki.searchSuggest\",\"mediawiki.page.watch.ajax\",\"ext.headertabs\"]);
+mw.loader.state({\"user\":\"ready\",\"user.groups\":\"ready\"});mw.loader.load([\"mediawiki.toc\",\"mediawiki.action.view.postEdit\",\"site\",\"mediawiki.user\",\"mediawiki.hidpi\",\"mediawiki.page.ready\",\"mediawiki.searchSuggest\",\"ext.headertabs\"]);
 } );</script><script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
-mw.config.set({\"wgBackendResponseTime\":289});
+mw.config.set({\"wgBackendResponseTime\":123});
 } );</script>
 	
 
@@ -6864,6 +6850,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="network";
      var_type=T_Object;
      object_type=LeabraNetwork;
+     completion_type=;
      object_val=.networks[0]$$;
      object_scope=NULL;
      objs_ptr=0;
@@ -6881,6 +6868,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="batch_prog";
      var_type=T_Object;
      object_type=Program;
+     completion_type=;
      object_val=.programs.gp[1][0]$$;
      object_scope=NULL;
      objs_ptr=0;
@@ -6893,6 +6881,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="tag";
      var_type=T_String;
      string_val="_RunMaster_NetMaster";
+     completion_type=;
      object_scope=NULL;
      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -6903,6 +6892,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="log_dir";
      var_type=T_String;
      string_val=;
+     completion_type=;
      object_scope=NULL;
      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -6913,6 +6903,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="log_file_nm";
      var_type=T_String;
      string_val="/Users/oreilly/emergent/proj_templates/LeabraFlex_RunMaster_NetMaster.args";
+     completion_type=;
      object_scope=NULL;
      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -6923,6 +6914,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="EpochOutputData";
      var_type=T_Object;
      object_type=DataTable;
+     completion_type=;
      object_val=.data.gp[1][1]$$;
      object_scope=.data.gp[1]$$;
      objs_ptr=0;
@@ -6935,6 +6927,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="batch_str";
      var_type=T_String;
      string_val="00";
+     completion_type=;
      object_scope=NULL;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -6945,6 +6938,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="batch_start";
      var_type=T_Int;
      int_val=0;
+     completion_type=;
      object_scope=NULL;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -6955,6 +6949,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="startup_prog";
      var_type=T_String;
      string_val="BasicStartup";
+     completion_type=;
      object_scope=NULL;
      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -6965,6 +6960,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="MyClusterRun";
      var_type=T_Object;
      object_type=ClusterRun;
+     completion_type=;
      object_val=.ctrl_panels[1]$$;
      object_scope=NULL;
      objs_ptr=0;
@@ -7504,6 +7500,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
+      completion_type=;
       object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -7521,6 +7518,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="tag";
       var_type=T_String;
       string_val="_RunMaster_NetMaster";
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL;
       reference=0;
@@ -7622,6 +7620,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
+      completion_type=;
       object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -7639,6 +7638,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="batch";
       var_type=T_Int;
       int_val=0;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -7649,6 +7649,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="batch_start";
       var_type=T_Int;
       int_val=0;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -7659,6 +7660,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="n_batches";
       var_type=T_Int;
       int_val=1;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -7703,6 +7705,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="i";
 	var_type=T_Int;
 	int_val=0;
+	completion_type=;
 	object_scope=NULL;
 	flags=LOCAL_VAR|USED|EDIT_VAL;
 	reference=0;
@@ -7847,6 +7850,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
+      completion_type=;
       object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -7864,6 +7868,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="activate_params";
       var_type=T_Bool;
       bool_val=1;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -7874,6 +7879,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="run_params";
       var_type=T_Object;
       object_type=ParamSet;
+      completion_type=;
       object_val=.active_params.gp[0][0]$$;
       object_scope=.active_params.gp[0]$$;
       objs_ptr=0;
@@ -7886,6 +7892,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="net_config";
       var_type=T_Object;
       object_type=ParamSet;
+      completion_type=;
       object_val=.active_params.gp[1][0]$$;
       object_scope=.active_params.gp[1]$$;
       objs_ptr=0;
@@ -7898,6 +7905,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="learn_params";
       var_type=T_Object;
       object_type=ParamSet;
+      completion_type=;
       object_val=.active_params.gp[2][0]$$;
       object_scope=.active_params.gp[2]$$;
       objs_ptr=0;
@@ -7910,6 +7918,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="run_prog";
       var_type=T_String;
       string_val="BasicRun";
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -7920,6 +7929,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="init_prog";
       var_type=T_String;
       string_val="BasicInit";
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -7930,6 +7940,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="cluster_run";
       var_type=T_Object;
       object_type=ClusterRun;
+      completion_type=;
       object_val=$.ctrl_panels[1]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -7942,6 +7953,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="save_log_files_interactive";
       var_type=T_Bool;
       bool_val=0;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
       reference=0;
@@ -7952,6 +7964,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="cust_tag";
       var_type=T_String;
       string_val=;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -7962,6 +7975,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="tag";
       var_type=T_String;
       string_val="__RunMaster_NetConfigMaster_LearnParamsMaster";
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -7972,6 +7986,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="stop_train";
       var_type=T_Bool;
       bool_val=0;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -8374,6 +8389,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
+      completion_type=;
       object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -8386,6 +8402,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="run_prog";
       var_type=T_String;
       string_val="BasicRun";
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -8400,6 +8417,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      ProgVar @[0] {
       name="stop_step_grain";
       var_type=T_DynEnum;
+      completion_type=;
       object_scope=NULL;
       dyn_enum_val {
        user_data_=NULL;
@@ -8654,6 +8672,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        name="network";
        var_type=T_Object;
        object_type=LeabraNetwork;
+       completion_type=;
        object_val=$.networks[0]$;
        object_scope=NULL;
        objs_ptr=0;
@@ -8671,6 +8690,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        name="layer_group_lesion_list";
        var_type=T_String;
        string_val=;
+       completion_type="Layer_Group";
        object_scope=NULL;
        flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
@@ -8681,6 +8701,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        name="layer_lesion_list";
        var_type=T_String;
        string_val=;
+       completion_type="Layer";
        object_scope=NULL;
        flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
@@ -8691,6 +8712,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        name="prjn_lesion_list";
        var_type=T_String;
        string_val=;
+       completion_type="Projection";
        object_scope=NULL;
        flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
@@ -8701,6 +8723,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        name="prjn_unlesion_list";
        var_type=T_String;
        string_val=;
+       completion_type="Projection";
        object_scope=NULL;
        flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
@@ -8711,6 +8734,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        name="test_run";
        var_type=T_Bool;
        bool_val=0;
+       completion_type=;
        object_scope=NULL;
        flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
        reference=0;
@@ -8944,6 +8968,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        name="network";
        var_type=T_Object;
        object_type=LeabraNetwork;
+       completion_type=;
        object_val=$.networks[0]$;
        object_scope=NULL;
        objs_ptr=0;
@@ -8961,6 +8986,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        name="train_epochs";
        var_type=T_Int;
        int_val=50;
+       completion_type=;
        object_scope=NULL;
        flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
        reference=0;
@@ -8971,6 +8997,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        name="trials_per_epoch_eff";
        var_type=T_Int;
        int_val=50;
+       completion_type=;
        object_scope=NULL;
        flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
        reference=0;
@@ -8981,6 +9008,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        name="test_interval";
        var_type=T_Int;
        int_val=1;
+       completion_type=;
        object_scope=NULL;
        flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
        reference=0;
@@ -8991,6 +9019,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        name="StdInputData";
        var_type=T_Object;
        object_type=DataTable;
+       completion_type=;
        object_val=.data.gp[0][0]$$;
        object_scope=NULL;
        objs_ptr=0;
@@ -9304,6 +9333,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="basic_train_time";
       var_type=T_Object;
       object_type=TimeUsed;
+      completion_type=;
       object_val=.programs.gp[2][0].objs[0]$$;
       object_scope=NULL;
       objs_ptr=1;
@@ -9326,6 +9356,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
+      completion_type=;
       object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -9338,6 +9369,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="input_data";
       var_type=T_Object;
       object_type=DataTable;
+      completion_type=;
       object_val=$.data.gp[0][0]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -9787,6 +9819,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="basic_train_time";
       var_type=T_Object;
       object_type=TimeUsed;
+      completion_type=;
       object_val=.programs.gp[2][1].objs[0]$$;
       object_scope=NULL;
       objs_ptr=1;
@@ -9809,6 +9842,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
+      completion_type=;
       object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -9821,6 +9855,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="input_data";
       var_type=T_Object;
       object_type=DataTable;
+      completion_type=;
       object_val=$.data.gp[0][0]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -10279,6 +10314,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
+      completion_type=;
       object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -10296,6 +10332,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="input_data";
       var_type=T_Object;
       object_type=DataTable;
+      completion_type=;
       object_val=$.data.gp[0][0]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -10308,6 +10345,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="data_loop_order";
       var_type=T_HardEnum;
       int_val=0;
+      completion_type=;
       object_scope=NULL;
       hard_enum_type=DataLoop::Order;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -10320,6 +10358,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="trial";
       var_type=T_Int;
       int_val=0;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -10330,6 +10369,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="trial_mon_data";
       var_type=T_Object;
       object_type=DataTable;
+      completion_type=;
       object_val=.data.gp[1][2]$$;
       object_scope=NULL;
       objs_ptr=0;
@@ -10342,6 +10382,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="step_on_err";
       var_type=T_Bool;
       bool_val=0;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -10352,6 +10393,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="data_loop_index";
       var_type=T_Int;
       int_val=3;
+      completion_type=;
       object_scope=NULL;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -10667,6 +10709,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="perm_idx_table";
       var_type=T_Object;
       object_type=DataTable;
+      completion_type=;
       object_val=.programs.gp[3][0].objs[0]$$;
       object_scope=NULL;
       objs_ptr=1;
@@ -10689,6 +10732,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
+      completion_type=;
       object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -10701,6 +10745,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="input_data";
       var_type=T_Object;
       object_type=DataTable;
+      completion_type=;
       object_val=$.data.gp[0][0]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -10713,6 +10758,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="permuted";
       var_type=T_Bool;
       bool_val=1;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -10728,6 +10774,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="cur_idx";
       var_type=T_Int;
       int_val=0;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -10738,6 +10785,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="input_idx";
       var_type=T_Int;
       int_val=0;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -10748,6 +10796,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="dmem_rows";
       var_type=T_Int;
       int_val=6;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -11452,6 +11501,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="input_data";
       var_type=T_Object;
       object_type=DataTable;
+      completion_type=;
       object_val=$.data.gp[0][0]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -11469,6 +11519,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="event_idx";
       var_type=T_Int;
       int_val=2;
+      completion_type=;
       object_scope=NULL;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -11649,6 +11700,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="layer_writer_0";
       var_type=T_Object;
       object_type=LayerWriter;
+      completion_type=;
       object_val=.programs.gp[3][2].objs[0]$$;
       object_scope=NULL;
       objs_ptr=1;
@@ -11671,6 +11723,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="network";
       var_type=T_Object;
       object_type=Network;
+      completion_type=;
       object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -11683,6 +11736,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="input_data";
       var_type=T_Object;
       object_type=DataTable;
+      completion_type=;
       object_val=$.data.gp[0][0]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -12023,6 +12077,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="rnd_seeds";
       var_type=T_Object;
       object_type=RndSeed_List;
+      completion_type=;
       object_val=.programs.gp[4][0].objs[0]$$;
       object_scope=NULL;
       objs_ptr=1;
@@ -12045,6 +12100,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
+      completion_type=;
       object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -12160,6 +12216,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
+      completion_type=;
       object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -12172,6 +12229,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="lesion_layer_groups";
       var_type=T_String;
       string_val=;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -12182,6 +12240,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="lesion_layers";
       var_type=T_String;
       string_val=;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -12192,6 +12251,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="lesion_prjns";
       var_type=T_String;
       string_val=;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -12202,6 +12262,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="un_lesion_prjns";
       var_type=T_String;
       string_val=;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -12247,6 +12308,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="laygp";
 	  var_type=T_Object;
 	  object_type=Layer_Group;
+	  completion_type=;
 	  object_val=NULL;
 	  object_scope=NULL;
 	  objs_ptr=0;
@@ -12259,6 +12321,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="lay";
 	  var_type=T_Object;
 	  object_type=Layer;
+	  completion_type=;
 	  object_val=NULL;
 	  object_scope=NULL;
 	  objs_ptr=0;
@@ -12396,6 +12459,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="laygps";
 	var_type=T_String;
 	string_val=;
+	completion_type=;
 	object_scope=NULL;
 	flags=LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
 	reference=0;
@@ -12406,6 +12470,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="lay_gp_on";
 	var_type=T_Bool;
 	bool_val=0;
+	completion_type=;
 	object_scope=NULL;
 	flags=LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
 	reference=0;
@@ -12430,6 +12495,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="les_laygp_mat";
 	  var_type=T_Object;
 	  object_type=String_Matrix;
+	  completion_type=;
 	  object_val=NULL;
 	  object_scope=NULL;
 	  objs_ptr=0;
@@ -12442,6 +12508,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="laygp";
 	  var_type=T_Object;
 	  object_type=Layer_Group;
+	  completion_type=;
 	  object_val=NULL;
 	  object_scope=NULL;
 	  objs_ptr=0;
@@ -12454,6 +12521,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="laygp_nm";
 	  var_type=T_String;
 	  string_val=;
+	  completion_type=;
 	  object_scope=NULL;
 	  flags=LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
@@ -12799,6 +12867,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="lays";
 	var_type=T_String;
 	string_val=;
+	completion_type=;
 	object_scope=NULL;
 	flags=LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
 	reference=0;
@@ -12809,6 +12878,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="lay_on";
 	var_type=T_Bool;
 	bool_val=0;
+	completion_type=;
 	object_scope=NULL;
 	flags=LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
 	reference=0;
@@ -12833,6 +12903,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="les_lays_mat";
 	  var_type=T_Object;
 	  object_type=String_Matrix;
+	  completion_type=;
 	  object_val=NULL;
 	  object_scope=NULL;
 	  objs_ptr=0;
@@ -12845,6 +12916,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="lay";
 	  var_type=T_Object;
 	  object_type=Layer;
+	  completion_type=;
 	  object_val=NULL;
 	  object_scope=NULL;
 	  objs_ptr=0;
@@ -12857,6 +12929,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="lay_nm";
 	  var_type=T_String;
 	  string_val=;
+	  completion_type=;
 	  object_scope=NULL;
 	  flags=LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
@@ -13191,6 +13264,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="prjns";
 	var_type=T_String;
 	string_val=;
+	completion_type=;
 	object_scope=NULL;
 	flags=LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
 	reference=0;
@@ -13201,6 +13275,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="prjn_on";
 	var_type=T_Bool;
 	bool_val=0;
+	completion_type=;
 	object_scope=NULL;
 	flags=LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
 	reference=0;
@@ -13225,6 +13300,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="les_prjns_mat";
 	  var_type=T_Object;
 	  object_type=String_Matrix;
+	  completion_type=;
 	  object_val=NULL;
 	  object_scope=NULL;
 	  objs_ptr=0;
@@ -13237,6 +13313,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="prjn";
 	  var_type=T_Object;
 	  object_type=Projection;
+	  completion_type=;
 	  object_val=NULL;
 	  object_scope=NULL;
 	  objs_ptr=0;
@@ -13249,6 +13326,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="prjn_nm";
 	  var_type=T_String;
 	  string_val=;
+	  completion_type=;
 	  object_scope=NULL;
 	  flags=LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
@@ -13259,6 +13337,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="lay_nm";
 	  var_type=T_String;
 	  string_val=;
+	  completion_type=;
 	  object_scope=NULL;
 	  flags=LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
@@ -13269,6 +13348,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="lay";
 	  var_type=T_Object;
 	  object_type=Layer;
+	  completion_type=;
 	  object_val=NULL;
 	  object_scope=NULL;
 	  objs_ptr=0;
@@ -14182,6 +14262,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
+      completion_type=;
       object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -14194,6 +14275,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="lesion_layers";
       var_type=T_String;
       string_val=;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -14204,6 +14286,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="lesion";
       var_type=T_Bool;
       bool_val=0;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -14219,6 +14302,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="les_lay_mat";
       var_type=T_Object;
       object_type=String_Matrix;
+      completion_type=;
       object_val=.programs.gp[4][2].objs[0]$$;
       object_scope=NULL;
       objs_ptr=1;
@@ -14231,6 +14315,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="i";
       var_type=T_Int;
       int_val=4;
+      completion_type=;
       object_scope=NULL;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -14241,6 +14326,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="laygp_nm";
       var_type=T_String;
       string_val="Head";
+      completion_type=;
       object_scope=NULL;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -14251,6 +14337,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="laygp";
       var_type=T_Object;
       object_type=Layer_Group;
+      completion_type=;
       object_val=NULL;
       object_scope=NULL;
       objs_ptr=0;
@@ -14664,6 +14751,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="dmem_rnd_seed";
       var_type=T_Object;
       object_type=RndSeed;
+      completion_type=;
       object_val=.programs.gp[4][3].objs[0]$$;
       object_scope=NULL;
       objs_ptr=1;
@@ -14686,6 +14774,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
+      completion_type=;
       object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -14703,6 +14792,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="load_weights";
       var_type=T_Bool;
       bool_val=0;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -14713,6 +14803,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="weights_file";
       var_type=T_String;
       string_val=;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -14723,6 +14814,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="load_st_epc";
       var_type=T_Int;
       int_val=1;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -14733,6 +14825,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="lrs_step_epochs";
       var_type=T_Int;
       int_val=50;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -14743,6 +14836,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="lrs_n_steps";
       var_type=T_Int;
       int_val=7;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -14753,6 +14847,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="lrs_bump_step";
       var_type=T_Int;
       int_val=-1;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -14763,6 +14858,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="LRSConSpec";
       var_type=T_Object;
       object_type=LeabraConSpec;
+      completion_type=;
       object_val=$.networks[0].specs[2]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -14775,6 +14871,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="save_log_files_interactive";
       var_type=T_Bool;
       bool_val=0;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -14785,6 +14882,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="dmem_new_seed";
       var_type=T_Bool;
       bool_val=0;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -14795,6 +14893,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="train_epochs";
       var_type=T_Int;
       int_val=50;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
       reference=0;
@@ -14805,6 +14904,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="trials_per_epoch";
       var_type=T_Int;
       int_val=50;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -14815,6 +14915,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="trials_per_epoch_eff";
       var_type=T_Int;
       int_val=50;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -14825,6 +14926,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="test_run";
       var_type=T_Bool;
       bool_val=0;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
       reference=0;
@@ -14835,6 +14937,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="test_interval";
       var_type=T_Int;
       int_val=1;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
       reference=0;
@@ -15329,6 +15432,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
+      completion_type=;
       object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -15346,6 +15450,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="save_final_wts";
       var_type=T_Bool;
       bool_val=1;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -15356,6 +15461,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="Train";
       var_type=T_Object;
       object_type=Program;
+      completion_type=;
       object_val=$.programs.gp[1][1]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -15515,6 +15621,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
+      completion_type=;
       object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -15532,6 +15639,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="trial_mon_data";
       var_type=T_Object;
       object_type=DataTable;
+      completion_type=;
       object_val=.data.gp[1][0]$$;
       object_scope=NULL;
       objs_ptr=0;
@@ -15544,6 +15652,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="BasicTrainTime";
       var_type=T_Object;
       object_type=TimeUsed;
+      completion_type=;
       object_val=$.programs.gp[2][0].objs[0]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -15715,6 +15824,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
+      completion_type=;
       object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -15732,6 +15842,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="save_wts_interval";
       var_type=T_Int;
       int_val=200;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -15908,6 +16019,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
+      completion_type=;
       object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -16070,6 +16182,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
+      completion_type=;
       object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -16087,6 +16200,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="update_net_view";
       var_type=T_Bool;
       bool_val=1;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -16192,6 +16306,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
+      completion_type=;
       object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -16209,6 +16324,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="update_net_view";
       var_type=T_Bool;
       bool_val=1;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -16243,6 +16359,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="qtr";
 	var_type=T_Int;
 	int_val=1;
+	completion_type=;
 	object_scope=NULL;
 	flags=LOCAL_VAR|USED|EDIT_VAL;
 	reference=0;
@@ -16363,6 +16480,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
+      completion_type=;
       object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -16380,6 +16498,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="update_net_view";
       var_type=T_Bool;
       bool_val=1;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -16504,6 +16623,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
+      completion_type=;
       object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -16521,6 +16641,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="update_net_view";
       var_type=T_Bool;
       bool_val=1;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -16555,6 +16676,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="qtr";
 	var_type=T_Int;
 	int_val=0;
+	completion_type=;
 	object_scope=NULL;
 	flags=LOCAL_VAR|USED|EDIT_VAL;
 	reference=0;
@@ -16743,6 +16865,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
+      completion_type=;
       object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -16760,6 +16883,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="cycle";
       var_type=T_Int;
       int_val=0;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -16770,6 +16894,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="update_net_view";
       var_type=T_Bool;
       bool_val=0;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -16814,6 +16939,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="cycle_max";
 	var_type=T_Int;
 	int_val=0;
+	completion_type=;
 	object_scope=NULL;
 	flags=LOCAL_VAR|USED|EDIT_VAL;
 	reference=0;
@@ -16824,6 +16950,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="cyc";
 	var_type=T_Int;
 	int_val=0;
+	completion_type=;
 	object_scope=NULL;
 	flags=LOCAL_VAR|USED|EDIT_VAL;
 	reference=0;
@@ -17008,6 +17135,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
+      completion_type=;
       object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -17025,6 +17153,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="update_net_view";
       var_type=T_Bool;
       bool_val=1;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -17144,6 +17273,7 @@ also save specs.";
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
+      completion_type=;
       object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -17161,6 +17291,7 @@ also save specs.";
       name="tag";
       var_type=T_String;
       string_val="__RunMaster_NetConfigMaster_LearnParamsMaster";
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
       reference=0;
@@ -17171,6 +17302,7 @@ also save specs.";
       name="wts_subdir";
       var_type=T_String;
       string_val=;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -17181,6 +17313,7 @@ also save specs.";
       name="fname";
       var_type=T_String;
       string_val="/Users/oreilly/emergent/proj_templates/LeabraFlex_RunMaster_NetMaster.00_0050.wts.gz";
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -17191,6 +17324,7 @@ also save specs.";
       name="epoch_str";
       var_type=T_String;
       string_val="0050";
+      completion_type=;
       object_scope=NULL;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -17201,6 +17335,7 @@ also save specs.";
       name="batch_str";
       var_type=T_String;
       string_val="00";
+      completion_type=;
       object_scope=NULL;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -17211,6 +17346,7 @@ also save specs.";
       name="final_tag";
       var_type=T_String;
       string_val="_RunMaster_NetMaster.00_0050";
+      completion_type=;
       object_scope=NULL;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -17502,6 +17638,7 @@ also save specs.";
        name="network";
        var_type=T_Object;
        object_type=LeabraNetwork;
+       completion_type=;
        object_val=$.networks[0]$;
        object_scope=NULL;
        objs_ptr=0;
@@ -17519,6 +17656,7 @@ also save specs.";
        name="tag";
        var_type=T_String;
        string_val="__RunMaster_NetConfigMaster_LearnParamsMaster";
+       completion_type=;
        object_scope=NULL;
        flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
@@ -17529,6 +17667,7 @@ also save specs.";
        name="log_trials";
        var_type=T_Bool;
        bool_val=0;
+       completion_type=;
        object_scope=NULL;
        flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
@@ -17539,6 +17678,7 @@ also save specs.";
        name="log_dir";
        var_type=T_String;
        string_val=;
+       completion_type=;
        object_scope=NULL;
        flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
@@ -17549,6 +17689,7 @@ also save specs.";
        name="log_file_nm";
        var_type=T_String;
        string_val="/Users/oreilly/emergent/proj_templates/LeabraFlex__RunMaster_NetMaster.trn_epc.dat";
+       completion_type=;
        object_scope=NULL;
        flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
@@ -17559,6 +17700,7 @@ also save specs.";
        name="epoch_output_data";
        var_type=T_Object;
        object_type=DataTable;
+       completion_type=;
        object_val=$.data.gp[1][1]$;
        object_scope=$.data.gp[1]$;
        objs_ptr=0;
@@ -17571,6 +17713,7 @@ also save specs.";
        name="trial_output_data";
        var_type=T_Object;
        object_type=DataTable;
+       completion_type=;
        object_val=$.data.gp[1][0]$;
        object_scope=$.data.gp[1]$;
        objs_ptr=0;
@@ -17889,6 +18032,7 @@ also save specs.";
 	name="items";
 	el_typ=NetMonItem;
 	el_def=0;
+	ignore_sig=0;
 	NetMonItem @[0] {
 	 name="batch";
 	 computed=0;
@@ -18787,6 +18931,7 @@ also save specs.";
        name="trial_netmon";
        var_type=T_Object;
        object_type=NetMonitor;
+       completion_type=;
        object_val=.programs.gp[4].gp[0][1].objs[0]$$;
        object_scope=NULL;
        objs_ptr=1;
@@ -18809,6 +18954,7 @@ also save specs.";
        name="network";
        var_type=T_Object;
        object_type=Network;
+       completion_type=;
        object_val=$.networks[0]$;
        object_scope=NULL;
        objs_ptr=0;
@@ -18826,6 +18972,7 @@ also save specs.";
        name="trial_mon_data";
        var_type=T_Object;
        object_type=DataTable;
+       completion_type=;
        object_val=$.data.gp[1][0]$;
        object_scope=$.data.gp[1]$;
        objs_ptr=0;
@@ -18838,6 +18985,7 @@ also save specs.";
        name="run_already";
        var_type=T_Bool;
        bool_val=0;
+       completion_type=;
        object_scope=NULL;
        flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
@@ -19183,6 +19331,7 @@ also save specs.";
 	name="items";
 	el_typ=NetMonItem;
 	el_def=0;
+	ignore_sig=0;
 	NetMonItem @[0] {
 	 name="batch";
 	 computed=0;
@@ -20217,6 +20366,7 @@ also save specs.";
        name="epoch_netmon";
        var_type=T_Object;
        object_type=NetMonitor;
+       completion_type=;
        object_val=.programs.gp[4].gp[0][2].objs[0]$$;
        object_scope=NULL;
        objs_ptr=1;
@@ -20239,6 +20389,7 @@ also save specs.";
        name="network";
        var_type=T_Object;
        object_type=Network;
+       completion_type=;
        object_val=$.networks[0]$;
        object_scope=NULL;
        objs_ptr=0;
@@ -20256,6 +20407,7 @@ also save specs.";
        name="epoch_mon_data";
        var_type=T_Object;
        object_type=DataTable;
+       completion_type=;
        object_val=$.data.gp[1][1]$;
        object_scope=$.data.gp[1]$;
        objs_ptr=0;
@@ -20268,6 +20420,7 @@ also save specs.";
        name="epoch_timer";
        var_type=T_Object;
        object_type=TimeUsed;
+       completion_type=;
        object_val=.networks[0].epoch_time$$;
        object_scope=NULL;
        objs_ptr=0;
@@ -20280,6 +20433,7 @@ also save specs.";
        name="run_already";
        var_type=T_Bool;
        bool_val=0;
+       completion_type=;
        object_scope=NULL;
        flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
@@ -20755,6 +20909,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
 	name="items";
 	el_typ=NetMonItem;
 	el_def=0;
+	ignore_sig=0;
 	NetMonItem @[0] {
 	 name="batch";
 	 computed=0;
@@ -21653,6 +21808,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
        name="trial_netmon";
        var_type=T_Object;
        object_type=NetMonitor;
+       completion_type=;
        object_val=.programs.gp[4].gp[0][3].objs[0]$$;
        object_scope=NULL;
        objs_ptr=1;
@@ -21675,6 +21831,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
        name="network";
        var_type=T_Object;
        object_type=Network;
+       completion_type=;
        object_val=$.networks[0]$;
        object_scope=NULL;
        objs_ptr=0;
@@ -21692,6 +21849,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
        name="trial_mon_data";
        var_type=T_Object;
        object_type=DataTable;
+       completion_type=;
        object_val=$.data.gp[1][2]$;
        object_scope=$.data.gp[1]$;
        objs_ptr=0;
@@ -21704,6 +21862,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
        name="run_already";
        var_type=T_Bool;
        bool_val=0;
+       completion_type=;
        object_scope=NULL;
        flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
@@ -22049,6 +22208,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
 	name="items";
 	el_typ=NetMonItem;
 	el_def=0;
+	ignore_sig=0;
 	NetMonItem @[0] {
 	 name="batch";
 	 computed=0;
@@ -22913,6 +23073,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
        name="epoch_netmon";
        var_type=T_Object;
        object_type=NetMonitor;
+       completion_type=;
        object_val=.programs.gp[4].gp[0][4].objs[0]$$;
        object_scope=NULL;
        objs_ptr=1;
@@ -22935,6 +23096,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
        name="network";
        var_type=T_Object;
        object_type=Network;
+       completion_type=;
        object_val=$.networks[0]$;
        object_scope=NULL;
        objs_ptr=0;
@@ -22952,6 +23114,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
        name="epoch_mon_data";
        var_type=T_Object;
        object_type=DataTable;
+       completion_type=;
        object_val=$.data.gp[1][3]$;
        object_scope=$.data.gp[1]$;
        objs_ptr=0;
@@ -22964,6 +23127,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
        name="run_already";
        var_type=T_Bool;
        bool_val=0;
+       completion_type=;
        object_scope=NULL;
        flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
@@ -23280,9 +23444,9 @@ and the testing data is updated.  The first epoch monitor should have all the it
     el_typ=UserDataItem;
     el_def=0;
     UserDataItem @[0] {name="view_win_lft": value=0: val_type_fixed=0: };
-    UserDataItem @[1] {name="view_win_top": value=0.05032182: val_type_fixed=0: };
-    UserDataItem @[2] {name="view_win_wd": value=0.9930693: val_type_fixed=0: };
-    UserDataItem @[3] {name="view_win_ht": value=0.7969573: val_type_fixed=0: };
+    UserDataItem @[1] {name="view_win_top": value=0.0496592: val_type_fixed=0: };
+    UserDataItem @[2] {name="view_win_wd": value=0.9928572: val_type_fixed=0: };
+    UserDataItem @[3] {name="view_win_ht": value=0.7964947: val_type_fixed=0: };
     UserDataItem @[4] {name="view_win_iconified": value=0: val_type_fixed=0: };
     UserDataItem @[5] {name="view_splitter_state": value=AAAA/wAAAAEAAAADAAABWAAAAnYAAAMgAf////8BAAAAAQA=: val_type_fixed=0: };
    };
@@ -23384,38 +23548,38 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	  lay_layout=THREE_D;
 	  lay_mv=1;
 	  net_text=1;
-	  state_width_default=8;
+	  net_state_text {
+	   name="net_state_text";
+	   state_items {
+	    name="state_items";
+	    el_typ=NetViewStateItem;
+	    el_def=0;
+	    NetViewStateItem @[0] {name="batch": net_member=1: display=1: width=4: found=1: };
+	    NetViewStateItem @[1] {name="epoch": net_member=1: display=1: width=4: found=1: };
+	    NetViewStateItem @[2] {name="group": net_member=1: display=0: width=4: found=1: };
+	    NetViewStateItem @[3] {name="trial": net_member=1: display=1: width=4: found=1: };
+	    NetViewStateItem @[4] {name="tick": net_member=1: display=0: width=4: found=1: };
+	    NetViewStateItem @[5] {name="cycle": net_member=1: display=1: width=4: found=1: };
+	    NetViewStateItem @[6] {name="time": net_member=1: display=0: width=8: found=1: };
+	    NetViewStateItem @[7] {name="total_trials": net_member=1: display=0: width=6: found=1: };
+	    NetViewStateItem @[8] {name="sse": net_member=1: display=1: width=8: found=1: };
+	    NetViewStateItem @[9] {name="group_name": net_member=1: display=0: width=12: found=1: };
+	    NetViewStateItem @[10] {name="trial_name": net_member=1: display=1: width=12: found=1: };
+	    NetViewStateItem @[11] {name="output_name": net_member=1: display=1: width=12: found=1: };
+	    NetViewStateItem @[12] {name="quarter": net_member=1: display=1: width=4: found=1: };
+	    NetViewStateItem @[13] {name="phase": net_member=1: display=0: width=8: found=1: };
+	    NetViewStateItem @[14] {name="tot_cycle": net_member=1: display=0: width=8: found=1: };
+	    NetViewStateItem @[15] {name="rt_cycles": net_member=1: display=0: width=4: found=1: };
+	    NetViewStateItem @[16] {name="ext_rew": net_member=1: display=0: width=8: found=1: };
+	    NetViewStateItem @[17] {name="norm_err": net_member=1: display=0: width=8: found=1: };
+	    NetViewStateItem @[18] {name="cos_err": net_member=1: display=0: width=8: found=1: };
+	    NetViewStateItem @[19] {name="minus_output_name": net_member=1: display=0: width=12: found=1: };
+	   };
+	  };
 	  show_iconified=0;
-	  net_text_xform {scale={x=0.7: y=0.7: z=0.7: }: rotate={x=1: y=0: z=0: rot=1.570796: }: translate={x=0: y=1: z=-1: }: };
-	  net_text_rot=-90;
 	  cur_unit_vals{ act;	  };
 	  hot_vars{ targ;ext;act;net;bias_wt;bias_dwt;act_eq;act_m;act_p;act_dif;avg_m;avg_l;act_avg;r.wt;r.wt*act;s.wt;r.dwt;s.dwt;	  };
 	  unit_src_path=".layers[2][0]";
-	  state_items {
-	   name="state_items";
-	   el_typ=NetViewStateItem;
-	   el_def=0;
-	   NetViewStateItem @[0] {name="batch": net_member=1: display=1: width=8: found=1: };
-	   NetViewStateItem @[1] {name="epoch": net_member=1: display=1: width=8: found=1: };
-	   NetViewStateItem @[2] {name="group": net_member=1: display=0: width=8: found=1: };
-	   NetViewStateItem @[3] {name="trial": net_member=1: display=1: width=8: found=1: };
-	   NetViewStateItem @[4] {name="tick": net_member=1: display=0: width=8: found=1: };
-	   NetViewStateItem @[5] {name="cycle": net_member=1: display=1: width=8: found=1: };
-	   NetViewStateItem @[6] {name="time": net_member=1: display=0: width=8: found=1: };
-	   NetViewStateItem @[7] {name="total_trials": net_member=1: display=0: width=8: found=1: };
-	   NetViewStateItem @[8] {name="sse": net_member=1: display=1: width=8: found=1: };
-	   NetViewStateItem @[9] {name="group_name": net_member=1: display=0: width=8: found=1: };
-	   NetViewStateItem @[10] {name="trial_name": net_member=1: display=1: width=8: found=1: };
-	   NetViewStateItem @[11] {name="output_name": net_member=1: display=1: width=8: found=1: };
-	   NetViewStateItem @[12] {name="quarter": net_member=1: display=1: width=8: found=1: };
-	   NetViewStateItem @[13] {name="phase": net_member=1: display=0: width=8: found=1: };
-	   NetViewStateItem @[14] {name="tot_cycle": net_member=1: display=0: width=8: found=1: };
-	   NetViewStateItem @[15] {name="rt_cycles": net_member=1: display=0: width=8: found=1: };
-	   NetViewStateItem @[16] {name="ext_rew": net_member=1: display=0: width=8: found=1: };
-	   NetViewStateItem @[17] {name="norm_err": net_member=1: display=0: width=8: found=1: };
-	   NetViewStateItem @[18] {name="cos_err": net_member=1: display=0: width=8: found=1: };
-	   NetViewStateItem @[19] {name="minus_output_name": net_member=1: display=0: width=8: found=1: };
-	  };
 	  con_type=ANY_CON;
 	  hist_idx=0;
 	  hist_save=1;
@@ -25043,9 +25207,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       el_typ=UserDataItem;
       el_def=0;
       UserDataItem @[0] {name="view_win_lft": value=0: val_type_fixed=0: };
-      UserDataItem @[1] {name="view_win_top": value=0.008191925: val_type_fixed=0: };
-      UserDataItem @[2] {name="view_win_wd": value=0.02706271: val_type_fixed=0: };
-      UserDataItem @[3] {name="view_win_ht": value=0.7501463: val_type_fixed=0: };
+      UserDataItem @[1] {name="view_win_top": value=0.009737099: val_type_fixed=0: };
+      UserDataItem @[2] {name="view_win_wd": value=0.04880952: val_type_fixed=0: };
+      UserDataItem @[3] {name="view_win_ht": value=0.7234664: val_type_fixed=0: };
       UserDataItem @[4] {name="view_win_iconified": value=0: val_type_fixed=0: };
       UserDataItem @[5] {name="view_visible": value=1: val_type_fixed=0: };
      };
@@ -25064,7 +25228,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
  save_as_only=0;
  auto_name=1;
  last_change_desc="svn rev: 10514 update startup program";
- tree_state{ .;.patches;.docs;.wizards;.ctrl_panels;.active_params;.active_params.gp[0];.active_params.gp[1];.active_params.gp[2];.data;.data.gp[0];.data.gp[1];.data.gp[2];.data.gp[3];.programs;.programs.gp[0];.programs.gp[1];.programs.gp[1].gp[0];.programs.gp[1].gp[1];.programs.gp[2];.programs.gp[3];.programs.gp[4];.programs.gp[4].gp[0];.networks;.networks[0];.networks[0].specs;.networks[0].specs[0];.networks[0].specs[0].children[0];.networks[0].specs[2];.networks[0].layers;.networks[0].weights; };
+ tree_state{ .;.patches;.docs;.wizards;.ctrl_panels;.active_params;.active_params.gp[0];.active_params.gp[1];.active_params.gp[2];.data;.data.gp[0];.data.gp[1];.data.gp[2];.data.gp[3];.programs;.programs.break_points;.programs.gp[0];.programs.gp[1];.programs.gp[1].gp[0];.programs.gp[1].gp[1];.programs.gp[2];.programs.gp[3];.programs.gp[4];.programs.gp[4].gp[0];.networks;.networks[0];.networks[0].spec_tables;.networks[0].specs;.networks[0].specs[0];.networks[0].specs[2];.networks[0].param_seqs;.networks[0].layers;.networks[0].weights; };
  networks {
   name="networks";
   el_typ=LeabraNetwork;
@@ -25218,9 +25382,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
        deep {on=0: bg_lrate=1: fg_lrate=0: };
        margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_lrn=0.5: };
-       dwt_noise=0;
-       dwt_noise_p0=0.7;
-       noise {name="noise": type=GAUSSIAN: mean=0: var=0.005: par=1: };
+       dwt_share {on=0: neigh=2: common=0: p_share=0.5: };
        use_lrate_sched=1;
        lrate_sched {
 	name="lrate_sched";
@@ -25303,9 +25465,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
        deep {on=0: bg_lrate=1: fg_lrate=0: };
        margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_lrn=0.5: };
-       dwt_noise=0;
-       dwt_noise_p0=0.7;
-       noise {name="noise": type=GAUSSIAN: mean=0: var=0.005: par=1: };
+       dwt_share {on=0: neigh=2: common=0: p_share=0.5: };
        use_lrate_sched=1;
        lrate_sched {
 	name="lrate_sched";
@@ -25376,9 +25536,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
      deep {on=0: bg_lrate=1: fg_lrate=0: };
      margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_lrn=0.5: };
-     dwt_noise=0;
-     dwt_noise_p0=0.7;
-     noise {name="noise": type=GAUSSIAN: mean=0: var=0.005: par=1: };
+     dwt_share {on=0: neigh=2: common=0: p_share=0.5: };
      use_lrate_sched=1;
      lrate_sched {
       name="lrate_sched";
@@ -25461,6 +25619,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      name="items";
      el_typ=NetMonItem;
      el_def=0;
+     ignore_sig=0;
     };
     network=$.networks[0]$;
     data=.networks[0].mon_data$$;
@@ -25718,7 +25877,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
    max_disp_size2d {x=5: y=9: };
    times {quarter=25: deep_cyc=5: time_inc=0.001: wt_bal_int=10: minus=75: plus=25: total_cycles=100: thal_gate_cycle=-2: };
    lstats {trg_max_act_crit=0.5: off_errs=1: on_errs=1: agg_unlearnable=0: wt_bal=0: };
-   net_misc {spike=0: deep=0: bias_learn=0: trial_decay=1: diff_scale_p=0: diff_scale_q1=0: wt_bal=1: lay_gp_inhib=0: inhib_cons=0: };
+   net_misc {spike=0: deep=0: bias_learn=0: trial_decay=0: diff_scale_p=0: diff_scale_q1=0: wt_bal=0: lay_gp_inhib=0: inhib_cons=0: };
    deep {on=0: ctxt=0: raw_net=0: mod_net=0: raw_qtr=0: };
    rel_netin {on=1: trl_skip=10: epc_skip=10: };
   };
