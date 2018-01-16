@@ -102,7 +102,7 @@ public:
   STATE_DECO_KEY("LayerSpec");
   STATE_TA_STD_CODE_SPEC(LayerAvgActSpec);
   
-  STATE_UAE( dt = 1.0f / tau; use_ext_act = false; );
+  STATE_UAE( dt = 1.0f / tau; );
   
 private:
   void  Initialize() { targ_init = 0.15f;  Defaults_init(); }
