@@ -766,6 +766,15 @@ UnitView* NetView::FindUnitView(UnitState_cpp* unit) {
   return NULL;
 }
 
+
+UnitState_cpp* NetView::UnitSrc() {
+  Network* nt = net();
+  if(!nt || !nt->IsBuiltIntact()) {
+    return NULL;
+  }
+  return nt->GetUnitStateFromPath(unit_src_path);
+}
+  
 // this fills a member group with the valid memberdefs from the units and connections
 void NetView::GetMembs() {
   if(!net()) return;
@@ -782,16 +791,16 @@ void NetView::GetMembs() {
   // minimizes issues with history etc
   // if(!unit_src) {
   // always get a new src
-    if(unit_src_path.nonempty()) {
-      UnitState_cpp* nu = nt->GetUnitStateFromPath(unit_src_path);
-      if(nu) setUnitSrc(NULL, nu);
+  if(unit_src_path.nonempty()) {
+    UnitState_cpp* nu = nt->GetUnitStateFromPath(unit_src_path);
+    if(nu) setUnitSrc(NULL, nu);
+  }
+  if(!unit_src && nt->layers.leaves > 0) {
+    Layer* lay = nt->layers.Leaf(nt->layers.leaves-1);
+    if(lay->n_units_built > 0) {
+      setUnitSrc(NULL, lay->GetUnitState(nt->net_state, 0));
     }
-    if(!unit_src && nt->layers.leaves > 0) {
-      Layer* lay = nt->layers.Leaf(nt->layers.leaves-1);
-      if(lay->n_units_built > 0) {
-        setUnitSrc(NULL, lay->GetUnitState(nt->net_state, 0));
-      }
-    }
+  }
   // }
 
   setUnitDispMd(NULL);

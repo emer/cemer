@@ -33,7 +33,7 @@
   STATE_CLASS(LeabraChannels)   g_bar;           // #CAT_Activation [Defaults: 1, .1, 1] maximal conductances for channels
   STATE_CLASS(LeabraChannels)   e_rev;           // #CAT_Activation [Defaults: 1, .3, .25] reversal potentials for each channel
   STATE_CLASS(KNaAdaptSpec)     kna_adapt;       // #CAT_Activation sodium-gated potassium channel adaptation mechanism -- evidence supports at least 3 different time constants: M-type (fast), Slick (medium), and Slack (slow)
-  STATE_CLASS(KNaAdaptMiscSpec) kna_misc;         // #CAT_Activation misc extra params for sodium-gated potassium channel adaptation mechanismp
+  STATE_CLASS(KNaAdaptMiscSpec) kna_misc;         // #CAT_Activation #CONDSHOW_ON_kna_adapt.on misc extra params for sodium-gated potassium channel adaptation mechanism
   STATE_CLASS(ShortPlastSpec)   stp;             // #CAT_Activation short term presynaptic plasticity specs -- can implement full range between facilitating vs. depresssion
   STATE_CLASS(SynDelaySpec)     syn_delay;       // #CAT_Activation synaptic delay -- if active, activation sent to other units is delayed by a given amount
   Quarters         deep_raw_qtr;    // #CAT_Learning #AKA_deep_qtr quarter(s) during which deep_raw layer 5 intrinsic bursting activations should be updated -- deep_raw is updated and sent to deep_raw_net during this quarter, and deep_ctxt is updated right after this quarter (wrapping around to the first quarter for the 4th quarter)

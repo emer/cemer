@@ -246,6 +246,7 @@ public:
   // misc util functions etc
   virtual void          GetMembs();
   virtual void          GetMaxSize(); // get max size from network
+  virtual UnitState_cpp* UnitSrc(); // get the currently picked unit -- source unit for viewing weights -- based on unit_src_path
 
   void                  GetUnitColor(float val, iColor& col, float& sc_val);
   // #IGNORE 
