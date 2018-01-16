@@ -1039,7 +1039,8 @@ public:
   bool         ChangeMyType(TypeDef* new_type) override;
   taBase*      ChooseNew(taBase* origin, const String& choice_text) override;
   bool         HasChooseNew() override { return true; }
-  
+  void         GetArgCompletionList(const String& method, const String& arg, taBase* arg_obj, const String& cur_txt, Completions& completions) override;
+
   void         setStale() override;
 
   void  InitLinks() override;

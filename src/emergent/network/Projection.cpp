@@ -21,6 +21,8 @@
 #include <taFiler>
 #include <DataTable>
 #include <taiEdit>
+#include <MemberDef>
+#include <Completions>
 
 #include <ProjectionSpec_cpp>
 
@@ -782,5 +784,19 @@ DataTable* Projection::ConVarsToTable(DataTable* dt, const String& var1, const S
   if(new_table)
     tabMisc::DelayedFunCall_gui(dt, "BrowserSelectMe");
   return dt;
+}
+
+void Projection::GetArgCompletionList(const String& method, const String& arg, taBase* arg_obj,
+                                 const String& cur_txt, Completions& completions) {
+  if (method == "MonitorVar" && arg == "variable") {
+    MemberSpace mbr_space = GetTypeDef()->members;
+    for (int i = 0; i < mbr_space.size; ++i) {
+      MemberDef* md = mbr_space.FastEl(i);
+      String category = md->OptionAfter("CAT_");
+      if (category == "Statistic" || category == "Activation") {
+        completions.member_completions.Link(md);
+      }
+    }
+  }
 }
 

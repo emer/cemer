@@ -1410,7 +1410,10 @@ void NetMonItem::GetMemberCompletionList(const MemberDef* md, const String& cur_
     for (int i = 0; i < mbr_space.size; ++i) {
       MemberDef* mbr_def = mbr_space.FastEl(i);
       if (!mbr_def->IsEditorHidden()) {
-        completions.member_completions.Link(mbr_def);
+        String category = md->OptionAfter("CAT_");
+        if (category == "Statistic" || category == "Activation" || category == "Bias" || category == "Counter") {
+          completions.member_completions.Link(mbr_def);
+        }
       }
     }
   }

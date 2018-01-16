@@ -33,6 +33,7 @@
 #include <NetMonitor>
 #include <taMath_float>
 #include <SpecMemberBase>
+#include <Completions>
 #include <taiEdit>
 
 #include "sha3.h"
@@ -3582,6 +3583,20 @@ taBase* Network::ChooseNew(taBase* origin, const String& choice_text) {
     ntwrk = (Network*)prjn->networks.New(1);
   }
   return ntwrk;
+}
+
+void Network::GetArgCompletionList(const String& method, const String& arg, taBase* arg_obj,
+                                   const String& cur_txt, Completions& completions) {
+  if (method == "MonitorVar" && arg == "variable") {
+    MemberSpace mbr_space = GetTypeDef()->members;
+    for (int i = 0; i < mbr_space.size; ++i) {
+      MemberDef* md = mbr_space.FastEl(i);
+      String category = md->OptionAfter("CAT_");
+      if (category == "Statistic" || category == "Counter") {
+        completions.member_completions.Link(md);
+      }
+    }
+  }
 }
 
 void Network::BgRunKilled() {

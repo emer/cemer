@@ -21,6 +21,7 @@
 #include <NetMonitor>
 #include <DataTable>
 #include <taiEdit>
+#include <Completions>
 
 #include <tabMisc>
 #include <taMisc>
@@ -1937,6 +1938,20 @@ bool Layer::LoadWeights(const String& fname, bool quiet) {
   flr->Close();
   taRefN::unRefDone(flr);
   return rval;
+}
+
+void Layer::GetArgCompletionList(const String& method, const String& arg, taBase* arg_obj,
+                                   const String& cur_txt, Completions& completions) {
+  if (method == "MonitorVar" && arg == "variable") {
+    MemberSpace mbr_space = GetTypeDef()->members;
+    for (int i = 0; i < mbr_space.size; ++i) {
+      MemberDef* md = mbr_space.FastEl(i);
+      String category = md->OptionAfter("CAT_");
+      if (category == "Statistic" || category == "Counter") {
+        completions.member_completions.Link(md);
+      }
+    }
+  }
 }
 
 #ifdef DMEM_COMPILE

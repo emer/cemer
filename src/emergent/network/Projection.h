@@ -201,6 +201,9 @@ public:
   int    GetEnabled() const    override { return MainIsActive(); }
   // void   SetEnabled(bool value) override { off = !value; }
 
+  void          GetArgCompletionList(const String& method, const String& arg, taBase* arg_obj,
+                                     const String& cur_txt, Completions& completions) override;
+
   bool ChangeMyType(TypeDef* new_type) override;
 
   void  InitLinks() override;
