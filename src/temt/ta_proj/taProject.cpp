@@ -385,7 +385,7 @@ void taProject::DoView() {
     iTreeView* nav_tree_view = main_window_viewer->widget()->GetMainTreeView();
     if (nav_tree_view) {
       nav_tree_view->SetTreeStateClean();  // ignore the expand/collapse that occurs opening the views
-      if (tree_state.size != 0 && file_name.nonempty()) {
+      if (tree_state.size != 0) {
         nav_tree_view->RestoreTreeState(tree_state);
       }
       else {

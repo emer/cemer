@@ -405,8 +405,8 @@ void iTreeView::ExpandDefault() {
   // prevent expanding to defaults if we already expanded to saved state
   // only applies to Navigator (TYPE_BROWSEVIEWER) - it is the only tree state we save
   if (parent_type == iTreeView::TYPE_BROWSEVIEWER && !tree_state_restored) {
-      return;
-    }
+    return;
+  }
 
   ExpandDefault_impl();
   ScrollTo(0);
