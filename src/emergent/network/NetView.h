@@ -57,6 +57,7 @@ public:
   float  prjn;          // #DEF_0.01 projection names and values
   float  unit;          // #DEF_0.02 unit names and values
   int    un_nm_len;     // #DEF_3 unit name length -- used to compute output name font size
+  int    un_val_prec;   // #DEF_2 precision unit value string to generate -- can prevent strings from being too long
 
   String       GetTypeDecoKey() const override { return "Network"; }
 

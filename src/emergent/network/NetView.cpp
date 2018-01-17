@@ -90,6 +90,7 @@ void NetViewFontSizes::Initialize() {
   prjn = .01f;
   unit = .02f;
   un_nm_len = 3;
+  un_val_prec = 2;
 }
 
 void NetViewParams::Initialize() {

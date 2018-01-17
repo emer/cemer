@@ -390,20 +390,12 @@ void UnitGroupView::Render_impl() {
   inherited::Render_impl();
 }
 
-void UnitGroupView::ValToDispText(float val, String& str) {
-  float val_abs = fabsf(val);
-  if ((val_abs < .0001) || (val_abs >= 10000))
-    str.convert(val, "%7.1e"); //note: 7 chars
-  if (val_abs < 1)
-    str.convert(val, "%#6.4f");
-  else if (val_abs < 10)
-    str.convert(val, "%#6.3f");
-  else if (val_abs < 100)
-    str.convert(val, "%#6.2f");
-  else if (val_abs < 1000)
-    str.convert(val, "%#6.1f");
-  else //must be: if (val_abs < 10000)
-    str.convert(val, "6.0f");
+String UnitGroupView::ValToDispTextFmt(int prec) {
+  return String("%.") + String(prec) + "g";
+}
+  
+void UnitGroupView::ValToDispText(float val, String& str, const String& fmt) {
+  str.convert(val, fmt);
 }
 
 void UnitGroupView::DoActionChildren_impl(DataViewAction acts) {
@@ -463,6 +455,8 @@ void UnitGroupView::Render_impl_children() {
     return;
   }
 
+  String val_fmt = ValToDispTextFmt(nv->font_sizes.un_val_prec);
+  
   // for efficiency we assume responsibility for the _impl of UnitViews
   T3UnitNode* unit_so;
   taVector2i co;
@@ -514,7 +508,7 @@ void UnitGroupView::Render_impl_children() {
       }
       else {
         if (nv->unit_text_disp & NetView::UTD_VALUES) {
-          ValToDispText(val, val_str);
+          ValToDispText(val, val_str, val_fmt);
         }
         String un_str;
         switch (nv->unit_text_disp) {
@@ -541,7 +535,7 @@ void UnitGroupView::Render_impl_children() {
       else { // text of some kind
         unit_so->transformCaption(font_xform);
         if (nv->unit_text_disp & NetView::UTD_VALUES) {
-          ValToDispText(val, val_str);
+          ValToDispText(val, val_str, val_fmt);
         }
         if (!at) // force captionNode creation
           at = unit_so->captionNode(true);
@@ -900,7 +894,7 @@ void UnitGroupView::Render_impl_blocks() {
         tr->translation.setValue(xfp, MAX(zp,0.0f) + .01f, yp);
         SoAsciiText* txt = (SoAsciiText*)tsep->getChild(1);
 //      if(nv->unit_text_disp & NetView::UTD_VALUES) {
-          //      ValToDispText(0.0f, val_str); // just use default
+          //      ValToDispText(0.0f, val_str, val_fmt); // just use default
 //      }
         if(nv->unit_text_disp & NetView::UTD_NAMES) {
           if(unit)
@@ -1151,6 +1145,8 @@ void UnitGroupView::UpdateUnitValues_blocks() {
   taVector2i pos;
   float zp1;
 
+  String val_fmt = ValToDispTextFmt(nv->font_sizes.un_val_prec);
+
 #ifdef TA_QT3D
 
   float t_idx = 0;
@@ -1178,7 +1174,7 @@ void UnitGroupView::UpdateUnitValues_blocks() {
       c_idx += 20;
 
       if(nv->unit_text_disp & NetView::UTD_VALUES) {
-        ValToDispText(val, val_str);
+        ValToDispText(val, val_str, val_fmt);
         T3TwoDText* txt = dynamic_cast<T3TwoDText*>(unit_text->children().at(t_idx++));
         switch (nv->unit_text_disp) {
         case NetView::UTD_VALUES:
@@ -1236,7 +1232,7 @@ void UnitGroupView::UpdateUnitValues_blocks() {
         SoSeparator* tsep = (SoSeparator*)un_txt->getChild(t_idx);
         SoAsciiText* txt = (SoAsciiText*)tsep->getChild(1);
         SoMFString* mfs = &(txt->string);
-        ValToDispText(val, val_str);
+        ValToDispText(val, val_str, val_fmt);
         switch (nv->unit_text_disp) {
         case NetView::UTD_VALUES:
           mfs->setValue(val_str.chars());

@@ -63,6 +63,8 @@ public slots:
   void                  FirstViewProperties(int tab_idx);
   void                  SetColorScheme(int tab_idx);
   void                  SetAllColorScheme(int tab_idx);
+  void                  FixAllTabNames(int tab_idx);
+  void                  UnFixAllTabNames(int tab_idx);
   void                  FocusFirstTab(); // hack to get first tab focussed on load
   void                  SetSelectedTab(int tab_idx);
   

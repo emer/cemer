@@ -72,6 +72,7 @@ public:
 
   T3DataViewRoot        root_view; // #TREE_SHOW placeholder item -- contains the actual root(s) DataView items as children
   T3DataView_List*      root_views; // #READ_ONLY #HIDDEN #NO_SAVE #NO_FIND pointer to root_view.children -- for selecting root views
+  bool                  fix_name;   // if set, do not update the tab name based on changes to the name of the object being viewed -- by default the tab name automatically updates
   taColor               bg_color; // background color of the panel note: alpha transparency value is also used and will be reflected in saved images!
   taColor               text_color; // color to use for text in the panel -- may need to change this from default of black depending on the bg_color
   bool                  headlight_on; // turn the camera headlight on for illuminating the scene -- turn off only if there is another source of light within the scenegraph -- otherwise it will be dark!

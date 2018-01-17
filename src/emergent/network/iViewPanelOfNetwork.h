@@ -66,6 +66,8 @@ public:
   taiWidgetComboBox*        cmbLayLayout;
   QLabel*                   lblUnitText;
   taiWidgetComboBox*        cmbUnitText;
+  QLabel*                   lblUnitTextPrec;
+  taiWidgetField*           fldUnitTextPrec;
   QLabel*                   lblDispMode;
   taiWidgetComboBox*        cmbDispMode;
   QLabel*                   lblPrjnDisp;

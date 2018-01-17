@@ -130,6 +130,21 @@ void iT3PanelViewer::SetAllColorScheme(int tab_idx) {
   }
 }
 
+void iT3PanelViewer::FixAllTabNames(int tab_idx) {
+  for (int i = 0; i < viewer()->panels.size; ++i) {
+    T3Panel* panl = viewer()->panels.FastEl(i);
+    panl->fix_name = true;
+  }
+}
+
+void iT3PanelViewer::UnFixAllTabNames(int tab_idx) {
+  for (int i = 0; i < viewer()->panels.size; ++i) {
+    T3Panel* panl = viewer()->panels.FastEl(i);
+    panl->fix_name = false;
+  }
+  UpdateTabNames();
+}
+
 void iT3PanelViewer::FillContextMenu_impl(taiWidgetMenu* menu, int tab_idx) {
    menu->AddItem("&Add Panel", iAction::action,
                  this, SLOT(AddPanel()),_nilVariant);
@@ -151,6 +166,14 @@ void iT3PanelViewer::FillContextMenu_impl(taiWidgetMenu* menu, int tab_idx) {
 
     menu->AddItem("Set Color Scheme -- All Views", iAction::int_act,
                   this, SLOT(SetAllColorScheme(int)), tab_idx);
+    
+    menu->AddSep();
+
+    menu->AddItem("Fix All Tab Names", iAction::int_act,
+                  this, SLOT(FixAllTabNames(int)), tab_idx);
+    
+    menu->AddItem("UnFix All Tab Names", iAction::int_act,
+                  this, SLOT(UnFixAllTabNames(int)), tab_idx);
     
     menu->AddSep();
 

@@ -39,7 +39,10 @@ class E_API UnitGroupView: public nvDataView {
 INHERITED(nvDataView)
   friend class LayerView;
 public:
-  static void           ValToDispText(float val, String& str); // renders the display text, typ 6 chars max
+  static void           ValToDispText(float val, String& str, const String& fmt);
+  // renders the display text using given format
+  static String         ValToDispTextFmt(int len);
+  // get format string for rendering values, to fit in given length
 
   voidptr_Matrix        uvd_bases; // #IGNORE [x][y][nv->membs.size] void* base pointers to unit values -- computed during Init -- note that bases for all members are encoded, so switching members does not require recompute, and this also speeds history saving
   float_Matrix          uvd_hist; // #IGNORE [x][y][nv->membs.size][hist_max] buffer of history of previous value data -- last (frame) dimension uses circ buffer system for efficient storing and retrieval

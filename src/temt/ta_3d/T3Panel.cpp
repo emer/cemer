@@ -44,6 +44,7 @@ TA_BASEFUNS_CTORS_DEFN(T3Panel);
 
 void T3Panel::Initialize() {
 //  link_type = &TA_T3SigLink;
+  fix_name = false;
   bg_color.setColorName(taMisc::t3d_bg_color);
   text_color.setColorName(taMisc::t3d_text_color);
   headlight_on = true;
@@ -142,6 +143,7 @@ void T3Panel::SigEmit(int sls, void* op1, void* op2) {
 }
 
 void T3Panel::UpdateNameFmFirstChild() {
+  if(fix_name) return;
   T3DataViewMain* fc = FirstChild();
   if(fc && fc->data()) {
     String nm = fc->data()->GetDisplayName();

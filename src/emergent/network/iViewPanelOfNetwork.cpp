@@ -101,16 +101,26 @@ iViewPanelOfNetwork::iViewPanelOfNetwork(NetView* dv_)
   lblUnitText = taiM->NewLabel("Unit:\nText", widg, font_spec);
   lblUnitText->setToolTip(taiMisc::ToolTipPreProcess("What text to display for each unit (values, names)"));
   layDispCheck->addWidget(lblUnitText);
-  cmbUnitText = dl.Add(new taiWidgetComboBox(true, TA_NetView.sub_types.FindName("UnitTextDisplay"),
-                                this, NULL, widg, taiWidget::flgAutoApply));
+  cmbUnitText = dl.Add(new taiWidgetComboBox
+                       (true, TA_NetView.sub_types.FindName("UnitTextDisplay"),
+                        this, NULL, widg, taiWidget::flgAutoApply));
   layDispCheck->addWidget(cmbUnitText->GetRep());
   layDispCheck->addSpacing(taiM->hschk_c);
+
+  lblUnitTextPrec = taiM->NewLabel("Prec", widg, font_spec);
+  lblUnitTextPrec->setToolTip(taiMisc::ToolTipPreProcess("Precision of values displayed when Unit Text displays values."));
+  layDispCheck->addWidget(lblUnitTextPrec);
+  fldUnitTextPrec = dl.Add(new taiWidgetField(&TA_int, this, NULL, widg));
+  layDispCheck->addWidget(fldUnitTextPrec->GetRep());
+  ((iLineEdit*)fldUnitTextPrec->GetRep())->setCharWidth(2);
+  layDispCheck->addSpacing(taiM->hsep_c);
 
   lblDispMode = taiM->NewLabel("Style", widg, font_spec);
   lblDispMode->setToolTip(taiMisc::ToolTipPreProcess("How to display unit values.  3d Block (default) is optimized for maximum speed."));
   layDispCheck->addWidget(lblDispMode);
-  cmbDispMode = dl.Add(new taiWidgetComboBox(true, TA_NetView.sub_types.FindName("UnitDisplayMode"),
-    this, NULL, widg, taiWidget::flgAutoApply));
+  cmbDispMode = dl.Add(new taiWidgetComboBox
+                       (true, TA_NetView.sub_types.FindName("UnitDisplayMode"),
+                        this, NULL, widg, taiWidget::flgAutoApply));
   layDispCheck->addWidget(cmbDispMode->GetRep());
   layDispCheck->addSpacing(taiM->hsep_c);
 
@@ -528,6 +538,7 @@ void iViewPanelOfNetwork::UpdatePanel_impl() {
   cmbLayLayout->GetEnumImage(nv->lay_layout);
   cmbConType->GetEnumImage(nv->con_type);
   cmbUnitText->GetEnumImage(nv->unit_text_disp);
+  fldUnitTextPrec->GetImage((String)nv->font_sizes.un_val_prec);
   cmbDispMode->GetEnumImage(nv->unit_disp_mode);
   cmbPrjnDisp->GetEnumImage(nv->view_params.prjn_disp);
   fldPrjnWdth->GetImage((String)nv->view_params.prjn_width);
@@ -620,6 +631,8 @@ void iViewPanelOfNetwork::GetValue_impl() {
   cmbUnitText->GetEnumValue(utd);
   nv->unit_text_disp = (NetView::UnitTextDisplay)utd;
 
+  nv->font_sizes.un_val_prec = (int)fldUnitTextPrec->GetValue();
+  
   // unit disp mode is only guy requiring full build!
   int udm;
   cmbDispMode->GetEnumValue(udm);
