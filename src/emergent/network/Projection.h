@@ -197,9 +197,10 @@ public:
   virtual void  UpdateLesioned();
   // #CAT_State update the cached lesioned flag
   
-  String       GetTypeDecoKey() const override { return "Projection"; }
-  int    GetEnabled() const    override { return MainIsActive(); }
-  // void   SetEnabled(bool value) override { off = !value; }
+  String        GetTypeDecoKey() const override { return "Projection"; }
+  int           GetEnabled() const    override { return !off; }
+  // void       SetEnabled(bool value) override { off = !value; }
+  int           GetSpecialState() const override;
 
   void          GetArgCompletionList(const String& method, const String& arg, taBase* arg_obj,
                                      const String& cur_txt, Completions& completions) override;

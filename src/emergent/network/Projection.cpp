@@ -253,6 +253,11 @@ void Projection::DMem_ComputeAggs(MPI_Comm comm) {
 #endif
 
 
+int Projection::GetSpecialState() const {
+  if(MainNotActive()) return 4;
+  return 0;
+}
+
 void Projection::ToggleOff() {
   NetworkState_cpp* net = GetValidNetState();
   if(net) {
