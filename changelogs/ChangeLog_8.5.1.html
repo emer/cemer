@@ -1,0 +1,295 @@
+<html><body>
+<h2>ChangeLog for Emergent Version 8.5.1
+  Revisions 11328:11361</h2>
+<table border="1" style="table-layout:fixed;width: 100%;">
+<tr>
+<td width="5%">Rev No.</td>
+<td width="10%">
+                Date               
+        </td>
+<td width="5%">
+                    Author
+                 
+        </td>
+<td width="">
+                    Message
+                 
+        </td>
+</tr>
+<tr>
+<td><pre>11328</pre></td>
+<td><pre>2018-01-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>revert version to 8.5.0 -- we have svn rev to track the diff and not worth version bump</pre></td>
+</tr>
+<tr>
+<td><pre>11329</pre></td>
+<td><pre>2018-01-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>do brew upgrade in emergent install so it is the latest versions of things..</pre></td>
+</tr>
+<tr>
+<td><pre>11330</pre></td>
+<td><pre>2018-01-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>changelog updated to 11328 for 8.5</pre></td>
+</tr>
+<tr>
+<td><pre>11333</pre></td>
+<td><pre>2018-01-09</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>- Change over from old to new "net text"
+- rename shadow variable in NetView
+</pre></td>
+</tr>
+<tr>
+<td><pre>11334</pre></td>
+<td><pre>2018-01-10</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>- New directive VIEW_WIDTH_nn to specify default width of items with the VIEW directive.
+- Used for NetStateText fields
+</pre></td>
+</tr>
+<tr>
+<td><pre>11335</pre></td>
+<td><pre>2018-01-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* LeabraConSpec: get rid of dwt_noise params -- not doing anything useful..
+* add DwtShareSpec -- share dwts across sender connections -- attempt to capture the "crazy"
+projection dynamic from WWI_emer model -- tests on small objrec_expt model indicate positive
+effects.. we'll see..  variety of options on probabilty, neigh size, and nature of sharing
+(common pool vs grabbing from window around each synapse)
+* also realized that momentum was operating prior to dwt aggregation across nodes / small batch -- tried it the other way and it failed badly on test model.. interesting..
+</pre></td>
+</tr>
+<tr>
+<td><pre>11336</pre></td>
+<td><pre>2018-01-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>recent xcode on mac now defines a type named "type" somewhere, which then conflicts with any
+member named 'type' which occurs in 7.1.. rebuilt 7.1 LTS package with this fix.
+</pre></td>
+</tr>
+<tr>
+<td><pre>11337</pre></td>
+<td><pre>2018-01-11</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Refactor for easier understanding and maintenance
+</pre></td>
+</tr>
+<tr>
+<td><pre>11338</pre></td>
+<td><pre>2018-01-11</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>New methods to find all NetView/BrainView views so that all can be notified (and are notified) of Network monitor additions/deletions.
+</pre></td>
+</tr>
+<tr>
+<td><pre>11339</pre></td>
+<td><pre>2018-01-12</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Add test for bug #3629 "crash in datatable sort"
+
+It looks like sorting in CSS breaks if there is a matrix column in the data table.
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>11340</pre></td>
+<td><pre>2018-01-12</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>You can now specify an object type for completion of a string field.
+- added member completion_type to ProgVar for specifying type
+- ProgVar now implements GetMemberCompletionList()
+- Tokens now kept for Layer_Group
+</pre></td>
+</tr>
+<tr>
+<td><pre>11341</pre></td>
+<td><pre>2018-01-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>guard against indexes going out of range in sort</pre></td>
+</tr>
+<tr>
+<td><pre>11342</pre></td>
+<td><pre>2018-01-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>trying a new quicksort algorithm, based on this:
+https://codereview.stackexchange.com/questions/77782/quick-sort-implementation
+which seems highly used, as compared to what seems to be the source of previous impl:
+https://stackoverflow.com/questions/6435131/indexed-array-quicksort-debug
+works on my mac, but let's see about grey..  how Sort has been working for all these years
+and all the sudden we're getting these issues is beyond me, but one clear issue was
+the treatment of &lt;= vs. &gt; in _compare method -- previously was return false for all ==
+</pre></td>
+</tr>
+<tr>
+<td><pre>11343</pre></td>
+<td><pre>2018-01-13</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Strengthen and expand tests for data table sorting
+Add a test for random permutation of rows in data table
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>11344</pre></td>
+<td><pre>2018-01-13</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>ControlPanelItems do the same completion as the var itself
+</pre></td>
+</tr>
+<tr>
+<td><pre>11345</pre></td>
+<td><pre>2018-01-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>cleanup of dwtshare code and key fix to sep case -- can't write back to dwts for that case!
+</pre></td>
+</tr>
+<tr>
+<td><pre>11346</pre></td>
+<td><pre>2018-01-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>er.. need to reset dwt to 0 after compute weights -- with dwtshare this needs to happen
+as a separate loop
+</pre></td>
+</tr>
+<tr>
+<td><pre>11347</pre></td>
+<td><pre>2018-01-14</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for #3632 - Completion for StringVal of ProgVar doesn't work in the EditDialog
+- Completer FieldType not getting set for iDialogWidgetField objects
+- A couple of lines of code that were missing
+</pre></td>
+</tr>
+<tr>
+<td><pre>11348</pre></td>
+<td><pre>2018-01-15</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix to get tree state restore working again.
+</pre></td>
+</tr>
+<tr>
+<td><pre>11349</pre></td>
+<td><pre>2018-01-15</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Additional fix for tree view save/restore -
+- Program Editor code was not expanding to default because the tree_state_restored bool was always false
+because we don't save restore the Editor tree
+- ExpandDefault now only checks tree_state_restore for the Navigator tree
+</pre></td>
+</tr>
+<tr>
+<td><pre>11350</pre></td>
+<td><pre>2018-01-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* css const char* operator converter was using a temp String from GetStr() -- chars were
+DOA -- now assigns to tmp_str to keep string around -- and for cssString and cssCPtr_String it
+references the original string instead of the GetStr() tmp -- longstanding issue that was
+avoided before by almost exclusively using const String&amp; args.. which are more efficient anyway..
+but with StateSeparation some of the state code doesn't know about Strings..  should have fixed
+this a long time ago -- gotta be less impatient sometimes..
+* meanwhile finally bothered to find untabify command in emacs, and applied it to all headers -- now all spaces instead of tabs.  big checkin.
+* updated emergent_install_mac_deps dialog using ScriptEditor and updated script for 8.5.1 to use
+qt5931_mac64.dmg which has new webkit that doesn't crash loading jpeg images..
+* fixed DoGRetinaProc to use mono image for mean if not rgb -- was assuming rgb.
+</pre></td>
+</tr>
+<tr>
+<td><pre>11351</pre></td>
+<td><pre>2018-01-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* bump version to 8.5.1 -- definitely new features now!
+* net monitor now always updates the network pointers -- when doing UpdateFromProgLib on
+LeabraEpochMonitor nothing was updated properly -- now it just works -- no major overhead --
+if it is ever an issue can just turn SetNetwork off
+* ProgLib now calls Refresh when doing UpdateFromProgLib
+* DoGRegionSpec mono_zero restore previous NET_FILTER option -- use the net on-off filter
+instead of doing each separately -- works significantly better for v1rf project -- which was
+broken in 8.2.0 but nobody noticed..
+</pre></td>
+</tr>
+<tr>
+<td><pre>11352</pre></td>
+<td><pre>2018-01-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* updated mac install deps script with /usr/local/bin/brew path explicit
+* cleanup and update defaults in dwt_share params
+</pre></td>
+</tr>
+<tr>
+<td><pre>11353</pre></td>
+<td><pre>2018-01-15</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for NetNetMonitor not showing up in chooser for method call MonitorVar()
+</pre></td>
+</tr>
+<tr>
+<td><pre>11354</pre></td>
+<td><pre>2018-01-16</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Completion for MonitorVar() arg	dialog "variable" field - fixes 3618 (no completion for variable field)
+- for Network, Layer, Projection
+- the members are filtered base on the CAT_ directive (e.g. CAT_Statistic, CAT_Counter, CAT_Bias, CAT_Activation)
+using different combinations depending on the object type - but maybe I could use that whole set all of the time
+and have a single method do the check)
+- in any case this is much better than dumping every member into the list!
+- will go back and add this filtering to NetMonitor completions which is a little trickier
+</pre></td>
+</tr>
+<tr>
+<td><pre>11355</pre></td>
+<td><pre>2018-01-16</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Add category filtering of members to GetArgCompletionList()
+</pre></td>
+</tr>
+<tr>
+<td><pre>11356</pre></td>
+<td><pre>2018-01-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* hide kna_adapt_misc if kna_adapt.on is not
+* UnitSrc() method in NetView to get from path
+</pre></td>
+</tr>
+<tr>
+<td><pre>11357</pre></td>
+<td><pre>2018-01-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>stop preventing use_ext_act as the code is working -- needed for sem.proj
+</pre></td>
+</tr>
+<tr>
+<td><pre>11358</pre></td>
+<td><pre>2018-01-16</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fill in the completion_type field for the 4 lesion list variables
+</pre></td>
+</tr>
+<tr>
+<td><pre>11359</pre></td>
+<td><pre>2018-01-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Projection: reserve the grey "enabled" status for the explicit off flag, and add a "SpecialState" of light red for projections that are not active due to other reasons (mainly from layer being lesioned)
+</pre></td>
+</tr>
+<tr>
+<td><pre>11360</pre></td>
+<td><pre>2018-01-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* NetView unit text precision setting -- defaults to 2
+* fix_name option in T3Panel (Visualizer tabs) + menus to update all
+* cur_font_size marked #HIDDEN in taDataView -- not user editable really
+</pre></td>
+</tr>
+<tr>
+<td><pre>11361</pre></td>
+<td><pre>2018-01-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* remove file_name.nonempty check that was preventing templates from restoring tree expansion
+* only formatting fix in iTreeView.
+</pre></td>
+</tr>
+</table>
+</body></html>
