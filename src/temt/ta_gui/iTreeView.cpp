@@ -1055,8 +1055,6 @@ void iTreeView::mouseDoubleClickEvent(QMouseEvent* event) {
   
   // if not and expanding item call inherited so we get double click to open editor
   inherited::mouseDoubleClickEvent(event);
-  emit itemDoubleClicked(item_, index.column()); // still need to emit the signal for other consumers!
-  // i.e., the iPanelOfList
 }
 
 void iTreeView::mousePressEvent(QMouseEvent* event) {

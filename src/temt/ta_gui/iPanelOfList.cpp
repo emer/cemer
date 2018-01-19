@@ -166,7 +166,7 @@ void iPanelOfList::list_itemDoubleClicked(QTreeWidgetItem* item_, int /*col*/) {
       data_panel_set()->SetPanelOfDataTable(item->num);  //  pass the column num
     }
     else {
-      ta->OpenInWindow(); // (jar - what does this mean?) pop up the edit dialog -- not favored, but probably the best thing for this situation
+      ta->OpenInWindow();
     }
   }
 }
