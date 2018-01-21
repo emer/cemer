@@ -520,7 +520,9 @@ void LEABRA_UNIT_SPEC::Compute_NetinInteg(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_S
   }
   else {
     u->net += dt.integ * dt.net_dt * (net_tot - u->net);
-    if(u->net < 0.0f) u->net = 0.0f; // negative netin doesn't make any sense
+    if(act_fun != SIGMOID) {
+      if(u->net < 0.0f) u->net = 0.0f; // negative netin doesn't make any sense
+    }
   }
 
   // first place noise is required -- generate here!
@@ -742,7 +744,7 @@ void LEABRA_UNIT_SPEC::Send_DeepRawNetin(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_ST
 
 
 void LEABRA_UNIT_SPEC::Compute_ActFun_Sigmoid(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) {
-  float new_act = 1.0f / (1.0f + expf(act.gain * u->net));
+  float new_act = 1.0f / (1.0f + expf(-act.gain * u->net));
 
   u->da = new_act - u->act;
   if((noise_type.type == STATE_CLASS(LeabraNoiseSpec)::ACT_NOISE) &&
