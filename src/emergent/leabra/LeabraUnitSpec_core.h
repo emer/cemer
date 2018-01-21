@@ -2,8 +2,9 @@
 //{
 
   enum ActFun {
-    NOISY_XX1,                        // x over x plus 1 convolved with Gaussian noise (noise is nvar)
-    SPIKE,                        // discrete spiking activations (spike when > thr) -- default params produce adaptive exponential (AdEx) model
+    NOISY_XX1,                 // x over x plus 1 convolved with Gaussian noise (noise is nvar)
+    SPIKE,                     // discrete spiking activations (spike when > thr) -- default params produce adaptive exponential (AdEx) model
+    SIGMOID,                   // simple sigmoidal function of net input -- e.g., for decoder layers
   };
 
   enum Quarters {               // #BITS specifies gamma frequency quarters within an alpha-frequency trial on which to do things
@@ -621,6 +622,9 @@
     // u->AddToActBuf(syn_delay);
   }
   // #CAT_Activation Rate coded activation
+
+  INIMPL virtual void Compute_ActFun_Sigmoid(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no);
+  // #CAT_Activation compute the activation using simple sigmoidal activation function of net input
 
   
   ///////////////////////////////////////////////////////////////////////

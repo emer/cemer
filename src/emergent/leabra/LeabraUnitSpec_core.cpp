@@ -639,6 +639,9 @@ void LEABRA_UNIT_SPEC::Compute_ApplyInhib
 
 
 void LEABRA_UNIT_SPEC::Compute_Vm(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) {
+  if(act_fun == SIGMOID) {
+    return;
+  }
   bool updt_spk_vm = true;
   if(spike_misc.t_r > 0 && u->spk_t > 0) {
     int spkdel = net->tot_cycle - u->spk_t;
@@ -738,7 +741,24 @@ void LEABRA_UNIT_SPEC::Send_DeepRawNetin(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_ST
 }
 
 
+void LEABRA_UNIT_SPEC::Compute_ActFun_Sigmoid(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) {
+  float new_act = 1.0f / (1.0f + expf(act.gain * u->net));
+
+  u->da = new_act - u->act;
+  if((noise_type.type == STATE_CLASS(LeabraNoiseSpec)::ACT_NOISE) &&
+     (noise.type != STATE_CLASS(Random)::NONE) && (net->cycle >= 0)) {
+    new_act += u->noise;
+  }
+  u->act_raw = new_act;
+  u->act = u->act_eq = u->act_nd = u->act_raw;
+}
+
 void LEABRA_UNIT_SPEC::Compute_ActFun_Rate(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) {
+  if(act_fun == SIGMOID) {
+    Compute_ActFun_Sigmoid(u, net, thr_no);
+    return;
+  }
+  
   float new_act;
   if(da_mod.DoDaModGain()) {
     float gain_eff = da_mod.DaModGain(u->da_p, act.gain,
