@@ -39,6 +39,7 @@
 #include <UserDataItem_List>
 #include <taProject>
 #include <DataTable>
+#include <ProgExprBase>
 
 #include <T3Misc>
 #include <taMisc>
@@ -109,14 +110,22 @@ void NetViewParams::Initialize() {
 #ifndef TA_QT3D
 void UnitGroupView_MouseCB(void* userData, SoEventCallback* ecb) {
   NetView* nv = (NetView*)userData;
+  nv->selected_layer = NULL;  // clear out old selection
+  nv->selected_unit = -1;
+  nv->selected_unit_var = _nilString;
+
   T3Panel* fr = nv->GetFrame();
   SoMouseButtonEvent* mouseevent = (SoMouseButtonEvent*)ecb->getEvent();
   SoMouseButtonEvent::Button but = mouseevent->getButton();
   if(!SoMouseButtonEvent::isButtonReleaseEvent(mouseevent, but))
     return; // only releases
   bool inspect_mode = false;
+  bool monitor_unit = false;
   if (QApplication::keyboardModifiers().testFlag(Qt::AltModifier) == true) {
     inspect_mode = true;
+  }
+  if (QApplication::keyboardModifiers().testFlag(Qt::MetaModifier) == true) {
+    monitor_unit = true;
   }
   bool got_one = false;
   for(int i=0;i<fr->root_view.children.size;i++) {
@@ -179,6 +188,8 @@ void UnitGroupView_MouseCB(void* userData, SoEventCallback* ecb) {
         if((xp >= 0) && (xp < lay->disp_geom.x) && (yp >= 0) && (yp < lay->disp_geom.y)) {
           UnitState_cpp* unit = lay->UnitAtDispCoord(xp, yp);
           if (unit && nv->unit_disp_md) {
+            nv->selected_layer = lay;
+            nv->selected_unit = unit->lay_un_idx;
             if(nv->unit_con_md && nv->unit_src) {
               // see UnitGroupView::UpdateUnitViewBase_Con_impl for relevant code
               // todo: could perhaps put this in a common method or something..
@@ -219,6 +230,14 @@ void UnitGroupView_MouseCB(void* userData, SoEventCallback* ecb) {
                   // have to use safe b/c could be PtrCon and other side might be gone..
                   nv->last_sel_unit_val = (String)tcong->CnSafeFast(con, act_md->idx, net->net_state);
                   break;                // once you've got one, done!
+                }
+              }
+            }
+            else if (monitor_unit) {
+              if (net) {
+                nv->CallFun("GetUnitMonitorVar");
+                if (nv->selected_unit_var.nonempty()) {
+                  nv->MonitorUnit();
                 }
               }
             }
@@ -1965,3 +1984,40 @@ void NetView::SetNetTextItemWidth(const String& name, int width) {
 void NetView::MonitorUpdate() {
   state_items_stale = true;  // some net monitor item change
 }
+
+void NetView::GetUnitMonitorVar(const String& variable) {
+  selected_unit_var = variable;
+}
+
+void NetView::MonitorUnit() {
+  if (net() && selected_layer && selected_unit != -1 && selected_unit_var.nonempty()) {
+    NetMonItem* mon_item = net()->monitor.AddUnit(selected_layer, selected_unit, selected_unit_var);
+  }
+}
+
+String NetView::GetArgForCompletion(const String& method, const String& arg) {
+  if (method == "GetUnitMonitorVar") {
+    return "layer";
+  }
+  return "";
+}
+
+void NetView::GetArgCompletionList(const String& method, const String& arg, taBase* arg_obj, const String& cur_txt, Completions& completions) {
+  if (method == "GetUnitMonitorVar") {
+    TypeDef* td = taMisc::FindTypeName("UnitState_cpp");
+    if (!td) {
+      return;
+    }
+    MemberSpace mbr_space = td->members;
+    for (int i = 0; i < mbr_space.size; ++i) {
+      MemberDef* md = mbr_space.FastEl(i);
+      String category = md->OptionAfter("CAT_");
+      if (category == "Statistic" || category == "Counter" || category == "Bias" || category == "Activation") {
+        if (!md->HasOption("HIDDEN")) {
+          completions.member_completions.Link(md);
+        }
+      }
+    }
+  }
+}
+

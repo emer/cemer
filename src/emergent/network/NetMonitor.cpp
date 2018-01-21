@@ -147,6 +147,11 @@ NetMonItem* NetMonitor::AddLayActAvg() {
   return nmi;
 }
 
+NetMonItem* NetMonitor::AddUnit(Layer* layer, const String& unit_or_range, const String& variable) {
+  String units_variable = "units[" + unit_or_range + "]." + variable;
+  return AddObject(layer, units_variable);
+}
+
 void NetMonitor::RemoveMonitors() {
   for (int i = 0; i < items.size; ++i) {
     NetMonItem* nmi = items.FastEl(i);
@@ -256,6 +261,8 @@ String NetMonitor::GetArgForCompletion(const String& method, const String& arg) 
 }
 
 void NetMonitor::GetArgCompletionList(const String& method, const String& arg, taBase* arg_obj, const String& cur_txt, Completions& completions) {
+  if (!arg_obj) return;
+  
   TypeDef* td = arg_obj->GetTypeDef();
   if (td) {
     TypeDef* special_td = NULL;
@@ -268,7 +275,9 @@ void NetMonitor::GetArgCompletionList(const String& method, const String& arg, t
       MemberDef* md = mbr_space.FastEl(i);
       String category = md->OptionAfter("CAT_");
       if (category == "Statistic" || category == "Counter" || category == "Bias" || category == "Activation") {
-        completions.member_completions.Link(md);
+        if (!md->HasOption("HIDDEN")) {
+          completions.member_completions.Link(md);
+        }
       }
     }
   }

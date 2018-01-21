@@ -88,7 +88,7 @@ void NetStateText::GetItems(Network* net) {
         existing_item->found = true;
       }
       if (add) {
-        NetViewStateItem* item = new NetViewStateItem(mon_item_name, false, false, 8);
+        NetViewStateItem* item = new NetViewStateItem(mon_item_name, false, true, 8);
         state_items.Add(item);
       }
     }
