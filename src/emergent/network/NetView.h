@@ -206,12 +206,7 @@ public:
   ColorScale            scale;          // contains current min,max,range,zero,auto_scale
   ScaleRange_List       scale_ranges;   // #NO_COPY Auto ranges for member buttons
   NameVar_Array         lay_disp_modes; // #READ_ONLY layer display modes (not properly saved otherwise, due to reset construction of LayerViews)
-  
-  ////////////////////////////////////////////////////////////////
-  // only for selecting a unit to monitor
-  Layer*                selected_layer;      // layer owning selected unit
-  int                   selected_unit;       // number of currently selected unit
-  String                selected_unit_var;   // the var to monitor on cur_unit
+  String                selected_unit_var;   // when adding a unit to monitor this is the var to monitor
   
   Network*              net() const {return (Network*)data();}
   T3NetNode*            node_so() const {return (T3NetNode*)inherited::node_so();}
@@ -251,7 +246,7 @@ public:
   // set the display width in chars of the value portion of the state text item
   virtual void          GetUnitMonitorVar(const String& variable);
   // #BUTTON user has selected a unit to monitor - ask for the variable to monitor
-  virtual void          MonitorUnit();
+  virtual void          MonitorUnit(Layer* layer, int unit, const String& var);
   // call on monitor to monitor the unit
   String                GetArgForCompletion(const String& method, const String& arg) override;
   virtual void          GetArgCompletionList(const String& method, const String& arg, taBase* arg_obj, const String& cur_txt, Completions& completions) override;

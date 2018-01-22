@@ -110,8 +110,6 @@ void NetViewParams::Initialize() {
 #ifndef TA_QT3D
 void UnitGroupView_MouseCB(void* userData, SoEventCallback* ecb) {
   NetView* nv = (NetView*)userData;
-  nv->selected_layer = NULL;  // clear out old selection
-  nv->selected_unit = -1;
   nv->selected_unit_var = _nilString;
 
   T3Panel* fr = nv->GetFrame();
@@ -188,8 +186,6 @@ void UnitGroupView_MouseCB(void* userData, SoEventCallback* ecb) {
         if((xp >= 0) && (xp < lay->disp_geom.x) && (yp >= 0) && (yp < lay->disp_geom.y)) {
           UnitState_cpp* unit = lay->UnitAtDispCoord(xp, yp);
           if (unit && nv->unit_disp_md) {
-            nv->selected_layer = lay;
-            nv->selected_unit = unit->lay_un_idx;
             if(nv->unit_con_md && nv->unit_src) {
               // see UnitGroupView::UpdateUnitViewBase_Con_impl for relevant code
               // todo: could perhaps put this in a common method or something..
@@ -237,7 +233,7 @@ void UnitGroupView_MouseCB(void* userData, SoEventCallback* ecb) {
               if (net) {
                 nv->CallFun("GetUnitMonitorVar");
                 if (nv->selected_unit_var.nonempty()) {
-                  nv->MonitorUnit();
+                  nv->MonitorUnit(lay, unit->lay_un_idx, nv->selected_unit_var);
                 }
               }
             }
@@ -418,9 +414,6 @@ void NetView::Initialize() {
   no_init_on_rerender = false;
   hist_reset_req = false;
   last_sel_unit_val = "";
-  
-  selected_layer = NULL;
-  selected_unit = -1;
   selected_unit_var = "";
 }
 
@@ -444,7 +437,6 @@ void NetView::InitLinks() {
   taBase::Own(eff_max_size, this);
   taBase::Own(font_sizes, this);
   taBase::Own(view_params, this);
-  taBase::Own(selected_layer, this);
 
   ctr_hist_idx.matrix = &ctr_hist;
 }
@@ -489,9 +481,6 @@ void NetView::CutLinks() {
   scale_ranges.CutLinks();
   scale.CutLinks();
   lay_disp_modes.CutLinks();
-  if (selected_layer) {
-    selected_layer->CutLinks();
-  }
   inherited::CutLinks();
 }
 
@@ -2005,9 +1994,9 @@ void NetView::GetUnitMonitorVar(const String& variable) {
   selected_unit_var = variable;
 }
 
-void NetView::MonitorUnit() {
-  if (net() && selected_layer && selected_unit != -1 && selected_unit_var.nonempty()) {
-    NetMonItem* mon_item = net()->monitor.AddUnit(selected_layer, selected_unit, selected_unit_var);
+void NetView::MonitorUnit(Layer* layer, int unit, const String& var) {
+  if (net() && layer && unit != -1 && var.nonempty()) {
+    NetMonItem* mon_item = net()->monitor.AddUnit(layer, unit, var);
   }
 }
 
