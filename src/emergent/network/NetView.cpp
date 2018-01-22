@@ -418,6 +418,10 @@ void NetView::Initialize() {
   no_init_on_rerender = false;
   hist_reset_req = false;
   last_sel_unit_val = "";
+  
+  selected_layer = NULL;
+  selected_unit = -1;
+  selected_unit_var = "";
 }
 
 void NetView::Destroy() {
@@ -440,6 +444,7 @@ void NetView::InitLinks() {
   taBase::Own(eff_max_size, this);
   taBase::Own(font_sizes, this);
   taBase::Own(view_params, this);
+  taBase::Own(selected_layer, this);
 
   ctr_hist_idx.matrix = &ctr_hist;
 }
@@ -484,7 +489,9 @@ void NetView::CutLinks() {
   scale_ranges.CutLinks();
   scale.CutLinks();
   lay_disp_modes.CutLinks();
-  
+  if (selected_layer) {
+    selected_layer->CutLinks();
+  }
   inherited::CutLinks();
 }
 
@@ -1308,7 +1315,16 @@ void NetView::RenderStateValues() {
           DataTable* monitor_data = &nt->mon_data;
           if (monitor_data) {
             if (monitor_data->rows > 0) {
-              val = monitor_data->GetValAsVar(item->name, -1).toString();
+              DataCol* dc = monitor_data->FindColName(var);
+              if (dc && dc->is_matrix) {
+                for (int j=0; j<dc->cell_size(); j++) {
+                  val = monitor_data->GetValAsVarM(var, -1, j).toString();
+                  taMisc::DebugInfo(val);
+                }
+              }
+              else {
+                val = monitor_data->GetValAsVar(var, -1).toString();
+              }
             }
           }
         }
