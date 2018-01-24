@@ -2676,6 +2676,7 @@ void Network::MonitorData() {
   if(!taMisc::gui_active) return;
   mon_data.EnforceRows(1);
   mon_data.WriteItem(0);
+  mon_data.ReadItem(0);
   monitor.GetMonVals();
 }
 
