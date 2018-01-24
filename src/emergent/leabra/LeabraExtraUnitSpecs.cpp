@@ -1347,3 +1347,11 @@ void LeabraContextUnitSpec::TriggerUpdate(LeabraLayer* lay, bool update) {
   lay->SyncLayerState();
 }
 
+
+#include "LeabraTickDecodeUnitSpec.cpp"
+TA_BASEFUNS_CTORS_DEFN(LeabraTickDecodeUnitSpec);
+
+void LeabraTickDecodeUnitSpec::Initialize() {
+  Initialize_core();
+}
+

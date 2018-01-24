@@ -383,7 +383,7 @@
         bool max_err = true;
         if(gpd->acts_m.max_i >= 0) {
           LEABRA_UNIT_STATE* un = net->GetUnitState(gpd->acts_m.max_i);
-          max_err = (un->targ < 0.1f);
+          max_err = (un->targ < 0.001f); // close enough to zero -- tickdecode may be low
         }
         gpd->max_err = (float)max_err;
         merr_sum += (int)max_err;

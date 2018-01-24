@@ -49,3 +49,4 @@
 #include "CerebGranuleUnitSpec.cpp"
 #include "LeabraMultCopyUnitSpec.cpp"
 #include "LeabraContextUnitSpec.cpp"
+#include "LeabraTickDecodeUnitSpec.cpp"

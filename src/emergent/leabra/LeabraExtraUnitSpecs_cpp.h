@@ -357,4 +357,14 @@ public:
   LeabraContextUnitSpec_cpp() { Initialize_core(); }
 };
 
+class E_API LeabraTickDecodeUnitSpec_cpp : public LeabraUnitSpec_cpp {
+  // for a decoder layer with unit groups, where each unit group learns to decode the representations at a different tick (using network.tick counter to index)
+INHERITED(LeabraUnitSpec)
+public:
+
+#include <LeabraTickDecodeUnitSpec>
+  
+  LeabraTickDecodeUnitSpec_cpp() { Initialize_core(); }
+};
+
 #endif // LeabraExtraUnitSpecs_cpp_h

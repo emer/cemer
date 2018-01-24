@@ -168,6 +168,7 @@ set(leabra_HEADS_NOMAKETA
   CerebGranuleUnitSpec.h
   LeabraMultCopyUnitSpec.h
   LeabraContextUnitSpec.h
+  LeabraTickDecodeUnitSpec.h
 
   LeabraExtraLayerSpecs_mbrs.h
   ScalarValLayerSpec.h

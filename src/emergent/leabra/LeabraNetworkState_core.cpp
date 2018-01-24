@@ -156,6 +156,8 @@ UNIT_SPEC_CPP* LEABRA_NETWORK_STATE::NewUnitSpec(int spec_type) const {
     return new STATE_CLASS_CPP(LeabraMultCopyUnitSpec)();
   case T_LeabraContextUnitSpec:
     return new STATE_CLASS_CPP(LeabraContextUnitSpec)();
+  case T_LeabraTickDecodeUnitSpec:
+    return new STATE_CLASS_CPP(LeabraTickDecodeUnitSpec)();
   }
   StateError("NewUnitSpec, type not recognized");
   return new STATE_CLASS_CPP(LeabraUnitSpec)();

@@ -698,4 +698,23 @@ private:
   void  Destroy()     { };
 };
 
+
+eTypeDef_Of(LeabraTickDecodeUnitSpec);
+
+class E_API LeabraTickDecodeUnitSpec : public LeabraUnitSpec {
+  // for a decoder layer with unit groups, where each unit group learns to decode the representations at a different tick (using network.tick counter to index)
+INHERITED(LeabraUnitSpec)
+public:
+
+#include <LeabraTickDecodeUnitSpec>
+
+  TA_SIMPLE_BASEFUNS(LeabraTickDecodeUnitSpec);
+protected:
+  SPEC_DEFAULTS;
+private:
+  void  Initialize();
+  void  Defaults_init() { };
+  void  Destroy()     { };
+};
+
 #endif // LeabraExtraUnitSpecs_h

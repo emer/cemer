@@ -68,6 +68,7 @@
     T_CerebGranuleUnitSpec,
     T_LeabraMultCopyUnitSpec,
     T_LeabraContextUnitSpec,
+    T_LeabraTickDecodeUnitSpec,
     
     N_LeabraUnitSpecs,    // derived classes start from this one -- use class name for subclasses
   };
