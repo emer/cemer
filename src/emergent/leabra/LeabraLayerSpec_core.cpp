@@ -78,6 +78,39 @@ void LEABRA_LAYER_SPEC::Trial_Init_Layer(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK
 }
 
 
+float LEABRA_LAYER_SPEC::Compute_MaxErr(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
+  LEABRA_UNGP_STATE* lgpd = lay->GetLayUnGpState(net);
+  lay->max_err = 0.0f;
+  if(!lay->HasExtFlag(LAYER_STATE::COMP_TARG)) return 0.0f;
+  if(HasUnitGpInhib(lay)) {
+    LEABRA_UNIT_SPEC_CPP* us = lay->GetUnitSpec(net);
+    int merr_sum = 0;
+    for(int g=0; g < lay->n_ungps; g++) {
+      if(us->GetStateSpecType() == LEABRA_NETWORK_STATE::T_LeabraTickDecodeUnitSpec) {
+        if(g != net->tick) continue; // only operate on the one tick
+      }
+      LEABRA_UNGP_STATE* gpd = lay->GetUnGpState(net, g);
+      bool max_err = true;
+      if(gpd->acts_m.max_i >= 0) {
+        LEABRA_UNIT_STATE* un = net->GetUnitState(gpd->acts_m.max_i);
+        max_err = (un->targ < 0.001f); // close enough to zero -- tickdecode may be low
+      }
+      gpd->max_err = (float)max_err;
+      merr_sum += (int)max_err;
+    }
+    lay->max_err = (merr_sum > 0);
+  }
+  else {
+    bool max_err = true;
+    if(lgpd->acts_m.max_i >= 0) {
+      LEABRA_UNIT_STATE* un = net->GetUnitState(lgpd->acts_m.max_i);
+      max_err = (un->targ < 0.1f);
+    }
+    lay->max_err = (float)max_err;
+  }
+  return lay->max_err;
+}
+
 void LEABRA_LAYER_SPEC::Compute_CosDiff_post(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
   if(cos_diff.lrate_mod && cos_diff.lrmod_fm_trc) {
     for(int i=0;i<lay->n_recv_prjns;i++) {

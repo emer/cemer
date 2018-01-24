@@ -372,34 +372,7 @@
   // #CAT_Statistic compute sum squared error of activation vs target over the entire layer -- always returns the actual sse, but unit_avg and sqrt flags determine averaging and sqrt of layer's own sse value
   // IMPORTANT: above requires special call by LeabraNetworkState to override base Layer function!
 
-  INLINE virtual float  Compute_MaxErr(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
-    LEABRA_UNGP_STATE* lgpd = lay->GetLayUnGpState(net);
-    lay->max_err = 0.0f;
-    if(!lay->HasExtFlag(LAYER_STATE::COMP_TARG)) return 0.0f;
-    if(HasUnitGpInhib(lay)) {
-      int merr_sum = 0;
-      for(int g=0; g < lay->n_ungps; g++) {
-        LEABRA_UNGP_STATE* gpd = lay->GetUnGpState(net, g);
-        bool max_err = true;
-        if(gpd->acts_m.max_i >= 0) {
-          LEABRA_UNIT_STATE* un = net->GetUnitState(gpd->acts_m.max_i);
-          max_err = (un->targ < 0.001f); // close enough to zero -- tickdecode may be low
-        }
-        gpd->max_err = (float)max_err;
-        merr_sum += (int)max_err;
-      }
-      lay->max_err = (merr_sum > 0);
-    }
-    else {
-      bool max_err = true;
-      if(lgpd->acts_m.max_i >= 0) {
-        LEABRA_UNIT_STATE* un = net->GetUnitState(lgpd->acts_m.max_i);
-        max_err = (un->targ < 0.1f);
-      }
-      lay->max_err = (float)max_err;
-    }
-    return lay->max_err;
-  }
+  INIMPL virtual float  Compute_MaxErr(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net);
   // #CAT_Statistic compute max_err, across unit groups (if present and used) and the entire layer
 
   INLINE virtual float  Compute_NormErr(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
