@@ -1307,8 +1307,10 @@ void NetView::RenderStateValues() {
               DataCol* dc = monitor_data->FindColName(var);
               if (dc && dc->is_matrix) {
                 for (int j=0; j<dc->cell_size(); j++) {
-                  val = monitor_data->GetValAsVarM(var, -1, j).toString();
-                  taMisc::DebugInfo(val);
+                  val += monitor_data->GetValAsVarM(var, -1, j).toString();
+                  if (j < dc->cell_size() - 1) {
+                    val += " : ";
+                  }
                 }
               }
               else {
