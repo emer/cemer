@@ -88,18 +88,21 @@ void NetStateText::GetItems(Network* net) {
         existing_item->found = true;
       }
       if (add) {
-        NetViewStateItem* item = new NetViewStateItem(mon_item_name, false, false, 8);
+        NetViewStateItem* item = new NetViewStateItem(mon_item_name, false, true, 8);
         state_items.Add(item);
       }
     }
   }
   
-  // remove not found
-  for (int i=state_items.size -1; i>=0; i--) {
-    if (!GetItem(i)->found) {
-      state_items.RemoveIdx(i);
+  // remove not found - don't do on first pass because net monitor table not populated yet
+  if (!first_pass) {
+    for (int i=state_items.size -1; i>=0; i--) {
+      if (!GetItem(i)->found) {
+        state_items.RemoveIdx(i);
+      }
     }
   }
+  first_pass = false;
 }
 
 void NetStateText::ShowItem(const String& name, bool show) {

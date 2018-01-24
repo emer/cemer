@@ -66,6 +66,7 @@ class E_API NetStateText : public taNBase {
 INHERITED(taNBase)
 public:
   NetViewStateItem_List   state_items;    // #NO_COPY #READ_ONLY all standard net state items (i.e. marked VIEW) plua any in network owned monitor - maintains order, width, display flag
+  bool                    first_pass;
   
   virtual void            GetItems(Network* net);
   // these are the Network vars marked #VIEW (e.g. cycle, trial_name, ...) plus any vars being monitored by the network
@@ -82,7 +83,7 @@ public:
 
   TA_SIMPLE_BASEFUNS(NetStateText);
 private:
-  void Initialize()  { };
+  void Initialize()  { first_pass = true; }
   void Destroy()     { };
 };
 

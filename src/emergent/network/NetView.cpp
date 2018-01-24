@@ -1315,6 +1315,7 @@ void NetView::RenderStateValues() {
               }
               else {
                 val = monitor_data->GetValAsVar(var, -1).toString();
+                val = val.repl("\n", " ");
               }
             }
           }
@@ -1972,6 +1973,11 @@ void NetView::GetNetTextItems() {
   net_state_text.GetItems(net());
   
   state_items_stale = false;
+  if (nvp) {
+    nvp->GetNetVars(); // make sure the view control panel is updated
+  }
+  RenderStateValues(); // force the NetText display to update
+  UpdatePanel();
 }
 
 int NetView::GetNetTextItemWidth(const String& name) {
@@ -1990,6 +1996,7 @@ void NetView::SetNetTextItemWidth(const String& name, int width) {
 
 void NetView::MonitorUpdate() {
   state_items_stale = true;  // some net monitor item change
+  GetNetTextItems();
 }
 
 void NetView::GetUnitMonitorVar(const String& variable) {
