@@ -455,7 +455,7 @@ public:
   int           GetSpecialState() const override;
   String        GetToolbarName() const override { return "layer"; }
 
-  void          GetArgCompletionList(const String& method, const String& arg, taBase* arg_obj,
+  void          GetArgCompletionList(const String& method, const String& arg, const String_Array& arg_values, taBase* arg_obj,
                                      const String& cur_txt, Completions& completions) override;
 
   bool ChangeMyType(TypeDef* new_type) override;

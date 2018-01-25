@@ -34,7 +34,7 @@ String DataOpBaseSpec::GetArgForCompletion(const String& method, const String& a
   return "dt";
 }
 
-void DataOpBaseSpec::GetArgCompletionList(const String& method, const String& arg, taBase* arg_obj, const String& cur_txt, Completions& completions) {
+void DataOpBaseSpec::GetArgCompletionList(const String& method, const String& arg, const String_Array& arg_values, taBase* arg_obj, const String& cur_txt, Completions& completions) {
   if (arg_obj) {
     if (arg_obj->InheritsFrom(&TA_DataTable)) {
       DataTable* table = (DataTable*)arg_obj;

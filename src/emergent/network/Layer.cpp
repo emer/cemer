@@ -1940,7 +1940,7 @@ bool Layer::LoadWeights(const String& fname, bool quiet) {
   return rval;
 }
 
-void Layer::GetArgCompletionList(const String& method, const String& arg, taBase* arg_obj,
+void Layer::GetArgCompletionList(const String& method, const String& arg, const String_Array& arg_values, taBase* arg_obj,
                                    const String& cur_txt, Completions& completions) {
   if (method == "MonitorVar" && arg == "variable") {
     MemberSpace mbr_space = GetTypeDef()->members;

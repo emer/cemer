@@ -90,6 +90,11 @@ void taiWidgetField::lookupKeyPressed() {
     String cur_text = leText->text();
     if (class_base) {
       if (label()) {
+        // build a list of arg values
+        String_Array arg_values;
+        for (int a=0; a<cssi_arg_dlg->use_argc; a++) {
+          arg_values.Add(cssi_arg_dlg->GetArgValue(a));
+        }
         reference_arg = class_base->GetArgForCompletion(cssi_arg_dlg->md->name, label()->text());
         
         taBase* arg_obj = NULL;
@@ -100,7 +105,7 @@ void taiWidgetField::lookupKeyPressed() {
         if (cur_text.contains('.')) {
           pre_text = cur_text.before('.');
         }
-        class_base->GetArgCompletionList(cssi_arg_dlg->md->name, label()->text(), arg_obj, pre_text, arg_completions);
+        class_base->GetArgCompletionList(cssi_arg_dlg->md->name, label()->text(), arg_values, arg_obj, pre_text, arg_completions);
         rep()->GetCompleter()->SetCompletions(&arg_completions);
       }
     }
@@ -213,6 +218,11 @@ void taiWidgetField::characterEntered() {
     if (class_base) {
       if (label()) { // why isn't the label always set - conditional field might be the issue
         if (!cur_text.contains('.')) {
+          // build a list of arg values
+          String_Array arg_values;
+          for (int a=0; a<cssi_arg_dlg->use_argc; a++) {
+            arg_values.Add(cssi_arg_dlg->GetArgValue(a));
+          }
           reference_arg = class_base->GetArgForCompletion(cssi_arg_dlg->md->name, label()->text());
           if (reference_arg.empty()) return;
           
@@ -224,7 +234,7 @@ void taiWidgetField::characterEntered() {
             String member_name = cssi_arg_dlg->GetArgValue(0);
             arg_completions.string_completions.Add(member_name);
           }
-          class_base->GetArgCompletionList(cssi_arg_dlg->md->name, label()->text(), arg_obj, cur_text, arg_completions);
+          class_base->GetArgCompletionList(cssi_arg_dlg->md->name, label()->text(), arg_values, arg_obj, cur_text, arg_completions);
           rep()->GetCompleter()->SetCompletions(&arg_completions);
           return;
         }

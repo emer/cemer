@@ -249,7 +249,7 @@ public:
   virtual void          MonitorUnit(Layer* layer, int unit, const String& var);
   // call on monitor to monitor the unit
   String                GetArgForCompletion(const String& method, const String& arg) override;
-  virtual void          GetArgCompletionList(const String& method, const String& arg, taBase* arg_obj, const String& cur_txt, Completions& completions) override;
+  virtual void          GetArgCompletionList(const String& method, const String& arg, const String_Array& arg_values, taBase* arg_obj, const String& cur_txt, Completions& completions) override;
 
   ////////////////////////////////////////////////////////////////
   // misc util functions etc

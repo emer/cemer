@@ -1264,10 +1264,10 @@ public:
   // #IGNORE returns a list of options that are legal entries for the field given the current contents and cursor position, used in expression fields and called after each character to present a list of options or called when Ctrl-L entered to display options in a chooser dialog
   virtual void          GetMemberCompletionList(const MemberDef* md, const String& cur_txt, Completions& completions) { };
   // #IGNORE populates list with appropriate completion choices, variable names, columnn names, etc - used for non-code_expression completions;
-  virtual void          GetArgCompletionList(const String& method, const String& arg, taBase* arg_obj, const String& cur_txt, Completions& completions);
+  virtual void          GetArgCompletionList(const String& method, const String& arg, const String_Array& arg_values, taBase* arg_obj, const String& cur_txt, Completions& completions);
   // #IGNORE populates list with appropriate completion choices, columnn names, etc - used for cssi_arg_dialogs which are generated from the method signature; arg_obj is the object pointed to by another one of the arguments and that arguments name is returned by GetArgForCompletion()
   virtual String        GetArgForCompletion(const String& method, const String& arg) { return _nilString; }
-  // #IGNORE some uses of GetArgCompletionList() require a base object from which to get the list - this method is called first to get the name of the argument that will have the pointer to that base object. So this method is called before GetArgCompletionList, return _nilString in other casse.
+  // #IGNORE some uses of GetArgCompletionList() require a base object from which to get the list - this method is called first to get the name of the argument that will have the pointer to that base object. So this method is called before GetArgCompletionList, return _nilString in other casse. arg_values are indexed to match the args in dialog
   
   virtual void          CallFun(const String& fun_name, const String& args_str=NULLStr);
   // #CAT_ObjectMgmt call function (method) of given name on this object, using args as comma-separated simple literal expressions for argument values, or prompting for args using gui interface otherwise if needed

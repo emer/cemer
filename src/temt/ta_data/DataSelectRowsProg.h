@@ -45,7 +45,7 @@ public:
   bool                  CvtFmCode(const String& code) override;
   
   String                GetArgForCompletion(const String& method, const String& arg) override;
-  void                  GetArgCompletionList(const String& method, const String& arg, taBase* arg_obj, const String& cur_txt, Completions& list) override;
+  void                  GetArgCompletionList(const String& method, const String& arg, const String_Array& arg_values, taBase* arg_obj, const String& cur_txt, Completions& list) override;
 
   TA_SIMPLE_BASEFUNS(DataSelectRowsProg);
 protected:

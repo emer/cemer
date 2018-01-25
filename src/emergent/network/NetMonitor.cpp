@@ -147,9 +147,36 @@ NetMonItem* NetMonitor::AddLayActAvg() {
   return nmi;
 }
 
+NetMonItem* NetMonitor::AddUnitOrGroup(Layer* layer, const String& group_or_range,
+                                       const String& unit_or_range, const String& variable) {
+  String unit_group_str;
+  unit_group_str = BuildUnitGroupString(group_or_range, unit_or_range, variable);
+  return AddObject(layer, unit_group_str);
+}
+
 NetMonItem* NetMonitor::AddUnit(Layer* layer, const String& unit_or_range, const String& variable) {
   String units_variable = "units[" + unit_or_range + "]." + variable;
   return AddObject(layer, units_variable);
+}
+
+String NetMonitor::BuildUnitGroupString(const String& grp, const String& unit, const String& var) {
+  String full_var_str;
+  if (grp.empty() && unit.empty()) {
+    return "";
+  }
+  else if (grp.nonempty() && unit.empty()) {
+    full_var_str = "ungp[" + grp + "]." + var;
+  }
+  else if (grp.empty() && unit.nonempty()) {
+    full_var_str = "units[" + unit + "]." + var;
+  }
+  else { // neither is empty
+    full_var_str = "units[" + grp + "][" + unit + "]." + var;
+  }
+  if (full_var_str.lastchar() == '.') {
+    full_var_str = full_var_str.before('.', -1);
+  }
+  return full_var_str;
 }
 
 void NetMonitor::RemoveMonitors() {
@@ -254,19 +281,26 @@ String NetMonitor::GetArgForCompletion(const String& method, const String& arg) 
   else if (method == "AddLayer") {
     return "layer";
   }
+  else if (method == "AddUnitOrGroup" && arg == "variable") {
+    return "layer";  // GetArgCompletionList will sort out if Unit or UnitGroup based on other args
+  }
   else if (method == "AddProjection") {
     return "projection";
   }
   return "";
 }
 
-void NetMonitor::GetArgCompletionList(const String& method, const String& arg, taBase* arg_obj, const String& cur_txt, Completions& completions) {
+void NetMonitor::GetArgCompletionList(const String& method, const String& arg, const String_Array& arg_values, taBase* arg_obj, const String& cur_txt, Completions& completions) {
   if (!arg_obj) return;
   
   TypeDef* td = arg_obj->GetTypeDef();
   if (td) {
     TypeDef* special_td = NULL;
-    special_td = ProgExprBase::GetSpecialCaseType(cur_txt);
+    String special = cur_txt;
+    if (method == "AddUnitOrGroup" && arg == "variable") {
+      special = BuildUnitGroupString(arg_values.SafeEl(1), arg_values.SafeEl(2), ""); // don't pass var
+    }
+    special_td = ProgExprBase::GetSpecialCaseType(special);
     if (special_td) {
       td = special_td;
     }

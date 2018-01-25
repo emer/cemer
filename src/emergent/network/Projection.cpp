@@ -791,7 +791,7 @@ DataTable* Projection::ConVarsToTable(DataTable* dt, const String& var1, const S
   return dt;
 }
 
-void Projection::GetArgCompletionList(const String& method, const String& arg, taBase* arg_obj,
+void Projection::GetArgCompletionList(const String& method, const String& arg, const String_Array& arg_values, taBase* arg_obj,
                                  const String& cur_txt, Completions& completions) {
   if (method == "MonitorVar" && arg == "variable") {
     MemberSpace mbr_space = GetTypeDef()->members;
