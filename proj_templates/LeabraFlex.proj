@@ -1,5 +1,5 @@
-// ta_Dump File v3.0 -- code v8.5.0.0 rev11349
-LeabraProject .projects[1] { 
+// ta_Dump File v3.0 -- code v8.5.1.0 rev11379
+LeabraProject .projects[0] { 
  Doc_Group @.docs = [2] {
   taDoc @[0] { 
    UserDataItem_List @*(.user_data_) {
@@ -3522,7 +3522,7 @@ LeabraProject .projects[1] {
   };
  };
 };
-LeabraProject .projects[1] {
+LeabraProject .projects[0] {
  name="LeabraFlex";
  desc="flexible modular framework for Leabra Programs";
  tags="Leabra, flex";
@@ -3588,7 +3588,7 @@ mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":!1,\
 <link rel=\"EditURI\" type=\"application/rsd+xml\" href=\"https://grey.colorado.edu/emergent/api.php?action=rsd\">
 <link rel=\"alternate\" type=\"application/atom+xml\" title=\"emergent Atom feed\" href=\"/emergent/index.php?title=Special:RecentChanges&amp;feed=atom\">
 <!--[if lt IE 7]><style type=\"text/css\">body{behavior:url(\"/emergent/skins/Vector/csshover.min.htc\")}</style><![endif]-->
-<script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery%2Cmediawiki&amp;only=scripts&amp;skin=vector&amp;version=%2B%2Bg4NuYj\"></script></head>
+</head>
 <body class=\"mediawiki ltr sitedir-ltr ns-0 ns-subject page-LeabraFlex skin-vector action-view\">
 		<div id=\"mw-page-base\" class=\"noprint\"></div>
 		<div id=\"mw-head-base\" class=\"noprint\"></div>
@@ -3661,11 +3661,11 @@ mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":!1,\
 
 <!-- 
 NewPP limit report
-Cached time: 20180116210413
+Cached time: 20180125232646
 Cache expiry: 86400
 Dynamic content: false
 CPU time usage: 0.040 seconds
-Real time usage: 0.075 seconds
+Real time usage: 0.057 seconds
 Preprocessor visited node count: 19/1000000
 Preprocessor generated node count: 24/1000000
 Post?expand include size: 0/2097152 bytes
@@ -3679,7 +3679,7 @@ Transclusion expansion time report (%,ms,calls,template)
 100.00%    0.000      1 - -total
 -->
 
-<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2315-0!*!0!!en!*!* and timestamp 20180116210413 and revision id 13216
+<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2315-0!*!0!!en!*!* and timestamp 20180125232646 and revision id 13216
  -->
 </div>					<div class=\"printfooter\">
 						Retrieved from \"<a dir=\"ltr\" href=\"https://grey.colorado.edu/emergent/index.php?title=LeabraFlex&amp;oldid=13216\">https://grey.colorado.edu/emergent/index.php?title=LeabraFlex&amp;oldid=13216</a>\"					</div>
@@ -3693,7 +3693,7 @@ Transclusion expansion time report (%,ms,calls,template)
 									<div id=\"p-personal\" role=\"navigation\" class=\"\" aria-labelledby=\"p-personal-label\">
 						<h3 id=\"p-personal-label\">Personal tools</h3>
 						<ul>
-							<li id=\"pt-createaccount\"><a href=\"/emergent/index.php?title=Special:UserLogin&amp;returnto=LeabraFlex&amp;type=signup\" title=\"You are encouraged to create an account and log in; however, it is not mandatory\">Create account</a></li><li id=\"pt-login\"><a href=\"/emergent/index.php?title=Special:UserLogin&amp;returnto=LeabraFlex\" title=\"You are encouraged to log in; however, it is not mandatory [o]\" accesskey=\"o\">Log in</a></li>						</ul>
+							<li id=\"pt-login\"><a href=\"/emergent/index.php?title=Special:UserLogin&amp;returnto=LeabraFlex\" title=\"You are encouraged to log in; however, it is not mandatory [o]\" accesskey=\"o\">Log in</a></li>						</ul>
 					</div>
 									<div id=\"left-navigation\">
 										<div id=\"p-namespaces\" role=\"navigation\" class=\"vectorTabs\" aria-labelledby=\"p-namespaces-label\">
@@ -3788,7 +3788,7 @@ You can view its source [e]\" accesskey=\"e\">View source</a></span></li>
 		<script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
 mw.loader.state({\"user\":\"ready\",\"user.groups\":\"ready\"});mw.loader.load([\"mediawiki.toc\",\"mediawiki.action.view.postEdit\",\"site\",\"mediawiki.user\",\"mediawiki.hidpi\",\"mediawiki.page.ready\",\"mediawiki.searchSuggest\",\"ext.headertabs\"]);
 } );</script><script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
-mw.config.set({\"wgBackendResponseTime\":123});
+mw.config.set({\"wgBackendResponseTime\":153});
 } );</script>
 	
 
@@ -23444,9 +23444,9 @@ and the testing data is updated.  The first epoch monitor should have all the it
     el_typ=UserDataItem;
     el_def=0;
     UserDataItem @[0] {name="view_win_lft": value=0: val_type_fixed=0: };
-    UserDataItem @[1] {name="view_win_top": value=0.0496592: val_type_fixed=0: };
-    UserDataItem @[2] {name="view_win_wd": value=0.9928572: val_type_fixed=0: };
-    UserDataItem @[3] {name="view_win_ht": value=0.7964947: val_type_fixed=0: };
+    UserDataItem @[1] {name="view_win_top": value=0.04940014: val_type_fixed=0: };
+    UserDataItem @[2] {name="view_win_wd": value=0.9925781: val_type_fixed=0: };
+    UserDataItem @[3] {name="view_win_ht": value=0.796048: val_type_fixed=0: };
     UserDataItem @[4] {name="view_win_iconified": value=0: val_type_fixed=0: };
     UserDataItem @[5] {name="view_splitter_state": value=AAAA/wAAAAEAAAADAAABWAAAAnYAAAMgAf////8BAAAAAQA=: val_type_fixed=0: };
    };
@@ -23575,6 +23575,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	    NetViewStateItem @[18] {name="cos_err": net_member=1: display=0: width=8: found=1: };
 	    NetViewStateItem @[19] {name="minus_output_name": net_member=1: display=0: width=12: found=1: };
 	   };
+	   first_pass=0;
 	  };
 	  show_iconified=0;
 	  cur_unit_vals{ act;	  };
@@ -23591,7 +23592,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	  max_size {x=5: y=5: z=2.333333: };
 	  max_size2d {x=5: y=9: z=1: };
 	  eff_max_size {x=5: y=5: z=2.333333: };
-	  font_sizes {net_name=0.05: net_vals=0.05: layer=0.04: layer_min=0.01: layer_vals=0.03: prjn=0.01: unit=0.02: un_nm_len=3: };
+	  font_sizes {net_name=0.05: net_vals=0.05: layer=0.04: layer_min=0.01: layer_vals=0.03: prjn=0.01: unit=0.02: un_nm_len=3: un_val_prec=2: };
 	  view_params {xy_square=0: unit_spacing=0.05: prjn_disp=L_R_B: prjn_name=0: prjn_width=0.002: prjn_trans=0.5: lay_trans=0.5: unit_trans=0.6: laygp_width=1: show_laygp=1: };
 	  wt_line_disp=0;
 	  wt_line_width=4;
@@ -23626,9 +23627,11 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	   };
 	  };
 	  lay_disp_modes{ Input=-1;Hidden=-1;Output=-1;	  };
+	  selected_unit_var=;
 	 };
 	};
        };
+       fix_name=0;
        bg_color {r=1: g=1: b=1: a=1: };
        text_color {r=0: g=0: b=0: a=1: };
        headlight_on=1;
@@ -25111,6 +25114,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	 };
 	};
        };
+       fix_name=0;
        bg_color {r=1: g=1: b=1: a=1: };
        text_color {r=0: g=0: b=0: a=1: };
        headlight_on=1;
@@ -25207,9 +25211,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       el_typ=UserDataItem;
       el_def=0;
       UserDataItem @[0] {name="view_win_lft": value=0: val_type_fixed=0: };
-      UserDataItem @[1] {name="view_win_top": value=0.009737099: val_type_fixed=0: };
-      UserDataItem @[2] {name="view_win_wd": value=0.04880952: val_type_fixed=0: };
-      UserDataItem @[3] {name="view_win_ht": value=0.7234664: val_type_fixed=0: };
+      UserDataItem @[1] {name="view_win_top": value=0.007057163: val_type_fixed=0: };
+      UserDataItem @[2] {name="view_win_wd": value=0.03203125: val_type_fixed=0: };
+      UserDataItem @[3] {name="view_win_ht": value=0.7431192: val_type_fixed=0: };
       UserDataItem @[4] {name="view_win_iconified": value=0: val_type_fixed=0: };
       UserDataItem @[5] {name="view_visible": value=1: val_type_fixed=0: };
      };
@@ -25228,7 +25232,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
  save_as_only=0;
  auto_name=1;
  last_change_desc="svn rev: 10514 update startup program";
- tree_state{ .;.patches;.docs;.wizards;.ctrl_panels;.active_params;.active_params.gp[0];.active_params.gp[1];.active_params.gp[2];.data;.data.gp[0];.data.gp[1];.data.gp[2];.data.gp[3];.programs;.programs.break_points;.programs.gp[0];.programs.gp[1];.programs.gp[1].gp[0];.programs.gp[1].gp[1];.programs.gp[2];.programs.gp[3];.programs.gp[4];.programs.gp[4].gp[0];.networks;.networks[0];.networks[0].spec_tables;.networks[0].specs;.networks[0].specs[0];.networks[0].specs[2];.networks[0].param_seqs;.networks[0].layers;.networks[0].weights; };
+ tree_state{ .;.patches;.docs;.wizards;.ctrl_panels;.active_params;.active_params.gp[0];.active_params.gp[1];.active_params.gp[2];.data;.data.gp[0];.data.gp[1];.data.gp[2];.data.gp[3];.programs;.programs.break_points;.programs.gp[0];.programs.gp[1];.programs.gp[1].gp[0];.programs.gp[1].gp[1];.programs.gp[2];.programs.gp[3];.programs.gp[4];.programs.gp[4].gp[0];.viewers[0];.viewers[0].frames[2];.networks;.networks[0];.networks[0].spec_tables;.networks[0].specs;.networks[0].specs[0];.networks[0].specs[2];.networks[0].param_seqs;.networks[0].layers;.networks[0].weights; };
  networks {
   name="networks";
   el_typ=LeabraNetwork;
@@ -25382,7 +25386,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
        deep {on=0: bg_lrate=1: fg_lrate=0: };
        margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_lrn=0.5: };
-       dwt_share {on=0: neigh=2: common=0: p_share=0.5: };
+       dwt_share {on=0: neigh=2: p_share=0.5: };
        use_lrate_sched=1;
        lrate_sched {
 	name="lrate_sched";
@@ -25465,7 +25469,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
        deep {on=0: bg_lrate=1: fg_lrate=0: };
        margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_lrn=0.5: };
-       dwt_share {on=0: neigh=2: common=0: p_share=0.5: };
+       dwt_share {on=0: neigh=2: p_share=0.5: };
        use_lrate_sched=1;
        lrate_sched {
 	name="lrate_sched";
@@ -25536,7 +25540,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
      deep {on=0: bg_lrate=1: fg_lrate=0: };
      margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_lrn=0.5: };
-     dwt_share {on=0: neigh=2: common=0: p_share=0.5: };
+     dwt_share {on=0: neigh=2: p_share=0.5: };
      use_lrate_sched=1;
      lrate_sched {
       name="lrate_sched";
