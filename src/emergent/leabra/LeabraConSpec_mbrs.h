@@ -74,6 +74,7 @@ class STATE_CLASS(XCalLearnSpec) : public STATE_CLASS(SpecMemberBase) {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra CtLeabra temporally eXtended Contrastive Attractor Learning (XCAL) specs
 INHERITED(SpecMemberBase)
 public:
+  bool          chl;            // use pure contrastive hebbian learning form for error-driven learning factor (still in terms of averages, but not using xcal equation)
   float         m_lrn;          // #DEF_1 #MIN_0 multiplier on learning based on the medium-term floating average threshold which produces error-driven learning -- this is typically 1 when error-driven learning is being used, and 0 when pure hebbian learning is used -- note that the long-term floating average threshold is provided by the receiving unit
   bool          set_l_lrn;      // #DEF_false if true, set a fixed l_lrn weighting factor that determines how much of the long-term floating average threshold (i.e., BCM, Hebbian) component of learning is used -- this is useful for setting a fully Hebbian learning connection, e.g., by setting m_lrn = 0 and l_lrn = 1. If false, then the receiving unit's avg_l_lrn factor is used, which dynamically modulates the amount of the long-term component as a function of how active overall it is
   float         l_lrn;          // #CONDSHOW_ON_set_l_lrn fixed l_lrn weighting factor that determines how much of the long-term floating average threshold (i.e., BCM, Hebbian) component of learning is used -- this is useful for setting a fully Hebbian learning connection, e.g., by setting m_lrn = 0 and l_lrn = 1. 
@@ -133,6 +134,7 @@ public:
 private:
   void  Initialize() {   Defaults_init(); }
   void  Defaults_init() {
+    chl = false;
     m_lrn = 1.0f;  set_l_lrn = false;  l_lrn = 1.0f;  d_rev = 0.10f;  d_thr = 0.0001f;
     lrn_thr = 0.01f; s_mult = 1.0f; d_rev_ratio = -(1.0f - d_rev) / d_rev;
   }

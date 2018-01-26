@@ -309,8 +309,15 @@
      const float ru_avg_l, const float ru_avg_l_lrn, const float ru_margin) 
   { float srs = xcal.s_mult * ru_avg_s * su_avg_s;
     float srm = ru_avg_m * su_avg_m;
-    float new_dwt = (ru_avg_l_lrn * xcal.dWtFun(srs, ru_avg_l) +
-                    xcal.m_lrn * xcal.dWtFun(srs, srm));
+    float bcm = ru_avg_l_lrn * xcal.dWtFun(srs, ru_avg_l);
+    float err;
+    if(xcal.chl) {
+      err = xcal.dWtFun(srs, srm);
+    }
+    else {
+      err = srs - srm;
+    }
+    float new_dwt = bcm + xcal.m_lrn * err;
     if(margin.sign_dwt) {
       float mdwt = ru_avg_l_lrn * margin.sign_lrn * margin.SignDwt(ru_margin) * su_avg_s;
       new_dwt += mdwt;
