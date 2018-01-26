@@ -3498,6 +3498,9 @@ bool LeabraWizard::Hippo(LeabraNetwork* net, int n_ec_slots) {
   
   // EC_CA1ConSpecs, wt_sig.gain = 6, off 1.25, cor = 1 (not .4)
 
+  ecca1_cons->SetUnique("momentum", true);
+  ecca1_cons->momentum.on = false;
+  
   // ECin_CA1, abs = 2
   ecin_ca1_cons->SetUnique("wt_scale", true);
   // ecin_ca1_cons->wt_scale.abs = 2.0f;
@@ -3519,6 +3522,12 @@ bool LeabraWizard::Hippo(LeabraNetwork* net, int n_ec_slots) {
   hip_cons->lrate = 0.2f;
   hip_cons->SetUnique("chl", true);
   hip_cons->chl.hebb = 0.05f;
+  hip_cons->SetUnique("chl", true);
+  hip_cons->chl.hebb = 0.05f;
+  hip_cons->SetUnique("momentum", true); // not used anyway but clearer to turn off
+  hip_cons->momentum.on = false;
+  hip_cons->SetUnique("wt_bal", true); // not used anyway but clearer to turn off
+  hip_cons->wt_bal.on = false;
   
   // mossy mean = 0.9 var = 0.01, rel = 8 , lrate = 0
   mossy_cons->SetUnique("rnd", true);
