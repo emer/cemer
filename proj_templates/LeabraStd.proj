@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.5.0.0 rev11320
+// ta_Dump File v3.0 -- code v8.5.1.0 rev11379
 LeabraProject .projects[0] { 
  Doc_Group @.docs = [0] {
  };
@@ -1835,7 +1835,7 @@ LeabraProject .projects[0] {
 	 T3DataView_List @.annote_children = [0] {
 	 };
 
-	 NetViewStateItem_List @.state_items = [20] {
+	 NetViewStateItem_List @.net_state_text.state_items = [20] {
 	  NetViewStateItem @[0] { };
 	  NetViewStateItem @[1] { };
 	  NetViewStateItem @[2] { };
@@ -4177,6 +4177,7 @@ LeabraProject .projects[0] {
      name="network";
      var_type=T_Object;
      object_type=LeabraNetwork;
+     completion_type=;
      object_val=.networks[0]$$;
      object_scope=NULL;
      objs_ptr=0;
@@ -4189,6 +4190,7 @@ LeabraProject .projects[0] {
      name="input_data";
      var_type=T_Object;
      object_type=DataTable;
+     completion_type=;
      object_val=.data.gp[0][0]$$;
      object_scope=NULL;
      objs_ptr=0;
@@ -4206,6 +4208,7 @@ LeabraProject .projects[0] {
      name="train_prog";
      var_type=T_Object;
      object_type=Program;
+     completion_type=;
      object_val=$.programs.gp[0][1]$;
      object_scope=NULL;
      objs_ptr=0;
@@ -4218,6 +4221,7 @@ LeabraProject .projects[0] {
      name="batch_prog";
      var_type=T_Object;
      object_type=Program;
+     completion_type=;
      object_val=.programs.gp[0][0]$$;
      object_scope=NULL;
      objs_ptr=0;
@@ -4230,6 +4234,7 @@ LeabraProject .projects[0] {
      name="param_set";
      var_type=T_String;
      string_val=;
+     completion_type=;
      object_scope=NULL;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -4240,6 +4245,7 @@ LeabraProject .projects[0] {
      name="tag";
      var_type=T_String;
      string_val="_gui";
+     completion_type=;
      object_scope=NULL;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -4250,6 +4256,7 @@ LeabraProject .projects[0] {
      name="batch_str";
      var_type=T_String;
      string_val="00";
+     completion_type=;
      object_scope=NULL;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -4260,6 +4267,7 @@ LeabraProject .projects[0] {
      name="log_dir";
      var_type=T_String;
      string_val=;
+     completion_type=;
      object_scope=NULL;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -4270,6 +4278,7 @@ LeabraProject .projects[0] {
      name="log_file_nm";
      var_type=T_String;
      string_val=;
+     completion_type=;
      object_scope=NULL;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -4280,6 +4289,7 @@ LeabraProject .projects[0] {
      name="batch_start";
      var_type=T_Int;
      int_val=0;
+     completion_type=;
      object_scope=NULL;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -4290,6 +4300,7 @@ LeabraProject .projects[0] {
      name="EpochOutputData";
      var_type=T_Object;
      object_type=DataTable;
+     completion_type=;
      object_val=.data.gp[1][1]$$;
      object_scope=NULL;
      objs_ptr=0;
@@ -4302,6 +4313,7 @@ LeabraProject .projects[0] {
      name="TrialOutputData";
      var_type=T_Object;
      object_type=DataTable;
+     completion_type=;
      object_val=.data.gp[1][0]$$;
      object_scope=NULL;
      objs_ptr=0;
@@ -4314,6 +4326,7 @@ LeabraProject .projects[0] {
      name="MyClusterRun";
      var_type=T_Object;
      object_type=ClusterRun;
+     completion_type=;
      object_val=.ctrl_panels[1]$$;
      object_scope=NULL;
      objs_ptr=0;
@@ -4326,6 +4339,7 @@ LeabraProject .projects[0] {
      name="param_sets";
      var_type=T_Object;
      object_type=ParamSet_Group;
+     completion_type=;
      object_val=.active_params$$;
      object_scope=NULL;
      objs_ptr=0;
@@ -5121,6 +5135,7 @@ LeabraProject .projects[0] {
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
+      completion_type=;
       object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -5133,6 +5148,7 @@ LeabraProject .projects[0] {
       name="input_data";
       var_type=T_Object;
       object_type=DataTable;
+      completion_type=;
       object_val=$.data.gp[0][0]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -5150,6 +5166,7 @@ LeabraProject .projects[0] {
       name="batch";
       var_type=T_Int;
       int_val=0;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -5160,6 +5177,7 @@ LeabraProject .projects[0] {
       name="batch_start";
       var_type=T_Int;
       int_val=0;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -5170,6 +5188,7 @@ LeabraProject .projects[0] {
       name="n_batches";
       var_type=T_Int;
       int_val=10;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -5214,6 +5233,7 @@ LeabraProject .projects[0] {
 	name="i";
 	var_type=T_Int;
 	int_val=0;
+	completion_type=;
 	object_scope=NULL;
 	flags=LOCAL_VAR|USED|EDIT_VAL;
 	reference=0;
@@ -5482,6 +5502,7 @@ LeabraProject .projects[0] {
       name="rnd_seeds";
       var_type=T_Object;
       object_type=RndSeed_List;
+      completion_type=;
       object_val=.programs.gp[0][1].objs[0]$$;
       object_scope=NULL;
       objs_ptr=1;
@@ -5494,6 +5515,7 @@ LeabraProject .projects[0] {
       name="rnd_seed";
       var_type=T_Object;
       object_type=RndSeed;
+      completion_type=;
       object_val=.programs.gp[0][1].objs[1]$$;
       object_scope=NULL;
       objs_ptr=1;
@@ -5541,6 +5563,7 @@ LeabraProject .projects[0] {
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
+      completion_type=;
       object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -5553,6 +5576,7 @@ LeabraProject .projects[0] {
       name="input_data";
       var_type=T_Object;
       object_type=DataTable;
+      completion_type=;
       object_val=$.data.gp[0][0]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -5565,6 +5589,7 @@ LeabraProject .projects[0] {
       name="no_prompts";
       var_type=T_Bool;
       bool_val=0;
+      completion_type=;
       object_scope=NULL;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -5580,6 +5605,7 @@ LeabraProject .projects[0] {
       name="max_epoch";
       var_type=T_Int;
       int_val=500;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -5590,6 +5616,7 @@ LeabraProject .projects[0] {
       name="epoch";
       var_type=T_Int;
       int_val=0;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -5600,6 +5627,7 @@ LeabraProject .projects[0] {
       name="train_mode";
       var_type=T_HardEnum;
       int_val=1;
+      completion_type=;
       object_scope=NULL;
       hard_enum_type=Network::TrainMode;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -5610,6 +5638,7 @@ LeabraProject .projects[0] {
      ProgVar @[3] {
       name="rnd_init";
       var_type=T_DynEnum;
+      completion_type=;
       object_scope=NULL;
       dyn_enum_val {
        user_data_=NULL;
@@ -5625,6 +5654,7 @@ LeabraProject .projects[0] {
       name="err_stopcrit";
       var_type=T_Real;
       real_val=0;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -5635,6 +5665,7 @@ LeabraProject .projects[0] {
       name="n_under_thr";
       var_type=T_Int;
       int_val=2;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -5645,6 +5676,7 @@ LeabraProject .projects[0] {
       name="save_final_wts";
       var_type=T_Bool;
       bool_val=0;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -5655,6 +5687,7 @@ LeabraProject .projects[0] {
       name="save_wts_interval";
       var_type=T_Int;
       int_val=-1;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -5665,6 +5698,7 @@ LeabraProject .projects[0] {
       name="n_under_cnt";
       var_type=T_Int;
       int_val=0;
+      completion_type=;
       object_scope=NULL;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -5675,6 +5709,7 @@ LeabraProject .projects[0] {
       name="train_timer";
       var_type=T_Object;
       object_type=TimeUsed;
+      completion_type=;
       object_val=.networks[0].train_time$$;
       object_scope=NULL;
       objs_ptr=0;
@@ -6570,6 +6605,7 @@ mw.config.set({\"wgBackendResponseTime\":155});
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
+      completion_type=;
       object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -6582,6 +6618,7 @@ mw.config.set({\"wgBackendResponseTime\":155});
       name="input_data";
       var_type=T_Object;
       object_type=DataTable;
+      completion_type=;
       object_val=$.data.gp[0][0]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -6599,6 +6636,7 @@ mw.config.set({\"wgBackendResponseTime\":155});
       name="data_loop_order";
       var_type=T_HardEnum;
       int_val=1;
+      completion_type=;
       object_scope=NULL;
       hard_enum_type=DataLoop::Order;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -6611,6 +6649,7 @@ mw.config.set({\"wgBackendResponseTime\":155});
       name="trial";
       var_type=T_Int;
       int_val=0;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -6621,6 +6660,7 @@ mw.config.set({\"wgBackendResponseTime\":155});
       name="trial_mon_data";
       var_type=T_Object;
       object_type=DataTable;
+      completion_type=;
       object_val=$.data.gp[1][0]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -6633,6 +6673,7 @@ mw.config.set({\"wgBackendResponseTime\":155});
       name="step_on_err";
       var_type=T_Bool;
       bool_val=0;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -6643,6 +6684,7 @@ mw.config.set({\"wgBackendResponseTime\":155});
       name="epoch_timer";
       var_type=T_Object;
       object_type=TimeUsed;
+      completion_type=;
       object_val=.networks[0].epoch_time$$;
       object_scope=NULL;
       objs_ptr=0;
@@ -6655,6 +6697,7 @@ mw.config.set({\"wgBackendResponseTime\":155});
       name="data_loop_index";
       var_type=T_Int;
       int_val=6;
+      completion_type=;
       object_scope=NULL;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -7003,6 +7046,7 @@ mw.config.set({\"wgBackendResponseTime\":155});
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
+      completion_type=;
       object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -7015,6 +7059,7 @@ mw.config.set({\"wgBackendResponseTime\":155});
       name="input_data";
       var_type=T_Object;
       object_type=DataTable;
+      completion_type=;
       object_val=$.data.gp[0][0]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -7032,6 +7077,7 @@ mw.config.set({\"wgBackendResponseTime\":155});
       name="update_net_view";
       var_type=T_Bool;
       bool_val=0;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -7066,6 +7112,7 @@ mw.config.set({\"wgBackendResponseTime\":155});
 	name="qtr";
 	var_type=T_Int;
 	int_val=0;
+	completion_type=;
 	object_scope=NULL;
 	flags=LOCAL_VAR|USED|EDIT_VAL;
 	reference=0;
@@ -7341,6 +7388,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
+      completion_type=;
       object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -7353,6 +7401,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="input_data";
       var_type=T_Object;
       object_type=DataTable;
+      completion_type=;
       object_val=$.data.gp[0][0]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -7370,6 +7419,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="cycle";
       var_type=T_Int;
       int_val=0;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -7380,6 +7430,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="update_net_view";
       var_type=T_Bool;
       bool_val=1;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -7424,6 +7475,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="cycle_max";
 	var_type=T_Int;
 	int_val=0;
+	completion_type=;
 	object_scope=NULL;
 	flags=LOCAL_VAR|USED|EDIT_VAL;
 	reference=0;
@@ -7434,6 +7486,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="cyc";
 	var_type=T_Int;
 	int_val=0;
+	completion_type=;
 	object_scope=NULL;
 	flags=LOCAL_VAR|USED|EDIT_VAL;
 	reference=0;
@@ -7686,6 +7739,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
+      completion_type=;
       object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -7703,6 +7757,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="update_net_view";
       var_type=T_Bool;
       bool_val=1;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -7844,6 +7899,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="layer_writer_0";
       var_type=T_Object;
       object_type=LayerWriter;
+      completion_type=;
       object_val=.programs.gp[0][6].objs[0]$$;
       object_scope=NULL;
       objs_ptr=1;
@@ -7866,6 +7922,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="network";
       var_type=T_Object;
       object_type=Network;
+      completion_type=;
       object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -7878,6 +7935,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="input_data";
       var_type=T_Object;
       object_type=DataTable;
+      completion_type=;
       object_val=$.data.gp[0][0]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -8998,6 +9056,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="trial_netmon";
       var_type=T_Object;
       object_type=NetMonitor;
+      completion_type=;
       object_val=.programs.gp[0][7].objs[0]$$;
       object_scope=NULL;
       objs_ptr=1;
@@ -9020,6 +9079,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="network";
       var_type=T_Object;
       object_type=Network;
+      completion_type=;
       object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -9037,6 +9097,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="trial_mon_data";
       var_type=T_Object;
       object_type=DataTable;
+      completion_type=;
       object_val=$.data.gp[1][0]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -10320,6 +10381,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="epoch_netmon";
       var_type=T_Object;
       object_type=NetMonitor;
+      completion_type=;
       object_val=.programs.gp[0][8].objs[0]$$;
       object_scope=NULL;
       objs_ptr=1;
@@ -10342,6 +10404,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="network";
       var_type=T_Object;
       object_type=Network;
+      completion_type=;
       object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -10359,6 +10422,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="epoch_mon_data";
       var_type=T_Object;
       object_type=DataTable;
+      completion_type=;
       object_val=$.data.gp[1][1]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -10371,6 +10435,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="epoch_timer";
       var_type=T_Object;
       object_type=TimeUsed;
+      completion_type=;
       object_val=$.networks[0].epoch_time$;
       object_scope=NULL;
       objs_ptr=0;
@@ -10762,6 +10827,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
       name="network";
       var_type=T_Object;
       object_type=Network;
+      completion_type=;
       object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -10779,6 +10845,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
       name="tag";
       var_type=T_String;
       string_val="_gui";
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -10789,6 +10856,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
       name="wts_subdir";
       var_type=T_String;
       string_val=;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -10799,6 +10867,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
       name="fname";
       var_type=T_String;
       string_val="/Users/oreilly/emergent/test/leabra_std.00_0010.wts.gz";
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -10809,6 +10878,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
       name="epoch_str";
       var_type=T_String;
       string_val="0010";
+      completion_type=;
       object_scope=NULL;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -10819,6 +10889,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
       name="batch_str";
       var_type=T_String;
       string_val="00";
+      completion_type=;
       object_scope=NULL;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -10829,6 +10900,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
       name="final_tag";
       var_type=T_String;
       string_val=".00_0010";
+      completion_type=;
       object_scope=NULL;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -11121,6 +11193,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
+      completion_type=;
       object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -11138,6 +11211,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
       name="input_data";
       var_type=T_Object;
       object_type=DataTable;
+      completion_type=;
       object_val=$.data.gp[0][0]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -11150,6 +11224,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
       name="data_loop_order";
       var_type=T_HardEnum;
       int_val=0;
+      completion_type=;
       object_scope=NULL;
       hard_enum_type=DataLoop::Order;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -11162,6 +11237,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
       name="trial";
       var_type=T_Int;
       int_val=0;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -11172,6 +11248,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
       name="trial_mon_data";
       var_type=T_Object;
       object_type=DataTable;
+      completion_type=;
       object_val=.data.gp[1][2]$$;
       object_scope=NULL;
       objs_ptr=0;
@@ -11184,6 +11261,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
       name="epoch_timer";
       var_type=T_Object;
       object_type=TimeUsed;
+      completion_type=;
       object_val=$.networks[0].epoch_time$;
       object_scope=NULL;
       objs_ptr=0;
@@ -11196,6 +11274,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
       name="data_loop_index";
       var_type=T_Int;
       int_val=6;
+      completion_type=;
       object_scope=NULL;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -11529,6 +11608,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
+      completion_type=;
       object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -11541,6 +11621,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
       name="input_data";
       var_type=T_Object;
       object_type=DataTable;
+      completion_type=;
       object_val=$.data.gp[0][0]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -11558,6 +11639,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
       name="update_net_view";
       var_type=T_Bool;
       bool_val=0;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -11592,6 +11674,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
 	name="qtr";
 	var_type=T_Int;
 	int_val=0;
+	completion_type=;
 	object_scope=NULL;
 	flags=LOCAL_VAR|USED|EDIT_VAL;
 	reference=0;
@@ -11867,6 +11950,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
+      completion_type=;
       object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -11879,6 +11963,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="input_data";
       var_type=T_Object;
       object_type=DataTable;
+      completion_type=;
       object_val=$.data.gp[0][0]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -11896,6 +11981,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="cycle";
       var_type=T_Int;
       int_val=0;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -11906,6 +11992,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="update_net_view";
       var_type=T_Bool;
       bool_val=1;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -11950,6 +12037,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="cycle_max";
 	var_type=T_Int;
 	int_val=0;
+	completion_type=;
 	object_scope=NULL;
 	flags=LOCAL_VAR|USED|EDIT_VAL;
 	reference=0;
@@ -11960,6 +12048,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="cyc";
 	var_type=T_Int;
 	int_val=0;
+	completion_type=;
 	object_scope=NULL;
 	flags=LOCAL_VAR|USED|EDIT_VAL;
 	reference=0;
@@ -12212,6 +12301,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
+      completion_type=;
       object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -12229,6 +12319,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="update_net_view";
       var_type=T_Bool;
       bool_val=0;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -12380,6 +12471,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="network";
       var_type=T_Object;
       object_type=Network;
+      completion_type=;
       object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -12392,6 +12484,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="input_data";
       var_type=T_Object;
       object_type=DataTable;
+      completion_type=;
       object_val=$.data.gp[0][0]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -12409,6 +12502,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="LayerWriter_0";
       var_type=T_Object;
       object_type=LayerWriter;
+      completion_type=;
       object_val=.programs.gp[1][4].objs[0]$$;
       object_scope=NULL;
       objs_ptr=1;
@@ -13330,6 +13424,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="network";
       var_type=T_Object;
       object_type=Network;
+      completion_type=;
       object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -13347,6 +13442,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="trial_mon_data";
       var_type=T_Object;
       object_type=DataTable;
+      completion_type=;
       object_val=$.data.gp[1][2]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -13359,6 +13455,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="trial_netmon";
       var_type=T_Object;
       object_type=NetMonitor;
+      completion_type=;
       object_val=.programs.gp[1][5].objs[0]$$;
       object_scope=NULL;
       objs_ptr=1;
@@ -14278,6 +14375,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="network";
       var_type=T_Object;
       object_type=Network;
+      completion_type=;
       object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -14295,6 +14393,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="epoch_mon_data";
       var_type=T_Object;
       object_type=DataTable;
+      completion_type=;
       object_val=$.data.gp[1][3]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -14307,6 +14406,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="epoch_netmon";
       var_type=T_Object;
       object_type=NetMonitor;
+      completion_type=;
       object_val=.programs.gp[1][6].objs[0]$$;
       object_scope=NULL;
       objs_ptr=1;
@@ -14319,6 +14419,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="epoch_timer";
       var_type=T_Object;
       object_type=TimeUsed;
+      completion_type=;
       object_val=$.networks[0].epoch_time$;
       object_scope=NULL;
       objs_ptr=0;
@@ -14649,9 +14750,9 @@ this program can be extended to do arbitrary things to generate data and apply i
     el_typ=UserDataItem;
     el_def=0;
     UserDataItem @[0] {name="view_win_lft": value=0: val_type_fixed=0: };
-    UserDataItem @[1] {name="view_win_top": value=0.01696899: val_type_fixed=0: };
+    UserDataItem @[1] {name="view_win_top": value=0.01693719: val_type_fixed=0: };
     UserDataItem @[2] {name="view_win_wd": value=1: val_type_fixed=0: };
-    UserDataItem @[3] {name="view_win_ht": value=0.7969573: val_type_fixed=0: };
+    UserDataItem @[3] {name="view_win_ht": value=0.7967537: val_type_fixed=0: };
     UserDataItem @[4] {name="view_win_iconified": value=0: val_type_fixed=0: };
     UserDataItem @[5] {name="view_splitter_state": value=AAAA/wAAAAEAAAADAAABFwAAAfwAAAKMAf////8BAAAAAQA=: val_type_fixed=0: };
    };
@@ -14753,38 +14854,39 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	  lay_layout=THREE_D;
 	  lay_mv=1;
 	  net_text=1;
-	  state_width_default=8;
+	  net_state_text {
+	   name="net_state_text";
+	   state_items {
+	    name="state_items";
+	    el_typ=NetViewStateItem;
+	    el_def=0;
+	    NetViewStateItem @[0] {name="batch": net_member=1: display=1: width=4: found=1: };
+	    NetViewStateItem @[1] {name="epoch": net_member=1: display=1: width=4: found=1: };
+	    NetViewStateItem @[2] {name="group": net_member=1: display=0: width=4: found=1: };
+	    NetViewStateItem @[3] {name="trial": net_member=1: display=1: width=4: found=1: };
+	    NetViewStateItem @[4] {name="tick": net_member=1: display=0: width=4: found=1: };
+	    NetViewStateItem @[5] {name="cycle": net_member=1: display=1: width=4: found=1: };
+	    NetViewStateItem @[6] {name="time": net_member=1: display=0: width=8: found=1: };
+	    NetViewStateItem @[7] {name="total_trials": net_member=1: display=0: width=6: found=1: };
+	    NetViewStateItem @[8] {name="sse": net_member=1: display=1: width=8: found=1: };
+	    NetViewStateItem @[9] {name="group_name": net_member=1: display=0: width=12: found=1: };
+	    NetViewStateItem @[10] {name="trial_name": net_member=1: display=1: width=12: found=1: };
+	    NetViewStateItem @[11] {name="output_name": net_member=1: display=1: width=12: found=1: };
+	    NetViewStateItem @[12] {name="quarter": net_member=1: display=1: width=4: found=1: };
+	    NetViewStateItem @[13] {name="phase": net_member=1: display=0: width=8: found=1: };
+	    NetViewStateItem @[14] {name="tot_cycle": net_member=1: display=0: width=8: found=1: };
+	    NetViewStateItem @[15] {name="rt_cycles": net_member=1: display=0: width=4: found=1: };
+	    NetViewStateItem @[16] {name="ext_rew": net_member=1: display=0: width=8: found=1: };
+	    NetViewStateItem @[17] {name="norm_err": net_member=1: display=0: width=8: found=1: };
+	    NetViewStateItem @[18] {name="cos_err": net_member=1: display=0: width=8: found=1: };
+	    NetViewStateItem @[19] {name="minus_output_name": net_member=1: display=0: width=12: found=1: };
+	   };
+	   first_pass=0;
+	  };
 	  show_iconified=0;
-	  net_text_xform {scale={x=0.7: y=0.7: z=0.7: }: rotate={x=1: y=0: z=0: rot=1.570796: }: translate={x=0: y=1: z=-1: }: };
-	  net_text_rot=-90;
 	  cur_unit_vals{ act;	  };
 	  hot_vars{ targ;ext;act;net;bias_wt;bias_dwt;act_eq;act_m;act_p;act_dif;avg_m;avg_l;act_avg;r.wt;r.wt*act;s.wt;r.dwt;s.dwt;	  };
 	  unit_src_path=".layers[2][0]";
-	  state_items {
-	   name="state_items";
-	   el_typ=NetViewStateItem;
-	   el_def=0;
-	   NetViewStateItem @[0] {name="batch": net_member=1: display=1: width=4: found=1: };
-	   NetViewStateItem @[1] {name="epoch": net_member=1: display=1: width=4: found=1: };
-	   NetViewStateItem @[2] {name="group": net_member=1: display=0: width=4: found=1: };
-	   NetViewStateItem @[3] {name="trial": net_member=1: display=1: width=4: found=1: };
-	   NetViewStateItem @[4] {name="tick": net_member=1: display=0: width=4: found=1: };
-	   NetViewStateItem @[5] {name="cycle": net_member=1: display=1: width=4: found=1: };
-	   NetViewStateItem @[6] {name="time": net_member=1: display=0: width=8: found=1: };
-	   NetViewStateItem @[7] {name="total_trials": net_member=1: display=0: width=8: found=1: };
-	   NetViewStateItem @[8] {name="sse": net_member=1: display=1: width=8: found=1: };
-	   NetViewStateItem @[9] {name="group_name": net_member=1: display=0: width=16: found=1: };
-	   NetViewStateItem @[10] {name="trial_name": net_member=1: display=1: width=16: found=1: };
-	   NetViewStateItem @[11] {name="output_name": net_member=1: display=1: width=16: found=1: };
-	   NetViewStateItem @[12] {name="quarter": net_member=1: display=1: width=4: found=1: };
-	   NetViewStateItem @[13] {name="phase": net_member=1: display=0: width=4: found=1: };
-	   NetViewStateItem @[14] {name="tot_cycle": net_member=1: display=0: width=8: found=1: };
-	   NetViewStateItem @[15] {name="rt_cycles": net_member=1: display=0: width=4: found=1: };
-	   NetViewStateItem @[16] {name="ext_rew": net_member=1: display=0: width=8: found=1: };
-	   NetViewStateItem @[17] {name="norm_err": net_member=1: display=0: width=8: found=1: };
-	   NetViewStateItem @[18] {name="cos_err": net_member=1: display=0: width=8: found=1: };
-	   NetViewStateItem @[19] {name="minus_output_name": net_member=1: display=0: width=16: found=1: };
-	  };
 	  con_type=ANY_CON;
 	  hist_idx=0;
 	  hist_save=1;
@@ -14796,7 +14898,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	  max_size {x=5: y=5: z=2.333333: };
 	  max_size2d {x=5: y=9: z=1: };
 	  eff_max_size {x=5: y=5: z=2.333333: };
-	  font_sizes {net_name=0.05: net_vals=0.05: layer=0.04: layer_min=0.01: layer_vals=0.03: prjn=0.01: unit=0.02: un_nm_len=3: };
+	  font_sizes {net_name=0.05: net_vals=0.05: layer=0.04: layer_min=0.01: layer_vals=0.03: prjn=0.01: unit=0.02: un_nm_len=3: un_val_prec=2: };
 	  view_params {xy_square=0: unit_spacing=0.05: prjn_disp=L_R_B: prjn_name=0: prjn_width=0.002: prjn_trans=0.5: lay_trans=0.5: unit_trans=0.6: laygp_width=1: show_laygp=1: };
 	  wt_line_disp=0;
 	  wt_line_width=4;
@@ -14897,9 +14999,11 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	   };
 	  };
 	  lay_disp_modes{ Input=-1;Hidden=-1;Output=-1;	  };
+	  selected_unit_var=;
 	 };
 	};
        };
+       fix_name=0;
        bg_color {r=1: g=1: b=1: a=1: };
        text_color {r=0: g=0: b=0: a=1: };
        headlight_on=1;
@@ -16373,6 +16477,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	 };
 	};
        };
+       fix_name=0;
        bg_color {r=1: g=1: b=1: a=1: };
        text_color {r=0: g=0: b=0: a=1: };
        headlight_on=1;
@@ -16830,6 +16935,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	 };
 	};
        };
+       fix_name=0;
        bg_color {r=1: g=1: b=1: a=1: };
        text_color {r=0: g=0: b=0: a=1: };
        headlight_on=1;
@@ -16926,9 +17032,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       el_typ=UserDataItem;
       el_def=0;
       UserDataItem @[0] {name="view_win_lft": value=0: val_type_fixed=0: };
-      UserDataItem @[1] {name="view_win_top": value=0.008191925: val_type_fixed=0: };
-      UserDataItem @[2] {name="view_win_wd": value=0.02706271: val_type_fixed=0: };
-      UserDataItem @[3] {name="view_win_ht": value=0.7501463: val_type_fixed=0: };
+      UserDataItem @[1] {name="view_win_top": value=0.007057163: val_type_fixed=0: };
+      UserDataItem @[2] {name="view_win_wd": value=0.03203125: val_type_fixed=0: };
+      UserDataItem @[3] {name="view_win_ht": value=0.743825: val_type_fixed=0: };
       UserDataItem @[4] {name="view_win_iconified": value=0: val_type_fixed=0: };
       UserDataItem @[5] {name="view_visible": value=1: val_type_fixed=0: };
      };
@@ -17101,9 +17207,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
        deep {on=0: bg_lrate=1: fg_lrate=0: };
        margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_lrn=0.5: };
-       dwt_noise=0;
-       dwt_noise_p0=0.7;
-       noise {name="noise": type=GAUSSIAN: mean=0: var=0.005: par=1: };
+       dwt_share {on=0: neigh=8: p_share=0.05: };
        use_lrate_sched=1;
        lrate_sched {
 	name="lrate_sched";
@@ -17144,9 +17248,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
        deep {on=0: bg_lrate=1: fg_lrate=0: };
        margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_lrn=0.5: };
-       dwt_noise=0;
-       dwt_noise_p0=0.7;
-       noise {name="noise": type=GAUSSIAN: mean=0: var=0.005: par=1: };
+       dwt_share {on=0: neigh=8: p_share=0.05: };
        use_lrate_sched=1;
        lrate_sched {
 	name="lrate_sched";
@@ -17175,9 +17277,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
      deep {on=0: bg_lrate=1: fg_lrate=0: };
      margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_lrn=0.5: };
-     dwt_noise=0;
-     dwt_noise_p0=0.7;
-     noise {name="noise": type=GAUSSIAN: mean=0: var=0.005: par=1: };
+     dwt_share {on=0: neigh=8: p_share=0.05: };
      use_lrate_sched=1;
      lrate_sched {
       name="lrate_sched";
@@ -17476,7 +17576,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
    max_disp_size2d {x=5: y=9: };
    times {quarter=25: deep_cyc=5: time_inc=0.001: wt_bal_int=10: minus=75: plus=25: total_cycles=100: thal_gate_cycle=-2: };
    lstats {trg_max_act_crit=0.5: off_errs=1: on_errs=1: agg_unlearnable=0: wt_bal=0: };
-   net_misc {spike=0: deep=1: bias_learn=0: trial_decay=0: diff_scale_p=0: diff_scale_q1=0: wt_bal=0: lay_gp_inhib=0: inhib_cons=0: };
+   net_misc {spike=0: deep=0: bias_learn=0: trial_decay=0: diff_scale_p=0: diff_scale_q1=0: wt_bal=0: lay_gp_inhib=0: inhib_cons=0: };
    deep {on=0: ctxt=0: raw_net=0: mod_net=0: raw_qtr=0: };
    rel_netin {on=1: trl_skip=10: epc_skip=10: };
   };
