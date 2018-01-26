@@ -791,6 +791,13 @@ DataTable* Projection::ConVarsToTable(DataTable* dt, const String& var1, const S
   return dt;
 }
 
+String Projection::GetArgForCompletion(const String& method, const String& arg) {
+  if (method == "MonitorVar") {
+    return "projection";
+  }
+  return "";
+}
+
 void Projection::GetArgCompletionList(const String& method, const String& arg, const String_Array& arg_values, taBase* arg_obj,
                                  const String& cur_txt, Completions& completions) {
   if (method == "MonitorVar" && arg == "variable") {

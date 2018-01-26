@@ -3586,6 +3586,13 @@ taBase* Network::ChooseNew(taBase* origin, const String& choice_text) {
   return ntwrk;
 }
 
+String Network::GetArgForCompletion(const String& method, const String& arg) {
+  if (method == "MonitorVar") {
+    return "network";
+  }
+  return "";
+}
+
 void Network::GetArgCompletionList(const String& method, const String& arg, const String_Array& arg_values, taBase* arg_obj,
                                    const String& cur_txt, Completions& completions) {
   if (method == "MonitorVar" && arg == "variable") {

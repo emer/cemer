@@ -201,7 +201,7 @@ public:
   int           GetEnabled() const    override { return !off; }
   // void       SetEnabled(bool value) override { off = !value; }
   int           GetSpecialState() const override;
-
+  String        GetArgForCompletion(const String& method, const String& arg) override;
   void          GetArgCompletionList(const String& method, const String& arg, const String_Array& arg_values, taBase* arg_obj,
                                      const String& cur_txt, Completions& completions) override;
 
