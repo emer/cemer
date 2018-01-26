@@ -842,7 +842,7 @@ void iViewPanelOfNetwork::GetNetVars() {
         titm->setText(0, item->name);
         titm->setText(1, (String)item->width);
         titm->setText(2, "monitor variable");
-//        titm->setToolTip(2, taiMisc::ToolTipPreProcess(md->desc));
+        titm->setToolTip(2, taiMisc::ToolTipPreProcess(md->desc));
      }
       if(item->display)
       titm->setCheckState(0, Qt::Checked);

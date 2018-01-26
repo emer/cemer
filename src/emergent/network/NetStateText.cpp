@@ -18,6 +18,8 @@
 #include <Network>
 #include <MemberDef>
 
+#include <taMisc>
+
 TA_BASEFUNS_CTORS_DEFN(NetStateText);
 TA_BASEFUNS_CTORS_DEFN(NetViewStateItem);
 TA_BASEFUNS_CTORS_DEFN(NetViewStateItem_List);
@@ -41,8 +43,14 @@ void NetStateText::GetItems(Network* net) {
   if(!net) return;
     
   // clear found flag - later remove any items not found
-  for (int i=0; i<state_items.size; i++) {
-    GetItem(i)->found = false;
+  for (int i=state_items.size-1; i>=0; i--) {
+    NetViewStateItem* item = state_items.SafeEl(i);
+    if (item->GetName().empty()) {
+      state_items.RemoveIdx(i);
+    }
+    else {
+      item->found = false;
+    }
   }
   
   // get the network members
