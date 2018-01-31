@@ -89,7 +89,9 @@ public:
     XCAL_DELTA_SM,              // delta rule, sending is medium-term average (minus phase): su->avg_m * xcal(ru->avg_s, ru->avg_m)
     XCAL_DELTA_SS,              // delta rule, sending is short-term average (plus phase): su->avg_s * xcal(ru->avg_s, ru->avg_m)
     XCAL_DELTA_SA,              // delta rule, sending is average of short and medium term: 0.5 (su->avg_m + su->avg_s) * xcal(ru->avg_s - ru->avg_m)
-    XCAL_NO_S_INC,              // problem comes when su->avg_s > su->avg_m and drives a weight increase on recv unit -- fix that: su_avg_s_eff = MIN(su->avg_s, su->avg_m) -- xcal(su_avg_s_eff * ru->avg_s, su->avg_m * ru->avg_m)
+    XCAL_DELTA_SS_IN,           // delta rule, sending is short-term average (plus phase), included inside xcal fun: xcal(su->avg_s * ru->avg_s, su->avg_s * ru->avg_m)
+    XCAL_DELTA_OVERRIDE,        // if our delta is negative, weights go down, regardless -- otherwise it is regular XCAL
+    CHL_DELTA_OVERRIDE,        // if our delta is negative, weights go down, regardless -- otherwise it is regular CHL
     CHL,                        // contrastive hebbian learning: su->avg_s * ru->avg_s - su->avg_m * ru->avg_m
   };
 
