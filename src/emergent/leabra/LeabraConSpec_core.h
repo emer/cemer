@@ -352,6 +352,15 @@
     case STATE_CLASS(XCalLearnSpec)::XCAL_DELTA_SS_IN:
       err = xcal.dWtFun(srs, su_avg_s * ru_avg_m);
       break;
+    case STATE_CLASS(XCalLearnSpec)::XCAL_REV_DELTA_SM:
+      err = ru_avg_m * xcal.dWtFun(su_avg_s, su_avg_m);
+      break;
+    case STATE_CLASS(XCalLearnSpec)::XCAL_REV_DELTA_SS:
+      err = ru_avg_s * xcal.dWtFun(su_avg_s, su_avg_m);
+      break;
+    case STATE_CLASS(XCalLearnSpec)::XCAL_REV_DELTA_SA:
+      err = 0.5f * (ru_avg_s + ru_avg_m) * xcal.dWtFun(su_avg_s, su_avg_m);
+      break;
     case STATE_CLASS(XCalLearnSpec)::XCAL_DELTA_OVERRIDE: {
       err = xcal.dWtFun(srs, srm);
       float del = ru_avg_s - ru_avg_m;

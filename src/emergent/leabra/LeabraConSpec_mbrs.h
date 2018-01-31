@@ -90,6 +90,9 @@ public:
     XCAL_DELTA_SS,              // delta rule, sending is short-term average (plus phase): su->avg_s * xcal(ru->avg_s, ru->avg_m)
     XCAL_DELTA_SA,              // delta rule, sending is average of short and medium term: 0.5 (su->avg_m + su->avg_s) * xcal(ru->avg_s - ru->avg_m)
     XCAL_DELTA_SS_IN,           // delta rule, sending is short-term average (plus phase), included inside xcal fun: xcal(su->avg_s * ru->avg_s, su->avg_s * ru->avg_m)
+    XCAL_REV_DELTA_SM,          // reversed delta rule (sender delta), sending is medium-term average (minus phase): ru->avg_m * xcal(su->avg_s, su->avg_m)
+    XCAL_REV_DELTA_SS,          // reversed delta rule (sender delta), sending is short-term average (plus phase): ru->avg_s * xcal(su->avg_s, su->avg_m)
+    XCAL_REV_DELTA_SA,          // reversed delta rule (sender delta), sending is average of short and medium term: 0.5 (ru->avg_m + ru->avg_s) * xcal(su->avg_s - su->avg_m)
     XCAL_DELTA_OVERRIDE,        // if our delta is negative, and computed xcal err is positive, we reduce err by fact1
     CHL,                        // contrastive hebbian learning: su->avg_s * ru->avg_s - su->avg_m * ru->avg_m
   };
