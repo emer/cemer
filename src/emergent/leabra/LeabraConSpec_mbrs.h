@@ -90,13 +90,13 @@ public:
     XCAL_DELTA_SS,              // delta rule, sending is short-term average (plus phase): su->avg_s * xcal(ru->avg_s, ru->avg_m)
     XCAL_DELTA_SA,              // delta rule, sending is average of short and medium term: 0.5 (su->avg_m + su->avg_s) * xcal(ru->avg_s - ru->avg_m)
     XCAL_DELTA_SS_IN,           // delta rule, sending is short-term average (plus phase), included inside xcal fun: xcal(su->avg_s * ru->avg_s, su->avg_s * ru->avg_m)
-    XCAL_DELTA_OVERRIDE,        // if our delta is negative, weights go down, regardless -- otherwise it is regular XCAL
-    CHL_DELTA_OVERRIDE,        // if our delta is negative, weights go down, regardless -- otherwise it is regular CHL
+    XCAL_DELTA_OVERRIDE,        // if our delta is negative, and computed xcal err is positive, we reduce err by fact1
     CHL,                        // contrastive hebbian learning: su->avg_s * ru->avg_s - su->avg_m * ru->avg_m
   };
 
   ErrLearnRule  errule;         // #DEF_XCAL error-driven learning rule to use -- for exploration purposes..
   BcmLearnRule  bcmrule;        // #DEF_SRS BCM Hebbian  learning rule to use -- for exploration purposes..
+  float         fact1;          // exploratory learning rule factor 1 -- depends on rule
   float         m_lrn;          // #DEF_1 #MIN_0 multiplier on learning based on the medium-term floating average threshold which produces error-driven learning -- this is typically 1 when error-driven learning is being used, and 0 when pure hebbian learning is used -- note that the long-term floating average threshold is provided by the receiving unit
   bool          set_l_lrn;      // #DEF_false if true, set a fixed l_lrn weighting factor that determines how much of the long-term floating average threshold (i.e., BCM, Hebbian) component of learning is used -- this is useful for setting a fully Hebbian learning connection, e.g., by setting m_lrn = 0 and l_lrn = 1. If false, then the receiving unit's avg_l_lrn factor is used, which dynamically modulates the amount of the long-term component as a function of how active overall it is
   float         l_lrn;          // #CONDSHOW_ON_set_l_lrn fixed l_lrn weighting factor that determines how much of the long-term floating average threshold (i.e., BCM, Hebbian) component of learning is used -- this is useful for setting a fully Hebbian learning connection, e.g., by setting m_lrn = 0 and l_lrn = 1. 
@@ -155,7 +155,7 @@ public:
 private:
   void  Initialize() {   Defaults_init(); }
   void  Defaults_init() {
-    errule = XCAL;  bcmrule = SRS;
+    errule = XCAL;  bcmrule = SRS;  fact1 = 1.0f;
     m_lrn = 1.0f;  set_l_lrn = false;  l_lrn = 1.0f;  d_rev = 0.10f;  d_thr = 0.0001f;
     lrn_thr = 0.01f; d_rev_ratio = -(1.0f - d_rev) / d_rev;
   }

@@ -356,14 +356,7 @@
       err = xcal.dWtFun(srs, srm);
       float del = ru_avg_s - ru_avg_m;
       if(del < 0.0f && err > 0.0f)
-        err *= -1.0f;                                 // flip the sign!?
-      break;
-    }
-    case STATE_CLASS(XCalLearnSpec)::CHL_DELTA_OVERRIDE: {
-      err = srs - srm;
-      float del = ru_avg_s - ru_avg_m;
-      if(del < 0.0f && err > 0.0f)
-        err *= -1.0f;                                 // flip the sign!?
+        err *= xcal.fact1;      // reduce, potentially to zero
       break;
     }
     case STATE_CLASS(XCalLearnSpec)::CHL:
