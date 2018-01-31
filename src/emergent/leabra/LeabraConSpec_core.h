@@ -307,7 +307,7 @@
   INLINE float  C_Compute_dWt_CtLeabraXCAL
     (const float ru_avg_s, const float ru_avg_m, const float su_avg_s, const float su_avg_m,
      const float ru_avg_l, const float ru_avg_l_lrn, const float ru_margin) 
-  { float srs = xcal.s_mult * ru_avg_s * su_avg_s;
+  { float srs = ru_avg_s * su_avg_s;
     float srm = ru_avg_m * su_avg_m;
 
     float bcm;
@@ -349,6 +349,11 @@
     case STATE_CLASS(XCalLearnSpec)::XCAL_DELTA_SA:
       err = 0.5f * (su_avg_s + su_avg_m) * xcal.dWtFun(ru_avg_s, ru_avg_m);
       break;
+    case STATE_CLASS(XCalLearnSpec)::XCAL_NO_S_INC: {
+      float su_avg_s_eff = fminf(su_avg_s, su_avg_m); // don't allow s to drive up
+      err = xcal.dWtFun(su_avg_s_eff * ru_avg_s, srm);
+      break;
+    }
     case STATE_CLASS(XCalLearnSpec)::CHL:
       err = srs - srm;
       break;
