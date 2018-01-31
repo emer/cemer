@@ -74,12 +74,31 @@ class STATE_CLASS(XCalLearnSpec) : public STATE_CLASS(SpecMemberBase) {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra CtLeabra temporally eXtended Contrastive Attractor Learning (XCAL) specs
 INHERITED(SpecMemberBase)
 public:
-  bool          chl;            // use pure contrastive hebbian learning form for error-driven learning factor (still in terms of averages, but not using xcal equation)
+  enum  BcmLearnRule {         // what form of BCM Hebbian learning to use, in terms of the factor being compared against ru_avg_l in the XCAL function
+    SRS,                       // bcm = xcal(su->avg_s * ru->avg_s, ru_avg_l)
+    SS_RS,                     // bcm = su->avg_s * xcal(ru->avg_s, ru_avg_l)
+    SM_RS,                     // bcm = su->avg_m * xcal(ru->avg_s, ru_avg_l)
+    SA_RS,                     // bcm = 0.5 * (su->avg_m + su->avg_s) * xcal(ru->avg_s, ru_avg_l)
+  };
+
+  enum  ErrLearnRule {          // what form of error-driven learning to use?
+    XCAL,                       // standard XCAL function of short vs. medium term average coproduct
+    DELTA_SM,                   // delta rule, sending is medium-term average (minus phase): su->avg_m * (ru->avg_s - ru->avg_m)
+    DELTA_SS,                   // delta rule, sending is short-term average (plus phase): su->avg_s * (ru->avg_s - ru->avg_m)
+    DELTA_SA,                   // delta rule, sending is average of short and medium term: 0.5 (su->avg_m + su->avg_s) * (ru->avg_s - ru->avg_m)
+    XCAL_DELTA_SM,              // delta rule, sending is medium-term average (minus phase): su->avg_m * xcal(ru->avg_s, ru->avg_m)
+    XCAL_DELTA_SS,              // delta rule, sending is short-term average (plus phase): su->avg_s * xcal(ru->avg_s, ru->avg_m)
+    XCAL_DELTA_SA,              // delta rule, sending is average of short and medium term: 0.5 (su->avg_m + su->avg_s) * xcal(ru->avg_s - ru->avg_m)
+    CHL,                        // contrastive hebbian learning: su->avg_s * ru->avg_s - su->avg_m * ru->avg_m
+  };
+
+  ErrLearnRule  errule;         // #DEF_XCAL error-driven learning rule to use -- for exploration purposes..
+  BcmLearnRule  bcmrule;        // #DEF_SRS BCM Hebbian  learning rule to use -- for exploration purposes..
   float         m_lrn;          // #DEF_1 #MIN_0 multiplier on learning based on the medium-term floating average threshold which produces error-driven learning -- this is typically 1 when error-driven learning is being used, and 0 when pure hebbian learning is used -- note that the long-term floating average threshold is provided by the receiving unit
   bool          set_l_lrn;      // #DEF_false if true, set a fixed l_lrn weighting factor that determines how much of the long-term floating average threshold (i.e., BCM, Hebbian) component of learning is used -- this is useful for setting a fully Hebbian learning connection, e.g., by setting m_lrn = 0 and l_lrn = 1. If false, then the receiving unit's avg_l_lrn factor is used, which dynamically modulates the amount of the long-term component as a function of how active overall it is
   float         l_lrn;          // #CONDSHOW_ON_set_l_lrn fixed l_lrn weighting factor that determines how much of the long-term floating average threshold (i.e., BCM, Hebbian) component of learning is used -- this is useful for setting a fully Hebbian learning connection, e.g., by setting m_lrn = 0 and l_lrn = 1. 
   float         d_rev;          // #DEF_0.1 #MIN_0 proportional point within LTD range where magnitude reverses to go back down to zero at zero -- err-driven svm component does better with smaller values, and BCM-like mvl component does better with larger values -- 0.1 is a compromise
-  float         d_thr;          // #DEF_0.0001;0.01 #MIN_0 minimum LTD threshold value below which no weight change occurs -- small default value is mainly to optimize computation for the many values close to zero associated with inactive synapses
+  float         d_thr;          // #DEF_0.0001;0.01 #MIN_0 minimum LTD threshold value below which no weight change occurs -- this is an absolute number, not proportional to the threshold
   float         lrn_thr;        // #DEF_0.01 xcal learning threshold -- don't learn when sending unit activation is below this value in both phases -- due to the nature of the learning function being 0 when the sr coproduct is 0, it should not affect learning in any substantial way -- nonstandard learning algorithms that have different properties should ignore it
   float         s_mult;        // multiplicative factor on short-time-scale average activations -- to compensate for overall average differences in activation level at end of settling vs. earlier -- needed especially for adaptation mechanism
 
@@ -134,7 +153,7 @@ public:
 private:
   void  Initialize() {   Defaults_init(); }
   void  Defaults_init() {
-    chl = false;
+    errule = XCAL;  bcmrule = SRS;
     m_lrn = 1.0f;  set_l_lrn = false;  l_lrn = 1.0f;  d_rev = 0.10f;  d_thr = 0.0001f;
     lrn_thr = 0.01f; s_mult = 1.0f; d_rev_ratio = -(1.0f - d_rev) / d_rev;
   }
