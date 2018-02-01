@@ -305,24 +305,34 @@
   // also: fminf(ru_avg_l,1.0f) for threshold as an option..
 
   INLINE float  C_Compute_dWt_CtLeabraXCAL
-    (const float ru_avg_s, const float ru_avg_m, const float su_avg_s, const float su_avg_m,
-     const float ru_avg_l, const float ru_avg_l_lrn, const float ru_margin) 
-  { float srs = su_avg_s * ru_avg_s;
+  (const float ru_avg_s_eff, const float ru_avg_s, const float ru_avg_m,
+   const float su_avg_s_eff, const float su_avg_s, const float su_avg_m, const float su_avg_del,
+   const float ru_avg_l, const float ru_avg_l_lrn, const float ru_margin, const float su_avg_l) {
+    
+    float srs = su_avg_s_eff * ru_avg_s_eff;
     float srm = su_avg_m * ru_avg_m;
 
+    float ru_avg_del = xcal.del_m_in_s * ru_avg_m + xcal.del_s_in_m * ru_avg_s;
+    
     float bcm;
     switch(xcal.bcmrule) {
     case STATE_CLASS(XCalLearnSpec)::SRS:
       bcm = xcal.dWtFun(srs, ru_avg_l);
       break;
-    case STATE_CLASS(XCalLearnSpec)::SS_RS:
-      bcm = su_avg_s * xcal.dWtFun(ru_avg_s, ru_avg_l);
+    case STATE_CLASS(XCalLearnSpec)::RS:
+      bcm = su_avg_del * xcal.dWtFun(ru_avg_s_eff, ru_avg_l);
       break;
-    case STATE_CLASS(XCalLearnSpec)::SM_RS:
-      bcm = su_avg_m * xcal.dWtFun(ru_avg_s, ru_avg_l);
+    case STATE_CLASS(XCalLearnSpec)::RS_SIN:
+      bcm = xcal.dWtFun(su_avg_del * ru_avg_s_eff, su_avg_del * ru_avg_l);
       break;
-    case STATE_CLASS(XCalLearnSpec)::SA_RS:
-      bcm = 0.5f * (su_avg_s + su_avg_m) * xcal.dWtFun(ru_avg_s, ru_avg_l);
+    case STATE_CLASS(XCalLearnSpec)::REV_SRS:
+      bcm = xcal.dWtFun(srs, su_avg_l);
+      break;
+    case STATE_CLASS(XCalLearnSpec)::REV_RS:
+      bcm = ru_avg_del * xcal.dWtFun(su_avg_s_eff, su_avg_l);
+      break;
+    case STATE_CLASS(XCalLearnSpec)::REV_RS_SIN:
+      bcm = xcal.dWtFun(ru_avg_del * su_avg_s_eff, ru_avg_del * su_avg_l);
       break;
     }
     
@@ -331,41 +341,29 @@
     case STATE_CLASS(XCalLearnSpec)::XCAL:
       err = xcal.dWtFun(srs, srm);
       break;
-    case STATE_CLASS(XCalLearnSpec)::DELTA_SM:
-      err = su_avg_m * (ru_avg_s - ru_avg_m);
+    case STATE_CLASS(XCalLearnSpec)::DELTA:
+      err = su_avg_del * (ru_avg_s_eff - ru_avg_m);
       break;
-    case STATE_CLASS(XCalLearnSpec)::DELTA_SS:
-      err = su_avg_s * (ru_avg_s - ru_avg_m);
+    case STATE_CLASS(XCalLearnSpec)::XCAL_DELTA:
+      err = su_avg_del * xcal.dWtFun(ru_avg_s_eff, ru_avg_m);
       break;
-    case STATE_CLASS(XCalLearnSpec)::DELTA_SA:
-      err = 0.5f * (su_avg_s + su_avg_m) * (ru_avg_s - ru_avg_m);
+    case STATE_CLASS(XCalLearnSpec)::XCAL_DELTA_SIN:
+      err = xcal.dWtFun(su_avg_del * ru_avg_s_eff, su_avg_del * ru_avg_m);
       break;
-    case STATE_CLASS(XCalLearnSpec)::XCAL_DELTA_SM:
-      err = su_avg_m * xcal.dWtFun(ru_avg_s, ru_avg_m);
+    case STATE_CLASS(XCalLearnSpec)::REV_DELTA:
+      err = ru_avg_del * (su_avg_s_eff - su_avg_m);
       break;
-    case STATE_CLASS(XCalLearnSpec)::XCAL_DELTA_SS:
-      err = su_avg_s * xcal.dWtFun(ru_avg_s, ru_avg_m);
+    case STATE_CLASS(XCalLearnSpec)::REV_XCAL_DELTA:
+      err = ru_avg_del * xcal.dWtFun(su_avg_s_eff, su_avg_m);
       break;
-    case STATE_CLASS(XCalLearnSpec)::XCAL_DELTA_SA:
-      err = 0.5f * (su_avg_s + su_avg_m) * xcal.dWtFun(ru_avg_s, ru_avg_m);
-      break;
-    case STATE_CLASS(XCalLearnSpec)::XCAL_DELTA_SS_IN:
-      err = xcal.dWtFun(srs, su_avg_s * ru_avg_m);
-      break;
-    case STATE_CLASS(XCalLearnSpec)::XCAL_REV_DELTA_SM:
-      err = ru_avg_m * xcal.dWtFun(su_avg_s, su_avg_m);
-      break;
-    case STATE_CLASS(XCalLearnSpec)::XCAL_REV_DELTA_SS:
-      err = ru_avg_s * xcal.dWtFun(su_avg_s, su_avg_m);
-      break;
-    case STATE_CLASS(XCalLearnSpec)::XCAL_REV_DELTA_SA:
-      err = 0.5f * (ru_avg_s + ru_avg_m) * xcal.dWtFun(su_avg_s, su_avg_m);
+    case STATE_CLASS(XCalLearnSpec)::REV_XCAL_DELTA_SIN:
+      err = xcal.dWtFun(ru_avg_del * su_avg_s_eff, ru_avg_del * su_avg_m);
       break;
     case STATE_CLASS(XCalLearnSpec)::XCAL_DELTA_OVERRIDE: {
       err = xcal.dWtFun(srs, srm);
-      float del = ru_avg_s - ru_avg_m;
+      float del = ru_avg_s_eff - ru_avg_m;
       if(del < 0.0f && err > 0.0f)
-        err *= xcal.fact1;      // reduce, potentially to zero
+        err *= xcal.del_or;      // reduce..
       break;
     }
     case STATE_CLASS(XCalLearnSpec)::CHL:
@@ -394,8 +392,11 @@
     bool deep_on;
     GetLrates(cg, net, thr_no, clrate, deep_on, bg_lrate, fg_lrate);
 
-    const float su_avg_s = su->avg_s_eff;
+    const float su_avg_s_eff = su->avg_s_eff;
+    const float su_avg_s = su->avg_s;
     const float su_avg_m = su->avg_m;
+    const float su_avg_del = xcal.del_m_in_s * su_avg_m + xcal.del_s_in_m * su_avg_s;
+    const float su_avg_l = su->avg_l;
     const int sz = cg->size;
 
     float* dwts = cg->OwnCnVar(DWT);
@@ -416,7 +417,8 @@
         }
         float l_lrn_eff = xcal.LongLrate(ru->avg_l_lrn);
         float new_dwt = C_Compute_dWt_CtLeabraXCAL
-          (ru->avg_s_eff, ru->avg_m, su_avg_s, su_avg_m, ru->avg_l, l_lrn_eff, ru->margin);
+          (ru->avg_s_eff, ru->avg_s, ru->avg_m, su_avg_s_eff, su_avg_s, su_avg_m, su_avg_del,
+           ru->avg_l, l_lrn_eff, ru->margin, su_avg_l);
         new_dwt = momentum.ComputeMoment(moments[i], dwavgs[i], new_dwt);
         dwts[i] += lrate_eff * new_dwt;
       }
@@ -434,7 +436,8 @@
         }
         float l_lrn_eff = xcal.LongLrate(ru->avg_l_lrn);
         float new_dwt = C_Compute_dWt_CtLeabraXCAL
-          (ru->avg_s_eff, ru->avg_m, su_avg_s, su_avg_m, ru->avg_l, l_lrn_eff, ru->margin);
+          (ru->avg_s_eff, ru->avg_s, ru->avg_m, su_avg_s_eff, su_avg_s, su_avg_m, su_avg_del,
+           ru->avg_l, l_lrn_eff, ru->margin, su_avg_l);
         dwts[i] += lrate_eff * new_dwt;
       }
     }

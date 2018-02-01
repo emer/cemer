@@ -73,13 +73,13 @@
         }
         float l_lrn_eff = xcal.LongLrate(ru->avg_l_lrn);
         float new_dwt;
-        if(delta_dwt) {
+        // if(delta_dwt) {
           new_dwt = C_Compute_dWt_Delta(ru->avg_s, ru->avg_m, su_avg_s);
-        }
-        else {
-          new_dwt = C_Compute_dWt_CtLeabraXCAL
-            (ru->avg_s_eff, ru->avg_m, su_avg_s, su_avg_m, ru->avg_l, l_lrn_eff, ru->margin);
-        }
+        // }
+        // else {
+        //   new_dwt = C_Compute_dWt_CtLeabraXCAL
+        //     (ru->avg_s_eff, ru->avg_m, su_avg_s, su_avg_m, ru->avg_l, l_lrn_eff, ru->margin);
+        // }
         new_dwt = momentum.ComputeMoment(moments[i], dwavgs[i], new_dwt);
         dwts[i] += lrate_eff * new_dwt; // lrate always at the end!
       }
@@ -101,13 +101,13 @@
         else
           l_lrn_eff = ru->avg_l_lrn;
         float new_dwt;
-        if(delta_dwt) {
+        // if(delta_dwt) {
           new_dwt = C_Compute_dWt_Delta(ru->avg_s, ru->avg_m, su_avg_s);
-        }
-        else {
-          new_dwt = C_Compute_dWt_CtLeabraXCAL
-            (ru->avg_s_eff, ru->avg_m, su_avg_s, su_avg_m, ru->avg_l, l_lrn_eff, ru->margin);
-        }
+        // }
+        // else {
+        //   new_dwt = C_Compute_dWt_CtLeabraXCAL
+        //     (ru->avg_s_eff, ru->avg_m, su_avg_s, su_avg_m, ru->avg_l, l_lrn_eff, ru->margin);
+        // }
         dwts[i] += lrate_eff * new_dwt; // lrate always at the end!
       }
     }
