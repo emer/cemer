@@ -2112,6 +2112,12 @@ void DataTable::DuplicateCol(const Variant& col) {
   StructUpdate(false);
 }
 
+void DataTable::SetColsReadOnly() {
+  for (int i=0; i<data.size; i++) {
+    data.SafeEl(i)->SetColFlag(DataCol::READ_ONLY);
+  }
+}
+
 void DataTable::MoveCol(int old_index, int new_index) {
   StructUpdate(true);
   data.MoveIdx(old_index, new_index);
