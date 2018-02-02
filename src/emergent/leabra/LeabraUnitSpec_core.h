@@ -666,7 +666,7 @@
 
   INLINE void Compute_ActFun_NotSpiked(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) {
     u->spike = 0.0f;
-    if(u->spk_t > 0) {
+    if(u->spk_t > 0 && u->spike_isi > 0.0f) {
       float cur_int = net->tot_cycle - u->spk_t;
       if(cur_int > 1.2f * u->spike_isi) { // some kind of estimate of when it exceeds est
         spike.UpdateSpikeInterval(u->spike_isi, cur_int);
