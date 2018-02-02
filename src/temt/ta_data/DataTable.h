@@ -525,7 +525,7 @@ public:
   // #CAT_Columns #MENU #MENU_ON_Columns #CONFIRM remove all columns (and data)
   virtual void          DuplicateCol(const Variant& col);
   // #CAT_Columns duplicates indicated column
-  virtual void          SetColsReadOnly();
+  virtual void          SetColsReadOnly(bool read_only);
   // #CAT_Columns utility to set all columns to read only
   virtual void          Reset();
   // #CAT_Columns remove all columns (and data) -- this cannot be undone!

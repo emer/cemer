@@ -2112,9 +2112,9 @@ void DataTable::DuplicateCol(const Variant& col) {
   StructUpdate(false);
 }
 
-void DataTable::SetColsReadOnly() {
+void DataTable::SetColsReadOnly(bool read_only) {
   for (int i=0; i<data.size; i++) {
-    data.SafeEl(i)->SetColFlag(DataCol::READ_ONLY);
+    data.SafeEl(i)->SetColFlagState(DataCol::READ_ONLY, read_only);
   }
 }
 
