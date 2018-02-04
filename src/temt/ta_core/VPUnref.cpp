@@ -33,13 +33,15 @@ VPUnref::VPUnref(void* base_, taBase* par, const String& p, MemberDef* md) {
 taBase* VPUnref::Resolve() {
   MemberDef* md;
   taBase* bs = dumpMisc::FindFromDumpPath(path, md);
-  if(!bs)
+  if(!bs) {
     return NULL;
+  }
   if(md) {
     if(md->type->IsPointer()) {
       bs = *((taBase**)bs);
-      if(!bs)
+      if(!bs) {
 	return NULL;
+      }
     }
     else if(md->type->IsAnyPtr()) {
       taMisc::Warning("ptr count != 0 in path:", path);
@@ -53,33 +55,42 @@ taBase* VPUnref::Resolve() {
   }
   else {// assume it is taBase_ptr or (binary-compat) taBasePtr
     if((memb_def != NULL) && memb_def->HasOption("OWN_POINTER")) {
-      if(parent == NULL)
+      if(parent == NULL) {
         taMisc::Warning("NULL parent for owned pointer:",path);
-      else
+      }
+      else {
         taBase::OwnPointer((taBase**)base, bs, parent);
-    } else 
+      }
+    }
+    else {
       taBase::SetPointer((taBase**)base, bs);
+    }
   }
 
-  if(taMisc::verbose_load >= taMisc::MESSAGES)
+  if(taMisc::verbose_load >= taMisc::MESSAGES) {
     taMisc::Warning("<== Resolved Reference:",path);
-  if(parent != NULL)
+  }
+  if(parent != NULL) {
     parent->UpdateAfterEdit();
+  }
   return bs;
 }
 
 void VPUList::Resolve() {
-  if(size <= 0)
+  if(size <= 0) {
     return;
+  }
   int i=0;
   do {
-    if(FastEl(i)->Resolve() != NULL)
+    if(FastEl(i)->Resolve() != NULL) {
       RemoveIdx(i);		// take off the list if resolved!
+    }
     else {
       VPUnref* vp = (VPUnref*)FastEl(i);
       String par_path;
-      if(vp->parent != NULL)
+      if(vp->parent != NULL) {
 	par_path = vp->parent->DisplayPath();
+      }
       taMisc::Warning("Could not resolve following path:",vp->path,
 		    "in object:",par_path);
       i++;
@@ -89,7 +100,8 @@ void VPUList::Resolve() {
 
 void VPUList::AddVPU(void* b, taBase* par, const String& p, MemberDef* md) {
   AddUniqNameOld(new VPUnref(b,par,p,md));
-  if(taMisc::verbose_load >= taMisc::MESSAGES)
+  if(taMisc::verbose_load >= taMisc::MESSAGES) {
     taMisc::Warning("==> Unresolved Reference:",p);
+  }
 }
 

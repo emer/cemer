@@ -1100,13 +1100,23 @@ void* taList_impl::FindMembeR(const String& nm, MemberDef*& ret_md) const {
   String idx_str = nm;
   idx_str = idx_str.before(']');
   if(idx_str.nonempty()) {
+    if(size == 0) return NULL;
     idx_str = idx_str.after('[');
     if(idx_str.contains('\"')) {
       String elnm = idx_str.between('\"','\"');
       elnm = taMisc::StringCVar(elnm);
       if(TestWarning(elnm.empty(), "FindMembeR","empty string index name:", idx_str))
         return NULL;
-      return FindName_(elnm);
+      void* rval = FindName_(elnm);
+      if(rval) return rval;
+      // look for a special case of TypeName_X number for default tokens of given type
+      if(!elnm.contains('_')) return NULL;
+      String typnm = elnm.before('_',-1);
+      if(typnm.empty()) return NULL;
+      if(el_base->InheritsFromName(typnm)) {
+        return DefaultEl_();
+      }
+      return NULL;
     }
     else {
       int idx = atoi(idx_str);
