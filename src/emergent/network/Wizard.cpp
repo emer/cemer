@@ -326,8 +326,8 @@ Program_Group* Wizard::TestProgs_impl(const String& prog_nm, Program* call_test_
   // maketesting output data tables -- used by the test programs
   DataTable_Group* dgp = (DataTable_Group*)proj->data.FindMakeGpName("OutputData");
   if(dgp->size < 4) {
-    proj->GetNewOutputDataTable("TrialTestOutputData", true); // msg = true
-    proj->GetNewOutputDataTable("EpochTestOutputData", true);
+    proj->GetNewOutputDataTable("TestTrialOutputData", true); // msg = true
+    proj->GetNewOutputDataTable("TestEpochOutputData", true);
   }
 
   taBase* rval = proj->programs.AddFromProgLibByName(prog_nm);

@@ -1113,7 +1113,9 @@ void* taList_impl::FindMembeR(const String& nm, MemberDef*& ret_md) const {
       if(!elnm.contains('_')) return NULL;
       String typnm = elnm.before('_',-1);
       if(typnm.empty()) return NULL;
-      if(el_base->InheritsFromName(typnm)) {
+      TypeDef* typ = taMisc::FindTypeName(typnm, false);
+      if(!typ) return NULL;
+      if(typ->InheritsFrom(el_base)) {
         return DefaultEl_();
       }
       return NULL;
