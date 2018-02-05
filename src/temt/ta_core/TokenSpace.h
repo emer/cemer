@@ -40,6 +40,7 @@ public:
   String        name;           // of the space
   TypeDef*      owner;          // owner is a typedef
   bool          keep;           // true if tokens are kept
+  int           name_idx_start; // starting index for naming -- discount instance and templates
   taAtomicInt   sub_tokens;     // number of tokens in sub-types
 #ifndef NO_TA_BASE
   taSigLink*   sig_link;

@@ -2058,8 +2058,11 @@ void taMisc::Init_Types_Gui(bool gui) {
       if (gui && td->InheritsFrom(TA_taiEdit))
         i_edit_space.Link(td);
     }
+    
+    // subtract instances, anything else at this point -- ok to redo..
+    td->tokens.name_idx_start = td->tokens.size;
   }
-
+  
   if (gui && (i_type_space.size == 0))
     taMisc::Error("taMisc::Init_Types_Gui: warning: no taiType's found with instance != NULL");
   if (gui && (i_memb_space.size == 0))

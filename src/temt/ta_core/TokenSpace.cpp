@@ -27,6 +27,7 @@ String TokenSpace::tmp_el_name;
 void TokenSpace::Initialize() {
   owner = NULL;
   keep = false;
+  name_idx_start = 0;
   sub_tokens = 0;
 #ifndef NO_TA_BASE
   sig_link = NULL;

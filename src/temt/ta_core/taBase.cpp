@@ -575,9 +575,10 @@ void taBase::SetDefaultName_impl(int idx) {
 //note: normally we dont' call SetDefaultName unless keeping tokens...
 void taBase::SetDefaultName_() {
   TypeDef* td = GetTypeDef();
-//nn  if (!td->tokens.keep) return;
+  if (!td->tokens.keep) return; // this should be here!
   int idx = td->tokens.FindEl((void *)this);
-//nn  if (idx < 0) return;
+  if (idx < 0) return;
+  if(idx >= td->tokens.name_idx_start) idx -= td->tokens.name_idx_start;
   SetDefaultName_impl(idx);
 }
 

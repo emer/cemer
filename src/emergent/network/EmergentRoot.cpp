@@ -21,6 +21,7 @@
 #include <KeyBindings>
 #include <iBaseClipWidgetAction>
 #include <ToolBoxRegistrar>
+#include <ToolBoxDockViewer>
 
 #include <NetCounterInit>
 #include <NetCounterIncr>
@@ -37,12 +38,18 @@
 //#include <ProjectionSpec>
 //#include <ConSpec>
 
+#include <ProjectionSpec>
+
 #include <LeabraNetwork>
 #include <LeabraLayer>
 #include <LeabraLayerSpec>
 #include <LeabraUnitSpec>
-#include <ProjectionSpec>
 #include <LeabraConSpec>
+
+#include <BpNetwork>
+#include <BpLayer>
+#include <BpUnitSpec>
+#include <BpConSpec>
 
 eTypeDef_Of(ProjectBase);
 
@@ -86,17 +93,9 @@ void EmergentRoot::Initialize() {
 
 void PDPProgramToolBoxProc(iToolBoxDockViewer* tb) {
   int sec = tb->AssertSection("Network"); //note: need to keep it short
-  NetCounterInit* init = new NetCounterInit;
-  taRootBase::instance()->templates.Add(init);
-  NetCounterIncr* incr = new NetCounterIncr;
-  taRootBase::instance()->templates.Add(incr);
-  NetUpdateView* view = new NetUpdateView;
-  taRootBase::instance()->templates.Add(view);
-  WtInitPrompt* prompt = new WtInitPrompt;
-  taRootBase::instance()->templates.Add(prompt);
-  NetDataLoop* loop = new NetDataLoop;
-  taRootBase::instance()->templates.Add(loop);
-  
+  taRootBase* root = taRootBase::instance();
+
+  // these are all automatically added to root->templates from ProgEl
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_NetCounterInit);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_NetCounterIncr);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_NetUpdateView);
@@ -105,57 +104,76 @@ void PDPProgramToolBoxProc(iToolBoxDockViewer* tb) {
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_NetDataLoop);
   
   int the_new_sec = tb->AssertSection("New"); //note: need to keep it short
-  
-//  Network* net = new Network;
-//  taRootBase::instance()->templates.Add(net);
-//  iProgramToolBar::ptbp_add_widget(tb, the_new_sec, &TA_Network);
-//  
-//  Layer* layer = new Layer;
-//  taRootBase::instance()->templates.Add(layer);
-//  iProgramToolBar::ptbp_add_widget(tb, the_new_sec, &TA_Layer);
-//  
-//  LayerSpec* layer_spec = new LayerSpec;
-//  taRootBase::instance()->templates.Add(layer_spec);
-//  iProgramToolBar::ptbp_add_widget(tb, the_new_sec, &TA_LayerSpec);
-//  
-//  UnitSpec* unit_spec = new UnitSpec;
-//  taRootBase::instance()->templates.Add(unit_spec);
-//  iProgramToolBar::ptbp_add_widget(tb, the_new_sec, &TA_UnitSpec);
-//  
-//  ProjectionSpec* proj_spec = new ProjectionSpec;
-//  taRootBase::instance()->templates.Add(proj_spec);
-//  iProgramToolBar::ptbp_add_widget(tb, the_new_sec, &TA_ProjectionSpec);
-//  
-//  ConSpec* con_spec = new ConSpec;
-//  taRootBase::instance()->templates.Add(con_spec);
-//  iProgramToolBar::ptbp_add_widget(tb, the_new_sec, &TA_ConSpec);
-//  
-//  tb->AddSeparator(the_new_sec);
 
-  {  // scope to reuse names
-    LeabraNetwork* net = new LeabraNetwork;
-    taRootBase::instance()->templates.Add(net);
-    iProgramToolBar::ptbp_add_widget(tb, the_new_sec, &TA_LeabraNetwork);
-    
-    LeabraLayer* leabra_layer = new LeabraLayer;
-    taRootBase::instance()->templates.Add(leabra_layer);
-    iProgramToolBar::ptbp_add_widget(tb, the_new_sec, &TA_LeabraLayer);
-    
-    LeabraLayerSpec* layer_spec = new LeabraLayerSpec;
-    taRootBase::instance()->templates.Add(layer_spec);
-    iProgramToolBar::ptbp_add_widget(tb, the_new_sec, &TA_LeabraLayerSpec);
-    
-    LeabraUnitSpec* unit_spec = new LeabraUnitSpec;
-    taRootBase::instance()->templates.Add(unit_spec);
-    iProgramToolBar::ptbp_add_widget(tb, the_new_sec, &TA_LeabraUnitSpec);
-    
-    ProjectionSpec* proj_spec = new ProjectionSpec;
-    taRootBase::instance()->templates.Add(proj_spec);
+  // add these for all cases:
+  {
+    taBase* check = root->templates.FindType(&TA_ProjectionSpec);
+    if(!check) {
+      root->templates.Add(new ProjectionSpec);
+      TA_ProjectionSpec.tokens.name_idx_start++;
+    }
+  }
+  
+  taProject* proj = NULL;
+  if(tb->viewer()) {
+    proj = tb->viewer()->GetMyProj();
+  }
+  if(!proj) {
+    taBase* check = root->templates.FindType(&TA_Network);
+    if(!check) {
+      root->templates.Add(new Network);
+      TA_Network.tokens.name_idx_start++;
+      root->templates.Add(new Layer);
+      TA_Layer.tokens.name_idx_start++;
+      root->templates.Add(new UnitSpec);
+      TA_UnitSpec.tokens.name_idx_start++;
+      root->templates.Add(new ConSpec);
+      TA_ConSpec.tokens.name_idx_start++;
+    }
+    iProgramToolBar::ptbp_add_widget(tb, the_new_sec, &TA_Network);
+    iProgramToolBar::ptbp_add_widget(tb, the_new_sec, &TA_Layer);
+    iProgramToolBar::ptbp_add_widget(tb, the_new_sec, &TA_UnitSpec);
+    iProgramToolBar::ptbp_add_widget(tb, the_new_sec, &TA_ConSpec);
     iProgramToolBar::ptbp_add_widget(tb, the_new_sec, &TA_ProjectionSpec);
-    
-    LeabraConSpec* con_spec = new LeabraConSpec;
-    taRootBase::instance()->templates.Add(con_spec);
+  }
+  else if(proj->GetTypeDef()->InheritsFromName("LeabraProject")) {
+    taBase* check = root->templates.FindType(&TA_LeabraNetwork);
+    if(!check) {
+      root->templates.Add(new LeabraNetwork);
+      TA_LeabraNetwork.tokens.name_idx_start++;
+      root->templates.Add(new LeabraLayer);
+      TA_LeabraLayer.tokens.name_idx_start++;
+      root->templates.Add(new LeabraLayerSpec);
+      TA_LeabraLayerSpec.tokens.name_idx_start++;
+      root->templates.Add(new LeabraUnitSpec);
+      TA_LeabraUnitSpec.tokens.name_idx_start++;
+      root->templates.Add(new LeabraConSpec);
+      TA_LeabraConSpec.tokens.name_idx_start++;
+    }
+    iProgramToolBar::ptbp_add_widget(tb, the_new_sec, &TA_LeabraNetwork);
+    iProgramToolBar::ptbp_add_widget(tb, the_new_sec, &TA_LeabraLayer);
+    iProgramToolBar::ptbp_add_widget(tb, the_new_sec, &TA_LeabraLayerSpec);
+    iProgramToolBar::ptbp_add_widget(tb, the_new_sec, &TA_LeabraUnitSpec);
     iProgramToolBar::ptbp_add_widget(tb, the_new_sec, &TA_LeabraConSpec);
+    iProgramToolBar::ptbp_add_widget(tb, the_new_sec, &TA_ProjectionSpec);
+  }
+  else if(proj->GetTypeDef()->InheritsFromName("BpProject")) {
+    taBase* check = root->templates.FindType(&TA_BpNetwork);
+    if(!check) {
+      root->templates.Add(new BpNetwork);
+      TA_BpNetwork.tokens.name_idx_start++;
+      root->templates.Add(new BpLayer);
+      TA_BpLayer.tokens.name_idx_start++;
+      root->templates.Add(new BpUnitSpec);
+      TA_BpUnitSpec.tokens.name_idx_start++;
+      root->templates.Add(new BpConSpec);
+      TA_BpConSpec.tokens.name_idx_start++;
+    }
+    iProgramToolBar::ptbp_add_widget(tb, the_new_sec, &TA_BpNetwork);
+    iProgramToolBar::ptbp_add_widget(tb, the_new_sec, &TA_BpLayer);
+    iProgramToolBar::ptbp_add_widget(tb, the_new_sec, &TA_BpUnitSpec);
+    iProgramToolBar::ptbp_add_widget(tb, the_new_sec, &TA_BpConSpec);
+    iProgramToolBar::ptbp_add_widget(tb, the_new_sec, &TA_ProjectionSpec);
   }
 }
 
