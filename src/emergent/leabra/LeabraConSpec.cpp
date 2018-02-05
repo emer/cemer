@@ -19,6 +19,7 @@
 #include <taProject>
 #include <DataTable>
 #include <MemberDef>
+#include <taDataAnal>
 
 #include <taMisc>
 
@@ -438,9 +439,11 @@ void LeabraConSpec::GraphLrnDWts(DataTable* graph_data, LeabraUnitSpec* unit_spe
     dc->SetUserData("MIN", 0.0f);  dc->SetUserData("MAX", 1.0f);
   }
   dwt->SetUserData("MIN", -1.0f);      dwt->SetUserData("MAX", 1.0f);
+  ru_act_m->SetUserData("X_AXIS", true);
+  ru_act_p->SetUserData("Z_AXIS", true);
 
-  for(float r_act_m = 0.0f; r_act_m <= 1.0f; r_act_m += ru_act_inc) {
-    for(float r_act_p = 0.0f; r_act_p <= 1.0f; r_act_p += ru_act_inc) {
+  for(float r_act_m = 0.0f; r_act_m <= 1.0001f; r_act_m += ru_act_inc) {
+    for(float r_act_p = 0.0f; r_act_p <= 1.0001f; r_act_p += ru_act_inc) {
       float r_avg_ss = 0.0f;  float r_avg_s = 0.0f; float r_avg_m = 0.0f;
       float r_ru_avg_s_lrn = 0.0f;  float r_su_avg_s_lrn = 0.0f;
       float s_avg_ss = 0.0f;  float s_avg_s = 0.0f; float s_avg_m = 0.0f;
@@ -482,7 +485,9 @@ void LeabraConSpec::GraphLrnDWts(DataTable* graph_data, LeabraUnitSpec* unit_spe
   if(made_uspec) {
     delete unit_spec;
   }
-    
+
+  taDataAnal::Matrix3DGraph(graph_data, "ru_act_m", "ru_act_p");
+  
   graph_data->StructUpdate(false);
   graph_data->FindMakeGraphView();
 }

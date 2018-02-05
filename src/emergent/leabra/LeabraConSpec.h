@@ -95,8 +95,8 @@ public:
   // #MENU_BUTTON #MENU_ON_Graph #NULL_OK #NULL_TEXT_NewGraphData graph the trajectory of fast and slow weight change dynamics over trials, in response to a single .1 dwt change (NULL = new data table)
   virtual void  GraphLrateSched(DataTable* graph_data = NULL);
   // #MENU_BUTTON #MENU_ON_Graph #NULL_OK #NULL_TEXT_NewGraphData graph the current learning rate schedule
-  virtual void  GraphLrnDWts(DataTable* graph_data = NULL, LeabraUnitSpec* unit_spec = NULL, float su_act_m = 0.5, float su_act_p = 0.5, float ru_act_inc = 0.1, float ru_avg_l = 0.5, float ru_avg_l_lrn = 0.0, float ru_margin = 0.5);
-  // #MENU_BUTTON #MENU_ON_Graph #NULL_OK #NULL_TEXT_NewGraphData graph the computed weight changes according to the current learning rule, as function of varying minus and plus phase receiving activations (3D graph) integrated through activation averaging equations based on selected unit spec (if NULL, defaults are used), and as function of given sending activations across minus and plus phases (also integrated into averages)
+  virtual void  GraphLrnDWts(DataTable* graph_data = NULL, LeabraUnitSpec* unit_spec = NULL, float su_act_m = 0.5, float su_act_p = 0.5, float ru_act_inc = 0.01, float ru_avg_l = 0.5, float ru_avg_l_lrn = 0.0, float ru_margin = 0.5);
+  // #MENU_BUTTON #MENU_ON_Graph #NULL_OK_0 #NULL_TEXT_0_NewGraphData graph the computed weight changes according to the current learning rule, as function of varying minus and plus phase receiving activations (3D graph) integrated through activation averaging equations based on selected unit spec (if NULL, defaults are used), and as function of given sending activations across minus and plus phases (also integrated into averages)
 
   virtual void  WtScaleCvt(float slay_kwta_pct=.25, int slay_n_units=100,
                            int n_recv_cons=5, bool norm_con_n=true);
