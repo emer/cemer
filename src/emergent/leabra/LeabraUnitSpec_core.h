@@ -848,12 +848,8 @@
     else {
       ru_act = u->act_eq;
     }
-
-    u->avg_ss += dt.integ * act_avg.ss_dt * (ru_act - u->avg_ss);
-    u->avg_s += dt.integ * act_avg.s_dt * (u->avg_ss - u->avg_s);
-    u->avg_m += dt.integ * act_avg.m_dt * (u->avg_s - u->avg_m);
-
-    u->avg_s_eff = act_avg.s_in_s * u->avg_s + act_avg.m_in_s * u->avg_m;
+    act_avg.ComputeAvgs(ru_act, dt.integ, u->avg_ss, u->avg_s, u->avg_m,
+                        u->ru_avg_s_lrn, u->su_avg_s_lrn);
   }
   // #CAT_Learning compute sending-receiving running activation averages (avg_ss, avg_s, avg_m) -- only for this unit (SR name is a hold-over from connection-level averaging that is no longer used) -- unit level only, used for XCAL -- called by Compute_Act_Post
   
@@ -978,7 +974,7 @@
       u->act_q4 = use_act;
       u->act_p = use_act;
       if(act_misc.dif_avg) {
-        u->act_dif = u->avg_s_eff - u->avg_m;
+        u->act_dif = u->ru_avg_s_lrn - u->avg_m;
       }
       else {
         u->act_dif = u->act_p - u->act_m;

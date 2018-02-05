@@ -70,35 +70,56 @@ private:
 };
 
 
-class STATE_CLASS(XCalLearnSpec) : public STATE_CLASS(SpecMemberBase) {
-  // ##INLINE ##NO_TOKENS ##CAT_Leabra CtLeabra temporally eXtended Contrastive Attractor Learning (XCAL) specs
+class STATE_CLASS(LeabraLearnSpec) : public STATE_CLASS(SpecMemberBase) {
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra parameters affecting overall learning rule, including experimental learning rule options 
 INHERITED(SpecMemberBase)
 public:
+  enum LearnRule {             // overall form of learning rule to use
+    DELTA_FF_FB,               // delta-rule in the feedforward projections (within the XCal function: xcal(su.su_avg_s_lrn * ru.ru_avg_s_lrn, su.su_avg_s_lrn * ru.avg_m)), and switched (sender <-> receiver) delta-rule in the feedback projections -- maintains symmetry while following the  correct backprop gradient -- also uses a compatible form of BCM Hebbian learning: xcal(su.su_avg_s_lrn * ru.avg_s, su.su_avg_s_lrn * ru.avg_l) -- learns significantly better than CHL in most cases -- requires accurately setting the fb flag for feedback projections so they switch
+    XCAL_CHL,                  // original contrastive-hebbian-learning form of error-driven learning (within the XCal function: xcal(su.su_avg_s_lrn * ru.ru_avg_s_lrn, su.avg_m * ru.avg_m)), which achieves symmetry with underlying delta-rule formulation by having both sides of the connection learn with the average of each-other's gradient, while also using the average of short and medium (plus and minus) phase variables for sending activation.  BCM Hebbian is xcal(su.su_avg_s_lrn * ru.ru_avg_s_lrn, ru.avg_l) -- recommend updating to DELTA_FF_FB, which requires accurately identifying the FF vs. FB projections
+    EXPT,                      // use an experimental form of learning defined by further selections of errule and bcmrule
+  };
+
   enum  BcmLearnRule {         // what form of BCM Hebbian learning to use, in terms of the factor being compared against ru_avg_l in the XCAL function
-    SRS,                       // bcm = xcal(su->avg_s * ru->avg_s, ru_avg_l)
-    RS,                        // bcm = su->avg_eff * xcal(ru->avg_s, ru_avg_l) (avg_eff uses del_m_in_s to mix short vs. med avgs, independent of m_in_s)
-    RS_SIN,                    // bcm = xcal(su->avg_eff * ru->avg_s, su->avg_eff * ru_avg_l) (avg_eff uses del_m_in_s to mix short vs. med avgs, independent of m_in_s)
-    REV_SRS,                   // reverse of SRS for top-down connections -- see SRS
-    REV_RS,                    // reverse of RS for top-down connections -- see RS
-    REV_RS_SIN,                // reverse of RS_SIN for top-down connections -- see RS_SIN
+    SRS,                       // bcm = xcal(su.su_avg_s_lrn * ru.ru_avg_s_lrn, ru_avg_l)
+    RS,                        // bcm = su.su_avg_s_lrn * xcal(ru.ru_avg_s_lrn, ru_avg_l) 
+    RS_SIN,                    // bcm = xcal(su.su_avg_s_lrn * ru.ru_avg_s_lrn, su.su_avg_s_lrn * ru_avg_l) -- now the preferred default, DELTA_FF_FB
   };
 
   enum  ErrLearnRule {          // what form of error-driven learning to use?
-    XCAL,                       // standard XCAL function of short vs. medium term average coproduct
-    DELTA,                      // delta rule, sending is del_m_in_s * short-term average (plus phase, raw with no m_in_s) + (1.0 - del_m_in_s) * med-term avg * (ru->avg_s_eff - ru->avg_m)
-    XCAL_DELTA,                 // xcal version of delta rule, del_m_in_s * short-term average (plus phase, raw with no m_in_s) + (1.0 - del_m_in_s) * med-term avg * xcal(ru->avg_s, ru->avg_m)
-    XCAL_DELTA_SIN,             // xcal version of delta rule with sending term included inside xcal function, sending is del_m_in_s * short-term average (plus phase, raw with no m_in_s) + (1.0 - del_m_in_s) * med-term avg: xcal(su->avg * ru->avg_s, su->avg * ru->avg_m)
+    XCAL,                       // standard XCAL-CHL function of short vs. medium term average coproduct
+    DELTA,                      // delta rule: su.su_avg_s_lrn * (ru.ru_avg_s_lrn - ru.avg_m)
+    XCAL_DELTA,                 // xcal version of delta rule: su.su_avg_s_lrn * xcal(ru.ru_avg_s_lrn, ru.avg_m)
+    XCAL_DELTA_SIN,             // xcal version of delta rule with sending term included inside xcal function -- now the preferred default in DELTA_FF_FB rule: xcal(su.su_avg_s_lrn * ru.ru_avg_s_lrn, su.su_avg_s_lrn * ru.avg_m)
     REV_DELTA,                  // reversed delta rule (sender delta instead of recv) -- see DELTA -- for top-down projections
     REV_XCAL_DELTA,             // reversed xcal delta rule (sender delta instead of recv) -- see XCAL_DELTA -- for top-down projections
     REV_XCAL_DELTA_SIN,         // reversed xcal delta rule (sender delta instead of recv) -- see XCAL_DELTA_SIN -- for top-down projections
     XCAL_DELTA_OVERRIDE,        // if our delta is negative, and computed xcal err is positive, we reduce err by del_or
-    CHL,                        // contrastive hebbian learning: su->avg_s * ru->avg_s - su->avg_m * ru->avg_m
+    CHL,                        // pure contrastive hebbian learning: su.su_avg_s_lrn * ru.ru_avg_s_lrn - su.avg_m * ru.avg_m
   };
 
-  ErrLearnRule  errule;         // #DEF_XCAL error-driven learning rule to use -- for exploration purposes..
-  BcmLearnRule  bcmrule;        // #DEF_SRS BCM Hebbian  learning rule to use -- for exploration purposes..
-  float         del_or;         // #CONDSHOW_ON_errule:XCAL_DELTA_OVERRIDE override amount for XCAL_DELTA_OVERRIDE
-  float         del_m_in_s;     // for delta-based learning rules, separate m_in_s factor for computing the effective sending activation -- allows exploring full continuum between s, m, independent of main m_in_s factor used for main delta
+  LearnRule     rule;           // overall form of learning rule to use
+  bool          fb;             // is this a feedback projection?  critical for DELTA_FF_FB to apply the correct form of delta rule learning
+  ErrLearnRule  errule;         // #CONDSHOW_ON_rule:EXPT error-driven learning rule to use -- for exploration purposes..
+  BcmLearnRule  bcmrule;        // #CONDSHOW_ON_rule:EXPT BCM Hebbian learning rule to use -- for exploration purposes..
+  float         del_or;         // #CONDSHOW_ON_rule:EXPT&&errule:XCAL_DELTA_OVERRIDE override amount for XCAL_DELTA_OVERRIDE
+
+  STATE_DECO_KEY("ConSpec");
+  STATE_TA_STD_CODE_SPEC(LeabraLearnSpec);
+  //  STATE_UAE(  );
+  
+private:
+  void  Initialize() {   Defaults_init(); }
+  void  Defaults_init() {
+    rule = XCAL_CHL; fb = false;  errule = XCAL;  bcmrule = SRS; del_or = 0.9f;
+  }
+};
+
+
+class STATE_CLASS(XCalLearnSpec) : public STATE_CLASS(SpecMemberBase) {
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra CtLeabra temporally eXtended Contrastive Attractor Learning function (XCAL) specs
+INHERITED(SpecMemberBase)
+public:
   float         m_lrn;          // #DEF_1 #MIN_0 multiplier on learning based on the medium-term floating average threshold which produces error-driven learning -- this is typically 1 when error-driven learning is being used, and 0 when pure hebbian learning is used -- note that the long-term floating average threshold is provided by the receiving unit
   bool          set_l_lrn;      // #DEF_false if true, set a fixed l_lrn weighting factor that determines how much of the long-term floating average threshold (i.e., BCM, Hebbian) component of learning is used -- this is useful for setting a fully Hebbian learning connection, e.g., by setting m_lrn = 0 and l_lrn = 1. If false, then the receiving unit's avg_l_lrn factor is used, which dynamically modulates the amount of the long-term component as a function of how active overall it is
   float         l_lrn;          // #CONDSHOW_ON_set_l_lrn fixed l_lrn weighting factor that determines how much of the long-term floating average threshold (i.e., BCM, Hebbian) component of learning is used -- this is useful for setting a fully Hebbian learning connection, e.g., by setting m_lrn = 0 and l_lrn = 1. 
@@ -107,7 +128,6 @@ public:
   float         lrn_thr;        // #DEF_0.01 xcal learning threshold -- don't learn when sending unit activation is below this value in both phases -- due to the nature of the learning function being 0 when the sr coproduct is 0, it should not affect learning in any substantial way -- nonstandard learning algorithms that have different properties should ignore it
 
   float         d_rev_ratio;    // #HIDDEN #READ_ONLY -(1-d_rev)/d_rev -- multiplication factor in learning rule -- builds in the minus sign!
-  float         del_s_in_m;     // #HIDDEN #READ_ONLY 1 - del_m_in_s
 
   INLINE float  dWtFun(const float srval, const float thr_p) {
     float rval;
@@ -153,13 +173,11 @@ public:
                d_rev_ratio = -(1.0f - d_rev) / d_rev;
              else
                d_rev_ratio = -1.0f;
-             del_s_in_m = 1.0f - del_m_in_s;
              );
   
 private:
   void  Initialize() {   Defaults_init(); }
   void  Defaults_init() {
-    errule = XCAL;  bcmrule = SRS;  del_m_in_s = 0.1f; del_or = 0.9f;
     m_lrn = 1.0f;  set_l_lrn = false;  l_lrn = 1.0f;  d_rev = 0.10f;  d_thr = 0.0001f;
     lrn_thr = 0.01f; d_rev_ratio = -(1.0f - d_rev) / d_rev;
   }

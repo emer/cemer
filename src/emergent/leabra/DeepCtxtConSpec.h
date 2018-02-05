@@ -78,7 +78,7 @@
         // }
         // else {
         //   new_dwt = C_Compute_dWt_CtLeabraXCAL
-        //     (ru->avg_s_eff, ru->avg_m, su_avg_s, su_avg_m, ru->avg_l, l_lrn_eff, ru->margin);
+        //     (ru->ru_avg_s_lrn, ru->avg_m, su_avg_s, su_avg_m, ru->avg_l, l_lrn_eff, ru->margin);
         // }
         new_dwt = momentum.ComputeMoment(moments[i], dwavgs[i], new_dwt);
         dwts[i] += lrate_eff * new_dwt; // lrate always at the end!
@@ -106,7 +106,7 @@
         // }
         // else {
         //   new_dwt = C_Compute_dWt_CtLeabraXCAL
-        //     (ru->avg_s_eff, ru->avg_m, su_avg_s, su_avg_m, ru->avg_l, l_lrn_eff, ru->margin);
+        //     (ru->ru_avg_s_lrn, ru->avg_m, su_avg_s, su_avg_m, ru->avg_l, l_lrn_eff, ru->margin);
         // }
         dwts[i] += lrate_eff * new_dwt; // lrate always at the end!
       }

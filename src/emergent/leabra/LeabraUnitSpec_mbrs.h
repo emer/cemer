@@ -135,7 +135,7 @@ INHERITED(SpecMemberBase)
 public:
   bool          rec_nd;         // record the act_nd non-depressed activation variable (instead of act_eq) for the act_q* quarter-trial and phase (act_m, act_p) activation state variables -- these are used primarily for statistics, or possibly for specialized learning mechanisms
   bool          avg_nd;         // use the act_nd non-depressed activation variable (instead of act_eq) for the time-average activation values (avg_ss, avg_s, avg_m, avg_l) used in the XCAL learning mechanism -- this is appropriate for action-potential driven learning dynamics, as compared to synaptic efficacy, when short term plasticity is present
-  bool          dif_avg;        // compute act_dif as avg_s_eff - avg_m (difference of average values that actually drive learning) -- otherwise it is act_p - act_m (difference of final activation states in plus phase minus minus phase -- the typical error signal)
+  bool          dif_avg;        // compute act_dif as ru_avg_s_lrn - avg_m (difference of average values that actually drive learning) -- otherwise it is act_p - act_m (difference of final activation states in plus phase minus minus phase -- the typical error signal)
   float         net_gain;       // #DEF_1 #MIN_0 multiplier on total synaptic net input -- this multiplies the net_raw, but AFTER the net_raw variable is saved (upon which the netin_raw statistics are computed)
 
   bool          avg_trace;      // #DEF_false set act_avg unit variable to the exponentially decaying trace of activation -- used for TD (temporal differences) reinforcement learning for example -- lambda parameter determines how much of the prior trace carries over into the new trace 
@@ -360,15 +360,31 @@ public:
   float         ss_tau;                // #DEF_2;4;7 #MIN_1 time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly -- 1.4x the half-life), for continuously updating the super-short time-scale avg_ss value -- this is provides a pre-integration step before integrating into the avg_s short time scale -- it is particularly important for spiking -- in general 4 is the largest value without starting to impair learning, but a value of 7 can be combined with m_in_s = 0 with somewhat worse results
   float         s_tau;                // #DEF_2 #MIN_1 time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly -- 1.4x the half-life), for continuously updating the short time-scale avg_s value from the super-short avg_ss value (cascade mode) -- avg_s represents the plus phase learning signal that reflects the most recent past information
   float         m_tau;                // #DEF_10 #MIN_1 time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly -- 1.4x the half-life), for continuously updating the medium time-scale avg_m value from the short avg_s value (cascade mode) -- avg_m represents the minus phase learning signal that reflects the expectation representation prior to experiencing the outcome (in addition to the outcome) -- the default value of 10 generally cannot be exceeded without impairing learning
-  float         m_in_s;                // #DEF_0.1;0 #MIN_0 #MAX_1 how much of the medium term average activation to include at the short (plus phase) avg_s_eff variable that is actually used in learning -- important to ensure that when unit turns off in plus phase (short time scale), enough medium-phase trace remains so that learning signal doesn't just go all the way to 0, at which point no learning would take place -- typically need faster time constant for updating s such that this trace of the m signal is lost -- can set ss_tau=7 and set this to 0 but learning is generally somewhat worse
+  float         ru_lrn_m;            // #DEF_0.1;0 #MIN_0 #MAX_1 #AKA_m_in_s how much of the medium term average activation to mix in with the short (plus phase) to compute the ru_avg_s_lrn variable that is used for the receiving unit's short-term average in learning -- this is important to ensure that when unit turns off in plus phase (short time scale), enough medium-phase trace remains so that learning signal doesn't just go all the way to 0, at which point no learning would take place -- typically need faster time constant for updating s such that this trace of the m signal is lost -- can set ss_tau=7 and set this to 0 but learning is generally somewhat worse
+  float         su_lrn_m;            // #DEF_0.5;0.1;0 #MIN_0 #MAX_1 how much of the medium term average activation to mix in with the short (plus phase) to compute the su_avg_s_lrn variable that is used for the sending unit's short-term average in learning -- for delta-rule based learning, this is typically .5 (half-and-half) but for CHL it is typically the same as ru_lrn_m (.1)
 
   float         ss_dt;               // #READ_ONLY #EXPERT rate = 1 / tau
   float         s_dt;                // #READ_ONLY #EXPERT rate = 1 / tau
   float         m_dt;                // #READ_ONLY #EXPERT rate = 1 / tau
-  float         s_in_s;              // #READ_ONLY #EXPERT 1-m_in_s
+  float         ru_lrn_s;            // #READ_ONLY #EXPERT 1-ru_lrn_m
+  float         su_lrn_s;            // #READ_ONLY #EXPERT 1-su_lrn_m
+
+
+  INLINE void   ComputeAvgs(const float ru_act, const float dt_integ,
+                            float& avg_ss, float& avg_s, float& avg_m,
+                            float& ru_avg_s_lrn, float& su_avg_s_lrn) {
+    avg_ss += dt_integ * ss_dt * (ru_act - avg_ss);
+    avg_s +=  dt_integ * s_dt * (avg_ss - avg_s);
+    avg_m +=  dt_integ * m_dt * (avg_s - avg_m);
+
+    ru_avg_s_lrn = ru_lrn_s * avg_s + ru_lrn_m * avg_m;
+    su_avg_s_lrn = su_lrn_s * avg_s + su_lrn_m * avg_m;
+  }
+  // compute averages based on current act, and overall dt integration factor
 
   INLINE void   UpdtDts() 
-  { ss_dt = 1.0f / ss_tau;  s_dt = 1.0f / s_tau;  m_dt = 1.0f / m_tau;    s_in_s = 1.0f - m_in_s; }
+  { ss_dt = 1.0f / ss_tau;  s_dt = 1.0f / s_tau;  m_dt = 1.0f / m_tau;
+    ru_lrn_s = 1.0f - ru_lrn_m; su_lrn_s = 1.0f - su_lrn_m; }
   
   
   STATE_DECO_KEY("UnitSpec");
@@ -379,7 +395,7 @@ public:
 private:
   void        Initialize()      { Defaults_init(); }
   void        Defaults_init() {
-    ss_tau = 4.0f;  s_tau = 2.0f;  m_tau = 10.0f;  m_in_s = 0.1f;
+    ss_tau = 4.0f;  s_tau = 2.0f;  m_tau = 10.0f;  ru_lrn_m = 0.1f;  su_lrn_m = 0.1f;
     UpdtDts();
   }
 };
