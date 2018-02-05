@@ -105,7 +105,7 @@ void PDPProgramToolBoxProc(iToolBoxDockViewer* tb) {
   
   int the_new_sec = tb->AssertSection("New"); //note: need to keep it short
 
-  // add this for all cases:
+  // add these for all cases:
   {
     taBase* check = root->templates.FindType(&TA_ProjectionSpec);
     if(!check) {

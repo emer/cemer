@@ -515,7 +515,7 @@ void taRootBase::About() {
   else
     taMisc::Info(info);
 }
-
+ 
 void taRootBase::AddTemplatesOfType(TypeDef* td) {
   if(!td->HasOption("VIRT_BASE") && td->GetInstance() != NULL) {
     taBase* tok = ((taBase*)td->GetInstance())->MakeToken();
