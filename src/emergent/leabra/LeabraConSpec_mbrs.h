@@ -75,7 +75,7 @@ class STATE_CLASS(LeabraLearnSpec) : public STATE_CLASS(SpecMemberBase) {
 INHERITED(SpecMemberBase)
 public:
   enum LearnRule {             // overall form of learning rule to use
-    DELTA_FF_FB,               // delta-rule in the feedforward projections (within the XCal function: xcal(su.su_avg_s_lrn * ru.ru_avg_s_lrn, su.su_avg_s_lrn * ru.avg_m)), and switched (sender <-> receiver) delta-rule in the feedback projections -- maintains symmetry while following the  correct backprop gradient -- also uses a compatible form of BCM Hebbian learning: xcal(su.su_avg_s_lrn * ru.avg_s, su.su_avg_s_lrn * ru.avg_l) -- learns significantly better than CHL in most cases -- requires accurately setting the fb flag for feedback projections so they switch
+    DELTA_FF_FB,               // delta-rule in the feedforward projections: su.su_avg_s_lrn * (ru.ru_avg_s_lrn - ru.avg_m), and switched (sender <-> receiver) delta-rule in the feedback projections -- maintains symmetry while following the  correct backprop gradient -- also uses a compatible form of BCM Hebbian learning: xcal(su.su_avg_s_lrn * ru.avg_s, su.su_avg_s_lrn * ru.avg_l) -- learns significantly better than CHL in most cases -- requires accurately setting the fb flag for feedback projections so they switch
     XCAL_CHL,                  // original contrastive-hebbian-learning form of error-driven learning (within the XCal function: xcal(su.su_avg_s_lrn * ru.ru_avg_s_lrn, su.avg_m * ru.avg_m)), which achieves symmetry with underlying delta-rule formulation by having both sides of the connection learn with the average of each-other's gradient, while also using the average of short and medium (plus and minus) phase variables for sending activation.  BCM Hebbian is xcal(su.su_avg_s_lrn * ru.ru_avg_s_lrn, ru.avg_l) -- recommend updating to DELTA_FF_FB, which requires accurately identifying the FF vs. FB projections
     EXPT,                      // use an experimental form of learning defined by further selections of errule and bcmrule
   };
@@ -123,29 +123,36 @@ public:
   float         m_lrn;          // #DEF_1 #MIN_0 multiplier on learning based on the medium-term floating average threshold which produces error-driven learning -- this is typically 1 when error-driven learning is being used, and 0 when pure hebbian learning is used -- note that the long-term floating average threshold is provided by the receiving unit
   bool          set_l_lrn;      // #DEF_false if true, set a fixed l_lrn weighting factor that determines how much of the long-term floating average threshold (i.e., BCM, Hebbian) component of learning is used -- this is useful for setting a fully Hebbian learning connection, e.g., by setting m_lrn = 0 and l_lrn = 1. If false, then the receiving unit's avg_l_lrn factor is used, which dynamically modulates the amount of the long-term component as a function of how active overall it is
   float         l_lrn;          // #CONDSHOW_ON_set_l_lrn fixed l_lrn weighting factor that determines how much of the long-term floating average threshold (i.e., BCM, Hebbian) component of learning is used -- this is useful for setting a fully Hebbian learning connection, e.g., by setting m_lrn = 0 and l_lrn = 1. 
-  float         d_rev;          // #DEF_0.1 #MIN_0 proportional point within LTD range where magnitude reverses to go back down to zero at zero -- err-driven svm component does better with smaller values, and BCM-like mvl component does better with larger values -- 0.1 is a compromise
-  float         d_thr;          // #DEF_0.0001;0.01 #MIN_0 minimum LTD threshold value below which no weight change occurs -- this is an absolute number, not proportional to the threshold
+  float         d_rev;          // #DEF_0.1 #MIN_0 #MAX_0.99 proportional point within LTD range where magnitude reverses to go back down to zero at zero -- err-driven svm component does better with smaller values, and BCM-like mvl component does better with larger values -- 0.1 is a compromise
+  float         d_gain;         // #DEF_1 #MIN_0 extra gain factor on LTD -- to compensate for reduction in LTD from higher levels of d_rev -- e.g., 2.0 for d_rev = .5 balances that out
+  float         d_thr;          // #DEF_0.0001;0.01 #MIN_0 minimum LTD threshold value below which no weight change occurs -- this is now *relative* to the threshold
+  float         thr_p_min;      // minimum thr_p potentiation threshold in absolute terms
   float         lrn_thr;        // #DEF_0.01 xcal learning threshold -- don't learn when sending unit activation is below this value in both phases -- due to the nature of the learning function being 0 when the sr coproduct is 0, it should not affect learning in any substantial way -- nonstandard learning algorithms that have different properties should ignore it
 
   float         d_rev_ratio;    // #HIDDEN #READ_ONLY -(1-d_rev)/d_rev -- multiplication factor in learning rule -- builds in the minus sign!
 
-  INLINE float  dWtFun(const float srval, const float thr_p) {
-    float rval;
+  INLINE float  dWtFun_nodgain(float srval, const float thr_p) {
     if(srval < d_thr)
-      rval = 0.0f;
-    else if(srval > thr_p * d_rev)
+      return 0.0f;
+    srval -= d_thr;
+    float rval;
+    if(srval > thr_p * d_rev)
       rval = (srval - thr_p);
     else
       rval = srval * d_rev_ratio;
     return rval;
   }
-  // XCAL function for weight change -- the "check mark" function 
+  // XCAL function for weight change -- the "check mark" function -- no d_gain
 
-  INLINE float  dWtFun_dgain(const float srval, const float thr_p, const float d_gain) {
+  INLINE float  dWtFun(float srval, float thr_p) {
+    if(thr_p < thr_p_min) thr_p = thr_p_min;
+    float d_thr_eff = d_thr * thr_p;
+    if(srval < d_thr_eff)
+      return 0.0f;
+    srval -= d_thr_eff;
+    thr_p -= d_thr;
     float rval;
-    if(srval < d_thr)
-      rval = 0.0f;
-    else if(srval >= thr_p)
+    if(srval >= thr_p)
       rval = srval - thr_p;
     else if(srval > thr_p * d_rev)
       rval = d_gain * (srval - thr_p);
@@ -153,7 +160,7 @@ public:
       rval = d_gain * srval * d_rev_ratio;
     return rval;
   }
-  // version that supports a differential d_gain term -- no longer included in base case
+  // XCAL function for weight change -- the "check mark" function -- with d_gain
 
   INLINE float  SymSbFun(const float wt_val) {
     return 2.0f * wt_val * (1.0f - wt_val);
@@ -178,8 +185,9 @@ public:
 private:
   void  Initialize() {   Defaults_init(); }
   void  Defaults_init() {
-    m_lrn = 1.0f;  set_l_lrn = false;  l_lrn = 1.0f;  d_rev = 0.10f;  d_thr = 0.0001f;
-    lrn_thr = 0.01f; d_rev_ratio = -(1.0f - d_rev) / d_rev;
+    m_lrn = 1.0f;  set_l_lrn = false;  l_lrn = 1.0f;  d_rev = 0.10f;  d_gain = 1.0f;
+    thr_p_min = 0.001f;
+    d_thr = 0.0001f;  lrn_thr = 0.01f; d_rev_ratio = -(1.0f - d_rev) / d_rev;
   }
 };
 
@@ -247,27 +255,48 @@ class STATE_CLASS(LeabraMomentum) : public STATE_CLASS(SpecMemberBase) {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra implements standard simple momentum and normalization by the overall running-average magnitude of weight changes (which serves as an estimate of the variance in the weight changes, assuming zero net mean overall) -- accentuates consistent directions of weight change and cancels out dithering -- biologically captures slower timecourse of longer-term plasticity mechanisms
 INHERITED(SpecMemberBase)
 public:
+  enum NormMode {               // how to normalize dweights -- uses MAX_ABS form of normalization
+    NORM_FB,                    // normalize only feedback connections as indicated by rule.fb flag -- this works best in large deep networks
+    NORM,                       // normalize by MAX_ABS delta weight
+    NO_NORM,                    // do not normalize weight changes
+  };
+
   bool          on;             // #DEF_true whether to use standard simple momentum and normalization as function of the running-average magnitude (abs value) of weight changes, which serves as an estimate of the variance in the weight changes, assuming zero net mean overall -- implements MAX_ABS version of normalization -- divide by MAX of abs dwt and slow decay of current aggregated value -- used in AdaMax algorithm of Kingman & Ba (2014)
-  float         dwavg_tau;      // #CONDSHOW_ON_on #MIN_1 #DEF_1000;10000 time constant for integration of dwavg average of delta weights used in normalization factor -- generally should be long-ish, between 1000-10000 -- integration rate factor is 1/tau
-  float         norm_min;       // #CONDSHOW_ON_on #MIN_0 #DEF_0.001 minimum effective value of the normalization factor -- provides a lower bound to how much normalization can be applied -- in backprop this is typically 1e-8 but larger values work better in Leabra
   float         m_tau;          // #CONDSHOW_ON_on #MIN_1 #DEF_10;20 time constant factor for integration of momentum -- 1/tau is dt (e.g., .1), and 1-1/tau (e.g., .95 or .9) is traditional momentum time-integration factor
-  float         lrate_comp;     // #MIN_0 #CONDSHOW_ON_on #DEF_0.01 overall learning rate multiplier to compensate for changes due to use of normalization and momentum  -- allows for a common master learning rate to be used between different conditions: normalization contributes = .1 and momentum = .1, so combined = .01 -- should generally use that value 
+  NormMode      norm;           // #CONDSHOW_ON_on if and how to normalize weight changes -- see options -- determines also which lr_comp is used
+  float         dwavg_tau;      // #CONDSHOW_ON_on #MIN_1 #DEF_1000;10000 time constant for integration of dwavg average of delta weights used in normalization factor -- generally should be long-ish, between 1000-10000 -- integration rate factor is 1/tau
+  float         norm_min;       // #CONDSHOW_ON_on&&!norm:NO_NORM #MIN_0 #DEF_0.001 minimum effective value of the normalization factor -- provides a lower bound to how much normalization can be applied -- in backprop this is typically 1e-8 but larger values work better in Leabra
+  float         norm_lr_comp;   // #MIN_0 #CONDSHOW_ON_on&&!norm:NO_NORM #DEF_0.01 overall learning rate multiplier to compensate for changes due to use of normalization AND momentum  -- allows for a common master learning rate to be used between different conditions: normalization contributes = .1 and momentum = .1, so combined = .01 -- should generally use that value 
+  float         mom_lr_comp;    // #MIN_0 #CONDSHOW_ON_on #DEF_0.1 overall learning rate multiplier to compensate for changes due to JUST momentum without normalization -- allows for a common master learning rate to be used between different conditions -- generally should use .1 to compensate for just momentum itself
 
   float         dwavg_dt;      // #READ_ONLY #EXPERT rate constant of delta-weight average integration = 1 / dwavg_tau
   float         dwavg_dt_c;    // #READ_ONLY #EXPERT complement rate constant of delta-weight average integration = 1 - (1 / dwavg_tau)
   float         m_dt;          // #READ_ONLY #EXPERT rate constant of momentum integration = 1 / m_tau
   float         m_dt_c;        // #READ_ONLY #EXPERT complement rate constant of momentum integration = 1 - (1 / m_tau)
 
-  INLINE float ComputeMoment(float& moment, float& dwavg, const float new_dwt) {
+  INLINE bool  IsNormOn(bool fb) {
+    if(norm == NO_NORM) return false;
+    return (norm == NORM || fb);
+  }
+  // check if norm is active given norm setting and whether this is a feedback projection
+  
+  INLINE float ComputeMoment(float& moment, float& dwavg, const float new_dwt, bool fb) {
     dwavg = fmaxf(dwavg_dt_c * dwavg, fabsf(new_dwt));
     moment = m_dt_c * moment + new_dwt;
-    if(dwavg != 0.0f) {
+    if(IsNormOn(fb) && (dwavg != 0.0f)) {
       return moment / fmaxf(dwavg, norm_min);
     }
     return moment;
   }
   // compute momentum version of new dwt change -- return normalized momentum value
 
+  INLINE float LrateComp(bool fb) {
+    if(!on) return 1.0f;
+    if(IsNormOn(fb)) return norm_lr_comp;
+    return mom_lr_comp;
+  }
+  // learning rate compensation factor based on settings and whether this is a feedback projection 
+  
   INLINE void   UpdtVals() {
     dwavg_dt = 1.0f / dwavg_tau;  dwavg_dt_c = 1.0f - dwavg_dt;  m_dt = 1.0f / m_tau;
     m_dt_c = 1.0f - m_dt;
@@ -280,8 +309,8 @@ public:
 private:
   void  Initialize()    {  Defaults_init(); }
   void  Defaults_init() {
-    on = true; dwavg_tau = 1000.0f;  norm_min = 0.001f;  m_tau = 20.0f;
-    lrate_comp = 0.01f;
+    on = true;  m_tau = 10.0f;  norm = NORM;  dwavg_tau = 1000.0f;  norm_min = 0.001f;  
+    norm_lr_comp = 0.01f; mom_lr_comp = 0.1f;
     UpdtVals();
   }
 };

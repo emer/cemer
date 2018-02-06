@@ -117,15 +117,6 @@ void taiArgTypeOfTokenPtr::GetImage_impl(taiWidget* dat, const void* base){
       taBase::SetPointer((taBase**)arg_base, val.toBase());
     }
   }
-  else {
-    if(meth->arg_defs.size > arg_idx) {
-      String arg_def = meth->arg_defs[arg_idx];
-      if(arg_def.nonempty()) {
-        if(arg_def.contains("NULL") || arg_def.contains("null"))
-          taBase::SetPointer((taBase**)arg_base, NULL);
-      }
-    }
-  }
   String filt_nm = GetOptionAfter("ITEM_FILTER_");
   if (filt_nm.nonempty()) {
     TypeDef* par_typ = typ;

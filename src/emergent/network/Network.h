@@ -648,6 +648,8 @@ public:
     // #CAT_State update all the State-side specs based on current settings in main specs
     virtual void  UpdateAllStateConSpecs();
     // #CAT_State update all the State-side specs based on current settings in main specs
+    virtual bool  UpdateAllSpecs(bool force = false);
+    // #CAT_Structure update all specs
     virtual void  BuildLayerUnitState();
     // #IGNORE initialize layer, projection, unit group, and unit state from corresponding network objects
     virtual void  BuildStateSizes();

@@ -239,6 +239,120 @@ void LeabraConSpec::TriangleLrateSched(int epcs_per_step, int n_cycles, float lo
   UpdateAfterEdit();            // needed to update the sub guys
 }
 
+void LeabraConSpec::GraphXCALdWtFun(DataTable* graph_data, float thr_p, float x_incr) {
+  taProject* proj = GetMyProj();
+  if(!graph_data) {
+    graph_data = proj->GetNewAnalysisDataTable(name + "_XCalFun", true);
+  }
+  graph_data->StructUpdate(true);
+  graph_data->ResetData();
+  int idx;
+  DataCol* sravg = graph_data->FindMakeColName("SRAvg", idx, VT_FLOAT);
+  DataCol* dwt = graph_data->FindMakeColName("dWt", idx, VT_FLOAT);
+  sravg->SetUserData("MIN", 0.0f);
+  sravg->SetUserData("MAX", 1.0f);
+  dwt->SetUserData("MIN", -1.0f);
+  dwt->SetUserData("MAX", 1.0f);
+
+  float x;
+  for(x = 0.0f; x <= 1.0f; x += x_incr) {
+    float dw = xcal.dWtFun(x, thr_p);
+    graph_data->AddBlankRow();
+    sravg->SetValAsFloat(x, -1);
+    dwt->SetValAsFloat(dw, -1);
+  }
+  graph_data->StructUpdate(false);
+  graph_data->FindMakeGraphView();
+}
+
+void LeabraConSpec::GraphLearnDWts(DataTable* graph_data, LeabraUnitSpec* unit_spec, float su_act_m, float su_act_p, float ru_act_inc, float ru_avg_l, float ru_avg_l_lrn, float ru_margin) {
+  taProject* proj = GetMyProj();
+  if(!graph_data) {
+    graph_data = proj->GetNewAnalysisDataTable(name + "_LearnDWts", true);
+  }
+
+  bool made_uspec = false;
+  if(!unit_spec) {
+    unit_spec = new LeabraUnitSpec;
+    made_uspec = true;
+  }
+  
+  graph_data->StructUpdate(true);
+  graph_data->ResetData();
+  int idx;
+  DataCol* ru_act_m = graph_data->FindMakeColName("ru_act_m", idx, VT_FLOAT);
+  DataCol* ru_act_p = graph_data->FindMakeColName("ru_act_p", idx, VT_FLOAT);
+  DataCol* ru_avg_ss = graph_data->FindMakeColName("ru_avg_ss", idx, VT_FLOAT);
+  DataCol* ru_avg_s = graph_data->FindMakeColName("ru_avg_s", idx, VT_FLOAT);
+  DataCol* ru_avg_m = graph_data->FindMakeColName("ru_avg_m", idx, VT_FLOAT);
+  DataCol* ru_ru_avg_s_lrn = graph_data->FindMakeColName("ru_ru_avg_s_lrn", idx, VT_FLOAT);
+  DataCol* ru_su_avg_s_lrn = graph_data->FindMakeColName("ru_su_avg_s_lrn", idx, VT_FLOAT);
+  DataCol* su_avg_ss = graph_data->FindMakeColName("su_avg_ss", idx, VT_FLOAT);
+  DataCol* su_avg_s = graph_data->FindMakeColName("su_avg_s", idx, VT_FLOAT);
+  DataCol* su_avg_m = graph_data->FindMakeColName("su_avg_m", idx, VT_FLOAT);
+  DataCol* su_su_avg_s_lrn = graph_data->FindMakeColName("su_su_avg_s_lrn", idx, VT_FLOAT);
+  DataCol* su_ru_avg_s_lrn = graph_data->FindMakeColName("su_ru_avg_s_lrn", idx, VT_FLOAT);
+  DataCol* dwt = graph_data->FindMakeColName("dWt", idx, VT_FLOAT);
+  for(int i =0; i<graph_data->data.size; i++) {
+    DataCol* dc = graph_data->data.FastEl(i);
+    if(dc != dwt) {
+      dc->SetUserData("MIN", 0.0f);  dc->SetUserData("MAX", 1.0f);
+    }
+  }
+  ru_act_m->SetUserData("X_AXIS", true);
+  ru_act_p->SetUserData("Z_AXIS", true);
+  dwt->SetUserData("PLOT_1", true);
+
+  for(float r_act_m = 0.0f; r_act_m <= 1.0001f; r_act_m += ru_act_inc) {
+    for(float r_act_p = 0.0f; r_act_p <= 1.0001f; r_act_p += ru_act_inc) {
+      float r_avg_ss = 0.0f;  float r_avg_s = 0.0f; float r_avg_m = 0.0f;
+      float r_ru_avg_s_lrn = 0.0f;  float r_su_avg_s_lrn = 0.0f;
+      float s_avg_ss = 0.0f;  float s_avg_s = 0.0f; float s_avg_m = 0.0f;
+      float s_ru_avg_s_lrn = 0.0f;  float s_su_avg_s_lrn = 0.0f;
+
+      // minus phase:
+      for(int cyc = 0; cyc < 75; cyc++) {
+        unit_spec->act_avg.ComputeAvgs(r_act_m, unit_spec->dt.integ, r_avg_ss, r_avg_s, r_avg_m, r_ru_avg_s_lrn, r_su_avg_s_lrn);
+        unit_spec->act_avg.ComputeAvgs(su_act_m, unit_spec->dt.integ, s_avg_ss, s_avg_s, s_avg_m, s_ru_avg_s_lrn, s_su_avg_s_lrn);
+      }
+      // plus phase:
+      for(int cyc = 75; cyc < 100; cyc++) {
+        unit_spec->act_avg.ComputeAvgs(r_act_p, unit_spec->dt.integ, r_avg_ss, r_avg_s, r_avg_m, r_ru_avg_s_lrn, r_su_avg_s_lrn);
+        unit_spec->act_avg.ComputeAvgs(su_act_p, unit_spec->dt.integ, s_avg_ss, s_avg_s, s_avg_m, s_ru_avg_s_lrn, s_su_avg_s_lrn);
+      }
+      
+      float dw = C_Compute_dWt_CtLeabraXCAL
+        (r_ru_avg_s_lrn, r_su_avg_s_lrn, r_avg_m,
+         s_su_avg_s_lrn, s_ru_avg_s_lrn, s_avg_m,
+         ru_avg_l, ru_avg_l_lrn, ru_margin);
+      graph_data->AddBlankRow();
+      ru_act_m->SetValAsFloat(r_act_m, -1);
+      ru_act_p->SetValAsFloat(r_act_p, -1);
+
+      ru_avg_ss->SetValAsFloat(r_avg_ss, -1);
+      ru_avg_s->SetValAsFloat(r_avg_s, -1);
+      ru_avg_m->SetValAsFloat(r_avg_m, -1);
+      ru_ru_avg_s_lrn->SetValAsFloat(r_ru_avg_s_lrn, -1);
+      ru_su_avg_s_lrn->SetValAsFloat(r_su_avg_s_lrn, -1);
+      
+      su_avg_ss->SetValAsFloat(s_avg_ss, -1);
+      su_avg_s->SetValAsFloat(s_avg_s, -1);
+      su_avg_m->SetValAsFloat(s_avg_m, -1);
+      su_su_avg_s_lrn->SetValAsFloat(s_su_avg_s_lrn, -1);
+      su_ru_avg_s_lrn->SetValAsFloat(s_ru_avg_s_lrn, -1);
+      dwt->SetValAsFloat(dw, -1);
+    }
+  }
+  if(made_uspec) {
+    delete unit_spec;
+  }
+
+  taDataAnal::Matrix3DGraph(graph_data, "ru_act_m", "ru_act_p");
+  
+  graph_data->StructUpdate(false);
+  graph_data->FindMakeGraphView();
+}
+
 void LeabraConSpec::GraphWtSigFun(DataTable* graph_data) {
   taProject* proj = GetMyProj();
   if(!graph_data) {
@@ -265,32 +379,6 @@ void LeabraConSpec::GraphWtSigFun(DataTable* graph_data) {
     lnwt->SetValAsFloat(x, -1);
     sigwt->SetValAsFloat(sig, -1);
     invwt->SetValAsFloat(inv, -1);
-  }
-  graph_data->StructUpdate(false);
-  graph_data->FindMakeGraphView();
-}
-
-void LeabraConSpec::GraphXCaldWtFun(DataTable* graph_data, float thr_p) {
-  taProject* proj = GetMyProj();
-  if(!graph_data) {
-    graph_data = proj->GetNewAnalysisDataTable(name + "_XCalFun", true);
-  }
-  graph_data->StructUpdate(true);
-  graph_data->ResetData();
-  int idx;
-  DataCol* sravg = graph_data->FindMakeColName("SRAvg", idx, VT_FLOAT);
-  DataCol* dwt = graph_data->FindMakeColName("dWt", idx, VT_FLOAT);
-  sravg->SetUserData("MIN", 0.0f);
-  sravg->SetUserData("MAX", 1.0f);
-  dwt->SetUserData("MIN", -1.0f);
-  dwt->SetUserData("MAX", 1.0f);
-
-  float x;
-  for(x = 0.0f; x <= 1.0f; x += .01f) {
-    float dw = xcal.dWtFun(x, thr_p);
-    graph_data->AddBlankRow();
-    sravg->SetValAsFloat(x, -1);
-    dwt->SetValAsFloat(dw, -1);
   }
   graph_data->StructUpdate(false);
   graph_data->FindMakeGraphView();
@@ -405,94 +493,6 @@ void LeabraConSpec::GraphLrateSched(DataTable* graph_data) {
   graph_data->StructUpdate(false);
   graph_data->FindMakeGraphView();
 }
-
-void LeabraConSpec::GraphLrnDWts(DataTable* graph_data, LeabraUnitSpec* unit_spec, float su_act_m, float su_act_p, float ru_act_inc, float ru_avg_l, float ru_avg_l_lrn, float ru_margin) {
-  taProject* proj = GetMyProj();
-  if(!graph_data) {
-    graph_data = proj->GetNewAnalysisDataTable(name + "_LrnDWts", true);
-  }
-
-  bool made_uspec = false;
-  if(!unit_spec) {
-    unit_spec = new LeabraUnitSpec;
-    made_uspec = true;
-  }
-  
-  graph_data->StructUpdate(true);
-  graph_data->ResetData();
-  int idx;
-  DataCol* ru_act_m = graph_data->FindMakeColName("ru_act_m", idx, VT_FLOAT);
-  DataCol* ru_act_p = graph_data->FindMakeColName("ru_act_p", idx, VT_FLOAT);
-  DataCol* ru_avg_ss = graph_data->FindMakeColName("ru_avg_ss", idx, VT_FLOAT);
-  DataCol* ru_avg_s = graph_data->FindMakeColName("ru_avg_s", idx, VT_FLOAT);
-  DataCol* ru_avg_m = graph_data->FindMakeColName("ru_avg_m", idx, VT_FLOAT);
-  DataCol* ru_ru_avg_s_lrn = graph_data->FindMakeColName("ru_ru_avg_s_lrn", idx, VT_FLOAT);
-  DataCol* ru_su_avg_s_lrn = graph_data->FindMakeColName("ru_su_avg_s_lrn", idx, VT_FLOAT);
-  DataCol* su_avg_ss = graph_data->FindMakeColName("su_avg_ss", idx, VT_FLOAT);
-  DataCol* su_avg_s = graph_data->FindMakeColName("su_avg_s", idx, VT_FLOAT);
-  DataCol* su_avg_m = graph_data->FindMakeColName("su_avg_m", idx, VT_FLOAT);
-  DataCol* su_su_avg_s_lrn = graph_data->FindMakeColName("su_su_avg_s_lrn", idx, VT_FLOAT);
-  DataCol* su_ru_avg_s_lrn = graph_data->FindMakeColName("su_ru_avg_s_lrn", idx, VT_FLOAT);
-  DataCol* dwt = graph_data->FindMakeColName("dWt", idx, VT_FLOAT);
-  for(int i =0; i<graph_data->data.size; i++) {
-    DataCol* dc = graph_data->data.FastEl(i);
-    dc->SetUserData("MIN", 0.0f);  dc->SetUserData("MAX", 1.0f);
-  }
-  dwt->SetUserData("MIN", -1.0f);      dwt->SetUserData("MAX", 1.0f);
-  ru_act_m->SetUserData("X_AXIS", true);
-  ru_act_p->SetUserData("Z_AXIS", true);
-
-  for(float r_act_m = 0.0f; r_act_m <= 1.0001f; r_act_m += ru_act_inc) {
-    for(float r_act_p = 0.0f; r_act_p <= 1.0001f; r_act_p += ru_act_inc) {
-      float r_avg_ss = 0.0f;  float r_avg_s = 0.0f; float r_avg_m = 0.0f;
-      float r_ru_avg_s_lrn = 0.0f;  float r_su_avg_s_lrn = 0.0f;
-      float s_avg_ss = 0.0f;  float s_avg_s = 0.0f; float s_avg_m = 0.0f;
-      float s_ru_avg_s_lrn = 0.0f;  float s_su_avg_s_lrn = 0.0f;
-
-      // minus phase:
-      for(int cyc = 0; cyc < 75; cyc++) {
-        unit_spec->act_avg.ComputeAvgs(r_act_m, unit_spec->dt.integ, r_avg_ss, r_avg_s, r_avg_m, r_ru_avg_s_lrn, r_su_avg_s_lrn);
-        unit_spec->act_avg.ComputeAvgs(su_act_m, unit_spec->dt.integ, s_avg_ss, s_avg_s, s_avg_m, s_ru_avg_s_lrn, s_su_avg_s_lrn);
-      }
-      // plus phase:
-      for(int cyc = 75; cyc < 100; cyc++) {
-        unit_spec->act_avg.ComputeAvgs(r_act_p, unit_spec->dt.integ, r_avg_ss, r_avg_s, r_avg_m, r_ru_avg_s_lrn, r_su_avg_s_lrn);
-        unit_spec->act_avg.ComputeAvgs(su_act_p, unit_spec->dt.integ, s_avg_ss, s_avg_s, s_avg_m, s_ru_avg_s_lrn, s_su_avg_s_lrn);
-      }
-      
-      float dw = C_Compute_dWt_CtLeabraXCAL
-        (r_ru_avg_s_lrn, r_su_avg_s_lrn, r_avg_m,
-         s_su_avg_s_lrn, s_ru_avg_s_lrn, s_avg_m,
-         ru_avg_l, ru_avg_l_lrn, ru_margin);
-      graph_data->AddBlankRow();
-      ru_act_m->SetValAsFloat(r_act_m, -1);
-      ru_act_p->SetValAsFloat(r_act_p, -1);
-
-      ru_avg_ss->SetValAsFloat(r_avg_ss, -1);
-      ru_avg_s->SetValAsFloat(r_avg_s, -1);
-      ru_avg_m->SetValAsFloat(r_avg_m, -1);
-      ru_ru_avg_s_lrn->SetValAsFloat(r_ru_avg_s_lrn, -1);
-      ru_su_avg_s_lrn->SetValAsFloat(r_su_avg_s_lrn, -1);
-      
-      su_avg_ss->SetValAsFloat(s_avg_ss, -1);
-      su_avg_s->SetValAsFloat(s_avg_s, -1);
-      su_avg_m->SetValAsFloat(s_avg_m, -1);
-      su_su_avg_s_lrn->SetValAsFloat(s_su_avg_s_lrn, -1);
-      su_ru_avg_s_lrn->SetValAsFloat(s_ru_avg_s_lrn, -1);
-      dwt->SetValAsFloat(dw, -1);
-    }
-  }
-  if(made_uspec) {
-    delete unit_spec;
-  }
-
-  taDataAnal::Matrix3DGraph(graph_data, "ru_act_m", "ru_act_p");
-  
-  graph_data->StructUpdate(false);
-  graph_data->FindMakeGraphView();
-}
-
-
 
 void LeabraConSpec::WtScaleCvt(float savg, int lay_sz, int n_cons,
                                bool norm_con_n) {

@@ -78,15 +78,6 @@ void taiArgTypeOfFromGroup::GetImage_impl(taiWidget* dat, const void* base) {
       taBase::SetPointer((taBase**)arg_base, val.toBase());
     }
   }
-  else {
-    if(meth->arg_defs.size > arg_idx) {
-      String arg_def = meth->arg_defs[arg_idx];
-      if(arg_def.nonempty()) {
-        if(arg_def.contains("NULL") || arg_def.contains("null"))
-          taBase::SetPointer((taBase**)arg_base, NULL);
-      }
-    }
-  }
   taList_impl* lst = GetList(base);
   if(!lst) return;
 

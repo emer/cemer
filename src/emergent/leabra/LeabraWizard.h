@@ -41,7 +41,7 @@ public:
   bool  UpdateInputDataFmNet(Network* net, DataTable* data_table) override;
 
   virtual bool  StdLeabraSpecs(LeabraNetwork* net);
-  // #MENU_BUTTON #MENU_ON_Network #MENU_SEP_BEFORE make standard layer specs for a basic Leabra network (FFFB inhib for hiddens, KWTA PAT_K for input/output), and TopDownCons con spec for connections from higher layers
+  // #MENU_BUTTON #MENU_ON_Network #MENU_SEP_BEFORE make standard layer specs for a basic Leabra network, with TopDownCons con spec for connections from higher layers, and current default spec values
 
   virtual bool  DeepLeabra(LeabraNetwork* net, const String& lay_name_contains = "");
   // #MENU_BUTTON configure DeepLeabra specs and layers, for hidden layers in the network (all or optionally those that contain given string) -- creates corresponding deep cortical layer and thalamic TRC layers for predictive auto-encoder learning, driven from deep raw driver projections coming from lower layers

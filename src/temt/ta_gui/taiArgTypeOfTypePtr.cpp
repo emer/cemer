@@ -111,18 +111,18 @@ void taiArgTypeOfTypePtr::GetImage_impl(taiWidget* dat, const void* base) {
       *((TypeDef**)arg_base) = tdlkup;
     }
   }
-  else {
-    if(meth->arg_defs.size > arg_idx) {
-      String arg_def = meth->arg_defs[arg_idx];
-      if(arg_def.nonempty()) {
-        if(arg_def.contains("&TA_"))
-          arg_def = arg_def.after("&TA_");
-        TypeDef* tdlkup = TypeDef::FindGlobalTypeName(arg_def, false);
-        if(tdlkup)
-          *((TypeDef**)arg_base) = tdlkup;
-      }
-    }
-  }
+  // else {
+    // if(meth->arg_defs.size > arg_idx) {
+    //   String arg_def = meth->arg_defs[arg_idx];
+    //   if(arg_def.nonempty()) {
+    //     if(arg_def.contains("&TA_"))
+    //       arg_def = arg_def.after("&TA_");
+    //     TypeDef* tdlkup = TypeDef::FindGlobalTypeName(arg_def, false);
+    //     if(tdlkup)
+    //       *((TypeDef**)arg_base) = tdlkup;
+    //   }
+    // }
+  // }
   TypeDef* typ_ = (TypeDef*)*((void**)arg_base);
   rval->GetImage(typ_, base_type);
 }

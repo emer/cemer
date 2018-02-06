@@ -1129,6 +1129,12 @@ void Network::UpdateAllStateConSpecs() {
   }
 }
 
+bool Network::UpdateAllSpecs(bool force) {
+  specs.UpdateAllSpecs();
+  UpdateAllStateSpecs();
+  return true;
+}
+
 void Network::BuildLayerUnitState() {
   BuildStateSizes();
   net_state->AllocLayerUnitMem();

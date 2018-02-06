@@ -50,7 +50,10 @@ void LeabraWizard::Initialize() {
 }
 
 String LeabraWizard::RenderWizDoc_network() {
-  String rval = inherited::RenderWizDoc_network();
+  String rval = String("\n== Network ==\n\
+* [[<this>.StdNetwork()|Standard Network]] -- generate or configure a standard network, specifying number of layers, layer names, sizes, types, and connectivity.\n\
+* [[<this>.StdLeabraSpecs()|Standard Leabra Specs]] -- make standard layer specs for a basic Leabra network, with TopDownCons con spec for connections from higher layers, and current default spec values.\n\
+\n=== Specialized Networks ===\n");
   rval += String("\
 * [[<this>.DeepLeabra()|DeepLeabra]] -- configure DeepLeabra specs and layers, for hidden layers in the network (all or optionally those that contain given string) -- creates corresponding deep cortical layer and thalamic TRC layers for predictive auto-encoder learning, driven from deep raw driver projections coming from lower layers\n\
 :* [[<this>.DeepLeabraCopy()|DeepLeabraCopy]] -- configure DeepLeabra layer(s) with name containing given string, copying specs from given source deep layer which is already configured -- creates corresponding deep cortical layer and thalamic TRC layers for predictive auto-encoder learning, driven from deep raw driver projections coming from lower layers\n\
@@ -145,11 +148,24 @@ bool LeabraWizard::StdLeabraSpecs(LeabraNetwork* net) {
 
   LeabraConSpec* ps = (LeabraConSpec*)net->specs.FindType(&TA_LeabraConSpec);
   if(!ps) return false;
+  ps->Defaults();
+  ps->rule.rule = LeabraLearnSpec::DELTA_FF_FB; // new default
+  ps->momentum.norm = LeabraMomentum::NORM_FB;
   
   FMChild(LeabraConSpec, td, ps, "TopDownCons");
   td->desc = "Leabra (particularly the XCAL learning rule) requires top-down connections to be weaker than bottom-up ones -- this spec achieves that by setting wt_scale.rel = .2 -- set this for any connections coming from higher-level TARGET layers";
   td->SetUnique("wt_scale", true);
   td->wt_scale.rel = 0.2f;
+  td->SetUnique("rule", true);
+  td->rule.rule = LeabraLearnSpec::DELTA_FF_FB; // new default
+  td->rule.fb = true;
+
+
+  LeabraUnitSpec* us = (LeabraUnitSpec*)net->specs.FindType(&TA_LeabraUnitSpec);
+  if(!us) return false;
+  us->Defaults();
+  us->act_avg.su_lrn_m = 0.5f;  // for delta rule
+  us->avg_l.gain = 5.0f;  // for delta rule
 
   for(int li=net->layers.leaves-1; li >= 0; li--) {
     LeabraLayer* lay = (LeabraLayer*)net->layers.Leaf(li);

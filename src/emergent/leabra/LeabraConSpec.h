@@ -85,18 +85,18 @@ public:
   virtual void  TriangleLrateSched(int epcs_per_step = 50, int n_cycles=8, float low_factor = 0.1, int log_drop_cycles = 2, bool interpolate = true);
   // #MENU_BUTTON #MENU_ON_LrateSched #CAT_Learning establish a triangle "bump" lrate schedule that oscillates between 1 and low_factor lrate multipliers every 2 * epcs_per_step cycles, for given number of cycles, with a log-lrate-sched drop after given number of cycles -- based on Leslie Smith paper on triangle schedule, and expanding on our prior bump steps  idea -- interpolate allows lrate to change linearly every epoch to produce triangle effect -- otherwise it is just discrete oscillations -- first step is flat initial high lrate before cycling starts
 
-  virtual void  GraphWtSigFun(DataTable* graph_data = NULL);
-  // #MENU_BUTTON #MENU_ON_Graph #NULL_OK #NULL_TEXT_NewGraphData graph the sigmoidal weight contrast enhancement function (NULL = new data table)
-  virtual void  GraphXCaldWtFun(DataTable* graph_data = NULL, float thr_p = 0.25);
-  // #MENU_BUTTON #MENU_ON_Graph #NULL_OK #NULL_TEXT_NewGraphData graph the xcal dWt function for given threshold value (NULL = new data table)
-  virtual void  GraphXCalSoftBoundFun(DataTable* graph_data = NULL);
-  // #MENU_BUTTON #MENU_ON_Graph #NULL_OK #NULL_TEXT_NewGraphData graph the xcal soft weight bounding function (NULL = new data table)
-  virtual void  GraphSlowWtsFun(int trials = 6000, DataTable* graph_data = NULL);
-  // #MENU_BUTTON #MENU_ON_Graph #NULL_OK #NULL_TEXT_NewGraphData graph the trajectory of fast and slow weight change dynamics over trials, in response to a single .1 dwt change (NULL = new data table)
-  virtual void  GraphLrateSched(DataTable* graph_data = NULL);
-  // #MENU_BUTTON #MENU_ON_Graph #NULL_OK #NULL_TEXT_NewGraphData graph the current learning rate schedule
-  virtual void  GraphLrnDWts(DataTable* graph_data = NULL, LeabraUnitSpec* unit_spec = NULL, float su_act_m = 0.5, float su_act_p = 0.5, float ru_act_inc = 0.01, float ru_avg_l = 0.5, float ru_avg_l_lrn = 0.0, float ru_margin = 0.5);
+  virtual void  GraphXCALdWtFun(DataTable* graph_data = NULL, float thr_p = 0.25, float x_incr = 0.001);
+  // #MENU_BUTTON #MENU_ON_Graph #NULL_OK_0 #NULL_TEXT_0_NewGraphData graph the xcal dWt function for given threshold value (NULL = new data table)
+  virtual void  GraphLearnDWts(DataTable* graph_data = NULL, LeabraUnitSpec* unit_spec = NULL, float su_act_m = 0.5, float su_act_p = 0.5, float ru_act_inc = 0.01, float ru_avg_l = 0.5, float ru_avg_l_lrn = 0.0, float ru_margin = 0.5);
   // #MENU_BUTTON #MENU_ON_Graph #NULL_OK_0 #NULL_TEXT_0_NewGraphData graph the computed weight changes according to the current learning rule, as function of varying minus and plus phase receiving activations (3D graph) integrated through activation averaging equations based on selected unit spec (if NULL, defaults are used), and as function of given sending activations across minus and plus phases (also integrated into averages)
+  virtual void  GraphWtSigFun(DataTable* graph_data = NULL);
+  // #MENU_BUTTON #MENU_ON_Graph #NULL_OK_0 #NULL_TEXT_0_NewGraphData graph the sigmoidal weight contrast enhancement function (NULL = new data table)
+  virtual void  GraphXCalSoftBoundFun(DataTable* graph_data = NULL);
+  // #MENU_BUTTON #MENU_ON_Graph #NULL_OK_0 #NULL_TEXT_0_NewGraphData graph the xcal soft weight bounding function (NULL = new data table)
+  virtual void  GraphSlowWtsFun(int trials = 6000, DataTable* graph_data = NULL);
+  // #MENU_BUTTON #MENU_ON_Graph #NULL_OK_0 #NULL_TEXT_0_NewGraphData graph the trajectory of fast and slow weight change dynamics over trials, in response to a single .1 dwt change (NULL = new data table)
+  virtual void  GraphLrateSched(DataTable* graph_data = NULL);
+  // #MENU_BUTTON #MENU_ON_Graph #NULL_OK_0 #NULL_TEXT_0_NewGraphData graph the current learning rate schedule
 
   virtual void  WtScaleCvt(float slay_kwta_pct=.25, int slay_n_units=100,
                            int n_recv_cons=5, bool norm_con_n=true);

@@ -1,8 +1,6 @@
 // this is included directly in LeabraExtraConSpecs_cpp / _cuda
 // {
 
-  bool  delta_dwt;              // use simple delta-dwt change rule, instead of full xcal learning rule -- key problem is that delta-dwt does NOT include hebbian component for controlling hog-unit dynamics, etc
-  
   // special!
   INLINE bool  DoesStdNetin() override { return false; }
   INLINE bool  DoesStdDwt() override { return false; }
@@ -35,7 +33,7 @@
 
   INLINE float C_Compute_dWt_Delta
     (const float ru_avg_s, const float ru_avg_m, const float su_deep_prv) {
-    float new_dwt = (ru_avg_s - ru_avg_m) * su_deep_prv;
+    float new_dwt = su_deep_prv * (ru_avg_s - ru_avg_m);
     return new_dwt;
   }
   // #IGNORE
@@ -56,66 +54,31 @@
 
     const int sz = cg->size;
 
-    if(momentum.on) {
-      clrate *= momentum.lrate_comp;
-      float* dwavgs = cg->OwnCnVar(DWAVG);
-      float* moments = cg->OwnCnVar(MOMENT);
-      for(int i=0; i<sz; i++) {
-        LEABRA_UNIT_STATE* ru = cg->UnState(i, net);
-        if(ru->lesioned()) continue;
-        // note: applying opt_thresh.xcal_lrn here does NOT work well for dwt_zone..
-        float lrate_eff = clrate;
-        if(deep_on) {
-          lrate_eff *= (bg_lrate + fg_lrate * ru->deep_lrn);
-        }
-        if(margin.lrate_mod) {
-          lrate_eff *= margin.MarginLrate(ru->margin);
-        }
-        float l_lrn_eff = xcal.LongLrate(ru->avg_l_lrn);
-        float new_dwt;
-        // if(delta_dwt) {
-          new_dwt = C_Compute_dWt_Delta(ru->avg_s, ru->avg_m, su_avg_s);
-        // }
-        // else {
-        //   new_dwt = C_Compute_dWt_CtLeabraXCAL
-        //     (ru->ru_avg_s_lrn, ru->avg_m, su_avg_s, su_avg_m, ru->avg_l, l_lrn_eff, ru->margin);
-        // }
-        new_dwt = momentum.ComputeMoment(moments[i], dwavgs[i], new_dwt);
-        dwts[i] += lrate_eff * new_dwt; // lrate always at the end!
+    clrate *= momentum.LrateComp(rule.fb);
+    
+    float* dwavgs = cg->OwnCnVar(DWAVG);
+    float* moments = cg->OwnCnVar(MOMENT);
+    for(int i=0; i<sz; i++) {
+      LEABRA_UNIT_STATE* ru = cg->UnState(i, net);
+      if(ru->lesioned()) continue;
+      // note: applying opt_thresh.xcal_lrn here does NOT work well for dwt_zone..
+      float lrate_eff = clrate;
+      if(deep_on) {
+        lrate_eff *= (bg_lrate + fg_lrate * ru->deep_lrn);
       }
-    }
-    else {
-      for(int i=0; i<sz; i++) {
-        LEABRA_UNIT_STATE* ru = cg->UnState(i, net);
-        if(ru->lesioned()) continue;
-        float lrate_eff = clrate;
-        if(deep_on) {
-          lrate_eff *= (bg_lrate + fg_lrate * ru->deep_lrn);
-        }
-        if(margin.lrate_mod) {
-          lrate_eff *= margin.MarginLrate(ru->margin);
-        }
-        float l_lrn_eff;
-        if(xcal.set_l_lrn)
-          l_lrn_eff = xcal.l_lrn;
-        else
-          l_lrn_eff = ru->avg_l_lrn;
-        float new_dwt;
-        // if(delta_dwt) {
-          new_dwt = C_Compute_dWt_Delta(ru->avg_s, ru->avg_m, su_avg_s);
-        // }
-        // else {
-        //   new_dwt = C_Compute_dWt_CtLeabraXCAL
-        //     (ru->ru_avg_s_lrn, ru->avg_m, su_avg_s, su_avg_m, ru->avg_l, l_lrn_eff, ru->margin);
-        // }
-        dwts[i] += lrate_eff * new_dwt; // lrate always at the end!
+      if(margin.lrate_mod) {
+        lrate_eff *= margin.MarginLrate(ru->margin);
       }
+      float new_dwt = C_Compute_dWt_Delta(ru->avg_s, ru->avg_m, su_avg_s);
+      if(momentum.on) {
+        new_dwt = momentum.ComputeMoment(moments[i], dwavgs[i], new_dwt, rule.fb);
+      }
+      dwts[i] += lrate_eff * new_dwt; // lrate always at the end!
     }
   }
 
   INLINE void Initialize_core() {
     wt_scale.rel = 1.0;
-    delta_dwt = false;
     momentum.on = false;
   }
   // #IGNORE

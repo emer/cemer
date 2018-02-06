@@ -906,7 +906,7 @@ void GraphTableView::FindDefaultXZAxes() {
     }
     if(da->HasUserData("Z_AXIS")) {
       z_axis.col_name = cvs->name;
-      z_axis.on = false;  // don't turn on by default - most graphs are 2D
+      z_axis.on = true;  // if the Z axis is specifically being labeled, it should be on!
       z_axis.InitFromUserData();
       z_axis.row_num = false;
     }
@@ -2260,6 +2260,31 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv,
   if(render_svg) {
     svg_str << taSvg::Path(plv.color.color(), line_width);
   }
+
+  float epsilon = 1.0e-05f;  // extra margin so no false-alarm out-of-bounds
+  float x_min = x_axis.range.min;
+  float x_max = x_axis.range.max;
+  float x_range = x_axis.range.Range();
+  if(x_range > 0.0f) {
+    x_min -= epsilon * x_range; 
+    x_max += epsilon * x_range;
+  }
+  
+  float z_min = z_axis.range.min;
+  float z_max = z_axis.range.max;
+  float z_range = z_axis.range.Range();
+  if(z_range > 0.0f) {
+    z_min -= epsilon * z_range; // extra margin so no false-alarm out-of-bounds
+    z_max += epsilon * z_range;
+  }
+  
+  float y_min = yax.range.min;
+  float y_max = yax.range.max;
+  float y_range = yax.range.Range();
+  if(y_range > 0.0f) {
+    y_min -= epsilon * y_range; // extra margin so no false-alarm out-of-bounds
+    y_max += epsilon * y_range;
+  }
   
   for (int row = view_range.min; row <= view_range.max; row++) {
     iColor clr; // only used for color modes
@@ -2273,7 +2298,7 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv,
     else {
       dat.x = x_axis.GetDataVal(da_x, row);
     }
-    if(dat.x < x_axis.range.min || dat.x > x_axis.range.max) continue;
+    if(dat.x < x_min || dat.x > x_max) continue;
     if(z_axis.on) {
       if(z_axis.row_num) {
         dat.z = row;
@@ -2281,7 +2306,7 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv,
       else if(da_z) {
         dat.z = z_axis.GetDataVal(da_z, row);
       }
-      if(dat.z < z_axis.range.min || dat.z > z_axis.range.max) continue;
+      if(dat.z < z_min || dat.z > z_max) continue;
     }
     if((mat_cell >= 0) && (matrix_mode == Z_INDEX)) {
       dat.z = mat_cell;
@@ -2312,11 +2337,11 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv,
       plt.y = ax_rst->DataToPlot(dat.y);
     }
     else {
-      if(dat.y < yax.range.min) {
+      if(dat.y < y_min) {
         plt.y = yax.DataToPlot(yax.range.min);
         out_of_bounds = true;
       }
-      else if(dat.y > yax.range.max) {
+      else if(dat.y > y_max) {
         plt.y = yax.DataToPlot(yax.range.max);
         out_of_bounds = true;
       }

@@ -386,10 +386,10 @@
     float bcm = xcal.dWtFun(su_su_avg_s_lrn * ru_ru_avg_s_lrn, su_su_avg_s_lrn * ru_avg_l);
     float err;
     if(rule.fb) {
-      err = xcal.dWtFun(ru_su_avg_s_lrn * su_ru_avg_s_lrn, ru_su_avg_s_lrn * su_avg_m);
+      err = ru_su_avg_s_lrn * (su_ru_avg_s_lrn - su_avg_m);
     }
     else {
-      err = xcal.dWtFun(su_su_avg_s_lrn * ru_ru_avg_s_lrn, su_su_avg_s_lrn * ru_avg_m);
+      err = su_su_avg_s_lrn * (ru_ru_avg_s_lrn - ru_avg_m);
     }
     return ru_avg_l_lrn * bcm + xcal.m_lrn * err;
   }
@@ -449,8 +449,9 @@
     const int sz = cg->size;
 
     float* dwts = cg->OwnCnVar(DWT);
-  
-    clrate *= momentum.lrate_comp;
+
+    clrate *= momentum.LrateComp(rule.fb);
+    
     float* dwavgs = cg->OwnCnVar(DWAVG);
     float* moments = cg->OwnCnVar(MOMENT);
     for(int i=0; i<sz; i++) {
@@ -469,8 +470,7 @@
          su_su_avg_s_lrn, su_ru_avg_s_lrn, su_avg_m,
          ru->avg_l, l_lrn_eff, ru->margin);
       if(momentum.on) {
-        // todo: automatic changing of momentum for fb??  also no-norm flag..
-        new_dwt = momentum.ComputeMoment(moments[i], dwavgs[i], new_dwt);
+        new_dwt = momentum.ComputeMoment(moments[i], dwavgs[i], new_dwt, rule.fb);
       }
       dwts[i] += lrate_eff * new_dwt;
     }
