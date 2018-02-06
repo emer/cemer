@@ -98,7 +98,7 @@ public:
     CHL,                        // pure contrastive hebbian learning: su.su_avg_s_lrn * ru.ru_avg_s_lrn - su.avg_m * ru.avg_m
   };
 
-  LearnRule     rule;           // overall form of learning rule to use
+  LearnRule     rule;           // #DEF_DELTA_FF_FB overall form of learning rule to use
   bool          fb;             // is this a feedback projection?  critical for DELTA_FF_FB to apply the correct form of delta rule learning
   ErrLearnRule  errule;         // #CONDSHOW_ON_rule:EXPT error-driven learning rule to use -- for exploration purposes..
   BcmLearnRule  bcmrule;        // #CONDSHOW_ON_rule:EXPT BCM Hebbian learning rule to use -- for exploration purposes..

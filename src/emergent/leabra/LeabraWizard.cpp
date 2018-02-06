@@ -164,6 +164,7 @@ bool LeabraWizard::StdLeabraSpecs(LeabraNetwork* net) {
   LeabraUnitSpec* us = (LeabraUnitSpec*)net->specs.FindType(&TA_LeabraUnitSpec);
   if(!us) return false;
   us->Defaults();
+  us->act_avg.ru_lrn_m = 0.0f;  // for delta rule
   us->act_avg.su_lrn_m = 0.5f;  // for delta rule
   us->avg_l.gain = 5.0f;  // for delta rule
 
