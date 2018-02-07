@@ -41,7 +41,7 @@ void NetStateText::MoveItem(int from_index, int to_index) {
 
 void NetStateText::GetItems(Network* net) {
   if(!net) return;
-    
+  
   // clear found flag - later remove any items not found
   for (int i=state_items.size-1; i>=0; i--) {
     NetViewStateItem* item = state_items.SafeEl(i);
@@ -103,7 +103,7 @@ void NetStateText::GetItems(Network* net) {
   }
   
   // remove not found - don't do on first pass because net monitor table not populated yet
-  if (!first_pass) {
+  if (!first_pass && !taMisc::is_loading) {
     for (int i=state_items.size -1; i>=0; i--) {
       if (!GetItem(i)->found) {
         state_items.RemoveIdx(i);
