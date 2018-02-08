@@ -103,7 +103,7 @@ void NetStateText::GetItems(Network* net) {
   }
   
   // remove not found - don't do on first pass because net monitor table not populated yet
-  if (!first_pass && !taMisc::is_loading) {
+  if (!first_pass && monitor_data->rows > 0) {
     for (int i=state_items.size -1; i>=0; i--) {
       if (!GetItem(i)->found) {
         state_items.RemoveIdx(i);
