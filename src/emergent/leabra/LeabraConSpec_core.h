@@ -340,6 +340,14 @@
     
     float err;
     switch(rule.errule) {
+    case STATE_CLASS(LeabraLearnSpec)::ERR_DELTA_FF_FB:
+      if(feedback) {
+        err = ru_su_avg_s_lrn * (su_ru_avg_s_lrn - su_avg_m);
+      }
+      else {
+        err = su_su_avg_s_lrn * (ru_ru_avg_s_lrn - ru_avg_m);
+      }
+      break;
     case STATE_CLASS(LeabraLearnSpec)::XCAL:
       err = xcal.dWtFun(srs, srm);
       break;

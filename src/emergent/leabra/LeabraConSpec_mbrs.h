@@ -90,6 +90,7 @@ public:
   };
 
   enum  ErrLearnRule {          // what form of error-driven learning to use?
+    ERR_DELTA_FF_FB,            // current default version: uses feedback flag to select between normal and reversed / switched delta
     XCAL,                       // standard XCAL-CHL function of short vs. medium term average coproduct
     DELTA,                      // delta rule: su.su_avg_s_lrn * (ru.ru_avg_s_lrn - ru.avg_m)
     XCAL_DELTA,                 // xcal version of delta rule: su.su_avg_s_lrn * xcal(ru.ru_avg_s_lrn, ru.avg_m)
@@ -112,7 +113,7 @@ public:
 private:
   void  Initialize() {   Defaults_init(); }
   void  Defaults_init() {
-    rule = XCAL_CHL; errule = XCAL;  bcmrule = SRS; cp_gain = 2.0f;
+    rule = XCAL_CHL; errule = XCAL;  bcmrule = SRS; cp_gain = 0.8f;
   }
 };
 
