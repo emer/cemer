@@ -107,6 +107,7 @@ public:
   BcmLearnRule  bcmrule;        // #CONDSHOW_ON_rule:EXPT BCM Hebbian learning rule to use -- for exploration purposes..
   float         cp_gain;        // #CONDSHOW_ON_rule:EXPT gain on sending activation factor in CP and CPCA learning rules
   bool          use_wt;         // #CONDSHOW_ON_rule:EXPT use effective (nonlinear, wt_gain) weight instead of linear fwt for learning rules that adapt against weight value
+  float         swt_lrate;      // #CONDSHOW_ON_rule:EXPT learning rate for updating swt term for hebbian factors that use this as an intermediate
 
   STATE_DECO_KEY("ConSpec");
   STATE_TA_STD_CODE_SPEC(LeabraLearnSpec);
@@ -115,7 +116,7 @@ public:
 private:
   void  Initialize() {   Defaults_init(); }
   void  Defaults_init() {
-    rule = XCAL_CHL; errule = XCAL;  bcmrule = SRS; cp_gain = 0.8f; use_wt = false;
+    rule = XCAL_CHL; errule = XCAL;  bcmrule = SRS; cp_gain = 0.8f; use_wt = false;  swt_lrate = 0.1f;
   }
 };
 

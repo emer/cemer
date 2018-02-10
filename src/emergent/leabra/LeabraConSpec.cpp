@@ -324,7 +324,7 @@ void LeabraConSpec::GraphLearnDWts(DataTable* graph_data, LeabraUnitSpec* unit_s
       float dw = C_Compute_dWt_CtLeabraXCAL
         (r_ru_avg_s_lrn, r_su_avg_s_lrn, r_avg_m,
          s_su_avg_s_lrn, s_ru_avg_s_lrn, s_avg_m,
-         ru_avg_l, ru_avg_l_lrn, ru_margin, ru_avg_l_lrn, ru_avg_l_lrn, 0.04f);
+         ru_avg_l, ru_avg_l_lrn, ru_margin, ru_avg_l_lrn, ru_avg_l_lrn);
       graph_data->AddBlankRow();
       ru_act_m->SetValAsFloat(r_act_m, -1);
       ru_act_p->SetValAsFloat(r_act_p, -1);
