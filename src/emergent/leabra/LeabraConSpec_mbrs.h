@@ -84,6 +84,9 @@ public:
     SRS,                       // bcm = xcal(su.su_avg_s_lrn * ru.ru_avg_s_lrn, ru_avg_l)
     RS,                        // bcm = su.su_avg_s_lrn * xcal(ru.ru_avg_s_lrn, ru_avg_l) 
     RS_SIN,                    // bcm = xcal(su.su_avg_s_lrn * ru.ru_avg_s_lrn, su.su_avg_s_lrn * ru_avg_l) -- now the preferred default, DELTA_FF_FB
+    CPCA,                      // cpca = ru.ru_avg_s_lrn * (su.su_avg_s_lrn, wt_gain * wt_lin)
+    CPL,                       // long-term conditional probability estimator that then trains weights: = su.su_avg_s_lrn * ru.ru_avg_s_lrn * (cp - wt_lin)
+    XCAL_CPL,                  // xcal version of long-term conditional probability estimator that then trains weights: = xcal(su.su_avg_s_lrn * ru.ru_avg_s_lrn * cp, su.su_avg_s_lrn * ru.ru_avg_s_lrn * wt_lin)
   };
 
   enum  ErrLearnRule {          // what form of error-driven learning to use?
@@ -94,15 +97,13 @@ public:
     REV_DELTA,                  // reversed delta rule (sender delta instead of recv) -- see DELTA -- for top-down projections
     REV_XCAL_DELTA,             // reversed xcal delta rule (sender delta instead of recv) -- see XCAL_DELTA -- for top-down projections
     REV_XCAL_DELTA_SIN,         // reversed xcal delta rule (sender delta instead of recv) -- see XCAL_DELTA_SIN -- for top-down projections
-    XCAL_DELTA_OVERRIDE,        // if our delta is negative, and computed xcal err is positive, we reduce err by del_or
     CHL,                        // pure contrastive hebbian learning: su.su_avg_s_lrn * ru.ru_avg_s_lrn - su.avg_m * ru.avg_m
   };
 
   LearnRule     rule;           // #DEF_DELTA_FF_FB overall form of learning rule to use
-  bool          fb;             // is this a feedback projection?  critical for DELTA_FF_FB to apply the correct form of delta rule learning
   ErrLearnRule  errule;         // #CONDSHOW_ON_rule:EXPT error-driven learning rule to use -- for exploration purposes..
   BcmLearnRule  bcmrule;        // #CONDSHOW_ON_rule:EXPT BCM Hebbian learning rule to use -- for exploration purposes..
-  float         del_or;         // #CONDSHOW_ON_rule:EXPT&&errule:XCAL_DELTA_OVERRIDE override amount for XCAL_DELTA_OVERRIDE
+  float         cp_gain;        // #CONDSHOW_ON_rule:EXPT gain on sending activation factor in CP and CPCA learning rules
 
   STATE_DECO_KEY("ConSpec");
   STATE_TA_STD_CODE_SPEC(LeabraLearnSpec);
@@ -111,7 +112,7 @@ public:
 private:
   void  Initialize() {   Defaults_init(); }
   void  Defaults_init() {
-    rule = XCAL_CHL; fb = false;  errule = XCAL;  bcmrule = SRS; del_or = 0.9f;
+    rule = XCAL_CHL; errule = XCAL;  bcmrule = SRS; cp_gain = 2.0f;
   }
 };
 
@@ -256,7 +257,7 @@ class STATE_CLASS(LeabraMomentum) : public STATE_CLASS(SpecMemberBase) {
 INHERITED(SpecMemberBase)
 public:
   enum NormMode {               // how to normalize dweights -- uses MAX_ABS form of normalization
-    NORM_FB,                    // normalize only feedback connections as indicated by rule.fb flag -- this works best in large deep networks
+    NORM_FB,                    // normalize only feedback connections as indicated by feedback flag -- this works best in large deep networks
     NORM,                       // normalize by MAX_ABS delta weight
     NO_NORM,                    // do not normalize weight changes
   };

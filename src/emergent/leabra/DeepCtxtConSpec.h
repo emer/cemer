@@ -54,7 +54,7 @@
 
     const int sz = cg->size;
 
-    clrate *= momentum.LrateComp(rule.fb);
+    clrate *= momentum.LrateComp(feedback);
     
     float* dwavgs = cg->OwnCnVar(DWAVG);
     float* moments = cg->OwnCnVar(MOMENT);
@@ -71,7 +71,7 @@
       }
       float new_dwt = C_Compute_dWt_Delta(ru->avg_s, ru->avg_m, su_avg_s);
       if(momentum.on) {
-        new_dwt = momentum.ComputeMoment(moments[i], dwavgs[i], new_dwt, rule.fb);
+        new_dwt = momentum.ComputeMoment(moments[i], dwavgs[i], new_dwt, feedback);
       }
       dwts[i] += lrate_eff * new_dwt; // lrate always at the end!
     }

@@ -150,7 +150,7 @@ bool LeabraWizard::StdLeabraSpecs(LeabraNetwork* net) {
   if(!ps) return false;
   ps->Defaults();
   ps->rule.rule = LeabraLearnSpec::DELTA_FF_FB; // new default
-  ps->momentum.norm = LeabraMomentum::NORM_FB;
+  // ps->momentum.norm = LeabraMomentum::NORM_FB; // only on big models
   
   FMChild(LeabraConSpec, td, ps, "TopDownCons");
   td->desc = "Leabra (particularly the XCAL learning rule) requires top-down connections to be weaker than bottom-up ones -- this spec achieves that by setting wt_scale.rel = .2 -- set this for any connections coming from higher-level TARGET layers";
@@ -158,7 +158,7 @@ bool LeabraWizard::StdLeabraSpecs(LeabraNetwork* net) {
   td->wt_scale.rel = 0.2f;
   td->SetUnique("rule", true);
   td->rule.rule = LeabraLearnSpec::DELTA_FF_FB; // new default
-  td->rule.fb = true;
+  td->feedback = true;
 
 
   LeabraUnitSpec* us = (LeabraUnitSpec*)net->specs.FindType(&TA_LeabraUnitSpec);
