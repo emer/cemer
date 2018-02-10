@@ -85,32 +85,25 @@ void NetStateText::GetItems(Network* net) {
   }
   
   // Now the Network monitor items
-  DataTable* monitor_data = &net->mon_data;
-  if (monitor_data) {
-    for (int i=0; i<monitor_data->data.size; i++) {
-      String mon_item_name = monitor_data->data.SafeEl(i)->GetName();
-      bool add = true;
-      NetViewStateItem* existing_item = state_items.FindName(mon_item_name);
-      if (existing_item) {
-        add = false;
-        existing_item->found = true;
-      }
-      if (add) {
-        NetViewStateItem* item = new NetViewStateItem(mon_item_name, false, true, 8);
-        state_items.Add(item);
-      }
+  for (int i=0; i<net->monitor.items.size; i++) {
+    String mon_item_name = net->monitor.items.SafeEl(i)->GetName();
+    bool add = true;
+    NetViewStateItem* existing_item = state_items.FindName(mon_item_name);
+    if (existing_item) {
+      add = false;
+      existing_item->found = true;
+    }
+    if (add) {
+      NetViewStateItem* item = new NetViewStateItem(mon_item_name, false, true, 8);
+      state_items.Add(item);
     }
   }
   
-  // remove not found - don't do on first pass because net monitor table not populated yet
-  if (!first_pass && monitor_data->rows > 0) {
-    for (int i=state_items.size -1; i>=0; i--) {
-      if (!GetItem(i)->found) {
-        state_items.RemoveIdx(i);
-      }
+  for (int i=state_items.size -1; i>=0; i--) {
+    if (!GetItem(i)->found) {
+      state_items.RemoveIdx(i);
     }
   }
-  first_pass = false;
 }
 
 void NetStateText::ShowItem(const String& name, bool show) {

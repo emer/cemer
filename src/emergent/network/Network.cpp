@@ -63,8 +63,10 @@ TA_BASEFUNS_CTORS_DEFN(Network);
 using namespace std;
 
 void NetNetMonitor::ItemsUpdated() {
+  if (data->cols() > 0) {
     UpdateDataTable();
     network->MonitorItemChange();
+  }
 }
 
 void NetStateSync_List::ParseTypes_impl(TypeDef* main_td, TypeDef* state_td, int main_off, int state_off,

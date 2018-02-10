@@ -642,7 +642,6 @@ void NetView::BuildAll() { // populates all T3 guys
   }
   GetMaxSize();
   GetMembs();
-  GetNetTextItems();
   
   Network* nt = net();
   
