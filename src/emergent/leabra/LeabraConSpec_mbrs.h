@@ -84,6 +84,7 @@ public:
     SRS,                       // bcm = xcal(su.su_avg_s_lrn * ru.ru_avg_s_lrn, ru_avg_l)
     RS,                        // bcm = su.su_avg_s_lrn * xcal(ru.ru_avg_s_lrn, ru_avg_l) 
     RS_SIN,                    // bcm = xcal(su.su_avg_s_lrn * ru.ru_avg_s_lrn, su.su_avg_s_lrn * ru_avg_l) -- now the preferred default, DELTA_FF_FB
+    RS_SIN_SLOW,               // swt updates with pure bcm, and then swt drives wts. swt += xcal(su.su_avg_s_lrn * ru.ru_avg_s_lrn, su.su_avg_s_lrn * ru_avg_l) -- xcal(su.su_avg_s_lrn * ru.ru_avg_s_lrn * cp, su.su_avg_s_lrn * ru.ru_avg_s_lrn * wt_lin)
     CPCA,                      // cpca = ru.ru_avg_s_lrn * (su.su_avg_s_lrn, wt_gain * wt_lin)
     CPL,                       // long-term conditional probability estimator that then trains weights: = su.su_avg_s_lrn * ru.ru_avg_s_lrn * (cp - wt_lin)
     XCAL_CPL,                  // xcal version of long-term conditional probability estimator that then trains weights: = xcal(su.su_avg_s_lrn * ru.ru_avg_s_lrn * cp, su.su_avg_s_lrn * ru.ru_avg_s_lrn * wt_lin)
@@ -105,6 +106,7 @@ public:
   ErrLearnRule  errule;         // #CONDSHOW_ON_rule:EXPT error-driven learning rule to use -- for exploration purposes..
   BcmLearnRule  bcmrule;        // #CONDSHOW_ON_rule:EXPT BCM Hebbian learning rule to use -- for exploration purposes..
   float         cp_gain;        // #CONDSHOW_ON_rule:EXPT gain on sending activation factor in CP and CPCA learning rules
+  bool          use_wt;         // #CONDSHOW_ON_rule:EXPT use effective (nonlinear, wt_gain) weight instead of linear fwt for learning rules that adapt against weight value
 
   STATE_DECO_KEY("ConSpec");
   STATE_TA_STD_CODE_SPEC(LeabraLearnSpec);
@@ -113,7 +115,7 @@ public:
 private:
   void  Initialize() {   Defaults_init(); }
   void  Defaults_init() {
-    rule = XCAL_CHL; errule = XCAL;  bcmrule = SRS; cp_gain = 0.8f;
+    rule = XCAL_CHL; errule = XCAL;  bcmrule = SRS; cp_gain = 0.8f; use_wt = false;
   }
 };
 

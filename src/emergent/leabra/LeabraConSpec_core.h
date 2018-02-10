@@ -309,7 +309,7 @@
   INLINE float  C_Compute_dWt_CtLeabraXCAL_Expt
   (float ru_ru_avg_s_lrn, float ru_su_avg_s_lrn, float ru_avg_m,
    float su_su_avg_s_lrn, float su_ru_avg_s_lrn, float su_avg_m,
-   float ru_avg_l, float ru_avg_l_lrn, float wt_lin, float& cp, float lrate_eff)
+   float ru_avg_l, float ru_avg_l_lrn, float wt_lin, float& swt, float lrate_eff)
   {    
     float srs = su_su_avg_s_lrn * ru_ru_avg_s_lrn;
     float srm = su_avg_m * ru_avg_m;
@@ -325,16 +325,20 @@
     case STATE_CLASS(LeabraLearnSpec)::RS_SIN:
       bcm = xcal.dWtFun(su_su_avg_s_lrn * ru_ru_avg_s_lrn, su_su_avg_s_lrn * ru_avg_l);
       break;
+    case STATE_CLASS(LeabraLearnSpec)::RS_SIN_SLOW:
+      swt += lrate_eff * xcal.dWtFun(su_su_avg_s_lrn * ru_ru_avg_s_lrn, su_su_avg_s_lrn * ru_avg_l);
+      bcm = xcal.dWtFun(srs * swt, srs * wt_lin);
+      break;
     case STATE_CLASS(LeabraLearnSpec)::CPCA:
       bcm = ru_ru_avg_s_lrn * ((rule.cp_gain * su_su_avg_s_lrn) - wt_lin);
       break;
     case STATE_CLASS(LeabraLearnSpec)::CPL:
-      cp += lrate_eff * ru_ru_avg_s_lrn * ((rule.cp_gain * su_su_avg_s_lrn) - cp);
-      bcm = srs * (cp - wt_lin);
+      swt += lrate_eff * ru_ru_avg_s_lrn * ((rule.cp_gain * su_su_avg_s_lrn) - swt);
+      bcm = srs * (swt - wt_lin);
       break;
     case STATE_CLASS(LeabraLearnSpec)::XCAL_CPL:
-      cp += lrate_eff * ru_ru_avg_s_lrn * ((rule.cp_gain * su_su_avg_s_lrn) - cp);
-      bcm = xcal.dWtFun(srs * cp, srs * wt_lin);
+      swt += lrate_eff * ru_ru_avg_s_lrn * ((rule.cp_gain * su_su_avg_s_lrn) - swt);
+      bcm = xcal.dWtFun(srs * swt, srs * wt_lin);
       break;
     }
     
@@ -419,7 +423,7 @@
   (float ru_ru_avg_s_lrn, float ru_su_avg_s_lrn, float ru_avg_m,
    float su_su_avg_s_lrn, float su_ru_avg_s_lrn, float su_avg_m,
    float ru_avg_l, float ru_avg_l_lrn, float ru_margin, float wt_lin,
-   float& cp, float lrate_eff)
+   float& swt, float lrate_eff)
   {
     float new_dwt;
     switch(rule.rule) {
@@ -433,7 +437,7 @@
       break;
     case STATE_CLASS(LeabraLearnSpec)::EXPT:
       new_dwt = C_Compute_dWt_CtLeabraXCAL_Expt
-        (ru_ru_avg_s_lrn, ru_su_avg_s_lrn, ru_avg_m, su_su_avg_s_lrn, su_ru_avg_s_lrn, su_avg_m, ru_avg_l, ru_avg_l_lrn, wt_lin, cp , lrate_eff);
+        (ru_ru_avg_s_lrn, ru_su_avg_s_lrn, ru_avg_m, su_su_avg_s_lrn, su_ru_avg_s_lrn, su_avg_m, ru_avg_l, ru_avg_l_lrn, wt_lin, swt , lrate_eff);
       break;
     }
     if(margin.sign_dwt) {
@@ -463,8 +467,15 @@
     const int sz = cg->size;
 
     float* dwts = cg->OwnCnVar(DWT);
-    float* fwts = cg->OwnCnVar(FWT);
     float* swts = cg->OwnCnVar(SWT);
+
+    float* fwts;
+    if(rule.use_wt) {
+      fwts = cg->OwnCnVar(WT);
+    }
+    else {
+      fwts = cg->OwnCnVar(FWT);
+    }
 
     clrate *= momentum.LrateComp(feedback);
     
