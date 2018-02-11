@@ -306,15 +306,14 @@
   // }
   // also: fminf(ru_avg_l,1.0f) for threshold as an option..
 
-  INLINE float  C_Compute_dWt_CtLeabraXCAL_Expt
-  (float ru_ru_avg_s_lrn, float ru_su_avg_s_lrn, float ru_avg_m,
+  INLINE void  C_Compute_dWt_CtLeabraXCAL_Expt
+  (float& err, float& bcm, float ru_ru_avg_s_lrn, float ru_su_avg_s_lrn, float ru_avg_m,
    float su_su_avg_s_lrn, float su_ru_avg_s_lrn, float su_avg_m,
-   float ru_avg_l, float ru_avg_l_lrn, float wt_lin, float& swt)
+   float ru_avg_l, float wt_lin)
   {    
     float srs = su_su_avg_s_lrn * ru_ru_avg_s_lrn;
     float srm = su_avg_m * ru_avg_m;
 
-    float bcm;
     switch(rule.bcmrule) {
     case STATE_CLASS(LeabraLearnSpec)::SRS:
       bcm = xcal.dWtFun(srs, ru_avg_l);
@@ -325,24 +324,11 @@
     case STATE_CLASS(LeabraLearnSpec)::RS_SIN:
       bcm = xcal.dWtFun(su_su_avg_s_lrn * ru_ru_avg_s_lrn, su_su_avg_s_lrn * ru_avg_l);
       break;
-    case STATE_CLASS(LeabraLearnSpec)::RS_SIN_SLOW:
-      swt += rule.swt_lrate * xcal.dWtFun(su_su_avg_s_lrn * ru_ru_avg_s_lrn, su_su_avg_s_lrn * ru_avg_l);
-      bcm = xcal.dWtFun(srs * swt, srs * wt_lin);
-      break;
     case STATE_CLASS(LeabraLearnSpec)::CPCA:
       bcm = ru_ru_avg_s_lrn * ((rule.cp_gain * su_su_avg_s_lrn) - wt_lin);
       break;
-    case STATE_CLASS(LeabraLearnSpec)::CPL:
-      swt += rule.swt_lrate * ru_ru_avg_s_lrn * ((rule.cp_gain * su_su_avg_s_lrn) - swt);
-      bcm = srs * (swt - wt_lin);
-      break;
-    case STATE_CLASS(LeabraLearnSpec)::XCAL_CPL:
-      swt += rule.swt_lrate * ru_ru_avg_s_lrn * ((rule.cp_gain * su_su_avg_s_lrn) - swt);
-      bcm = xcal.dWtFun(srs * swt, srs * wt_lin);
-      break;
     }
     
-    float err;
     switch(rule.errule) {
     case STATE_CLASS(LeabraLearnSpec)::ERR_DELTA_FF_FB:
       if(feedback) {
@@ -377,73 +363,63 @@
       err = srs - srm;
       break;
     }
-    return ru_avg_l_lrn * bcm + xcal.m_lrn * err;
   }
   // #IGNORE compute temporally eXtended Contrastive Attractor Learning (XCAL), experimental version, returning new dwt
 
 
-  INLINE float  C_Compute_dWt_CtLeabraXCAL_CHL
-  (float ru_ru_avg_s_lrn, float ru_avg_m, float su_su_avg_s_lrn, float su_avg_m,
-   float ru_avg_l, float ru_avg_l_lrn)
+  INLINE void  C_Compute_dWt_CtLeabraXCAL_CHL
+  (float& err, float& bcm, float ru_ru_avg_s_lrn, float ru_avg_m, float su_su_avg_s_lrn,
+   float su_avg_m, float ru_avg_l)
   {
     float srs = su_su_avg_s_lrn * ru_ru_avg_s_lrn;
     float srm = su_avg_m * ru_avg_m;
     
-    float bcm = xcal.dWtFun(srs, ru_avg_l);
-    float err = xcal.dWtFun(srs, srm);
-    return ru_avg_l_lrn * bcm + xcal.m_lrn * err;
+    bcm = xcal.dWtFun(srs, ru_avg_l);
+    err = xcal.dWtFun(srs, srm);
   }
   // #IGNORE compute temporally eXtended Contrastive Attractor Learning (XCAL), CHL version, returning new dwt
 
-  INLINE float  C_Compute_dWt_CtLeabraXCAL_Delta
-  (float ru_ru_avg_s_lrn, float ru_su_avg_s_lrn, float ru_avg_m,
+  INLINE void  C_Compute_dWt_CtLeabraXCAL_Delta
+  (float& err, float& bcm, float ru_ru_avg_s_lrn, float ru_su_avg_s_lrn, float ru_avg_m,
    float su_su_avg_s_lrn, float su_ru_avg_s_lrn, float su_avg_m,
-   float ru_avg_l, float ru_avg_l_lrn)
+   float ru_avg_l)
   {
-    float bcm = xcal.dWtFun(su_su_avg_s_lrn * ru_ru_avg_s_lrn, su_su_avg_s_lrn * ru_avg_l);
-    float err;
+    bcm = xcal.dWtFun(su_su_avg_s_lrn * ru_ru_avg_s_lrn, su_su_avg_s_lrn * ru_avg_l);
     if(feedback) {
       err = ru_su_avg_s_lrn * (su_ru_avg_s_lrn - su_avg_m);
     }
     else {
       err = su_su_avg_s_lrn * (ru_ru_avg_s_lrn - ru_avg_m);
     }
-    return ru_avg_l_lrn * bcm + xcal.m_lrn * err;
   }
   // #IGNORE compute temporally eXtended Contrastive Attractor Learning (XCAL), DELTA_FF_FB version, returning new dwt
 
-  INLINE float  C_Compute_dWt_CtLeabraXCAL_MarginSign
-  (float ru_avg_l_lrn, float ru_margin, float su_su_avg_s_lrn) {
-    return ru_avg_l_lrn * margin.sign_lrn * margin.SignDwt(ru_margin) * su_su_avg_s_lrn;
+  INLINE float  C_Compute_dWt_CtLeabraXCAL_MarginSign(float ru_margin, float su_su_avg_s_lrn) {
+    return margin.sign_lrn * margin.SignDwt(ru_margin) * su_su_avg_s_lrn;
   }
   // #IGNORE margin sign_dwt -- only if margin.sign_dwt
 
 
-  INLINE float  C_Compute_dWt_CtLeabraXCAL
-  (float ru_ru_avg_s_lrn, float ru_su_avg_s_lrn, float ru_avg_m,
-   float su_su_avg_s_lrn, float su_ru_avg_s_lrn, float su_avg_m,
-   float ru_avg_l, float ru_avg_l_lrn, float ru_margin, float wt_lin,
-   float& swt)
+  INLINE void  C_Compute_dWt_CtLeabraXCAL
+  (float& err, float& bcm, float ru_ru_avg_s_lrn, float ru_su_avg_s_lrn, float ru_avg_m,
+   float su_su_avg_s_lrn, float su_ru_avg_s_lrn, float su_avg_m, float ru_avg_l, float wt_lin)
   {
-    float new_dwt;
     switch(rule.rule) {
     case STATE_CLASS(LeabraLearnSpec)::DELTA_FF_FB:
-      new_dwt = C_Compute_dWt_CtLeabraXCAL_Delta
-        (ru_ru_avg_s_lrn, ru_su_avg_s_lrn, ru_avg_m, su_su_avg_s_lrn, su_ru_avg_s_lrn, su_avg_m, ru_avg_l, ru_avg_l_lrn);
+      C_Compute_dWt_CtLeabraXCAL_Delta
+        (err, bcm, ru_ru_avg_s_lrn, ru_su_avg_s_lrn, ru_avg_m, su_su_avg_s_lrn,
+         su_ru_avg_s_lrn, su_avg_m, ru_avg_l);
       break;
     case STATE_CLASS(LeabraLearnSpec)::XCAL_CHL:
-      new_dwt = C_Compute_dWt_CtLeabraXCAL_CHL
-        (ru_ru_avg_s_lrn, ru_avg_m, su_su_avg_s_lrn, su_avg_m, ru_avg_l, ru_avg_l_lrn);
+      C_Compute_dWt_CtLeabraXCAL_CHL
+        (err, bcm, ru_ru_avg_s_lrn, ru_avg_m, su_su_avg_s_lrn, su_avg_m, ru_avg_l);
       break;
     case STATE_CLASS(LeabraLearnSpec)::EXPT:
-      new_dwt = C_Compute_dWt_CtLeabraXCAL_Expt
-        (ru_ru_avg_s_lrn, ru_su_avg_s_lrn, ru_avg_m, su_su_avg_s_lrn, su_ru_avg_s_lrn, su_avg_m, ru_avg_l, ru_avg_l_lrn, wt_lin, swt);
+      C_Compute_dWt_CtLeabraXCAL_Expt
+        (err, bcm, ru_ru_avg_s_lrn, ru_su_avg_s_lrn, ru_avg_m, su_su_avg_s_lrn,
+         su_ru_avg_s_lrn, su_avg_m, ru_avg_l, wt_lin);
       break;
     }
-    if(margin.sign_dwt) {
-      new_dwt += C_Compute_dWt_CtLeabraXCAL_MarginSign(ru_avg_l_lrn, ru_margin, su_su_avg_s_lrn);
-    }
-    return new_dwt;
   }
   // #IGNORE compute temporally eXtended Contrastive Attractor Learning (XCAL)
 
@@ -467,15 +443,7 @@
     const int sz = cg->size;
 
     float* dwts = cg->OwnCnVar(DWT);
-    float* swts = cg->OwnCnVar(SWT);
-
-    float* fwts;
-    if(rule.use_wt) {
-      fwts = cg->OwnCnVar(WT);
-    }
-    else {
-      fwts = cg->OwnCnVar(FWT);
-    }
+    float* fwts = cg->OwnCnVar(FWT);
 
     clrate *= momentum.LrateComp(feedback);
     
@@ -492,12 +460,21 @@
         lrate_eff *= margin.MarginLrate(ru->margin);
       }
       float l_lrn_eff = xcal.LongLrate(ru->avg_l_lrn);
-      float new_dwt = C_Compute_dWt_CtLeabraXCAL
-        (ru->ru_avg_s_lrn, ru->su_avg_s_lrn, ru->avg_m,
-         su_su_avg_s_lrn, su_ru_avg_s_lrn, su_avg_m,
-         ru->avg_l, l_lrn_eff, ru->margin, fwts[i], swts[i]);
+      float err, bcm;
+      C_Compute_dWt_CtLeabraXCAL
+        (err, bcm, ru->ru_avg_s_lrn, ru->su_avg_s_lrn, ru->avg_m,
+         su_su_avg_s_lrn, su_ru_avg_s_lrn, su_avg_m, ru->avg_l, fwts[i]);
+      if(margin.sign_dwt) {
+        bcm += C_Compute_dWt_CtLeabraXCAL_MarginSign(ru->margin, su_su_avg_s_lrn);
+      }
+      bcm *= l_lrn_eff;
+      err *= xcal.m_lrn;
+      float new_dwt;
       if(momentum.on) {
-        new_dwt = momentum.ComputeMoment(moments[i], dwavgs[i], new_dwt, feedback);
+        new_dwt = momentum.ComputeMoment(moments[i], dwavgs[i], err, bcm, feedback);
+      }
+      else {
+        new_dwt = err + bcm;
       }
       dwts[i] += lrate_eff * new_dwt;
     }

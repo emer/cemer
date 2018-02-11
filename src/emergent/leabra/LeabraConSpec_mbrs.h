@@ -84,10 +84,7 @@ public:
     SRS,                       // bcm = xcal(su.su_avg_s_lrn * ru.ru_avg_s_lrn, ru_avg_l)
     RS,                        // bcm = su.su_avg_s_lrn * xcal(ru.ru_avg_s_lrn, ru_avg_l) 
     RS_SIN,                    // bcm = xcal(su.su_avg_s_lrn * ru.ru_avg_s_lrn, su.su_avg_s_lrn * ru_avg_l) -- now the preferred default, DELTA_FF_FB
-    RS_SIN_SLOW,               // swt updates with pure bcm, and then swt drives wts. swt += xcal(su.su_avg_s_lrn * ru.ru_avg_s_lrn, su.su_avg_s_lrn * ru_avg_l) -- xcal(su.su_avg_s_lrn * ru.ru_avg_s_lrn * cp, su.su_avg_s_lrn * ru.ru_avg_s_lrn * wt_lin)
     CPCA,                      // cpca = ru.ru_avg_s_lrn * (su.su_avg_s_lrn, wt_gain * wt_lin)
-    CPL,                       // long-term conditional probability estimator that then trains weights: = su.su_avg_s_lrn * ru.ru_avg_s_lrn * (cp - wt_lin)
-    XCAL_CPL,                  // xcal version of long-term conditional probability estimator that then trains weights: = xcal(su.su_avg_s_lrn * ru.ru_avg_s_lrn * cp, su.su_avg_s_lrn * ru.ru_avg_s_lrn * wt_lin)
   };
 
   enum  ErrLearnRule {          // what form of error-driven learning to use?
@@ -106,8 +103,6 @@ public:
   ErrLearnRule  errule;         // #CONDSHOW_ON_rule:EXPT error-driven learning rule to use -- for exploration purposes..
   BcmLearnRule  bcmrule;        // #CONDSHOW_ON_rule:EXPT BCM Hebbian learning rule to use -- for exploration purposes..
   float         cp_gain;        // #CONDSHOW_ON_rule:EXPT gain on sending activation factor in CP and CPCA learning rules
-  bool          use_wt;         // #CONDSHOW_ON_rule:EXPT use effective (nonlinear, wt_gain) weight instead of linear fwt for learning rules that adapt against weight value
-  float         swt_lrate;      // #CONDSHOW_ON_rule:EXPT learning rate for updating swt term for hebbian factors that use this as an intermediate
 
   STATE_DECO_KEY("ConSpec");
   STATE_TA_STD_CODE_SPEC(LeabraLearnSpec);
@@ -116,7 +111,7 @@ public:
 private:
   void  Initialize() {   Defaults_init(); }
   void  Defaults_init() {
-    rule = XCAL_CHL; errule = XCAL;  bcmrule = SRS; cp_gain = 0.8f; use_wt = false;  swt_lrate = 0.1f;
+    rule = XCAL_CHL; errule = XCAL;  bcmrule = SRS; cp_gain = 0.8f;
   }
 };
 
@@ -267,8 +262,9 @@ public:
   };
 
   bool          on;             // #DEF_true whether to use standard simple momentum and normalization as function of the running-average magnitude (abs value) of weight changes, which serves as an estimate of the variance in the weight changes, assuming zero net mean overall -- implements MAX_ABS version of normalization -- divide by MAX of abs dwt and slow decay of current aggregated value -- used in AdaMax algorithm of Kingman & Ba (2014)
-  float         m_tau;          // #CONDSHOW_ON_on #MIN_1 #DEF_10;20 time constant factor for integration of momentum -- 1/tau is dt (e.g., .1), and 1-1/tau (e.g., .95 or .9) is traditional momentum time-integration factor
   NormMode      norm;           // #CONDSHOW_ON_on if and how to normalize weight changes -- see options -- determines also which lr_comp is used
+  bool          norm_err;       // #CONDSHOW_ON_on&&!norm:NO_NORM only normalize the error-driven component of learning, then add the other component(s) (BCM, margin) to that normalized err before computing momentum
+  float         m_tau;          // #CONDSHOW_ON_on #MIN_1 #DEF_10;20 time constant factor for integration of momentum -- 1/tau is dt (e.g., .1), and 1-1/tau (e.g., .95 or .9) is traditional momentum time-integration factor
   float         dwavg_tau;      // #CONDSHOW_ON_on #MIN_1 #DEF_1000;10000 time constant for integration of dwavg average of delta weights used in normalization factor -- generally should be long-ish, between 1000-10000 -- integration rate factor is 1/tau
   float         norm_min;       // #CONDSHOW_ON_on&&!norm:NO_NORM #MIN_0 #DEF_0.001 minimum effective value of the normalization factor -- provides a lower bound to how much normalization can be applied -- in backprop this is typically 1e-8 but larger values work better in Leabra
   float         norm_lr_comp;   // #MIN_0 #CONDSHOW_ON_on&&!norm:NO_NORM #DEF_0.01 overall learning rate multiplier to compensate for changes due to use of normalization AND momentum  -- allows for a common master learning rate to be used between different conditions: normalization contributes = .1 and momentum = .1, so combined = .01 -- should generally use that value 
@@ -285,13 +281,25 @@ public:
   }
   // check if norm is active given norm setting and whether this is a feedback projection
   
-  INLINE float ComputeMoment(float& moment, float& dwavg, const float new_dwt, bool fb) {
-    dwavg = fmaxf(dwavg_dt_c * dwavg, fabsf(new_dwt));
-    moment = m_dt_c * moment + new_dwt;
-    if(IsNormOn(fb) && (dwavg != 0.0f)) {
-      return moment / fmaxf(dwavg, norm_min);
+  INLINE float ComputeMoment(float& moment, float& dwavg, float err, float bcm,
+                             bool fb) {
+    if(IsNormOn(fb) && norm_err) {
+      dwavg = fmaxf(dwavg_dt_c * dwavg, fabsf(err));
+      if(dwavg != 0.0f)
+        err /= fmaxf(dwavg, norm_min);
+      float new_dwt = err + bcm;
+      moment = m_dt_c * moment + new_dwt;
+      return moment;
     }
-    return moment;
+    else {
+      float new_dwt = err + bcm;
+      dwavg = fmaxf(dwavg_dt_c * dwavg, fabsf(new_dwt));
+      moment = m_dt_c * moment + new_dwt;
+      if(IsNormOn(fb) && (dwavg != 0.0f)) {
+        return moment / fmaxf(dwavg, norm_min);
+      }
+      return moment;
+    }
   }
   // compute momentum version of new dwt change -- return normalized momentum value
 
@@ -314,7 +322,8 @@ public:
 private:
   void  Initialize()    {  Defaults_init(); }
   void  Defaults_init() {
-    on = true;  m_tau = 10.0f;  norm = NORM;  dwavg_tau = 1000.0f;  norm_min = 0.001f;  
+    on = true;  norm = NORM;  norm_err = false;
+    m_tau = 10.0f;  dwavg_tau = 1000.0f;  norm_min = 0.001f;  
     norm_lr_comp = 0.01f; mom_lr_comp = 0.1f;
     UpdtVals();
   }

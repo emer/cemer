@@ -69,11 +69,11 @@
       if(margin.lrate_mod) {
         lrate_eff *= margin.MarginLrate(ru->margin);
       }
-      float new_dwt = C_Compute_dWt_Delta(ru->avg_s, ru->avg_m, su_avg_s);
+      float err = C_Compute_dWt_Delta(ru->avg_s, ru->avg_m, su_avg_s);
       if(momentum.on) {
-        new_dwt = momentum.ComputeMoment(moments[i], dwavgs[i], new_dwt, feedback);
+        err = momentum.ComputeMoment(moments[i], dwavgs[i], err, 0.0f, feedback);
       }
-      dwts[i] += lrate_eff * new_dwt; // lrate always at the end!
+      dwts[i] += lrate_eff * err; // lrate always at the end!
     }
   }
 

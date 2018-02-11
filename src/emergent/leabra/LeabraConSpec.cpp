@@ -320,11 +320,14 @@ void LeabraConSpec::GraphLearnDWts(DataTable* graph_data, LeabraUnitSpec* unit_s
         unit_spec->act_avg.ComputeAvgs(r_act_p, unit_spec->dt.integ, r_avg_ss, r_avg_s, r_avg_m, r_ru_avg_s_lrn, r_su_avg_s_lrn);
         unit_spec->act_avg.ComputeAvgs(su_act_p, unit_spec->dt.integ, s_avg_ss, s_avg_s, s_avg_m, s_ru_avg_s_lrn, s_su_avg_s_lrn);
       }
+
+      float err, bcm;
+      C_Compute_dWt_CtLeabraXCAL
+        (err, bcm, r_ru_avg_s_lrn, r_su_avg_s_lrn, r_avg_m,
+         s_su_avg_s_lrn, s_ru_avg_s_lrn, s_avg_m, ru_avg_l, 0.5f);
       
-      float dw = C_Compute_dWt_CtLeabraXCAL
-        (r_ru_avg_s_lrn, r_su_avg_s_lrn, r_avg_m,
-         s_su_avg_s_lrn, s_ru_avg_s_lrn, s_avg_m,
-         ru_avg_l, ru_avg_l_lrn, ru_margin, ru_avg_l_lrn, ru_avg_l_lrn);
+      float dw = xcal.m_lrn * err + ru_avg_l_lrn * bcm;
+
       graph_data->AddBlankRow();
       ru_act_m->SetValAsFloat(r_act_m, -1);
       ru_act_p->SetValAsFloat(r_act_p, -1);
