@@ -55,7 +55,7 @@ void ParamStep::AutoName() {
   if(!ps) return;
   String nm = ps->name + "_";
   if(epoch >= 0)
-    nm += taMisc::LeadingZeros(epoch, 3);
+    nm += taMisc::LeadingZeros(epoch, 6);
   else
     nm += "off";
   SetName(nm);

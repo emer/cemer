@@ -18,19 +18,24 @@
   INLINE PRJN_STATE*  GetPrjnState(NETWORK_STATE* net) const {
     return net->GetPrjnState(prjn_idx);
   }
+  // #CAT_Access projection state
   INLINE LAYER_STATE* GetRecvLayer(NETWORK_STATE* net) const {
     return net->GetLayerState(recv_lay_idx);
   }
+  // #CAT_Access receiving layer
   INLINE LAYER_STATE* GetSendLayer(NETWORK_STATE* net) const {
     return net->GetLayerState(send_lay_idx);
   }
+  // #CAT_Access sending layer
   INLINE PRJN_SPEC_CPP* GetPrjnSpec(NETWORK_STATE* net) const {
     return net->GetPrjnSpec(spec_idx);
   }
+  // #CAT_Access projection spec (state version)
   INLINE CON_SPEC_CPP*  GetConSpec(NETWORK_STATE* net) const {
     return net->GetConSpec(con_spec_idx);
   }
-  
+  // #CAT_Access connection spec (state version)
+
   INLINE bool IsActive(NETWORK_STATE* net) const { return (!off && !lesioned); }
   // #CAT_Access is this projection active and valid?
 

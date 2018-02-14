@@ -50,12 +50,21 @@
 
     const float su_avg_s = su->deep_raw_prv; // value sent on prior trial..
     const float su_avg_m = su->deep_raw_prv;
+    
+    LEABRA_PRJN_STATE* prjn = cg->GetPrjnState(net);
+    float err_norm_fact = dwt_norm.EffNormFactor(prjn->err_dwt_max_avg);
+
+    if(momentum.on) {
+      clrate *= momentum.lr_comp;
+    }
+    
+    float err_dwt_max = 0.0f;
+    float bcm_dwt_max = 0.0f;
+
     float* dwts = cg->OwnCnVar(DWT);
 
     const int sz = cg->size;
 
-    clrate *= momentum.LrateComp(feedback);
-    
     float* dwavgs = cg->OwnCnVar(DWAVG);
     float* moments = cg->OwnCnVar(MOMENT);
     for(int i=0; i<sz; i++) {
@@ -70,11 +79,16 @@
         lrate_eff *= margin.MarginLrate(ru->margin);
       }
       float err = C_Compute_dWt_Delta(ru->avg_s, ru->avg_m, su_avg_s);
+
+      err_dwt_max = fmaxf(fabsf(err), err_dwt_max);
+      err *= err_norm_fact;
+
       if(momentum.on) {
-        err = momentum.ComputeMoment(moments[i], dwavgs[i], err, 0.0f, feedback);
+        err = momentum.ComputeMoment(moments[i], err);
       }
       dwts[i] += lrate_eff * err; // lrate always at the end!
     }
+    cg->err_dwt_max = err_dwt_max;
   }
 
   INLINE void Initialize_core() {

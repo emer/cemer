@@ -34,6 +34,7 @@
   STATE_CLASS(LeabraLearnSpec)  rule;           // #CAT_Learning #CONDSHOW_ON_learn overall learning rule form and parameters
   STATE_CLASS(XCalLearnSpec)    xcal;           // #CAT_Learning #CONDSHOW_ON_learn XCAL (eXtended Contrastive Attractor Learning) learning parameters
   STATE_CLASS(WtSigSpec)        wt_sig;         // #CAT_Learning #CONDSHOW_ON_learn sigmoidal weight function for contrast enhancement: high gain makes weights more binary & discriminative
+  STATE_CLASS(LeabraDwtNorm)    dwt_norm;       // #CAT_Learning #CONDSHOW_ON_learn normalization error-driven learning component by the overall running-average magnitude of weight changes across projection (which serves as an estimate of the variance in the weight changes, assuming zero net mean overall)
   STATE_CLASS(LeabraMomentum)   momentum;      // #CAT_Learning #CONDSHOW_ON_learn implements standard, simple momentum and normalization by the overall running-average magnitude of weight changes (which serves as an estimate of the variance in the weight changes, assuming zero net mean overall) -- accentuates consistent directions of weight change and cancels out dithering
   STATE_CLASS(WtBalanceSpec)    wt_bal;         // #CAT_Learning #CONDSHOW_ON_learn weight balance maintenance spec: a soft form of normalization that maintains overall weight balance across units by progressively penalizing weight increases as a function of extent to which average weights exceed target value, and vice-versa when weight average is less than target -- alters rate of weight increases vs. decreases in soft bounding function
   STATE_CLASS(AdaptWtScaleSpec) adapt_scale;    // #CAT_Learning #CONDSHOW_ON_learn parameters to adapt the scale multiplier on weights, as a function of weight value
@@ -56,6 +57,9 @@
     Init_Weights_symflag(net, thr_no);
     LEABRA_CON_STATE* cg = (LEABRA_CON_STATE*)pcg;
 
+    cg->err_dwt_max = 0.0f;    cg->bcm_dwt_max = 0.0f; cg->dwt_max = 0.0f;
+    cg->wb_inc = 1.0f;         cg->wb_dec = 1.0f;
+    
     float* wts = cg->OwnCnVar(WT);
     float* dwts = cg->OwnCnVar(DWT);
     float* scales = cg->OwnCnVar(SCALE);
@@ -442,11 +446,20 @@
     const float su_avg_l = su->avg_l;
     const int sz = cg->size;
 
+    LEABRA_PRJN_STATE* prjn = cg->GetPrjnState(net);
+    float err_norm_fact = dwt_norm.EffNormFactor(prjn->err_dwt_max_avg);
+
+    if(momentum.on) {
+      clrate *= momentum.lr_comp;
+    }
+    
+    float err_dwt_max = 0.0f;
+    float bcm_dwt_max = 0.0f;
+    float dwt_max = 0.0f;
+
     float* dwts = cg->OwnCnVar(DWT);
     float* fwts = cg->OwnCnVar(FWT);
 
-    clrate *= momentum.LrateComp(feedback);
-    
     float* dwavgs = cg->OwnCnVar(DWAVG);
     float* moments = cg->OwnCnVar(MOMENT);
     for(int i=0; i<sz; i++) {
@@ -464,20 +477,32 @@
       C_Compute_dWt_CtLeabraXCAL
         (err, bcm, ru->ru_avg_s_lrn, ru->su_avg_s_lrn, ru->avg_m,
          su_su_avg_s_lrn, su_ru_avg_s_lrn, su_avg_m, ru->avg_l, fwts[i]);
+
       if(margin.sign_dwt) {
         bcm += C_Compute_dWt_CtLeabraXCAL_MarginSign(ru->margin, su_su_avg_s_lrn);
       }
+      
       bcm *= l_lrn_eff;
       err *= xcal.m_lrn;
-      float new_dwt;
+      
+      err_dwt_max = fmaxf(fabsf(err), err_dwt_max);
+      bcm_dwt_max = fmaxf(fabsf(bcm), bcm_dwt_max);
+
+      err *= err_norm_fact;     // 1 if not normalizing
+      
+      float new_dwt = bcm + err;
       if(momentum.on) {
-        new_dwt = momentum.ComputeMoment(moments[i], dwavgs[i], err, bcm, feedback);
+        new_dwt = momentum.ComputeMoment(moments[i], new_dwt);
       }
-      else {
-        new_dwt = err + bcm;
-      }
+
+      dwt_max = fmaxf(fabsf(new_dwt), dwt_max);
+      
       dwts[i] += lrate_eff * new_dwt;
     }
+    
+    cg->err_dwt_max = err_dwt_max;
+    cg->bcm_dwt_max = bcm_dwt_max;
+    cg->dwt_max = dwt_max;
   }
 
 

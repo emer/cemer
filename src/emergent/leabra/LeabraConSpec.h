@@ -47,6 +47,7 @@ eTypeDef_Of(WtScaleSpec);
 eTypeDef_Of(LeabraLearnSpec);
 eTypeDef_Of(XCalLearnSpec);
 eTypeDef_Of(WtSigSpec);
+eTypeDef_Of(LeabraDwtNorm);
 eTypeDef_Of(LeabraMomentum);
 eTypeDef_Of(WtBalanceSpec);
 eTypeDef_Of(AdaptWtScaleSpec);

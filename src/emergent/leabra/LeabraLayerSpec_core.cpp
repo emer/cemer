@@ -126,10 +126,43 @@ void LEABRA_LAYER_SPEC::Compute_CosDiff_post(LEABRA_LAYER_STATE* lay, LEABRA_NET
   }
 }
 
+void LEABRA_LAYER_SPEC::Compute_MaxDwts(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
+  for(int i = 0; i < lay->n_send_prjns; i++) {
+    LEABRA_PRJN_STATE* prjn = lay->GetSendPrjnState(net, i);
+    if(prjn->NotActive(net)) continue;
+
+    LEABRA_CON_SPEC_CPP* cs = prjn->GetConSpec(net);
+    
+    float err_dwt_max = 0.0f;
+    float bcm_dwt_max = 0.0f;
+    float dwt_max = 0.0f;
+    
+    for(int ui = 0; ui < lay->n_units; ui++) {
+      LEABRA_UNIT_STATE* u = lay->GetUnitState(net, ui);
+      if(u->lesioned()) continue;
+      LEABRA_CON_STATE* cg = (LEABRA_CON_STATE*)u->SendConStatePrjn(net, prjn);
+      if(!cg) continue;
+      err_dwt_max = fmaxf(cg->err_dwt_max, err_dwt_max);
+      bcm_dwt_max = fmaxf(cg->bcm_dwt_max, bcm_dwt_max);
+      dwt_max = fmaxf(cg->dwt_max, dwt_max);
+    }
+
+    prjn->err_dwt_max = err_dwt_max;
+    prjn->bcm_dwt_max = bcm_dwt_max;
+    prjn->dwt_max = dwt_max;
+
+    cs->dwt_norm.UpdateAvg(prjn->err_dwt_max_avg, err_dwt_max);
+    cs->dwt_norm.UpdateAvg(prjn->bcm_dwt_max_avg, bcm_dwt_max);
+    cs->dwt_norm.UpdateAvg(prjn->dwt_max_avg, dwt_max);
+  }
+}
+
 void LEABRA_LAYER_SPEC::Compute_AbsRelNetin(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
   LEABRA_UNGP_STATE* lgpd = lay->GetLayUnGpState(net);
   LEABRA_UNIT_SPEC_CPP* us = lay->GetUnitSpec(net);
 
+  Compute_MaxDwts(lay, net);
+  
   if(lgpd->netin.max < 0.01f) return; // not getting enough activation to count!
 
   // layer is automatic
@@ -190,6 +223,7 @@ void LEABRA_LAYER_SPEC::Compute_AvgAbsRelNetin(LEABRA_LAYER_STATE* lay, LEABRA_N
   }
   lay->avg_netin_sum.avg = 0.0f;
   lay->avg_netin_sum.max = 0.0f;
+
   lay->avg_netin_n = 0;
   for(int i = 0; i < lay->n_recv_prjns; i++) {
     LEABRA_PRJN_STATE* prjn = lay->GetRecvPrjnState(net, i);

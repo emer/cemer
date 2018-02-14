@@ -251,68 +251,65 @@ private:
 };
 
 
-class STATE_CLASS(LeabraMomentum) : public STATE_CLASS(SpecMemberBase) {
-  // ##INLINE ##NO_TOKENS ##CAT_Leabra implements standard simple momentum and normalization by the overall running-average magnitude of weight changes (which serves as an estimate of the variance in the weight changes, assuming zero net mean overall) -- accentuates consistent directions of weight change and cancels out dithering -- biologically captures slower timecourse of longer-term plasticity mechanisms
+class STATE_CLASS(LeabraDwtNorm) : public STATE_CLASS(SpecMemberBase) {
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra implements dwt normalization, only on error-driven dwt component, based on projection-level max_avg value -- slowly decays and instantly resets to any current max -- serves as an estimate of the variance in the weight changes, assuming zero net mean overall
 INHERITED(SpecMemberBase)
 public:
-  enum NormMode {               // how to normalize dweights -- uses MAX_ABS form of normalization
-    NORM_FB,                    // normalize only feedback connections as indicated by feedback flag -- this works best in large deep networks
-    NORM,                       // normalize by MAX_ABS delta weight
-    NO_NORM,                    // do not normalize weight changes
-  };
-
-  bool          on;             // #DEF_true whether to use standard simple momentum and normalization as function of the running-average magnitude (abs value) of weight changes, which serves as an estimate of the variance in the weight changes, assuming zero net mean overall -- implements MAX_ABS version of normalization -- divide by MAX of abs dwt and slow decay of current aggregated value -- used in AdaMax algorithm of Kingman & Ba (2014)
-  NormMode      norm;           // #CONDSHOW_ON_on if and how to normalize weight changes -- see options -- determines also which lr_comp is used
-  bool          norm_err;       // #CONDSHOW_ON_on&&!norm:NO_NORM only normalize the error-driven component of learning, then add the other component(s) (BCM, margin) to that normalized err before computing momentum
-  float         m_tau;          // #CONDSHOW_ON_on #MIN_1 #DEF_10;20 time constant factor for integration of momentum -- 1/tau is dt (e.g., .1), and 1-1/tau (e.g., .95 or .9) is traditional momentum time-integration factor
-  float         dwavg_tau;      // #CONDSHOW_ON_on #MIN_1 #DEF_1000;10000 time constant for integration of dwavg average of delta weights used in normalization factor -- generally should be long-ish, between 1000-10000 -- integration rate factor is 1/tau
-  float         norm_min;       // #CONDSHOW_ON_on&&!norm:NO_NORM #MIN_0 #DEF_0.001 minimum effective value of the normalization factor -- provides a lower bound to how much normalization can be applied -- in backprop this is typically 1e-8 but larger values work better in Leabra
-  float         norm_lr_comp;   // #MIN_0 #CONDSHOW_ON_on&&!norm:NO_NORM #DEF_0.01 overall learning rate multiplier to compensate for changes due to use of normalization AND momentum  -- allows for a common master learning rate to be used between different conditions: normalization contributes = .1 and momentum = .1, so combined = .01 -- should generally use that value 
-  float         mom_lr_comp;    // #MIN_0 #CONDSHOW_ON_on #DEF_0.1 overall learning rate multiplier to compensate for changes due to JUST momentum without normalization -- allows for a common master learning rate to be used between different conditions -- generally should use .1 to compensate for just momentum itself
+  bool          on;             // whether to use dwt normalization, only on error-driven dwt component, based on projection-level max_avg value -- slowly decays and instantly resets to any current max
+  float         avg_tau;        // #CONDSHOW_ON_on #MIN_1 #DEF_1000;10000 time constant for integration of dwavg average of delta weights used in normalization factor -- generally should be long-ish, between 1000-10000 -- integration rate factor is 1/tau
+  float         norm_min;       // #CONDSHOW_ON_on #MIN_0 #DEF_0.001 minimum effective value of the normalization factor -- provides a lower bound to how much normalization can be applied
+  float         lr_comp;        // #MIN_0 #CONDSHOW_ON_on #DEF_0.002 overall learning rate multiplier to compensate for changes due to use of normalization -- allows for a common master learning rate to be used between different conditions
 
   float         dwavg_dt;      // #READ_ONLY #EXPERT rate constant of delta-weight average integration = 1 / dwavg_tau
   float         dwavg_dt_c;    // #READ_ONLY #EXPERT complement rate constant of delta-weight average integration = 1 - (1 / dwavg_tau)
+
+  INLINE void UpdateAvg(float& max_avg, const float max_dwt) {
+    max_avg = fmaxf(dwavg_dt_c * max_avg, max_dwt);
+  }
+  // update the max_avg running value
+
+  INLINE float EffNormFactor(float max_avg) {
+    if(!on || max_avg == 0.0f) return 1.0f; // not on or first time -- no norm
+    return lr_comp / fmaxf(max_avg, norm_min);
+  }
+  // get the effective normalization factor, as a multiplier, including lrate comp
+  
+  INLINE void   UpdtVals() {
+    dwavg_dt = 1.0f / avg_tau;  dwavg_dt_c = 1.0f - dwavg_dt;
+  }
+  // #IGNORE
+  
+  STATE_DECO_KEY("ConSpec");
+  STATE_TA_STD_CODE_SPEC(LeabraDwtNorm);
+  STATE_UAE( UpdtVals(); );
+private:
+  void  Initialize()    {  Defaults_init(); }
+  void  Defaults_init() {
+    on = true;  avg_tau = 1000.0f;  norm_min = 0.001f; lr_comp = 0.002f;
+    UpdtVals();
+  }
+};
+
+
+class STATE_CLASS(LeabraMomentum) : public STATE_CLASS(SpecMemberBase) {
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra implements standard simple momentum -- accentuates consistent directions of weight change and cancels out dithering -- biologically captures slower timecourse of longer-term plasticity mechanisms
+INHERITED(SpecMemberBase)
+public:
+  bool          on;             // #DEF_true whether to use standard simple momentum 
+  float         m_tau;          // #CONDSHOW_ON_on #MIN_1 #DEF_10;20 time constant factor for integration of momentum -- 1/tau is dt (e.g., .1), and 1-1/tau (e.g., .95 or .9) is traditional momentum time-integration factor
+  float         lr_comp;        // #MIN_0 #CONDSHOW_ON_on #DEF_0.1 overall learning rate multiplier to compensate for changes due to JUST momentum without normalization -- allows for a common master learning rate to be used between different conditions -- generally should use .1 to compensate for just momentum itself
+
   float         m_dt;          // #READ_ONLY #EXPERT rate constant of momentum integration = 1 / m_tau
   float         m_dt_c;        // #READ_ONLY #EXPERT complement rate constant of momentum integration = 1 - (1 / m_tau)
 
-  INLINE bool  IsNormOn(bool fb) {
-    if(norm == NO_NORM) return false;
-    return (norm == NORM || fb);
+  INLINE float ComputeMoment(float& moment, float new_dwt) {
+    moment = m_dt_c * moment + new_dwt;
+    return moment;
   }
-  // check if norm is active given norm setting and whether this is a feedback projection
-  
-  INLINE float ComputeMoment(float& moment, float& dwavg, float err, float bcm,
-                             bool fb) {
-    if(IsNormOn(fb) && norm_err) {
-      dwavg = fmaxf(dwavg_dt_c * dwavg, fabsf(err));
-      if(dwavg != 0.0f)
-        err /= fmaxf(dwavg, norm_min);
-      float new_dwt = err + bcm;
-      moment = m_dt_c * moment + new_dwt;
-      return moment;
-    }
-    else {
-      float new_dwt = err + bcm;
-      dwavg = fmaxf(dwavg_dt_c * dwavg, fabsf(new_dwt));
-      moment = m_dt_c * moment + new_dwt;
-      if(IsNormOn(fb) && (dwavg != 0.0f)) {
-        return moment / fmaxf(dwavg, norm_min);
-      }
-      return moment;
-    }
-  }
-  // compute momentum version of new dwt change -- return normalized momentum value
+  // compute momentum version of new dwt change
 
-  INLINE float LrateComp(bool fb) {
-    if(!on) return 1.0f;
-    if(IsNormOn(fb)) return norm_lr_comp;
-    return mom_lr_comp;
-  }
-  // learning rate compensation factor based on settings and whether this is a feedback projection 
-  
   INLINE void   UpdtVals() {
-    dwavg_dt = 1.0f / dwavg_tau;  dwavg_dt_c = 1.0f - dwavg_dt;  m_dt = 1.0f / m_tau;
-    m_dt_c = 1.0f - m_dt;
+    m_dt = 1.0f / m_tau;  m_dt_c = 1.0f - m_dt;
   }
   // #IGNORE
   
@@ -322,9 +319,7 @@ public:
 private:
   void  Initialize()    {  Defaults_init(); }
   void  Defaults_init() {
-    on = true;  norm = NORM;  norm_err = false;
-    m_tau = 10.0f;  dwavg_tau = 1000.0f;  norm_min = 0.001f;  
-    norm_lr_comp = 0.01f; mom_lr_comp = 0.1f;
+    on = true;  m_tau = 10.0f;  lr_comp = 0.1f;
     UpdtVals();
   }
 };

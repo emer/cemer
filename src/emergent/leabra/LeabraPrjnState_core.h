@@ -10,7 +10,13 @@
   float         avg_netin_rel;        // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic relative netinput values for the recv projections into this layer, averaged over an epoch
   float         avg_netin_rel_sum;    // #NO_SAVE #GUI_READ_ONLY #HIDDEN #DMEM_AGG_SUM #CAT_Statistic relative netinput values for the recv projections into this layer, sum over an epoch (for computing average)
   int           avg_netin_n;          // #NO_SAVE #GUI_READ_ONLY #HIDDEN #DMEM_AGG_SUM #CAT_Statistic count for computing epoch-level averages
-
+  float         err_dwt_max;          // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Learning maximum error-driven weight change across this projection, this trial
+  float         bcm_dwt_max;          // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Learning maximum hebbian BCM weight change across this projection, this trial
+  float         dwt_max;              // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Learning maximum overall weight change across this projection, this trial
+  float         err_dwt_max_avg;      // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Learning time-averaged maximum error-driven weight change across this projection -- decays with conspec dwt_norm.avg_tau time constant and always increases to max when exceeded
+  float         bcm_dwt_max_avg;      // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Learning time-averaged maximum hebbian BCM weight change across this projection -- decays with conspec dwt_norm.avg_tau time constant and always increases to max when exceeded
+  float         dwt_max_avg;          // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Learning time-averaged maximum weight change across this projection -- decays with conspec dwt_norm.avg_tau time constant and always increases to max when exceeded
+  
   LEABRA_AVG_MAX  wb_avg;             // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic average, maximum of average weight above wt_bal.avg_thr across recv con state of units with this projection -- only computed if weight balance mechanism is on and network.lstats.wt_bal is on
   LEABRA_AVG_MAX  wb_avg_pre_hog;     // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic for units with an act_avg value above the pre_hog threshold but below the hog threshold, average, maximum of average weight above wt_bal.avg_thr across recv con state of units with this projection -- only computed if weight balance mechanism is on and network.lstats.wt_bal is on
   LEABRA_AVG_MAX  wb_avg_hog;         // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic for units with an act_avg value above the hog threshold, average, maximum of average weight above wt_bal.avg_thr across recv con state of units with this projection -- only computed if weight balance mechanism is on and network.lstats.wt_bal is on
@@ -33,7 +39,8 @@
   }
 
   INLINE void     Init_Weights_State() {
-    scale_eff = 1.0f;
+    scale_eff = 1.0f; err_dwt_max = 0.0f; bcm_dwt_max = 0.0f; dwt_max = 0.0f;
+    err_dwt_max_avg = 0.0f; bcm_dwt_max_avg = 0.0f; dwt_max_avg = 0.0f;
   }
 
   INLINE void     Init_WtBalStats() {

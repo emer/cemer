@@ -710,8 +710,11 @@
   // #CAT_Statistic compute epoch-level statistics (averages)
   // IMPORTANT: above requires special call by LeabraNetworkState to override base Layer function!
 
+  INIMPL virtual void Compute_MaxDwts(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net);
+  // #CAT_Statistic max dwts over sending projections in this layer -- called by Compute_AbsRelNetin
+
   INIMPL virtual void Compute_AbsRelNetin(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net);
-  // #CAT_Statistic compute the absolute layer-level and relative netinput from different projections into this layer
+  // #CAT_Statistic compute the absolute layer-level and relative netinput from different projections into this layer -- run at Trial_Final
 
   INIMPL virtual void Compute_AvgAbsRelNetin(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net);
   // #CAT_Statistic compute time-average relative netinput from different projections into this layer (e.g., every epoch)
