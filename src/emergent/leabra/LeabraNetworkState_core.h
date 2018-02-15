@@ -36,10 +36,10 @@
   { return thrs_send_deepmodnet_tmp[thr_no]; }
   // #IGNORE temporary sending deep_mod_net netinput memory for given thread 
 
-  INLINE STATE_CLASS(LeabraAvgMax)* ThrUnGpAvgMax(int thr_no, int ungp_idx, AvgMaxVars var) 
-  { return (STATE_CLASS(LeabraAvgMax)*)
+  INLINE LEABRA_AVG_MAX* ThrUnGpAvgMax(int thr_no, int ungp_idx, AvgMaxVars var) 
+  { return (LEABRA_AVG_MAX*)
       (thrs_ungp_avg_max_vals[thr_no] +(n_ungps_built * var + ungp_idx) *
-       sizeof(STATE_CLASS(LeabraAvgMax))); }
+       sizeof(LEABRA_AVG_MAX)); }
   // #IGNORE get AvgMax data for given thread, unit group, and variable
 
 
@@ -335,6 +335,10 @@
   INIMPL virtual void Compute_ActMargin_Thr(int thr_no);
   // #IGNORE
   INIMPL virtual void Compute_ActMargin_Agg();
+  // #IGNORE
+  INIMPL virtual void Compute_AvgLStats_Thr(int thr_no);
+  // #IGNORE
+  INIMPL virtual void Compute_AvgLStats_Agg();
   // #IGNORE
   INIMPL virtual void Compute_RTCycles_Agg();
   // #IGNORE

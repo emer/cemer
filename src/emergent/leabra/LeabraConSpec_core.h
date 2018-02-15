@@ -456,6 +456,9 @@
     float err_dwt_max = 0.0f;
     float bcm_dwt_max = 0.0f;
     float dwt_max = 0.0f;
+    float err_dwt_avg = 0.0f;
+    float bcm_dwt_avg = 0.0f;
+    float dwt_avg = 0.0f;
 
     float* dwts = cg->OwnCnVar(DWT);
     float* fwts = cg->OwnCnVar(FWT);
@@ -484,10 +487,15 @@
       
       bcm *= l_lrn_eff;
       err *= xcal.m_lrn;
-      
-      err_dwt_max = fmaxf(fabsf(err), err_dwt_max);
-      bcm_dwt_max = fmaxf(fabsf(bcm), bcm_dwt_max);
 
+      float abserr = fabsf(err);
+      float absbcm = fabsf(bcm);
+      
+      err_dwt_max = fmaxf(abserr, err_dwt_max);
+      bcm_dwt_max = fmaxf(absbcm, bcm_dwt_max);
+      err_dwt_avg += abserr;
+      bcm_dwt_avg += absbcm;
+      
       err *= err_norm_fact;     // 1 if not normalizing
       
       float new_dwt = bcm + err;
@@ -495,7 +503,9 @@
         new_dwt = momentum.ComputeMoment(moments[i], new_dwt);
       }
 
-      dwt_max = fmaxf(fabsf(new_dwt), dwt_max);
+      float absdwt = fabsf(new_dwt);
+      dwt_max = fmaxf(absdwt, dwt_max);
+      dwt_avg += absdwt;
       
       dwts[i] += lrate_eff * new_dwt;
     }
@@ -503,6 +513,13 @@
     cg->err_dwt_max = err_dwt_max;
     cg->bcm_dwt_max = bcm_dwt_max;
     cg->dwt_max = dwt_max;
+
+    if(sz > 0) {
+      float nrm = 1.0f / (float)sz;
+      cg->err_dwt_avg = err_dwt_avg * nrm;
+      cg->bcm_dwt_avg = bcm_dwt_avg * nrm;
+      cg->dwt_avg = dwt_avg * nrm;
+    }
   }
 
 

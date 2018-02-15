@@ -8,8 +8,11 @@
   float         wb_inc;         // #NO_SAVE #CAT_Learning weight balance increment factor -- extra multiplier to add to weight increases to maintain overall weight balance
   float         wb_dec;         // #NO_SAVE #CAT_Learning weight balance decrement factor -- extra multiplier to add to weight decreases to maintain overall weight balance
   float         err_dwt_max;    // #NO_SAVE #CAT_Learning maximum error-driven weight change across this set of sending connections
+  float         err_dwt_avg;    // #NO_SAVE #CAT_Learning average error-driven weight change across this set of sending connections
   float         bcm_dwt_max;    // #NO_SAVE #CAT_Learning maximum hebbian BCM weight change across this set of sending projections
+  float         bcm_dwt_avg;    // #NO_SAVE #CAT_Learning average hebbian BCM weight change across this set of sending projections
   float         dwt_max;        // #NO_SAVE #CAT_Learning maximum weight change across this set of sending projections
+  float         dwt_avg;        // #NO_SAVE #CAT_Learning average weight change across this set of sending projections
 
 
   INLINE LEABRA_CON_SPEC_CPP* GetConSpec(NETWORK_STATE* nnet) const {
@@ -48,6 +51,7 @@
     net = 0.0f; net_raw = 0.0f;
     wb_avg = 0.0f; wb_fact = 0.0f; wb_inc = 1.0f; wb_dec = 1.0f;
     err_dwt_max = 0.0f; bcm_dwt_max = 0.0f; dwt_max = 0.0f;
+    err_dwt_avg = 0.0f; bcm_dwt_avg = 0.0f; dwt_avg = 0.0f;
   }
   // #IGNORE leabra initialize
 

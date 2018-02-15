@@ -1812,6 +1812,51 @@ void LEABRA_NETWORK_STATE::Compute_ActMargin_Agg() {
   }
 }
 
+void LEABRA_NETWORK_STATE::Compute_AvgLStats_Thr(int thr_no) {
+  const int nugs = n_ungps_built;
+  for(int li = 0; li < nugs; li++) {
+    LEABRA_UNGP_STATE* gpd = GetUnGpState(li);
+    LEABRA_LAYER_STATE* lay = gpd->GetLayerState(this);
+    if(lay->lesioned()) continue;
+    LEABRA_AVG_MAX* am_avg_l = ThrUnGpAvgMax(thr_no, li, AM_AVG_L);
+    am_avg_l->InitVals();
+    LEABRA_AVG_MAX* am_avg_l_lrn = ThrUnGpAvgMax(thr_no, li, AM_AVG_L_LRN);
+    am_avg_l_lrn->InitVals();
+    
+    const int ust = ThrUnGpUnStart(thr_no, li);
+    const int ued = ThrUnGpUnEnd(thr_no, li);
+    for(int ui = ust; ui < ued; ui++) {
+      LEABRA_UNIT_STATE* uv = ThrUnitState(thr_no, ui);
+      if(uv->lesioned()) continue;
+      const int flat_idx = uv->flat_idx;
+      am_avg_l->UpdtVals(uv->avg_l, flat_idx); 
+      am_avg_l_lrn->UpdtVals(uv->avg_l_lrn, flat_idx); 
+    }
+  }
+}
+
+void LEABRA_NETWORK_STATE::Compute_AvgLStats_Agg() {
+  const int nugs = n_ungps_built;
+  for(int li = 0; li < nugs; li++) {
+    LEABRA_UNGP_STATE* gpd = GetUnGpState(li);
+    LEABRA_LAYER_STATE* lay = gpd->GetLayerState(this);
+    if(lay->lesioned()) continue;
+    LEABRA_AVG_MAX& am_avg_l = gpd->am_avg_l;
+    LEABRA_AVG_MAX& am_avg_l_lrn = gpd->am_avg_l_lrn;
+    am_avg_l.InitVals();
+    am_avg_l_lrn.InitVals();
+
+    for(int i=0; i < n_thrs_built; i++) {
+      LEABRA_AVG_MAX* t_am_avg_l = ThrUnGpAvgMax(i, li, AM_AVG_L);
+      am_avg_l.UpdtFmAvgMax(*t_am_avg_l);
+      LEABRA_AVG_MAX* t_am_avg_l_lrn = ThrUnGpAvgMax(i, li, AM_AVG_L_LRN);
+      am_avg_l_lrn.UpdtFmAvgMax(*t_am_avg_l_lrn);
+    }
+    am_avg_l.CalcAvg();
+    am_avg_l_lrn.CalcAvg();
+  }
+}
+
 void LEABRA_NETWORK_STATE::Compute_RTCycles_Agg() {
   if(rt_cycles < 0) // never reached target
     rt_cycles = cycle;       // set to current cyc -- better for integrating
@@ -1935,6 +1980,7 @@ void LEABRA_NETWORK_STATE::Compute_PlusStats_Thr(int thr_no) {
   Compute_AvgActDiff_Thr(thr_no);
   Compute_TrialCosDiff_Thr(thr_no);
   Compute_ActMargin_Thr(thr_no);
+  Compute_AvgLStats_Thr(thr_no);
   //  Compute_HogDeadPcts_Thr(thr_no);  // only in epoch
 }
 
@@ -1949,6 +1995,7 @@ void LEABRA_NETWORK_STATE::Compute_PlusStats_Agg() {
   Compute_AvgActDiff_Agg();
   Compute_TrialCosDiff_Agg();
   Compute_ActMargin_Agg();
+  Compute_AvgLStats_Agg();
   //  Compute_HogDeadPcts_Agg();  // only in epoch
 }
 

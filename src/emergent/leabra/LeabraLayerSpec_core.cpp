@@ -132,28 +132,25 @@ void LEABRA_LAYER_SPEC::Compute_MaxDwts(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_
     if(prjn->NotActive(net)) continue;
 
     LEABRA_CON_SPEC_CPP* cs = prjn->GetConSpec(net);
-    
-    float err_dwt_max = 0.0f;
-    float bcm_dwt_max = 0.0f;
-    float dwt_max = 0.0f;
-    
+
+    prjn->am_err_dwt.InitVals();
+    prjn->am_bcm_dwt.InitVals();
+    prjn->am_dwt.InitVals();
+
     for(int ui = 0; ui < lay->n_units; ui++) {
       LEABRA_UNIT_STATE* u = lay->GetUnitState(net, ui);
       if(u->lesioned()) continue;
       LEABRA_CON_STATE* cg = (LEABRA_CON_STATE*)u->SendConStatePrjn(net, prjn);
       if(!cg) continue;
-      err_dwt_max = fmaxf(cg->err_dwt_max, err_dwt_max);
-      bcm_dwt_max = fmaxf(cg->bcm_dwt_max, bcm_dwt_max);
-      dwt_max = fmaxf(cg->dwt_max, dwt_max);
+      const int flat_idx = u->flat_idx;
+      prjn->am_err_dwt.UpdtSepAvgMax(cg->err_dwt_avg, cg->err_dwt_max, flat_idx);
+      prjn->am_bcm_dwt.UpdtSepAvgMax(cg->bcm_dwt_avg, cg->bcm_dwt_max, flat_idx);
+      prjn->am_dwt.UpdtSepAvgMax(cg->dwt_avg, cg->dwt_max, flat_idx);
     }
 
-    prjn->err_dwt_max = err_dwt_max;
-    prjn->bcm_dwt_max = bcm_dwt_max;
-    prjn->dwt_max = dwt_max;
-
-    cs->dwt_norm.UpdateAvg(prjn->err_dwt_max_avg, err_dwt_max);
-    cs->dwt_norm.UpdateAvg(prjn->bcm_dwt_max_avg, bcm_dwt_max);
-    cs->dwt_norm.UpdateAvg(prjn->dwt_max_avg, dwt_max);
+    cs->dwt_norm.UpdateAvg(prjn->err_dwt_max_avg, prjn->am_err_dwt.max);
+    cs->dwt_norm.UpdateAvg(prjn->bcm_dwt_max_avg, prjn->am_bcm_dwt.max);
+    cs->dwt_norm.UpdateAvg(prjn->dwt_max_avg, prjn->am_dwt.max);
   }
 }
 

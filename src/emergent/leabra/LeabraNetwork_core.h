@@ -5,13 +5,15 @@
     PLUS_PHASE = 1,             // plus phase
   };
 
-  enum AvgMaxVars { // variables that we collect average and max values of -- thread optimized -- coordintate with LeabraInhib.h
+  enum AvgMaxVars { // variables that we collect average and max values of -- thread optimized
     AM_NET,
     AM_NET_RAW,
     AM_ACT,
     AM_ACT_EQ,
     AM_ACT_RAW,
     AM_UN_G_I,
+    AM_AVG_L,
+    AM_AVG_L_LRN,
     AM_DEEP_RAW,
     AM_DEEP_NET,
     N_AM_VARS,

@@ -42,7 +42,7 @@ INHERITED(taOBase)
 public:
   float         avg;            // #DMEM_AGG_SUM average value
   float         max;            // #DMEM_AGG_SUM maximum value
-  int           max_i;          // index of unit with maximum value
+  int           max_i;          // flat_idx index of unit with maximum value -- can look this up directly in flat list of units in network
   float         sum;            // #DMEM_AGG_SUM sum for computing average
   int           n;              // #DMEM_AGG_SUM number of items in sum
 
@@ -64,6 +64,10 @@ public:
   INLINE void   CopyFmAvgMax(const STATE_CLASS(LeabraAvgMax)& oth)
   { avg = oth.avg;  max = oth.max; max_i = oth.max_i; sum = oth.sum; n = oth.n; }
   // copy from other
+  
+  INLINE void   UpdtSepAvgMax(float avg_val, float max_val, int idx)
+  { sum += avg_val; ++n; if(max_val > max) { max = max_val; max_i = idx; } }
+  // update average and max values separately -- e.g., from values that are already separately avg and max values
 
 #ifdef STATE_MAIN
   LeabraAvgMax& operator =(const LeabraAvgMax_cpp& oth)

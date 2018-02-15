@@ -35,7 +35,7 @@ TA_BASEFUNS_CTORS_DEFN(LeabraInitSpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraDtSpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraActAvgSpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraAvgLSpec);
-TA_BASEFUNS_CTORS_DEFN(LeabraAvgL2Spec);
+TA_BASEFUNS_CTORS_DEFN(LeabraAvgLLrnSpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraChannels);
 TA_BASEFUNS_CTORS_DEFN(KNaAdaptSpec);
 TA_BASEFUNS_CTORS_DEFN(KNaAdaptMiscSpec);
@@ -135,6 +135,9 @@ void LeabraUnitSpec::UpdateAfterEdit_impl() {
   vm_range.UpdateAfterEdit_NoGui();
   dt.UpdateAfterEdit_NoGui();
   act_avg.UpdateAfterEdit_NoGui();
+  avg_l.UpdateAfterEdit_NoGui();
+  avg_l_lrn.avg_l_min = avg_l.min;
+  avg_l_lrn.UpdateAfterEdit_NoGui();
   kna_adapt.UpdateAfterEdit_NoGui();
   stp.UpdateAfterEdit_NoGui();
   deep.UpdateAfterEdit_NoGui();

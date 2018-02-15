@@ -9,8 +9,8 @@
   float         da_p;           // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Learning positive valence oriented dopamine-like modulatory value (where applicable)
   float         da_n;           // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Learning positive valence oriented dopamine-like modulatory value (where applicable)
   float         sev;            // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Learning serotonin-like modulatory value (where applicable)
-  STATE_CLASS(LeabraAvgMax)        avg_netin;        // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Activation minus-phase net input values for the layer, averaged over an epoch-level timescale
-  STATE_CLASS(LeabraAvgMax)        avg_netin_sum;        // #NO_SAVE #GUI_READ_ONLY #HIDDEN #CAT_Activation #DMEM_AGG_SUM sum of net input values for the layer, for computing average over an epoch-level timescale
+  LEABRA_AVG_MAX        avg_netin;        // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Activation minus-phase net input values for the layer, averaged over an epoch-level timescale
+  LEABRA_AVG_MAX        avg_netin_sum;        // #NO_SAVE #GUI_READ_ONLY #HIDDEN #CAT_Activation #DMEM_AGG_SUM sum of net input values for the layer, for computing average over an epoch-level timescale
   int           avg_netin_n;        // #NO_SAVE #GUI_READ_ONLY #HIDDEN #CAT_Activation #DMEM_AGG_SUM number of times sum is updated for computing average
   float         pre_hog_pct;        // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic the percentage of units in the layer that have a long-time-averaged activitation level that is above the layerspec pre_hog_thr threshold, indicating that they are potentialy on their way toward 'hogging' the representational space (because this is computed on a time average, there is no epoch average of this statistic)
   float         hog_pct;           // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic the percentage of units in the layer that have a long-time-averaged activitation level that is above the layerspec hog_thr threshold, indicating that they are 'hogging' the representational space (because this is computed on a time average, there is no epoch average of this statistic)
@@ -19,7 +19,7 @@
   float         max_err;        // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic max activity error value for this layer -- is 0 if the most active unit in the layer (or across unit groups if unit groups are present and inhibition uses them) has a non-zero target value -- otherwise 1 -- in other words, is the most active unit a target unit?  this only really makes sense for localist single-unit activity layers (although multiple units can be set to targets to allow for multiple options).  it is a highly sensitive measure, allowing for any other kinds of activity in the layer
   float         norm_err;        // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic normalized binary error value for this layer, computed subject to the parameters on the network
   STATE_CLASS(Average)        avg_norm_err;        // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #DMEM_AGG_SUM average normalized binary error value (computed over previous epoch)
-  float                cos_err;        // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic cosine (normalized dot product) error on this trial for this layer, comparing targ vs. act_m
+  float         cos_err;        // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic cosine (normalized dot product) error on this trial for this layer, comparing targ vs. act_m
   STATE_CLASS(Average)        avg_cos_err;        // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #DMEM_AGG_SUM average cosine (normalized dot product) error (computed over previous epoch)
   float         cos_diff;        // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic cosine (normalized dot product) activation difference between act_p and act_m on this trial for this layer -- computed by Compute_CosDiff -- must be called after Quarter_Final in plus phase to get act_p values
   STATE_CLASS(Average)        avg_cos_diff;        // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #DMEM_AGG_SUM average cosine (normalized dot product) diff (computed over previous epoch)
@@ -43,12 +43,14 @@
   float         acts_m_avg;        // #GUI_READ_ONLY #SHOW #CAT_Activation #SAVE_WTS COPIED FROM UNGP STATE: time-averaged minus-phase activation stats for the layer -- this is used for adaptive inhibition tuning (inhib_adapt in LeabraLayerSpec) -- time constant in layer spec avg_act.tau and initialized to avg_act.init -- saved with weights
   float         acts_p_avg;        // #GUI_READ_ONLY #SHOW #CAT_Activation #SAVE_WTS COPIED FROM UNGP STATE: time-averaged plus-phase activation stats for the layer -- time constant in layer spec avg_act.tau and initialized to avg_act.init -- this is used for netinput scaling (via _eff version) and should match reasonably well with act_avg.init value -- saved with weights
   float         acts_p_avg_eff;    // #GUI_READ_ONLY #SHOW #CAT_Activation #SAVE_WTS COPIED FROM UNGP STATE: acts_p_avg * avg_act.adjust factor -- this is the effective value actually used for netinput scaling based on layer activation levels -- saved with weights
-  STATE_CLASS(LeabraAvgMax)    netin;      // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Activation average, maximum net input values for the layer
-  STATE_CLASS(LeabraAvgMax)    netin_m;    // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Activation average, maximum net input values for the layer, minus phase
-  STATE_CLASS(LeabraAvgMax)    acts;       // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Activation average, maximum activation values for the layer
-  STATE_CLASS(LeabraAvgMax)    acts_eq;    // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Activation average, maximum act_eq values for the layer
-  STATE_CLASS(LeabraAvgMax)    acts_m;        // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Activation average, maximum minus-phase activation stats for the layer (from acts_eq at end of minus phase)
-  STATE_CLASS(LeabraAvgMax)    acts_p;        // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Activation average, maximum plus-phase activation stats for the layer (from acts_eq at end of plus phase)
+  LEABRA_AVG_MAX    netin;         // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Activation average, maximum net input values for the layer
+  LEABRA_AVG_MAX    netin_m;       // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Activation average, maximum net input values for the layer, minus phase
+  LEABRA_AVG_MAX    acts;          // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Activation average, maximum activation values for the layer
+  LEABRA_AVG_MAX    acts_eq;       // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Activation average, maximum act_eq values for the layer
+  LEABRA_AVG_MAX    acts_m;        // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Activation average, maximum minus-phase activation stats for the layer (from acts_eq at end of minus phase)
+  LEABRA_AVG_MAX    acts_p;        // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Activation average, maximum plus-phase activation stats for the layer (from acts_eq at end of plus phase)
+  LEABRA_AVG_MAX    am_avg_l;      // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Activation average, maximum long-term average activation, avg_l, used for dynamic floating threshold in BCM hebbian learning 
+  LEABRA_AVG_MAX    am_avg_l_lrn;  // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Activation average, maximum learning rate based on long-term average activation, avg_l_lrn -- determines how much BCM hebbian learning occurs
 
 
   INLINE LEABRA_LAYER_SPEC_CPP* GetLayerSpec(NETWORK_STATE* net) const
@@ -107,9 +109,11 @@
   // Get the total act_q0 activation in the layer based on average and number of units
 
   INLINE void   CopyFromUnGpState(LEABRA_UNGP_STATE* ugp) {
-    acts_m_avg = ugp->acts_m_avg;  acts_p_avg = ugp->acts_p_avg;   acts_p_avg_eff = ugp->acts_p_avg_eff;
+    acts_m_avg = ugp->acts_m_avg;  acts_p_avg = ugp->acts_p_avg;
+    acts_p_avg_eff = ugp->acts_p_avg_eff;
     netin = ugp->netin;  netin_m = ugp->netin_m;  acts = ugp->acts;  acts_eq = ugp->acts_eq;
     acts_m = ugp->acts_m;  acts_p = ugp->acts_p;
+    am_avg_l = ugp->am_avg_l;  am_avg_l_lrn = ugp->am_avg_l_lrn;
   }
   // copy stats from unit group state to make avail at layer level
 
@@ -139,7 +143,7 @@
     da_p = 0.0f;    da_n = 0.0f;    sev = 0.0f;
     net_sd = 0.0f;    avg_net_sd.ResetAvg();
     netin.InitVals(); netin_m.InitVals(); acts.InitVals(); acts_eq.InitVals();
-    acts_m.InitVals(); acts_p.InitVals();
+    acts_m.InitVals(); acts_p.InitVals();  am_avg_l.InitVals(); am_avg_l_lrn.InitVals();
   }
   // initialize all the statistics values
 
