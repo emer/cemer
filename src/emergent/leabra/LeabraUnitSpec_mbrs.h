@@ -408,9 +408,6 @@ public:
   float         init;           // #DEF_0.4 #MIN_0 #MAX_1 initial avg_l value at start of training
   float         gain;           // #DEF_1.5;2;2.5;3;4;5 #AKA_max #MIN_0 gain multiplier on activation used in computing the running average avg_l value that is the key floating threshold in the BCM Hebbian learning rule -- when using the DELTA_FF_FB learning rule, it should generally be 2x what it was before with the old XCAL_CHL rule, i.e., default of 5 instead of 2.5 -- it is a good idea to experiment with this parameter a bit -- the default is on the high-side, so typically reducing a bit from initial default is a good direction
   float         min;            // #DEF_0.2 #MIN_0 miniumum avg_l value -- running average cannot go lower than this value even when it otherwise would due to inactivity -- this value is generally good and typically does not need to be changed
-  bool          lay_avg_gain;   // adjust the effective gain as a function of the layer average activation, relative to lay_avg_trg taret activation -- more sparsely active layers have a higher effective gain to compensate for lower baserate activity levels
-  float         lay_avg_trg;    // #CONDSHOW_ON_lay_avg_gain #DEF_0.15 target layer average activation where gain applies -- see lay_avg_gain
-  float         max_gain_mult;  // #CONDSHOW_ON_lay_avg_gain #DEF_4 maximum gain multiplier for lay_avg_gain mode -- prevent gain from going too crazy high
   float         tau;            // #DEF_10 #MIN_1 time constant for updating the running average avg_l -- avg_l moves toward gain*act with this time constant on every trial - longer time constants can also work fine, but the default of 10 allows for quicker reaction to beneficial weight changes
   float         lay_act_thr;    // #DEF_0.01 threshold of layer average activation on this trial, in order to update avg_l values -- setting to 0 disables this check
   
@@ -418,20 +415,13 @@ public:
   float         min_lay_avg;    // #READ_ONLY #EXPERT lay_avg_trg / max_gain_mult
 
   INLINE void   UpdtAvgL(float& avg_l, const float act, float lay_avg) {
-    float eff_gain = gain;
-    if(lay_avg_gain) {
-      lay_avg = fmaxf(lay_avg, min_lay_avg);
-      float gain_mult = lay_avg_trg / lay_avg;
-      eff_gain = gain * gain_mult;
-    }
-    avg_l += dt * (eff_gain * act - avg_l);
+    avg_l += dt * (gain * act - avg_l);
     if(avg_l < min) avg_l = min;
   }
   // update long-term average value from given activation, using average-based update
 
   INLINE void UpdtVals() {
     dt = 1.0f / tau;
-    min_lay_avg = lay_avg_trg / max_gain_mult;
   }
   // #IGNORE
   
@@ -444,7 +434,6 @@ private:
   void        Initialize()      { Defaults_init(); }
   void        Defaults_init() {
     init = 0.4f;  gain = 2.5f;  min = 0.2f;
-    lay_avg_gain = false; lay_avg_trg = 0.15f; max_gain_mult = 4.0f;
     tau = 10.0f; lay_act_thr = 0.01f;
     UpdtVals();
   }

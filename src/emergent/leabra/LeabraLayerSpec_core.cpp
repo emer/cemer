@@ -148,6 +148,10 @@ void LEABRA_LAYER_SPEC::Compute_MaxDwts(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_
       prjn->am_dwt.UpdtSepAvgMax(cg->dwt_avg, cg->dwt_max, flat_idx);
     }
 
+    prjn->am_err_dwt.CalcAvg();
+    prjn->am_bcm_dwt.CalcAvg();
+    prjn->am_dwt.CalcAvg();
+
     cs->dwt_norm.UpdateAvg(prjn->err_dwt_max_avg, prjn->am_err_dwt.max);
     cs->dwt_norm.UpdateAvg(prjn->bcm_dwt_max_avg, prjn->am_bcm_dwt.max);
     cs->dwt_norm.UpdateAvg(prjn->dwt_max_avg, prjn->am_dwt.max);
