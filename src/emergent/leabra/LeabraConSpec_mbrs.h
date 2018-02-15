@@ -256,6 +256,8 @@ class STATE_CLASS(LeabraDwtNorm) : public STATE_CLASS(SpecMemberBase) {
 INHERITED(SpecMemberBase)
 public:
   bool          on;             // whether to use dwt normalization, only on error-driven dwt component, based on projection-level max_avg value -- slowly decays and instantly resets to any current max
+  bool          err_only;       // #CONDSHOW_ON_on only normalize the error-driven component of learning
+  bool          prjn;           // #CONDSHOW_ON_on use the projection-level max_abs in normalization -- otherwise uses synapse-specific normalization factor
   float         avg_tau;        // #CONDSHOW_ON_on #MIN_1 #DEF_1000;10000 time constant for integration of dwavg average of delta weights used in normalization factor -- generally should be long-ish, between 1000-10000 -- integration rate factor is 1/tau
   float         norm_min;       // #CONDSHOW_ON_on #MIN_0 #DEF_0.001 minimum effective value of the normalization factor -- provides a lower bound to how much normalization can be applied
   float         lr_comp;        // #MIN_0 #CONDSHOW_ON_on #DEF_0.1 overall learning rate multiplier to compensate for changes due to use of normalization -- allows for a common master learning rate to be used between different conditions
@@ -285,7 +287,8 @@ public:
 private:
   void  Initialize()    {  Defaults_init(); }
   void  Defaults_init() {
-    on = false;  avg_tau = 1000.0f;  norm_min = 0.001f; lr_comp = 0.1f;
+    on = false;  err_only = false; prjn = false; avg_tau = 1000.0f;  norm_min = 0.001f;
+    lr_comp = 0.1f;
     UpdtVals();
   }
 };

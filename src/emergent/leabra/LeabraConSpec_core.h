@@ -447,7 +447,13 @@
     const int sz = cg->size;
 
     LEABRA_PRJN_STATE* prjn = cg->GetPrjnState(net);
-    float err_norm_fact = dwt_norm.EffNormFactor(prjn->err_dwt_max_avg);
+    float norm_fact = 1.0f;
+    if(dwt_norm.err_only) {
+      norm_fact = dwt_norm.EffNormFactor(prjn->err_dwt_max_avg);
+    }
+    else {
+      norm_fact = dwt_norm.EffNormFactor(prjn->dwt_max_avg);
+    }
 
     if(momentum.on) {
       clrate *= momentum.lr_comp;
@@ -462,9 +468,9 @@
 
     float* dwts = cg->OwnCnVar(DWT);
     float* fwts = cg->OwnCnVar(FWT);
-
     float* dwavgs = cg->OwnCnVar(DWAVG);
     float* moments = cg->OwnCnVar(MOMENT);
+    
     for(int i=0; i<sz; i++) {
       LEABRA_UNIT_STATE* ru = cg->UnState(i, net);
       if(ru->lesioned()) continue;
@@ -495,10 +501,29 @@
       bcm_dwt_max = fmaxf(absbcm, bcm_dwt_max);
       err_dwt_avg += abserr;
       bcm_dwt_avg += absbcm;
-      
-      err *= err_norm_fact;     // 1 if not normalizing
+
+      if(dwt_norm.on && dwt_norm.err_only) {
+        if(dwt_norm.prjn) {
+          err *= norm_fact;     // 1 if not normalizing
+        }
+        else {
+          dwt_norm.UpdateAvg(dwavgs[i], abserr); // this comes first in synapse-specific version..
+          err *= dwt_norm.EffNormFactor(dwavgs[i]);
+        }
+      }
       
       float new_dwt = bcm + err;
+
+      if(dwt_norm.on && !dwt_norm.err_only) {
+        if(dwt_norm.prjn) {
+          new_dwt *= norm_fact;     // 1 if not normalizing
+        }
+        else {
+          dwt_norm.UpdateAvg(dwavgs[i], fabsf(new_dwt)); // this comes first in synapse-specific version..
+          new_dwt *= dwt_norm.EffNormFactor(dwavgs[i]);
+        }
+      }
+      
       if(momentum.on) {
         new_dwt = momentum.ComputeMoment(moments[i], new_dwt);
       }
