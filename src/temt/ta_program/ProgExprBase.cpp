@@ -1245,6 +1245,7 @@ Completions* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_po
       taList_impl* tal = NULL;
       taBase* base_base = NULL;
       TypeDef* own_td = NULL;
+      ProgVar* st_var = NULL;
       if(path_base) {
         base_base = path_base;
         path_rest = base_path;
@@ -1258,7 +1259,6 @@ Completions* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_po
         if (path_var.empty()) {
           path_var = base_path;
         }
-        ProgVar* st_var = NULL;
         if(own_fun)
           st_var = own_fun->FindVarName(path_var);
         if(!st_var)
@@ -1361,7 +1361,12 @@ Completions* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_po
         }
       }
       else if(lookup_td) {
-        if(path_base || path_base_typ) {          // can only lookup members, not methods
+        // special case
+        if (lookup_td->name == "DataTableCols") {
+          String message = "The DataTable variable " + st_var->GetName() + " is NULL, no column name completion.";
+          taMisc::Warning(message);
+        }
+        else if(path_base || path_base_typ) {          // can only lookup members, not methods
           GetMembersForType(lookup_td, &completion_member_list);
         }
         else {
