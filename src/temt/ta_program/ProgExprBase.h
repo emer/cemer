@@ -62,11 +62,12 @@ public:
     NOT_SET,
     ENUM,           // just enums - basically all you can have for case:
     VARIOUS,        // could be one of several types - e.g. at start of line - could be a data type, program variable, program element, etc.
-    OBJ_MEMB_METH,  // object. or object-> list will be members and methods
+    OBJ_MEMBER,     // object. or object-> list will be members and methods
+    OBJ_METHOD,     // method called object variable, list will be members
+    MEMBER_METHOD,  // method called on object member, list will be members
     SCOPED,         // class::
     CALL,           // call of program or call of function
     PROGRAM_FUNCTION, //  call of a function in another program
-    METHOD,         // method. list will be members
     ASSIGN,         // could be ProgVar, method, function but not program
     EQUALITY,       // either == or !=
     STRING_INDEX,   // access of list/group item by name i.e. "string" or access of datatable column by name

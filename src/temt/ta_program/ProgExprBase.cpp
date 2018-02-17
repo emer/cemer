@@ -737,7 +737,7 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
       expr_start_pos += shift;
       prepend_txt = txt.before(expr_start_pos);
       lookup_seed = txt.after(delim_pos[0]);
-      lookup_type = ProgExprBase::METHOD;
+      lookup_type = ProgExprBase::OBJ_METHOD;
       delims_used = delim_pos.size;  // this will keep us from falling into the conditional "delim_pos.size > delims_used" until that bit is eliminated
       
       int left_parens_pos = base_path.index('(', -1);
@@ -751,10 +751,12 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
         path_rest = path_rest.after(separator_end);
         path_var = base_path.before(separator_start);
       }
-      // path_var is at the start of the path - handles cases where path has more than one separator
-      // we still don't handle var.member.method. or similar paths with intermediate members/methods
+      // path_var is at the start of the path
       if (FindPathSeparator(path_var, separator_start, separator_end, false)) {
         path_var = path_var.before(separator_start);
+      }
+      if (path_rest.contains('.') || path_rest.contains("->")) {
+        lookup_type = ProgExprBase::MEMBER_METHOD;
       }
     }
     else if(txt[delim_pos[0]] == '.') { // path sep = .
@@ -770,7 +772,7 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
         expr_start_pos += shift;
         prepend_txt = txt.before(expr_start_pos);
         lookup_seed = txt.after(delim_pos[0]);
-        lookup_type = ProgExprBase::OBJ_MEMB_METH;
+        lookup_type = ProgExprBase::OBJ_MEMBER;
         delims_used = 1;
         if (delim_pos.size > 1 && txt[delim_pos[1]] == ']') {
           lookup_group_default = true;
@@ -809,7 +811,7 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
       expr_start_pos += shift;
       prepend_txt = txt.before(expr_start_pos);
       lookup_seed = txt.after(delim_pos[0]);
-      lookup_type = ProgExprBase::METHOD;
+      lookup_type = ProgExprBase::OBJ_METHOD;
       delims_used = delim_pos.size;  // this will keep us from falling into the conditional "delim_pos.size > delims_used" until that bit is eliminated
       
       // check for both '.' and "->" delimiters
@@ -824,10 +826,12 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
         path_rest = path_rest.after(separator_end);
         path_var = base_path.before(separator_start);
       }
-      // path_var is at the start of the path - handles cases where path has more than one separator
-      // we still don't handle var.member.method. or similar paths with intermediate members/methods
+      // path_var is at the start of the path
       if (FindPathSeparator(path_var, separator_start, separator_end, false)) {
         path_var = path_var.before(separator_end);
+      }
+      if (path_rest.contains('.') || path_rest.contains("->")) {
+        lookup_type = ProgExprBase::MEMBER_METHOD;
       }
     }
     else if(delim_pos.size > 1 && txt[delim_pos[0]] == '>' && txt[delim_pos[1]] == '-'
@@ -843,7 +847,7 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
       expr_start_pos += shift;
       prepend_txt = txt.before(expr_start_pos);
       lookup_seed = txt.after(delim_pos[0]);
-      lookup_type = ProgExprBase::OBJ_MEMB_METH;
+      lookup_type = ProgExprBase::OBJ_MEMBER;
       delims_used = 2;
       if (delim_pos.size > 2 && txt[delim_pos[2]] == ']') {
         lookup_group_default = true;
@@ -1173,7 +1177,7 @@ Completions* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_po
       break;
     }
 
-    case ProgExprBase::METHOD: {
+    case ProgExprBase::OBJ_METHOD: {
       TypeDef* lookup_td = NULL;
       ProgVar* st_var = NULL;
       st_var = own_prg->FindVarName(path_var);
@@ -1192,6 +1196,39 @@ Completions* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_po
       break;
     }
       
+    case ProgExprBase::MEMBER_METHOD: {
+      TypeDef* lookup_td = NULL;
+      ProgVar* st_var = NULL;
+      taBase* base_base = NULL;
+      
+      st_var = own_prg->FindVarName(path_var);
+      if (st_var) {
+        base_base = st_var->object_val;
+        if (base_base) {
+          TypeDef* var_td = st_var->object_type;
+          if (var_td) {
+            MemberDef* mbr_def = NULL;
+            String path_rest_mod = path_rest;
+            path_rest_mod = path_rest_mod.repl("->", ".");
+            String member_path = path_rest_mod.before('.', -1);
+            String method_name = path_rest_mod.after('.', -1);
+            taBase* mbr_base = base_base->FindFromPath(member_path, mbr_def);
+            if (mbr_base) {
+              TypeDef* mbr_td = mbr_base->GetTypeDef();
+              MethodDef* mth_def = mbr_td->methods.FindName(method_name);
+              if (mth_def) {
+                lookup_td = mth_def->type;  // get the return type
+              }
+            }
+          }
+        }
+      }
+      if (lookup_td) {
+        GetMembersForType(lookup_td, &completion_member_list);
+      }
+      break;
+    }
+
     case ProgExprBase::STRING_INDEX: {
       TypeDef* lookup_td = NULL;
       taList_impl* tal = NULL;
@@ -1240,7 +1277,7 @@ Completions* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_po
       break;
     }
   
-    case ProgExprBase::OBJ_MEMB_METH: {                     // members/methods
+    case ProgExprBase::OBJ_MEMBER: {
       TypeDef* lookup_td = NULL;
       taList_impl* tal = NULL;
       taBase* base_base = NULL;
