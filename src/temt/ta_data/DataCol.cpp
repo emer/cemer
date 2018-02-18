@@ -800,7 +800,9 @@ bool DataCol::SetValAsBool_impl(bool val, int row, int cell) {
 bool DataCol::InitVals(const Variant& init_val, int st_row, int n_rows)  {
   if(n_rows < 0)
     n_rows = rows() - st_row;
-  for(int i=0; i<n_rows; i++) {
+  if (n_rows + st_row > rows())
+    n_rows = rows() - st_row;
+  for(int i=st_row; i<st_row + n_rows; i++) {
     SetVal(init_val, i);
   }
   return true;
@@ -809,8 +811,10 @@ bool DataCol::InitVals(const Variant& init_val, int st_row, int n_rows)  {
 bool DataCol::InitValsToRowNo(int st_row, int n_rows)  {
   if(n_rows < 0)
     n_rows = rows() - st_row;
-  for(int i=0; i<n_rows; i++) {
-    SetValAsInt(st_row + i, st_row + i);
+  if (n_rows + st_row > rows())
+    n_rows = rows() - st_row;
+  for(int i=st_row; i<st_row + n_rows; i++) {
+    SetValAsInt(i, i);
   }
   return true;
 }
@@ -818,14 +822,16 @@ bool DataCol::InitValsToRowNo(int st_row, int n_rows)  {
 bool DataCol::InitValsByIncrement(float first_value, float increment, int st_row, int n_rows)  {
   if(n_rows < 0)
     n_rows = rows() - st_row;
+  if (n_rows + st_row > rows())
+    n_rows = rows() - st_row;
   if(valType() == VT_INT) {
-    for(int i=0; i<n_rows; i++) {
-      SetValAsInt(first_value + i*increment, st_row + i);
+    for(int i=st_row; i<st_row + n_rows; i++) {
+      SetValAsInt(first_value + (i-st_row)*increment, i);
     }
   }
   else {
-    for(int i=0; i<n_rows; i++) {
-      SetValAsFloat(first_value + (float)i*increment, st_row + i);
+    for(int i=st_row; i<st_row + n_rows; i++) {
+      SetValAsFloat(first_value + (float)(i-st_row)*increment, i);
     }
   }
   return true;
