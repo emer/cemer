@@ -73,22 +73,22 @@ public:
   bool                off;              // #NO_SAVE_EMPTY set this to not use this netmon item
   bool                error;            // #NO_SAVE #READ_ONLY an error was detected on this item, preventing this item from generating data -- the error message will be shown at check config time
   String              error_msg;        // #NO_SAVE #CONDSHOW_ON_error #READ_ONLY #SHOW if you are seeing this message then there was an error with this monitor and this tells you what the problem is -- you can turn the item off to ignore the error temporarily
-  bool                computed; // if true, this value is computed separately in a program, and this is here just to make a place for it in the output data (note: computation sold separately -- must be performed elsewhere)
+  bool                computed;         // if true, this value is computed separately in a program, and this is here just to make a place for it in the output data (note: computation sold separately -- must be performed elsewhere)
   TypeDef*            object_type;      // #CONDSHOW_OFF_computed #TYPE_taOBase type of object to monitor (narrows down the choices when choosing the object)
   taSmartRef          object;           // #CONDSHOW_OFF_computed #TYPE_ON_object_type #PROJ_SCOPE the network object being monitored
-  String              variable; //  #ADD_COMPLETER_SIMPLE #CONDSHOW_OFF_computed Variable on object to monitor.  Can also be a variable on sub-objects (e.g., act on Layer or Network will get all unit activations); r. and s. indicate recv and send connection vals (e.g., r.wt), projections.varname or prjns.varname gets projection-level variables, and layers.varname specifically targets layer-level variables (important for same-name variables on network and layer); can specify vars on particular unit(s) within a layer as 'units[index<-endidx>].varname' or 'units[gpno][index<-endidx>].varname' where the index value is a leaf in the first case and within a given unit group in the second -- in both cases a range of units can be optionally specified -- also 'ungp[gpno]' accesses UnGpState variables, with gpno=-1 for layer-level group, 0..n-1 for specific unit groups (range avail too) -- use user_data.data_name to access user data variables by name
+  String              variable;         //  #ADD_COMPLETER_SIMPLE #CONDSHOW_OFF_computed Variable on object to monitor.  Can also be a variable on sub-objects (e.g., act on Layer or Network will get all unit activations); r. and s. indicate recv and send connection vals (e.g., r.wt), projections.varname or prjns.varname gets projection-level variables, and layers.varname specifically targets layer-level variables (important for same-name variables on network and layer); can specify vars on particular unit(s) within a layer as 'units[index<-endidx>].varname' or 'units[gpno][index<-endidx>].varname' where the index value is a leaf in the first case and within a given unit group in the second -- in both cases a range of units can be optionally specified -- also 'ungp[gpno]' accesses UnGpState variables, with gpno=-1 for layer-level group, 0..n-1 for specific unit groups (range avail too) -- use user_data.data_name to access user data variables by name
   String              var_label;        // #CONDSHOW_OFF_computed label to use in place of variable in naming the columns/columns generated from this data (if empty, variable is used)
-  NameStyle           name_style;        // #CONDSHOW_OFF_computed how to name the columns/columns generated from this data?
-  int                 max_name_len;      // #DEF_6 maximum length for any name segment
-  MonOptions          options;         // #CONDSHOW_OFF_computed misc options for modifying the way that monitors operate
+  NameStyle           name_style;       // #CONDSHOW_OFF_computed how to name the columns/columns generated from this data?
+  int                 max_name_len;     // #DEF_6 maximum length for any name segment
+  MonOptions          options;          // #CONDSHOW_OFF_computed||object_type:LeabraLayer||object_type:Layer misc options for modifying the way that monitors operate
 
-  ValType             val_type;       // #CONDSHOW_ON_computed type of data column to create (only for computed variables)
+  ValType             val_type;         // #CONDSHOW_ON_computed type of data column to create (only for computed variables)
   bool                matrix;           // #CONDSHOW_ON_computed if true, create a matrix data column (otherwise scalar)
   MatrixGeom          matrix_geom;      // #CONDSHOW_ON_matrix&&computed geometry of matrix to create if a matrix type
 
   bool                data_agg;         // #CONDSHOW_ON_computed compute value automatically from a column of data in another data table
-  DataTableRef        data_src; // #CONDSHOW_ON_data_agg source data for data aggregation operation
-  DataOpEl            agg_col;  // #CONDSHOW_ON_data_agg #NO_AUTO_NAME column name in data_src data table to get data to aggregate from
+  DataTableRef        data_src;         // #CONDSHOW_ON_data_agg source data for data aggregation operation
+  DataOpEl            agg_col;          // #CONDSHOW_ON_data_agg #NO_AUTO_NAME column name in data_src data table to get data to aggregate from
   AggregateSpec       agg;              // #CONDSHOW_ON_computed:false||data_agg:true aggregation operation to perform (reduces vector data down to a single scalar value for network variables, and is aggregation to perform for data_agg aggregation)
 
   bool                 select_rows;     // #CONDSHOW_ON_data_agg whether to select specific rows of data from the data_src data table to operate on
