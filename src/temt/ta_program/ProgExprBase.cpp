@@ -1324,6 +1324,9 @@ Completions* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_po
             lookup_td = &TA_DynEnum;
           }
         }
+        else if (path_var == "this") {
+          base_base = own_prg;
+        }
         else {
           taMisc::DebugInfo("Var lookup: cannot find variable:", path_var, "as start of lookup path:", base_path);
         }
