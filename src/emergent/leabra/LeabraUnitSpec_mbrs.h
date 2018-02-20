@@ -444,17 +444,9 @@ class STATE_CLASS(LeabraAvgLLrnSpec) : public STATE_CLASS(SpecMemberBase) {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra parameters for computing the learning rate modulator for  BCM-style hebbian learning in XCAL -- based on long-term floating average value, avg_l
 INHERITED(SpecMemberBase)
 public:
-  enum ErrModMode {                  // how to modulate BCM hebbian learning by error
-    NET_ERR_MOD,                     // use network-level avg_cos_err -- BCM hebbian learning is multiplied by (1- avg_cos_err) -- as network performs better (avg_cos_err goes closer to 1), less hebbian learning is applied -- this makes sense when using dwt_norm in the conspec, which normalizes all the error-driven learning weight change magnitudes, so there is no need to also modulate by layer (see LAY_ERR_MOD)
-    LAY_ERR_MOD,                     // use layer-level cos_diff_avg_lrn, to make hebbian term roughly proportional to amount of error driven learning signal across layers -- cos_diff_avg computes the running average of the cos diff value between act_m and act_p (no diff is 1, max diff is 0), and cos_diff_avg_lrn = 1 - cos_diff_avg (and 0 for non-HIDDEN layers) -- see LeabraLayerSpec cos_diff.avg_tau rate constant for integrating cos_diff_avg value -- this adjusts amount of BCM hebbian per layer -- makes sense when not normalizing error-driven learning using conspec dwt_norm -- see NET_ERR_MOD
-    NO_ERR_MOD,                      // don't use any error modulation of BCM hebbian learning
-  };
-  
-  float         lrn_max;        // #DEF_0.1 #MIN_0 maximum avg_l_lrn value, which is amount of learning driven by avg_l factor -- when avg_l is at or above avg_l_max, then avg_l_lrn will be at this maximum value -- by default, strong amounts of this homeostatic Hebbian form of learning can be used when the receiving unit is highly active -- this will then tend to bring down the average activity of units -- the default, in combination with the err_mod flag, works well for most models -- use around 0.0004?? for a single fixed value (with err_mod flag off)
+  float         lrn_max;        // #DEF_0.01 #MIN_0 maximum avg_l_lrn value, which is amount of learning driven by avg_l factor -- when avg_l is at or above avg_l_max, then avg_l_lrn will be at this maximum value -- by default, strong amounts of this homeostatic Hebbian form of learning can be used when the receiving unit is highly active -- this will then tend to bring down the average activity of units -- use around 0.0004 for a single fixed value (i.e., set min = max = this value) without any other modulation (see avg_l_mod)
   float         lrn_min;        // #DEF_0.0001;0.0004 #MIN_0 miniumum avg_l_lrn value (amount of learning driven by avg_l factor) -- if avg_l is at its minimum value, then avg_l_lrn will be at this minimum value -- neurons that are not overly active may not need to increase the contrast of their weights as much -- use around 0.0004 for a single fixed value (with err_mod flag off)
-  ErrModMode    err_mod;        // whether and how to modulate amount of BCM hebbian learning as function error levels, either by network or per layer
-  float         err_min;        // #DEF_0.01:0.1 #CONDSHOW_OFF_err_mod:NO_ERR_MOD minimum cos diff error modulation value (for non-zero cases, i.e., not for target or input layers) -- ensures a minimum amount of self-organizing learning even for network / layers that have a very small level of error signal
-  float         avg_l_max;      // #DEF_1 value of avg_l, at or above which the maximum amount of BCM learning applies -- avg_l can be dynamically modulated by layer activity -- see the am_avg_l statistic on layers for actual ranges of values
+  float         avg_l_max;      // #DEF_2 value of avg_l, at or above which the maximum amount of BCM learning applies -- see the am_avg_l statistic on layers for actual ranges of values -- previously was always avg_l.gain (def 5) but that full range is not typically reached, so a lower value makes more sense
 
   float         avg_l_min;      // #READ_ONLY #EXPERT min copied from avg_l spec
   float         lrn_fact;       // #READ_ONLY #EXPERT (lrn_max - lrn_min) / (avg_l_max - min)
@@ -477,9 +469,61 @@ public:
 private:
   void        Initialize()      { Defaults_init(); }
   void        Defaults_init() {
-    lrn_max = 0.1f;  lrn_min = 0.0001f;  avg_l_max = 1.0f;
-    err_mod = LAY_ERR_MOD;  err_min = 0.01f;    avg_l_min = 0.2f;
+    lrn_max = 0.01f;  lrn_min = 0.0001f;   avg_l_max = 2.0f;
+    avg_l_min = 0.2f;
     UpdtLrnFact();
+  }
+
+};
+
+
+class STATE_CLASS(LeabraAvgLModSpec) : public STATE_CLASS(SpecMemberBase) {
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra parameters for modulating the learning rate for BCM-style hebbian learning in XCAL by other factors in the network
+INHERITED(SpecMemberBase)
+public:
+  enum ModMode {                     // how to modulate BCM hebbian learning
+    NET_ERR_MOD,                     // decrease in proportion to (1 - avg_cos_err) -- as network performs better (avg_cos_err goes closer to 1), less hebbian learning is applied -- this makes sense when using dwt_norm in the conspec, which normalizes all the error-driven learning weight change magnitudes, so there is no need to also modulate by layer (see LAY_ERR_MOD)
+    LAY_ERR_MOD,                     // decrease in proportion to layer-level cos_diff_avg_lrn, to make hebbian term roughly proportional to amount of error driven learning signal across layers -- cos_diff_avg computes the running average of the cos diff value between act_m and act_p (no diff is 1, max diff is 0), and cos_diff_avg_lrn = 1 - cos_diff_avg (and 0 for non-HIDDEN layers) -- see LeabraLayerSpec cos_diff.avg_tau rate constant for integrating cos_diff_avg value -- this adjusts amount of BCM hebbian per layer -- makes sense when not normalizing error-driven learning using conspec dwt_norm, was prior default with err_mod flag -- see NET_ERR_MOD
+    NO_MOD,                      // don't use any modulation of BCM hebbian learning
+  };
+  
+  ModMode       mod;            // #DEF_NET_ERR_MOD;NO_MOD whether and how to modulate amount of BCM hebbian learning as function of other variables
+  float         mod_min;        // #DEF_0.5 #CONDSHOW_ON_mod:NET_ERR_MOD,LAY_ERR_MOD minimum mod_avg_l_lrn modulation value -- ensures a minimum amount of self-organizing learning even for network / layers that have a very small level of error signal -- for layer: .01 was prior default, network: .5 probably best
+  float         err_start;      // #DEF_0.5 #CONDSHOW_ON_mod:NET_ERR_MOD for NET_ERR_MOD, do not start decreasing the amount of hebbian learning until the network avg_cos_err has gone above this value (higher is better, 1 = perfect) -- beneficial to wait until learning as progressed well before starting to back off on hebbian -- modulation effect goes from 1 to mod_min within the range of avg_cos_err between err_start and err_end
+  float         err_end;        // #DEF_1 #CONDSHOW_ON_mod:NET_ERR_MOD for NET_ERR_MOD, upper level of network avg_cos_err (higher is better, 1 = perfect) where the modulatory factor will reach mod_min (and stay there) -- can set less than 1 if model doesn't fully converge to get full range of modulation
+
+  INLINE float  GetMod(float lay_cos_diff_avg_lrn, float net_avg_cos_err) {
+    switch(mod) {
+    case NET_ERR_MOD: {
+      if(net_avg_cos_err <= err_start) return 1.0f;
+      if(net_avg_cos_err >= err_end) return mod_min;
+      float emod = ((net_avg_cos_err - err_start) / (err_end - err_start)); // 0..1
+      emod = fminf(1.0f, emod);
+      return 1.0f - emod * (1.0f - mod_min);
+    }
+    case LAY_ERR_MOD: {
+      return fmaxf(lay_cos_diff_avg_lrn, mod_min);
+    }
+    default:
+      return 1.0f;
+    }
+  }
+  // get the mod_avg_l_lrn modulation factor -- called in LayerSpec Compute_CosDiff, where cos_diff_avg_lrn is computed -- sets layer mod_avg_l_lrn variable
+
+  INLINE void   UpdtVals() {
+    if(err_start <= 0.0f || err_start >= 1.0f) err_start = 0.5f; // cant be zero or 1
+    if(err_end < err_start) err_end = 1.0f;
+  }
+  // #IGNORE update the learn factor
+  
+  STATE_DECO_KEY("UnitSpec");
+  STATE_TA_STD_CODE_SPEC(LeabraAvgLModSpec);
+  STATE_UAE( UpdtVals(); );
+  
+private:
+  void        Initialize()      { Defaults_init(); }
+  void        Defaults_init() {
+    mod = NO_MOD;  mod_min = 0.5f;   err_start = 0.5f;  err_end = 1.0f;
   }
 
 };

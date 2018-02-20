@@ -4,7 +4,8 @@
   bool           hard_clamped;        // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Activation if true, indicates that this layer was actually hard clamped -- this is normally set by the Compute_HardClamp function called by Quarter_Init() or NewInputData_Init() -- see LayerSpec clamp.hard parameter to determine whether layer is hard clamped or not -- this flag is not to be manipulated directly
   float         lrate_mod;      // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Learning learning rate modulation factor based on layer_lrate for this layer, and cos_diff.lrate_mod result for this layer
   bool          deep_lrate_mod;  // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Learning apply deep learning rate modulation to this layer -- set from the unit spec, used by conspec in setting learning rates
-  float         adapt_gi;   // #GUI_READ_ONLY #SHOW #CAT_Activation #SAVE_WTS adaptive inhibitory gain value -- this is an *extra* multiplier on top of existing gi value in the layer, unit inhib specs, starts out at 1 and moves from there -- adjusted by adaptive inhibition function -- saved with weight files
+  float         adapt_gi;        // #GUI_READ_ONLY #SHOW #CAT_Activation #SAVE_WTS adaptive inhibitory gain value -- this is an *extra* multiplier on top of existing gi value in the layer, unit inhib specs, starts out at 1 and moves from there -- adjusted by adaptive inhibition function -- saved with weight files
+  float         mod_avg_l_lrn;  // #GUI_READ_ONLY #SHOW #CAT_Activation avg_l_lrn multiplier -- modulates amount of longer-term average BCM-style hebbian learning -- can be modulated in various ways according to unit spec avg_l_lrn specs
   STATE_CLASS(LeabraMarginVals) margin; // #SAVE_WTS #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Learning marginal v_m_eq levels -- used for modulating learning rate for those on the margin or even changing sign of learning
   float         da_p;           // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Learning positive valence oriented dopamine-like modulatory value (where applicable)
   float         da_n;           // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Learning positive valence oriented dopamine-like modulatory value (where applicable)
@@ -149,7 +150,7 @@
 
   INLINE void   Initialize_lay_core() {
     hard_clamped = false;
-    lrate_mod = 1.0f;    deep_lrate_mod = false;  adapt_gi = 1.0f;
+    lrate_mod = 1.0f;    deep_lrate_mod = false;  adapt_gi = 1.0f; mod_avg_l_lrn = 0.0f;
     da_p = 0.0f;    da_n = 0.0f;    sev = 0.0f;
     acts_m_avg = acts_p_avg = acts_p_avg_eff = 0.15f;
     Init_Stats();

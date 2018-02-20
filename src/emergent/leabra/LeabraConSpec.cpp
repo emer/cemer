@@ -56,13 +56,6 @@ void LeabraConSpec::Initialize() {
 
   Initialize_core();
   lrate_sched.interpolate = false;
-  taVersion v820(8, 2, 0);
-  if(taMisc::is_loading && taMisc::loading_version < v820) {
-    momentum.on = false;
-  }
-  else {
-    momentum.on = true;
-  }
   Defaults_init();
 }
 
@@ -90,6 +83,19 @@ void LeabraConSpec::InitLinks() {
 void LeabraConSpec::UpdateAfterEdit_impl() {
   if(HasBaseFlag(BF_MISC2)) return; // flag used for marking UAE
   SetBaseFlag(BF_MISC2);              // now in it, mark..
+
+  taVersion v856(8, 5, 6);
+  if(taMisc::is_loading && taMisc::loading_version < v856) {
+    if(momentum.on) {
+      dwt_norm.on = true;
+      dwt_norm.err_only = false;
+      dwt_norm.prjn = false;
+      dwt_norm.lr_comp = 0.1f;
+    }
+    else {
+      dwt_norm.on = false;
+    }
+  }
 
   inherited::UpdateAfterEdit_impl();
   lrate_sched.UpdateAfterEdit_NoGui();

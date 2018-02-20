@@ -30,7 +30,8 @@
   STATE_CLASS(LeabraDtSpec)     dt;              // #CAT_Activation time constants (rate of updating): membrane potential (vm) and net input (net)
   STATE_CLASS(LeabraActAvgSpec) act_avg;         // #CAT_Learning time constants (rate of updating) for computing activation averages -- used in XCAL learning rules
   STATE_CLASS(LeabraAvgLSpec)   avg_l;           // #CAT_Learning parameters for computing the avg_l long-term floating average that drives BCM-style hebbian learning
-  STATE_CLASS(LeabraAvgLLrnSpec) avg_l_lrn;       // #CAT_Learning parameters for computing the avg_l_lrn learning factor for BCM-style hebbian learning driven by long-term floating average
+  STATE_CLASS(LeabraAvgLLrnSpec) avg_l_lrn;       // #CAT_Learning parameters for computing the avg_l_lrn learning factor for controlling the amount of BCM-style hebbian learning driven by long-term floating average
+  STATE_CLASS(LeabraAvgLModSpec) avg_l_mod;       // #CAT_Learning parameters for modulating the amount of avg_l_lrn learning as a function of other network variables
   STATE_CLASS(LeabraChannels)   g_bar;           // #CAT_Activation [Defaults: 1, .1, 1] maximal conductances for channels
   STATE_CLASS(LeabraChannels)   e_rev;           // #CAT_Activation [Defaults: 1, .3, .25] reversal potentials for each channel
   STATE_CLASS(KNaAdaptSpec)     kna_adapt;       // #CAT_Activation sodium-gated potassium channel adaptation mechanism -- evidence supports at least 3 different time constants: M-type (fast), Slick (medium), and Slack (slow)
@@ -166,18 +167,7 @@
     if(lgpd->acts_p_avg >= avg_l.lay_act_thr) {
       avg_l.UpdtAvgL(u->avg_l, u->avg_m, lgpd->acts_p_avg);
     }
-    u->avg_l_lrn = avg_l_lrn.GetLrn(u->avg_l);
-    if(avg_l_lrn.err_mod == STATE_CLASS(LeabraAvgLLrnSpec)::NET_ERR_MOD) {
-      float eff_err = fmaxf((1.0f - net->avg_cos_err.avg), avg_l_lrn.err_min);
-      u->avg_l_lrn *= eff_err;
-    }
-    else if(avg_l_lrn.err_mod == STATE_CLASS(LeabraAvgLLrnSpec)::LAY_ERR_MOD) {
-      float eff_err = fmaxf(lay->cos_diff_avg_lrn, avg_l_lrn.err_min);
-      u->avg_l_lrn *= eff_err;
-    }
-    if((lay->layer_type != LAYER_STATE::HIDDEN) || deep.IsTRC()) {
-      u->avg_l_lrn = 0.0f;        // no self organizing in non-hidden layers!
-    }
+    u->avg_l_lrn = lay->mod_avg_l_lrn * avg_l_lrn.GetLrn(u->avg_l);
   }
   // #CAT_Learning reset the sender-receiver coproduct average -- call at start of trial
     

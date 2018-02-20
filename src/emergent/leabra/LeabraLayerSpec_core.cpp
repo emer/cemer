@@ -41,6 +41,21 @@ float LEABRA_LAYER_SPEC::Compute_AvgExt(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_
   return avg_ext;
 }
 
+void LEABRA_LAYER_SPEC::Init_AdaptParams(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
+  LEABRA_UNGP_STATE* lgpd = lay->GetLayUnGpState(net);
+  lay->adapt_gi = 1.0f;
+  lay->lrate_mod = lay_lrate;
+  lay->margin.low_thr = margin.low_thr;
+  lay->margin.med_thr = margin.med_thr;
+  lay->margin.hi_thr = margin.hi_thr;
+  float eff_p_avg = lgpd->acts_p_avg / margin.avg_act;
+  lay->margin.low_avg = eff_p_avg;
+  lay->margin.med_avg = margin.MedTarg(eff_p_avg);
+  lay->margin.hi_avg = margin.HiTarg(eff_p_avg);
+  lay->laygp_i_val.InitVals(); lay->laygp_netin.InitVals(); lay->laygp_acts_eq.InitVals();
+  lay->mod_avg_l_lrn = 0.0f;    // start at 0 -- safer than alternative -- will get updated soon enough
+}
+
 void LEABRA_LAYER_SPEC::Trial_Init_Layer(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
   LEABRA_UNIT_SPEC_CPP* us = lay->GetUnitSpec(net);
   LEABRA_UNGP_STATE* lgpd = lay->GetLayUnGpState(net);
@@ -109,6 +124,54 @@ float LEABRA_LAYER_SPEC::Compute_MaxErr(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_
     lay->max_err = (float)max_err;
   }
   return lay->max_err;
+}
+
+float LEABRA_LAYER_SPEC::Compute_CosDiff(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net)  {
+  lay->cos_diff = 0.0f;
+  float cosv = 0.0f;
+  float ssm = 0.0f;
+  float sst = 0.0f;
+
+  const int li = lay->layer_idx;
+  for(int thr_no=0; thr_no < net->n_thrs_built; thr_no++) {
+    // integrate over thread raw data
+    float& lcosv = net->ThrLayStats(thr_no, li, 0, LEABRA_NETWORK_STATE::COSDIFF);
+    float& lssm = net->ThrLayStats(thr_no, li, 1, LEABRA_NETWORK_STATE::COSDIFF);
+    float& lsst = net->ThrLayStats(thr_no, li, 2, LEABRA_NETWORK_STATE::COSDIFF);
+
+    cosv += lcosv;
+    ssm += lssm;
+    sst += lsst;
+  }
+  float dist = sqrtf(ssm * sst);
+  if(dist != 0.0f)
+    cosv /= dist;
+  lay->cos_diff = cosv;
+
+  cos_diff.UpdtDiffAvgVar(lay->cos_diff_avg, lay->cos_diff_var, lay->cos_diff);
+  lay->lrate_mod = lay_lrate;
+
+  if(cos_diff.lrate_mod && !cos_diff.lrmod_fm_trc) {
+    lay->lrate_mod *= cos_diff.CosDiffLrateMod(lay->cos_diff, lay->cos_diff_avg,
+                                               lay->cos_diff_var);
+    if(cos_diff.set_net_unlrn && lay->lrate_mod == 0.0f) {
+      net->unlearnable_trial = true;
+    }
+  }
+  
+  LEABRA_UNIT_SPEC_CPP* us = lay->GetUnitSpec(net);
+  if((lay->layer_type != LAYER_STATE::HIDDEN) || us->deep.IsTRC()) {
+    lay->cos_diff_avg_lrn = 0.0f; // no bcm for TARGET layers; irrelevant for INPUT
+    lay->mod_avg_l_lrn = 0.0f;
+  }
+  else {
+    lay->cos_diff_avg_lrn = 1.0f - lay->cos_diff_avg;
+    lay->mod_avg_l_lrn = us->avg_l_mod.GetMod(lay->cos_diff_avg_lrn, net->avg_cos_err.avg);
+  }
+
+  lay->avg_cos_diff.Increment(lay->cos_diff);
+  
+  return cosv;
 }
 
 void LEABRA_LAYER_SPEC::Compute_CosDiff_post(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {

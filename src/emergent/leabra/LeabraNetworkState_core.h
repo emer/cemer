@@ -104,8 +104,8 @@
   INIMPL void Init_Stats_Layers() override;
   INIMPL void Init_Counters_State() override;
 
-  INIMPL virtual void Init_AdaptInhib();
-  // #CAT_Activation Initialize adaptive inhibition gain value on all the layers -- undoes any adaptation that has taken place (including from loaded weights - the adaptive gain value is saved with the weights)
+  INIMPL virtual void Init_AdaptParams();
+  // #CAT_Activation Initialize adaptive parameters that are slowly adjusted over course of learning, including inhibition gain, margin values, avg_l_lrn  -- undoes any adaptation that has taken place (including from loaded weights -- adaptive params are saved with the weights)
 
   INIMPL virtual void Init_Acts_Layers();
   // #CAT_TrialInit layer-level acts init 

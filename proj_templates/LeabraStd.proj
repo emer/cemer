@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.5.1.0 rev11379
+// ta_Dump File v3.0 -- code v8.5.6.0 rev11427
 LeabraProject .projects[0] { 
  Doc_Group @.docs = [0] {
  };
@@ -14750,9 +14750,9 @@ this program can be extended to do arbitrary things to generate data and apply i
     el_typ=UserDataItem;
     el_def=0;
     UserDataItem @[0] {name="view_win_lft": value=0: val_type_fixed=0: };
-    UserDataItem @[1] {name="view_win_top": value=0.01693719: val_type_fixed=0: };
+    UserDataItem @[1] {name="view_win_top": value=0.01521358: val_type_fixed=0: };
     UserDataItem @[2] {name="view_win_wd": value=1: val_type_fixed=0: };
-    UserDataItem @[3] {name="view_win_ht": value=0.7967537: val_type_fixed=0: };
+    UserDataItem @[3] {name="view_win_ht": value=0.7963722: val_type_fixed=0: };
     UserDataItem @[4] {name="view_win_iconified": value=0: val_type_fixed=0: };
     UserDataItem @[5] {name="view_splitter_state": value=AAAA/wAAAAEAAAADAAABFwAAAfwAAAKMAf////8BAAAAAQA=: val_type_fixed=0: };
    };
@@ -14881,7 +14881,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	    NetViewStateItem @[18] {name="cos_err": net_member=1: display=0: width=8: found=1: };
 	    NetViewStateItem @[19] {name="minus_output_name": net_member=1: display=0: width=12: found=1: };
 	   };
-	   first_pass=0;
 	  };
 	  show_iconified=0;
 	  cur_unit_vals{ act;	  };
@@ -17032,9 +17031,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       el_typ=UserDataItem;
       el_def=0;
       UserDataItem @[0] {name="view_win_lft": value=0: val_type_fixed=0: };
-      UserDataItem @[1] {name="view_win_top": value=0.007057163: val_type_fixed=0: };
-      UserDataItem @[2] {name="view_win_wd": value=0.03203125: val_type_fixed=0: };
-      UserDataItem @[3] {name="view_win_ht": value=0.743825: val_type_fixed=0: };
+      UserDataItem @[1] {name="view_win_top": value=0.008191925: val_type_fixed=0: };
+      UserDataItem @[2] {name="view_win_wd": value=0.02708058: val_type_fixed=0: };
+      UserDataItem @[3] {name="view_win_ht": value=0.7495611: val_type_fixed=0: };
       UserDataItem @[4] {name="view_win_iconified": value=0: val_type_fixed=0: };
       UserDataItem @[5] {name="view_visible": value=1: val_type_fixed=0: };
      };
@@ -17150,9 +17149,10 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      vm_range {min=0: max=2: range=2: scale=0.5: };
      init {v_m=0.4: act=0: netin=0: };
      dt {integ=1: vm_tau=3.3: net_tau=1.4: vm_cyc=1: fast_cyc=0: vm_dt=0.3030303: vm_dt_cyc=0.3030303: net_dt=0.7142857: };
-     act_avg {ss_tau=2: s_tau=2: m_tau=10: m_in_s=0.1: ss_dt=0.5: s_dt=0.5: m_dt=0.1: s_in_s=0.9: };
-     avg_l {init=0.4: gain=2.5: min=0.2: tau=10: lrn_max=0.5: lrn_min=0.0001: dt=0.1: lrn_fact=0.2173478: };
-     avg_l_2 {err_mod=1: err_min=0.01: lay_act_thr=0.01: };
+     act_avg {ss_tau=2: s_tau=2: m_tau=10: ru_lrn_m=0.1: su_lrn_m=0.1: ss_dt=0.5: s_dt=0.5: m_dt=0.1: ru_lrn_s=0.9: su_lrn_s=0.9: };
+     avg_l {init=0.4: gain=2.5: min=0.2: tau=10: lay_act_thr=0.01: dt=0.1: min_lay_avg=-0.372549: };
+     avg_l_lrn {lrn_max=0.01: lrn_min=0.0001: avg_l_max=2: avg_l_min=0.2: lrn_fact=0.0055: };
+     avg_l_mod {mod=NO_MOD: mod_min=0.5: err_start=0.5: };
      g_bar {e=1: l=0.1: i=1: k=0.2: };
      e_rev {e=1: l=0.3: i=0.25: k=0.1: };
      kna_adapt {on=0: rate_rise=0.8: f_on=1: f_rise=0.05: f_max=0.1: f_tau=50: m_on=1: m_rise=0.02: m_max=0.1: m_tau=200: s_on=1: s_rise=0.001: s_max=1: s_tau=1000: f_dt=0.02: m_dt=0.005: s_dt=0.001: };
@@ -17192,6 +17192,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        rnd {name="rnd": type=UNIFORM: mean=0: var=0: par=1: };
        wt_limits {type=NONE: min=-1: max=5: sym=0: sym_fm_top=0: };
        inhib=0;
+       feedback=0;
        wt_scale {abs=1: rel=1: no_plus_net=0: };
        learn=0;
        learn_qtr=Q4;
@@ -17199,9 +17200,11 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        cur_lrate=0.04;
        lrs_mult=1;
        use_unlearnable=1;
-       xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: lrn_thr=0.01: s_mult=1: d_rev_ratio=-9: };
+       rule {rule=DELTA_FF_FB: errule=XCAL: bcmrule=SRS: cp_gain=0.8: };
+       xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: thr_p_min=0.001: lrn_thr=0.01: d_rev_ratio=-9: };
        wt_sig {gain=6: off=1: soft_bound=1: };
-       momentum {on=1: dwavg_tau=1000: norm_min=0.001: m_tau=20: lrate_comp=0.01: dwavg_dt=0.001: dwavg_dt_c=0.999: m_dt=0.05: m_dt_c=0.95: };
+       dwt_norm {on=1: err_only=1: prjn=1: avg_tau=1000: norm_min=0.001: lr_comp=0.2: dwavg_dt=0.001: dwavg_dt_c=0.999: };
+       momentum {on=1: m_tau=10: lr_comp=0.1: m_dt=0.1: m_dt_c=0.9: };
        wt_bal {on=1: avg_thr=0.25: hi_thr=0.4: hi_gain=4: lo_thr=0.4: lo_gain=6: act_thr=0.25: act_gain=0: no_targ=1: };
        adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
        slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
@@ -17223,7 +17226,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        is_used=1;
        used_status=USED;
        desc="top-down connections from output layers down to hidden etc typically need to be weaker than bottom-up";
-       unique{ wt_scale;       };
+       unique{ wt_scale;feedback;       };
        saved{        };
        children {
 	name="children";
@@ -17233,6 +17236,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        rnd {name="rnd": type=UNIFORM: mean=0.5: var=0.25: par=1: };
        wt_limits {type=MIN_MAX: min=0: max=1: sym=1: sym_fm_top=0: };
        inhib=0;
+       feedback=1;
        wt_scale {abs=1: rel=0.2: no_plus_net=0: };
        learn=1;
        learn_qtr=Q4;
@@ -17240,9 +17244,11 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        cur_lrate=0.04;
        lrs_mult=1;
        use_unlearnable=1;
-       xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: lrn_thr=0.01: s_mult=1: d_rev_ratio=-9: };
+       rule {rule=DELTA_FF_FB: errule=XCAL: bcmrule=SRS: cp_gain=0.8: };
+       xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: thr_p_min=0.001: lrn_thr=0.01: d_rev_ratio=-9: };
        wt_sig {gain=6: off=1: soft_bound=1: };
-       momentum {on=1: dwavg_tau=1000: norm_min=0.001: m_tau=20: lrate_comp=0.01: dwavg_dt=0.001: dwavg_dt_c=0.999: m_dt=0.05: m_dt_c=0.95: };
+       dwt_norm {on=1: err_only=1: prjn=1: avg_tau=1000: norm_min=0.001: lr_comp=0.2: dwavg_dt=0.001: dwavg_dt_c=0.999: };
+       momentum {on=1: m_tau=10: lr_comp=0.1: m_dt=0.1: m_dt_c=0.9: };
        wt_bal {on=1: avg_thr=0.25: hi_thr=0.4: hi_gain=4: lo_thr=0.4: lo_gain=6: act_thr=0.25: act_gain=0: no_targ=1: };
        adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
        slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
@@ -17262,6 +17268,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      rnd {name="rnd": type=UNIFORM: mean=0.5: var=0.25: par=1: };
      wt_limits {type=MIN_MAX: min=0: max=1: sym=1: sym_fm_top=0: };
      inhib=0;
+     feedback=0;
      wt_scale {abs=1: rel=1: no_plus_net=0: };
      learn=1;
      learn_qtr=Q4;
@@ -17269,9 +17276,11 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      cur_lrate=0.04;
      lrs_mult=1;
      use_unlearnable=1;
-     xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: lrn_thr=0.01: s_mult=1: d_rev_ratio=-9: };
+     rule {rule=DELTA_FF_FB: errule=XCAL: bcmrule=SRS: cp_gain=0.8: };
+     xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: thr_p_min=0.001: lrn_thr=0.01: d_rev_ratio=-9: };
      wt_sig {gain=6: off=1: soft_bound=1: };
-     momentum {on=1: dwavg_tau=1000: norm_min=0.001: m_tau=20: lrate_comp=0.01: dwavg_dt=0.001: dwavg_dt_c=0.999: m_dt=0.05: m_dt_c=0.95: };
+     dwt_norm {on=1: err_only=1: prjn=1: avg_tau=1000: norm_min=0.001: lr_comp=0.2: dwavg_dt=0.001: dwavg_dt_c=0.999: };
+     momentum {on=1: m_tau=10: lr_comp=0.1: m_dt=0.1: m_dt_c=0.9: };
      wt_bal {on=1: avg_thr=0.25: hi_thr=0.4: hi_gain=4: lo_thr=0.4: lo_gain=6: act_thr=0.25: act_gain=0: no_targ=1: };
      adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
      slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
@@ -17406,6 +17415,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      voxel_fill_pct=1;
      spec {type=LeabraLayerSpec: spec=.networks[0].specs[0].children[0]$$: };
      adapt_gi=1;
+     mod_avg_l_lrn=0;
      acts_m_avg=0.2;
      acts_p_avg=0.2;
      acts_p_avg_eff=0.2;
@@ -17488,6 +17498,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      voxel_fill_pct=1;
      spec {type=LeabraLayerSpec: spec=.networks[0].specs[0]$$: };
      adapt_gi=1;
+     mod_avg_l_lrn=0;
      acts_m_avg=0.2;
      acts_p_avg=0.2;
      acts_p_avg_eff=0.2;
@@ -17556,6 +17567,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      voxel_fill_pct=1;
      spec {type=LeabraLayerSpec: spec=$.networks[0].specs[0].children[0]$: };
      adapt_gi=1;
+     mod_avg_l_lrn=0;
      acts_m_avg=0.2;
      acts_p_avg=0.2;
      acts_p_avg_eff=0.2;

@@ -48,25 +48,12 @@
       LEABRA_PRJN_STATE* prjn = lay->GetRecvPrjnState(net, i);
       prjn->Init_Weights_State();
     }
-    Init_AdaptInhib(lay, net);         // initialize inhibition at start..
+    Init_AdaptParams(lay, net);         // initialize params at start..
   }
   // #CAT_Learning layer-level initialization taking place after Init_Weights on units
-  // IMPORTANT: above requires special call by LeabraNetworkState -- not part of base Init_Weights
   
-  INLINE virtual void  Init_AdaptInhib(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
-    LEABRA_UNGP_STATE* lgpd = lay->GetLayUnGpState(net);
-    lay->adapt_gi = 1.0f;
-    lay->lrate_mod = lay_lrate;
-    lay->margin.low_thr = margin.low_thr;
-    lay->margin.med_thr = margin.med_thr;
-    lay->margin.hi_thr = margin.hi_thr;
-    float eff_p_avg = lgpd->acts_p_avg / margin.avg_act;
-    lay->margin.low_avg = eff_p_avg;
-    lay->margin.med_avg = margin.MedTarg(eff_p_avg);
-    lay->margin.hi_avg = margin.HiTarg(eff_p_avg);
-    lay->laygp_i_val.InitVals(); lay->laygp_netin.InitVals(); lay->laygp_acts_eq.InitVals();
-  }
-  // #CAT_Activation called in Init_Weights_Layer initialize the adaptive inhibitory state values
+  INIMPL virtual void  Init_AdaptParams(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net);
+  // #CAT_Activation called in Init_Weights_Layer initialize the adaptive parameter state values
   
   INLINE virtual void  Init_Stats(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net) {
     lay->Init_Stats();
@@ -470,50 +457,7 @@
   }
   // #CAT_Statistic compute cosine (normalized dot product) of target compared to act_m over the layer -- n_vals is number of units contributing
 
-  INLINE virtual float  Compute_CosDiff(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net)  {
-    lay->cos_diff = 0.0f;
-    float cosv = 0.0f;
-    float ssm = 0.0f;
-    float sst = 0.0f;
-
-    const int li = lay->layer_idx;
-    for(int thr_no=0; thr_no < net->n_thrs_built; thr_no++) {
-      // integrate over thread raw data
-      float& lcosv = net->ThrLayStats(thr_no, li, 0, LEABRA_NETWORK_STATE::COSDIFF);
-      float& lssm = net->ThrLayStats(thr_no, li, 1, LEABRA_NETWORK_STATE::COSDIFF);
-      float& lsst = net->ThrLayStats(thr_no, li, 2, LEABRA_NETWORK_STATE::COSDIFF);
-
-      cosv += lcosv;
-      ssm += lssm;
-      sst += lsst;
-    }
-    float dist = sqrtf(ssm * sst);
-    if(dist != 0.0f)
-      cosv /= dist;
-    lay->cos_diff = cosv;
-
-    cos_diff.UpdtDiffAvgVar(lay->cos_diff_avg, lay->cos_diff_var, lay->cos_diff);
-    lay->lrate_mod = lay_lrate;
-
-    if(cos_diff.lrate_mod && !cos_diff.lrmod_fm_trc) {
-      lay->lrate_mod *= cos_diff.CosDiffLrateMod(lay->cos_diff, lay->cos_diff_avg,
-                                                 lay->cos_diff_var);
-      if(cos_diff.set_net_unlrn && lay->lrate_mod == 0.0f) {
-        net->unlearnable_trial = true;
-      }
-    }
-  
-    if(lay->layer_type == LAYER_STATE::HIDDEN) {
-      lay->cos_diff_avg_lrn = 1.0f - lay->cos_diff_avg;
-    }
-    else {
-      lay->cos_diff_avg_lrn = 0.0f; // no mix for TARGET layers; irrelevant for INPUT
-    }
-
-    lay->avg_cos_diff.Increment(lay->cos_diff);
-  
-    return cosv;
-  }
+  INIMPL virtual float  Compute_CosDiff(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net);
   // #CAT_Statistic compute cosine (normalized dot product) of phase activation difference in this layer: act_p compared to act_m -- must be called after Quarter_Final for plus phase to get the act_p values
   
   INIMPL virtual void   Compute_CosDiff_post(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_STATE* net);

@@ -36,6 +36,7 @@ TA_BASEFUNS_CTORS_DEFN(LeabraDtSpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraActAvgSpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraAvgLSpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraAvgLLrnSpec);
+TA_BASEFUNS_CTORS_DEFN(LeabraAvgLModSpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraChannels);
 TA_BASEFUNS_CTORS_DEFN(KNaAdaptSpec);
 TA_BASEFUNS_CTORS_DEFN(KNaAdaptMiscSpec);
@@ -123,6 +124,16 @@ void LeabraUnitSpec::UpdateAfterEdit_impl() {
     noise_type.type = LeabraNoiseSpec::NETIN_NOISE;
   }
 
+  taVersion v856(8, 5, 6);
+  if(taMisc::is_loading && taMisc::loading_version < v856) {
+    // revert to prior settings
+    avg_l_lrn.lrn_max = 0.5f;
+    avg_l_lrn.lrn_min = 0.0001f;
+    avg_l_lrn.avg_l_max = 5.0f;
+    avg_l_mod.mod = LeabraAvgLModSpec::LAY_ERR_MOD;
+    avg_l_mod.mod_min = 0.01f;
+  }
+  
   if(spike_misc.ex)
     spike_misc.eff_spk_thr = spike_misc.spk_thr;
   else
@@ -138,6 +149,7 @@ void LeabraUnitSpec::UpdateAfterEdit_impl() {
   avg_l.UpdateAfterEdit_NoGui();
   avg_l_lrn.avg_l_min = avg_l.min;
   avg_l_lrn.UpdateAfterEdit_NoGui();
+  avg_l_mod.UpdateAfterEdit_NoGui();
   kna_adapt.UpdateAfterEdit_NoGui();
   stp.UpdateAfterEdit_NoGui();
   deep.UpdateAfterEdit_NoGui();

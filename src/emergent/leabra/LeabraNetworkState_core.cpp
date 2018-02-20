@@ -231,7 +231,7 @@ void LEABRA_NETWORK_STATE::Init_Weights_Layers() {
     LEABRA_LAYER_STATE* lay = GetLayerState(li);
     if(lay->lesioned()) continue;
     LEABRA_LAYER_SPEC_CPP* ls = lay->GetLayerSpec(this);
-    ls->Init_Weights_Layer(lay, this);
+    ls->Init_Weights_Layer(lay, this); // also calls Init_AdaptParams, prjn->Init_Weights_State
   }
 }
 
@@ -288,12 +288,12 @@ void LEABRA_NETWORK_STATE::Init_Stats_Layers() {
   }
 }
 
-void LEABRA_NETWORK_STATE::Init_AdaptInhib() {
+void LEABRA_NETWORK_STATE::Init_AdaptParams() {
   for(int li=0; li < n_layers_built; li++) {
     LEABRA_LAYER_STATE* lay = GetLayerState(li);
     if(lay->lesioned()) continue;
     LEABRA_LAYER_SPEC_CPP* ls = lay->GetLayerSpec(this);
-    ls->Init_AdaptInhib(lay, this);
+    ls->Init_AdaptParams(lay, this);
   }
 }
 

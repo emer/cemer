@@ -124,17 +124,20 @@ public:
   bool          set_l_lrn;      // #DEF_false if true, set a fixed l_lrn weighting factor that determines how much of the long-term floating average threshold (i.e., BCM, Hebbian) component of learning is used -- this is useful for setting a fully Hebbian learning connection, e.g., by setting m_lrn = 0 and l_lrn = 1. If false, then the receiving unit's avg_l_lrn factor is used, which dynamically modulates the amount of the long-term component as a function of how active overall it is
   float         l_lrn;          // #CONDSHOW_ON_set_l_lrn fixed l_lrn weighting factor that determines how much of the long-term floating average threshold (i.e., BCM, Hebbian) component of learning is used -- this is useful for setting a fully Hebbian learning connection, e.g., by setting m_lrn = 0 and l_lrn = 1. 
   float         d_rev;          // #DEF_0.1 #MIN_0 #MAX_0.99 proportional point within LTD range where magnitude reverses to go back down to zero at zero -- err-driven svm component does better with smaller values, and BCM-like mvl component does better with larger values -- 0.1 is a compromise
-  float         d_gain;         // #DEF_1 #MIN_0 extra gain factor on LTD -- to compensate for reduction in LTD from higher levels of d_rev -- e.g., 2.0 for d_rev = .5 balances that out
+  // float         d_gain;         // #DEF_1 #MIN_0 extra gain factor on LTD -- to compensate for reduction in LTD from higher levels of d_rev -- e.g., 2.0 for d_rev = .5 balances that out
   float         d_thr;          // #DEF_0.0001;0.01 #MIN_0 minimum LTD threshold value below which no weight change occurs -- this is now *relative* to the threshold
   float         thr_p_min;      // minimum thr_p potentiation threshold in absolute terms
   float         lrn_thr;        // #DEF_0.01 xcal learning threshold -- don't learn when sending unit activation is below this value in both phases -- due to the nature of the learning function being 0 when the sr coproduct is 0, it should not affect learning in any substantial way -- nonstandard learning algorithms that have different properties should ignore it
 
   float         d_rev_ratio;    // #HIDDEN #READ_ONLY -(1-d_rev)/d_rev -- multiplication factor in learning rule -- builds in the minus sign!
 
-  INLINE float  dWtFun_nodgain(float srval, const float thr_p) {
-    if(srval < d_thr)
+  INLINE float  dWtFun(float srval, float thr_p) {
+    if(thr_p < thr_p_min) thr_p = thr_p_min;
+    float d_thr_eff = d_thr * thr_p;
+    if(srval < d_thr_eff)
       return 0.0f;
-    srval -= d_thr;
+    srval -= d_thr_eff;
+    thr_p -= d_thr;
     float rval;
     if(srval > thr_p * d_rev)
       rval = (srval - thr_p);
@@ -144,7 +147,7 @@ public:
   }
   // XCAL function for weight change -- the "check mark" function -- no d_gain
 
-  INLINE float  dWtFun(float srval, float thr_p) {
+  INLINE float  dWtFun_dgain(float srval, float thr_p, const float d_gain = 1.0f) {
     if(thr_p < thr_p_min) thr_p = thr_p_min;
     float d_thr_eff = d_thr * thr_p;
     if(srval < d_thr_eff)
@@ -173,21 +176,25 @@ public:
   }
   // get the learning rate for long-term floating average component (BCM)
 
+  INLINE void   UpdtVals() {
+    d_rev_ratio = (1.0f - d_rev) / d_rev;
+    if(d_rev > 0.0f)
+      d_rev_ratio = -(1.0f - d_rev) / d_rev;
+    else
+      d_rev_ratio = -1.0f;
+  }
+
+  
   STATE_DECO_KEY("ConSpec");
   STATE_TA_STD_CODE_SPEC(XCalLearnSpec);
-  STATE_UAE( d_rev_ratio = (1.0f - d_rev) / d_rev;
-             if(d_rev > 0.0f)
-               d_rev_ratio = -(1.0f - d_rev) / d_rev;
-             else
-               d_rev_ratio = -1.0f;
-             );
+  STATE_UAE( UpdtVals(); );
   
 private:
   void  Initialize() {   Defaults_init(); }
   void  Defaults_init() {
-    m_lrn = 1.0f;  set_l_lrn = false;  l_lrn = 1.0f;  d_rev = 0.10f;  d_gain = 1.0f;
+    m_lrn = 1.0f;  set_l_lrn = false;  l_lrn = 1.0f;  d_rev = 0.10f;  // d_gain = 1.0f;
     thr_p_min = 0.001f;
-    d_thr = 0.0001f;  lrn_thr = 0.01f; d_rev_ratio = -(1.0f - d_rev) / d_rev;
+    d_thr = 0.0001f;  lrn_thr = 0.01f; UpdtVals();
   }
 };
 
@@ -255,12 +262,12 @@ class STATE_CLASS(LeabraDwtNorm) : public STATE_CLASS(SpecMemberBase) {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra implements dwt normalization, only on error-driven dwt component, based on projection-level max_avg value -- slowly decays and instantly resets to any current max -- serves as an estimate of the variance in the weight changes, assuming zero net mean overall
 INHERITED(SpecMemberBase)
 public:
-  bool          on;             // whether to use dwt normalization, only on error-driven dwt component, based on projection-level max_avg value -- slowly decays and instantly resets to any current max
-  bool          err_only;       // #CONDSHOW_ON_on only normalize the error-driven component of learning
-  bool          prjn;           // #CONDSHOW_ON_on use the projection-level max_abs in normalization -- otherwise uses synapse-specific normalization factor
+  bool          on;             // #DEF_true whether to use dwt normalization, only on error-driven dwt component, based on projection-level max_avg value -- slowly decays and instantly resets to any current max
+  bool          err_only;       // #CONDSHOW_ON_on #DEF_true only normalize the error-driven component of learning
+  bool          prjn;           // #CONDSHOW_ON_on #DEF_true use the projection-level max_abs in normalization -- otherwise uses synapse-specific normalization factor
   float         avg_tau;        // #CONDSHOW_ON_on #MIN_1 #DEF_1000;10000 time constant for integration of dwavg average of delta weights used in normalization factor -- generally should be long-ish, between 1000-10000 -- integration rate factor is 1/tau
   float         norm_min;       // #CONDSHOW_ON_on #MIN_0 #DEF_0.001 minimum effective value of the normalization factor -- provides a lower bound to how much normalization can be applied
-  float         lr_comp;        // #MIN_0 #CONDSHOW_ON_on #DEF_0.1 overall learning rate multiplier to compensate for changes due to use of normalization -- allows for a common master learning rate to be used between different conditions
+  float         lr_comp;        // #MIN_0 #CONDSHOW_ON_on #DEF_0.2 overall learning rate multiplier to compensate for changes due to use of normalization -- allows for a common master learning rate to be used between different conditions
 
   float         dwavg_dt;      // #READ_ONLY #EXPERT rate constant of delta-weight average integration = 1 / dwavg_tau
   float         dwavg_dt_c;    // #READ_ONLY #EXPERT complement rate constant of delta-weight average integration = 1 - (1 / dwavg_tau)
@@ -287,8 +294,8 @@ public:
 private:
   void  Initialize()    {  Defaults_init(); }
   void  Defaults_init() {
-    on = false;  err_only = false; prjn = false; avg_tau = 1000.0f;  norm_min = 0.001f;
-    lr_comp = 0.1f;
+    on = true;  err_only = true; prjn = true; avg_tau = 1000.0f;  norm_min = 0.001f;
+    lr_comp = 0.2f;
     UpdtVals();
   }
 };
@@ -299,7 +306,7 @@ class STATE_CLASS(LeabraMomentum) : public STATE_CLASS(SpecMemberBase) {
 INHERITED(SpecMemberBase)
 public:
   bool          on;             // #DEF_true whether to use standard simple momentum 
-  float         m_tau;          // #CONDSHOW_ON_on #MIN_1 #DEF_10;20 time constant factor for integration of momentum -- 1/tau is dt (e.g., .1), and 1-1/tau (e.g., .95 or .9) is traditional momentum time-integration factor
+  float         m_tau;          // #CONDSHOW_ON_on #MIN_1 #DEF_10 time constant factor for integration of momentum -- 1/tau is dt (e.g., .1), and 1-1/tau (e.g., .95 or .9) is traditional momentum time-integration factor
   float         lr_comp;        // #MIN_0 #CONDSHOW_ON_on #DEF_0.1 overall learning rate multiplier to compensate for changes due to JUST momentum without normalization -- allows for a common master learning rate to be used between different conditions -- generally should use .1 to compensate for just momentum itself
 
   float         m_dt;          // #READ_ONLY #EXPERT rate constant of momentum integration = 1 / m_tau

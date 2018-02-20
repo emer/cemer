@@ -58,6 +58,7 @@ eTypeDef_Of(LeabraDtSpec);
 eTypeDef_Of(LeabraActAvgSpec);
 eTypeDef_Of(LeabraAvgLSpec);
 eTypeDef_Of(LeabraAvgLLrnSpec);
+eTypeDef_Of(LeabraAvgLModSpec);
 eTypeDef_Of(LeabraChannels);
 eTypeDef_Of(KNaAdaptSpec);
 eTypeDef_Of(KNaAdaptMiscSpec);
