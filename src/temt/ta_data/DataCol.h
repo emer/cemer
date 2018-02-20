@@ -173,7 +173,7 @@ public:
   // #CAT_Modify set value of matrix type, in Variant form (any data type, use for Programs), -ve row is from end (-1=last), using flat representation of matrix cell (single cell index)
 
   bool          InitVals(const Variant& init_val, int st_row = 0, int n_rows = -1);
-  // #CAT_Modify #BUTTON #MENU #MENU_CONTEXT #MENU_ON_Column #VARIANT_TYPE_FM_FUN initialize all values in this column to given value -- for rows as specified by starting row, and n_rows = -1 means to the end
+  // #CAT_Modify #BUTTON #MENU #MENU_CONTEXT #MENU_ON_Column #VARIANT_TYPE_FM_FUN initialize all values in this column to given value -- for rows as specified by starting row, and n_rows = -1 means to the end -- float and real can be set to "nan" for undefined values
   bool          InitValsToRowNo(int st_row = 0, int n_rows = -1);
   // #CAT_Modify #MENU #MENU_CONTEXT initialize all values in this column to be equal to the row number -- for rows as specified by starting row, and n_rows = -1 means to the end
   bool          InitValsByIncrement(float first_value = 0.0f, float increment = 1.0f, int st_row = 0, int n_rows = -1);
