@@ -96,6 +96,24 @@ SmoothGauss
     Run Emergent Program	SmoothGauss
     Prog Var Should Equal	test_failed	0    
 
+InitVals
+    Ensure Emergent Free
+    Set Suite Variable     ${program_test}       "InitVals"    
+    Run Emergent Program	InitVals
+    Prog Var Should Equal	pass_test	true    
+
+InitValsByIncrement
+    Ensure Emergent Free
+    Set Suite Variable     ${program_test}       "InitValsByIncrement"    
+    Run Emergent Program	InitValsByIncrement
+    Prog Var Should Equal	pass_test	true    
+
+InitValsToRowNo
+    Ensure Emergent Free
+    Set Suite Variable     ${program_test}       "InitValsToRowNo"    
+    Run Emergent Program	InitValsToRowNo
+    Prog Var Should Equal	pass_test	true    
+
 
 *** Keywords ***
 

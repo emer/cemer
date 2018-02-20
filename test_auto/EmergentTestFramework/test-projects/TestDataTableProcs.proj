@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.5.0.0 rev11342
+// ta_Dump File v3.0 -- code v8.5.6.0 rev11428
 LeabraProject .projects[0] { 
  Doc_Group @.docs = [0] {
  };
@@ -55,7 +55,7 @@ LeabraProject .projects[0] {
   };
  };
 
- Program_TopGroup @.programs = [9] {
+ Program_TopGroup @.programs = [12] {
   Program @[0] { 
    UserDataItem_List @*(.user_data_) {
     UserData_DocLink @[0] { };
@@ -5291,11 +5291,9 @@ LeabraProject .projects[0] {
    ProgVar_List @.args = [0] {
    };
 
-   ProgVar_List @.vars = [4] {
+   ProgVar_List @.vars = [2] {
     ProgVar @[0] { };
     ProgVar @[1] { };
-    ProgVar @[2] { };
-    ProgVar @[3] { };
    };
 
    Function_List @.functions = [0] {
@@ -5399,6 +5397,720 @@ LeabraProject .projects[0] {
      };
     };
     BlankLineEl @[11] { };
+   };
+  };
+  Program @[9] { 
+   ProgObjList @.objs = [1] {
+    DataTable @[0] { 
+     DataTableCols @.data = [4] {
+      String_Data @[0] { };
+      int_Data @[1] { 
+       UserDataItem_List @*(.user_data_) {
+	UserDataItem @[0] { };
+       };
+      };
+      double_Data @[2] { };
+      bool_Data @[3] { };
+     };
+
+     DataOpList @.last_sort_spec.ops = [0] {
+     };
+    };
+   };
+
+   ProgVar_List @.objs_vars = [1] {
+    ProgVar @[0] { };
+   };
+
+   ProgType_List @.types = [0] {
+   };
+
+   ProgVar_List @.args = [0] {
+   };
+
+   ProgVar_List @.vars = [1] {
+    ProgVar @[0] { };
+   };
+
+   Function_List @.functions = [0] {
+   };
+
+   ProgEl_List @.init_code = [0] {
+   };
+
+   ProgEl_List @.prog_code = [26] {
+    LocalVars @[0] { 
+     ProgVar_List @.local_vars = [1] {
+      ProgVar @[0] { };
+     };
+    };
+    AssignExpr @[1] { };
+    MethodCall @[2] { 
+     ProgArg_List @.meth_args = [0] {
+     };
+    };
+    MethodCall @[3] { 
+     ProgArg_List @.meth_args = [1] {
+      ProgArg @[0] { };
+     };
+    };
+    MethodCall @[4] { 
+     ProgArg_List @.meth_args = [4] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+      ProgArg @[3] { };
+     };
+    };
+    ForLoop @[5] { 
+     ProgEl_List @.loop_code = [1] {
+      If @[0] { 
+       ProgEl_List @.true_code = [2] {
+	AssignExpr @[0] { };
+	MiscCall @[1] { 
+	 ProgArg_List @.meth_args = [9] {
+	  ProgArg @[0] { };
+	  ProgArg @[1] { };
+	  ProgArg @[2] { };
+	  ProgArg @[3] { };
+	  ProgArg @[4] { };
+	  ProgArg @[5] { };
+	  ProgArg @[6] { };
+	  ProgArg @[7] { };
+	  ProgArg @[8] { };
+	 };
+	};
+       };
+      };
+     };
+    };
+    MethodCall @[6] { 
+     ProgArg_List @.meth_args = [4] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+      ProgArg @[3] { };
+     };
+    };
+    ForLoop @[7] { 
+     ProgEl_List @.loop_code = [1] {
+      If @[0] { 
+       ProgEl_List @.true_code = [2] {
+	AssignExpr @[0] { };
+	MiscCall @[1] { 
+	 ProgArg_List @.meth_args = [9] {
+	  ProgArg @[0] { };
+	  ProgArg @[1] { };
+	  ProgArg @[2] { };
+	  ProgArg @[3] { };
+	  ProgArg @[4] { };
+	  ProgArg @[5] { };
+	  ProgArg @[6] { };
+	  ProgArg @[7] { };
+	  ProgArg @[8] { };
+	 };
+	};
+       };
+      };
+     };
+    };
+    MethodCall @[8] { 
+     ProgArg_List @.meth_args = [4] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+      ProgArg @[3] { };
+     };
+    };
+    ForLoop @[9] { 
+     ProgEl_List @.loop_code = [1] {
+      If @[0] { 
+       ProgEl_List @.true_code = [2] {
+	AssignExpr @[0] { };
+	MiscCall @[1] { 
+	 ProgArg_List @.meth_args = [9] {
+	  ProgArg @[0] { };
+	  ProgArg @[1] { };
+	  ProgArg @[2] { };
+	  ProgArg @[3] { };
+	  ProgArg @[4] { };
+	  ProgArg @[5] { };
+	  ProgArg @[6] { };
+	  ProgArg @[7] { };
+	  ProgArg @[8] { };
+	 };
+	};
+       };
+      };
+     };
+    };
+    MethodCall @[10] { 
+     ProgArg_List @.meth_args = [4] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+      ProgArg @[3] { };
+     };
+    };
+    ForLoop @[11] { 
+     ProgEl_List @.loop_code = [1] {
+      If @[0] { 
+       ProgEl_List @.true_code = [2] {
+	AssignExpr @[0] { };
+	MiscCall @[1] { 
+	 ProgArg_List @.meth_args = [9] {
+	  ProgArg @[0] { };
+	  ProgArg @[1] { };
+	  ProgArg @[2] { };
+	  ProgArg @[3] { };
+	  ProgArg @[4] { };
+	  ProgArg @[5] { };
+	  ProgArg @[6] { };
+	  ProgArg @[7] { };
+	  ProgArg @[8] { };
+	 };
+	};
+       };
+      };
+     };
+    };
+    BlankLineEl @[12] { };
+    BlankLineEl @[13] { };
+    MethodCall @[14] { 
+     ProgArg_List @.meth_args = [0] {
+     };
+    };
+    MethodCall @[15] { 
+     ProgArg_List @.meth_args = [1] {
+      ProgArg @[0] { };
+     };
+    };
+    MethodCall @[16] { 
+     ProgArg_List @.meth_args = [4] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+      ProgArg @[3] { };
+     };
+    };
+    ForLoop @[17] { 
+     ProgEl_List @.loop_code = [2] {
+      If @[0] { 
+       ProgEl_List @.true_code = [1] {
+	If @[0] { 
+	 ProgEl_List @.true_code = [2] {
+	  AssignExpr @[0] { };
+	  MiscCall @[1] { 
+	   ProgArg_List @.meth_args = [9] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	    ProgArg @[3] { };
+	    ProgArg @[4] { };
+	    ProgArg @[5] { };
+	    ProgArg @[6] { };
+	    ProgArg @[7] { };
+	    ProgArg @[8] { };
+	   };
+	  };
+	 };
+	};
+       };
+      };
+      Else @[1] { 
+       ProgEl_List @.true_code = [1] {
+	If @[0] { 
+	 ProgEl_List @.true_code = [2] {
+	  AssignExpr @[0] { };
+	  MiscCall @[1] { 
+	   ProgArg_List @.meth_args = [9] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	    ProgArg @[3] { };
+	    ProgArg @[4] { };
+	    ProgArg @[5] { };
+	    ProgArg @[6] { };
+	    ProgArg @[7] { };
+	    ProgArg @[8] { };
+	   };
+	  };
+	 };
+	};
+       };
+      };
+     };
+    };
+    BlankLineEl @[18] { };
+    MethodCall @[19] { 
+     ProgArg_List @.meth_args = [4] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+      ProgArg @[3] { };
+     };
+    };
+    ForLoop @[20] { 
+     ProgEl_List @.loop_code = [2] {
+      If @[0] { 
+       ProgEl_List @.true_code = [1] {
+	If @[0] { 
+	 ProgEl_List @.true_code = [2] {
+	  AssignExpr @[0] { };
+	  MiscCall @[1] { 
+	   ProgArg_List @.meth_args = [9] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	    ProgArg @[3] { };
+	    ProgArg @[4] { };
+	    ProgArg @[5] { };
+	    ProgArg @[6] { };
+	    ProgArg @[7] { };
+	    ProgArg @[8] { };
+	   };
+	  };
+	 };
+	};
+       };
+      };
+      Else @[1] { 
+       ProgEl_List @.true_code = [1] {
+	If @[0] { 
+	 ProgEl_List @.true_code = [2] {
+	  AssignExpr @[0] { };
+	  MiscCall @[1] { 
+	   ProgArg_List @.meth_args = [9] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	    ProgArg @[3] { };
+	    ProgArg @[4] { };
+	    ProgArg @[5] { };
+	    ProgArg @[6] { };
+	    ProgArg @[7] { };
+	    ProgArg @[8] { };
+	   };
+	  };
+	 };
+	};
+       };
+      };
+     };
+    };
+    MethodCall @[21] { 
+     ProgArg_List @.meth_args = [4] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+      ProgArg @[3] { };
+     };
+    };
+    ForLoop @[22] { 
+     ProgEl_List @.loop_code = [2] {
+      If @[0] { 
+       ProgEl_List @.true_code = [1] {
+	If @[0] { 
+	 ProgEl_List @.true_code = [2] {
+	  AssignExpr @[0] { };
+	  MiscCall @[1] { 
+	   ProgArg_List @.meth_args = [9] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	    ProgArg @[3] { };
+	    ProgArg @[4] { };
+	    ProgArg @[5] { };
+	    ProgArg @[6] { };
+	    ProgArg @[7] { };
+	    ProgArg @[8] { };
+	   };
+	  };
+	 };
+	};
+       };
+      };
+      Else @[1] { 
+       ProgEl_List @.true_code = [1] {
+	If @[0] { 
+	 ProgEl_List @.true_code = [2] {
+	  AssignExpr @[0] { };
+	  MiscCall @[1] { 
+	   ProgArg_List @.meth_args = [9] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	    ProgArg @[3] { };
+	    ProgArg @[4] { };
+	    ProgArg @[5] { };
+	    ProgArg @[6] { };
+	    ProgArg @[7] { };
+	    ProgArg @[8] { };
+	   };
+	  };
+	 };
+	};
+       };
+      };
+     };
+    };
+    MethodCall @[23] { 
+     ProgArg_List @.meth_args = [4] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+      ProgArg @[3] { };
+     };
+    };
+    ForLoop @[24] { 
+     ProgEl_List @.loop_code = [2] {
+      If @[0] { 
+       ProgEl_List @.true_code = [1] {
+	If @[0] { 
+	 ProgEl_List @.true_code = [2] {
+	  AssignExpr @[0] { };
+	  MiscCall @[1] { 
+	   ProgArg_List @.meth_args = [9] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	    ProgArg @[3] { };
+	    ProgArg @[4] { };
+	    ProgArg @[5] { };
+	    ProgArg @[6] { };
+	    ProgArg @[7] { };
+	    ProgArg @[8] { };
+	   };
+	  };
+	 };
+	};
+       };
+      };
+      Else @[1] { 
+       ProgEl_List @.true_code = [1] {
+	If @[0] { 
+	 ProgEl_List @.true_code = [2] {
+	  AssignExpr @[0] { };
+	  MiscCall @[1] { 
+	   ProgArg_List @.meth_args = [9] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	    ProgArg @[3] { };
+	    ProgArg @[4] { };
+	    ProgArg @[5] { };
+	    ProgArg @[6] { };
+	    ProgArg @[7] { };
+	    ProgArg @[8] { };
+	   };
+	  };
+	 };
+	};
+       };
+      };
+     };
+    };
+    BlankLineEl @[25] { };
+   };
+  };
+  Program @[10] { 
+   ProgObjList @.objs = [1] {
+    DataTable @[0] { 
+     DataTableCols @.data = [2] {
+      int_Data @[0] { 
+       UserDataItem_List @*(.user_data_) {
+	UserDataItem @[0] { };
+       };
+      };
+      int_Data @[1] { 
+       UserDataItem_List @*(.user_data_) {
+	UserDataItem @[0] { };
+       };
+      };
+     };
+
+     DataOpList @.last_sort_spec.ops = [0] {
+     };
+    };
+   };
+
+   ProgVar_List @.objs_vars = [1] {
+    ProgVar @[0] { };
+   };
+
+   ProgType_List @.types = [0] {
+   };
+
+   ProgVar_List @.args = [0] {
+   };
+
+   ProgVar_List @.vars = [1] {
+    ProgVar @[0] { };
+   };
+
+   Function_List @.functions = [0] {
+   };
+
+   ProgEl_List @.init_code = [0] {
+   };
+
+   ProgEl_List @.prog_code = [11] {
+    LocalVars @[0] { 
+     ProgVar_List @.local_vars = [1] {
+      ProgVar @[0] { };
+     };
+    };
+    AssignExpr @[1] { };
+    MethodCall @[2] { 
+     ProgArg_List @.meth_args = [0] {
+     };
+    };
+    MethodCall @[3] { 
+     ProgArg_List @.meth_args = [1] {
+      ProgArg @[0] { };
+     };
+    };
+    BlankLineEl @[4] { };
+    MethodCall @[5] { 
+     ProgArg_List @.meth_args = [5] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+      ProgArg @[3] { };
+      ProgArg @[4] { };
+     };
+    };
+    ForLoop @[6] { 
+     ProgEl_List @.loop_code = [1] {
+      If @[0] { 
+       ProgEl_List @.true_code = [2] {
+	MiscCall @[0] { 
+	 ProgArg_List @.meth_args = [9] {
+	  ProgArg @[0] { };
+	  ProgArg @[1] { };
+	  ProgArg @[2] { };
+	  ProgArg @[3] { };
+	  ProgArg @[4] { };
+	  ProgArg @[5] { };
+	  ProgArg @[6] { };
+	  ProgArg @[7] { };
+	  ProgArg @[8] { };
+	 };
+	};
+	AssignExpr @[1] { };
+       };
+      };
+     };
+    };
+    BlankLineEl @[7] { };
+    MethodCall @[8] { 
+     ProgArg_List @.meth_args = [5] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+      ProgArg @[3] { };
+      ProgArg @[4] { };
+     };
+    };
+    ForLoop @[9] { 
+     ProgEl_List @.loop_code = [1] {
+      If @[0] { 
+       ProgEl_List @.true_code = [2] {
+	MiscCall @[0] { 
+	 ProgArg_List @.meth_args = [9] {
+	  ProgArg @[0] { };
+	  ProgArg @[1] { };
+	  ProgArg @[2] { };
+	  ProgArg @[3] { };
+	  ProgArg @[4] { };
+	  ProgArg @[5] { };
+	  ProgArg @[6] { };
+	  ProgArg @[7] { };
+	  ProgArg @[8] { };
+	 };
+	};
+	AssignExpr @[1] { };
+       };
+      };
+     };
+    };
+    BlankLineEl @[10] { };
+   };
+  };
+  Program @[11] { 
+   UserDataItem_List @*(.user_data_) {
+    UserData_DocLink @[0] { };
+   };
+
+   ProgObjList @.objs = [1] {
+    DataTable @[0] { 
+     DataTableCols @.data = [2] {
+      int_Data @[0] { 
+       UserDataItem_List @*(.user_data_) {
+	UserDataItem @[0] { };
+       };
+      };
+      double_Data @[1] { 
+       UserDataItem_List @*(.user_data_) {
+	UserDataItem @[0] { };
+       };
+      };
+     };
+
+     DataOpList @.last_sort_spec.ops = [0] {
+     };
+    };
+   };
+
+   ProgVar_List @.objs_vars = [1] {
+    ProgVar @[0] { };
+   };
+
+   ProgType_List @.types = [0] {
+   };
+
+   ProgVar_List @.args = [0] {
+   };
+
+   ProgVar_List @.vars = [1] {
+    ProgVar @[0] { };
+   };
+
+   Function_List @.functions = [0] {
+   };
+
+   ProgEl_List @.init_code = [0] {
+   };
+
+   ProgEl_List @.prog_code = [11] {
+    LocalVars @[0] { 
+     ProgVar_List @.local_vars = [1] {
+      ProgVar @[0] { };
+     };
+    };
+    AssignExpr @[1] { };
+    MethodCall @[2] { 
+     ProgArg_List @.meth_args = [0] {
+     };
+    };
+    MethodCall @[3] { 
+     ProgArg_List @.meth_args = [1] {
+      ProgArg @[0] { };
+     };
+    };
+    BlankLineEl @[4] { };
+    MethodCall @[5] { 
+     ProgArg_List @.meth_args = [3] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+     };
+    };
+    ForLoop @[6] { 
+     ProgEl_List @.loop_code = [2] {
+      If @[0] { 
+       ProgEl_List @.true_code = [1] {
+	If @[0] { 
+	 ProgEl_List @.true_code = [2] {
+	  MiscCall @[0] { 
+	   ProgArg_List @.meth_args = [9] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	    ProgArg @[3] { };
+	    ProgArg @[4] { };
+	    ProgArg @[5] { };
+	    ProgArg @[6] { };
+	    ProgArg @[7] { };
+	    ProgArg @[8] { };
+	   };
+	  };
+	  AssignExpr @[1] { };
+	 };
+	};
+       };
+      };
+      Else @[1] { 
+       ProgEl_List @.true_code = [1] {
+	If @[0] { 
+	 ProgEl_List @.true_code = [2] {
+	  MiscCall @[0] { 
+	   ProgArg_List @.meth_args = [9] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	    ProgArg @[3] { };
+	    ProgArg @[4] { };
+	    ProgArg @[5] { };
+	    ProgArg @[6] { };
+	    ProgArg @[7] { };
+	    ProgArg @[8] { };
+	   };
+	  };
+	  AssignExpr @[1] { };
+	 };
+	};
+       };
+      };
+     };
+    };
+    BlankLineEl @[7] { };
+    MethodCall @[8] { 
+     ProgArg_List @.meth_args = [3] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+     };
+    };
+    ForLoop @[9] { 
+     ProgEl_List @.loop_code = [2] {
+      If @[0] { 
+       ProgEl_List @.true_code = [1] {
+	If @[0] { 
+	 ProgEl_List @.true_code = [2] {
+	  MiscCall @[0] { 
+	   ProgArg_List @.meth_args = [9] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	    ProgArg @[3] { };
+	    ProgArg @[4] { };
+	    ProgArg @[5] { };
+	    ProgArg @[6] { };
+	    ProgArg @[7] { };
+	    ProgArg @[8] { };
+	   };
+	  };
+	  AssignExpr @[1] { };
+	 };
+	};
+       };
+      };
+      Else @[1] { 
+       ProgEl_List @.true_code = [1] {
+	If @[0] { 
+	 ProgEl_List @.true_code = [2] {
+	  MiscCall @[0] { 
+	   ProgArg_List @.meth_args = [9] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	    ProgArg @[3] { };
+	    ProgArg @[4] { };
+	    ProgArg @[5] { };
+	    ProgArg @[6] { };
+	    ProgArg @[7] { };
+	    ProgArg @[8] { };
+	   };
+	  };
+	  AssignExpr @[1] { };
+	 };
+	};
+       };
+      };
+     };
+    };
+    BlankLineEl @[10] { };
    };
   };
  };
@@ -10015,11 +10727,11 @@ LeabraProject .projects[0] {
      max_col_width=50;
      keygen 4 0=0;
      row_indexes {
-      name=;
+      name="row_indexes";
      [11] 0;1;2;3;4;5;6;7;8;9;
 10;     };
      last_sort_spec {
-      name="DataSortSpec_68";
+      name="last_sort_spec";
       ops {
        name="ops";
        el_typ=DataSortEl;
@@ -10102,7 +10814,7 @@ LeabraProject .projects[0] {
       name="row_indexes";
      [0]      };
      last_sort_spec {
-      name="DataSortSpec_71";
+      name="last_sort_spec";
       ops {
        name="ops";
        el_typ=DataSortEl;
@@ -10241,7 +10953,7 @@ LeabraProject .projects[0] {
      [10] 9;8;7;6;5;4;3;2;1;0;
      };
      last_sort_spec {
-      name="DataSortSpec_71";
+      name="last_sort_spec";
       ops {
        name="ops";
        el_typ=DataSortEl;
@@ -10376,11 +11088,11 @@ LeabraProject .projects[0] {
      max_col_width=50;
      keygen 4 0=0;
      row_indexes {
-      name=;
+      name="row_indexes";
      [11] 10;9;8;7;6;5;4;3;2;1;
 0;     };
      last_sort_spec {
-      name="DataSortSpec_71";
+      name="last_sort_spec";
       ops {
        name="ops";
        el_typ=DataSortEl;
@@ -10543,7 +11255,7 @@ LeabraProject .projects[0] {
     el_typ=ProgCode;
     el_def=0;
     LocalVars @[0] {
-     name="LocalVars_LocalVars0vars";
+     name="LocalVars_LocalVars5vars";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="LocalVars (5 vars)";
@@ -18159,7 +18871,7 @@ LeabraProject .projects[0] {
 	  el_typ=ProgCode;
 	  el_def=0;
 	  MiscCall @[0] {
-	   name="MiscCall_taMiscError";
+	   name="MiscCall_taMiscErrortable_itencyaftersort";
 	   desc=;
 	   flags=CAN_REVERT_TO_CODE;
 	   code_string="taMisc::Error(\"table inconsitency after sort\", , , , , , , , )";
@@ -18306,7 +19018,7 @@ LeabraProject .projects[0] {
 	   };
 	  };
 	  MiscCall @[1] {
-	   name="MiscCall_taMiscError";
+	   name="MiscCall_taMiscErrortable_itencyaftersort";
 	   desc=;
 	   flags=CAN_REVERT_TO_CODE;
 	   code_string="taMisc::Error(\"table inconsitency after sort\", , , , , , , , )";
@@ -18461,7 +19173,7 @@ LeabraProject .projects[0] {
 	       };
 	      };
 	      MiscCall @[1] {
-	       name="MiscCall_taMiscError";
+	       name="MiscCall_taMiscErrortable_itencyaftersort";
 	       desc=;
 	       flags=CAN_REVERT_TO_CODE;
 	       code_string="taMisc::Error(\"table inconsitency after sort\", , , , , , , , )";
@@ -18632,7 +19344,7 @@ LeabraProject .projects[0] {
 	     };
 	    };
 	    MiscCall @[1] {
-	     name="MiscCall_taMiscError";
+	     name="MiscCall_taMiscErrorSortingorderfailed";
 	     desc=;
 	     flags=CAN_REVERT_TO_CODE;
 	     code_string="taMisc::Error(\"Sorting order failed!\", , , , , , , , )";
@@ -19031,7 +19743,7 @@ LeabraProject .projects[0] {
 	  el_typ=ProgCode;
 	  el_def=0;
 	  MiscCall @[0] {
-	   name="MiscCall_taMiscError";
+	   name="MiscCall_taMiscErrortable_itencyaftersort";
 	   desc=;
 	   flags=CAN_REVERT_TO_CODE;
 	   code_string="taMisc::Error(\"table inconsitency after sort\", , , , , , , , )";
@@ -19178,7 +19890,7 @@ LeabraProject .projects[0] {
 	   };
 	  };
 	  MiscCall @[1] {
-	   name="MiscCall_taMiscError";
+	   name="MiscCall_taMiscErrortable_itencyaftersort";
 	   desc=;
 	   flags=CAN_REVERT_TO_CODE;
 	   code_string="taMisc::Error(\"table inconsitency after sort\", , , , , , , , )";
@@ -19333,7 +20045,7 @@ LeabraProject .projects[0] {
 	       };
 	      };
 	      MiscCall @[1] {
-	       name="MiscCall_taMiscError";
+	       name="MiscCall_taMiscErrortable_itencyaftersort";
 	       desc=;
 	       flags=CAN_REVERT_TO_CODE;
 	       code_string="taMisc::Error(\"table inconsitency after sort\", , , , , , , , )";
@@ -19504,7 +20216,7 @@ LeabraProject .projects[0] {
 	     };
 	    };
 	    MiscCall @[1] {
-	     name="MiscCall_taMiscError";
+	     name="MiscCall_taMiscErrorSortingorderfailed";
 	     desc=;
 	     flags=CAN_REVERT_TO_CODE;
 	     code_string="taMisc::Error(\"Sorting order failed!\", , , , , , , , )";
@@ -20015,7 +20727,7 @@ LeabraProject .projects[0] {
 	el_typ=ProgCode;
 	el_def=0;
 	MiscCall @[0] {
-	 name="MiscCall_taMiscError";
+	 name="MiscCall_taMiscErrortable_itencyaftersort";
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="taMisc::Error(\"table inconsitency after sort\", , , , , , , , )";
@@ -20162,7 +20874,7 @@ LeabraProject .projects[0] {
 	 };
 	};
 	MiscCall @[1] {
-	 name="MiscCall_taMiscError";
+	 name="MiscCall_taMiscErrortable_itencyaftersort";
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="taMisc::Error(\"table inconsitency after sort\", , , , , , , , )";
@@ -20317,7 +21029,7 @@ LeabraProject .projects[0] {
 	     };
 	    };
 	    MiscCall @[1] {
-	     name="MiscCall_taMiscError";
+	     name="MiscCall_taMiscErrortable_itencyaftersort";
 	     desc=;
 	     flags=CAN_REVERT_TO_CODE;
 	     code_string="taMisc::Error(\"table inconsitency after sort\", , , , , , , , )";
@@ -20488,7 +21200,7 @@ LeabraProject .projects[0] {
 	   };
 	  };
 	  MiscCall @[1] {
-	   name="MiscCall_taMiscError";
+	   name="MiscCall_taMiscErrorSortingorderfailed";
 	   desc=;
 	   flags=CAN_REVERT_TO_CODE;
 	   code_string="taMisc::Error(\"Sorting order failed!\", , , , , , , , )";
@@ -20976,7 +21688,7 @@ LeabraProject .projects[0] {
 	el_typ=ProgCode;
 	el_def=0;
 	MiscCall @[0] {
-	 name="MiscCall_taMiscError";
+	 name="MiscCall_taMiscErrortable_itencyaftersort";
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="taMisc::Error(\"table inconsitency after sort\", , , , , , , , )";
@@ -21123,7 +21835,7 @@ LeabraProject .projects[0] {
 	 };
 	};
 	MiscCall @[1] {
-	 name="MiscCall_taMiscError";
+	 name="MiscCall_taMiscErrortable_itencyaftersort";
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="taMisc::Error(\"table inconsitency after sort\", , , , , , , , )";
@@ -21278,7 +21990,7 @@ LeabraProject .projects[0] {
 	     };
 	    };
 	    MiscCall @[1] {
-	     name="MiscCall_taMiscError";
+	     name="MiscCall_taMiscErrortable_itencyaftersort";
 	     desc=;
 	     flags=CAN_REVERT_TO_CODE;
 	     code_string="taMisc::Error(\"table inconsitency after sort\", , , , , , , , )";
@@ -21449,7 +22161,7 @@ LeabraProject .projects[0] {
 	   };
 	  };
 	  MiscCall @[1] {
-	   name="MiscCall_taMiscError";
+	   name="MiscCall_taMiscErrorSortingorderfailed";
 	   desc=;
 	   flags=CAN_REVERT_TO_CODE;
 	   code_string="taMisc::Error(\"Sorting order failed!\", , , , , , , , )";
@@ -21937,7 +22649,7 @@ LeabraProject .projects[0] {
 	el_typ=ProgCode;
 	el_def=0;
 	MiscCall @[0] {
-	 name="MiscCall_taMiscError";
+	 name="MiscCall_taMiscErrortable_itencyaftersort";
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="taMisc::Error(\"table inconsitency after sort\", , , , , , , , )";
@@ -22084,7 +22796,7 @@ LeabraProject .projects[0] {
 	 };
 	};
 	MiscCall @[1] {
-	 name="MiscCall_taMiscError";
+	 name="MiscCall_taMiscErrortable_itencyaftersort";
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="taMisc::Error(\"table inconsitency after sort\", , , , , , , , )";
@@ -22239,7 +22951,7 @@ LeabraProject .projects[0] {
 	     };
 	    };
 	    MiscCall @[1] {
-	     name="MiscCall_taMiscError";
+	     name="MiscCall_taMiscErrortable_itencyaftersort";
 	     desc=;
 	     flags=CAN_REVERT_TO_CODE;
 	     code_string="taMisc::Error(\"table inconsitency after sort\", , , , , , , , )";
@@ -22410,7 +23122,7 @@ LeabraProject .projects[0] {
 	   };
 	  };
 	  MiscCall @[1] {
-	   name="MiscCall_taMiscError";
+	   name="MiscCall_taMiscErrorSortingorderfailed";
 	   desc=;
 	   flags=CAN_REVERT_TO_CODE;
 	   code_string="taMisc::Error(\"Sorting order failed!\", , , , , , , , )";
@@ -22898,7 +23610,7 @@ LeabraProject .projects[0] {
 	el_typ=ProgCode;
 	el_def=0;
 	MiscCall @[0] {
-	 name="MiscCall_taMiscError";
+	 name="MiscCall_taMiscErrortable_itencyaftersort";
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="taMisc::Error(\"table inconsitency after sort\", , , , , , , , )";
@@ -23045,7 +23757,7 @@ LeabraProject .projects[0] {
 	 };
 	};
 	MiscCall @[1] {
-	 name="MiscCall_taMiscError";
+	 name="MiscCall_taMiscErrortable_itencyaftersort";
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="taMisc::Error(\"table inconsitency after sort\", , , , , , , , )";
@@ -23200,7 +23912,7 @@ LeabraProject .projects[0] {
 	     };
 	    };
 	    MiscCall @[1] {
-	     name="MiscCall_taMiscError";
+	     name="MiscCall_taMiscErrortable_itencyaftersort";
 	     desc=;
 	     flags=CAN_REVERT_TO_CODE;
 	     code_string="taMisc::Error(\"table inconsitency after sort\", , , , , , , , )";
@@ -23371,7 +24083,7 @@ LeabraProject .projects[0] {
 	   };
 	  };
 	  MiscCall @[1] {
-	   name="MiscCall_taMiscError";
+	   name="MiscCall_taMiscErrorSortingorderfailed";
 	   desc=;
 	   flags=CAN_REVERT_TO_CODE;
 	   code_string="taMisc::Error(\"Sorting order failed!\", , , , , , , , )";
@@ -23641,11 +24353,11 @@ LeabraProject .projects[0] {
      max_col_width=50;
      keygen 4 0=0;
      row_indexes {
-      name=;
+      name="row_indexes";
      [11] 0;1;2;3;4;5;6;7;8;9;
 10;     };
      last_sort_spec {
-      name="DataSortSpec_68";
+      name="last_sort_spec";
       ops {
        name="ops";
        el_typ=DataSortEl;
@@ -23755,11 +24467,11 @@ LeabraProject .projects[0] {
      max_col_width=50;
      keygen 4 0=0;
      row_indexes {
-      name=;
-     [11] 7;8;4;5;9;0;2;1;10;6;
-3;     };
+      name="row_indexes";
+     [11] 3;1;9;7;8;6;0;10;5;2;
+4;     };
      last_sort_spec {
-      name="DataSortSpec_68";
+      name="last_sort_spec";
       ops {
        name="ops";
        el_typ=DataSortEl;
@@ -23801,19 +24513,19 @@ LeabraProject .projects[0] {
        matrix_col_width=10;
        ar {
 	name="ar";
-       [11 11 1] 866;928;835;933;894;921;913;911;915;912;
-972;893;862;931;963;915;959;899;934;930;
-836;878;873;908;853;968;916;974;894;937;
-916;913;848;908;893;892;886;967;922;916;
-922;867;905;922;977;889;883;868;896;939;
-893;917;897;919;922;959;883;895;878;919;
-850;929;871;923;932;961;929;923;929;921;
-911;864;880;880;931;935;897;899;887;928;
-893;904;903;942;925;933;862;924;906;935;
-996;904;900;855;923;876;887;926;892;911;
-939;912;881;881;899;868;880;926;974;929;
-879;953;946;905;897;914;943;947;875;886;
-855;       };
+       [11 11 1] 924;897;892;834;930;949;919;903;871;947;
+934;937;884;942;880;892;907;876;903;900;
+903;976;840;894;868;920;917;908;958;924;
+978;937;856;962;956;895;947;909;905;922;
+869;877;880;878;910;883;944;911;862;955;
+949;908;880;938;860;928;909;931;939;900;
+908;875;908;902;890;910;895;917;881;946;
+897;903;916;941;894;951;859;885;958;950;
+878;884;874;902;895;958;885;931;906;885;
+861;926;925;909;917;943;915;901;912;888;
+898;941;888;935;929;864;907;918;891;941;
+925;919;895;931;949;853;902;899;907;877;
+943;       };
       };
      };
      data_flags=SAVE_ROWS|AUTO_CALC;
@@ -23823,10 +24535,10 @@ LeabraProject .projects[0] {
      max_col_width=50;
      keygen 4 0=0;
      row_indexes {
-      name=;
+      name="row_indexes";
      [1] 0;     };
      last_sort_spec {
-      name="DataSortSpec_70";
+      name="last_sort_spec";
       ops {
        name="ops";
        el_typ=DataSortEl;
@@ -23920,7 +24632,7 @@ LeabraProject .projects[0] {
     el_typ=ProgCode;
     el_def=0;
     LocalVars @[0] {
-     name="LocalVars_LocalVars0vars";
+     name="LocalVars_LocalVars5vars";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="LocalVars (5 vars)";
@@ -24144,7 +24856,7 @@ LeabraProject .projects[0] {
 	     };
 	    };
 	    MiscCall @[1] {
-	     name="MiscCall_taMiscError";
+	     name="MiscCall_taMiscErrortable_itencyaftersort";
 	     desc=;
 	     flags=CAN_REVERT_TO_CODE;
 	     code_string="taMisc::Error(\"table inconsitency after sort\", , , , , , , , )";
@@ -24281,7 +24993,7 @@ LeabraProject .projects[0] {
 	     };
 	    };
 	    MiscCall @[1] {
-	     name="MiscCall_taMiscError";
+	     name="MiscCall_taMiscErrortable_itencyaftersort";
 	     desc=;
 	     flags=CAN_REVERT_TO_CODE;
 	     code_string="taMisc::Error(\"table inconsitency after sort\", , , , , , , , )";
@@ -24436,7 +25148,7 @@ LeabraProject .projects[0] {
 		 };
 		};
 		MiscCall @[1] {
-		 name="MiscCall_taMiscError";
+		 name="MiscCall_taMiscErrortable_itencyaftersort";
 		 desc=;
 		 flags=CAN_REVERT_TO_CODE;
 		 code_string="taMisc::Error(\"table inconsitency after sort\", , , , , , , , )";
@@ -24669,7 +25381,7 @@ LeabraProject .projects[0] {
 	   };
 	  };
 	  MiscCall @[1] {
-	   name="MiscCall_taMiscError";
+	   name="MiscCall_taMiscErrorRando_seemsnonuniform";
 	   desc=;
 	   flags=CAN_REVERT_TO_CODE;
 	   code_string="taMisc::Error(\"Random permutation distribution seems non uniform\", , , , , , , , )";
@@ -24960,7 +25672,13 @@ LeabraProject .projects[0] {
 </body>
 </html>
 ";
-    html_text=;
+    html_text="<html>
+<head></head>
+<body>
+<h2> Enter Title Here </h2>
+</body>
+</html>
+";
    };
   };
   Program @[5] {
@@ -43038,32 +43756,6 @@ LeabraProject .projects[0] {
      desc=;
      init_from=NULL;
     };
-    ProgVar @[2] {
-     name="data_table1_copy";
-     var_type=T_Object;
-     object_type=DataTable;
-     completion_type=;
-     object_val=$.programs[8].objs[1]$;
-     object_scope=NULL;
-     objs_ptr=0;
-     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-     reference=0;
-     desc=;
-     init_from=NULL;
-    };
-    ProgVar @[3] {
-     name="data_table1";
-     var_type=T_Object;
-     object_type=DataTable;
-     completion_type=;
-     object_val=$.programs[8].objs[0]$;
-     object_scope=NULL;
-     objs_ptr=0;
-     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-     reference=0;
-     desc=;
-     init_from=NULL;
-    };
    };
    functions {
     name="functions";
@@ -43123,7 +43815,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_copy->CopyFrom(data_table1)";
      result_var=NULL;
-     obj=.programs[8].vars[2]$$;
+     obj=.programs[8].objs_vars[1]$$;
      method=taBase::CopyFrom;
      meth_args {
       name="meth_args";
@@ -43444,7 +44136,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_copy->CopyFrom(data_table1)";
      result_var=NULL;
-     obj=$.programs[8].vars[2]$;
+     obj=$.programs[8].objs_vars[1]$;
      method=taBase::CopyFrom;
      meth_args {
       name="meth_args";
@@ -43471,7 +44163,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_copy->Filter(\"Name\", Relation::CONTAINS, \"Type2\", , , , , , , )";
      result_var=NULL;
-     obj=$.programs[8].vars[2]$;
+     obj=$.programs[8].objs_vars[1]$;
      method=DataTable::Filter;
      meth_args {
       name="meth_args";
@@ -43769,6 +44461,4491 @@ LeabraProject .projects[0] {
     html_text=;
    };
   };
+  Program @[9] {
+   name="InitVals";
+   short_nm=;
+   tags=;
+   desc=;
+   version {
+    major=0;
+    minor=0;
+    step=0;
+   };
+   author="Kai Krueger";
+   email="kai.krueger@colorado.edu";
+   flags=NO_STOP_STEP|OBJS_UPDT_GUI;
+   stop_step_cond {
+    expr=;
+   };
+   objs {
+    name="objs";
+    el_typ=DataTable;
+    el_def=0;
+    DataTable @[0] {
+     name="DataTable";
+     desc=;
+     data {
+      name="data";
+      el_typ=String_Data;
+      el_def=0;
+      String_Data @[0] {
+       name="StringCol";
+       col_flags=SAVE_DATA|AUTO_WIDTH;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name="dim_names";
+       [0]        };
+       width=0;
+       matrix_col_width=10;
+       ar {
+	name="ar";
+       [10] ;"Hello World";"Hello World";"Hello World";"Hello World";"Hello World";"Hello World";"Hello World";"Hello World";;
+       };
+      };
+      int_Data @[1] {
+       UserDataItem_List @*(.user_data_) {
+	name=;
+	el_typ=UserDataItem;
+	el_def=0;
+	UserDataItem @[0] {name="NARROW": value=1: val_type_fixed=0: };
+       };
+       name="IntCol";
+       col_flags=SAVE_DATA|AUTO_WIDTH;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name="dim_names";
+       [0]        };
+       width=0;
+       matrix_col_width=10;
+       ar {
+	name="ar";
+       [10] 0;7;7;7;7;7;7;7;7;0;
+       };
+      };
+      double_Data @[2] {
+       name="DoubleCol";
+       col_flags=SAVE_DATA|AUTO_WIDTH;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name="dim_names";
+       [0]        };
+       width=0;
+       matrix_col_width=10;
+       ar {
+	name="ar";
+       [10] 0;7.3;7.3;7.3;7.3;7.3;7.3;7.3;7.3;0;
+       };
+      };
+      bool_Data @[3] {
+       name="BoolCol";
+       col_flags=SAVE_DATA|AUTO_WIDTH;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name="dim_names";
+       [0]        };
+       width=0;
+       matrix_col_width=10;
+       ar {
+	name="ar";
+       [10] false;true;true;true;true;true;true;true;true;false;
+       };
+      };
+     };
+     data_flags=SAVE_ROWS|AUTO_CALC;
+     auto_load=NO_AUTO_LOAD;
+     auto_load_file=;
+     row_height=1;
+     max_col_width=50;
+     keygen 4 0=0;
+     row_indexes {
+      name=;
+     [10] 0;1;2;3;4;5;6;7;8;9;
+     };
+     last_sort_spec {
+      name="DataSortSpec_877";
+      ops {
+       name="ops";
+       el_typ=DataSortEl;
+       el_def=0;
+      };
+     };
+     row_with_hilite=-1;
+    };
+   };
+   objs_vars {
+    name="objs_vars";
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @[0] {
+     name="data_table";
+     var_type=T_Object;
+     object_type=DataTable;
+     completion_type=;
+     object_val=.programs[9].objs[0]$$;
+     object_scope=NULL;
+     objs_ptr=1;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+   };
+   types {
+    name="types";
+    el_typ=DynEnumType;
+    el_def=0;
+   };
+   args {
+    name="args";
+    el_typ=ProgVar;
+    el_def=0;
+   };
+   vars {
+    name="vars";
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @[0] {
+     name="pass_test";
+     var_type=T_Bool;
+     completion_type=;
+     object_scope=NULL;
+     flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+   };
+   functions {
+    name="functions";
+    el_typ=Function;
+    el_def=0;
+   };
+   init_code {
+    name="init_code";
+    el_typ=ProgCode;
+    el_def=0;
+   };
+   prog_code {
+    name="prog_code";
+    el_typ=ProgCode;
+    el_def=0;
+    LocalVars @[0] {
+     name="LocalVars_LocalVars0vars";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="LocalVars (1 vars)";
+     local_vars {
+      name="local_vars";
+      el_typ=ProgVar;
+      el_def=0;
+      ProgVar @[0] {
+       name="i";
+       var_type=T_Int;
+       int_val=0;
+       completion_type=;
+       object_scope=NULL;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+     };
+    };
+    AssignExpr @[1] {
+     name="AssignExpr_passtesttrue";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="pass_test = true";
+     result_var=.programs[9].vars[0]$$;
+     expr {
+      expr="true";
+     };
+    };
+    MethodCall @[2] {
+     name="MethodCall_datatableResetData";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="data_table->ResetData()";
+     result_var=NULL;
+     obj=.programs[9].objs_vars[0]$$;
+     method=DataTable::ResetData;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+     };
+     meth_sig="void ResetData()";
+     meth_desc=" deletes all the data (rows), but keeps the column structure -- this cannot be undone!";
+    };
+    MethodCall @[3] {
+     name="MethodCall_datatableAddRows10";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="data_table->AddRows(10)";
+     result_var=NULL;
+     obj=$.programs[9].objs_vars[0]$;
+     method=DataTable::AddRows;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=int;
+       type="int";
+       name="n";
+       required=0;
+       def_val="1";
+       prev_expr=;
+       expr {
+	expr="10";
+       };
+      };
+     };
+     meth_sig="bool AddRows(int n = 1)";
+     meth_desc=" add n rows, returns true if successfully added";
+    };
+    MethodCall @[4] {
+     name="MethodCall_datatableInitVal_rldStringCol010";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="data_table->InitVals(\"Hello World\", \"StringCol\", 0, 10)";
+     result_var=NULL;
+     obj=$.programs[9].objs_vars[0]$;
+     method=DataTable::InitVals;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_Variant_ref;
+       type="Variant&";
+       name="init_val";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="\"Hello World\"";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_Variant_ref;
+       type="Variant&";
+       name="col";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="\"StringCol\"";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=int;
+       type="int";
+       name="st_row";
+       required=0;
+       def_val="0";
+       prev_expr=;
+       expr {
+	expr="0";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=int;
+       type="int";
+       name="n_rows";
+       required=0;
+       def_val="-1";
+       prev_expr=;
+       expr {
+	expr="10";
+       };
+      };
+     };
+     meth_sig="bool InitVals(Variant& init_val, Variant& col, int st_row = 0, int n_rows = -1)";
+     meth_desc=" initialize all values in given column to given value -- column can be specified as either integer index or a string that is then used to find the given column name -- for rows as specified by starting row, and n_rows = -1 means to the end";
+    };
+    ForLoop @[5] {
+     name="ForLoop_fori0i10i";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="for (i = 0; i < 10; i++)";
+     loop_code {
+      name="loop_code";
+      el_typ=ProgCode;
+      el_def=0;
+      If @[0] {
+       name="If_ifdatatableStringColiHelloWorld";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="if (data_table[\"StringCol\"][i] != \"Hello World\")";
+       cond {
+	expr="data_table[\"StringCol\"][i] != \"Hello World\"";
+       };
+       true_code {
+	name="true_code";
+	el_typ=ProgCode;
+	el_def=0;
+	AssignExpr @[0] {
+	 name="AssignExpr_passtestfalse";
+	 desc=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="pass_test = false";
+	 result_var=$.programs[9].vars[0]$;
+	 expr {
+	  expr="false";
+	 };
+	};
+	MiscCall @[1] {
+	 name="MiscCall_taMiscError";
+	 desc=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="taMisc::Error(\"InitVals did not init a string column\", , , , , , , , )";
+	 result_var=NULL;
+	 object_type=taMisc;
+	 method=taMisc::Error;
+	 meth_args {
+	  name="meth_args";
+	  el_typ=ProgArg;
+	  el_def=0;
+	  ProgArg @[0] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="a";
+	   required=1;
+	   def_val=;
+	   prev_expr=;
+	   expr {
+	    expr="\"InitVals did not init a string column\"";
+	   };
+	  };
+	  ProgArg @[1] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="b";
+	   required=0;
+	   def_val="\"\"";
+	   prev_expr=;
+	   expr {
+	    expr=;
+	   };
+	  };
+	  ProgArg @[2] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="c";
+	   required=0;
+	   def_val="\"\"";
+	   prev_expr=;
+	   expr {
+	    expr=;
+	   };
+	  };
+	  ProgArg @[3] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="d";
+	   required=0;
+	   def_val="\"\"";
+	   prev_expr=;
+	   expr {
+	    expr=;
+	   };
+	  };
+	  ProgArg @[4] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="e";
+	   required=0;
+	   def_val="\"\"";
+	   prev_expr=;
+	   expr {
+	    expr=;
+	   };
+	  };
+	  ProgArg @[5] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="f";
+	   required=0;
+	   def_val="\"\"";
+	   prev_expr=;
+	   expr {
+	    expr=;
+	   };
+	  };
+	  ProgArg @[6] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="g";
+	   required=0;
+	   def_val="\"\"";
+	   prev_expr=;
+	   expr {
+	    expr=;
+	   };
+	  };
+	  ProgArg @[7] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="h";
+	   required=0;
+	   def_val="\"\"";
+	   prev_expr=;
+	   expr {
+	    expr=;
+	   };
+	  };
+	  ProgArg @[8] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="i";
+	   required=0;
+	   def_val="\"\"";
+	   prev_expr=;
+	   expr {
+	    expr=;
+	   };
+	  };
+	 };
+	};
+       };
+      };
+     };
+     init {
+      expr="i = 0";
+     };
+     test {
+      expr="i < 10";
+     };
+     iter {
+      expr="i++";
+     };
+    };
+    MethodCall @[6] {
+     name="MethodCall_datatableInitVals7IntCol010";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="data_table->InitVals(7, \"IntCol\", 0, 10)";
+     result_var=NULL;
+     obj=$.programs[9].objs_vars[0]$;
+     method=DataTable::InitVals;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_Variant_ref;
+       type="Variant&";
+       name="init_val";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="7";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_Variant_ref;
+       type="Variant&";
+       name="col";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="\"IntCol\"";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=int;
+       type="int";
+       name="st_row";
+       required=0;
+       def_val="0";
+       prev_expr=;
+       expr {
+	expr="0";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=int;
+       type="int";
+       name="n_rows";
+       required=0;
+       def_val="-1";
+       prev_expr=;
+       expr {
+	expr="10";
+       };
+      };
+     };
+     meth_sig="bool InitVals(Variant& init_val, Variant& col, int st_row = 0, int n_rows = -1)";
+     meth_desc=" initialize all values in given column to given value -- column can be specified as either integer index or a string that is then used to find the given column name -- for rows as specified by starting row, and n_rows = -1 means to the end";
+    };
+    ForLoop @[7] {
+     name="ForLoop_fori0i10i_1";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="for (i = 0; i < 10; i++)";
+     loop_code {
+      name="loop_code";
+      el_typ=ProgCode;
+      el_def=0;
+      If @[0] {
+       name="If_ifdatatableIntColi7";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="if (data_table[\"IntCol\"][i] != 7)";
+       cond {
+	expr="data_table[\"IntCol\"][i] != 7";
+       };
+       true_code {
+	name="true_code";
+	el_typ=ProgCode;
+	el_def=0;
+	AssignExpr @[0] {
+	 name="AssignExpr_passtestfalse";
+	 desc=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="pass_test = false";
+	 result_var=$.programs[9].vars[0]$;
+	 expr {
+	  expr="false";
+	 };
+	};
+	MiscCall @[1] {
+	 name="MiscCall_taMiscErrorInitV_tinitaintcolumn";
+	 desc=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="taMisc::Error(\"InitVals did not init a int column\", , , , , , , , )";
+	 result_var=NULL;
+	 object_type=taMisc;
+	 method=taMisc::Error;
+	 meth_args {
+	  name="meth_args";
+	  el_typ=ProgArg;
+	  el_def=0;
+	  ProgArg @[0] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="a";
+	   required=1;
+	   def_val=;
+	   prev_expr=;
+	   expr {
+	    expr="\"InitVals did not init a int column\"";
+	   };
+	  };
+	  ProgArg @[1] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="b";
+	   required=0;
+	   def_val="\"\"";
+	   prev_expr=;
+	   expr {
+	    expr=;
+	   };
+	  };
+	  ProgArg @[2] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="c";
+	   required=0;
+	   def_val="\"\"";
+	   prev_expr=;
+	   expr {
+	    expr=;
+	   };
+	  };
+	  ProgArg @[3] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="d";
+	   required=0;
+	   def_val="\"\"";
+	   prev_expr=;
+	   expr {
+	    expr=;
+	   };
+	  };
+	  ProgArg @[4] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="e";
+	   required=0;
+	   def_val="\"\"";
+	   prev_expr=;
+	   expr {
+	    expr=;
+	   };
+	  };
+	  ProgArg @[5] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="f";
+	   required=0;
+	   def_val="\"\"";
+	   prev_expr=;
+	   expr {
+	    expr=;
+	   };
+	  };
+	  ProgArg @[6] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="g";
+	   required=0;
+	   def_val="\"\"";
+	   prev_expr=;
+	   expr {
+	    expr=;
+	   };
+	  };
+	  ProgArg @[7] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="h";
+	   required=0;
+	   def_val="\"\"";
+	   prev_expr=;
+	   expr {
+	    expr=;
+	   };
+	  };
+	  ProgArg @[8] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="i";
+	   required=0;
+	   def_val="\"\"";
+	   prev_expr=;
+	   expr {
+	    expr=;
+	   };
+	  };
+	 };
+	};
+       };
+      };
+     };
+     init {
+      expr="i = 0";
+     };
+     test {
+      expr="i < 10";
+     };
+     iter {
+      expr="i++";
+     };
+    };
+    MethodCall @[8] {
+     name="MethodCall_datatableInitVals7DoubleCol010";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="data_table->InitVals(7.3, \"DoubleCol\", 0, 10)";
+     result_var=NULL;
+     obj=$.programs[9].objs_vars[0]$;
+     method=DataTable::InitVals;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_Variant_ref;
+       type="Variant&";
+       name="init_val";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="7.3";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_Variant_ref;
+       type="Variant&";
+       name="col";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="\"DoubleCol\"";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=int;
+       type="int";
+       name="st_row";
+       required=0;
+       def_val="0";
+       prev_expr=;
+       expr {
+	expr="0";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=int;
+       type="int";
+       name="n_rows";
+       required=0;
+       def_val="-1";
+       prev_expr=;
+       expr {
+	expr="10";
+       };
+      };
+     };
+     meth_sig="bool InitVals(Variant& init_val, Variant& col, int st_row = 0, int n_rows = -1)";
+     meth_desc=" initialize all values in given column to given value -- column can be specified as either integer index or a string that is then used to find the given column name -- for rows as specified by starting row, and n_rows = -1 means to the end";
+    };
+    ForLoop @[9] {
+     name="ForLoop_fori0i10i_2";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="for (i = 0; i < 10; i++)";
+     loop_code {
+      name="loop_code";
+      el_typ=ProgCode;
+      el_def=0;
+      If @[0] {
+       name="If_ifdatatableIntColi73";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="if (data_table[\"IntCol\"][i] != 7.3)";
+       cond {
+	expr="data_table[\"IntCol\"][i] != 7.3";
+       };
+       true_code {
+	name="true_code";
+	el_typ=ProgCode;
+	el_def=0;
+	AssignExpr @[0] {
+	 name="AssignExpr_passtestfalse";
+	 desc=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="pass_test = false";
+	 result_var=$.programs[9].vars[0]$;
+	 expr {
+	  expr="false";
+	 };
+	};
+	MiscCall @[1] {
+	 name="MiscCall_taMiscErrorInitV_itadoublecolumn";
+	 desc=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="taMisc::Error(\"InitVals did not init a double column\", , , , , , , , )";
+	 result_var=NULL;
+	 object_type=taMisc;
+	 method=taMisc::Error;
+	 meth_args {
+	  name="meth_args";
+	  el_typ=ProgArg;
+	  el_def=0;
+	  ProgArg @[0] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="a";
+	   required=1;
+	   def_val=;
+	   prev_expr=;
+	   expr {
+	    expr="\"InitVals did not init a double column\"";
+	   };
+	  };
+	  ProgArg @[1] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="b";
+	   required=0;
+	   def_val="\"\"";
+	   prev_expr=;
+	   expr {
+	    expr=;
+	   };
+	  };
+	  ProgArg @[2] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="c";
+	   required=0;
+	   def_val="\"\"";
+	   prev_expr=;
+	   expr {
+	    expr=;
+	   };
+	  };
+	  ProgArg @[3] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="d";
+	   required=0;
+	   def_val="\"\"";
+	   prev_expr=;
+	   expr {
+	    expr=;
+	   };
+	  };
+	  ProgArg @[4] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="e";
+	   required=0;
+	   def_val="\"\"";
+	   prev_expr=;
+	   expr {
+	    expr=;
+	   };
+	  };
+	  ProgArg @[5] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="f";
+	   required=0;
+	   def_val="\"\"";
+	   prev_expr=;
+	   expr {
+	    expr=;
+	   };
+	  };
+	  ProgArg @[6] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="g";
+	   required=0;
+	   def_val="\"\"";
+	   prev_expr=;
+	   expr {
+	    expr=;
+	   };
+	  };
+	  ProgArg @[7] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="h";
+	   required=0;
+	   def_val="\"\"";
+	   prev_expr=;
+	   expr {
+	    expr=;
+	   };
+	  };
+	  ProgArg @[8] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="i";
+	   required=0;
+	   def_val="\"\"";
+	   prev_expr=;
+	   expr {
+	    expr=;
+	   };
+	  };
+	 };
+	};
+       };
+      };
+     };
+     init {
+      expr="i = 0";
+     };
+     test {
+      expr="i < 10";
+     };
+     iter {
+      expr="i++";
+     };
+    };
+    MethodCall @[10] {
+     name="MethodCall_datatableInitValstrueBoolCol010";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="data_table->InitVals(true, \"BoolCol\", 0, 10)";
+     result_var=NULL;
+     obj=$.programs[9].objs_vars[0]$;
+     method=DataTable::InitVals;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_Variant_ref;
+       type="Variant&";
+       name="init_val";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="true";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_Variant_ref;
+       type="Variant&";
+       name="col";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="\"BoolCol\"";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=int;
+       type="int";
+       name="st_row";
+       required=0;
+       def_val="0";
+       prev_expr=;
+       expr {
+	expr="0";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=int;
+       type="int";
+       name="n_rows";
+       required=0;
+       def_val="-1";
+       prev_expr=;
+       expr {
+	expr="10";
+       };
+      };
+     };
+     meth_sig="bool InitVals(Variant& init_val, Variant& col, int st_row = 0, int n_rows = -1)";
+     meth_desc=" initialize all values in given column to given value -- column can be specified as either integer index or a string that is then used to find the given column name -- for rows as specified by starting row, and n_rows = -1 means to the end";
+    };
+    ForLoop @[11] {
+     name="ForLoop_fori0i10i";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="for (i = 0; i < 10; i++)";
+     loop_code {
+      name="loop_code";
+      el_typ=ProgCode;
+      el_def=0;
+      If @[0] {
+       name="If_ifdatatableBoolColitrue";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="if (data_table[\"BoolCol\"][i] != true)";
+       cond {
+	expr="data_table[\"BoolCol\"][i] != true";
+       };
+       true_code {
+	name="true_code";
+	el_typ=ProgCode;
+	el_def=0;
+	AssignExpr @[0] {
+	 name="AssignExpr_passtestfalse";
+	 desc=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="pass_test = false";
+	 result_var=$.programs[9].vars[0]$;
+	 expr {
+	  expr="false";
+	 };
+	};
+	MiscCall @[1] {
+	 name="MiscCall_taMiscErrorInitV_initaboolcolumn";
+	 desc=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="taMisc::Error(\"InitVals did not init a bool column\", , , , , , , , )";
+	 result_var=NULL;
+	 object_type=taMisc;
+	 method=taMisc::Error;
+	 meth_args {
+	  name="meth_args";
+	  el_typ=ProgArg;
+	  el_def=0;
+	  ProgArg @[0] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="a";
+	   required=1;
+	   def_val=;
+	   prev_expr=;
+	   expr {
+	    expr="\"InitVals did not init a bool column\"";
+	   };
+	  };
+	  ProgArg @[1] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="b";
+	   required=0;
+	   def_val="\"\"";
+	   prev_expr=;
+	   expr {
+	    expr=;
+	   };
+	  };
+	  ProgArg @[2] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="c";
+	   required=0;
+	   def_val="\"\"";
+	   prev_expr=;
+	   expr {
+	    expr=;
+	   };
+	  };
+	  ProgArg @[3] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="d";
+	   required=0;
+	   def_val="\"\"";
+	   prev_expr=;
+	   expr {
+	    expr=;
+	   };
+	  };
+	  ProgArg @[4] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="e";
+	   required=0;
+	   def_val="\"\"";
+	   prev_expr=;
+	   expr {
+	    expr=;
+	   };
+	  };
+	  ProgArg @[5] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="f";
+	   required=0;
+	   def_val="\"\"";
+	   prev_expr=;
+	   expr {
+	    expr=;
+	   };
+	  };
+	  ProgArg @[6] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="g";
+	   required=0;
+	   def_val="\"\"";
+	   prev_expr=;
+	   expr {
+	    expr=;
+	   };
+	  };
+	  ProgArg @[7] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="h";
+	   required=0;
+	   def_val="\"\"";
+	   prev_expr=;
+	   expr {
+	    expr=;
+	   };
+	  };
+	  ProgArg @[8] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="i";
+	   required=0;
+	   def_val="\"\"";
+	   prev_expr=;
+	   expr {
+	    expr=;
+	   };
+	  };
+	 };
+	};
+       };
+      };
+     };
+     init {
+      expr="i = 0";
+     };
+     test {
+      expr="i < 10";
+     };
+     iter {
+      expr="i++";
+     };
+    };
+    BlankLineEl @[12] {
+     name="BlankLineEl_";
+     desc=;
+     flags=CAN_REVERT_TO_CODE|NO_CODE;
+     code_string=" ";
+    };
+    BlankLineEl @[13] {
+     name="BlankLineEl__1";
+     desc=;
+     flags=CAN_REVERT_TO_CODE|NO_CODE;
+     code_string=" ";
+    };
+    MethodCall @[14] {
+     name="MethodCall_datatableResetData_1";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="data_table->ResetData()";
+     result_var=NULL;
+     obj=$.programs[9].objs_vars[0]$;
+     method=DataTable::ResetData;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+     };
+     meth_sig="void ResetData()";
+     meth_desc=" deletes all the data (rows), but keeps the column structure -- this cannot be undone!";
+    };
+    MethodCall @[15] {
+     name="MethodCall_datatableAddRows10_1";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="data_table->AddRows(10)";
+     result_var=NULL;
+     obj=$.programs[9].objs_vars[0]$;
+     method=DataTable::AddRows;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=int;
+       type="int";
+       name="n";
+       required=0;
+       def_val="1";
+       prev_expr=;
+       expr {
+	expr="10";
+       };
+      };
+     };
+     meth_sig="bool AddRows(int n = 1)";
+     meth_desc=" add n rows, returns true if successfully added";
+    };
+    MethodCall @[16] {
+     name="MethodCall_datatableInitVal_orldStringCol18";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="data_table->InitVals(\"Hello World\", \"StringCol\", 1, 8)";
+     result_var=NULL;
+     obj=$.programs[9].objs_vars[0]$;
+     method=DataTable::InitVals;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_Variant_ref;
+       type="Variant&";
+       name="init_val";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="\"Hello World\"";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_Variant_ref;
+       type="Variant&";
+       name="col";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="\"StringCol\"";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=int;
+       type="int";
+       name="st_row";
+       required=0;
+       def_val="0";
+       prev_expr=;
+       expr {
+	expr="1";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=int;
+       type="int";
+       name="n_rows";
+       required=0;
+       def_val="-1";
+       prev_expr=;
+       expr {
+	expr="8";
+       };
+      };
+     };
+     meth_sig="bool InitVals(Variant& init_val, Variant& col, int st_row = 0, int n_rows = -1)";
+     meth_desc=" initialize all values in given column to given value -- column can be specified as either integer index or a string that is then used to find the given column name -- for rows as specified by starting row, and n_rows = -1 means to the end";
+    };
+    ForLoop @[17] {
+     name="ForLoop_fori0i10i_1";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="for (i = 0; i < 10; i++)";
+     loop_code {
+      name="loop_code";
+      el_typ=ProgCode;
+      el_def=0;
+      If @[0] {
+       name="If_ifi0i9";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="if ((i == 0) || (i == 9))";
+       cond {
+	expr="(i == 0) || (i == 9)";
+       };
+       true_code {
+	name="true_code";
+	el_typ=ProgCode;
+	el_def=0;
+	If @[0] {
+	 name="If_ifdatatableStringColi";
+	 desc=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="if (data_table[\"StringCol\"][i] != \"\")";
+	 cond {
+	  expr="data_table[\"StringCol\"][i] != \"\"";
+	 };
+	 true_code {
+	  name="true_code";
+	  el_typ=ProgCode;
+	  el_def=0;
+	  AssignExpr @[0] {
+	   name="AssignExpr_passtestfalse";
+	   desc=;
+	   flags=CAN_REVERT_TO_CODE;
+	   code_string="pass_test = false";
+	   result_var=$.programs[9].vars[0]$;
+	   expr {
+	    expr="false";
+	   };
+	  };
+	  MiscCall @[1] {
+	   name="MiscCall_taMiscError";
+	   desc=;
+	   flags=CAN_REVERT_TO_CODE;
+	   code_string="taMisc::Error(\"InitVals did not init a string column\", , , , , , , , )";
+	   result_var=NULL;
+	   object_type=taMisc;
+	   method=taMisc::Error;
+	   meth_args {
+	    name="meth_args";
+	    el_typ=ProgArg;
+	    el_def=0;
+	    ProgArg @[0] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="a";
+	     required=1;
+	     def_val=;
+	     prev_expr=;
+	     expr {
+	      expr="\"InitVals did not init a string column\"";
+	     };
+	    };
+	    ProgArg @[1] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="b";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[2] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="c";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[3] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="d";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[4] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="e";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[5] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="f";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[6] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="g";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[7] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="h";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[8] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="i";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	   };
+	  };
+	 };
+	};
+       };
+      };
+      Else @[1] {
+       name="Else_If_ifi0i9";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="else";
+       cond {
+	expr=;
+       };
+       true_code {
+	name="true_code";
+	el_typ=ProgCode;
+	el_def=0;
+	If @[0] {
+	 name="If_ifdatatableStringColiHelloWorld";
+	 desc=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="if (data_table[\"StringCol\"][i] != \"Hello World\")";
+	 cond {
+	  expr="data_table[\"StringCol\"][i] != \"Hello World\"";
+	 };
+	 true_code {
+	  name="true_code";
+	  el_typ=ProgCode;
+	  el_def=0;
+	  AssignExpr @[0] {
+	   name="AssignExpr_passtestfalse";
+	   desc=;
+	   flags=CAN_REVERT_TO_CODE;
+	   code_string="pass_test = false";
+	   result_var=$.programs[9].vars[0]$;
+	   expr {
+	    expr="false";
+	   };
+	  };
+	  MiscCall @[1] {
+	   name="MiscCall_taMiscError";
+	   desc=;
+	   flags=CAN_REVERT_TO_CODE;
+	   code_string="taMisc::Error(\"InitVals did not init a string column\", , , , , , , , )";
+	   result_var=NULL;
+	   object_type=taMisc;
+	   method=taMisc::Error;
+	   meth_args {
+	    name="meth_args";
+	    el_typ=ProgArg;
+	    el_def=0;
+	    ProgArg @[0] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="a";
+	     required=1;
+	     def_val=;
+	     prev_expr=;
+	     expr {
+	      expr="\"InitVals did not init a string column\"";
+	     };
+	    };
+	    ProgArg @[1] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="b";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[2] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="c";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[3] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="d";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[4] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="e";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[5] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="f";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[6] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="g";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[7] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="h";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[8] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="i";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	   };
+	  };
+	 };
+	};
+       };
+      };
+     };
+     init {
+      expr="i = 0";
+     };
+     test {
+      expr="i < 10";
+     };
+     iter {
+      expr="i++";
+     };
+    };
+    BlankLineEl @[18] {
+     name="BlankLineEl_";
+     desc=;
+     flags=CAN_REVERT_TO_CODE|NO_CODE;
+     code_string=" ";
+    };
+    MethodCall @[19] {
+     name="MethodCall_datatableInitVals7IntCol18";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="data_table->InitVals(7, \"IntCol\", 1, 8)";
+     result_var=NULL;
+     obj=$.programs[9].objs_vars[0]$;
+     method=DataTable::InitVals;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_Variant_ref;
+       type="Variant&";
+       name="init_val";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="7";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_Variant_ref;
+       type="Variant&";
+       name="col";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="\"IntCol\"";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=int;
+       type="int";
+       name="st_row";
+       required=0;
+       def_val="0";
+       prev_expr=;
+       expr {
+	expr="1";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=int;
+       type="int";
+       name="n_rows";
+       required=0;
+       def_val="-1";
+       prev_expr=;
+       expr {
+	expr="8";
+       };
+      };
+     };
+     meth_sig="bool InitVals(Variant& init_val, Variant& col, int st_row = 0, int n_rows = -1)";
+     meth_desc=" initialize all values in given column to given value -- column can be specified as either integer index or a string that is then used to find the given column name -- for rows as specified by starting row, and n_rows = -1 means to the end";
+    };
+    ForLoop @[20] {
+     name="ForLoop_fori0i10i_3";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="for (i = 0; i < 10; i++)";
+     loop_code {
+      name="loop_code";
+      el_typ=ProgCode;
+      el_def=0;
+      If @[0] {
+       name="If_ifi0i9";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="if ((i == 0) || (i == 9))";
+       cond {
+	expr="(i == 0) || (i == 9)";
+       };
+       true_code {
+	name="true_code";
+	el_typ=ProgCode;
+	el_def=0;
+	If @[0] {
+	 name="If_ifdatatableIntColi0";
+	 desc=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="if (data_table[\"IntCol\"][i] != 0)";
+	 cond {
+	  expr="data_table[\"IntCol\"][i] != 0";
+	 };
+	 true_code {
+	  name="true_code";
+	  el_typ=ProgCode;
+	  el_def=0;
+	  AssignExpr @[0] {
+	   name="AssignExpr_passtestfalse";
+	   desc=;
+	   flags=CAN_REVERT_TO_CODE;
+	   code_string="pass_test = false";
+	   result_var=$.programs[9].vars[0]$;
+	   expr {
+	    expr="false";
+	   };
+	  };
+	  MiscCall @[1] {
+	   name="MiscCall_taMiscError";
+	   desc=;
+	   flags=CAN_REVERT_TO_CODE;
+	   code_string="taMisc::Error(\"InitVals did not init a string column\", , , , , , , , )";
+	   result_var=NULL;
+	   object_type=taMisc;
+	   method=taMisc::Error;
+	   meth_args {
+	    name="meth_args";
+	    el_typ=ProgArg;
+	    el_def=0;
+	    ProgArg @[0] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="a";
+	     required=1;
+	     def_val=;
+	     prev_expr=;
+	     expr {
+	      expr="\"InitVals did not init a string column\"";
+	     };
+	    };
+	    ProgArg @[1] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="b";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[2] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="c";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[3] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="d";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[4] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="e";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[5] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="f";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[6] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="g";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[7] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="h";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[8] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="i";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	   };
+	  };
+	 };
+	};
+       };
+      };
+      Else @[1] {
+       name="Else_If_ifi0i9";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="else";
+       cond {
+	expr=;
+       };
+       true_code {
+	name="true_code";
+	el_typ=ProgCode;
+	el_def=0;
+	If @[0] {
+	 name="If_ifdatatableIntColi7";
+	 desc=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="if (data_table[\"IntCol\"][i] != 7)";
+	 cond {
+	  expr="data_table[\"IntCol\"][i] != 7";
+	 };
+	 true_code {
+	  name="true_code";
+	  el_typ=ProgCode;
+	  el_def=0;
+	  AssignExpr @[0] {
+	   name="AssignExpr_passtestfalse";
+	   desc=;
+	   flags=CAN_REVERT_TO_CODE;
+	   code_string="pass_test = false";
+	   result_var=$.programs[9].vars[0]$;
+	   expr {
+	    expr="false";
+	   };
+	  };
+	  MiscCall @[1] {
+	   name="MiscCall_taMiscErrorInitV_tinitaintcolumn";
+	   desc=;
+	   flags=CAN_REVERT_TO_CODE;
+	   code_string="taMisc::Error(\"InitVals did not init a int column\", , , , , , , , )";
+	   result_var=NULL;
+	   object_type=taMisc;
+	   method=taMisc::Error;
+	   meth_args {
+	    name="meth_args";
+	    el_typ=ProgArg;
+	    el_def=0;
+	    ProgArg @[0] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="a";
+	     required=1;
+	     def_val=;
+	     prev_expr=;
+	     expr {
+	      expr="\"InitVals did not init a int column\"";
+	     };
+	    };
+	    ProgArg @[1] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="b";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[2] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="c";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[3] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="d";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[4] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="e";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[5] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="f";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[6] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="g";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[7] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="h";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[8] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="i";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	   };
+	  };
+	 };
+	};
+       };
+      };
+     };
+     init {
+      expr="i = 0";
+     };
+     test {
+      expr="i < 10";
+     };
+     iter {
+      expr="i++";
+     };
+    };
+    MethodCall @[21] {
+     name="MethodCall_datatableInitVals73DoubleCol18";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="data_table->InitVals(7.3, \"DoubleCol\", 1, 8)";
+     result_var=NULL;
+     obj=$.programs[9].objs_vars[0]$;
+     method=DataTable::InitVals;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_Variant_ref;
+       type="Variant&";
+       name="init_val";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="7.3";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_Variant_ref;
+       type="Variant&";
+       name="col";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="\"DoubleCol\"";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=int;
+       type="int";
+       name="st_row";
+       required=0;
+       def_val="0";
+       prev_expr=;
+       expr {
+	expr="1";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=int;
+       type="int";
+       name="n_rows";
+       required=0;
+       def_val="-1";
+       prev_expr=;
+       expr {
+	expr="8";
+       };
+      };
+     };
+     meth_sig="bool InitVals(Variant& init_val, Variant& col, int st_row = 0, int n_rows = -1)";
+     meth_desc=" initialize all values in given column to given value -- column can be specified as either integer index or a string that is then used to find the given column name -- for rows as specified by starting row, and n_rows = -1 means to the end";
+    };
+    ForLoop @[22] {
+     name="ForLoop_fori0i10i_4";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="for (i = 0; i < 10; i++)";
+     loop_code {
+      name="loop_code";
+      el_typ=ProgCode;
+      el_def=0;
+      If @[0] {
+       name="If_ifi0i9";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="if ((i == 0) || (i == 9))";
+       cond {
+	expr="(i == 0) || (i == 9)";
+       };
+       true_code {
+	name="true_code";
+	el_typ=ProgCode;
+	el_def=0;
+	If @[0] {
+	 name="If_ifdatatableDoubleColi00";
+	 desc=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="if (data_table[\"DoubleCol\"][i] != 0.0)";
+	 cond {
+	  expr="data_table[\"DoubleCol\"][i] != 0.0";
+	 };
+	 true_code {
+	  name="true_code";
+	  el_typ=ProgCode;
+	  el_def=0;
+	  AssignExpr @[0] {
+	   name="AssignExpr_passtestfalse";
+	   desc=;
+	   flags=CAN_REVERT_TO_CODE;
+	   code_string="pass_test = false";
+	   result_var=$.programs[9].vars[0]$;
+	   expr {
+	    expr="false";
+	   };
+	  };
+	  MiscCall @[1] {
+	   name="MiscCall_taMiscError";
+	   desc=;
+	   flags=CAN_REVERT_TO_CODE;
+	   code_string="taMisc::Error(\"InitVals did not init a string column\", , , , , , , , )";
+	   result_var=NULL;
+	   object_type=taMisc;
+	   method=taMisc::Error;
+	   meth_args {
+	    name="meth_args";
+	    el_typ=ProgArg;
+	    el_def=0;
+	    ProgArg @[0] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="a";
+	     required=1;
+	     def_val=;
+	     prev_expr=;
+	     expr {
+	      expr="\"InitVals did not init a string column\"";
+	     };
+	    };
+	    ProgArg @[1] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="b";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[2] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="c";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[3] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="d";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[4] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="e";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[5] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="f";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[6] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="g";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[7] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="h";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[8] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="i";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	   };
+	  };
+	 };
+	};
+       };
+      };
+      Else @[1] {
+       name="Else_If_ifi0i9";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="else";
+       cond {
+	expr=;
+       };
+       true_code {
+	name="true_code";
+	el_typ=ProgCode;
+	el_def=0;
+	If @[0] {
+	 name="If_ifdatatableDoubleColi73";
+	 desc=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="if (data_table[\"DoubleCol\"][i] != 7.3)";
+	 cond {
+	  expr="data_table[\"DoubleCol\"][i] != 7.3";
+	 };
+	 true_code {
+	  name="true_code";
+	  el_typ=ProgCode;
+	  el_def=0;
+	  AssignExpr @[0] {
+	   name="AssignExpr_passtestfalse";
+	   desc=;
+	   flags=CAN_REVERT_TO_CODE;
+	   code_string="pass_test = false";
+	   result_var=$.programs[9].vars[0]$;
+	   expr {
+	    expr="false";
+	   };
+	  };
+	  MiscCall @[1] {
+	   name="MiscCall_taMiscErrorInitV_itadoublecolumn";
+	   desc=;
+	   flags=CAN_REVERT_TO_CODE;
+	   code_string="taMisc::Error(\"InitVals did not init a double column\", , , , , , , , )";
+	   result_var=NULL;
+	   object_type=taMisc;
+	   method=taMisc::Error;
+	   meth_args {
+	    name="meth_args";
+	    el_typ=ProgArg;
+	    el_def=0;
+	    ProgArg @[0] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="a";
+	     required=1;
+	     def_val=;
+	     prev_expr=;
+	     expr {
+	      expr="\"InitVals did not init a double column\"";
+	     };
+	    };
+	    ProgArg @[1] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="b";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[2] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="c";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[3] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="d";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[4] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="e";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[5] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="f";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[6] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="g";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[7] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="h";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[8] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="i";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	   };
+	  };
+	 };
+	};
+       };
+      };
+     };
+     init {
+      expr="i = 0";
+     };
+     test {
+      expr="i < 10";
+     };
+     iter {
+      expr="i++";
+     };
+    };
+    MethodCall @[23] {
+     name="MethodCall_datatableInitValstrueBoolCol18";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="data_table->InitVals(true, \"BoolCol\", 1, 8)";
+     result_var=NULL;
+     obj=$.programs[9].objs_vars[0]$;
+     method=DataTable::InitVals;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_Variant_ref;
+       type="Variant&";
+       name="init_val";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="true";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_Variant_ref;
+       type="Variant&";
+       name="col";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="\"BoolCol\"";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=int;
+       type="int";
+       name="st_row";
+       required=0;
+       def_val="0";
+       prev_expr=;
+       expr {
+	expr="1";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=int;
+       type="int";
+       name="n_rows";
+       required=0;
+       def_val="-1";
+       prev_expr=;
+       expr {
+	expr="8";
+       };
+      };
+     };
+     meth_sig="bool InitVals(Variant& init_val, Variant& col, int st_row = 0, int n_rows = -1)";
+     meth_desc=" initialize all values in given column to given value -- column can be specified as either integer index or a string that is then used to find the given column name -- for rows as specified by starting row, and n_rows = -1 means to the end";
+    };
+    ForLoop @[24] {
+     name="ForLoop_fori0i10i_5";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="for (i = 0; i < 10; i++)";
+     loop_code {
+      name="loop_code";
+      el_typ=ProgCode;
+      el_def=0;
+      If @[0] {
+       name="If_ifi0i9";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="if ((i == 0) || (i == 9))";
+       cond {
+	expr="(i == 0) || (i == 9)";
+       };
+       true_code {
+	name="true_code";
+	el_typ=ProgCode;
+	el_def=0;
+	If @[0] {
+	 name="If_ifdatatableBoolColifalse";
+	 desc=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="if (data_table[\"BoolCol\"][i] != false)";
+	 cond {
+	  expr="data_table[\"BoolCol\"][i] != false";
+	 };
+	 true_code {
+	  name="true_code";
+	  el_typ=ProgCode;
+	  el_def=0;
+	  AssignExpr @[0] {
+	   name="AssignExpr_passtestfalse";
+	   desc=;
+	   flags=CAN_REVERT_TO_CODE;
+	   code_string="pass_test = false";
+	   result_var=$.programs[9].vars[0]$;
+	   expr {
+	    expr="false";
+	   };
+	  };
+	  MiscCall @[1] {
+	   name="MiscCall_taMiscErrorInitV_initaboolcolumn";
+	   desc=;
+	   flags=CAN_REVERT_TO_CODE;
+	   code_string="taMisc::Error(\"InitVals did not init a bool column\", , , , , , , , )";
+	   result_var=NULL;
+	   object_type=taMisc;
+	   method=taMisc::Error;
+	   meth_args {
+	    name="meth_args";
+	    el_typ=ProgArg;
+	    el_def=0;
+	    ProgArg @[0] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="a";
+	     required=1;
+	     def_val=;
+	     prev_expr=;
+	     expr {
+	      expr="\"InitVals did not init a bool column\"";
+	     };
+	    };
+	    ProgArg @[1] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="b";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[2] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="c";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[3] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="d";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[4] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="e";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[5] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="f";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[6] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="g";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[7] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="h";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[8] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="i";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	   };
+	  };
+	 };
+	};
+       };
+      };
+      Else @[1] {
+       name="Else_If_ifi0i9";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="else";
+       cond {
+	expr=;
+       };
+       true_code {
+	name="true_code";
+	el_typ=ProgCode;
+	el_def=0;
+	If @[0] {
+	 name="If_ifdatatableBoolColitrue";
+	 desc=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="if (data_table[\"BoolCol\"][i] != true)";
+	 cond {
+	  expr="data_table[\"BoolCol\"][i] != true";
+	 };
+	 true_code {
+	  name="true_code";
+	  el_typ=ProgCode;
+	  el_def=0;
+	  AssignExpr @[0] {
+	   name="AssignExpr_passtestfalse";
+	   desc=;
+	   flags=CAN_REVERT_TO_CODE;
+	   code_string="pass_test = false";
+	   result_var=$.programs[9].vars[0]$;
+	   expr {
+	    expr="false";
+	   };
+	  };
+	  MiscCall @[1] {
+	   name="MiscCall_taMiscErrorInitV_initaboolcolumn";
+	   desc=;
+	   flags=CAN_REVERT_TO_CODE;
+	   code_string="taMisc::Error(\"InitVals did not init a bool column\", , , , , , , , )";
+	   result_var=NULL;
+	   object_type=taMisc;
+	   method=taMisc::Error;
+	   meth_args {
+	    name="meth_args";
+	    el_typ=ProgArg;
+	    el_def=0;
+	    ProgArg @[0] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="a";
+	     required=1;
+	     def_val=;
+	     prev_expr=;
+	     expr {
+	      expr="\"InitVals did not init a bool column\"";
+	     };
+	    };
+	    ProgArg @[1] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="b";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[2] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="c";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[3] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="d";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[4] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="e";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[5] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="f";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[6] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="g";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[7] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="h";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[8] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="i";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	   };
+	  };
+	 };
+	};
+       };
+      };
+     };
+     init {
+      expr="i = 0";
+     };
+     test {
+      expr="i < 10";
+     };
+     iter {
+      expr="i++";
+     };
+    };
+    BlankLineEl @[25] {
+     name="BlankLineEl__2";
+     desc=;
+     flags=CAN_REVERT_TO_CODE|NO_CODE;
+     code_string=" ";
+    };
+   };
+   step_prog=NULL;
+   step_n=1;
+   doc {
+    name="doc";
+    desc=;
+    web_doc=0;
+    wiki=;
+    url="local";
+    full_url="local";
+    text_size=1;
+    text="<html>
+<head></head>
+<body>
+== Enter Title Here ==
+</body>
+</html>
+";
+    html_text=;
+   };
+  };
+  Program @[10] {
+   name="InitValsByIncrement";
+   short_nm=;
+   tags=;
+   desc=;
+   version {
+    major=0;
+    minor=0;
+    step=0;
+   };
+   author="Kai Krueger";
+   email="kai.krueger@colorado.edu";
+   flags=NO_STOP_STEP|OBJS_UPDT_GUI;
+   stop_step_cond {
+    expr=;
+   };
+   objs {
+    name="objs";
+    el_typ=DataTable;
+    el_def=0;
+    DataTable @[0] {
+     name="DataTable";
+     desc=;
+     data {
+      name="data";
+      el_typ=int_Data;
+      el_def=0;
+      int_Data @[0] {
+       UserDataItem_List @*(.user_data_) {
+	name=;
+	el_typ=UserDataItem;
+	el_def=0;
+	UserDataItem @[0] {name="NARROW": value=1: val_type_fixed=0: };
+       };
+       name="IntCol";
+       col_flags=SAVE_DATA|AUTO_WIDTH;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name="dim_names";
+       [0]        };
+       width=0;
+       matrix_col_width=10;
+       ar {
+	name="ar";
+       [10] 1;3;5;7;9;11;13;15;17;19;
+       };
+      };
+      int_Data @[1] {
+       UserDataItem_List @*(.user_data_) {
+	name=;
+	el_typ=UserDataItem;
+	el_def=0;
+	UserDataItem @[0] {name="NARROW": value=1: val_type_fixed=0: };
+       };
+       name="DoubleCol";
+       col_flags=SAVE_DATA|AUTO_WIDTH;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name="dim_names";
+       [0]        };
+       width=0;
+       matrix_col_width=10;
+       ar {
+	name="ar";
+       [10] 1;3;5;7;9;12;14;16;18;20;
+       };
+      };
+     };
+     data_flags=SAVE_ROWS|AUTO_CALC;
+     auto_load=NO_AUTO_LOAD;
+     auto_load_file=;
+     row_height=1;
+     max_col_width=50;
+     keygen 4 0=0;
+     row_indexes {
+      name=;
+     [10] 0;1;2;3;4;5;6;7;8;9;
+     };
+     last_sort_spec {
+      name="DataSortSpec_878";
+      ops {
+       name="ops";
+       el_typ=DataSortEl;
+       el_def=0;
+      };
+     };
+     row_with_hilite=-1;
+    };
+   };
+   objs_vars {
+    name="objs_vars";
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @[0] {
+     name="data_table";
+     var_type=T_Object;
+     object_type=DataTable;
+     completion_type=;
+     object_val=.programs[10].objs[0]$$;
+     object_scope=NULL;
+     objs_ptr=1;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+   };
+   types {
+    name="types";
+    el_typ=DynEnumType;
+    el_def=0;
+   };
+   args {
+    name="args";
+    el_typ=ProgVar;
+    el_def=0;
+   };
+   vars {
+    name="vars";
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @[0] {
+     name="pass_test";
+     var_type=T_Bool;
+     bool_val=1;
+     completion_type=;
+     object_scope=NULL;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+   };
+   functions {
+    name="functions";
+    el_typ=Function;
+    el_def=0;
+   };
+   init_code {
+    name="init_code";
+    el_typ=ProgCode;
+    el_def=0;
+   };
+   prog_code {
+    name="prog_code";
+    el_typ=ProgCode;
+    el_def=0;
+    LocalVars @[0] {
+     name="LocalVars_LocalVars0vars";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="LocalVars (1 vars)";
+     local_vars {
+      name="local_vars";
+      el_typ=ProgVar;
+      el_def=0;
+      ProgVar @[0] {
+       name="i";
+       var_type=T_Int;
+       int_val=0;
+       completion_type=;
+       object_scope=NULL;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+     };
+    };
+    AssignExpr @[1] {
+     name="AssignExpr_passtesttrue";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="pass_test = true";
+     result_var=.programs[10].vars[0]$$;
+     expr {
+      expr="true";
+     };
+    };
+    MethodCall @[2] {
+     name="MethodCall_datatableResetData";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="data_table->ResetData()";
+     result_var=NULL;
+     obj=.programs[10].objs_vars[0]$$;
+     method=DataTable::ResetData;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+     };
+     meth_sig="void ResetData()";
+     meth_desc=" deletes all the data (rows), but keeps the column structure -- this cannot be undone!";
+    };
+    MethodCall @[3] {
+     name="MethodCall_datatableAddRows10";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="data_table->AddRows(10)";
+     result_var=NULL;
+     obj=$.programs[10].objs_vars[0]$;
+     method=DataTable::AddRows;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=int;
+       type="int";
+       name="n";
+       required=0;
+       def_val="1";
+       prev_expr=;
+       expr {
+	expr="10";
+       };
+      };
+     };
+     meth_sig="bool AddRows(int n = 1)";
+     meth_desc=" add n rows, returns true if successfully added";
+    };
+    BlankLineEl @[4] {
+     name="BlankLineEl_";
+     desc=;
+     flags=CAN_REVERT_TO_CODE|NO_CODE;
+     code_string=" ";
+    };
+    MethodCall @[5] {
+     name="MethodCall_datatableInitVal_nt1020IntCol010";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="data_table->InitValsByIncrement(1.0, 2.0 , \"IntCol\" , 0 , 10)";
+     result_var=NULL;
+     obj=$.programs[10].objs_vars[0]$;
+     method=DataTable::InitValsByIncrement;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_float;
+       type="const float";
+       name="first_value";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="1.0";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_float;
+       type="const float";
+       name="increment";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="2.0 ";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=const_Variant_ref;
+       type="Variant&";
+       name="col";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="\"IntCol\" ";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=int;
+       type="int";
+       name="st_row";
+       required=0;
+       def_val="0";
+       prev_expr=;
+       expr {
+	expr="0 ";
+       };
+      };
+      ProgArg @[4] {
+       arg_type=int;
+       type="int";
+       name="n_rows";
+       required=0;
+       def_val="-1";
+       prev_expr=;
+       expr {
+	expr="10";
+       };
+      };
+     };
+     meth_sig="bool InitValsByIncrement(const float first_value, const float increment, Variant& col, int st_row = 0, int n_rows = -1)";
+     meth_desc=" initialize all values in given column to be equal to some starting values plus some increment -- column can be specified as either integer index or a string that is then used to find the given column name -- for rows as specified by starting row, and n_rows = -1 means to the end";
+    };
+    ForLoop @[6] {
+     name="ForLoop_fori0i10i";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="for (i = 0; i < 10; i++)";
+     loop_code {
+      name="loop_code";
+      el_typ=ProgCode;
+      el_def=0;
+      If @[0] {
+       name="If_ifdatatableIntColii21";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="if (data_table[\"IntCol\"][i] != (i*2 + 1))";
+       cond {
+	expr="data_table[\"IntCol\"][i] != (i*2 + 1)";
+       };
+       true_code {
+	name="true_code";
+	el_typ=ProgCode;
+	el_def=0;
+	MiscCall @[0] {
+	 name="MiscCall_taMiscErrorInitV_ializeforIntCol";
+	 desc=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="taMisc::Error(\"InitValsByIncrement did not correctly initialize for IntCol\", , , , , , , , )";
+	 result_var=NULL;
+	 object_type=taMisc;
+	 method=taMisc::Error;
+	 meth_args {
+	  name="meth_args";
+	  el_typ=ProgArg;
+	  el_def=0;
+	  ProgArg @[0] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="a";
+	   required=1;
+	   def_val=;
+	   prev_expr=;
+	   expr {
+	    expr="\"InitValsByIncrement did not correctly initialize for IntCol\"";
+	   };
+	  };
+	  ProgArg @[1] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="b";
+	   required=0;
+	   def_val="\"\"";
+	   prev_expr=;
+	   expr {
+	    expr=;
+	   };
+	  };
+	  ProgArg @[2] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="c";
+	   required=0;
+	   def_val="\"\"";
+	   prev_expr=;
+	   expr {
+	    expr=;
+	   };
+	  };
+	  ProgArg @[3] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="d";
+	   required=0;
+	   def_val="\"\"";
+	   prev_expr=;
+	   expr {
+	    expr=;
+	   };
+	  };
+	  ProgArg @[4] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="e";
+	   required=0;
+	   def_val="\"\"";
+	   prev_expr=;
+	   expr {
+	    expr=;
+	   };
+	  };
+	  ProgArg @[5] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="f";
+	   required=0;
+	   def_val="\"\"";
+	   prev_expr=;
+	   expr {
+	    expr=;
+	   };
+	  };
+	  ProgArg @[6] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="g";
+	   required=0;
+	   def_val="\"\"";
+	   prev_expr=;
+	   expr {
+	    expr=;
+	   };
+	  };
+	  ProgArg @[7] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="h";
+	   required=0;
+	   def_val="\"\"";
+	   prev_expr=;
+	   expr {
+	    expr=;
+	   };
+	  };
+	  ProgArg @[8] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="i";
+	   required=0;
+	   def_val="\"\"";
+	   prev_expr=;
+	   expr {
+	    expr=;
+	   };
+	  };
+	 };
+	};
+	AssignExpr @[1] {
+	 name="AssignExpr_passtestfalse";
+	 desc=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="pass_test = false";
+	 result_var=$.programs[10].vars[0]$;
+	 expr {
+	  expr="false";
+	 };
+	};
+       };
+      };
+     };
+     init {
+      expr="i = 0";
+     };
+     test {
+      expr="i < 10";
+     };
+     iter {
+      expr="i++";
+     };
+    };
+    BlankLineEl @[7] {
+     name="BlankLineEl__1";
+     desc=;
+     flags=CAN_REVERT_TO_CODE|NO_CODE;
+     code_string=" ";
+    };
+    MethodCall @[8] {
+     name="MethodCall_datatableInitVal_122DoubleCol010";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="data_table->InitValsByIncrement(1.1, 2.2 , \"DoubleCol\" , 0 , 10)";
+     result_var=NULL;
+     obj=$.programs[10].objs_vars[0]$;
+     method=DataTable::InitValsByIncrement;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_float;
+       type="const float";
+       name="first_value";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="1.1";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_float;
+       type="const float";
+       name="increment";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="2.2 ";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=const_Variant_ref;
+       type="Variant&";
+       name="col";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="\"DoubleCol\" ";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=int;
+       type="int";
+       name="st_row";
+       required=0;
+       def_val="0";
+       prev_expr=;
+       expr {
+	expr="0 ";
+       };
+      };
+      ProgArg @[4] {
+       arg_type=int;
+       type="int";
+       name="n_rows";
+       required=0;
+       def_val="-1";
+       prev_expr=;
+       expr {
+	expr="10";
+       };
+      };
+     };
+     meth_sig="bool InitValsByIncrement(const float first_value, const float increment, Variant& col, int st_row = 0, int n_rows = -1)";
+     meth_desc=" initialize all values in given column to be equal to some starting values plus some increment -- column can be specified as either integer index or a string that is then used to find the given column name -- for rows as specified by starting row, and n_rows = -1 means to the end";
+    };
+    ForLoop @[9] {
+     name="ForLoop_fori0i10i_1";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="for (i = 0; i < 10; i++)";
+     loop_code {
+      name="loop_code";
+      el_typ=ProgCode;
+      el_def=0;
+      If @[0] {
+       name="If_ifdatatableDoubl_ubledoublei2211";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="if (data_table[\"DoubleCol\"][i] != ((double)(((double)i)*2.2 + 1.1)))";
+       cond {
+	expr="data_table[\"DoubleCol\"][i] != ((double)(((double)i)*2.2 + 1.1))";
+       };
+       true_code {
+	name="true_code";
+	el_typ=ProgCode;
+	el_def=0;
+	MiscCall @[0] {
+	 name="MiscCall_taMiscErrorInitV_izeforDoubleCol";
+	 desc=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="taMisc::Error(\"InitValsByIncrement did not correctly initialize for DoubleCol\", , , , , , , , )";
+	 result_var=NULL;
+	 object_type=taMisc;
+	 method=taMisc::Error;
+	 meth_args {
+	  name="meth_args";
+	  el_typ=ProgArg;
+	  el_def=0;
+	  ProgArg @[0] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="a";
+	   required=1;
+	   def_val=;
+	   prev_expr=;
+	   expr {
+	    expr="\"InitValsByIncrement did not correctly initialize for DoubleCol\"";
+	   };
+	  };
+	  ProgArg @[1] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="b";
+	   required=0;
+	   def_val="\"\"";
+	   prev_expr=;
+	   expr {
+	    expr=;
+	   };
+	  };
+	  ProgArg @[2] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="c";
+	   required=0;
+	   def_val="\"\"";
+	   prev_expr=;
+	   expr {
+	    expr=;
+	   };
+	  };
+	  ProgArg @[3] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="d";
+	   required=0;
+	   def_val="\"\"";
+	   prev_expr=;
+	   expr {
+	    expr=;
+	   };
+	  };
+	  ProgArg @[4] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="e";
+	   required=0;
+	   def_val="\"\"";
+	   prev_expr=;
+	   expr {
+	    expr=;
+	   };
+	  };
+	  ProgArg @[5] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="f";
+	   required=0;
+	   def_val="\"\"";
+	   prev_expr=;
+	   expr {
+	    expr=;
+	   };
+	  };
+	  ProgArg @[6] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="g";
+	   required=0;
+	   def_val="\"\"";
+	   prev_expr=;
+	   expr {
+	    expr=;
+	   };
+	  };
+	  ProgArg @[7] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="h";
+	   required=0;
+	   def_val="\"\"";
+	   prev_expr=;
+	   expr {
+	    expr=;
+	   };
+	  };
+	  ProgArg @[8] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="i";
+	   required=0;
+	   def_val="\"\"";
+	   prev_expr=;
+	   expr {
+	    expr=;
+	   };
+	  };
+	 };
+	};
+	AssignExpr @[1] {
+	 name="AssignExpr_passtestfalse";
+	 desc=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="pass_test = false";
+	 result_var=$.programs[10].vars[0]$;
+	 expr {
+	  expr="false";
+	 };
+	};
+       };
+      };
+     };
+     init {
+      expr="i = 0";
+     };
+     test {
+      expr="i < 10";
+     };
+     iter {
+      expr="i++";
+     };
+    };
+    BlankLineEl @[10] {
+     name="BlankLineEl__2";
+     desc=;
+     flags=CAN_REVERT_TO_CODE|NO_CODE;
+     code_string=" ";
+    };
+   };
+   step_prog=NULL;
+   step_n=1;
+   doc {
+    name="doc";
+    desc=;
+    web_doc=0;
+    wiki=;
+    url="local";
+    full_url="local";
+    text_size=1;
+    text="<html>
+<head></head>
+<body>
+== Enter Title Here ==
+</body>
+</html>
+";
+    html_text=;
+   };
+  };
+  Program @[11] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserData_DocLink;
+    el_def=0;
+    UserData_DocLink @[0] {name="DocLink": doc=.programs[11].doc$$: };
+   };
+   name="InitValsToRowNo";
+   short_nm="nVlTRw";
+   tags=;
+   desc=;
+   version {
+    major=0;
+    minor=0;
+    step=0;
+   };
+   author="Kai Krueger";
+   email="kai.krueger@colorado.edu";
+   flags=NO_STOP_STEP|OBJS_UPDT_GUI;
+   stop_step_cond {
+    expr=;
+   };
+   objs {
+    name="objs";
+    el_typ=DataTable;
+    el_def=0;
+    DataTable @[0] {
+     name="DataTable";
+     desc=;
+     data {
+      name="data";
+      el_typ=int_Data;
+      el_def=0;
+      int_Data @[0] {
+       UserDataItem_List @*(.user_data_) {
+	name=;
+	el_typ=UserDataItem;
+	el_def=0;
+	UserDataItem @[0] {name="NARROW": value=1: val_type_fixed=0: };
+       };
+       name="IntCol";
+       col_flags=SAVE_DATA|AUTO_WIDTH;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name="dim_names";
+       [0]        };
+       width=0;
+       matrix_col_width=10;
+       ar {
+	name="ar";
+       [10] 0;0;2;3;4;5;6;7;8;0;
+       };
+      };
+      double_Data @[1] {
+       UserDataItem_List @*(.user_data_) {
+	name=;
+	el_typ=UserDataItem;
+	el_def=0;
+	UserDataItem @[0] {name="NARROW": value=1: val_type_fixed=0: };
+       };
+       name="DoubleCol";
+       col_flags=SAVE_DATA|AUTO_WIDTH;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name="dim_names";
+       [0]        };
+       width=0;
+       matrix_col_width=10;
+       ar {
+	name="ar";
+       [10] 0;0;2;3;4;5;6;7;8;0;
+       };
+      };
+     };
+     data_flags=SAVE_ROWS|AUTO_CALC;
+     auto_load=NO_AUTO_LOAD;
+     auto_load_file=;
+     row_height=1;
+     max_col_width=50;
+     keygen 4 0=0;
+     row_indexes {
+      name=;
+     [10] 0;1;2;3;4;5;6;7;8;9;
+     };
+     last_sort_spec {
+      name="DataSortSpec_878";
+      ops {
+       name="ops";
+       el_typ=DataSortEl;
+       el_def=0;
+      };
+     };
+     row_with_hilite=-1;
+    };
+   };
+   objs_vars {
+    name="objs_vars";
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @[0] {
+     name="data_table";
+     var_type=T_Object;
+     object_type=DataTable;
+     completion_type=;
+     object_val=.programs[11].objs[0]$$;
+     object_scope=NULL;
+     objs_ptr=1;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+   };
+   types {
+    name="types";
+    el_typ=DynEnumType;
+    el_def=0;
+   };
+   args {
+    name="args";
+    el_typ=ProgVar;
+    el_def=0;
+   };
+   vars {
+    name="vars";
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @[0] {
+     name="pass_test";
+     var_type=T_Bool;
+     bool_val=1;
+     completion_type=;
+     object_scope=NULL;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+   };
+   functions {
+    name="functions";
+    el_typ=Function;
+    el_def=0;
+   };
+   init_code {
+    name="init_code";
+    el_typ=ProgCode;
+    el_def=0;
+   };
+   prog_code {
+    name="prog_code";
+    el_typ=ProgCode;
+    el_def=0;
+    LocalVars @[0] {
+     name="LocalVars_LocalVars0vars";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="LocalVars (1 vars)";
+     local_vars {
+      name="local_vars";
+      el_typ=ProgVar;
+      el_def=0;
+      ProgVar @[0] {
+       name="i";
+       var_type=T_Int;
+       int_val=0;
+       completion_type=;
+       object_scope=NULL;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+     };
+    };
+    AssignExpr @[1] {
+     name="AssignExpr_passtesttrue";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="pass_test = true";
+     result_var=.programs[11].vars[0]$$;
+     expr {
+      expr="true";
+     };
+    };
+    MethodCall @[2] {
+     name="MethodCall_datatableResetData";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="data_table->ResetData()";
+     result_var=NULL;
+     obj=.programs[11].objs_vars[0]$$;
+     method=DataTable::ResetData;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+     };
+     meth_sig="void ResetData()";
+     meth_desc=" deletes all the data (rows), but keeps the column structure -- this cannot be undone!";
+    };
+    MethodCall @[3] {
+     name="MethodCall_datatableAddRows10";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="data_table->AddRows(10)";
+     result_var=NULL;
+     obj=$.programs[11].objs_vars[0]$;
+     method=DataTable::AddRows;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=int;
+       type="int";
+       name="n";
+       required=0;
+       def_val="1";
+       prev_expr=;
+       expr {
+	expr="10";
+       };
+      };
+     };
+     meth_sig="bool AddRows(int n = 1)";
+     meth_desc=" add n rows, returns true if successfully added";
+    };
+    BlankLineEl @[4] {
+     name="BlankLineEl_";
+     desc=;
+     flags=CAN_REVERT_TO_CODE|NO_CODE;
+     code_string=" ";
+    };
+    MethodCall @[5] {
+     name="MethodCall_datatableInitValsToRowNoIntCol27";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="data_table->InitValsToRowNo(\"IntCol\" , 2 , 7)";
+     result_var=NULL;
+     obj=$.programs[11].objs_vars[0]$;
+     method=DataTable::InitValsToRowNo;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_Variant_ref;
+       type="Variant&";
+       name="col";
+       required=1;
+       def_val=;
+       prev_expr="1.0";
+       expr {
+	expr="\"IntCol\" ";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=int;
+       type="int";
+       name="st_row";
+       required=0;
+       def_val="0";
+       prev_expr="2.0 ";
+       expr {
+	expr="2 ";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=int;
+       type="int";
+       name="n_rows";
+       required=0;
+       def_val="-1";
+       prev_expr="\"IntCol\" ";
+       expr {
+	expr="7";
+       };
+      };
+     };
+     meth_sig="bool InitValsToRowNo(Variant& col, int st_row = 0, int n_rows = -1)";
+     meth_desc=" initialize all values in given column to be equal to the row number -- column can be specified as either integer index or a string that is then used to find the given column name -- for rows as specified by starting row, and n_rows = -1 means to the end";
+    };
+    ForLoop @[6] {
+     name="ForLoop_fori0i10i";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="for (i = 0; i < 10; i++)";
+     loop_code {
+      name="loop_code";
+      el_typ=ProgCode;
+      el_def=0;
+      If @[0] {
+       name="If_ifi2i9";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="if ((i < 2) || (i ==9))";
+       cond {
+	expr="(i < 2) || (i ==9)";
+       };
+       true_code {
+	name="true_code";
+	el_typ=ProgCode;
+	el_def=0;
+	If @[0] {
+	 name="If_ifdatatableIntColi0";
+	 desc=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="if (data_table[\"IntCol\"][i] != 0)";
+	 cond {
+	  expr="data_table[\"IntCol\"][i] != 0";
+	 };
+	 true_code {
+	  name="true_code";
+	  el_typ=ProgCode;
+	  el_def=0;
+	  MiscCall @[0] {
+	   name="MiscCall_taMiscErrorInitV_ializeforIntCol";
+	   desc=;
+	   flags=CAN_REVERT_TO_CODE;
+	   code_string="taMisc::Error(\"InitValsToRowNo did not correctly initialize for IntCol\", , , , , , , , )";
+	   result_var=NULL;
+	   object_type=taMisc;
+	   method=taMisc::Error;
+	   meth_args {
+	    name="meth_args";
+	    el_typ=ProgArg;
+	    el_def=0;
+	    ProgArg @[0] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="a";
+	     required=1;
+	     def_val=;
+	     prev_expr=;
+	     expr {
+	      expr="\"InitValsToRowNo did not correctly initialize for IntCol\"";
+	     };
+	    };
+	    ProgArg @[1] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="b";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[2] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="c";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[3] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="d";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[4] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="e";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[5] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="f";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[6] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="g";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[7] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="h";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[8] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="i";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	   };
+	  };
+	  AssignExpr @[1] {
+	   name="AssignExpr_passtestfalse";
+	   desc=;
+	   flags=CAN_REVERT_TO_CODE;
+	   code_string="pass_test = false";
+	   result_var=$.programs[11].vars[0]$;
+	   expr {
+	    expr="false";
+	   };
+	  };
+	 };
+	};
+       };
+      };
+      Else @[1] {
+       name="Else_If_ifi2i9";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="else";
+       cond {
+	expr=;
+       };
+       true_code {
+	name="true_code";
+	el_typ=ProgCode;
+	el_def=0;
+	If @[0] {
+	 name="If_ifdatatableIntColii";
+	 desc=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="if (data_table[\"IntCol\"][i] != i)";
+	 cond {
+	  expr="data_table[\"IntCol\"][i] != i";
+	 };
+	 true_code {
+	  name="true_code";
+	  el_typ=ProgCode;
+	  el_def=0;
+	  MiscCall @[0] {
+	   name="MiscCall_taMiscErrorInitV_ializeforIntCol";
+	   desc=;
+	   flags=CAN_REVERT_TO_CODE;
+	   code_string="taMisc::Error(\"InitValsToRowNo did not correctly initialize for IntCol\", , , , , , , , )";
+	   result_var=NULL;
+	   object_type=taMisc;
+	   method=taMisc::Error;
+	   meth_args {
+	    name="meth_args";
+	    el_typ=ProgArg;
+	    el_def=0;
+	    ProgArg @[0] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="a";
+	     required=1;
+	     def_val=;
+	     prev_expr=;
+	     expr {
+	      expr="\"InitValsToRowNo did not correctly initialize for IntCol\"";
+	     };
+	    };
+	    ProgArg @[1] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="b";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[2] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="c";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[3] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="d";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[4] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="e";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[5] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="f";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[6] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="g";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[7] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="h";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[8] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="i";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	   };
+	  };
+	  AssignExpr @[1] {
+	   name="AssignExpr_passtestfalse";
+	   desc=;
+	   flags=CAN_REVERT_TO_CODE;
+	   code_string="pass_test = false";
+	   result_var=$.programs[11].vars[0]$;
+	   expr {
+	    expr="false";
+	   };
+	  };
+	 };
+	};
+       };
+      };
+     };
+     init {
+      expr="i = 0";
+     };
+     test {
+      expr="i < 10";
+     };
+     iter {
+      expr="i++";
+     };
+    };
+    BlankLineEl @[7] {
+     name="BlankLineEl__1";
+     desc=;
+     flags=CAN_REVERT_TO_CODE|NO_CODE;
+     code_string=" ";
+    };
+    MethodCall @[8] {
+     name="MethodCall_datatableInitVal_owNoDoubleCol27";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="data_table->InitValsToRowNo(\"DoubleCol\", 2 , 7)";
+     result_var=NULL;
+     obj=$.programs[11].objs_vars[0]$;
+     method=DataTable::InitValsToRowNo;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_Variant_ref;
+       type="Variant&";
+       name="col";
+       required=1;
+       def_val=;
+       prev_expr="1.1";
+       expr {
+	expr="\"DoubleCol\"";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=int;
+       type="int";
+       name="st_row";
+       required=0;
+       def_val="0";
+       prev_expr="2.2 ";
+       expr {
+	expr="2 ";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=int;
+       type="int";
+       name="n_rows";
+       required=0;
+       def_val="-1";
+       prev_expr="\"DoubleCol\" ";
+       expr {
+	expr="7";
+       };
+      };
+     };
+     meth_sig="bool InitValsToRowNo(Variant& col, int st_row = 0, int n_rows = -1)";
+     meth_desc=" initialize all values in given column to be equal to the row number -- column can be specified as either integer index or a string that is then used to find the given column name -- for rows as specified by starting row, and n_rows = -1 means to the end";
+    };
+    ForLoop @[9] {
+     name="ForLoop_fori0i10i_1";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="for (i = 0; i < 10; i++)";
+     loop_code {
+      name="loop_code";
+      el_typ=ProgCode;
+      el_def=0;
+      If @[0] {
+       name="If_ifi2i9";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="if ((i < 2) || (i ==9))";
+       cond {
+	expr="(i < 2) || (i ==9)";
+       };
+       true_code {
+	name="true_code";
+	el_typ=ProgCode;
+	el_def=0;
+	If @[0] {
+	 name="If_ifdatatableDoubleColi0";
+	 desc=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="if (data_table[\"DoubleCol\"][i] != 0)";
+	 cond {
+	  expr="data_table[\"DoubleCol\"][i] != 0";
+	 };
+	 true_code {
+	  name="true_code";
+	  el_typ=ProgCode;
+	  el_def=0;
+	  MiscCall @[0] {
+	   name="MiscCall_taMiscErrorInitV_izeforDoubleCol";
+	   desc=;
+	   flags=CAN_REVERT_TO_CODE;
+	   code_string="taMisc::Error(\"InitValsToRowNo did not correctly initialize for DoubleCol\", , , , , , , , )";
+	   result_var=NULL;
+	   object_type=taMisc;
+	   method=taMisc::Error;
+	   meth_args {
+	    name="meth_args";
+	    el_typ=ProgArg;
+	    el_def=0;
+	    ProgArg @[0] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="a";
+	     required=1;
+	     def_val=;
+	     prev_expr=;
+	     expr {
+	      expr="\"InitValsToRowNo did not correctly initialize for DoubleCol\"";
+	     };
+	    };
+	    ProgArg @[1] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="b";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[2] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="c";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[3] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="d";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[4] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="e";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[5] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="f";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[6] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="g";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[7] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="h";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[8] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="i";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	   };
+	  };
+	  AssignExpr @[1] {
+	   name="AssignExpr_passtestfalse";
+	   desc=;
+	   flags=CAN_REVERT_TO_CODE;
+	   code_string="pass_test = false";
+	   result_var=$.programs[11].vars[0]$;
+	   expr {
+	    expr="false";
+	   };
+	  };
+	 };
+	};
+       };
+      };
+      Else @[1] {
+       name="Else_If_ifi2i9";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="else";
+       cond {
+	expr=;
+       };
+       true_code {
+	name="true_code";
+	el_typ=ProgCode;
+	el_def=0;
+	If @[0] {
+	 name="If_ifdatatableDoubleColii";
+	 desc=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="if (data_table[\"DoubleCol\"][i] != i)";
+	 cond {
+	  expr="data_table[\"DoubleCol\"][i] != i";
+	 };
+	 true_code {
+	  name="true_code";
+	  el_typ=ProgCode;
+	  el_def=0;
+	  MiscCall @[0] {
+	   name="MiscCall_taMiscErrorInitV_izeforDoubleCol";
+	   desc=;
+	   flags=CAN_REVERT_TO_CODE;
+	   code_string="taMisc::Error(\"InitValsToRowNo did not correctly initialize for DoubleCol\", , , , , , , , )";
+	   result_var=NULL;
+	   object_type=taMisc;
+	   method=taMisc::Error;
+	   meth_args {
+	    name="meth_args";
+	    el_typ=ProgArg;
+	    el_def=0;
+	    ProgArg @[0] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="a";
+	     required=1;
+	     def_val=;
+	     prev_expr=;
+	     expr {
+	      expr="\"InitValsToRowNo did not correctly initialize for DoubleCol\"";
+	     };
+	    };
+	    ProgArg @[1] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="b";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[2] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="c";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[3] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="d";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[4] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="e";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[5] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="f";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[6] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="g";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[7] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="h";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[8] {
+	     arg_type=const_taString_ref;
+	     type="taString&";
+	     name="i";
+	     required=0;
+	     def_val="\"\"";
+	     prev_expr=;
+	     expr {
+	      expr=;
+	     };
+	    };
+	   };
+	  };
+	  AssignExpr @[1] {
+	   name="AssignExpr_passtestfalse";
+	   desc=;
+	   flags=CAN_REVERT_TO_CODE;
+	   code_string="pass_test = false";
+	   result_var=$.programs[11].vars[0]$;
+	   expr {
+	    expr="false";
+	   };
+	  };
+	 };
+	};
+       };
+      };
+     };
+     init {
+      expr="i = 0";
+     };
+     test {
+      expr="i < 10";
+     };
+     iter {
+      expr="i++";
+     };
+    };
+    BlankLineEl @[10] {
+     name="BlankLineEl__2";
+     desc=;
+     flags=CAN_REVERT_TO_CODE|NO_CODE;
+     code_string=" ";
+    };
+   };
+   step_prog=NULL;
+   step_n=1;
+   doc {
+    name="doc";
+    desc=;
+    web_doc=0;
+    wiki=;
+    url="local";
+    full_url="local";
+    text_size=1;
+    text="<html>
+<head></head>
+<body>
+== Enter Title Here ==
+</body>
+</html>
+";
+    html_text=;
+   };
+  };
  };
  viewers {
   name="viewers";
@@ -43866,6 +49043,7 @@ LeabraProject .projects[0] {
 	 el_def=0;
 	};
        };
+       fix_name=0;
        bg_color {r=1: g=1: b=1: a=1: };
        text_color {r=0: g=0: b=0: a=1: };
        headlight_on=1;
@@ -43961,9 +49139,9 @@ LeabraProject .projects[0] {
       name="UserDataItem_List_103";
       el_typ=UserDataItem;
       el_def=0;
-      UserDataItem @[0] {name="view_win_lft": value=-0.002785515: val_type_fixed=0: };
+      UserDataItem @[0] {name="view_win_lft": value=0: val_type_fixed=0: };
       UserDataItem @[1] {name="view_win_top": value=0.002280502: val_type_fixed=0: };
-      UserDataItem @[2] {name="view_win_wd": value=0.05710306: val_type_fixed=0: };
+      UserDataItem @[2] {name="view_win_wd": value=0.05694444: val_type_fixed=0: };
       UserDataItem @[3] {name="view_win_ht": value=0.9236032: val_type_fixed=0: };
       UserDataItem @[4] {name="view_win_iconified": value=0: val_type_fixed=0: };
       UserDataItem @[5] {name="view_visible": value=1: val_type_fixed=0: };
@@ -43983,7 +49161,7 @@ LeabraProject .projects[0] {
  save_as_only=0;
  auto_name=1;
  last_change_desc=;
- tree_state{ .;.programs;.programs[0];.programs[0].objs;.programs[3].objs;.programs[3].prog_code;.programs[4].objs;.programs[4].objs[2];.programs[4].types;.programs[4].functions;.programs[4].prog_code;.programs[4].prog_code[0];.networks; };
+ tree_state{ .;.programs;.programs[0].objs;.programs[9].objs;.programs[9].objs[0];.programs[9].types;.programs[9].functions;.programs[10].objs;.programs[10].objs[0];.programs[10].types;.programs[10].functions;.programs[10].prog_code;.programs[10].prog_code[9];.programs[11].objs;.programs[11].objs[0];.networks; };
  networks {
   name="networks";
   el_typ=LeabraNetwork;
