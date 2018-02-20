@@ -85,6 +85,12 @@ void iMatrixTableView::ResetColorsAction(int ea) {
   mat->ResetColorScale();
 }
 
+void iMatrixTableView::SetColorSpecAction(int ea) {
+  taMatrix* mat = this->mat(); // may not have a model/mat!
+  if (!mat) return;
+  mat->SetColorSpec();
+}
+
 void iMatrixTableView::GetEditActionsEnabled(int& ea) {
   int allowed = 0;
   int forbidden = 0;
@@ -165,7 +171,9 @@ void iMatrixTableView::FillContextMenu_impl(ContextArea ca, taiWidgetMenu* menu,
     act = menu->AddItem("Set Fixed Column Width...", taiWidgetMenu::normal,
                         iAction::int_act,
                         this, SLOT(RowColOp(int)), (OP_COL | OP_SET_WIDTH) );
-  }
+    }
+    act = menu->AddItem("&Set Color Spec", taiWidgetMenu::normal,
+                      iAction::int_act, this, SLOT(SetColorSpecAction(int)), 1);
 }
 
 void iMatrixTableView::RowColOp_impl(int op_code, const CellRange& sel) {

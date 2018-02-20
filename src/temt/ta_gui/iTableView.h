@@ -104,6 +104,7 @@ public:
 
   virtual void          ViewAction(int va) {}
   virtual void          ResetColorsAction(int va) {}
+  virtual void          SetColorSpecAction(int va) {}
 #ifndef __MAKETA__
  signals:
   void                  UpdateUi();
