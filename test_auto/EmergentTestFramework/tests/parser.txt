@@ -68,7 +68,7 @@ ParseObjectSelectMethodOrMember
     ${output} =                Run Command Wait      {"command": "RunProgram", "program": ${program_test}}
     Status OK No Result        ${output}
     
-    Prog Var Should Match      lookup_type_str	     OBJ_MEMB_METH
+    Prog Var Should Match      lookup_type_str	     OBJ_MEMBER
 
     Prog Var Should Be Empty	lookup_seed
     Prog Var Should Be Empty	prepend_txt
@@ -120,7 +120,7 @@ ParseObjectMemberSelectMethodOrMember
     ${output} =                Run Command Wait      {"command": "RunProgram", "program": ${program_test}}
     Status OK No Result        ${output}
     
-    Prog Var Should Match      lookup_type_str	     OBJ_MEMB_METH
+    Prog Var Should Match      lookup_type_str	     OBJ_MEMBER
 
     Prog Var Should Be Empty	lookup_seed
     Prog Var Should Be Empty	prepend_txt
@@ -137,7 +137,7 @@ ParseObjectMemberSelectMethodOrMemberSeeded
     ${output} =                Run Command Wait      {"command": "RunProgram", "program": ${program_test}}
     Status OK No Result        ${output}
 
-    Prog Var Should Match      lookup_type_str	     OBJ_MEMB_METH
+    Prog Var Should Match      lookup_type_str	     OBJ_MEMBER
 
     Prog Var Should MAtch	lookup_seed	     af
     Prog Var Should Be Empty	prepend_txt
