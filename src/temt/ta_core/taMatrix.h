@@ -31,7 +31,6 @@
 class int_Matrix; // 
 class MatrixIndex; // 
 class iMatrixTableModel; //
-class ColorScale;  //
 class CellRange; //
 class taMatrix_PList; //
 class taArray_base; //
@@ -643,8 +642,6 @@ public:
   // #IGNORE
 
   iMatrixTableModel*     GetTableModel(); // gets the table model, making if needed
-  ColorScale*            GetColorScale(); // gets the color scale, making if needed
-  virtual void           ResetColorScale(); // reset the color scale based on current min/max values
 
 public:
   ///////////////////////////////////////////////////////////////////
@@ -756,7 +753,6 @@ protected:
   taMatrix*             slice_par; // slice parent -- we ref/unref it
   fixed_dealloc_fun     fixed_dealloc; // optional dealloc fun passed in on FixedData
   iMatrixTableModel*    table_model; // created on-demand, then persists for lifetime
-  ColorScale*           colorscale; // created on-demand, then persists for lifetime -- for table_model
 
   virtual bool          fastAlloc() const {return true;}
   // #IGNORE enables using fast block-based allocations, copies, and skipping reclaims -- for ints,floats, etc.; not for Strings/Variants

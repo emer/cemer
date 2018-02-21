@@ -79,10 +79,13 @@ void iMatrixTableView::ViewAction(int ea) {
   taMisc::Confirm("contents of cell(s):\n", str);
 }
 
-void iMatrixTableView::ResetColorsAction(int ea) {
+void iMatrixTableView::ResetColorScaleAction(int ea) {
   taMatrix* mat = this->mat(); // may not have a model/mat!
   if (!mat) return;
-  mat->ResetColorScale();
+  iMatrixTableModel* mod = qobject_cast<iMatrixTableModel*>(model());
+  if (mod) {
+    mod->ResetColorScale();
+  }
 }
 
 void iMatrixTableView::GetEditActionsEnabled(int& ea) {
@@ -166,6 +169,9 @@ void iMatrixTableView::FillContextMenu_impl(ContextArea ca, taiWidgetMenu* menu,
                         iAction::int_act,
                         this, SLOT(RowColOp(int)), (OP_COL | OP_SET_WIDTH) );
   }
+  act = menu->AddItem("&Reset Colors", taiWidgetMenu::normal,
+                      iAction::int_act, this, SLOT(ResetColorScaleAction(int)), 1);
+  
 }
 
 void iMatrixTableView::RowColOp_impl(int op_code, const CellRange& sel) {

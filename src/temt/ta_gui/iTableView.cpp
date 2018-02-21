@@ -301,9 +301,6 @@ void iTableView::FillContextMenu_impl(ContextArea ca,
       act->setEnabled(false);
     }
   }
-  act = menu->AddItem("&Reset Colors", taiWidgetMenu::normal,
-                      iAction::int_act, this, SLOT(ResetColorsAction(int)), 1);
-
 }
 
 void iTableView::RowColOp(int op_code) {

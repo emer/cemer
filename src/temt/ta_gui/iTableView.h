@@ -103,7 +103,7 @@ public:
   virtual void          GetEditActionsEnabled(int& ea) {}
 
   virtual void          ViewAction(int va) {}
-  virtual void          ResetColorsAction(int va) {}
+  virtual void          ResetColorScaleAction(int va) {}
   virtual void          SetColorSpecAction(int va) {}
 #ifndef __MAKETA__
  signals:

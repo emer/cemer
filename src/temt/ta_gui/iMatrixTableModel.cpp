@@ -25,6 +25,7 @@
 #include <SigLinkSignal>
 #include <taMisc>
 #include <taiMisc>
+#include <cmath>
 
 #include <QColor>
 #include <QBrush>
@@ -40,9 +41,12 @@ iMatrixTableModel::iMatrixTableModel(taMatrix* mat_)
   m_pat_4d = false;
   m_dim_names = NULL;
   m_view_layout = taMisc::TOP_ZERO;
+  color_scale = NULL;
+  GetColorScale();
 }
 
 iMatrixTableModel::~iMatrixTableModel() {
+  color_scale->CutLinks();
   // note: following shouldn't really execute since mat manages our lifetime
   if (m_mat) {
     m_mat->RemoveSigClient(this);
@@ -63,38 +67,40 @@ int iMatrixTableModel::columnCount(const QModelIndex& parent) const {
 
 QVariant iMatrixTableModel::data(const QModelIndex& index, int role) const {
   if (!m_mat) return QVariant();
+  
   switch (role) {
-  case Qt::DisplayRole: 
-  case Qt::EditRole:
-    return static_cast<const char *>(m_mat->SafeElAsStr_Flat(matIndex(index)));
-//Qt::DecorationRole
-//Qt::ToolTipRole
-//Qt::StatusTipRole
-//Qt::WhatsThisRole
-//Qt::SizeHintRole -- QSize
-//Qt::FontRole--  QFont: font for the text
-  case Qt::TextAlignmentRole:
-    return m_mat->defAlignment();
-  case Qt::BackgroundRole: {
-    //-- QColor
- /* note: only used when !(option.showDecorationSelected && (option.state
-    & QStyle::State_Selected)) */
-    if (!(flags(index) & Qt::ItemIsEditable))
-      return QBrush(Qt::lightGray);
-    ColorScale* cs = m_mat->GetColorScale();
-    if(cs) {
-      float val = m_mat->SafeElAsFloat_Flat(matIndex(index));
-      cs->UpdateMinMax(val); // lame attempt to keep in range -- probably ok tho
-      float sc_val;
-      iColor ic = cs->GetColor(val, sc_val);
-      return (QBrush)(QColor)ic;
+    case Qt::DisplayRole:
+    case Qt::EditRole:
+      return static_cast<const char *>(m_mat->SafeElAsStr_Flat(matIndex(index)));
+      //Qt::DecorationRole
+      //Qt::ToolTipRole
+      //Qt::StatusTipRole
+      //Qt::WhatsThisRole
+      //Qt::SizeHintRole -- QSize
+      //Qt::FontRole--  QFont: font for the text
+    case Qt::TextAlignmentRole:
+      return m_mat->defAlignment();
+    case Qt::BackgroundRole: {
+      //-- QColor
+      /* note: only used when !(option.showDecorationSelected && (option.state
+       & QStyle::State_Selected)) */
+      if (!(flags(index) & Qt::ItemIsEditable))
+        return QBrush(Qt::lightGray);
+      if(color_scale) {
+        float val = m_mat->SafeElAsFloat_Flat(matIndex(index));
+        if (color_scale) {
+          color_scale->UpdateMinMax(val); // lame attempt to keep in range -- probably ok tho
+        }
+        float sc_val;
+        iColor ic = color_scale->GetColor(val, sc_val);
+        return (QBrush)(QColor)ic;
+      }
+      break;
     }
-    break;
-  }
-/*Qt::TextColorRole
-  QColor: color of text
-Qt::CheckStateRole*/
-  default: break;
+      /*Qt::TextColorRole
+       QColor: color of text
+       Qt::CheckStateRole*/
+    default: break;
   }
   return QVariant();
 }
@@ -318,3 +324,29 @@ bool iMatrixTableModel::ValidateIndex(const QModelIndex& index) const {
 int iMatrixTableModel::matView() const {
   return taMisc::matrix_view;
 }
+
+ColorScale* iMatrixTableModel::GetColorScale() {
+  if (!mat() || mat()->isDestroying()) return NULL;
+  if(mat()->GetDataValType() != taBase::VT_FLOAT && mat()->GetDataValType() != taBase::VT_DOUBLE)
+    return NULL;                // only for real-valued numerical types
+  if(!color_scale) {
+    color_scale = new ColorScale;
+    color_scale->InitLinks();
+    ResetColorScale();
+  }
+  return color_scale;
+}
+
+void iMatrixTableModel::ResetColorScale() {
+  if (!mat() || !color_scale) return;
+  
+  float min = mat()->FastElAsFloat_Flat(0);
+  float max = mat()->FastElAsFloat_Flat(0);
+  for(int i=1; i<mat()->size; i++) {
+    min = fminf(min, mat()->FastElAsFloat_Flat(i));
+    max = fmaxf(max, mat()->FastElAsFloat_Flat(i));
+  }
+  color_scale->SetMinMax(min, max);
+}
+
+
