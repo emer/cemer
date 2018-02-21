@@ -645,7 +645,6 @@ public:
   iMatrixTableModel*     GetTableModel(); // gets the table model, making if needed
   ColorScale*            GetColorScale(); // gets the color scale, making if needed
   virtual void           ResetColorScale(); // reset the color scale based on current min/max values
-  virtual void           SetColorSpec(); // reset the color scale based on current min/max values
 
 public:
   ///////////////////////////////////////////////////////////////////

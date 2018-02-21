@@ -1846,10 +1846,6 @@ void taMatrix::ResetColorScale() {
   colorscale->SetMinMax(min, max);
 }
 
-void taMatrix::SetColorSpec() {
-  colorscale->CallFun("SetColorSpec");
-}
-
 ColorScale* taMatrix::GetColorScale() {
   if(isDestroying()) return NULL;
   if(GetDataValType() != VT_FLOAT && GetDataValType() != VT_DOUBLE)

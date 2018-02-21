@@ -57,7 +57,6 @@ public: // cliphandler i/f
   void                  GetEditActionsEnabled(int& ea) override;
   void                  ViewAction(int ea) override;
   void                  ResetColorsAction(int ea) override;
-  void                  SetColorSpecAction(int ea) override;
 };
 
 #endif // iMatrixTableView_h
