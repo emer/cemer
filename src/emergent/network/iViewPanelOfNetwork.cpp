@@ -893,19 +893,23 @@ void iViewPanelOfNetwork::lvDisplayValues_itemClicked(QTreeWidgetItem* item, int
 
   NetView *nv = getNetView();
   if (!nv) return;
-  Qt::CheckState chk = item->checkState(col);
-  String nm = item->text(0);
-  if(chk == Qt::Checked) {
-    nv->hot_vars.AddUnique(nm);
+  
+  if (col == 0) {
+    Qt::CheckState chk = item->checkState(col);
+    String nm = item->text(0);
+    if(chk == Qt::Checked) {
+      nv->hot_vars.AddUnique(nm);
+    }
+    else {
+      nv->hot_vars.RemoveEl(nm);
+    }
+    nv->UpdateDisplay(false);
   }
-  else {
-    nv->hot_vars.RemoveEl(nm);
-  }
-  nv->UpdateDisplay(false);
 }
 
 void iViewPanelOfNetwork::NetStateValues_itemClicked(QTreeWidgetItem* changed_item, int col) {
   if (updating) return;
+  
   NetView *nv = getNetView();
   if (!nv) return;
   
