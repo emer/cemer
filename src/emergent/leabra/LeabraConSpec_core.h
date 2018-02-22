@@ -513,6 +513,7 @@
       }
       
       float new_dwt = bcm + err;
+      dwt_max = fmaxf(fabsf(new_dwt), dwt_max); // must update this prior to any normalization otherwise it is useless for prjn normalization!
 
       if(dwt_norm.on && !dwt_norm.err_only) {
         if(dwt_norm.prjn) {
@@ -528,9 +529,7 @@
         new_dwt = momentum.ComputeMoment(moments[i], new_dwt);
       }
 
-      float absdwt = fabsf(new_dwt);
-      dwt_max = fmaxf(absdwt, dwt_max);
-      dwt_avg += absdwt;
+      dwt_avg += fabsf(new_dwt); // avg reflects full net dwt average
       
       dwts[i] += lrate_eff * new_dwt;
     }
