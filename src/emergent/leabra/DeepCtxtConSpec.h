@@ -52,20 +52,22 @@
     const float su_avg_m = su->deep_raw_prv;
     
     LEABRA_PRJN_STATE* prjn = cg->GetPrjnState(net);
-    float err_norm_fact = dwt_norm.EffNormFactor(prjn->err_dwt_max_avg);
-
     if(momentum.on) {
       clrate *= momentum.lr_comp;
     }
-    
+
     float err_dwt_max = 0.0f;
     float bcm_dwt_max = 0.0f;
+    float dwt_max = 0.0f;
+    float err_dwt_avg = 0.0f;
+    float bcm_dwt_avg = 0.0f;
+    float dwt_avg = 0.0f;
 
     float* dwts = cg->OwnCnVar(DWT);
 
     const int sz = cg->size;
 
-    float* dwavgs = cg->OwnCnVar(DWAVG);
+    float* dwnorms = cg->OwnCnVar(DWNORM);
     float* moments = cg->OwnCnVar(MOMENT);
     for(int i=0; i<sz; i++) {
       LEABRA_UNIT_STATE* ru = cg->UnState(i, net);
@@ -80,15 +82,46 @@
       }
       float err = C_Compute_dWt_Delta(ru->avg_s, ru->avg_m, su_avg_s);
 
-      err_dwt_max = fmaxf(fabsf(err), err_dwt_max);
-      err *= err_norm_fact;
+      float abserr = fabsf(err);
+      if(dwt_norm.stats) {
+        err_dwt_max = fmaxf(abserr, err_dwt_max);
+        err_dwt_avg += abserr;
+      }
+
+      if(dwt_norm.on) {
+        dwt_norm.UpdateAvg(dwnorms[i], abserr); // always update
+        err *= dwt_norm.EffNormFactor(dwnorms[i]);
+      }
 
       if(momentum.on) {
         err = momentum.ComputeMoment(moments[i], err);
       }
+
+      if(dwt_norm.stats) {
+        float absdwt = fabsf(err);
+        dwt_max = fmaxf(absdwt, dwt_max); 
+        dwt_avg += absdwt; 
+      }
+
       dwts[i] += lrate_eff * err; // lrate always at the end!
     }
-    cg->err_dwt_max = err_dwt_max;
+    
+    if(dwt_norm.stats) {
+      cg->err_dwt_max = err_dwt_max;
+      cg->bcm_dwt_max = bcm_dwt_max;
+      cg->dwt_max = dwt_max;
+
+      if(sz > 0) {
+        float nrm = 1.0f / (float)sz;
+        cg->err_dwt_avg = err_dwt_avg * nrm;
+        cg->bcm_dwt_avg = bcm_dwt_avg * nrm;
+        cg->dwt_avg = dwt_avg * nrm;
+      }
+    }
+
+    if(dwt_norm.SendConsAgg() || dwt_norm.PrjnAgg()) {
+      DwtNorm_SendCons(cg, net, thr_no);
+    }
   }
 
   INLINE void Initialize_core() {

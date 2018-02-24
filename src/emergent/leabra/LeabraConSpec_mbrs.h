@@ -259,32 +259,62 @@ private:
 
 
 class STATE_CLASS(LeabraDwtNorm) : public STATE_CLASS(SpecMemberBase) {
-  // ##INLINE ##NO_TOKENS ##CAT_Leabra implements dwt normalization, only on error-driven dwt component, based on projection-level max_avg value -- slowly decays and instantly resets to any current max -- serves as an estimate of the variance in the weight changes, assuming zero net mean overall
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra implements dwt normalization, either on all dwts or only on error-driven dwt component, based on different levels of max_avg value -- slowly decays and instantly resets to any current max(abs) -- serves as an estimate of the variance in the weight changes, assuming zero net mean overall
 INHERITED(SpecMemberBase)
 public:
+  enum  NormLevel {             // what level to aggregate normalization factor over
+    SYN,                        // normalize each synapse separately
+    RECV_CONS,                  // normalize across all receiving connections per projection, per unit -- updates with wt_bal factors, every Network.times.wt_bal_int trials -- adjust avg_tau accordingly!
+    SEND_CONS,                  // normalize across all sending connections per projection, per unit -- updates every trial (fast, sender-based)
+    RECV_UNIT,                  // normalize across all connections within recv unit -- updates with wt_bal factors, every Network.times.wt_bal_int trials -- adjust avg_tau accordingly!
+    PRJN,                       // normalize across an entire projection -- sender-based, fast, but this seems to increase hogging..
+  };
+  
   bool          on;             // #DEF_true whether to use dwt normalization, only on error-driven dwt component, based on projection-level max_avg value -- slowly decays and instantly resets to any current max
-  bool          err_only;       // #CONDSHOW_ON_on #DEF_true only normalize the error-driven component of learning
-  bool          prjn;           // #CONDSHOW_ON_on #DEF_true use the projection-level max_abs in normalization -- otherwise uses synapse-specific normalization factor
-  float         avg_tau;        // #CONDSHOW_ON_on #MIN_1 #DEF_1000;10000 time constant for integration of dwavg average of delta weights used in normalization factor -- generally should be long-ish, between 1000-10000 -- integration rate factor is 1/tau
+  NormLevel     level;          // #CONDSHOW_ON_on what level to normalize across -- the max value is updated at this level -- for larger-scale levels, always ensures that normalization factor is max of current abs dwt too, so no weight change magnitude exceeds 1 ever
+  bool          err_only;       // #CONDSHOW_ON_on #DEF_false only normalize the error-driven component of learning
+  float         decay_tau;      // #CONDSHOW_ON_on #MIN_1 #DEF_1000;10000 time constant for decay of dwnorm factor -- generally should be long-ish, between 1000-10000 -- integration rate factor is 1/tau
   float         norm_min;       // #CONDSHOW_ON_on #MIN_0 #DEF_0.001 minimum effective value of the normalization factor -- provides a lower bound to how much normalization can be applied
-  float         lr_comp;        // #MIN_0 #CONDSHOW_ON_on #DEF_0.2 overall learning rate multiplier to compensate for changes due to use of normalization -- allows for a common master learning rate to be used between different conditions
+  float         lr_comp;        // #MIN_0 #CONDSHOW_ON_on #DEF_0.1;0.2 overall learning rate multiplier to compensate for changes due to use of normalization -- allows for a common master learning rate to be used between different conditions -- 0.1 for synapse-level, maybe higher for other levels
+  bool          stats;          // record the avg, max values of err, bcm hebbian, and overall dwt change per con group and per projection
 
-  float         dwavg_dt;      // #READ_ONLY #EXPERT rate constant of delta-weight average integration = 1 / dwavg_tau
-  float         dwavg_dt_c;    // #READ_ONLY #EXPERT complement rate constant of delta-weight average integration = 1 - (1 / dwavg_tau)
+  float         decay_dt;      // #READ_ONLY #EXPERT rate constant of decay = 1 / decay_tau
+  float         decay_dt_c;    // #READ_ONLY #EXPERT complement rate constant of decay = 1 - (1 / decay_tau)
 
-  INLINE void UpdateAvg(float& max_avg, const float max_dwt) {
-    max_avg = fmaxf(dwavg_dt_c * max_avg, max_dwt);
+  INLINE bool RecvConsAgg() const {
+    return (on && (level == RECV_CONS));
   }
-  // update the max_avg running value
-
-  INLINE float EffNormFactor(float max_avg) {
-    if(!on || max_avg == 0.0f) return 1.0f; // not on or first time -- no norm
-    return lr_comp / fmaxf(max_avg, norm_min);
+  // is a recv-cons level aggregation required?  slow.. done during WtBal computation
+  
+  INLINE bool RecvUnitAgg() const {
+    return (on && (level == RECV_UNIT));
   }
-  // get the effective normalization factor, as a multiplier, including lrate comp
+  // is a recv-unit level aggregation required?  slow.. done during WtBal computation
+  
+  INLINE bool SendConsAgg() const {
+    return (on && (level == SEND_CONS));
+  }
+  // is a send-cons level aggregation required?
+  
+  INLINE bool PrjnAgg() const {
+    return (on && (level == PRJN));
+  }
+  // is a projection level aggregation required? 
+  
+  INLINE void UpdateAvg(float& dwnorm, const float abs_dwt) const {
+    dwnorm = fmaxf(decay_dt_c * dwnorm, abs_dwt);
+  }
+  // update the dwnorm running max_abs, slowly decaying value -- jumps up to max(abs_dwt) and slowly decays
+
+  INLINE float EffNormFactor(float dwnorm) const {
+    if(!on || dwnorm == 0.0f) return 1.0f;   // nothing going on
+    dwnorm = fmaxf(dwnorm, norm_min);
+    return lr_comp / dwnorm;
+  }
+  // get the effective normalization factor, as a multiplier, including lrate comp -- dwnorm already has been updated to be max(abs_dwt) so no dwt can be > 1
   
   INLINE void   UpdtVals() {
-    dwavg_dt = 1.0f / avg_tau;  dwavg_dt_c = 1.0f - dwavg_dt;
+    decay_dt = 1.0f / decay_tau;  decay_dt_c = 1.0f - decay_dt;
   }
   // #IGNORE
   
@@ -294,8 +324,8 @@ public:
 private:
   void  Initialize()    {  Defaults_init(); }
   void  Defaults_init() {
-    on = true;  err_only = true; prjn = true; avg_tau = 1000.0f;  norm_min = 0.001f;
-    lr_comp = 0.2f;
+    on = true;  level = SYN;  err_only = false; decay_tau = 1000.0f; norm_min = 0.001f;
+    lr_comp = 0.1f;  stats = false;
     UpdtVals();
   }
 };

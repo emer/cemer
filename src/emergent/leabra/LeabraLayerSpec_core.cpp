@@ -200,6 +200,8 @@ void LEABRA_LAYER_SPEC::Compute_MaxDwts(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_
     prjn->am_bcm_dwt.InitVals();
     prjn->am_dwt.InitVals();
 
+    float max_dwnorm = 0.0f;
+
     for(int ui = 0; ui < lay->n_units; ui++) {
       LEABRA_UNIT_STATE* u = lay->GetUnitState(net, ui);
       if(u->lesioned()) continue;
@@ -209,15 +211,18 @@ void LEABRA_LAYER_SPEC::Compute_MaxDwts(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_
       prjn->am_err_dwt.UpdtSepAvgMax(cg->err_dwt_avg, cg->err_dwt_max, flat_idx);
       prjn->am_bcm_dwt.UpdtSepAvgMax(cg->bcm_dwt_avg, cg->bcm_dwt_max, flat_idx);
       prjn->am_dwt.UpdtSepAvgMax(cg->dwt_avg, cg->dwt_max, flat_idx);
+
+      max_dwnorm = fmaxf(max_dwnorm, cg->cons_dwnorm);
     }
 
     prjn->am_err_dwt.CalcAvg();
     prjn->am_bcm_dwt.CalcAvg();
     prjn->am_dwt.CalcAvg();
+    prjn->prjn_dwnorm = max_dwnorm;
 
-    cs->dwt_norm.UpdateAvg(prjn->err_dwt_max_avg, prjn->am_err_dwt.max);
-    cs->dwt_norm.UpdateAvg(prjn->bcm_dwt_max_avg, prjn->am_bcm_dwt.max);
-    cs->dwt_norm.UpdateAvg(prjn->dwt_max_avg, prjn->am_dwt.max);
+    if(cs->dwt_norm.PrjnAgg()) {
+      // todo: need to copy it back down.. 
+    }
   }
 }
 

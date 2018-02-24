@@ -15,7 +15,7 @@ const char* LEABRA_CON_SPEC::ConVarName(int var_no) const {
   case WT: return "wt";
   case DWT: return "dwt";
   case SCALE: return "scale";
-  case DWAVG: return "dwavg";
+  case DWNORM: return "dwnorm";
   case MOMENT: return "moment";
   case FWT: return "fwt";
   case SWT: return "swt";

@@ -131,7 +131,7 @@ void LeabraUnitSpec::UpdateAfterEdit_impl() {
     avg_l_lrn.lrn_min = 0.0001f;
     avg_l_lrn.avg_l_max = 5.0f;
     avg_l_mod.mod = LeabraAvgLModSpec::LAY_ERR_MOD;
-    avg_l_mod.mod_min = 0.01f;
+    avg_l_mod.lay_mod_min = 0.01f;
   }
   
   if(spike_misc.ex)

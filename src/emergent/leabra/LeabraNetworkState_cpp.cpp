@@ -174,11 +174,15 @@ void LeabraNetworkState_cpp::Compute_dWt() {
 void LeabraNetworkState_cpp::Compute_Weights() {
   NET_THREAD_CALL(LeabraNetworkState_cpp::Compute_Weights_Thr);
   
-  if(net_misc.wt_bal && (total_trials % times.wt_bal_int == 0)) {
+  if((net_misc.wt_bal || net_misc.recv_con_dwnorm) && (total_trials % times.wt_bal_int == 0)) {
     NET_THREAD_CALL(LeabraNetworkState_cpp::Compute_WtBal_Thr);
-    if(lstats.wt_bal) {
+    if(net_misc.wt_bal && lstats.wt_bal) {
       Compute_WtBalStats();
     }
+  }
+  
+  if((net_misc.wt_bal || net_misc.recv_unit_dwnorm) && (total_trials % times.wt_bal_int == 0)) {
+    NET_THREAD_CALL(LeabraNetworkState_cpp::Compute_DwtNormRecvUnit_Thr);
   }
 }
 

@@ -153,9 +153,9 @@ void STATE_CLASS(LHbRMTgUnitSpec)::Compute_Lhb(LEABRA_UNIT_STATE* u, LEABRA_NETW
   
   // don't double count pv going through the matrix guys
   float net_pos = vsmatrix_pos_net;
-  if(pv_pos) { net_pos = fmaxf(pv_pos, vsmatrix_pos_net); }
+  if(pv_pos != 0.0f) { net_pos = fmaxf(pv_pos, vsmatrix_pos_net); }
   float net_neg = vsmatrix_neg_net;
-  if(pv_neg) {
+  if(pv_neg != 0.0f) {
     // below can arise when same CS can predict either pos_pv or neg_pv probalistically
     if(vsmatrix_pos_net < 0.0f) {
       net_neg = fmaxf(net_neg, fabsf(vsmatrix_pos_net));

@@ -68,7 +68,8 @@ public:
   bool          off_errs;       // #DEF_true #CAT_Statistic include in norm_err computation units that were incorrectly off (should have been on but were actually off) -- either 1 or both of off_errs and on_errs must be set
   bool          on_errs;        // #DEF_true #CAT_Statistic include in norm_err computation units that were incorrectly on (should have been off but were actually on) -- either 1 or both of off_errs and on_errs must be set
   bool          agg_unlearnable; // #DEF_false #CAT_Statistic should unlearnable trials be aggregated into epoch-level summary stats?  default is not to (i.e., false)
-  bool          wt_bal;         // #DEF_false #CAT_Statistic aggregate weight balance statistics per projection when wt_balance mechanism is active (soft form of weight normalization) -- see times.wt_bal_int for interval when these stats are updated
+  bool          wt_bal;         // #DEF_false #CAT_Statistic aggregate weight balance statistics per projection when wt_balance mechanism is active (soft form of weight normalization) -- see times.wt_bal_int for interval when these are updated
+
 
   STATE_DECO_KEY("Network");
   STATE_TA_STD_CODE(LeabraNetStats);
@@ -93,21 +94,31 @@ public:
   bool          trial_decay;   // #GUI_READ_ONLY #SHOW at least one layer spec has a non-zero level of trial decay -- if all layers have 0 trial decay, then the net input does not need to be reset between trials, yielding significantly faster performance
   bool          diff_scale_p;   // #GUI_READ_ONLY #SHOW a unitspec such as the hippocampus ThetaPhase units rescales inputs in plus phase -- this requires initializing the net inputs between these phases
   bool          diff_scale_q1;  // #GUI_READ_ONLY #SHOW at least one unit spec rescales inputs at start of second quarter, such as hippocampus ThetaPhase units -- this requires initializing the net inputs at this point
-  bool          wt_bal;       // #GUI_READ_ONLY #SHOW wt_bal weight balancing is being used -- this must be done as a separate step -- LeabraConSpec will set this flag if LeabraConSpec::wt_norm_bal.bal_on flag is on, and off if not -- updated in Trial_Init_Specs call
+  bool          wt_bal;       // #GUI_READ_ONLY #SHOW wt_bal weight balancing is being used -- this must be done as a separate step -- LeabraConSpec will set this flag if LeabraConSpec::wt_bal.on flag is on, and off if not -- updated in Trial_Init_Specs call
+  bool          recv_con_dwnorm;   // #GUI_READ_ONLY #SHOW recv-connection group based dwnorm aggregation required -- LeabraConSpec will set this flag based on LeabraConSpec::dwt_norm.level -- updated in Trial_Init_Specs call
+  bool          recv_unit_dwnorm;   // #GUI_READ_ONLY #SHOW recv-unit based dwnorm aggregation required -- -- LeabraConSpec will set this flag based on LeabraConSpec::dwt_norm.level -- updated in Trial_Init_Specs call
   bool          lay_gp_inhib;   // #GUI_READ_ONLY #SHOW layer group level inhibition is active for some layer groups -- may cause some problems with asynchronous threading operation -- updated in Trial_Init_Specs call
   bool          inhib_cons;     // #GUI_READ_ONLY #SHOW inhibitory connections are being used in this network -- detected during buildunits_threads to determine how netinput is computed -- sets NETIN_PER_PRJN flag
 
-  STATE_DECO_KEY("Network");
-  STATE_TA_STD_CODE(LeabraNetMisc);
-private:
-  void  Initialize() {
+  INLINE void   ResetInitSpecsFlags() {
     spike = false;
     bias_learn = false;
     trial_decay = false;
     diff_scale_p = false;
     diff_scale_q1 = false;
     wt_bal = false;
+    recv_con_dwnorm = false;
+    recv_unit_dwnorm = false;
     lay_gp_inhib = false;
+  }
+  // reset flags before Trial_InitSpecs call -- everything except inhib_cons usually
+
+    
+  STATE_DECO_KEY("Network");
+  STATE_TA_STD_CODE(LeabraNetMisc);
+private:
+  void  Initialize() {
+    ResetInitSpecsFlags();
     inhib_cons = false;
   }
 };

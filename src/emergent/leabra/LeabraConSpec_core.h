@@ -2,7 +2,7 @@
 //{
   enum LeabraConVars {
     SCALE = N_CON_VARS,        // scaling paramter -- effective weight value is scaled by this factor -- useful for topographic connectivity patterns e.g., to enforce more distant connections to always be lower in magnitude than closer connections -- set by custom weight init code for certain projection specs
-    DWAVG,                     // average of absolute value of computed dwt values over time -- serves as an estimate of variance in weight changes over time
+    DWNORM,                    // dwt normalization factor -- reset to max of abs value of dwt, decays slowly down over time -- serves as an estimate of variance in weight changes over time
     MOMENT,                    // momentum -- time-integrated dwt changes, to accumulate a consistent direction of weight change and cancel out dithering contradictory changes
     FWT,                       // fast learning linear (underlying) weight value -- learns according to the lrate specified in the connection spec -- this is converted into the effective weight value, "wt", via sigmoidal contrast enhancement (wt_sig)
     SWT,                       // slow learning linear (underlying) weight value -- learns more slowly from weight changes than fast weights, and fwt decays down to swt over time
@@ -130,13 +130,13 @@
     float* swts = cg->OwnCnVar(SWT);
     float* fwts = cg->OwnCnVar(FWT);
     float* scales = cg->OwnCnVar(SCALE);
-    float* dwavgs = cg->OwnCnVar(DWAVG);
+    float* dwnorms = cg->OwnCnVar(DWNORM);
     float* moments = cg->OwnCnVar(MOMENT);
     float* wbincs = cg->OwnCnVar(WB_INC);
     float* wbdecs = cg->OwnCnVar(WB_DEC);
     for(int i=0; i<cg->size; i++) {
       fwts[i] = LinFmSigWt(wts[i]); // swt, fwt are linear underlying weight values
-      dwavgs[i] = 0.0f;
+      dwnorms[i] = 0.0f;
       moments[i] = 0.0f;
       swts[i] = fwts[i];
       wts[i] *= scales[i];
@@ -162,6 +162,12 @@
     if(wt_bal.on) {
       net->net_misc.wt_bal = true;
     }
+    if(dwt_norm.RecvConsAgg()) {
+      net->net_misc.recv_con_dwnorm = true;
+    }
+    if(dwt_norm.RecvUnitAgg()) {
+      net->net_misc.recv_unit_dwnorm = true;
+    }      
   }
   // #CAT_Learning initialize specs and specs update network flags -- e.g., set current learning rate based on schedule given epoch (or error value)
 
@@ -447,14 +453,6 @@
     const int sz = cg->size;
 
     LEABRA_PRJN_STATE* prjn = cg->GetPrjnState(net);
-    float norm_fact = 1.0f;
-    if(dwt_norm.err_only) {
-      norm_fact = dwt_norm.EffNormFactor(prjn->err_dwt_max_avg);
-    }
-    else {
-      norm_fact = dwt_norm.EffNormFactor(prjn->dwt_max_avg);
-    }
-
     if(momentum.on) {
       clrate *= momentum.lr_comp;
     }
@@ -468,7 +466,7 @@
 
     float* dwts = cg->OwnCnVar(DWT);
     float* fwts = cg->OwnCnVar(FWT);
-    float* dwavgs = cg->OwnCnVar(DWAVG);
+    float* dwnorms = cg->OwnCnVar(DWNORM);
     float* moments = cg->OwnCnVar(MOMENT);
     
     for(int i=0; i<sz; i++) {
@@ -495,54 +493,52 @@
       err *= xcal.m_lrn;
 
       float abserr = fabsf(err);
-      float absbcm = fabsf(bcm);
-      
-      err_dwt_max = fmaxf(abserr, err_dwt_max);
-      bcm_dwt_max = fmaxf(absbcm, bcm_dwt_max);
-      err_dwt_avg += abserr;
-      bcm_dwt_avg += absbcm;
+      if(dwt_norm.stats) {
+        float absbcm = fabsf(bcm);
+        err_dwt_max = fmaxf(abserr, err_dwt_max);
+        bcm_dwt_max = fmaxf(absbcm, bcm_dwt_max);
+        err_dwt_avg += abserr;
+        bcm_dwt_avg += absbcm;
+      }
 
       if(dwt_norm.on && dwt_norm.err_only) {
-        if(dwt_norm.prjn) {
-          err *= norm_fact;     // 1 if not normalizing
-        }
-        else {
-          dwt_norm.UpdateAvg(dwavgs[i], abserr); // this comes first in synapse-specific version..
-          err *= dwt_norm.EffNormFactor(dwavgs[i]);
-        }
+        dwt_norm.UpdateAvg(dwnorms[i], abserr); // always update our syn factor -- later aggregated -- must be second loop to avoid order effects!
+        err *= dwt_norm.EffNormFactor(dwnorms[i]);
       }
       
       float new_dwt = bcm + err;
-      dwt_max = fmaxf(fabsf(new_dwt), dwt_max); // must update this prior to any normalization otherwise it is useless for prjn normalization!
-
       if(dwt_norm.on && !dwt_norm.err_only) {
-        if(dwt_norm.prjn) {
-          new_dwt *= norm_fact;     // 1 if not normalizing
-        }
-        else {
-          dwt_norm.UpdateAvg(dwavgs[i], fabsf(new_dwt)); // this comes first in synapse-specific version..
-          new_dwt *= dwt_norm.EffNormFactor(dwavgs[i]);
-        }
+        dwt_norm.UpdateAvg(dwnorms[i], fabsf(new_dwt)); // always update
+        new_dwt *= dwt_norm.EffNormFactor(dwnorms[i]);
       }
       
       if(momentum.on) {
         new_dwt = momentum.ComputeMoment(moments[i], new_dwt);
       }
-
-      dwt_avg += fabsf(new_dwt); // avg reflects full net dwt average
-      
       dwts[i] += lrate_eff * new_dwt;
+
+      if(dwt_norm.stats) {
+        float absdwt = fabsf(new_dwt);
+        dwt_max = fmaxf(absdwt, dwt_max); 
+        dwt_avg += absdwt; 
+      }
     }
     
-    cg->err_dwt_max = err_dwt_max;
-    cg->bcm_dwt_max = bcm_dwt_max;
-    cg->dwt_max = dwt_max;
+    if(dwt_norm.stats) {
+      cg->err_dwt_max = err_dwt_max;
+      cg->bcm_dwt_max = bcm_dwt_max;
+      cg->dwt_max = dwt_max;
 
-    if(sz > 0) {
-      float nrm = 1.0f / (float)sz;
-      cg->err_dwt_avg = err_dwt_avg * nrm;
-      cg->bcm_dwt_avg = bcm_dwt_avg * nrm;
-      cg->dwt_avg = dwt_avg * nrm;
+      if(sz > 0) {
+        float nrm = 1.0f / (float)sz;
+        cg->err_dwt_avg = err_dwt_avg * nrm;
+        cg->bcm_dwt_avg = bcm_dwt_avg * nrm;
+        cg->dwt_avg = dwt_avg * nrm;
+      }
+    }
+
+    if(dwt_norm.SendConsAgg() || dwt_norm.PrjnAgg()) {
+      DwtNorm_SendCons(cg, net, thr_no);
     }
   }
 
@@ -672,35 +668,77 @@
     }
   }
 
-
-  INLINE virtual void   Compute_WtBal(LEABRA_CON_STATE* cg, LEABRA_NETWORK_STATE* net, int thr_no) {
-    if(!learn || cg->size < 1 || !wt_bal.on) return;
-    LEABRA_UNIT_STATE* ru = cg->ThrOwnUnState(net, thr_no);
-    if(wt_bal.no_targ &&
-       (ru->HasUnitFlag(LEABRA_UNIT_STATE::TRC) || ru->HasExtFlag(LEABRA_UNIT_STATE::TARG))) return;
-    float sum_wt = 0.0f;
-    int sum_n = 0;
-    for(int i=0; i<cg->size; i++) {
-      float wt = cg->PtrCn(i,WT,net);
-      if(wt >= wt_bal.avg_thr) {
-        sum_wt += wt;
-        sum_n++;
-      }
+  INLINE virtual void DwtNorm_SendCons(LEABRA_CON_STATE* cg, LEABRA_NETWORK_STATE* net,
+                                               int thr_no) {
+    float* dwnorms = cg->OwnCnVar(DWNORM);
+    const int sz = cg->size;
+    float max_dwnorm = 0.0f;
+    for(int i=0; i<sz; i++) {
+      max_dwnorm = fmaxf(max_dwnorm, dwnorms[i]); // simple max
     }
-    if(sum_n > 0)
-      sum_wt /= (float)sum_n;
-    else
-      sum_wt = 0.0f;
-    cg->wb_avg = sum_wt;
-    wt_bal.WtBal(sum_wt, ru->act_avg, cg->wb_fact, cg->wb_inc, cg->wb_dec);
-    // note: these are specific to recv unit and cannot be copied to sender!
-    // BUT can copy to synapses:
-    for(int i=0; i<cg->size; i++) {
-      cg->PtrCn(i,WB_INC,net) = cg->wb_inc;
-      cg->PtrCn(i,WB_DEC,net) = cg->wb_dec;
+    cg->cons_dwnorm = max_dwnorm;
+    for(int i=0; i<sz; i++) {
+      dwnorms[i] = max_dwnorm;
     }
   }
-  // #IGNORE compute weight balance factors
+  // #IGNORE compute dwt_norm sender-based con group level dwnorm factor
+
+  INLINE virtual void   Compute_WtBal_DwtNormRecv(LEABRA_CON_STATE* cg, LEABRA_NETWORK_STATE* net, int thr_no) {
+    bool do_wb = wt_bal.on;
+    bool do_norm = dwt_norm.RecvConsAgg();
+    if(!learn || cg->size < 1 || !(do_wb || do_norm)) return;
+    LEABRA_UNIT_STATE* ru = cg->ThrOwnUnState(net, thr_no);
+    if(wt_bal.no_targ &&
+       (ru->HasUnitFlag(LEABRA_UNIT_STATE::TRC) || ru->HasExtFlag(LEABRA_UNIT_STATE::TARG))) {
+      do_wb = false;
+      if(!do_norm) return;      // no need
+    }
+    
+    float sum_wt = 0.0f;
+    int sum_n = 0;
+    float max_dwnorm = 0.0f;
+    
+    const int sz = cg->size;
+    for(int i=0; i<sz; i++) {
+      if(do_wb) {
+        float wt = cg->PtrCn(i,WT,net);
+        if(wt >= wt_bal.avg_thr) {
+          sum_wt += wt;
+          sum_n++;
+        }
+      }
+      if(do_norm) {
+        float dwnorm = cg->PtrCn(i,DWNORM,net);
+        max_dwnorm = fmaxf(max_dwnorm, dwnorm);
+      }
+    }
+
+    if(do_norm) {
+      cg->cons_dwnorm = max_dwnorm;
+    }
+
+    if(do_wb) {
+      if(sum_n > 0)
+        sum_wt /= (float)sum_n;
+      else
+        sum_wt = 0.0f;
+      cg->wb_avg = sum_wt;
+      wt_bal.WtBal(sum_wt, ru->act_avg, cg->wb_fact, cg->wb_inc, cg->wb_dec);
+    }
+    // note: these are specific to recv unit and cannot be copied to sender!
+    // BUT can copy to synapses:
+
+    for(int i=0; i<sz; i++) {
+      if(do_wb) {
+        cg->PtrCn(i,WB_INC,net) = cg->wb_inc;
+        cg->PtrCn(i,WB_DEC,net) = cg->wb_dec;
+      }
+      if(do_norm) {
+        cg->PtrCn(i,DWNORM,net) = max_dwnorm;
+      }
+    }
+  }
+  // #IGNORE compute weight balance factors and / or DwtNorm at a recv level
 
   INLINE virtual void Compute_EpochWeights(LEABRA_CON_STATE* cg, LEABRA_NETWORK_STATE* net,
                                            int thr_no) { };

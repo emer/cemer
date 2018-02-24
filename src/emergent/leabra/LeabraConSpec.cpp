@@ -88,8 +88,8 @@ void LeabraConSpec::UpdateAfterEdit_impl() {
   if(taMisc::is_loading && taMisc::loading_version < v856) {
     if(momentum.on) {
       dwt_norm.on = true;
+      dwt_norm.level = LeabraDwtNorm::SYN;
       dwt_norm.err_only = false;
-      dwt_norm.prjn = false;
       dwt_norm.lr_comp = 0.1f;
     }
     else {

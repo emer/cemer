@@ -350,13 +350,7 @@ void LEABRA_NETWORK_STATE::Trial_Init_Counters() {
 }
 
 void LEABRA_NETWORK_STATE::Trial_Init_Specs() {
-  net_misc.spike = false;
-  net_misc.bias_learn = false;
-  net_misc.trial_decay = false;
-  net_misc.diff_scale_p = false;
-  net_misc.diff_scale_q1 = false;
-  net_misc.wt_bal = false;
-  net_misc.lay_gp_inhib = false;
+  net_misc.ResetInitSpecsFlags();
 
   deep.on = false;
   deep.ctxt = false;
@@ -1389,7 +1383,34 @@ void LEABRA_NETWORK_STATE::Compute_WtBal_Thr(int thr_no) {
   for(int i=0; i<nrcg; i++) {
     LEABRA_CON_STATE* rcg = ThrRecvConState(thr_no, i);
     if(rcg->NotActive()) continue;
-    rcg->GetConSpec(this)->Compute_WtBal(rcg, this, thr_no);
+    rcg->GetConSpec(this)->Compute_WtBal_DwtNormRecv(rcg, this, thr_no);
+  }
+}
+
+void LEABRA_NETWORK_STATE::Compute_DwtNormRecvUnit_Thr(int thr_no) {
+  const int nu = ThrNUnits(thr_no);
+  for(int ui=0; ui<nu; ui++) {
+    LEABRA_UNIT_STATE* uv = ThrUnitState(thr_no, ui);
+    if(uv->lesioned()) continue;
+    float max_dwnorm = 0.0f;
+    const int rsz = uv->NRecvConGps(this);
+    for(int g = 0; g < rsz; g++) {
+      LeabraConState_cpp* cg = uv->RecvConState(this, g);
+      if(cg->NotActive()) continue;
+      const int sz = cg->size;
+      for(int i=0; i<sz; i++) {
+        float dwnorm = cg->PtrCn(i,LeabraConSpec_cpp::DWNORM,this);
+        max_dwnorm = fmaxf(max_dwnorm, dwnorm);
+      }
+    }
+    for(int g = 0; g < rsz; g++) {
+      LeabraConState_cpp* cg = uv->RecvConState(this, g);
+      if(cg->NotActive()) continue;
+      const int sz = cg->size;
+      for(int i=0; i<sz; i++) {
+        cg->PtrCn(i,LeabraConSpec_cpp::DWNORM,this) = max_dwnorm;
+      }
+    }
   }
 }
 
