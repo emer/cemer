@@ -159,15 +159,17 @@
   }
 
   INLINE virtual void  Trial_Init_Specs(LEABRA_NETWORK_STATE* net) {
-    if(wt_bal.on) {
-      net->net_misc.wt_bal = true;
+    if(learn) {
+      if(wt_bal.on) {
+        net->net_misc.wt_bal = true;
+      }
+      if(dwt_norm.RecvConsAgg()) {
+        net->net_misc.recv_con_dwnorm = true;
+      }
+      if(dwt_norm.RecvUnitAgg()) {
+        net->net_misc.recv_unit_dwnorm = true;
+      }
     }
-    if(dwt_norm.RecvConsAgg()) {
-      net->net_misc.recv_con_dwnorm = true;
-    }
-    if(dwt_norm.RecvUnitAgg()) {
-      net->net_misc.recv_unit_dwnorm = true;
-    }      
   }
   // #CAT_Learning initialize specs and specs update network flags -- e.g., set current learning rate based on schedule given epoch (or error value)
 

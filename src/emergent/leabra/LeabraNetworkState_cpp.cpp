@@ -181,7 +181,7 @@ void LeabraNetworkState_cpp::Compute_Weights() {
     }
   }
   
-  if((net_misc.wt_bal || net_misc.recv_unit_dwnorm) && (total_trials % times.wt_bal_int == 0)) {
+  if(net_misc.recv_unit_dwnorm && (total_trials % times.wt_bal_int == 0)) {
     NET_THREAD_CALL(LeabraNetworkState_cpp::Compute_DwtNormRecvUnit_Thr);
   }
 }
