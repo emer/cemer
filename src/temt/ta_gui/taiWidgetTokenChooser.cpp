@@ -30,7 +30,7 @@
 #include <QTreeWidgetItem>
 #include <MemberDef>
 
-const int TOKEN_CHOOSER_NAME_MAX_LEN = 32;
+const int NAME_COL_DEFAULT_WIDTH = 32;  // chars
 
 taiWidgetTokenChooser::taiWidgetTokenChooser(TypeDef* typ_, IWidgetHost* host,
                                      taiWidget* par, QWidget* gui_parent_, int flags_,
@@ -258,6 +258,8 @@ int taiWidgetTokenChooser::BuildChooser_0(iDialogItemChooser* ic, TypeDef* td,
     return 0;
   int rval = 0;
   
+  ic->SetFirstColumnMaxChars(22);
+  
   //NOTES:
   // if !tokens.keep then tokens.size==0
 
@@ -267,9 +269,7 @@ int taiWidgetTokenChooser::BuildChooser_0(iDialogItemChooser* ic, TypeDef* td,
     // note: IMPORTANT to put all the show logic in one method, shared by count tokens
 
     // todo: need to get a more globally unique name, maybe key_unique_name
-    QTreeWidgetItem* item = ic->AddItem
-      (btmp->GetColText(taBase::key_disp_name).elidedTo(TOKEN_CHOOSER_NAME_MAX_LEN),
-       top_item, (void*)btmp);
+    QTreeWidgetItem* item = ic->AddItem(btmp->GetColText(taBase::key_disp_name), top_item, (void*)btmp);
     item->setData(1, Qt::DisplayRole, btmp->GetTypeDef()->name);
     taBase* own = btmp->GetParent();
     if (own) {
@@ -338,7 +338,7 @@ const String taiWidgetTokenChooser::headerText(int index, int view) const {
 }
 
 const String taiWidgetTokenChooser::labelNameNonNull() const {
-  return token()->GetDisplayName().elidedTo(TOKEN_CHOOSER_NAME_MAX_LEN); // not 
+  return token()->GetDisplayName(); // not
 }
 
 const String taiWidgetTokenChooser::viewText(int index) const {

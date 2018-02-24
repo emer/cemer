@@ -35,6 +35,7 @@
 #include <QCoreApplication>
 #include <QKeyEvent>
 #include <QFrame>
+#include <QFontMetrics>
 
 #if defined(TA_OS_MAC) && (QT_VERSION == 0x050200)
 // defined in mac_objc_code.mm objective C file:
@@ -80,6 +81,7 @@ void iDialogItemChooser::init(const String& caption_) {
   setWindowTitle(caption);
 //  setFont(taiM->dialogFont(taiMisc::fonSmall));
   resize(taiM->dialogSize(taiMisc::hdlg_m));
+  first_col_max_chars = -1;
 }
 
 void iDialogItemChooser::accept() {
@@ -427,6 +429,14 @@ void iDialogItemChooser::Refresh() {
     // make columns nice sizes (not last)
     for (int i = 0; i < (cols - 1); ++i) {
       items->resizeColumnToContents(i);
+      if (i == 0 && first_col_max_chars >= 0) {
+        QFont font = hi->font(0);
+        QFontMetrics fm(font);
+        int font_width = fm.width('m');
+        if (items->columnWidth(0) > font_width * first_col_max_chars) {
+          items->setColumnWidth(0, font_width * first_col_max_chars);
+        }
+      }
     }
     // set current item; if NO NULL and none, then first item by default
     void* tsel = m_client->sel();
@@ -649,3 +659,10 @@ void iDialogItemChooser::GetColumnSpecifier(String specifier, int& column) const
     }
   }
 }
+
+void iDialogItemChooser::SetFirstColumnMaxChars(int n_chars) {
+  if (n_chars > 0) {
+    first_col_max_chars = n_chars;
+  }
+}
+

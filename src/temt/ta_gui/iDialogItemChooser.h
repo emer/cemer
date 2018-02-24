@@ -74,7 +74,8 @@ public:
   void                  setCatFilter(int value, bool force = false);
   int                   view() const {return m_view;}
   void                  setView(int value, bool force = false);
-
+  void                  SetFirstColumnMaxChars(int n_chars); //
+  
   QFrame*               body;
   QVBoxLayout*          layOuter;
   QComboBox*            cmbView;
@@ -116,6 +117,7 @@ protected:
   QString               last_filter; // for checking if anything changed
   QTimer*               timFilter; // timer for filter changes
   bool                  is_dialog; // actually runing as a dialog -- otherwise body is just used in another widget but there is no popup dialog
+  int                   first_col_max_chars; // max chars for first column, -1 means no max, user can stretch
 
   void                  showEvent(QShowEvent* event) override;
 
