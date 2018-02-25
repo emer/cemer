@@ -805,7 +805,7 @@ void Projection::GetArgCompletionList(const String& method, const String& arg, c
     for (int i = 0; i < mbr_space.size; ++i) {
       MemberDef* md = mbr_space.FastEl(i);
       String category = md->OptionAfter("CAT_");
-      if (category == "Statistic" || category == "Activation") {
+      if (category == "Statistic" || category == "Activation" || category == "Learning") {
         completions.member_completions.Link(md);
       }
     }
