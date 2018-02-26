@@ -209,6 +209,7 @@ void taiWidgetField::lookupKeyPressed_dialog() {
 
 void taiWidgetField::characterEntered() {
   arg_completions.Reset();
+  rep()->GetCompleter()->SetCompletions(&arg_completions);  // reset
   cssiArgDialog* cssi_arg_dlg = dynamic_cast<cssiArgDialog*>(host);
   if (cssi_arg_dlg) {
     String reference_arg;  // the arg that holds a pointer to the object from which we can get a list
@@ -252,6 +253,7 @@ void taiWidgetField::characterEntered() {
             arg_obj = cssi_arg_dlg->GetBaseForArg(reference_arg);
             td = ProgExprBase::GetSpecialCaseType(arg_obj, member_name);
           }
+          
           if (td) {
             for (int i=0; i<td->members.size; i++) {
               MemberDef* member_md = td->members.FastEl(i);
@@ -260,6 +262,15 @@ void taiWidgetField::characterEntered() {
               }
             }
             arg_completions.pre_text = member_name + '.';
+          }
+          else {
+            reference_arg = class_base->GetArgForCompletion(cssi_arg_dlg->md->name, label()->text());
+            if (reference_arg.empty()) return;
+            taBase* arg_obj = NULL;
+            arg_obj = cssi_arg_dlg->GetBaseForArg(reference_arg);
+            String_Array dummy_vals;
+            class_base->GetArgCompletionList(cssi_arg_dlg->md->name, label()->text(), dummy_vals, arg_obj, cur_text, arg_completions);
+            arg_completions.pre_text = cur_text;
             rep()->GetCompleter()->SetCompletions(&arg_completions);
           }
         }

@@ -294,6 +294,24 @@ void NetMonitor::GetArgCompletionList(const String& method, const String& arg, c
   if (!arg_obj) return;
   
   TypeDef* td = arg_obj->GetTypeDef();
+  
+  if (arg_obj->InheritsFromName("Network")){
+    if (cur_txt == "layers." || cur_txt == ".layers.") {
+      Network* net = (Network*)arg_obj;
+      Layer* lay = net->layers.SafeEl(0);
+      if (lay) {
+        td = lay->GetTypeDef();
+      }
+    }
+    else if (cur_txt == "prjns." || cur_txt == ".prjns.") {
+      Network* net = (Network*)arg_obj;
+      Projection* prjn = net->StatePrjn(0);
+      if (prjn) {
+        td = prjn->GetTypeDef();
+      }
+    }
+  }
+
   if (td) {
     TypeDef* special_td = NULL;
     String special = cur_txt;
