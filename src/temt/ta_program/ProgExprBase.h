@@ -217,7 +217,7 @@ public:
   static void           GetNull(String_Array* nulls);
   static void           GetTypes(String_Array* types);
   static void           GenProgElList(ProgEl_List& list, TypeDef* td);
-  static TypeDef*       GetSpecialCaseType(const String& text);
+  static TypeDef*       GetSpecialCaseType(taBase* arg_obj, const String& text);
 
   
   static ProgExprBase::LookUpType           Test_ParseForLookup(const String test_name, const String input_text, const int cursor_pos,

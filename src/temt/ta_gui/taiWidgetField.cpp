@@ -20,7 +20,6 @@
 #include <MethodDef>
 #include <BuiltinTypeDefs>
 #include <Completions>
-#include <DataTable>
 #include <ProgExprBase>
 
 #include <iDialogWidgetField>
@@ -247,13 +246,16 @@ void taiWidgetField::characterEntered() {
             td = md->type;
           }
           else {  // special case?
-            td = ProgExprBase::GetSpecialCaseType(member_name);
+            reference_arg = class_base->GetArgForCompletion(cssi_arg_dlg->md->name, label()->text());
+            if (reference_arg.empty()) return;
+            taBase* arg_obj = NULL;
+            arg_obj = cssi_arg_dlg->GetBaseForArg(reference_arg);
+            td = ProgExprBase::GetSpecialCaseType(arg_obj, member_name);
           }
           if (td) {
             for (int i=0; i<td->members.size; i++) {
               MemberDef* member_md = td->members.FastEl(i);
               if (!member_md->IsEditorHidden()) {
-//                if (!member_md->IsGuiReadOnly() && !member_md->IsEditorHidden()) {
                 arg_completions.member_completions.Link(member_md);
               }
             }

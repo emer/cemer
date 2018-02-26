@@ -1400,7 +1400,7 @@ void NetMonItem::ToggleOffFlag() {
 void NetMonItem::GetMemberCompletionList(const MemberDef* md, const String& cur_txt, Completions& completions) {
   if (object_type) {
     MemberSpace mbr_space;
-    TypeDef* special_td = ProgExprBase::GetSpecialCaseType(cur_txt);
+    TypeDef* special_td = ProgExprBase::GetSpecialCaseType(NULL, cur_txt);
     if (special_td) {
       mbr_space = special_td->members;
     }

@@ -300,7 +300,7 @@ void NetMonitor::GetArgCompletionList(const String& method, const String& arg, c
     if (method == "AddUnitOrGroup" && arg == "variable") {
       special = BuildUnitGroupString(arg_values.SafeEl(1), arg_values.SafeEl(2), ""); // don't pass var
     }
-    special_td = ProgExprBase::GetSpecialCaseType(special);
+    special_td = ProgExprBase::GetSpecialCaseType(arg_obj, special);
     if (special_td) {
       td = special_td;
     }

@@ -1368,7 +1368,7 @@ Completions* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_po
               if (tab_special && tab_special->InheritsFromName("Layer")) {
                 String text_special = txt.before('.', -1);
                 text_special = text_special.after('.', -1);
-                lookup_td = GetSpecialCaseType(text_special);
+                lookup_td = GetSpecialCaseType(tab_special, text_special);
               }
             }
           }
@@ -1957,8 +1957,37 @@ bool ProgExprBase::ExpressionTakesArgs(String expression) {
   return false;
 }
 
-TypeDef* ProgExprBase::GetSpecialCaseType(const String& text) {
+TypeDef* ProgExprBase::GetSpecialCaseType(taBase* arg_obj, const String& text) {
   TypeDef* td = NULL;
+  
+  // do all of this with string matching - don't add network classes to ProgExprBase
+  if (arg_obj) {
+    if (arg_obj->GetTypeName() == "LeabraNetwork"){
+      if (text == "layers" || text == ".layers") {
+        return taMisc::FindTypeName("LeabraLayer");
+      }
+      if (text == "prjns" || text == ".prjns") {
+        return taMisc::FindTypeName("LeabraPrjn");
+      }
+   }
+    else if (arg_obj->GetTypeName() == "BpNetwork"){
+      if (text == "layers" || text == ".layers") {
+        return taMisc::FindTypeName("BpLayer");
+      }
+      if (text == "prjns" || text == ".prjns") {
+        return taMisc::FindTypeName("Projection");
+      }
+    }
+    else if (arg_obj->GetTypeName() == "Network"){
+      if (text == "layers" || text == ".layers") {
+        return taMisc::FindTypeName("Layer");
+      }
+      if (text == "prjns" || text == ".prjns") {
+        return taMisc::FindTypeName("Projection");
+      }
+    }
+  }
+  
   // crazy!! could not get Qt's reg ex to work with \[[0-9]] or the like
   String text_with_sub = text;
   text_with_sub.repl("[", "~");
