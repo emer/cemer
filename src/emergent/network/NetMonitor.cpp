@@ -310,6 +310,10 @@ void NetMonitor::GetArgCompletionList(const String& method, const String& arg, c
         td = prjn->GetTypeDef();
       }
     }
+    else {
+      completions.string_completions.Add("layers");
+      completions.string_completions.Add("prjns");
+    }
   }
 
   if (td) {

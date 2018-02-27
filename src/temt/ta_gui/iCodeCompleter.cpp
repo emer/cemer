@@ -88,12 +88,14 @@ void iCodeCompleter::SetCompletions(Completions* completions) {
     }
     
     // Members
+    completions->member_completions.Sort();
     for (int i=0; i<completions->member_completions.size; i++) {
       MemberDef* member_def = completions->member_completions.FastEl(i);
       string_list.append(member_def->name);
     }
     
     //  Methods
+    completions->method_completions.Sort();
     for (int i=0; i<completions->method_completions.size; i++) {
       MethodDef* method_def = completions->method_completions.FastEl(i);
       String name_plus = method_def->name  + "()";
@@ -101,25 +103,28 @@ void iCodeCompleter::SetCompletions(Completions* completions) {
     }
     
     string_list.append(str_list);
-
+    
     //  Enums
+    completions->enum_completions.Sort();
     for (int i=0; i<completions->enum_completions.size; i++) {
       EnumDef* enum_def = completions->enum_completions.FastEl(i);
       string_list.append(enum_def->name);
     }
-
+    
     //  Statics
+    completions->static_completions.Sort();
     for (int i=0; i<completions->static_completions.size; i++) {
       TypeDef* static_def = completions->static_completions.FastEl(i);
       string_list.append(static_def->name + "::");
     }
-
-    //  Miscellaneous classes - 
+    
+    //  Miscellaneous classes -
+    completions->misc_completions.Sort();
     for (int i=0; i<completions->misc_completions.size; i++) {
       TypeDef* scope_def = completions->misc_completions.FastEl(i);
       string_list.append(scope_def->name + "::");
     }
-
+    
     list_model->setStringList(string_list);
   }
 }

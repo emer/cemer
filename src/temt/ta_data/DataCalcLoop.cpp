@@ -337,7 +337,6 @@ bool DataCalcLoop::CvtFmCode(const String& code) {
 }
 
 void DataCalcLoop::GetArgCompletionList(const String& method, const String& arg, const String_Array& arg_values, taBase* arg_obj, const String& cur_txt, Completions& completions) {
-  taMisc::DebugInfo(method);
     if (method == "AddSrcColumn") {
       if (GetSrcData()) {
         FOREACH_ELEM_IN_LIST(DataCol, col, GetSrcData()->data) {

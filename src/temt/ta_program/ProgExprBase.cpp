@@ -1563,7 +1563,6 @@ Completions* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_po
     }
   }
 
-  completion_member_list.Sort();
   for (int i=0; i<completion_member_list.size; i++) {
     MemberDef* member_def = completion_member_list.FastEl(i);
     completions.member_completions.Link(member_def);
@@ -1809,7 +1808,6 @@ void ProgExprBase::GetMembersForType(TypeDef *td, MemberSpace* members, bool jus
       members->Link(mbr);
     }
   }
-  members->Sort();
 }
 
 void ProgExprBase::GetMethodsForType(TypeDef *td, MethodSpace* methods, bool just_static) {
@@ -1825,7 +1823,6 @@ void ProgExprBase::GetMethodsForType(TypeDef *td, MethodSpace* methods, bool jus
     }
     methods->Link(mth);
   }
-  methods->Sort();
 }
 
 void ProgExprBase::GetEnumsForType(TypeDef* td, EnumSpace* enums) {
@@ -1841,7 +1838,6 @@ void ProgExprBase::GetEnumsForType(TypeDef* td, EnumSpace* enums) {
       }
     }
   }
-  enums->Sort();
 }
 
 void ProgExprBase::GetProgEls(String_Array* progels) {
@@ -1867,7 +1863,6 @@ void ProgExprBase::GetProgEls(String_Array* progels) {
       }
     }
   }
-  progels->Sort();
 }
 
 void ProgExprBase::GenProgElList(ProgEl_List& list, TypeDef* td) {
