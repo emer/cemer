@@ -300,8 +300,6 @@
   // #IGNORE compute weight balance factors
   INIMPL virtual void Compute_WtBalStats();
   // #IGNORE compute weight balance statistics
-  INIMPL virtual void Compute_DwtNormRecvUnit_Thr(int thr_no);
-  // #IGNORE compute dwtnorm factor at recv unit level
 
 
   ///////////////////////////////////////////////////////////////////////

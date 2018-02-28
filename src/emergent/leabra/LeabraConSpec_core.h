@@ -166,9 +166,6 @@
       if(dwt_norm.RecvConsAgg()) {
         net->net_misc.recv_con_dwnorm = true;
       }
-      if(dwt_norm.RecvUnitAgg()) {
-        net->net_misc.recv_unit_dwnorm = true;
-      }
     }
   }
   // #CAT_Learning initialize specs and specs update network flags -- e.g., set current learning rate based on schedule given epoch (or error value)
@@ -503,13 +500,8 @@
         bcm_dwt_avg += absbcm;
       }
 
-      if(dwt_norm.on && dwt_norm.err_only) {
-        dwt_norm.UpdateAvg(dwnorms[i], abserr); // always update our syn factor -- later aggregated -- must be second loop to avoid order effects!
-        err *= dwt_norm.EffNormFactor(dwnorms[i]);
-      }
-      
       float new_dwt = bcm + err;
-      if(dwt_norm.on && !dwt_norm.err_only) {
+      if(dwt_norm.on) {
         dwt_norm.UpdateAvg(dwnorms[i], fabsf(new_dwt)); // always update
         new_dwt *= dwt_norm.EffNormFactor(dwnorms[i]);
       }
@@ -539,7 +531,7 @@
       }
     }
 
-    if(dwt_norm.SendConsAgg() || dwt_norm.PrjnAgg()) {
+    if(dwt_norm.SendConsAgg()) {
       DwtNorm_SendCons(cg, net, thr_no);
     }
   }
@@ -671,7 +663,7 @@
   }
 
   INLINE virtual void DwtNorm_SendCons(LEABRA_CON_STATE* cg, LEABRA_NETWORK_STATE* net,
-                                               int thr_no) {
+                                       int thr_no) {
     float* dwnorms = cg->OwnCnVar(DWNORM);
     const int sz = cg->size;
     float max_dwnorm = 0.0f;

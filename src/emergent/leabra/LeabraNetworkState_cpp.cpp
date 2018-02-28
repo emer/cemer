@@ -180,10 +180,6 @@ void LeabraNetworkState_cpp::Compute_Weights() {
       Compute_WtBalStats();
     }
   }
-  
-  if(net_misc.recv_unit_dwnorm && (total_trials % times.wt_bal_int == 0)) {
-    NET_THREAD_CALL(LeabraNetworkState_cpp::Compute_DwtNormRecvUnit_Thr);
-  }
 }
 
 void LeabraNetworkState_cpp::Compute_NormErr() {

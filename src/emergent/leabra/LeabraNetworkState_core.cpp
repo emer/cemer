@@ -1387,33 +1387,6 @@ void LEABRA_NETWORK_STATE::Compute_WtBal_Thr(int thr_no) {
   }
 }
 
-void LEABRA_NETWORK_STATE::Compute_DwtNormRecvUnit_Thr(int thr_no) {
-  const int nu = ThrNUnits(thr_no);
-  for(int ui=0; ui<nu; ui++) {
-    LEABRA_UNIT_STATE* uv = ThrUnitState(thr_no, ui);
-    if(uv->lesioned()) continue;
-    float max_dwnorm = 0.0f;
-    const int rsz = uv->NRecvConGps(this);
-    for(int g = 0; g < rsz; g++) {
-      LeabraConState_cpp* cg = uv->RecvConState(this, g);
-      if(cg->NotActive()) continue;
-      const int sz = cg->size;
-      for(int i=0; i<sz; i++) {
-        float dwnorm = cg->PtrCn(i,LeabraConSpec_cpp::DWNORM,this);
-        max_dwnorm = fmaxf(max_dwnorm, dwnorm);
-      }
-    }
-    for(int g = 0; g < rsz; g++) {
-      LeabraConState_cpp* cg = uv->RecvConState(this, g);
-      if(cg->NotActive()) continue;
-      const int sz = cg->size;
-      for(int i=0; i<sz; i++) {
-        cg->PtrCn(i,LeabraConSpec_cpp::DWNORM,this) = max_dwnorm;
-      }
-    }
-  }
-}
-
 void LEABRA_NETWORK_STATE::Compute_WtBalStats() {
   for(int li=0; li < n_layers_built; li++) {
     LEABRA_LAYER_STATE* lay = GetLayerState(li);

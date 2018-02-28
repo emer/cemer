@@ -119,7 +119,7 @@
       }
     }
 
-    if(dwt_norm.SendConsAgg() || dwt_norm.PrjnAgg()) {
+    if(dwt_norm.SendConsAgg()) {
       DwtNorm_SendCons(cg, net, thr_no);
     }
   }

@@ -219,10 +219,6 @@ void LEABRA_LAYER_SPEC::Compute_MaxDwts(LEABRA_LAYER_STATE* lay, LEABRA_NETWORK_
     prjn->am_bcm_dwt.CalcAvg();
     prjn->am_dwt.CalcAvg();
     prjn->prjn_dwnorm = max_dwnorm;
-
-    if(cs->dwt_norm.PrjnAgg()) {
-      // todo: need to copy it back down.. 
-    }
   }
 }
 

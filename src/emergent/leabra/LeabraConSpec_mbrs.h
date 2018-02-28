@@ -259,23 +259,20 @@ private:
 
 
 class STATE_CLASS(LeabraDwtNorm) : public STATE_CLASS(SpecMemberBase) {
-  // ##INLINE ##NO_TOKENS ##CAT_Leabra implements dwt normalization, either on all dwts or only on error-driven dwt component, based on different levels of max_avg value -- slowly decays and instantly resets to any current max(abs) -- serves as an estimate of the variance in the weight changes, assuming zero net mean overall
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra implements dwt normalization, using MAX(ABS(dwt)) aggregated over a given level of network structure (e.g., all sending connections in a given projection for a given unit) -- slowly decays and instantly resets to any current max(abs) -- serves as an estimate of the variance in the weight changes, assuming zero net mean overall
 INHERITED(SpecMemberBase)
 public:
   enum  NormLevel {             // what level to aggregate normalization factor over
-    SYN,                        // normalize each synapse separately
+    SEND_CONS,                  // normalize across all sending connections per projection, per unit -- updates every trial (fast, sender-based) -- works best so far
     RECV_CONS,                  // normalize across all receiving connections per projection, per unit -- updates with wt_bal factors, every Network.times.wt_bal_int trials -- adjust avg_tau accordingly!
-    SEND_CONS,                  // normalize across all sending connections per projection, per unit -- updates every trial (fast, sender-based)
-    RECV_UNIT,                  // normalize across all connections within recv unit -- updates with wt_bal factors, every Network.times.wt_bal_int trials -- adjust avg_tau accordingly!
-    PRJN,                       // normalize across an entire projection -- sender-based, fast, but this seems to increase hogging..
+    SYN,                        // normalize each synapse separately
   };
   
   bool          on;             // #DEF_true whether to use dwt normalization, only on error-driven dwt component, based on projection-level max_avg value -- slowly decays and instantly resets to any current max
-  NormLevel     level;          // #CONDSHOW_ON_on what level to normalize across -- the max value is updated at this level -- for larger-scale levels, always ensures that normalization factor is max of current abs dwt too, so no weight change magnitude exceeds 1 ever
-  bool          err_only;       // #CONDSHOW_ON_on #DEF_false only normalize the error-driven component of learning
+  NormLevel     level;          // #CONDSHOW_ON_on #DEF_SEND_CONS what level to normalize across -- the max value is updated at this level -- for larger-scale levels, always ensures that normalization factor is max of current abs dwt too, so no weight change magnitude exceeds 1 ever
   float         decay_tau;      // #CONDSHOW_ON_on #MIN_1 #DEF_1000;10000 time constant for decay of dwnorm factor -- generally should be long-ish, between 1000-10000 -- integration rate factor is 1/tau
   float         norm_min;       // #CONDSHOW_ON_on #MIN_0 #DEF_0.001 minimum effective value of the normalization factor -- provides a lower bound to how much normalization can be applied
-  float         lr_comp;        // #MIN_0 #CONDSHOW_ON_on #DEF_0.1;0.2 overall learning rate multiplier to compensate for changes due to use of normalization -- allows for a common master learning rate to be used between different conditions -- 0.1 for synapse-level, maybe higher for other levels
+  float         lr_comp;        // #MIN_0 #CONDSHOW_ON_on #DEF_0.15 overall learning rate multiplier to compensate for changes due to use of normalization -- allows for a common master learning rate to be used between different conditions -- 0.1 for synapse-level, maybe higher for other levels
   bool          stats;          // record the avg, max values of err, bcm hebbian, and overall dwt change per con group and per projection
 
   float         decay_dt;      // #READ_ONLY #EXPERT rate constant of decay = 1 / decay_tau
@@ -286,20 +283,10 @@ public:
   }
   // is a recv-cons level aggregation required?  slow.. done during WtBal computation
   
-  INLINE bool RecvUnitAgg() const {
-    return (on && (level == RECV_UNIT));
-  }
-  // is a recv-unit level aggregation required?  slow.. done during WtBal computation
-  
   INLINE bool SendConsAgg() const {
     return (on && (level == SEND_CONS));
   }
   // is a send-cons level aggregation required?
-  
-  INLINE bool PrjnAgg() const {
-    return (on && (level == PRJN));
-  }
-  // is a projection level aggregation required? 
   
   INLINE void UpdateAvg(float& dwnorm, const float abs_dwt) const {
     dwnorm = fmaxf(decay_dt_c * dwnorm, abs_dwt);
@@ -324,8 +311,8 @@ public:
 private:
   void  Initialize()    {  Defaults_init(); }
   void  Defaults_init() {
-    on = true;  level = SYN;  err_only = false; decay_tau = 1000.0f; norm_min = 0.001f;
-    lr_comp = 0.1f;  stats = false;
+    on = true;  level = SEND_CONS;  decay_tau = 1000.0f; norm_min = 0.001f;
+    lr_comp = 0.15f;  stats = false;
     UpdtVals();
   }
 };
