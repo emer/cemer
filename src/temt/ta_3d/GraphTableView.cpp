@@ -579,6 +579,9 @@ void GraphTableView::UpdateName() {
 }
 
 const String GraphTableView::caption() const {
+  if (!show_caption) {
+    return _nilString;
+  }
   String rval = inherited::caption();
   if(last_sel_col_nm.nonempty()) {
     rval += " pt: " + last_sel_col_nm + " = " + last_sel_pt.GetStr();

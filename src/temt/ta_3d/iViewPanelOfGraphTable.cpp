@@ -217,6 +217,13 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
   chkZAxisLabel->setObjectName("chkZAxisLabel");
   layAxisLabelChks->addWidget(chkZAxisLabel);
   connect(chkZAxisLabel, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
+  
+  chkCaption = new QCheckBox("Caption    ", widg);
+  chkCaption->setObjectName("chkCaption");
+  layAxisLabelChks->addWidget(chkCaption);
+  chkCaption->setToolTip(taiMisc::ToolTipPreProcess("show caption (graph title) below graph?"));
+  connect(chkCaption, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
+
   chkLinesSolid = new QCheckBox("Solid Lines    ", widg);
   chkLinesSolid->setObjectName("chkLinesSolid");
   layAxisLabelChks->addWidget(chkLinesSolid);
@@ -729,8 +736,9 @@ void iViewPanelOfGraphTable::UpdatePanel_impl() {
   fldWidth->GetImage((String)glv->width);
   fldDepth->GetImage((String)glv->depth);
   fldNPlots->GetImage((String)glv->tot_plots);
+  chkCaption->setChecked(glv->show_caption);
   chkLinesSolid->setChecked(glv->solid_lines);
-  
+
   lelXAxis->GetImage(&(glv->children), glv->x_axis.GetColPtr());
   rncXAxis->setChecked(glv->x_axis.row_num);
   pdtXAxis->GetImage_(&(glv->x_axis.fixed_range));
@@ -892,6 +900,7 @@ void iViewPanelOfGraphTable::GetValue_impl() {
   glv->width = (float)fldWidth->GetValue();
   glv->depth = (float)fldDepth->GetValue();
   glv->tot_plots = (float)fldNPlots->GetValue();
+  glv->show_caption = chkCaption->isChecked();
   glv->solid_lines = chkLinesSolid->isChecked();
   glv->x_axis_label = fldTextXAxis->GetValue();
   glv->z_axis_label = fldTextZAxis->GetValue();

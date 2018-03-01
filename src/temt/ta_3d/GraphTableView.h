@@ -83,6 +83,7 @@ public:
   float                 point_size;     // size of point marker symbols
   int                   point_spacing;  // #CONDEDIT_OFF_plot_style:LINE #MIN_1 how frequently to display point markers
   bool                  solid_lines;    // only use solid line style -- not dotted or dashed
+  bool                  show_caption;        // show caption if true
   float                 bar_space;      // #DEF_0.2 amount of space between bars
   float                 bar_depth;      // #DEF_0.01 how deep to make the 3d bars
   int                   label_spacing;  // how frequently to display text labels of the data values (-1 = never); if plotting a string column, the other data column (e.g. plot_2) is used to determine the y axis values
