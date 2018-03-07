@@ -448,7 +448,6 @@
     const float su_ru_avg_s_lrn = su->ru_avg_s_lrn;
     const float su_avg_s = su->avg_s;
     const float su_avg_m = su->avg_m;
-    const float su_avg_l = su->avg_l;
     const int sz = cg->size;
 
     LEABRA_PRJN_STATE* prjn = cg->GetPrjnState(net);
