@@ -88,13 +88,15 @@
         err_dwt_avg += abserr;
       }
 
+      float norm = 1.0f;
       if(dwt_norm.on) {
-        dwt_norm.UpdateAvg(dwnorms[i], abserr); // always update
-        err *= dwt_norm.EffNormFactor(dwnorms[i]);
+        norm = dwt_norm.ComputeNorm(dwnorms[i], abserr); // always update
       }
 
       if(momentum.on) {
-        err = momentum.ComputeMoment(moments[i], err);
+        err = norm * momentum.ComputeMoment(moments[i], err);
+      } else {
+        err *= norm;
       }
 
       if(dwt_norm.stats) {

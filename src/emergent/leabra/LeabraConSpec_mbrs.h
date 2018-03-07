@@ -288,18 +288,14 @@ public:
   }
   // is a send-cons level aggregation required?
   
-  INLINE void UpdateAvg(float& dwnorm, const float abs_dwt) const {
+  INLINE float ComputeNorm(float& dwnorm, const float abs_dwt) const {
     dwnorm = fmaxf(decay_dt_c * dwnorm, abs_dwt);
+    if(dwnorm == 0.0f) return 1.0f;   // nothing going on
+    float norm = fmaxf(dwnorm, norm_min);
+    return lr_comp / norm;
   }
-  // update the dwnorm running max_abs, slowly decaying value -- jumps up to max(abs_dwt) and slowly decays
+  // update the dwnorm running max_abs, slowly decaying value -- jumps up to max(abs_dwt) and slowly decays -- returns the effective normalization factor, as a multiplier, including lrate comp
 
-  INLINE float EffNormFactor(float dwnorm) const {
-    if(!on || dwnorm == 0.0f) return 1.0f;   // nothing going on
-    dwnorm = fmaxf(dwnorm, norm_min);
-    return lr_comp / dwnorm;
-  }
-  // get the effective normalization factor, as a multiplier, including lrate comp -- dwnorm already has been updated to be max(abs_dwt) so no dwt can be > 1
-  
   INLINE void   UpdtVals() {
     decay_dt = 1.0f / decay_tau;  decay_dt_c = 1.0f - decay_dt;
   }

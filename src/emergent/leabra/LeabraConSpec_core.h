@@ -501,13 +501,17 @@
       }
 
       float new_dwt = bcm + err;
+      float norm = 1.0f;
       if(dwt_norm.on) {
-        dwt_norm.UpdateAvg(dwnorms[i], fabsf(new_dwt)); // always update
-        new_dwt *= dwt_norm.EffNormFactor(dwnorms[i]);
+        norm = dwt_norm.ComputeNorm(dwnorms[i], fabsf(new_dwt)); // always update
       }
       
       if(momentum.on) {
-        new_dwt = momentum.ComputeMoment(moments[i], new_dwt);
+        // apparently quite important for norm to be applied to post-momentum dwt
+        new_dwt = norm * momentum.ComputeMoment(moments[i], new_dwt);
+      }
+      else {
+        new_dwt *= norm;
       }
       dwts[i] += lrate_eff * new_dwt;
 
