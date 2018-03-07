@@ -93,12 +93,12 @@
       else {
         C_Compute_dWt_CtLeabraXCAL
           (err, bcm, ru->ru_avg_s_lrn, ru->su_avg_s_lrn, ru->avg_m,
-           su_su_avg_s_lrn, su_ru_avg_s_lrn, su_avg_m, ru->avg_l, fwts[i]);
+           su_avg_s, su_avg_s, su_avg_m, ru->avg_l, fwts[i]);
       }
 
-      // if(margin.sign_dwt) {
-      //   bcm += C_Compute_dWt_CtLeabraXCAL_MarginSign(ru->margin, su_su_avg_s_lrn);
-      // }
+      if(margin.sign_dwt) {
+        bcm += C_Compute_dWt_CtLeabraXCAL_MarginSign(ru->margin, su_su_avg_s_lrn);
+      }
       
       bcm *= l_lrn_eff;
       err *= xcal.m_lrn;
