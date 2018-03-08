@@ -2013,6 +2013,8 @@ String ClusterRun::ReplaceVars(const String& str) {
   int end_pos = 0;
   int idx = -1;
   String label_expanded = str;
+  label_expanded = label_expanded.repl("\n", " "); // fix for bug 3703
+  label_expanded.trim();
 
   idx = label_expanded.index('%',start_pos);
 
