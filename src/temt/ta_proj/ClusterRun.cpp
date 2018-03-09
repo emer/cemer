@@ -2013,8 +2013,6 @@ String ClusterRun::ReplaceVars(const String& str) {
   int end_pos = 0;
   int idx = -1;
   String label_expanded = str;
-  label_expanded = label_expanded.repl("\n", " "); // fix for bug 3703
-  label_expanded.trim();
 
   idx = label_expanded.index('%',start_pos);
 
@@ -2043,6 +2041,12 @@ void
 ClusterRun::AddJobRow_impl(const String& cmd, const String& params, int cmd_id) {
   int csi = taMisc::clusters.FindName(cluster);
   ClusterSpecs& cs = taMisc::clusters[csi];
+
+  notes = notes.repl("\n", " "); // no Returns
+  notes.trim();
+
+  label = label.repl("\n", " "); // no Returns
+  label.trim();
 
   int row = jobs_submit.AddBlankRow();
   // submit_svn filled in later -- not avail now
