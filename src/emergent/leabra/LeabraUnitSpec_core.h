@@ -34,7 +34,7 @@
   STATE_CLASS(LeabraAvgLModSpec) avg_l_mod;       // #CAT_Learning parameters for modulating the amount of avg_l_lrn learning as a function of other network variables
   STATE_CLASS(LeabraChannels)   g_bar;           // #CAT_Activation [Defaults: 1, .1, 1] maximal conductances for channels
   STATE_CLASS(LeabraChannels)   e_rev;           // #CAT_Activation [Defaults: 1, .3, .25] reversal potentials for each channel
-  STATE_CLASS(KNaAdaptSpec)     kna_adapt;       // #CAT_Activation sodium-gated potassium channel adaptation mechanism -- evidence supports at least 3 different time constants: M-type (fast), Slick (medium), and Slack (slow)
+  STATE_CLASS(KNaAdaptSpec)     kna_adapt;       // #CAT_Activation sodium-activated potassium channel adaptation mechanism -- evidence supports at least 3 different time constants: M-type (fast), Slick (medium), and Slack (slow)
   STATE_CLASS(KNaAdaptMiscSpec) kna_misc;         // #CAT_Activation #CONDSHOW_ON_kna_adapt.on misc extra params for sodium-gated potassium channel adaptation mechanism
   STATE_CLASS(ShortPlastSpec)   stp;             // #CAT_Activation short term presynaptic plasticity specs -- can implement full range between facilitating vs. depresssion
   STATE_CLASS(SynDelaySpec)     syn_delay;       // #CAT_Activation synaptic delay -- if active, activation sent to other units is delayed by a given amount
