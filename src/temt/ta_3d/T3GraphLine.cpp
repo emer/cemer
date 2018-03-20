@@ -643,6 +643,8 @@ String T3GraphLine::GetSvnLineStyle(LineStyle style) {
     case DASH_DOT:
       return  "stroke-dasharray=\"5,10,5\"";
       break;
+    default:
+      return "";
   }
 }
 
