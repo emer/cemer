@@ -629,6 +629,23 @@ void T3GraphLine::markerAt(const iVec3f& pt, MarkerStyle style) {
   }
 }
 
+String T3GraphLine::GetSvnLineStyle(LineStyle style) {
+  switch (style) {
+    case SOLID:
+      return  "";
+      break;
+    case DOT:
+      return  "stroke-dasharray=\"2,6\"";
+      break;
+    case DASH:
+      return  "stroke-dasharray=\"7,5\"";
+      break;
+    case DASH_DOT:
+      return  "stroke-dasharray=\"5,10,5\"";
+      break;
+  }
+}
+
 void T3GraphLine::setDefaultCaptionTransform() {
   //note: this is the one for 3d objects -- 2d replace this
   captionNode_->justification = SoAsciiText::CENTER;
@@ -664,18 +681,18 @@ void T3GraphLine::setDefaultColor(const T3Color& c) {
 void T3GraphLine::setLineStyle(LineStyle value, float line_width) {
   unsigned short pattern;
   switch (value) {
-  case SOLID:
-    pattern = 0xffff; // 1111111111111111
-    break;
-  case DOT:
-    pattern = 0x3030; // 0011000000110000
-    break;
-  case DASH:
-    pattern = 0x0f0f; // 0000111100001111
-    break;
-  case DASH_DOT:
-    pattern = 0x060f; // 0000011000001111
-    break;
+    case SOLID:
+      pattern = 0xffff; // 1111111111111111
+      break;
+    case DOT:
+      pattern = 0x3030; // 0011000000110000
+      break;
+    case DASH:
+      pattern = 0x0f0f; // 0000111100001111
+      break;
+    case DASH_DOT:
+      pattern = 0x060f; // 0000011000001111
+      break;
   }
   lineDrawStyle_->linePattern.setValue(pattern);
   lineDrawStyle_->lineWidth.setValue(line_width);

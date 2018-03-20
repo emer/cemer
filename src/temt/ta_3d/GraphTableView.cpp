@@ -1491,8 +1491,11 @@ void GraphTableView::RenderLegend_Ln(GraphPlotView& plv, T3GraphLine* t3gl,
   
   if(render_svg) {
     label.xml_esc();            // svg is xml..
+    T3GraphLine::LineStyle style = (T3GraphLine::LineStyle)plv.line_style;
+    String svg_style_str = t3gl->GetSvnLineStyle(style);
     svg_str << taSvg::GroupTranslate(cur_tr.x, -cur_tr.y)
-    << taSvg::Path(plv.color.color(), line_width)
+    
+    << taSvg::Path(plv.color.color(), line_width, false, iColor::black_, svg_style_str)
     << "M " << taSvg::Coords(st)
     << "L " << taSvg::Coords(ed)
     << taSvg::PathEnd();
@@ -1773,11 +1776,18 @@ void GraphTableView::RenderGraph_XY() {
           int clr_inc = colorscale.chunks / pl->n_cells;
           clr_inc = MAX(1, clr_inc);
           int clr_idx = (ci * clr_inc) % colorscale.chunks;
-          PlotData_XY(*pl, *errbars[main_y_plots[i]], *mainy, ln, ci, clr_idx);
+          PlotData_XY(*pl, *errbars[main_y_plots[i]], *mainy, ln, RENDER_ALL, ci, clr_idx);
         }
       }
       else {
-        PlotData_XY(*pl, *errbars[main_y_plots[i]], *mainy, ln);
+        if (render_svg) {  // separately so each has its own path and is svg separate object
+          PlotData_XY(*pl, *errbars[main_y_plots[i]], *mainy, ln, RENDER_LINE);
+          PlotData_XY(*pl, *errbars[main_y_plots[i]], *mainy, ln, RENDER_POINTS);
+          PlotData_XY(*pl, *errbars[main_y_plots[i]], *mainy, ln, RENDER_ERR_BARS);
+        }
+        else {
+          PlotData_XY(*pl, *errbars[main_y_plots[i]], *mainy, ln, RENDER_ALL);
+        }
       }
     }
   }
@@ -1799,7 +1809,7 @@ void GraphTableView::RenderGraph_XY() {
           int clr_inc = colorscale.chunks / pl->n_cells;
           clr_inc = MAX(1, clr_inc);
           int clr_idx = (ci * clr_inc) % colorscale.chunks;
-          PlotData_XY(*pl, *errbars[alt_y_plots[i]], *alty, ln, ci, clr_idx);
+          PlotData_XY(*pl, *errbars[alt_y_plots[i]], *alty, ln, RENDER_ALL, ci, clr_idx);
         }
       }
       else {
@@ -1959,7 +1969,7 @@ void GraphTableView::RenderGraph_Matrix_Zi() {
     T3GraphLine* ln = new T3GraphLine(mainy, label_font_size);
     gr1->addChild(ln);
 #endif // TA_QT3D
-    PlotData_XY(*mainy, *errbars[main_y_plots[0]], *mainy, ln, i);
+    PlotData_XY(*mainy, *errbars[main_y_plots[0]], *mainy, ln, RENDER_ALL, i);
   }
 
 }
@@ -2047,7 +2057,7 @@ void GraphTableView::RenderGraph_Matrix_Sep() {
           else
             idx = mgeom.IndexFmDims(pos.x, pos.y);
         }
-        PlotData_XY(*mainy, *erry, *mainy, ln, idx);
+        PlotData_XY(*mainy, *erry, *mainy, ln, RENDER_ALL, idx);
       }
     }
   }
@@ -2097,7 +2107,7 @@ void GraphTableView::RenderGraph_Matrix_Sep() {
             idx = mgeom.IndexFmDims(pos.x, ymax-1-pos.y, zmax-1-z);
           else
             idx = mgeom.IndexFmDims(pos.x, pos.y, z);
-          PlotData_XY(*mainy, *erry, *mainy, ln, idx);
+          PlotData_XY(*mainy, *erry, *mainy, ln, RENDER_ALL, idx);
         }
       }
     }
@@ -2150,7 +2160,7 @@ void GraphTableView::RenderGraph_Matrix_Sep() {
               idx = mgeom.IndexFmDims(pos.x, ymax-1-pos.y, opos.x, yymax-1-opos.y);
             else
               idx = mgeom.IndexFmDims(pos.x, pos.y, opos.x, opos.y);
-            PlotData_XY(*mainy, *erry, *mainy, ln, idx);
+            PlotData_XY(*mainy, *erry, *mainy, ln, RENDER_ALL, idx);
           }
         }
       }
@@ -2183,8 +2193,8 @@ const iColor GraphTableView::GetValueColor(GraphAxisBase* ax_clr, float val) {
 
 void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv,
                                  GraphPlotView& yax,
-                                 T3GraphLine* t3gl, int mat_cell,
-                                 int clr_idx) {
+                                 T3GraphLine* t3gl, RenderElement element,
+                                 int mat_cell, int clr_idx) {
   if(!t3gl) return;
   
   DataCol* da_y = plv.GetDAPtr();
@@ -2261,7 +2271,14 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv,
   String  svg_labels;
   
   if(render_svg) {
-    svg_str << taSvg::Path(plv.color.color(), line_width);
+    if (element == RENDER_LINE) { // markers, borders, error bars, etc are always solid
+      T3GraphLine::LineStyle style = (T3GraphLine::LineStyle)plv.line_style;
+      String svg_style_str = t3gl->GetSvnLineStyle(style);
+      svg_str << taSvg::Path(plv.color.color(), line_width, false, iColor::black_, svg_style_str);
+    }
+    else {
+      svg_str << taSvg::Path(plv.color.color(), line_width, false, iColor::black_, "");
+    }
   }
 
   float epsilon = 1.0e-05f;  // extra margin so no false-alarm out-of-bounds
@@ -2394,70 +2411,74 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv,
     }
 
     // draw the line
-    if(plot_style == LINE || plot_style == LINE_AND_POINTS) {
-      if(first || (new_trace && !negative_draw) || (new_trace_z && !negative_draw_z))
-      { // just starting out
-        if(clr_ok)
-          t3gl->moveTo(plt, clr);
-        else
-          t3gl->moveTo(plt);
-        if(render_svg) {
-          svg_str << "M " << taSvg::Coords(plt);
-        }
-      }
-      else {
-        if(clr_ok)
-          t3gl->lineTo(plt, clr);
-        else
-          t3gl->lineTo(plt);
-        if(render_svg) {
-          svg_str << "L " << taSvg::Coords(plt);
-        }
-      }
-    }
-    else if(plot_style == THRESH_LINE) {
-      if(yval >= thresh) {
-        th_st = plt;  th_st.x = x_axis.DataToPlot(dat.x - thr_line_len);
-        th_ed = plt;  th_ed.x = x_axis.DataToPlot(dat.x + thr_line_len);
-        if(clr_ok) {
-          t3gl->moveTo(th_st, clr);
-          t3gl->lineTo(th_ed, clr);
+    if (element == RENDER_LINE || element == RENDER_ALL) {
+       if(plot_style == LINE || plot_style == LINE_AND_POINTS) {
+        if(first || (new_trace && !negative_draw) || (new_trace_z && !negative_draw_z))
+        { // just starting out
+          if(clr_ok)
+            t3gl->moveTo(plt, clr);
+          else
+            t3gl->moveTo(plt);
+          if(render_svg) {
+            svg_str << "M " << taSvg::Coords(plt);
+          }
         }
         else {
-          t3gl->moveTo(th_st);
-          t3gl->lineTo(th_ed);
-        }
-        if(render_svg) {
-          svg_str << "M " << taSvg::Coords(th_st)
-          << "L " << taSvg::Coords(th_ed);
+          if(clr_ok)
+            t3gl->lineTo(plt, clr);
+          else
+            t3gl->lineTo(plt);
+          if(render_svg) {
+            svg_str << "L " << taSvg::Coords(plt);
+          }
         }
       }
-    }
-    else if(plot_style == THRESH_POINT) {
-      if(yval >= thresh) {
-        if(clr_ok)
-          t3gl->markerAt(plt, (T3GraphLine::MarkerStyle)plv.point_style, clr);
-        else
-          t3gl->markerAt(plt, (T3GraphLine::MarkerStyle)plv.point_style);
-        if(render_svg) {
-          svg_markers << t3gl->markerAtSvg(plt, (T3GraphLine::MarkerStyle)plv.point_style);
+      else if(plot_style == THRESH_LINE) {
+        if(yval >= thresh) {
+          th_st = plt;  th_st.x = x_axis.DataToPlot(dat.x - thr_line_len);
+          th_ed = plt;  th_ed.x = x_axis.DataToPlot(dat.x + thr_line_len);
+          if(clr_ok) {
+            t3gl->moveTo(th_st, clr);
+            t3gl->lineTo(th_ed, clr);
+          }
+          else {
+            t3gl->moveTo(th_st);
+            t3gl->lineTo(th_ed);
+          }
+          if(render_svg) {
+            svg_str << "M " << taSvg::Coords(th_st)
+            << "L " << taSvg::Coords(th_ed);
+          }
+        }
+      }
+      else if(plot_style == THRESH_POINT) {
+        if(yval >= thresh) {
+          if(clr_ok)
+            t3gl->markerAt(plt, (T3GraphLine::MarkerStyle)plv.point_style, clr);
+          else
+            t3gl->markerAt(plt, (T3GraphLine::MarkerStyle)plv.point_style);
+          if(render_svg) {
+            svg_markers << t3gl->markerAtSvg(plt, (T3GraphLine::MarkerStyle)plv.point_style);
+          }
         }
       }
     }
     
     // render marker, if any
-    if((plot_style == POINTS) || (plot_style == LINE_AND_POINTS) || out_of_bounds) {
-      T3GraphLine::MarkerStyle mrk = (T3GraphLine::MarkerStyle)plv.point_style;
-      if(out_of_bounds)
-        mrk = T3GraphLine::STAR; // indicates out of bounds
-      
-      if(row % point_spacing == 0 || out_of_bounds) {
-        if(clr_ok)
-          t3gl->markerAt(plt, mrk, clr);
-        else
-          t3gl->markerAt(plt, mrk);
-        if(render_svg) {
-          svg_markers << t3gl->markerAtSvg(plt, mrk);
+    if (element == RENDER_POINTS || element == RENDER_ALL) {
+      if((plot_style == POINTS) || (plot_style == LINE_AND_POINTS) || out_of_bounds) {
+        T3GraphLine::MarkerStyle mrk = (T3GraphLine::MarkerStyle)plv.point_style;
+        if(out_of_bounds)
+          mrk = T3GraphLine::STAR; // indicates out of bounds
+        
+        if(row % point_spacing == 0 || out_of_bounds) {
+          if(clr_ok)
+            t3gl->markerAt(plt, mrk, clr);
+          else
+            t3gl->markerAt(plt, mrk);
+          if(render_svg) {
+            svg_markers << t3gl->markerAtSvg(plt, mrk);
+          }
         }
       }
     }
@@ -2481,18 +2502,21 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv,
       else
         t3gl->errBar(plt, err_plt, err_bar_width);
       
-      if(render_svg) {
-        svg_str
-        // low bar
-        << "\nM " << taSvg::Coords(plt.x-err_bar_width, plt.y-err_plt, plt.z)
-        << "L " << taSvg::Coords(plt.x+err_bar_width, plt.y-err_plt, plt.z)
-        << "M " << taSvg::Coords(plt.x-err_bar_width, plt.y+err_plt, plt.z)
-        // high bar
-        << "L " << taSvg::Coords(plt.x+err_bar_width, plt.y+err_plt, plt.z)
-        << "M " << taSvg::Coords(plt.x, plt.y-err_plt, plt.z)
-        // vert bar
-        << "L " << taSvg::Coords(plt.x, plt.y+err_plt, plt.z)
-        << "M " << taSvg::Coords(plt.x, plt.y, plt.z) << "\n"; // back home..
+      if (element == RENDER_ERR_BARS || element == RENDER_ALL) {
+        if(render_svg) {
+          svg_str
+          
+          // low bar
+          << "\nM " << taSvg::Coords(plt.x-err_bar_width, plt.y-err_plt, plt.z)
+          << "L " << taSvg::Coords(plt.x+err_bar_width, plt.y-err_plt, plt.z)
+          << "M " << taSvg::Coords(plt.x-err_bar_width, plt.y+err_plt, plt.z)
+          // high bar
+          << "L " << taSvg::Coords(plt.x+err_bar_width, plt.y+err_plt, plt.z)
+          << "M " << taSvg::Coords(plt.x, plt.y-err_plt, plt.z)
+          // vert bar
+          << "L " << taSvg::Coords(plt.x, plt.y+err_plt, plt.z)
+          << "M " << taSvg::Coords(plt.x, plt.y, plt.z) << "\n"; // back home..
+        }
       }
     }
     

@@ -60,6 +60,13 @@ public:
     THRESH_POINT,               // draw a point when value is over threshold
   };
 
+  enum RenderElement {
+    RENDER_ALL,                 // render all element types
+    RENDER_LINE,                // just draw line, no points
+    RENDER_POINTS,              // just draw points/markers, no line
+    RENDER_ERR_BARS,            // draw error bars
+  };
+
   enum ColorMode {
     FIXED,                // use the color specified in the plot view (shown in EXPERT mode)
     BY_VALUE,                // the data value determines the data drawing color, looked up on the color scale
@@ -246,7 +253,7 @@ protected:
 
   virtual void          PlotData_XY(GraphPlotView& plv, GraphPlotView& erv,
                                     GraphPlotView& yax,
-                                    T3GraphLine* t3gl, int mat_cell = -1, 
+                                    T3GraphLine* t3gl, RenderElement element = RENDER_ALL, int mat_cell = -1,
                                     int clr_idx = -1);
   // plot XY data from given plot view column (and err view column) into given line, using given yaxis values, if from matrix then mat_cell >= 0), and color override if clr_idx >= 0
 #ifdef TA_QT3D

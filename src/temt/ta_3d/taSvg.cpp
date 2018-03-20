@@ -177,13 +177,13 @@ String taSvg::CoordsXY(float x, float y, float z) {
 }
 
 String taSvg::Path(const iColor& color, float line_width, bool fill,
-                   const iColor& fill_color) {
+                   const iColor& fill_color, String svn_line_style) {
   if(!CheckInst()) return _nilString;
   String rval;
   rval << "<path";
   if(line_width >= 0.0f) {
     rval << " stroke=\"#" << color.toString() << "\""
-         << " stroke-width=\"" << line_width << "\"";
+    << " stroke-width=\"" << line_width << "\"";
   }
   else {
     rval << " stroke=\"none\"";
@@ -209,6 +209,9 @@ String taSvg::Path(const iColor& color, float line_width, bool fill,
     if(line_width >= 0.0f && color.a != 255) {
       rval << " stroke-opacity=\"" << color.alphaf() << "\"";
     }
+  }
+  if(svn_line_style.nonempty()) {
+    rval << " " + svn_line_style + " ";
   }
   rval << "\n"
        << "  d=\"";

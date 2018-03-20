@@ -41,7 +41,7 @@ public:
     SOLID,                      // -----
     DOT,                        // .....
     DASH,                       // - - -
-    DASH_DOT                    // _._._
+    DASH_DOT                    // _._._'
 #ifndef __MAKETA__
     ,LineStyle_MIN = SOLID, // also the default
     LineStyle_MAX = DASH_DOT
@@ -127,7 +127,6 @@ public:
 
   String                markerAtSvg(const iVec3f& pt, MarkerStyle style);
   // string of SVG commands for drawing marker at given point -- just the move, line guys
-
   void                  setNodeUpdating(bool updating) override;
   void                  setDefaultCaptionTransform() override;
   
@@ -157,7 +156,7 @@ public:
     SOLID,                      // -----
     DOT,                        // .....
     DASH,                       // - - -
-    DASH_DOT                    // _._._
+    DASH_DOT                   // _._._
 #ifndef __MAKETA__
     ,LineStyle_MIN = SOLID, // also the default
     LineStyle_MAX = DASH_DOT
@@ -235,6 +234,8 @@ public:
 
   String                markerAtSvg(const iVec3f& pt, MarkerStyle style);
   // string of SVG commands for drawing marker at given point -- just the move, line guys
+  String                GetSvnLineStyle(LineStyle style);
+  // return svg string corresponding to style
 
   T3GraphLine(T3DataView* dataView_ = NULL, float fnt_sz = .05f);
 
