@@ -113,7 +113,7 @@ bool DataVarProg::GenCss_OneVar(Program* prog, ProgVar* var, const String& idnm,
 
   if(dt && (var->var_type == ProgVar::T_HardEnum || var->var_type == ProgVar::T_DynEnum)) {
     da = dt->FindColName(var->name);
-    if(da->isMatrix()) {
+    if(da && da->isMatrix()) {
       return GenCss_OneVarMatEnum(prog, var, idnm, var_no);
     }
   }
