@@ -169,7 +169,7 @@ void ProgExprBase::ReParseExpr(bool prompt_for_bad) {
           // did the user forget to quote a string?
           if (pel->InheritsFrom(&TA_AssignExpr)) {
             AssignExpr* ass_expr = (AssignExpr*)pel;
-            if (ass_expr && ass_expr->result_var->var_type == ProgVar::T_String) {
+            if (ass_expr && ass_expr->result_var && ass_expr->result_var->var_type == ProgVar::T_String) {
               int chs = taMisc::Choice("Did you forget quotes around \"" + expr + "\" ?", "No, continue", "Yes, please quote");
               if (chs == 1) {
                 expr = "\"" + expr + "\"";
