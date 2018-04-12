@@ -340,11 +340,11 @@ ColorScale* iMatrixTableModel::GetColorScale() {
 void iMatrixTableModel::ResetColorScale() {
   if (!mat() || !color_scale) return;
   
-  float min = mat()->FastElAsFloat_Flat(0);
-  float max = mat()->FastElAsFloat_Flat(0);
+  float min = mat()->SafeElAsFloat_Flat(0);
+  float max = mat()->SafeElAsFloat_Flat(0);
   for(int i=1; i<mat()->size; i++) {
-    min = fminf(min, mat()->FastElAsFloat_Flat(i));
-    max = fmaxf(max, mat()->FastElAsFloat_Flat(i));
+    min = fminf(min, mat()->(i));
+    max = fmaxf(max, mat()->SafeElAsFloat_Flat(i));
   }
   color_scale->SetMinMax(min, max);
 }
