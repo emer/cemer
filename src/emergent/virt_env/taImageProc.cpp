@@ -1741,6 +1741,38 @@ bool taImageProc::CompositeImages(float_Matrix& img1, const float_Matrix& img2) 
   return true;
 }
 
+bool taImageProc::CompositeProportionally(float_Matrix& img1, const float_Matrix& img2, float img2_proportion) {
+  if(!CheckValidRGBMatrix(img1)) {
+    return false;
+  }
+  if(!CheckValidRGBMatrix(img2)) {
+    return false;
+  }
+  
+  if(img1.dim(0) != img2.dim(0) || img1.dim(1) != img2.dim(1)) {
+    taMisc::Error("img1 must be same size as img2");
+    return false;
+  }
+  
+  if (img2_proportion <= 0.0 || img2_proportion >= 1.0) {
+    taMisc::Error("proportion_of_noise must be between 0 and 1");
+    return false;
+  }
+  
+  taVector2i img_size(img1.dim(0), img1.dim(1));
+  
+  for(int yi=0; yi< img_size.y; yi++) {
+    for(int xi=0; xi< img_size.x; xi++) {
+      for(int cl=0; cl < 3; cl++) { // only use rgb for this loop - no alpha
+        float& i1clr = img1.FastEl3d(xi, yi, cl);
+        float i2clr = img2.FastEl3d(xi, yi, cl);
+        i1clr = i1clr * (1 - img2_proportion) + i2clr * img2_proportion;
+      }
+    }
+  }
+  return true;
+}
+
 bool taImageProc::CompositeAndCenterImage(float_Matrix& img1, const float_Matrix& img2) {
   if(!CheckValidRGBMatrix(img1)) {
     return false;

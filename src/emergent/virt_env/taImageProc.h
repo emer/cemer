@@ -177,6 +177,9 @@ public:
   
   static bool   CompositeImages(float_Matrix& img1, const float_Matrix& img2);
   // #CAT_ImageProc #MENU_BUTTON #MENU_ON_ImageProc Combine img1 and img2 using img1's alpha channel. Operation is done in place on img1. Assumes img1 is RGBA format (img2 alpha channel unused) and images are same size.  img2 can be greyscale or rgb
+  
+  static bool   CompositeProportionally(float_Matrix& img1, const float_Matrix& img2, float img2_proportion);
+  // #CAT_ImageProc img1 and img2 are combined by proportion. A proportion of .9, for example, would make the resulting image very much like img2. Images must be the same size and both must be rgb, proportion must be > 0 && < 1. The operation is done in place on img1.
 
   static bool   CompositePartialImages(float_Matrix& img1, int x, int y, const float_Matrix& img2);
   // #CAT_ImageProc #MENU_BUTTON #MENU_ON_ImageProc Combine img1 and img2 using img1's alpha channel. Operation is done in place on img1. Assumes img1 is RGBA format (img2 alpha channel unused) and img2 is smaller than img1. X/Y are coordinates within img1 where to place img2
