@@ -1541,6 +1541,9 @@ void Program::ClearAllBreakpoints() {
 
 void Program::SetAllBreakpoints() {
   if(!script) return;
+  
+  if(!taMisc::gui_active) return;
+  
   int nbp = 0;
   script->DelAllBreaks();       // start with clean slate
   ProgEl* last_pel_set = NULL;
