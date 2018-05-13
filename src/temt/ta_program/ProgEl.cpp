@@ -846,6 +846,7 @@ String ProgEl::CodeGetDesc(const String& code, String& desc) {
       desc = trim(desc.before("*/",-1));
     return trim(code.before("/*"));
   }
+  desc = "";  // no comment markers - no description
   return code;
 }
 
