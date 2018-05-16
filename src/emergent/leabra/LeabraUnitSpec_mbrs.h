@@ -402,17 +402,20 @@ private:
 
 
 class STATE_CLASS(LeabraAvgLSpec) : public STATE_CLASS(SpecMemberBase) {
-  // ##INLINE ##NO_TOKENS ##CAT_Leabra parameters for computing the long-term floating average value, avg_l, which is used for driving BCM-style hebbian learning in XCAL -- this form of learning increases contrast of weights and generally decreases overall activity of neuron, to prevent "hog" units -- it is computed as a running average of the (gain multiplied) medium-time-scale average activation at the end of the trial
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra parameters for computing the long-term floating average value, avg_l, which is used for driving BCM-style hebbian learning in XCAL -- this form of learning increases contrast of weights and generally decreases overall activity of neuron, to prevent "hog" units -- it is computed as a running average of the (gain multiplied) medium-time-scale average activation at the end of the trial -- also computes an adaptive amount of BCM learning, avg_l_lrn, based on avg_l, 
 INHERITED(SpecMemberBase)
 public:
   float         init;           // #DEF_0.4 #MIN_0 #MAX_1 initial avg_l value at start of training
   float         gain;           // #DEF_1.5;2;2.5;3;4;5 #AKA_max #MIN_0 gain multiplier on activation used in computing the running average avg_l value that is the key floating threshold in the BCM Hebbian learning rule -- when using the DELTA_FF_FB learning rule, it should generally be 2x what it was before with the old XCAL_CHL rule, i.e., default of 5 instead of 2.5 -- it is a good idea to experiment with this parameter a bit -- the default is on the high-side, so typically reducing a bit from initial default is a good direction
   float         min;            // #DEF_0.2 #MIN_0 miniumum avg_l value -- running average cannot go lower than this value even when it otherwise would due to inactivity -- this value is generally good and typically does not need to be changed
   float         tau;            // #DEF_10 #MIN_1 time constant for updating the running average avg_l -- avg_l moves toward gain*act with this time constant on every trial - longer time constants can also work fine, but the default of 10 allows for quicker reaction to beneficial weight changes
+  float         lrn_max;        // #DEF_0.5 #MIN_0 maximum avg_l_lrn value, which is amount of learning driven by avg_l factor -- when avg_l is at its maximum value (i.e., gain, as act does not exceed 1), then avg_l_lrn will be at this maximum value -- by default, strong amounts of this homeostatic Hebbian form of learning can be used when the receiving unit is highly active -- this will then tend to bring down the average activity of units -- the default of 0.5, in combination with the err_mod flag, works well for most models -- use around 0.0004 for a single fixed value (with err_mod flag off)
+  float         lrn_min;        // #DEF_0.0001;0.0004 #MIN_0 miniumum avg_l_lrn value (amount of learning driven by avg_l factor) -- if avg_l is at its minimum value, then avg_l_lrn will be at this minimum value -- neurons that are not overly active may not need to increase the contrast of their weights as much -- use around 0.0004 for a single fixed value (with err_mod flag off)
   float         lay_act_thr;    // #DEF_0.01 threshold of layer average activation on this trial, in order to update avg_l values -- setting to 0 disables this check
   
   float         dt;             // #READ_ONLY #EXPERT rate = 1 / tau
   float         min_lay_avg;    // #READ_ONLY #EXPERT lay_avg_trg / max_gain_mult
+  float         lrn_fact;       // #READ_ONLY #EXPERT (lrn_max - lrn_min) / (avg_l_max - min)
 
   INLINE void   UpdtAvgL(float& avg_l, const float act, float lay_avg) {
     avg_l += dt * (gain * act - avg_l);
@@ -420,8 +423,14 @@ public:
   }
   // update long-term average value from given activation, using average-based update
 
+  INLINE float  GetLrn(const float avg_l) {
+    return lrn_min + lrn_fact * (avg_l - min);
+  }
+  // get the avg_l_lrn value for given avg_l value
+
   INLINE void UpdtVals() {
     dt = 1.0f / tau;
+    lrn_fact = (lrn_max - lrn_min) / (gain - min);
   }
   // #IGNORE
   
@@ -433,47 +442,11 @@ public:
 private:
   void        Initialize()      { Defaults_init(); }
   void        Defaults_init() {
-    init = 0.4f;  gain = 2.5f;  min = 0.2f;
-    tau = 10.0f; lay_act_thr = 0.01f;
+    init = 0.4f;        gain = 2.5f;            min = 0.2f;
+    tau = 10.0f;        lay_act_thr = 0.01f;
+    lrn_max = 0.5f;     lrn_min = 0.0001f;
     UpdtVals();
   }
-};
-
-
-class STATE_CLASS(LeabraAvgLLrnSpec) : public STATE_CLASS(SpecMemberBase) {
-  // ##INLINE ##NO_TOKENS ##CAT_Leabra parameters for computing the learning rate modulator for  BCM-style hebbian learning in XCAL -- based on long-term floating average value, avg_l
-INHERITED(SpecMemberBase)
-public:
-  float         lrn_max;        // #DEF_0.5;0.2 #MIN_0 maximum avg_l_lrn value, which is amount of learning driven by avg_l factor -- when avg_l is at or above avg_l_max, then avg_l_lrn will be at this maximum value -- by default, strong amounts of this homeostatic Hebbian form of learning can be used when the receiving unit is highly active -- this will then tend to bring down the average activity of units -- default of 0.5 or 0.2 (for avg_l_max=2) is for LAY_ERR_MOD modulation in avg_l_mod -- use around 0.0004 for a single fixed value (i.e., set min = max = this value) without any other modulation (see avg_l_mod) -- use around 0.01 when error is normalized at .2 and not using LAY_ERR_MOD, which indicates rough proportional value
-  float         lrn_min;        // #DEF_0.0001;0.0004 #MIN_0 miniumum avg_l_lrn value (amount of learning driven by avg_l factor) -- if avg_l is at its minimum value, then avg_l_lrn will be at this minimum value -- neurons that are not overly active may not need to increase the contrast of their weights as much -- use around 0.0004 for a single fixed value (with err_mod flag off)
-  float         avg_l_max;      // #DEF_5;2 value of avg_l, at or above which the maximum amount of BCM learning applies -- see the am_avg_l statistic on layers for actual ranges of values -- previously was always avg_l.gain (def 5) but that full range is not typically reached, so a lower value of 2 makes more sense -- decrease lrn_max in proportion to avg_l_max (e.g., if lrn_max was .5, decrease to .2 for avg_l_max = 2)
-
-  float         avg_l_min;      // #READ_ONLY #EXPERT min copied from avg_l spec
-  float         lrn_fact;       // #READ_ONLY #EXPERT (lrn_max - lrn_min) / (avg_l_max - min)
-  
-  INLINE float  GetLrn(float avg_l) {
-    avg_l = fminf(avg_l, avg_l_max);
-    return lrn_min + lrn_fact * (avg_l - avg_l_min);
-  }
-  // get the avg_l_lrn value for given avg_l value
-
-  INLINE void   UpdtLrnFact() {
-    lrn_fact = (lrn_max - lrn_min) / (avg_l_max - avg_l_min);
-  }
-  // #IGNORE update the learn factor
-  
-  STATE_DECO_KEY("UnitSpec");
-  STATE_TA_STD_CODE_SPEC(LeabraAvgLLrnSpec);
-  STATE_UAE( UpdtLrnFact(); );
-  
-private:
-  void        Initialize()      { Defaults_init(); }
-  void        Defaults_init() {
-    lrn_max = 0.2f;  lrn_min = 0.0001f;   avg_l_max = 2.0f;
-    avg_l_min = 0.2f;
-    UpdtLrnFact();
-  }
-
 };
 
 

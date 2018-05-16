@@ -30,7 +30,6 @@
   STATE_CLASS(LeabraDtSpec)     dt;              // #CAT_Activation time constants (rate of updating): membrane potential (vm) and net input (net)
   STATE_CLASS(LeabraActAvgSpec) act_avg;         // #CAT_Learning time constants (rate of updating) for computing activation averages -- used in XCAL learning rules
   STATE_CLASS(LeabraAvgLSpec)   avg_l;           // #CAT_Learning parameters for computing the avg_l long-term floating average that drives BCM-style hebbian learning
-  STATE_CLASS(LeabraAvgLLrnSpec) avg_l_lrn;       // #CAT_Learning parameters for computing the avg_l_lrn learning factor for controlling the amount of BCM-style hebbian learning driven by long-term floating average
   STATE_CLASS(LeabraAvgLModSpec) avg_l_mod;       // #CAT_Learning parameters for modulating the amount of avg_l_lrn learning as a function of other network variables
   STATE_CLASS(LeabraChannels)   g_bar;           // #CAT_Activation [Defaults: 1, .1, 1] maximal conductances for channels
   STATE_CLASS(LeabraChannels)   e_rev;           // #CAT_Activation [Defaults: 1, .3, .25] reversal potentials for each channel
@@ -93,7 +92,7 @@
       u->act_avg = act_misc.avg_init;
     }
     u->avg_l = avg_l.init;
-    u->avg_l_lrn = avg_l_lrn.GetLrn(u->avg_l);
+    u->avg_l_lrn = avg_l.GetLrn(u->avg_l);
   }
   // #CAT_Activation initialize average activation values, used to control learning
   
@@ -167,7 +166,7 @@
     if(lgpd->acts_p_avg >= avg_l.lay_act_thr) {
       avg_l.UpdtAvgL(u->avg_l, u->avg_m, lgpd->acts_p_avg);
     }
-    u->avg_l_lrn = lay->mod_avg_l_lrn * avg_l_lrn.GetLrn(u->avg_l);
+    u->avg_l_lrn = lay->mod_avg_l_lrn * avg_l.GetLrn(u->avg_l);
   }
   // #CAT_Learning reset the sender-receiver coproduct average -- call at start of trial
     

@@ -35,7 +35,7 @@ void LEABRA_UNIT_SPEC::Init_Acts(UNIT_STATE* uv, NETWORK_STATE* net, int thr_no)
   u->ru_avg_s_lrn = u->avg_s;
   u->su_avg_s_lrn = u->avg_s;
   u->avg_m = act_misc.avg_init;
-  u->avg_l_lrn = avg_l_lrn.GetLrn(u->avg_l);
+  u->avg_l_lrn = avg_l.GetLrn(u->avg_l);
   // not avg_l
   // not act_avg
   u->margin = 0.0f;
@@ -133,7 +133,7 @@ void LEABRA_UNIT_SPEC::Init_UnitState(UNIT_STATE* uv, NETWORK_STATE* net, int th
   u->ru_avg_s_lrn = u->avg_s;
   u->su_avg_s_lrn = u->avg_s;
   u->avg_m = act_misc.avg_init;
-  u->avg_l_lrn = avg_l_lrn.GetLrn(u->avg_l);
+  u->avg_l_lrn = avg_l.GetLrn(u->avg_l);
   // not avg_l
   // not act_avg
   u->margin = 0.0f;
