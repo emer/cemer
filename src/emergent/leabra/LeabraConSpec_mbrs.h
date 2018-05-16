@@ -131,7 +131,19 @@ public:
 
   float         d_rev_ratio;    // #HIDDEN #READ_ONLY -(1-d_rev)/d_rev -- multiplication factor in learning rule -- builds in the minus sign!
 
-  INLINE float  dWtFun(float srval, float thr_p) {
+  INLINE float  dWtFun(const float srval, const float thr_p) {
+    float rval;
+    if(srval < d_thr)
+      rval = 0.0f;
+    else if(srval > thr_p * d_rev)
+      rval = (srval - thr_p);
+    else
+      rval = srval * d_rev_ratio;
+    return rval;
+  }
+  // XCAL function for weight change -- the "check mark" function -- no d_gain, no thr_p_min
+
+  INLINE float  dWtFun_thrp(float srval, float thr_p) {
     if(thr_p < thr_p_min) thr_p = thr_p_min;
     float d_thr_eff = d_thr * thr_p;
     if(srval < d_thr_eff)
@@ -145,7 +157,7 @@ public:
       rval = srval * d_rev_ratio;
     return rval;
   }
-  // XCAL function for weight change -- the "check mark" function -- no d_gain
+  // XCAL function for weight change -- the "check mark" function -- no d_gain, but with thr_p_min
 
   INLINE float  dWtFun_dgain(float srval, float thr_p, const float d_gain = 1.0f) {
     if(thr_p < thr_p_min) thr_p = thr_p_min;
