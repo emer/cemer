@@ -46,7 +46,9 @@ iMatrixTableModel::iMatrixTableModel(taMatrix* mat_)
 }
 
 iMatrixTableModel::~iMatrixTableModel() {
-  color_scale->CutLinks();
+  if (color_scale) {
+    color_scale->CutLinks();
+  }
   // note: following shouldn't really execute since mat manages our lifetime
   if (m_mat) {
     m_mat->RemoveSigClient(this);
