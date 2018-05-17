@@ -26,6 +26,7 @@
   DecayType     decay_type;     // type of weight decay to apply (before 8.0 this was set by selecting a function, but this prevents optimization)
   float         decay;          // #CONDSHOW_OFF_decay_type:NO_DECAY decay rate -- the learning rate is also applied to the decay -- i.e., decay comes before the learning rate factor
   WtUpdtType    wt_updt;        // #READ_ONLY type of weight update to perform -- computed from other parameters set -- used to optimize computation
+  bool          no_bp;          // #DEF_false if true, do not backpropagate error through this connection -- it still learns, but does not send error back to layer it receives from -- this is useful for decoder connections that attempt to decode from a layer without influencing its learning
 
   INLINE int  GetStateSpecType() const override { return BP_NETWORK_STATE::T_BpConSpec; }
 
@@ -63,8 +64,10 @@
   INLINE virtual float  Compute_dEdA(CON_STATE* cg, NETWORK_STATE* net, int thr_no) {
     // this is ptr-con based and thus very slow..
     float rval = 0.0f;
-    CON_STATE_LOOP(cg, rval += C_Compute_dEdA(cg->PtrCn(i,WT,net),
-                                              ((BP_UNIT_STATE*)cg->UnState(i,net))->dEdNet));
+    if (!no_bp) {
+      CON_STATE_LOOP(cg, rval += C_Compute_dEdA(cg->PtrCn(i,WT,net),
+                                                ((BP_UNIT_STATE*)cg->UnState(i,net))->dEdNet));
+    }
     return rval;
   }
   // get error from units I send to
@@ -334,4 +337,5 @@
     momentum = 0.0f;
     decay_type = NO_DECAY;
     decay = 0.0f;
+    no_bp = false;
   }

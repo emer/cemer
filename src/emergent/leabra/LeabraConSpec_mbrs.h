@@ -157,7 +157,7 @@ public:
       rval = srval * d_rev_ratio;
     return rval;
   }
-  // XCAL function for weight change -- the "check mark" function -- no d_gain, but with thr_p_min
+  // XCAL function for weight change -- the "check mark" function -- no d_gain, but with thr_p_min -- todo: this is impairing performance in WWI and likely MDM model -- need to explore lower thr_p_min levels??
 
   INLINE float  dWtFun_dgain(float srval, float thr_p, const float d_gain = 1.0f) {
     if(thr_p < thr_p_min) thr_p = thr_p_min;
