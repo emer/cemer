@@ -1073,7 +1073,7 @@ public:
   virtual bool          FilterBySpec(DataSelectSpec* spec);
   // #CAT_DataProc filter the table rows by specifying which rows to retain in the table (hiding the ones that do not match).  Note: you can instantly recover the original full set of rows, unsorted and unfiltered, by using ShowAllRows on the DataTable -- see that function for more details -- to be be able to undo just this Filter you would need to run Flatten first
   virtual void          UnFilter();
-  // #CAT_DataProc clears last_select_spec and executes ShowAllRows
+  // #CAT_DataProc  #MENU #FROM_LIST_data clears last_select_spec and executes ShowAllRows
   virtual void          FilterRowNumbers(const int_Matrix* row_list,
                                          bool include_rows);
   // #CAT_DataProc filter table by a list of row numbers to either include or exclude
