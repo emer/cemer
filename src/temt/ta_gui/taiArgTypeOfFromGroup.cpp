@@ -39,7 +39,12 @@ cssEl* taiArgTypeOfFromGroup::GetElFromArg(const char* nm, void* base) {
   taList_impl* lst = GetList(base);
   TypeDef* npt = arg_typ->GetNonRefType()->GetNonConstType()->GetNonPtrType();
   if (lst != NULL)
-    arg_val = new cssTA_Base(lst->DefaultEl_(), 1, npt, nm);
+    if (GetHasOption("PREFER_NULL")) {
+      arg_val = new cssTA_Base(NULL, 1, npt, nm);
+    }
+    else {
+      arg_val = new cssTA_Base(lst->DefaultEl_(), 1, npt, nm);
+    }
   else
     arg_val = new cssTA_Base(NULL, 1, npt, nm);
 

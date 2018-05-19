@@ -1061,7 +1061,7 @@ public:
      Relation::Relations operator_2 = Relation::EQUAL, const String& value_2 = "",
      DataCol* col3 = NULL, Relation::Relations operator_3 = Relation::EQUAL,
      const String& value_3 = "");
-  // #CAT_DataProc #MENU #FROM_LIST_data #LABEL_Filter Select table rows by specifying up to 3 conditions for which rows to retain in the table (hiding the ones that do not match). Note: you can instantly recover the original full set of rows, unsorted and unfiltered, by using ShowAllRows on the DataTable -- see that function for more details -- to be be able to undo just this Filter you would need to run Flatten first
+  // #CAT_DataProc #MENU #FROM_LIST_data #NULL_OK #PREFER_NULL #LABEL_Filter Select table rows by specifying up to 3 conditions for which rows to retain in the table (hiding the ones that do not match). Note: you can instantly recover the original full set of rows, unsorted and unfiltered, by using ShowAllRows on the DataTable -- see that function for more details -- to be be able to undo just this Filter you would need to run Flatten first
   virtual bool          FilterByScript(const String& filter_expr);
   // #CAT_DataProc #MENU #FROM_LIST_data #LABEL_Filter_Custom Select table rows by supplying a logical expression -- if it evaluates to true the row remains visible.  Refer to columns by name. Note: you can instantly recover the original full set of rows, unsorted and unfiltered, by using ShowAllRows on the DataTable -- see that function for more details -- to be be able to undo just this Filter you would need to run Flatten first
   virtual void          FilterContainsList(const Variant& col, const String& contains_list,
