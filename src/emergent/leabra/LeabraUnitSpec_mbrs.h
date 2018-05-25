@@ -803,35 +803,28 @@ INHERITED(SpecMemberBase)
 public:
   bool       p_only_m;          // TRC plus-phase (clamping) for TRC units only occurs if the minus phase max activation for given unit group is above .1
   bool       thal_gate;         // apply thalamic gating to TRC activations -- multiply netin by current thal parameter
-  bool       clamp_net;         // #CONDSHOW_OFF_avg_clamp directly clamp the deep netin instead of settling -- appropriate for one-to-one projections to exactly reproduce the activation state
-  bool       avg_clamp;         // #CONDSHOW_OFF_clamp_net TRC plus-phase netinput is weighted average (see deep_gain) of current plus-phase deep netin and standard netin -- produces a better clamping dynamic
-  float      deep_gain;         // #CONDSHOW_ON_avg_clamp how much to weight the deep netin relative to standard netin  (1.0-deep_gain) for avg_clamp
-  bool       clip;              // clip the deep netin to clip_max value -- produces more of an OR-like behavior for TRC reps
-  float      clip_max;          // #CONDSHOW_ON_clip maximum netin value to clip deep raw netin in trc plus-phase clamping -- prevents strong from dominating weak too much..
+  bool       binarize;          // apply threshold to deep_raw_net -- above gets bin_on, below gets bin_off -- typically used for one-to-one trc prjns with fixed wts = 1, so threshold is in terms of sending activation
+  float      bin_thr;           // #CONDSHOW_ON_binarize threshold for binarizing -- typically used for one-to-one trc prjns with fixed wts = 1, so threshold is in terms of sending activation
+  float      bin_on;            // #CONDSHOW_ON_binarize #DEF_0.3 effective netin for units above threshold -- lower value around 0.3 or so seems best
+  float      bin_off;           // #CONDSHOW_ON_binarize #DEF_0 effective netin for units below threshold -- typically 0
 
-  float      std_gain;          // #READ_ONLY #HIDDEN 1-deep_gain
-
-  INLINE float  TRCClampNet(float deep_raw_net, const float net_syn)
-  { if(clip)      deep_raw_net = fminf(deep_raw_net, clip_max);
-    if(avg_clamp) return deep_gain * deep_raw_net + std_gain * net_syn;
+  INLINE float  TRCClampNet(float deep_raw_net)
+  { if(binarize)  return (deep_raw_net >= bin_thr) ? bin_on : bin_off;
     else          return deep_raw_net; }
   // compute TRC plus-phase clamp netinput
-  
   
   STATE_DECO_KEY("UnitSpec");
   STATE_TA_STD_CODE_SPEC(TRCSpec);
   
-  STATE_UAE(std_gain = 1.0f - deep_gain;  if(clamp_net) avg_clamp = false; if(avg_clamp) clamp_net = false; );
+  // STATE_UAE();
 
 private:
   void        Initialize()
-  { clamp_net = false; avg_clamp = false; clip = false; clip_max = 0.4f;  Defaults_init(); }
+  { thal_gate = false; Defaults_init(); }
 
   void        Defaults_init() {
     p_only_m = false;
-    thal_gate = false;
-    deep_gain = 0.2f;
-    std_gain = 1.0f - deep_gain;
+    binarize = false; bin_thr = 0.4f; bin_on = 0.3f; bin_off = 0.0f;
   }
 };
 

@@ -495,14 +495,14 @@ void LEABRA_UNIT_SPEC::Compute_NetinInteg(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_S
         LEABRA_UNGP_STATE* gpd = u->GetOwnUnGp(net);
         if(gpd->acts_prvq.max > 0.1f) {
           // only activate if we got prior and current activation
-          net_syn = trc.TRCClampNet(u->deep_raw_net, net_syn); // u->net_prv_q); 
+          net_syn = trc.TRCClampNet(u->deep_raw_net); // u->net_prv_q); 
         }
         else {
           net_ex = Compute_NetinExtras(u, net, thr_no, net_syn);
         }
       }
       else {                       // always do it
-        net_syn = trc.TRCClampNet(u->deep_raw_net, net_syn); // u->net_prv_q); 
+        net_syn = trc.TRCClampNet(u->deep_raw_net); // u->net_prv_q); 
       }
     }
     else {
@@ -800,9 +800,6 @@ void LEABRA_UNIT_SPEC::Compute_ActFun_Rate(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_
     
   if(net->cycle >= dt.fast_cyc) {
     new_act = cur_act + dt.integ * dt.vm_dt * (new_act - cur_act); // time integral with dt.vm_dt  -- use nd to avoid synd problems
-  }
-  if(deep.IsTRC() && Quarter_DeepRawNow(net->quarter) && trc.clamp_net) {
-    new_act = u->net;
   }
 
   u->da = new_act - cur_act;
