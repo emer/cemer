@@ -480,6 +480,10 @@ void ClusterRun::SaveState() {
   }
 }
 
+void ClusterRun::LoadDataNoRemove() {
+  LoadData(false);
+}
+
 void ClusterRun::LoadData(bool remove_existing) {
   // note: can't call Update here because it unselects the rows in jobs_ tables!
   
