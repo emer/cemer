@@ -1485,6 +1485,63 @@ bool taDataAnal::CorrelMatrixTable(DataTable* correl_mat, bool view, DataTable* 
   return true;
 }
 
+float taDataAnal::DistMatrixGroupSimilarity(DataTable* src_data,
+				 const String& data_col_nm, const String& name_col_nm,
+				 taMath::DistMetric metric, bool norm, float tol,
+				 bool incl_scalars) {
+  if(!src_data || src_data->rows == 0) {
+    taMisc::Error("taDataAnal::DistMatrixGroupSimilarity -- src_data is NULL or has no data -- must pass in this data");
+    return 0.0f;
+  }
+  if(src_data->rows == 0) {
+    taMisc::Error("taDataAnal::DistMatrixGroupSimilarity -- src_data has no rows -- cannot compute distance matrix");
+    return 0.0f;
+  }
+
+  DataCol* nmda = src_data->FindColName(name_col_nm, true); // errmsg
+  if(nmda == NULL) {
+    return 0.0f;
+  }
+    
+  float_Matrix dmat(false);
+  bool rval = DistMatrix(&dmat, src_data, data_col_nm, metric, norm, tol, incl_scalars);
+  if(!rval) return 0.0f;
+
+  float same_sum = 0.0f;
+  int same_n = 0;
+  float diff_sum = 0.0f;
+  int diff_n = 0;
+
+  int n = dmat.dim(0);
+  for(int i=0; i<n; i++) {
+    String nm1 = nmda->GetValAsString(i);
+
+    for(int j=0; j<i; j++) {
+      String nm2 = nmda->GetValAsString(j);
+
+      if(nm1 == nm2) {
+        same_sum += dmat.FastEl2d(i,j);
+        same_n++;
+      }
+      else {
+        diff_sum += dmat.FastEl2d(i,j);
+        diff_n++;
+      }
+    }
+  }
+
+  if(same_n > 0) {
+    same_sum /= (float)same_n;
+  }
+  if(diff_n > 0) {
+    diff_sum /= (float)diff_n;
+  }
+  if(diff_sum > 0.0f) {
+    same_sum /= diff_sum;
+  }
+  return same_sum;
+}
+
 ///////////////////////////////////////////////////////////////////
 // standard multidimensional data analysis methods
 

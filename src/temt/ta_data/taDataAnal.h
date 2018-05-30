@@ -112,6 +112,13 @@ public:
                                      bool incl_scalars=false);
   // #CAT_Distance #MENU_BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable compute cross distance matrix table between two different matrix data columns in src_data_a and srd_data_b datatables. if data_col_nm's are both blank, all real-valued matrix (and scalars if if incl_scalars) columns are used, summing across (only cols at same col index that match exactly will be used).  dist_mat returns a symmetric matrix with cells as the distance between each row in table a versus each row of table b. if name_col_nm is non-empty and valid, nxm scalar float rows and columns are made, with names from name_col_nm values from src_data table; otherwise a single matrix column is made, named by the src_data_a + "_" + src_data_b + "_DistMatrix".  if view, then a grid view in a new frame is automatically created
 
+  static float   DistMatrixGroupSimilarity(DataTable* src_data,
+                                   const String& data_col_nm, const String& name_col_nm,
+                                   taMath::DistMetric metric, bool norm=false, float tol=0.0f,
+                                   bool incl_scalars=false);
+  // #CAT_Distance #MENU_BUTTON #MENU_ON_Distance #NULL_OK_0 #NULL_TEXT_0_NewDataTable returns the ratio of the average within-group distances over the between-group ones, where groups are defined as having the same name in name_col_nm (must be sorted by this column) -- i.e., the "on diagonal" terms over the "off diagonal" ones (excluding the actual diagonal self terms) -- first computes distance matrix table as in DistMatrixTable (see that for more info) -- name_col_nm is required
+
+  
   ///////////////////////////////////////////////////////////////////
   // correlation matricies
 
