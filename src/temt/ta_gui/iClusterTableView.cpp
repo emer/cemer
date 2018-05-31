@@ -50,6 +50,9 @@ void iClusterTableView::FillContextMenu_impl(ContextArea ca,
 
     act = menu->AddItem("Load Data", taiWidgetMenu::normal, iAction::var_act, this, SLOT(DoClusterOp(const Variant&)), "LoadData");
     act->setEnabled((tab->name == "running" || tab->name == "done" || tab->name == "archive" || tab->name == "files") && sel.height() > 0);
+    
+    act = menu->AddItem("Load Data No Remove", taiWidgetMenu::normal, iAction::var_act, this, SLOT(DoClusterOp(const Variant&)), "LoadDataNoRemove");
+    act->setEnabled((tab->name == "running" || tab->name == "done" || tab->name == "archive" || tab->name == "files") && sel.height() > 0);
 
     menu->AddSep();
     
