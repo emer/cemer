@@ -187,10 +187,10 @@ ParamSearchAlgo* ClusterRun::NewSearchAlgo(TypeDef *type) {
 
 void ClusterRun::Run() {
   bool prompt_user = true;      // always prompt the user on a new run.
-  Run_impl(prompt_user, true);
+  Run_impl(prompt_user, true, false);
 }
 
-void ClusterRun::Run_impl(bool prompt_user, bool autoupdate) {
+void ClusterRun::Run_impl(bool prompt_user, bool autoupdate, bool block_till_submission) {
   if(!InitClusterManager())
     return;
   Update(); //Update the SVN repository in the background
@@ -214,6 +214,15 @@ void ClusterRun::Run_impl(bool prompt_user, bool autoupdate) {
       taDataProc::AppendRows(&jobs_submitted, &jobs_submit);
       if (autoupdate) {
         AutoUpdateMe();
+      }
+      if (block_till_submission) {
+        int rev = m_cm->UpdateWorkingCopy();
+        int iterations = 1;
+        while ((jobs_submit.rows > 0) && (iterations < 4)) {
+          rev = m_cm->UpdateWorkingCopy();
+          iterations++;
+        }
+        
       }
     }
   }
