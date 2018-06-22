@@ -1488,13 +1488,9 @@ bool taDataAnal::CorrelMatrixTable(DataTable* correl_mat, bool view, DataTable* 
 float taDataAnal::DistMatrixGroupSimilarity(DataTable* src_data,
 				 const String& data_col_nm, const String& name_col_nm,
 				 taMath::DistMetric metric, bool norm, float tol,
-				 bool incl_scalars) {
+                                 bool incl_scalars) {
   if(!src_data || src_data->rows == 0) {
     taMisc::Error("taDataAnal::DistMatrixGroupSimilarity -- src_data is NULL or has no data -- must pass in this data");
-    return 0.0f;
-  }
-  if(src_data->rows == 0) {
-    taMisc::Error("taDataAnal::DistMatrixGroupSimilarity -- src_data has no rows -- cannot compute distance matrix");
     return 0.0f;
   }
 
@@ -1541,6 +1537,102 @@ float taDataAnal::DistMatrixGroupSimilarity(DataTable* src_data,
   }
   return same_sum;
 }
+
+void taDataAnal::DistMatrixGroupSimStats(DataTable* group_stats, DataTable* src_data,
+                                          const String& data_col_nm, const String& name_col_nm,
+                                          taMath::DistMetric metric, bool norm, float tol,
+                                          bool incl_scalars) {
+  if(!src_data || src_data->rows == 0) {
+    taMisc::Error("taDataAnal::DistMatrixGroupSimilarity -- src_data is NULL or has no data -- must pass in this data");
+    return;
+  }
+  GetDest(group_stats, src_data, "_GroupSimStats");
+
+  DataCol* nmda = src_data->FindColName(name_col_nm, true); // errmsg
+  if(nmda == NULL) {
+    return;
+  }
+    
+  src_data->Sort(name_col_nm, true); // must be
+    
+  group_stats->ResetData();
+  int idx;
+  DataCol* gpst_gp = group_stats->FindMakeColName("group", idx, VT_STRING, 0);
+  DataCol* gpst_avg_in = group_stats->FindMakeColName("avg_within", idx, VT_FLOAT, 0);
+  DataCol* gpst_avg_out = group_stats->FindMakeColName("avg_between", idx, VT_FLOAT, 0);
+  DataCol* gpst_max_in = group_stats->FindMakeColName("max_within", idx, VT_FLOAT, 0);
+  DataCol* gpst_max_out = group_stats->FindMakeColName("max_between", idx, VT_FLOAT, 0);
+
+  float_Matrix dmat(false);
+  bool rval = DistMatrix(&dmat, src_data, data_col_nm, metric, norm, tol, incl_scalars);
+  if(!rval) return;
+
+  float avg_in_sum = 0.0f;
+  float avg_out_sum = 0.0f;
+  float max_in_sum = 0.0f;
+  float max_out_sum = 0.0f;
+  int gp_n = 0;
+  String prvnm;
+  int n = dmat.dim(0);
+  for(int i=0; i<=n; i++) {
+    String nm1;
+    if(i < n) {
+      nm1 = nmda->GetValAsString(i);
+    }
+    if(nm1 != prvnm || i == n) {
+      if(!prvnm.empty() && gp_n > 0) {
+        group_stats->AddBlankRow();
+        gpst_gp->SetVal(prvnm, -1);
+        gpst_avg_in->SetVal(avg_in_sum / float(gp_n), -1);
+        gpst_avg_out->SetVal(avg_out_sum / float(gp_n), -1);
+        gpst_max_in->SetVal(max_in_sum / float(gp_n), -1);
+        gpst_max_out->SetVal(max_out_sum / float(gp_n), -1);
+        group_stats->WriteClose();
+      }
+      if(i == n) {
+        break;
+      }
+      avg_in_sum = 0.0f;
+      avg_out_sum = 0.0f;
+      max_in_sum = 0.0f;
+      max_out_sum = 0.0f;
+      gp_n = 0;
+    }
+    
+    float same_sum = 0.0f;
+    float same_max = 0.0f;
+    int same_n = 0;
+    float diff_sum = 0.0f;
+    float diff_max = 0.0f;
+    int diff_n = 0;
+    for(int j=0; j<n; j++) {
+      if(j==i) continue;
+      String nm2 = nmda->GetValAsString(j);
+      float dv = dmat.FastEl2d(i,j);
+      if(nm1 == nm2) {
+        same_sum += dv;
+        same_max = fmaxf(same_max, dv);
+        same_n++;
+      }
+      else {
+        diff_sum += dv;
+        diff_max = fmaxf(diff_max, dv);
+        diff_n++;
+      }
+    }
+    if(same_n > 0) {
+      avg_in_sum += same_sum / float(same_n);
+      max_in_sum += same_max;
+    }
+    if(diff_n > 0) {
+      avg_out_sum += diff_sum / float(diff_n);
+      max_out_sum += diff_max;
+    }
+    gp_n++;
+    prvnm = nm1;
+  }
+}
+
 
 ///////////////////////////////////////////////////////////////////
 // standard multidimensional data analysis methods

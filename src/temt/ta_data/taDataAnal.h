@@ -35,7 +35,6 @@ class TA_API taDataAnal : public taNBase {
   // #STEM_BASE ##CAT_Data ##STATIC_COMPLETION collection of data analysis functions
 INHERITED(taNBase)
 public:
-
   static bool   GetDest(DataTable*& dest, const DataTable* src, const String& suffix, bool reset = true);
   // #IGNORE get a dest analysis datatable -- if NULL, make one in proj.data.AnalysisData with name based on src and suffix
   static DataCol* GetDataCol(DataTable* src_data, const String& data_col_nm);
@@ -116,7 +115,13 @@ public:
                                    const String& data_col_nm, const String& name_col_nm,
                                    taMath::DistMetric metric, bool norm=false, float tol=0.0f,
                                    bool incl_scalars=false);
-  // #CAT_Distance #MENU_BUTTON #MENU_ON_Distance #NULL_OK_0 #NULL_TEXT_0_NewDataTable returns the ratio of the average within-group distances over the between-group ones, where groups are defined as having the same name in name_col_nm (must be sorted by this column) -- i.e., the "on diagonal" terms over the "off diagonal" ones (excluding the actual diagonal self terms) -- first computes distance matrix table as in DistMatrixTable (see that for more info) -- name_col_nm is required
+  // #CAT_Distance #MENU_BUTTON #MENU_ON_Distance #NULL_OK_0 #NULL_TEXT_0_NewDataTable returns the ratio of the average within-group distances over the between-group ones, where groups are defined as having the same name in name_col_nm -- i.e., the "on diagonal" terms over the "off diagonal" ones (excluding the actual diagonal self terms) -- first computes distance matrix table as in DistMatrixTable (see that for more info) -- name_col_nm is required
+
+  static void   DistMatrixGroupSimStats(DataTable* group_stats, DataTable* src_data,
+                                   const String& data_col_nm, const String& name_col_nm,
+                                   taMath::DistMetric metric, bool norm=false, float tol=0.0f,
+                                   bool incl_scalars=false);
+  // #CAT_Distance #MENU_BUTTON #MENU_ON_Distance #NULL_OK_0 #NULL_TEXT_0_NewDataTable computes the average and max within and between category distances (defined as having the same name in name_col_nm -- sorts by this column) -- i.e., the "on diagonal" terms vs the "off diagonal" ones (excluding the actual diagonal self terms) -- first computes distance matrix table as in DistMatrixTable (see that for more info) -- name_col_nm is required
 
   
   ///////////////////////////////////////////////////////////////////
