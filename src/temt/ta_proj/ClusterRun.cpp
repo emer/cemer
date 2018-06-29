@@ -218,7 +218,8 @@ void ClusterRun::Run_impl(bool prompt_user, bool autoupdate, bool block_till_sub
       if (block_till_submission) {
         int rev = m_cm->UpdateWorkingCopy();
         int iterations = 1;
-        while ((jobs_submit.rows > 0) && (iterations < 4)) {
+        while ((rev == submit_rev) && (iterations < 4)) {
+          taMisc::SleepS(5);
           rev = m_cm->UpdateWorkingCopy();
           iterations++;
         }
