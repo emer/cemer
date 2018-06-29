@@ -1450,23 +1450,24 @@ void GraphTableView::RenderLegend_Ln(GraphPlotView& plv, T3GraphLine* t3gl,
   t3gl->setLineStyle((T3GraphLine::LineStyle)plv.line_style, line_width_mult * line_width);
   t3gl->setMarkerSize(point_size);
   t3gl->setValueColorMode(false);
+  iColor clr;
   if (color_mode == BY_GROUP) {
     if(color_gp_use_y) {
       int plot_idx = group % plots.size;
       GraphPlotView* gpv = plots[plot_idx];
       t3gl->setLineStyle((T3GraphLine::LineStyle)gpv->line_style, line_width_mult *
                          line_width);
-      t3gl->setDefaultColor(gpv->color.color());
+      clr = gpv->color.color();
+      
     }
     else {
-      iColor clr = GetValueColor(&color_axis, group);
-      t3gl->setDefaultColor(clr);
+      clr = GetValueColor(&color_axis, group);
     }
   }
   else {
-    t3gl->setDefaultColor(plv.color.color());
+    clr = plv.color.color();
   }
-  
+  t3gl->setDefaultColor(clr);
   String label;
   if (color_mode == BY_GROUP) {
     label = plv.group_by_values[group];
@@ -1495,12 +1496,12 @@ void GraphTableView::RenderLegend_Ln(GraphPlotView& plv, T3GraphLine* t3gl,
     String svg_style_str = t3gl->GetSvnLineStyle(style);
     svg_str << taSvg::GroupTranslate(cur_tr.x, -cur_tr.y)
     
-    << taSvg::Path(plv.color.color(), line_width, false, iColor::black_, svg_style_str)
+    << taSvg::Path(clr, line_width, false, iColor::black_, svg_style_str)
     << "M " << taSvg::Coords(st)
     << "L " << taSvg::Coords(ed)
     << taSvg::PathEnd();
     svg_str << taSvg::Text(label, ed.x + TICK_OFFSET, ed.y - (.5f * label_font_size),
-                           ed.z, plv.color.color(), label_font_size, taSvg::LEFT)
+                           ed.z, clr, label_font_size, taSvg::LEFT)
     << taSvg::GroupEnd();
   }
 }
@@ -2420,6 +2421,10 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv,
           else
             t3gl->moveTo(plt);
           if(render_svg) {
+            svg_str << taSvg::PathEnd();
+            T3GraphLine::LineStyle style = (T3GraphLine::LineStyle)plv.line_style;
+            String svg_style_str = t3gl->GetSvnLineStyle(style);
+            svg_str << taSvg::Path(clr, line_width, false, iColor::black_, svg_style_str);
             svg_str << "M " << taSvg::Coords(plt);
           }
         }
@@ -2482,7 +2487,12 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv,
         }
       }
     }
-    
+    if (render_svg && erv.on && (new_trace || first) && (element == RENDER_ERR_BARS || element == RENDER_ALL)) {
+      svg_str << taSvg::PathEnd();
+      T3GraphLine::LineStyle style = (T3GraphLine::LineStyle)plv.line_style;
+      String svg_style_str = t3gl->GetSvnLineStyle(style);
+      svg_str << taSvg::Path(clr, line_width, false, iColor::black_, svg_style_str);
+    }
     if(erv.on && da_er && (row % err_spacing == 0)) {
       float err_dat;
       if(da_er->is_matrix && mat_cell >= 0) {
