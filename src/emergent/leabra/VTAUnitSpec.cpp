@@ -57,13 +57,15 @@ bool STATE_CLASS(VTAUnitSpec)::GetRecvLayers_P
   return true;
 }
 
+//bool STATE_CLASS(VTAUnitSpec)::GetRecvLayers_N
+//(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, LEABRA_LAYER_STATE*& negpv_lay,
+// LEABRA_LAYER_STATE*& pptg_lay_n, LEABRA_LAYER_STATE*& lhb_lay,
+// LEABRA_LAYER_STATE*& vspatchnegd1_lay, LEABRA_LAYER_STATE*& vspatchnegd2_lay_n) {
 bool STATE_CLASS(VTAUnitSpec)::GetRecvLayers_N
-(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, LEABRA_LAYER_STATE*& negpv_lay,
- LEABRA_LAYER_STATE*& pptg_lay_n, LEABRA_LAYER_STATE*& lhb_lay,
- LEABRA_LAYER_STATE*& vspatchnegd1_lay, LEABRA_LAYER_STATE*& vspatchnegd2_lay_n) {
+  (LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, LEABRA_LAYER_STATE*& negpv_lay, LEABRA_LAYER_STATE*& lhb_lay, LEABRA_LAYER_STATE*& vspatchnegd1_lay, LEABRA_LAYER_STATE*& vspatchnegd2_lay_n) {
   
   negpv_lay = NULL;
-  pptg_lay_n = NULL;
+  //pptg_lay_n = NULL;
   lhb_lay = NULL;
   
   const int nrg = u->NRecvConGps(net);
@@ -74,9 +76,9 @@ bool STATE_CLASS(VTAUnitSpec)::GetRecvLayers_N
     LEABRA_LAYER_STATE* fmlay = recv_gp->GetSendLayer(net);
     LEABRA_UNIT_SPEC_CPP* us =  fmlay->GetUnitSpec(net);
     if(!cs->IsMarkerCon()) continue;
-    if(us->GetStateSpecType() == LEABRA_NETWORK_STATE::T_PPTgUnitSpec) {
-      pptg_lay_n = fmlay;
-    }
+//    if(us->GetStateSpecType() == LEABRA_NETWORK_STATE::T_PPTgUnitSpec) {
+//      pptg_lay_n = fmlay;
+//    }
     else if(us->GetStateSpecType() == LEABRA_NETWORK_STATE::T_LHbRMTgUnitSpec) {
       lhb_lay = fmlay;
     }
@@ -217,18 +219,20 @@ void STATE_CLASS(VTAUnitSpec)::Compute_DaN
   (LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, int thr_no) {
   
   LEABRA_LAYER_STATE* negpv_lay = NULL;
-  LEABRA_LAYER_STATE* pptg_lay_n = NULL;
+  //LEABRA_LAYER_STATE* pptg_lay_n = NULL;
   LEABRA_LAYER_STATE* lhb_lay_n = NULL;
   LEABRA_LAYER_STATE* vspatchnegd1_lay = NULL;
   LEABRA_LAYER_STATE* vspatchnegd2_lay = NULL;
   
   LEABRA_LAYER_STATE* lay = u->GetOwnLayer(net);
   
-  GetRecvLayers_N(u, net, negpv_lay, pptg_lay_n, lhb_lay_n, vspatchnegd1_lay,
-                  vspatchnegd2_lay);
+  //GetRecvLayers_N(u, net, negpv_lay, pptg_lay_n, lhb_lay_n, vspatchnegd1_lay,
+  //                vspatchnegd2_lay);
+  GetRecvLayers_N(u, net, negpv_lay, lhb_lay_n, vspatchnegd1_lay,
+                    vspatchnegd2_lay);
   
   float negpv = negpv_lay->GetTotalActEq(net);
-  float pptg_da_n = pptg_lay_n->GetTotalActEq(net);
+  //float pptg_da_n = pptg_lay_n->GetTotalActEq(net);
   float lhb_da_n = lhb_lay_n->GetTotalActEq(net);
 
   float vspvi_n = 0.0f;
@@ -258,8 +262,10 @@ void STATE_CLASS(VTAUnitSpec)::Compute_DaN
   negpv_da = fmaxf(negpv_da, 0.0f); // in case we add PVi-like shunting later...
     
     
-  float tot_burst_da = fmaxf(gains.pv_gain * negpv_da, gains.pptg_gain * pptg_da_n);
-  tot_burst_da = fmaxf(tot_burst_da, gains.lhb_gain * burst_lhb_da_n);
+  //float tot_burst_da = fmaxf(gains.pv_gain * negpv_da, gains.pptg_gain * pptg_da_n);
+  //tot_burst_da = fmaxf(tot_burst_da, gains.lhb_gain * burst_lhb_da_n);
+  //float tot_burst_da = gains.pv_gain * negpv_da;
+  float tot_burst_da = fmaxf(gains.pv_gain * negpv_da, gains.lhb_gain * burst_lhb_da_n);
   
   // PVi shunting
   float net_burst_da = tot_burst_da - vspvi_n;

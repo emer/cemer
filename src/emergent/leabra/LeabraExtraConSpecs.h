@@ -318,8 +318,7 @@ public:
   TA_SIMPLE_BASEFUNS(CElAmygConSpec);
 protected:
   SPEC_DEFAULTS;
-private:
-  void  Initialize();
+private:  void  Initialize();
   void  Defaults_init();
   void  Destroy()     { };
 };

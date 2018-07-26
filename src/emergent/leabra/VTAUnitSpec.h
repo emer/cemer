@@ -25,10 +25,14 @@
      LEABRA_LAYER_STATE*& vspatchnegd1_lay, LEABRA_LAYER_STATE*& vspatchnegd2_lay);
     // get the recv layers to VTAp (DA_P case)
   
+//  INIMPL virtual bool  GetRecvLayers_N
+//    (LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, LEABRA_LAYER_STATE*& negpv_lay,
+//     LEABRA_LAYER_STATE*& pptg_lay_n,  LEABRA_LAYER_STATE*& lhb_lay,
+//     LEABRA_LAYER_STATE*& vspatchnegd1_lay, LEABRA_LAYER_STATE*& vspatchnegd2_lay);
   INIMPL virtual bool  GetRecvLayers_N
     (LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net, LEABRA_LAYER_STATE*& negpv_lay,
-     LEABRA_LAYER_STATE*& pptg_lay_n,  LEABRA_LAYER_STATE*& lhb_lay,
-     LEABRA_LAYER_STATE*& vspatchnegd1_lay, LEABRA_LAYER_STATE*& vspatchnegd2_lay);
+     LEABRA_LAYER_STATE*& lhb_lay, LEABRA_LAYER_STATE*& vspatchnegd1_lay,
+     LEABRA_LAYER_STATE*& vspatchnegd2_lay);
   // get the recv layers to VTAn (DA_N case)
 
   INLINE void   Compute_NetinInteg(LEABRA_UNIT_STATE* u, LEABRA_NETWORK_STATE* net,

@@ -693,16 +693,17 @@ bool VTAUnitSpec::CheckConfig_Unit(Layer* lay, bool quiet) {
     LEABRA_LAYER_STATE* vspatchnegd1_lay = NULL;
     LEABRA_LAYER_STATE* vspatchnegd2_lay = NULL;
     
-    GetRecvLayers_N(un, net, negpv_lay, pptg_lay_n, lhb_lay_n, vspatchnegd1_lay, vspatchnegd2_lay);
+//    GetRecvLayers_N(un, net, negpv_lay, pptg_lay_n, lhb_lay_n, vspatchnegd1_lay, vspatchnegd2_lay);
+    GetRecvLayers_N(un, net, negpv_lay, lhb_lay_n, vspatchnegd1_lay, vspatchnegd2_lay);
 
     if(lay->CheckError(!negpv_lay, quiet, rval,
                      "did not find NegPV layer to get negative PV from -- looks for PV and Neg in layer name")) {
       rval = false;
     }
-    if(lay->CheckError(!pptg_lay_n, quiet, rval,
-                     "did not find PPTg_n layer to get DA bursts from (looks for PPTgUnitSpec)")) {
-      rval = false;
-    }
+//    if(lay->CheckError(!pptg_lay_n, quiet, rval,
+//                     "did not find PPTg_n layer to get DA bursts from (looks for PPTgUnitSpec)")) {
+//      rval = false;
+//    }
     if(lay->CheckError(!lhb_lay_n, quiet, rval,
                      "did not find LHbRMTg layer projection (looks for LHbRMTgUnitSpec)")) {
       rval = false;
