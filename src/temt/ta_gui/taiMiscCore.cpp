@@ -26,10 +26,6 @@
 
 #include <signal.h>
 
-extern "C" {
-  extern int rl_done;
-}
-
 #ifndef NO_TA_BASE
 TA_API taiMiscCore* taiMC_ = NULL;
 
@@ -42,7 +38,6 @@ int taiMiscCore::rl_callback() {
   return 0; // ???
 
 quit_exit:
-  rl_done = 1;
   return 0;
 }
 
