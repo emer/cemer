@@ -24,7 +24,6 @@
 extern "C" {
   extern char* rl_readline(char*);
   extern void add_history(char*);
-  extern int rl_done;		// readline done reading
 }
 
 //////////////////////////

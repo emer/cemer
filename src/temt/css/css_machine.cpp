@@ -5724,8 +5724,7 @@ void cssCmdShell::SetPrompt(const String& prmpt, bool disp_prompt) {
 extern "C" {
   extern char* rl_readline(char*);
   extern void add_history(char*);
-  extern int rl_done;           // readline done reading
-  extern int (*rl_event_hook)(void);    // rl callback routine -- only used in NoConsole
+//  extern int (*rl_event_hook)(void);    // rl callback routine -- only used in NoConsole
 }
 
 void cssCmdShell::UpdatePrompt(bool disp_prompt) {
@@ -5783,7 +5782,6 @@ void cssCmdShell::Shell_Gui_Console(const String& prmpt) {
 }
 
 void cssCmdShell::Shell_No_Console(const String& prmpt) {
-  rl_done = false;
   SetPrompt(prmpt);
   external_exit = false;
 
@@ -5793,10 +5791,9 @@ void cssCmdShell::Shell_No_Console(const String& prmpt) {
 void cssCmdShell::Shell_NoConsole_Run() {
 //TODO: rejig this for batch or piped contexts:
 // end = EOF, no readline, non-blocking input
-  rl_event_hook = taiMiscCore::rl_callback;
+//  rl_event_hook = taiMiscCore::rl_callback;
   while(!external_exit && !taMisc::quitting) {
     char* curln = rl_readline((char*)act_prompt);
-    //  if (rl_done) break; -- rl_done not a useful signal it turns out!
     // NULL result is defined as EOF
     if (curln == (char*)0) {
       Exit();
