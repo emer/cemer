@@ -414,7 +414,6 @@ public:
   float         lay_act_thr;    // #DEF_0.01 threshold of layer average activation on this trial, in order to update avg_l values -- setting to 0 disables this check
   
   float         dt;             // #READ_ONLY #EXPERT rate = 1 / tau
-  float         min_lay_avg;    // #READ_ONLY #EXPERT lay_avg_trg / max_gain_mult
   float         lrn_fact;       // #READ_ONLY #EXPERT (lrn_max - lrn_min) / (avg_l_max - min)
 
   INLINE void   UpdtAvgL(float& avg_l, const float act, float lay_avg) {

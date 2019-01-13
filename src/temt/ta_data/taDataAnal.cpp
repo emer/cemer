@@ -1,4 +1,4 @@
-  // 2018right 2013-2017, Regents of the University of Colorado,
+// Copyright 2013-2018, Regents of the University of Colorado,
 // Carnegie Mellon University, Princeton University.
 //
 // This file is part of The Emergent Toolkit
@@ -1512,7 +1512,8 @@ float taDataAnal::DistMatrixGroupSimilarity(DataTable* src_data,
   for(int i=0; i<n; i++) {
     String nm1 = nmda->GetValAsString(i);
 
-    for(int j=0; j<i; j++) {
+    for(int j=0; j<n; j++) {
+		   if(j==i) continue;
       String nm2 = nmda->GetValAsString(j);
 
       if(nm1 == nm2) {
@@ -1524,6 +1525,85 @@ float taDataAnal::DistMatrixGroupSimilarity(DataTable* src_data,
         diff_n++;
       }
     }
+  }
+
+  if(same_n > 0) {
+    same_sum /= (float)same_n;
+  }
+  if(diff_n > 0) {
+    diff_sum /= (float)diff_n;
+  }
+  if(diff_sum > 0.0f) {
+    same_sum /= diff_sum;
+  }
+  return same_sum;
+}
+
+float taDataAnal::DistMatrixGroupSimilarityByItem(DataTable* src_data,
+				 const String& data_col_nm, const String& name_col_nm, const String& sim_col_nm,
+				 taMath::DistMetric metric, bool norm, float tol,
+                                 bool incl_scalars) {
+  if(!src_data || src_data->rows == 0) {
+    taMisc::Error("taDataAnal::DistMatrixGroupSimilarityByItem -- src_data is NULL or has no data -- must pass in this data");
+    return 0.0f;
+  }
+
+  DataCol* nmda = src_data->FindColName(name_col_nm, true); // errmsg
+  if(nmda == NULL) {
+    return 0.0f;
+  }
+    
+  DataCol* simda = src_data->FindColName(sim_col_nm, true); // errmsg
+  if(simda == NULL) {
+    return 0.0f;
+  }
+    
+  float_Matrix dmat(false);
+  bool rval = DistMatrix(&dmat, src_data, data_col_nm, metric, norm, tol, incl_scalars);
+  if(!rval) return 0.0f;
+
+  float same_sum = 0.0f;
+  int same_n = 0;
+  float diff_sum = 0.0f;
+  int diff_n = 0;
+
+  int n = dmat.dim(0);
+  for(int i=0; i<n; i++) {
+    String nm1 = nmda->GetValAsString(i);
+
+	float it_same_sum = 0.0f;
+	int it_same_n = 0;	
+	float it_diff_sum = 0.0f;
+	int it_diff_n = 0;
+	
+    for(int j=0; j<n; j++) {
+		if(j==i) continue;
+      	String nm2 = nmda->GetValAsString(j);
+
+      	if(nm1 == nm2) {
+  	      it_same_sum += dmat.FastEl2d(i,j);
+	      it_same_n++;
+	    }
+  		else {
+ 	      it_diff_sum += dmat.FastEl2d(i,j);
+	      it_diff_n++;
+	   }
+    }
+    same_sum += it_same_sum;
+    same_n += it_same_n;
+    diff_sum += it_diff_sum;
+    diff_n += it_diff_n;
+	
+	if(it_same_n > 0) {
+	  it_same_sum /= (float)it_same_n;
+	}
+	if(it_diff_n > 0) {
+	  it_diff_sum /= (float)it_diff_n;
+	}
+	if(it_diff_sum > 0.0f) {
+	  it_same_sum /= it_diff_sum;
+	}
+	simda->SetVal(it_same_sum, i);
   }
 
   if(same_n > 0) {
