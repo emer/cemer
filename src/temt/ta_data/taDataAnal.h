@@ -111,17 +111,18 @@ public:
                                      bool incl_scalars=false);
   // #CAT_Distance #MENU_BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable compute cross distance matrix table between two different matrix data columns in src_data_a and srd_data_b datatables. if data_col_nm's are both blank, all real-valued matrix (and scalars if if incl_scalars) columns are used, summing across (only cols at same col index that match exactly will be used).  dist_mat returns a symmetric matrix with cells as the distance between each row in table a versus each row of table b. if name_col_nm is non-empty and valid, nxm scalar float rows and columns are made, with names from name_col_nm values from src_data table; otherwise a single matrix column is made, named by the src_data_a + "_" + src_data_b + "_DistMatrix".  if view, then a grid view in a new frame is automatically created
 
-  static float   DistMatrixGroupSimilarity(DataTable* src_data,
+  static void   DistMatrixGroupSimilarity(float& avg_sim, float& max_sim, DataTable* src_data,
                                    const String& data_col_nm, const String& name_col_nm,
                                    taMath::DistMetric metric, bool norm=false, float tol=0.0f,
                                    bool incl_scalars=false);
-  // #CAT_Distance #MENU_BUTTON #MENU_ON_Distance #NULL_OK_0 #NULL_TEXT_0_NewDataTable returns the ratio of the average within-group distances over the between-group ones, where groups are defined as having the same name in name_col_nm -- i.e., the "on diagonal" terms over the "off diagonal" ones (excluding the actual diagonal self terms) -- first computes distance matrix table as in DistMatrixTable (see that for more info) -- name_col_nm is required
+  // #CAT_Distance #MENU_BUTTON #MENU_ON_Distance #NULL_OK_0 #NULL_TEXT_0_NewDataTable returns the ratio of the average within-group distances over the between-group ones (avg_sim) and max (min) within over max (min) between (max_sim) (max vs. min depends on distance metric), where groups are defined as having the same name in name_col_nm -- i.e., the "on diagonal" terms over the "off diagonal" ones (excluding the actual diagonal self terms) -- first computes distance matrix table as in DistMatrixTable (see that for more info) -- name_col_nm is required
 
-  static float   DistMatrixGroupSimilarityByItem(DataTable* src_data,
-                                   const String& data_col_nm, const String& name_col_nm, const String& sim_col_nm,
+  static void   DistMatrixGroupSimilarityByItem(float& avg_sim, float& max_sim, DataTable* src_data,
+                                   const String& data_col_nm, const String& name_col_nm,
+                                   const String& avg_sim_col_nm, const String& max_sim_col_nm,
                                    taMath::DistMetric metric, bool norm=false, float tol=0.0f,
                                    bool incl_scalars=false);
-  // #CAT_Distance #MENU_BUTTON #MENU_ON_Distance #NULL_OK_0 #NULL_TEXT_0_NewDataTable computes the ratio of the average within-group distances over the between-group ones, where groups are defined as having the same name in name_col_nm -- i.e., the "on diagonal" terms over the "off diagonal" ones (excluding the actual diagonal self terms) -- first computes distance matrix table as in DistMatrixTable (see that for more info) -- name_col_nm is required -- sim_col_nm is column to write the per-item similarity stat results to.
+  // #CAT_Distance #MENU_BUTTON #MENU_ON_Distance #NULL_OK_0 #NULL_TEXT_0_NewDataTable computes the ratio of the average within-group distances over the between-group ones (avg_sim) and max (min) within over max (min) between (max_sim) (max vs. min depends on distance metric), where groups are defined as having the same name in name_col_nm -- i.e., the "on diagonal" terms over the "off diagonal" ones (excluding the actual diagonal self terms) -- first computes distance matrix table as in DistMatrixTable (see that for more info) -- name_col_nm is required -- avg & max_sim_col_nm are column to write the per-item similarity stats results to.
 
   static void   DistMatrixGroupSimStats(DataTable* group_stats, DataTable* src_data,
                                    const String& data_col_nm, const String& name_col_nm,

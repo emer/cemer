@@ -1485,48 +1485,71 @@ bool taDataAnal::CorrelMatrixTable(DataTable* correl_mat, bool view, DataTable* 
   return true;
 }
 
-float taDataAnal::DistMatrixGroupSimilarity(DataTable* src_data,
+void taDataAnal::DistMatrixGroupSimilarity(float& avg_sim, float& max_sim, DataTable* src_data,
 				 const String& data_col_nm, const String& name_col_nm,
-				 taMath::DistMetric metric, bool norm, float tol,
-                                 bool incl_scalars) {
+				 taMath::DistMetric metric, bool norm, float tol, bool incl_scalars) {
   if(!src_data || src_data->rows == 0) {
     taMisc::Error("taDataAnal::DistMatrixGroupSimilarity -- src_data is NULL or has no data -- must pass in this data");
-    return 0.0f;
+    return;
   }
 
   DataCol* nmda = src_data->FindColName(name_col_nm, true); // errmsg
   if(nmda == NULL) {
-    return 0.0f;
+    return;
   }
     
   float_Matrix dmat(false);
   bool rval = DistMatrix(&dmat, src_data, data_col_nm, metric, norm, tol, incl_scalars);
-  if(!rval) return 0.0f;
+  if(!rval) return;
 
   float same_sum = 0.0f;
   int same_n = 0;
   float diff_sum = 0.0f;
   int diff_n = 0;
 
+  max_sim = 0.0f;
+
+  bool larger_further = taMath::dist_larger_further(metric);
+
   int n = dmat.dim(0);
   for(int i=0; i<n; i++) {
     String nm1 = nmda->GetValAsString(i);
 
+    float same_max = 0.0f;
+    float diff_max = 0.0f;
     for(int j=0; j<n; j++) {
 		   if(j==i) continue;
       String nm2 = nmda->GetValAsString(j);
-
+      float val = dmat.FastEl2d(i,j);
       if(nm1 == nm2) {
-        same_sum += dmat.FastEl2d(i,j);
+        same_sum += val;
+        if(larger_further) {
+          same_max = fminf(same_max, val);
+        } else {
+          same_max = fmaxf(same_max, val);
+        }
         same_n++;
       }
       else {
         diff_sum += dmat.FastEl2d(i,j);
+        if(larger_further) {
+          diff_max = fminf(diff_max, val);
+        } else {
+          diff_max = fmaxf(diff_max, val);
+        }
         diff_n++;
       }
     }
+    
+    if(diff_max > 0.0f) {
+      same_max /= diff_max;
+    }
+    max_sim += same_max;
   }
 
+  if(n > 0) {
+    max_sim /= float(n);
+  }
   if(same_n > 0) {
     same_sum /= (float)same_n;
   }
@@ -1536,76 +1559,105 @@ float taDataAnal::DistMatrixGroupSimilarity(DataTable* src_data,
   if(diff_sum > 0.0f) {
     same_sum /= diff_sum;
   }
-  return same_sum;
+  avg_sim = same_sum;
 }
 
-float taDataAnal::DistMatrixGroupSimilarityByItem(DataTable* src_data,
-				 const String& data_col_nm, const String& name_col_nm, const String& sim_col_nm,
-				 taMath::DistMetric metric, bool norm, float tol,
-                                 bool incl_scalars) {
+void taDataAnal::DistMatrixGroupSimilarityByItem(float& avg_sim, float& max_sim, DataTable* src_data,
+				 const String& data_col_nm, const String& name_col_nm,
+        const String& avg_sim_col_nm, const String& max_sim_col_nm,
+				 taMath::DistMetric metric, bool norm, float tol, bool incl_scalars) {
   if(!src_data || src_data->rows == 0) {
     taMisc::Error("taDataAnal::DistMatrixGroupSimilarityByItem -- src_data is NULL or has no data -- must pass in this data");
-    return 0.0f;
+    return;
   }
 
   DataCol* nmda = src_data->FindColName(name_col_nm, true); // errmsg
   if(nmda == NULL) {
-    return 0.0f;
+    return;
   }
     
-  DataCol* simda = src_data->FindColName(sim_col_nm, true); // errmsg
-  if(simda == NULL) {
-    return 0.0f;
+  DataCol* asimda = src_data->FindColName(avg_sim_col_nm, true); // errmsg
+  DataCol* msimda = src_data->FindColName(max_sim_col_nm, true); // errmsg
+  if(asimda == NULL || msimda == NULL) {
+    return;
   }
     
   float_Matrix dmat(false);
   bool rval = DistMatrix(&dmat, src_data, data_col_nm, metric, norm, tol, incl_scalars);
-  if(!rval) return 0.0f;
+  if(!rval) return;
 
   float same_sum = 0.0f;
   int same_n = 0;
   float diff_sum = 0.0f;
   int diff_n = 0;
 
+  max_sim = 0.0f;
+  
+  bool larger_further = taMath::dist_larger_further(metric);
+
   int n = dmat.dim(0);
   for(int i=0; i<n; i++) {
     String nm1 = nmda->GetValAsString(i);
 
-	float it_same_sum = 0.0f;
-	int it_same_n = 0;	
-	float it_diff_sum = 0.0f;
-	int it_diff_n = 0;
+    float it_same_sum = 0.0f;
+    int it_same_n = 0;	
+    float it_diff_sum = 0.0f;
+    int it_diff_n = 0;
 	
+    float same_max = 0.0f;
+    float diff_max = 0.0f;
+    
     for(int j=0; j<n; j++) {
-		if(j==i) continue;
-      	String nm2 = nmda->GetValAsString(j);
+      if(j==i) continue;
+      String nm2 = nmda->GetValAsString(j);
 
-      	if(nm1 == nm2) {
-  	      it_same_sum += dmat.FastEl2d(i,j);
-	      it_same_n++;
-	    }
-  		else {
- 	      it_diff_sum += dmat.FastEl2d(i,j);
-	      it_diff_n++;
-	   }
+      float val = dmat.FastEl2d(i,j);
+      if(nm1 == nm2) {
+        it_same_sum += val;
+        it_same_n++;
+        if(larger_further) {
+          same_max = fminf(same_max, val);
+        } else {
+          same_max = fmaxf(same_max, val);
+        }
+      }
+      else {
+        it_diff_sum += val;
+        it_diff_n++;
+        if(larger_further) {
+          diff_max = fminf(diff_max, val);
+        } else {
+          diff_max = fmaxf(diff_max, val);
+        }
+      }
     }
     same_sum += it_same_sum;
     same_n += it_same_n;
     diff_sum += it_diff_sum;
     diff_n += it_diff_n;
 	
-	if(it_same_n > 0) {
-	  it_same_sum /= (float)it_same_n;
-	}
-	if(it_diff_n > 0) {
-	  it_diff_sum /= (float)it_diff_n;
-	}
-	if(it_diff_sum > 0.0f) {
-	  it_same_sum /= it_diff_sum;
-	}
-	simda->SetVal(it_same_sum, i);
+    if(it_same_n > 0) {
+      it_same_sum /= (float)it_same_n;
+    }
+    if(it_diff_n > 0) {
+      it_diff_sum /= (float)it_diff_n;
+    }
+    if(it_diff_sum > 0.0f) {
+      it_same_sum /= it_diff_sum;
+    }
+    
+    if(diff_max > 0.0f) {
+      same_max /= diff_max;
+    }
+    max_sim += same_max;
+    
+    asimda->SetVal(it_same_sum, i);
+    msimda->SetVal(same_max, i);
   }
 
+  if(n > 0) {
+    max_sim /= float(n);
+  }
   if(same_n > 0) {
     same_sum /= (float)same_n;
   }
@@ -1615,7 +1667,7 @@ float taDataAnal::DistMatrixGroupSimilarityByItem(DataTable* src_data,
   if(diff_sum > 0.0f) {
     same_sum /= diff_sum;
   }
-  return same_sum;
+  avg_sim = same_sum;
 }
 
 void taDataAnal::DistMatrixGroupSimStats(DataTable* group_stats, DataTable* src_data,
