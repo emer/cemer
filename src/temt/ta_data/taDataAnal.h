@@ -113,16 +113,8 @@ public:
 
   static void   DistMatrixGroupSimilarity(float& avg_sim, float& max_sim, DataTable* src_data,
                                    const String& data_col_nm, const String& name_col_nm,
-                                   taMath::DistMetric metric, bool norm=false, float tol=0.0f,
-                                   bool incl_scalars=false);
-  // #CAT_Distance #MENU_BUTTON #MENU_ON_Distance #NULL_OK_0 #NULL_TEXT_0_NewDataTable returns the ratio of the average within-group distances over the between-group ones (avg_sim) and max (min) within over max (min) between (max_sim) (max vs. min depends on distance metric), where groups are defined as having the same name in name_col_nm -- i.e., the "on diagonal" terms over the "off diagonal" ones (excluding the actual diagonal self terms) -- first computes distance matrix table as in DistMatrixTable (see that for more info) -- name_col_nm is required
-
-  static void   DistMatrixGroupSimilarityByItem(float& avg_sim, float& max_sim, DataTable* src_data,
-                                   const String& data_col_nm, const String& name_col_nm,
-                                   const String& avg_sim_col_nm, const String& max_sim_col_nm,
-                                   taMath::DistMetric metric, bool norm=false, float tol=0.0f,
-                                   bool incl_scalars=false);
-  // #CAT_Distance #MENU_BUTTON #MENU_ON_Distance #NULL_OK_0 #NULL_TEXT_0_NewDataTable computes the ratio of the average within-group distances over the between-group ones (avg_sim) and max (min) within over max (min) between (max_sim) (max vs. min depends on distance metric), where groups are defined as having the same name in name_col_nm -- i.e., the "on diagonal" terms over the "off diagonal" ones (excluding the actual diagonal self terms) -- first computes distance matrix table as in DistMatrixTable (see that for more info) -- name_col_nm is required -- avg & max_sim_col_nm are column to write the per-item similarity stats results to.
+                                   const String& avg_sim_col_nm="", const String& max_sim_col_nm="");
+  // #CAT_Distance #MENU_BUTTON #MENU_ON_Distance #NULL_OK_0 #NULL_TEXT_0_NewDataTable using the normalized dot-product (cosine) distance metric, computes a within vs. between group (category) similarity metric, as: 1 - [(1 - within) / (1 - between)], where within and between are either the average or maximum cosines, used for avg_sim and max_sim respectively. This value is 1 when within items are identical and between are completely different (~0 cosine), and 0 when there is no diff between within vs. between (and negative if within is less similar than between).  Groups are defined as having the same name in name_col_nm.  If avg, max_sim_col_nm are provided, then the per-item similarity stats results are written to those column names in the src_data table (yes, that table is modified!)
 
   static void   DistMatrixGroupSimStats(DataTable* group_stats, DataTable* src_data,
                                    const String& data_col_nm, const String& name_col_nm,
