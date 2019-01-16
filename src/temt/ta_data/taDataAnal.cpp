@@ -1485,7 +1485,8 @@ bool taDataAnal::CorrelMatrixTable(DataTable* correl_mat, bool view, DataTable* 
   return true;
 }
 
-void taDataAnal::DistMatrixGroupSimilarity(float& avg_sim, float& max_sim, DataTable* src_data,
+void taDataAnal::DistMatrixGroupSimilarity(float& avg_sim, float& max_sim, float& max_avg_sim, 
+        float& max_max_sim, DataTable* src_data,
 				 const String& data_col_nm, const String& name_col_nm,
         const String& avg_sim_col_nm, const String& max_sim_col_nm) {
   if(!src_data || src_data->rows == 0) {
@@ -1507,10 +1508,26 @@ void taDataAnal::DistMatrixGroupSimilarity(float& avg_sim, float& max_sim, DataT
 
   avg_sim = 0.0f;
   max_sim = 0.0f;
-
+  max_avg_sim = 0.0f;
+  max_max_sim = 0.0f;
+  String cur_cat;
+  float cat_max_avg_sim = 0.0f;
+  float cat_max_max_sim = 0.0f;
+  int cat_n = 0;
+  
   int n = dmat.dim(0);
   for(int i=0; i<n; i++) {
     String nm1 = nmda->GetValAsString(i);
+    if(cur_cat != nm1) {
+      if(cur_cat != "") {
+        max_avg_sim += cat_max_avg_sim;
+        max_max_sim += cat_max_max_sim;
+        cat_max_avg_sim = 0.0f;
+        cat_max_max_sim = 0.0f;
+        cat_n++;
+      }
+      cur_cat = nm1;
+    }
 
     float same_sum = 0.0f;
     int same_n = 0;
@@ -1528,7 +1545,7 @@ void taDataAnal::DistMatrixGroupSimilarity(float& avg_sim, float& max_sim, DataT
         same_n++;
       }
       else {
-        diff_sum += dmat.FastEl2d(i,j);
+        diff_sum += val;
         diff_max = fmaxf(diff_max, val);
         diff_n++;
       }
@@ -1549,6 +1566,7 @@ void taDataAnal::DistMatrixGroupSimilarity(float& avg_sim, float& max_sim, DataT
         asimda->SetVal(sv, i);
       }
       avg_sim += sv;
+      cat_max_avg_sim = fmaxf(cat_max_avg_sim, sv);
     }
     if(diff_max < 1.0f) {
       float sv = 1.0f - ((1.0f - same_max) / (1.0f - diff_max));
@@ -1559,8 +1577,15 @@ void taDataAnal::DistMatrixGroupSimilarity(float& avg_sim, float& max_sim, DataT
         msimda->SetVal(sv, i);
       }
       max_sim += sv;
+      cat_max_max_sim = fmaxf(cat_max_max_sim, sv);
     }
   }
+  max_avg_sim += cat_max_avg_sim;
+  max_max_sim += cat_max_max_sim;
+  cat_n++;
+  
+  max_avg_sim /= float(cat_n);
+  max_max_sim /= float(cat_n);
 
   if(n > 0) {
     max_sim /= float(n);
