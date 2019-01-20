@@ -1499,7 +1499,8 @@ void taDataAnal::DistMatrixGroupSimilarity(float& avg_sim, float& max_sim, float
     return;
   }
 
-  src_data->Sort(name_col_nm, true); // actually must be sorted now given max structure
+  // src_data->Sort(name_col_nm, true); // actually must be sorted now given max structure
+  // note: this takes a ton of time -- much better to sort in advance, and also flatten
   
   DataCol* asimda = src_data->FindColName(avg_sim_col_nm, false); // no errmsg
   DataCol* msimda = src_data->FindColName(max_sim_col_nm, false); // no errmsg
@@ -1521,7 +1522,7 @@ void taDataAnal::DistMatrixGroupSimilarity(float& avg_sim, float& max_sim, float
   for(int i=0; i<n; i++) {
     String nm1 = nmda->GetValAsString(i);
     if(cur_cat != nm1) {
-      if(cur_cat != "") {
+      if(cur_cat != "" || i == n-1) {
         max_avg_sim += cat_max_avg_sim;
         max_max_sim += cat_max_max_sim;
         cat_max_avg_sim = 0.0f;
@@ -1582,9 +1583,6 @@ void taDataAnal::DistMatrixGroupSimilarity(float& avg_sim, float& max_sim, float
       cat_max_max_sim = fmaxf(cat_max_max_sim, sv);
     }
   }
-  max_avg_sim += cat_max_avg_sim;
-  max_max_sim += cat_max_max_sim;
-  cat_n++;
   
   max_avg_sim /= float(cat_n);
   max_max_sim /= float(cat_n);
