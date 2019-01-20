@@ -1498,7 +1498,9 @@ void taDataAnal::DistMatrixGroupSimilarity(float& avg_sim, float& max_sim, float
   if(nmda == NULL) {
     return;
   }
-    
+
+  src_data->Sort(name_col_nm, true); // actually must be sorted now given max structure
+  
   DataCol* asimda = src_data->FindColName(avg_sim_col_nm, false); // no errmsg
   DataCol* msimda = src_data->FindColName(max_sim_col_nm, false); // no errmsg
     
@@ -1591,6 +1593,156 @@ void taDataAnal::DistMatrixGroupSimilarity(float& avg_sim, float& max_sim, float
     max_sim /= float(n);
     avg_sim /= float(n);
   }
+}
+
+void taDataAnal::DistMatrixGroupSimilarityMatrix(DataTable* dst_data, DataTable* sumdt, DataTable* src_data,
+				 const String& data_col_nm, const String& name_col_nm) {
+  if(!src_data || src_data->rows == 0) {
+    taMisc::Error("taDataAnal::DistMatrixGroupSimilarityMatrix -- src_data is NULL or has no data -- must pass in this data");
+    return;
+  }
+
+  DataCol* nmda = src_data->FindColName(name_col_nm, true); // errmsg
+  if(nmda == NULL) {
+    return;
+  }
+    
+  // src_data->Sort(name_col_nm, true); // actually must be sorted now given max structure
+
+  sumdt->StructUpdate(true);
+  sumdt->Reset();
+  DataCol* snmda = sumdt->FindMakeCol(name_col_nm, VT_STRING);
+  
+  float_Matrix dmat(false);
+  bool rval = DistMatrix(&dmat, src_data, data_col_nm, taMath::INNER_PROD, true, 0.0f, false);
+  if(!rval) return;
+
+  float avg_sim = 0.0f;
+  String cur_cat;
+  
+  int n = dmat.dim(0);
+  for(int i=0; i<n; i++) {
+    String nm1 = nmda->GetValAsString(i);
+    if(cur_cat != nm1 || i == n-1) {
+      if(cur_cat != "") {
+        DataCol* cc = sumdt->FindMakeCol(cur_cat, VT_FLOAT);
+        sumdt->AddBlankRow();
+        snmda->SetVal(cur_cat, -1);
+      }
+      cur_cat = nm1;
+    }
+  }
+
+  int nc = sumdt->rows;
+  
+  DataTable ndt(false);
+  ndt.OwnTempObj();
+  ndt.CopyFrom(sumdt);
+  
+  DataTable cdt(false);
+  cdt.OwnTempObj();
+  cdt.CopyFrom(sumdt);
+  
+  cur_cat = "";
+  int cati = 0;
+  for(int i=0; i<n; i++) {
+    String nm1 = nmda->GetValAsString(i);
+    if(cur_cat != nm1) {
+      if(cur_cat != "") {
+        cati++;
+      }
+      cur_cat = nm1;
+    }
+
+    float cat_sum = 0.0f;
+    float cat_n = 0.0f;
+    String cat2;
+    int catj = 0;
+    for(int j=0; j<n; j++) {
+		   if(j==i) continue;
+      String nm2 = nmda->GetValAsString(j);
+      
+      if(cat2 != nm2 || j == n-1) {
+        if(cat2 != "") {
+          float csum = cdt.GetValAsFloat(cati+1, catj);
+          cdt.SetValAsFloat(csum + cat_sum, cati+1, catj);
+          float cn = ndt.GetValAsFloat(cati+1, catj);
+          ndt.SetValAsFloat(cn + cat_n, cati+1, catj);
+          catj++;
+          cat_sum = 0.0f;
+          cat_n = 0.0f;
+        }
+        cat2 = nm2;
+      }
+      cat_sum += dmat.FastEl2d(i,j);
+      cat_n += 1.0f;
+    }
+  }
+  
+  DataTable colsum(false);
+  colsum.OwnTempObj();
+  colsum.CopyFrom(sumdt);
+  
+  for(int i=0; i< nc; i++) {
+    float cls = 0.0f;
+    for(int j=0; j<nc; j++) {
+      float csum = cdt.GetValAsFloat(i+1, j);
+      float cn = ndt.GetValAsFloat(i+1, j);
+      csum /= cn;
+      
+      float sv = 1.0f - csum;
+      sumdt->SetValAsFloat(sv, i+1, j);
+      cls += sv;
+    }
+    colsum.SetValAsFloat(cls, 1, i);
+    colsum.SetValAsFloat(i, 2, i);
+  }
+
+  DataTable srdt(false);
+  srdt.OwnTempObj();
+  srdt.CopyFrom(sumdt);
+  
+  colsum.Sort(1, true); // sort by sum dist to all others
+  int ci = 1 + colsum.GetValAsInt(0, 2); // index of item closest to all others
+  String scnm = srdt.data[ci]->name;
+  String_Array order;
+  order.Add(scnm);
+  
+  while(true) {
+    srdt.Sort(ci, true);
+    String cnm = srdt.data[ci]->name;
+    String nnm;
+    for(int i = 0; i < nc; i++) {
+      String nm = srdt.GetValAsString(0, i);
+      if(nm == cnm) continue;
+      if(order.FindEl(nm) >= 0) continue;
+      order.Add(nm);
+      nnm = nm;
+      break;
+    }
+    if(order.size == nc) break;
+    ci = srdt.FindColNameIdx(nnm, false);
+  }
+
+  // taMisc::ConsoleOutput(order.PrintStr());
+  
+  DataTable sdt(false);
+  sdt.OwnTempObj();
+  sdt.Copy_NoData(*src_data);
+  for(int si=0; si < nc; si++) {
+    String cnm = order[si];
+    int sti = nmda->FindVal(cnm);
+    while(true) {
+      sdt.AddBlankRow();
+      sdt.CopyFromRow(-1, *src_data, sti);
+      sti++;
+      if(sti >= src_data->rows || nmda->GetValAsString(sti) != cnm) break;
+    }
+  }
+  
+  taDataAnal::DistMatrixTable(dst_data, true, &sdt, data_col_nm, name_col_nm, taMath::INNER_PROD, true, 0.0f, false, true, true);
+
+  sumdt->StructUpdate(false);
 }
 
 void taDataAnal::DistMatrixGroupSimStats(DataTable* group_stats, DataTable* src_data,
