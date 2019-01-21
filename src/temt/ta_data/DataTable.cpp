@@ -4262,7 +4262,7 @@ void DataTable::Sort(const Variant& col1, bool ascending1,
       sp->SetColName(da->name);
     }
   }
-  if(col2.isStringType() || col1.toInt() >= 0) {
+  if(col2.isStringType() || col2.toInt() >= 0) {
     DataCol* da = GetColData(col2);
     if(da) {
       DataSortEl* sp = (DataSortEl*)spec.ops.New(1);
@@ -4271,7 +4271,7 @@ void DataTable::Sort(const Variant& col1, bool ascending1,
       sp->SetColName(da->name);
     }
   }
-  if(col3.isStringType() || col1.toInt() >= 0) {
+  if(col3.isStringType() || col3.toInt() >= 0) {
     DataCol* da = GetColData(col3);
     if(da) {
       DataSortEl* sp = (DataSortEl*)spec.ops.New(1);
@@ -4280,7 +4280,7 @@ void DataTable::Sort(const Variant& col1, bool ascending1,
       sp->SetColName(da->name);
     }
   }
-  if(col4.isStringType() || col1.toInt() >= 0) {
+  if(col4.isStringType() || col4.toInt() >= 0) {
     DataCol* da = GetColData(col4);
     if(da) {
       DataSortEl* sp = (DataSortEl*)spec.ops.New(1);
@@ -4289,7 +4289,7 @@ void DataTable::Sort(const Variant& col1, bool ascending1,
       sp->SetColName(da->name);
     }
   }
-  if(col5.isStringType() || col1.toInt() >= 0) {
+  if(col5.isStringType() || col5.toInt() >= 0) {
     DataCol* da = GetColData(col5);
     if(da) {
       DataSortEl* sp = (DataSortEl*)spec.ops.New(1);
@@ -4298,7 +4298,7 @@ void DataTable::Sort(const Variant& col1, bool ascending1,
       sp->SetColName(da->name);
     }
   }
-  if(col6.isStringType() || col1.toInt() >= 0) {
+  if(col6.isStringType() || col6.toInt() >= 0) {
     DataCol* da = GetColData(col6);
     if(da) {
       DataSortEl* sp = (DataSortEl*)spec.ops.New(1);
