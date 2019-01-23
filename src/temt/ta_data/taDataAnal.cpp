@@ -1486,9 +1486,9 @@ bool taDataAnal::CorrelMatrixTable(DataTable* correl_mat, bool view, DataTable* 
 }
 
 void taDataAnal::DistMatrixGroupSimilarity(float& avg_sim, float& max_sim, float& max_avg_sim, 
-        float& max_max_sim, DataTable* src_data,
+        float& max_max_sim, float& same_sim, DataTable* src_data,
 				 const String& data_col_nm, const String& name_col_nm,
-        const String& avg_sim_col_nm, const String& max_sim_col_nm) {
+        const String& avg_sim_col_nm, const String& max_sim_col_nm, const String& same_sim_col_nm) {
   if(!src_data || src_data->rows == 0) {
     taMisc::Error("taDataAnal::DistMatrixGroupSimilarity -- src_data is NULL or has no data -- must pass in this data");
     return;
@@ -1504,6 +1504,7 @@ void taDataAnal::DistMatrixGroupSimilarity(float& avg_sim, float& max_sim, float
   
   DataCol* asimda = src_data->FindColName(avg_sim_col_nm, false); // no errmsg
   DataCol* msimda = src_data->FindColName(max_sim_col_nm, false); // no errmsg
+  DataCol* ssimda = src_data->FindColName(same_sim_col_nm, false); // no errmsg
     
   float_Matrix dmat(false);
   bool rval = DistMatrix(&dmat, src_data, data_col_nm, taMath::INNER_PROD, true, 0.0f, false);
@@ -1513,6 +1514,7 @@ void taDataAnal::DistMatrixGroupSimilarity(float& avg_sim, float& max_sim, float
   max_sim = 0.0f;
   max_avg_sim = 0.0f;
   max_max_sim = 0.0f;
+  same_sim = 0.0f;
   String cur_cat;
   float cat_max_avg_sim = 0.0f;
   float cat_max_max_sim = 0.0f;
@@ -1556,6 +1558,10 @@ void taDataAnal::DistMatrixGroupSimilarity(float& avg_sim, float& max_sim, float
     
     if(same_n > 0) {
       same_sum /= (float)same_n;
+      same_sim += same_sum;
+      if(ssimda != NULL) {
+        ssimda->SetVal(1.0f - same_sum, i);
+      }
     }
     if(diff_n > 0) {
       diff_sum /= (float)diff_n;
@@ -1586,6 +1592,7 @@ void taDataAnal::DistMatrixGroupSimilarity(float& avg_sim, float& max_sim, float
   
   max_avg_sim /= float(cat_n);
   max_max_sim /= float(cat_n);
+  same_sim = 1.0f - (same_sim / float(cat_n));
 
   if(n > 0) {
     max_sim /= float(n);
@@ -1593,15 +1600,16 @@ void taDataAnal::DistMatrixGroupSimilarity(float& avg_sim, float& max_sim, float
   }
 }
 
-void taDataAnal::DistMatrixGroupSimilarityMatrix(DataTable* dst_data, DataTable* sumdt, DataTable* src_data,
-				 const String& data_col_nm, const String& name_col_nm) {
+void taDataAnal::DistMatrixGroupSimilarityCluster(DataTable* sumdt, DataTable* src_data,
+				 const String& data_col_nm, const String& name_col_nm, const String& order_col_nm) {
   if(!src_data || src_data->rows == 0) {
     taMisc::Error("taDataAnal::DistMatrixGroupSimilarityMatrix -- src_data is NULL or has no data -- must pass in this data");
     return;
   }
 
   DataCol* nmda = src_data->FindColName(name_col_nm, true); // errmsg
-  if(nmda == NULL) {
+  DataCol* orda = src_data->FindColName(order_col_nm, true); // errmsg
+  if(nmda == NULL || orda == NULL) {
     return;
   }
     
@@ -1723,22 +1731,13 @@ void taDataAnal::DistMatrixGroupSimilarityMatrix(DataTable* dst_data, DataTable*
   }
 
   // taMisc::ConsoleOutput(order.PrintStr());
-  
-  DataTable sdt(false);
-  sdt.OwnTempObj();
-  sdt.Copy_NoData(*src_data);
-  for(int si=0; si < nc; si++) {
-    String cnm = order[si];
-    int sti = nmda->FindVal(cnm);
-    while(true) {
-      sdt.AddBlankRow();
-      sdt.CopyFromRow(-1, *src_data, sti);
-      sti++;
-      if(sti >= src_data->rows || nmda->GetValAsString(sti) != cnm) break;
-    }
+
+  for(int si=0; si < src_data->rows; si++) {
+    String cnm = nmda->GetValAsString(si);
+    int oi = order.FindEl(cnm);
+    orda->SetVal(oi, si);
   }
-  
-  taDataAnal::DistMatrixTable(dst_data, true, &sdt, data_col_nm, name_col_nm, taMath::INNER_PROD, true, 0.0f, false, true, true);
+  src_data->WriteClose();
 
   sumdt->StructUpdate(false);
 }
@@ -1916,8 +1915,11 @@ bool taDataAnal::PCAEigenTable(DataTable* pca_data, bool view, DataTable* src_da
   if(!da)
     return false;
 
-  String cl_nm = data_col_nm + "_PCAEigens";
   int idx;
+  String cl_nm = data_col_nm + "_PCAEigenVals";
+  DataCol* evda = pca_data->FindMakeColName(cl_nm, idx, VT_FLOAT);
+
+  cl_nm = data_col_nm + "_PCAEigenVecs";
   DataCol* dmda = pca_data->FindMakeColName(cl_nm, idx, VT_FLOAT,
 						   da->cell_dims(), da->GetCellGeom(0),
 						   da->GetCellGeom(1), da->GetCellGeom(2),
@@ -1926,6 +1928,7 @@ bool taDataAnal::PCAEigenTable(DataTable* pca_data, bool view, DataTable* src_da
   pca_data->StructUpdate(true);
   for(int i=0;i<eigen_vecs.dim(0);i++) {
     pca_data->AddBlankRow();
+    evda->SetValAsFloat(eigen_vals[i], -1);
     for(int j=0;j<eigen_vecs.dim(1);j++) {
       dmda->SetValAsFloatM(eigen_vecs.FastEl2d(i,j), -1, j);
     }
