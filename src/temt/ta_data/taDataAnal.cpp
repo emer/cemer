@@ -1485,8 +1485,8 @@ bool taDataAnal::CorrelMatrixTable(DataTable* correl_mat, bool view, DataTable* 
   return true;
 }
 
-void taDataAnal::DistMatrixGroupSimilarity(float& avg_sim, float& max_sim, float& max_avg_sim, 
-        float& max_max_sim, float& same_sim, DataTable* src_data,
+void taDataAnal::DistMatrixGroupSimilarity(float& avg_sim, float& max_sim, float& same_sim, float& max_avg_sim, 
+        float& max_max_sim, float& max_same_sim, DataTable* src_data,
 				 const String& data_col_nm, const String& name_col_nm,
         const String& avg_sim_col_nm, const String& max_sim_col_nm, const String& same_sim_col_nm) {
   if(!src_data || src_data->rows == 0) {
@@ -1514,10 +1514,12 @@ void taDataAnal::DistMatrixGroupSimilarity(float& avg_sim, float& max_sim, float
   max_sim = 0.0f;
   max_avg_sim = 0.0f;
   max_max_sim = 0.0f;
+  max_same_sim = 0.0f;
   same_sim = 0.0f;
   String cur_cat;
-  float cat_max_avg_sim = 0.0f;
-  float cat_max_max_sim = 0.0f;
+  float cat_max_avg_sim = -1.0f;
+  float cat_max_max_sim = -1.0f;
+  float cat_max_same_sim = -1.0f;
   int cat_n = 0;
   
   int n = dmat.dim(0);
@@ -1527,8 +1529,10 @@ void taDataAnal::DistMatrixGroupSimilarity(float& avg_sim, float& max_sim, float
       if(cur_cat != "" || i == n-1) {
         max_avg_sim += cat_max_avg_sim;
         max_max_sim += cat_max_max_sim;
-        cat_max_avg_sim = 0.0f;
-        cat_max_max_sim = 0.0f;
+        max_same_sim += cat_max_same_sim;
+        cat_max_avg_sim = -1.0f;
+        cat_max_max_sim = -1.0f;
+        cat_max_same_sim = -1.0f;
         cat_n++;
       }
       cur_cat = nm1;
@@ -1559,8 +1563,9 @@ void taDataAnal::DistMatrixGroupSimilarity(float& avg_sim, float& max_sim, float
     if(same_n > 0) {
       same_sum /= (float)same_n;
       same_sim += same_sum;
+      cat_max_same_sim = fmaxf(cat_max_same_sim, same_sum);
       if(ssimda != NULL) {
-        ssimda->SetVal(1.0f - same_sum, i);
+        ssimda->SetVal(same_sum, i);
       }
     }
     if(diff_n > 0) {
@@ -1592,11 +1597,12 @@ void taDataAnal::DistMatrixGroupSimilarity(float& avg_sim, float& max_sim, float
   
   max_avg_sim /= float(cat_n);
   max_max_sim /= float(cat_n);
-  same_sim = 1.0f - (same_sim / float(cat_n));
+  max_same_sim /= float(cat_n);
 
   if(n > 0) {
     max_sim /= float(n);
     avg_sim /= float(n);
+    same_sim /= float(n);
   }
 }
 
