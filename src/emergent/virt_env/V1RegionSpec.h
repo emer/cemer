@@ -225,7 +225,7 @@ public:
 
   /////////// Motion
   V1MotionSpec  v1s_motion;     // #CONDSHOW_OFF_motion_frames:1 specs for V1 motion filters within the simple processing layer
-  RenormMode    v1m_renorm;     // #CONDSHOW_OFF_motion_frames:1 #DEF_THR_LIN_RENORM how to renormalize the output of v1s motion filters
+  RenormMode    v1m_renorm;     // #CONDSHOW_OFF_motion_frames:1 #DEF_NO_RENORM how to renormalize the output of v1s motion filters
   V1KwtaSpec    v1m_kwta;       // #CONDSHOW_OFF_motion_frames:1 k-winner-take-all inhibitory dynamics for the v1 motion stage
   XYNGeom       v1m_feat_geom;  // #CONDSHOW_OFF_motion_frames:1 #READ_ONLY #SHOW size of one 'hypercolumn' of features for V1 motion filtering -- always x = angles; y = 2 * speeds
 
