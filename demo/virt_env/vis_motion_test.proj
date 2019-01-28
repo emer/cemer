@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.5.0.0 rev11309
+// ta_Dump File v3.0 -- code v8.5.6.0 rev11473
 LeabraProject .projects[0] { 
  Doc_Group @.docs = [2] {
   taDoc @[0] { 
@@ -784,25 +784,23 @@ LeabraProject .projects[0] {
 <title>demos/vis motion test - emergent</title>
 <script>document.documentElement.className = document.documentElement.className.replace( /(^|\\s)client-nojs(\\s|$)/, \"$1client-js$2\" );</script>
 <script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
-mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":!1,\"wgNamespaceNumber\":0,\"wgPageName\":\"demos/vis_motion_test\",\"wgTitle\":\"demos/vis motion test\",\"wgCurRevisionId\":12270,\"wgRevisionId\":12270,\"wgArticleId\":2917,\"wgIsArticle\":!0,\"wgIsRedirect\":!1,\"wgAction\":\"view\",\"wgUserName\":\"Oreilly\",\"wgUserGroups\":[\"bureaucrat\",\"svnadmins\",\"sysop\",\"*\",\"user\",\"autoconfirmed\"],\"wgCategories\":[\"PublishedProject\"],\"wgBreakFrames\":!1,\"wgPageContentLanguage\":\"en\",\"wgPageContentModel\":\"wikitext\",\"wgSeparatorTransformTable\":[\"\",\"\"],\"wgDigitTransformTable\":[\"\",\"\"],\"wgDefaultDateFormat\":\"dmy\",\"wgMonthNames\":[\"\",\"January\",\"February\",\"March\",\"April\",\"May\",\"June\",\"July\",\"August\",\"September\",\"October\",\"November\",\"December\"],\"wgMonthNamesShort\":[\"\",\"Jan\",\"Feb\",\"Mar\",\"Apr\",\"May\",\"Jun\",\"Jul\",\"Aug\",\"Sep\",\"Oct\",\"Nov\",\"Dec\"],\"wgRelevantPageName\":\"demos/vis_motion_test\",\"wgRelevantArticleId\":2917,\"wgUserId\":3,\"wgUserEditCount\":3319,\"wgUserRegistration\":1178051527000,\"wgUserNewMsgRevisionId\"
-:null,\"wgIsProbablyEditable\":!0,\"wgRestrictionEdit\":[],\"wgRestrictionMove\":[],\"sfgAutocompleteValues\":[],\"sfgAutocompleteOnAllChars\":!1,\"sfgFieldProperties\":[],\"sfgDependentFields\":[],\"sfgShowOnSelect\":[],\"sfgScriptPath\":\"/emergent/extensions/SemanticForms\",\"wgSVGEditEditor\":\"http://svg-edit.googlecode.com/svn/trunk/editor/svg-editor.html\",\"wgHeaderTabsTabIndexes\":[],\"wgWikiEditorEnabledModules\":{\"toolbar\":!0,\"dialogs\":!0,\"preview\":!0,\"publish\":!1},\"wgCategoryTreePageCategoryOptions\":\"{\\\"mode\\\":0,\\\"hideprefix\\\":20,\\\"showcount\\\":true,\\\"namespaces\\\":false}\"});mw.loader.implement(\"user.options\",function($,jQuery){mw.user.options.set({\"ccmeonemails\":\"1\",\"enotifminoredits\":\"1\",\"imagesize\":\"0\",\"previewontop\":\"\",\"rows\":\"30\",\"thumbsize\":\"0\",\"underline\":\"0\",\"watchmoves\":\"1\",\"editsection\":\"1\",\"rememberpassword\":\"1\",\"timecorrection\":\"ZoneInfo|-360|America/Denver\",\"watchlisttoken\":\"14fd6c804d78e99930123181974c128b983adb9e\"});});mw.loader.implement(\"user.tokens\",function($,jQuery){mw.user.tokens.set({\"editToken\":\"2417c72bb2c4d0edf231f999c822d5fa5a51e7a0+\\\\\",\"patrolToken\":\"bb747d1efa2848211bc7b5c141e1a9755a51e7a0+\\\\\",\"watchToken\":\"c71e3469465fd0d0a6c8362d480ddbba5a51e7a0+\\\\\"});});mw.loader.load([\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\",\"mediawiki.legacy.wikibits\",\"skins.vector.js\"]);
+mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":!1,\"wgNamespaceNumber\":0,\"wgPageName\":\"demos/vis_motion_test\",\"wgTitle\":\"demos/vis motion test\",\"wgCurRevisionId\":12270,\"wgRevisionId\":12270,\"wgArticleId\":2917,\"wgIsArticle\":!0,\"wgIsRedirect\":!1,\"wgAction\":\"view\",\"wgUserName\":null,\"wgUserGroups\":[\"*\"],\"wgCategories\":[\"PublishedProject\"],\"wgBreakFrames\":!1,\"wgPageContentLanguage\":\"en\",\"wgPageContentModel\":\"wikitext\",\"wgSeparatorTransformTable\":[\"\",\"\"],\"wgDigitTransformTable\":[\"\",\"\"],\"wgDefaultDateFormat\":\"dmy\",\"wgMonthNames\":[\"\",\"January\",\"February\",\"March\",\"April\",\"May\",\"June\",\"July\",\"August\",\"September\",\"October\",\"November\",\"December\"],\"wgMonthNamesShort\":[\"\",\"Jan\",\"Feb\",\"Mar\",\"Apr\",\"May\",\"Jun\",\"Jul\",\"Aug\",\"Sep\",\"Oct\",\"Nov\",\"Dec\"],\"wgRelevantPageName\":\"demos/vis_motion_test\",\"wgRelevantArticleId\":2917,\"wgIsProbablyEditable\":!1,\"wgRestrictionEdit\":[],\"wgRestrictionMove\":[],\"sfgAutocompleteValues\":[],\"sfgAutocompleteOnAllChars\":!1,\"sfgFieldProperties\"
+:[],\"sfgDependentFields\":[],\"sfgShowOnSelect\":[],\"sfgScriptPath\":\"/emergent/extensions/SemanticForms\",\"wgSVGEditEditor\":\"http://svg-edit.googlecode.com/svn/trunk/editor/svg-editor.html\",\"wgHeaderTabsTabIndexes\":[],\"wgWikiEditorEnabledModules\":{\"toolbar\":!0,\"dialogs\":!0,\"preview\":!0,\"publish\":!1},\"wgCategoryTreePageCategoryOptions\":\"{\\\"mode\\\":0,\\\"hideprefix\\\":20,\\\"showcount\\\":true,\\\"namespaces\\\":false}\"});mw.loader.implement(\"user.options\",function($,jQuery){mw.user.options.set({\"variant\":\"en\"});});mw.loader.implement(\"user.tokens\",function($,jQuery){mw.user.tokens.set({\"editToken\":\"+\\\\\",\"patrolToken\":\"+\\\\\",\"watchToken\":\"+\\\\\"});});mw.loader.load([\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\",\"mediawiki.legacy.wikibits\",\"skins.vector.js\"]);
 } );</script>
 <link rel=\"stylesheet\" href=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=mediawiki.legacy.commonPrint%2Cshared%7Cmediawiki.sectionAnchor%7Cmediawiki.skinning.interface%7Cskins.vector.styles&amp;only=styles&amp;skin=vector\">
 <link rel=\"stylesheet\" href=\"/emergent/extensions/HeaderTabs/skins/ext.headertabs.large.css\">
 <meta name=\"ResourceLoaderDynamicStyles\" content=\"\">
 <link rel=\"stylesheet\" href=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=site&amp;only=styles&amp;skin=vector\">
-<style>a{text-decoration:none}</style>
+<style>a:lang(ar),a:lang(kk-arab),a:lang(mzn),a:lang(ps),a:lang(ur){text-decoration:none}</style>
 <script async=\"\" src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=startup&amp;only=scripts&amp;skin=vector\"></script>
 <meta name=\"generator\" content=\"MediaWiki 1.26.4\">
 <link rel=\"ExportRDF\" type=\"application/rdf+xml\" title=\"demos/vis motion test\" href=\"/emergent/index.php?title=Special:ExportRDF/demos/vis_motion_test&amp;xmlmime=rdf\">
-<link rel=\"alternate\" type=\"application/x-wiki\" title=\"Edit\" href=\"/emergent/index.php?title=demos/vis_motion_test&amp;action=edit\">
-<link rel=\"edit\" title=\"Edit\" href=\"/emergent/index.php?title=demos/vis_motion_test&amp;action=edit\">
 <link rel=\"shortcut icon\" href=\"/emergent/favicon.ico\">
 <link rel=\"search\" type=\"application/opensearchdescription+xml\" href=\"/emergent/opensearch_desc.php\" title=\"emergent (en)\">
 <link rel=\"EditURI\" type=\"application/rsd+xml\" href=\"https://grey.colorado.edu/emergent/api.php?action=rsd\">
 <link rel=\"alternate\" type=\"application/atom+xml\" title=\"emergent Atom feed\" href=\"/emergent/index.php?title=Special:RecentChanges&amp;feed=atom\">
 <!--[if lt IE 7]><style type=\"text/css\">body{behavior:url(\"/emergent/skins/Vector/csshover.min.htc\")}</style><![endif]-->
-<script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery%2Cmediawiki&amp;only=scripts&amp;skin=vector&amp;version=toRM9FaD\"></script></head>
+</head>
 <body class=\"mediawiki ltr sitedir-ltr ns-0 ns-subject page-demos_vis_motion_test skin-vector action-view\">
 		<div id=\"mw-page-base\" class=\"noprint\"></div>
 		<div id=\"mw-head-base\" class=\"noprint\"></div>
@@ -880,16 +878,16 @@ mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":!1,\
 <tr>
 <th> Other Files
 </th>
-<td> <a href=\"/emergent/index.php/File:ball.svg\" class=\"image\" title=\"ball.svg\"><img alt=\"ball.svg\" src=\"/mediawiki/sites/emergent/images/thumb/9/96/ball.svg/120px-ball.svg.png\" width=\"120\" height=\"120\" style=\"vertical-align: text-top\" class=\"thumbborder\" srcset=\"/mediawiki/sites/emergent/images/thumb/9/96/ball.svg/180px-ball.svg.png 1.5x, /mediawiki/sites/emergent/images/thumb/9/96/ball.svg/240px-ball.svg.png 2x\"></a>, <a href=\"/emergent/index.php/File:mother.svg\" class=\"image\" title=\"mother.svg\"><img alt=\"mother.svg\" src=\"/mediawiki/sites/emergent/images/thumb/6/6a/mother.svg/120px-mother.svg.png\" width=\"120\" height=\"120\" style=\"vertical-align: text-top\" class=\"thumbborder\" srcset=\"/mediawiki/sites/emergent/images/thumb/6/6a/mother.svg/180px-mother.svg.png 1.5x, /mediawiki/sites/emergent/images/thumb/6/6a/mother.svg/240px-mother.svg.png 2x\"></a>
+<td> <a href=\"/emergent/index.php/File:ball.svg\" class=\"image\" title=\"ball.svg\"><img alt=\"ball.svg\" src=\"/mediawiki/sites/emergent/images/thumb/9/96/ball.svg/300px-ball.svg.png\" width=\"300\" height=\"300\" style=\"vertical-align: text-top\" class=\"thumbborder\" srcset=\"/mediawiki/sites/emergent/images/thumb/9/96/ball.svg/450px-ball.svg.png 1.5x, /mediawiki/sites/emergent/images/thumb/9/96/ball.svg/600px-ball.svg.png 2x\"></a>, <a href=\"/emergent/index.php/File:mother.svg\" class=\"image\" title=\"mother.svg\"><img alt=\"mother.svg\" src=\"/mediawiki/sites/emergent/images/thumb/6/6a/mother.svg/300px-mother.svg.png\" width=\"300\" height=\"300\" style=\"vertical-align: text-top\" class=\"thumbborder\" srcset=\"/mediawiki/sites/emergent/images/thumb/6/6a/mother.svg/450px-mother.svg.png 1.5x, /mediawiki/sites/emergent/images/thumb/6/6a/mother.svg/600px-mother.svg.png 2x\"></a>
 </td></tr></tbody></table>
 
 <!-- 
 NewPP limit report
-Cached time: 20180107092551
+Cached time: 20190125052403
 Cache expiry: 86400
 Dynamic content: false
 CPU time usage: 0.100 seconds
-Real time usage: 0.117 seconds
+Real time usage: 0.126 seconds
 Preprocessor visited node count: 78/1000000
 Preprocessor generated node count: 485/1000000
 Post?expand include size: 1913/2097152 bytes
@@ -900,13 +898,13 @@ Expensive parser function count: 0/100
 
 <!-- 
 Transclusion expansion time report (%,ms,calls,template)
-100.00%   63.100      1 - -total
-100.00%   63.100      1 - Template:PublishedProject
-  6.51%    4.110      1 - Template:cite
-  4.35%    2.748      1 - Template:emerlink
+100.00%   76.628      1 - -total
+100.00%   76.628      1 - Template:PublishedProject
+  6.18%    4.735      1 - Template:emerlink
+  6.05%    4.637      1 - Template:cite
 -->
 
-<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2917-0!*!0!*!*!0!* and timestamp 20180107092551 and revision id 12270
+<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2917-0!*!0!*!*!5!* and timestamp 20190125052403 and revision id 12270
  -->
 </div>					<div class=\"printfooter\">
 						Retrieved from \"<a dir=\"ltr\" href=\"https://grey.colorado.edu/emergent/index.php?title=demos/vis_motion_test&amp;oldid=12270\">https://grey.colorado.edu/emergent/index.php?title=demos/vis_motion_test&amp;oldid=12270</a>\"					</div>
@@ -920,7 +918,7 @@ Transclusion expansion time report (%,ms,calls,template)
 									<div id=\"p-personal\" role=\"navigation\" class=\"\" aria-labelledby=\"p-personal-label\">
 						<h3 id=\"p-personal-label\">Personal tools</h3>
 						<ul>
-							<li id=\"pt-userpage\"><a href=\"/emergent/index.php/User:Oreilly\" dir=\"auto\" title=\"Your user page [.]\" accesskey=\".\">Oreilly</a></li><li id=\"pt-mytalk\"><a href=\"/emergent/index.php/User_talk:Oreilly\" class=\"new\" title=\"Your talk page [n]\" accesskey=\"n\">Talk</a></li><li id=\"pt-preferences\"><a href=\"/emergent/index.php/Special:Preferences\" title=\"Your preferences\">Preferences</a></li><li id=\"pt-watchlist\"><a href=\"/emergent/index.php/Special:Watchlist\" title=\"A list of pages you are monitoring for changes [l]\" accesskey=\"l\">Watchlist</a></li><li id=\"pt-mycontris\"><a href=\"/emergent/index.php/Special:Contributions/Oreilly\" title=\"A list of your contributions [y]\" accesskey=\"y\">Contributions</a></li><li id=\"pt-logout\"><a href=\"/emergent/index.php?title=Special:UserLogout&amp;returnto=demos%2Fvis+motion+test\" title=\"Log out\">Log out</a></li>						</ul>
+							<li id=\"pt-login\"><a href=\"/emergent/index.php?title=Special:UserLogin&amp;returnto=demos%2Fvis+motion+test\" title=\"You are encouraged to log in; however, it is not mandatory [o]\" accesskey=\"o\">Log in</a></li>						</ul>
 					</div>
 									<div id=\"left-navigation\">
 										<div id=\"p-namespaces\" role=\"navigation\" class=\"vectorTabs\" aria-labelledby=\"p-namespaces-label\">
@@ -946,28 +944,16 @@ Transclusion expansion time report (%,ms,calls,template)
 						<h3 id=\"p-views-label\">Views</h3>
 						<ul>
 															<li id=\"ca-view\" class=\"selected\"><span><a href=\"/emergent/index.php/demos/vis_motion_test\">Read</a></span></li>
-															<li id=\"ca-edit\"><span><a href=\"/emergent/index.php?title=demos/vis_motion_test&amp;action=edit\" title=\"Edit this page [e]\" accesskey=\"e\">Edit</a></span></li>
+															<li id=\"ca-viewsource\"><span><a href=\"/emergent/index.php?title=demos/vis_motion_test&amp;action=edit\" title=\"This page is protected.
+You can view its source [e]\" accesskey=\"e\">View source</a></span></li>
 															<li id=\"ca-history\" class=\"collapsible\"><span><a href=\"/emergent/index.php?title=demos/vis_motion_test&amp;action=history\" title=\"Past revisions of this page [h]\" accesskey=\"h\">View history</a></span></li>
-															<li id=\"ca-unwatch\" class=\"icon\"><span><a href=\"/emergent/index.php?title=demos/vis_motion_test&amp;action=unwatch&amp;token=c1c9e36751fac3f6b8daee8df412318a5a51e7a0%2B%5C\" title=\"Remove this page from your watchlist [w]\" accesskey=\"w\">Unwatch</a></span></li>
 													</ul>
 					</div>
-										<div id=\"p-cactions\" role=\"navigation\" class=\"vectorMenu\" aria-labelledby=\"p-cactions-label\">
+										<div id=\"p-cactions\" role=\"navigation\" class=\"vectorMenu emptyPortlet\" aria-labelledby=\"p-cactions-label\">
 						<h3 id=\"p-cactions-label\"><span>More</span><a href=\"#\"></a></h3>
 
 						<div class=\"menu\">
 							<ul>
-																	<li id=\"ca-delete\">
-										<a href=\"/emergent/index.php?title=demos/vis_motion_test&amp;action=delete\" title=\"Delete this page [d]\" accesskey=\"d\">Delete</a>
-									</li>
-																	<li id=\"ca-move\">
-										<a href=\"/emergent/index.php/Special:MovePage/demos/vis_motion_test\" title=\"Move this page [m]\" accesskey=\"m\">Move</a>
-									</li>
-																	<li id=\"ca-protect\">
-										<a href=\"/emergent/index.php?title=demos/vis_motion_test&amp;action=protect\" title=\"Protect this page [=]\" accesskey=\"=\">Protect</a>
-									</li>
-																	<li id=\"ca-purge\">
-										<a href=\"/emergent/index.php?title=demos/vis_motion_test&amp;action=purge\">Refresh</a>
-									</li>
 															</ul>
 						</div>
 					</div>
@@ -998,7 +984,7 @@ Transclusion expansion time report (%,ms,calls,template)
 
 			<div class=\"body\">
 									<ul>
-						<li id=\"t-whatlinkshere\"><a href=\"/emergent/index.php/Special:WhatLinksHere/demos/vis_motion_test\" title=\"A list of all wiki pages that link here [j]\" accesskey=\"j\">What links here</a></li><li id=\"t-recentchangeslinked\"><a href=\"/emergent/index.php/Special:RecentChangesLinked/demos/vis_motion_test\" title=\"Recent changes in pages linked from this page [k]\" accesskey=\"k\">Related changes</a></li><li id=\"t-upload\"><a href=\"/emergent/index.php/Special:Upload\" title=\"Upload files [u]\" accesskey=\"u\">Upload file</a></li><li id=\"t-specialpages\"><a href=\"/emergent/index.php/Special:SpecialPages\" title=\"A list of all special pages [q]\" accesskey=\"q\">Special pages</a></li><li id=\"t-permalink\"><a href=\"/emergent/index.php?title=demos/vis_motion_test&amp;oldid=12270\" title=\"Permanent link to this revision of the page\">Permanent link</a></li><li id=\"t-info\"><a href=\"/emergent/index.php?title=demos/vis_motion_test&amp;action=info\" title=\"More information about this page\">Page information</a></li><li id=\"t-smwbrowselink\"><a href=\"/emergent/index.php/Special:Browse/demos/vis_motion_test\" rel=\"smw-browse\">Browse properties</a></li>					</ul>
+						<li id=\"t-whatlinkshere\"><a href=\"/emergent/index.php/Special:WhatLinksHere/demos/vis_motion_test\" title=\"A list of all wiki pages that link here [j]\" accesskey=\"j\">What links here</a></li><li id=\"t-recentchangeslinked\"><a href=\"/emergent/index.php/Special:RecentChangesLinked/demos/vis_motion_test\" title=\"Recent changes in pages linked from this page [k]\" accesskey=\"k\">Related changes</a></li><li id=\"t-specialpages\"><a href=\"/emergent/index.php/Special:SpecialPages\" title=\"A list of all special pages [q]\" accesskey=\"q\">Special pages</a></li><li id=\"t-permalink\"><a href=\"/emergent/index.php?title=demos/vis_motion_test&amp;oldid=12270\" title=\"Permanent link to this revision of the page\">Permanent link</a></li><li id=\"t-info\"><a href=\"/emergent/index.php?title=demos/vis_motion_test&amp;action=info\" title=\"More information about this page\">Page information</a></li><li id=\"t-smwbrowselink\"><a href=\"/emergent/index.php/Special:Browse/demos/vis_motion_test\" rel=\"smw-browse\">Browse properties</a></li>					</ul>
 							</div>
 		</div>
 			<div class=\"portal\" role=\"navigation\" id=\"p-coll-print_export\" aria-labelledby=\"p-coll-print_export-label\">
@@ -1013,7 +999,7 @@ Transclusion expansion time report (%,ms,calls,template)
 		</div>
 		<div id=\"footer\" role=\"contentinfo\">
 							<ul id=\"footer-info\">
-											<li id=\"footer-info-lastmod\"> This page was last modified on 31 August 2016, at 03:42.</li>
+											<li id=\"footer-info-lastmod\"> This page was last modified on 31 August 2016, at 02:42.</li>
 									</ul>
 							<ul id=\"footer-places\">
 											<li id=\"footer-places-about\"><a href=\"/emergent/index.php/emergent:About\" title=\"emergent:About\">About emergent</a></li>
@@ -1025,9 +1011,9 @@ Transclusion expansion time report (%,ms,calls,template)
 						<div style=\"clear:both\"></div>
 		</div>
 		<script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
-mw.loader.state({\"user\":\"ready\",\"user.groups\":\"ready\"});mw.loader.load([\"mediawiki.action.view.postEdit\",\"site\",\"mediawiki.user\",\"mediawiki.hidpi\",\"mediawiki.page.ready\",\"mediawiki.searchSuggest\",\"mediawiki.page.watch.ajax\",\"ext.headertabs\"]);
+mw.loader.state({\"user\":\"ready\",\"user.groups\":\"ready\"});mw.loader.load([\"mediawiki.action.view.postEdit\",\"site\",\"mediawiki.user\",\"mediawiki.hidpi\",\"mediawiki.page.ready\",\"mediawiki.searchSuggest\",\"ext.headertabs\"]);
 } );</script><script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
-mw.config.set({\"wgBackendResponseTime\":577});
+mw.config.set({\"wgBackendResponseTime\":290});
 } );</script>
 	
 
@@ -1143,6 +1129,7 @@ Published on wiki: emergent page: demos/vis_motion_test with description: Test o
    proj_name=;
    auto_updt_interval=10;
    auto_updt_timeout=30;
+   load_data_size_max=10000000;
    cluster=;
    clusters=;
    users=;
@@ -2779,7 +2766,7 @@ Published on wiki: emergent page: demos/vis_motion_test with description: Test o
        v1s_feat_geom {x=4: y=2: n_not_xy=0: n=8: };
        v1s_motion {on=1: wt=1: gain=3: size=10: spacing=1: wvlen=6: sig_len=2: sig_wd=0.3: phase_off=1.5708: circle_edge=0: n_angles=2: r_only=1: };
        v1m_renorm=NO_RENORM;
-       v1m_kwta {on=1: gi=3: lay_gi=10: gain=10: nvar=0.01: g_bar_l=0.1: };
+       v1m_kwta {on=1: gi=2: lay_gi=1.5: gain=20: nvar=0.01: g_bar_l=0.1: };
        v1m_feat_geom {x=4: y=4: n_not_xy=0: n=16: };
        square_group {on=1: sg_rf=2: sg_spc=2: v1s_color=0: sg_half=1: sg_border=0: };
        sg_save=SAVE_DATA;
@@ -2818,6 +2805,7 @@ Published on wiki: emergent page: demos/vis_motion_test with description: Test o
      name="motion_output";
      var_type=T_Object;
      object_type=DataTable;
+     completion_type=;
      object_val=$.programs[0].objs[0]$;
      object_scope=NULL;
      objs_ptr=1;
@@ -2830,6 +2818,7 @@ Published on wiki: emergent page: demos/vis_motion_test with description: Test o
      name="canvas_view";
      var_type=T_Object;
      object_type=DataTable;
+     completion_type=;
      object_val=.programs[0].objs[1]$$;
      object_scope=NULL;
      objs_ptr=1;
@@ -2842,6 +2831,7 @@ Published on wiki: emergent page: demos/vis_motion_test with description: Test o
      name="v1_retina_motion";
      var_type=T_Object;
      object_type=V1RetinaProc;
+     completion_type=;
      object_val=.programs[0].objs[2]$$;
      object_scope=NULL;
      objs_ptr=1;
@@ -2854,6 +2844,7 @@ Published on wiki: emergent page: demos/vis_motion_test with description: Test o
      name="canvas";
      var_type=T_Object;
      object_type=taCanvas;
+     completion_type=;
      object_val=.programs[0].objs[3]$$;
      object_scope=NULL;
      objs_ptr=1;
@@ -2905,11 +2896,12 @@ Published on wiki: emergent page: demos/vis_motion_test with description: Test o
     ProgVar @[0] {
      name="stim_type";
      var_type=T_DynEnum;
+     completion_type=;
      object_scope=NULL;
      dyn_enum_val {
       user_data_=NULL;
       enum_type=.programs[0].types[0]$$;
-      value=1;
+      value=0;
      };
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -2920,6 +2912,7 @@ Published on wiki: emergent page: demos/vis_motion_test with description: Test o
      name="canvas_size";
      var_type=T_Int;
      int_val=128;
+     completion_type=;
      object_scope=NULL;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -2930,6 +2923,7 @@ Published on wiki: emergent page: demos/vis_motion_test with description: Test o
      name="bg_color";
      var_type=T_String;
      string_val="black";
+     completion_type=;
      object_scope=NULL;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -2940,6 +2934,7 @@ Published on wiki: emergent page: demos/vis_motion_test with description: Test o
      name="line_width";
      var_type=T_Real;
      real_val=0.02;
+     completion_type=;
      object_scope=NULL;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -2949,7 +2944,8 @@ Published on wiki: emergent page: demos/vis_motion_test with description: Test o
     ProgVar @[4] {
      name="line_color";
      var_type=T_String;
-     string_val="black";
+     string_val="white";
+     completion_type=;
      object_scope=NULL;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -2960,6 +2956,7 @@ Published on wiki: emergent page: demos/vis_motion_test with description: Test o
      name="start_x";
      var_type=T_Real;
      real_val=0.3;
+     completion_type=;
      object_scope=NULL;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -2970,6 +2967,7 @@ Published on wiki: emergent page: demos/vis_motion_test with description: Test o
      name="start_y";
      var_type=T_Real;
      real_val=0.3;
+     completion_type=;
      object_scope=NULL;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -2980,6 +2978,7 @@ Published on wiki: emergent page: demos/vis_motion_test with description: Test o
      name="size";
      var_type=T_Real;
      real_val=0.5;
+     completion_type=;
      object_scope=NULL;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -2990,6 +2989,7 @@ Published on wiki: emergent page: demos/vis_motion_test with description: Test o
      name="half_size";
      var_type=T_Real;
      real_val=0.25;
+     completion_type=;
      object_scope=NULL;
      flags=CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -3000,6 +3000,7 @@ Published on wiki: emergent page: demos/vis_motion_test with description: Test o
      name="rot_angle";
      var_type=T_Real;
      real_val=0;
+     completion_type=;
      object_scope=NULL;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -3009,7 +3010,8 @@ Published on wiki: emergent page: demos/vis_motion_test with description: Test o
     ProgVar @[10] {
      name="vel_x";
      var_type=T_Real;
-     real_val=0.02;
+     real_val=0;
+     completion_type=;
      object_scope=NULL;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -3019,7 +3021,8 @@ Published on wiki: emergent page: demos/vis_motion_test with description: Test o
     ProgVar @[11] {
      name="vel_y";
      var_type=T_Real;
-     real_val=0;
+     real_val=-0.02;
+     completion_type=;
      object_scope=NULL;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -3029,7 +3032,8 @@ Published on wiki: emergent page: demos/vis_motion_test with description: Test o
     ProgVar @[12] {
      name="cur_x";
      var_type=T_Real;
-     real_val=0.6000000000000002;
+     real_val=0.3;
+     completion_type=;
      object_scope=NULL;
      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -3039,7 +3043,8 @@ Published on wiki: emergent page: demos/vis_motion_test with description: Test o
     ProgVar @[13] {
      name="cur_y";
      var_type=T_Real;
-     real_val=0.3;
+     real_val=0.06;
+     completion_type=;
      object_scope=NULL;
      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -3050,6 +3055,7 @@ Published on wiki: emergent page: demos/vis_motion_test with description: Test o
      name="n_steps";
      var_type=T_Int;
      int_val=15;
+     completion_type=;
      object_scope=NULL;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -3076,6 +3082,7 @@ Published on wiki: emergent page: demos/vis_motion_test with description: Test o
        name="canv";
        var_type=T_Object;
        object_type=taCanvas;
+       completion_type=;
        object_val=NULL;
        object_scope=NULL;
        objs_ptr=0;
@@ -3214,6 +3221,7 @@ Published on wiki: emergent page: demos/vis_motion_test with description: Test o
        name="canv";
        var_type=T_Object;
        object_type=taCanvas;
+       completion_type=;
        object_val=NULL;
        object_scope=NULL;
        objs_ptr=0;
@@ -3226,6 +3234,7 @@ Published on wiki: emergent page: demos/vis_motion_test with description: Test o
        name="col_nm";
        var_type=T_String;
        string_val=;
+       completion_type=;
        object_scope=NULL;
        flags=LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
        reference=0;
@@ -3309,7 +3318,7 @@ Published on wiki: emergent page: demos/vis_motion_test with description: Test o
        meth_desc=" configure data column with given name (if it doesn't exist, it is created) to represent current image -- if rgb is false, then a greyscale image is configured (2d)";
       };
       MethodCall @[2] {
-       name="MethodCall_CanvasViewEnforceRows1";
+       name="MethodCall_canvasviewEnforceRows1";
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="canvas_view->EnforceRows(1)";
@@ -3336,7 +3345,7 @@ Published on wiki: emergent page: demos/vis_motion_test with description: Test o
        meth_desc=" ensure that there are exactly n_rows in the table, removing or adding as needed";
       };
       MethodCall @[3] {
-       name="MethodCall_canvImageToDataC_anvasViewcolnm0";
+       name="MethodCall_canvImageToDataC_anvasviewcolnm0";
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="canv->ImageToDataCellName(canvas_view, col_nm, 0)";
@@ -3385,7 +3394,7 @@ Published on wiki: emergent page: demos/vis_motion_test with description: Test o
        meth_desc=" set image to datatable cell indexed by col name and row number -- uses cell dimensionality and type -- only amount that fits in cell is copied. row = -1 = last row";
       };
       MethodCall @[4] {
-       name="MethodCall_CanvasViewUpdateAllViews";
+       name="MethodCall_canvasviewUpdateAllViews";
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="canvas_view->UpdateAllViews()";
@@ -3431,6 +3440,7 @@ Published on wiki: emergent page: demos/vis_motion_test with description: Test o
 	 name="sx";
 	 var_type=T_Real;
 	 real_val=0;
+	 completion_type=;
 	 object_scope=NULL;
 	 flags=LOCAL_VAR|USED|EDIT_VAL;
 	 reference=0;
@@ -3441,6 +3451,7 @@ Published on wiki: emergent page: demos/vis_motion_test with description: Test o
 	 name="sy";
 	 var_type=T_Real;
 	 real_val=0;
+	 completion_type=;
 	 object_scope=NULL;
 	 flags=LOCAL_VAR|USED|EDIT_VAL;
 	 reference=0;
@@ -3451,6 +3462,7 @@ Published on wiki: emergent page: demos/vis_motion_test with description: Test o
 	 name="rad_ang";
 	 var_type=T_Real;
 	 real_val=0;
+	 completion_type=;
 	 object_scope=NULL;
 	 flags=LOCAL_VAR|USED|EDIT_VAL;
 	 reference=0;
@@ -3461,6 +3473,7 @@ Published on wiki: emergent page: demos/vis_motion_test with description: Test o
 	 name="ex";
 	 var_type=T_Real;
 	 real_val=0;
+	 completion_type=;
 	 object_scope=NULL;
 	 flags=LOCAL_VAR|USED|EDIT_VAL;
 	 reference=0;
@@ -3471,6 +3484,7 @@ Published on wiki: emergent page: demos/vis_motion_test with description: Test o
 	 name="ey";
 	 var_type=T_Real;
 	 real_val=0;
+	 completion_type=;
 	 object_scope=NULL;
 	 flags=LOCAL_VAR|USED|EDIT_VAL;
 	 reference=0;
@@ -3545,7 +3559,7 @@ Published on wiki: emergent page: demos/vis_motion_test with description: Test o
        };
       };
       MethodCall @[6] {
-       name="MethodCall_CanvasLinesxsyexey";
+       name="MethodCall_canvasLinesxsyexey";
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="canvas->Line(sx, sy, ex, ey)";
@@ -3634,7 +3648,7 @@ Published on wiki: emergent page: demos/vis_motion_test with description: Test o
        };
       };
       MethodCall @[1] {
-       name="MethodCall_CanvasDrawSvgFil_izetruerotangle";
+       name="MethodCall_canvasDrawSvgFil_izetruerotangle";
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="canvas->DrawSvgFile(\"ball.svg\", cur_x - half_size, cur_y - half_size, size, size, true, rot_angle)";
@@ -3756,7 +3770,7 @@ Published on wiki: emergent page: demos/vis_motion_test with description: Test o
        };
       };
       MethodCall @[1] {
-       name="MethodCall_CanvasDrawSvgFil_izetruerotangle";
+       name="MethodCall_canvasDrawSvgFil_izetruerotangle";
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="canvas->DrawSvgFile(\"mother.svg\", cur_x - half_size, cur_y - half_size, size, size, true, rot_angle)";
@@ -3981,7 +3995,7 @@ Published on wiki: emergent page: demos/vis_motion_test with description: Test o
     el_typ=ProgCode;
     el_def=0;
     MethodCall @[0] {
-     name="MethodCall_CanvasSetImageSi_ssizecanvassize";
+     name="MethodCall_canvasSetImageSi_ssizecanvassize";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="canvas->SetImageSize(canvas_size, canvas_size)";
@@ -4019,7 +4033,7 @@ Published on wiki: emergent page: demos/vis_motion_test with description: Test o
      meth_desc=" set size of current image -- if currently same size, then returns false and nothing happens; otherwise, a new image data structure of given size is created, using ARGB32 format";
     };
     FunctionCall @[1] {
-     name="FunctionCall_InitCanvasCanvas";
+     name="FunctionCall_InitCanvascanvas";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="InitCanvas(canvas)";
@@ -4043,7 +4057,7 @@ Published on wiki: emergent page: demos/vis_motion_test with description: Test o
      };
     };
     MethodCall @[2] {
-     name="MethodCall_V1RetinamotionInit";
+     name="MethodCall_v1retinamotionInit";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="v1_retina_motion->Init()";
@@ -4059,7 +4073,7 @@ Published on wiki: emergent page: demos/vis_motion_test with description: Test o
      meth_desc=" initialize the filters, data table, etc -- call this in the init_code of any Program that is using this object";
     };
     MethodCall @[3] {
-     name="MethodCall_CanvasViewEnforceRows1";
+     name="MethodCall_canvasviewEnforceRows1";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="canvas_view->EnforceRows(1)";
@@ -4113,6 +4127,7 @@ Published on wiki: emergent page: demos/vis_motion_test with description: Test o
        name="st";
        var_type=T_Int;
        int_val=0;
+       completion_type=;
        object_scope=NULL;
        flags=LOCAL_VAR|USED|EDIT_VAL;
        reference=0;
@@ -4151,7 +4166,7 @@ Published on wiki: emergent page: demos/vis_motion_test with description: Test o
       el_typ=ProgCode;
       el_def=0;
       MethodCall @[0] {
-       name="MethodCall_CanvasEraseNamebgcolor";
+       name="MethodCall_canvasEraseNamebgcolor";
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="canvas->EraseName(bg_color)";
@@ -4191,7 +4206,7 @@ Published on wiki: emergent page: demos/vis_motion_test with description: Test o
        };
       };
       FunctionCall @[2] {
-       name="FunctionCall_ViewCanvasCanvascanvas";
+       name="FunctionCall_ViewCanvascanvascanvas";
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="ViewCanvas(canvas, \"canvas\")";
@@ -4226,7 +4241,7 @@ Published on wiki: emergent page: demos/vis_motion_test with description: Test o
        };
       };
       MethodCall @[3] {
-       name="MethodCall_V1RetinamotionLo_ImageCanvasNULL";
+       name="MethodCall_v1retinamotionLo_ImagecanvasNULL";
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="v1_retina_motion->LookAtImage(canvas, NULL, , , , , , , , , )";
@@ -4363,7 +4378,7 @@ Published on wiki: emergent page: demos/vis_motion_test with description: Test o
        meth_desc=" transform image/s in image format, with region of retina centered and scaled to fit the box coordinates given in 0-1 normalized units (ll=lower-left, ur=upper-right); additional scale, rotate, and move params applied after foveation scaling and offsets";
       };
       MethodCall @[4] {
-       name="MethodCall_V1RetinamotionFi_rImageDatafalse";
+       name="MethodCall_v1retinamotionFi_rImageDatafalse";
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="v1_retina_motion->FilterImageData(false)";
@@ -4390,7 +4405,7 @@ Published on wiki: emergent page: demos/vis_motion_test with description: Test o
        meth_desc=" filter retinal image data -- operates on images that were generated from prior Transform or LookAt calls -- must call one of those first -- if motion_only = true, then only process up to level of motion, for faster processing of initial frames of motion sequence";
       };
       MethodCall @[5] {
-       name="MethodCall_MotionOutputUpdateAllViews";
+       name="MethodCall_motionoutputUpdateAllViews";
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="motion_output->UpdateAllViews()";
@@ -4446,7 +4461,7 @@ Published on wiki: emergent page: demos/vis_motion_test with description: Test o
      };
     };
     MethodCall @[4] {
-     name="MethodCall_MotionOutputUpdateAllViews";
+     name="MethodCall_motionoutputUpdateAllViews";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="motion_output->UpdateAllViews()";
@@ -4486,9 +4501,9 @@ Published on wiki: emergent page: demos/vis_motion_test with description: Test o
     name="UserDataItem_List_46";
     el_typ=UserDataItem;
     el_def=0;
-    UserDataItem @[0] {name="view_win_lft": value=0.000660066: val_type_fixed=0: };
-    UserDataItem @[1] {name="view_win_top": value=0.03803394: val_type_fixed=0: };
-    UserDataItem @[2] {name="view_win_wd": value=0.9980198: val_type_fixed=0: };
+    UserDataItem @[0] {name="view_win_lft": value=0.1912153: val_type_fixed=0: };
+    UserDataItem @[1] {name="view_win_top": value=0.06495026: val_type_fixed=0: };
+    UserDataItem @[2] {name="view_win_wd": value=0.9980185: val_type_fixed=0: };
     UserDataItem @[3] {name="view_win_ht": value=0.7987127: val_type_fixed=0: };
     UserDataItem @[4] {name="view_win_iconified": value=0: val_type_fixed=0: };
     UserDataItem @[5] {name="view_splitter_state": value=AAAA/wAAAAEAAAADAAABAAAAAfwAAAKMAQAAAAcBAAAAAQE=: val_type_fixed=0: };
@@ -5893,6 +5908,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	 };
 	};
        };
+       fix_name=0;
        bg_color {r=0: g=0: b=0: a=1: };
        text_color {r=1: g=0: b=0: a=1: };
        headlight_on=1;
@@ -6084,6 +6100,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	 };
 	};
        };
+       fix_name=0;
        bg_color {r=1: g=1: b=1: a=1: };
        text_color {r=0: g=0: b=0: a=1: };
        headlight_on=1;
@@ -6275,6 +6292,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	 };
 	};
        };
+       fix_name=0;
        bg_color {r=0: g=0: b=0: a=1: };
        text_color {r=1: g=0: b=0: a=1: };
        headlight_on=1;
@@ -6452,6 +6470,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	 };
 	};
        };
+       fix_name=0;
        bg_color {r=1: g=1: b=1: a=1: };
        text_color {r=0: g=0: b=0: a=1: };
        headlight_on=1;
@@ -6549,7 +6568,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       el_def=0;
       UserDataItem @[0] {name="view_win_lft": value=0: val_type_fixed=0: };
       UserDataItem @[1] {name="view_win_top": value=0.008191925: val_type_fixed=0: };
-      UserDataItem @[2] {name="view_win_wd": value=0.02706271: val_type_fixed=0: };
+      UserDataItem @[2] {name="view_win_wd": value=0.02708058: val_type_fixed=0: };
       UserDataItem @[3] {name="view_win_ht": value=0.7519017: val_type_fixed=0: };
       UserDataItem @[4] {name="view_win_iconified": value=0: val_type_fixed=0: };
       UserDataItem @[5] {name="view_visible": value=0: val_type_fixed=0: };
@@ -6569,7 +6588,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
  save_as_only=0;
  auto_name=1;
  last_change_desc="Published on wiki: emergent page: demos/vis_motion_test with description: Test of visual motion filters using stimuli in 3D virtual environment that move in reliable ways tags: Demo, Vision, Motion Perception, Motion Filters, Spatiotemporal Receptive Field author: Randall C. O'Reilly email: emergent-users@grey.colorado.edu version: 8.0.0 pub_cite: ";
- tree_state{ .;.docs;.wizards;.ctrl_panels;.data;.data.gp[0];.data.gp[1];.data.gp[2];.programs;.networks; };
+ tree_state{ .;.docs;.wizards;.ctrl_panels;.data;.data.gp[0];.data.gp[1];.data.gp[2];.programs;.programs[0];.programs[0].objs;.programs[0].objs[2];.programs[0].types;.programs[0].functions;.networks; };
  networks {
   name="networks";
   el_typ=LeabraNetwork;

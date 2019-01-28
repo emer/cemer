@@ -86,6 +86,7 @@ public:
   String        proj_name;      // #NO_DIFF #CONDSHOW_ON_set_proj_name project name to use in lieu of the actual project name, when set_proj_name is active
   int           auto_updt_interval; // #NO_DIFF (10 default) how many seconds to wait between auto-update while waiting for information back from the cluster
   int           auto_updt_timeout; // #NO_DIFF (30 default) how many seconds to wait before giving up on receiving information back from the cluster -- when it times out, then you can just hit the update button manually
+  int64_t       load_data_size_max; // #NO_DIFF (10,000,000 = 10Mb default) for LoadData function, this is the maximum size of data file to load -- increase if you want to load larger files, but often it might be more useful to process very large files separately
   String        cluster;        // #NO_DIFF #METHBOX_LABEL name of cluster to run job on -- see Preferences / Options settings for list of valid names -- easiest to use SelectCluster to switch between clusters, and when you Run a job you can pick from a dropdown list
   String        clusters;       // #NO_DIFF space-separated list of cluster names to include in listing jobs for this project
   String        users;          // #NO_DIFF space-separated list of user names to include in listing jobs for this project

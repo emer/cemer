@@ -63,6 +63,7 @@ void ClusterRun::Initialize() {
   set_proj_name = false;
   auto_updt_interval = 10;
   auto_updt_timeout = 30;
+  load_data_size_max = 10000000;
   cur_svn_rev = -1;
   last_backend_checkin = "Unknown";
   is_updating = false;
@@ -608,6 +609,7 @@ void ClusterRun::LoadData_impl(DataTable_Group* dgp, const DataTable& table, int
   files.FmDelimString(dat_files, " ");
   for(int i=0; i< files.size; i++) {
     String fl = files[i];
+    String fpth = res_path + "/" + fl;
     String dnm = fl.before(".dat", -1);
     dnm = taMisc::StringCVar(dnm);
     DataTable* dat = dgp->FindName(dnm);
@@ -619,7 +621,12 @@ void ClusterRun::LoadData_impl(DataTable_Group* dgp, const DataTable& table, int
       dat->name = dnm;
       dat->ClearDataFlag(DataTable::SAVE_ROWS); // don't save these by default!!
     }
-    dat->LoadData(res_path + "/" + fl);
+    int64_t fsz = taMisc::FileSize(fpth);
+    if(fsz > load_data_size_max) {
+      dat->SetFileName(fpth);
+    } else {
+      dat->LoadData(fpth);
+    }
     AddParamsToTable(dat, tag, tag_svn, tag_job, params, lnotes, llabel);
   }
 }

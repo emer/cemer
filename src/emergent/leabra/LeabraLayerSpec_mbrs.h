@@ -291,7 +291,7 @@ class STATE_CLASS(LayerDecaySpec) : public STATE_CLASS(SpecMemberBase) {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra holds decay values and other layer-level time constants
 INHERITED(SpecMemberBase)
 public:
-  float         trial;          // #AKA_event #MIN_0 #MAX_1 [1 to clear] proportion decay of state vars between trials -- if all layers have 0 trial decay, then the net input does not need to be reset between trials, yielding significantly faster performance
+  float         trial;          // #AKA_event #MIN_0 #MAX_1 [1 to clear] proportion decay of state vars between trials
 
   STATE_DECO_KEY("LayerSpec");
   STATE_TA_STD_CODE_SPEC(LayerDecaySpec);

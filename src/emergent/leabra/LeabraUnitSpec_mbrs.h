@@ -499,7 +499,7 @@ public:
 private:
   void        Initialize()      { Defaults_init(); }
   void        Defaults_init() {
-    mod = NO_MOD;  lay_mod_min = 0.01f;
+    mod = LAY_ERR_MOD;  lay_mod_min = 0.01f;
     net_mod_min = 0.5f; net_err_start = 0.5f;  net_err_end = 1.0f;
   }
 
