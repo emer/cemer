@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.5.6.0 rev11473
+// ta_Dump File v3.0 -- code v8.5.6.0 rev11491
 LeabraProject .projects[0] { 
  Doc_Group @.docs = [1] {
   taDoc @[0] { };
@@ -216,7 +216,7 @@ LeabraProject .projects[0] {
     };
    };
    DataTable @[4] { 
-    DataTableCols @.data = [13] {
+    DataTableCols @.data = [18] {
      int_Data @[0] { };
      int_Data @[1] { };
      int_Data @[2] { 
@@ -242,6 +242,11 @@ LeabraProject .projects[0] {
      float_Data @[10] { };
      float_Data @[11] { };
      float_Data @[12] { };
+     float_Data @[13] { };
+     float_Data @[14] { };
+     float_Data @[15] { };
+     float_Data @[16] { };
+     float_Data @[17] { };
     };
 
     DataOpList @.last_sort_spec.ops = [0] {
@@ -273,7 +278,7 @@ LeabraProject .projects[0] {
   };
  };
 
- Program_TopGroup @.programs = [2] {
+ Program_TopGroup @.programs = [3] {
   Program @[0] { 
    UserDataItem_List @*(.user_data_) {
     UserData_DocLink @[0] { };
@@ -531,6 +536,80 @@ LeabraProject .projects[0] {
       MatrixAssign @[6] { };
       MatrixAssign @[7] { };
       MatrixAssign @[8] { };
+     };
+    };
+   };
+  };
+  Program @[2] { 
+   UserDataItem_List @*(.user_data_) {
+    UserData_DocLink @[0] { };
+   };
+
+   ProgObjList @.objs = [2] {
+    DataTable @[0] { 
+     DataTableCols @.data = [3] {
+      float_Data @[0] { };
+      float_Data @[1] { };
+      float_Data @[2] { };
+     };
+
+     DataOpList @.last_sort_spec.ops = [0] {
+     };
+    };
+    DataTable @[1] { 
+     DataTableCols @.data = [5] {
+      float_Data @[0] { };
+      float_Data @[1] { };
+      float_Data @[2] { };
+      float_Data @[3] { };
+      float_Data @[4] { };
+     };
+
+     DataOpList @.last_sort_spec.ops = [0] {
+     };
+    };
+   };
+
+   ProgVar_List @.objs_vars = [2] {
+    ProgVar @[0] { };
+    ProgVar @[1] { };
+   };
+
+   ProgType_List @.types = [0] {
+   };
+
+   ProgVar_List @.args = [0] {
+   };
+
+   ProgVar_List @.vars = [3] {
+    ProgVar @[0] { };
+    ProgVar @[1] { };
+    ProgVar @[2] { };
+   };
+
+   Function_List @.functions = [0] {
+   };
+
+   ProgEl_List @.init_code = [0] {
+   };
+
+   ProgEl_List @.prog_code = [2] {
+    LocalVars @[0] { 
+     ProgVar_List @.local_vars = [6] {
+      ProgVar @[0] { };
+      ProgVar @[1] { };
+      ProgVar @[2] { };
+      ProgVar @[3] { };
+      ProgVar @[4] { };
+      ProgVar @[5] { };
+     };
+    };
+    ForLoop @[1] { 
+     ProgEl_List @.loop_code = [4] {
+      AssignExpr @[0] { };
+      AssignExpr @[1] { };
+      AssignExpr @[2] { };
+      MatrixAssign @[3] { };
      };
     };
    };
@@ -1446,7 +1525,7 @@ LeabraProject .projects[0] {
 
     ProgObjList @.objs = [1] {
      NetMonitor @[0] { 
-      NetMonItem_List @.items = [13] {
+      NetMonItem_List @.items = [18] {
        NetMonItem @[0] { };
        NetMonItem @[1] { };
        NetMonItem @[2] { };
@@ -1460,6 +1539,11 @@ LeabraProject .projects[0] {
        NetMonItem @[10] { };
        NetMonItem @[11] { };
        NetMonItem @[12] { };
+       NetMonItem @[13] { };
+       NetMonItem @[14] { };
+       NetMonItem @[15] { };
+       NetMonItem @[16] { };
+       NetMonItem @[17] { };
       };
      };
     };
@@ -2120,7 +2204,7 @@ LeabraProject .projects[0] {
 	  NetViewStateItem @[19] { };
 	 };
 
-	 ScaleRange_List @.scale_ranges = [17] {
+	 ScaleRange_List @.scale_ranges = [20] {
 	  ScaleRange @[0] { };
 	  ScaleRange @[1] { };
 	  ScaleRange @[2] { };
@@ -2138,6 +2222,9 @@ LeabraProject .projects[0] {
 	  ScaleRange @[14] { };
 	  ScaleRange @[15] { };
 	  ScaleRange @[16] { };
+	  ScaleRange @[17] { };
+	  ScaleRange @[18] { };
+	  ScaleRange @[19] { };
 	 };
 	};
        };
@@ -2464,7 +2551,7 @@ LeabraProject .projects[0] {
  version {
   major=8;
   minor=0;
-  step=1;
+  step=2;
  };
  author="Randall C. O'Reilly";
  email="emergent-users@grey.colorado.edu";
@@ -2495,6 +2582,11 @@ LeabraProject .projects[0] {
 <h1>ChangeLog</h1>
 <ul>
 
+
+<li>Mon Jan 28 14:46:29 2019 version: 8.0.2 user: oreilly file_name: <code>basic_leabra_test.proj</code> <br>
+svn rev: 11493 running-average acts driving learning monitored, verified against go
+
+
 <li>Sat Jan 26 20:04:25 2019 version: 8.0.1 user: oreilly file_name: <code>basic_leabra_test.proj</code> <br>
 finally, a unit-testing style project for basic leabra equations -- for validating new Go emergent.
 </ul>
@@ -2506,6 +2598,11 @@ finally, a unit-testing style project for basic leabra equations -- for validati
 <body>
 <h1>ChangeLog</h1>
 <ul>
+<P>
+<P>
+<li>Mon Jan 28 14:46:29 2019 version: 8.0.2 user: oreilly file_name: <code>basic_leabra_test.proj</code> <br>
+svn rev: 11493 running-average acts driving learning monitored, verified against go
+<P>
 <P>
 <li>Sat Jan 26 20:04:25 2019 version: 8.0.1 user: oreilly file_name: <code>basic_leabra_test.proj</code> <br>
 finally, a unit-testing style project for basic leabra equations -- for validating new Go emergent.
@@ -4612,7 +4709,7 @@ finally, a unit-testing style project for basic leabra equations -- for validati
       dim_names {
        name="dim_names";
       [2] ;;      };
-      width=0;
+      width=10;
       matrix_col_width=10;
      };
      float_Data @[9] {
@@ -4626,7 +4723,7 @@ finally, a unit-testing style project for basic leabra equations -- for validati
       dim_names {
        name="dim_names";
       [2] ;;      };
-      width=0;
+      width=11;
       matrix_col_width=10;
      };
      float_Data @[10] {
@@ -4654,11 +4751,81 @@ finally, a unit-testing style project for basic leabra equations -- for validati
       dim_names {
        name="dim_names";
       [2] ;;      };
-      width=0;
+      width=10;
       matrix_col_width=10;
      };
      float_Data @[12] {
       name="Output_gc_i";
+      col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
+      is_matrix=1;
+      cell_geom{ 4;1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [2] ;;      };
+      width=11;
+      matrix_col_width=10;
+     };
+     float_Data @[13] {
+      name="Hidden_avg_ss";
+      col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
+      is_matrix=1;
+      cell_geom{ 4;1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [2] ;;      };
+      width=0;
+      matrix_col_width=10;
+     };
+     float_Data @[14] {
+      name="Hidden_avg_s";
+      col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
+      is_matrix=1;
+      cell_geom{ 4;1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [2] ;;      };
+      width=0;
+      matrix_col_width=10;
+     };
+     float_Data @[15] {
+      name="Hidden_avg_m";
+      col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
+      is_matrix=1;
+      cell_geom{ 4;1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [2] ;;      };
+      width=0;
+      matrix_col_width=10;
+     };
+     float_Data @[16] {
+      name="Output_avg_s";
+      col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
+      is_matrix=1;
+      cell_geom{ 4;1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [2] ;;      };
+      width=0;
+      matrix_col_width=10;
+     };
+     float_Data @[17] {
+      name="Output_avg_m";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=1;
       cell_geom{ 4;1;      };
@@ -7076,6 +7243,514 @@ finally, a unit-testing style project for basic leabra equations -- for validati
      };
      test {
       expr="i<act_test_vals.rows";
+     };
+     iter {
+      expr="i++";
+     };
+    };
+   };
+   step_prog=NULL;
+   step_n=1;
+   doc {
+    name="doc";
+    desc=;
+    web_doc=0;
+    wiki=;
+    url="local";
+    full_url="local";
+    text_size=1;
+    text="<html>
+<head></head>
+<body>
+== Enter Title Here ==
+</body>
+</html>
+";
+    html_text="<html>
+<head></head>
+<body>
+<h2> Enter Title Here </h2>
+</body>
+</html>
+";
+   };
+  };
+  Program @[2] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserData_DocLink;
+    el_def=0;
+    UserData_DocLink @[0] {name="DocLink": doc=$.programs[1].doc$: };
+   };
+   name="TestLearn";
+   short_nm="TstLrn";
+   tags=;
+   desc="test for leabra activation function";
+   version {
+    major=0;
+    minor=0;
+    step=0;
+   };
+   author="Randall C. O'Reilly";
+   email="emergent-users@grey.colorado.edu";
+   flags=NO_STOP_STEP|OBJS_UPDT_GUI;
+   stop_step_cond {
+    expr=;
+   };
+   objs {
+    name="objs";
+    el_typ=DataTable;
+    el_def=0;
+    DataTable @[0] {
+     name="XCalTestVals";
+     desc=;
+     data {
+      name="data";
+      el_typ=float_Data;
+      el_def=0;
+      float_Data @[0] {
+       name="sravg";
+       col_flags=SAVE_DATA|AUTO_WIDTH;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name="dim_names";
+       [0]        };
+       width=8;
+       matrix_col_width=10;
+       ar {
+	name="ar";
+       [19] -0.050000001;-0.039999999;-0.029999999;-0.02;-0.0099999998;0;0.0099999998;0.02;0.029999999;0.039999999;
+0.050000001;0.1;0.2;0.30000001;0.40000001;0.5;0.60000002;0.69999999;0.80000001;       };
+      };
+      float_Data @[1] {
+       name="thrp";
+       col_flags=SAVE_DATA|AUTO_WIDTH;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name="dim_names";
+       [0]        };
+       width=8;
+       matrix_col_width=10;
+       ar {
+	name="ar";
+       [19] -0.050000001;-0.039999999;-0.029999999;-0.02;-0.0099999998;0;0.1;0.1;0.1;0.1;
+0.1;0.1;0.2;0.2;0.2;0.2;0.2;0.30000001;0.30000001;       };
+      };
+      float_Data @[2] {
+       name="yval";
+       col_flags=SAVE_DATA|AUTO_WIDTH;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name="dim_names";
+       [0]        };
+       width=8;
+       matrix_col_width=10;
+       ar {
+	name="ar";
+       [19] 1.7735992e-14;7.1552096e-12;2.8866178e-09;1.1645375e-06;0.0004686492;0.094767615;-0.089999996;-0.079999998;-0.07;-0.060000002;
+-0.050000001;0;0;0.10000001;0.2;0.30000001;0.40000004;0.39999998;0.5;       };
+      };
+     };
+     data_flags=SAVE_ROWS|AUTO_CALC;
+     auto_load=NO_AUTO_LOAD;
+     auto_load_file=;
+     row_height=1;
+     max_col_width=50;
+     keygen 4 0=0;
+     row_indexes {
+      name=;
+     [13] 6;7;8;9;10;11;12;13;14;15;
+16;17;18;     };
+     last_sort_spec {
+      name="last_sort_spec";
+      ops {
+       name="ops";
+       el_typ=DataSortEl;
+       el_def=0;
+      };
+     };
+     row_with_hilite=-1;
+    };
+    DataTable @[1] {
+     name="ActTestVals";
+     desc=;
+     data {
+      name="data";
+      el_typ=float_Data;
+      el_def=0;
+      float_Data @[0] {
+       name="geinc";
+       col_flags=SAVE_DATA|AUTO_WIDTH;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name="dim_names";
+       [0]        };
+       width=8;
+       matrix_col_width=10;
+       ar {
+	name="ar";
+       [8] 0.0099999998;0.02;0.029999999;0.039999999;0.050000001;0.1;0.2;0.30000001;       };
+      };
+      float_Data @[1] {
+       name="net";
+       col_flags=SAVE_DATA|AUTO_WIDTH;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name="dim_names";
+       [0]        };
+       width=8;
+       matrix_col_width=10;
+       ar {
+	name="ar";
+       [8] 0.0071428572;0.023469388;0.049562681;0.085589334;0.13159695;0.21617056;0.38319159;0.64519763;       };
+      };
+      float_Data @[2] {
+       name="Inet";
+       col_flags=SAVE_DATA|AUTO_WIDTH;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name="dim_names";
+       [0]        };
+       width=8;
+       matrix_col_width=10;
+       ar {
+	name="ar";
+       [8] -0.015221091;-0.0047221333;0.010820583;0.030752223;0.053931765;0.093856573;0;0.39380142;       };
+      };
+      float_Data @[3] {
+       name="vm";
+       col_flags=SAVE_DATA|AUTO_WIDTH;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name="dim_names";
+       [0]        };
+       width=8;
+       matrix_col_width=10;
+       ar {
+	name="ar";
+       [8] 0.3952381;0.39376712;0.39718926;0.40693361;0.42410299;0.45430645;0.50831974;0.59182489;       };
+      };
+      float_Data @[4] {
+       name="act";
+       col_flags=SAVE_DATA|AUTO_WIDTH;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name="dim_names";
+       [0]        };
+       width=8;
+       matrix_col_width=10;
+       ar {
+	name="ar";
+       [8] 2.8884652e-29;3.2081581e-29;1.1549084e-28;3.2309231e-26;9.5983243e-22;7.1203744e-14;0.29335475;0.50222141;       };
+      };
+     };
+     data_flags=SAVE_ROWS|AUTO_CALC;
+     auto_load=NO_AUTO_LOAD;
+     auto_load_file=;
+     row_height=1;
+     max_col_width=50;
+     keygen 4 0=0;
+     row_indexes {
+      name=;
+     [8] 0;1;2;3;4;5;6;7;     };
+     last_sort_spec {
+      name="last_sort_spec";
+      ops {
+       name="ops";
+       el_typ=DataSortEl;
+       el_def=0;
+      };
+     };
+     row_with_hilite=-1;
+    };
+   };
+   objs_vars {
+    name="objs_vars";
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @[0] {
+     name="xcal_test_vals";
+     var_type=T_Object;
+     object_type=DataTable;
+     completion_type=;
+     object_val=.programs[2].objs[0]$$;
+     object_scope=NULL;
+     objs_ptr=1;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @[1] {
+     name="act_test_vals";
+     var_type=T_Object;
+     object_type=DataTable;
+     completion_type=;
+     object_val=.programs[2].objs[1]$$;
+     object_scope=NULL;
+     objs_ptr=1;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+   };
+   types {
+    name="types";
+    el_typ=DynEnumType;
+    el_def=0;
+   };
+   args {
+    name="args";
+    el_typ=ProgVar;
+    el_def=0;
+   };
+   vars {
+    name="vars";
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @[0] {
+     name="us";
+     var_type=T_Object;
+     object_type=LeabraUnitSpec;
+     completion_type=;
+     object_val=$.networks[0].specs[1]$;
+     object_scope=NULL;
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @[1] {
+     name="network";
+     var_type=T_Object;
+     object_type=LeabraNetwork;
+     completion_type=;
+     object_val=$.networks[0]$;
+     object_scope=NULL;
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @[2] {
+     name="cs";
+     var_type=T_Object;
+     object_type=LeabraConSpec;
+     completion_type=;
+     object_val=$.networks[0].specs[2]$;
+     object_scope=NULL;
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+   };
+   functions {
+    name="functions";
+    el_typ=Function;
+    el_def=0;
+   };
+   init_code {
+    name="init_code";
+    el_typ=ProgCode;
+    el_def=0;
+   };
+   prog_code {
+    name="prog_code";
+    el_typ=ProgCode;
+    el_def=0;
+    LocalVars @[0] {
+     name="LocalVars_LocalVars5vars";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="LocalVars (6 vars)";
+     local_vars {
+      name="local_vars";
+      el_typ=ProgVar;
+      el_def=0;
+      ProgVar @[0] {
+       name="i";
+       var_type=T_Int;
+       int_val=0;
+       completion_type=;
+       object_scope=NULL;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[1] {
+       name="sravg";
+       var_type=T_Real;
+       real_val=0;
+       completion_type=;
+       object_scope=NULL;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[2] {
+       name="thrp";
+       var_type=T_Real;
+       real_val=0;
+       completion_type=;
+       object_scope=NULL;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[3] {
+       name="yval";
+       var_type=T_Real;
+       real_val=0;
+       completion_type=;
+       object_scope=NULL;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[4] {
+       name="unit";
+       var_type=T_Object;
+       object_type=LeabraUnit;
+       completion_type=;
+       object_val=NULL;
+       object_scope=NULL;
+       objs_ptr=0;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[5] {
+       name="geinc";
+       var_type=T_Real;
+       real_val=0;
+       completion_type=;
+       object_scope=NULL;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+     };
+    };
+    ForLoop @[1] {
+     name="ForLoop_fori0ixx1testvalsrowsi";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="for (i = 0; i<xcal_test_vals.rows; i++)";
+     loop_code {
+      name="loop_code";
+      el_typ=ProgCode;
+      el_def=0;
+      AssignExpr @[0] {
+       name="AssignExpr_sravgxcaltestvalssravgi";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="sravg = xcal_test_vals[\"sravg\"][i]";
+       result_var=.programs[2].prog_code[0].local_vars[1]$$;
+       expr {
+	expr="xcal_test_vals[\"sravg\"][i]";
+       };
+      };
+      AssignExpr @[1] {
+       name="AssignExpr_thrpxcaltestvalsthrpi";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="thrp = xcal_test_vals[\"thrp\"][i]";
+       result_var=.programs[2].prog_code[0].local_vars[2]$$;
+       expr {
+	expr="xcal_test_vals[\"thrp\"][i]";
+       };
+      };
+      AssignExpr @[2] {
+       name="AssignExpr_yvalcsxcaldWtFunsravgthrp";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="yval = cs.xcal.dWtFun(sravg, thrp)";
+       result_var=.programs[2].prog_code[0].local_vars[3]$$;
+       expr {
+	expr="cs.xcal.dWtFun(sravg, thrp)";
+       };
+      };
+      MatrixAssign @[3] {
+       name="MatrixAssign_xx1testvalsyvaliyval";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="xcal_test_vals[\"yval\"][i] = yval";
+       variable=.programs[2].objs_vars[0]$$;
+       data_table=1;
+       col {
+	expr="\"yval\"";
+       };
+       dim0 {
+	expr="i";
+       };
+       dim1 {
+	expr=;
+       };
+       dim2 {
+	expr=;
+       };
+       dim3 {
+	expr=;
+       };
+       dim4 {
+	expr=;
+       };
+       dim5 {
+	expr=;
+       };
+       expr {
+	expr="yval";
+       };
+      };
+     };
+     init {
+      expr="i = 0";
+     };
+     test {
+      expr="i<xcal_test_vals.rows";
      };
      iter {
       expr="i++";
@@ -13546,7 +14221,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
 	agg_col {
 	 col_name=;
 	};
-	agg {name="AggregateSpec_2598": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: val_string="": use_var=0: var=NULL: }: };
+	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: val_string="": use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
 	 col_name=;
@@ -13558,9 +14233,9 @@ and the testing data is updated.  The first epoch monitor should have all the it
 	 var=NULL;
 	 enable_var=NULL;
 	};
-	pre_proc_1 {name="SimpleMathSpec_816": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {name="SimpleMathSpec_817": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {name="SimpleMathSpec_818": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @[10] {
 	name="Output_act";
@@ -13648,7 +14323,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
 	agg_col {
 	 col_name=;
 	};
-	agg {name="AggregateSpec_2598": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: val_string="": use_var=0: var=NULL: }: };
+	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: val_string="": use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
 	 col_name=;
@@ -13660,9 +14335,179 @@ and the testing data is updated.  The first epoch monitor should have all the it
 	 var=NULL;
 	 enable_var=NULL;
 	};
-	pre_proc_1 {name="SimpleMathSpec_816": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {name="SimpleMathSpec_817": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {name="SimpleMathSpec_818": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
+       };
+       NetMonItem @[13] {
+	name="Hidden_avg_ss";
+	computed=0;
+	object_type=LeabraLayer;
+	object=$.networks[0].layers[1]$;
+	variable="avg_ss";
+	var_label=;
+	name_style=AUTO_NAME;
+	max_name_len=6;
+	options=HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
+	val_type=VT_FLOAT;
+	matrix=0;
+	matrix_geom{ 	};
+	data_agg=0;
+	data_src=NULL;
+	agg_col {
+	 col_name=;
+	};
+	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: val_string="": use_var=0: var=NULL: }: };
+	select_rows=0;
+	select_spec {
+	 col_name=;
+	 name="_EQUAL_";
+	 on=1;
+	 rel=EQUAL;
+	 use_var=0;
+	 cmp 2 0=0;
+	 var=NULL;
+	 enable_var=NULL;
+	};
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
+       };
+       NetMonItem @[14] {
+	name="Hidden_avg_s";
+	computed=0;
+	object_type=LeabraLayer;
+	object=$.networks[0].layers[1]$;
+	variable="avg_s";
+	var_label=;
+	name_style=AUTO_NAME;
+	max_name_len=6;
+	options=HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
+	val_type=VT_FLOAT;
+	matrix=0;
+	matrix_geom{ 	};
+	data_agg=0;
+	data_src=NULL;
+	agg_col {
+	 col_name=;
+	};
+	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: val_string="": use_var=0: var=NULL: }: };
+	select_rows=0;
+	select_spec {
+	 col_name=;
+	 name="_EQUAL_";
+	 on=1;
+	 rel=EQUAL;
+	 use_var=0;
+	 cmp 2 0=0;
+	 var=NULL;
+	 enable_var=NULL;
+	};
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
+       };
+       NetMonItem @[15] {
+	name="Hidden_avg_m";
+	computed=0;
+	object_type=LeabraLayer;
+	object=$.networks[0].layers[1]$;
+	variable="avg_m";
+	var_label=;
+	name_style=AUTO_NAME;
+	max_name_len=6;
+	options=HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
+	val_type=VT_FLOAT;
+	matrix=0;
+	matrix_geom{ 	};
+	data_agg=0;
+	data_src=NULL;
+	agg_col {
+	 col_name=;
+	};
+	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: val_string="": use_var=0: var=NULL: }: };
+	select_rows=0;
+	select_spec {
+	 col_name=;
+	 name="_EQUAL_";
+	 on=1;
+	 rel=EQUAL;
+	 use_var=0;
+	 cmp 2 0=0;
+	 var=NULL;
+	 enable_var=NULL;
+	};
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
+       };
+       NetMonItem @[16] {
+	name="Output_avg_s";
+	computed=0;
+	object_type=LeabraLayer;
+	object=$.networks[0].layers[2]$;
+	variable="avg_s";
+	var_label=;
+	name_style=AUTO_NAME;
+	max_name_len=6;
+	options=HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
+	val_type=VT_FLOAT;
+	matrix=0;
+	matrix_geom{ 	};
+	data_agg=0;
+	data_src=NULL;
+	agg_col {
+	 col_name=;
+	};
+	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: val_string="": use_var=0: var=NULL: }: };
+	select_rows=0;
+	select_spec {
+	 col_name=;
+	 name="_EQUAL_";
+	 on=1;
+	 rel=EQUAL;
+	 use_var=0;
+	 cmp 2 0=0;
+	 var=NULL;
+	 enable_var=NULL;
+	};
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
+       };
+       NetMonItem @[17] {
+	name="Output_avg_m";
+	computed=0;
+	object_type=LeabraLayer;
+	object=$.networks[0].layers[2]$;
+	variable="avg_m";
+	var_label=;
+	name_style=AUTO_NAME;
+	max_name_len=6;
+	options=HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
+	val_type=VT_FLOAT;
+	matrix=0;
+	matrix_geom{ 	};
+	data_agg=0;
+	data_src=NULL;
+	agg_col {
+	 col_name=;
+	};
+	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: val_string="": use_var=0: var=NULL: }: };
+	select_rows=0;
+	select_spec {
+	 col_name=;
+	 name="_EQUAL_";
+	 on=1;
+	 rel=EQUAL;
+	 use_var=0;
+	 cmp 2 0=0;
+	 var=NULL;
+	 enable_var=NULL;
+	};
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
       };
       network=$.networks[0]$;
@@ -17557,8 +18402,8 @@ this program can be extended to do arbitrary things to generate data and apply i
     name="UserDataItem_List_114";
     el_typ=UserDataItem;
     el_def=0;
-    UserDataItem @[0] {name="view_win_lft": value=0.01254954: val_type_fixed=0: };
-    UserDataItem @[1] {name="view_win_top": value=0.08367466: val_type_fixed=0: };
+    UserDataItem @[0] {name="view_win_lft": value=0.06373844: val_type_fixed=0: };
+    UserDataItem @[1] {name="view_win_top": value=0: val_type_fixed=0: };
     UserDataItem @[2] {name="view_win_wd": value=0.7661823: val_type_fixed=0: };
     UserDataItem @[3] {name="view_win_ht": value=0.7875951: val_type_fixed=0: };
     UserDataItem @[4] {name="view_win_iconified": value=0: val_type_fixed=0: };
@@ -17691,8 +18536,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	   };
 	  };
 	  show_iconified=0;
-	  cur_unit_vals{ gc_i;	  };
-	  hot_vars{ targ;ext;act;net;bias_wt;bias_dwt;act_eq;act_m;act_p;act_dif;avg_m;avg_l;act_avg;r.wt;r.wt*act;s.wt;r.dwt;s.dwt;gc_i;	  };
+	  cur_unit_vals{ act_nd;	  };
+	  hot_vars{ targ;ext;act;net;bias_wt;bias_dwt;act_eq;act_m;act_p;act_dif;avg_m;avg_l;act_avg;r.wt;r.wt*act;s.wt;r.dwt;s.dwt;gc_i;avg_s;act_nd;	  };
 	  unit_src_path=".layers[2][2]";
 	  con_type=ANY_CON;
 	  hist_idx=0;
@@ -17830,6 +18675,24 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	   };
 	   ScaleRange @[16] {
 	    var_name="gi_syn";
+	    auto_scale=0;
+	    min=-1;
+	    max=1;
+	   };
+	   ScaleRange @[17] {
+	    var_name="avg_s";
+	    auto_scale=0;
+	    min=-1;
+	    max=1;
+	   };
+	   ScaleRange @[18] {
+	    var_name="act_eq";
+	    auto_scale=0;
+	    min=-1;
+	    max=1;
+	   };
+	   ScaleRange @[19] {
+	    var_name="act_nd";
 	    auto_scale=0;
 	    min=-1;
 	    max=1;
@@ -20521,8 +21384,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
  save_view=1;
  save_as_only=0;
  auto_name=1;
- last_change_desc="finally, a unit-testing style project for basic leabra equations -- for validating new Go emergent.";
- tree_state{ .;.docs;.wizards;.wizards[0];.ctrl_panels;.data;.data.gp[0];.data.gp[1];.data.gp[2];.programs;.programs.gp[0];.programs.gp[0][10];.programs.gp[0][10].objs;.programs.gp[0][10].objs[0];.programs.gp[1];.viewers[0];.viewers[0].frames[2];.networks;.networks[0];.networks[0].specs;.networks[0].specs[0];.networks[0].specs[1];.networks[0].specs[2];.networks[0].specs[4];.networks[0].layers;.networks[0].layers[1];.networks[0].layers[1].projections;.networks[0].layers[2];.networks[0].layers[2].projections;.networks[0].weights; };
+ last_change_desc="svn rev: 11493 running-average acts driving learning monitored, verified against go";
+ tree_state{ .;.docs;.wizards;.wizards[0];.ctrl_panels;.data;.data.gp[0];.data.gp[1];.data.gp[2];.programs;.programs.gp[0];.programs.gp[1];.viewers[0];.viewers[0].frames[2];.networks;.networks[0];.networks[0].specs;.networks[0].specs[0];.networks[0].specs[1];.networks[0].specs[2];.networks[0].specs[4];.networks[0].layers;.networks[0].layers[1];.networks[0].layers[1].projections;.networks[0].layers[2];.networks[0].layers[2].projections;.networks[0].weights; };
  networks {
   name="networks";
   el_typ=LeabraNetwork;
