@@ -19,10 +19,12 @@ LeabraProject .projects[0] {
     UserDataItem @[0] { };
    };
 
-   ControlPanelMember_Group @.mbrs = [3] {
+   ControlPanelMember_Group @.mbrs = [5] {
     ControlPanelMember @[0] { };
     ControlPanelMember @[1] { };
     ControlPanelMember @[2] { };
+    ControlPanelMember @[3] { };
+    ControlPanelMember @[4] { };
    };
 
    ControlPanelMethod_Group @.mths = [4] {
@@ -69,7 +71,11 @@ LeabraProject .projects[0] {
   };
   DataTable_Group @.gp[1] = [5] { 
    DataTable @[0] { 
-    DataTableCols @.data = [42] {
+    UserDataItem_List @*(.user_data_) {
+     UserDataItem @[0] { };
+    };
+
+    DataTableCols @.data = [48] {
      int_Data @[0] { };
      int_Data @[1] { };
      String_Data @[2] { };
@@ -112,6 +118,12 @@ LeabraProject .projects[0] {
      float_Data @[39] { };
      float_Data @[40] { };
      float_Data @[41] { };
+     float_Data @[42] { };
+     float_Data @[43] { };
+     float_Data @[44] { };
+     float_Data @[45] { };
+     float_Data @[46] { };
+     float_Data @[47] { };
     };
 
     DataOpList @.last_sort_spec.ops = [0] {
@@ -1259,7 +1271,7 @@ LeabraProject .projects[0] {
 
     ProgObjList @.objs = [1] {
      NetMonitor @[0] { 
-      NetMonItem_List @.items = [36] {
+      NetMonItem_List @.items = [40] {
        NetMonItem @[0] { };
        NetMonItem @[1] { };
        NetMonItem @[2] { };
@@ -1296,6 +1308,10 @@ LeabraProject .projects[0] {
        NetMonItem @[33] { };
        NetMonItem @[34] { };
        NetMonItem @[35] { };
+       NetMonItem @[36] { };
+       NetMonItem @[37] { };
+       NetMonItem @[38] { };
+       NetMonItem @[39] { };
       };
      };
     };
@@ -2579,7 +2595,7 @@ LeabraProject .projects[0] {
  version {
   major=8;
   minor=0;
-  step=2;
+  step=3;
  };
  author="Randall C. O'Reilly";
  email="emergent-users@grey.colorado.edu";
@@ -2611,6 +2627,11 @@ LeabraProject .projects[0] {
 <ul>
 
 
+<li>Fri Feb  1 16:29:29 2019 version: 8.0.3 user: oreilly file_name: <code>basic_leabra_test.proj</code> <br>
+svn rev: 11496 recording norm, moment. go fully compliant now
+
+
+
 <li>Mon Jan 28 14:46:29 2019 version: 8.0.2 user: oreilly file_name: <code>basic_leabra_test.proj</code> <br>
 svn rev: 11493 running-average acts driving learning monitored, verified against go
 
@@ -2626,6 +2647,11 @@ finally, a unit-testing style project for basic leabra equations -- for validati
 <body>
 <h1>ChangeLog</h1>
 <ul>
+<P>
+<P>
+<li>Fri Feb  1 16:29:29 2019 version: 8.0.3 user: oreilly file_name: <code>basic_leabra_test.proj</code> <br>
+svn rev: 11496 recording norm, moment. go fully compliant now
+<P>
 <P>
 <P>
 <li>Mon Jan 28 14:46:29 2019 version: 8.0.2 user: oreilly file_name: <code>basic_leabra_test.proj</code> <br>
@@ -2704,6 +2730,26 @@ finally, a unit-testing style project for basic leabra equations -- for validati
      base=.networks[0].times$$;
      mbr=LeabraTimes::cycle_qtr;
      data {ctrl_type=CONTROL: is_numeric=0: is_single=1: state=EXPLORE: saved_value="": range="0:1:0.1": notes="": };
+    };
+    ControlPanelMember @[3] {
+     label="leabra_con_spec_0_dwt_norm";
+     short_label=0;
+     cust_label=0;
+     desc=" normalization error-driven learning component by the overall running-average magnitude of weight changes across projection (which serves as an estimate of the variance in the weight changes, assuming zero net mean overall)";
+     cust_desc=0;
+     base=$.networks[0].specs[2]$;
+     mbr=LeabraConSpec::dwt_norm;
+     data {ctrl_type=CONTROL: is_numeric=0: is_single=0: state=EXPLORE: saved_value="{on=false: level=SEND_CONS: decay_tau=1000: norm_min=0.001: lr_comp=0.15: stats=false: decay_dt=0.001: decay_dt_c=0.999: }": range="": notes="": };
+    };
+    ControlPanelMember @[4] {
+     label="leabra_con_spec_0_momentum";
+     short_label=0;
+     cust_label=0;
+     desc=" implements standard, simple momentum and normalization by the overall running-average magnitude of weight changes (which serves as an estimate of the variance in the weight changes, assuming zero net mean overall) -- accentuates consistent directions of weight change and cancels out dithering";
+     cust_desc=0;
+     base=$.networks[0].specs[2]$;
+     mbr=LeabraConSpec::momentum;
+     data {ctrl_type=CONTROL: is_numeric=0: is_single=0: state=EXPLORE: saved_value="{on=false: m_tau=10: lr_comp=0.1: m_dt=0.1: m_dt_c=0.9: }": range="": notes="": };
     };
    };
    mths {
@@ -2928,6 +2974,12 @@ finally, a unit-testing style project for basic leabra equations -- for validati
    el_def=0;
    save_tables=1;
    DataTable @[0] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserDataItem;
+     el_def=0;
+     UserDataItem @[0] {name="user_pinned": value=1: val_type_fixed=0: };
+    };
     name="TrialOutputData";
     desc=;
     data {
@@ -3467,6 +3519,62 @@ finally, a unit-testing style project for basic leabra equations -- for validati
       matrix_col_width=10;
      };
      float_Data @[38] {
+      name="Hidden_Fm_Input_r_moment";
+      col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
+      is_matrix=1;
+      cell_geom{ 4;1;4;1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [4] ;;;;      };
+      width=24;
+      matrix_col_width=10;
+     };
+     float_Data @[39] {
+      name="Hidden_Fm_Output_r_moment";
+      col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
+      is_matrix=1;
+      cell_geom{ 4;1;4;1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [4] ;;;;      };
+      width=25;
+      matrix_col_width=10;
+     };
+     float_Data @[40] {
+      name="Hidden_Fm_Input_r_dwnorm";
+      col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
+      is_matrix=1;
+      cell_geom{ 4;1;4;1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [4] ;;;;      };
+      width=24;
+      matrix_col_width=10;
+     };
+     float_Data @[41] {
+      name="Hidden_Fm_Output_r_dwnorm";
+      col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
+      is_matrix=1;
+      cell_geom{ 4;1;4;1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [4] ;;;;      };
+      width=25;
+      matrix_col_width=10;
+     };
+     float_Data @[42] {
       name="Output_avg_l";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=1;
@@ -3480,7 +3588,7 @@ finally, a unit-testing style project for basic leabra equations -- for validati
       width=12;
       matrix_col_width=10;
      };
-     float_Data @[39] {
+     float_Data @[43] {
       name="Output_avg_l_lrn";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=1;
@@ -3494,7 +3602,7 @@ finally, a unit-testing style project for basic leabra equations -- for validati
       width=16;
       matrix_col_width=10;
      };
-     float_Data @[40] {
+     float_Data @[44] {
       name="Output_Fm_Hidden_r_dwt";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=1;
@@ -3508,7 +3616,7 @@ finally, a unit-testing style project for basic leabra equations -- for validati
       width=22;
       matrix_col_width=10;
      };
-     float_Data @[41] {
+     float_Data @[45] {
       name="Output_Fm_Hidden_r_wt";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=1;
@@ -3520,6 +3628,34 @@ finally, a unit-testing style project for basic leabra equations -- for validati
        name="dim_names";
       [4] ;;;;      };
       width=21;
+      matrix_col_width=10;
+     };
+     float_Data @[46] {
+      name="Output_Fm_Hidden_r_moment";
+      col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
+      is_matrix=1;
+      cell_geom{ 4;1;4;1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [4] ;;;;      };
+      width=25;
+      matrix_col_width=10;
+     };
+     float_Data @[47] {
+      name="Output_Fm_Hidden_r_dwnorm";
+      col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
+      is_matrix=1;
+      cell_geom{ 4;1;4;1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [4] ;;;;      };
+      width=25;
       matrix_col_width=10;
      };
     };
@@ -12167,6 +12303,74 @@ this program can be extended to do arbitrary things to generate data and apply i
 	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @[32] {
+	name="Hidden_r_moment";
+	computed=0;
+	object_type=LeabraLayer;
+	object=$.networks[0].layers[1]$;
+	variable="r.moment";
+	var_label=;
+	name_style=AUTO_NAME;
+	max_name_len=6;
+	options=HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
+	val_type=VT_FLOAT;
+	matrix=0;
+	matrix_geom{ 	};
+	data_agg=0;
+	data_src=NULL;
+	agg_col {
+	 col_name=;
+	};
+	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: val_string="": use_var=0: var=NULL: }: };
+	select_rows=0;
+	select_spec {
+	 col_name=;
+	 name="_EQUAL_";
+	 on=1;
+	 rel=EQUAL;
+	 use_var=0;
+	 cmp 2 0=0;
+	 var=NULL;
+	 enable_var=NULL;
+	};
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
+       };
+       NetMonItem @[33] {
+	name="Hidden_r_dwnorm";
+	computed=0;
+	object_type=LeabraLayer;
+	object=$.networks[0].layers[1]$;
+	variable="r.dwnorm";
+	var_label=;
+	name_style=AUTO_NAME;
+	max_name_len=6;
+	options=HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
+	val_type=VT_FLOAT;
+	matrix=0;
+	matrix_geom{ 	};
+	data_agg=0;
+	data_src=NULL;
+	agg_col {
+	 col_name=;
+	};
+	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: val_string="": use_var=0: var=NULL: }: };
+	select_rows=0;
+	select_spec {
+	 col_name=;
+	 name="_EQUAL_";
+	 on=1;
+	 rel=EQUAL;
+	 use_var=0;
+	 cmp 2 0=0;
+	 var=NULL;
+	 enable_var=NULL;
+	};
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
+       };
+       NetMonItem @[34] {
 	name="Output_avg_l";
 	computed=0;
 	object_type=LeabraLayer;
@@ -12200,7 +12404,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
-       NetMonItem @[33] {
+       NetMonItem @[35] {
 	name="Output_avg_l_lrn";
 	computed=0;
 	object_type=LeabraLayer;
@@ -12234,7 +12438,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
-       NetMonItem @[34] {
+       NetMonItem @[36] {
 	name="Output_r_dwt";
 	computed=0;
 	object_type=LeabraLayer;
@@ -12268,12 +12472,80 @@ this program can be extended to do arbitrary things to generate data and apply i
 	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
-       NetMonItem @[35] {
+       NetMonItem @[37] {
 	name="Output_r_wt";
 	computed=0;
 	object_type=LeabraLayer;
 	object=$.networks[0].layers[2]$;
 	variable="r.wt";
+	var_label=;
+	name_style=AUTO_NAME;
+	max_name_len=6;
+	options=HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
+	val_type=VT_FLOAT;
+	matrix=0;
+	matrix_geom{ 	};
+	data_agg=0;
+	data_src=NULL;
+	agg_col {
+	 col_name=;
+	};
+	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: val_string="": use_var=0: var=NULL: }: };
+	select_rows=0;
+	select_spec {
+	 col_name=;
+	 name="_EQUAL_";
+	 on=1;
+	 rel=EQUAL;
+	 use_var=0;
+	 cmp 2 0=0;
+	 var=NULL;
+	 enable_var=NULL;
+	};
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
+       };
+       NetMonItem @[38] {
+	name="Output_r_moment";
+	computed=0;
+	object_type=LeabraLayer;
+	object=$.networks[0].layers[2]$;
+	variable="r.moment";
+	var_label=;
+	name_style=AUTO_NAME;
+	max_name_len=6;
+	options=HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
+	val_type=VT_FLOAT;
+	matrix=0;
+	matrix_geom{ 	};
+	data_agg=0;
+	data_src=NULL;
+	agg_col {
+	 col_name=;
+	};
+	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: val_string="": use_var=0: var=NULL: }: };
+	select_rows=0;
+	select_spec {
+	 col_name=;
+	 name="_EQUAL_";
+	 on=1;
+	 rel=EQUAL;
+	 use_var=0;
+	 cmp 2 0=0;
+	 var=NULL;
+	 enable_var=NULL;
+	};
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
+       };
+       NetMonItem @[39] {
+	name="Output_r_dwnorm";
+	computed=0;
+	object_type=LeabraLayer;
+	object=$.networks[0].layers[2]$;
+	variable="r.dwnorm";
 	var_label=;
 	name_style=AUTO_NAME;
 	max_name_len=6;
@@ -18938,10 +19210,10 @@ this program can be extended to do arbitrary things to generate data and apply i
     name="UserDataItem_List_114";
     el_typ=UserDataItem;
     el_def=0;
-    UserDataItem @[0] {name="view_win_lft": value=0.03038309: val_type_fixed=0: };
-    UserDataItem @[1] {name="view_win_top": value=0.01930954: val_type_fixed=0: };
+    UserDataItem @[0] {name="view_win_lft": value=0.02972259: val_type_fixed=0: };
+    UserDataItem @[1] {name="view_win_top": value=0.01521358: val_type_fixed=0: };
     UserDataItem @[2] {name="view_win_wd": value=0.997358: val_type_fixed=0: };
-    UserDataItem @[3] {name="view_win_ht": value=0.5564657: val_type_fixed=0: };
+    UserDataItem @[3] {name="view_win_ht": value=0.5552955: val_type_fixed=0: };
     UserDataItem @[4] {name="view_win_iconified": value=0: val_type_fixed=0: };
     UserDataItem @[5] {name="view_splitter_state": value=AAAA/wAAAAEAAAADAAABrwAAA18AAAOhAf////8BAAAAAQA=: val_type_fixed=0: };
    };
@@ -19072,7 +19344,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	   };
 	  };
 	  show_iconified=0;
-	  cur_unit_vals{ avg_l_lrn;	  };
+	  cur_unit_vals{ avg_l;	  };
 	  hot_vars{ targ;ext;act;net;bias_wt;bias_dwt;act_eq;act_m;act_p;act_dif;avg_m;avg_l;act_avg;r.wt;r.wt*act;s.wt;r.dwt;s.dwt;gc_i;avg_s;act_nd;avg_l_lrn;	  };
 	  unit_src_path=".layers[1][1]";
 	  con_type=ANY_CON;
@@ -21938,7 +22210,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       UserDataItem @[0] {name="view_win_lft": value=0: val_type_fixed=0: };
       UserDataItem @[1] {name="view_win_top": value=0.008191925: val_type_fixed=0: };
       UserDataItem @[2] {name="view_win_wd": value=0.02708058: val_type_fixed=0: };
-      UserDataItem @[3] {name="view_win_ht": value=0.5096548: val_type_fixed=0: };
+      UserDataItem @[3] {name="view_win_ht": value=0.5084845: val_type_fixed=0: };
       UserDataItem @[4] {name="view_win_iconified": value=0: val_type_fixed=0: };
       UserDataItem @[5] {name="view_visible": value=1: val_type_fixed=0: };
      };
@@ -21956,8 +22228,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
  save_view=1;
  save_as_only=0;
  auto_name=1;
- last_change_desc="svn rev: 11493 running-average acts driving learning monitored, verified against go";
- tree_state{ .;.docs;.wizards;.wizards[0];.ctrl_panels;.data;.data.gp[0];.data.gp[1];.data.gp[2];.programs;.programs.gp[0];.programs.gp[1];.networks;.networks[0];.networks[0].specs;.networks[0].specs[0];.networks[0].specs[1];.networks[0].specs[2];.networks[0].specs[4];.networks[0].layers;.networks[0].layers[1];.networks[0].layers[1].projections;.networks[0].layers[2];.networks[0].layers[2].projections;.networks[0].weights; };
+ last_change_desc="svn rev: 11496 recording norm, moment. go fully compliant now";
+ tree_state{ .;.docs;.wizards;.wizards[0];.ctrl_panels;.data;.data.gp[0];.data.gp[1];.data.gp[2];.programs;.programs.gp[0];.programs.gp[1];.viewers[0];.viewers[0].frames[2];.networks;.networks[0];.networks[0].specs;.networks[0].specs[0];.networks[0].specs[1];.networks[0].specs[2];.networks[0].specs[4];.networks[0].layers;.networks[0].layers[1];.networks[0].layers[1].projections;.networks[0].layers[2];.networks[0].layers[2].projections;.networks[0].weights; };
  networks {
   name="networks";
   el_typ=LeabraNetwork;
@@ -22107,15 +22379,15 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        rule {rule=XCAL_CHL: errule=XCAL: bcmrule=SRS: cp_gain=0.8: };
        xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: thr_p_min=0.001: lrn_thr=0.01: d_rev_ratio=-9: };
        wt_sig {gain=6: off=1: soft_bound=1: };
-       dwt_norm {on=0: level=SEND_CONS: decay_tau=1000: norm_min=0.001: lr_comp=0.15: stats=0: decay_dt=0.001: decay_dt_c=0.999: };
-       momentum {on=0: m_tau=10: lr_comp=0.1: m_dt=0.1: m_dt_c=0.9: };
+       dwt_norm {on=1: level=SEND_CONS: decay_tau=1000: norm_min=0.001: lr_comp=0.15: stats=0: decay_dt=0.001: decay_dt_c=0.999: };
+       momentum {on=1: m_tau=10: lr_comp=0.1: m_dt=0.1: m_dt_c=0.9: };
        wt_bal {on=0: avg_thr=0.25: hi_thr=0.4: hi_gain=4: lo_thr=0.4: lo_gain=6: act_thr=0.25: act_gain=0: no_targ=1: };
        adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
        slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
        deep {on=0: bg_lrate=1: fg_lrate=0: };
        margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_lrn=0.5: };
        dwt_share {on=0: neigh=8: p_share=0.05: };
-       use_lrate_sched=1;
+       use_lrate_sched=0;
        lrate_sched {
 	name="lrate_sched";
 	el_typ=SchedItem;
@@ -22151,15 +22423,15 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        rule {rule=XCAL_CHL: errule=XCAL: bcmrule=SRS: cp_gain=0.8: };
        xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: thr_p_min=0.001: lrn_thr=0.01: d_rev_ratio=-9: };
        wt_sig {gain=6: off=1: soft_bound=1: };
-       dwt_norm {on=0: level=SEND_CONS: decay_tau=1000: norm_min=0.001: lr_comp=0.15: stats=0: decay_dt=0.001: decay_dt_c=0.999: };
-       momentum {on=0: m_tau=10: lr_comp=0.1: m_dt=0.1: m_dt_c=0.9: };
+       dwt_norm {on=1: level=SEND_CONS: decay_tau=1000: norm_min=0.001: lr_comp=0.15: stats=0: decay_dt=0.001: decay_dt_c=0.999: };
+       momentum {on=1: m_tau=10: lr_comp=0.1: m_dt=0.1: m_dt_c=0.9: };
        wt_bal {on=0: avg_thr=0.25: hi_thr=0.4: hi_gain=4: lo_thr=0.4: lo_gain=6: act_thr=0.25: act_gain=0: no_targ=1: };
        adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
        slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
        deep {on=0: bg_lrate=1: fg_lrate=0: };
        margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_lrn=0.5: };
        dwt_share {on=0: neigh=8: p_share=0.05: };
-       use_lrate_sched=1;
+       use_lrate_sched=0;
        lrate_sched {
 	name="lrate_sched";
 	el_typ=SchedItem;
@@ -22183,15 +22455,15 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      rule {rule=XCAL_CHL: errule=XCAL: bcmrule=SRS: cp_gain=0.8: };
      xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: thr_p_min=0.001: lrn_thr=0.01: d_rev_ratio=-9: };
      wt_sig {gain=6: off=1: soft_bound=1: };
-     dwt_norm {on=0: level=SEND_CONS: decay_tau=1000: norm_min=0.001: lr_comp=0.15: stats=0: decay_dt=0.001: decay_dt_c=0.999: };
-     momentum {on=0: m_tau=10: lr_comp=0.1: m_dt=0.1: m_dt_c=0.9: };
+     dwt_norm {on=1: level=SEND_CONS: decay_tau=1000: norm_min=0.001: lr_comp=0.15: stats=0: decay_dt=0.001: decay_dt_c=0.999: };
+     momentum {on=1: m_tau=10: lr_comp=0.1: m_dt=0.1: m_dt_c=0.9: };
      wt_bal {on=0: avg_thr=0.25: hi_thr=0.4: hi_gain=4: lo_thr=0.4: lo_gain=6: act_thr=0.25: act_gain=0: no_targ=1: };
      adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
      slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
      deep {on=0: bg_lrate=1: fg_lrate=0: };
      margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_lrn=0.5: };
      dwt_share {on=0: neigh=8: p_share=0.05: };
-     use_lrate_sched=1;
+     use_lrate_sched=0;
      lrate_sched {
       name="lrate_sched";
       el_typ=SchedItem;
