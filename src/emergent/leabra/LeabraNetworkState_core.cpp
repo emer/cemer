@@ -1272,10 +1272,6 @@ void LEABRA_NETWORK_STATE::Quarter_Final_Unit_Thr(int thr_no) {
 }
 
 void LEABRA_NETWORK_STATE::Quarter_Final_Layers() {
-  if(quarter == 3) {
-    Compute_CosDiff_Agg();      // aggregate from Unit_Thr
-  }
-  
   for(int li=0; li < n_layers_built; li++) {
     LEABRA_LAYER_STATE* lay = GetLayerState(li);
     if(lay->lesioned()) continue;

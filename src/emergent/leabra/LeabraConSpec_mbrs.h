@@ -276,7 +276,6 @@ INHERITED(SpecMemberBase)
 public:
   enum  NormLevel {             // what level to aggregate normalization factor over
     SEND_CONS,                  // normalize across all sending connections per projection, per unit -- updates every trial (fast, sender-based) -- works best so far
-    RECV_CONS,                  // normalize across all receiving connections per projection, per unit -- updates with wt_bal factors, every Network.times.wt_bal_int trials -- adjust avg_tau accordingly!
     SYN,                        // normalize each synapse separately
   };
   
@@ -290,11 +289,6 @@ public:
   float         decay_dt;      // #READ_ONLY #EXPERT rate constant of decay = 1 / decay_tau
   float         decay_dt_c;    // #READ_ONLY #EXPERT complement rate constant of decay = 1 - (1 / decay_tau)
 
-  INLINE bool RecvConsAgg() const {
-    return (on && (level == RECV_CONS));
-  }
-  // is a recv-cons level aggregation required?  slow.. done during WtBal computation
-  
   INLINE bool SendConsAgg() const {
     return (on && (level == SEND_CONS));
   }

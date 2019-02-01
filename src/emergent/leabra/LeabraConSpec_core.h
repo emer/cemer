@@ -163,9 +163,6 @@
       if(wt_bal.on) {
         net->net_misc.wt_bal = true;
       }
-      if(dwt_norm.RecvConsAgg()) {
-        net->net_misc.recv_con_dwnorm = true;
-      }
     }
   }
   // #CAT_Learning initialize specs and specs update network flags -- e.g., set current learning rate based on schedule given epoch (or error value)
@@ -681,14 +678,11 @@
   // #IGNORE compute dwt_norm sender-based con group level dwnorm factor
 
   INLINE virtual void   Compute_WtBal_DwtNormRecv(LEABRA_CON_STATE* cg, LEABRA_NETWORK_STATE* net, int thr_no) {
-    bool do_wb = wt_bal.on;
-    bool do_norm = dwt_norm.RecvConsAgg();
-    if(!learn || cg->size < 1 || !(do_wb || do_norm)) return;
+    if(!learn || cg->size < 1 || !wt_bal.on) return;
     LEABRA_UNIT_STATE* ru = cg->ThrOwnUnState(net, thr_no);
     if(wt_bal.no_targ &&
        (ru->HasUnitFlag(LEABRA_UNIT_STATE::TRC) || ru->HasExtFlag(LEABRA_UNIT_STATE::TARG))) {
-      do_wb = false;
-      if(!do_norm) return;      // no need
+        return;
     }
     
     float sum_wt = 0.0f;
@@ -697,42 +691,25 @@
     
     const int sz = cg->size;
     for(int i=0; i<sz; i++) {
-      if(do_wb) {
-        float wt = cg->PtrCn(i,WT,net);
-        if(wt >= wt_bal.avg_thr) {
-          sum_wt += wt;
-          sum_n++;
-        }
-      }
-      if(do_norm) {
-        float dwnorm = cg->PtrCn(i,DWNORM,net);
-        max_dwnorm = fmaxf(max_dwnorm, dwnorm);
+      float wt = cg->PtrCn(i,WT,net);
+      if(wt >= wt_bal.avg_thr) {
+        sum_wt += wt;
+        sum_n++;
       }
     }
 
-    if(do_norm) {
-      cg->cons_dwnorm = max_dwnorm;
-    }
-
-    if(do_wb) {
-      if(sum_n > 0)
-        sum_wt /= (float)sum_n;
-      else
-        sum_wt = 0.0f;
-      cg->wb_avg = sum_wt;
-      wt_bal.WtBal(sum_wt, ru->act_avg, cg->wb_fact, cg->wb_inc, cg->wb_dec);
-    }
+    if(sum_n > 0)
+      sum_wt /= (float)sum_n;
+    else
+      sum_wt = 0.0f;
+    cg->wb_avg = sum_wt;
+    wt_bal.WtBal(sum_wt, ru->act_avg, cg->wb_fact, cg->wb_inc, cg->wb_dec);
     // note: these are specific to recv unit and cannot be copied to sender!
     // BUT can copy to synapses:
 
     for(int i=0; i<sz; i++) {
-      if(do_wb) {
-        cg->PtrCn(i,WB_INC,net) = cg->wb_inc;
-        cg->PtrCn(i,WB_DEC,net) = cg->wb_dec;
-      }
-      if(do_norm) {
-        cg->PtrCn(i,DWNORM,net) = max_dwnorm;
-      }
+      cg->PtrCn(i,WB_INC,net) = cg->wb_inc;
+      cg->PtrCn(i,WB_DEC,net) = cg->wb_dec;
     }
   }
   // #IGNORE compute weight balance factors and / or DwtNorm at a recv level

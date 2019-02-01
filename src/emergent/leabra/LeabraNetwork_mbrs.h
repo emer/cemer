@@ -95,7 +95,6 @@ public:
   bool          diff_scale_p;   // #GUI_READ_ONLY #SHOW a unitspec such as the hippocampus ThetaPhase units rescales inputs in plus phase -- this requires initializing the net inputs between these phases
   bool          diff_scale_q1;  // #GUI_READ_ONLY #SHOW at least one unit spec rescales inputs at start of second quarter, such as hippocampus ThetaPhase units -- this requires initializing the net inputs at this point
   bool          wt_bal;       // #GUI_READ_ONLY #SHOW wt_bal weight balancing is being used -- this must be done as a separate step -- LeabraConSpec will set this flag if LeabraConSpec::wt_bal.on flag is on, and off if not -- updated in Trial_Init_Specs call
-  bool          recv_con_dwnorm;   // #GUI_READ_ONLY #SHOW recv-connection group based dwnorm aggregation required -- LeabraConSpec will set this flag based on LeabraConSpec::dwt_norm.level -- updated in Trial_Init_Specs call
   bool          lay_gp_inhib;   // #GUI_READ_ONLY #SHOW layer group level inhibition is active for some layer groups -- may cause some problems with asynchronous threading operation -- updated in Trial_Init_Specs call
   bool          inhib_cons;     // #GUI_READ_ONLY #SHOW inhibitory connections are being used in this network -- detected during buildunits_threads to determine how netinput is computed -- sets NETIN_PER_PRJN flag
 
@@ -106,7 +105,6 @@ public:
     diff_scale_p = false;
     diff_scale_q1 = false;
     wt_bal = false;
-    recv_con_dwnorm = false;
     lay_gp_inhib = false;
   }
   // reset flags before Trial_InitSpecs call -- everything except inhib_cons usually

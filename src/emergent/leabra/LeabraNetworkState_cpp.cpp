@@ -149,8 +149,11 @@ void LeabraNetworkState_cpp::ClearMSNTrace() {
 
 void LeabraNetworkState_cpp::Quarter_Final() {
   Quarter_Final_Pre();
+  Quarter_Final_Layers(); // note: this MUST come before unit to get acts_p for cos_diff
   NET_THREAD_CALL(LeabraNetworkState_cpp::Quarter_Final_Unit_Thr);
-  Quarter_Final_Layers();
+  if(quarter == 3) {
+    Compute_CosDiff_Agg();      // aggregate from Unit_Thr
+  }
   Quarter_Compute_dWt();
   Quarter_Final_Counters();
 }
@@ -174,7 +177,7 @@ void LeabraNetworkState_cpp::Compute_dWt() {
 void LeabraNetworkState_cpp::Compute_Weights() {
   NET_THREAD_CALL(LeabraNetworkState_cpp::Compute_Weights_Thr);
   
-  if((net_misc.wt_bal || net_misc.recv_con_dwnorm) && (total_trials % times.wt_bal_int == 0)) {
+  if(net_misc.wt_bal && (total_trials % times.wt_bal_int == 0)) {
     NET_THREAD_CALL(LeabraNetworkState_cpp::Compute_WtBal_Thr);
     if(net_misc.wt_bal && lstats.wt_bal) {
       Compute_WtBalStats();
