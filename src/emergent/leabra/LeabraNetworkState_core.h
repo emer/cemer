@@ -3,7 +3,6 @@
 
   enum LeabraThrLayStats {         // stats that require holding threaded layer-level variables for subsequent aggregation
     NORMERR = N_NetThrLayStats,
-    COSERR,
     COSDIFF,
     AVGACTDIFF,
     TRIALCOSDIFF,
@@ -316,9 +315,9 @@
   // #IGNORE
   INIMPL virtual void Compute_NormErr_Agg();
   // #IGNORE
-  INIMPL virtual void Compute_CosErr_Thr(int thr_no);
+  INIMPL void Compute_CosErr_Thr(int thr_no) override;
   // #IGNORE
-  INIMPL virtual float Compute_CosErr_Agg();
+  INIMPL float Compute_CosErr_Agg() override;
   // #IGNORE
   INIMPL virtual void Compute_CosDiff_Thr(int thr_no);
   // #IGNORE
@@ -388,6 +387,7 @@
   INIMPL CON_SPEC_CPP*      NewConSpec(int spec_type) const override;
 
   INLINE void Initialize_core() {
+    stats.cos_err = true;
     n_lay_stats = N_LeabraThrLayStats;
 
     thrs_send_deeprawnet_tmp = NULL;

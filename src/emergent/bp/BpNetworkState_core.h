@@ -1,5 +1,6 @@
 // this contains core shared code, and is included directly in BpNetworkState _cpp.h, _cuda.h
 //{
+  
   INIMPL virtual void   Compute_dEdA_dEdNet_Thr(int thr_no);
   // #IGNORE compute derivatives of error with respect to activations & net inputs (backpropagate)
   INIMPL virtual void   Compute_Error_Thr(int thr_no);
@@ -16,4 +17,5 @@
 
   INIMPL UNIT_SPEC_CPP*     NewUnitSpec(int spec_type) const override;
   INIMPL CON_SPEC_CPP*      NewConSpec(int spec_type) const override;
+
 

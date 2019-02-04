@@ -138,10 +138,8 @@ STATE_CLASS(Average)  avg_ext_rew;      // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_St
 float           norm_err;       // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW #VIEW_WIDTH_8 normalized binary (Hamming) error on this trial: number of units that were incorrectly activated or incorrectly inactivated (see lstats.off_errs, on_errs to exclude each component separately)
 STATE_CLASS(Average)  avg_norm_err;     // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #DMEM_AGG_SUM average normalized binary error value (computed over previous epoch)
 
-float           cos_err;        // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW #VIEW_WIDTH_8 cosine (normalized dot product) error on this trial, comparing targ vs. act_m
 float           cos_err_prv;    // #NO_SAVE #GUI_READ_ONLY #SHOW #CONDSHOW_ON_net_misc.ti #CAT_Statistic cosine (normalized dot product) error on this trial, comparing targ on this trial against activations on previous trial (act_q0) -- computed automatically during TI
 float           cos_err_vs_prv; // #NO_SAVE #GUI_READ_ONLY #SHOW #CONDSHOW_ON_net_misc.ti #CAT_Statistic cos_err - cos_err_prv -- how much better is cosine error on this trial relative to just saying the same thing as was output last time -- for TI
-STATE_CLASS(Average)  avg_cos_err;      // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #DMEM_AGG_SUM average cosine (normalized dot product) error (computed over previous epoch)
 STATE_CLASS(Average)  avg_cos_err_prv; // #NO_SAVE #GUI_READ_ONLY #SHOW #CONDSHOW_ON_net_misc.ti #CAT_Statistic #DMEM_AGG_SUM average cosine (normalized dot product) error on prv (see cos_err_prv) (computed over previous epoch)
 STATE_CLASS(Average)  avg_cos_err_vs_prv; // #NO_SAVE #GUI_READ_ONLY #SHOW #CONDSHOW_ON_net_misc.ti #CAT_Statistic #DMEM_AGG_SUM average cosine (normalized dot product) error on vs prv (see cos_err_vs_prv) (computed over previous epoch)
 

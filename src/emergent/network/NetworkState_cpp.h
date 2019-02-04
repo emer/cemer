@@ -182,6 +182,8 @@ public:
   // #CAT_Statistic compute sum squared error of activations vs targets over the entire network -- optionally taking the average over units, and square root of the final results
   virtual void  Compute_PRerr();
   // #CAT_Statistic compute precision and recall error statistics over entire network -- true positive, false positive, and false negative -- precision = tp / (tp + fp) recall = tp / (tp + fn) fmeasure = 2 * p * r / (p + r), specificity, fall-out, mcc.
+  virtual float  Compute_CosErr();
+  // #CAT_Statistic compute cosine error, which is normalized dot product (cosine) between act and targ values
 
   virtual void  Compute_TrialStats();
   // #CAT_Statistic compute trial-level statistics (SSE and others defined by specific algorithms)

@@ -122,6 +122,9 @@
   float         cur_cnt_err;    // #NO_SAVE #GUI_READ_ONLY #DMEM_AGG_SUM #CAT_Statistic current cnt_err -- used for computing cnt_err
   float         pct_err;        // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic epoch-wise average of count of number of times the sum squared error was above cnt_err_tol over an epoch or similar larger set of external input patterns (= cnt_err / n)
   float         pct_cor;        // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic epoch-wise average of count of number of times the sum squared error was below cnt_err_tol over an epoch or similar larger set of external input patterns (= 1 - pct_err -- just for convenience for whichever you want to plot)
+  float         cos_err;            // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW #VIEW_WIDTH_8 cosine error over the network, for the current external input pattern
+  float         sum_cos_err;        // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic total sum cos_err over an epoch or similar larger set of external input patterns
+  STATE_CLASS(Average)  avg_cos_err;        // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #DMEM_AGG_SUM average cos_err over an epoch or similar larger set of external input patterns
 
   STATE_CLASS(PRerrVals)     prerr;          // #NO_SAVE #GUI_READ_ONLY #CONDSHOW_ON_stats.prerr #CAT_Statistic precision and recall error values for the entire network, for the current external input pattern
   STATE_CLASS(PRerrVals)     sum_prerr;      // #NO_SAVE #GUI_READ_ONLY #DMEM_AGG_SUM #CAT_Statistic precision and recall error values for the entire network, over an epoch or similar larger set of external input patterns -- these are always up-to-date as the system is aggregating, given the additive nature of the statistics

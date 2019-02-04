@@ -263,6 +263,9 @@ void NETWORK_STATE::Init_Stats() {
   cur_cnt_err = 0.0f;
   pct_err = 0.0f;
   pct_cor = 0.0f;
+  cos_err = 0.0f;
+  sum_cos_err = 0.0f;
+  avg_cos_err.ResetAvg();
 
   sum_prerr.InitVals();
   epc_prerr.InitVals();
@@ -734,6 +737,99 @@ int NETWORK_STATE::Compute_PRerr_Layer(LAYER_STATE* lay) {
   return n_vals;
 }    
 
+void NETWORK_STATE::Compute_CosErr_Thr(int thr_no) {
+  // gather all the raw data for sse computation
+  const int nlay = n_layers_built;
+  for(int li = 0; li < nlay; li++) {
+    LAYER_STATE* lay = GetLayerState(li);
+    if(lay->lesioned()) continue;
+    if(!lay->HasExtFlag(UNIT_STATE::COMP_TARG))
+      continue;
+    if(lay->layer_type == LAYER_STATE::HIDDEN)
+      continue;
+
+    float cosv = 0.0f;  float ssm = 0.0f;
+    float sst = 0.0f;    float nvals = 0.0f;
+
+    const int ust = ThrLayUnStart(thr_no, li);
+    const int ued = ThrLayUnEnd(thr_no, li);
+    for(int ui = ust; ui < ued; ui++) {
+      UNIT_STATE* uv = ThrUnitState(thr_no, ui);
+      if(uv->lesioned()) continue;
+      if(!uv->HasExtFlag(UNIT_STATE::COMP_TARG)) continue;
+      nvals += 1.0f;
+      cosv += uv->targ * uv->act;
+      ssm += uv->act * uv->act;
+      sst += uv->targ * uv->targ;
+    }
+    ThrLayStats(thr_no, li, 0, COSERR) = cosv;
+    ThrLayStats(thr_no, li, 1, COSERR) = ssm;
+    ThrLayStats(thr_no, li, 2, COSERR) = sst;
+    ThrLayStats(thr_no, li, 3, COSERR) = nvals;
+  }
+}
+
+float NETWORK_STATE::Compute_CosErr_Agg() {
+  float cosv = 0.0f;
+  int n_lays = 0;
+  int lay_vals = 0;
+  const int nlay = n_layers_built;
+  for(int li = 0; li < nlay; li++) {
+    LAYER_STATE* lay = GetLayerState(li);
+    if(lay->lesioned()) continue;
+    cosv += Compute_CosErr_Layer(lay, lay_vals);
+    if(lay_vals > 0) {
+      n_lays++;
+    }
+  }
+  if(n_lays > 0) {
+    cosv /= (float)n_lays;
+    cos_err = cosv;
+    avg_cos_err.Increment(cos_err);
+  }
+  else {
+    cos_err = 0.0f;
+  }
+  return cosv;
+}
+
+float NETWORK_STATE::Compute_CosErr_Layer(LAYER_STATE* lay, int& n_vals) {
+  lay->cos_err = 0.0f;
+  n_vals = 0;
+  if(!lay->HasExtFlag(LAYER_STATE::COMP_TARG)) return 0.0f;
+  if(lay->layer_type == LAYER_STATE::HIDDEN) return 0.0f;
+  float cosv = 0.0f;
+  float ssm = 0.0f;
+  float sst = 0.0f;
+  const int li = lay->layer_idx;
+  for(int thr_no=0; thr_no < n_thrs_built; thr_no++) {
+    // integrate over thread raw data
+    float& lcosv = ThrLayStats(thr_no, li, 0, COSERR);
+    float& lssm = ThrLayStats(thr_no, li, 1, COSERR);
+    float& lsst = ThrLayStats(thr_no, li, 2, COSERR);
+    float& lnvals = ThrLayStats(thr_no, li, 3, COSERR);
+
+    n_vals += lnvals;
+    cosv += lcosv;
+    ssm += lssm;
+    sst += lsst;
+  }
+  if(n_vals == 0) return 0.0f;
+  float dist = sqrtf(ssm * sst);
+  if(dist != 0.0f)
+    cosv /= dist;
+  lay->cos_err = cosv;
+
+  lay->avg_cos_err.Increment(lay->cos_err);
+
+  if(lay->HasLayerFlag(LAYER_STATE::NO_ADD_SSE) ||
+     (lay->HasExtFlag(LAYER_STATE::COMP) && lay->HasLayerFlag(LAYER_STATE::NO_ADD_COMP_SSE))) {
+    n_vals = 0;
+    return 0.0f;
+  }
+  return cosv;
+}
+
 void NETWORK_STATE::Compute_EpochStats_Layers() {
   for(int li=0; li < n_layers_built; li++) {
     LAYER_STATE* lay = GetLayerState(li);
@@ -746,6 +842,9 @@ void NETWORK_STATE::Compute_EpochStats_Layer(LAYER_STATE* lay) {
   Compute_EpochSSE_Layer(lay);
   if(stats.prerr) {
     Compute_EpochPRerr_Layer(lay);
+  }
+  if(stats.cos_err) {
+    Compute_EpochCosErr_Layer(lay);
   }
 }
 
@@ -782,6 +881,15 @@ void NETWORK_STATE::Compute_EpochPRerr_Layer(LAYER_STATE* lay) {
   lay->epc_prerr = lay->sum_prerr;
   lay->epc_prerr.ComputePR();        // make sure, in case of dmem summing
   lay->sum_prerr.InitVals();         // reset!
+}
+
+void NETWORK_STATE::Compute_EpochCosErr() {
+  sum_cos_err = avg_cos_err.sum;
+  avg_cos_err.GetAvg_Reset();
+}
+
+void NETWORK_STATE::Compute_EpochCosErr_Layer(LAYER_STATE* lay) {
+  lay->avg_cos_err.GetAvg_Reset();
 }
 
 

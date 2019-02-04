@@ -73,7 +73,9 @@
   float                 pct_cor;        // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic epoch-wise average of count of number of times the sum squared error was below cnt_err_tol over an epoch or similar larger set of external input patterns (= 1 - pct_err -- just for convenience for whichever you want to plot)
   STATE_CLASS(PRerrVals) prerr;          // #NO_SAVE #GUI_READ_ONLY #CAT_Statistic precision and recall error values for this layer, for the current pattern
   STATE_CLASS(PRerrVals) sum_prerr;      // #NO_SAVE #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic precision and recall error values over an epoch or similar larger set of external input patterns -- these are always up-to-date as the system is aggregating, given the additive nature of the statistics
-  STATE_CLASS(PRerrVals) epc_prerr;      // #NO_SAVE #GUI_READ_ONLY #SHOW #CONDSHOW_ON_stats.prerr #CAT_Statistic precision and recall error values over an epoch or similar larger set of external input patterns
+  STATE_CLASS(PRerrVals) epc_prerr;      // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic precision and recall error values over an epoch or similar larger set of external input patterns
+  float         cos_err;        // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic cosine (normalized dot product) error on this trial for this layer, comparing targ vs. act
+  STATE_CLASS(Average)        avg_cos_err;        // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #DMEM_AGG_SUM average cosine (normalized dot product) error (computed over previous epoch)
   float                 icon_value;     // #NO_SAVE #GUI_READ_ONLY #HIDDEN #CAT_Statistic value to display if layer is iconified (algorithmically determined)
   
   INLINE void   SetLayerFlag(int flg)   { flags = (LayerFlags)(flags | flg); }

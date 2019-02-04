@@ -6,6 +6,7 @@
   enum NetThrLayStats {         // stats that require holding threaded layer-level variables for subsequent aggregation
     SSE,
     PRERR,
+    COSERR,
     N_NetThrLayStats,
   };
 
@@ -540,6 +541,13 @@
   INIMPL virtual int   Compute_PRerr_Layer(LAYER_STATE* lay);
   // #IGNORE compute precision and recall error statistics over entire layer -- true positive, false positive, and false negative -- returns number of values entering into computation (depends on number of targets) -- precision = tp / (tp + fp) recall = tp / (tp + fn) fmeasure = 2 * p * r / (p + r) -- uses sse_tol so error is 0 if within tolerance on a per unit basis -- results are stored in prerr values on layer
 
+  INIMPL virtual void Compute_CosErr_Thr(int thr_no);
+  // #IGNORE
+  INIMPL virtual float Compute_CosErr_Agg();
+  // #IGNORE
+  INIMPL virtual float Compute_CosErr_Layer(LAYER_STATE* lay, int& n_vals);
+  // #IGNORE
+  
 
   INIMPL virtual void Compute_EpochSSE();
   // #IGNORE compute epoch-level sum squared error and related statistics
@@ -551,6 +559,11 @@
   INIMPL virtual void Compute_EpochPRerr_Layer(LAYER_STATE* lay);
   // #IGNORE compute epoch-level precision and recall statistics
 
+  INIMPL virtual void Compute_EpochCosErr();
+  // #IGNORE
+  INIMPL virtual void Compute_EpochCosErr_Layer(LAYER_STATE* lay);
+  // #IGNORE
+  
 
   INIMPL virtual void Compute_EpochStats_Layers();
   // #IGNORE compute epoch-level statistics at the layer level: SSE, PRerr -- overload in derived classes

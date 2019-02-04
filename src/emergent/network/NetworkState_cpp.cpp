@@ -229,16 +229,25 @@ void NetworkState_cpp::Compute_PRerr() {
   Compute_PRerr_Agg();
 }
 
+float NetworkState_cpp::Compute_CosErr() {
+  NET_THREAD_CALL(NetworkState_cpp::Compute_CosErr_Thr);
+  return Compute_CosErr_Agg();
+}
+
 void NetworkState_cpp::Compute_TrialStats() {
   Compute_SSE(stats.sse_unit_avg, stats.sse_sqrt);
   if(stats.prerr)
     Compute_PRerr();
+  if(stats.cos_err)
+    Compute_CosErr();
 }
 
 void NetworkState_cpp::Compute_EpochStats() {
   Compute_EpochSSE();
   if(stats.prerr)
     Compute_EpochPRerr();
+  if(stats.cos_err)
+    Compute_EpochCosErr();
   Compute_EpochStats_Layers();
 }
 
