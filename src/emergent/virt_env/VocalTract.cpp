@@ -285,6 +285,26 @@ void VocalTractCtrl::SetFromFloat(float val, ParamIndex param, bool normalized) 
   }
 }
 
+float VocalTractCtrl::Normalize(float val, ParamIndex param) {
+  TypeDef* td = GetTypeDef();
+  int stidx = td->members.FindNameIdx("glot_pitch");
+  MemberDef* md = td->members[stidx + param];
+  float* par = (float*)md->GetOff(this);
+  float min = md->OptionAfter("MIN_").toFloat();
+  float max = md->OptionAfter("MAX_").toFloat();
+  return (val - min) / (max - min);
+}
+
+float VocalTractCtrl::UnNormalize(float val, ParamIndex param) {
+  TypeDef* td = GetTypeDef();
+  int stidx = td->members.FindNameIdx("glot_pitch");
+  MemberDef* md = td->members[stidx + param];
+  float* par = (float*)md->GetOff(this);
+  float min = md->OptionAfter("MIN_").toFloat();
+  float max = md->OptionAfter("MAX_").toFloat();
+  return min + val * (max - min);
+}
+
 void VocalTractCtrl::SetFromFloats(const float* vals, bool normalized) {
   for(int i=0; i < N_PARAMS; i++) {
     SetFromFloat(vals[i], (ParamIndex)i, normalized);

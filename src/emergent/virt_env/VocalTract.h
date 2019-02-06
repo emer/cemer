@@ -257,6 +257,11 @@ public:
                          bool normalized = true);
   // set values from a matrix cell -- see ParamIndex for indexes of each value -- for normalized values then 0..1 floats are expanded according to the min/max values
   
+  // return the normalized value using the params min/max range
+  float Normalize(float val, ParamIndex param);
+  // return the unnormalized value using the params min/max range
+  float UnNormalize(float val, ParamIndex param);
+
   TA_SIMPLE_BASEFUNS(VocalTractCtrl);
 private:
   void Initialize();
