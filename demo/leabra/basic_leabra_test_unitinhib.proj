@@ -2609,7 +2609,7 @@ LeabraProject .projects[0] {
  version {
   major=8;
   minor=0;
-  step=4;
+  step=5;
  };
  author="Randall C. O'Reilly";
  email="emergent-users@grey.colorado.edu";
@@ -2641,6 +2641,11 @@ LeabraProject .projects[0] {
 <ul>
 
 
+<li>Fri Apr 26 21:23:54 2019 version: 8.0.5 user: oreilly file_name: <code>basic_leabra_test_unitinhib.proj</code> <br>
+svn rev: 11500 inhib test
+
+
+
 <li>Fri Apr 26 21:23:18 2019 version: 8.0.4 user: oreilly file_name: <code>basic_leabra_test_unitinhib.proj</code> <br>
 inhib test -- go emergent is replicating
 
@@ -2666,6 +2671,11 @@ finally, a unit-testing style project for basic leabra equations -- for validati
 <body>
 <h1>ChangeLog</h1>
 <ul>
+<P>
+<P>
+<li>Fri Apr 26 21:23:54 2019 version: 8.0.5 user: oreilly file_name: <code>basic_leabra_test_unitinhib.proj</code> <br>
+svn rev: 11500 inhib test
+<P>
 <P>
 <P>
 <li>Fri Apr 26 21:23:18 2019 version: 8.0.4 user: oreilly file_name: <code>basic_leabra_test_unitinhib.proj</code> <br>
@@ -22331,8 +22341,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
  save_view=1;
  save_as_only=0;
  auto_name=1;
- last_change_desc="inhib test -- go emergent is replicating";
- tree_state{ .;.docs;.wizards;.wizards[0];.ctrl_panels;.data;.data.gp[0];.data.gp[1];.data.gp[2];.programs;.programs.gp[0];.programs.gp[1];.viewers[0];.viewers[0].frames[2];.networks;.networks[0];.networks[0].specs;.networks[0].specs[0];.networks[0].specs[1];.networks[0].specs[2];.networks[0].specs[4];.networks[0].layers;.networks[0].layers[1];.networks[0].layers[1].projections;.networks[0].layers[2];.networks[0].layers[2].projections;.networks[0].weights; };
+ last_change_desc="svn rev: 11500 inhib test";
+ tree_state{ .;.docs;.wizards;.wizards[0];.ctrl_panels;.data;.data.gp[0];.data.gp[1];.data.gp[2];.programs;.programs.gp[0];.programs.gp[1];.networks;.networks[0];.networks[0].specs;.networks[0].specs[0];.networks[0].specs[1];.networks[0].specs[2];.networks[0].specs[4];.networks[0].layers;.networks[0].layers[1];.networks[0].layers[1].projections;.networks[0].layers[2];.networks[0].layers[2].projections;.networks[0].weights; };
  networks {
   name="networks";
   el_typ=LeabraNetwork;
@@ -22762,9 +22772,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      spec {type=LeabraLayerSpec: spec=.networks[0].specs[0].children[0]$$: };
      adapt_gi=1;
      mod_avg_l_lrn=0;
-     acts_m_avg=0.21875;
-     acts_p_avg=0.21875;
-     acts_p_avg_eff=0.21875;
+     acts_m_avg=0.2;
+     acts_p_avg=0.2;
+     acts_p_avg_eff=0.2;
     };
     LeabraLayer @[1] {
      name="Hidden";
@@ -22858,10 +22868,10 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      voxel_fill_pct=1;
      spec {type=LeabraLayerSpec: spec=.networks[0].specs[0]$$: };
      adapt_gi=1;
-     mod_avg_l_lrn=0.01;
-     acts_m_avg=0.1615089;
-     acts_p_avg=0.1704035;
-     acts_p_avg_eff=0.1704035;
+     mod_avg_l_lrn=0;
+     acts_m_avg=0.2;
+     acts_p_avg=0.2;
+     acts_p_avg_eff=0.2;
     };
     LeabraLayer @[2] {
      name="Output";
@@ -22928,9 +22938,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      spec {type=LeabraLayerSpec: spec=$.networks[0].specs[0].children[0]$: };
      adapt_gi=1;
      mod_avg_l_lrn=0;
-     acts_m_avg=0.1810896;
-     acts_p_avg=0.21875;
-     acts_p_avg_eff=0.21875;
+     acts_m_avg=0.2;
+     acts_p_avg=0.2;
+     acts_p_avg_eff=0.2;
     };
    };
    weights {
@@ -22948,7 +22958,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
    max_disp_size2d {x=4: y=5: };
    times {quarter=25: deep_cyc=5: time_inc=0.001: wt_bal_int=10: minus=75: plus=25: total_cycles=100: thal_gate_cycle=-2: };
    lstats {trg_max_act_crit=0.5: off_errs=1: on_errs=1: agg_unlearnable=0: wt_bal=0: };
-   net_misc {spike=0: deep=0: bias_learn=0: trial_decay=1: diff_scale_p=0: diff_scale_q1=0: wt_bal=0: lay_gp_inhib=0: inhib_cons=1: };
+   net_misc {spike=0: deep=0: bias_learn=0: trial_decay=0: diff_scale_p=0: diff_scale_q1=0: wt_bal=0: lay_gp_inhib=0: inhib_cons=1: };
    deep {on=0: ctxt=0: raw_net=0: mod_net=0: raw_qtr=0: };
    rel_netin {on=1: trl_skip=10: epc_skip=10: };
   };
