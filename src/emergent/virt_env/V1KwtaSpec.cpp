@@ -225,8 +225,10 @@ bool V1KwtaSpec::Compute_Inhib(float_Matrix& inputs, float_Matrix& outputs,
     Compute_FFFB(inputs, outputs, gc_i_mat);
     Compute_Act(inputs, outputs, gc_i_mat);
     cycle++;
-    if(max_da < max_da_crit)
+    if(max_da < max_da_crit) {
+      // printf("cycle: %d\n", cycle);
       break;
+    }
   }
   return true;
 }

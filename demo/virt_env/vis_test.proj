@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.5.0.0 rev11309
+// ta_Dump File v3.0 -- code v8.5.6.0 rev11491
 LeabraProject .projects[0] { 
  Doc_Group @.docs = [2] {
   taDoc @[0] { 
@@ -212,7 +212,7 @@ LeabraProject .projects[0] {
     UserData_DocLink @[0] { };
    };
 
-   ProgObjList @.objs = [2] {
+   ProgObjList @.objs = [3] {
     V1RetinaProc @[0] { 
      VisRegionSpecBaseList @.regions = [1] {
       V1RegionSpec @[0] { };
@@ -235,9 +235,13 @@ LeabraProject .projects[0] {
      DataOpList @.last_sort_spec.ops = [0] {
      };
     };
+    taImage @[2] { };
    };
 
-   ProgVar_List @.objs_vars = [0] {
+   ProgVar_List @.objs_vars = [3] {
+    ProgVar @[0] { };
+    ProgVar @[1] { };
+    ProgVar @[2] { };
    };
 
    ProgType_List @.types = [0] {
@@ -246,10 +250,8 @@ LeabraProject .projects[0] {
    ProgVar_List @.args = [0] {
    };
 
-   ProgVar_List @.vars = [3] {
+   ProgVar_List @.vars = [1] {
     ProgVar @[0] { };
-    ProgVar @[1] { };
-    ProgVar @[2] { };
    };
 
    Function_List @.functions = [0] {
@@ -262,12 +264,30 @@ LeabraProject .projects[0] {
     };
    };
 
-   ProgEl_List @.prog_code = [3] {
-    ProgramCall @[0] { 
+   ProgEl_List @.prog_code = [8] {
+    LocalVars @[0] { 
+     ProgVar_List @.local_vars = [2] {
+      ProgVar @[0] { };
+      ProgVar @[1] { };
+     };
+    };
+    ProgramCall @[1] { 
      ProgArg_List @.prog_args = [0] {
      };
     };
-    MethodCall @[1] { 
+    MethodCall @[2] { 
+     ProgArg_List @.meth_args = [1] {
+      ProgArg @[0] { };
+     };
+    };
+    MethodCall @[3] { 
+     ProgArg_List @.meth_args = [2] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+     };
+    };
+    PrintVar @[4] { };
+    MethodCall @[5] { 
      ProgArg_List @.meth_args = [6] {
       ProgArg @[0] { };
       ProgArg @[1] { };
@@ -277,9 +297,13 @@ LeabraProject .projects[0] {
       ProgArg @[5] { };
      };
     };
-    MethodCall @[2] { 
+    MethodCall @[6] { 
      ProgArg_List @.meth_args = [1] {
       ProgArg @[0] { };
+     };
+    };
+    MethodCall @[7] { 
+     ProgArg_List @.meth_args = [0] {
      };
     };
    };
@@ -305,7 +329,9 @@ LeabraProject .projects[0] {
     };
    };
 
-   ProgVar_List @.objs_vars = [0] {
+   ProgVar_List @.objs_vars = [2] {
+    ProgVar @[0] { };
+    ProgVar @[1] { };
    };
 
    ProgType_List @.types = [2] {
@@ -328,7 +354,7 @@ LeabraProject .projects[0] {
    ProgVar_List @.args = [0] {
    };
 
-   ProgVar_List @.vars = [33] {
+   ProgVar_List @.vars = [31] {
     ProgVar @[0] { };
     ProgVar @[1] { };
     ProgVar @[2] { };
@@ -360,8 +386,6 @@ LeabraProject .projects[0] {
     ProgVar @[28] { };
     ProgVar @[29] { };
     ProgVar @[30] { };
-    ProgVar @[31] { };
-    ProgVar @[32] { };
    };
 
    Function_List @.functions = [2] {
@@ -2006,7 +2030,7 @@ LeabraProject .projects[0] {
 	 T3DataView_List @.annote_children = [0] {
 	 };
 
-	 NetViewStateItem_List @.state_items = [20] {
+	 NetViewStateItem_List @.net_state_text.state_items = [20] {
 	  NetViewStateItem @[0] { };
 	  NetViewStateItem @[1] { };
 	  NetViewStateItem @[2] { };
@@ -2171,259 +2195,7 @@ LeabraProject .projects[0] {
 </body>
 </html>
 ";
-   html_text="<!DOCTYPE html><html lang=\"en\" dir=\"ltr\" class=\"client-js\"><head>
-<meta charset=\"UTF-8\">
-<title>demos/vis test - emergent</title>
-<script>document.documentElement.className = document.documentElement.className.replace( /(^|\\s)client-nojs(\\s|$)/, \"$1client-js$2\" );</script>
-<script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
-mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":!1,\"wgNamespaceNumber\":0,\"wgPageName\":\"demos/vis_test\",\"wgTitle\":\"demos/vis test\",\"wgCurRevisionId\":12253,\"wgRevisionId\":12253,\"wgArticleId\":2911,\"wgIsArticle\":!0,\"wgIsRedirect\":!1,\"wgAction\":\"view\",\"wgUserName\":\"Oreilly\",\"wgUserGroups\":[\"bureaucrat\",\"svnadmins\",\"sysop\",\"*\",\"user\",\"autoconfirmed\"],\"wgCategories\":[\"PublishedProject\"],\"wgBreakFrames\":!1,\"wgPageContentLanguage\":\"en\",\"wgPageContentModel\":\"wikitext\",\"wgSeparatorTransformTable\":[\"\",\"\"],\"wgDigitTransformTable\":[\"\",\"\"],\"wgDefaultDateFormat\":\"dmy\",\"wgMonthNames\":[\"\",\"January\",\"February\",\"March\",\"April\",\"May\",\"June\",\"July\",\"August\",\"September\",\"October\",\"November\",\"December\"],\"wgMonthNamesShort\":[\"\",\"Jan\",\"Feb\",\"Mar\",\"Apr\",\"May\",\"Jun\",\"Jul\",\"Aug\",\"Sep\",\"Oct\",\"Nov\",\"Dec\"],\"wgRelevantPageName\":\"demos/vis_test\",\"wgRelevantArticleId\":2911,\"wgUserId\":3,\"wgUserEditCount\":3319,\"wgUserRegistration\":1178051527000,\"wgUserNewMsgRevisionId\":null,
-\"wgIsProbablyEditable\":!0,\"wgRestrictionEdit\":[],\"wgRestrictionMove\":[],\"sfgAutocompleteValues\":[],\"sfgAutocompleteOnAllChars\":!1,\"sfgFieldProperties\":[],\"sfgDependentFields\":[],\"sfgShowOnSelect\":[],\"sfgScriptPath\":\"/emergent/extensions/SemanticForms\",\"wgSVGEditEditor\":\"http://svg-edit.googlecode.com/svn/trunk/editor/svg-editor.html\",\"wgHeaderTabsTabIndexes\":[],\"wgWikiEditorEnabledModules\":{\"toolbar\":!0,\"dialogs\":!0,\"preview\":!0,\"publish\":!1},\"wgCategoryTreePageCategoryOptions\":\"{\\\"mode\\\":0,\\\"hideprefix\\\":20,\\\"showcount\\\":true,\\\"namespaces\\\":false}\"});mw.loader.implement(\"user.options\",function($,jQuery){mw.user.options.set({\"ccmeonemails\":\"1\",\"enotifminoredits\":\"1\",\"imagesize\":\"0\",\"previewontop\":\"\",\"rows\":\"30\",\"thumbsize\":\"0\",\"underline\":\"0\",\"watchmoves\":\"1\",\"editsection\":\"1\",\"rememberpassword\":\"1\",\"timecorrection\":\"ZoneInfo|-360|America/Denver\",\"watchlisttoken\":\"14fd6c804d78e99930123181974c128b983adb9e\"});});mw.loader.implement(\"user.tokens\",function($,jQuery){mw.user.tokens.set({\"editToken\":\"55e4b62abf8ad97ff0184de6753a4b9a5a51e8a8+\\\\\",\"patrolToken\":\"4085e1f06fee80baec33040a81ebb0595a51e8a8+\\\\\",\"watchToken\":\"8d607234ef4ff87d166e6543215340f35a51e8a8+\\\\\"});});mw.loader.load([\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\",\"mediawiki.legacy.wikibits\",\"skins.vector.js\"]);
-} );</script>
-<link rel=\"stylesheet\" href=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=mediawiki.legacy.commonPrint%2Cshared%7Cmediawiki.sectionAnchor%7Cmediawiki.skinning.interface%7Cskins.vector.styles&amp;only=styles&amp;skin=vector\">
-<link rel=\"stylesheet\" href=\"/emergent/extensions/HeaderTabs/skins/ext.headertabs.large.css\">
-<meta name=\"ResourceLoaderDynamicStyles\" content=\"\">
-<link rel=\"stylesheet\" href=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=site&amp;only=styles&amp;skin=vector\">
-<style>a{text-decoration:none}</style>
-<script async=\"\" src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=startup&amp;only=scripts&amp;skin=vector\"></script>
-<meta name=\"generator\" content=\"MediaWiki 1.26.4\">
-<link rel=\"ExportRDF\" type=\"application/rdf+xml\" title=\"demos/vis test\" href=\"/emergent/index.php?title=Special:ExportRDF/demos/vis_test&amp;xmlmime=rdf\">
-<link rel=\"alternate\" type=\"application/x-wiki\" title=\"Edit\" href=\"/emergent/index.php?title=demos/vis_test&amp;action=edit\">
-<link rel=\"edit\" title=\"Edit\" href=\"/emergent/index.php?title=demos/vis_test&amp;action=edit\">
-<link rel=\"shortcut icon\" href=\"/emergent/favicon.ico\">
-<link rel=\"search\" type=\"application/opensearchdescription+xml\" href=\"/emergent/opensearch_desc.php\" title=\"emergent (en)\">
-<link rel=\"EditURI\" type=\"application/rsd+xml\" href=\"https://grey.colorado.edu/emergent/api.php?action=rsd\">
-<link rel=\"alternate\" type=\"application/atom+xml\" title=\"emergent Atom feed\" href=\"/emergent/index.php?title=Special:RecentChanges&amp;feed=atom\">
-<!--[if lt IE 7]><style type=\"text/css\">body{behavior:url(\"/emergent/skins/Vector/csshover.min.htc\")}</style><![endif]-->
-</head>
-<body class=\"mediawiki ltr sitedir-ltr ns-0 ns-subject page-demos_vis_test skin-vector action-view\">
-		<div id=\"mw-page-base\" class=\"noprint\"></div>
-		<div id=\"mw-head-base\" class=\"noprint\"></div>
-		<div id=\"content\" class=\"mw-body\" role=\"main\">
-			<a id=\"top\"></a>
-
-						<div class=\"mw-indicators\">
-</div>
-			<h1 id=\"firstHeading\" class=\"firstHeading\" lang=\"en\">demos/vis test</h1>
-									<div id=\"bodyContent\" class=\"mw-body-content\">
-									<div id=\"siteSub\">From emergent</div>
-								<div id=\"contentSub\"></div>
-												<div id=\"jump-to-nav\" class=\"mw-jump\">
-					Jump to:					<a href=\"#mw-head\">navigation</a>, 					<a href=\"#p-search\">search</a>
-				</div>
-				<div id=\"mw-content-text\" lang=\"en\" dir=\"ltr\" class=\"mw-content-ltr\"><table style=\"width: 35em; font-size: 90%; border: 1px solid #aaaaaa; background-color: #f9f9f9; color: black; margin-bottom: 0.5em; margin-left: 1em; padding: 0.2em; float: right; clear: right; text-align:left;\">
-<tbody><tr>
-<th style=\"text-align: center; background-color:#ccccff;\" colspan=\"2\"><big>demos/vis test</big>
-</th></tr>
-<tr>
-<th> Project Name
-</th>
-<td> vis_test
-</td></tr>
-<tr>
-<th> Filename
-</th>
-<td> <a href=\"/emergent/index.php/File:vis_test.proj\" title=\"File:vis test.proj\">File:vis test.proj</a> <a href=\"/emergent/index.php?title=.OpenProjectFromWeb(vis_test.proj,https://grey.colorado.edu/emergent/index.php/MainPage)&amp;action=edit&amp;redlink=1\" class=\"new\" title=\".OpenProjectFromWeb(vis test.proj,https://grey.colorado.edu/emergent/index.php/MainPage) (page does not exist)\"><span style=\"color:#000000;background-color:#C0C0C0;font-weight:bold; border:1px solid black; padding:0 3px 0 3px\">Open Project in emergent</span></a>
-</td></tr>
-<tr>
-<th> Author
-</th>
-<td>  Randall C. O'Reilly
-</td></tr>
-<tr>
-<th> Email
-</th>
-<td> emergent-users@grey.colorado.edu
-</td></tr>
-<tr>
-<th> Publication
-</th>
-<td> ERROR: Could not find title object]]
-</td></tr>
-<tr>
-<th> First Published
-</th>
-<td> Aug 31 2016
-</td></tr>
-<tr>
-<th> Tags
-</th>
-<td>  Demo, Vision, V1 Filters, Gabor Filters
-</td></tr>
-<tr>
-<th> Description
-</th>
-<td>  Allows testing of V1 visual filters on well-controlled visual stimuli rendered using a canvas and in a 3D world.
-</td></tr>
-<tr>
-<th> Updated
-</th>
-<td> 31 August 2016
-</td></tr>
-<tr>
-<th> Versions
-</th>
-<td> 8.0.0
-</td></tr>
-<tr>
-<th> Emergent Versions
-</th>
-<td> 8.0.0
-</td></tr>
-<tr>
-<th> Other Files
-</th>
-<td>
-</td></tr></tbody></table>
-
-<!-- 
-NewPP limit report
-Cached time: 20180107092936
-Cache expiry: 86400
-Dynamic content: false
-CPU time usage: 0.080 seconds
-Real time usage: 0.107 seconds
-Preprocessor visited node count: 78/1000000
-Preprocessor generated node count: 485/1000000
-Post?expand include size: 1592/2097152 bytes
-Template argument size: 641/2097152 bytes
-Highest expansion depth: 5/40
-Expensive parser function count: 0/100
--->
-
-<!-- 
-Transclusion expansion time report (%,ms,calls,template)
-100.00%   53.467      1 - -total
-100.00%   53.467      1 - Template:PublishedProject
-  5.22%    2.792      1 - Template:emerlink
-  4.97%    2.660      1 - Template:cite
--->
-
-<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2911-0!*!0!*!*!0!* and timestamp 20180107092936 and revision id 12253
- -->
-</div>					<div class=\"printfooter\">
-						Retrieved from \"<a dir=\"ltr\" href=\"https://grey.colorado.edu/emergent/index.php?title=demos/vis_test&amp;oldid=12253\">https://grey.colorado.edu/emergent/index.php?title=demos/vis_test&amp;oldid=12253</a>\"					</div>
-				<div id=\"catlinks\" class=\"catlinks\"><div id=\"mw-normal-catlinks\" class=\"mw-normal-catlinks\"><a href=\"/emergent/index.php/Special:Categories\" title=\"Special:Categories\">Category</a>: <ul><li><a href=\"/emergent/index.php/Category:PublishedProject\" title=\"Category:PublishedProject\">PublishedProject</a></li></ul></div></div>				<div class=\"visualClear\"></div>
-							</div>
-		</div>
-		<div id=\"mw-navigation\">
-			<h2>Navigation menu</h2>
-
-			<div id=\"mw-head\">
-									<div id=\"p-personal\" role=\"navigation\" class=\"\" aria-labelledby=\"p-personal-label\">
-						<h3 id=\"p-personal-label\">Personal tools</h3>
-						<ul>
-							<li id=\"pt-userpage\"><a href=\"/emergent/index.php/User:Oreilly\" dir=\"auto\" title=\"Your user page [.]\" accesskey=\".\">Oreilly</a></li><li id=\"pt-mytalk\"><a href=\"/emergent/index.php/User_talk:Oreilly\" class=\"new\" title=\"Your talk page [n]\" accesskey=\"n\">Talk</a></li><li id=\"pt-preferences\"><a href=\"/emergent/index.php/Special:Preferences\" title=\"Your preferences\">Preferences</a></li><li id=\"pt-watchlist\"><a href=\"/emergent/index.php/Special:Watchlist\" title=\"A list of pages you are monitoring for changes [l]\" accesskey=\"l\">Watchlist</a></li><li id=\"pt-mycontris\"><a href=\"/emergent/index.php/Special:Contributions/Oreilly\" title=\"A list of your contributions [y]\" accesskey=\"y\">Contributions</a></li><li id=\"pt-logout\"><a href=\"/emergent/index.php?title=Special:UserLogout&amp;returnto=demos%2Fvis+test\" title=\"Log out\">Log out</a></li>						</ul>
-					</div>
-									<div id=\"left-navigation\">
-										<div id=\"p-namespaces\" role=\"navigation\" class=\"vectorTabs\" aria-labelledby=\"p-namespaces-label\">
-						<h3 id=\"p-namespaces-label\">Namespaces</h3>
-						<ul>
-															<li id=\"ca-nstab-main\" class=\"selected\"><span><a href=\"/emergent/index.php/demos/vis_test\" title=\"View the content page [c]\" accesskey=\"c\">Page</a></span></li>
-															<li id=\"ca-talk\" class=\"new\"><span><a href=\"/emergent/index.php?title=Talk:demos/vis_test&amp;action=edit&amp;redlink=1\" title=\"Discussion about the content page [t]\" accesskey=\"t\" rel=\"discussion\">Discussion</a></span></li>
-													</ul>
-					</div>
-										<div id=\"p-variants\" role=\"navigation\" class=\"vectorMenu emptyPortlet\" aria-labelledby=\"p-variants-label\">
-												<h3 id=\"p-variants-label\">
-							<span>Variants</span><a href=\"#\"></a>
-						</h3>
-
-						<div class=\"menu\">
-							<ul>
-															</ul>
-						</div>
-					</div>
-									</div>
-				<div id=\"right-navigation\">
-										<div id=\"p-views\" role=\"navigation\" class=\"vectorTabs\" aria-labelledby=\"p-views-label\">
-						<h3 id=\"p-views-label\">Views</h3>
-						<ul>
-															<li id=\"ca-view\" class=\"selected\"><span><a href=\"/emergent/index.php/demos/vis_test\">Read</a></span></li>
-															<li id=\"ca-edit\"><span><a href=\"/emergent/index.php?title=demos/vis_test&amp;action=edit\" title=\"Edit this page [e]\" accesskey=\"e\">Edit</a></span></li>
-															<li id=\"ca-history\" class=\"collapsible\"><span><a href=\"/emergent/index.php?title=demos/vis_test&amp;action=history\" title=\"Past revisions of this page [h]\" accesskey=\"h\">View history</a></span></li>
-															<li id=\"ca-unwatch\" class=\"icon\"><span><a href=\"/emergent/index.php?title=demos/vis_test&amp;action=unwatch&amp;token=56b71da71b78ab3e296f630f9da67d675a51e8a8%2B%5C\" title=\"Remove this page from your watchlist [w]\" accesskey=\"w\">Unwatch</a></span></li>
-													</ul>
-					</div>
-										<div id=\"p-cactions\" role=\"navigation\" class=\"vectorMenu\" aria-labelledby=\"p-cactions-label\">
-						<h3 id=\"p-cactions-label\"><span>More</span><a href=\"#\"></a></h3>
-
-						<div class=\"menu\">
-							<ul>
-																	<li id=\"ca-delete\">
-										<a href=\"/emergent/index.php?title=demos/vis_test&amp;action=delete\" title=\"Delete this page [d]\" accesskey=\"d\">Delete</a>
-									</li>
-																	<li id=\"ca-move\">
-										<a href=\"/emergent/index.php/Special:MovePage/demos/vis_test\" title=\"Move this page [m]\" accesskey=\"m\">Move</a>
-									</li>
-																	<li id=\"ca-protect\">
-										<a href=\"/emergent/index.php?title=demos/vis_test&amp;action=protect\" title=\"Protect this page [=]\" accesskey=\"=\">Protect</a>
-									</li>
-																	<li id=\"ca-purge\">
-										<a href=\"/emergent/index.php?title=demos/vis_test&amp;action=purge\">Refresh</a>
-									</li>
-															</ul>
-						</div>
-					</div>
-										<div id=\"p-search\" role=\"search\">
-						<h3>
-							<label for=\"searchInput\">Search</label>
-						</h3>
-
-						<form action=\"/emergent/index.php\" id=\"searchform\">
-							<div id=\"simpleSearch\">
-							<input type=\"search\" name=\"search\" placeholder=\"Search\" title=\"Search emergent [f]\" accesskey=\"f\" id=\"searchInput\"><input type=\"hidden\" value=\"Special:Search\" name=\"title\"><input type=\"submit\" name=\"fulltext\" value=\"Search\" title=\"Search the pages for this text\" id=\"mw-searchButton\" class=\"searchButton mw-fallbackSearchButton\"><input type=\"submit\" name=\"go\" value=\"Go\" title=\"Go to a page with this exact name if it exists\" id=\"searchButton\" class=\"searchButton\">							</div>
-						</form>
-					</div>
-									</div>
-			</div>
-			<div id=\"mw-panel\">
-				<div id=\"p-logo\" role=\"banner\"><a class=\"mw-wiki-logo\" href=\"/emergent/index.php/Main_Page\" title=\"Visit the main page\"></a></div>
-						<div class=\"portal\" role=\"navigation\" id=\"p-navigation\" aria-labelledby=\"p-navigation-label\">
-			<h3 id=\"p-navigation-label\">Navigation</h3>
-
-			<div class=\"body\">
-									<ul>
-						<li id=\"n-mainpage-description\"><a href=\"/emergent/index.php/Main_Page\" title=\"Visit the main page [z]\" accesskey=\"z\">Main page</a></li><li id=\"n-recentchanges\"><a href=\"/emergent/index.php/Special:RecentChanges\" title=\"A list of recent changes in the wiki [r]\" accesskey=\"r\">Recent changes</a></li><li id=\"n-Documentation\"><a href=\"/emergent/index.php/User_hub\">Documentation</a></li><li id=\"n-Submit-a-bug\"><a href=\"/emergent/index.php/How_to_submit_a_bug_report\">Submit a bug</a></li><li id=\"n-Bug-tracker\"><a href=\"//grey.colorado.edu/cgi-bin/bugzilla/index.cgi\" rel=\"nofollow\">Bug tracker</a></li><li id=\"n-Mailing-list\"><a href=\"//grey.colorado.edu/cgi-bin/mailman/listinfo/emergent-users\" rel=\"nofollow\">Mailing list</a></li>					</ul>
-							</div>
-		</div>
-			<div class=\"portal\" role=\"navigation\" id=\"p-tb\" aria-labelledby=\"p-tb-label\">
-			<h3 id=\"p-tb-label\">Tools</h3>
-
-			<div class=\"body\">
-									<ul>
-						<li id=\"t-whatlinkshere\"><a href=\"/emergent/index.php/Special:WhatLinksHere/demos/vis_test\" title=\"A list of all wiki pages that link here [j]\" accesskey=\"j\">What links here</a></li><li id=\"t-recentchangeslinked\"><a href=\"/emergent/index.php/Special:RecentChangesLinked/demos/vis_test\" title=\"Recent changes in pages linked from this page [k]\" accesskey=\"k\">Related changes</a></li><li id=\"t-upload\"><a href=\"/emergent/index.php/Special:Upload\" title=\"Upload files [u]\" accesskey=\"u\">Upload file</a></li><li id=\"t-specialpages\"><a href=\"/emergent/index.php/Special:SpecialPages\" title=\"A list of all special pages [q]\" accesskey=\"q\">Special pages</a></li><li id=\"t-permalink\"><a href=\"/emergent/index.php?title=demos/vis_test&amp;oldid=12253\" title=\"Permanent link to this revision of the page\">Permanent link</a></li><li id=\"t-info\"><a href=\"/emergent/index.php?title=demos/vis_test&amp;action=info\" title=\"More information about this page\">Page information</a></li><li id=\"t-smwbrowselink\"><a href=\"/emergent/index.php/Special:Browse/demos/vis_test\" rel=\"smw-browse\">Browse properties</a></li>					</ul>
-							</div>
-		</div>
-			<div class=\"portal\" role=\"navigation\" id=\"p-coll-print_export\" aria-labelledby=\"p-coll-print_export-label\">
-			<h3 id=\"p-coll-print_export-label\">Print/export</h3>
-
-			<div class=\"body\">
-									<ul>
-						<li id=\"coll-create_a_book\"><a href=\"/emergent/index.php?title=Special:Book&amp;bookcmd=book_creator&amp;referer=demos%2Fvis+test\">Create a book</a></li><li id=\"coll-download-as-rl\"><a href=\"/emergent/index.php?title=Special:Book&amp;bookcmd=render_article&amp;arttitle=demos%2Fvis+test&amp;oldid=12253&amp;writer=rl\">Download as PDF</a></li><li id=\"t-print\"><a href=\"/emergent/index.php?title=demos/vis_test&amp;printable=yes\" title=\"Printable version of this page [p]\" accesskey=\"p\">Printable version</a></li>					</ul>
-							</div>
-		</div>
-				</div>
-		</div>
-		<div id=\"footer\" role=\"contentinfo\">
-							<ul id=\"footer-info\">
-											<li id=\"footer-info-lastmod\"> This page was last modified on 31 August 2016, at 03:32.</li>
-									</ul>
-							<ul id=\"footer-places\">
-											<li id=\"footer-places-about\"><a href=\"/emergent/index.php/emergent:About\" title=\"emergent:About\">About emergent</a></li>
-									</ul>
-										<ul id=\"footer-icons\" class=\"noprint\">
-											<li id=\"footer-poweredbyico\">
-							<a href=\"//www.mediawiki.org/\"><img src=\"/emergent/resources/assets/poweredby_mediawiki_88x31.png\" alt=\"Powered by MediaWiki\" srcset=\"/emergent/resources/assets/poweredby_mediawiki_132x47.png 1.5x, /emergent/resources/assets/poweredby_mediawiki_176x62.png 2x\" width=\"88\" height=\"31\"></a><a href=\"https://www.semantic-mediawiki.org/wiki/Semantic_MediaWiki\"><img src=\"/emergent/extensions/SemanticMediaWiki/resources/images/smw_button.png\" alt=\"Powered by Semantic MediaWiki\" width=\"88\" height=\"31\"></a>						</li>
-									</ul>
-						<div style=\"clear:both\"></div>
-		</div>
-		<script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
-mw.loader.state({\"user\":\"ready\",\"user.groups\":\"ready\"});mw.loader.load([\"mediawiki.action.view.postEdit\",\"site\",\"mediawiki.user\",\"mediawiki.hidpi\",\"mediawiki.page.ready\",\"mediawiki.searchSuggest\",\"mediawiki.page.watch.ajax\",\"ext.headertabs\"]);
-} );</script><script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
-mw.config.set({\"wgBackendResponseTime\":152});
-} );</script>
-	
-
-</body></html>";
+   html_text="<html><head><meta charset=\"utf-8\"><title>Socket operation timed out</title><style>html{font-family:sans;background:#EEE;color:#000;}body{max-width:600px;margin:150px auto 0;padding:10px;}pre{text-align:right;color:#999;}</style></head><body><h1>Socket operation timed out</h1><hr><p>Failed to load URL <a href=\"https://grey.colorado.edu/emergent/index.php/demos/vis_test\">https://grey.colorado.edu/emergent/index.php/demos/vis_test</a>.</p><pre>QtNetwork Error 4</pre></body></html>";
   };
   taDoc @[1] {
    name="ChangeLog";
@@ -2530,7 +2302,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
      cust_label=1;
      desc="angle of background lines";
      cust_desc=1;
-     base=.programs[2].vars[16]$$;
+     base=.programs[2].vars[14]$$;
      mbr=ProgVar::real_val;
      data {ctrl_type=CONTROL: is_numeric=1: is_single=1: state=EXPLORE: saved_value="": range="0:1:0.1": notes="": };
     };
@@ -2540,7 +2312,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
      cust_label=1;
      desc=" real value -- this is the current actual value of the variable at all times for global variables, and is used as an initialization value for local variables (they start with this value, but what you see here is NOT their current value as the program runs)";
      cust_desc=0;
-     base=.programs[2].vars[14]$$;
+     base=.programs[2].vars[12]$$;
      mbr=ProgVar::real_val;
      data {ctrl_type=CONTROL: is_numeric=1: is_single=1: state=EXPLORE: saved_value="": range="0:1:0.1": notes="": };
     };
@@ -2630,6 +2402,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
    proj_name=;
    auto_updt_interval=10;
    auto_updt_timeout=30;
+   load_data_size_max=10000000;
    cluster=;
    clusters=;
    users=;
@@ -9573,8 +9346,8 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
      el_typ=UserDataItem;
      el_def=0;
      UserDataItem @[0] {name="N_ROWS": value=4: val_type_fixed=0: };
-     UserDataItem @[1] {name="SCALE_MIN": value=-0.1584121733903885: val_type_fixed=0: };
-     UserDataItem @[2] {name="SCALE_MAX": value=0.1584121733903885: val_type_fixed=0: };
+     UserDataItem @[1] {name="SCALE_MIN": value=-0.04293614: val_type_fixed=0: };
+     UserDataItem @[2] {name="SCALE_MAX": value=0.04293614: val_type_fixed=0: };
      UserDataItem @[3] {name="BLOCK_HEIGHT": value=0: val_type_fixed=0: };
     };
     name="V1_high_Gabor_GridFilter";
@@ -9610,7 +9383,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="Filter";
       col_flags=SAVE_DATA|AUTO_WIDTH;
       is_matrix=1;
-      cell_geom{ 6;6;      };
+      cell_geom{ 12;12;      };
       calc_expr {
        expr=;
       };
@@ -9621,21 +9394,64 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       matrix_col_width=10;
       ar {
        name="ar";
-      [6 6 4] 0;-0.010219083;-0.013914045;-0.013914045;-0.010219083;0;-0.04421255;-0.081965022;-0.11160151;-0.11160151;
--0.081965022;-0.04421255;-0.044269949;-0.082071424;-0.11174638;-0.11174638;-0.082071424;-0.044269949;0.044269953;0.082071431;
-0.11174639;0.11174639;0.082071431;0.044269953;0.044212554;0.081965037;0.11160152;0.11160152;0.081965037;0.044212554;
-0;0.010219084;0.013914047;0.013914047;0.010219084;0;0;-0.046091687;-0.069369979;-0.034216233;
--0.0028732102;0;0.046091687;0;-0.11634482;-0.12860401;-0.046587955;-0.0028732102;0.069369979;0.11634482;
-0;-0.15841217;-0.12860401;-0.034216233;0.034216233;0.12860401;0.15841217;0;-0.11634482;-0.069369979;
-0.0028732102;0.046587955;0.12860401;0.11634482;0;-0.046091687;0;0.0028732102;0.034216233;0.069369979;
-0.046091687;0;0;0.04421255;0.044269953;-0.044269942;-0.044212561;0;0.010219083;0.081965014;
-0.082071431;-0.082071424;-0.081965029;-0.010219079;0.013914045;0.11160151;0.11174638;-0.11174637;-0.11160151;-0.013914045;
-0.013914045;0.11160151;0.11174637;-0.11174638;-0.11160151;-0.013914045;0.010219079;0.081965029;0.082071424;-0.082071431;
--0.081965014;-0.010219083;0;0.044212561;0.044269942;-0.044269953;-0.04421255;0;0;0.0028732102;
-0.034216233;0.069369979;0.046091687;0;0.0028732102;0.046587955;0.12860401;0.11634482;0;-0.046091687;
-0.034216233;0.12860401;0.15841217;0;-0.11634482;-0.069369979;0.069369979;0.11634482;0;-0.15841217;
--0.12860401;-0.034216233;0.046091687;0;-0.11634482;-0.12860401;-0.046587955;-0.0028732102;0;-0.046091687;
--0.069369979;-0.034216233;-0.0028732102;0;      };
+      [12 12 4] 0;0;0;0;-0.001187928;-0.0012832183;-0.0012832183;-0.001187928;0;0;
+0;0;0;0;-0.0052567697;-0.0066259792;-0.0077316253;-0.0083518205;-0.0083518205;-0.0077316253;
+-0.0066259792;-0.0052567697;0;0;0;-0.010561598;-0.014380405;-0.018126011;-0.021150611;-0.022847218;
+-0.022847218;-0.021150611;-0.018126011;-0.014380405;-0.010561598;0;0;-0.017779708;-0.024208402;-0.030513864;
+-0.035605572;-0.038461685;-0.038461685;-0.035605572;-0.030513864;-0.024208402;-0.017779708;0;-0.012523065;-0.01841885;
+-0.025078643;-0.031610772;-0.036885519;-0.039844308;-0.039844308;-0.036885519;-0.031610772;-0.025078643;-0.01841885;-0.012523065;
+-0.0054528085;-0.0080199586;-0.010919772;-0.013764001;-0.016060738;-0.017349055;-0.017349055;-0.016060738;-0.013764001;-0.010919772;
+-0.0080199586;-0.0054528085;0.0054528085;0.0080199586;0.010919772;0.013764001;0.016060738;0.017349055;0.017349055;0.016060738;
+0.013764001;0.010919772;0.0080199586;0.0054528085;0.012523065;0.01841885;0.025078643;0.031610772;0.036885519;0.039844308;
+0.039844308;0.036885519;0.031610772;0.025078643;0.01841885;0.012523065;0;0.017779708;0.024208402;0.030513864;
+0.035605572;0.038461685;0.038461685;0.035605572;0.030513864;0.024208402;0.017779708;0;0;0.010561598;
+0.014380405;0.018126011;0.021150611;0.022847218;0.022847218;0.021150611;0.018126011;0.014380405;0.010561598;0;
+0;0;0.0052567697;0.0066259792;0.0077316253;0.0083518205;0.0083518205;0.0077316253;0.0066259792;0.0052567697;
+0;0;0;0;0;0;0.001187928;0.0012832183;0.0012832183;0.001187928;
+0;0;0;0;0;0;0;0;-0.013686798;-0.011481983;
+-0.0072924383;-0.0032408575;0;0;0;0;0;0;-0.007139245;-0.015607216;
+-0.021440238;-0.021745233;-0.016887635;-0.0099292006;-0.0040849908;-0.00077186106;0;0;0;0.0071392441;
+0;-0.012252508;-0.024796344;-0.031534173;-0.029607756;-0.021286283;-0.01158604;-0.0044126669;-0.00077186106;0;
+0;0.015607215;0.012252507;0;-0.018020915;-0.033762079;-0.039747749;-0.034548264;-0.022993769;-0.01158604;
+-0.0040849908;0;0.013686797;0.021440236;0.024796341;0.018020913;0;-0.022714747;-0.039395798;-0.042936135;
+-0.034548264;-0.021286283;-0.0099292006;-0.0032408575;0.011481981;0.021745231;0.031534169;0.033762075;0.022714745;0;
+-0.024536822;-0.039395798;-0.039747749;-0.029607756;-0.016887635;-0.0072924383;0.0072924378;0.016887633;0.029607752;0.039747745;
+0.039395794;0.02453682;0;-0.022714747;-0.033762079;-0.031534173;-0.021745233;-0.011481983;0.003240857;0.0099291997;
+0.021286281;0.03454826;0.042936128;0.039395794;0.022714745;0;-0.018020915;-0.024796344;-0.021440238;-0.013686798;
+0;0.0040849904;0.011586039;0.022993768;0.03454826;0.039747745;0.033762075;0.018020913;0;-0.012252508;
+-0.015607216;0;0;0.000771861;0.0044126664;0.011586039;0.021286281;0.029607752;0.031534169;0.024796341;
+0.012252507;0;-0.007139245;0;0;0;0.000771861;0.0040849904;0.0099291997;0.016887633;
+0.021745231;0.021440236;0.015607215;0.0071392441;0;0;0;0;0;0;
+0.003240857;0.0072924378;0.011481981;0.013686797;0;0;0;0;0;0;
+0;0;0.012523066;0.0054528103;-0.0054528066;-0.012523067;0;0;0;0;
+0;0;0.010561595;0.017779706;0.018418852;0.0080199614;-0.0080199558;-0.018418852;-0.01777971;-0.010561599;
+0;0;0;0.0052567697;0.0143804;0.0242084;0.025078645;0.010919777;-0.010919771;-0.025078647;
+-0.024208406;-0.014380408;-0.0052567702;0;0;0.0066259797;0.018126013;0.030513864;0.031610776;0.013764004;
+-0.013764;-0.031610779;-0.030513868;-0.018126013;-0.0066259797;0;0.001187928;0.0077316258;0.021150611;0.035605572;
+0.036885519;0.01606074;-0.016060736;-0.036885522;-0.035605572;-0.021150613;-0.0077316263;-0.0011879281;0.0012832183;0.0083518205;
+0.022847218;0.038461685;0.039844308;0.017349055;-0.017349055;-0.039844312;-0.038461693;-0.02284722;-0.0083518215;-0.0012832184;
+0.0012832183;0.0083518205;0.022847218;0.038461685;0.039844308;0.017349053;-0.017349057;-0.039844312;-0.038461693;-0.02284722;
+-0.0083518215;-0.0012832184;0.001187928;0.0077316253;0.021150611;0.035605568;0.036885519;0.016060734;-0.016060742;-0.036885522;
+-0.035605576;-0.021150613;-0.0077316267;-0.0011879281;0;0.0066259792;0.018126011;0.030513864;0.031610776;0.013763999;
+-0.013764005;-0.031610779;-0.030513868;-0.018126015;-0.0066259801;0;0;0.0052567697;0.014380406;0.024208404;
+0.025078643;0.01091977;-0.010919778;-0.025078649;-0.024208402;-0.014380402;-0.0052567702;0;0;0;
+0.010561598;0.017779708;0.01841885;0.0080199549;-0.0080199623;-0.018418854;-0.017779708;-0.010561596;0;0;
+0;0;0;0;0.012523065;0.0054528061;-0.0054528108;-0.012523068;0;0;
+0;0;0;0;0;0;0.0032408575;0.0072924383;0.011481983;0.013686798;
+0;0;0;0;0;0;0.00077186106;0.0040849908;0.0099292006;0.016887635;
+0.021745233;0.021440238;0.015607216;0.007139245;0;0;0;0.00077186106;0.0044126669;0.01158604;
+0.021286283;0.029607756;0.031534173;0.024796344;0.012252508;0;-0.0071392441;0;0;0.0040849908;
+0.01158604;0.022993769;0.034548264;0.039747749;0.033762079;0.018020915;0;-0.012252507;-0.015607215;0;
+0.0032408575;0.0099292006;0.021286283;0.034548264;0.042936135;0.039395798;0.022714747;0;-0.018020913;-0.024796341;
+-0.021440236;-0.013686797;0.0072924383;0.016887635;0.029607756;0.039747749;0.039395798;0.024536822;0;-0.022714745;
+-0.033762075;-0.031534169;-0.021745231;-0.011481981;0.011481983;0.021745233;0.031534173;0.033762079;0.022714747;0;
+-0.02453682;-0.039395794;-0.039747745;-0.029607752;-0.016887633;-0.0072924378;0.013686798;0.021440238;0.024796344;0.018020915;
+0;-0.022714745;-0.039395794;-0.042936128;-0.03454826;-0.021286281;-0.0099291997;-0.003240857;0;0.015607216;
+0.012252508;0;-0.018020913;-0.033762075;-0.039747745;-0.03454826;-0.022993768;-0.011586039;-0.0040849904;0;
+0;0.007139245;0;-0.012252507;-0.024796341;-0.031534169;-0.029607752;-0.021286281;-0.011586039;-0.0044126664;
+-0.000771861;0;0;0;-0.0071392441;-0.015607215;-0.021440236;-0.021745231;-0.016887633;-0.0099291997;
+-0.0040849904;-0.000771861;0;0;0;0;0;0;-0.013686797;-0.011481981;
+-0.0072924378;-0.003240857;0;0;0;0;      };
      };
     };
     data_flags=SAVE_ROWS|AUTO_CALC;
@@ -9728,9 +9544,9 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
     el_typ=ProgCode;
     el_def=0;
     ReturnExpr @[0] {
-     name=;
+     name="ReturnExpr_return";
      desc=;
-     flags=OFF|CAN_REVERT_TO_CODE;
+     flags=OFF;
      code_string=;
      expr {
       expr=;
@@ -9894,8 +9710,8 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
     minor=0;
     step=0;
    };
-   author=;
-   email=;
+   author="Randall C. O'Reilly";
+   email="emergent-users@grey.colorado.edu";
    flags=0;
    stop_step_cond {
     expr=;
@@ -9919,31 +9735,31 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
        save_mode=FIRST_ROW;
        image_save=SAVE_DATA;
        region {ocularity=MONOCULAR: region=FOVEA: res=HI_RES: color=MONOCHROME: edge_mode=WRAP: renorm_thr=1e-5: };
-       input_size {retina_size={x=36: y=36: }: border={x=0: y=0: }: input_size={x=36: y=36: }: };
+       input_size {retina_size={x=128: y=128: }: border={x=0: y=0: }: input_size={x=128: y=128: }: };
        input_adapt {on=0: up_dt=0.3: dn_dt=0.1: };
        motion_frames=1;
-       v1s_specs {on=1: wt=1: gain=2: size=6: spacing=1: wvlen=6: sig_len=0.3: sig_wd=0.2: phase_off=0: circle_edge=1: n_angles=4: };
+       v1s_specs {on=1: wt=1: gain=2: size=12: spacing=4: wvlen=12: sig_len=0.3: sig_wd=0.2: phase_off=0: circle_edge=1: n_angles=4: };
        v1s_specs_2 {on=0: wt=1: gain=2: size=8: spacing=1: wvlen=6: sig_len=0.3: sig_wd=0.2: phase_off=0: circle_edge=1: n_angles=4: };
        v1s_specs_3 {on=0: wt=1: gain=2: size=8: spacing=1: wvlen=6: sig_len=0.3: sig_wd=0.2: phase_off=0: circle_edge=1: n_angles=4: };
        v1s_renorm=NO_RENORM;
-       v1s_kwta {on=1: gi=2: lay_gi=1.5: gain=40: nvar=0.01: g_bar_l=0.1: };
-       v1s_neigh_inhib {on=1: inhib_d=1: inhib_g=0.8: tot_ni_len=3: };
+       v1s_kwta {on=1: gi=2: lay_gi=1.5: gain=80: nvar=0.01: g_bar_l=0.1: };
+       v1s_neigh_inhib {on=0: inhib_d=1: inhib_g=0: tot_ni_len=3: };
        v1s_adapt {on=0: up_dt=0.3: dn_dt=0.1: };
-       v1s_save=SAVE_DATA;
-       v1s_img_geom {x=36: y=36: n_not_xy=0: n=1296: };
+       v1s_save=SAVE_DATA|SAVE_DEBUG;
+       v1s_img_geom {x=32: y=32: n_not_xy=0: n=1024: };
        v1s_feat_geom {x=4: y=2: n_not_xy=0: n=8: };
-       v1s_motion {on=0: wt=1: gain=3: size=10: spacing=1: wvlen=6: sig_len=2: sig_wd=0.3: phase_off=1.570796: circle_edge=0: n_angles=2: r_only=1: };
+       v1s_motion {on=0: wt=1: gain=3: size=10: spacing=1: wvlen=6: sig_len=2: sig_wd=0.3: phase_off=1.5708: circle_edge=0: n_angles=2: r_only=1: };
        v1m_renorm=NO_RENORM;
        v1m_kwta {on=1: gi=3: lay_gi=10: gain=10: nvar=0.01: g_bar_l=0.1: };
        v1m_feat_geom {x=4: y=4: n_not_xy=0: n=16: };
        square_group {on=1: sg_rf=2: sg_spc=2: v1s_color=0: sg_half=1: sg_border=0: };
-       sg_save=0;
-       v1sg_img_geom {x=18: y=18: n_not_xy=0: n=324: };
+       sg_save=SAVE_DATA|SAVE_DEBUG;
+       v1sg_img_geom {x=16: y=16: n_not_xy=0: n=256: };
        v1sg_feat_geom {x=4: y=2: n_not_xy=0: n=8: };
        v1c_specs {on=1: end_stop=1: add_v1s=1: len_sum_len=1: es_thr=0.2: len_sum_width=3: len_sum_norm=0.3333333: };
        v1c_kwta {on=0: gi=2: lay_gi=1.5: gain=80: nvar=0.01: g_bar_l=0.1: };
        v1c_save=SAVE_DATA|SAVE_DEBUG;
-       v1c_img_geom {x=18: y=18: n_not_xy=0: n=324: };
+       v1c_img_geom {x=16: y=16: n_not_xy=0: n=256: };
        v1c_feat_geom {x=4: y=5: n_not_xy=0: n=20: };
        si_specs {on=0: v1s=0: v1pi=0: v1c=1: spat_rf={x=6: y=6: }: sig=0.8: sum_rf=0: spat_half={x=3: y=3: }: spat_spacing={x=3: y=3: }: spat_border={x=0: y=0: }: };
        si_renorm=NO_RENORM;
@@ -9969,7 +9785,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       el_def=0;
       float_Data @[0] {
        UserDataItem_List @*(.user_data_) {
-	name="UserDataItem_List_78";
+	name=;
 	el_typ=UserDataItem;
 	el_def=0;
 	UserDataItem @[0] {name="IMAGE": value=1: val_type_fixed=0: };
@@ -9977,21 +9793,21 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
        name="V1_high_image_r";
        col_flags=SAVE_DATA|AUTO_WIDTH;
        is_matrix=1;
-       cell_geom{ 36;36;       };
+       cell_geom{ 128;128;       };
        calc_expr {
 	expr=;
        };
        dim_names {
 	name="dim_names";
        [2] ;;       };
-       width=36;
+       width=128;
        matrix_col_width=10;
       };
       float_Data @[1] {
        name="V1_high_v1s_r";
        col_flags=SAVE_DATA|AUTO_WIDTH;
        is_matrix=1;
-       cell_geom{ 4;2;36;36;       };
+       cell_geom{ 4;2;32;32;       };
        calc_expr {
 	expr=;
        };
@@ -10002,52 +9818,24 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
        matrix_col_width=10;
       };
       float_Data @[2] {
-       name="V1_high_v1pi_r";
+       name="V1_high_v1s_sg_r";
        col_flags=SAVE_DATA|AUTO_WIDTH;
        is_matrix=1;
-       cell_geom{ 4;1;36;36;       };
+       cell_geom{ 4;2;16;16;       };
        calc_expr {
 	expr=;
        };
        dim_names {
 	name="dim_names";
        [4] ;;;;       };
-       width=14;
+       width=0;
        matrix_col_width=10;
       };
       float_Data @[3] {
-       name="V1_high_v1c";
+       name="V1_high_v1pi_r";
        col_flags=SAVE_DATA|AUTO_WIDTH;
        is_matrix=1;
-       cell_geom{ 4;3;36;36;       };
-       calc_expr {
-	expr=;
-       };
-       dim_names {
-	name="dim_names";
-       [4] ;;;;       };
-       width=11;
-       matrix_col_width=10;
-      };
-      float_Data @[4] {
-       name="V1_high_v1sg_out";
-       col_flags=SAVE_DATA|AUTO_WIDTH;
-       is_matrix=1;
-       cell_geom{ 4;1;36;36;       };
-       calc_expr {
-	expr=;
-       };
-       dim_names {
-	name="dim_names";
-       [4] ;;;;       };
-       width=16;
-       matrix_col_width=10;
-      };
-      float_Data @[5] {
-       name="V1_high_v1c_si";
-       col_flags=SAVE_DATA|AUTO_WIDTH;
-       is_matrix=1;
-       cell_geom{ 4;5;12;12;       };
+       cell_geom{ 4;1;32;32;       };
        calc_expr {
 	expr=;
        };
@@ -10055,6 +9843,34 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
 	name="dim_names";
        [4] ;;;;       };
        width=14;
+       matrix_col_width=10;
+      };
+      float_Data @[4] {
+       name="V1_high_v1pi_sg_r";
+       col_flags=SAVE_DATA|AUTO_WIDTH;
+       is_matrix=1;
+       cell_geom{ 4;1;16;16;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name="dim_names";
+       [4] ;;;;       };
+       width=0;
+       matrix_col_width=10;
+      };
+      float_Data @[5] {
+       name="V1_high_v1c_r";
+       col_flags=SAVE_DATA|AUTO_WIDTH;
+       is_matrix=1;
+       cell_geom{ 4;5;16;16;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name="dim_names";
+       [4] ;;;;       };
+       width=13;
        matrix_col_width=10;
       };
      };
@@ -10062,7 +9878,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
      auto_load=NO_AUTO_LOAD;
      auto_load_file=;
      row_height=1;
-     max_col_width=50;
+     max_col_width=128;
      keygen 4 0=0;
      last_sort_spec {
       name="last_sort_spec";
@@ -10074,11 +9890,53 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
      };
      row_with_hilite=-1;
     };
+    taImage @[2] {
+     name="loadimg";
+    };
    };
    objs_vars {
     name="objs_vars";
     el_typ=ProgVar;
     el_def=0;
+    ProgVar @[0] {
+     name="v1_retina_proc_0";
+     var_type=T_Object;
+     object_type=V1RetinaProc;
+     completion_type=;
+     object_val=.programs[1].objs[0]$$;
+     object_scope=NULL;
+     objs_ptr=1;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @[1] {
+     name="v1_data_save2_d";
+     var_type=T_Object;
+     object_type=DataTable;
+     completion_type=;
+     object_val=$.programs[1].objs[1]$;
+     object_scope=NULL;
+     objs_ptr=1;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @[2] {
+     name="loadimg";
+     var_type=T_Object;
+     object_type=taImage;
+     completion_type=;
+     object_val=.programs[1].objs[2]$$;
+     object_scope=NULL;
+     objs_ptr=1;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
    };
    types {
     name="types";
@@ -10095,37 +9953,14 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
     el_typ=ProgVar;
     el_def=0;
     ProgVar @[0] {
-     name="V1DataSave2D";
-     var_type=T_Object;
-     object_type=DataTable;
-     object_val=$.programs[1].objs[1]$;
-     object_scope=NULL;
-     objs_ptr=1;
-     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-     reference=0;
-     desc=;
-     init_from=NULL;
-    };
-    ProgVar @[1] {
-     name="V1RetinaProc_0";
-     var_type=T_Object;
-     object_type=V1RetinaProc;
-     object_val=.programs[1].objs[0]$$;
-     object_scope=NULL;
-     objs_ptr=1;
-     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-     reference=0;
-     desc=;
-     init_from=NULL;
-    };
-    ProgVar @[2] {
      name="Canvas";
      var_type=T_Object;
      object_type=taCanvas;
+     completion_type=;
      object_val=.programs[2].objs[0]$$;
      object_scope=NULL;
      objs_ptr=0;
-     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
      reference=0;
      desc=;
      init_from=NULL;
@@ -10141,12 +9976,12 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
     el_typ=ProgCode;
     el_def=0;
     MethodCall @[0] {
-     name="MethodCall_V1RetinaProc0Init";
+     name="MethodCall_v1retinaproc0Init";
      desc=;
      flags=CAN_REVERT_TO_CODE;
-     code_string="V1RetinaProc_0->Init()";
+     code_string="v1_retina_proc_0->Init()";
      result_var=NULL;
-     obj=.programs[1].vars[1]$$;
+     obj=.programs[1].objs_vars[0]$$;
      method=RetinaProc::Init;
      meth_args {
       name="meth_args";
@@ -10161,10 +9996,43 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
     name="prog_code";
     el_typ=ProgCode;
     el_def=0;
-    ProgramCall @[0] {
-     name="ProgramCall_VisStimGen";
+    LocalVars @[0] {
+     name="LocalVars_LocalVars2vars";
      desc=;
      flags=CAN_REVERT_TO_CODE;
+     code_string="LocalVars (2 vars)";
+     local_vars {
+      name="local_vars";
+      el_typ=ProgVar;
+      el_def=0;
+      ProgVar @[0] {
+       name="width";
+       var_type=T_Int;
+       int_val=0;
+       completion_type=;
+       object_scope=NULL;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[1] {
+       name="height";
+       var_type=T_Int;
+       int_val=0;
+       completion_type=;
+       object_scope=NULL;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+     };
+    };
+    ProgramCall @[1] {
+     name="ProgramCall_VisStimGen";
+     desc=;
+     flags=OFF|CAN_REVERT_TO_CODE;
      code_string="VisStimGen()";
      prog_args {
       name="prog_args";
@@ -10174,13 +10042,92 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
      target=.programs[2]$$;
      targ_ld_init="*VisStimGen*";
     };
-    MethodCall @[1] {
-     name="MethodCall_V1RetinaProc0Tra_CanvasNULL00250";
+    MethodCall @[2] {
+     name="MethodCall_loadimgLoadImagesidetee128png";
      desc=;
      flags=CAN_REVERT_TO_CODE;
-     code_string="V1RetinaProc_0->TransformImage(Canvas, NULL, 0, 0, .25, 0)";
+     code_string="loadimg->LoadImage(\"side-tee-128.png\")";
      result_var=NULL;
-     obj=$.programs[1].vars[1]$;
+     obj=.programs[1].objs_vars[2]$$;
+     method=taImage::LoadImage;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="fname";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="\"side-tee-128.png\"";
+       };
+      };
+     };
+     meth_sig="bool LoadImage(taString& fname)";
+     meth_desc=" load the image from given file name (leave file name blank to get a chooser)";
+    };
+    MethodCall @[3] {
+     name="MethodCall_loadimgGetImageSizewidthheight";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="loadimg->GetImageSize(width, height)";
+     result_var=NULL;
+     obj=$.programs[1].objs_vars[2]$;
+     method=taImage::GetImageSize;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=int_ref;
+       type="int&";
+       name="width";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="width";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=int_ref;
+       type="int&";
+       name="height";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="height";
+       };
+      };
+     };
+     meth_sig="bool GetImageSize(int& width, int& height)";
+     meth_desc=" get size of current image";
+    };
+    PrintVar @[4] {
+     name="PrintVar_Printwidthheight";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="Print  width height";
+     message=;
+     print_var=.programs[1].prog_code[0].local_vars[0]$$;
+     print_var2=.programs[1].prog_code[0].local_vars[1]$$;
+     print_var3=NULL;
+     print_var4=NULL;
+     print_var5=NULL;
+     print_var6=NULL;
+     debug=0;
+    };
+    MethodCall @[5] {
+     name="MethodCall_v1retinaproc0Tra_loadimgNULL0010";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="v1_retina_proc_0->TransformImage(loadimg, NULL, 0, 0, 1, 0)";
+     result_var=NULL;
+     obj=$.programs[1].objs_vars[0]$;
      method=RetinaProc::TransformImage;
      meth_args {
       name="meth_args";
@@ -10194,7 +10141,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
        def_val=;
        prev_expr=;
        expr {
-	expr="Canvas";
+	expr="loadimg";
        };
       };
       ProgArg @[1] {
@@ -10238,7 +10185,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
        def_val="1.0f";
        prev_expr=;
        expr {
-	expr=".25";
+	expr="1";
        };
       };
       ProgArg @[5] {
@@ -10256,13 +10203,13 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
      meth_sig="bool TransformImage(taImage* right_eye_image, taImage* left_eye_image = __null, float move_x = 0, float move_y = 0, float scale = 1.0f, float rotate = 0.0f)";
      meth_desc=" transform image/s in image format, with retina centered at given normalized offsets from center of image (move -1=far left edge, 0=ctr, 1=far right edge), scaled by given factor (1=same size, .5 = half size, 2 = double size), rotated by normalized units (1=360deg)";
     };
-    MethodCall @[2] {
-     name="MethodCall_V1RetinaProc0Fil_rImageDatafalse";
+    MethodCall @[6] {
+     name="MethodCall_v1retinaproc0Fil_rImageDatafalse";
      desc=;
      flags=CAN_REVERT_TO_CODE;
-     code_string="V1RetinaProc_0->FilterImageData(false)";
+     code_string="v1_retina_proc_0->FilterImageData(false)";
      result_var=NULL;
-     obj=$.programs[1].vars[1]$;
+     obj=$.programs[1].objs_vars[0]$;
      method=RetinaProc::FilterImageData;
      meth_args {
       name="meth_args";
@@ -10282,6 +10229,22 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
      };
      meth_sig="bool FilterImageData(bool motion_only = false)";
      meth_desc=" filter retinal image data -- operates on images that were generated from prior Transform or LookAt calls -- must call one of those first -- if motion_only = true, then only process up to level of motion, for faster processing of initial frames of motion sequence";
+    };
+    MethodCall @[7] {
+     name="MethodCall_v1datasave2dUpdateAllViews";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="v1_data_save2_d->UpdateAllViews()";
+     result_var=NULL;
+     obj=.programs[1].objs_vars[1]$$;
+     method=taBase::UpdateAllViews;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+     };
+     meth_sig="void UpdateAllViews()";
+     meth_desc=" called after data changes, to update views";
     };
    };
    step_prog=NULL;
@@ -16603,6 +16566,32 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
     name="objs_vars";
     el_typ=ProgVar;
     el_def=0;
+    ProgVar @[0] {
+     name="canvas";
+     var_type=T_Object;
+     object_type=taCanvas;
+     completion_type=;
+     object_val=$.programs[2].objs[0]$;
+     object_scope=NULL;
+     objs_ptr=1;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @[1] {
+     name="stim_gen_data";
+     var_type=T_Object;
+     object_type=DataTable;
+     completion_type=;
+     object_val=.programs[2].objs[1]$$;
+     object_scope=NULL;
+     objs_ptr=1;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
    };
    types {
     name="types";
@@ -16672,6 +16661,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
      name="canvas_width";
      var_type=T_Int;
      int_val=144;
+     completion_type=;
      object_scope=NULL;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -16682,6 +16672,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
      name="canvas_height";
      var_type=T_Int;
      int_val=144;
+     completion_type=;
      object_scope=NULL;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -16689,32 +16680,9 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
      init_from=NULL;
     };
     ProgVar @[2] {
-     name="Canvas";
-     var_type=T_Object;
-     object_type=taCanvas;
-     object_val=$.programs[2].objs[0]$;
-     object_scope=NULL;
-     objs_ptr=1;
-     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-     reference=0;
-     desc=;
-     init_from=NULL;
-    };
-    ProgVar @[3] {
-     name="StimGenData";
-     var_type=T_Object;
-     object_type=DataTable;
-     object_val=.programs[2].objs[1]$$;
-     object_scope=NULL;
-     objs_ptr=1;
-     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-     reference=0;
-     desc=;
-     init_from=NULL;
-    };
-    ProgVar @[4] {
      name="disp_type";
      var_type=T_DynEnum;
+     completion_type=;
      object_scope=NULL;
      dyn_enum_val {
       user_data_=NULL;
@@ -16726,49 +16694,54 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
      desc=;
      init_from=NULL;
     };
-    ProgVar @[5] {
+    ProgVar @[3] {
      name="disp_size";
      var_type=T_Int;
      int_val=1;
+     completion_type=;
      object_scope=NULL;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc="display size, as number in each dimension of a square grid of oriented lines";
      init_from=NULL;
     };
-    ProgVar @[6] {
+    ProgVar @[4] {
      name="bg_color";
      var_type=T_String;
      string_val="grey";
+     completion_type=;
      object_scope=NULL;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc="color of background";
      init_from=NULL;
     };
-    ProgVar @[7] {
+    ProgVar @[5] {
      name="non_targ_color";
      var_type=T_String;
      string_val="white";
+     completion_type=;
      object_scope=NULL;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc="color of non-target stimulus";
      init_from=NULL;
     };
-    ProgVar @[8] {
+    ProgVar @[6] {
      name="targ_color";
      var_type=T_String;
      string_val="black";
+     completion_type=;
      object_scope=NULL;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc="color of target stimulus";
      init_from=NULL;
     };
-    ProgVar @[9] {
+    ProgVar @[7] {
      name="trg_shape";
      var_type=T_DynEnum;
+     completion_type=;
      object_scope=NULL;
      dyn_enum_val {
       user_data_=NULL;
@@ -16780,9 +16753,10 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
      desc=;
      init_from=NULL;
     };
-    ProgVar @[10] {
+    ProgVar @[8] {
      name="non_trg_shape";
      var_type=T_DynEnum;
+     completion_type=;
      object_scope=NULL;
      dyn_enum_val {
       user_data_=NULL;
@@ -16794,9 +16768,10 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
      desc=;
      init_from=NULL;
     };
-    ProgVar @[11] {
+    ProgVar @[9] {
      name="cur_shape";
      var_type=T_DynEnum;
+     completion_type=;
      object_scope=NULL;
      dyn_enum_val {
       user_data_=NULL;
@@ -16808,110 +16783,143 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
      desc=;
      init_from=NULL;
     };
-    ProgVar @[12] {
+    ProgVar @[10] {
      name="trg_ctr";
      var_type=T_Bool;
      bool_val=0;
+     completion_type=;
      object_scope=NULL;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc="always put the target in the center";
      init_from=NULL;
     };
-    ProgVar @[13] {
+    ProgVar @[11] {
      name="line_len";
      var_type=T_Real;
      real_val=0.5;
+     completion_type=;
      object_scope=NULL;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc="line length, as proportion of entire display";
      init_from=NULL;
     };
-    ProgVar @[14] {
+    ProgVar @[12] {
      name="line_width";
      var_type=T_Real;
      real_val=0.15;
+     completion_type=;
      object_scope=NULL;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc=;
      init_from=NULL;
     };
-    ProgVar @[15] {
+    ProgVar @[13] {
      name="spacing";
      var_type=T_Real;
      real_val=0.01;
+     completion_type=;
      object_scope=NULL;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc="space between lines (normalized units)";
      init_from=NULL;
     };
-    ProgVar @[16] {
+    ProgVar @[14] {
      name="bg_line_angle";
      var_type=T_Real;
      real_val=0;
+     completion_type=;
      object_scope=NULL;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc="angle of background lines";
      init_from=NULL;
     };
-    ProgVar @[17] {
+    ProgVar @[15] {
      name="fg_line_angle";
      var_type=T_Real;
      real_val=45;
+     completion_type=;
      object_scope=NULL;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc="angle of target line";
      init_from=NULL;
     };
-    ProgVar @[18] {
+    ProgVar @[16] {
      name="orientation_jitter";
      var_type=T_Real;
      real_val=0;
+     completion_type=;
      object_scope=NULL;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc="jitter in orientation of lines";
      init_from=NULL;
     };
-    ProgVar @[19] {
+    ProgVar @[17] {
      name="total_size";
      var_type=T_Real;
      real_val=0.5;
+     completion_type=;
      object_scope=NULL;
      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc="total size of display = disp_size * line_len + (disp_size-1) * spacing";
      init_from=NULL;
     };
-    ProgVar @[20] {
+    ProgVar @[18] {
      name="start_coord";
      var_type=T_Real;
      real_val=0.505;
+     completion_type=;
      object_scope=NULL;
      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc="where to start drawing";
      init_from=NULL;
     };
-    ProgVar @[21] {
+    ProgVar @[19] {
      name="incr";
      var_type=T_Real;
      real_val=0.51;
+     completion_type=;
      object_scope=NULL;
      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc="increment per line";
      init_from=NULL;
     };
-    ProgVar @[22] {
+    ProgVar @[20] {
      name="cur_x";
      var_type=T_Real;
      real_val=0.505;
+     completion_type=;
+     object_scope=NULL;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @[21] {
+     name="cur_y";
+     var_type=T_Real;
+     real_val=0.505;
+     completion_type=;
+     object_scope=NULL;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @[22] {
+     name="y";
+     var_type=T_Int;
+     int_val=1;
+     completion_type=;
      object_scope=NULL;
      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -16919,9 +16927,10 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
      init_from=NULL;
     };
     ProgVar @[23] {
-     name="cur_y";
-     var_type=T_Real;
-     real_val=0.505;
+     name="x";
+     var_type=T_Int;
+     int_val=1;
+     completion_type=;
      object_scope=NULL;
      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -16929,29 +16938,32 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
      init_from=NULL;
     };
     ProgVar @[24] {
-     name="y";
-     var_type=T_Int;
-     int_val=1;
-     object_scope=NULL;
-     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-     reference=0;
-     desc=;
-     init_from=NULL;
-    };
-    ProgVar @[25] {
-     name="x";
-     var_type=T_Int;
-     int_val=1;
-     object_scope=NULL;
-     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-     reference=0;
-     desc=;
-     init_from=NULL;
-    };
-    ProgVar @[26] {
      name="trg_idx";
      var_type=T_Int;
      int_val=0;
+     completion_type=;
+     object_scope=NULL;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc="index of target item";
+     init_from=NULL;
+    };
+    ProgVar @[25] {
+     name="trg_x";
+     var_type=T_Int;
+     int_val=0;
+     completion_type=;
+     object_scope=NULL;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc="index of target item";
+     init_from=NULL;
+    };
+    ProgVar @[26] {
+     name="trg_y";
+     var_type=T_Int;
+     int_val=0;
+     completion_type=;
      object_scope=NULL;
      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -16959,59 +16971,43 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
      init_from=NULL;
     };
     ProgVar @[27] {
-     name="trg_x";
-     var_type=T_Int;
-     int_val=0;
-     object_scope=NULL;
-     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-     reference=0;
-     desc="index of target item";
-     init_from=NULL;
-    };
-    ProgVar @[28] {
-     name="trg_y";
-     var_type=T_Int;
-     int_val=0;
-     object_scope=NULL;
-     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-     reference=0;
-     desc="index of target item";
-     init_from=NULL;
-    };
-    ProgVar @[29] {
      name="idx";
      var_type=T_Int;
      int_val=1;
+     completion_type=;
      object_scope=NULL;
      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc="index of line";
      init_from=NULL;
     };
-    ProgVar @[30] {
+    ProgVar @[28] {
      name="cur_angle";
      var_type=T_Real;
      real_val=0;
+     completion_type=;
      object_scope=NULL;
      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc=;
      init_from=NULL;
     };
-    ProgVar @[31] {
+    ProgVar @[29] {
      name="cur_jitter";
      var_type=T_Real;
      real_val=0;
+     completion_type=;
      object_scope=NULL;
      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc=;
      init_from=NULL;
     };
-    ProgVar @[32] {
+    ProgVar @[30] {
      name="cur_color";
      var_type=T_String;
      string_val="black";
+     completion_type=;
      object_scope=NULL;
      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -17038,6 +17034,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
        name="ctr_x";
        var_type=T_Real;
        real_val=0;
+       completion_type=;
        object_scope=NULL;
        flags=LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
        reference=0;
@@ -17048,6 +17045,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
        name="ctr_y";
        var_type=T_Real;
        real_val=0;
+       completion_type=;
        object_scope=NULL;
        flags=LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
        reference=0;
@@ -17058,6 +17056,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
        name="Myangle";
        var_type=T_Real;
        real_val=0;
+       completion_type=;
        object_scope=NULL;
        flags=LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
        reference=0;
@@ -17068,6 +17067,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
        name="color";
        var_type=T_String;
        string_val=;
+       completion_type=;
        object_scope=NULL;
        flags=LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
        reference=0;
@@ -17092,6 +17092,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
 	 name="st_x";
 	 var_type=T_Real;
 	 real_val=0;
+	 completion_type=;
 	 object_scope=NULL;
 	 flags=LOCAL_VAR|USED|EDIT_VAL;
 	 reference=0;
@@ -17102,6 +17103,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
 	 name="st_y";
 	 var_type=T_Real;
 	 real_val=0;
+	 completion_type=;
 	 object_scope=NULL;
 	 flags=LOCAL_VAR|USED|EDIT_VAL;
 	 reference=0;
@@ -17112,6 +17114,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
 	 name="ed_x";
 	 var_type=T_Real;
 	 real_val=0;
+	 completion_type=;
 	 object_scope=NULL;
 	 flags=LOCAL_VAR|USED|EDIT_VAL;
 	 reference=0;
@@ -17122,6 +17125,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
 	 name="ed_y";
 	 var_type=T_Real;
 	 real_val=0;
+	 completion_type=;
 	 object_scope=NULL;
 	 flags=LOCAL_VAR|USED|EDIT_VAL;
 	 reference=0;
@@ -17131,12 +17135,12 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
        };
       };
       MethodCall @[1] {
-       name="MethodCall_CanvasPenColorNamecolor";
+       name="MethodCall_canvasPenColorNamecolor";
        desc=;
        flags=CAN_REVERT_TO_CODE;
-       code_string="Canvas->PenColorName(color)";
+       code_string="canvas->PenColorName(color)";
        result_var=NULL;
-       obj=.programs[2].vars[2]$$;
+       obj=.programs[2].objs_vars[0]$$;
        method=taCanvas::PenColorName;
        meth_args {
 	name="meth_args";
@@ -17298,12 +17302,12 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
        };
       };
       MethodCall @[10] {
-       name="MethodCall_CanvasLinestxstyedxedy";
+       name="MethodCall_canvasLinestxstyedxedy";
        desc=;
        flags=CAN_REVERT_TO_CODE;
-       code_string="Canvas->Line(st_x, st_y, ed_x, ed_y)";
+       code_string="canvas->Line(st_x, st_y, ed_x, ed_y)";
        result_var=NULL;
-       obj=$.programs[2].vars[2]$;
+       obj=$.programs[2].objs_vars[0]$;
        method=taCanvas::Line;
        meth_args {
 	name="meth_args";
@@ -17373,6 +17377,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       ProgVar @[0] {
        name="Myshape";
        var_type=T_DynEnum;
+       completion_type=;
        object_scope=NULL;
        dyn_enum_val {
 	user_data_=NULL;
@@ -17387,6 +17392,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
        name="ctr_x";
        var_type=T_Real;
        real_val=0;
+       completion_type=;
        object_scope=NULL;
        flags=LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
        reference=0;
@@ -17397,6 +17403,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
        name="ctr_y";
        var_type=T_Real;
        real_val=0;
+       completion_type=;
        object_scope=NULL;
        flags=LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
        reference=0;
@@ -17407,6 +17414,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
        name="Myangle";
        var_type=T_Real;
        real_val=0;
+       completion_type=;
        object_scope=NULL;
        flags=LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
        reference=0;
@@ -17417,6 +17425,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
        name="color";
        var_type=T_String;
        string_val=;
+       completion_type=;
        object_scope=NULL;
        flags=LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
        reference=0;
@@ -17441,6 +17450,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
 	 name="st_x";
 	 var_type=T_Real;
 	 real_val=0;
+	 completion_type=;
 	 object_scope=NULL;
 	 flags=LOCAL_VAR|USED|EDIT_VAL;
 	 reference=0;
@@ -17451,6 +17461,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
 	 name="st_y";
 	 var_type=T_Real;
 	 real_val=0;
+	 completion_type=;
 	 object_scope=NULL;
 	 flags=LOCAL_VAR|USED|EDIT_VAL;
 	 reference=0;
@@ -17461,6 +17472,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
 	 name="ed_x";
 	 var_type=T_Real;
 	 real_val=0;
+	 completion_type=;
 	 object_scope=NULL;
 	 flags=LOCAL_VAR|EDIT_VAL;
 	 reference=0;
@@ -17471,6 +17483,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
 	 name="ed_y";
 	 var_type=T_Real;
 	 real_val=0;
+	 completion_type=;
 	 object_scope=NULL;
 	 flags=LOCAL_VAR|EDIT_VAL;
 	 reference=0;
@@ -17481,6 +17494,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
 	 name="other_color";
 	 var_type=T_String;
 	 string_val=;
+	 completion_type=;
 	 object_scope=NULL;
 	 flags=LOCAL_VAR|USED|EDIT_VAL;
 	 reference=0;
@@ -17919,19 +17933,19 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
     el_typ=ProgCode;
     el_def=0;
     ResetDataRows @[0] {
-     name="ResetDataRows_ResetDataRowstableStimGenData";
+     name="ResetDataRows_ResetDataRowstablestimgendata";
      desc=;
      flags=CAN_REVERT_TO_CODE;
-     code_string="ResetDataRows:  table = StimGenData ";
-     data_var=.programs[2].vars[3]$$;
+     code_string="ResetDataRows:  table = stim_gen_data ";
+     data_var=.programs[2].objs_vars[1]$$;
     };
     MethodCall @[1] {
-     name="MethodCall_CanvasSetImageSi_dthcanvasheight";
+     name="MethodCall_canvasSetImageSi_dthcanvasheight";
      desc=;
      flags=CAN_REVERT_TO_CODE;
-     code_string="Canvas->SetImageSize(canvas_width, canvas_height)";
+     code_string="canvas->SetImageSize(canvas_width, canvas_height)";
      result_var=NULL;
-     obj=$.programs[2].vars[2]$;
+     obj=$.programs[2].objs_vars[0]$;
      method=taImage::SetImageSize;
      meth_args {
       name="meth_args";
@@ -17964,12 +17978,12 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
      meth_desc=" set size of current image -- if currently same size, then returns false and nothing happens; otherwise, a new image data structure of given size is created, using ARGB32 format";
     };
     MethodCall @[2] {
-     name="MethodCall_CanvasConfigData_BaseVTFLOATtrue";
+     name="MethodCall_canvasConfigData_BaseVTFLOATtrue";
      desc=;
      flags=CAN_REVERT_TO_CODE;
-     code_string="Canvas->ConfigDataColName(StimGenData, \"Canvas\", taBase::VT_FLOAT, true)";
+     code_string="canvas->ConfigDataColName(stim_gen_data, \"Canvas\", taBase::VT_FLOAT, true)";
      result_var=NULL;
-     obj=$.programs[2].vars[2]$;
+     obj=$.programs[2].objs_vars[0]$;
      method=taImage::ConfigDataColName;
      meth_args {
       name="meth_args";
@@ -17983,7 +17997,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
        def_val=;
        prev_expr=;
        expr {
-	expr="StimGenData";
+	expr="stim_gen_data";
        };
       };
       ProgArg @[1] {
@@ -18024,19 +18038,19 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
      meth_desc=" configure data column with given name (if it doesn't exist, it is created) to represent current image -- if rgb is false, then a greyscale image is configured (2d)";
     };
     AddNewDataRow @[3] {
-     name="AddNewDataRow_AddNewRowtableStimGenData";
+     name="AddNewDataRow_AddNewRowtablestimgendata";
      desc=;
      flags=CAN_REVERT_TO_CODE;
-     code_string="Add New Row:  table = StimGenData ";
-     data_var=$.programs[2].vars[3]$;
+     code_string="Add New Row:  table = stim_gen_data ";
+     data_var=$.programs[2].objs_vars[1]$;
     };
     MethodCall @[4] {
-     name="MethodCall_CanvasInitCanvas";
+     name="MethodCall_canvasInitCanvas";
      desc=;
      flags=CAN_REVERT_TO_CODE;
-     code_string="Canvas->InitCanvas()";
+     code_string="canvas->InitCanvas()";
      result_var=NULL;
-     obj=$.programs[2].vars[2]$;
+     obj=$.programs[2].objs_vars[0]$;
      method=taCanvas::InitCanvas;
      meth_args {
       name="meth_args";
@@ -18047,12 +18061,12 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
      meth_desc=" initialize the canvas -- MUST be called prior to drawing!";
     };
     MethodCall @[5] {
-     name="MethodCall_CanvasEraseNamebgcolor";
+     name="MethodCall_canvasEraseNamebgcolor";
      desc=;
      flags=CAN_REVERT_TO_CODE;
-     code_string="Canvas->EraseName(bg_color)";
+     code_string="canvas->EraseName(bg_color)";
      result_var=NULL;
-     obj=$.programs[2].vars[2]$;
+     obj=$.programs[2].objs_vars[0]$;
      method=taCanvas::EraseName;
      meth_args {
       name="meth_args";
@@ -18074,12 +18088,12 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
      meth_desc=" erase image to given color name";
     };
     MethodCall @[6] {
-     name="MethodCall_CanvasPenWidthlinewidth";
+     name="MethodCall_canvasPenWidthlinewidth";
      desc=;
      flags=CAN_REVERT_TO_CODE;
-     code_string="Canvas->PenWidth(line_width)";
+     code_string="canvas->PenWidth(line_width)";
      result_var=NULL;
-     obj=$.programs[2].vars[2]$;
+     obj=$.programs[2].objs_vars[0]$;
      method=taCanvas::PenWidth;
      meth_args {
       name="meth_args";
@@ -18105,7 +18119,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="total_size = line_len* disp_size +  spacing*(disp_size-1)";
-     result_var=.programs[2].vars[19]$$;
+     result_var=.programs[2].vars[17]$$;
      expr {
       expr="line_len* disp_size +  spacing*(disp_size-1)";
      };
@@ -18115,7 +18129,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="incr = line_len+ spacing";
-     result_var=.programs[2].vars[21]$$;
+     result_var=.programs[2].vars[19]$$;
      expr {
       expr="line_len+ spacing";
      };
@@ -18125,7 +18139,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="start_coord = .5 - total_size * .5 + .5 * incr";
-     result_var=.programs[2].vars[20]$$;
+     result_var=.programs[2].vars[18]$$;
      expr {
       expr=".5 - total_size * .5 + .5 * incr";
      };
@@ -18135,7 +18149,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="trg_x = Random::IntZeroN(disp_size, )";
-     result_var=.programs[2].vars[27]$$;
+     result_var=.programs[2].vars[25]$$;
      object_type=Random;
      method=Random::IntZeroN;
      meth_args {
@@ -18171,7 +18185,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="trg_y = Random::IntZeroN(disp_size, )";
-     result_var=.programs[2].vars[28]$$;
+     result_var=.programs[2].vars[26]$$;
      object_type=Random;
      method=Random::IntZeroN;
      meth_args {
@@ -18207,7 +18221,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="trg_idx = trg_y * disp_size + trg_x";
-     result_var=.programs[2].vars[26]$$;
+     result_var=.programs[2].vars[24]$$;
      expr {
       expr="trg_y * disp_size + trg_x";
      };
@@ -18229,7 +18243,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="trg_idx = .5 * (disp_size * disp_size)";
-       result_var=$.programs[2].vars[26]$;
+       result_var=$.programs[2].vars[24]$;
        expr {
 	expr=".5 * (disp_size * disp_size)";
        };
@@ -18250,7 +18264,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="cur_y = start_coord + incr * y";
-       result_var=.programs[2].vars[23]$$;
+       result_var=.programs[2].vars[21]$$;
        expr {
 	expr="start_coord + incr * y";
        };
@@ -18269,7 +18283,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="cur_x = start_coord + incr * x";
-	 result_var=.programs[2].vars[22]$$;
+	 result_var=.programs[2].vars[20]$$;
 	 expr {
 	  expr="start_coord + incr * x";
 	 };
@@ -18279,7 +18293,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="cur_angle = bg_line_angle";
-	 result_var=.programs[2].vars[30]$$;
+	 result_var=.programs[2].vars[28]$$;
 	 expr {
 	  expr="bg_line_angle";
 	 };
@@ -18289,7 +18303,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="cur_color = non_targ_color";
-	 result_var=.programs[2].vars[32]$$;
+	 result_var=.programs[2].vars[30]$$;
 	 expr {
 	  expr="non_targ_color";
 	 };
@@ -18299,7 +18313,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="cur_shape = non_trg_shape";
-	 result_var=.programs[2].vars[11]$$;
+	 result_var=.programs[2].vars[9]$$;
 	 expr {
 	  expr="non_trg_shape";
 	 };
@@ -18309,7 +18323,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="cur_jitter = Random::UniformMinMax(-  orientation_jitter, orientation_jitter, )";
-	 result_var=.programs[2].vars[31]$$;
+	 result_var=.programs[2].vars[29]$$;
 	 object_type=Random;
 	 method=Random::UniformMinMax;
 	 meth_args {
@@ -18380,7 +18394,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
 	     desc=;
 	     flags=CAN_REVERT_TO_CODE;
 	     code_string="cur_color = targ_color";
-	     result_var=$.programs[2].vars[32]$;
+	     result_var=$.programs[2].vars[30]$;
 	     expr {
 	      expr="targ_color";
 	     };
@@ -18404,7 +18418,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
 	     desc=;
 	     flags=CAN_REVERT_TO_CODE;
 	     code_string="cur_angle = fg_line_angle";
-	     result_var=$.programs[2].vars[30]$;
+	     result_var=$.programs[2].vars[28]$;
 	     expr {
 	      expr="fg_line_angle";
 	     };
@@ -18416,7 +18430,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
 	   desc=;
 	   flags=CAN_REVERT_TO_CODE;
 	   code_string="cur_shape = trg_shape";
-	   result_var=$.programs[2].vars[11]$;
+	   result_var=$.programs[2].vars[9]$;
 	   expr {
 	    expr="trg_shape";
 	   };
@@ -18520,12 +18534,12 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
      code_string="// update the datatable with the current image";
     };
     MethodCall @[16] {
-     name="MethodCall_CanvasImageToDat_mGenDataCanvas1";
+     name="MethodCall_canvasImageToDat_mgendataCanvas1";
      desc=;
      flags=CAN_REVERT_TO_CODE;
-     code_string="Canvas->ImageToDataCellName(StimGenData, \"Canvas\", -1)";
+     code_string="canvas->ImageToDataCellName(stim_gen_data, \"Canvas\", -1)";
      result_var=NULL;
-     obj=$.programs[2].vars[2]$;
+     obj=$.programs[2].objs_vars[0]$;
      method=taImage::ImageToDataCellName;
      meth_args {
       name="meth_args";
@@ -18539,7 +18553,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
        def_val=;
        prev_expr=;
        expr {
-	expr="StimGenData";
+	expr="stim_gen_data";
        };
       };
       ProgArg @[1] {
@@ -18569,11 +18583,11 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
      meth_desc=" set image to datatable cell indexed by col name and row number -- uses cell dimensionality and type -- only amount that fits in cell is copied. row = -1 = last row";
     };
     DoneWritingDataRow @[17] {
-     name="DoneWritingDataRow_DoneWritingDataR_ableStimGenData";
+     name="DoneWritingDataRow_DoneWritingDataR_ablestimgendata";
      desc=;
      flags=CAN_REVERT_TO_CODE;
-     code_string="DoneWritingDataRow:  table = StimGenData ";
-     data_var=$.programs[2].vars[3]$;
+     code_string="DoneWritingDataRow:  table = stim_gen_data ";
+     data_var=$.programs[2].objs_vars[1]$;
     };
    };
    step_prog=NULL;
@@ -18883,6 +18897,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
      name="V1DataSave3D";
      var_type=T_Object;
      object_type=DataTable;
+     completion_type=;
      object_val=$.programs[3].objs[1]$;
      object_scope=NULL;
      objs_ptr=1;
@@ -18895,6 +18910,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
      name="V1RetinaProc_3D";
      var_type=T_Object;
      object_type=V1RetinaProc;
+     completion_type=;
      object_val=.programs[3].objs[0]$$;
      object_scope=NULL;
      objs_ptr=1;
@@ -18907,6 +18923,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
      name="VEVisTestWorld";
      var_type=T_Object;
      object_type=VEWorld;
+     completion_type=;
      object_val=.programs.gp[0][0].objs[0]$$;
      object_scope=NULL;
      objs_ptr=0;
@@ -18919,6 +18936,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
      name="LeftEyeImage";
      var_type=T_Object;
      object_type=taImage;
+     completion_type=;
      object_val=.programs[3].objs[2]$$;
      object_scope=NULL;
      objs_ptr=1;
@@ -18931,6 +18949,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
      name="RightEyeImage";
      var_type=T_Object;
      object_type=taImage;
+     completion_type=;
      object_val=.programs[3].objs[3]$$;
      object_scope=NULL;
      objs_ptr=1;
@@ -18942,6 +18961,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
     ProgVar @[5] {
      name="gen_type";
      var_type=T_DynEnum;
+     completion_type=;
      object_scope=NULL;
      dyn_enum_val {
       user_data_=NULL;
@@ -18957,6 +18977,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
      name="targ_x";
      var_type=T_Real;
      real_val=0.85;
+     completion_type=;
      object_scope=NULL;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -18967,6 +18988,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
      name="targ_y";
      var_type=T_Real;
      real_val=0.25;
+     completion_type=;
      object_scope=NULL;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -18977,6 +18999,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
      name="targ_z";
      var_type=T_Real;
      real_val=0.8;
+     completion_type=;
      object_scope=NULL;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -18987,6 +19010,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
      name="n_move";
      var_type=T_Int;
      int_val=3;
+     completion_type=;
      object_scope=NULL;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -18997,6 +19021,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
      name="move_x";
      var_type=T_Real;
      real_val=-0.04;
+     completion_type=;
      object_scope=NULL;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -19007,6 +19032,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
      name="move_y";
      var_type=T_Real;
      real_val=-0.04;
+     completion_type=;
      object_scope=NULL;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -19017,6 +19043,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
      name="move_z";
      var_type=T_Real;
      real_val=0;
+     completion_type=;
      object_scope=NULL;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -19027,6 +19054,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
      name="tpos_x";
      var_type=T_Real;
      real_val=0.7299999999999999;
+     completion_type=;
      object_scope=NULL;
      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -19037,6 +19065,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
      name="tpos_y";
      var_type=T_Real;
      real_val=0.13;
+     completion_type=;
      object_scope=NULL;
      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -19047,6 +19076,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
      name="tpos_z";
      var_type=T_Real;
      real_val=0.8;
+     completion_type=;
      object_scope=NULL;
      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -19057,6 +19087,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
      name="i";
      var_type=T_Int;
      int_val=3;
+     completion_type=;
      object_scope=NULL;
      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -20648,6 +20679,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="move_eyes";
       var_type=T_Bool;
       bool_val=1;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -20658,6 +20690,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="gen_rnd_eye_pos";
       var_type=T_Bool;
       bool_val=0;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -20668,6 +20701,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="move_head";
       var_type=T_Bool;
       bool_val=1;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -20678,6 +20712,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="gen_rnd_head_pos";
       var_type=T_Bool;
       bool_val=0;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -20688,6 +20723,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="leye_horiz";
       var_type=T_Real;
       real_val=0.4602921903133392;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -20698,6 +20734,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="leye_vert";
       var_type=T_Real;
       real_val=0.3668570518493652;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -20708,6 +20745,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="reye_horiz";
       var_type=T_Real;
       real_val=0.4124630093574524;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -20718,6 +20756,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="reye_vert";
       var_type=T_Real;
       real_val=0.3668570518493652;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -20728,6 +20767,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="head_horiz";
       var_type=T_Real;
       real_val=0.5;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -20738,6 +20778,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="head_vert";
       var_type=T_Real;
       real_val=0.5;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -20748,6 +20789,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="VEVisTestWorld";
       var_type=T_Object;
       object_type=VEWorld;
+      completion_type=;
       object_val=$.programs.gp[0][0].objs[0]$;
       object_scope=NULL;
       objs_ptr=1;
@@ -20760,6 +20802,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="LeftEyeJoint";
       var_type=T_Object;
       object_type=VEJoint;
+      completion_type=;
       object_val=.programs.gp[0][0].objs[0].objects[0].joints[0]$$;
       object_scope=NULL;
       objs_ptr=0;
@@ -20772,6 +20815,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="RightEyeJoint";
       var_type=T_Object;
       object_type=VEJoint;
+      completion_type=;
       object_val=.programs.gp[0][0].objs[0].objects[0].joints[1]$$;
       object_scope=NULL;
       objs_ptr=0;
@@ -20784,6 +20828,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="NeckJoint";
       var_type=T_Object;
       object_type=VEJoint;
+      completion_type=;
       object_val=.programs.gp[0][0].objs[0].objects[0].joints[2]$$;
       object_scope=NULL;
       objs_ptr=0;
@@ -20796,6 +20841,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="ve_step";
       var_type=T_Int;
       int_val=50;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -20806,6 +20852,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="max_ve_steps";
       var_type=T_Int;
       int_val=50;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -20816,6 +20863,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="RobotTime";
       var_type=T_Object;
       object_type=TimeUsed;
+      completion_type=;
       object_val=.programs.gp[0][0].objs[1]$$;
       object_scope=NULL;
       objs_ptr=1;
@@ -21506,6 +21554,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="targ_x";
       var_type=T_Real;
       real_val=0.1049999967217445;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -21516,6 +21565,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="targ_y";
       var_type=T_Real;
       real_val=0.125;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -21526,6 +21576,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="targ_z";
       var_type=T_Real;
       real_val=0.7799999713897705;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -21541,6 +21592,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="leye_horiz";
       var_type=T_Real;
       real_val=0.4602921903133392;
+      completion_type=;
       object_scope=NULL;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -21551,6 +21603,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="leye_horiz_ang";
       var_type=T_Real;
       real_val=1.475497603416443;
+      completion_type=;
       object_scope=NULL;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -21561,6 +21614,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="leye_vert";
       var_type=T_Real;
       real_val=0.3668570518493652;
+      completion_type=;
       object_scope=NULL;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -21571,6 +21625,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="reye_horiz";
       var_type=T_Real;
       real_val=0.4124630093574524;
+      completion_type=;
       object_scope=NULL;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -21581,6 +21636,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="reye_horiz_ang";
       var_type=T_Real;
       real_val=1.360707521438599;
+      completion_type=;
       object_scope=NULL;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -21591,6 +21647,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="reye_vert";
       var_type=T_Real;
       real_val=0.3668570518493652;
+      completion_type=;
       object_scope=NULL;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -21601,6 +21658,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="reye_vert_ang";
       var_type=T_Real;
       real_val=1.251253247261047;
+      completion_type=;
       object_scope=NULL;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -21611,6 +21669,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="nose_x";
       var_type=T_String;
       string_val="0";
+      completion_type=;
       object_scope=NULL;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -21621,6 +21680,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="nose_y";
       var_type=T_Real;
       real_val=0.3499999940395355;
+      completion_type=;
       object_scope=NULL;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -21631,6 +21691,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="nose_z";
       var_type=T_Real;
       real_val=0.1000000014901161;
+      completion_type=;
       object_scope=NULL;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -21641,6 +21702,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="vert_z_gain";
       var_type=T_Real;
       real_val=1;
+      completion_type=;
       object_scope=NULL;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -21651,6 +21713,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="eye_off";
       var_type=T_Real;
       real_val=-0.03999999910593033;
+      completion_type=;
       object_scope=NULL;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -21661,6 +21724,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="Head";
       var_type=T_Object;
       object_type=VEBody;
+      completion_type=;
       object_val=$.programs.gp[0][0].objs[0].objects[0].bodies[1]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -21673,6 +21737,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="LeftEye";
       var_type=T_Object;
       object_type=VECamera;
+      completion_type=;
       object_val=$.programs.gp[0][0].objs[0].objects[0].bodies[2]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -21685,6 +21750,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="RightEye";
       var_type=T_Object;
       object_type=VECamera;
+      completion_type=;
       object_val=$.programs.gp[0][0].objs[0].objects[0].bodies[3]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -21697,6 +21763,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="RightEyeJoint";
       var_type=T_Object;
       object_type=VEJoint;
+      completion_type=;
       object_val=$.programs.gp[0][0].objs[0].objects[0].joints[1]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -21993,6 +22060,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="on_off";
       var_type=T_Bool;
       bool_val=1;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -22008,6 +22076,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="EyeBeamL";
       var_type=T_Object;
       object_type=VEBody;
+      completion_type=;
       object_val=$.programs.gp[0][0].objs[0].objects[0].bodies[4]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -22020,6 +22089,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="EyeBeamR";
       var_type=T_Object;
       object_type=VEBody;
+      completion_type=;
       object_val=$.programs.gp[0][0].objs[0].objects[0].bodies[5]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -22032,6 +22102,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="VEEmerWorld";
       var_type=T_Object;
       object_type=VEWorld;
+      completion_type=;
       object_val=$.programs.gp[0][0].objs[0]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -22044,6 +22115,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="vis_radius";
       var_type=T_Real;
       real_val=0.005;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -22054,6 +22126,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="off_radius";
       var_type=T_Real;
       real_val=5e-8;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -22252,6 +22325,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="gen_rnd_loc";
       var_type=T_Bool;
       bool_val=0;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -22262,6 +22336,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="targ_x";
       var_type=T_Real;
       real_val=0.85;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -22272,6 +22347,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="targ_y";
       var_type=T_Real;
       real_val=0.25;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -22282,6 +22358,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="targ_z";
       var_type=T_Real;
       real_val=0.8;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -22297,6 +22374,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="TargetBody";
       var_type=T_Object;
       object_type=VEBody;
+      completion_type=;
       object_val=.programs.gp[0][0].objs[0].objects[1].bodies[0]$$;
       object_scope=NULL;
       objs_ptr=0;
@@ -22309,6 +22387,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="trg_box_size_x";
       var_type=T_Real;
       real_val=0.3;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -22319,6 +22398,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="trg_box_size_y";
       var_type=T_Real;
       real_val=0.3;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -22329,6 +22409,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="trg_box_size_z";
       var_type=T_Real;
       real_val=0.6;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -22339,6 +22420,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="box_half_len";
       var_type=T_Real;
       real_val=0.15;
+      completion_type=;
       object_scope=NULL;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -22349,6 +22431,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="min_z_off";
       var_type=T_Real;
       real_val=0.3;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -22359,6 +22442,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="min_y_off";
       var_type=T_Real;
       real_val=0.05;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -22369,6 +22453,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="VEEmerWorld";
       var_type=T_Object;
       object_type=VEWorld;
+      completion_type=;
       object_val=$.programs.gp[0][0].objs[0]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -22685,6 +22770,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="gen_rnd_loc";
       var_type=T_Bool;
       bool_val=0;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -22695,6 +22781,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="targ_x";
       var_type=T_Real;
       real_val=0.85;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -22705,6 +22792,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="targ_y";
       var_type=T_Real;
       real_val=0.25;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -22715,6 +22803,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="targ_z";
       var_type=T_Real;
       real_val=0.8;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -22730,6 +22819,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="Target1";
       var_type=T_Object;
       object_type=VEObjCarousel;
+      completion_type=;
       object_val=$.programs.gp[0][0].objs[0].objects[1].bodies[0]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -22742,6 +22832,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="targ_z_off";
       var_type=T_Real;
       real_val=0;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -22752,6 +22843,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="targ_y_off";
       var_type=T_Real;
       real_val=0;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -23099,6 +23191,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
+      completion_type=;
       object_val=.networks[0]$$;
       object_scope=NULL;
       objs_ptr=0;
@@ -23111,6 +23204,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="input_data";
       var_type=T_Object;
       object_type=DataTable;
+      completion_type=;
       object_val=$.programs[1].objs[1]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -23128,6 +23222,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="phase_no";
       var_type=T_Int;
       int_val=0;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -23138,6 +23233,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="update_net_view";
       var_type=T_Bool;
       bool_val=0;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -23148,6 +23244,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="trial";
       var_type=T_Int;
       int_val=0;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|EDIT_VAL;
       reference=0;
@@ -23158,6 +23255,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="compute_rel_netin";
       var_type=T_Bool;
       bool_val=0;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
       reference=0;
@@ -23423,6 +23521,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="network";
       var_type=T_Object;
       object_type=Network;
+      completion_type=;
       object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -23435,6 +23534,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="input_data";
       var_type=T_Object;
       object_type=DataTable;
+      completion_type=;
       object_val=$.programs[1].objs[1]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -23452,6 +23552,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="LayerWriter_0";
       var_type=T_Object;
       object_type=LayerWriter;
+      completion_type=;
       object_val=.programs.gp[1][1].objs[0]$$;
       object_scope=NULL;
       objs_ptr=1;
@@ -23681,6 +23782,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
+      completion_type=;
       object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -23693,6 +23795,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="input_data";
       var_type=T_Object;
       object_type=DataTable;
+      completion_type=;
       object_val=$.programs[1].objs[1]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -23710,6 +23813,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="cycle";
       var_type=T_Int;
       int_val=0;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -23720,6 +23824,7 @@ Published on wiki: emergent page: demos/vis_test with description: This model al
       name="min_cycles";
       var_type=T_Int;
       int_val=15;
+      completion_type=;
       object_scope=NULL;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -23731,6 +23836,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       name="update_net_view";
       var_type=T_Bool;
       bool_val=1;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -24101,6 +24207,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
+      completion_type=;
       object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -24118,6 +24225,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       name="update_net_view";
       var_type=T_Bool;
       bool_val=1;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -24228,6 +24336,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       name="Network_0";
       var_type=T_Object;
       object_type=LeabraNetwork;
+      completion_type=;
       object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
@@ -24240,6 +24349,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       name="V2bo";
       var_type=T_Object;
       object_type=LeabraLayer;
+      completion_type=;
       object_val=.networks[0].layers[0]$$;
       object_scope=NULL;
       objs_ptr=0;
@@ -24252,6 +24362,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       name="uidx";
       var_type=T_Int;
       int_val=0;
+      completion_type=;
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
       reference=0;
@@ -24262,6 +24373,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       name="unit";
       var_type=T_Object;
       object_type=Unit;
+      completion_type=;
       object_val=NULL;
       object_scope=NULL;
       objs_ptr=0;
@@ -24395,10 +24507,10 @@ presented in the minus phase -- if this is not the case (values are computed on 
     name=;
     el_typ=UserDataItem;
     el_def=0;
-    UserDataItem @[0] {name="view_win_lft": value=0: val_type_fixed=0: };
-    UserDataItem @[1] {name="view_win_top": value=0: val_type_fixed=0: };
-    UserDataItem @[2] {name="view_win_wd": value=1: val_type_fixed=0: };
-    UserDataItem @[3] {name="view_win_ht": value=0.7987127: val_type_fixed=0: };
+    UserDataItem @[0] {name="view_win_lft": value=0.0005288207: val_type_fixed=0: };
+    UserDataItem @[1] {name="view_win_top": value=0.05607476: val_type_fixed=0: };
+    UserDataItem @[2] {name="view_win_wd": value=0.9994712: val_type_fixed=0: };
+    UserDataItem @[3] {name="view_win_ht": value=0.7986406: val_type_fixed=0: };
     UserDataItem @[4] {name="view_win_iconified": value=0: val_type_fixed=0: };
     UserDataItem @[5] {name="view_splitter_state": value=AAAA/wAAAAEAAAADAAABDAAAAh0AAAPRAQAAAAcBAAAAAQE=: val_type_fixed=0: };
    };
@@ -24561,6 +24673,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	 };
 	};
        };
+       fix_name=0;
        bg_color {r=0.8: g=0.8: b=0.8: a=1: };
        text_color {r=0: g=0: b=0: a=1: };
        headlight_on=1;
@@ -24678,7 +24791,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    scale_min=0;
 	    scale_max=0;
 	    mat_layout=BOT_ZERO;
-	    mat_image=1;
+	    mat_image=0;
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[1] {
@@ -24689,19 +24802,19 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    visible=1;
 	    text_width=8;
 	    scale_on=1;
-	    scale_min=0;
-	    scale_max=0;
+	    scale_min=3.443831e-41;
+	    scale_max=0.025;
 	    mat_layout=BOT_ZERO;
 	    mat_image=0;
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[2] {
-	    name="V1_high_v1pi_r";
+	    name="V1_high_v1s_sg_r";
 	    m_data=.programs[1].objs[1].data[2]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
-	    text_width=8;
+	    text_width=4;
 	    scale_on=1;
 	    scale_min=0;
 	    scale_max=0;
@@ -24710,43 +24823,43 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[3] {
-	    name="V1_high_v1c";
+	    name="V1_high_v1pi_r";
 	    m_data=.programs[1].objs[1].data[3]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
-	    text_width=8;
+	    text_width=4;
 	    scale_on=1;
-	    scale_min=0;
-	    scale_max=0;
+	    scale_min=3.443831e-41;
+	    scale_max=0.005;
 	    mat_layout=BOT_ZERO;
 	    mat_image=0;
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[4] {
-	    name="V1_high_v1sg_out";
+	    name="V1_high_v1pi_sg_r";
 	    m_data=.programs[1].objs[1].data[4]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
-	    text_width=8;
+	    text_width=4;
 	    scale_on=1;
-	    scale_min=0;
+	    scale_min=1.170364e-41;
 	    scale_max=0;
 	    mat_layout=BOT_ZERO;
 	    mat_image=0;
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[5] {
-	    name="V1_high_v1c_si";
+	    name="V1_high_v1c_r";
 	    m_data=.programs[1].objs[1].data[5]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
-	    text_width=8;
+	    text_width=4;
 	    scale_on=1;
-	    scale_min=0;
-	    scale_max=0;
+	    scale_min=3.443831e-41;
+	    scale_max=0.025;
 	    mat_layout=BOT_ZERO;
 	    mat_image=0;
 	    mat_odd_vert=1;
@@ -24764,7 +24877,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   el_def=0;
 	  };
 	  view_rows=1;
-	  view_range {min=0: max=-1: };
+	  view_range {min=0: max=0: };
 	  page_rows=10;
 	  display_on=1;
 	  manip_ctrl_on=0;
@@ -24837,19 +24950,19 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    visible=1;
 	    text_width=8;
 	    scale_on=1;
-	    scale_min=0;
-	    scale_max=0;
+	    scale_min=3.443831e-41;
+	    scale_max=0.025;
 	    mat_layout=BOT_ZERO;
 	    mat_image=0;
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[2] {
-	    name="V1_high_v1pi_r";
+	    name="V1_high_v1s_sg_r";
 	    m_data=$.programs[1].objs[1].data[2]$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
-	    text_width=8;
+	    text_width=4;
 	    scale_on=1;
 	    scale_min=0;
 	    scale_max=0;
@@ -24858,26 +24971,26 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[3] {
-	    name="V1_high_v1c";
+	    name="V1_high_v1pi_r";
 	    m_data=$.programs[1].objs[1].data[3]$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
-	    text_width=8;
+	    text_width=4;
 	    scale_on=1;
-	    scale_min=0;
-	    scale_max=0;
+	    scale_min=3.443831e-41;
+	    scale_max=0.025;
 	    mat_layout=BOT_ZERO;
 	    mat_image=0;
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[4] {
-	    name="V1_high_v1sg_out";
+	    name="V1_high_v1pi_sg_r";
 	    m_data=$.programs[1].objs[1].data[4]$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
-	    text_width=8;
+	    text_width=4;
 	    scale_on=1;
 	    scale_min=0;
 	    scale_max=0;
@@ -24886,15 +24999,15 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[5] {
-	    name="V1_high_v1c_si";
+	    name="V1_high_v1c_r";
 	    m_data=$.programs[1].objs[1].data[5]$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
-	    text_width=8;
+	    text_width=4;
 	    scale_on=1;
-	    scale_min=0;
-	    scale_max=0;
+	    scale_min=3.443831e-41;
+	    scale_max=0.005;
 	    mat_layout=BOT_ZERO;
 	    mat_image=0;
 	    mat_odd_vert=1;
@@ -24912,13 +25025,13 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   el_def=0;
 	  };
 	  view_rows=1;
-	  view_range {min=0: max=-1: };
-	  page_rows=10;
+	  view_range {min=0: max=0: };
+	  page_rows=1;
 	  display_on=1;
 	  manip_ctrl_on=0;
 	  view_cols=1;
-	  page_cols=5;
-	  col_range {min=1: max=1: };
+	  page_cols=1;
+	  col_range {min=4: max=4: };
 	  need_scale_update=1;
 	  width=1;
 	  grid_on=1;
@@ -24985,19 +25098,19 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    visible=1;
 	    text_width=8;
 	    scale_on=1;
-	    scale_min=0;
-	    scale_max=0;
+	    scale_min=3.443831e-41;
+	    scale_max=0.025;
 	    mat_layout=BOT_ZERO;
 	    mat_image=0;
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[2] {
-	    name="V1_high_v1pi_r";
+	    name="V1_high_v1s_sg_r";
 	    m_data=$.programs[1].objs[1].data[2]$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
-	    text_width=8;
+	    text_width=4;
 	    scale_on=1;
 	    scale_min=0;
 	    scale_max=0;
@@ -25006,26 +25119,26 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[3] {
-	    name="V1_high_v1c";
+	    name="V1_high_v1pi_r";
 	    m_data=$.programs[1].objs[1].data[3]$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
-	    text_width=8;
+	    text_width=4;
 	    scale_on=1;
-	    scale_min=0;
-	    scale_max=0;
+	    scale_min=3.443831e-41;
+	    scale_max=0.025;
 	    mat_layout=BOT_ZERO;
 	    mat_image=0;
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[4] {
-	    name="V1_high_v1sg_out";
+	    name="V1_high_v1pi_sg_r";
 	    m_data=$.programs[1].objs[1].data[4]$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
-	    text_width=8;
+	    text_width=4;
 	    scale_on=1;
 	    scale_min=0;
 	    scale_max=0;
@@ -25034,15 +25147,15 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[5] {
-	    name="V1_high_v1c_si";
+	    name="V1_high_v1c_r";
 	    m_data=$.programs[1].objs[1].data[5]$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
-	    text_width=8;
+	    text_width=4;
 	    scale_on=1;
-	    scale_min=0;
-	    scale_max=0;
+	    scale_min=3.443831e-41;
+	    scale_max=0.025;
 	    mat_layout=BOT_ZERO;
 	    mat_image=0;
 	    mat_odd_vert=1;
@@ -25060,13 +25173,13 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   el_def=0;
 	  };
 	  view_rows=1;
-	  view_range {min=0: max=-1: };
+	  view_range {min=0: max=0: };
 	  page_rows=10;
 	  display_on=1;
 	  manip_ctrl_on=0;
 	  view_cols=1;
 	  page_cols=5;
-	  col_range {min=3: max=3: };
+	  col_range {min=2: max=2: };
 	  need_scale_update=1;
 	  width=1;
 	  grid_on=1;
@@ -25133,47 +25246,47 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    visible=1;
 	    text_width=8;
 	    scale_on=1;
-	    scale_min=0;
-	    scale_max=0;
+	    scale_min=3.443831e-41;
+	    scale_max=0.025;
 	    mat_layout=BOT_ZERO;
 	    mat_image=0;
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[2] {
-	    name="V1_high_v1pi_r";
+	    name="V1_high_v1s_sg_r";
 	    m_data=$.programs[1].objs[1].data[2]$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
-	    text_width=8;
+	    text_width=4;
 	    scale_on=1;
-	    scale_min=0;
-	    scale_max=0;
+	    scale_min=-1.073953;
+	    scale_max=0.02;
 	    mat_layout=BOT_ZERO;
 	    mat_image=0;
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[3] {
-	    name="V1_high_v1c";
+	    name="V1_high_v1pi_r";
 	    m_data=$.programs[1].objs[1].data[3]$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
-	    text_width=8;
+	    text_width=4;
 	    scale_on=1;
-	    scale_min=0;
-	    scale_max=0;
+	    scale_min=3.443831e-41;
+	    scale_max=0.025;
 	    mat_layout=BOT_ZERO;
 	    mat_image=0;
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[4] {
-	    name="V1_high_v1sg_out";
+	    name="V1_high_v1pi_sg_r";
 	    m_data=$.programs[1].objs[1].data[4]$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
-	    text_width=8;
+	    text_width=4;
 	    scale_on=1;
 	    scale_min=0;
 	    scale_max=0;
@@ -25182,15 +25295,15 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[5] {
-	    name="V1_high_v1c_si";
+	    name="V1_high_v1c_r";
 	    m_data=$.programs[1].objs[1].data[5]$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
-	    text_width=8;
+	    text_width=4;
 	    scale_on=1;
-	    scale_min=0;
-	    scale_max=0;
+	    scale_min=3.443831e-41;
+	    scale_max=0.025;
 	    mat_layout=BOT_ZERO;
 	    mat_image=0;
 	    mat_odd_vert=1;
@@ -25208,13 +25321,13 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   el_def=0;
 	  };
 	  view_rows=1;
-	  view_range {min=0: max=-1: };
+	  view_range {min=0: max=0: };
 	  page_rows=10;
 	  display_on=1;
 	  manip_ctrl_on=0;
 	  view_cols=1;
 	  page_cols=5;
-	  col_range {min=5: max=5: };
+	  col_range {min=3: max=3: };
 	  need_scale_update=1;
 	  width=1;
 	  grid_on=1;
@@ -25252,6 +25365,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	 };
 	};
        };
+       fix_name=0;
        bg_color {r=0: g=0: b=0: a=1: };
        text_color {r=1: g=0: b=0: a=1: };
        headlight_on=1;
@@ -25443,6 +25557,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	 };
 	};
        };
+       fix_name=0;
        bg_color {r=0.8: g=0.8: b=0.8: a=1: };
        text_color {r=0: g=0: b=0: a=1: };
        headlight_on=1;
@@ -25696,6 +25811,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	 };
 	};
        };
+       fix_name=0;
        bg_color {r=0.419: g=0.419: b=0.419: a=1: };
        text_color {r=0: g=0: b=0: a=1: };
        headlight_on=0;
@@ -26555,6 +26671,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	 };
 	};
        };
+       fix_name=0;
        bg_color {r=0: g=0: b=0: a=1: };
        text_color {r=1: g=0: b=0: a=1: };
        headlight_on=1;
@@ -26653,7 +26770,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	 el_typ=GridTableView;
 	 el_def=0;
 	 GridTableView @[0] {
-	  name="GridTableView_6";
+	  name="V1_high_Gabor_GridFilter_Grid";
 	  m_data=.data.gp[2][3]$$;
 	  cur_font_size=12;
 taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
@@ -26720,11 +26837,11 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  colorscale {
 	   name="colorscale";
 	   chunks=133;
-	   min=-0.1584122;
-	   max=0.1584122;
+	   min=-0.04293614;
+	   max=0.04293614;
 	   last_min=-1;
 	   last_max=1;
-	   range=0.1584122;
+	   range=0.04293614;
 	   zero=0;
 	   spec=$.colorspecs["C_ColdHot"]$;
 	   auto_scale=0;
@@ -26746,6 +26863,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	 };
 	};
        };
+       fix_name=0;
        bg_color {r=0.8: g=0.8: b=0.8: a=1: };
        text_color {r=0: g=0: b=0: a=1: };
        headlight_on=1;
@@ -26863,38 +26981,38 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	  lay_layout=THREE_D;
 	  lay_mv=1;
 	  net_text=1;
-	  state_width_default=8;
+	  net_state_text {
+	   name="net_state_text";
+	   state_items {
+	    name="state_items";
+	    el_typ=NetViewStateItem;
+	    el_def=0;
+	    NetViewStateItem @[0] {name="": net_member=1: display=1: width=1811965284: found=1: };
+	    NetViewStateItem @[1] {name="": net_member=1: display=1: width=1694524772: found=0: };
+	    NetViewStateItem @[2] {name="": net_member=1: display=0: width=97: found=0: };
+	    NetViewStateItem @[3] {name="": net_member=1: display=0: width=97: found=0: };
+	    NetViewStateItem @[4] {name="": net_member=1: display=0: width=97: found=0: };
+	    NetViewStateItem @[5] {name="": net_member=1: display=0: width=97: found=0: };
+	    NetViewStateItem @[6] {name="": net_member=1: display=0: width=97: found=0: };
+	    NetViewStateItem @[7] {name="": net_member=1: display=0: width=97: found=0: };
+	    NetViewStateItem @[8] {name="": net_member=1: display=0: width=97: found=0: };
+	    NetViewStateItem @[9] {name="": net_member=1: display=1: width=24576: found=0: };
+	    NetViewStateItem @[10] {name="": net_member=0: display=0: width=0: found=0: };
+	    NetViewStateItem @[11] {name="": net_member=1: display=1: width=24576: found=0: };
+	    NetViewStateItem @[12] {name="": net_member=0: display=0: width=0: found=0: };
+	    NetViewStateItem @[13] {name="": net_member=1: display=0: width=97: found=0: };
+	    NetViewStateItem @[14] {name="": net_member=1: display=0: width=97: found=0: };
+	    NetViewStateItem @[15] {name="": net_member=1: display=0: width=97: found=0: };
+	    NetViewStateItem @[16] {name="": net_member=1: display=0: width=97: found=0: };
+	    NetViewStateItem @[17] {name="": net_member=1: display=0: width=97: found=0: };
+	    NetViewStateItem @[18] {name="": net_member=1: display=0: width=97: found=0: };
+	    NetViewStateItem @[19] {name="": net_member=1: display=0: width=97: found=0: };
+	   };
+	  };
 	  show_iconified=0;
-	  net_text_xform {scale={x=0.4412228: y=0.4412234: z=0.4412235: }: rotate={x=-1.000165: y=-2.835972e-6: z=-2.835973e-6: rot=0.04293072: }: translate={x=1.005204: y=0.002140507: z=-0.6380163: }: };
-	  net_text_rot=-90;
 	  cur_unit_vals{ act;	  };
 	  hot_vars{ targ;ext;act;net;bias_wt;bias_dwt;act_eq;act_m;act_p;act_dif;avg_m;avg_l;act_avg;	  };
 	  unit_src_path=".layers[0].units[3298]";
-	  state_items {
-	   name="state_items";
-	   el_typ=NetViewStateItem;
-	   el_def=0;
-	   NetViewStateItem @[0] {name="batch": net_member=1: display=1: width=8: found=1: };
-	   NetViewStateItem @[1] {name="epoch": net_member=1: display=1: width=8: found=1: };
-	   NetViewStateItem @[2] {name="group": net_member=1: display=0: width=8: found=1: };
-	   NetViewStateItem @[3] {name="trial": net_member=1: display=1: width=8: found=1: };
-	   NetViewStateItem @[4] {name="tick": net_member=1: display=0: width=8: found=1: };
-	   NetViewStateItem @[5] {name="cycle": net_member=1: display=1: width=8: found=1: };
-	   NetViewStateItem @[6] {name="time": net_member=1: display=0: width=8: found=1: };
-	   NetViewStateItem @[7] {name="total_trials": net_member=1: display=0: width=8: found=1: };
-	   NetViewStateItem @[8] {name="sse": net_member=1: display=1: width=8: found=1: };
-	   NetViewStateItem @[9] {name="group_name": net_member=1: display=0: width=8: found=1: };
-	   NetViewStateItem @[10] {name="trial_name": net_member=1: display=1: width=8: found=1: };
-	   NetViewStateItem @[11] {name="output_name": net_member=1: display=1: width=8: found=1: };
-	   NetViewStateItem @[12] {name="quarter": net_member=1: display=1: width=8: found=1: };
-	   NetViewStateItem @[13] {name="phase": net_member=1: display=0: width=8: found=1: };
-	   NetViewStateItem @[14] {name="tot_cycle": net_member=1: display=0: width=8: found=1: };
-	   NetViewStateItem @[15] {name="rt_cycles": net_member=1: display=0: width=8: found=1: };
-	   NetViewStateItem @[16] {name="ext_rew": net_member=1: display=0: width=8: found=1: };
-	   NetViewStateItem @[17] {name="norm_err": net_member=1: display=0: width=8: found=1: };
-	   NetViewStateItem @[18] {name="cos_err": net_member=1: display=0: width=8: found=1: };
-	   NetViewStateItem @[19] {name="minus_output_name": net_member=1: display=0: width=8: found=1: };
-	  };
 	  con_type=ANY_CON;
 	  hist_idx=0;
 	  hist_save=1;
@@ -26906,7 +27024,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	  max_size {x=179: y=107: z=1: };
 	  max_size2d {x=179: y=107: z=1: };
 	  eff_max_size {x=179: y=107: z=1: };
-	  font_sizes {net_name=0.05: net_vals=0.05: layer=0.04: layer_min=0.01: layer_vals=0.03: prjn=0.01: unit=0.02: un_nm_len=3: };
+	  font_sizes {net_name=0.05: net_vals=0.05: layer=0.04: layer_min=0.01: layer_vals=0.03: prjn=0.01: unit=0.02: un_nm_len=3: un_val_prec=2: };
 	  view_params {xy_square=0: unit_spacing=0.05: prjn_disp=L_R_B: prjn_name=0: prjn_width=0.002: prjn_trans=0.5: lay_trans=0.5: unit_trans=0.6: laygp_width=1: show_laygp=1: };
 	  wt_line_disp=0;
 	  wt_line_width=4;
@@ -26965,9 +27083,11 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	   };
 	  };
 	  lay_disp_modes{ V2bo=-1;	  };
+	  selected_unit_var=;
 	 };
 	};
        };
+       fix_name=0;
        bg_color {r=0: g=0: b=0: a=1: };
        text_color {r=1: g=0: b=0: a=1: };
        headlight_on=1;
@@ -27064,9 +27184,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
       el_typ=UserDataItem;
       el_def=0;
       UserDataItem @[0] {name="view_win_lft": value=0: val_type_fixed=0: };
-      UserDataItem @[1] {name="view_win_top": value=0.008191925: val_type_fixed=0: };
-      UserDataItem @[2] {name="view_win_wd": value=0.02706271: val_type_fixed=0: };
-      UserDataItem @[3] {name="view_win_ht": value=0.7519017: val_type_fixed=0: };
+      UserDataItem @[1] {name="view_win_top": value=0.008496176: val_type_fixed=0: };
+      UserDataItem @[2] {name="view_win_wd": value=0.0433633: val_type_fixed=0: };
+      UserDataItem @[3] {name="view_win_ht": value=0.7349193: val_type_fixed=0: };
       UserDataItem @[4] {name="view_win_iconified": value=0: val_type_fixed=0: };
       UserDataItem @[5] {name="view_visible": value=0: val_type_fixed=0: };
      };
@@ -27085,7 +27205,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
  save_as_only=0;
  auto_name=1;
  last_change_desc="Published on wiki: emergent page: demos/vis_test with description: Allows testing of V1 visual filters on well-controlled visual stimuli rendered using a canvas and in a 3D world. tags: Demo, Vision, V1 Filters, Gabor Filters author: Randall C. O'Reilly email: emergent-users@grey.colorado.edu version: 8.0.0 pub_cite: ";
- tree_state{ .;.docs;.wizards;.ctrl_panels;.data;.data.gp[0];.data.gp[1];.data.gp[2];.programs;.programs[0];.programs[0].prog_code;.programs[0].prog_code[0];.programs[0].prog_code[5];.programs[0].prog_code[6];.programs[0].prog_code[7];.programs[3];.programs[3].functions;.programs[3].functions[0];.programs[3].functions[0].fun_code;.programs[3].functions[0].fun_code[11];.programs.gp[0];.programs.gp[0][2];.programs.gp[0][2].prog_code;.programs.gp[0][2].prog_code[3];.programs.gp[1];.networks;.networks[0];.networks[0].specs;.networks[0].layers; };
+ tree_state{ .;.docs;.wizards;.ctrl_panels;.data;.data.gp[0];.data.gp[1];.data.gp[2];.programs;.programs[0];.programs[0].prog_code;.programs[0].prog_code[0];.programs[0].prog_code[5];.programs[0].prog_code[6];.programs[0].prog_code[7];.programs[1];.programs[1].objs;.programs[1].objs[0];.programs[1].objs[1];.programs[1].objs[1].data[3];.programs[1].objs[1].data[5];.programs[1].types;.programs[1].vars;.programs[1].functions;.programs.gp[0];.programs.gp[1];.viewers[0];.viewers[0].frames[2];.networks;.networks[0];.networks[0].specs;.networks[0].layers; };
  networks {
   name="networks";
   el_typ=LeabraNetwork;
@@ -27097,7 +27217,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
    train_mode=TRAIN;
    wt_update=ON_LINE;
    small_batch_n=10;
-   stats {sse_unit_avg=0: sse_sqrt=0: cnt_err_tol=0: prerr=0: };
+   stats {sse_unit_avg=0: sse_sqrt=0: cnt_err_tol=0: prerr=0: cos_err=1: };
    n_units=10369;
    n_cons=0;
    max_prjns=1;
@@ -27130,9 +27250,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      vm_range {min=0: max=2: range=2: scale=0.5: };
      init {v_m=0.4: act=0: netin=0: };
      dt {integ=1: vm_tau=3.333333: net_tau=1.428571: vm_cyc=1: fast_cyc=0: vm_dt=0.3: vm_dt_cyc=0.3: net_dt=0.7000002: };
-     act_avg {ss_tau=2: s_tau=2: m_tau=10: m_in_s=0.1: ss_dt=0.5: s_dt=0.5: m_dt=0.1: s_in_s=0.9: };
-     avg_l {init=0.4: gain=1.5: min=0.1: tau=10: lrn_max=0.05: lrn_min=0.005: dt=0.1: lrn_fact=0.03214286: };
-     avg_l_2 {err_mod=1: err_min=0.01: lay_act_thr=0.01: };
+     act_avg {ss_tau=2: s_tau=2: m_tau=10: ru_lrn_m=0.1: su_lrn_m=0.1: ss_dt=0.5: s_dt=0.5: m_dt=0.1: ru_lrn_s=0.9: su_lrn_s=0.9: };
+     avg_l {init=0.4: gain=1.5: min=0.1: tau=10: lrn_max=0.05: lrn_min=0.005: lay_act_thr=0.01: dt=0.1: lrn_fact=0.03214286: };
+     avg_l_mod {mod=LAY_ERR_MOD: lay_mod_min=0.01: net_mod_min=0.5: net_err_start=0.5: net_err_end=1: };
      g_bar {e=0.9999999: l=0.1: i=0.9999999: k=0.2: };
      e_rev {e=1: l=0.3: i=0.25: k=0.1: };
      kna_adapt {on=0: rate_rise=0.8: f_on=1: f_rise=0.05: f_max=0.1: f_tau=50: m_on=1: m_rise=0.02: m_max=0.1: m_tau=200: s_on=1: s_rise=0.001: s_max=1: s_tau=1000: f_dt=0.02: m_dt=0.005: s_dt=0.001: };
@@ -27141,7 +27261,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      syn_delay {on=0: delay=4: };
      deep_raw_qtr=Q4;
      deep {on=0: role=SUPER: raw_thr_rel=0.1: raw_thr_abs=0.1: mod_min=0.8: mod_thr=0.1: ctxt_prv=0: tick_updt=-1: else_prv=0.9: mod_range=0.2: ctxt_new=1: else_new=0.1: };
-     trc {p_only_m=0: thal_gate=0: clamp_net=0: avg_clamp=0: deep_gain=0.2: clip=0: clip_max=0.4: std_gain=0.8: };
+     trc {p_only_m=0: thal_gate=0: binarize=0: bin_thr=0.4: bin_on=0.3: bin_off=0: };
      da_mod {on=0: mod_gain=0: minus=0: plus=0.1: da_neg_gain=0.1: da_pos_gain=0.1: };
      noise_type {type=NO_NOISE: trial_fixed=1: };
      noise {name="noise": type=GAUSSIAN: mean=0: var=0.001000000047497451: par=1: };
@@ -27161,6 +27281,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      rnd {name="rnd": type=UNIFORM: mean=0: var=0: par=1: };
      wt_limits {type=NONE: min=-1: max=5: sym=0: sym_fm_top=0: };
      inhib=0;
+     feedback=1;
      wt_scale {abs=1: rel=1: no_plus_net=0: };
      learn=1;
      learn_qtr=Q4;
@@ -27168,17 +27289,17 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      cur_lrate=0.02;
      lrs_mult=1;
      use_unlearnable=1;
-     xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: lrn_thr=0.01: s_mult=1: d_rev_ratio=-9: };
+     rule {rule=XCAL_CHL: errule=XCAL: bcmrule=SRS: cp_gain=0.8: };
+     xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: thr_p_min=0.001: lrn_thr=0.01: d_rev_ratio=-9: };
      wt_sig {gain=6: off=1.25: soft_bound=1: };
-     momentum {on=0: dwavg_tau=1000: norm_min=0.001: m_tau=20: lrate_comp=0.01: dwavg_dt=0.001: dwavg_dt_c=0.999: m_dt=0.05: m_dt_c=0.95: };
+     dwt_norm {on=0: level=SEND_CONS: decay_tau=1000: norm_min=0.001: lr_comp=0.15: stats=0: decay_dt=0.001: decay_dt_c=0.999: };
+     momentum {on=0: m_tau=20: lr_comp=0.1: m_dt=0.05: m_dt_c=0.95: };
      wt_bal {on=0: avg_thr=0.25: hi_thr=0.4: hi_gain=4: lo_thr=0.4: lo_gain=6: act_thr=0.25: act_gain=0: no_targ=1: };
      adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
      slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
      deep {on=0: bg_lrate=1: fg_lrate=0: };
      margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_lrn=0.5: };
-     dwt_noise=0;
-     dwt_noise_p0=0.7;
-     noise {name="noise": type=GAUSSIAN: mean=0: var=0.004999999888241291: par=1: };
+     dwt_share {on=0: neigh=8: p_share=0.05: };
      use_lrate_sched=1;
      lrate_sched {
       name="lrate_sched";
@@ -27249,6 +27370,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      rnd {name="rnd": type=UNIFORM: mean=0.5: var=0.25: par=1: };
      wt_limits {type=MIN_MAX: min=0: max=1: sym=0: sym_fm_top=0: };
      inhib=0;
+     feedback=1;
      wt_scale {abs=1: rel=1: no_plus_net=0: };
      learn=1;
      learn_qtr=Q4;
@@ -27256,17 +27378,17 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      cur_lrate=0;
      lrs_mult=1;
      use_unlearnable=1;
-     xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: lrn_thr=0.01: s_mult=1: d_rev_ratio=-9: };
+     rule {rule=XCAL_CHL: errule=XCAL: bcmrule=SRS: cp_gain=0.8: };
+     xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: thr_p_min=0.001: lrn_thr=0.01: d_rev_ratio=-9: };
      wt_sig {gain=6: off=1.25: soft_bound=1: };
-     momentum {on=0: dwavg_tau=1000: norm_min=0.001: m_tau=20: lrate_comp=0.01: dwavg_dt=0.001: dwavg_dt_c=0.999: m_dt=0.05: m_dt_c=0.95: };
+     dwt_norm {on=0: level=SEND_CONS: decay_tau=1000: norm_min=0.001: lr_comp=0.15: stats=0: decay_dt=0.001: decay_dt_c=0.999: };
+     momentum {on=0: m_tau=20: lr_comp=0.1: m_dt=0.05: m_dt_c=0.95: };
      wt_bal {on=0: avg_thr=0.25: hi_thr=0.4: hi_gain=4: lo_thr=0.4: lo_gain=6: act_thr=0.25: act_gain=0: no_targ=1: };
      adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
      slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
      deep {on=0: bg_lrate=1: fg_lrate=0: };
      margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_lrn=0.5: };
-     dwt_noise=0;
-     dwt_noise_p0=0.7;
-     noise {name="noise": type=GAUSSIAN: mean=0: var=0.004999999888241291: par=1: };
+     dwt_share {on=0: neigh=8: p_share=0.05: };
      use_lrate_sched=1;
      lrate_sched {
       name="lrate_sched";
@@ -27288,6 +27410,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      name="items";
      el_typ=NetMonItem;
      el_def=0;
+     ignore_sig=0;
     };
     network=$.networks[0]$;
     data=.networks[0].mon_data$$;
@@ -27374,6 +27497,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      voxel_fill_pct=1;
      spec {type=LeabraLayerSpec: spec=$.networks[0].specs[2]$: };
      adapt_gi=1;
+     mod_avg_l_lrn=0;
      acts_m_avg=0.2;
      acts_p_avg=0.2;
      acts_p_avg_eff=0.2;
