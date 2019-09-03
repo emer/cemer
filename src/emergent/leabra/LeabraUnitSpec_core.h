@@ -1045,7 +1045,7 @@
     e_rev_sub_thr.e = e_rev.e - act.thr;
     e_rev_sub_thr.l = e_rev.l - act.thr;
     e_rev_sub_thr.i = e_rev.i - act.thr;
-    e_rev_sub_thr.k = e_rev.i - act.thr;
+    e_rev_sub_thr.k = e_rev.k - act.thr;
     thr_sub_e_rev_i = (act.thr - e_rev.i); // not multiplied by g_bar.i here..
     thr_sub_e_rev_e = (act.thr - e_rev.e);
   }
@@ -1070,7 +1070,7 @@
     e_rev.e = 1.0f;
     e_rev.l = 0.3f;
     e_rev.i = 0.25f;
-    e_rev.k = 0.10f;
+    e_rev.k = 0.25f;
 
     UpdateChannels();
 
