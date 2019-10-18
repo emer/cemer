@@ -2317,7 +2317,7 @@ double taMath_double::vec_cross_entropy(const double_Matrix* vec, const double_M
     if(FOREACH_itr_b.Done()) bi = oth->IterFirstIndex(FOREACH_itr_b); // start over
     double p = vec->FastEl_Flat(ai);
     double q = oth->FastEl_Flat(bi);
-    q = max(q,0.000001); q = max(q,0.999999);
+    q = max(q,0.000001); q = min(q,0.999999);
     if(p >= 1.0)
       rval += -log(q);
     else if(p <= 0.0)

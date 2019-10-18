@@ -2180,7 +2180,7 @@ float taMath_float::vec_cross_entropy(const float_Matrix* vec, const float_Matri
     if(FOREACH_itr_b.Done()) bi = oth->IterFirstIndex(FOREACH_itr_b); // start over
     float p = vec->FastEl_Flat(ai);
     float q = oth->FastEl_Flat(bi);
-    q = max(q,0.000001); q = max(q,0.999999);
+    q = max(q,0.000001); q = min(q,0.999999);
     if(p >= 1.0)
       rval += -log(q);
     else if(p <= 0.0)

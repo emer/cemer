@@ -50,7 +50,7 @@ void taDoc::SetURL(const String& new_url) {
       url = new_url.after(base_url);
     else {
       wiki = _nilString;
-      url = url;
+      url = new_url;
     }
   }
   else {

@@ -45,14 +45,14 @@ public:
   float         pointSize; // point size of the font -- will be aproximated in 3D
   int           stretch; // #EXPERT #DEF_100 the degree of stretch, less is narrower
 
-  bool          bold() const {return  (attribs && Bold);}
+  bool          bold() const {return  (attribs & Bold);}
   void          setBold(bool value);
-  bool          italic() const {return  (attribs && Italic);}
+  bool          italic() const {return  (attribs & Italic);}
   void          setItalic(bool value);
   void          setPointSize(float value);
   void          setPointSize(int value);
   void          setStretch(int value);
-  bool          underline() const {return (attribs && Underline);}
+  bool          underline() const {return (attribs & Underline);}
   void          setUnderline(bool value);
 
   void          copy(const iFont& src);
