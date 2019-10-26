@@ -1,0 +1,3003 @@
+// ta_Dump File v3.0 -- code v8.1.1.0 rev10912
+Program .projects[0].programs.gp[2][16] { 
+ UserDataItem_List @*(.user_data_) {
+  UserDataItem @[0] { };
+  UserData_DocLink @[1] { };
+ };
+
+ ProgObjList @.objs = [5] {
+  DataTable @[0] { 
+   DataTableCols @.data = [3] {
+    float_Data @[0] { };
+    float_Data @[1] { };
+    int_Data @[2] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+   };
+
+   DataOpList @.last_sort_spec.ops = [0] {
+   };
+  };
+  WtBasedRF @[1] { };
+  DataTable @[2] { 
+   DataTableCols @.data = [1] {
+    float_Data @[0] { };
+   };
+
+   DataOpList @.last_sort_spec.ops = [0] {
+   };
+  };
+  DataTable @[3] { 
+   UserDataItem_List @*(.user_data_) {
+    UserDataItem @[0] { };
+   };
+
+   DataTableCols @.data = [1] {
+    float_Data @[0] { };
+   };
+
+   DataOpList @.last_sort_spec.ops = [0] {
+   };
+  };
+  DataTable @[4] { 
+   DataTableCols @.data = [5] {
+    String_Data @[0] { };
+    float_Data @[1] { };
+    float_Data @[2] { };
+    float_Data @[3] { };
+    int_Data @[4] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+   };
+
+   DataOpList @.last_sort_spec.ops = [0] {
+   };
+  };
+ };
+
+ ProgVar_List @.objs_vars = [5] {
+  ProgVar @[0] { };
+  ProgVar @[1] { };
+  ProgVar @[2] { };
+  ProgVar @[3] { };
+  ProgVar @[4] { };
+ };
+
+ ProgType_List @.types = [0] {
+ };
+
+ ProgVar_List @.args = [0] {
+ };
+
+ ProgVar_List @.vars = [11] {
+  ProgVar @[0] { };
+  ProgVar @[1] { };
+  ProgVar @[2] { };
+  ProgVar @[3] { };
+  ProgVar @[4] { };
+  ProgVar @[5] { };
+  ProgVar @[6] { };
+  ProgVar @[7] { };
+  ProgVar @[8] { };
+  ProgVar @[9] { };
+  ProgVar @[10] { };
+ };
+
+ Function_List @.functions = [4] {
+  Function @[0] { 
+   ProgVar_List @.args = [0] {
+   };
+
+   ProgEl_List @.fun_code = [6] {
+    LocalVars @[0] { 
+     ProgVar_List @.local_vars = [0] {
+     };
+    };
+    Comment @[1] { };
+    If @[2] { 
+     ProgEl_List @.true_code = [1] {
+      MethodCall @[0] { 
+       ProgArg_List @.meth_args = [1] {
+	ProgArg @[0] { };
+       };
+      };
+     };
+    };
+    Comment @[3] { };
+    MethodCall @[4] { 
+     ProgArg_List @.meth_args = [1] {
+      ProgArg @[0] { };
+     };
+    };
+    MethodCall @[5] { 
+     ProgArg_List @.meth_args = [2] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+     };
+    };
+   };
+  };
+  Function @[1] { 
+   ProgVar_List @.args = [0] {
+   };
+
+   ProgEl_List @.fun_code = [12] {
+    LocalVars @[0] { 
+     ProgVar_List @.local_vars = [13] {
+      ProgVar @[0] { };
+      ProgVar @[1] { };
+      ProgVar @[2] { };
+      ProgVar @[3] { };
+      ProgVar @[4] { };
+      ProgVar @[5] { };
+      ProgVar @[6] { };
+      ProgVar @[7] { };
+      ProgVar @[8] { };
+      ProgVar @[9] { };
+      ProgVar @[10] { };
+      ProgVar @[11] { };
+      ProgVar @[12] { };
+     };
+    };
+    AssignExpr @[1] { };
+    MethodCall @[2] { 
+     ProgArg_List @.meth_args = [0] {
+     };
+    };
+    AssignExpr @[3] { };
+    AssignExpr @[4] { };
+    AssignExpr @[5] { };
+    AssignExpr @[6] { };
+    PrintVar @[7] { };
+    If @[8] { 
+     ProgEl_List @.true_code = [2] {
+      MethodCall @[0] { 
+       ProgArg_List @.meth_args = [1] {
+	ProgArg @[0] { };
+       };
+      };
+      MethodCall @[1] { 
+       ProgArg_List @.meth_args = [2] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+       };
+      };
+     };
+    };
+    MethodCall @[9] { 
+     ProgArg_List @.meth_args = [2] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+     };
+    };
+    If @[10] { 
+     ProgEl_List @.true_code = [7] {
+      MethodCall @[0] { 
+       ProgArg_List @.meth_args = [3] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+       };
+      };
+      MethodCall @[1] { 
+       ProgArg_List @.meth_args = [2] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+       };
+      };
+      AssignExpr @[2] { };
+      MethodCall @[3] { 
+       ProgArg_List @.meth_args = [2] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+       };
+      };
+      BlankLineEl @[4] { };
+      Comment @[5] { };
+      ForLoop @[6] { 
+       ProgEl_List @.loop_code = [1] {
+	ForLoop @[0] { 
+	 ProgEl_List @.loop_code = [1] {
+	  ForLoop @[0] { 
+	   ProgEl_List @.loop_code = [1] {
+	    ForLoop @[0] { 
+	     ProgEl_List @.loop_code = [5] {
+	      AssignExpr @[0] { };
+	      MethodCall @[1] { 
+	       ProgArg_List @.meth_args = [3] {
+		ProgArg @[0] { };
+		ProgArg @[1] { };
+		ProgArg @[2] { };
+	       };
+	      };
+	      MethodCall @[2] { 
+	       ProgArg_List @.meth_args = [3] {
+		ProgArg @[0] { };
+		ProgArg @[1] { };
+		ProgArg @[2] { };
+	       };
+	      };
+	      AssignExpr @[3] { };
+	      MethodCall @[4] { 
+	       ProgArg_List @.meth_args = [4] {
+		ProgArg @[0] { };
+		ProgArg @[1] { };
+		ProgArg @[2] { };
+		ProgArg @[3] { };
+	       };
+	      };
+	     };
+	    };
+	   };
+	  };
+	 };
+	};
+       };
+      };
+     };
+    };
+    Else @[11] { 
+     ProgEl_List @.true_code = [1] {
+      PrintExpr @[0] { };
+     };
+    };
+   };
+  };
+  Function @[2] { 
+   ProgVar_List @.args = [0] {
+   };
+
+   ProgEl_List @.fun_code = [8] {
+    LocalVars @[0] { 
+     ProgVar_List @.local_vars = [5] {
+      ProgVar @[0] { };
+      ProgVar @[1] { };
+      ProgVar @[2] { };
+      ProgVar @[3] { };
+      ProgVar @[4] { };
+     };
+    };
+    AssignExpr @[1] { };
+    MethodCall @[2] { 
+     ProgArg_List @.meth_args = [0] {
+     };
+    };
+    MethodCall @[3] { 
+     ProgArg_List @.meth_args = [2] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+     };
+    };
+    AssignExpr @[4] { };
+    MethodCall @[5] { 
+     ProgArg_List @.meth_args = [2] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+     };
+    };
+    If @[6] { 
+     ProgEl_List @.true_code = [1] {
+      MethodCall @[0] { 
+       ProgArg_List @.meth_args = [0] {
+       };
+      };
+     };
+    };
+    ForLoop @[7] { 
+     ProgEl_List @.loop_code = [12] {
+      AssignExpr @[0] { };
+      MethodCall @[1] { 
+       ProgArg_List @.meth_args = [2] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+       };
+      };
+      MemberMethodCall @[2] { 
+       ProgArg_List @.meth_args = [2] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+       };
+      };
+      PrintVar @[3] { };
+      MethodCall @[4] { 
+       ProgArg_List @.meth_args = [2] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+       };
+      };
+      MethodCall @[5] { 
+       ProgArg_List @.meth_args = [0] {
+       };
+      };
+      MethodCall @[6] { 
+       ProgArg_List @.meth_args = [3] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+       };
+      };
+      MethodCall @[7] { 
+       ProgArg_List @.meth_args = [3] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+       };
+      };
+      MethodCall @[8] { 
+       ProgArg_List @.meth_args = [4] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+	ProgArg @[3] { };
+       };
+      };
+      MethodCall @[9] { 
+       ProgArg_List @.meth_args = [3] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+       };
+      };
+      MethodCall @[10] { 
+       ProgArg_List @.meth_args = [3] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+       };
+      };
+      MethodCall @[11] { 
+       ProgArg_List @.meth_args = [5] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+	ProgArg @[3] { };
+	ProgArg @[4] { };
+       };
+      };
+     };
+    };
+   };
+  };
+  Function @[3] { 
+   ProgVar_List @.args = [0] {
+   };
+
+   ProgEl_List @.fun_code = [5] {
+    LocalVars @[0] { 
+     ProgVar_List @.local_vars = [0] {
+     };
+    };
+    MethodCall @[1] { 
+     ProgArg_List @.meth_args = [0] {
+     };
+    };
+    MethodCall @[2] { 
+     ProgArg_List @.meth_args = [0] {
+     };
+    };
+    MethodCall @[3] { 
+     ProgArg_List @.meth_args = [0] {
+     };
+    };
+    MethodCall @[4] { 
+     ProgArg_List @.meth_args = [0] {
+     };
+    };
+   };
+  };
+ };
+
+ ProgEl_List @.init_code = [1] {
+  LocalVars @[0] { 
+   ProgVar_List @.local_vars = [0] {
+   };
+  };
+ };
+
+ ProgEl_List @.prog_code = [10] {
+  LocalVars @[0] { 
+   ProgVar_List @.local_vars = [0] {
+   };
+  };
+  FunctionCall @[1] { 
+   ProgArg_List @.fun_args = [0] {
+   };
+  };
+  MethodCall @[2] { 
+   ProgArg_List @.meth_args = [1] {
+    ProgArg @[0] { };
+   };
+  };
+  PrintVar @[3] { };
+  Comment @[4] { };
+  If @[5] { 
+   ProgEl_List @.true_code = [1] {
+    AssignExpr @[0] { };
+   };
+  };
+  ElseIf @[6] { 
+   ProgEl_List @.true_code = [1] {
+    AssignExpr @[0] { };
+   };
+  };
+  MethodCall @[7] { 
+   ProgArg_List @.meth_args = [7] {
+    ProgArg @[0] { };
+    ProgArg @[1] { };
+    ProgArg @[2] { };
+    ProgArg @[3] { };
+    ProgArg @[4] { };
+    ProgArg @[5] { };
+    ProgArg @[6] { };
+   };
+  };
+  FunctionCall @[8] { 
+   ProgArg_List @.fun_args = [0] {
+   };
+  };
+  FunctionCall @[9] { 
+   ProgArg_List @.fun_args = [0] {
+   };
+  };
+ };
+};
+Program .projects[0].programs.gp[2][16] {
+ UserDataItem_List @*(.user_data_) {
+  name=;
+  el_typ=UserData_DocLink;
+  el_def=0;
+  UserDataItem @[0] {name="user_pinned": value=1: val_type_fixed=0: };
+  UserData_DocLink @[1] {name="DocLink": doc=.doc$$: };
+ };
+ name="WtBasedRField_V2";
+ short_nm="WBsRFl";
+ tags="Statistic, Receptive Field";
+ desc="computes a weight based receptive field (RF) using WtBasedRF object type --  The calculation is based on the V2 wts that are developed during training in combination with the gabor filter values that are applied to the original image. Each row of the WtRFData table shows a single units' representation field and how the original image looks to that unit. Note - V2 may receive from mulitple layers, choose one";
+ version {
+  major=0;
+  minor=0;
+  step=0;
+ };
+ author="John Rohrlich";
+ email="john.rohrlich@colorado.edu";
+ flags=NO_STOP_STEP;
+ stop_step_cond {
+  expr=;
+ };
+ objs {
+  name="objs";
+  el_typ=ActBasedRF;
+  el_def=0;
+  DataTable @[0] {
+   name="WtRFData";
+   desc="receptive field data -- could move this into AnalysisData if you want..";
+   data {
+    name="data";
+    el_typ=float_Data;
+    el_def=0;
+    float_Data @[0] {
+     name="values";
+     col_flags=SAVE_DATA|AUTO_WIDTH;
+     is_matrix=1;
+     cell_geom{ 128;128;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name="dim_names";
+     [2] ;;     };
+     width=128;
+     matrix_col_width=10;
+    };
+    float_Data @[1] {
+     name="values_x_act";
+     col_flags=SAVE_DATA|AUTO_WIDTH;
+     is_matrix=1;
+     cell_geom{ 128;128;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name="dim_names";
+     [2] ;;     };
+     width=128;
+     matrix_col_width=10;
+    };
+    int_Data @[2] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_1";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {name="NARROW": value=1: val_type_fixed=0: };
+     };
+     name="count";
+     col_flags=SAVE_DATA|AUTO_WIDTH;
+     is_matrix=1;
+     cell_geom{ 128;128;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name="dim_names";
+     [2] ;;     };
+     width=128;
+     matrix_col_width=10;
+    };
+   };
+   data_flags=AUTO_CALC;
+   auto_load=NO_AUTO_LOAD;
+   auto_load_file=;
+   row_height=1;
+   max_col_width=128;
+   keygen 4 0=0;
+   last_sort_spec {
+    name="last_sort_spec";
+    ops {
+     name="ops";
+     el_typ=DataSortEl;
+     el_def=0;
+    };
+   };
+   row_with_hilite=-1;
+  };
+  WtBasedRF @[1] {
+   name="WtBasedRF_Analysis";
+   network=.networks["LVisNet"]$$<LeabraNetwork,LVisNet>;
+   trg_layer=.networks["LVisNet"].layers.gp["V2"]["V2mF16"]$$<LeabraLayer,V2mF16>;
+   snd_layer=.networks["LVisNet"].layers.gp["V1"]["V1mF16"]$$<LeabraLayer,V1mF16>;
+   dt_trg_rf=.objs[0]$$;
+   dt_snd_rf=NULL;
+   trg_wt_threshold=0;
+  };
+  DataTable @[2] {
+   name="trg_layer_wts";
+   desc=;
+   data {
+    name="data";
+    el_typ=float_Data;
+    el_def=0;
+    float_Data @[0] {
+     name="V1mF16";
+     col_flags=SAVE_DATA|AUTO_WIDTH;
+     is_matrix=1;
+     cell_geom{ 64;80;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name="dim_names";
+     [2] ;;     };
+     width=64;
+     matrix_col_width=10;
+    };
+   };
+   data_flags=AUTO_CALC;
+   auto_load=NO_AUTO_LOAD;
+   auto_load_file=;
+   row_height=1;
+   max_col_width=64;
+   keygen 4 0=0;
+   last_sort_spec {
+    name="last_sort_spec";
+    ops {
+     name="ops";
+     el_typ=DataSortEl;
+     el_def=0;
+    };
+   };
+   row_with_hilite=-1;
+  };
+  DataTable @[3] {
+   UserDataItem_List @*(.user_data_) {
+    name="UserDataItem_List_271";
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @[0] {name="user_pinned": value=0: val_type_fixed=0: };
+   };
+   name="TrgLayerActivations";
+   desc=;
+   data {
+    name="data";
+    el_typ=float_Data;
+    el_def=0;
+    float_Data @[0] {
+     name="V2mF16_act_m";
+     col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
+     is_matrix=1;
+     cell_geom{ 10;10;8;8;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name="dim_names";
+     [4] ;;;;     };
+     width=12;
+     matrix_col_width=10;
+    };
+   };
+   data_flags=AUTO_CALC;
+   auto_load=NO_AUTO_LOAD;
+   auto_load_file=;
+   row_height=1;
+   max_col_width=50;
+   keygen 4 0=0;
+   last_sort_spec {
+    name="last_sort_spec";
+    ops {
+     name="ops";
+     el_typ=DataSortEl;
+     el_def=0;
+    };
+   };
+   row_with_hilite=-1;
+  };
+  DataTable @[4] {
+   name="SampleUnits";
+   desc="receptive field data -- could move this into AnalysisData if you want..";
+   data {
+    name="data";
+    el_typ=float_Data;
+    el_def=0;
+    String_Data @[0] {
+     name="image_name";
+     col_flags=SAVE_DATA|AUTO_WIDTH;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name="dim_names";
+     [0]      };
+     width=16;
+     matrix_col_width=10;
+    };
+    float_Data @[1] {
+     name="image";
+     col_flags=SAVE_DATA|AUTO_WIDTH;
+     is_matrix=1;
+     cell_geom{ 128;128;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name="dim_names";
+     [2] ;;     };
+     width=144;
+     matrix_col_width=10;
+    };
+    float_Data @[2] {
+     name="values_x_act";
+     col_flags=SAVE_DATA|AUTO_WIDTH;
+     is_matrix=1;
+     cell_geom{ 128;128;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name="dim_names";
+     [2] ;;     };
+     width=128;
+     matrix_col_width=10;
+    };
+    float_Data @[3] {
+     name="activation";
+     col_flags=SAVE_DATA|AUTO_WIDTH;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name="dim_names";
+     [0]      };
+     width=10;
+     matrix_col_width=10;
+    };
+    int_Data @[4] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_1";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {name="NARROW": value=1: val_type_fixed=0: };
+     };
+     name="unit_idx_flat";
+     col_flags=SAVE_DATA|AUTO_WIDTH;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name="dim_names";
+     [0]      };
+     width=13;
+     matrix_col_width=10;
+    };
+   };
+   data_flags=AUTO_CALC;
+   auto_load=NO_AUTO_LOAD;
+   auto_load_file=;
+   row_height=1;
+   max_col_width=144;
+   keygen 4 0=0;
+   last_sort_spec {
+    name="last_sort_spec";
+    ops {
+     name="ops";
+     el_typ=DataSortEl;
+     el_def=0;
+    };
+   };
+   row_with_hilite=-1;
+  };
+ };
+ objs_vars {
+  name="objs_vars";
+  el_typ=ProgVar;
+  el_def=0;
+  ProgVar @[0] {
+   name="wt_rfdata";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=$.objs[0]$;
+   object_scope=NULL;
+   objs_ptr=1;
+   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc="data table to record weight based receptive field values - the columns and rows will be generated by the underlying code";
+   init_from=NULL;
+  };
+  ProgVar @[1] {
+   name="wt_based_rf_analysis";
+   var_type=T_Object;
+   object_type=WtBasedRF;
+   object_val=.objs[1]$$;
+   object_scope=NULL;
+   objs_ptr=1;
+   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc="This is the object on which to call the compute method";
+   init_from=NULL;
+  };
+  ProgVar @[2] {
+   name="trg_layer_wts";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=.objs[2]$$;
+   object_scope=NULL;
+   objs_ptr=1;
+   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc="these are the weights for each projection to each unit of the target layer";
+   init_from=NULL;
+  };
+  ProgVar @[3] {
+   name="trg_layer_activations";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=.objs[3]$$;
+   object_scope=NULL;
+   objs_ptr=1;
+   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+  ProgVar @[4] {
+   name="sample_units";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=.objs[4]$$;
+   object_scope=NULL;
+   objs_ptr=1;
+   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+ };
+ types {
+  name="types";
+  el_typ=DynEnumType;
+  el_def=0;
+ };
+ args {
+  name="args";
+  el_typ=ProgVar;
+  el_def=0;
+ };
+ vars {
+  name="vars";
+  el_typ=ProgVar;
+  el_def=0;
+  ProgVar @[0] {
+   name="network";
+   var_type=T_Object;
+   object_type=Network;
+   object_val=$.networks["LVisNet"]$;
+   object_scope=NULL;
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc="network to operate on -- updates batch counter on network and passes it to train program";
+   init_from=NULL;
+  };
+  ProgVar @[1] {
+   name="trg_layer";
+   var_type=T_Object;
+   object_type=Layer;
+   object_val=$.networks["LVisNet"].layers.gp["V2"]["V2mF16"]$;
+   object_scope=NULL;
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc="layer for which to generate the receptive field data - typically V2 but could be any layer receiving directly from a V1 layer";
+   init_from=NULL;
+  };
+  ProgVar @[2] {
+   name="snd_layer";
+   var_type=T_Object;
+   object_type=Layer;
+   object_val=$.networks["LVisNet"].layers.gp["V1"]["V1mF16"]$;
+   object_scope=NULL;
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc="the layer sending to target layer - if more than one, choose";
+   init_from=NULL;
+  };
+  ProgVar @[3] {
+   name="v1_retina_proc";
+   var_type=T_Object;
+   object_type=V1RetinaProc;
+   object_val=.programs.gp["EnviroProgs"]["ApplyInputsImage"].objs["V1RetinaProcTE16_F8"]$$<V1RetinaProc,V1RetinaProcTE16_F8>;
+   object_scope=NULL;
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc="this is the retina_proc which specifies the gabor filters used in training - can be found in ApplyInputs";
+   init_from=NULL;
+  };
+  ProgVar @[4] {
+   name="wt_threshold";
+   var_type=T_Real;
+   real_val=0;
+   object_scope=NULL;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+  ProgVar @[5] {
+   name="activation_var";
+   var_type=T_String;
+   object_scope=NULL;
+   flags=USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+  ProgVar @[6] {
+   name="max_act";
+   var_type=T_Real;
+   real_val=0.6910520792007446;
+   object_scope=NULL;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+  ProgVar @[7] {
+   name="sample_size";
+   var_type=T_Int;
+   int_val=20;
+   object_scope=NULL;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+  ProgVar @[8] {
+   name="image_filename";
+   var_type=T_String;
+   string_val="images/CU3D_100_plus_renders/autogun_001_00001.png";
+   object_scope=NULL;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+  ProgVar @[9] {
+   name="objects_env";
+   var_type=T_Object;
+   object_type=Program;
+   object_val=.programs.gp["EnviroProgs"]["ObjectsEnv"]$$<Program,ObjectsEnv>;
+   object_scope=NULL;
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+  ProgVar @[10] {
+   name="v1_fovea_region_data";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=.programs.gp["EnviroProgs"]["ApplyInputsImage"].objs["V1FoveaRegionData"]$$<DataTable,V1FoveaRegionData>;
+   object_scope=NULL;
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+ };
+ functions {
+  name="functions";
+  el_typ=Function;
+  el_def=0;
+  Function @[0] {
+   name="ResetTables";
+   desc=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="ResetTables() returns: int";
+   return_type=T_Int;
+   object_type=taOBase;
+   args {
+    name="args";
+    el_typ=ProgVar;
+    el_def=0;
+   };
+   fun_code {
+    name="fun_code";
+    el_typ=ProgCode;
+    el_def=0;
+    LocalVars @[0] {
+     name="LocalVars_LocalVars0vars";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="LocalVars (0 vars)";
+     local_vars {
+      name="local_vars";
+      el_typ=ProgVar;
+      el_def=0;
+     };
+    };
+    Comment @[1] {
+     name="Comment_activationsdiffe_eresetthecolumn";
+     desc="activations different for every image - reset the column";
+     flags=CAN_REVERT_TO_CODE|NO_CODE;
+     code_string="// activations different for every image - reset the column";
+    };
+    If @[2] {
+     name="If_ifwtrfdataFindColNamevaluesxact";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if (wt_rfdata->FindColName(\"values_x_act\"))";
+     cond {
+      expr="wt_rfdata->FindColName(\"values_x_act\")";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      MethodCall @[0] {
+       name="MethodCall_wtrfdataRemoveColvaluesxact";
+       desc="this column should be recalculated for each image";
+       flags=CAN_REVERT_TO_CODE;
+       code_string="wt_rfdata->RemoveCol(\"values_x_act\")";
+       result_var=NULL;
+       obj=.objs_vars[0]$$;
+       method=DataTable::RemoveCol;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_Variant_ref;
+	 type="Variant&";
+	 name="col";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="\"values_x_act\"";
+	 };
+	};
+       };
+       meth_sig="void RemoveCol(Variant& col)";
+       meth_desc=" removes indicated column";
+      };
+     };
+    };
+    Comment @[3] {
+     name="Comment_alwaysrecreateth_aluesxactcolumn";
+     desc="always recreate the values_x_act column";
+     flags=CAN_REVERT_TO_CODE|NO_CODE;
+     code_string="// always recreate the values_x_act column";
+    };
+    MethodCall @[4] {
+     name="MethodCall_wtrfdataDuplicateColvalues";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="wt_rfdata->DuplicateCol(\"values\")";
+     result_var=NULL;
+     obj=$.objs_vars[0]$;
+     method=DataTable::DuplicateCol;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_Variant_ref;
+       type="Variant&";
+       name="col";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="\"values\"";
+       };
+      };
+     };
+     meth_sig="void DuplicateCol(Variant& col)";
+     meth_desc=" duplicates indicated column";
+    };
+    MethodCall @[5] {
+     name="MethodCall_wtrfdataRenameCo_scopyvaluesxact";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="wt_rfdata->RenameCol(\"values_copy\", \"values_x_act\")";
+     result_var=NULL;
+     obj=$.objs_vars[0]$;
+     method=DataTable::RenameCol;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="cur_nm";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="\"values_copy\"";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="new_nm";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="\"values_x_act\"";
+       };
+      };
+     };
+     meth_sig="bool RenameCol(taString& cur_nm, taString& new_nm)";
+     meth_desc=" rename column with current name cur_nm to new name new_nm (returns false if ccur_nm not found)";
+    };
+   };
+  };
+  Function @[1] {
+   name="MultiplyWithActivations";
+   desc="Do for each image - takes V2 activations for particular image and multiplies with weight x filter results";
+   flags=CAN_REVERT_TO_CODE;
+   code_string="MultiplyWithActivations() returns: int";
+   return_type=T_Int;
+   object_type=taOBase;
+   args {
+    name="args";
+    el_typ=ProgVar;
+    el_def=0;
+   };
+   fun_code {
+    name="fun_code";
+    el_typ=ProgCode;
+    el_def=0;
+    LocalVars @[0] {
+     name="LocalVars_LocalVars13vars";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="LocalVars (13 vars)";
+     local_vars {
+      name="local_vars";
+      el_typ=ProgVar;
+      el_def=0;
+      ProgVar @[0] {
+       name="act";
+       var_type=T_Real;
+       real_val=0;
+       object_scope=NULL;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[1] {
+       name="grp_row";
+       var_type=T_Int;
+       int_val=0;
+       object_scope=NULL;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[2] {
+       name="grp_col";
+       var_type=T_Int;
+       int_val=0;
+       object_scope=NULL;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[3] {
+       name="unit_row";
+       var_type=T_Int;
+       int_val=0;
+       object_scope=NULL;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[4] {
+       name="unit_col";
+       var_type=T_Int;
+       int_val=0;
+       object_scope=NULL;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[5] {
+       name="flat_index";
+       var_type=T_Int;
+       int_val=0;
+       object_scope=NULL;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[6] {
+       name="grp_rows";
+       var_type=T_Int;
+       int_val=8;
+       object_scope=NULL;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[7] {
+       name="grp_cols";
+       var_type=T_Int;
+       int_val=8;
+       object_scope=NULL;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[8] {
+       name="unit_rows";
+       var_type=T_Int;
+       int_val=8;
+       object_scope=NULL;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[9] {
+       name="unit_cols";
+       var_type=T_Int;
+       int_val=8;
+       object_scope=NULL;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[10] {
+       name="wt_rf_cell_matrix";
+       var_type=T_Object;
+       object_type=float_Matrix;
+       object_val=NULL;
+       object_scope=NULL;
+       objs_ptr=0;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[11] {
+       name="values_x_act_data_col";
+       var_type=T_Object;
+       object_type=float_Data;
+       object_val=NULL;
+       object_scope=NULL;
+       objs_ptr=0;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[12] {
+       name="trg_layer_acts_matrix";
+       var_type=T_Object;
+       object_type=float_Matrix;
+       object_val=NULL;
+       object_scope=NULL;
+       objs_ptr=0;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+     };
+    };
+    AssignExpr @[1] {
+     name="AssignExpr_wtrfcellmatrixnewfloatMatrix";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="wt_rf_cell_matrix = new float_Matrix";
+     result_var=.functions[1].fun_code[0].local_vars[10]$$;
+     expr {
+      expr="new float_Matrix";
+     };
+    };
+    MethodCall @[2] {
+     name="MethodCall_trglayeractivationsResetData";
+     desc="these values get reset for each image";
+     flags=CAN_REVERT_TO_CODE;
+     code_string="trg_layer_activations->ResetData()";
+     result_var=NULL;
+     obj=.objs_vars[3]$$;
+     method=DataTable::ResetData;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+     };
+     meth_sig="void ResetData()";
+     meth_desc=" deletes all the data (rows), but keeps the column structure -- this cannot be undone!";
+    };
+    AssignExpr @[3] {
+     name="AssignExpr_grprowstrglayergpgeomy";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="grp_rows = trg_layer.gp_geom.y";
+     result_var=.functions[1].fun_code[0].local_vars[6]$$;
+     expr {
+      expr="trg_layer.gp_geom.y";
+     };
+    };
+    AssignExpr @[4] {
+     name="AssignExpr_grpcolstrglayergpgeomx";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="grp_cols = trg_layer.gp_geom.x";
+     result_var=.functions[1].fun_code[0].local_vars[7]$$;
+     expr {
+      expr="trg_layer.gp_geom.x";
+     };
+    };
+    AssignExpr @[5] {
+     name="AssignExpr_unitrowstrglayerungeomy";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="unit_rows = trg_layer.un_geom.y";
+     result_var=.functions[1].fun_code[0].local_vars[8]$$;
+     expr {
+      expr="trg_layer.un_geom.y";
+     };
+    };
+    AssignExpr @[6] {
+     name="AssignExpr_unitcolstrglayerungeomx";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="unit_cols = trg_layer.un_geom.x";
+     result_var=.functions[1].fun_code[0].local_vars[9]$$;
+     expr {
+      expr="trg_layer.un_geom.x";
+     };
+    };
+    PrintVar @[7] {
+     name="PrintVar_Printgrprowsunitrows";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="Print  grp_rows unit_rows";
+     message=;
+     print_var=$.functions[1].fun_code[0].local_vars[6]$;
+     print_var2=$.functions[1].fun_code[0].local_vars[8]$;
+     print_var3=NULL;
+     print_var4=NULL;
+     print_var5=NULL;
+     print_var6=NULL;
+     debug=0;
+    };
+    If @[8] {
+     name="If_ifwtrfdataFindColNamevaluesxact";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if (!wt_rfdata->FindColName(\"values_x_act\"))";
+     cond {
+      expr="!wt_rfdata->FindColName(\"values_x_act\")";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      MethodCall @[0] {
+       name="MethodCall_wtrfdataDuplicateColvalues";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="wt_rfdata->DuplicateCol(\"values\")";
+       result_var=NULL;
+       obj=$.objs_vars[0]$;
+       method=DataTable::DuplicateCol;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_Variant_ref;
+	 type="Variant&";
+	 name="col";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="\"values\"";
+	 };
+	};
+       };
+       meth_sig="void DuplicateCol(Variant& col)";
+       meth_desc=" duplicates indicated column";
+      };
+      MethodCall @[1] {
+       name="MethodCall_wtrfdataRenameCo_scopyvaluesxact";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="wt_rfdata->RenameCol(\"values_copy\", \"values_x_act\")";
+       result_var=NULL;
+       obj=$.objs_vars[0]$;
+       method=DataTable::RenameCol;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="cur_nm";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="\"values_copy\"";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="new_nm";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="\"values_x_act\"";
+	 };
+	};
+       };
+       meth_sig="bool RenameCol(taString& cur_nm, taString& new_nm)";
+       meth_desc=" rename column with current name cur_nm to new name new_nm (returns false if ccur_nm not found)";
+      };
+     };
+    };
+    MethodCall @[9] {
+     name="MethodCall_valuesxactdataco_lNamevaluesxact";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="values_x_act_data_col = wt_rfdata->FindColName(\"values_x_act\", )";
+     result_var=.functions[1].fun_code[0].local_vars[11]$$;
+     obj=$.objs_vars[0]$;
+     method=DataTable::FindColName;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="col_nm";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="\"values_x_act\"";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=bool;
+       type="bool";
+       name="err_msg";
+       required=0;
+       def_val="false";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+     };
+     meth_sig="DataCol_ptr FindColName(taString& col_nm, bool err_msg = false)";
+     meth_desc=" find a column of the given name; if err_msg then generate an error if not found";
+    };
+    If @[10] {
+     name="If_ifvaluesxactdatacol";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if (values_x_act_data_col)";
+     cond {
+      expr="values_x_act_data_col";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      MethodCall @[0] {
+       name="MethodCall_valuesxactdatacolInitVals0";
+       desc="this column gets reset for each image";
+       flags=CAN_REVERT_TO_CODE;
+       code_string="values_x_act_data_col->InitVals(0, , )";
+       result_var=NULL;
+       obj=$.functions[1].fun_code[0].local_vars[11]$;
+       method=DataCol::InitVals;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_Variant_ref;
+	 type="Variant&";
+	 name="init_val";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="0";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=int;
+	 type="int";
+	 name="st_row";
+	 required=0;
+	 def_val="0";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=int;
+	 type="int";
+	 name="n_rows";
+	 required=0;
+	 def_val="-1";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+       };
+       meth_sig="bool InitVals(Variant& init_val, int st_row = 0, int n_rows = -1)";
+       meth_desc=" initialize all values in this column to given value -- for rows as specified by starting row, and n_rows = -1 means to the end";
+      };
+      MethodCall @[1] {
+       name="MethodCall_trglayerVarToTab_nsactivationvar";
+       desc="get data to table";
+       flags=CAN_REVERT_TO_CODE;
+       code_string="trg_layer->VarToTable(trg_layer_activations, activation_var)";
+       result_var=NULL;
+       obj=.vars[1]$$;
+       method=Layer::VarToTable;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=DataTable_ptr;
+	 type="DataTable*";
+	 name="dt";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="trg_layer_activations";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="variable";
+	 required=1;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr="activation_var";
+	 };
+	};
+       };
+       meth_sig="DataTable_ptr VarToTable(DataTable* dt, taString& variable)";
+       meth_desc=" send given variable to data table -- number of columns depends on variable (for projection variables, specify prjns.; for connection variables, specify r. or s. (e.g., r.wt)) -- this uses a NetMonitor internally, so see documentation there for more information";
+      };
+      AssignExpr @[2] {
+       name="AssignExpr_trglayeractsmatrixnewfloatMatrix";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="trg_layer_acts_matrix = new float_Matrix";
+       result_var=.functions[1].fun_code[0].local_vars[12]$$;
+       expr {
+	expr="new float_Matrix";
+       };
+      };
+      MethodCall @[3] {
+       name="MethodCall_trglayeractsmatr_etValAsMatrix00";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="trg_layer_acts_matrix = trg_layer_activations->GetValAsMatrix(0, 0)";
+       result_var=$.functions[1].fun_code[0].local_vars[12]$;
+       obj=$.objs_vars[3]$;
+       method=DataTable::GetValAsMatrix;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_Variant_ref;
+	 type="Variant&";
+	 name="col";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="0";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=int;
+	 type="int";
+	 name="row";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="0";
+	 };
+	};
+       };
+       meth_sig="taMatrix_ptr GetValAsMatrix(Variant& col, int row)";
+       meth_desc=" get data of matrix type (multi-dimensional data within a given cell), in Matrix form, for given column, row; for Program usage, assign to a LocalVars Matrix* variable, NOT a global vars variable, at the appropriate scope where the matrix will be used, (e.g., if within a loop, put variable in the loop_code of the loop), so that the local variable will be deleted automatically, to free the memory associated with the Matrix when it is no longer needed";
+      };
+      BlankLineEl @[4] {
+       name="BlankLineEl_";
+       desc=;
+       flags=CAN_REVERT_TO_CODE|NO_CODE;
+       code_string=" ";
+      };
+      Comment @[5] {
+       name="Comment_multiplyeveryV2u_naddthistoCcode";
+       desc="multiply every V2 unit weight x filter x V1_activation by the current V2 activation - add this to C++ code?";
+       flags=CAN_REVERT_TO_CODE|NO_CODE;
+       code_string="// multiply every V2 unit weight x filter x V1_activation by the current V2 activation - add this to C++ code?";
+      };
+      ForLoop @[6] {
+       name="ForLoop_forgrprow0grprowgrprowsgrprow";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="for (grp_row = 0; grp_row < grp_rows; grp_row++)";
+       loop_code {
+	name="loop_code";
+	el_typ=ProgCode;
+	el_def=0;
+	ForLoop @[0] {
+	 name="ForLoop_forgrpcol0grpcolgrpcolsgrpcol";
+	 desc=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="for (grp_col = 0; grp_col < grp_cols; grp_col++)";
+	 loop_code {
+	  name="loop_code";
+	  el_typ=ProgCode;
+	  el_def=0;
+	  ForLoop @[0] {
+	   name="ForLoop_forunitrow0unitr_unitrowsunitrow";
+	   desc=;
+	   flags=CAN_REVERT_TO_CODE;
+	   code_string="for (unit_row = 0; unit_row<unit_rows; unit_row++)";
+	   loop_code {
+	    name="loop_code";
+	    el_typ=ProgCode;
+	    el_def=0;
+	    ForLoop @[0] {
+	     name="ForLoop_forunitcol0unitc_unitcolsunitcol";
+	     desc=;
+	     flags=CAN_REVERT_TO_CODE;
+	     code_string="for (unit_col = 0; unit_col<unit_cols; unit_col++)";
+	     loop_code {
+	      name="loop_code";
+	      el_typ=ProgCode;
+	      el_def=0;
+	      AssignExpr @[0] {
+	       name="AssignExpr_flatindexunitcol_nitrowsunitcols";
+	       desc=;
+	       flags=CAN_REVERT_TO_CODE;
+	       code_string="flat_index = unit_col + unit_row*unit_cols + grp_col*unit_rows*unit_cols + grp_row*grp_cols*unit_rows*unit_cols";
+	       result_var=.functions[1].fun_code[0].local_vars[5]$$;
+	       expr {
+		expr="unit_col + unit_row*unit_cols + grp_col*unit_rows*unit_cols + grp_row*grp_cols*unit_rows*unit_cols";
+	       };
+	      };
+	      MethodCall @[1] {
+	       name="MethodCall_wtrfcellmatrixwt_valuesflatindex";
+	       desc=;
+	       flags=CAN_REVERT_TO_CODE;
+	       code_string="wt_rf_cell_matrix = wt_rfdata->GetValAsMatrixColName(\"values\", flat_index, )";
+	       result_var=$.functions[1].fun_code[0].local_vars[10]$;
+	       obj=$.objs_vars[0]$;
+	       method=DataTable::GetValAsMatrixColName;
+	       meth_args {
+		name="meth_args";
+		el_typ=ProgArg;
+		el_def=0;
+		ProgArg @[0] {
+		 arg_type=const_taString_ref;
+		 type="taString&";
+		 name="col_name";
+		 required=1;
+		 def_val=;
+		 prev_expr=;
+		 expr {
+		  expr="\"values\"";
+		 };
+		};
+		ProgArg @[1] {
+		 arg_type=int;
+		 type="int";
+		 name="row";
+		 required=1;
+		 def_val=;
+		 prev_expr=;
+		 expr {
+		  expr="flat_index";
+		 };
+		};
+		ProgArg @[2] {
+		 arg_type=bool;
+		 type="bool";
+		 name="quiet";
+		 required=0;
+		 def_val="false";
+		 prev_expr=;
+		 expr {
+		  expr=;
+		 };
+		};
+	       };
+	       meth_sig="taMatrix_ptr GetValAsMatrixColName(taString& col_name, int row, bool quiet = false)";
+	       meth_desc=" get data of matrix type (multi-dimensional data within a given cell), in Matrix form, for given column, row; for Program usage, assign to a LocalVars Matrix* variable, NOT a global vars variable, at the appropriate scope where the matrix will be used, (e.g., if within a loop, put variable in the loop_code of the loop), so that the local variable will be deleted automatically, to free the memory associated with the Matrix when it is no longer needed";
+	      };
+	      MethodCall @[2] {
+	       name="MethodCall_acttrglayeractiv_tVal00flatindex";
+	       desc=;
+	       flags=CAN_REVERT_TO_CODE;
+	       code_string="act = trg_layer_activations->GetMatrixFlatVal(0, 0, flat_index)";
+	       result_var=.functions[1].fun_code[0].local_vars[0]$$;
+	       obj=$.objs_vars[3]$;
+	       method=DataTable::GetMatrixFlatVal;
+	       meth_args {
+		name="meth_args";
+		el_typ=ProgArg;
+		el_def=0;
+		ProgArg @[0] {
+		 arg_type=const_Variant_ref;
+		 type="Variant&";
+		 name="col";
+		 required=1;
+		 def_val=;
+		 prev_expr=;
+		 expr {
+		  expr="0";
+		 };
+		};
+		ProgArg @[1] {
+		 arg_type=int;
+		 type="int";
+		 name="row";
+		 required=1;
+		 def_val=;
+		 prev_expr=;
+		 expr {
+		  expr="0";
+		 };
+		};
+		ProgArg @[2] {
+		 arg_type=int;
+		 type="int";
+		 name="cell";
+		 required=1;
+		 def_val=;
+		 prev_expr=;
+		 expr {
+		  expr="flat_index";
+		 };
+		};
+	       };
+	       meth_sig="const_Variant GetMatrixFlatVal(Variant& col, int row, int cell)";
+	       meth_desc=" get data of matrix type, in Variant form (any data type, use for Programs), for given column, row, and matrix flat cell index (regardless of dimensions) -- column can be specified as either integer index or a string that is then used to find the given column name";
+	      };
+	      AssignExpr @[3] {
+	       name="AssignExpr_wtrfcellmatrixwtrfcellmatrixact";
+	       desc=;
+	       flags=CAN_REVERT_TO_CODE;
+	       code_string="wt_rf_cell_matrix = wt_rf_cell_matrix * act";
+	       result_var=$.functions[1].fun_code[0].local_vars[10]$;
+	       expr {
+		expr="wt_rf_cell_matrix * act";
+	       };
+	      };
+	      MethodCall @[4] {
+	       name="MethodCall_wtrfdataSetValAs_esxactflatindex";
+	       desc=;
+	       flags=CAN_REVERT_TO_CODE;
+	       code_string="wt_rfdata->SetValAsMatrixColName(wt_rf_cell_matrix, \"values_x_act\", flat_index, )";
+	       result_var=NULL;
+	       obj=$.objs_vars[0]$;
+	       method=DataTable::SetValAsMatrixColName;
+	       meth_args {
+		name="meth_args";
+		el_typ=ProgArg;
+		el_def=0;
+		ProgArg @[0] {
+		 arg_type=const_taMatrix_ptr;
+		 type="taMatrix*";
+		 name="val";
+		 required=1;
+		 def_val=;
+		 prev_expr=;
+		 expr {
+		  expr="wt_rf_cell_matrix";
+		 };
+		};
+		ProgArg @[1] {
+		 arg_type=const_taString_ref;
+		 type="taString&";
+		 name="col_name";
+		 required=1;
+		 def_val=;
+		 prev_expr=;
+		 expr {
+		  expr="\"values_x_act\"";
+		 };
+		};
+		ProgArg @[2] {
+		 arg_type=int;
+		 type="int";
+		 name="row";
+		 required=1;
+		 def_val=;
+		 prev_expr=;
+		 expr {
+		  expr="flat_index";
+		 };
+		};
+		ProgArg @[3] {
+		 arg_type=bool;
+		 type="bool";
+		 name="quiet";
+		 required=0;
+		 def_val="false";
+		 prev_expr=;
+		 expr {
+		  expr=;
+		 };
+		};
+	       };
+	       meth_sig="bool SetValAsMatrixColName(taMatrix* val, taString& col_name, int row, bool quiet = false)";
+	       meth_desc=" set a matrix cell to values in given matrix val -- checks that the matrix has the proper geometry as the column's cells -- val can be of a different type than the data table column (it will just be a bit slower than if the type matches)";
+	      };
+	     };
+	     init {
+	      expr="unit_col = 0";
+	     };
+	     test {
+	      expr="unit_col<unit_cols";
+	     };
+	     iter {
+	      expr="unit_col++";
+	     };
+	    };
+	   };
+	   init {
+	    expr="unit_row = 0";
+	   };
+	   test {
+	    expr="unit_row<unit_rows";
+	   };
+	   iter {
+	    expr="unit_row++";
+	   };
+	  };
+	 };
+	 init {
+	  expr="grp_col = 0";
+	 };
+	 test {
+	  expr="grp_col < grp_cols";
+	 };
+	 iter {
+	  expr="grp_col++";
+	 };
+	};
+       };
+       init {
+	expr="grp_row = 0";
+       };
+       test {
+	expr="grp_row < grp_rows";
+       };
+       iter {
+	expr="grp_row++";
+       };
+      };
+     };
+    };
+    Else @[11] {
+     name="Else_If_ifvaluesxactdatacol";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="else";
+     cond {
+      expr=;
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      PrintExpr @[0] {
+       name="PrintExpr_Printvaluesxactc_ndandnotcreated";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="Print \"values_x_act column not found and not created!!!\"";
+       expr {
+	expr="\"values_x_act column not found and not created!!!\"";
+       };
+       debug=0;
+      };
+     };
+    };
+   };
+  };
+  Function @[2] {
+   name="Sample";
+   desc="Locate a sample of high activity units";
+   flags=CAN_REVERT_TO_CODE;
+   code_string="Sample() returns: int";
+   return_type=T_Int;
+   object_type=taOBase;
+   args {
+    name="args";
+    el_typ=ProgVar;
+    el_def=0;
+   };
+   fun_code {
+    name="fun_code";
+    el_typ=ProgCode;
+    el_def=0;
+    LocalVars @[0] {
+     name="LocalVars_LocalVars5vars";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="LocalVars (5 vars)";
+     local_vars {
+      name="local_vars";
+      el_typ=ProgVar;
+      el_def=0;
+      ProgVar @[0] {
+       name="sample";
+       var_type=T_Int;
+       int_val=0;
+       object_scope=NULL;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[1] {
+       name="max_act_flat_idx";
+       var_type=T_Int;
+       int_val=0;
+       object_scope=NULL;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[2] {
+       name="max_act_index";
+       var_type=T_Object;
+       object_type=MatrixIndex;
+       object_val=NULL;
+       object_scope=NULL;
+       objs_ptr=0;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[3] {
+       name="unit_matrix";
+       var_type=T_Object;
+       object_type=float_Matrix;
+       object_val=NULL;
+       object_scope=NULL;
+       objs_ptr=0;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[4] {
+       name="trg_layer_acts_matrix";
+       var_type=T_Object;
+       object_type=float_Matrix;
+       object_val=NULL;
+       object_scope=NULL;
+       objs_ptr=0;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+     };
+    };
+    AssignExpr @[1] {
+     name="AssignExpr_maxactindexnewMatrixIndex";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="max_act_index = new MatrixIndex";
+     result_var=.functions[2].fun_code[0].local_vars[2]$$;
+     expr {
+      expr="new MatrixIndex";
+     };
+    };
+    MethodCall @[2] {
+     name="MethodCall_trglayeractivationsResetData";
+     desc="these values get reset for each image";
+     flags=CAN_REVERT_TO_CODE;
+     code_string="trg_layer_activations->ResetData()";
+     result_var=NULL;
+     obj=$.objs_vars[3]$;
+     method=DataTable::ResetData;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+     };
+     meth_sig="void ResetData()";
+     meth_desc=" deletes all the data (rows), but keeps the column structure -- this cannot be undone!";
+    };
+    MethodCall @[3] {
+     name="MethodCall_trglayerVarToTab_nsactivationvar";
+     desc="get data to table";
+     flags=CAN_REVERT_TO_CODE;
+     code_string="trg_layer->VarToTable(trg_layer_activations, activation_var)";
+     result_var=NULL;
+     obj=$.vars[1]$;
+     method=Layer::VarToTable;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=DataTable_ptr;
+       type="DataTable*";
+       name="dt";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="trg_layer_activations";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="variable";
+       required=1;
+       def_val="\"\"";
+       prev_expr=;
+       expr {
+	expr="activation_var";
+       };
+      };
+     };
+     meth_sig="DataTable_ptr VarToTable(DataTable* dt, taString& variable)";
+     meth_desc=" send given variable to data table -- number of columns depends on variable (for projection variables, specify prjns.; for connection variables, specify r. or s. (e.g., r.wt)) -- this uses a NetMonitor internally, so see documentation there for more information";
+    };
+    AssignExpr @[4] {
+     name="AssignExpr_trglayeractsmatrixnewfloatMatrix";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="trg_layer_acts_matrix = new float_Matrix";
+     result_var=.functions[2].fun_code[0].local_vars[4]$$;
+     expr {
+      expr="new float_Matrix";
+     };
+    };
+    MethodCall @[5] {
+     name="MethodCall_trglayeractsmatr_etValAsMatrix00";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="trg_layer_acts_matrix = trg_layer_activations->GetValAsMatrix(0, 0)";
+     result_var=$.functions[2].fun_code[0].local_vars[4]$;
+     obj=$.objs_vars[3]$;
+     method=DataTable::GetValAsMatrix;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_Variant_ref;
+       type="Variant&";
+       name="col";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="0";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=int;
+       type="int";
+       name="row";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="0";
+       };
+      };
+     };
+     meth_sig="taMatrix_ptr GetValAsMatrix(Variant& col, int row)";
+     meth_desc=" get data of matrix type (multi-dimensional data within a given cell), in Matrix form, for given column, row; for Program usage, assign to a LocalVars Matrix* variable, NOT a global vars variable, at the appropriate scope where the matrix will be used, (e.g., if within a loop, put variable in the loop_code of the loop), so that the local variable will be deleted automatically, to free the memory associated with the Matrix when it is no longer needed";
+    };
+    If @[6] {
+     name="If_ifnetworktrial0";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if (network.trial == 0)";
+     cond {
+      expr="network.trial == 0";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      MethodCall @[0] {
+       name="MethodCall_sampleunitsRemoveAllRows";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="sample_units->RemoveAllRows()";
+       result_var=NULL;
+       obj=.objs_vars[4]$$;
+       method=DataTable::RemoveAllRows;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+       };
+       meth_sig="void RemoveAllRows()";
+       meth_desc=" remove all of the rows of data, but keep the column structure";
+      };
+     };
+    };
+    ForLoop @[7] {
+     name="ForLoop_forsample0samplesamplesizesample";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="for (sample = 0; sample < sample_size; sample++)";
+     loop_code {
+      name="loop_code";
+      el_typ=ProgCode;
+      el_def=0;
+      AssignExpr @[0] {
+       name="AssignExpr_maxacttrglayeractsmatrixMax";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="max_act = trg_layer_acts_matrix->Max()";
+       result_var=.vars[6]$$;
+       expr {
+	expr="trg_layer_acts_matrix->Max()";
+       };
+      };
+      MethodCall @[1] {
+       name="MethodCall_maxactflatidxtrg_dValFlatmaxact0";
+       desc="the flat index of sample unit";
+       flags=CAN_REVERT_TO_CODE;
+       code_string="max_act_flat_idx = trg_layer_acts_matrix->FindVal_Flat(max_act, 0)";
+       result_var=.functions[2].fun_code[0].local_vars[1]$$;
+       obj=$.functions[2].fun_code[0].local_vars[4]$;
+       method=taMatrix::FindVal_Flat;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_Variant_ref;
+	 type="Variant&";
+	 name="val";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="max_act";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=int;
+	 type="int";
+	 name="st_idx";
+	 required=0;
+	 def_val="0";
+	 prev_expr=;
+	 expr {
+	  expr="0";
+	 };
+	};
+       };
+       meth_sig="int FindVal_Flat(Variant& val, int st_idx = 0)";
+       meth_desc=" find a value in the matrix -- treats the matrix like a flat array, returns the flat index where the value was found, or -1 if not found. Negative st_idx will search backwards";
+      };
+      MemberMethodCall @[2] {
+       name="MemberMethodCall_trglayeractsmatr_tidxmaxactindex";
+       desc="multidimensional matrix indices of the unit";
+       flags=CAN_REVERT_TO_CODE;
+       code_string="trg_layer_acts_matrix.geom.DimsFmIndex(max_act_flat_idx, max_act_index)";
+       obj=$.functions[2].fun_code[0].local_vars[4]$;
+       path="geom";
+       result_var=NULL;
+       method=MatrixGeom::DimsFmIndex;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=int;
+	 type="int";
+	 name="idx";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="max_act_flat_idx";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=MatrixIndex_ref;
+	 type="MatrixIndex&";
+	 name="dims";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="max_act_index";
+	 };
+	};
+       };
+       meth_sig="void DimsFmIndex(int idx, MatrixIndex& dims)";
+       meth_desc=" get dimension values from index, based on geometry represented by 'this' geom object";
+      };
+      PrintVar @[3] {
+       name="PrintVar_Printmaxactmaxac_tidxmaxactindex";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="Print  max_act max_act_flat_idx max_act_index";
+       message=;
+       print_var=$.vars[6]$;
+       print_var2=$.functions[2].fun_code[0].local_vars[1]$;
+       print_var3=$.functions[2].fun_code[0].local_vars[2]$;
+       print_var4=NULL;
+       print_var5=NULL;
+       print_var6=NULL;
+       debug=0;
+      };
+      MethodCall @[4] {
+       name="MethodCall_trglayeractsmatr_t1maxactflatidx";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="trg_layer_acts_matrix->Set_Flat(-1, max_act_flat_idx)";
+       result_var=NULL;
+       obj=$.functions[2].fun_code[0].local_vars[4]$;
+       method=taMatrixT_float_::Set_Flat;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_float_ref;
+	 type="float&";
+	 name="item";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="-1";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=int;
+	 type="int";
+	 name="idx";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="max_act_flat_idx";
+	 };
+	};
+       };
+       meth_sig="void Set_Flat(float& item, int idx)";
+       meth_desc=" safely assign values to items in the matrix, treated as a flat vector";
+      };
+      MethodCall @[5] {
+       name="MethodCall_sampleunitsAddBlankRow";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="sample_units->AddBlankRow()";
+       result_var=NULL;
+       obj=$.objs_vars[4]$;
+       method=DataTable::AddBlankRow;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+       };
+       meth_sig="int AddBlankRow()";
+       meth_desc=" add a new row to the data table, sets read (source) and write (sink) index to this last row (as in ReadItem or WriteItem), so that subsequent data routines refer to this new row, and returns row ";
+      };
+      MethodCall @[6] {
+       name="MethodCall_sampleunitsSetVa_enameimagename1";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="sample_units->SetValAsString(image_filename, \"image_name\", -1)";
+       result_var=NULL;
+       obj=$.objs_vars[4]$;
+       method=DataTable::SetValAsString;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="val";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="image_filename";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=const_Variant_ref;
+	 type="Variant&";
+	 name="col";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="\"image_name\"";
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=int;
+	 type="int";
+	 name="row";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="-1";
+	 };
+	};
+       };
+       meth_sig="bool SetValAsString(taString& val, Variant& col, int row)";
+       meth_desc=" set data of scalar type, in String form, for given column, row; does nothing if no cell; 'true if set";
+      };
+      MethodCall @[7] {
+       name="MethodCall_unitmatrixwtrfda_ctmaxactflatidx";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="unit_matrix = wt_rfdata->GetValAsMatrixColName(\"values_x_act\", max_act_flat_idx, )";
+       result_var=.functions[2].fun_code[0].local_vars[3]$$;
+       obj=$.objs_vars[0]$;
+       method=DataTable::GetValAsMatrixColName;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="col_name";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="\"values_x_act\"";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=int;
+	 type="int";
+	 name="row";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="max_act_flat_idx";
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=bool;
+	 type="bool";
+	 name="quiet";
+	 required=0;
+	 def_val="false";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+       };
+       meth_sig="taMatrix_ptr GetValAsMatrixColName(taString& col_name, int row, bool quiet = false)";
+       meth_desc=" get data of matrix type (multi-dimensional data within a given cell), in Matrix form, for given column, row; for Program usage, assign to a LocalVars Matrix* variable, NOT a global vars variable, at the appropriate scope where the matrix will be used, (e.g., if within a loop, put variable in the loop_code of the loop), so that the local variable will be deleted automatically, to free the memory associated with the Matrix when it is no longer needed";
+      };
+      MethodCall @[8] {
+       name="MethodCall_sampleunitsSetVa_trixvaluesxact1";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="sample_units->SetValAsMatrixColName(unit_matrix, \"values_x_act\", -1, )";
+       result_var=NULL;
+       obj=$.objs_vars[4]$;
+       method=DataTable::SetValAsMatrixColName;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_taMatrix_ptr;
+	 type="taMatrix*";
+	 name="val";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="unit_matrix";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="col_name";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="\"values_x_act\"";
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=int;
+	 type="int";
+	 name="row";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="-1";
+	 };
+	};
+	ProgArg @[3] {
+	 arg_type=bool;
+	 type="bool";
+	 name="quiet";
+	 required=0;
+	 def_val="false";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+       };
+       meth_sig="bool SetValAsMatrixColName(taMatrix* val, taString& col_name, int row, bool quiet = false)";
+       meth_desc=" set a matrix cell to values in given matrix val -- checks that the matrix has the proper geometry as the column's cells -- val can be of a different type than the data table column (it will just be a bit slower than if the type matches)";
+      };
+      MethodCall @[9] {
+       name="MethodCall_sampleunitsSetVa_idxunitidxflat1";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="sample_units->SetValAsInt(max_act_flat_idx, \"unit_idx_flat\", -1)";
+       result_var=NULL;
+       obj=$.objs_vars[4]$;
+       method=DataTable::SetValAsInt;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=int;
+	 type="int";
+	 name="val";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="max_act_flat_idx";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=const_Variant_ref;
+	 type="Variant&";
+	 name="col";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="\"unit_idx_flat\"";
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=int;
+	 type="int";
+	 name="row";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="-1";
+	 };
+	};
+       };
+       meth_sig="bool SetValAsInt(int val, Variant& col, int row)";
+       meth_desc=" set data of scalar type, in int form, for given column, row; does nothing if no cell' 'true' if set";
+      };
+      MethodCall @[10] {
+       name="MethodCall_sampleunitsSetVa_xactactivation1";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="sample_units->SetValAsFloat(max_act, \"activation\", -1)";
+       result_var=NULL;
+       obj=$.objs_vars[4]$;
+       method=DataTable::SetValAsFloat;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=float;
+	 type="float";
+	 name="val";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="max_act";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=const_Variant_ref;
+	 type="Variant&";
+	 name="col";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="\"activation\"";
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=int;
+	 type="int";
+	 name="row";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="-1";
+	 };
+	};
+       };
+       meth_sig="bool SetValAsFloat(float val, Variant& col, int row)";
+       meth_desc=" set data of scalar type, in float form, for given column, row; does nothing if no cell' 'true' if set";
+      };
+      MethodCall @[11] {
+       name="MethodCall_sampleunitsCopyC_taV1lF16imager0";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="sample_units->CopyCell(\"image\", -1, v1_fovea_region_data, \"V1lF16_image_r\", 0)";
+       result_var=NULL;
+       obj=$.objs_vars[4]$;
+       method=DataTable::CopyCell;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_Variant_ref;
+	 type="Variant&";
+	 name="dest_col";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="\"image\"";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=int;
+	 type="int";
+	 name="dest_row";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="-1";
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=const_DataTable_ref;
+	 type="DataTable&";
+	 name="src";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="v1_fovea_region_data";
+	 };
+	};
+	ProgArg @[3] {
+	 arg_type=const_Variant_ref;
+	 type="Variant&";
+	 name="src_col";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="\"V1lF16_image_r\"";
+	 };
+	};
+	ProgArg @[4] {
+	 arg_type=int;
+	 type="int";
+	 name="src_row";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="0";
+	 };
+	};
+       };
+       meth_sig="bool CopyCell(Variant& dest_col, int dest_row, DataTable& src, Variant& src_col, int src_row)";
+       meth_desc=" copy one cell (indexed by column, row) from source to this data table in given col,row cell -- is robust to differences in type and matrix sizing (returns false if not successful) -- column can be specified as either integer index or a string that is then used to find the given column name";
+      };
+     };
+     init {
+      expr="sample = 0";
+     };
+     test {
+      expr="sample < sample_size";
+     };
+     iter {
+      expr="sample++";
+     };
+    };
+   };
+  };
+  Function @[3] {
+   name="RemoveAllRowsAllTables";
+   desc=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="RemoveAllRowsAllTables() returns: int";
+   return_type=T_Int;
+   object_type=taOBase;
+   args {
+    name="args";
+    el_typ=ProgVar;
+    el_def=0;
+   };
+   fun_code {
+    name="fun_code";
+    el_typ=ProgCode;
+    el_def=0;
+    LocalVars @[0] {
+     name="LocalVars_LocalVars0vars";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="LocalVars (0 vars)";
+     local_vars {
+      name="local_vars";
+      el_typ=ProgVar;
+      el_def=0;
+     };
+    };
+    MethodCall @[1] {
+     name="MethodCall_wtrfdataRemoveAllRows";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="wt_rfdata->RemoveAllRows()";
+     result_var=NULL;
+     obj=$.objs_vars[0]$;
+     method=DataTable::RemoveAllRows;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+     };
+     meth_sig="void RemoveAllRows()";
+     meth_desc=" remove all of the rows of data, but keep the column structure";
+    };
+    MethodCall @[2] {
+     name="MethodCall_trglayerwtsRemoveAllRows";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="trg_layer_wts->RemoveAllRows()";
+     result_var=NULL;
+     obj=.objs_vars[2]$$;
+     method=DataTable::RemoveAllRows;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+     };
+     meth_sig="void RemoveAllRows()";
+     meth_desc=" remove all of the rows of data, but keep the column structure";
+    };
+    MethodCall @[3] {
+     name="MethodCall_trglayeractivationsRemoveAllRows";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="trg_layer_activations->RemoveAllRows()";
+     result_var=NULL;
+     obj=$.objs_vars[3]$;
+     method=DataTable::RemoveAllRows;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+     };
+     meth_sig="void RemoveAllRows()";
+     meth_desc=" remove all of the rows of data, but keep the column structure";
+    };
+    MethodCall @[4] {
+     name="MethodCall_sampleunitsRemoveAllRows";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="sample_units->RemoveAllRows()";
+     result_var=NULL;
+     obj=$.objs_vars[4]$;
+     method=DataTable::RemoveAllRows;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+     };
+     meth_sig="void RemoveAllRows()";
+     meth_desc=" remove all of the rows of data, but keep the column structure";
+    };
+   };
+  };
+ };
+ init_code {
+  name="init_code";
+  el_typ=ProgCode;
+  el_def=0;
+  LocalVars @[0] {
+   name="LocalVars_LocalVars0vars";
+   desc=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="LocalVars (0 vars)";
+   local_vars {
+    name="local_vars";
+    el_typ=ProgVar;
+    el_def=0;
+   };
+  };
+ };
+ prog_code {
+  name="prog_code";
+  el_typ=ProgCode;
+  el_def=0;
+  LocalVars @[0] {
+   name="LocalVars_LocalVars0vars";
+   desc=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="LocalVars (0 vars)";
+   local_vars {
+    name="local_vars";
+    el_typ=ProgVar;
+    el_def=0;
+   };
+  };
+  FunctionCall @[1] {
+   name="FunctionCall_ResetTables";
+   desc=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="ResetTables()";
+   result_var=NULL;
+   fun=.functions[0]$$;
+   fun_args {
+    name="fun_args";
+    el_typ=ProgArg;
+    el_def=0;
+   };
+  };
+  MethodCall @[2] {
+   name="MethodCall_imagefilenameobj_rcurobjfilename";
+   desc=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="image_filename = objects_env->GetVar(\"cur_obj_filename\")";
+   result_var=.vars[8]$$;
+   obj=.vars[9]$$;
+   method=Program::GetVar;
+   meth_args {
+    name="meth_args";
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=const_taString_ref;
+     type="taString&";
+     name="var_nm";
+     required=1;
+     def_val=;
+     prev_expr=;
+     expr {
+      expr="\"cur_obj_filename\"";
+     };
+    };
+   };
+   meth_sig="Variant GetVar(taString& var_nm)";
+   meth_desc=" get the value of a program variable (only top-level variables in vars or args) -- can be called from within a running program";
+  };
+  PrintVar @[3] {
+   name="PrintVar_Printimagefilename";
+   desc=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="Print  image_filename";
+   message=;
+   print_var=$.vars[8]$;
+   print_var2=NULL;
+   print_var3=NULL;
+   print_var4=NULL;
+   print_var5=NULL;
+   print_var6=NULL;
+   debug=0;
+  };
+  Comment @[4] {
+   name="Comment_makesuretousethe_ivationvariable";
+   desc="make sure to use the correct activation variable!";
+   flags=CAN_REVERT_TO_CODE|NO_CODE;
+   code_string="// make sure to use the correct activation variable!";
+  };
+  If @[5] {
+   name="If_ifnetworkInherit_omNameBpNetwork";
+   desc=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="if (network->InheritsFromName(\"BpNetwork\"))";
+   cond {
+    expr="network->InheritsFromName(\"BpNetwork\")";
+   };
+   true_code {
+    name="true_code";
+    el_typ=ProgCode;
+    el_def=0;
+    AssignExpr @[0] {
+     name="AssignExpr_activationvaract";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="activation_var = \"act\"";
+     result_var=.vars[5]$$;
+     expr {
+      expr="\"act\"";
+     };
+    };
+   };
+  };
+  ElseIf @[6] {
+   name="ElseIf_elseifnetworkInh_meLeabraNetwork";
+   desc=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="else if (network->InheritsFromName(\"LeabraNetwork\"))";
+   cond {
+    expr="network->InheritsFromName(\"LeabraNetwork\")";
+   };
+   true_code {
+    name="true_code";
+    el_typ=ProgCode;
+    el_def=0;
+    AssignExpr @[0] {
+     name="AssignExpr_activationvaractm";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="activation_var = \"act_m\"";
+     result_var=$.vars[5]$;
+     expr {
+      expr="\"act_m\"";
+     };
+    };
+   };
+  };
+  MethodCall @[7] {
+   name="MethodCall_wtbasedrfanalysi_procwtthreshold";
+   desc=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="wt_based_rf_analysis->ComputeV2RF(network, wt_rfdata, trg_layer_wts, trg_layer, snd_layer, v1_retina_proc, wt_threshold)";
+   result_var=NULL;
+   obj=.objs_vars[1]$$;
+   method=WtBasedRF::ComputeV2RF;
+   meth_args {
+    name="meth_args";
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=Network_ptr;
+     type="Network*";
+     name="net";
+     required=1;
+     def_val=;
+     prev_expr=;
+     expr {
+      expr="network";
+     };
+    };
+    ProgArg @[1] {
+     arg_type=DataTable_ptr;
+     type="DataTable*";
+     name="dt_trg";
+     required=1;
+     def_val=;
+     prev_expr=;
+     expr {
+      expr="wt_rfdata";
+     };
+    };
+    ProgArg @[2] {
+     arg_type=DataTable_ptr;
+     type="DataTable*";
+     name="wts";
+     required=1;
+     def_val=;
+     prev_expr=;
+     expr {
+      expr="trg_layer_wts";
+     };
+    };
+    ProgArg @[3] {
+     arg_type=Layer_ptr;
+     type="Layer*";
+     name="tlay";
+     required=1;
+     def_val=;
+     prev_expr=;
+     expr {
+      expr="trg_layer";
+     };
+    };
+    ProgArg @[4] {
+     arg_type=Layer_ptr;
+     type="Layer*";
+     name="slay";
+     required=1;
+     def_val=;
+     prev_expr=;
+     expr {
+      expr="snd_layer";
+     };
+    };
+    ProgArg @[5] {
+     arg_type=V1RetinaProc_ptr;
+     type="V1RetinaProc*";
+     name="rproc";
+     required=1;
+     def_val=;
+     prev_expr=;
+     expr {
+      expr="v1_retina_proc";
+     };
+    };
+    ProgArg @[6] {
+     arg_type=float;
+     type="float";
+     name="wt_threshold";
+     required=0;
+     def_val="0";
+     prev_expr=;
+     expr {
+      expr="wt_threshold";
+     };
+    };
+   };
+   meth_sig="bool ComputeV2RF(Network* net, DataTable* dt_trg, DataTable* wts, Layer* tlay, Layer* slay, V1RetinaProc* rproc, float wt_threshold = 0)";
+   meth_desc=" compute the rf_data based on V2 wts and V1 filters";
+  };
+  FunctionCall @[8] {
+   name="FunctionCall_MultiplyWithActivations";
+   desc=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="MultiplyWithActivations()";
+   result_var=NULL;
+   fun=.functions[1]$$;
+   fun_args {
+    name="fun_args";
+    el_typ=ProgArg;
+    el_def=0;
+   };
+  };
+  FunctionCall @[9] {
+   name="FunctionCall_Sample";
+   desc=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="Sample()";
+   result_var=NULL;
+   fun=.functions[2]$$;
+   fun_args {
+    name="fun_args";
+    el_typ=ProgArg;
+    el_def=0;
+   };
+  };
+ };
+ step_prog=NULL;
+ step_n=1;
+ doc {
+  name="doc";
+  desc=;
+  web_doc=0;
+  wiki=;
+  url="local";
+  full_url="local";
+  text_size=1;
+  text="<html>
+<head></head>
+<body>
+== Enter Title Here ==
+</body>
+</html>
+";
+  html_text="<html>
+<head></head>
+<body>
+<h2> Enter Title Here </h2>
+</body>
+</html>
+";
+ };
+};

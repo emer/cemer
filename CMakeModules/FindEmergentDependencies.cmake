@@ -154,6 +154,20 @@ find_package(ODE)
 find_package(CCD)
 find_package(GSL)
 
+if(ODE_FOUND)
+  set(EMERGENT_MISC_LIBS ${EMERGENT_MISC_LIBS} ${ODE_LIBRARY})
+  include_directories(${ODE_INCLUDE_DIR})
+endif (ODE_FOUND)
+
+if(CCD_FOUND)
+  set(EMERGENT_MISC_LIBS ${EMERGENT_MISC_LIBS} ${CCD_LIBRARY})
+  include_directories(${CCD_INCLUDE_DIR})
+endif (CCD_FOUND)
+
+if(GSL_FOUND)
+  set(EMERGENT_MISC_LIBS ${EMERGENT_MISC_LIBS} ${GSL_LIBRARY})
+  include_directories(${GSL_INCLUDE_DIR})
+endif (GSL_FOUND)
 
 # ZLIB
 if (WIN32)
@@ -230,11 +244,9 @@ ENDIF(CUDA_BUILD)
 #find_package(BISON)
 
 include_directories(${COIN_INCLUDE_DIR} 
-  ${ODE_INCLUDE_DIR}
-  ${CCD_INCLUDE_DIR}
-  ${GSL_INCLUDE_DIR}
   ${SUBVERSION_INCLUDE_DIRS}
 )
+
 if (WIN32)
   include_directories($ENV{COINDIR}/include )
 else (WIN32)
@@ -253,8 +265,7 @@ endif (WIN32)
 # all dependency libraries to link to -- used automatically in EMERGENT_LINK_LIBRARIES
 # specify in executables
 # not including: ${JPEG_LIBRARIES}
-set(EMERGENT_DEP_LIBRARIES ${COIN_LIBRARY} ${QT_LIBRARIES}
-    ${ODE_LIBRARY} ${CCD_LIBRARY} ${GSL_LIBRARIES}
+set(EMERGENT_DEP_LIBRARIES ${COIN_LIBRARY} ${QT_LIBRARIES} ${EMERGENT_MISC_LIBS}
     ${OPENGL_LIBRARIES} ${ZLIB_LIBRARIES}
     ${SUBVERSION_LIBRARIES} ${EMERGENT_OPT_LIBRARIES}
 )
