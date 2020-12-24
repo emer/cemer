@@ -409,7 +409,7 @@ bool AuditoryProc::InitFilters_Mel() {
   for(int idx = 0; idx < mel_n_filters_eff; idx++) {
     float ml = mel_fbank.lo_mel + (float)idx*mel_inc;
     float hz = mel_fbank.MelToFreq(ml);
-    int bin = mel_fbank.FreqToBin(hz, dft_use, input.sample_rate);
+    int bin = mel_fbank.FreqToBin(hz, dft_size, input.sample_rate);
     mel_pts_mel.FastEl_Flat(idx) = ml;
     mel_pts_hz.FastEl_Flat(idx) = hz;
     mel_pts_bin.FastEl_Flat(idx) = bin;
