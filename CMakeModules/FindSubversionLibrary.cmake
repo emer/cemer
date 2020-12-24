@@ -154,6 +154,7 @@ IF (NOT WIN32)
             IF(${_ARG} MATCHES "^-l")
                STRING(REGEX REPLACE "^-l" "" _ARG ${_ARG})
                FIND_LIBRARY(_APR_LIB_FROM_ARG NAMES ${_ARG}
+                    NO_DEFAULT_PATH
                     PATHS
                     ${_APR_LIB_PATHS}
                )
@@ -181,6 +182,7 @@ IF (NOT WIN32)
             IF(${_ARG} MATCHES "^-l")
                STRING(REGEX REPLACE "^-l" "" _ARG ${_ARG})
                FIND_LIBRARY(_APU_LIB_FROM_ARG NAMES ${_ARG}
+                    NO_DEFAULT_PATH
                     PATHS
                     ${_APU_LIB_PATHS}
                )

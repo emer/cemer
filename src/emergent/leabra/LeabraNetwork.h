@@ -252,6 +252,9 @@ public:
 
   void TimingReportInitNames() override;
 
+  virtual String  AllWtScales();
+  // #MENU #MENU_ON_State #USE_RVAL report all wt scales for all layers and projections
+
   void  SetProjectionDefaultTypes(Projection* prjn) override;
 
   String       GetToolbarName() const override { return "network"; }

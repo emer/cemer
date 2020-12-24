@@ -435,3 +435,22 @@ void LeabraNetwork::TimingReportInitNames() {
   net_timer_names[LeabraNetworkState_cpp::NT_CYCLE_STATS] = "Cycle_Stats";
 }  
 
+
+String LeabraNetwork::AllWtScales() {
+  String str;
+  for(int li=0; li < n_layers_built; li++) {
+    LeabraLayerState_cpp* lay = (LeabraLayerState_cpp*)net_state->GetLayerState(li);
+    if(lay->lesioned()) continue;
+    LeabraLayer* mlay = (LeabraLayer*)LayerFromState(lay);
+    str += "\nLayer: " + mlay->GetName() + "\n";
+    for(int i = 0; i < mlay->projections.size; i++) {
+      Projection* prjn = mlay->projections[i];
+      if(!prjn->MainIsActive())
+        continue;
+      LeabraConSpec* cs = (LeabraConSpec*)prjn->con_spec.SPtr();
+      str += "\t" + prjn->name + "\t\tAbs:\t" + String(cs->wt_scale.abs) + "\tRel:\t" + String(cs->wt_scale.rel) + "\n";
+    } 
+  }
+  return str;
+}
+

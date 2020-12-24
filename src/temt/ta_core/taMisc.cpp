@@ -26,9 +26,9 @@ taTypeDef_Of(EnumDef);
 
 // this gets around cmake's internal dependency checking mechanisms, to break
 // interdependency on svnrev.h
-# define CMAKE_DEPENDENCY_HACK(a) #a
-#  include CMAKE_DEPENDENCY_HACK(svnrev.h)
-# undef CMAKE_DEPENDENCY_HACK
+// # define CMAKE_DEPENDENCY_HACK(a) #a
+// #  include CMAKE_DEPENDENCY_HACK(svnrev.h)
+// # undef CMAKE_DEPENDENCY_HACK
 
 #include <taBase> 
 #include <taBase_PtrList>
