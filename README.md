@@ -1,8 +1,18 @@
 # emergent
 
-This is the C++ version of emergent.  Main documentation is here: https://grey.colorado.edu/emergent
+This is the C++ version of emergent.  Main documentation is here: https://grey.colorado.edu/emergent -- basic install and build information is on the [Github Wiki](https://github.com/emer/cemer/wiki)
 
 We are no longer developing this software.  We are now developing a new framework based on the `Go` language, with a `Python` interface: https://github.com/emer/emergent
+
+The current release built from github sources (source code only) is: https://github.com/emer/cemer/releases/tag/v8.6.1
+
+The latest release with built packages is: https://github.com/emer/cemer/releases/tag/v8.5.2, released Feb, 2018.
+
+The main dependency files for current releases are found in: https://github.com/emer/cemer/releases/tag/v8.5.1
+
+This github repository was converted from the svn original, and has captured the full history of git tags (including historical dates!) in: https://github.com/emer/cemer/tags
+
+# About
 
 *emergent* is a comprehensive neural network simulator that enables the creation and analysis of complex, sophisticated models of the brain in the world; features:
 
